@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162272-3-25297625427579513
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162184-2-9427385869662402149
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162272; b=CKkybpNJgryO7rIWwox+QrpXQgrYV6JjddUUf10dDW1mvRLQbj
-    5i21McHRz14i1RXzGK03ekb8tOpgWRnL2jRWH2v/odIvmFo/aSwJArDgBV2YfeA3
-    p013nrx4NvL5qp6Hz+4jNzpHgNTaClyZUImXwbkc8+gNl2kYj1XvYQqSrz9+fsP8
-    Ns8ttl99B8LNqKPxa8GUYcBCSW+7G0TRuW0U57L5jIYyU2yLkG9hnNlEn5kffWjU
-    TRIDMpl6mTyR0euQaQS+8aV5FosJYNLXjz9DQ6qXoRq5a/e68SYRuLLY+h2UixDp
-    a2tPPYAbNBCGmMmyPsbjUio0tSfnva5EQvSg==
+    1527162184; b=VKtJbNwaavnJQgu5EeAmicbTbUKP/iI8rN+0WXRcJmiB3U5p+4
+    CXoTeB9Pdkm1Iap00BP1KZn6wx2QAINHqqZBWwNuPhrXdbIqQ5dKSu3kt+aG57as
+    4dSTH483FeRxDUn8OJDS4SeAkYD9MlttfY5/lF4pHwIw+izJHnnmsCleG5X0SwEF
+    gCUqZZ7NQLCDmnLK0sA6G2A+FojcUU5PTMeHzingJo373Hkg5zc+UfAfN8PIouEb
+    TH8yeDxQHXnfdX+kg8aa8CRcCXiH+/O5yG5cNjg2eneMswnd+QliFUl4zCt21NZl
+    T5cZp/IKhGp6pijG+S+kS4ibRYCS7hrLNjSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162272; bh=hsSJEVrH2gbv5v1WrLQSSGTXyA+NIY
-    CZTwxe3ubVxwA=; b=dlH4u1OMAsLyybYK08eF4o+DzpHueJ6IzrYBKxxJdSzjmn
-    Kw+DpGsx9jdkiRGLCM+NLJtEOlKXdnN/R7YCs48LJ5AQedxOlV29Rmlq1dRolkK0
-    V01S4ojqrIYBCK/GRZTUAWO//9kmrsp0kPGKT+Ir7jtc23ZMrVyeM8hIuXwY7o5y
-    IB8x5Irs2cgLRcpbgmJxslw3GTkEriAuJNokGw1/bvfaCqpjv+xh+Cgzr8jmG3gj
-    ueM+1XEWxqHmP9TQRzQSl2Cg2LBrHwFmlCiJ3AzKaCely+zXCoI1+EWSecH2MOnb
-    cP3lKj/FaQwhzQcx4PIpvOm3Mi9ELm7v5GXi56Lg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162184; bh=gXdlPx+4XiwZ1UiPLugQpb/PEYo0iz
+    VrAMclh77DiWU=; b=D+KlRr74qdkLaqFjZfAQgTgDm4fAZ4vkaf2EDTubt8q+V9
+    zvLKlB42XWIksgk/LwkmPcNw4cMNtzh2GiUVqsMHW1YNMtXX9y11gil77gqosr4z
+    NOiLe7u5hxeSOsUrEO0FI3hRtNAJfQw4PZmEBtRG+4pkgDlN/LhOFZHS5H4FKpGW
+    HmY6TLIMcsn9kUIIAN0SvfJqzbrxa33agXkdOTrsH7Q64wqvKCy3ohGp3m32kj/m
+    iKeQm4S1/X9/++wsMtPr+gDGFD2uoI9S81oqVebOyJrCeSna5OX1xGmA6+xHujgg
+    EcJDFx3eDUPrj9zZnUSJEkQ6nuagq2dBkqaC04Ng==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=NKP9AaQ9 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Mc6zQ8ei x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=NKP9AaQ9 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Mc6zQ8ei x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,31 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBERtFdBN6M0CuqlZenBUV6U/0MzIBIR6L7+OCo2q4r1/H4TbiH2PaK7cK3KciUOLBAVnsVbW7NbXYbyEKkPoiC+2pP+aeUrsvX3nOpnP0G/RtJrXuob
-    9vx5vb2zxp0xNUEmGpa/9H4lelDqHtf5wYGjsRgcebjTpzEbXB9lV0M7wL5z9/gQvsVgwn/78v7AG8StGCy+s95YcPSGdUgtKM5pgjwNmh4FUqm0RnIXDxI+
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIk5vNKoUHNemL1TQiz9fR/7qhbA4q/mSEsSMDaMbnuhkXNozNCo62V+TSOZmM4GB3nxUzGx3cnlGNXy0ODzs5lixbrRQiK8c5kdH5vxh298GQ4VV5GL
+    +V7B6iJvzY3T1De5S+TeRlY64itJ/8y4inTbdxZJ7QJ4oCpX3H0iIkRmJjldDhBu4pfP/76Sb3w7Q1aSfWHRn5xnJM+H9pWRrtq3++I1CKIAjNRAg3jzF+Kl
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=u-AzxMXRe4DiE4IcPcUA:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=jIQo8A4GAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=JaPq-73m0TlQmVeIr-wA:9 a=QEXdDO2ut3YA:10 a=Lf5xNeLK5dgiOs8hzIjU:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969237AbeEXLni (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:43:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33450 "EHLO mail.kernel.org"
+        id S967258AbeEXLnA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:43:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967191AbeEXJsQ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:16 -0400
+        id S966483AbeEXJsT (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nobutaka Okabe <nob77413@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 35/96] ALSA: usb-audio: Add native DSD support for Luxman DA-06
-Date: Thu, 24 May 2018 11:38:18 +0200
-Message-Id: <20180524093607.586426661@linuxfoundation.org>
+Subject: [PATCH 4.9 36/96] usb: dwc3: Add SoftReset PHY synchonization delay
+Date: Thu, 24 May 2018 11:38:19 +0200
+Message-Id: <20180524093607.649376350@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -105,129 +106,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nobutaka Okabe <nob77413@gmail.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-[ Upstream commit 71426535f49fe6034d0e0db77608b91a0c1a022d ]
+[ Upstream commit fab3833338779e1e668bd58d1f76d601657304b8 ]
 
-Add native DSD support quirk for Luxman DA-06 DAC, by adding the
-PID/VID 1852:5065.
+>From DWC_usb31 programming guide section 1.3.2, once DWC3_DCTL_CSFTRST
+bit is cleared, we must wait at least 50ms before accessing the PHY
+domain (synchronization delay).
 
-Rename "is_marantz_denon_dac()" function to "is_itf_usb_dsd_2alts_dac()"
-to cover broader device family sharing the same USB audio
-implementation(*).
-For the same reason, rename "is_teac_dsd_dac()" function to
-"is_itf_usb_dsd_3alts_dac()".
-
-(*)
-These devices have the same USB controller "ITF-USB DSD", supplied by
-INTERFACE Co., Ltd.
-"ITF-USB DSD" USB controller has two patterns,
-
-Pattern 1. (2 altsets version)
-- Altset 0: for control
-- Altset 1: for stream (S32)
-- Altset 2: for stream (S32, DSD_U32)
-
-Pattern 2. (3 altsets version)
-- Altset 0: for control
-- Altset 1: for stream (S16)
-- Altset 2: for stream (S32)
-- Altset 3: for stream (S32, DSD_U32)
-
-"is_itf_usb_dsd_2alts_dac()" returns true, if the DAC has "Pattern 1"
-USB controller, and "is_itf_usb_dsd_3alts_dac()" returns true, if
-"Pattern2".
-
-Signed-off-by: Nobutaka Okabe <nob77413@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/usb/quirks.c |   29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ drivers/usb/dwc3/core.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1153,24 +1153,27 @@ bool snd_usb_get_sample_rate_quirk(struc
- 	return false;
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -161,7 +161,7 @@ static int dwc3_core_soft_reset(struct d
+ 	do {
+ 		reg = dwc3_readl(dwc->regs, DWC3_DCTL);
+ 		if (!(reg & DWC3_DCTL_CSFTRST))
+-			return 0;
++			goto done;
+ 
+ 		udelay(1);
+ 	} while (--retries);
+@@ -170,6 +170,17 @@ static int dwc3_core_soft_reset(struct d
+ 	phy_exit(dwc->usb2_generic_phy);
+ 
+ 	return -ETIMEDOUT;
++
++done:
++	/*
++	 * For DWC_usb31 controller, once DWC3_DCTL_CSFTRST bit is cleared,
++	 * we must wait at least 50ms before accessing the PHY domain
++	 * (synchronization delay). DWC_usb31 programming guide section 1.3.2.
++	 */
++	if (dwc3_is_usb31(dwc))
++		msleep(50);
++
++	return 0;
  }
  
--/* Marantz/Denon USB DACs need a vendor cmd to switch
-+/* ITF-USB DSD based DACs need a vendor cmd to switch
-  * between PCM and native DSD mode
-+ * (2 altsets version)
-  */
--static bool is_marantz_denon_dac(unsigned int id)
-+static bool is_itf_usb_dsd_2alts_dac(unsigned int id)
- {
- 	switch (id) {
- 	case USB_ID(0x154e, 0x1003): /* Denon DA-300USB */
- 	case USB_ID(0x154e, 0x3005): /* Marantz HD-DAC1 */
- 	case USB_ID(0x154e, 0x3006): /* Marantz SA-14S1 */
-+	case USB_ID(0x1852, 0x5065): /* Luxman DA-06 */
- 		return true;
- 	}
- 	return false;
- }
- 
--/* TEAC UD-501/UD-503/NT-503 USB DACs need a vendor cmd to switch
-- * between PCM/DOP and native DSD mode
-+/* ITF-USB DSD based DACs need a vendor cmd to switch
-+ * between PCM and native DSD mode
-+ * (3 altsets version)
-  */
--static bool is_teac_dsd_dac(unsigned int id)
-+static bool is_itf_usb_dsd_3alts_dac(unsigned int id)
- {
- 	switch (id) {
- 	case USB_ID(0x0644, 0x8043): /* TEAC UD-501/UD-503/NT-503 */
-@@ -1187,7 +1190,7 @@ int snd_usb_select_mode_quirk(struct snd
- 	struct usb_device *dev = subs->dev;
- 	int err;
- 
--	if (is_marantz_denon_dac(subs->stream->chip->usb_id)) {
-+	if (is_itf_usb_dsd_2alts_dac(subs->stream->chip->usb_id)) {
- 		/* First switch to alt set 0, otherwise the mode switch cmd
- 		 * will not be accepted by the DAC
- 		 */
-@@ -1208,7 +1211,7 @@ int snd_usb_select_mode_quirk(struct snd
- 			break;
- 		}
- 		mdelay(20);
--	} else if (is_teac_dsd_dac(subs->stream->chip->usb_id)) {
-+	} else if (is_itf_usb_dsd_3alts_dac(subs->stream->chip->usb_id)) {
- 		/* Vendor mode switch cmd is required. */
- 		switch (fmt->altsetting) {
- 		case 3: /* DSD mode (DSD_U32) requested */
-@@ -1304,10 +1307,10 @@ void snd_usb_ctl_msg_quirk(struct usb_de
- 	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
- 		mdelay(20);
- 
--	/* Marantz/Denon devices with USB DAC functionality need a delay
-+	/* ITF-USB DSD based DACs functionality need a delay
- 	 * after each class compliant request
- 	 */
--	if (is_marantz_denon_dac(chip->usb_id)
-+	if (is_itf_usb_dsd_2alts_dac(chip->usb_id)
- 	    && (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
- 		mdelay(20);
- 
-@@ -1371,14 +1374,14 @@ u64 snd_usb_interface_dsd_format_quirks(
- 		break;
- 	}
- 
--	/* Denon/Marantz devices with USB DAC functionality */
--	if (is_marantz_denon_dac(chip->usb_id)) {
-+	/* ITF-USB DSD based DACs (2 altsets version) */
-+	if (is_itf_usb_dsd_2alts_dac(chip->usb_id)) {
- 		if (fp->altsetting == 2)
- 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
- 	}
- 
--	/* TEAC devices with USB DAC functionality */
--	if (is_teac_dsd_dac(chip->usb_id)) {
-+	/* ITF-USB DSD based DACs (3 altsets version) */
-+	if (is_itf_usb_dsd_3alts_dac(chip->usb_id)) {
- 		if (fp->altsetting == 3)
- 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
- 	}
+ /**
