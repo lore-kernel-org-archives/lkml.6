@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935473AbeEXBsI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:48:08 -0400
+        id S935543AbeEXBs4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:48:56 -0400
 Received: from mga06.intel.com ([134.134.136.31]:42102 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935277AbeEXBsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:48:01 -0400
+        id S935368AbeEXBsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:48:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,435,1520924400";
-   d="scan'208";a="41747916"
+   d="scan'208";a="41747924"
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To: lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
         mgorman@techsingularity.net
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         juri.lelli@redhat.com, viresh.kumar@linaro.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [RFC/RFT] [PATCH v2 2/6] cpufreq: intel_pstate: Add HWP boost utility functions
-Date: Wed, 23 May 2018 18:47:34 -0700
-Message-Id: <20180524014738.52924-3-srinivas.pandruvada@linux.intel.com>
+Subject: [RFC/RFT] [PATCH v2 6/6] cpufreq: intel_pstate: enable boost for SKX
+Date: Wed, 23 May 2018 18:47:38 -0700
+Message-Id: <20180524014738.52924-7-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180524014738.52924-1-srinivas.pandruvada@linux.intel.com>
 References: <20180524014738.52924-1-srinivas.pandruvada@linux.intel.com>
@@ -27,135 +27,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added two utility functions to HWP boost up gradually and boost down to
-the default cached HWP request values.
-
-Boost up:
-Boost up updates HWP request minimum value in steps. This minimum value
-can reach upto at HWP request maximum values depends on how frequently,
-the IOWAIT flag is set. At max, boost up will take three steps to reach
-the maximum, depending on the current HWP request levels and HWP
-capabilities. For example, if the current settings are:
-If P0 (Turbo max) = P1 (Guaranteed max) = min
-	No boost at all.
-If P0 (Turbo max) > P1 (Guaranteed max) = min
-	Should result in one level boost only for P0.
-If P0 (Turbo max) = P1 (Guaranteed max) > min
-	Should result in two level boost:
-		(min + p1)/2 and P1.
-If P0 (Turbo max) > P1 (Guaranteed max) > min
-	Should result in three level boost:
-		(min + p1)/2, P1 and P0.
-We don't set any level between P0 and P1 as there is no guarantee that
-they will be honored.
-
-Boost down:
-After the system is idle for hold time of 3ms, the HWP request is reset
-to the default cached value from HWP init or user modified one via sysfs.
+Enable HWP boost on Skylake server platform.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- drivers/cpufreq/intel_pstate.c | 74 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ drivers/cpufreq/intel_pstate.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index baed29c768e7..6ad46e07cad6 100644
+index b2613c9775d5..6f8214a40764 100644
 --- a/drivers/cpufreq/intel_pstate.c
 +++ b/drivers/cpufreq/intel_pstate.c
-@@ -223,6 +223,7 @@ struct global_params {
-  *			operation
-  * @hwp_req_cached:	Cached value of the last HWP Request MSR
-  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
-+ * @hwp_boost_min:	Last HWP boosted min performance
-  *
-  * This structure stores per CPU instance data for all CPUs.
-  */
-@@ -257,6 +258,7 @@ struct cpudata {
- 	s16 epp_saved;
- 	u64 hwp_req_cached;
- 	u64 hwp_cap_cached;
-+	int hwp_boost_min;
+@@ -1801,6 +1801,11 @@ static const struct x86_cpu_id intel_pstate_cpu_ee_disable_ids[] = {
+ 	{}
  };
  
- static struct cpudata **all_cpu_data;
-@@ -1387,6 +1389,78 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
- 	intel_pstate_set_min_pstate(cpu);
- }
- 
-+/*
-+ * Long hold time will keep high perf limits for long time,
-+ * which negatively impacts perf/watt for some workloads,
-+ * like specpower. 3ms is based on experiements on some
-+ * workoads.
-+ */
-+static int hwp_boost_hold_time_ms = 3;
++static const struct x86_cpu_id intel_pstate_hwp_boost_ids[] __initconst = {
++	ICPU(INTEL_FAM6_SKYLAKE_X, core_funcs),
++	{}
++};
 +
-+static inline void intel_pstate_hwp_boost_up(struct cpudata *cpu)
-+{
-+	u64 hwp_req = READ_ONCE(cpu->hwp_req_cached);
-+	int max_limit = (hwp_req & 0xff00) >> 8;
-+	int min_limit = (hwp_req & 0xff);
-+	int boost_level1;
-+
-+	/*
-+	 * Cases to consider (User changes via sysfs or boot time):
-+	 * If, P0 (Turbo max) = P1 (Guaranteed max) = min:
-+	 *	No boost, return.
-+	 * If, P0 (Turbo max) > P1 (Guaranteed max) = min:
-+	 *     Should result in one level boost only for P0.
-+	 * If, P0 (Turbo max) = P1 (Guaranteed max) > min:
-+	 *     Should result in two level boost:
-+	 *         (min + p1)/2 and P1.
-+	 * If, P0 (Turbo max) > P1 (Guaranteed max) > min:
-+	 *     Should result in three level boost:
-+	 *        (min + p1)/2, P1 and P0.
-+	 */
-+
-+	/* If max and min are equal or already at max, nothing to boost */
-+	if (max_limit == min_limit || cpu->hwp_boost_min >= max_limit)
-+		return;
-+
-+	if (!cpu->hwp_boost_min)
-+		cpu->hwp_boost_min = min_limit;
-+
-+	/* level at half way mark between min and guranteed */
-+	boost_level1 = (HWP_GUARANTEED_PERF(cpu->hwp_cap_cached) + min_limit) >> 1;
-+
-+	if (cpu->hwp_boost_min < boost_level1)
-+		cpu->hwp_boost_min = boost_level1;
-+	else if (cpu->hwp_boost_min < HWP_GUARANTEED_PERF(cpu->hwp_cap_cached))
-+		cpu->hwp_boost_min = HWP_GUARANTEED_PERF(cpu->hwp_cap_cached);
-+	else if (cpu->hwp_boost_min == HWP_GUARANTEED_PERF(cpu->hwp_cap_cached) &&
-+		 max_limit != HWP_GUARANTEED_PERF(cpu->hwp_cap_cached))
-+		cpu->hwp_boost_min = max_limit;
-+	else
-+		return;
-+
-+	hwp_req = (hwp_req & ~GENMASK_ULL(7, 0)) | cpu->hwp_boost_min;
-+	wrmsrl(MSR_HWP_REQUEST, hwp_req);
-+	cpu->last_update = cpu->sample.time;
-+}
-+
-+static inline bool intel_pstate_hwp_boost_down(struct cpudata *cpu)
-+{
-+	if (cpu->hwp_boost_min) {
-+		bool expired;
-+
-+		/* Check if we are idle for hold time to boost down */
-+		expired = time_after64(cpu->sample.time, cpu->last_update +
-+				       (hwp_boost_hold_time_ms * NSEC_PER_MSEC));
-+		if (expired) {
-+			wrmsrl(MSR_HWP_REQUEST, cpu->hwp_req_cached);
-+			cpu->hwp_boost_min = 0;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
- static inline void intel_pstate_calc_avg_perf(struct cpudata *cpu)
+ static int intel_pstate_init_cpu(unsigned int cpunum)
  {
- 	struct sample *sample = &cpu->sample;
+ 	struct cpudata *cpu;
+@@ -1831,6 +1836,10 @@ static int intel_pstate_init_cpu(unsigned int cpunum)
+ 			intel_pstate_disable_ee(cpunum);
+ 
+ 		intel_pstate_hwp_enable(cpu);
++
++		id = x86_match_cpu(intel_pstate_hwp_boost_ids);
++		if (id)
++			hwp_boost = true;
+ 	}
+ 
+ 	intel_pstate_get_cpu_pstates(cpu);
 -- 
 2.13.6
