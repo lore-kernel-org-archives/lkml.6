@@ -1,91 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156074-2-2898698480278178965
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156074; b=hheF/eTTUF41M5abxAh7DJEbKoFEh+GdoY51+vh4F0B8eS4mPp
-    1bbGGEvbdqcQBEE8T9jg1Yo6N3au8sfa62j2FW1IO/NzDhDUBJhlEX9CHmA9RFmK
-    pDMNwvJ6ZwBA05GvR0Nrs4mp+UDlgtVUwBb+nBacLAlMpEkO+/WF1ADNujAcISYV
-    woKQJvUBQiPIeFT2wK5LDjDAl95OW1zai3nNzuH8YGXWvfTbCMEfJ9oYS3gGTZB+
-    p+NBVD1qFo9iGGt/HrByIz7PQgGNMCtIsdaMGRI7k0yEpa28Bpk5Zi1OUQQHDFag
-    mCkRJsEN6W6ncUTCzisAK/mIqmk2ryv3sR3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156074; bh=BohMhZaUjqYHv3/FkTitoJ9rb/5Sj3
-    NI2Fp3GbCLbdM=; b=I9vwm6tpMX8kTtSaxsKb4sjqGjyKFjsJ5OaJX+W+f3/46N
-    grf+ztG4geqgEMmUUuyvYDFMkjciS0YjwjK8VdWt0czNPr1rRnRxXojjtkIGMIEB
-    mhKSbYSLg7Ggqj6ymUzQa16y8B4+9W1DhdC+uVv/39XuU05vLZPN2Hv0LoGaASFD
-    yilTm4HvuytUCD4M7cdIW7Gy4U85JFF10X3ygd08A7h/4hYhkMKfbFLsqqPDi5wi
-    8urcs1jhGMLZkURaba5sQc5HuXGFcskHYeFW3qir9djHjbWPGY7cklqQLp39R7nE
-    d93h7qbi+P5Ne315JG5HXAmQObYfvfRpwf+cYvTg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=w0XDwybQ x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=w0XDwybQ x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB6y78ENm37slUOfju5LpV28UfLcNh41GHBVvVFZ7wSyM2dUaiBhnSZZOB/0EBfgPnAw4FS/2qOlfobFLwoRJbJ4U4Ay/eSByrlzZdRdojyJi+ocEYtd
-    NLRjSjC8hHblbc4ablrdaOPL98DjBHQRzZ/vF8E4jcNSwdCjq4fq3g0Alp+9ZfmppRpN3DbDILoveNwvjJF27mKEaW8G9q4W495Iz20eEYan3aR82hDfVkQD
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=XyMwAGQSYJT2K2sAP5MA:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030880AbeEXKBI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:01:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030878AbeEXKBG (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:01:06 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZq6VD7FuTg/cNobiY3PzkGXOjRok+86adJoTrl4tAT6tBzqIfu/FReSaKdDm6mZptDp9kDm
+ARC-Seal: i=1; a=rsa-sha256; t=1527156072; cv=none;
+        d=google.com; s=arc-20160816;
+        b=fpdny4r+s5xociP0r3L7fRZoXgOPBq6g1CNXKI4Wwcvi8A4JjbPJaSNvyxaxFO6F8U
+         1chOwCUjiuVwK7eSuO8G08xO2K6i8o1Gmblz/M4ff7nyrd7/UJ0td131YmDx5ThXAa8g
+         Bhe2neJgaYYDwbeJaaEc6qmOz5YHB2Mmmu2pgTGNpK1M3Hk0yXIVP+onWz5fgvxtDY8+
+         yYdDgtvOKKasf0UGoxAcGJHH0X78sqe8kBJvWPbdADEiaU5WTruLfGtY4g4vN7ZmrI5b
+         ExxVHp3tg917Q5E7K6VH8fIaThLoWi+/5EhL33vNjVNfPbK+SH+iyrIR3yRJgStb1Nwl
+         S/Xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=x8g4AXx81xef/7suzxuvRwJjoVYD9/hCKF8YXQ7Fs4M=;
+        b=cD5POAWUCNZFOYuPsKecD0yTlLgauQTR4z8vZlkR5UxwQ1BYThDTAo2kf1m1pqW4gE
+         Q8lPkEjXQ8bAIKybfMWE3TMMQwGOE4RurBqCOWZBICZnq5dBShJWW4etIuxfY54h2y2D
+         sLUuIiXyWjpCdJo4861TKxr0fyFPxQCqdu3YWHwFpkRgbIByJdR/YitfIz+WUhaerGmH
+         3ckd5kCDzzKgrpJGXDuDFIrxsEJ+2S8hHMvTvP/OqSuT83LqvCeYzBhiG1+NmyF4d+Xv
+         8c55pGt/AH9LfgyGiZFRo/0caHpZmVZ+l4JwSpUG7njX9sgUTYBgB0g5eY+li33M8PNB
+         rTyA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xoCQHjfH;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xoCQHjfH;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 051/161] s390: report spectre mitigation via syslog
-Date: Thu, 24 May 2018 11:37:56 +0200
-Message-Id: <20180524093024.568592676@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.16 052/161] s390: add sysfs attributes for spectre
+Date: Thu, 24 May 2018 11:37:57 +0200
+Message-Id: <20180524093024.685628974@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -93,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601339205287555710?=
+X-GMAIL-MSGID: =?utf-8?q?1601339205287555710?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -105,34 +52,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit bc035599718412cfba9249aa713f90ef13f13ee9 ]
+[ Upstream commit d424986f1d6b16079b3231db0314923f4f8deed1 ]
 
-Add a boot message if either of the spectre defenses is active.
-The message is
-    "Spectre V2 mitigation: execute trampolines."
-or  "Spectre V2 mitigation: limited branch prediction."
+Set CONFIG_GENERIC_CPU_VULNERABILITIES and provide the two functions
+cpu_show_spectre_v1 and cpu_show_spectre_v2 to report the spectre
+mitigations.
 
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/nospec-branch.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/s390/Kconfig                |    1 +
+ arch/s390/kernel/nospec-branch.c |   19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -120,6 +120,7 @@ config S390
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_DEVICES if !SMP
++	select GENERIC_CPU_VULNERABILITIES
+ 	select GENERIC_FIND_FIRST_BIT
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
 --- a/arch/s390/kernel/nospec-branch.c
 +++ b/arch/s390/kernel/nospec-branch.c
-@@ -32,6 +32,16 @@ static int __init nospec_setup_early(cha
- }
- early_param("nospec", nospec_setup_early);
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/module.h>
++#include <linux/device.h>
+ #include <asm/nospec-branch.h>
  
-+static int __init nospec_report(void)
+ static int __init nobp_setup_early(char *str)
+@@ -42,6 +43,24 @@ static int __init nospec_report(void)
+ }
+ arch_initcall(nospec_report);
+ 
++#ifdef CONFIG_SYSFS
++ssize_t cpu_show_spectre_v1(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++}
++
++ssize_t cpu_show_spectre_v2(struct device *dev,
++			    struct device_attribute *attr, char *buf)
 +{
 +	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable)
-+		pr_info("Spectre V2 mitigation: execute trampolines.\n");
++		return sprintf(buf, "Mitigation: execute trampolines\n");
 +	if (__test_facility(82, S390_lowcore.alt_stfle_fac_list))
-+		pr_info("Spectre V2 mitigation: limited branch prediction.\n");
-+	return 0;
++		return sprintf(buf, "Mitigation: limited branch prediction.\n");
++	return sprintf(buf, "Vulnerable\n");
 +}
-+arch_initcall(nospec_report);
++#endif
 +
  #ifdef CONFIG_EXPOLINE
  
