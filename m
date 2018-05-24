@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935494AbeEXBsJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:48:09 -0400
+        id S935520AbeEXBsN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:48:13 -0400
 Received: from mga06.intel.com ([134.134.136.31]:42101 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935278AbeEXBsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:48:01 -0400
+        id S935367AbeEXBsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:48:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,435,1520924400";
-   d="scan'208";a="41747918"
+   d="scan'208";a="41747921"
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To: lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
         mgorman@techsingularity.net
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         juri.lelli@redhat.com, viresh.kumar@linaro.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [RFC/RFT] [PATCH v2 3/6] cpufreq: intel_pstate: Add update_util_hook for HWP
-Date: Wed, 23 May 2018 18:47:35 -0700
-Message-Id: <20180524014738.52924-4-srinivas.pandruvada@linux.intel.com>
+Subject: [RFC/RFT] [PATCH v2 5/6] cpufreq: intel_pstate: New sysfs entry to control HWP boost
+Date: Wed, 23 May 2018 18:47:37 -0700
+Message-Id: <20180524014738.52924-6-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180524014738.52924-1-srinivas.pandruvada@linux.intel.com>
 References: <20180524014738.52924-1-srinivas.pandruvada@linux.intel.com>
@@ -27,74 +27,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When HWP dynamic boost is active then set the HWP specific update util
-hook.
+A new attribute is added to intel_pstate sysfs to enable/disable
+HWP dynamic performance boost.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- drivers/cpufreq/intel_pstate.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ drivers/cpufreq/intel_pstate.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 6ad46e07cad6..382160570b5f 100644
+index 6d0ebe4fe1c7..b2613c9775d5 100644
 --- a/drivers/cpufreq/intel_pstate.c
 +++ b/drivers/cpufreq/intel_pstate.c
-@@ -291,6 +291,7 @@ static struct pstate_funcs pstate_funcs __read_mostly;
- 
- static int hwp_active __read_mostly;
- static bool per_cpu_limits __read_mostly;
-+static bool hwp_boost __read_mostly;
- 
- static struct cpufreq_driver *intel_pstate_driver __read_mostly;
- 
-@@ -1461,6 +1462,11 @@ static inline bool intel_pstate_hwp_boost_down(struct cpudata *cpu)
- 	return false;
+@@ -1033,6 +1033,30 @@ static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
+ 	return count;
  }
  
-+static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
-+						u64 time, unsigned int flags)
++static ssize_t show_hwp_dynamic_boost(struct kobject *kobj,
++				struct attribute *attr, char *buf)
 +{
++	return sprintf(buf, "%u\n", hwp_boost);
 +}
 +
- static inline void intel_pstate_calc_avg_perf(struct cpudata *cpu)
- {
- 	struct sample *sample = &cpu->sample;
-@@ -1764,7 +1770,7 @@ static void intel_pstate_set_update_util_hook(unsigned int cpu_num)
- {
- 	struct cpudata *cpu = all_cpu_data[cpu_num];
++static ssize_t store_hwp_dynamic_boost(struct kobject *a, struct attribute *b,
++				       const char *buf, size_t count)
++{
++	unsigned int input;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &input);
++	if (ret)
++		return ret;
++
++	mutex_lock(&intel_pstate_driver_lock);
++	hwp_boost = !!input;
++	intel_pstate_update_policies();
++	mutex_unlock(&intel_pstate_driver_lock);
++
++	return count;
++}
++
+ show_one(max_perf_pct, max_perf_pct);
+ show_one(min_perf_pct, min_perf_pct);
  
--	if (hwp_active)
-+	if (hwp_active && !hwp_boost)
- 		return;
+@@ -1042,6 +1066,7 @@ define_one_global_rw(max_perf_pct);
+ define_one_global_rw(min_perf_pct);
+ define_one_global_ro(turbo_pct);
+ define_one_global_ro(num_pstates);
++define_one_global_rw(hwp_dynamic_boost);
  
- 	if (cpu->update_util_set)
-@@ -1772,8 +1778,12 @@ static void intel_pstate_set_update_util_hook(unsigned int cpu_num)
+ static struct attribute *intel_pstate_attributes[] = {
+ 	&status.attr,
+@@ -1082,6 +1107,11 @@ static void __init intel_pstate_sysfs_expose_params(void)
+ 	rc = sysfs_create_file(intel_pstate_kobject, &min_perf_pct.attr);
+ 	WARN_ON(rc);
  
- 	/* Prevent intel_pstate_update_util() from using stale data. */
- 	cpu->sample.time = 0;
--	cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
--				     intel_pstate_update_util);
-+	if (hwp_active)
-+		cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
-+					     intel_pstate_update_util_hwp);
-+	else
-+		cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
-+					     intel_pstate_update_util);
- 	cpu->update_util_set = true;
- }
- 
-@@ -1885,8 +1895,11 @@ static int intel_pstate_set_policy(struct cpufreq_policy *policy)
- 		intel_pstate_set_update_util_hook(policy->cpu);
- 	}
- 
--	if (hwp_active)
 +	if (hwp_active) {
-+		if (!hwp_boost)
-+			intel_pstate_clear_update_util_hook(policy->cpu);
- 		intel_pstate_hwp_set(policy->cpu);
++		rc = sysfs_create_file(intel_pstate_kobject,
++				       &hwp_dynamic_boost.attr);
++		WARN_ON(rc);
 +	}
- 
- 	mutex_unlock(&intel_pstate_limits_lock);
+ }
+ /************************** sysfs end ************************/
  
 -- 
 2.13.6
