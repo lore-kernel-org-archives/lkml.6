@@ -1,105 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970895AbeEXPS0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:18:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45558 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966307AbeEXPSX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:18:23 -0400
-Date: Thu, 24 May 2018 08:18:18 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Huaisheng Ye <yehs2007@gmail.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, vbabka@suse.cz, mgorman@techsingularity.net,
-        kstewart@linuxfoundation.org, alexander.levin@verizon.com,
-        gregkh@linuxfoundation.org, colyli@suse.de, chengnt@lenovo.com,
-        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, xen-devel@lists.xenproject.org,
-        linux-btrfs@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
-Subject: Re: [RFC PATCH v2 00/12] get rid of GFP_ZONE_TABLE/BAD
-Message-ID: <20180524151818.GA21245@bombadil.infradead.org>
-References: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
- <20180522183728.GB20441@dhcp22.suse.cz>
- <20180524051919.GA9819@bombadil.infradead.org>
- <20180524122323.GH20441@dhcp22.suse.cz>
+        id S1033425AbeEXPWU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 11:22:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45038 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966472AbeEXPWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 11:22:16 -0400
+Subject: Re: [PATCH v8 3/6] cpuset: Add cpuset.sched.load_balance flag to v2
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-4-git-send-email-longman@redhat.com>
+ <20180524143614.GC3948@localhost.localdomain>
+ <4bd31510-4f73-e263-8dc1-5edb0fe63b59@redhat.com>
+ <20180524151656.GD3948@localhost.localdomain>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <5f409ed7-3850-f1ea-58cf-4326605d1570@redhat.com>
+Date: Thu, 24 May 2018 11:22:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524122323.GH20441@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180524151656.GD3948@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 02:23:23PM +0200, Michal Hocko wrote:
-> > If we had eight ZONEs, we could offer:
-> 
-> No, please no more zones. What we have is quite a maint. burden on its
-> own. Ideally we should only have lowmem, highmem and special/device
-> zones for directly kernel accessible memory, the one that the kernel
-> cannot or must not use and completely special memory managed out of
-> the page allocator. All the remaining constrains should better be
-> implemented on top.
+On 05/24/2018 11:16 AM, Juri Lelli wrote:
+> On 24/05/18 11:09, Waiman Long wrote:
+>> On 05/24/2018 10:36 AM, Juri Lelli wrote:
+>>> On 17/05/18 16:55, Waiman Long wrote:
+>>>
+>>> [...]
+>>>
+>>>> +	A parent cgroup cannot distribute all its CPUs to child
+>>>> +	scheduling domain cgroups unless its load balancing flag is
+>>>> +	turned off.
+>>>> +
+>>>> +  cpuset.sched.load_balance
+>>>> +	A read-write single value file which exists on non-root
+>>>> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+>>>> +	either "0" (off) or a non-zero value (on).  This flag is set
+>>>> +	by the parent and is not delegatable.
+>>>> +
+>>>> +	When it is on, tasks within this cpuset will be load-balanced
+>>>> +	by the kernel scheduler.  Tasks will be moved from CPUs with
+>>>> +	high load to other CPUs within the same cpuset with less load
+>>>> +	periodically.
+>>>> +
+>>>> +	When it is off, there will be no load balancing among CPUs on
+>>>> +	this cgroup.  Tasks will stay in the CPUs they are running on
+>>>> +	and will not be moved to other CPUs.
+>>>> +
+>>>> +	The initial value of this flag is "1".	This flag is then
+>>>> +	inherited by child cgroups with cpuset enabled.  Its state
+>>>> +	can only be changed on a scheduling domain cgroup with no
+>>>> +	cpuset-enabled children.
+>>> [...]
+>>>
+>>>> +	/*
+>>>> +	 * On default hierachy, a load balance flag change is only allowed
+>>>> +	 * in a scheduling domain with no child cpuset.
+>>>> +	 */
+>>>> +	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) && balance_flag_changed &&
+>>>> +	   (!is_sched_domain(cs) || css_has_online_children(&cs->css))) {
+>>>> +		err = -EINVAL;
+>>>> +		goto out;
+>>>> +	}
+>>> The rule is actually
+>>>
+>>>  - no child cpuset
+>>>  - and it must be a scheduling domain
+>>>
+>>> Right?
+>> Yes, because it doesn't make sense to have a cpu in one cpuset that has
+>> loading balance off while, at the same time, in another cpuset with load
+>> balancing turned on. This restriction is there to make sure that the
+>> above condition will not happen. I may be wrong if there is a realistic
+>> use case where the above condition is desired.
+> Yep, makes sense to me.
+>
+> Maybe add the second condition to the comment and documentation.
 
-I believe you when you say that they're a maintenance pain.  Is that
-maintenance pain because they're so specialised?  ie if we had more,
-could we solve our pain by making them more generic?
+Sure. Will do.
 
-> > ZONE_16M	// 24 bit
-> > ZONE_256M	// 28 bit
-> > ZONE_LOWMEM	// CONFIG_32BIT only
-> > ZONE_4G		// 32 bit
-> > ZONE_64G	// 36 bit
-> > ZONE_1T		// 40 bit
-> > ZONE_ALL	// everything larger
-> > ZONE_MOVABLE	// movable allocations; no physical address guarantees
-> > 
-> > #ifdef CONFIG_64BIT
-> > #define ZONE_NORMAL	ZONE_ALL
-> > #else
-> > #define ZONE_NORMAL	ZONE_LOWMEM
-> > #endif
-> > 
-> > This would cover most driver DMA mask allocations; we could tweak the
-> > offered zones based on analysis of what people need.
-> 
-> But those already do have aproper API, IIUC. So do we really need to
-> make our GFP_*/Zone API more complicated than it already is?
-
-I don't want to change the driver API (setting the DMA mask, etc),
-but we don't actually have a good API to the page allocator for the
-implementation of dma_alloc_foo() to request pages.  More or less,
-architectures do:
-
-	if (mask < 4GB)
-		alloc_page(GFP_DMA)
-	else if (mask < 64EB)
-		alloc_page(GFP_DMA32)
-	else
-		alloc_page(GFP_HIGHMEM)
-
-it more-or-less sucks that the devices with 28-bit DMA limits are forced
-to allocate from the low 16MB when they're perfectly capable of using the
-low 256MB.  Sure, my proposal doesn't help 27 or 26 bit DMA mask devices,
-but those are pretty rare.
-
-I'm sure you don't need reminding what a mess vmalloc_32 is, and the
-implementation of saa7146_vmalloc_build_pgtable() just hurts.
-
-> > #define GFP_HIGHUSER		(GFP_USER | ZONE_ALL)
-> > #define GFP_HIGHUSER_MOVABLE	(GFP_USER | ZONE_MOVABLE)
-> > 
-> > One other thing I want to see is that fallback from zones happens from
-> > highest to lowest normally (ie if you fail to allocate in 1T, then you
-> > try to allocate from 64G), but movable allocations hapen from lowest
-> > to highest.  So ZONE_16M ends up full of page cache pages which are
-> > readily evictable for the rare occasions when we need to allocate memory
-> > below 16MB.
-> > 
-> > I'm sure there are lots of good reasons why this won't work, which is
-> > why I've been hesitant to propose it before now.
-> 
-> I am worried you are playing with a can of worms...
-
-Yes.  Me too.
+-Longman
