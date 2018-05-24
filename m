@@ -1,33 +1,33 @@
 Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AB8JxZrqUcl5c271cpMO9sB8dTxB2tJxqWWk15EB/kwOSBEGOyfSSquSZnM+zMypxmaSZnFZMBl7
-ARC-Seal: i=1; a=rsa-sha256; t=1527186906; cv=none;
+X-Google-Smtp-Source: AB8JxZqPDnOgnRt9ik2oWC1//RLQUPMu/Y8U9y90R8/vqnXkZzEbxOdJEQAavqMyR63y3YN+6pcF
+ARC-Seal: i=1; a=rsa-sha256; t=1527167249; cv=none;
         d=google.com; s=arc-20160816;
-        b=rvlS9Pbxg1mpcZdDbocHQN4d63rguqONlnftRPx9sD5es3Kg8m8ajTtPMGIIKbFKrz
-         5ZLy03hMIKgKUC4pU5sLF+5t92br7ZWrj5NMotop3fi37RLLZ6hE1w5RThZ2oyLKTcuu
-         rr6L27s4DyWYfyh4TGwe2oj6XA3bQVzXMoQiw1OBz4ozV/aaGk2/NFgBpxOjdwJt4Uyr
-         xOY8qhqFRqhXavxQfa3XbvFzDtM9od0Bw8Behg2dviXaH99ui4IeROH30LASwwUe1icJ
-         2uXBz3QUZf2l6a07k2TKQzuK6DNHc0nTkurQzyB2mzGakKvgf0tmqhql2GIQdq+yY3UK
-         ydbg==
+        b=kQaYMBN0kBGasERPNIVjSdRW7uX4B22ZjotJRyF00xG9l8MZWK+aBW4lgksJyXyQGe
+         TzTJs6CaXirEl75uKjj2Vrva6kdF9rrMwjtxoUwgVsJ6mQZAawlbuNvPV04hs9MB/fmP
+         DND2xG3JBFcQwsONhy8HyJr82hG9TOzxSVeHsaGk2+gkGgIniJvCM/Rr73+zw7rbNZHQ
+         x3IrstC2v2hohbUCdMufA2afEHyTq6BrTvJCDbszWY/h6naKXpPd3aEbK4Ai9Rsw5xhU
+         BpsEgkyO4jAGAih4FQbkfoqOnfQ0zpFxt6VrDLmipG7lRBIjl39RfjFvKw7HdEKPqght
+         6EMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=fuxCRuxW0KFBk9dBKa5riTtImrFPw5xr3IdXdLhImDY=;
-        b=L01arCuzt4ZghcbXHm/9ZYmwY0teuJCWTZeQCvcIiyizeQGYYLZKleYupchCEuzrIh
-         3wWxA9gI+OpsSThR7USN1fWVlJFew3W8Edhf8eRhlg8INVK1XZtvw6wOtdwbGr9oFyGn
-         A4jNFf6L1LPnHMpLXCr7tpxtrl9WNgc3J+yrqvCN7y7Y34OtzKfcjPWgxPzG4NvRN7Pn
-         /Ax3s4KeFFVYWGvhrwWCc1npoDhtnVAKi3fkUXbyb26K7ANSTjQPifCD7qfQmXhwvd/k
-         V1SpH49FCYMbzUmgaaNgGSsaXEGjA5HRzr5cnu+zprsjRSfX3Uq8HAaUbJKahE+zXO/C
-         pldw==
+        bh=ovHdnV3NtaR5CprTp41AvD527DJi+Nt9JIyUD5r27ts=;
+        b=NuR57WyO+VFKvlMu2ZCrKKbE774KELNjwBkFuO907cEpENRHuML8kVWPuPnbqVr5/x
+         z81BwIS2zxsuccf5/BKH9pJs3ma335A9VG/KyvBUP+rcu+Gv8S1nwAKZLPkD3wTK5SyY
+         N5SRHlxjHQr48Kg5nuR6p4kHqI4JwwD9kCyu+hCDhrZco2nT1j5JdQz21izdOxHsJy13
+         4tsseM7uFa3g5fhi2xVNUMc8+C8mv+75wp1ijWBxPdHEpcBlv+lO5bj7YCy5yc9mVU5Y
+         dPJiOR4l5TNx718Yop1k71vyX7LlVu9uv19uGmeo1uJgWgrHZivGEzyUzbMTpvlyrZuq
+         OOgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mmqTD/yJ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OPx33pY/;
        spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mmqTD/yJ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OPx33pY/;
        spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 24 May 2018 13:35:02 -0500
+Date: Thu, 24 May 2018 08:07:27 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Sinan Kaya <okaya@codeaurora.org>
 Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
@@ -44,153 +44,76 @@ Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
 	Don Brace <don.brace@microsemi.com>, esc.storagedev@microsemi.com,
 	linux-scsi@vger.kernel.org
 Subject: Re: [PATCH V2] PCI/portdrv: do not disable device on reboot/shutdown
-Message-ID: <20180524183502.GB85822@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <20180524130727.GA85822@bhelgaas-glaptop.roam.corp.google.com>
 References: <1527043490-17268-1-git-send-email-okaya@codeaurora.org>
  <20180523213249.GD150632@bhelgaas-glaptop.roam.corp.google.com>
  <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
+ <82656e20-e821-1944-3399-1667ceb27719@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
+In-Reply-To: <82656e20-e821-1944-3399-1667ceb27719@codeaurora.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1601221164637868413?=
-X-GMAIL-MSGID: =?utf-8?q?1601371537413571260?=
+X-GMAIL-MSGID: =?utf-8?q?1601350925274380040?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 23, 2018 at 06:57:18PM -0400, Sinan Kaya wrote:
-> On 5/23/2018 5:32 PM, Bjorn Helgaas wrote:
-> > 
-> > The crash seems to indicate that the hpsa device attempted a DMA after
-> > we cleared the Root Port's PCI_COMMAND_MASTER, which means
-> > hpsa_shutdown() didn't stop DMA from the device (it looks like *most*
-> > shutdown methods don't disable device DMA, so it's in good company).
+On Thu, May 24, 2018 at 07:43:05AM -0400, Sinan Kaya wrote:
+> On 5/23/2018 6:57 PM, Sinan Kaya wrote:
+> >> The crash seems to indicate that the hpsa device attempted a DMA after
+> >> we cleared the Root Port's PCI_COMMAND_MASTER, which means
+> >> hpsa_shutdown() didn't stop DMA from the device (it looks like *most*
+> >> shutdown methods don't disable device DMA, so it's in good company).
+> > All drivers are expected to shutdown DMA and interrupts in their shutdown()
+> > routines. They can skip removing threads, data structures etc. but DMA and
+> > interrupt disabling are required. This is the difference between shutdown()
+> > and remove() callbacks.
 > 
-> All drivers are expected to shutdown DMA and interrupts in their shutdown()
-> routines. They can skip removing threads, data structures etc. but DMA and
-> interrupt disabling are required. This is the difference between shutdown()
-> and remove() callbacks.
+> I found this note yesterday to see why we are not disabling the
+> devices in the PCI core itself. 
 > 
-> If you see that this is not being done in HPSA, then that is where the
-> bugfix should be.
+> pci_device_remove()
 > 
-> Counter argument is that if shutdown() is not implemented, at least remove()
-> should be called. Expecting all drivers to implement shutdown() callbacks
-> is just bad by design in my opinion. 
+> 	/*
+> 	 * We would love to complain here if pci_dev->is_enabled is set, that
+> 	 * the driver should have called pci_disable_device(), but the
+> 	 * unfortunate fact is there are too many odd BIOS and bridge setups
+> 	 * that don't like drivers doing that all of the time.
+> 	 * Oh well, we can dream of sane hardware when we sleep, no matter how
+> 	 * horrible the crap we have to deal with is when we are awake...
+> 	 */ 
 > 
-> Code should have fallen back to remove() if shutdown() doesn't exist.
-> I can propose a patch for this but this is yet another story to chase.
+> Ryan, can you discard the previous patch and test this one instead?
+> remove() path in hpsa driver seems to call pci_disable_device() via 
+> 
+> hpsa_remove_one()
+> 	hpsa_free_pci_init()
+> 
+> but nothing on the shutdown path.
+> 
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index 4ed3d26..3823f04 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -8651,6 +8651,7 @@ static void hpsa_shutdown(struct pci_dev *pdev)
+>         h->access.set_intr_mask(h, HPSA_INTR_OFF);
+>         hpsa_free_irqs(h);                      /* init_one 4 */
+>         hpsa_disable_interrupt_mode(h);         /* pci_init 2 */
+> +       pci_disable_device(h->pdev);
+>  }
 
-That sounds like a reasonable idea, and it is definitely another can
-of worms.  I looked briefly at some of the .shutdown() cases:
+I suspect this will make things "work" (if the device can't attempt
+DMA, no Unsupported Request error will occur).
 
-  - device_shutdown() doesn't fall back to remove().
+But I'm concerned that the reason for the DMA might that hpsa is
+transferring buffers from system memory to the hpsa device, and if we
+arbitrarily terminate those transfers with pci_disable_device(), we
+may leave the hpsa device in an inconsistent state, e.g., with a dirty
+filesystem.
 
-  - It looks like most bus_types don't implement .shutdown() at all (I
-    didn't look at them all).
+But we really need guidance from an hpsa expert.  I don't know the
+filesystem/SCSI/hpsa details.
 
-  - Of the bus_types that do implement .shutdown(), most do not fall
-    back to .remove().  ps3_system_bus_type() is an example of one
-    that *does* fall back to a driver's .remove() if there is no
-    .shutdown().
-
-Implement shutdown (no fallback unless indicated):
-
-  ecard_bus_type
-  gio_bus_type
-  ps3_system_bus_type	# does fallback to remove
-  ibmebus_bus_type
-  isa_bus_type
-  platform_bus_type	# not direct implementation
-  fmc_bus_type		# fmc_shutdown() looks spurious
-  mipi_dsi_bus_type
-  hv_bus
-
-> >> This has been found to cause crashes on HP DL360 Gen9 machines during
-> >> reboot. Besides, kexec is already clearing the bus master bit in
-> >> pci_device_shutdown() after all PCI drivers are removed.
-> > 
-> > The original path was:
-> > 
-> >   pci_device_shutdown(hpsa)
-> >     drv->shutdown
-> >       hpsa_shutdown                     # hpsa_pci_driver.shutdown
-> >   ...
-> >   pci_device_shutdown(RP)               # root port
-> >     drv->shutdown
-> >       pcie_portdrv_remove               # pcie_portdriver.shutdown
-> >         pcie_port_device_remove
-> >           pci_disable_device
-> >             do_pci_disable_device
-> >               # clear RP PCI_COMMAND_MASTER
-> >     if (kexec)
-> >       pci_clear_master(RP)
-> >         # clear RP PCI_COMMAND_MASTER
-> > 
-> > If I understand correctly, the new path after this patch is:
-> > 
-> >   pci_device_shutdown(hpsa)
-> >     drv->shutdown
-> >       hpsa_shutdown                     # hpsa_pci_driver.shutdown
-> >   ...
-> >   pci_device_shutdown(RP)               # root port
-> >     drv->shutdown
-> >       pcie_portdrv_shutdown             # pcie_portdriver.shutdown
-> >         __pcie_portdrv_remove(RP, false)
-> >           pcie_port_device_remove(RP, false)
-> >             # do NOT clear RP PCI_COMMAND_MASTER
-> 
-> yup
-> 
-> >     if (kexec)
-> >       pci_clear_master(RP)
-> >         # clear RP PCI_COMMAND_MASTER
-> > 
-> > I guess this patch avoids the panic during reboot because we're not in
-> > the kexec path, so we never clear PCI_COMMAND_MASTER for the Root
-> > Port, so the hpsa device can DMA happily until the lights go out.
-> > 
-> > But DMA continuing for some random amount of time before the reboot or
-> > shutdown happens makes me a little queasy.  That doesn't sound safe.
-> > The more I think about this, the more confused I get.  What am I
-> > missing?  
-> 
-> see above.
-> 
-> > 
-> >> Just remove the extra clear in shutdown path by seperating the remove and
-> >> shutdown APIs in the PORTDRV.
-> >>
-> >>  static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
-> >> @@ -218,7 +228,7 @@ static struct pci_driver pcie_portdriver = {
-> >>  
-> >>  	.probe		= pcie_portdrv_probe,
-> >>  	.remove		= pcie_portdrv_remove,
-> >> -	.shutdown	= pcie_portdrv_remove,
-> >> +	.shutdown	= pcie_portdrv_shutdown,
-> > 
-> > What are the circumstances when we call .remove() vs .shutdown()?
-> > 
-> > I guess the main (maybe only) way to call .remove() is to hot-remove
-> > the port?  And .shutdown() is basically used in the reboot and kexec
-> > paths?
-> 
-> Correct. shutdown() is only called during reboot/shutdown calls. If you echo
-> 1 into the remove file, remove() gets called. Handy for hotplug use cases.
-> It needs to be the exact opposite of the probe. It needs to clean up resources
-> etc. and have the HW in a state where it can be reinitialized via probe again.
-> 
-> > 
-> >>  	.err_handler	= &pcie_portdrv_err_handler,
-> >>  
-> >> -- 
-> >> 2.7.4
-> >>
-> > 
-> 
-> 
-> -- 
-> Sinan Kaya
-> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Bjorn
