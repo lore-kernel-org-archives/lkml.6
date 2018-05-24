@@ -1,38 +1,38 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoEETSFNwnSKtzdZoKcqJRUWMsz6dCBAdzJYZfbCNxsSi36PAAHGavxlIaqpyb9TQV7CXFW
-ARC-Seal: i=1; a=rsa-sha256; t=1527156185; cv=none;
+X-Google-Smtp-Source: AB8JxZr+5mBaKDxxQhqNPgurBTKJPc3Z9aUZd4ahiWbzmjuoRzvA0q5WqVgdfW9oO+9bZxCUBHlD
+ARC-Seal: i=1; a=rsa-sha256; t=1527156182; cv=none;
         d=google.com; s=arc-20160816;
-        b=d3FneJLTYh+gixqcQMMN4A4Vbsk4oqGWZXav57lLAxA3uBQDsEahoPNrY0CqHkhblW
-         bKB+yi5Veu4SzB9cVX6wgT+qfGSUTUHbT1nNW0lLQj/e+ohryrRiMlUCbZ1ROH4YUAeE
-         PQ7+Hybz7BdI81zna2tm1b0jNzvCgAe+zUV+RcnU2YK1vc3QMbRnGmYc4PX3EUFoeAA3
-         aD8u2LRhqovls0zpn9kS2eMEjzFkXxaV+8Swcx9LN/qa2NFFtJAK6p+akVCBETOyftKY
-         EfUE08DZZ5sqqkH8upP+kwGRIC8EoJX4+x+u2BZPAz8xgJSsBl9Mjiaav0g6UlR5+IVl
-         U0bA==
+        b=PM1TR2dGc55zkbzuAai79I0KcOSIJ4dDL6qMdHyz5B2hGiY2tcJUz0Wu9IS2Q3aMq5
+         tMrOi1Yrk7yZPRCKExK/9ftlIk9sRLb+ZSKOrV1iXZawmBRfjO6AoKmVoDD850hmCNp7
+         ruzpmrJQHcpv61/I3GC4kYzJbBwPQXKdyCW5rtR/1oKLRNFZuFppqoojoMfpvt7B+HSA
+         cwOBLvU6Dy/KX4hrztErBpbV4Hl/E2HXXgBAqVjkHgIk1UK9zQ5nnEaQZDgXIuUdtIew
+         WDfZlMw7GpTc31F82gnqC22EhogBp4DhoN+nLn4MQxz8zTh9qs5BPqHsM0wLT1A++kZi
+         9c5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=XhwesVIsJ6/Br3mx1FjXhRCCSMOWtIlPlD4WLYPharE=;
-        b=ENuREtn2Q2Afp0bZSeDKZCzeaMchqrnRikqTbz3iJin+kSDAv6GGc9SKSt88AjF32T
-         /n8N4CPWBqjOflRe9jiMDPks/BraIgrp7teI465R9K6bESRzGIrSHIto4LEgPcnQapku
-         Rhf0EZyjzuG4wJoc29N25QB9LR01kgpKo5DXqnCMgdwNtC5NVknGGcRC9sCAxW+zOviB
-         1SXP3wz7dpp69Sn8mfDyrtkHxmw778RcXvcEkxNFNgpa9IwFGltVFipMW53+ffUIazol
-         2Pi6HBziQbRG4Dd6pihd8AeGnBLVbZKJGxRXnvrImIIXBBlTNSegXXERD0FsG1hUkXDA
-         jkRA==
+        bh=gV0dbmxXRGEVTR0sqS1Pl6RpAeoUOIXAktHkcFTJzoM=;
+        b=kIOsQSpyaTxjUyP3olc7Mvmx8Z3fTHLapZUtNHGQB5WMtQnGYFB3Jhy7t7P1rUJej4
+         PYVmptwddnuPM3K6k/X+eRgDq/ya4OfbztuGegc4INfDCAlCOXOLp53EZqpQ7/yHQBW2
+         +daLEXCtMfDUBoAvruRDFSEXDlgVtgligQxbXXldLa1r5mRgNaYfmzV/BZ6zEH07DDdY
+         J/FavcuzHmFFWzX5f2ZApv6uBN6ySD0fw84ycKG6OX/jp5x8htAV3Y2qgc+qd8S7Irjn
+         q/W1q5Jq2XYyBuTv6YAtxvGXKPFyilYoOc+ycfKlSjtmlABQA6Y4vXBRJL3/oCFF//lI
+         jp/A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nuR1wx0K;
+       dkim=pass header.i=@kernel.org header.s=default header.b=odkbXrWp;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nuR1wx0K;
+       dkim=pass header.i=@kernel.org header.s=default header.b=odkbXrWp;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+	NeilBrown <neilb@suse.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 093/161] staging: fsl-dpaa2/eth: Fix incorrect casts
-Date: Thu, 24 May 2018 11:38:38 +0200
-Message-Id: <20180524093029.568570633@linuxfoundation.org>
+Subject: [PATCH 4.16 092/161] staging: lustre: fix bug in osc_enter_cache_try
+Date: Thu, 24 May 2018 11:38:37 +0200
+Message-Id: <20180524093029.439099481@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338820614579952?=
-X-GMAIL-MSGID: =?utf-8?q?1601339323999076765?=
+X-GMAIL-THRID: =?utf-8?q?1601338430003114719?=
+X-GMAIL-MSGID: =?utf-8?q?1601339320728269951?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,49 +51,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+From: NeilBrown <neilb@suse.com>
 
-[ Upstream commit 75c583ab9709692a60871d4719006391cde8dc1d ]
+[ Upstream commit 2fab9faf9b27298c4536c1c1b14072ab18b8f80b ]
 
-The DPAA2 Ethernet driver incorrectly assumes virtual addresses
-are always 64b long, which causes compiler errors when building
-for a 32b platform.
+The lustre-release patch commit bdc5bb52c554 ("LU-4933 osc:
+Automatically increase the max_dirty_mb") changed
 
-Fix this by using explicit casts to uintptr_t where necessary.
+-       if (cli->cl_dirty + PAGE_CACHE_SIZE <= cli->cl_dirty_max &&
++       if (cli->cl_dirty_pages < cli->cl_dirty_max_pages &&
 
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+When this patch landed in Linux a couple of years later, it landed as
+
+-       if (cli->cl_dirty + PAGE_SIZE <= cli->cl_dirty_max &&
++       if (cli->cl_dirty_pages <= cli->cl_dirty_max_pages &&
+
+which is clearly different ('<=' vs '<'), and allows cl_dirty_pages to
+increase beyond cl_dirty_max_pages - which causes a latter assertion
+to fails.
+
+Fixes: 3147b268400a ("staging: lustre: osc: Automatically increase the max_dirty_mb")
+Signed-off-by: NeilBrown <neilb@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/lustre/lustre/include/obd.h   |    2 +-
+ drivers/staging/lustre/lustre/osc/osc_cache.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-@@ -324,7 +324,7 @@ static int consume_frames(struct dpaa2_e
- 		}
+--- a/drivers/staging/lustre/lustre/include/obd.h
++++ b/drivers/staging/lustre/lustre/include/obd.h
+@@ -191,7 +191,7 @@ struct client_obd {
+ 	struct sptlrpc_flavor    cl_flvr_mgc;   /* fixed flavor of mgc->mgs */
  
- 		fd = dpaa2_dq_fd(dq);
--		fq = (struct dpaa2_eth_fq *)dpaa2_dq_fqd_ctx(dq);
-+		fq = (struct dpaa2_eth_fq *)(uintptr_t)dpaa2_dq_fqd_ctx(dq);
- 		fq->stats.frames++;
+ 	/* the grant values are protected by loi_list_lock below */
+-	unsigned long		 cl_dirty_pages;	/* all _dirty_ in pahges */
++	unsigned long		 cl_dirty_pages;	/* all _dirty_ in pages */
+ 	unsigned long		 cl_dirty_max_pages;	/* allowed w/o rpc */
+ 	unsigned long		 cl_dirty_transit;	/* dirty synchronous */
+ 	unsigned long		 cl_avail_grant;	/* bytes of credit for ost */
+--- a/drivers/staging/lustre/lustre/osc/osc_cache.c
++++ b/drivers/staging/lustre/lustre/osc/osc_cache.c
+@@ -1530,7 +1530,7 @@ static int osc_enter_cache_try(struct cl
+ 	if (rc < 0)
+ 		return 0;
  
- 		fq->consume(priv, ch, fd, &ch->napi, fq->flowid);
-@@ -1908,7 +1908,7 @@ static int setup_rx_flow(struct dpaa2_et
- 	queue.destination.id = fq->channel->dpcon_id;
- 	queue.destination.type = DPNI_DEST_DPCON;
- 	queue.destination.priority = 1;
--	queue.user_context = (u64)fq;
-+	queue.user_context = (u64)(uintptr_t)fq;
- 	err = dpni_set_queue(priv->mc_io, 0, priv->mc_token,
- 			     DPNI_QUEUE_RX, 0, fq->flowid,
- 			     DPNI_QUEUE_OPT_USER_CTX | DPNI_QUEUE_OPT_DEST,
-@@ -1960,7 +1960,7 @@ static int setup_tx_flow(struct dpaa2_et
- 	queue.destination.id = fq->channel->dpcon_id;
- 	queue.destination.type = DPNI_DEST_DPCON;
- 	queue.destination.priority = 0;
--	queue.user_context = (u64)fq;
-+	queue.user_context = (u64)(uintptr_t)fq;
- 	err = dpni_set_queue(priv->mc_io, 0, priv->mc_token,
- 			     DPNI_QUEUE_TX_CONFIRM, 0, fq->flowid,
- 			     DPNI_QUEUE_OPT_USER_CTX | DPNI_QUEUE_OPT_DEST,
+-	if (cli->cl_dirty_pages <= cli->cl_dirty_max_pages &&
++	if (cli->cl_dirty_pages < cli->cl_dirty_max_pages &&
+ 	    atomic_long_read(&obd_dirty_pages) + 1 <= obd_max_dirty_pages) {
+ 		osc_consume_write_grant(cli, &oap->oap_brw_page);
+ 		if (transient) {
