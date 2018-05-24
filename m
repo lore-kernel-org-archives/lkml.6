@@ -1,37 +1,37 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZou1+nEfF8UC+sOlBO3+e9yHhb/LUOwgAHKjMJdK++4P0Uk54ijKbLrSoW4938ySAIpR15V
-ARC-Seal: i=1; a=rsa-sha256; t=1527155685; cv=none;
+X-Google-Smtp-Source: AB8JxZpF9XRNWDvbSKFzvj8imSukffNmB0mQEaDAhQQAXa07WFix/C32e0zMR/Bje72CVHklvQ3P
+ARC-Seal: i=1; a=rsa-sha256; t=1527155683; cv=none;
         d=google.com; s=arc-20160816;
-        b=q+AddS3dLP+A26Jgz4gGUZnyUiWcSVPnFTeEdEYZqlZ0Sek+AqC+r3RNgcWkB8q5aP
-         ACNN+XVhZ4d2RnJEcTM51xEeWCZ5t+tCbc+pNhxtQLctZmx0OSSjylMTkbz2N2+dRdvy
-         Mt3vhyBQmK4JBx+v4MRtFprh7L5X0zDzgcRu8B5o7cT5SVpclBO9I5nO47UBPEM46vjm
-         3u+3gR741FpblICzrOw7NAAKvZQhlmGAPZ0pb1y/wez6fzAV/dim84jmEOE6O4uxU+u/
-         m/ph7FmhhWBKeKzDIhHxG/NirVBQ1rB7MzuWlErxykQz8AQ29eipR9g9XKqfQNC3CmpC
-         fYSg==
+        b=S/6cuhkKXE0eJVoBGiXIHlgTuxsC9FCQ5Wq2U6zyeFm8mKoxzAL71cYplK5IdEfW50
+         gPLTdAzHzPLfcK+uH56D03VEOcWkvzyegJqskBG6G3JrBBRe8NiNYfnsl5ItN5ywuCGy
+         THIYWw4WZzEPSCqqjzUch/u8yJ0Ci04WRFNNdCqXkKYBtNo1juhKG6YdzleZWrgQpzUH
+         13wAy/2l8NOVCwJ2Al1XZiHUbWHXTLqEmWHjI1jULY+SGV78iCPrYc/AxpwYZWfH8OiJ
+         DQJG2JPpkoo4uRIX8DPhayiwGMaxFcJme6e6JALneSQFfcWxrPTbbMyh36siHw9a1yXT
+         8dng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Fi1qP1bw/NHCleySZhDU5zWuFgw3hubjH7x5OC0+RIU=;
-        b=PgcJ0Qer+GfK16FAY0DdZLXtlZfI2CjlP/OOUj7hORT4ulp4kupv5JVZC4WzdwpreW
-         8eU7wrrxHxqb63J+fUFIoBTZhUQxBk4kw31lBz8J4+ggJ7qZBGsFtLmK6Ib2uzMb/nUw
-         CFVcg9OwQV8O1U1JJ3h8nhPbgetEfgo+8OVroSyBLTv/ltn69O6ml38/dkthWJhE2KIu
-         41Fg+qHQGgo1cyu8smGTfd4WlEoSjvgXnJDJgQSi3AbUjDe06rEHGH0u8KEOzwnuBmj4
-         zdM5ruew3kv8VWLB6MIbKlsEKJCH+UBENjvAJgLcoI74HyeIyTfbA59upf0iAljKYH0k
-         z8Gw==
+        bh=7FipA9fYZR7x0p5/vs+Lmmot13+qTBltwM0ii3V5wK4=;
+        b=nws2zVDzD4keyyxSJTKdSyEm+hVJ5hSz/lUsLwnEBcdnHOMAdxrXUhUm+EkQ2z296a
+         WebpBCe34SWAZSp1SKn2cukgjEeYE6kQBduNYoJ/72qij9Zs9zQOZ0ulsqJA8l/5lgkU
+         Zh8OxDNX8eKcnCxbhKVKsV3y62+B2Ag1zJmCnJ6HFQkYDNornyTArxfHbxo04dlSoOWh
+         sJ/Gxs2USBGoaQO0xwSN2yVwZ+2Tw5C6i8394PNTYj4OFhy7e1Z+7t67/przRP82QyM6
+         YL/gULCxr0UfAtqRhO33JPlARH0wxyTVXvAgiOhx9bQ+eESAGYq2UnGg8WeAu3i6pzXF
+         os3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Wz2/jjaP;
+       dkim=pass header.i=@kernel.org header.s=default header.b=noWdkTiD;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Wz2/jjaP;
+       dkim=pass header.i=@kernel.org header.s=default header.b=noWdkTiD;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 044/165] s390: extend expoline to BC instructions
-Date: Thu, 24 May 2018 11:37:30 +0200
-Message-Id: <20180524093623.805173601@linuxfoundation.org>
+Subject: [PATCH 4.14 043/165] s390: move spectre sysfs attribute code
+Date: Thu, 24 May 2018 11:37:29 +0200
+Message-Id: <20180524093623.757568544@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338299102356702?=
-X-GMAIL-MSGID: =?utf-8?q?1601338800219147897?=
+X-GMAIL-THRID: =?utf-8?q?1601338296169118734?=
+X-GMAIL-MSGID: =?utf-8?q?1601338797679561289?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,175 +52,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 6deaa3bbca804b2a3627fd685f75de64da7be535 ]
+[ Upstream commit 4253b0e0627ee3461e64c2495c616f1c8f6b127b ]
 
-The BPF JIT uses a 'b <disp>(%r<x>)' instruction in the definition
-of the sk_load_word and sk_load_half functions.
+The nospec-branch.c file is compiled without the gcc options to
+generate expoline thunks. The return branch of the sysfs show
+functions cpu_show_spectre_v1 and cpu_show_spectre_v2 is an indirect
+branch as well. These need to be compiled with expolines.
 
-Add support for branch-on-condition instructions contained in the
-thunk code of an expoline.
+Move the sysfs functions for spectre reporting to a separate file
+and loose an '.' for one of the messages.
 
+Cc: stable@vger.kernel.org # 4.16
+Fixes: d424986f1d ("s390: add sysfs attributes for spectre")
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-insn.h |   57 ++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/nospec-branch.c    |   25 ++++++++++++---
- 2 files changed, 77 insertions(+), 5 deletions(-)
+ arch/s390/kernel/Makefile        |    1 +
+ arch/s390/kernel/nospec-branch.c |   18 ------------------
+ arch/s390/kernel/nospec-sysfs.c  |   21 +++++++++++++++++++++
+ 3 files changed, 22 insertions(+), 18 deletions(-)
+ create mode 100644 arch/s390/kernel/nospec-sysfs.c
 
---- a/arch/s390/include/asm/nospec-insn.h
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -34,10 +34,18 @@ _LC_BR_R1 = __LC_BR_R1
- 	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
- 	.endm
+--- a/arch/s390/kernel/Makefile
++++ b/arch/s390/kernel/Makefile
+@@ -63,6 +63,7 @@ obj-y	+= nospec-branch.o
  
-+	.macro __THUNK_PROLOG_BC d0,r1,r2
-+	__THUNK_PROLOG_NAME __s390x_indirect_branch_\d0\()_\r2\()use_\r1
-+	.endm
-+
- 	.macro __THUNK_BR r1,r2
- 	jg	__s390x_indirect_jump_r\r2\()use_r\r1
- 	.endm
+ extra-y				+= head.o head64.o vmlinux.lds
  
-+	.macro __THUNK_BC d0,r1,r2
-+	jg	__s390x_indirect_branch_\d0\()_\r2\()use_\r1
-+	.endm
-+
- 	.macro __THUNK_BRASL r1,r2,r3
- 	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
- 	.endm
-@@ -80,6 +88,23 @@ _LC_BR_R1 = __LC_BR_R1
- 	.endif
- 	.endm
++obj-$(CONFIG_SYSFS)		+= nospec-sysfs.o
+ CFLAGS_REMOVE_nospec-branch.o	+= $(CC_FLAGS_EXPOLINE)
  
-+	.macro	__DECODE_DRR expand,disp,reg,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \reg,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r2
-+	\expand \disp,\r1,\r2
-+	.set __decode_fail,0
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_DRR failed"
-+	.endif
-+	.endm
-+
- 	.macro __THUNK_EX_BR reg,ruse
- 	# Be very careful when adding instructions to this macro!
- 	# The ALTERNATIVE replacement code has a .+10 which targets
-@@ -100,12 +125,30 @@ _LC_BR_R1 = __LC_BR_R1
- 555:	br	\reg
- 	.endm
- 
-+	.macro __THUNK_EX_BC disp,reg,ruse
-+#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
-+	exrl	0,556f
-+	j	.
-+#else
-+	larl	\ruse,556f
-+	ex	0,0(\ruse)
-+	j	.
-+#endif
-+556:	b	\disp(\reg)
-+	.endm
-+
- 	.macro GEN_BR_THUNK reg,ruse=%r1
- 	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
- 	__THUNK_EX_BR \reg,\ruse
- 	__THUNK_EPILOG
- 	.endm
- 
-+	.macro GEN_B_THUNK disp,reg,ruse=%r1
-+	__DECODE_DRR __THUNK_PROLOG_BC,\disp,\reg,\ruse
-+	__THUNK_EX_BC \disp,\reg,\ruse
-+	__THUNK_EPILOG
-+	.endm
-+
- 	.macro BR_EX reg,ruse=%r1
- 557:	__DECODE_RR __THUNK_BR,\reg,\ruse
- 	.pushsection .s390_indirect_branches,"a",@progbits
-@@ -113,6 +156,13 @@ _LC_BR_R1 = __LC_BR_R1
- 	.popsection
- 	.endm
- 
-+	 .macro B_EX disp,reg,ruse=%r1
-+558:	__DECODE_DRR __THUNK_BC,\disp,\reg,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	558b-.
-+	.popsection
-+	.endm
-+
- 	.macro BASR_EX rsave,rtarget,ruse=%r1
- 559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
- 	.pushsection .s390_indirect_branches,"a",@progbits
-@@ -124,10 +174,17 @@ _LC_BR_R1 = __LC_BR_R1
- 	.macro GEN_BR_THUNK reg,ruse=%r1
- 	.endm
- 
-+	.macro GEN_B_THUNK disp,reg,ruse=%r1
-+	.endm
-+
- 	 .macro BR_EX reg,ruse=%r1
- 	br	\reg
- 	.endm
- 
-+	 .macro B_EX disp,reg,ruse=%r1
-+	b	\disp(\reg)
-+	.endm
-+
- 	.macro BASR_EX rsave,rtarget,ruse=%r1
- 	basr	\rsave,\rtarget
- 	.endm
+ obj-$(CONFIG_MODULES)		+= module.o
 --- a/arch/s390/kernel/nospec-branch.c
 +++ b/arch/s390/kernel/nospec-branch.c
-@@ -94,7 +94,6 @@ static void __init_or_module __nospec_re
- 	s32 *epo;
+@@ -44,24 +44,6 @@ static int __init nospec_report(void)
+ }
+ arch_initcall(nospec_report);
  
- 	/* Second part of the instruction replace is always a nop */
--	memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x00, 0x00 }, 4);
- 	for (epo = start; epo < end; epo++) {
- 		instr = (u8 *) epo + *epo;
- 		if (instr[0] == 0xc0 && (instr[1] & 0x0f) == 0x04)
-@@ -115,18 +114,34 @@ static void __init_or_module __nospec_re
- 			br = thunk + (*(int *)(thunk + 2)) * 2;
- 		else
- 			continue;
--		if (br[0] != 0x07 || (br[1] & 0xf0) != 0xf0)
-+		/* Check for unconditional branch 0x07f? or 0x47f???? */
-+		if ((br[0] & 0xbf) != 0x07 || (br[1] & 0xf0) != 0xf0)
- 			continue;
+-#ifdef CONFIG_SYSFS
+-ssize_t cpu_show_spectre_v1(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
+-{
+-	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+-}
+-
+-ssize_t cpu_show_spectre_v2(struct device *dev,
+-			    struct device_attribute *attr, char *buf)
+-{
+-	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable)
+-		return sprintf(buf, "Mitigation: execute trampolines\n");
+-	if (__test_facility(82, S390_lowcore.alt_stfle_fac_list))
+-		return sprintf(buf, "Mitigation: limited branch prediction.\n");
+-	return sprintf(buf, "Vulnerable\n");
+-}
+-#endif
+-
+ #ifdef CONFIG_EXPOLINE
+ 
+ int nospec_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+--- /dev/null
++++ b/arch/s390/kernel/nospec-sysfs.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/device.h>
++#include <linux/cpu.h>
++#include <asm/facility.h>
++#include <asm/nospec-branch.h>
 +
-+		memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x07, 0x00 }, 4);
- 		switch (type) {
- 		case BRCL_EXPOLINE:
--			/* brcl to thunk, replace with br + nop */
- 			insnbuf[0] = br[0];
- 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
-+			if (br[0] == 0x47) {
-+				/* brcl to b, replace with bc + nopr */
-+				insnbuf[2] = br[2];
-+				insnbuf[3] = br[3];
-+			} else {
-+				/* brcl to br, replace with bcr + nop */
-+			}
- 			break;
- 		case BRASL_EXPOLINE:
--			/* brasl to thunk, replace with basr + nop */
--			insnbuf[0] = 0x0d;
- 			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
-+			if (br[0] == 0x47) {
-+				/* brasl to b, replace with bas + nopr */
-+				insnbuf[0] = 0x4d;
-+				insnbuf[2] = br[2];
-+				insnbuf[3] = br[3];
-+			} else {
-+				/* brasl to br, replace with basr + nop */
-+				insnbuf[0] = 0x0d;
-+			}
- 			break;
- 		}
- 
++ssize_t cpu_show_spectre_v1(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++}
++
++ssize_t cpu_show_spectre_v2(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable)
++		return sprintf(buf, "Mitigation: execute trampolines\n");
++	if (__test_facility(82, S390_lowcore.alt_stfle_fac_list))
++		return sprintf(buf, "Mitigation: limited branch prediction\n");
++	return sprintf(buf, "Vulnerable\n");
++}
