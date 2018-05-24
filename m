@@ -1,130 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032788AbeEXLBI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:01:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:41090 "EHLO foss.arm.com"
+        id S1030356AbeEXLCl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:02:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:40986 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030243AbeEXLBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:01:03 -0400
-Date: Thu, 24 May 2018 12:00:58 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
- between EL0 and EL1
-Message-ID: <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-3-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522150648.28297-3-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1032596AbeEXK7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 06:59:21 -0400
+From: Will Deacon <will.deacon@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@kernel.org,
+        linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 7/9] asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*
+Date: Thu, 24 May 2018 11:59:44 +0100
+Message-Id: <1527159586-8578-8-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
+References: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 04:06:36PM +0100, Marc Zyngier wrote:
-> In order for the kernel to protect itself, let's call the SSBD mitigation
-> implemented by the higher exception level (either hypervisor or firmware)
-> on each transition between userspace and kernel.
-> 
-> We must take the PSCI conduit into account in order to target the
-> right exception level, hence the introduction of a runtime patching
-> callback.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm64/kernel/cpu_errata.c | 18 ++++++++++++++++++
->  arch/arm64/kernel/entry.S      | 22 ++++++++++++++++++++++
->  include/linux/arm-smccc.h      |  5 +++++
->  3 files changed, 45 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index a900befadfe8..46b3aafb631a 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -232,6 +232,24 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
->  }
->  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
->  
-> +#ifdef CONFIG_ARM64_SSBD
-> +void __init arm64_update_smccc_conduit(struct alt_instr *alt,
-> +				       __le32 *origptr, __le32 *updptr,
-> +				       int nr_inst)
-> +{
-> +	u32 insn;
-> +
-> +	BUG_ON(nr_inst != 1);
-> +
-> +	if (psci_ops.conduit == PSCI_CONDUIT_HVC)
-> +		insn = aarch64_insn_get_hvc_value();
-> +	else
-> +		insn = aarch64_insn_get_smc_value();
+The lock bitops can be implemented more efficiently using the atomic_fetch_*
+ops, which provide finer-grained control over the memory ordering semantics
+than the bitops.
 
-Shouldn't this also handle the case where there is no conduit?
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ include/asm-generic/bitops/lock.h | 68 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 56 insertions(+), 12 deletions(-)
 
-See below comment in apply_ssbd for rationale.
-
-> +
-> +	*updptr = cpu_to_le32(insn);
-> +}
-> +#endif	/* CONFIG_ARM64_SSBD */
-> +
->  #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
->  	.matches = is_affected_midr_range,			\
->  	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index ec2ee720e33e..f33e6aed3037 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -18,6 +18,7 @@
->   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->   */
->  
-> +#include <linux/arm-smccc.h>
->  #include <linux/init.h>
->  #include <linux/linkage.h>
->  
-> @@ -137,6 +138,18 @@ alternative_else_nop_endif
->  	add	\dst, \dst, #(\sym - .entry.tramp.text)
->  	.endm
->  
-> +	// This macro corrupts x0-x3. It is the caller's duty
-> +	// to save/restore them if required.
-> +	.macro	apply_ssbd, state
-> +#ifdef CONFIG_ARM64_SSBD
-> +	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-> +	mov	w1, #\state
-> +alternative_cb	arm64_update_smccc_conduit
-> +	nop					// Patched to SMC/HVC #0
-> +alternative_cb_end
-> +#endif
-> +	.endm
-
-If my system doesn't have SMCCC1.1, or the FW doesn't have an
-implementation of ARCH_WORKAROUND_2, does this stay as a NOP?
-
-It looks like this would be patched to an SMC, which would be fatal on
-systems without EL3 FW.
-
-> +
->  	.macro	kernel_entry, el, regsize = 64
->  	.if	\regsize == 32
->  	mov	w0, w0				// zero upper 32 bits of x0
-> @@ -163,6 +176,13 @@ alternative_else_nop_endif
->  	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
->  	disable_step_tsk x19, x20		// exceptions when scheduling.
->  
-> +	apply_ssbd 1
-
-
-... and thus kernel_entry would be fatal.
-
-Thanks,
-Mark.
+diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
+index 67ab280ad134..3ae021368f48 100644
+--- a/include/asm-generic/bitops/lock.h
++++ b/include/asm-generic/bitops/lock.h
+@@ -2,6 +2,10 @@
+ #ifndef _ASM_GENERIC_BITOPS_LOCK_H_
+ #define _ASM_GENERIC_BITOPS_LOCK_H_
+ 
++#include <linux/atomic.h>
++#include <linux/compiler.h>
++#include <asm/barrier.h>
++
+ /**
+  * test_and_set_bit_lock - Set a bit and return its old value, for lock
+  * @nr: Bit to set
+@@ -11,7 +15,20 @@
+  * the returned value is 0.
+  * It can be used to implement bit locks.
+  */
+-#define test_and_set_bit_lock(nr, addr)	test_and_set_bit(nr, addr)
++static inline int test_and_set_bit_lock(unsigned int nr,
++					volatile unsigned long *p)
++{
++	long old;
++	unsigned long mask = BIT_MASK(nr);
++
++	p += BIT_WORD(nr);
++	if (READ_ONCE(*p) & mask)
++		return 1;
++
++	old = atomic_long_fetch_or_acquire(mask, (atomic_long_t *)p);
++	return !!(old & mask);
++}
++
+ 
+ /**
+  * clear_bit_unlock - Clear a bit in memory, for unlock
+@@ -20,11 +37,11 @@
+  *
+  * This operation is atomic and provides release barrier semantics.
+  */
+-#define clear_bit_unlock(nr, addr)	\
+-do {					\
+-	smp_mb__before_atomic();	\
+-	clear_bit(nr, addr);		\
+-} while (0)
++static inline void clear_bit_unlock(unsigned int nr, volatile unsigned long *p)
++{
++	p += BIT_WORD(nr);
++	atomic_long_fetch_andnot_release(BIT_MASK(nr), (atomic_long_t *)p);
++}
+ 
+ /**
+  * __clear_bit_unlock - Clear a bit in memory, for unlock
+@@ -37,11 +54,38 @@ do {					\
+  *
+  * See for example x86's implementation.
+  */
+-#define __clear_bit_unlock(nr, addr)	\
+-do {					\
+-	smp_mb__before_atomic();	\
+-	clear_bit(nr, addr);		\
+-} while (0)
++static inline void __clear_bit_unlock(unsigned int nr,
++				      volatile unsigned long *p)
++{
++	unsigned long old;
+ 
+-#endif /* _ASM_GENERIC_BITOPS_LOCK_H_ */
++	p += BIT_WORD(nr);
++	old = READ_ONCE(*p);
++	old &= ~BIT_MASK(nr);
++	atomic_long_set_release((atomic_long_t *)p, old);
++}
++
++/**
++ * clear_bit_unlock_is_negative_byte - Clear a bit in memory and test if bottom
++ *                                     byte is negative, for unlock.
++ * @nr: the bit to clear
++ * @addr: the address to start counting from
++ *
++ * This is a bit of a one-trick-pony for the filemap code, which clears
++ * PG_locked and tests PG_waiters,
++ */
++#ifndef clear_bit_unlock_is_negative_byte
++static inline bool clear_bit_unlock_is_negative_byte(unsigned int nr,
++						     volatile unsigned long *p)
++{
++	long old;
++	unsigned long mask = BIT_MASK(nr);
++
++	p += BIT_WORD(nr);
++	old = atomic_long_fetch_andnot_release(mask, (atomic_long_t *)p);
++	return !!(old & BIT(7));
++}
++#define clear_bit_unlock_is_negative_byte clear_bit_unlock_is_negative_byte
++#endif
+ 
++#endif /* _ASM_GENERIC_BITOPS_LOCK_H_ */
+-- 
+2.1.4
