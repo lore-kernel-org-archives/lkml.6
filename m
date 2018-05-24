@@ -1,55 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161453AbeEXVjV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:39:21 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39506 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966304AbeEXVjS (ORCPT
+        id S1161467AbeEXVjd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:39:33 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44659 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966304AbeEXVjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:39:18 -0400
-Date: Thu, 24 May 2018 22:38:59 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Ramon Fried <ramon.fried@gmail.com>
-Cc: Baruch Siach <baruch@tkos.co.il>, catalin.marinas@arm.com,
-        will.deacon@arm.com, open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: uImage target support on arm64
-Message-ID: <20180524213859.GA17671@n2100.armlinux.org.uk>
-References: <CA+Kvs9=mgW4Z=UcBZZLL82fJ=c--OXF3=B2Zbho+CfMTr8Wk-Q@mail.gmail.com>
- <20180524193449.jql27apudwaevwpf@tarshish>
- <CA+Kvs9=x4kxkj-amni+E_KVjH2qjq_mXU88Dr-x5NNyz64gfuA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+Kvs9=x4kxkj-amni+E_KVjH2qjq_mXU88Dr-x5NNyz64gfuA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 24 May 2018 17:39:31 -0400
+X-Google-Smtp-Source: AB8JxZpStD8SxqKIjJo9hDSGOPJwvrPfrcaC88znUmcl1fK37euDjSmkgmX1maEOT7t3NmTg/AXZzw==
+From: Jon Maxwell <jmaxwell37@gmail.com>
+To: davem@davemloft.net
+Cc: dsahern@gmail.com, mschiffer@universe-factory.net,
+        zhangshengju@cmss.chinamobile.com, ktkhai@virtuozzo.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmaxwell@redhat.com
+Subject: [PATCH net-next] ifb: fix packets checksum
+Date: Fri, 25 May 2018 07:38:29 +1000
+Message-Id: <20180524213829.15208-1-jmaxwell37@gmail.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 11:17:19PM +0300, Ramon Fried wrote:
-> On Thu, May 24, 2018 at 10:34 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-> > Hi Ramon,
-> >
-> > On Thu, May 24, 2018 at 10:05:15PM +0300, Ramon Fried wrote:
-> >> I've noticed that it's not supported.
-> >> Is it on purpose ?
-> >
-> > Yes. The 32bit load address in the uImage header in pretty limited when
-> > applied to 64bit ARM64. Even for ARM zImage is the preferred kernel format for
-> > quite some time now, since it allows flexible load address, as well as
-> > multi-platform kernels.
-> Hi Baruch.
-> I though that in terms of U-boot, the new FIT image is the preferred
-> kernel format.
+Fixup the checksum for CHECKSUM_COMPLETE when pulling skbs on RX path. 
+Otherwise we get splats when tc mirred is used to redirect packets to ifb.
 
-u-boot keeps inventing new image formats for itself that are specific
-to u-boot.  Not every boot loader is u-boot.
+Before fix:
 
-For 32-bit ARM, zImage has _always_ since day one been the preferred
-format.
+nic: hw csum failure
 
+Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+---
+ drivers/net/ifb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ifb.c b/drivers/net/ifb.c
+index 5f2897ec0edc..d345c61d476c 100644
+--- a/drivers/net/ifb.c
++++ b/drivers/net/ifb.c
+@@ -102,7 +102,7 @@ static void ifb_ri_tasklet(unsigned long _txp)
+ 		if (!skb->tc_from_ingress) {
+ 			dev_queue_xmit(skb);
+ 		} else {
+-			skb_pull(skb, skb->mac_len);
++			skb_pull_rcsum(skb, skb->mac_len);
+ 			netif_receive_skb(skb);
+ 		}
+ 	}
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.13.6
