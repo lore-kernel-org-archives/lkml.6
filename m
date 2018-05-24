@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155607-2-7797644365191408029
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155587-2-2078297362495445185
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES endafr, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155606; b=GzDyLYLtFGGy69fIf8EQTUNxCXGw39XuLEsKPCi3tLOPcVoySB
-    lF/s47okElUlHD5sZ5uSmA+aR7Szub74tQHpMotO1bo86BTfWL6R2nmLAR+ZMkfS
-    eNSVChl2AWbqaScfQb8ZtgA6qv830i0ialM8vTAlKXMouKZvnw9QGF6jEafyG22M
-    4J1PFgsqUm+2k01Bxdp+qu1QAyXvOjsLLS8LpMpeaiMTrmfmbmhh4fsYhP5ihUTc
-    Jjdax4sRTlQA26wFsFw+/95bWtiy6H2HljiuNIWfNkuUKTZjJODGuj0udGY4qTGE
-    VJ+0i5sEfAurWMlhz8YSrwhLxnZJuU/1H2aQ==
+    1527155586; b=QkTiwDfK/NHPtdD1ZZVPN7sNF2Q0lbt/5pm/EZz8I9c629Y233
+    XgsG8zHsdRnUi0nYrYbny6iSvQTRz8qKsAnWBxt3Q86jLeqfUP7UVf69+dNz3TBU
+    Tm2d9y7efSaDg3gM8hk147VDytmyYRDOm1dCmuhZ867xGiHlZ9y75JSv9LZxctj6
+    XeEQ8v7/B20BXUnLPCUpYmIgCVx1dyitrAqjSe8Q4rqS0fLoUimTdK/RlUx2LCaX
+    txFZUO9L6MZ9UgNgaT7wYjaLrBoCOw/yzJluddKQdcUf8WKKIirV3DXNFArRIRS/
+    zdZGSV4whCSG8l7NNuo3dDYrCGy2j4hKJ8vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155606; bh=CRHBAGfqwMsXowRgKZm7NfWeQp56Jj
-    QEqR29zT3qDaY=; b=mazPuS4SA4QMPAB/HP97/ZtUcQWid8GuLX9fy8c/W5ryyz
-    KuIEHDyS169oJ3z+LymixUTaXi1n6OuQs67FZzQMoWMs/jTTiN+rQ+cBfzSF0TWT
-    O7yrmiH8R+elBGWtY9SKkmCw1t+mpmFVFjE5CJJ+slzXqRAYFbqr3l8t+hGCweCY
-    eYvQgU89+G8cEvM8HRfPX1kouG4CAQMTXDS/nw/ab35lII4Nw/fMqqm+/U7aFZM1
-    SILN3/4Xts2F/FM+jY66LJU0DmIr1b5VG1Gj0Ak+LuhDcRtFBog4YY8lbZ+mdUUm
-    jlL2IXt+JxDClCcqLl5B3W2Hylrb/wBH/tblHsPA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155586; bh=jKInOCiZGt2oo5FUGXhp0y3U4qwoVT
+    QL2f/+WCwRjWA=; b=M9ftTrNuIdsIt9Z017y+jQvboxfsjW2lUyycoZgYjBHOVN
+    3DZbF3bU0VpZci5p1SXWMzhXkMAzszXW3OF2faBqL1Vq8k8J8QUYI2Jdonn264ob
+    1N7HoPnJD8RBlSqYCznqMiqV1CTkkpLuaV4wWHbVokFwUoA8Xgk2oaAYdbFBHdgM
+    jOQFY8aNwIDLj0deb9AV4wF5dBWUtyWAmUIkqcBi3SykNJsFFRpOUWYp3FOgtcpP
+    l1shM0olde1lP+FIawBdsnTUrC5QznHWSZr5QjQABkJ0lb2r4a++WKvuwICI69Hi
+    SCKf50WyY0+h0nXtG54PTpKvuOQH13ENO/lG/+qw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=DPRrGfU+ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=DGURxHzQ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=DPRrGfU+ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=DGURxHzQ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,29 +64,31 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJMTNfTBCXQDD75/ZjebHyH0ALNuSrDzR1wQZ7ZFSv1UEZfO+CMxsKYBil7MLq16JgjXvlj8Wm8kKPipJGDYZXdfx5Jrb+LiRpZg30ug5P4LW9t26nZG
-    jEiM5BaH4srR9dWBIrn6i9Dz9UIN7cQHm0wXXMJScpEMud9ZNO4JSSjDzJaeXf37jmkOpa+H5PzSYWnFH0bDhfY0qrpULVxnZv1SFP0EF9QAmnbJ4An5CC8N
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJiffTUVxdt6m/dBL8dkKnQQDe+BjfwQM47DfbA5xOLk3R8S0S68Q9BCnzph0CNjoOHsoCOaz+NqlATIYGIcxDW9rPDWaSFdxkv5MxgXtqjklWH4574Z
+    cBRud/zXykqYD1ZhvDSkB1UbSbKk328Gg8dOgsnpYxkE05fT/JOp7yCLoUSGu1tBzSgST6SykViPCF1zWL+JHhqozLqtroRN70OhhE9BiuCKwzPMCXP4bufs
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=cr4mjWP-PH8plK2SDcIA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=FDWzJhBSr47RAHrKXxYA:9
+    a=2j97-PERoSpG-F8l:21 a=XfC4L9z_rsF2_Xuf:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968028AbeEXJxW (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:53:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58580 "EHLO mail.kernel.org"
+        id S967968AbeEXJxD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:53:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967476AbeEXJxT (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:19 -0400
+        id S966810AbeEXJxA (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:53:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Subject: [PATCH 4.14 040/165] s390/lib: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:37:26 +0200
-Message-Id: <20180524093623.603335457@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 006/165] net: test tailroom before appending to linear skb
+Date: Thu, 24 May 2018 11:36:52 +0200
+Message-Id: <20180524093622.232282889@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -105,76 +106,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 97489e0663fa700d6e7febddc43b58df98d7bcda ]
+[ Upstream commit 113f99c3358564a0647d444c2ae34e8b1abfd5b9 ]
 
-The return from the memmove, memset, memcpy, __memset16, __memset32 and
-__memset64 functions are done with "br %r14". These are indirect branches
-as well and need to use execute trampolines for CONFIG_EXPOLINE=y.
+Device features may change during transmission. In particular with
+corking, a device may toggle scatter-gather in between allocating
+and writing to an skb.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Do not unconditionally assume that !NETIF_F_SG at write time implies
+that the same held at alloc time and thus the skb has sufficient
+tailroom.
+
+This issue predates git history.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/lib/mem.S |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ net/ipv4/ip_output.c  |    3 ++-
+ net/ipv6/ip6_output.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/s390/lib/mem.S
-+++ b/arch/s390/lib/mem.S
-@@ -7,6 +7,9 @@
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -1040,7 +1040,8 @@ alloc_new_skb:
+ 		if (copy > length)
+ 			copy = length;
  
- #include <linux/linkage.h>
- #include <asm/export.h>
-+#include <asm/nospec-insn.h>
-+
-+	GEN_BR_THUNK %r14
+-		if (!(rt->dst.dev->features&NETIF_F_SG)) {
++		if (!(rt->dst.dev->features&NETIF_F_SG) &&
++		    skb_tailroom(skb) >= copy) {
+ 			unsigned int off;
  
- /*
-  * void *memmove(void *dest, const void *src, size_t n)
-@@ -33,14 +36,14 @@ ENTRY(memmove)
- .Lmemmove_forward_remainder:
- 	larl	%r5,.Lmemmove_mvc
- 	ex	%r4,0(%r5)
--	br	%r14
-+	BR_EX	%r14
- .Lmemmove_reverse:
- 	ic	%r0,0(%r4,%r3)
- 	stc	%r0,0(%r4,%r1)
- 	brctg	%r4,.Lmemmove_reverse
- 	ic	%r0,0(%r4,%r3)
- 	stc	%r0,0(%r4,%r1)
--	br	%r14
-+	BR_EX	%r14
- .Lmemmove_mvc:
- 	mvc	0(1,%r1),0(%r3)
- EXPORT_SYMBOL(memmove)
-@@ -77,7 +80,7 @@ ENTRY(memset)
- .Lmemset_clear_remainder:
- 	larl	%r3,.Lmemset_xc
- 	ex	%r4,0(%r3)
--	br	%r14
-+	BR_EX	%r14
- .Lmemset_fill:
- 	stc	%r3,0(%r2)
- 	cghi	%r4,1
-@@ -94,7 +97,7 @@ ENTRY(memset)
- .Lmemset_fill_remainder:
- 	larl	%r3,.Lmemset_mvc
- 	ex	%r4,0(%r3)
--	br	%r14
-+	BR_EX	%r14
- .Lmemset_xc:
- 	xc	0(1,%r1),0(%r1)
- .Lmemset_mvc:
-@@ -117,7 +120,7 @@ ENTRY(memcpy)
- .Lmemcpy_remainder:
- 	larl	%r5,.Lmemcpy_mvc
- 	ex	%r4,0(%r5)
--	br	%r14
-+	BR_EX	%r14
- .Lmemcpy_loop:
- 	mvc	0(256,%r1),0(%r3)
- 	la	%r1,256(%r1)
+ 			off = skb->len;
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1488,7 +1488,8 @@ alloc_new_skb:
+ 		if (copy > length)
+ 			copy = length;
+ 
+-		if (!(rt->dst.dev->features&NETIF_F_SG)) {
++		if (!(rt->dst.dev->features&NETIF_F_SG) &&
++		    skb_tailroom(skb) >= copy) {
+ 			unsigned int off;
+ 
+ 			off = skb->len;
