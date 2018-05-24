@@ -1,96 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030868AbeEXQZZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:25:25 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:42806 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030515AbeEXQZY (ORCPT
+        id S1033656AbeEXQ0p (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:26:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46042 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030515AbeEXQ0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:25:24 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@suse.cz>,
-        Oleg Nesterov <oleg@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-References: <20180524143629.2ofsg7mhjixr5pnm@linutronix.de>
-Date: Thu, 24 May 2018 11:25:14 -0500
-In-Reply-To: <20180524143629.2ofsg7mhjixr5pnm@linutronix.de> (Sebastian
-        Andrzej Siewior's message of "Thu, 24 May 2018 16:36:30 +0200")
-Message-ID: <87wovt3tsl.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 24 May 2018 12:26:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8145560A06
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=girishm@codeaurora.org
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based
+ QUP
+To: Mark Brown <broonie@kernel.org>, Stephen Boyd <swboyd@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        sdharia@codeaurora.org, kramasub@codeaurora.org, dianders@chromium.org,
+        linux-arm-msm@vger.kernel.org
+References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
+ <152607782792.34267.8023817955251139395@swboyd.mtv.corp.google.com>
+ <24b3ef71-18c1-1704-e324-5581fd18a998@codeaurora.org>
+ <152700759909.210890.13296077062705155869@swboyd.mtv.corp.google.com>
+ <20180522173000.GG24776@sirena.org.uk>
+From: "Mahadevan, Girish" <girishm@codeaurora.org>
+Message-ID: <8968e04c-a200-ef06-5c33-94e399f7b9fe@codeaurora.org>
+Date: Thu, 24 May 2018 10:25:58 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fLt3K-0002PY-Ca;;;mid=<87wovt3tsl.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18qznuTPF2Iig+MAodK9IxCtuaN7FliHLY=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 301 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.2 (1.1%), b_tie_ro: 2.2 (0.7%), parse: 1.32 (0.4%),
-        extract_message_metadata: 21 (7.0%), get_uri_detail_list: 2.4 (0.8%),
-        tests_pri_-1000: 11 (3.8%), tests_pri_-950: 1.68 (0.6%), tests_pri_-900: 1.33
-        (0.4%), tests_pri_-400: 22 (7.3%), check_bayes: 21 (6.9%), b_tokenize: 8
-        (2.6%), b_tok_get_all: 6 (1.9%), b_comp_prob: 2.4 (0.8%), b_tok_touch_all:
-        2.7 (0.9%), b_finish: 0.72 (0.2%), tests_pri_0: 232 (76.9%),
-        check_dkim_signature: 0.60 (0.2%), check_dkim_adsp: 3.3 (1.1%),
-        tests_pri_500: 3.5 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] signal: Revert ptrace preempt magic
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20180522173000.GG24776@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+Hi Mark, Stephen
 
-> From: Thomas Gleixner <tglx@linutronix.de>
+On 5/22/2018 11:30 AM, Mark Brown wrote:
+>> That's good. The problem I see is that we have to specify the max
+>> frequency in the controller/bus node, and also in the child/slave node.
+>> It should only need to be specified in the slave node, so making the
+>> cur_speed_hz equal the max_speed_hz is problematic. The current speed of
+>> the master should be determined by calling clk_get_rate().
 >
-> Upstream commit '53da1d9456fe7f8 fix ptrace slowness' is nothing more
-> than a bandaid around the ptrace design trainwreck. It's not a
-> correctness issue, it's merily a cosmetic bandaid.
+> We don't require that the slaves all individually set a speed since it
+> gets a bit redundant, it should be enough to just use the default the
+> controller provides.  A bigger problem with this is that the driver will
+> never see a transfer which doesn't explicitly have a speed set as the
+> core will ensure something is set, open coding this logic in every
+> driver would obviously be tiresome.
 
-This patch comes with no justification or reason to remove the
-``cosmetic bandaid''.  The description in 53da1d9456fe ("fix ptrace
-slowness") is quite persuasive that there is a real world issue.
+Sorry , I need some more clarification.
 
-So while this may be a good idea to remove this.  I don't see any
-description of testing to indicate this won't cause uml to regresssion.
-Nor do I see any compelling reason except code tidiness to remove this.
+When I register the master, I specify the max rate the core can support
+(50 Mhz). So any transaction that comes to the driver is going to be
+requesting at-most 50 Mhz.
 
-As such until adequate descriptions can be provideded.
+The reason I have the cur_speed_hz is that there is a max_speed_hz which
+is the max frequency the slave can do; but every transfer can also
+specify a speed_hz and override this.
 
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+So my point is we can do upto 4 slaves on a given controller, each slave
+can have a different max speed and each slave's transfer can override
+the max_frequency of that slave device.
+(the default frequency is the master's max frequency)
 
+>> Do you mean spi-rx-delay-us and spi-tx-delay-us properties? Those are
+>> documented but don't seem to be used. There's also the delay_usecs part
+>> of the spi_transfer structure, which may be what you're talking about.
+> 
+> delay_usecs is for inter-transfer delays within a message rather than
+> after the initial chip select assert (it can be used to keep chip select
+> asserted for longer after the final transfer too).  Obviously this is
+> also something that shouldn't be configured in a driver specific
+> fashion.
+> 
 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  kernel/signal.c |    8 --------
->  1 file changed, 8 deletions(-)
->
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1876,15 +1876,7 @@ static void ptrace_stop(int exit_code, i
->  		if (gstop_done && ptrace_reparented(current))
->  			do_notify_parent_cldstop(current, false, why);
->  
-> -		/*
-> -		 * Don't want to allow preemption here, because
-> -		 * sys_ptrace() needs this task to be inactive.
-> -		 *
-> -		 * XXX: implement read_unlock_no_resched().
-> -		 */
-> -		preempt_disable();
->  		read_unlock(&tasklist_lock);
-> -		preempt_enable_no_resched();
->  		freezable_schedule();
->  	} else {
->  		/*
+Hmmm ok, so you mean don't send these as controller_data, rather add new
+members to the spi_device struct ?
+
+Best Regards
+Girish
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora
+Forum, a Linux Foundation Collaborative Project.
