@@ -1,168 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968442AbeEXLCj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:02:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:40988 "EHLO foss.arm.com"
+        id S1032788AbeEXLBI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:01:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:41090 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032603AbeEXK7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:59:21 -0400
-From: Will Deacon <will.deacon@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 8/9] arm64: Replace our atomic/lock bitop implementations with asm-generic
-Date: Thu, 24 May 2018 11:59:45 +0100
-Message-Id: <1527159586-8578-9-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
-References: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
+        id S1030243AbeEXLBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:01:03 -0400
+Date: Thu, 24 May 2018 12:00:58 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
+ between EL0 and EL1
+Message-ID: <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-3-marc.zyngier@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522150648.28297-3-marc.zyngier@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The asm-generic/bitops/{atomic,lock}.h implementations are built around
-the atomic-fetch ops, which we implement efficiently for both LSE and
-LL/SC systems. Use that instead of our hand-rolled, out-of-line bitops.S.
+On Tue, May 22, 2018 at 04:06:36PM +0100, Marc Zyngier wrote:
+> In order for the kernel to protect itself, let's call the SSBD mitigation
+> implemented by the higher exception level (either hypervisor or firmware)
+> on each transition between userspace and kernel.
+> 
+> We must take the PSCI conduit into account in order to target the
+> right exception level, hence the introduction of a runtime patching
+> callback.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  arch/arm64/kernel/cpu_errata.c | 18 ++++++++++++++++++
+>  arch/arm64/kernel/entry.S      | 22 ++++++++++++++++++++++
+>  include/linux/arm-smccc.h      |  5 +++++
+>  3 files changed, 45 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index a900befadfe8..46b3aafb631a 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -232,6 +232,24 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+>  }
+>  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+>  
+> +#ifdef CONFIG_ARM64_SSBD
+> +void __init arm64_update_smccc_conduit(struct alt_instr *alt,
+> +				       __le32 *origptr, __le32 *updptr,
+> +				       int nr_inst)
+> +{
+> +	u32 insn;
+> +
+> +	BUG_ON(nr_inst != 1);
+> +
+> +	if (psci_ops.conduit == PSCI_CONDUIT_HVC)
+> +		insn = aarch64_insn_get_hvc_value();
+> +	else
+> +		insn = aarch64_insn_get_smc_value();
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/include/asm/bitops.h | 14 ++------
- arch/arm64/lib/Makefile         |  2 +-
- arch/arm64/lib/bitops.S         | 76 -----------------------------------------
- 3 files changed, 3 insertions(+), 89 deletions(-)
- delete mode 100644 arch/arm64/lib/bitops.S
+Shouldn't this also handle the case where there is no conduit?
 
-diff --git a/arch/arm64/include/asm/bitops.h b/arch/arm64/include/asm/bitops.h
-index 9c19594ce7cb..13501460be6b 100644
---- a/arch/arm64/include/asm/bitops.h
-+++ b/arch/arm64/include/asm/bitops.h
-@@ -17,22 +17,11 @@
- #define __ASM_BITOPS_H
- 
- #include <linux/compiler.h>
--#include <asm/barrier.h>
- 
- #ifndef _LINUX_BITOPS_H
- #error only <linux/bitops.h> can be included directly
- #endif
- 
--/*
-- * Little endian assembly atomic bitops.
-- */
--extern void set_bit(int nr, volatile unsigned long *p);
--extern void clear_bit(int nr, volatile unsigned long *p);
--extern void change_bit(int nr, volatile unsigned long *p);
--extern int test_and_set_bit(int nr, volatile unsigned long *p);
--extern int test_and_clear_bit(int nr, volatile unsigned long *p);
--extern int test_and_change_bit(int nr, volatile unsigned long *p);
--
- #include <asm-generic/bitops/builtin-__ffs.h>
- #include <asm-generic/bitops/builtin-ffs.h>
- #include <asm-generic/bitops/builtin-__fls.h>
-@@ -44,8 +33,9 @@ extern int test_and_change_bit(int nr, volatile unsigned long *p);
- 
- #include <asm-generic/bitops/sched.h>
- #include <asm-generic/bitops/hweight.h>
--#include <asm-generic/bitops/lock.h>
- 
-+#include <asm-generic/bitops/atomic.h>
-+#include <asm-generic/bitops/lock.h>
- #include <asm-generic/bitops/non-atomic.h>
- #include <asm-generic/bitops/le.h>
- 
-diff --git a/arch/arm64/lib/Makefile b/arch/arm64/lib/Makefile
-index 137710f4dac3..68755fd70dcf 100644
---- a/arch/arm64/lib/Makefile
-+++ b/arch/arm64/lib/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--lib-y		:= bitops.o clear_user.o delay.o copy_from_user.o	\
-+lib-y		:= clear_user.o delay.o copy_from_user.o		\
- 		   copy_to_user.o copy_in_user.o copy_page.o		\
- 		   clear_page.o memchr.o memcpy.o memmove.o memset.o	\
- 		   memcmp.o strcmp.o strncmp.o strlen.o strnlen.o	\
-diff --git a/arch/arm64/lib/bitops.S b/arch/arm64/lib/bitops.S
-deleted file mode 100644
-index 43ac736baa5b..000000000000
---- a/arch/arm64/lib/bitops.S
-+++ /dev/null
-@@ -1,76 +0,0 @@
--/*
-- * Based on arch/arm/lib/bitops.h
-- *
-- * Copyright (C) 2013 ARM Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-- */
--
--#include <linux/linkage.h>
--#include <asm/assembler.h>
--#include <asm/lse.h>
--
--/*
-- * x0: bits 5:0  bit offset
-- *     bits 31:6 word offset
-- * x1: address
-- */
--	.macro	bitop, name, llsc, lse
--ENTRY(	\name	)
--	and	w3, w0, #63		// Get bit offset
--	eor	w0, w0, w3		// Clear low bits
--	mov	x2, #1
--	add	x1, x1, x0, lsr #3	// Get word offset
--alt_lse "	prfm	pstl1strm, [x1]",	"nop"
--	lsl	x3, x2, x3		// Create mask
--
--alt_lse	"1:	ldxr	x2, [x1]",		"\lse	x3, [x1]"
--alt_lse	"	\llsc	x2, x2, x3",		"nop"
--alt_lse	"	stxr	w0, x2, [x1]",		"nop"
--alt_lse	"	cbnz	w0, 1b",		"nop"
--
--	ret
--ENDPROC(\name	)
--	.endm
--
--	.macro	testop, name, llsc, lse
--ENTRY(	\name	)
--	and	w3, w0, #63		// Get bit offset
--	eor	w0, w0, w3		// Clear low bits
--	mov	x2, #1
--	add	x1, x1, x0, lsr #3	// Get word offset
--alt_lse "	prfm	pstl1strm, [x1]",	"nop"
--	lsl	x4, x2, x3		// Create mask
--
--alt_lse	"1:	ldxr	x2, [x1]",		"\lse	x4, x2, [x1]"
--	lsr	x0, x2, x3
--alt_lse	"	\llsc	x2, x2, x4",		"nop"
--alt_lse	"	stlxr	w5, x2, [x1]",		"nop"
--alt_lse	"	cbnz	w5, 1b",		"nop"
--alt_lse	"	dmb	ish",			"nop"
--
--	and	x0, x0, #1
--	ret
--ENDPROC(\name	)
--	.endm
--
--/*
-- * Atomic bit operations.
-- */
--	bitop	change_bit, eor, steor
--	bitop	clear_bit, bic, stclr
--	bitop	set_bit, orr, stset
--
--	testop	test_and_change_bit, eor, ldeoral
--	testop	test_and_clear_bit, bic, ldclral
--	testop	test_and_set_bit, orr, ldsetal
--- 
-2.1.4
+See below comment in apply_ssbd for rationale.
+
+> +
+> +	*updptr = cpu_to_le32(insn);
+> +}
+> +#endif	/* CONFIG_ARM64_SSBD */
+> +
+>  #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
+>  	.matches = is_affected_midr_range,			\
+>  	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index ec2ee720e33e..f33e6aed3037 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -18,6 +18,7 @@
+>   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+>  
+> +#include <linux/arm-smccc.h>
+>  #include <linux/init.h>
+>  #include <linux/linkage.h>
+>  
+> @@ -137,6 +138,18 @@ alternative_else_nop_endif
+>  	add	\dst, \dst, #(\sym - .entry.tramp.text)
+>  	.endm
+>  
+> +	// This macro corrupts x0-x3. It is the caller's duty
+> +	// to save/restore them if required.
+> +	.macro	apply_ssbd, state
+> +#ifdef CONFIG_ARM64_SSBD
+> +	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+> +	mov	w1, #\state
+> +alternative_cb	arm64_update_smccc_conduit
+> +	nop					// Patched to SMC/HVC #0
+> +alternative_cb_end
+> +#endif
+> +	.endm
+
+If my system doesn't have SMCCC1.1, or the FW doesn't have an
+implementation of ARCH_WORKAROUND_2, does this stay as a NOP?
+
+It looks like this would be patched to an SMC, which would be fatal on
+systems without EL3 FW.
+
+> +
+>  	.macro	kernel_entry, el, regsize = 64
+>  	.if	\regsize == 32
+>  	mov	w0, w0				// zero upper 32 bits of x0
+> @@ -163,6 +176,13 @@ alternative_else_nop_endif
+>  	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
+>  	disable_step_tsk x19, x20		// exceptions when scheduling.
+>  
+> +	apply_ssbd 1
+
+
+... and thus kernel_entry would be fatal.
+
+Thanks,
+Mark.
