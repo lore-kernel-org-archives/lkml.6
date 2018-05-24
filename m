@@ -1,98 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161211-2-9297891844677894385
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enroca, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161211; b=mCa5Ukr9xPUABqh53vXrgA//HjKcUqKbgf3pUx+MhlyDbQkwFi
-    iH0ntsdqGNlkyWdivkDK5FLMvqksfGvBQZ4vAD9ekHC0IfYo49KBUksNmKmfVMJE
-    g00mPoeKVMj9VkQBciUdw59huf23Ctg5eSb9JTWNaecxLJBEpPBub2eNE2f6UsD/
-    +Z9fVpAByiempAuixpwxhh1VXMXEf5pJcGKjaNXsaOQoRbvh+DOvhq/SPgGybKum
-    YcL9PD/8328mOw+9TMdLXaSqdiesBSSSGLyJi+Z1Ie5Mcw+WSU/semjOXpZ59YgE
-    QejFpHJtlgdWeGlLeuuzwtlbbJHrwyA+orHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161211; bh=VCqOD/5WT0VbKmwhTUb2MU0kQSGLRH
-    kDJsMjPNAxx7M=; b=Qi5ZuMY+dKFgaIYQ0ADF1E9nen/HJnvBdwHEBBHe+Zzu2R
-    MWdmyH+/46kWZ5dOmaUH8BdBzQkqg8IygVo8YBRxbFxTfcYCITWUg9yhGI7ZKzuy
-    YjR/nT1eB1279sEE3SPGzXwCDtApmdeUVg1ZDX9f9MQl4xM5rJwbgL6lptIQYS1D
-    vECbKFZ2Kv3ZwUN1/iqGWKUiKk65zYC5pnbyCnfvhGBzvEdusvAbScvctPo3qeHx
-    8go8VUROCOp08VZkZiQrDK9NttIgJ89Bh/dmy6BrP5hg5SqhgL1li7rl40xic4KV
-    Safq9qjmIy3Up19HuhI30zaZJYF4GXyx4n5d6oTA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=RdD6dLkV x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=RdD6dLkV x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOaLWEmVyoDk9drdn69xoVSCrIQfeIBACriHd7efX/5PYf+5CxwBalzaeAhqhVVb7XcCobWm/MWav4z0uD69aMcPIInOxQI4NN79pGQnXCz/MRy1KEzc
-    qeY/k97dxi3nGtL9pI6/O+mn2e6h0kI6tJJurPFxGVOIfwG16pIS6KhNyDMGhiSC/010FwfJREFWGJ+0KRXK6RMD/6jZpQ/rcWOOhG19cZV0pQ5Dd3cvh4Ml
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=zAyngx5bAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=CuLLJFOO9y4rdPHpTEYA:9 a=QEXdDO2ut3YA:10
-    a=4LA4qAFo6bo561LpWNDU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967721AbeEXJvd (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967719AbeEXJva (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:30 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrwfXEUrbQ/ZZVLgbRPQe4PvAOZavt3S7UYzYW3pieIow9/HaiZhFD4KX6uHiCYq/A16j+/
+ARC-Seal: i=1; a=rsa-sha256; t=1527157751; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UHr9Jt8rwsrvouxR4wT4Wt0cXNZ+74h1F4q0fNf352f8MiuO3VUP9T4kft12GfUjH2
+         K6E7f9cVYEb3iUquLgk3XcXNvUEdveyS+lUR8DgIqfexjRLk5qikIz1FlI863gAE6wJE
+         akA/n1IYRos0CFresKroFwESgUO4fDqNgvIge4JrfKKbaasjk8Xfr6I74iGqXnpN8ivK
+         FemKKMWKKnTkjKXVOpKc7m7dOk/GnBNCAavQRBs89fFNrydX+4FhsV4xq06ctuEJSDPH
+         sJaatB8piXsS1t1iC6WxSbWTS3Wbgh7z4rtJ9/FcIGS+H6zYviHN6gCZd2twNCif1rdX
+         NgBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=yY+ofUSgldrphUKQ1XGAOk4KsZ2IovRzY8YpE9BOqVg=;
+        b=V5d8KNgn7v1nTKgmbhKtlTA6d1zit4Ei27MFVXzHh4bF5JhOsUa7zV/pZor+6qmya5
+         BaznmABJx0b6Rs1wUUKcEyWzB6yZiWrUDRBdMu7PtewP3uF6lU7Zdo+nIU5Ye5cA2fZa
+         v/y2Mv2KPWW1qWNvS7EzNBJd9xvXYBJpOlujRYiaSFpZ6I8AYbJ1o2D2KG6xVdT94AT2
+         u8P72X+pj5j01MqbCsCH2vHoUze+nDt2n4TTQIxZ3Q2HVhZL85IRo5OtPtrnL9ngwjCY
+         FFAv+mizgMFnhc9j+/XeGbFd5KFfOVnedk5IPDr9rs0qClrDDJ12IhWih/PaWOrQ75ax
+         7qNw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EWfPtR1F;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EWfPtR1F;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manish Rangankar <manish.rangankar@cavium.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Tomas Henzl <thenzl@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 59/96] scsi: qla4xxx: skip error recovery in case of register disconnect.
-Date: Thu, 24 May 2018 11:38:42 +0200
-Message-Id: <20180524093608.857625124@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 08/96] ext2: fix a block leak
+Date: Thu, 24 May 2018 11:37:51 +0200
+Message-Id: <20180524093606.086245224@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -100,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601340960342171264?=
+X-GMAIL-MSGID: =?utf-8?q?1601340966305248543?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -110,136 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Manish Rangankar <manish.rangankar@cavium.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 1bc5ad3a6acdcf56f83272f2de1cd2389ea9e9e2 ]
+commit 5aa1437d2d9a068c0334bd7c9dafa8ec4f97f13b upstream.
 
-A system crashes when continuously removing/re-adding the storage
-controller.
+open file, unlink it, then use ioctl(2) to make it immutable or
+append only.  Now close it and watch the blocks *not* freed...
 
-Signed-off-by: Manish Rangankar <manish.rangankar@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Tomas Henzl <thenzl@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Immutable/append-only checks belong in ->setattr().
+Note: the bug is old and backport to anything prior to 737f2e93b972
+("ext2: convert to use the new truncate convention") will need
+these checks lifted into ext2_setattr().
+
+Cc: stable@kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/qla4xxx/ql4_def.h |    2 +
- drivers/scsi/qla4xxx/ql4_os.c  |   46 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
 
---- a/drivers/scsi/qla4xxx/ql4_def.h
-+++ b/drivers/scsi/qla4xxx/ql4_def.h
-@@ -168,6 +168,8 @@
- #define DEV_DB_NON_PERSISTENT	0
- #define DEV_DB_PERSISTENT	1
+---
+ fs/ext2/inode.c |   10 ----------
+ 1 file changed, 10 deletions(-)
+
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -1258,21 +1258,11 @@ do_indirects:
  
-+#define QL4_ISP_REG_DISCONNECT 0xffffffffU
-+
- #define COPY_ISID(dst_isid, src_isid) {			\
- 	int i, j;					\
- 	for (i = 0, j = ISID_SIZE - 1; i < ISID_SIZE;)	\
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -262,6 +262,24 @@ static struct iscsi_transport qla4xxx_is
- 
- static struct scsi_transport_template *qla4xxx_scsi_transport;
- 
-+static int qla4xxx_isp_check_reg(struct scsi_qla_host *ha)
-+{
-+	u32 reg_val = 0;
-+	int rval = QLA_SUCCESS;
-+
-+	if (is_qla8022(ha))
-+		reg_val = readl(&ha->qla4_82xx_reg->host_status);
-+	else if (is_qla8032(ha) || is_qla8042(ha))
-+		reg_val = qla4_8xxx_rd_direct(ha, QLA8XXX_PEG_ALIVE_COUNTER);
-+	else
-+		reg_val = readw(&ha->reg->ctrl_status);
-+
-+	if (reg_val == QL4_ISP_REG_DISCONNECT)
-+		rval = QLA_ERROR;
-+
-+	return rval;
-+}
-+
- static int qla4xxx_send_ping(struct Scsi_Host *shost, uint32_t iface_num,
- 			     uint32_t iface_type, uint32_t payload_size,
- 			     uint32_t pid, struct sockaddr *dst_addr)
-@@ -9196,10 +9214,17 @@ static int qla4xxx_eh_abort(struct scsi_
- 	struct srb *srb = NULL;
- 	int ret = SUCCESS;
- 	int wait = 0;
-+	int rval;
- 
- 	ql4_printk(KERN_INFO, ha, "scsi%ld:%d:%llu: Abort command issued cmd=%p, cdb=0x%x\n",
- 		   ha->host_no, id, lun, cmd, cmd->cmnd[0]);
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	spin_lock_irqsave(&ha->hardware_lock, flags);
- 	srb = (struct srb *) CMD_SP(cmd);
- 	if (!srb) {
-@@ -9251,6 +9276,7 @@ static int qla4xxx_eh_device_reset(struc
- 	struct scsi_qla_host *ha = to_qla_host(cmd->device->host);
- 	struct ddb_entry *ddb_entry = cmd->device->hostdata;
- 	int ret = FAILED, stat;
-+	int rval;
- 
- 	if (!ddb_entry)
- 		return ret;
-@@ -9270,6 +9296,12 @@ static int qla4xxx_eh_device_reset(struc
- 		      cmd, jiffies, cmd->request->timeout / HZ,
- 		      ha->dpc_flags, cmd->result, cmd->allowed));
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	/* FIXME: wait for hba to go online */
- 	stat = qla4xxx_reset_lun(ha, ddb_entry, cmd->device->lun);
- 	if (stat != QLA_SUCCESS) {
-@@ -9313,6 +9345,7 @@ static int qla4xxx_eh_target_reset(struc
- 	struct scsi_qla_host *ha = to_qla_host(cmd->device->host);
- 	struct ddb_entry *ddb_entry = cmd->device->hostdata;
- 	int stat, ret;
-+	int rval;
- 
- 	if (!ddb_entry)
- 		return FAILED;
-@@ -9330,6 +9363,12 @@ static int qla4xxx_eh_target_reset(struc
- 		      ha->host_no, cmd, jiffies, cmd->request->timeout / HZ,
- 		      ha->dpc_flags, cmd->result, cmd->allowed));
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	stat = qla4xxx_reset_target(ha, ddb_entry);
- 	if (stat != QLA_SUCCESS) {
- 		starget_printk(KERN_INFO, scsi_target(cmd->device),
-@@ -9384,9 +9423,16 @@ static int qla4xxx_eh_host_reset(struct
+ static void ext2_truncate_blocks(struct inode *inode, loff_t offset)
  {
- 	int return_status = FAILED;
- 	struct scsi_qla_host *ha;
-+	int rval;
+-	/*
+-	 * XXX: it seems like a bug here that we don't allow
+-	 * IS_APPEND inode to have blocks-past-i_size trimmed off.
+-	 * review and fix this.
+-	 *
+-	 * Also would be nice to be able to handle IO errors and such,
+-	 * but that's probably too much to ask.
+-	 */
+ 	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+ 	    S_ISLNK(inode->i_mode)))
+ 		return;
+ 	if (ext2_inode_is_fast_symlink(inode))
+ 		return;
+-	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
+-		return;
  
- 	ha = to_qla_host(cmd->device->host);
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	if ((is_qla8032(ha) || is_qla8042(ha)) && ql4xdontresethba)
- 		qla4_83xx_set_idc_dontreset(ha);
- 
+ 	dax_sem_down_write(EXT2_I(inode));
+ 	__ext2_truncate_blocks(inode, offset);
