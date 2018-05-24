@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935475AbeEXBWt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:22:49 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36842 "EHLO
+        id S935462AbeEXBWn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:22:43 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39950 "EHLO
         mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935413AbeEXBWd (ORCPT
+        with ESMTP id S935404AbeEXBWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:22:33 -0400
-X-Google-Smtp-Source: AB8JxZrnE/F+S6kaEyQOZh/p/zDvdl9cCbNZbLktijstAEps/fT5m0Onr4X6gvIL/kGOz6nqytBLPg==
+        Wed, 23 May 2018 21:22:32 -0400
+X-Google-Smtp-Source: AB8JxZpbMIe0TDdlLMp9zj33/Rg67eeLhPnxsGMhDCCaeuQUreI1PD4EViOA6bJuz4m+AmlR2EOUlQ==
 From: Joel Fernandes <joelaf@google.com>
 X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
@@ -25,9 +25,9 @@ Cc: kernel-team@android.com,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v7 4/8] trace/irqsoff: Split reset into separate functions
-Date: Wed, 23 May 2018 18:21:53 -0700
-Message-Id: <20180524012157.181277-5-joel@joelfernandes.org>
+Subject: [PATCH v7 3/8] srcu: Add notrace variant of srcu_dereference
+Date: Wed, 23 May 2018 18:21:52 -0700
+Message-Id: <20180524012157.181277-4-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 In-Reply-To: <20180524012157.181277-1-joel@joelfernandes.org>
 References: <20180524012157.181277-1-joel@joelfernandes.org>
@@ -37,75 +37,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-Split reset functions into seperate functions in preparation
-of future patches that need to do tracer specific reset.
+In the last patch in this series, we are making lockdep register hooks
+onto the irq_{disable,enable} tracepoints. These tracepoints use the
+_rcuidle tracepoint variant. In this series we switch the _rcuidle
+tracepoint callers to use SRCU instead of sched-RCU. Inorder to
+dereference the pointer to the probe functions, we could call
+srcu_dereference, however this API will call back into lockdep to check
+if the lock is held *before* the lockdep probe hooks have a chance to
+run and annotate the IRQ enabled/disabled state.
 
+For this reason we need a notrace variant of srcu_dereference since
+otherwise we get lockdep splats. This patch adds the needed
+srcu_dereference_notrace variant.
+
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/trace/trace_irqsoff.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ include/linux/srcu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index 03ecb4465ee4..f8daa754cce2 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -634,7 +634,7 @@ static int __irqsoff_tracer_init(struct trace_array *tr)
- 	return 0;
- }
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 2ec618979b20..a1c4947be877 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
+  */
+ #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
  
--static void irqsoff_tracer_reset(struct trace_array *tr)
-+static void __irqsoff_tracer_reset(struct trace_array *tr)
- {
- 	int lat_flag = save_flags & TRACE_ITER_LATENCY_FMT;
- 	int overwrite_flag = save_flags & TRACE_ITER_OVERWRITE;
-@@ -665,6 +665,12 @@ static int irqsoff_tracer_init(struct trace_array *tr)
- 
- 	return __irqsoff_tracer_init(tr);
- }
++/**
++ * srcu_dereference_notrace - no tracing and no lockdep calls from here
++ */
++#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
 +
-+static void irqsoff_tracer_reset(struct trace_array *tr)
-+{
-+	__irqsoff_tracer_reset(tr);
-+}
-+
- static struct tracer irqsoff_tracer __read_mostly =
- {
- 	.name		= "irqsoff",
-@@ -697,11 +703,16 @@ static int preemptoff_tracer_init(struct trace_array *tr)
- 	return __irqsoff_tracer_init(tr);
- }
- 
-+static void preemptoff_tracer_reset(struct trace_array *tr)
-+{
-+	__irqsoff_tracer_reset(tr);
-+}
-+
- static struct tracer preemptoff_tracer __read_mostly =
- {
- 	.name		= "preemptoff",
- 	.init		= preemptoff_tracer_init,
--	.reset		= irqsoff_tracer_reset,
-+	.reset		= preemptoff_tracer_reset,
- 	.start		= irqsoff_tracer_start,
- 	.stop		= irqsoff_tracer_stop,
- 	.print_max	= true,
-@@ -731,11 +742,16 @@ static int preemptirqsoff_tracer_init(struct trace_array *tr)
- 	return __irqsoff_tracer_init(tr);
- }
- 
-+static void preemptirqsoff_tracer_reset(struct trace_array *tr)
-+{
-+	__irqsoff_tracer_reset(tr);
-+}
-+
- static struct tracer preemptirqsoff_tracer __read_mostly =
- {
- 	.name		= "preemptirqsoff",
- 	.init		= preemptirqsoff_tracer_init,
--	.reset		= irqsoff_tracer_reset,
-+	.reset		= preemptirqsoff_tracer_reset,
- 	.start		= irqsoff_tracer_start,
- 	.stop		= irqsoff_tracer_stop,
- 	.print_max	= true,
+ /**
+  * srcu_read_lock - register a new reader for an SRCU-protected structure.
+  * @sp: srcu_struct in which to register the new reader.
 -- 
 2.17.0.441.gb46fe60e1d-goog
