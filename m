@@ -1,484 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965488AbeEXIqg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:46:36 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:34518 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965114AbeEXIq3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:46:29 -0400
+        id S965508AbeEXIrJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:47:09 -0400
+Received: from mail-ve1eur01on0139.outbound.protection.outlook.com ([104.47.1.139]:43760
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965114AbeEXIrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:47:06 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-i2c@vger.kernel.org,
+        Peter Chang <dpf@google.com>,
+        Deepa Dinamani <deepadinamani@google.com>,
+        John Sperbeck <jsperbeck@google.com>
+Subject: [PATCH v2 0/2] Re: Problem: lockdep warning with nested instances of i2c-mux
+Date: Thu, 24 May 2018 10:46:44 +0200
+Message-Id: <20180524084646.31697-1-peda@axentia.se>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <CAFNjLiXZk3Zigfpy9Hj2uY92sPGB7msUxoZHf6pFDOWSuBwkBA@mail.gmail.com>
+References: <CAFNjLiXZk3Zigfpy9Hj2uY92sPGB7msUxoZHf6pFDOWSuBwkBA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Thu, 24 May 2018 10:46:27 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180523161810.0ed9fe80@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <20180523161810.0ed9fe80@bbrezillon>
-Message-ID: <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[25];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR0402CA0019.eurprd04.prod.outlook.com
+ (2603:10a6:3:d0::29) To HE1PR0202MB2779.eurprd02.prod.outlook.com
+ (2603:10a6:3:e8::21)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2779;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;3:2tb6JDGvWPbnQVy9ac+tVQn8/XFps27ycIwonWxBWA5XN3NVyP6CRkeI5bWiZEMiF+CtkYwyA1AH6A1DkjLWuAftfuXVf36Vm5tR63PdOjSMkmWYvTsvxlAkvPdAfHlGTBYb5s0ZQad+ZUBigg3lNNpzQNDiGlXvtJe2ddOIRQ7jOUruqmF3kJGjTslDfLgN/X7diWu8RMjruhzHRH5KMUjjEiXm/OX8+avKOiLHwxQgfRe9SFp0290nRULSgZ8E;25:QHhFw8MZ3r9n/HyilEaZoqQvhBc7m0ql+qzT92dhUhAsaO/mZVKaqiUbdjvyMPX/i0BT+EuoYy69Yi7JvIEg9P+teg6ye3eyecIdFwNPKutqQPj8u9KyBxKa0E5UqTer1is9ie8iL/Yw342OtETtt3E8gk4WtvwgHxnzw9xfxbLDX39EHda5SBmmgtJXsgVWuRXsqUSaUwYuPzr+nypHbbgl488H/8tvPbcYzccmJ2tOBo28iHOFl3+UUkfosY5DJpeoggMptnDEmfZLfl5jUsA0sPKVimpYBvIDxhYjGbIQDIlS1MPMAUPAbp9DqOwupkrkTbQQT5pv1zsGID9IyQ==;31:+ZB2q2b9JTx/kNaTNJZehfaZHhVdOpV8vT1CAstyIOPIfXYZX7vP4B9drHJUHp8ZCEy1LwvpmxRn4kYumoEVIuTIPfZ10SC3PbvXINccxDmcSDoIZOLtjhb/qZzslmh0vHu63RIWYZvUHRsxvjL5qWZcQHgyunGbICWn/SMpXg3QR8n0BfLR6zI8SfD2/f01GU9QDIc+E13cJgVCdR1OTAggZW9t3ftMIz5mI6Sjpv0=
+X-MS-TrafficTypeDiagnostic: HE1PR0202MB2779:
+X-Microsoft-Antispam-PRVS: <HE1PR0202MB2779A28425C7EECDEB6D5374BC6A0@HE1PR0202MB2779.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(2016111802025)(6043046)(6072148)(201708071742011)(7699016);SRVR:HE1PR0202MB2779;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2779;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;4:E+iqngscNlz7xhTACF4p04hMvAAjEwI7ndm+ak2Y9yey6ONYtbowRPDSyFJsZDn5XgWxD5zZFTXR3SGkTJdpqzsYg9s/GNuN/pQHOGyHqytc8mwO7Jvmd6zyBmPLyIHMbH9v7PPLJk2kYhG6NChmu5vAeX/DXYCgCLcW4pK1SDCkAZ+Mn8WFYAhuF1t19F7dCu0BvdQZH/stKi46xoUPkkxTmuJruaXwGckSoBGjJdzINSw5MmX9D6+JbYKsD0uU8sDidyJbZQiptrg9GYqx+Q==
+X-Forefront-PRVS: 0682FC00E8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(396003)(39830400003)(376002)(346002)(51914003)(189003)(199004)(74482002)(52116002)(25786009)(6916009)(50226002)(8936002)(6506007)(386003)(478600001)(51416003)(2351001)(2361001)(7736002)(5660300001)(476003)(6486002)(97736004)(6512007)(305945005)(76176011)(6666003)(53936002)(86362001)(54906003)(486006)(59450400001)(316002)(2616005)(81156014)(81166006)(11346002)(4326008)(956004)(8676002)(3846002)(48376002)(66066001)(68736007)(7416002)(50466002)(36756003)(16586007)(6116002)(106356001)(16526019)(105586002)(1076002)(186003)(26005)(446003)(2906002)(47776003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2779;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0202MB2779;23:PA4dVJKNlL83dxWFQnJ/dF14vuCqFhzairozktI?=
+ =?us-ascii?Q?qFhpRNmDdrwedE29cYjb7oyJ7H+Zyw9CWSaRdiiAiBzuxrE5fBap6+XC/hs+?=
+ =?us-ascii?Q?wkqihnmNgiGQPsfYe4FgCFcx2sh99rbb9879Hrds0MI8ddRuLjapAH4I1m4e?=
+ =?us-ascii?Q?yLGoITMr1nIlacwU2QrBDQ6RfnVbQoed/zAS94fRa4eElXKL4hqyHrBOw1Rx?=
+ =?us-ascii?Q?otw2zhmoKn+Z0y24vcdc3i9jJh+cLR4GQMy0E7HfttAqRANZq/Vm8vrply1x?=
+ =?us-ascii?Q?LB6HrHqkM3oKkKdIlW3q5TuN2hBljat7utHe8NpnqNDB2GPjmCj0UsHURBy5?=
+ =?us-ascii?Q?vNJkt2s/7ux0bXLfYZv2w2nqy01UIWiYcj+9WsE6z6avB8Kh0E7GS7Miumgm?=
+ =?us-ascii?Q?iVeH9ovR1mlmlJzqDY/6dtsOnJZytq0bJhJv17NluviOXLH9RmYa+6U/foTM?=
+ =?us-ascii?Q?+WsELPGhzqU9ZcL4dkyaunOH8TO+r4HAv+evwBcz9qpU4hQCqQ6foF7Bb/WP?=
+ =?us-ascii?Q?MYvrqQckdhMg+TA8N/AF6/PD7whceVpiDqX7/tkXwiAtCl6SORZxlH2jj9hQ?=
+ =?us-ascii?Q?arZPPVLyRDRHGjht9xtXeFRK1qcmpij2+rbiHMW29gm7fKHCMeYDYvIF3DBw?=
+ =?us-ascii?Q?NDAB/WjsYudmyE+vYUgG4+yycCYXpC/6DCClGDXthqRkpPneQiXIIaKLGWlb?=
+ =?us-ascii?Q?iTLUZXi8UcEoy0c0b1RVjJFOLSz++DS43LYNhaz60zZ71acPdtceXQv2Lr1Y?=
+ =?us-ascii?Q?4LS/D3JItXMwpX5pntzpQEmgdbiNDqBnS0WlE7qo3Rs6xjo8zhSZEP1rlG9M?=
+ =?us-ascii?Q?hlKgTfI9pQ1l4zyn+cDa5yAuywtIQbpyJpskrfr8SPEyDpISKmGJMcpNHWUQ?=
+ =?us-ascii?Q?51FdWHdENi7pLfnv5cE5Oi34hVH0p45rR1RyACx7L5Q8J0hPbJVTkSba0npP?=
+ =?us-ascii?Q?W1GkUIh7yB90GH4gfHCa31duLaBSV6B8oc4g7Tx6vQCh8zWraJq8BgeLMe2z?=
+ =?us-ascii?Q?G/W+kEPYSvSakThxnDWSASGOL7L/vKm7Cb+GBXfICn3Id3uj2vDvJ86vZJW3?=
+ =?us-ascii?Q?UTwBATH7uw/lIA6gueq5pINbPElgrbCzKF2cNtFFzkkk3eIDBw5g66G8Jv7j?=
+ =?us-ascii?Q?C8qh5Ly9gTOY6xZ8p+sn0ReJF4j1pfn6Uf61qIpTcjz5Sm6kPcfjWaxvZ3Z6?=
+ =?us-ascii?Q?TG/e9zKkjbNHegjB2XTFSqtsWCBuLFClKrmkDhTbd2TFxQALkoHEo7JQEv4W?=
+ =?us-ascii?Q?YpfpES3hS9getcxGy7Crk6gHKEebat+ha8ndA9QiIsBj1W9r+6soiJ4CMxTF?=
+ =?us-ascii?Q?T1a9Ky6YU5f0gPdlnw0w1YJr9qfedAiXnonLcwG0XT4GyVzQ3P4pHYdza9IH?=
+ =?us-ascii?Q?MqEa8bA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: 8lztHzffGJM89TBh1Btqm7b9JpRgy7YFtS2n/HS2qct1LKBjD7P3bdmAszkrn5lsjKcnVCN309p6MckB7nBhvUHQflIyiQhY6VRJJTg+pWtZ7L5saVKRuA51M6J9HuPut4pZtszAnZyASXkvw7Qjrx+5gIVp9zXEyJr2HYGfHBegv87uEk4ytekB3HlwN3G7
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;6:rA14n2lw6EARhG7eeiHLukGT2EsSGPRVsSXNsdQI2GG7xF1mODR8eI+vrK2b7iVA4AhtKN6XdEbpXRvHx3QwOp64czRmn7UW/IfTHMvfv6czUGS6RV4mxDCF8uFK2hvzoWEOS3h4yCFkCDalMCh14idELbYg3P3N2kBesnTXe6E3TmULMTWVlHgUaQRtvZ7bya85U6E846ez4l7UpNe2Q6uhsiqt7z1Yf9AFsULcy6hTgDHuNUn0zO1N3A+1LLy9Tdn6lrwXaIJ8Lvo0yxsGPitgzv2vQbgyPQyeyHGGo3RlAvP69JvCZgNBz49cB5xhQUlniQ6RQ6ZhxfXxTQXm3SSJLT/1GcCdrLuEEBM0iMILBDn7dKvU6euUOB63gLj0yVw4NltUL4Ajumo1FHilViI+N7DOTkwBMwD/8aha/WVHpQwNxOSzzBBdrzae83RaKSU7uObIqkPvpc5/mDDtKA==;5:2IDIiZlhFsDxo03ov9brndrhQkftuIr1jD31qOOiolTFYSbQu+yFkvV3wpUfCX35q4wY2uScBJncFSlWoSRgf+udhqabWtqH2mkHQAdtjgnla9fSb0lKFjAL6d0R11Qtg+Mpz4MAqzmZGbDs7O6JcUWEbkMaI4bryWSIwC5vIsg=;24:8UCwcxSJTplza08AJB8jX8D4Bmu5Bo4fMsNxCK1k+dVBqQaeSpn/NsxD/QzorkIVY+nW6SxrZqc1PciHKBSDTbS24JqlJ4aGHtuvwgq9FrQ=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;7:nRg1NICuiqe4rs3iu/1L2LFkPmQgQts0Gm1mEoY6lbhTF5D6YjQXIAB5euith13/sAqkHfICeUFMBxgB5afMQaX5F3p2xFs30Da2GxsxxWtQKiWPxxUfCsw3rqgQ5nUKT6Xh4/UXQx30+k+uF9Fe4snDtTdsNpTrhfGt2k8hM5gzxKqMk+kj+OGY77Ufm4JguKNNkxwQl7oWgZLBv2Q8Jwe+F8QU1aHg0RVE5Ra95vEPXDhncvhIKZN3S/+UwJNb
+X-MS-Office365-Filtering-Correlation-Id: 6bb20486-0737-48b3-2180-08d5c152eada
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2018 08:47:01.0998 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bb20486-0737-48b3-2180-08d5c152eada
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2779
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Changes since v1:
+- Further compile tests indicated a missing #define for rt_mutex_lock
+  with lockdep enabled, so that one is added.
+- I have verified that I don't get any lockdep splat for a local i2c-mux
+  setup with these patches applied, and that I do without them.
 
-Thanks for the initial review! One small question below:
+Again, thanks for the report!
 
-On 23.05.2018 16:18, Boris Brezillon wrote:
-> Hi Stefan,
-> 
-> On Tue, 22 May 2018 14:07:06 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
->> +
->> +struct tegra_nand {
->> +	void __iomem *regs;
->> +	struct clk *clk;
->> +	struct gpio_desc *wp_gpio;
->> +
->> +	struct nand_chip chip;
->> +	struct device *dev;
->> +
->> +	struct completion command_complete;
->> +	struct completion dma_complete;
->> +	bool last_read_error;
->> +
->> +	dma_addr_t data_dma;
->> +	void *data_buf;
->> +	dma_addr_t oob_dma;
->> +	void *oob_buf;
->> +
->> +	int cur_chip;
->> +};
-> 
-> This struct should be split in 2 structures: one representing the NAND
-> controller and one representing the NAND chip:
-> 
-> struct tegra_nand_controller {
-> 	struct nand_hw_control base;
-> 	void __iomem *regs;
-> 	struct clk *clk;
-> 	struct device *dev;
-> 	struct completion command_complete;
-> 	struct completion dma_complete;
-> 	bool last_read_error;
-> 	int cur_chip;
-> };
-> 
-> struct tegra_nand {
-> 	struct nand_chip base;
-> 	dma_addr_t data_dma;
-> 	void *data_buf;
-> 	dma_addr_t oob_dma;
-> 	void *oob_buf;
-> };
+Cheers,
+Peter
 
-Is there a particular reason why you would leave DMA buffers in the chip
-structure? It seems that is more a controller thing...
+Peter Rosin (2):
+  rtmutex: allow specifying a subclass for nested locking
+  i2c: mux: annotate the nested rt_mutex usage
 
-If I move them, then struct tegra_nand would be basically empty. Can I
-just use struct nand_chip and have no driver specific chip abstraction?
+ drivers/i2c/i2c-core-base.c |  2 +-
+ drivers/i2c/i2c-mux.c       |  4 ++--
+ include/linux/rtmutex.h     |  7 +++++++
+ kernel/locking/rtmutex.c    | 29 +++++++++++++++++++++++++----
+ 4 files changed, 35 insertions(+), 7 deletions(-)
 
---
-Stefan
-
-> 
->> +
->> +static inline struct tegra_nand *to_tegra_nand(struct mtd_info *mtd)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +
->> +	return nand_get_controller_data(chip);
-> 
-> then you can just do:
-> 
-> 	return container_of(chip, struct tegra_nand, base);
-> 
->> +}
->> +
->> +static int tegra_nand_ooblayout_16_ecc(struct mtd_info *mtd, int section,
->> +				       struct mtd_oob_region *oobregion)
->> +{
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = 4;
->> +	oobregion->length = 4;
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_ooblayout_16_free(struct mtd_info *mtd, int section,
->> +					struct mtd_oob_region *oobregion)
->> +{
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = 8;
->> +	oobregion->length = 8;
->> +
->> +	return 0;
->> +}
-> 
-> ...
-> 
->> +
->> +static int tegra_nand_ooblayout_224_ecc(struct mtd_info *mtd, int section,
->> +				       struct mtd_oob_region *oobregion)
->> +{
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = 4;
->> +	oobregion->length = 144;
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_ooblayout_224_free(struct mtd_info *mtd, int section,
->> +					struct mtd_oob_region *oobregion)
->> +{
->> +	if (section > 0)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = 148;
->> +	oobregion->length = 76;
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct mtd_ooblayout_ops tegra_nand_oob_224_ops = {
->> +	.ecc = tegra_nand_ooblayout_224_ecc,
->> +	.free = tegra_nand_ooblayout_224_free,
->> +};
->> +
-> 
-> I'm pretty sure we can find a pattern here to avoid defining a new
-> mtd_ooblayout_ops for each OOB size.
-> 
->> +static irqreturn_t tegra_nand_irq(int irq, void *data)
->> +{
->> +	struct tegra_nand *nand = data;
->> +	u32 isr, dma;
->> +
->> +	isr = readl(nand->regs + ISR);
->> +	dma = readl(nand->regs + DMA_CTRL);
->> +	dev_dbg(nand->dev, "isr %08x\n", isr);
->> +
->> +	if (!isr && !(dma & DMA_CTRL_IS_DONE))
->> +		return IRQ_NONE;
->> +
->> +	if (isr & ISR_CORRFAIL_ERR)
->> +		nand->last_read_error = true;
->> +
->> +	if (isr & ISR_CMD_DONE)
->> +		complete(&nand->command_complete);
->> +
->> +	if (isr & ISR_UND)
->> +		dev_dbg(nand->dev, "FIFO underrun\n");
->> +
->> +	if (isr & ISR_OVR)
->> +		dev_dbg(nand->dev, "FIFO overrun\n");
->> +
->> +	/* handle DMA interrupts */
->> +	if (dma & DMA_CTRL_IS_DONE) {
->> +		writel(dma, nand->regs + DMA_CTRL);
->> +		complete(&nand->dma_complete);
->> +	}
->> +
->> +	/* clear interrupts */
->> +	writel(isr, nand->regs + ISR);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int tegra_nand_cmd(struct nand_chip *chip,
->> +			 const struct nand_subop *subop)
->> +{
->> +	const struct nand_op_instr *instr;
->> +	const struct nand_op_instr *instr_data_in = NULL;
->> +	struct mtd_info *mtd = nand_to_mtd(chip);
->> +	struct tegra_nand *nand = to_tegra_nand(mtd);
->> +	unsigned int op_id = -1, trfr_in_sz = 0, trfr_out_sz = 0, offset = 0;
->> +	bool first_cmd = true;
->> +	bool force8bit;
->> +	u32 cmd = 0;
->> +	u32 value;
->> +
->> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
->> +		unsigned int naddrs, i;
->> +		const u8 *addrs;
->> +		u32 addr1 = 0, addr2 = 0;
->> +
->> +		instr = &subop->instrs[op_id];
->> +
->> +		switch (instr->type) {
->> +		case NAND_OP_CMD_INSTR:
->> +			if (first_cmd) {
->> +				cmd |= CMD_CLE;
->> +				writel(instr->ctx.cmd.opcode, nand->regs + CMD_1);
->> +			} else {
->> +				cmd |= CMD_SEC_CMD;
->> +				writel(instr->ctx.cmd.opcode, nand->regs + CMD_2);
->> +			}
->> +			first_cmd = false;
->> +			break;
->> +		case NAND_OP_ADDR_INSTR:
->> +			offset = nand_subop_get_addr_start_off(subop, op_id);
->> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
->> +			addrs = &instr->ctx.addr.addrs[offset];
->> +
->> +			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
->> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
->> +				addr1 |= *addrs++ << (8 * i);
->> +			naddrs -= i;
->> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
->> +				addr2 |= *addrs++ << (8 * i);
->> +			writel(addr1, nand->regs + ADDR_1);
->> +			writel(addr2, nand->regs + ADDR_2);
->> +			break;
->> +
->> +		case NAND_OP_DATA_IN_INSTR:
->> +			trfr_in_sz = nand_subop_get_data_len(subop, op_id);
->> +			offset = nand_subop_get_data_start_off(subop, op_id);
->> +
->> +			cmd |= CMD_TRANS_SIZE(trfr_in_sz) | CMD_PIO | CMD_RX | CMD_A_VALID;
->> +
->> +			instr_data_in = instr;
->> +			break;
->> +
->> +		case NAND_OP_DATA_OUT_INSTR:
->> +			trfr_out_sz = nand_subop_get_data_len(subop, op_id);
->> +			offset = nand_subop_get_data_start_off(subop, op_id);
->> +			trfr_out_sz = min_t(size_t, trfr_out_sz, 4);
->> +
->> +			cmd |= CMD_TRANS_SIZE(trfr_out_sz) | CMD_PIO | CMD_TX | CMD_A_VALID;
->> +
->> +			memcpy(&value, instr->ctx.data.buf.out + offset, trfr_out_sz);
->> +			writel(value, nand->regs + RESP);
->> +
->> +			break;
->> +		case NAND_OP_WAITRDY_INSTR:
->> +			cmd |= CMD_RBSY_CHK;
->> +			break;
->> +
->> +		}
->> +	}
->> +
->> +
->> +	cmd |= CMD_GO | CMD_CE(nand->cur_chip);
->> +	writel(cmd, nand->regs + CMD);
->> +	wait_for_completion(&nand->command_complete);
->> +
->> +	if (instr_data_in) {
->> +		u32 value;
->> +		size_t n = min_t(size_t, trfr_in_sz, 4);
->> +
->> +		value = readl(nand->regs + RESP);
->> +		memcpy(instr_data_in->ctx.data.buf.in + offset, &value, n);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct nand_op_parser tegra_nand_op_parser = NAND_OP_PARSER(
->> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true)),
->> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
->> +		NAND_OP_PARSER_PAT_DATA_OUT_ELEM(false, 4)),
->> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
->> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
->> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
->> +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, 4)),
->> +	);
->> +
->> +static int tegra_nand_exec_op(struct nand_chip *chip,
->> +			     const struct nand_operation *op,
->> +			     bool check_only)
->> +{
->> +	return nand_op_parser_exec_op(chip, &tegra_nand_op_parser, op,
->> +				      check_only);
->> +}
-> 
-> Missing empty line here.
-> 
->> +static void tegra_nand_select_chip(struct mtd_info *mtd, int chip)
->> +{
->> +	struct tegra_nand *nand = to_tegra_nand(mtd);
->> +
->> +	nand->cur_chip = chip;
->> +}
-> 
-> ...
-> 
->> +
->> +static void tegra_nand_setup_chiptiming(struct tegra_nand *nand)
->> +{
->> +	struct nand_chip *chip = &nand->chip;
->> +	int mode;
->> +
->> +	mode = onfi_get_async_timing_mode(chip);
->> +	if (mode == ONFI_TIMING_MODE_UNKNOWN)
->> +		mode = chip->onfi_timing_mode_default;
->> +	else
->> +		mode = fls(mode);
->> +
->> +	tegra_nand_setup_timing(nand, mode);
-> 
-> Hm, you shouldn't do that. Let the core select the timing mode for you,
-> and just implement the ->setup_data_interface() hook.
-> 
->> +}
->> +
->> +static int tegra_nand_probe(struct platform_device *pdev)
->> +{
->> +	struct reset_control *rst;
->> +	struct tegra_nand *nand;
->> +	struct nand_chip *chip;
->> +	struct mtd_info *mtd;
->> +	struct resource *res;
->> +	unsigned long value;
->> +	int irq, err = 0;
->> +
->> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
->> +	if (!nand)
->> +		return -ENOMEM;
->> +
->> +	nand->dev = &pdev->dev;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(nand->regs))
->> +		return PTR_ERR(nand->regs);
->> +
->> +	irq = platform_get_irq(pdev, 0);
->> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
->> +			       dev_name(&pdev->dev), nand);
->> +	if (err)
->> +		return err;
->> +
->> +	rst = devm_reset_control_get(&pdev->dev, "nand");
->> +	if (IS_ERR(rst))
->> +		return PTR_ERR(rst);
->> +
->> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
->> +	if (IS_ERR(nand->clk))
->> +		return PTR_ERR(nand->clk);
->> +
->> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "wp-gpios",
->> +					   GPIOD_OUT_HIGH);
->> +	if (IS_ERR(nand->wp_gpio))
->> +		return PTR_ERR(nand->wp_gpio);
->> +
->> +	err = clk_prepare_enable(nand->clk);
->> +	if (err)
->> +		return err;
->> +
->> +	reset_control_assert(rst);
->> +	udelay(2);
->> +	reset_control_deassert(rst);
->> +
->> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
->> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
->> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
->> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
->> +	writel(value, nand->regs + HWSTATUS_MASK);
->> +
->> +	init_completion(&nand->command_complete);
->> +	init_completion(&nand->dma_complete);
->> +
->> +	/* clear interrupts */
->> +	value = readl(nand->regs + ISR);
->> +	writel(value, nand->regs + ISR);
->> +
->> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
->> +
->> +	/* enable interrupts */
->> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
->> +	writel(value, nand->regs + IER);
->> +
->> +	/* reset config */
->> +	writel(0, nand->regs + CFG);
->> +
->> +	chip = &nand->chip;
->> +	mtd = nand_to_mtd(chip);
->> +
->> +	mtd->dev.parent = &pdev->dev;
->> +	mtd->name = "tegra_nand";
->> +	mtd->owner = THIS_MODULE;
->> +
->> +	nand_set_flash_node(chip, pdev->dev.of_node);
->> +	nand_set_controller_data(chip, nand);
->> +
->> +	chip->options = NAND_NO_SUBPAGE_WRITE;
->> +	chip->exec_op = tegra_nand_exec_op;
->> +	chip->select_chip = tegra_nand_select_chip;
->> +	tegra_nand_setup_timing(nand, 0);
->> +
->> +	err = nand_scan_ident(mtd, 1, NULL);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
->> +		chip->bbt_options |= NAND_BBT_NO_OOB;
->> +
->> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
->> +					    &nand->data_dma, GFP_KERNEL);
->> +	if (!nand->data_buf) {
->> +		err = -ENOMEM;
->> +		goto err_disable_clk;
->> +	}
->> +
->> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
->> +					    &nand->oob_dma, GFP_KERNEL);
->> +	if (!nand->oob_buf) {
->> +		err = -ENOMEM;
->> +		goto err_disable_clk;
->> +	}
->> +
->> +	chip->ecc.mode = NAND_ECC_HW;
->> +	chip->ecc.size = 512;
->> +	chip->ecc.read_page = tegra_nand_read_page;
->> +	chip->ecc.write_page = tegra_nand_write_page;
-> 
-> I'd like to have raw accessors implemented here.
-> 
-> That was just a quick review focusing mainly on architectural issues so
-> that you can start working on a v2.
-> 
-> Regards,
-> 
-> Boris
+-- 
+2.11.0
