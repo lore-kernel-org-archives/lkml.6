@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964920AbeEXHPA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:15:00 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:41484 "EHLO
+        id S965038AbeEXHPM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:15:12 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:27996 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935637AbeEXHO6 (ORCPT
+        with ESMTP id S935671AbeEXHPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:14:58 -0400
+        Thu, 24 May 2018 03:15:04 -0400
 X-ME-Helo: belgarion.home
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Thu, 24 May 2018 09:07:26 +0200
+X-ME-Date: Thu, 24 May 2018 09:07:32 +0200
 X-ME-IP: 90.55.202.35
 From: Robert Jarzmik <robert.jarzmik@free.fr>
 To: Daniel Mack <daniel@zonque.org>,
@@ -28,9 +28,9 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH v2 01/13] dmaengine: pxa: use a dma slave map
-Date: Thu, 24 May 2018 09:06:51 +0200
-Message-Id: <20180524070703.11901-2-robert.jarzmik@free.fr>
+Subject: [PATCH v2 05/13] mtd: rawnand: marvell: remove the dmaengine compat need
+Date: Thu, 24 May 2018 09:06:55 +0200
+Message-Id: <20180524070703.11901-6-robert.jarzmik@free.fr>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180524070703.11901-1-robert.jarzmik@free.fr>
 References: <20180524070703.11901-1-robert.jarzmik@free.fr>
@@ -38,84 +38,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to remove the specific knowledge of the dma mapping from PXA
-drivers, add a default slave map for pxa architectures.
+As the pxa architecture switched towards the dmaengine slave map, the
+old compatibility mechanism to acquire the dma requestor line number and
+priority are not needed anymore.
 
-This won't impact MMP architecture, but is aimed only at all PXA boards.
+This patch simplifies the dma resource acquisition, using the more
+generic function dma_request_slave_channel().
 
-This is the first step, and once all drivers are converted,
-pxad_filter_fn() will be made static, and the DMA resources removed from
-device.c.
-
+Signed-off-by: Signed-off-by: Daniel Mack <daniel@zonque.org>
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/dma/pxa_dma.c                 | 10 +++++++++-
- include/linux/platform_data/mmp_dma.h |  4 ++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/raw/marvell_nand.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
-index b53fb618bbf6..9505334f9c6e 100644
---- a/drivers/dma/pxa_dma.c
-+++ b/drivers/dma/pxa_dma.c
-@@ -179,6 +179,8 @@ static unsigned int pxad_drcmr(unsigned int line)
- 	return 0x1000 + line * 4;
- }
+diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+index 10e953218948..f9763be078ef 100644
+--- a/drivers/mtd/nand/raw/marvell_nand.c
++++ b/drivers/mtd/nand/raw/marvell_nand.c
+@@ -2613,8 +2613,6 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
+ 						    dev);
+ 	struct dma_slave_config config = {};
+ 	struct resource *r;
+-	dma_cap_mask_t mask;
+-	struct pxad_param param;
+ 	int ret;
  
-+bool pxad_filter_fn(struct dma_chan *chan, void *param);
-+
- /*
-  * Debug fs
-  */
-@@ -1396,9 +1398,10 @@ static int pxad_probe(struct platform_device *op)
- {
- 	struct pxad_device *pdev;
- 	const struct of_device_id *of_id;
-+	const struct dma_slave_map *slave_map = NULL;
- 	struct mmp_dma_platdata *pdata = dev_get_platdata(&op->dev);
- 	struct resource *iores;
--	int ret, dma_channels = 0, nb_requestors = 0;
-+	int ret, dma_channels = 0, nb_requestors = 0, slave_map_cnt = 0;
- 	const enum dma_slave_buswidth widths =
- 		DMA_SLAVE_BUSWIDTH_1_BYTE   | DMA_SLAVE_BUSWIDTH_2_BYTES |
- 		DMA_SLAVE_BUSWIDTH_4_BYTES;
-@@ -1429,6 +1432,8 @@ static int pxad_probe(struct platform_device *op)
- 	} else if (pdata && pdata->dma_channels) {
- 		dma_channels = pdata->dma_channels;
- 		nb_requestors = pdata->nb_requestors;
-+		slave_map = pdata->slave_map;
-+		slave_map_cnt = pdata->slave_map_cnt;
- 	} else {
- 		dma_channels = 32;	/* default 32 channel */
- 	}
-@@ -1440,6 +1445,9 @@ static int pxad_probe(struct platform_device *op)
- 	pdev->slave.device_prep_dma_memcpy = pxad_prep_memcpy;
- 	pdev->slave.device_prep_slave_sg = pxad_prep_slave_sg;
- 	pdev->slave.device_prep_dma_cyclic = pxad_prep_dma_cyclic;
-+	pdev->slave.filter.map = slave_map;
-+	pdev->slave.filter.mapcnt = slave_map_cnt;
-+	pdev->slave.filter.fn = pxad_filter_fn;
+ 	if (!IS_ENABLED(CONFIG_PXA_DMA)) {
+@@ -2627,20 +2625,7 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
+ 	if (ret)
+ 		return ret;
  
- 	pdev->slave.copy_align = PDMA_ALIGNMENT;
- 	pdev->slave.src_addr_widths = widths;
-diff --git a/include/linux/platform_data/mmp_dma.h b/include/linux/platform_data/mmp_dma.h
-index d1397c8ed94e..6397b9c8149a 100644
---- a/include/linux/platform_data/mmp_dma.h
-+++ b/include/linux/platform_data/mmp_dma.h
-@@ -12,9 +12,13 @@
- #ifndef MMP_DMA_H
- #define MMP_DMA_H
- 
-+struct dma_slave_map;
-+
- struct mmp_dma_platdata {
- 	int dma_channels;
- 	int nb_requestors;
-+	int slave_map_cnt;
-+	const struct dma_slave_map *slave_map;
- };
- 
- #endif /* MMP_DMA_H */
+-	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (!r) {
+-		dev_err(nfc->dev, "No resource defined for data DMA\n");
+-		return -ENXIO;
+-	}
+-
+-	param.drcmr = r->start;
+-	param.prio = PXAD_PRIO_LOWEST;
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
+-	nfc->dma_chan =
+-		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-						 &param, nfc->dev,
+-						 "data");
++	nfc->dma_chan =	dma_request_slave_channel(&nfc->dev, "data");
+ 	if (!nfc->dma_chan) {
+ 		dev_err(nfc->dev,
+ 			"Unable to request data DMA channel\n");
 -- 
 2.11.0
