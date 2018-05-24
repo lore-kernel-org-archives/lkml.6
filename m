@@ -1,76 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965160AbeEXHoS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:44:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:48452 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935502AbeEXHoR (ORCPT
+        id S965168AbeEXHpV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:45:21 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44491 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935502AbeEXHpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:44:17 -0400
-Date: Thu, 24 May 2018 09:44:14 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] sched,tracing: Correct trace_sched_pi_setprio() for
- deboosting
-Message-ID: <20180524074413.dukslrbgqfvaab5b@linutronix.de>
-References: <20180523141107.6417-1-bigeasy@linutronix.de>
- <20180523172819.GW12198@hirez.programming.kicks-ass.net>
+        Thu, 24 May 2018 03:45:19 -0400
+X-Google-Smtp-Source: AB8JxZrhfb2EfqyCOReiIem1+iWHI0kQRqhRA81BmF6p6Ciin2EJHKJ3fpjod05sEsITpM0zALYQiiGstpwthPt9VrA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180523172819.GW12198@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com>
+References: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 May 2018 09:45:17 +0200
+X-Google-Sender-Auth: wPzIQ9ZemikLtjxKHesZ-2nXaOI
+Message-ID: <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: reinitialize new policy min/max when writing scaling_(max|min)_freq
+To: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gengyanping@hisilicon.com, sunzhaosheng@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-23 19:28:19 [+0200], Peter Zijlstra wrote:
-> On Wed, May 23, 2018 at 04:11:07PM +0200, Sebastian Andrzej Siewior wrote:
-> 
-> > Since that commit I see during a deboost a task this:
-> > |futex sched_pi_setprio: comm=futex_requeue_p pid=2234 oldprio=98 newprio=98
-> > |futex sched_switch: prev_comm=futex_requeue_p prev_pid=2234 prev_prio=120
-> > 
-> > and after the revert, the `newprio' shows the correct value again:
-> > 
-> > |futex sched_pi_setprio: comm=futex_requeue_p pid=2220 oldprio=98 newprio=120
-> > |futex sched_switch: prev_comm=futex_requeue_p prev_pid=2220 prev_prio=120
-> 
-> > @@ -435,7 +435,7 @@ TRACE_EVENT(sched_pi_setprio,
-> >  		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-> >  		__entry->pid		= tsk->pid;
-> >  		__entry->oldprio	= tsk->prio;
-> > -		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
-> > +		__entry->newprio	= new_prio;
-> >  		/* XXX SCHED_DEADLINE bits missing */
-> >  	),
-> >  
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 092f7c4de903..888df643b99b 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3823,7 +3823,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
-> >  		goto out_unlock;
-> >  	}
-> >  
-> > -	trace_sched_pi_setprio(p, pi_task);
-> > +	trace_sched_pi_setprio(p, prio);
-> 
-> at this point:
-> 
-> 	prio = pi_task ? min(p->normal_prio, pi->task->prio) : p->normal_prio;
-> 
-> (aka __rt_effective_prio)
-> 
-> Should we put that in the tracepoint instead?
+On Thu, May 24, 2018 at 8:43 AM, Kevin Wangtao
+<kevin.wangtao@hisilicon.com> wrote:
+> consider such situation, current user_policy.min is 1000000,
+> current user_policy.max is 1200000, in cpufreq_set_policy,
+> other driver may update policy.min to 1200000, policy.max to
+> 1300000. After that, If we input "echo 1300000 > scaling_min_freq",
+> then user_policy.min will be 1300000, and user_policy.max is
+> still 1200000, because the input value is checked with policy.max
+> not user_policy.max. if we get all related cpus offline and
+> online again, it will cause cpufreq_init_policy fail because
+> user_policy.min is higher than user_policy.max.
 
-I don't see the point in open coding __rt_effective_prio() and
-recomputing the value we already have. I'm a little worried that if
-something happens to `prio' we might miss it and notice later while
-debugging.
-However, if they are reasons like breaking the trace-API for $tools, I
-can update it.
+How do you reproduce this, exactly?
 
-Sebastian
+> The solution is when user space tries to write scaling_(max|min)_freq,
+> the min/max of new_policy should be reinitialized with min/max
+> of user_policy, like what cpufreq_update_policy does.
+>
+> Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index b79c532..8b33e08 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -697,6 +697,8 @@ static ssize_t store_##file_name                                    \
+>         struct cpufreq_policy new_policy;                               \
+>                                                                         \
+>         memcpy(&new_policy, policy, sizeof(*policy));                   \
+> +       new_policy->min = policy->user_policy.min;                      \
+> +       new_policy->max = policy->user_policy.max;                      \
+
+It looks like you haven't even tried to build this, have you?
+
+>                                                                         \
+>         ret = sscanf(buf, "%u", &new_policy.object);                    \
+>         if (ret != 1)                                                   \
+> --
+> 2.8.1
+>
