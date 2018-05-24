@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032891AbeEXOU0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:20:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42522 "EHLO
+        id S1033077AbeEXOVP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:21:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42078 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032634AbeEXOUF (ORCPT
+        with ESMTP id S1032054AbeEXOTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:20:05 -0400
+        Thu, 24 May 2018 10:19:49 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Fabio Estevam <fabio.estevam@nxp.com>
 Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: pfuze100: Switch to SPDX identifier" to the regulator tree
-In-Reply-To: <1527103058-8422-1-git-send-email-festevam@gmail.com>
-Message-Id: <E1fLr61-0002yP-PX@debutante>
-Date: Thu, 24 May 2018 15:20:01 +0100
+Subject: Applied "regulator: mc13xxx-core: Switch to SPDX identifier" to the regulator tree
+In-Reply-To: <1527103058-8422-5-git-send-email-festevam@gmail.com>
+Message-Id: <E1fLr5m-0001Wx-MT@debutante>
+Date: Thu, 24 May 2018 15:19:46 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: pfuze100: Switch to SPDX identifier
+   regulator: mc13xxx-core: Switch to SPDX identifier
 
 has been applied to the regulator tree at
 
@@ -46,10 +46,10 @@ to this mail.
 Thanks,
 Mark
 
->From 809858cd44c5e28a95fcba953d8ddf58ab53180c Mon Sep 17 00:00:00 2001
+>From 910adc0e1bf50cc4c9eddf1d8764e6fe4055adf4 Mon Sep 17 00:00:00 2001
 From: Fabio Estevam <fabio.estevam@nxp.com>
-Date: Wed, 23 May 2018 16:17:34 -0300
-Subject: [PATCH] regulator: pfuze100: Switch to SPDX identifier
+Date: Wed, 23 May 2018 16:17:38 -0300
+Subject: [PATCH] regulator: mc13xxx-core: Switch to SPDX identifier
 
 Adopt the SPDX license identifier headers to ease license compliance
 management.
@@ -57,37 +57,44 @@ management.
 Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/pfuze100-regulator.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ drivers/regulator/mc13xxx-regulator-core.c | 28 ++++++++++------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 677a070eeb1c..26a5cd9b4637 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -1,20 +1,7 @@
+diff --git a/drivers/regulator/mc13xxx-regulator-core.c b/drivers/regulator/mc13xxx-regulator-core.c
+index 0281c31ae2ed..41271aeea63e 100644
+--- a/drivers/regulator/mc13xxx-regulator-core.c
++++ b/drivers/regulator/mc13xxx-regulator-core.c
+@@ -1,19 +1,15 @@
 -/*
-- * Copyright (C) 2011-2013 Freescale Semiconductor, Inc. All Rights Reserved.
+- * Regulator Driver for Freescale MC13xxx PMIC
+- *
+- * Copyright 2010 Yong Shen <yong.shen@linaro.org>
+- *
+- * Based on mc13783 regulator driver :
+- * Copyright (C) 2008 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
+- * Copyright 2009 Alberto Panizzo <maramaopercheseimorto@gmail.com>
 - *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+- * Regs infos taken from mc13xxx drivers from freescale and mc13xxx.pdf file
+- * from freescale
 - */
-+// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
 +//
-+// Copyright (C) 2011-2013 Freescale Semiconductor, Inc. All Rights Reserved.
-+
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/init.h>
++// Regulator Driver for Freescale MC13xxx PMIC
++//
++// Copyright 2010 Yong Shen <yong.shen@linaro.org>
++//
++// Based on mc13783 regulator driver :
++// Copyright (C) 2008 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
++// Copyright 2009 Alberto Panizzo <maramaopercheseimorto@gmail.com>
++//
++// Regs infos taken from mc13xxx drivers from freescale and mc13xxx.pdf file
++// from freescale
+ 
+ #include <linux/mfd/mc13xxx.h>
+ #include <linux/regulator/machine.h>
 -- 
 2.17.0
