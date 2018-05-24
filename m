@@ -1,44 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034306AbeEXSVv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 14:21:51 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37615 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034293AbeEXSVo (ORCPT
+        id S1032608AbeEXSYo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 14:24:44 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35784 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030470AbeEXSYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 14:21:44 -0400
-X-Google-Smtp-Source: AB8JxZoS3o2UmVIetmWLSQbkT4NOVZue948Cl8VZQVHHLVl/be1FIDbhOLJJ/PWSDh1+BSDDJbSyKO8WhOHdr3XiSVc=
+        Thu, 24 May 2018 14:24:40 -0400
+X-Google-Smtp-Source: AB8JxZoNIOBoGy4wcLYupArquEPWLGpZDr5+Zhu0ANIBusPSWZ/7Dp/zQThEZlE9Vh9CSObvONyHYFovJnf8CYRoefs=
 MIME-Version: 1.0
-References: <CAFNjLiXZk3Zigfpy9Hj2uY92sPGB7msUxoZHf6pFDOWSuBwkBA@mail.gmail.com>
- <20180524135240.10881-1-peda@axentia.se>
-In-Reply-To: <20180524135240.10881-1-peda@axentia.se>
-From: John Sperbeck <jsperbeck@google.com>
-Date: Thu, 24 May 2018 11:21:31 -0700
-Message-ID: <CAFNjLiVZ+g6eeHjpwMm+KiAA69Kpm_nVjWxkm2wCuV58RZwj4A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] Re: Problem: lockdep warning with nested instances
- of i2c-mux
-To: peda@axentia.se
-Cc: linux-kernel@vger.kernel.org, wsa@the-dreams.de, peterz@infradead.org,
-        mingo@redhat.com, will.deacon@arm.com, dave@stgolabs.net,
-        pombredanne@nexb.com, tglx@linutronix.de, gregkh@linuxfoundation.org,
-        linux-i2c@vger.kernel.org, Peter Chang <dpf@google.com>,
-        Deepa Dinamani <deepadinamani@google.com>
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com>
+In-Reply-To: <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 24 May 2018 11:24:28 -0700
+Message-ID: <CAKwvOdndRL6gs29eQQrL+bVNBt1fjrXS=mBgF4CRshz+J5LY-Q@mail.gmail.com>
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 6:52 AM Peter Rosin <peda@axentia.se> wrote:
+On Thu, May 24, 2018 at 11:20 AM <hpa@zytor.com> wrote:
+> A stack canary on an *inlined* function? That's bound to break things
+elsewhere too sooner or later.
 
-> Hi!
+But it's *not* inlined by GCC or Clang.
 
-> Sorry for spamming. At least I'm finding these embarrassing f$&%ups
-> myself, not that it helps all that much, but...
+While the function is marked `static inline`, it's not in
+arch/x86/kernel/paravirt.o due to:
+arch/x86/kernel/paravirt.c:326
 
-> Changes since v2    https://lkml.org/lkml/2018/5/24/176
-> - EXPORT_SYMBOL_GPL(rt_mutex_lock_nested) is more appropriate (the
->    rt_ prefix was missing).
+325 __visible struct pv_irq_ops pv_irq_ops = {
 
+326         .save_fl = __PV_IS_CALLEE_SAVE(native_save_fl),
 
-Yes, after fixing the "rt_" typo, this addresses our use case.  Thanks for
-the quick response.
+see comparison of disassembly  attached in:
+https://bugs.llvm.org/attachment.cgi?id=20338
+-- 
+Thanks,
+~Nick Desaulniers
