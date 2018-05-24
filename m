@@ -1,41 +1,41 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqhe+rrKR3xNzXvYU/oy5v36gHediR185osPYk+EMNC5fJbtTz8sYDQAXLLPIOlp7MS/QE9
-ARC-Seal: i=1; a=rsa-sha256; t=1527155871; cv=none;
+X-Google-Smtp-Source: AB8JxZrJYFBK1+9TX6qgwmtUaUUwTbFtJENVTmgVZ0eYUvzck5KJQ8GYcrrqgfsyeWR3h/hpxHlz
+ARC-Seal: i=1; a=rsa-sha256; t=1527155857; cv=none;
         d=google.com; s=arc-20160816;
-        b=sWZyTigeiFa18GK9+RpeynG0y051v67go9V2mWxFavLwtyxh75GB3TJkEM3jfuedOP
-         j8vjv8Lkz+WovfrcAg4xb1vrqeuyMIcrSklCGZC9+LMRLUp4BPmDGvJdiRx7c1LX7qR/
-         +fY1hfPgTcqGqy4H7buYieXbR/TFPPNyMLVCTgD8UI5/bJ4aHbxjrxiiFxu1DUs8AJw6
-         j1yRNcXyrzFRfA1Qad3941rXYF3ikhl3v+Tl+Zs2WpY2ABkEQ4GQD+J3RSOrKd9ZB7uH
-         ivjWNYIsxMk15yCwoNxLRNWdkKppHVLOpgLF+r/ClPZYWHGrQjojR+SPufn8ffWyZxBr
-         TOeQ==
+        b=iUpeHV5+MfwIclx9Fm7WXP3SNTeXv3YnhBFd75NakYPelkb7RK6Ifebso9FGWseGnz
+         Q556RFirRury/hKoUOGD+/Ma8MiQbCJqlK7uAcbwIgYs+sOKia9U2mDXitDxm6lRI75f
+         o39aSrRf3QWmKnIjXL5WBxFv36fVnYm5C61Nhjr5i4Enl3/R/WVfviQgqH1SSwmRtH/F
+         b4yQf1SXRc7G+vMUolaI0P3TWXy29VpTWHObX49pxZuj3Qp1HPIA7r9o3V68Ve+YSEIv
+         Z2zydEhNutdorINvrZyxbH2syXKcGx0xtqmgE9iTeiYCeTAntRz+SoIYDgys70WDN9G5
+         cX3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=/Ahh6bkKNNuaUNE1FBjyhd0qlsuauxc0IJPkTvRWIHU=;
-        b=ao7FyggavRY3PjOAnP6xyrBK7tKQOkoMPn8UyKX49QyHa7FuP60CYNkcBmaDnt8UYD
-         jIIGnWGG8wBP8v4qaxNjPDF62tvVdGfVgVgYFmm0v7TqDJxvTjjIyWvRseUCmhcC2rJl
-         L92LEh+aTFEcs5YXLjQUl8sDqqkSpAXtn+TAVdiH9N+m6L2Pm7rRaCUk3J0uI4KnWYtp
-         Myt3MIJRq4/BIAP7zVma3B16ygVL1LglMnGYJ3zvEoFXWoVG09eE65zQO+DHFUjv7sBl
-         73cpaBJUOa46vw9n53B+cqLIf6XA165pUMux7TYREsoI/cJpClBW3quiJA/N5JQaYcgv
-         5vVQ==
+        bh=19SsaNcPLCzu+cOIPmebP8t1P0a2/0GIq4upSz18VHE=;
+        b=sJfS5/Tg0MpariR8tS3Gxxzdh6V2zcNF7scOGkizVrIrsE9n7ISyd6S3qJMXw6f8jy
+         frwlSrFhReYim0m2KI45e5J2RGLD4nb2U9fU2cEKgIcHRXQeNc2SSMmlTLvMFPlghtjq
+         s+cMQMDfLETQ9PRl2DLOJIqI31Prm0JESb224PXxx39z3nuZPP2EbkU6n+dCLXhHInPI
+         yNgMwv1SA9GzkM5srm2W9IstDv0HHfVyq0rD/XyASPShze1PpAyATj8z5FgKHf7hLkmf
+         nqYRYGCF7hQMZ3LCUMvZ/dO4xFoYwviqV4x82Nj8a+VC1WI2t+ANX1UJjumjSuyGc2uU
+         oQyQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ju/F+eZX;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gRpW425s;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ju/F+eZX;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gRpW425s;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 146/165] media: i2c: adv748x: fix HDMI field heights
-Date: Thu, 24 May 2018 11:39:12 +0200
-Message-Id: <20180524093627.982857557@linuxfoundation.org>
+Subject: [PATCH 4.14 142/165] media: s3c-camif: fix out-of-bounds array access
+Date: Thu, 24 May 2018 11:39:08 +0200
+Message-Id: <20180524093627.822425622@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338995847294247?=
-X-GMAIL-MSGID: =?utf-8?q?1601338995847294247?=
+X-GMAIL-THRID: =?utf-8?q?1601338534966239104?=
+X-GMAIL-MSGID: =?utf-8?q?1601338981365136690?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,41 +54,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 9f564184e6cc21a86c26bab920afac1bab7653ff ]
+[ Upstream commit a398e043637a4819a0e96467bfecaabf3224dd62 ]
 
-The ADV748x handles interlaced media using V4L2_FIELD_ALTERNATE field
-types.  The correct specification for the height on the mbus is the
-image height, in this instance, the field height.
+While experimenting with older compiler versions, I ran
+into a warning that no longer shows up on gcc-4.8 or newer:
 
-The AFE component already correctly adjusts the height on the mbus, but
-the HDMI component got left behind.
+drivers/media/platform/s3c-camif/camif-capture.c: In function '__camif_subdev_try_format':
+drivers/media/platform/s3c-camif/camif-capture.c:1265:25: error: array subscript is below array bounds
 
-Adjust the mbus height to correctly describe the image height of the
-fields when processing interlaced video for HDMI pipelines.
+This is an off-by-one bug, leading to an access before the start of the
+array, while newer compilers silently assume this undefined behavior
+cannot happen and leave the loop at index 0 if no other entry matches.
 
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+As Sylvester explains, we actually need to ensure that the
+value is within the range, so this reworks the loop to be
+easier to parse correctly, and an additional check to fall
+back on the first format value for any unexpected input.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+I found an existing gcc bug for it and added a reduced version
+of the function there.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69249#c3
+Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/adv748x/adv748x-hdmi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/platform/s3c-camif/camif-capture.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -105,6 +105,9 @@ static void adv748x_hdmi_fill_format(str
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -1256,16 +1256,17 @@ static void __camif_subdev_try_format(st
+ {
+ 	const struct s3c_camif_variant *variant = camif->variant;
+ 	const struct vp_pix_limits *pix_lim;
+-	int i = ARRAY_SIZE(camif_mbus_formats);
++	unsigned int i;
  
- 	fmt->width = hdmi->timings.bt.width;
- 	fmt->height = hdmi->timings.bt.height;
-+
-+	if (fmt->field == V4L2_FIELD_ALTERNATE)
-+		fmt->height /= 2;
- }
+ 	/* FIXME: constraints against codec or preview path ? */
+ 	pix_lim = &variant->vp_pix_limits[VP_CODEC];
  
- static void adv748x_fill_optional_dv_timings(struct v4l2_dv_timings *timings)
+-	while (i-- >= 0)
++	for (i = 0; i < ARRAY_SIZE(camif_mbus_formats); i++)
+ 		if (camif_mbus_formats[i] == mf->code)
+ 			break;
+ 
+-	mf->code = camif_mbus_formats[i];
++	if (i == ARRAY_SIZE(camif_mbus_formats))
++		mf->code = camif_mbus_formats[0];
+ 
+ 	if (pad == CAMIF_SD_PAD_SINK) {
+ 		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
