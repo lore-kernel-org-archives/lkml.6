@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163201-2-17380820556538479067
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163166-2-6694514580174237755
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163201; b=gFA4N4CQF+t40Su0mnokFATidtfqQPJ80dGkBxKzzuG5jvgiD3
-    /3SRTzXgvT2mGCnW9eFr646OZ4XfGyjWGcYBBHJpZahgTyeqPS0ogjpM1udjlr0a
-    4Y9uuUBsdSBMHTds92FnXY5L64ig5wmMzY9chssoGf87iBe0o+wdKNbEKo4or0pZ
-    GI+tf1M7ouqdVA7m4e9Cke7sOwlL3+06VicXVJn49HhOQPK6XTdkVX1QeOp93ykZ
-    5JIPbtH9n4id1d9WTFOxAeEunre0EA1o08WnRsr/PSK8M2G6y3x8jzoOzPoEDvlV
-    cwn2g/Rof3VFHeQuetCbHDloX2gxacerMc9A==
+    1527163166; b=Z78nPA2wXMgJJttkTGvS+EMpXx1WbJyUS0549D1nGJKGFEy0Bn
+    TuQrc8P/T+WO/dCpZ7TDZGR3CroRqixIXTrhJBBKaWIAEOSQhrRuBf6vEgflgZAK
+    EhhvPiUlqlm89/hSExb8BkH+mJgzCLrrGNfHjMK2NR8+1h9ERhmh1he6vlfrzvqD
+    JB15KR1xclx2agAFcE3h62lS6jNlbeNkMt17iu5vR53B14Jtc0m+vKFQWWaQFNBx
+    71Flhlt5BfxNm31j2+OrfFipFon7NhHo3ckXQ8Cb1opipu+KZi8r98haJ8WvP2P3
+    Y1x3W70X/7Z7YHuCo8OaMAVUitSKhmFAB9Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163201; bh=W9AZ+AW2Fq5PJVQ5H+kCq8tzMudoa+
-    l/MrpZ5I8ADW4=; b=hHSkg7F4MAVlxKcwmKik9TOWvkz7AZPxP4bynMV15UTnWM
-    diijcuc837xapGNgnVic/A1Ta8686wrp0uLiFjVAC3M2q0TEUSqO7NL/1LEwk8FJ
-    3OtzQSyaVpZ/nOKNtN2VV4Pl4CxB1e3iNL+Eyy2RHfmTxQAzzbUJrYIOi1pfj4q0
-    p11HeSA2NwCFM9ecOfZnh2nGHtyxJN+MzQSELmXGJM/ROqpfNXiNX/0ZaP+5bMa4
-    z6FmyZn+7ghZRA8aMMHECMCpUgyaXR/+QUrsHo48OspwzqZJlDqlZxepf2IlpCNT
-    CrIF+PIPX7dpa7zccHS/xDkLz+qSc7Ke4YvNG0rQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163166; bh=uBbtckGVBDkV+yKpcbPuuRxAD+3hpJ
+    Am+GlP/eCckxk=; b=YknkyuMgwRRycDQl5je9no39vWBFAJAPZ91VGNUhQXk7x9
+    mgQPbmkmwhuVHcEZRVAJbkKWdOBPgM637oJa+BG+VL2Vk4jrUhJh4DEpFTZHCju6
+    6WqjIxDPiBbyI5crlhonshCOvntoHiqEXRN7Q5LN9oSgH9uGOzhgGq8MQEdVIXHb
+    9hiw86mKviJMSL/EualWu8PZBs+lprFd3v27wt/GU707sf9tCLvtvagvLuxs5yTw
+    4SDbU5sx/jSQPfTgM22VkQ8IAy+hgZREnM7M57r4a5iLDeD9JdxfSnIS5tX1d485
+    V36u5dstUvy99SujRfNgIBSSxF/l7pa8Dmn+Vdqw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=1gJzKkZn x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=NkG2/em4 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=1gJzKkZn x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=NkG2/em4 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAjzNlTsEt9Ihe0thFzUViz1iFOtW8a+tIeFV++RBUS1NGFi3my6BMl1JFbz3+YG/2uc5jTPoNfeuRyBHFGccvYkzWDIcpOEqIzR09ZLmQxUAEnO6j5O
-    bFYzMblsL7ycz9nTJghPpq6zpZCWp/rIO/+6hE3+cdn8YjB3nk2FJxSQiZN8OHWEgAgXm/OisRpvisMSStXAJ+Cx/64/vSH2p0CwVhDZuEcJu/f35P/69fSt
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNlQ1c+s10D37rSN2z3EUk3bsXSUK3QzU79Ytk6EfgNXvwKU24VGe5zehYFRZMwOBaPtjdJf40PvQmErvXlbxwodItNiC8BoW9fF9F6fihxrxOpgbcG+
+    KqmbxNFTiYd5RCet1UHrPfhGhrn2l5iBxmG3Z50LvhFAFHnChOiNN7B+ksmgqj7L7HYhIVGG5y3VWMX1uniy/3xVeUmj+pk6AC6ewu189njx3FVPCRixERcF
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=LfR2_N8ysYQO3oEyUZ8A:9
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=lwQ16D-4d2GxOm33qPoA:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966990AbeEXL70 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56452 "EHLO mail.kernel.org"
+        id S966759AbeEXJpR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965783AbeEXJpQ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:16 -0400
+        id S966749AbeEXJpK (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 61/92] s390: remove indirect branch from do_softirq_own_stack
-Date: Thu, 24 May 2018 11:38:38 +0200
-Message-Id: <20180524093205.137407442@linuxfoundation.org>
+Subject: [PATCH 4.4 59/92] s390/cpum_sf: ensure sample frequency of perf event attributes is non-zero
+Date: Thu, 24 May 2018 11:38:36 +0200
+Message-Id: <20180524093204.984626877@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,36 +105,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Hendrik Brueckner <brueckner@linux.ibm.com>
 
-commit 9f18fff63cfd6f559daa1eaae60640372c65f84b upstream.
+commit 4bbaf2584b86b0772413edeac22ff448f36351b1 upstream.
 
-The inline assembly to call __do_softirq on the irq stack uses
-an indirect branch. This can be replaced with a normal relative
-branch.
+Correct a trinity finding for the perf_event_open() system call with
+a perf event attribute structure that uses a frequency but has the
+sampling frequency set to zero.  This causes a FP divide exception during
+the sample rate initialization for the hardware sampling facility.
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Fixes: 8c069ff4bd606 ("s390/perf: add support for the CPU-Measurement Sampling Facility")
+Cc: stable@vger.kernel.org # 3.14+
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/irq.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/s390/kernel/perf_cpum_sf.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/s390/kernel/irq.c
-+++ b/arch/s390/kernel/irq.c
-@@ -173,10 +173,9 @@ void do_softirq_own_stack(void)
- 		new -= STACK_FRAME_OVERHEAD;
- 		((struct stack_frame *) new)->back_chain = old;
- 		asm volatile("   la    15,0(%0)\n"
--			     "   basr  14,%2\n"
-+			     "   brasl 14,__do_softirq\n"
- 			     "   la    15,0(%1)\n"
--			     : : "a" (new), "a" (old),
--			         "a" (__do_softirq)
-+			     : : "a" (new), "a" (old)
- 			     : "0", "1", "2", "3", "4", "5", "14",
- 			       "cc", "memory" );
- 	} else {
+--- a/arch/s390/kernel/perf_cpum_sf.c
++++ b/arch/s390/kernel/perf_cpum_sf.c
+@@ -744,6 +744,10 @@ static int __hw_perf_event_init(struct p
+ 	 */
+ 	rate = 0;
+ 	if (attr->freq) {
++		if (!attr->sample_freq) {
++			err = -EINVAL;
++			goto out;
++		}
+ 		rate = freq_to_sample_rate(&si, attr->sample_freq);
+ 		rate = hw_limit_rate(&si, rate);
+ 		attr->freq = 0;
