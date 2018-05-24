@@ -1,31 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755097AbeEXFms (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:42:48 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57029 "EHLO
+        id S1755123AbeEXFnR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:43:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40409 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754890AbeEXFmq (ORCPT
+        with ESMTP id S1755106AbeEXFnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:42:46 -0400
-Date: Wed, 23 May 2018 22:42:24 -0700
+        Thu, 24 May 2018 01:43:15 -0400
+Date: Wed, 23 May 2018 22:42:53 -0700
 From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-6e97957d3d30552c415292bb08a0e5f3c459c027@git.kernel.org>
-Cc: tglx@linutronix.de, luto@kernel.org, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
-        jolsa@redhat.com, acme@redhat.com, joro@8bytes.org,
-        adrian.hunter@intel.com, ak@linux.intel.com, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: joro@8bytes.org, acme@redhat.com, luto@kernel.org,
-        tglx@linutronix.de, peterz@infradead.org, jolsa@redhat.com,
-        hpa@zytor.com, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, adrian.hunter@intel.com,
-        ak@linux.intel.com
-In-Reply-To: <1526986485-6562-12-git-send-email-adrian.hunter@intel.com>
-References: <1526986485-6562-12-git-send-email-adrian.hunter@intel.com>
+Message-ID: <tip-c9dd1d894958b81a329ec01e7dd03b92eca52789@git.kernel.org>
+Cc: peterz@infradead.org, ak@linux.intel.com, tglx@linutronix.de,
+        acme@redhat.com, luto@kernel.org, dave.hansen@linux.intel.com,
+        adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, joro@8bytes.org
+Reply-To: alexander.shishkin@linux.intel.com, hpa@zytor.com, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, joro@8bytes.org, adrian.hunter@intel.com,
+        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        ak@linux.intel.com, acme@redhat.com, dave.hansen@linux.intel.com,
+        luto@kernel.org
+In-Reply-To: <1526986485-6562-13-git-send-email-adrian.hunter@intel.com>
+References: <1526986485-6562-13-git-send-email-adrian.hunter@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf kcore_copy: Keep a count of phdrs
-Git-Commit-ID: 6e97957d3d30552c415292bb08a0e5f3c459c027
+Subject: [tip:perf/core] perf kcore_copy: Calculate offset from phnum
+Git-Commit-ID: c9dd1d894958b81a329ec01e7dd03b92eca52789
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,16 +37,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6e97957d3d30552c415292bb08a0e5f3c459c027
-Gitweb:     https://git.kernel.org/tip/6e97957d3d30552c415292bb08a0e5f3c459c027
+Commit-ID:  c9dd1d894958b81a329ec01e7dd03b92eca52789
+Gitweb:     https://git.kernel.org/tip/c9dd1d894958b81a329ec01e7dd03b92eca52789
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Tue, 22 May 2018 13:54:39 +0300
+AuthorDate: Tue, 22 May 2018 13:54:40 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 23 May 2018 10:26:41 -0300
 
-perf kcore_copy: Keep a count of phdrs
+perf kcore_copy: Calculate offset from phnum
 
-In preparation to add more program headers, keep a count of phdrs.
+In preparation to add more program headers, calculate offset from the
+number of phdrs.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -60,50 +60,33 @@ Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526986485-6562-12-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1526986485-6562-13-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol-elf.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ tools/perf/util/symbol-elf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index b13873a6f368..4e7b71e8ac0e 100644
+index 4e7b71e8ac0e..4aec12102e19 100644
 --- a/tools/perf/util/symbol-elf.c
 +++ b/tools/perf/util/symbol-elf.c
-@@ -1398,6 +1398,7 @@ struct kcore_copy_info {
- 	u64 last_symbol;
- 	u64 first_module;
- 	u64 last_module_symbol;
-+	size_t phnum;
- 	struct phdr_data kernel_map;
- 	struct phdr_data modules_map;
- 	struct list_head phdrs;
-@@ -1517,6 +1518,8 @@ static int kcore_copy__read_maps(struct kcore_copy_info *kci, Elf *elf)
- 	if (kci->modules_map.len)
- 		list_add_tail(&kci->modules_map.node, &kci->phdrs);
- 
-+	kci->phnum = !!kci->kernel_map.len + !!kci->modules_map.len;
-+
- 	return 0;
- }
- 
-@@ -1678,7 +1681,6 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- {
+@@ -1682,7 +1682,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
  	struct kcore kcore;
  	struct kcore extract;
--	size_t count = 2;
  	int idx = 0, err = -1;
- 	off_t offset = page_size, sz, modules_offset = 0;
+-	off_t offset = page_size, sz, modules_offset = 0;
++	off_t offset, sz, modules_offset = 0;
  	struct kcore_copy_info kci = { .stext = 0, };
-@@ -1705,10 +1707,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (kcore__init(&extract, extract_filename, kcore.elfclass, false))
- 		goto out_kcore_close;
- 
--	if (!kci.modules_map.addr)
--		count -= 1;
--
--	if (kcore__copy_hdr(&kcore, &extract, count))
-+	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
+ 	char kcore_filename[PATH_MAX];
+ 	char extract_filename[PATH_MAX];
+@@ -1710,6 +1710,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
+ 	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
  		goto out_extract_close;
  
++	offset = gelf_fsize(extract.elf, ELF_T_EHDR, 1, EV_CURRENT) +
++		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
++	offset = round_up(offset, page_size);
++
  	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
+ 			    kci.kernel_map.len))
+ 		goto out_extract_close;
