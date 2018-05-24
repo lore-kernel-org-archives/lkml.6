@@ -1,39 +1,41 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpQDxSgCmxTfhYgEUiSQwpmVLSa0wW0mynA+xeTcQfmTujwOma6Z16iWL0Lc0Y2mbvIF5jO
-ARC-Seal: i=1; a=rsa-sha256; t=1527155680; cv=none;
+X-Google-Smtp-Source: AB8JxZoMXYH1NzEOhLVFtn5x70wRw+NV3TaDudCZGtAfU/6yr88iVPqc5pw6UTX0TGHc+dbf+lHA
+ARC-Seal: i=1; a=rsa-sha256; t=1527155677; cv=none;
         d=google.com; s=arc-20160816;
-        b=BaboQMV9oy9gQI06/aI6k9R2KgCQUjNks9FonkiiokYIvwgP4Tbgesyf7QE0OUzRGn
-         TaO8ww8hVBeWVjbjMY8BhEVgg5nesiS/FBBJdlNK8RdxP8SkSturI2dxNYw+v7wG4wXl
-         LVE2D2U4Uv9kzWgfTTRNg1LrlyCPasiHeBSm/vJjeVn1kcF1PJgBIFyzitm9jHRmPIS9
-         gANaeRLJG91l2QDj08LYSo7/SQRYnKCCkwJyCQ3BnD5GaP1WOFWthjkP4vevSvQOf1Km
-         Ja6oP7MJUe4sPhrL5blmM+vaRDhrwtUJa14J5ZBixY8nvPQl0K3EY+6B/wLGhg6hBFJt
-         ip4Q==
+        b=xAzMcl0ocn/QwjvpquA0n1h5n90RQFnaFqkS2ND+QPJgmXpBKSAIf6rPsIvqlXfDAN
+         X/1rfof+bd81zJwLFniGlS8adp85nFMKlivjaULN1TtoBD+4t21QELEVKJmTvMMtEzZD
+         sc+kp8eqnLH5waq8ScrDvG988fPizOGzSMVeipD8d5U6tw6bEf63NAkSMRfmfarIu1hH
+         sTsQxrvM4ZEPxWArIdyJOnBUXgLUdNtGIYfRJkLASYO08gCKiMQwZGel9P02GozjzrQU
+         UOURlqInzmeY5mnrPqCTOeg7GtnIMJNoFrkrF2ucXnhsI6KSuvCp0sgLfSKeyjX/mIY/
+         inIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=+uol2akEooR1lrN+vm1jRTwjCy4jZBY7j0sluJCfDGs=;
-        b=lpQts+e8uXrzQUogTzRBA8qoDNz3sflii5ACHNf6G7ulRTUyp/6LKNr/cIBzIszDJE
-         eNf1SiqqdDZ1b2fIZUg11dbQXZUU3gu41D2ogNMrVQEJEyltXDZccAalEFFyhw/FJ+W3
-         yOBaV5wfmCmZcoqXBdUwcLv6quhNjplmRYZ6zKwaUgLlFY8kYUF76GrTI9NkSnZm9XOi
-         G9hnzHobz3ZlQryEXb+kurUjAIK0pVzp8xCgVXmFP8gPM/2jeJ+q3m7FITfw6pZXNYZQ
-         fps6OrktesoTa6WoNYX2bUrBgWJjkyM1Irak4EkU5AZ7D1294BZ4CtcR+OsZbMPqtXh7
-         G7Rw==
+        bh=AfiO4GzDqXJHXQS9sB5pv5H2IHOlCG52FAA5lTpBj0E=;
+        b=APDjeIU5sZOeAXETAVosVfE/k04QsiCsH9tPXqn0Pd0UDIeXIj/uHrW4VGocS2ckF0
+         au3zS+GdK/9rKAOcyNZvkBVklKt5ioWZ0I8FJprsvcRHwbQakgtLTaJELmaq/PfLJTvN
+         5nagWHhiFkSZoUCWeWIX5b0bic6QNJNW2cZe2oZf4SjPxioeHO0zef2yTKeQHuLbCk1/
+         OBes3J3wtfHj8v3+h4ieYG5Bz4ybB5BYGFAMnTYyukOngRDnYJhD6hA5ehqXBpbMulrZ
+         CUnwBP/IJahUG5AReuPRJI4zWzpu10qErEvsmai5O1W/4OWxZz+/lucU1zPVxpGgnyNx
+         GUBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XxlCxafw;
+       dkim=pass header.i=@kernel.org header.s=default header.b=tvRfD40U;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XxlCxafw;
+       dkim=pass header.i=@kernel.org header.s=default header.b=tvRfD40U;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>,
+	John Youn <johnyoun@synopsys.com>,
+	Minas Harutyunyan <hminas@synopsys.com>,
+	Grigor Tovmasyan <tovmasya@synopsys.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 076/165] usb: gadget: ffs: Let setup() return USB_GADGET_DELAYED_STATUS
-Date: Thu, 24 May 2018 11:38:02 +0200
-Message-Id: <20180524093625.099127926@linuxfoundation.org>
+Subject: [PATCH 4.14 075/165] usb: dwc2: host: Fix transaction errors in host mode
+Date: Thu, 24 May 2018 11:38:01 +0200
+Message-Id: <20180524093625.057778686@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338408734906633?=
-X-GMAIL-MSGID: =?utf-8?q?1601338795104427688?=
+X-GMAIL-THRID: =?utf-8?q?1601338406021883806?=
+X-GMAIL-MSGID: =?utf-8?q?1601338791910483424?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,51 +54,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Minas Harutyunyan <hminas@synopsys.com>
 
-[ Upstream commit 946ef68ad4e45aa048a5fb41ce8823ed29da866a ]
+[ Upstream commit 92a8dd26464e1f21f1d869ec53717bd2c1200d63 ]
 
-Some UDC drivers (like the DWC3) expect that the response to a setup()
-request is queued from within the setup function itself so that it is
-available as soon as setup() has completed.
+Added missing GUSBCFG programming in host mode, which fixes
+transaction errors issue on HiKey and Altera Cyclone V boards.
 
-Upon receiving a setup request the function fs driver creates an event that
-is made available to userspace. And only once userspace has acknowledged
-that event the response to the setup request is queued.
+These field even if was programmed in device mode (in function
+dwc2_hsotg_core_init_disconnected()) will be resetting to POR values
+after core soft reset applied.
+So, each time when switching to host mode required to set this field
+to correct value.
 
-So it violates the requirement of those UDC drivers and random failures can
-be observed. This is basically a race condition and if userspace is able to
-read the event and queue the response fast enough all is good. But if it is
-not, for example because other processes are currently scheduled to run,
-the USB host that sent the setup request will observe an error.
-
-To avoid this the gadget framework provides the USB_GADGET_DELAYED_STATUS
-return code. If a setup() callback returns this value the UDC driver is
-aware that response is not yet available and can uses the appropriate
-methods to handle this case.
-
-Since in the case of function fs the response will never be available when
-the setup() function returns make sure that this status code is used.
-
-This fixed random occasional failures that were previously observed on a
-DWC3 based system under high system load.
-
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Acked-by: John Youn <johnyoun@synopsys.com>
+Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/f_fs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc2/hcd.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -3239,7 +3239,7 @@ static int ffs_func_setup(struct usb_fun
- 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
- 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -2329,10 +2329,22 @@ static int dwc2_core_init(struct dwc2_hs
+  */
+ static void dwc2_core_host_init(struct dwc2_hsotg *hsotg)
+ {
+-	u32 hcfg, hfir, otgctl;
++	u32 hcfg, hfir, otgctl, usbcfg;
  
--	return 0;
-+	return USB_GADGET_DELAYED_STATUS;
- }
+ 	dev_dbg(hsotg->dev, "%s(%p)\n", __func__, hsotg);
  
- static bool ffs_func_req_match(struct usb_function *f,
++	/* Set HS/FS Timeout Calibration to 7 (max available value).
++	 * The number of PHY clocks that the application programs in
++	 * this field is added to the high/full speed interpacket timeout
++	 * duration in the core to account for any additional delays
++	 * introduced by the PHY. This can be required, because the delay
++	 * introduced by the PHY in generating the linestate condition
++	 * can vary from one PHY to another.
++	 */
++	usbcfg = dwc2_readl(hsotg->regs + GUSBCFG);
++	usbcfg |= GUSBCFG_TOUTCAL(7);
++	dwc2_writel(usbcfg, hsotg->regs + GUSBCFG);
++
+ 	/* Restart the Phy Clock */
+ 	dwc2_writel(0, hsotg->regs + PCGCTL);
+ 
