@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162143-2-15573578076999882294
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162139-2-18015980329822467381
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162142; b=YGoKPZ8N3FIfeBsf7TtN2ZxhfsbIZ7zdo0R7orQreptstheCM6
-    GPymurckFmefGKugxT10OdeE66dh6cVjqwag9W402gdC+F5UrAyJawtQCJ19+5W9
-    r9rXtfKuel79Oww0J0Qzvjky5mtpHNiaAylJ0DD8pGtXJR5ZZuJEbAoubpRXgggF
-    75sFYqOzS9tQJ20zAstBtwl+NAXGvqaVrK++skdWtLzsqNOLcGIFhUddLQ4HD21q
-    2XNQA/hE7TX+OJNPOhXESmLXQfYJTh6iy1RnyROPZaF4FK8u1x4z5dL9FtBwDO7s
-    PTMdPtGhNKUkagAIzI+n5iKFCueIWE31zAwQ==
+    1527162139; b=ELdRqUpr1sufrHofaIMGU8zRu8lUIXLrKwLOpVaxkxQB4tg4QQ
+    RDFGuTCFRHeOLFcBH5kCmm3boyX7jWtLQ4Y5t/7rta4yTmn3gLvWrLxyprF4REQr
+    KjECbBozokZnKV+fmaME2dL7FymPQkxPJ0nxs9JEnxPJV0EViy6y9p3v8XqqBO/z
+    KrT04cg4tW4ry0+clNIZgHM6rwFZ8WGy4wzs8xpRaoMQyfHRN7C8YrEBbI3bGEDs
+    /6tRgZfRL+oBYRzycDK4+EE18YEHzF82VLTdkyxmbnMDVXNs4FgKBX5wAisvWwzY
+    8EMoDOF+w5r41HlyNGhXyCcKI15P3XGDUwWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162142; bh=uiGdUTbsaUSOWmpWmP+edvEc8J4ohr
-    lZBsppbzB8ThQ=; b=NUBlBCAeCY5Pr5BU3y0pG8r8vAz8S/1X41p9iY6HDpMhga
-    zr0hZH3o6qYOk71qeLNqlzr8k8G0yI+v7IojpGDdwGEjMgeIFpwhhDUGRK5I/eJU
-    JIZ1BGyJiGuReD2/Ib2EnnX3rKq2Oy0i3VViohT7iy9bWGcuSZzDucrdWdtvanK2
-    91mrjTY2WjIvMcFqZTFnzD5xPR7Nxpkpr0L1ptHcmgq+lgCycLV7X2ahDAJk4qPN
-    EpPnfh6upraE/a34e//BNyoOb/zk3c52LY05lsfIy1IG+G9Jtl3X8AE+Tis8CGZv
-    yP7Yg7tOjcXSI85kTzxaghNb5ePRNFR/JPWSTePQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162139; bh=VUqJEGJxozgJ2qCyNrgFwLliKWfswn
+    183I5LyIjXnjI=; b=HcjUnK5QibSsWVS71Kgnt4V+XXOeroVxmActJNjYXxO+Qp
+    xrDhOPxYEwqKshxErcT8+7eO8Od4We9kwcNkFLmfvI230dTCMnf+Gcv+upY3zysv
+    BntnGaOUcTQ80FoiRWiv3J3Mfcop3yJTR0D0EvIDDUZQd2SxCdMxanJ5CtM5aRFn
+    Tqg6XQkPso7P9OhZXf7PPSOCUdmaMr6vkvuQhkbmvw+PsDoDUTnsdtsazxY27Msc
+    w6sCetMlHOgWlb2L/PZBkQGSMX4xvNPMyQjQkJ/10D1sfrT5JTb6fDRup+d0+lNW
+    XncNcogIjGn4YCDGcCRx2xeaAcy1+LDZwtnBkgag==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=WJDLwvTf x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=remQvxvZ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=WJDLwvTf x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=remQvxvZ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJbksNl2rcIvCmxV9ukHZkHKwhE/6mn8yzD1TcIFPv6RORuc++JPRP2Lk99bSlyIM0Osa03TwrihWqOr0oHW0s6TnsaVJF2TJ70gQHIvicR2NGZaqNcu
-    U3XVpWbya3cZKx9X8ahvttgmdugSNXtFoAKmk6++C9eN7b2KpZewkvuaC2YqZlLgJZ2NPTkw7JPdGUIYHtwUvHNZrN/FYECu8urzi0dJ3YgxNGJ2wKqRlUuI
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKq2vXR2v6pqOMZlClbaW7Rbjk1NpGrKe+7RJ8UzE9cc9tjL9SxejO9AOp/OGB16Wjeqev2Nn5lHMFIHj5h2W11mGEcxN2OEfmLoKTQ4b2+MIzqpnhoL
+    JAWnNhLwn9Kzr6D073xyqY7i/gUxdaUglNvHv6i7dcxhme0kM9sGAXWja+0p6P/U5qOeSicl9h0jqb+7JMB064C6/xHGcX4iH545Vu0abSk0wRrGVSuyNCso
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=jIQo8A4GAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=jRutK7hKn5Zijk1ZCrUA:9 a=QEXdDO2ut3YA:10 a=Lf5xNeLK5dgiOs8hzIjU:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=N9Og8pMog36rpUuX43cA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966884AbeEXJsb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:48:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33684 "EHLO mail.kernel.org"
+        id S967123AbeEXLmE (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:42:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967222AbeEXJs1 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:27 -0400
+        id S967232AbeEXJsc (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Grigor Tovmasyan <tovmasya@synopsys.com>,
+        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 39/96] usb: dwc2: Fix interval type issue
-Date: Thu, 24 May 2018 11:38:22 +0200
-Message-Id: <20180524093607.795045924@linuxfoundation.org>
+Subject: [PATCH 4.9 41/96] usb: gadget: ffs: Let setup() return USB_GADGET_DELAYED_STATUS
+Date: Thu, 24 May 2018 11:38:24 +0200
+Message-Id: <20180524093607.887097559@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -106,29 +105,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grigor Tovmasyan <Grigor.Tovmasyan@synopsys.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit 12814a3f8f9b247531d7863170cc82b3fe4218fd ]
+[ Upstream commit 946ef68ad4e45aa048a5fb41ce8823ed29da866a ]
 
-The maximum value that unsigned char can hold is 255, meanwhile
-the maximum value of interval is  2^(bIntervalMax-1)=2^15.
+Some UDC drivers (like the DWC3) expect that the response to a setup()
+request is queued from within the setup function itself so that it is
+available as soon as setup() has completed.
 
-Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
+Upon receiving a setup request the function fs driver creates an event that
+is made available to userspace. And only once userspace has acknowledged
+that event the response to the setup request is queued.
+
+So it violates the requirement of those UDC drivers and random failures can
+be observed. This is basically a race condition and if userspace is able to
+read the event and queue the response fast enough all is good. But if it is
+not, for example because other processes are currently scheduled to run,
+the USB host that sent the setup request will observe an error.
+
+To avoid this the gadget framework provides the USB_GADGET_DELAYED_STATUS
+return code. If a setup() callback returns this value the UDC driver is
+aware that response is not yet available and can uses the appropriate
+methods to handle this case.
+
+Since in the case of function fs the response will never be available when
+the setup() function returns make sure that this status code is used.
+
+This fixed random occasional failures that were previously observed on a
+DWC3 based system under high system load.
+
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/core.h |    2 +-
+ drivers/usb/gadget/function/f_fs.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -209,7 +209,7 @@ struct dwc2_hsotg_ep {
- 	unsigned char           dir_in;
- 	unsigned char           index;
- 	unsigned char           mc;
--	unsigned char           interval;
-+	u16                     interval;
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -3239,7 +3239,7 @@ static int ffs_func_setup(struct usb_fun
+ 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
+ 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
  
- 	unsigned int            halted:1;
- 	unsigned int            periodic:1;
+-	return 0;
++	return USB_GADGET_DELAYED_STATUS;
+ }
+ 
+ static bool ffs_func_req_match(struct usb_function *f,
