@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164178-2-15319947144402554085
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164157-2-8257781273022488003
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164178; b=M9r670RwtlJcuPrc15KOwfQQf6PdbH0epmusqktBuL3nnPH+5C
-    jHJvD9Bk9nPRxcvpvI6kwdltB53HQ3WgQzbnJmIbL0EJWPk3A4kQweQDjIHru+ao
-    jGwtxI2ZnGOfrNPfUhaK4DsfKH/iyarYq0kyHY6wDtbWba+tycnOtDFsxguNWpUH
-    +OtHeYqhkxoARxnfARR5Ye6SRojkB3wMlA2K6hGSennSIA+qoEhZ7Aph5nFhlxug
-    eUfLPbf2zeAtBSG5/Aq2Jp/2urKZ6HXF/4OrEqSRA2A3OMRvrTvTayLNO9S0kTTn
-    tB1ZPjk+R03cGCww22MQ6L4Qv/HO5SlJrgEw==
+    1527164156; b=YJvdiCUTsb5ZjhzbVG1yuEcvnamcZMV/Sp2coTJrUMpTRUWFkC
+    YCEu8rsNbO2MeE+vRdg/ShQbDPAIDCRYLZIQkGo2Netlv9bnni8xjwyIA8bFXAUn
+    ytQPdJEfnEqPDQ6x4dcdsrCgZmnRfvfGA0s70s8SZRWItLU/lhQjYrKOqxijErbu
+    Gels/90jWH60Tgp6NAyS/VnSxHkPyZ4mqO1MQGlK17c/Tu8bb7NVk3G5h55K/tc0
+    UiM+UyBv2FhzexAYHHi3xusSQXZ3ZeLk922+jHabMHg/DhOoQ02xpg/GcSdRd04Y
+    VDJt3Rfh6c8Mq5ZOoxKciu6FR21PdHnA/wlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164178; bh=1+CVbk1q5c5SilvHFhaXTYZ6RtvrMY
-    lZHthwWd4ahqg=; b=XXuyZv8xxlrZBadO40K9yD+7NiDeGtY2D+j0rn0otRN98i
-    AgZgvVDrJlHtHlwyY/J7TwT90Gmp6MJhyEQJv/KkWoeVbesdx8o8Dt6MnKuGYNcy
-    RpSg0i+g7zePcUh1mACq1m0Af3CedqrEsHPBiLh27Gl7OcPd3TLTVLNhbwXyr43f
-    bweEZYsB8r88WvLyHkPc9aG1DJNCi5kb9YFU9d5VZoAwHAgTVvdZNEEtaPHaY9Lu
-    9s1Trk42SrN4NoGd18ZfbbZ7HUV1FczCjiNt4Nvut7vOhqYKgdz3HcGZsr6XfrZL
-    HhrG31pp9aKxXjFlVTCcCNbLAUoDGEFN4HYMXaIA==
+    :list-id; s=fm2; t=1527164156; bh=t8KJxaYjaZoipg7gsyHM2ymY39re08
+    kL90wol1Bzfek=; b=QCr4aomZgMNmVvx50f0HKol/tuWMQ/bQ6jf8LSyQrcZGxE
+    DDpD/qTNCiWDRuW27FcibQCKd0ClK7EKXN/oGhEfc3n1d1Pac6jqdYmWM/TMN7+C
+    vlYMcV0iPpa2x24/JyFoD5LauVGT6DrxDpXiDsEgBOtWFJJoD5yX61+3B+qBkMe7
+    BnlcjEXJpwPQjOHDipF8XBGQUHkRp6pkSr4OeOCG9oqAnmHtAgdkQUD0i/7PXILy
+    Wv+3bMWGYU/SkOz2IoYvaggl60UQctwUmif+OYUjTWdrRySCKkXaEZcUJobzKV15
+    0Mo9QmVAWSaxg4WKdmkjdckJpkE8RrmoMcJ2mrfQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=xEQh53J4 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=zwTv5JsK x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -49,7 +49,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=xEQh53J4 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=zwTv5JsK x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,30 +65,33 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOtJAtcwti/x+jBOzoj2Z2cLkNqF+juJ/K/s/mISjJIyTYjH5T+DH+w2LVngXmo75f3Ifp3yMR9A/fZZsKfkxAfRTgCy6MQ7wW8w7IQlhkxbpqy2rVsT
-    nfymCpcBORUdGbOm/7C1PcUZREwWo2Gkge6n6qxTqjjX+qum5PrTakFCrTSJya6YVYLFWHGUC1xkXj9iQ7IsK+IRAKE9LBp9wYszUKqIURB+feHd7GP1nKbw
+X-CM-Envelope: MS4wfBd1lJjZX/vHaZ0Nf6pTZlcGFew2WBc0Bj98Y+oooAx2PAVgbf8F2EQ637Fwt0PC/YXHouyYkc/p6Enmt3KeOO4tNkB8iM0GGsRIT8kRXqvczdPlHsr1
+    R+ZPVFA8mEpXJp76ODRUA6G7wXhTwP7FBN6kXe16s8THcvhNSZOgAjpKifCCL6M4AcREUsyLnoa0HOGoqVsUZYlniKTAv4QunS0TysxaexcaBJ8I5MKKnlN/
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=PHq6YzTAAAAA:8 a=ag1SF4gXAAAA:8 a=Bm5lvbky7RdN8-YtJ6kA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=ZKzU8r6zoKMcqsNulkmm:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=jxzauDbPASHEnw4kFhcA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966302AbeEXJmM (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:42:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53856 "EHLO mail.kernel.org"
+        id S966330AbeEXMPl (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:15:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965977AbeEXJmH (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:07 -0400
+        id S966311AbeEXJmO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 3.18 37/45] ARM: 8772/1: kprobes: Prohibit kprobes on get_user functions
-Date: Thu, 24 May 2018 11:38:45 +0200
-Message-Id: <20180524093125.494745514@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 39/45] tcp: purge write queue in tcp_connect_init()
+Date: Thu, 24 May 2018 11:38:47 +0200
+Message-Id: <20180524093125.821095095@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -106,116 +109,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 0d73c3f8e7f6ee2aab1bb350f60c180f5ae21a2c upstream.
+[ Upstream commit 7f582b248d0a86bae5788c548d7bb5bca6f7691a ]
 
-Since do_undefinstr() uses get_user to get the undefined
-instruction, it can be called before kprobes processes
-recursive check. This can cause an infinit recursive
-exception.
-Prohibit probing on get_user functions.
+syzkaller found a reliable way to crash the host, hitting a BUG()
+in __tcp_retransmit_skb()
 
-Fixes: 24ba613c9d6c ("ARM kprobes: core code")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Malicous MSG_FASTOPEN is the root cause. We need to purge write queue
+in tcp_connect_init() at the point we init snd_una/write_seq.
+
+This patch also replaces the BUG() by a less intrusive WARN_ON_ONCE()
+
+kernel BUG at net/ipv4/tcp_output.c:2837!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 5276 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__tcp_retransmit_skb+0x2992/0x2eb0 net/ipv4/tcp_output.c:2837
+RSP: 0000:ffff8801dae06ff8 EFLAGS: 00010206
+RAX: ffff8801b9fe61c0 RBX: 00000000ffc18a16 RCX: ffffffff864e1a49
+RDX: 0000000000000100 RSI: ffffffff864e2e12 RDI: 0000000000000005
+RBP: ffff8801dae073a0 R08: ffff8801b9fe61c0 R09: ffffed0039c40dd2
+R10: ffffed0039c40dd2 R11: ffff8801ce206e93 R12: 00000000421eeaad
+R13: ffff8801ce206d4e R14: ffff8801ce206cc0 R15: ffff8801cd4f4a80
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000096bc900
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000001c47b6000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ tcp_retransmit_skb+0x2e/0x250 net/ipv4/tcp_output.c:2923
+ tcp_retransmit_timer+0xc50/0x3060 net/ipv4/tcp_timer.c:488
+ tcp_write_timer_handler+0x339/0x960 net/ipv4/tcp_timer.c:573
+ tcp_write_timer+0x111/0x1d0 net/ipv4/tcp_timer.c:593
+ call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+ expire_timers kernel/time/timer.c:1363 [inline]
+ __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+ run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+ __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+ invoke_softirq kernel/softirq.c:365 [inline]
+ irq_exit+0x1d1/0x200 kernel/softirq.c:405
+ exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+ smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+
+Fixes: cf60af03ca4e ("net-tcp: Fast Open client - sendmsg(MSG_FASTOPEN)")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/include/asm/assembler.h |   10 ++++++++++
- arch/arm/lib/getuser.S           |   10 ++++++++++
- 2 files changed, 20 insertions(+)
+ net/ipv4/tcp_output.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -448,4 +448,14 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- #endif
- 	.endm
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -2497,8 +2497,10 @@ int __tcp_retransmit_skb(struct sock *sk
+ 		return -EBUSY;
  
-+#ifdef CONFIG_KPROBES
-+#define _ASM_NOKPROBE(entry)				\
-+	.pushsection "_kprobe_blacklist", "aw" ;	\
-+	.balign 4 ;					\
-+	.long entry;					\
-+	.popsection
-+#else
-+#define _ASM_NOKPROBE(entry)
-+#endif
-+
- #endif /* __ASM_ASSEMBLER_H__ */
---- a/arch/arm/lib/getuser.S
-+++ b/arch/arm/lib/getuser.S
-@@ -38,6 +38,7 @@ ENTRY(__get_user_1)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_1)
-+_ASM_NOKPROBE(__get_user_1)
- 
- ENTRY(__get_user_2)
- 	check_uaccess r0, 2, r1, r2, __get_user_bad
-@@ -58,6 +59,7 @@ rb	.req	r0
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_2)
-+_ASM_NOKPROBE(__get_user_2)
- 
- ENTRY(__get_user_4)
- 	check_uaccess r0, 4, r1, r2, __get_user_bad
-@@ -65,6 +67,7 @@ ENTRY(__get_user_4)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_4)
-+_ASM_NOKPROBE(__get_user_4)
- 
- ENTRY(__get_user_8)
- 	check_uaccess r0, 8, r1, r2, __get_user_bad
-@@ -78,6 +81,7 @@ ENTRY(__get_user_8)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_8)
-+_ASM_NOKPROBE(__get_user_8)
- 
- #ifdef __ARMEB__
- ENTRY(__get_user_32t_8)
-@@ -91,6 +95,7 @@ ENTRY(__get_user_32t_8)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_32t_8)
-+_ASM_NOKPROBE(__get_user_32t_8)
- 
- ENTRY(__get_user_64t_1)
- 	check_uaccess r0, 1, r1, r2, __get_user_bad8
-@@ -98,6 +103,7 @@ ENTRY(__get_user_64t_1)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_64t_1)
-+_ASM_NOKPROBE(__get_user_64t_1)
- 
- ENTRY(__get_user_64t_2)
- 	check_uaccess r0, 2, r1, r2, __get_user_bad8
-@@ -114,6 +120,7 @@ rb	.req	r0
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_64t_2)
-+_ASM_NOKPROBE(__get_user_64t_2)
- 
- ENTRY(__get_user_64t_4)
- 	check_uaccess r0, 4, r1, r2, __get_user_bad8
-@@ -121,6 +128,7 @@ ENTRY(__get_user_64t_4)
- 	mov	r0, #0
- 	ret	lr
- ENDPROC(__get_user_64t_4)
-+_ASM_NOKPROBE(__get_user_64t_4)
- #endif
- 
- __get_user_bad8:
-@@ -131,6 +139,8 @@ __get_user_bad:
- 	ret	lr
- ENDPROC(__get_user_bad)
- ENDPROC(__get_user_bad8)
-+_ASM_NOKPROBE(__get_user_bad)
-+_ASM_NOKPROBE(__get_user_bad8)
- 
- .pushsection __ex_table, "a"
- 	.long	1b, __get_user_bad
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
+-		if (before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))
+-			BUG();
++		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
++			WARN_ON_ONCE(1);
++			return -EINVAL;
++		}
+ 		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
+ 			return -ENOMEM;
+ 	}
+@@ -2989,6 +2991,7 @@ static void tcp_connect_init(struct sock
+ 	sock_reset_flag(sk, SOCK_DONE);
+ 	tp->snd_wnd = 0;
+ 	tcp_init_wl(tp, 0);
++	tcp_write_queue_purge(sk);
+ 	tp->snd_una = tp->write_seq;
+ 	tp->snd_sml = tp->write_seq;
+ 	tp->snd_up = tp->write_seq;
