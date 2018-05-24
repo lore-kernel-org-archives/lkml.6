@@ -1,58 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755263AbeEXX0D (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 19:26:03 -0400
-Received: from imap.thunk.org ([74.207.234.97]:52436 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755048AbeEXX0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 19:26:01 -0400
-Date: Thu, 24 May 2018 19:25:53 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Sterba <dsterba@suse.cz>
-Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
-Message-ID: <20180524232553.GI7712@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Sterba <dsterba@suse.cz>
-References: <20180424183536.GF30619@thunk.org>
- <20180524114341.1101-1-mhocko@kernel.org>
- <20180524221715.GY10363@dastard>
+        id S1755283AbeEXX1M (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 19:27:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58808 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755048AbeEXX1K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 19:27:10 -0400
+Subject: Re: [PATCH v4] rcu: Speed up calling of RCU tasks callbacks
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20180524184946.5fa82d19@gandalf.local.home>
+ <20180524231918.GA98334@joelaf.mtv.corp.google.com>
+ <20180524192247.759f7572@gandalf.local.home>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <076566f7-43ff-5cc8-03ba-ebde9c19418c@infradead.org>
+Date: Thu, 24 May 2018 16:26:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524221715.GY10363@dastard>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180524192247.759f7572@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 08:17:15AM +1000, Dave Chinner wrote:
-> On Thu, May 24, 2018 at 01:43:41PM +0200, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Although the api is documented in the source code Ted has pointed out
-> > that there is no mention in the core-api Documentation and there are
-> > people looking there to find answers how to use a specific API.
-> > 
-> > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > Cc: David Sterba <dsterba@suse.cz>
-> > Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+On 05/24/2018 04:22 PM, Steven Rostedt wrote:
+> On Thu, 24 May 2018 16:19:18 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
 > 
-> Yay, Documentation! :)
+>> On Thu, May 24, 2018 at 06:49:46PM -0400, Steven Rostedt wrote:
+>>>
+>>> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>>
+>>> Joel Fernandes found that the synchronize_rcu_tasks() was taking a
+>>> significant amount of time. He demonstrated it with the following test:
+>>>
+>>>  # cd /sys/kernel/tracing
+>>>  # while [ 1 ]; do x=1; done &
+>>>  # echo '__schedule_bug:traceon' > set_ftrace_filter
+>>>  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+>>>
+>>> real	0m1.064s
+>>> user	0m0.000s
+>>> sys	0m0.004s
+>>>
+>>> Where it takes a little over a second to perform the synchronize,
+>>> because there's a loop that waits 1 second at a time for tasks to get
+>>> through their quiescent points when there's a task that must be waited
+>>> for.
+>>>
+>>> After discussion we came up with a simple way to wait for holdouts but
+>>> increase the time for each iteration of the loop but no more than a
+>>> full second.
+>>>
+>>> With the new patch we have:
+>>>
+>>>  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+>>>
+>>> real	0m0.131s
+>>> user	0m0.000s
+>>> sys	0m0.004s
+>>>
+>>> Which drops it down to 13% of what the original wait time was.  
+>>
+>> Should be 90% of original?
+> 
+> That would be if I said "drops it down X" but I said "drops it down to
+> X of what the original wait time was". And 0.131 is 13% of 1.064. :-)
 
-Indeed, many thanks!!!
+I think that you are confusing "drops it down to" with "drops it down by".
+You said the former.  You should say the latter.
+IOW, I agree with Joel.
 
-					- Ted
+>> Other than minor change log change, looks good to me:
+>>
+>> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> 
+> Awesome, thanks!
+> 
+> -- Steve
+> 
+
+
+-- 
+~Randy
