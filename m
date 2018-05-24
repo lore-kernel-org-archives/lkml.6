@@ -1,82 +1,100 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2285987-1527182614-2-2862757521864045844
+X-Cyrus-Session-Id: sloti22d1t05-2350608-1527184422-2-17816373766060748628
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527182613; b=GX7fGalFw8XpMM+NaBGE8oKDPVE1OCydR+QFhzwwYTONGZ/8xx
-    zP9vOS6rLUB2Z7ikHztWJSu1HhkIYd46oJT4KHxnsAVTsyodAB/PH0EbfkwFE0yk
-    ffBHm4szMP04THOPQoHdDawZGfFf5fnF8Aba8QXtHyiX1aNsuaEmlOCfhWDGnJsU
-    llfpNrfNeV3W8AiV382GBxOqBXwVdfj/xl+BwS3M838ifCMkr57DpTqJnh0m+34w
-    ittLLd+BIgHazoup/Ke1TOs4IJKIiG07QQxYlvFxG48aAGxbN/z5wlJcZLc2dYCd
-    duDzBCoQZnBhIxBXs3WOiPmtP/Bgg8Ogf9jw==
+    1527184421; b=OQFsGDiCkdYyjUSM4kEjqK6lO2tOvuCdLd6BC+4lyPrTFgB1Z+
+    lmAVGNzT/2EGMPLdxeXYh9CYnb1aQiN8MaOv1mpz0Fj+dculTeDIdybvy/FW9Lo5
+    N5muq3uW49HDCEn058josj7wHqyivkNHtdzzA3rMJiUvxD/BvtiVotlJASJWmmsk
+    Zr0z+Jb3mXpg9Mho4q+eJbB+18VFb1tDi57pE4BE8iIO+j5TwD3MW+FCGm9F9Nkz
+    dkJ1T2AsVsTcGiYOCRotT3/tmQTaovIh3UQgHSM6IhJgXGu30y7cPzj6wdqlhZq/
+    U5niCb1lWq5911AIaWdxUlBKNHCSwmC+tEmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527182613; bh=CNT08n8hISS1QjGojBTnoyssQljttI
-    v0WAGfoAwREWU=; b=E5AQfIZ4qqJykRFnDGakCOl5ZmD5QkZlmXgSPn81Y15cR2
-    9pCeHtpE7pv6GS7Npwgphs3UNzanbnQ3Vd8XYLTCyVR6TCmMCx2ZwTHYaWpY8Scy
-    D+BeZJnPSL3agDOcmCV8g7L/NzMueyd+BhDbZ2zzBjCj8DmePb7+mb/D+KZ6suqJ
-    hYmqR1ncp19ZsHs5Ya/d3iTM3EBK2BtgXNZ7r/heQUh8Nxuk0PtdHU0AK4DsfINO
-    KR7tZJXcMongvsr2f0qKgwfwwrsKBdf4IVK1DGehKjL+0FmMWoswLVQEeLCt/PoC
-    +Hk4Dxstg7Z4k0W/qYuReMHWiaAB2BPCc7/k/q8w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
+    messagingengine.com; h=mime-version:references:in-reply-to:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1527184421; bh=RZh/orBxd8EiMBLsipbSi+f8NZrXPveFe8x2+B5/o5
+    8=; b=MKAlHGeymuDVVSS+0ZKvlzcIxF0miJpisO17QNj2pAWPazWFK+wIFLDD/w
+    AyHvdO6L9Lkk6pT/wR0zOfdHMP1rQ7ciWTZUk8Iee9pH2Ri+f6CbNOdGVO5ohXQS
+    AVgJyd1aZ6JBOH9/l7Pa6WvYd4D4ZbCNXvUhiMfiJwB/4yLhN4NZuUHKzq+GQYhx
+    KRVN1iV39+4GY3nYDxaKmfad8ZCpbuz77nYrKgvYExL0jjM/T0hdtjStqWQAfhbY
+    ePrrbfhK8poNINeoV6Bg22brDIVJRBa1pJZ5qotyHwze55jrOKNpLCdJYWj7fMO1
+    h56DrY/iwnYYZF/uMrTyTWw9C/kA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=linux-foundation.org header.i=@linux-foundation.org
+    header.b=emGzJkbL x-bits=1024 x-keytype=rsa x-algorithm=sha256
+    x-selector=google;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linux-foundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=at0PGoPP;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=stgolabs.net header.result=pass
+    header.domain=linux-foundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=linux-foundation.org header.i=@linux-foundation.org
+      header.b=emGzJkbL x-bits=1024 x-keytype=rsa x-algorithm=sha256
+      x-selector=google;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linux-foundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=at0PGoPP;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=stgolabs.net header.result=pass
+      header.domain=linux-foundation.org header.result=pass
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDN2YkAQGy7eYBGDxqSWKaHQSi76WF3bmJheQ9oS1GuV4sHW6oqVYDE2OmezAFMWmvEhRoc9iqKEhT4BDJR6oMm7PDnElJchegi+bf5TQ7m3ol1OpWow
-    lXFl2GrKHRYe2zKyg7gJsJ4lHIE8N4S+v8Q33aG6ic84+EO1tFmVpR5oq29500Xr+zXWRuHfTxQOOA31JR2qULIrZogniBJ63qBFC29VZYhvq/UtTkEZty61
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=WJ0wQqe_a59KIX44F1MA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAhsBBn0gz4FkbQlEk+SLyA8P1nN0Ekr9ABgmHMmR4XbnogpNDly59w+/+HMzvG2Q07S1qVMyToU5NeQxGM3UPQGDurooa6DIMmOENFKmm9MyW4HlO6K
+    oeLcyrXc3rgBd5wCRIzm2HrXAghzwocxRFQbrg5yFRrhIDkLO2kAlPJNjJQ3PwLsIImTt364PYwrnesuQFDVJJPehNFzQ/zz/sCEGlqKdOcah8infqiRuCSc
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=R4ayLD03AAAA:8 a=VwQbUJbxAAAA:8 a=kAdJWrUr-JonDoMVUH4A:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=qJlm0-shE6CLU_iKUWNr:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031393AbeEXRXb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 13:23:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53896 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031084AbeEXRXa (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 24 May 2018 13:23:30 -0400
-Date: Thu, 24 May 2018 10:07:00 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+        id S1032113AbeEXRxj (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 13:53:39 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:36154 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030467AbeEXRxi (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 24 May 2018 13:53:38 -0400
+X-Google-Smtp-Source: AB8JxZr6G6OLCYdoG/N9ZA511ZVvUws71F3ryaCA93qaEcF3DjG8i8EYpXQ8KxV98ZBTABHfv1GHGn46yF797QivG8Y=
+MIME-Version: 1.0
+References: <20180523172500.anfvmjtumww65ief@linux-n805> <CA+55aFwAtfiMa22-OFGf1dNR8CNzSKjjLLj5UL-HqgapV7Tf1A@mail.gmail.com>
+ <20180524170700.wblnybinjzx5rwky@linux-n805>
+In-Reply-To: <20180524170700.wblnybinjzx5rwky@linux-n805>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 24 May 2018 10:53:26 -0700
+Message-ID: <CA+55aFwhkOnHngHpQ3wif5iy7PtOAVdjTcwce=kgBq0TCgmfJA@mail.gmail.com>
+Subject: Re: semantics of rhashtable and sysvipc
+To: Davidlohr Bueso <dave@stgolabs.net>
 Cc: Thomas Graf <tgraf@suug.ch>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -84,137 +102,39 @@ Cc: Thomas Graf <tgraf@suug.ch>,
         guillaume.knispel@supersonicimagine.com,
         Linux API <linux-api@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: semantics of rhashtable and sysvipc
-Message-ID: <20180524170700.wblnybinjzx5rwky@linux-n805>
-References: <20180523172500.anfvmjtumww65ief@linux-n805>
- <CA+55aFwAtfiMa22-OFGf1dNR8CNzSKjjLLj5UL-HqgapV7Tf1A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwAtfiMa22-OFGf1dNR8CNzSKjjLLj5UL-HqgapV7Tf1A@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 23 May 2018, Linus Torvalds wrote:
+On Thu, May 24, 2018 at 10:23 AM Davidlohr Bueso <dave@stgolabs.net> wrote:
 
->One option is to make rhashtable_alloc() shrink the allocation and try
->again if it fails, and then you *can* do __GFP_NOFAIL eventually.
+>          tbl = bucket_table_alloc(ht, size, GFP_KERNEL);
+> -       if (tbl == NULL)
+> -               return -ENOMEM;
+> +       if (unlikely(tbl == NULL)) {
+> +               size = min(size, HASH_DEFAULT_SIZE) / 2;
+> +
+> +               tbl = bucket_table_alloc(ht, size, GFP_KERNEL);
+> +               if (tbl == NULL)
+> +                       tbl = bucket_table_alloc_retry(ht, size,
+GFP_KERNEL);
+> +       }
 
-The below attempts to implements this, along with converting the EINVAL cases
-to WARN_ON().
+This doesn't seem to be taking 'param->min_size' into account.
 
-I've refactored bucket_table_alloc() to add a 'retry' param which always
-ends up doing GFP_KERNEL|__GFP_NOFAIL for both the tbl as well as
-alloc_bucket_spinlocks(). I've arbitrarily shrunk the size in half upon
-initial allocation failure. So we default from 64 to 32 buckets, and if
-the user is hinting at larger nelems, we simply disregard that and retry
-with 32. Similarly, smaller values are also cut in half.
+I'm not sure that matters, but right now, if you have nelem_hint set and a
+min_size, the min_size is honored (if you have just min_size it's already
+ignored because the rhashtable always starts with HASH_DEFAULT_SIZE). So I
+could imagine that somebody uses it to guarantee something. The docs say
+that "min_size" is the minimum size for *shrinking* not for initializing,
+so I guess it's debatable.
 
-In addition, I think we can also get rid of explicitly passing the gfp flags
-to bucket_table_alloc() (we only do GFP_KERNEL or GFP_ATOMIC), and leave it
-up to __bucket_table_alloc() by adding a new bucket_table_alloc_noblock() or
-something for GFP_ATOMIC.
+Also, wouldn't it make sense to make this all be a while loop? Or are you
+just depending on the knowledge that HASH_DEFAULT_SIZE / 2 is already
+guaranteed to be so small that there's no point? A comment to that effect
+would be good, perhaps.
 
->
->In fact, it can validly be argued that rhashtable_init() is just buggy
->as-is. The whole *point* olf that function is to size things appropriately,
->and returning -ENOMEM obviously means that it didn't do its job.
-
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 9427b5766134..e86a396aebcf 100644
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -166,16 +166,21 @@ static struct bucket_table *nested_bucket_table_alloc(struct rhashtable *ht,
- 	return tbl;
- }
- 
--static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
--					       size_t nbuckets,
--					       gfp_t gfp)
-+static struct bucket_table *__bucket_table_alloc(struct rhashtable *ht,
-+						 size_t nbuckets,
-+						 gfp_t gfp, bool retry)
- {
- 	struct bucket_table *tbl = NULL;
- 	size_t size, max_locks;
- 	int i;
- 
- 	size = sizeof(*tbl) + nbuckets * sizeof(tbl->buckets[0]);
--	if (gfp != GFP_KERNEL)
-+	if (retry) {
-+		gfp |= __GFP_NOFAIL;
-+		tbl = kzalloc(size, gfp);
-+	}
-+
-+	else if (gfp != GFP_KERNEL)
- 		tbl = kzalloc(size, gfp | __GFP_NOWARN | __GFP_NORETRY);
- 	else
- 		tbl = kvzalloc(size, gfp);
-@@ -211,6 +216,20 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
- 	return tbl;
- }
- 
-+static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
-+					       size_t nbuckets,
-+					       gfp_t gfp)
-+{
-+	return __bucket_table_alloc(ht, nbuckets, gfp, false);
-+}
-+
-+static struct bucket_table *bucket_table_alloc_retry(struct rhashtable *ht,
-+						     size_t nbuckets,
-+						     gfp_t gfp)
-+{
-+	return __bucket_table_alloc(ht, nbuckets, gfp, true);
-+}
-+
- static struct bucket_table *rhashtable_last_table(struct rhashtable *ht,
- 						  struct bucket_table *tbl)
- {
-@@ -1024,12 +1043,11 @@ int rhashtable_init(struct rhashtable *ht,
- 
- 	size = HASH_DEFAULT_SIZE;
- 
--	if ((!params->key_len && !params->obj_hashfn) ||
--	    (params->obj_hashfn && !params->obj_cmpfn))
--		return -EINVAL;
-+	WARN_ON((!params->key_len && !params->obj_hashfn) ||
-+		(params->obj_hashfn && !params->obj_cmpfn));
- 
--	if (params->nulls_base && params->nulls_base < (1U << RHT_BASE_SHIFT))
--		return -EINVAL;
-+	WARN_ON(params->nulls_base &&
-+		params->nulls_base < (1U << RHT_BASE_SHIFT));
- 
- 	memset(ht, 0, sizeof(*ht));
- 	mutex_init(&ht->mutex);
-@@ -1068,9 +1086,23 @@ int rhashtable_init(struct rhashtable *ht,
- 		}
- 	}
- 
-+	/*
-+	 * This is api initialization. We need to guarantee the initial
-+	 * rhashtable allocation. Upon failure, retry with a smaller size,
-+	 * otherwise we exhaust our options with __GFP_NOFAIL.
-+	 *
-+	 * The size of the table is shrunk to at least half the original
-+	 * value. Users that use large nelem_hint values are lowered to 32
-+	 * buckets.
-+	 */
- 	tbl = bucket_table_alloc(ht, size, GFP_KERNEL);
--	if (tbl == NULL)
--		return -ENOMEM;
-+	if (unlikely(tbl == NULL)) {
-+		size = min(size, HASH_DEFAULT_SIZE) / 2;
-+
-+		tbl = bucket_table_alloc(ht, size, GFP_KERNEL);
-+		if (tbl == NULL)
-+			tbl = bucket_table_alloc_retry(ht, size, GFP_KERNEL);
-+	}
- 
- 	atomic_set(&ht->nelems, 0);
- 
+                    Linus
