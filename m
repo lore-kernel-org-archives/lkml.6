@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527160552-2-6173426855891954316
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159965-2-4297756001393340581
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160552; b=Z3DiEIO7nDH5n7IXoGWmE1rdKrAf+/iEvmQShQMIyUl+6wnaIh
-    uhgBIj/Pa4dznY0JPs/FgIMAJ3BcDsGmkwOgnvtT8DpIJoOk7K6Y5cdfmVl0VvYi
-    xWRvvmX34V3KObngwoB85UIoF+q/7TRWFg3+nJvTCh4Qbl5ae9Is9Rse2RnC0qmP
-    vDK/PjSXF08IaBeCq+Zw7aCgkYlDQHMrQpEkP0ZXJgOXiinbw37IRMvTxmpigxFu
-    nWJMJ65NEHCk0n8MSp9R1wzQvf8/39CH4QmWC4pemiG81/l7vnGP0LvgoagqXx8y
-    6/lfQSmSiRZPW+47Atg61+t3caPBmU8gjYOg==
+    1527159965; b=cf+sPYcyrHthHHWQ0PlEK2sPwxFnn+E+09NoZ5FBoVzSBNzoeK
+    WGz772v7xitb2Qet/UbjDKHL+kBp0ZigzZgnCTUTMxHCkm6vBqjlY3pL115rDAHD
+    4+EzSDgA+JS+h6upL4QvXhav7I45jNDTcHF4RLzgdhuy49l/mZqtMGpLr2fAS6ey
+    qX4cOWq2yGPF7ZMlHYJ/FbwJdj8aj8WjPnfy/KWi9WGe1fO6VkenEQ36BYSWnYCl
+    +ioIuaXtcOLvTe0dGIDmSsNfnynTr0NbUscpIC1CmazVXYe4FDnwCREUA01CYYMQ
+    iF+R/ZqV+lWUnodobQWDsWeKyVx68n93dQBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160552; bh=DsvT2rukNL7Nulxd55ws0aT1p9Or1K
-    wc+K4DpeJVpl0=; b=Hm0tMTZzhGMg4GcpbozGySCLoWBrhimQR9p+ViV/iKyNxq
-    nYuHY12s21aPz0YDnOkpWSOnkNQx+bqomjvOZoM+tLqyVmq3jRUZOKBcO5ufQfI0
-    KbcmnEVN1an/MjXdaK2wfim+gIB2yolQraj9bUlL/DfOQz3mTOOlVL7WpLnNCo/9
-    WVkIk8sGqLcKLrRQ8f/WquyaN0mtnPe1HmpaQtzN3VMmltxtDRyZFSHoALZA+beK
-    k1yA7qE0gfot9kUKhlljPdafEF8owF4VMTXD2NfkmFYDDN4p6KKWC+W+AeyLlWG3
-    jayEP0Y0hxhvfjJEoVWS3fdMrBDqzuN5I5GthDaQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159965; bh=LnVYrzntBImcn1FOvbx+MIXh7TUkgZ
+    6pYWw+MZ008HE=; b=EPn9QihEIXPnN+6qkhAtBQnRWm6UHg+/vKzWDAxdiDNuA+
+    qSUHvvvhX7QVB2PkQ8+LjWdhXeh2TL7NQh/bTAcnka9gOvv+UIxnJEXyPLPl3LVH
+    FRY+YFK1GcmuItzJgwhBZesZjmALQ1mUwxQhNJ2f6G777K3pg3ADzVqow/MICfmO
+    +pDP3AuZywxleAm8+9CGZY2aD5nk7+phHeWloQ5hSvgHI8nlAje0S59gRiHDM/Ob
+    /9LZ5qLxp1SQKPHZ5InjBnA6KTmQLKzYcICrv2/PnfPb+ubd+VrWKEYaACO/qeAm
+    l0Iq2Sandw6GaAt7YrxRhHcRpj0UZ2wrDH1wz0pw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=szYXSsV0 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=KHHHliv3 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=szYXSsV0 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=KHHHliv3 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,29 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG6zT8kklDCGx8uDrmimTYBh20WQs386cvV8mYdU9D9ZwlQZJIJlsNkPMdM2L5bURWtDe1ZtKW6cko+axXaPdQNcW4YGE30NotFr+IWrzrOa6TQEcyob
-    +fVXXWUcD0pStPwnb7nvaYp2+IVkW0tRgcMTtXNSDvbi3HzXT5xYcSQchmNYIFbxj1az18+ziP3zFsby8jfNrOeRvgtSVGbOcyyt/JV7BFzm2wkxb0tsv4sT
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIxOCDZkLT8iLVqmqUZfbYaUsmBOsFnHxzGvGh77rF6z3rcT9Av8HY/GyFhsegIO74NkCeRvPp1zmeCxTCw3kA0+4TzW6ZMop2eKk82UqGg5200X+SJo
+    VmNH1gLYhZqz+bkrNefj+OkvpOV1SoD0UgGrJBu29nHzPEup+SD6YgjMbJUbyb9OjGBTyGgeHQvFGzA7jb6UUTIoBeBmKKgdirE3Lo7vXYd0/WLB3uVCOFwQ
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=LpQP-O61AAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=WEBF5sqjXZMyK3CwXLsA:9 a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=DfNHnWVPAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=A-hZHoMch7ZS3K96ndYA:9
+    a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968091AbeEXLPf (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:15:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60518 "EHLO mail.kernel.org"
+        id S1030506AbeEXLGB (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:06:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968074AbeEXJxn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:43 -0400
+        id S968282AbeEXJzH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 057/165] usb: gadget: core: Fix use-after-free of usb_request
-Date: Thu, 24 May 2018 11:37:43 +0200
-Message-Id: <20180524093624.325409354@linuxfoundation.org>
+Subject: [PATCH 4.14 088/165] staging: rtl8192u: return -ENOMEM on failed allocation of priv->oldaddr
+Date: Thu, 24 May 2018 11:38:14 +0200
+Message-Id: <20180524093625.590991506@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -106,30 +104,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Manu Gautam <mgautam@codeaurora.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit e74bd4d358e5455233f1dcc3975425905b270b91 ]
+[ Upstream commit e1a7418529e33bc4efc346324557251a16a3e79b ]
 
-Driver is tracing usb_request after freeing it.
-Fix it by changing the order.
+Currently the allocation of priv->oldaddr is not null checked which will
+lead to subsequent errors when accessing priv->oldaddr.  Fix this with
+a null pointer check and a return of -ENOMEM on allocation failure.
 
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Detected with Coccinelle:
+drivers/staging/rtl8192u/r8192U_core.c:1708:2-15: alloc with no test,
+possible model on line 1723
+
+Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192u/r8192U_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/gadget/udc/core.c
-+++ b/drivers/usb/gadget/udc/core.c
-@@ -191,8 +191,8 @@ EXPORT_SYMBOL_GPL(usb_ep_alloc_request);
- void usb_ep_free_request(struct usb_ep *ep,
- 				       struct usb_request *req)
- {
--	ep->ops->free_request(ep, req);
- 	trace_usb_ep_free_request(ep, req, 0);
-+	ep->ops->free_request(ep, req);
- }
- EXPORT_SYMBOL_GPL(usb_ep_free_request);
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -1702,6 +1702,8 @@ static short rtl8192_usb_initendpoints(s
  
+ 		priv->rx_urb[16] = usb_alloc_urb(0, GFP_KERNEL);
+ 		priv->oldaddr = kmalloc(16, GFP_KERNEL);
++		if (!priv->oldaddr)
++			return -ENOMEM;
+ 		oldaddr = priv->oldaddr;
+ 		align = ((long)oldaddr) & 3;
+ 		if (align) {
