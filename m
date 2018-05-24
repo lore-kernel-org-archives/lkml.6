@@ -1,99 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965413AbeEXNQT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:16:19 -0400
-Received: from sandeen.net ([63.231.237.45]:60304 "EHLO sandeen.net"
+        id S965534AbeEXNRp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:17:45 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:43557 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965064AbeEXNQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:16:17 -0400
-Subject: Re: Bugs involving maliciously crafted file system
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster> <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain> <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
- <20180523234114.GA3434@thunk.org> <20180524004931.GB23861@dastard>
- <20180524005906.GC3434@thunk.org>
-From: Eric Sandeen <sandeen@sandeen.net>
-Message-ID: <27e0242c-1e71-ffe4-df4d-e75e8d2bb529@sandeen.net>
-Date: Thu, 24 May 2018 08:16:14 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S965042AbeEXNRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 09:17:43 -0400
+Date: Thu, 24 May 2018 15:17:38 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <vokac.m@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        vivien.didelot@savoirfairelinux.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, davem@davemloft.net, michal.vokac@ysoft.com
+Subject: Re: [PATCH net-next v3 0/7] Add support for QCA8334 switch
+Message-ID: <20180524131738.GD24557@lunn.ch>
+References: <1527056424-14528-1-git-send-email-michal.vokac@ysoft.com>
+ <29ea7cdd-5690-e39a-a2ef-4f48fbcb7659@gmail.com>
+ <f8bf325c-77a5-d44b-34c3-93ea4b11fd84@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180524005906.GC3434@thunk.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8bf325c-77a5-d44b-34c3-93ea4b11fd84@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/23/18 7:59 PM, Theodore Y. Ts'o wrote:
-> On Thu, May 24, 2018 at 10:49:31AM +1000, Dave Chinner wrote:
->> We've learnt this lesson the hard way over and over again: don't
->> parse untrusted input in privileged contexts. How many times do we
->> have to make the same mistakes before people start to learn from
->> them?
-> Good question.  For how many years (or is it decades, now) has Fedora
-> auto-mounted USB sticks?:-)  Let me know when you successfully get
-> Fedora to turn of a feature which appears to have great user appeal.
+> Thank you too Florian. And also big thank to you Andrew. You helped me
+> a lot to debug the RGMII issue. I have been stuck at that for more than
+> a month and would not resolve it without your help.
 
-So we have decades of filesystem design based on one threat model, and
-some desktop environments decided to blow it all up 'cause it's more
-convenient that way.
+We are here to help. I also got stuck figuring out RGMII issues, so i
+know what it feels like...
+ 
+> As I have done this in a process of upgrading our BSP to a more recent
+> kernel, and hopefully mainline, I now need to move on to other parts of
+> the board.
 
-Super.  Maybe the email client can start auto-running attachments, too,
-For The Convenience.
+Do you think you can mainline the board? It would be nice to have an
+in kernel board using this switch. If you post the device tree
+patches, please Cc: me.
 
-What's the phrase... poor planning on your part doesn't constitute an
-emergency on my part?  :/  (not actually referring to /you/, Ted) ;)
-
-Anyway, if desktops auto-mounting USB sticks is the primary threat,
-maybe time would be better spent adding restrictions there - allow only a
-subset of common USB formats which are simple and have been fuzzed to hell
-and back, rather than mounting whatever you happened to find lying in the
-parking lot at work and hoping that somebody, somewhere, has discovered and
-fixed every attack vector now that we've blown up the trust model
-For The Convenience.
-
-(Digging through dconf-editor, there's just on/off, no gui method at
-least, to include or exclude automountable fs types.  It's all or
-nothing.  TBH I have no idea how many mechanisms are out there to do
-this automounting - hal/udev/systemd/ghome/dbus/...?)
-
-Anyway, fuzzers aside, it sure seems like if we can't un-ring the
-automount bell, it'd be prudent to limit it to FAT by default and focus
-efforts on making that as safe as possible.
-
->> Bugs don't have to be exploitable to be a "security issue". Detected
->> filesystem corruptions on a errors=panic mount, or undetected
->> problems that cause a x/NULL deref are still a user-triggerable
->> kernel crash (i.e. a DOS) and therefore considered a security
->> problem.
-> 
-> I disagree here.  I think it's worth it to disambiguate the two.  If
-> you have physical access to the machine, you can also apply AC mains
-> voltage to the USB port, which will likely cause the system to crash.
-> And at least for Chrome OS, it reboots really quickly.  
-
-Even after you apply AC mains to the USB port?  Cool, Chrome's pretty
-resilient.  ;)
-
-I think Dave may have been just stating a reality there rather than agreeing
-with it, not sure.
-  
-> If someone can gain control of the system so they can exfiltrate data,
-> or be able to modify files owned as root, that's a much bigger deal
-> that crashing the machcine in my view.
-
-For sure.  I guess some subset of the crashes could be more carefully
-crafted to be more dangerous, but fuzzers really don't tell us that today,
-in fact the more insidious flaws that don't turn up as a crash or hang likely
-go unnoticed.
-
--Eric
+	 Andrew
