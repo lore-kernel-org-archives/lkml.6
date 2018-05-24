@@ -1,31 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034425AbeEXTFX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:05:23 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:54455 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032875AbeEXTFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:05:17 -0400
-X-Google-Smtp-Source: AB8JxZox7+EtnJyebqSfO4sE5AWz6A9PIEojKX8BZxHEfauSvW9HfoG980D86PCZwIfl0gMfVJ6pvaSh9RVaFwOD9YI=
+        id S1034435AbeEXTGb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:06:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030244AbeEXTG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:06:29 -0400
+Date: Thu, 24 May 2018 21:06:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>
+Subject: Re: [PATCH 4.4 50/92] mm: filemap: avoid unnecessary calls to
+ lock_page when waiting for IO to complete during a read
+Message-ID: <20180524190611.GD31019@kroah.com>
+References: <20180524093159.286472249@linuxfoundation.org>
+ <20180524093204.290399449@linuxfoundation.org>
+ <20180524105011.jkmjrmoyqtogtgnn@quack2.suse.cz>
+ <20180524110546.GA16171@kroah.com>
+ <CANsGZ6bsz-J9XB_O5+B+mmRV2CGaJ8e+Aa=N3WnE7YNARWsAnw@mail.gmail.com>
+ <20180524112841.GA17626@kroah.com>
+ <CANsGZ6anzAW3dcEQqgfRGxnk+n4ih_PpKOCGdcHv_SF86x2-0g@mail.gmail.com>
 MIME-Version: 1.0
-From: Ramon Fried <ramon.fried@gmail.com>
-Date: Thu, 24 May 2018 22:05:15 +0300
-Message-ID: <CA+Kvs9=mgW4Z=UcBZZLL82fJ=c--OXF3=B2Zbho+CfMTr8Wk-Q@mail.gmail.com>
-Subject: uImage target support on arm64
-To: catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANsGZ6anzAW3dcEQqgfRGxnk+n4ih_PpKOCGdcHv_SF86x2-0g@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
-I've noticed that it's not supported.
-Is it on purpose ?
-If not I'll be happy to add support for: make uImage
-for arm64 targets.
+On Thu, May 24, 2018 at 10:27:59AM -0700, Hugh Dickins wrote:
+> On Thu, May 24, 2018 at 4:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > On Thu, May 24, 2018 at 04:17:12AM -0700, Hugh Dickins wrote:
+> > >   Thu, May 24, 2018 at 4:06 AM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org>
+> > > wrote:
+> > >
+> > > > On Thu, May 24, 2018 at 12:50:11PM +0200, Jan Kara wrote:
+> > > > > On Thu 24-05-18 11:38:27, Greg Kroah-Hartman wrote:
+> > > > > > 4.4-stable review patch.  If anyone has any objections, please
+> let me
+> > > know.
+> > > > >
+> > > > > Just one objection: Why does stable care about this (and the
+> previous
+> > > > > patch)? I've checked the stable queue and I don't see anything that
+> > > would
+> > > > > have these patches as a prerequisite. And on their own, they are
+> only
+> > > > > cleanups without substantial gains.
+> > >
+> > > > There's a small gain here:
+> > >
+> > > > > > paralleldd
+> > > > > >                                     4.4.0                 4.4.0
+> > > > > >                                   vanilla             avoidlock
+> > > > > > Amean    Elapsd-1          5.28 (  0.00%)        5.15 (  2.50%)
+> > > > > > Amean    Elapsd-4          5.29 (  0.00%)        5.17 (  2.12%)
+> > > > > > Amean    Elapsd-7          5.28 (  0.00%)        5.18 (  1.78%)
+> > > > > > Amean    Elapsd-12         5.20 (  0.00%)        5.33 ( -2.50%)
+> > > > > > Amean    Elapsd-21         5.14 (  0.00%)        5.21 ( -1.41%)
+> > > > > > Amean    Elapsd-30         5.30 (  0.00%)        5.12 (  3.38%)
+> > > > > > Amean    Elapsd-48         5.78 (  0.00%)        5.42 (  6.21%)
+> > > > > > Amean    Elapsd-79         6.78 (  0.00%)        6.62 (  2.46%)
+> > > > > > Amean    Elapsd-110        9.09 (  0.00%)        8.99 (  1.15%)
+> > > > > > Amean    Elapsd-128       10.60 (  0.00%)       10.43 (  1.66%)
+> > > > > >
+> > > > > > The impact is small but intuitively, it makes sense to avoid
+> > > unnecessary
+> > > > > > calls to lock_page.
+> > >
+> > > > Yes, it's small, but it's marked in the SLES kernel as "needs to be
+> > > > merged into stable", so obviously it matters to someone :)
+> > >
+> > > Hmm. I had the same reaction to these two as Jan, but assumed that they
+> > > made applying later patches easier, and didn't take the trouble he did
+> to
+> > > find that's not so.
+> > >
+> > > I've no wish to be disputatious, but it does seem that the definition of
+> > > "stable" has changed, and not necessarily for the better, if it's now a
+> > > home for small gains: I thought we left those to upstream.
+> 
+> > This is in the SLES kernel for a reason, and again, it's in the section
+> > that says "this should be pushed to stable".  So if it's good enough for
+> > the SLES kernel, why isn't it good enough for all users of this kernel
+> > tree?
+> 
+> > If you all think it should be dropped in both places, that's fine with
+> > me :)
+> 
+> I think they are perfectly fine in SLES: folding in good work is a part of
+> what distros are about.
 
-Warm regards,
-Ramon.
+And it's also what stable is for.  We have had backports of performance
+improvements in the past, along with lots of other things over the
+years.  This is a performance improvement.  A tiny one, yes, but getting
+rid of a lock is a good thing, and I picked it up as part of my review
+of what a distro decided was worth adding for their users, as that's a
+huge signal that might be of value to others.
+
+> But I cannot find anything in stable-kernel-rules.rst that would admit them
+> - perhaps that's just out of date?
+
+Nope, that's the list I use to say "no" to.  You can't describe
+everything in that file, it's a judgement call.
+
+> If -stable is to be a compendium of "this looks nice, you might like to
+> include it", so be it: but the rules should then be updated.
+
+This is a "a bunch of people I trust took it in their kernel, and it's
+been running on zillion of machines for a while and causes no harm and a
+slight benefit, so let's add it!" type of thing.  It's not the only
+patch in this series that was like that, but for some reason this one is
+the one the triggered the debate, which is funny to me as this does have
+numbers in it showing that it is an improvement :)
+
+thanks,
+
+greg k-h
