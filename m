@@ -1,77 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032060AbeEXRwZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:52:25 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:38181 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031168AbeEXRul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:50:41 -0400
-X-Google-Smtp-Source: AB8JxZrc2TdvR9ECx8yPlMYRSrZ2R1CNZMNxvJELm4B8RdNwGEwyTxURdT1WzEja3oLaycG3VzW0zg==
-From: Rob Herring <robh@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        boot-architecture@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 5/8] pinctrl: optionally stop deferring probe at end of initcalls
-Date: Thu, 24 May 2018 12:50:21 -0500
-Message-Id: <20180524175024.19874-6-robh@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180524175024.19874-1-robh@kernel.org>
-References: <20180524175024.19874-1-robh@kernel.org>
+        id S1032187AbeEXR4Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:56:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40855 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030366AbeEXR4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 13:56:23 -0400
+Date: Thu, 24 May 2018 19:56:20 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Radu Pirea <radu.pirea@microchip.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH v3 5/6] spi: at91-usart: add driver for at91-usart as spi
+Message-ID: <20180524175620.GB12093@piout.net>
+References: <20180511103822.31698-1-radu.pirea@microchip.com>
+ <20180511103822.31698-6-radu.pirea@microchip.com>
+ <CAHp75Ve3Ugnjjm8EZkPQTZSvH1qad1e5SqjOn8zz5syHSQea_g@mail.gmail.com>
+ <5a3930b867cf8c279953d08c5d5dd1d93113a43b.camel@microchip.com>
+ <CAHp75VdRrL25Jgnbk64Qqc5RY3uJdcntJ3xwRdp3F+rRFeTHBA@mail.gmail.com>
+ <c23cdde58b9f724f51787c6c38478df983be6efa.camel@microchip.com>
+ <20180517045437.GE20254@sirena.org.uk>
+ <0e6e71e2-f8ac-7889-0d81-8d8a4c15223d@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e6e71e2-f8ac-7889-0d81-8d8a4c15223d@microchip.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the pinctrl node in DT indicates that pin setup is optional and the
-defaults can be used with the 'pinctrl-use-default', then only defer probe
-until initcalls are done. This gives platforms the option to work without
-their pinctrl driver being enabled.
+Hi,
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pinctrl/devicetree.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+On 24/05/2018 19:04:11+0300, Radu Pirea wrote:
+> 
+> 
+> On 05/17/2018 07:54 AM, Mark Brown wrote:
+> > On Tue, May 15, 2018 at 12:22:24PM +0300, Radu Pirea wrote:
+> > > On Mon, 2018-05-14 at 20:38 +0300, Andy Shevchenko wrote:
+> > 
+> > > > So, what is not going as expected in "SPI core takes care of CSs"
+> > > > case?
+> > > > Did you use oscilloscope for that?
+> > 
+> > > Yes, I used and CSs was not asserted. Anyway, I will will try again.
+> > 
+> > If the core chip select handling is not working properly for some reason
+> > then the core chip select handling should be fixed rather than just open
+> > coding in your driver - probably it's also broken for other users.
+> > 
+> 
+> Hi Mark,
+> 
+> I found the fix for cs-gpios. If I change spi_add_device function like
+> this(see below) everything is ok.
+> 
+> int spi_add_device(struct spi_device *spi)
+> 
+> ...
+> 
+>     if (ctlr->cs_gpios){
+>         spi->cs_gpio = ctlr->cs_gpios[spi->chip_select];
+>         if(gpio_is_valid(spi->cs_gpio))
+>             gpio_direction_output(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
+> 
+>     }
+> 
+> ...
+> 
+>     return status;
+> }
+> 
+> In the subsystem gpio direction of pins is never set and gpio_set_value()
+> don't set the direction.
+> In my opinion gpio_direction_output() set direction should be called in
+> spi_add_device. What do you think? Is ok?
 
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index b601039d6c69..74a31074b406 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -110,17 +110,23 @@ static int dt_to_map_one_config(struct pinctrl *p,
- 	int ret;
- 	struct pinctrl_map *map;
- 	unsigned num_maps;
-+	bool pctl_optional = false;
- 
- 	/* Find the pin controller containing np_config */
- 	np_pctldev = of_node_get(np_config);
- 	for (;;) {
-+		if (!pctl_optional)
-+			pctl_optional = of_property_read_bool(np_pctldev, "pinctrl-use-default");
-+
- 		np_pctldev = of_get_next_parent(np_pctldev);
- 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
--			dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
--				np_config);
- 			of_node_put(np_pctldev);
--			/* OK let's just assume this will appear later then */
--			return -EPROBE_DEFER;
-+			ret = driver_deferred_probe_check_init_done(p->dev, pctl_optional);
-+			if (ret == -EPROBE_DEFER)
-+				/* OK let's just assume this will appear later then */
-+				dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
-+					np_config);
-+			return ret;
- 		}
- 		/* If we're creating a hog we can use the passed pctldev */
- 		if (pctldev && (np_pctldev == p->dev->of_node))
+Back in 2014, I was suggesting using devm_gpio_request_one() in
+of_spi_register_master(). That would take care of setting the direction
+of the GPIO:
+
+https://www.spinics.net/lists/arm-kernel/msg351251.html
+
+I never took the time to create the patch and test though.
+
 -- 
-2.17.0
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
