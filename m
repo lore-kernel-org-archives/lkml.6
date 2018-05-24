@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527159837-2-3846336874478992970
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159836-2-1787106050454179329
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enca, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159836; b=estlCDqrVYpCK+EYA3zVz1bEAKPaSJcvvmSobDag1MpxJtrfP3
-    JuQLg2UrxtyfgARLt9nu9NrR5iHnr8bkllRu9X9mEtRbme5+lXDszkgyOyrYnruG
-    1ESSswSpNrjV2hK8EmIgK8x7xdLbEclw9+vyAkPH2NwvsH4YWWNiubDgHIr/Qa1H
-    uRFfqk9fHBwi1/Ocs9LxAshtH6m+1fLIkD2wfUf/in6RMf7Eb2+8fy4UcFbFCX/O
-    yhI0nLcmzIxIoJCEoCD93dmQaMsXfx01DRegHzkKJ3Yt2kHSy12aukWGHX11JPAK
-    t7twsV+kNs3aDVJrSeU/k5J3nm7bjU5JnWHQ==
+    1527159835; b=NLlnRS7OKL7vEWYLL92uESNSXLeVaktOxNY6dxs6k2PVw01JAt
+    mYuNGT0n+TXeJwCHbOE3jlMxYkqwh8qnxCVz9VMsApB3UI2YVcbAiwwBoLBOKuyJ
+    QXSB8UNgK1UJ92YA6O8yZHk4HzbilCbgiR8/3TatpmP/WFHMLAglqUgWqNcPNb1u
+    r6UuJ7z5frDHZVEy9Pjh+oUDThU0t9aTfvGFPDkcj6ft2Q/JxNfz9YYeXYE+JbuZ
+    vAUcvGNh91fdoinFwsWYwZfuJ6buM6Eq0DjNU9UgMHyhNwlc8++7h2kSvvqYOpsv
+    7kQdWIKURWvXgcz+WTrGZ3L3JCzXV05ud/Ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159836; bh=3jT90In2JIUiiGDZUrPl1vuBoaeaRu
-    c4Q+KdL8LfEEg=; b=k0DMLb8r//CZtd2qzavBLh008i1OM6oayGnDI5kOT3NuSj
-    RIutFsb6uEVlH6jlyd6AJiU4w22gY8jad00z6OEGEIfJPhlsbuu9D4KuZUkWePZz
-    Ok31+pjSUKGcYLKf8/ax/GpUBOAjC1UUkBZIb1Tz6qz28LaNfO2I/TepZq3pata4
-    o6YfkJKRvLQqCle1mYxpp7spFwDXHhGuuAXdm3pqOgmNZvxcuTSP/KLIXiyL/1zD
-    Jd3tijxUCa7dCH5iarpdtjyxIY4rhAeK8zU/MChT5kvi+PLgBqc3sI2BUpgmHR3b
-    JbmdYx3xOirCZkrvB2B319p2hFt+XNppbou30JRQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159835; bh=GAU85ESeGo5wbF7M1rFhEzFKxdz9fM
+    4i3n+DyNwjqV0=; b=PclSsRDRehwQT51VBXKHrkJOSosxpt0hvu5eNI4ri2cnNs
+    ZoNENAPidjWL9rvT/LHT58JQzFU+ndxX+yTqANEWw+XN0tafEMo+MrIbyHvBpRlh
+    nSItPcI6nmKX1jJkIikrpJpIxPR4//Bxt70CRRzy89hXMwuH0zQmIehofbtEWqsW
+    6tHPbKZv0vBYzEAZrSIv+u2w/yplVJMvDdLCzJVaY/xo0l4kINqz0IOTMZftfOF3
+    bbveG6OFFXx1AYmA6bGtJRsf2lCYu/e2l7CcVLbHR3tEx/i2B8uxAc6Zu8Gy7Rip
+    BIPj8Ddycb1rgjVO23kH/31o4lUEoh9dcoFQCZxw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Zi6ZBvJl x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=rcX+Qi2u x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Zi6ZBvJl x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=rcX+Qi2u x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,33 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMY9RZiTjTxiwJ6avHxCdZAm2zKrWj63hixDPndckN26aIKkqJ3Nm8nPvtpxrEjw3HpnnNZ8cruYmXB1I06mvdHbPDbohPLcW6pW9YQW91yphbugnQyT
-    +ZUTeFp8q/s+1Z6+c0BLBciWMCGA7als5qYGiqgd/PY6YH99fCZK6nalEpgUODLesJrReWmqXGNqHbI67ZuBdyHs84hWULmmtOhiLoFYnWkBQUrynO1gMEmS
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJPqjCctzpycbBUMrgDYRizZbTmQvTmTIIwj9Yk2Luzji2KtnoBMz5IEEzVjfq86u0KZdgoxDL52nLG70YCucUlyaQJVAsJUxfxkS/gAX/nJr//KlnMT
+    iIPjRBu1jGIMhtACiPrvNj4+Ew+hMurDRPVxU7gAqMHbu6hTDHCc5GN11AvnW3pAtGE5LekkV/L7Bs2nRjetV1pqtlmU0rRAW4xFJVM8E/Wx332cga1BZ/rQ
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=P-IC7800AAAA:8 a=FNyBlpCuAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=Mwc-CdAr3abN8VHC810A:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
-    a=RlW-AWeGUCXs_Nkyno-6:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=zAyngx5bAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=LY6Ug91mmT4cBBZjW7EA:9 a=QEXdDO2ut3YA:10 a=4LA4qAFo6bo561LpWNDU:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968361AbeEXJzl (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35702 "EHLO mail.kernel.org"
+        id S1030258AbeEXLDf (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:03:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968389AbeEXJzh (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:55:37 -0400
+        id S968396AbeEXJzn (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 098/165] crypto: inside-secure - fix the invalidation step during cra_exit
-Date: Thu, 24 May 2018 11:38:24 +0200
-Message-Id: <20180524093625.981448838@linuxfoundation.org>
+Subject: [PATCH 4.14 100/165] scsi: qla2xxx: Fix memory corruption during hba reset test
+Date: Thu, 24 May 2018 11:38:26 +0200
+Message-Id: <20180524093626.059713786@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,60 +108,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-[ Upstream commit b7007dbccd92f7b8c00e590020bee542a48c6a2c ]
+[ Upstream commit 2ce87cc5b269510de9ca1185ca8a6e10ec78c069 ]
 
-When exiting a transformation, the cra_exit() helper is called in each
-driver providing one. The Inside Secure SafeXcel driver has one, which
-is responsible of freeing some areas and of sending one invalidation
-request to the crypto engine, to invalidate the context that was used
-during the transformation.
+This patch fixes memory corrpution while performing HBA Reset test.
 
-We could see in some setups (when lots of transformations were being
-used with a short lifetime, and hence lots of cra_exit() calls) NULL
-pointer dereferences and other weird issues. All these issues were
-coming from accessing the tfm context.
+Following stack trace is seen:
 
-The issue is the invalidation request completion is checked using a
-wait_for_completion_interruptible() call in both the cipher and hash
-cra_exit() helpers. In some cases this was interrupted while the
-invalidation request wasn't processed yet. And then cra_exit() returned,
-and its caller was freeing the tfm instance. Only then the request was
-being handled by the SafeXcel driver, which lead to the said issues.
+[  466.397219] BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+[  466.433669] IP: [<ffffffffc06f5dd0>] qlt_free_session_done+0x260/0x5f0 [qla2xxx]
+[  466.467731] PGD 0
+[  466.476718] Oops: 0000 [#1] SMP
 
-This patch fixes this by using wait_for_completion() calls in these
-specific cases.
-
-Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/inside-secure/safexcel_cipher.c |    2 +-
- drivers/crypto/inside-secure/safexcel_hash.c   |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_os.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/crypto/inside-secure/safexcel_cipher.c
-+++ b/drivers/crypto/inside-secure/safexcel_cipher.c
-@@ -446,7 +446,7 @@ static int safexcel_cipher_exit_inv(stru
- 	if (!priv->ring[ring].need_dequeue)
- 		safexcel_dequeue(priv, ring);
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3581,6 +3581,8 @@ qla2x00_remove_one(struct pci_dev *pdev)
+ 	}
+ 	qla2x00_wait_for_hba_ready(base_vha);
  
--	wait_for_completion_interruptible(&result.completion);
-+	wait_for_completion(&result.completion);
- 
- 	if (result.error) {
- 		dev_warn(priv->dev,
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -494,7 +494,7 @@ static int safexcel_ahash_exit_inv(struc
- 	if (!priv->ring[ring].need_dequeue)
- 		safexcel_dequeue(priv, ring);
- 
--	wait_for_completion_interruptible(&result.completion);
-+	wait_for_completion(&result.completion);
- 
- 	if (result.error) {
- 		dev_warn(priv->dev, "hash: completion error (%d)\n",
++	qla2x00_wait_for_sess_deletion(base_vha);
++
+ 	/*
+ 	 * if UNLOAD flag is already set, then continue unload,
+ 	 * where it was set first.
