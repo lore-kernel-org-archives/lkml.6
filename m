@@ -1,38 +1,37 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpanWnNOBBhYZKF5P/sEI0G0PFzQFPM9EGVuK30wD4pc8K+QA9DZEzv8M4DZn5e5bbRJs5/
-ARC-Seal: i=1; a=rsa-sha256; t=1527156179; cv=none;
+X-Google-Smtp-Source: AB8JxZqRTCsWEJXWP20Iw2mK/qQjySz4dTgx/aOGR9JR4tHyC3JfmueeWqxUlzY1DJ9aG1Nlw/Au
+ARC-Seal: i=1; a=rsa-sha256; t=1527156174; cv=none;
         d=google.com; s=arc-20160816;
-        b=cShqrRtn6tN53E/XFnf1bi7KQRloW688M9KG4KntnAnjACKflCGSZCPNuTeivZriFY
-         HtTyvjw0CVoDRcUUdxywdDm6JNvzUid0VYh6UA2/4wqpbEaAiTgYiAllURAKLMwMApXk
-         tLKYjRaK+pdcKOMeHug/fkoJdEVrGwqSq2EwpBZ4gBoAOsJ67Wc3ZtWUt/FU4mX3E506
-         N5Q13fNMBxFWMfmT/qXAvuQCI6W9o9n4KhJbzYtDwcWv4YEL3dSka+b+qfbv/KvEY/+M
-         nNpKOZ49akAf53g2mOOq3ax74yBVZsCFaOUTONA9l5V2s7wjMrRGkhLhfvtpkkSzB83m
-         jumw==
+        b=uii5r2yUlSitEufKw//biVM/YVJxFzz9HnEvt4WBz9H0rHNV2cn+bPQTwlrvF06mdo
+         gSrzm/hqfbz3XKdy3bYszOw3F7oBJY44cH6fSDdHFChghRvmGydaSBPbosfDEbu1Ox1H
+         wObt/CG4s0I1r1KQ+D/kKhZUjRoFrjnJla2YPVq40XZC0gBxTIWm/VrdNlrWplcdRfij
+         mJ4Iy2dOrzncBMdUWNtFIPIigicFIORzv3LQe90XH/zoFmWTNg13IJ9yRCjsct9yo5GS
+         ZqwpaitY70RqJgZojlNmF606ekVG3mH26cdc/QkIaIUu3W9WfEYMJ9mitJJAHCpwGMA7
+         K8hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=KZ6WNtoq2dvRUmITo/WuysIGOFatUaLnUwl2NOKmEuQ=;
-        b=xtYsLZpYuW/vgWt4/xYYgucZYuKGOgVe4gxvdlHlupYZZ5W6didbAtuWfOsc0PBwZu
-         kKb03mx6JsA+SXRHsUlj1bp7EF1BesnGIbNG79vrrCk+21KK0+EwBAsoJHvuAlNVtrmD
-         j+l4R3VHIPyI9Ip/1+KeVHIh7XQpK7mQisMvvovQlusbX/FwcVN+usIFoksagngF8zGo
-         QiBFKPsm4TxpG7Vjk/wqiTK33bQznXlWgtkua7sVmealmfZe9qZLay8FTxpW27bO0ZbH
-         RPXAbh27reZB8YAwXv/dRhLTFjJur1udDIMcrzE7s3jutlxzqObd9BJZv54cLDxP0YPi
-         BUlw==
+        bh=D4CLhSdJGAM5IjHhie6AaXzVAha34+87mB3vBCt2q3s=;
+        b=sldmcoAEfO6JcVzVJfOM7fHbkgYmFkckWMcQqiASssgavB3rjnQuudxUZwbp0VCg3C
+         sdUlO6Cd6N9MCdguRuoqJg1dl4h1NbyGIthJmF8QHRMJC3xs8R7QE4hRFUSivUFwbo/m
+         7GPU5sbhdF2eyrzva0ps2+vr5+L8AyMZ/UgkHrE6h0wJKAj1NtH5wnNoRM3M2QVftcnT
+         fo2FA7YnAik8LhCnsWqJp8UhRqMAe7w3zl8IdRFKipFqegmxw8sLX+tGFlTcP/ec9W/R
+         MujJVsUL4mj2YqxB+QeiTBp77SXqV3CixPVKySFNyIOLKpAcsUaVYbu950sUY7yov/MS
+         r3eg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=g8DuDWQl;
+       dkim=pass header.i=@kernel.org header.s=default header.b=AQblLiJF;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=g8DuDWQl;
+       dkim=pass header.i=@kernel.org header.s=default header.b=AQblLiJF;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-	Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.16 091/161] staging: fsl-dpaa2/eth: Fix incorrect kfree
-Date: Thu, 24 May 2018 11:38:36 +0200
-Message-Id: <20180524093029.308672095@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.16 063/161] s390: use expoline thunks in the BPF JIT
+Date: Thu, 24 May 2018 11:38:08 +0200
+Message-Id: <20180524093026.047619368@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339318281511093?=
-X-GMAIL-MSGID: =?utf-8?q?1601339318281511093?=
+X-GMAIL-THRID: =?utf-8?q?1601338301933165174?=
+X-GMAIL-MSGID: =?utf-8?q?1601339312873833846?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +50,188 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 6a9bbe53db9a5aa0be9788aa8a2c250dee55444b ]
+[ Upstream commit de5cb6eb514ebe241e3edeb290cb41deb380b81d ]
 
-Use netdev_alloc_frag() instead of kmalloc to allocate space for
-the S/G table of egress multi-buffer frames.
+The BPF JIT need safe guarding against spectre v2 in the sk_load_xxx
+assembler stubs and the indirect branches generated by the JIT itself
+need to be converted to expolines.
 
-This fixes a bug where an unaligned pointer received from the
-allocator would be overwritten with the 64B aligned value,
-leading to a wrong address being later passed to kfree.
-
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/s390/net/bpf_jit.S      |   16 ++++++----
+ arch/s390/net/bpf_jit_comp.c |   63 +++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 71 insertions(+), 8 deletions(-)
 
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-@@ -374,12 +374,14 @@ static int build_sg_fd(struct dpaa2_eth_
- 	/* Prepare the HW SGT structure */
- 	sgt_buf_size = priv->tx_data_offset +
- 		       sizeof(struct dpaa2_sg_entry) * (1 + num_dma_bufs);
--	sgt_buf = kzalloc(sgt_buf_size + DPAA2_ETH_TX_BUF_ALIGN, GFP_ATOMIC);
-+	sgt_buf = netdev_alloc_frag(sgt_buf_size + DPAA2_ETH_TX_BUF_ALIGN);
- 	if (unlikely(!sgt_buf)) {
- 		err = -ENOMEM;
- 		goto sgt_buf_alloc_failed;
- 	}
- 	sgt_buf = PTR_ALIGN(sgt_buf, DPAA2_ETH_TX_BUF_ALIGN);
-+	memset(sgt_buf, 0, sgt_buf_size);
+--- a/arch/s390/net/bpf_jit.S
++++ b/arch/s390/net/bpf_jit.S
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <asm/nospec-insn.h>
+ #include "bpf_jit.h"
+ 
+ /*
+@@ -54,7 +55,7 @@ ENTRY(sk_load_##NAME##_pos);						\
+ 	clg	%r3,STK_OFF_HLEN(%r15);	/* Offset + SIZE > hlen? */	\
+ 	jh	sk_load_##NAME##_slow;					\
+ 	LOAD	%r14,-SIZE(%r3,%r12);	/* Get data from skb */		\
+-	b	OFF_OK(%r6);		/* Return */			\
++	B_EX	OFF_OK,%r6;		/* Return */			\
+ 									\
+ sk_load_##NAME##_slow:;							\
+ 	lgr	%r2,%r7;		/* Arg1 = skb pointer */	\
+@@ -64,11 +65,14 @@ sk_load_##NAME##_slow:;							\
+ 	brasl	%r14,skb_copy_bits;	/* Get data from skb */		\
+ 	LOAD	%r14,STK_OFF_TMP(%r15);	/* Load from temp bufffer */	\
+ 	ltgr	%r2,%r2;		/* Set cc to (%r2 != 0) */	\
+-	br	%r6;			/* Return */
++	BR_EX	%r6;			/* Return */
+ 
+ sk_load_common(word, 4, llgf)	/* r14 = *(u32 *) (skb->data+offset) */
+ sk_load_common(half, 2, llgh)	/* r14 = *(u16 *) (skb->data+offset) */
+ 
++	GEN_BR_THUNK %r6
++	GEN_B_THUNK OFF_OK,%r6
 +
- 	sgt = (struct dpaa2_sg_entry *)(sgt_buf + priv->tx_data_offset);
+ /*
+  * Load 1 byte from SKB (optimized version)
+  */
+@@ -80,7 +84,7 @@ ENTRY(sk_load_byte_pos)
+ 	clg	%r3,STK_OFF_HLEN(%r15)	# Offset >= hlen?
+ 	jnl	sk_load_byte_slow
+ 	llgc	%r14,0(%r3,%r12)	# Get byte from skb
+-	b	OFF_OK(%r6)		# Return OK
++	B_EX	OFF_OK,%r6		# Return OK
  
- 	/* Fill in the HW SGT structure.
-@@ -421,7 +423,7 @@ static int build_sg_fd(struct dpaa2_eth_
- 	return 0;
+ sk_load_byte_slow:
+ 	lgr	%r2,%r7			# Arg1 = skb pointer
+@@ -90,7 +94,7 @@ sk_load_byte_slow:
+ 	brasl	%r14,skb_copy_bits	# Get data from skb
+ 	llgc	%r14,STK_OFF_TMP(%r15)	# Load result from temp buffer
+ 	ltgr	%r2,%r2			# Set cc to (%r2 != 0)
+-	br	%r6			# Return cc
++	BR_EX	%r6			# Return cc
  
- dma_map_single_failed:
--	kfree(sgt_buf);
-+	skb_free_frag(sgt_buf);
- sgt_buf_alloc_failed:
- 	dma_unmap_sg(dev, scl, num_sg, DMA_BIDIRECTIONAL);
- dma_map_sg_failed:
-@@ -525,9 +527,9 @@ static void free_tx_fd(const struct dpaa
- 		return;
- 	}
+ #define sk_negative_common(NAME, SIZE, LOAD)				\
+ sk_load_##NAME##_slow_neg:;						\
+@@ -104,7 +108,7 @@ sk_load_##NAME##_slow_neg:;						\
+ 	jz	bpf_error;						\
+ 	LOAD	%r14,0(%r2);		/* Get data from pointer */	\
+ 	xr	%r3,%r3;		/* Set cc to zero */		\
+-	br	%r6;			/* Return cc */
++	BR_EX	%r6;			/* Return cc */
  
--	/* Free SGT buffer kmalloc'ed on tx */
-+	/* Free SGT buffer allocated on tx */
- 	if (fd_format != dpaa2_fd_single)
--		kfree(skbh);
-+		skb_free_frag(skbh);
+ sk_negative_common(word, 4, llgf)
+ sk_negative_common(half, 2, llgh)
+@@ -113,4 +117,4 @@ sk_negative_common(byte, 1, llgc)
+ bpf_error:
+ # force a return 0 from jit handler
+ 	ltgr	%r15,%r15	# Set condition code
+-	br	%r6
++	BR_EX	%r6
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -25,6 +25,8 @@
+ #include <linux/bpf.h>
+ #include <asm/cacheflush.h>
+ #include <asm/dis.h>
++#include <asm/facility.h>
++#include <asm/nospec-branch.h>
+ #include <asm/set_memory.h>
+ #include "bpf_jit.h"
  
- 	/* Move on with skb release */
- 	dev_kfree_skb(skb);
+@@ -41,6 +43,8 @@ struct bpf_jit {
+ 	int base_ip;		/* Base address for literal pool */
+ 	int ret0_ip;		/* Address of return 0 */
+ 	int exit_ip;		/* Address of exit */
++	int r1_thunk_ip;	/* Address of expoline thunk for 'br %r1' */
++	int r14_thunk_ip;	/* Address of expoline thunk for 'br %r14' */
+ 	int tail_call_start;	/* Tail call start offset */
+ 	int labels[1];		/* Labels for local jumps */
+ };
+@@ -250,6 +254,19 @@ static inline void reg_set_seen(struct b
+ 	REG_SET_SEEN(b2);					\
+ })
+ 
++#define EMIT6_PCREL_RILB(op, b, target)				\
++({								\
++	int rel = (target - jit->prg) / 2;			\
++	_EMIT6(op | reg_high(b) << 16 | rel >> 16, rel & 0xffff);	\
++	REG_SET_SEEN(b);					\
++})
++
++#define EMIT6_PCREL_RIL(op, target)				\
++({								\
++	int rel = (target - jit->prg) / 2;			\
++	_EMIT6(op | rel >> 16, rel & 0xffff);			\
++})
++
+ #define _EMIT6_IMM(op, imm)					\
+ ({								\
+ 	unsigned int __imm = (imm);				\
+@@ -469,8 +486,45 @@ static void bpf_jit_epilogue(struct bpf_
+ 	EMIT4(0xb9040000, REG_2, BPF_REG_0);
+ 	/* Restore registers */
+ 	save_restore_regs(jit, REGS_RESTORE, stack_depth);
++	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable) {
++		jit->r14_thunk_ip = jit->prg;
++		/* Generate __s390_indirect_jump_r14 thunk */
++		if (test_facility(35)) {
++			/* exrl %r0,.+10 */
++			EMIT6_PCREL_RIL(0xc6000000, jit->prg + 10);
++		} else {
++			/* larl %r1,.+14 */
++			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
++			/* ex 0,0(%r1) */
++			EMIT4_DISP(0x44000000, REG_0, REG_1, 0);
++		}
++		/* j . */
++		EMIT4_PCREL(0xa7f40000, 0);
++	}
+ 	/* br %r14 */
+ 	_EMIT2(0x07fe);
++
++	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable &&
++	    (jit->seen & SEEN_FUNC)) {
++		jit->r1_thunk_ip = jit->prg;
++		/* Generate __s390_indirect_jump_r1 thunk */
++		if (test_facility(35)) {
++			/* exrl %r0,.+10 */
++			EMIT6_PCREL_RIL(0xc6000000, jit->prg + 10);
++			/* j . */
++			EMIT4_PCREL(0xa7f40000, 0);
++			/* br %r1 */
++			_EMIT2(0x07f1);
++		} else {
++			/* larl %r1,.+14 */
++			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
++			/* ex 0,S390_lowcore.br_r1_tampoline */
++			EMIT4_DISP(0x44000000, REG_0, REG_0,
++				   offsetof(struct lowcore, br_r1_trampoline));
++			/* j . */
++			EMIT4_PCREL(0xa7f40000, 0);
++		}
++	}
+ }
+ 
+ /*
+@@ -966,8 +1020,13 @@ static noinline int bpf_jit_insn(struct
+ 		/* lg %w1,<d(imm)>(%l) */
+ 		EMIT6_DISP_LH(0xe3000000, 0x0004, REG_W1, REG_0, REG_L,
+ 			      EMIT_CONST_U64(func));
+-		/* basr %r14,%w1 */
+-		EMIT2(0x0d00, REG_14, REG_W1);
++		if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable) {
++			/* brasl %r14,__s390_indirect_jump_r1 */
++			EMIT6_PCREL_RILB(0xc0050000, REG_14, jit->r1_thunk_ip);
++		} else {
++			/* basr %r14,%w1 */
++			EMIT2(0x0d00, REG_14, REG_W1);
++		}
+ 		/* lgr %b0,%r2: load return value into %b0 */
+ 		EMIT4(0xb9040000, BPF_REG_0, REG_2);
+ 		if ((jit->seen & SEEN_SKB) &&
