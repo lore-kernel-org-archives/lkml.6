@@ -1,59 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969567AbeEXVhm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:37:42 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40590 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969483AbeEXVhj (ORCPT
+        id S969670AbeEXVhx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:37:53 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37262 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969582AbeEXVhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:37:39 -0400
-X-Google-Smtp-Source: AB8JxZq51H681stc8cqSeoTm7Ieu6ff19QTU1RTzDNmh+KgMmkXFbDYE9Ba5zF6BfkYmhYN36UTaGA==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Manu Gautam <mgautam@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
-Date: Thu, 24 May 2018 14:37:35 -0700
-Message-Id: <20180524213735.12121-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        Thu, 24 May 2018 17:37:48 -0400
+X-Google-Smtp-Source: AB8JxZp1JXn/TdSaDWuKEMCDVcm8FRAivUPDBCVXBfcjEuJ36f5tK6QFNytsVIfxQtzDkWo3VvK0oRV1lbu/CMM05Qo=
+MIME-Version: 1.0
+References: <20180524211135.27760-1-dave@stgolabs.net> <20180524211135.27760-4-dave@stgolabs.net>
+In-Reply-To: <20180524211135.27760-4-dave@stgolabs.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 24 May 2018 14:37:36 -0700
+Message-ID: <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
+Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        guillaume.knispel@supersonicimagine.com,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The halt check of the UFS symbol clocks always fails, as such probing
-UFS after clk_disable_unused always fails. This makes it impossible to
-boot a system with the UFS phy or UFS HCD drivers compiled as modules.
+On Thu, May 24, 2018 at 2:28 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
 
-Follow SDM845 and disable the halt check on these clocks.
+>                  if (gfpflags_allow_blocking(gfp))
+> -                       tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
+> +                       tlocks = kvmalloc_array(size, sizeof(spinlock_t),
+gfp);
+>                  else
+>                          tlocks = kmalloc_array(size, sizeof(spinlock_t),
+gfp);
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 2 ++
- 1 file changed, 2 insertions(+)
+Side note: how about we just move that "gfpflags_allow_blocking()" into
+kvmalloc() instead, and make kvmalloc() generally usable?
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 3d6452932797..5f17080c5804 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -2792,6 +2792,7 @@ static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
- 
- static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
- 	.halt_reg = 0x7501c,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x7501c,
- 		.enable_mask = BIT(0),
-@@ -2807,6 +2808,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
- 
- static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
- 	.halt_reg = 0x75020,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x75020,
- 		.enable_mask = BIT(0),
--- 
-2.17.0
+Now we have that really odd situation where kvmalloc() takes gfp flags, but
+to quote the comment:
+
+  * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm
+people.
+
+and the code:
+
+         /*
+          * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
+tables)
+          * so the given set of flags has to be compatible.
+          */
+         WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+
+which isn't really all that helpful. Do mm people really want to be
+consulted about random uses?
+
+Maybe we could just make the rule for kvmalloc() be to only fall back on
+vmalloc for allocations that are
+
+  - larger than page size
+
+  - blocking and allow GFP_KERNEL (so basically that WARN_ON_ONCE() logic in
+kvmalloc_node).
+
+Hmm? Isn't that what everybody really *wants* kvmalloc() and friends to do?
+
+              Linus
