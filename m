@@ -1,41 +1,40 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoIrvi9vMYeuLR7RrVKYTbz+8NMpWqwljdhf6q21FfNB3AdxelBJklNxwKMkRqlS6OykPTA
-ARC-Seal: i=1; a=rsa-sha256; t=1527156275; cv=none;
+X-Google-Smtp-Source: AB8JxZoBQU8tPxt6dq3MVMN9+o374KilyjmEV/4zRy7mxnRpEBgqac7mH9fqiQ/UDMZyiipzhoIY
+ARC-Seal: i=1; a=rsa-sha256; t=1527156273; cv=none;
         d=google.com; s=arc-20160816;
-        b=YEZr7tyoSBEIeOqgj5N29idnAT5QaSAvmPU+WvphaArmJL3i38Zy5qEPpz2uqItG8J
-         UbIbbyPamWi0iIUbbYQS6FBmucvveWCQWwHHQ3GP5D9WgpJeQ+lh7Ul+5980i5iQ/Y96
-         5C9vL0MAGmwBlmwREdDx2as6pWA/Ji77JoNB55GuOsjSFBGvVvfnZZ3xh03Grzhqd4xw
-         hChoBZGCsETfZodI6g9vnEW8k/x6BtEKgjzhiuU33L/fC9NkywJz9gwkOSMDVYt3jc9g
-         5LHO13bTzZavwicZxlpdSRspfyMwKyMdeTg3ndYI+jsaBN3DaCHLSxDC0Oh0/OrHbTo/
-         CNxQ==
+        b=cvWy5rT2+3fW3IGcl0T7NI7yEOMan5okvZ3BI5NLNHouNPhYqt7apBdlxjN/GCqyk4
+         V3xMfIXr4yBmfmvGeOU29qFNuF7mtb7bmIfxLm+ud6Ki5xZcZvPkSpeQByCG7sYX+H4M
+         q8NKWVYV70QE8M6oG6JFHQYfliscoeGyjlmePWMK/x3pTYTb5B5GuHGK/bxrflUE/Tqm
+         F7DUegMqWACNhCyNAeWI1MKQhn0czRpwymrqmYsK/vYFy5FPV3qnBLQ+4xn/y+1R0+WP
+         QKz4L++LBZELjqhhYrx0pUFQ6BozJQcbxteT+0LcoKLwGng8P6fvMmbwJ71syrsBMo72
+         AffA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ied/Kf+fo5/1h+Tu3w5aN1ya8xRjdWcJKkVghSA/Il8=;
-        b=lsLBukyWUOucGsCAcje0CB59q1wbxQj3yL8C1vm8SRe6U4wp+yCzDytvHIE2nsYzLl
-         X1IcTPUB2kqvN9cNHrZ6TQ3o8thpLSo1B1+0xeMPfezor8qR3K4hKL6JPubHqAzBNFrw
-         uXO0EqOj2I/4Agk8FloR5ideS5TOavTL2KPpPpuDMpfJKoz1W1OLMln1/1C+2R/ce+Ts
-         /ePMiWlGQTGdvOeNR4eckeKiS4hzqIyNSRgt8Oz096AnSVaLhlKyAG8XFVDkJCKsLU+z
-         br0O2nY5GRohwRepxHE109NZhjJInSlhtmihmgMHQFRTaj7NK6lwnxC2AuQJQpmC5k0v
-         kUzg==
+        bh=YIsrHeVesD4IiVB3eN3qdcy0prlpWuv7m0u3lEIwdIg=;
+        b=BTPHtdoAzM/RqWXH9REmqXs/jgH8KDSjPMdC66d0hctDbmvlwv+Xmdeffg0BBKqae0
+         uDQm4LEh1kRKX91ba4VZOlCBTTMBJ+sCMqeZgW/3kciF/SgfEcHC6QSNbk8SFFHJcBcc
+         7GBlclLOVWn3RYHPEdT3LQ7NEz+B1cl6g8jn/I7p/tvJY4460cHECcpt9Hc4TbBYiHNg
+         WNhlpF7mI0E6xI98MJ0jyNrEI6RGgL3xHPJ7CpbZieikeJsyEjuxbzXKHlETE8KuImGk
+         AibtjaKAXTti2FzFKyt9vhkCLjyEc+S+g/I6sj1E5XBuNu40aHla1gmMzpnytIUu7JYo
+         cfQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XPjUx6vp;
+       dkim=pass header.i=@kernel.org header.s=default header.b=uRnIBlnQ;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=XPjUx6vp;
+       dkim=pass header.i=@kernel.org header.s=default header.b=uRnIBlnQ;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	Tudor Ambarus <tudor.ambarus@microchip.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 126/161] clk: samsung: s3c2410: Fix PLL rates
-Date: Thu, 24 May 2018 11:39:11 +0200
-Message-Id: <20180524093033.399659398@linuxfoundation.org>
+Subject: [PATCH 4.16 099/161] crypto: atmel-aes - fix the keys zeroing on errors
+Date: Thu, 24 May 2018 11:38:44 +0200
+Message-Id: <20180524093030.271884133@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338508992104744?=
-X-GMAIL-MSGID: =?utf-8?q?1601339419162102331?=
+X-GMAIL-THRID: =?utf-8?q?1601338835304621094?=
+X-GMAIL-MSGID: =?utf-8?q?1601339415959310788?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,67 +53,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 179db533c08431f509a3823077549773d519358b ]
+[ Upstream commit 5d804a5157dbaa64872a675923ae87161165c66b ]
 
-Rates declared in PLL rate tables should match exactly rates calculated from
-the PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+The Atmel AES driver uses memzero_explicit on the keys on error, but the
+variable zeroed isn't the right one because of a typo. Fix this by using
+the right variable.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: 89a82ef87e01 ("crypto: atmel-authenc - add support to authenc(hmac(shaX), Y(aes)) modes")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-s3c2410.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/crypto/atmel-aes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/samsung/clk-s3c2410.c
-+++ b/drivers/clk/samsung/clk-s3c2410.c
-@@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll
- 	PLL_35XX_RATE(226000000, 105, 1, 1),
- 	PLL_35XX_RATE(210000000, 132, 2, 1),
- 	/* 2410 common */
--	PLL_35XX_RATE(203000000, 161, 3, 1),
-+	PLL_35XX_RATE(202800000, 161, 3, 1),
- 	PLL_35XX_RATE(192000000, 88, 1, 1),
- 	PLL_35XX_RATE(186000000, 85, 1, 1),
- 	PLL_35XX_RATE(180000000, 82, 1, 1),
-@@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll
- 	PLL_35XX_RATE(147000000, 90, 2, 1),
- 	PLL_35XX_RATE(135000000, 82, 2, 1),
- 	PLL_35XX_RATE(124000000, 116, 1, 2),
--	PLL_35XX_RATE(118000000, 150, 2, 2),
-+	PLL_35XX_RATE(118500000, 150, 2, 2),
- 	PLL_35XX_RATE(113000000, 105, 1, 2),
--	PLL_35XX_RATE(101000000, 127, 2, 2),
-+	PLL_35XX_RATE(101250000, 127, 2, 2),
- 	PLL_35XX_RATE(90000000, 112, 2, 2),
--	PLL_35XX_RATE(85000000, 105, 2, 2),
-+	PLL_35XX_RATE(84750000, 105, 2, 2),
- 	PLL_35XX_RATE(79000000, 71, 1, 2),
--	PLL_35XX_RATE(68000000, 82, 2, 2),
--	PLL_35XX_RATE(56000000, 142, 2, 3),
-+	PLL_35XX_RATE(67500000, 82, 2, 2),
-+	PLL_35XX_RATE(56250000, 142, 2, 3),
- 	PLL_35XX_RATE(48000000, 120, 2, 3),
--	PLL_35XX_RATE(51000000, 161, 3, 3),
-+	PLL_35XX_RATE(50700000, 161, 3, 3),
- 	PLL_35XX_RATE(45000000, 82, 1, 3),
--	PLL_35XX_RATE(34000000, 82, 2, 3),
-+	PLL_35XX_RATE(33750000, 82, 2, 3),
- 	{ /* sentinel */ },
- };
+--- a/drivers/crypto/atmel-aes.c
++++ b/drivers/crypto/atmel-aes.c
+@@ -2155,7 +2155,7 @@ static int atmel_aes_authenc_setkey(stru
+ 
+ badkey:
+ 	crypto_aead_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+-	memzero_explicit(&key, sizeof(keys));
++	memzero_explicit(&keys, sizeof(keys));
+ 	return -EINVAL;
+ }
  
