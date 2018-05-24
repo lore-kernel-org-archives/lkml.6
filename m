@@ -1,38 +1,38 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr+5mBaKDxxQhqNPgurBTKJPc3Z9aUZd4ahiWbzmjuoRzvA0q5WqVgdfW9oO+9bZxCUBHlD
-ARC-Seal: i=1; a=rsa-sha256; t=1527156182; cv=none;
+X-Google-Smtp-Source: AB8JxZpanWnNOBBhYZKF5P/sEI0G0PFzQFPM9EGVuK30wD4pc8K+QA9DZEzv8M4DZn5e5bbRJs5/
+ARC-Seal: i=1; a=rsa-sha256; t=1527156179; cv=none;
         d=google.com; s=arc-20160816;
-        b=PM1TR2dGc55zkbzuAai79I0KcOSIJ4dDL6qMdHyz5B2hGiY2tcJUz0Wu9IS2Q3aMq5
-         tMrOi1Yrk7yZPRCKExK/9ftlIk9sRLb+ZSKOrV1iXZawmBRfjO6AoKmVoDD850hmCNp7
-         ruzpmrJQHcpv61/I3GC4kYzJbBwPQXKdyCW5rtR/1oKLRNFZuFppqoojoMfpvt7B+HSA
-         cwOBLvU6Dy/KX4hrztErBpbV4Hl/E2HXXgBAqVjkHgIk1UK9zQ5nnEaQZDgXIuUdtIew
-         WDfZlMw7GpTc31F82gnqC22EhogBp4DhoN+nLn4MQxz8zTh9qs5BPqHsM0wLT1A++kZi
-         9c5A==
+        b=cShqrRtn6tN53E/XFnf1bi7KQRloW688M9KG4KntnAnjACKflCGSZCPNuTeivZriFY
+         HtTyvjw0CVoDRcUUdxywdDm6JNvzUid0VYh6UA2/4wqpbEaAiTgYiAllURAKLMwMApXk
+         tLKYjRaK+pdcKOMeHug/fkoJdEVrGwqSq2EwpBZ4gBoAOsJ67Wc3ZtWUt/FU4mX3E506
+         N5Q13fNMBxFWMfmT/qXAvuQCI6W9o9n4KhJbzYtDwcWv4YEL3dSka+b+qfbv/KvEY/+M
+         nNpKOZ49akAf53g2mOOq3ax74yBVZsCFaOUTONA9l5V2s7wjMrRGkhLhfvtpkkSzB83m
+         jumw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=gV0dbmxXRGEVTR0sqS1Pl6RpAeoUOIXAktHkcFTJzoM=;
-        b=kIOsQSpyaTxjUyP3olc7Mvmx8Z3fTHLapZUtNHGQB5WMtQnGYFB3Jhy7t7P1rUJej4
-         PYVmptwddnuPM3K6k/X+eRgDq/ya4OfbztuGegc4INfDCAlCOXOLp53EZqpQ7/yHQBW2
-         +daLEXCtMfDUBoAvruRDFSEXDlgVtgligQxbXXldLa1r5mRgNaYfmzV/BZ6zEH07DDdY
-         J/FavcuzHmFFWzX5f2ZApv6uBN6ySD0fw84ycKG6OX/jp5x8htAV3Y2qgc+qd8S7Irjn
-         q/W1q5Jq2XYyBuTv6YAtxvGXKPFyilYoOc+ycfKlSjtmlABQA6Y4vXBRJL3/oCFF//lI
-         jp/A==
+        bh=KZ6WNtoq2dvRUmITo/WuysIGOFatUaLnUwl2NOKmEuQ=;
+        b=xtYsLZpYuW/vgWt4/xYYgucZYuKGOgVe4gxvdlHlupYZZ5W6didbAtuWfOsc0PBwZu
+         kKb03mx6JsA+SXRHsUlj1bp7EF1BesnGIbNG79vrrCk+21KK0+EwBAsoJHvuAlNVtrmD
+         j+l4R3VHIPyI9Ip/1+KeVHIh7XQpK7mQisMvvovQlusbX/FwcVN+usIFoksagngF8zGo
+         QiBFKPsm4TxpG7Vjk/wqiTK33bQznXlWgtkua7sVmealmfZe9qZLay8FTxpW27bO0ZbH
+         RPXAbh27reZB8YAwXv/dRhLTFjJur1udDIMcrzE7s3jutlxzqObd9BJZv54cLDxP0YPi
+         BUlw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=odkbXrWp;
+       dkim=pass header.i=@kernel.org header.s=default header.b=g8DuDWQl;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=odkbXrWp;
+       dkim=pass header.i=@kernel.org header.s=default header.b=g8DuDWQl;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NeilBrown <neilb@suse.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 092/161] staging: lustre: fix bug in osc_enter_cache_try
-Date: Thu, 24 May 2018 11:38:37 +0200
-Message-Id: <20180524093029.439099481@linuxfoundation.org>
+	Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.16 091/161] staging: fsl-dpaa2/eth: Fix incorrect kfree
+Date: Thu, 24 May 2018 11:38:36 +0200
+Message-Id: <20180524093029.308672095@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338430003114719?=
-X-GMAIL-MSGID: =?utf-8?q?1601339320728269951?=
+X-GMAIL-THRID: =?utf-8?q?1601339318281511093?=
+X-GMAIL-MSGID: =?utf-8?q?1601339318281511093?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,53 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 
-[ Upstream commit 2fab9faf9b27298c4536c1c1b14072ab18b8f80b ]
+[ Upstream commit 6a9bbe53db9a5aa0be9788aa8a2c250dee55444b ]
 
-The lustre-release patch commit bdc5bb52c554 ("LU-4933 osc:
-Automatically increase the max_dirty_mb") changed
+Use netdev_alloc_frag() instead of kmalloc to allocate space for
+the S/G table of egress multi-buffer frames.
 
--       if (cli->cl_dirty + PAGE_CACHE_SIZE <= cli->cl_dirty_max &&
-+       if (cli->cl_dirty_pages < cli->cl_dirty_max_pages &&
+This fixes a bug where an unaligned pointer received from the
+allocator would be overwritten with the 64B aligned value,
+leading to a wrong address being later passed to kfree.
 
-When this patch landed in Linux a couple of years later, it landed as
-
--       if (cli->cl_dirty + PAGE_SIZE <= cli->cl_dirty_max &&
-+       if (cli->cl_dirty_pages <= cli->cl_dirty_max_pages &&
-
-which is clearly different ('<=' vs '<'), and allows cl_dirty_pages to
-increase beyond cl_dirty_max_pages - which causes a latter assertion
-to fails.
-
-Fixes: 3147b268400a ("staging: lustre: osc: Automatically increase the max_dirty_mb")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lustre/include/obd.h   |    2 +-
- drivers/staging/lustre/lustre/osc/osc_cache.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/lustre/lustre/include/obd.h
-+++ b/drivers/staging/lustre/lustre/include/obd.h
-@@ -191,7 +191,7 @@ struct client_obd {
- 	struct sptlrpc_flavor    cl_flvr_mgc;   /* fixed flavor of mgc->mgs */
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+@@ -374,12 +374,14 @@ static int build_sg_fd(struct dpaa2_eth_
+ 	/* Prepare the HW SGT structure */
+ 	sgt_buf_size = priv->tx_data_offset +
+ 		       sizeof(struct dpaa2_sg_entry) * (1 + num_dma_bufs);
+-	sgt_buf = kzalloc(sgt_buf_size + DPAA2_ETH_TX_BUF_ALIGN, GFP_ATOMIC);
++	sgt_buf = netdev_alloc_frag(sgt_buf_size + DPAA2_ETH_TX_BUF_ALIGN);
+ 	if (unlikely(!sgt_buf)) {
+ 		err = -ENOMEM;
+ 		goto sgt_buf_alloc_failed;
+ 	}
+ 	sgt_buf = PTR_ALIGN(sgt_buf, DPAA2_ETH_TX_BUF_ALIGN);
++	memset(sgt_buf, 0, sgt_buf_size);
++
+ 	sgt = (struct dpaa2_sg_entry *)(sgt_buf + priv->tx_data_offset);
  
- 	/* the grant values are protected by loi_list_lock below */
--	unsigned long		 cl_dirty_pages;	/* all _dirty_ in pahges */
-+	unsigned long		 cl_dirty_pages;	/* all _dirty_ in pages */
- 	unsigned long		 cl_dirty_max_pages;	/* allowed w/o rpc */
- 	unsigned long		 cl_dirty_transit;	/* dirty synchronous */
- 	unsigned long		 cl_avail_grant;	/* bytes of credit for ost */
---- a/drivers/staging/lustre/lustre/osc/osc_cache.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_cache.c
-@@ -1530,7 +1530,7 @@ static int osc_enter_cache_try(struct cl
- 	if (rc < 0)
- 		return 0;
+ 	/* Fill in the HW SGT structure.
+@@ -421,7 +423,7 @@ static int build_sg_fd(struct dpaa2_eth_
+ 	return 0;
  
--	if (cli->cl_dirty_pages <= cli->cl_dirty_max_pages &&
-+	if (cli->cl_dirty_pages < cli->cl_dirty_max_pages &&
- 	    atomic_long_read(&obd_dirty_pages) + 1 <= obd_max_dirty_pages) {
- 		osc_consume_write_grant(cli, &oap->oap_brw_page);
- 		if (transient) {
+ dma_map_single_failed:
+-	kfree(sgt_buf);
++	skb_free_frag(sgt_buf);
+ sgt_buf_alloc_failed:
+ 	dma_unmap_sg(dev, scl, num_sg, DMA_BIDIRECTIONAL);
+ dma_map_sg_failed:
+@@ -525,9 +527,9 @@ static void free_tx_fd(const struct dpaa
+ 		return;
+ 	}
+ 
+-	/* Free SGT buffer kmalloc'ed on tx */
++	/* Free SGT buffer allocated on tx */
+ 	if (fd_format != dpaa2_fd_single)
+-		kfree(skbh);
++		skb_free_frag(skbh);
+ 
+ 	/* Move on with skb release */
+ 	dev_kfree_skb(skb);
