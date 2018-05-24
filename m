@@ -1,48 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030574AbeEXRoe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:44:34 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36685 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968459AbeEXRob (ORCPT
+        id S1030787AbeEXRow (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:44:52 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40505 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030394AbeEXRos (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:44:31 -0400
-Date: Thu, 24 May 2018 19:44:25 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] serial: imx: drop CTS/RTS handling from shutdown
-Message-ID: <20180524174425.2b6b7xb7c6vvrodo@pengutronix.de>
-References: <20180524173024.20936-1-sebastian.reichel@collabora.co.uk>
- <20180524173024.20936-2-sebastian.reichel@collabora.co.uk>
+        Thu, 24 May 2018 13:44:48 -0400
+X-Google-Smtp-Source: AB8JxZofkcfb+gIkPUl7A+PehKjKz79YxsrhEagUM8Xnp+ifI4sYjqkvcrOkKyoRXrjqfFOShDcRDQ==
+Date: Thu, 24 May 2018 23:14:40 +0530
+From: Nishad Kamdar <nishadkamdar@gmail.com>
+To: Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: comedi: comedidev.h: Fix SPDX-License-Identifier
+ tag style
+Message-ID: <20180524174436.GA10724@nishad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180524173024.20936-2-sebastian.reichel@collabora.co.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 07:30:23PM +0200, Sebastian Reichel wrote:
-> According to Documentation/serial/driver the shutdown function should
-> not disable RTS, so drop it.
-> 
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Great idea! :-)
+Replace // SPDX-License-Identifier: GPL-2.0+ by
+/* SPDX-License-Identifier: GPL-2.0+ */ as per licensing rule
+for C header files. Issue found by checkpatch. Part of
+Eudyptula Challenge.
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/staging/comedi/comedidev.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/staging/comedi/comedidev.h b/drivers/staging/comedi/comedidev.h
+index f3474a4ba69e..c54ac94d89d2 100644
+--- a/drivers/staging/comedi/comedidev.h
++++ b/drivers/staging/comedi/comedidev.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * comedidev.h
+  * header file for kernel-only structures, variables, and constants
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.17.0
