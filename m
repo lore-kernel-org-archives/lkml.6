@@ -1,164 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935745AbeEXHe3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:34:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33804 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935498AbeEXHe1 (ORCPT
+        id S935759AbeEXHgN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:36:13 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43443 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935498AbeEXHgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:34:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D52160618
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH v9 3/4] arm64: Implement page table free interfaces
-To: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Philip Elcan <pelcan@codeaurora.org>, Toshi Kani <toshi.kani@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-References: <1525074094-25839-1-git-send-email-cpandya@codeaurora.org>
- <1525074094-25839-4-git-send-email-cpandya@codeaurora.org>
- <20180523140157.GG26965@arm.com>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <9a059bc1-07eb-031b-e561-7e1eaabbf980@codeaurora.org>
-Date: Thu, 24 May 2018 13:04:15 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 24 May 2018 03:36:10 -0400
+X-Google-Smtp-Source: AB8JxZoBXtVz+QsCyYJW/6fWs81TINOU8yeCkZz0/7FtKe0xInzCpmVpmM0wmlvpJOTWgHYqTvbFSHGFiB1BoLh9Y7c=
 MIME-Version: 1.0
-In-Reply-To: <20180523140157.GG26965@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
+References: <cover.1526835466.git.sean.wang@mediatek.com> <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 24 May 2018 09:36:08 +0200
+Message-ID: <CACRpkdbKwck2E3v+vr3freG1L5kSnfRc8Gti7jYtkqcuemK-fQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/7] dt-bindings: pinctrl: add external interrupt
+ support to MT7622 pinctrl
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support"
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, May 20, 2018 at 7:01 PM,  <sean.wang@mediatek.com> wrote:
 
+> From: Sean Wang <sean.wang@mediatek.com>
+>
+> Extend the capability of MT7622 pinctrl with adding EINT so that each
+> GPIO can be used to notify CPU when a signal state is changing on the
+> line as an external interrupt.
+>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
-On 5/23/2018 7:31 PM, Will Deacon wrote:
-> Hi Chintan,
+Patch applied with Rob's review tag.
 
-Hi Will,
-
-> 
-> [as a side note: I'm confused on the status of this patch series, as part
->   of it was reposted separately by Toshi. Please can you work together?]
-
-I will share all 4 patches once again as v10 and take latest version of
-1/4 as updated by Toshi.
-
-> 
-> On Mon, Apr 30, 2018 at 01:11:33PM +0530, Chintan Pandya wrote:
->> Implement pud_free_pmd_page() and pmd_free_pte_page().
->>
->> Implementation requires,
->>   1) Clearing off the current pud/pmd entry
->>   2) Invalidate TLB which could have previously
->>      valid but not stale entry
->>   3) Freeing of the un-used next level page tables
->>
->> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
->> ---
->>   arch/arm64/mm/mmu.c | 29 +++++++++++++++++++++++++----
->>   1 file changed, 25 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index da98828..0f651db 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -45,6 +45,7 @@
->>   #include <asm/memblock.h>
->>   #include <asm/mmu_context.h>
->>   #include <asm/ptdump.h>
->> +#include <asm/tlbflush.h>
->>   
->>   #define NO_BLOCK_MAPPINGS	BIT(0)
->>   #define NO_CONT_MAPPINGS	BIT(1)
->> @@ -973,12 +974,32 @@ int pmd_clear_huge(pmd_t *pmdp)
->>   	return 1;
->>   }
->>   
->> -int pud_free_pmd_page(pud_t *pud, unsigned long addr)
->> +int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
->>   {
->> -	return pud_none(*pud);
->> +	pmd_t *table;
->> +
->> +	if (pmd_present(READ_ONCE(*pmdp))) {
-> 
-> Might also be worth checking pmd_table here, just in case. (same for pud)
-
-I had that check in v2 as below.
-
-if (pud_val(*pud) && !pud_huge(*pud))
-
-But removed that in v3 as unmap should change this to NONE if it is
-not table. I still don't see the need of it.
-
-> 
->> +		table = __va(pmd_val(*pmdp));
-> 
-> Can you avoid dereferencing *pmdp twice, and instead READ_ONCE into a local
-> variable, please? (same for pud)
-
-Okay.
-
-> 
->> +		pmd_clear(pmdp);
->> +		__flush_tlb_kernel_pgtable(addr);
->> +		free_page((unsigned long) table);
-> 
-> Shouldn't this be pte_free_kernel, to pair with pte_alloc_kernel which
-> was used to allocate the page in the first place? (similarly for pud)
-
-Okay.
-
-> 
->> +	}
->> +	return 1;
->>   }
->>   
->> -int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
->> +int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->>   {
->> -	return pmd_none(*pmd);
->> +	pmd_t *table;
->> +	int i;
->> +
->> +	if (pud_present(READ_ONCE(*pudp))) {
->> +		table = __va(pud_val(*pudp));
->> +		for (i = 0; i < PTRS_PER_PMD; i++)
->> +			pmd_free_pte_page(&table[i], addr + (i * PMD_SIZE));
-> 
-> I think it would be cleaner to write this as a do { ... } while, for
-> consistency with the ioremap and vmalloc code.
-
-Okay.
-
-I'll raise v10 fixing above things. Thanks for the review.
-
-> 
-> Will
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
-Chintan
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+Yours,
+Linus Walleij
