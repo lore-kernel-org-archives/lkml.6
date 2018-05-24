@@ -1,51 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964926AbeEXXAg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 19:00:36 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34174 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeEXXAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 19:00:35 -0400
-X-Google-Smtp-Source: AB8JxZoRZpJjZHxxgaCHrvD7w7VrtXxyzmJieWZPIn4vHRiYIMS7x5np1PfMro/hUeo6HEcE2T+tEg==
-Date: Thu, 24 May 2018 16:00:23 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Andrei Vagin <avagin@openvz.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] proc: fix smaps and meminfo alignment
-Message-ID: <alpine.LSU.2.11.1805241554210.1326@eggly.anvils>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        id S965084AbeEXXCg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 19:02:36 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40110 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935346AbeEXXCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 19:02:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,437,1520924400";
+   d="scan'208";a="53658204"
+From: Mike Mason <michael.w.mason@intel.com>
+To: marc.herbert@intel.com
+Cc: andy.work@nglowry.com, git@vger.kernel.org, gitster@pobox.com,
+        josh@joshtriplett.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lists@nerdbynature.de,
+        michael.w.mason@intel.com, peff@peff.net,
+        nico-linuxsetlocalversion@schottelius.org
+Subject: Re: Wrong -dirty suffix set by setlocalversion (was: BUG in git diff-index) 
+Date: Thu, 24 May 2018 16:03:34 -0700
+Message-Id: <20180524230334.12452-1-michael.w.mason@intel.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <89d82c84-7a3b-9c4c-679e-a7a723669592@intel.com>
+References: <89d82c84-7a3b-9c4c-679e-a7a723669592@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 4.17-rc /proc/meminfo and /proc/<pid>/smaps look ugly: single-digit
-numbers (commonly 0) are misaligned. Remove seq_put_decimal_ull_width()'s
-leftover optimization for single digits: it's wrong now that num_to_str()
-takes care of the width.
+How about something like this? It ignores attributes that should have no
+bearing on whether the kernel is considered dirty. Copied trees with no other
+changes would no longer be marked with -dirty. Plus it works on read-only
+media since no index updating is required.
 
-Fixes: d1be35cb6f96 ("proc: add seq_put_decimal_ull_width to speed up /proc/pid/smaps")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
+Would this also be considered kosher, at least for the purposes of
+setlocalversion?
 
- fs/seq_file.c |    5 -----
- 1 file changed, 5 deletions(-)
-
---- 4.17-rc6/fs/seq_file.c	2018-04-15 21:45:06.740885410 -0700
-+++ linux/fs/seq_file.c	2018-05-24 14:41:21.508491794 -0700
-@@ -709,11 +709,6 @@ void seq_put_decimal_ull_width(struct se
- 	if (m->count + width >= m->size)
- 		goto overflow;
+diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+index 71f39410691b..9da4c5e83285 100755
+--- a/scripts/setlocalversion
++++ b/scripts/setlocalversion
+@@ -73,8 +73,10 @@ scm_version()
+ 			printf -- '-svn%s' "`git svn find-rev $head`"
+ 		fi
  
--	if (num < 10) {
--		m->buf[m->count++] = num + '0';
--		return;
--	}
--
- 	len = num_to_str(m->buf + m->count, m->size - m->count, num, width);
- 	if (!len)
- 		goto overflow;
+-		# Check for uncommitted changes
+-		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
++		# Check for uncommitted changes. Only check mtime and size.
++       # Ignore insequential ctime, uid, gid and inode differences.
++		if git -c "core.checkstat=minimal" diff-index --name-only HEAD | \
++				grep -qv "^scripts/package"; then
+ 			printf '%s' -dirty
+ 		fi
+ 
