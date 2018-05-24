@@ -1,38 +1,38 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZphCgJC/Dzy0RoeJVQAyi+ntRqa+ZjXZdMrf/rkVk2K/NAPgqCwTyhbFqe1EwPzzRJBGNET
-ARC-Seal: i=1; a=rsa-sha256; t=1527156161; cv=none;
+X-Google-Smtp-Source: AB8JxZo8pkIAXIX5NeggDASbvnO5IxlZnu9LVXygQS26OU4hTHJpDRiex7c577Xd+BXQ3SHdCkhX
+ARC-Seal: i=1; a=rsa-sha256; t=1527156158; cv=none;
         d=google.com; s=arc-20160816;
-        b=fZixA9OmXvRnUE9R6V6yI0LTnjNtkVqLXd9uqsUuREGFinjq3pUPpQY7CQMmh8nf9X
-         tteyHSq+HWaBL/qWPDY0QgRpPCQPgpgYBaKv2NQpCAlCUocSgpfBq8Xhh8wwIE1K1f2y
-         SRH7rdt8oYy/j4XOrgRo9SQWQJfX+AwxHI4ctRz6aZFqJGSOX2AKtsfSnxTQqXtpsRk2
-         DPOvupTuPGcsdoAv6rgSrntm0FhAjzjPNdlTAyhnvbMh6mYJSNB68YjpfePcKe3rAUlM
-         yILneW5Gj4fYSzE2Z0WMBPHUVjCkZNMlZbJvwZbIuaBiKpQ9S7dGDTQdfunlHmIIo+35
-         rasQ==
+        b=pkPwAN887bAU9QuMwfoOVkbLI6wmnxSd2NCBqDadmVynUbx1Tzq3ZXxiQBvOB/OpV6
+         X0CUenBFx0P1pQbus1GpX0RiLrPUmWS4rVZuagADBG7e6TAGbpQA6AChCSEJ45m5U9F7
+         q7dE/SEM43puxbwJD356hv8Yr4BJ8JYa2vfLD4ZTuaqwApEION6dI530IxT5s3iXxWCi
+         t96yBL6bksZRevnJb/ENGkKz153HMT/+XYNu3KtsucD2McdOgKPPqCOwGZO7FTHUBgpn
+         vGyWlzjETcu4hHaAVzyn8/RqWIEW9ZIA9TDIMX5sfYQBkVITPKarg2aJY5eR3Z4gjOD1
+         txiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=wr6oDSkdNCsUmM4/Mqs8/Pbg71No6yAhLSs9ZbX1pl0=;
-        b=n/rgPxsqKfNKHEn1UH5LPZplI2FASFau7SBMlJVsP0MDwmuzg7aHzBMfcaQD8BKxtn
-         a2EKJyUbo1zic8RvI19E6tI1LAVYp7RD6mFnLVxZtYATdFQCekJcjnbA/rvsPzrxZD7T
-         wpkV0yOn/nO4b8tEpY5Hphxvq9pWV1Wyb7lsWMeuyQsnMlu7pTJyaxfvC1246O+vYfrf
-         cJcw1PQuwI8BwyIrkFImPogu+ycHhKx5EOnrrdhZ8iNBJciTjRmrQaBfKjQ8p1ZOiIUg
-         LF11bpeaJm8qDEFAi2auQPu0YVGkKQPvjfaMakUzEar2ciH/e8G6V0sedD3WupYIbZ3Q
-         Dg2g==
+        bh=0mXDSZBTtYOmqpKIXj+v392COcqYWwF0ShjztECMpuY=;
+        b=qRv4opHjXMpBYbk7QpvpOPUxXZrnzKMuXalKV8Wn861vAekI2Mkq1PKsjy3bUn4XDH
+         ComsCIHBXRvSvtux0wR7mUUI7/6y2Em60AZic8/QO1RmTs+oBsshKMviA3drqgDGTXYf
+         ah1pvWI+l41DPchiUYwVWKErXWc6iE+0XsN5yIcU95EY7kWSDPVQ+RoAWhGocwcZrEf1
+         aCk0BRf+FueCXHWgK0cLM6wX7/MxkOuED5eAY9rwbHgVFHpVXlLxQhrT6azY5sSyawsG
+         /kEFg/aQqHCSUQ95BGj86syC+7TyfXHKp4p0vhTAfb0753hvC2PT/oSm8eJHKfzOd3Zc
+         siUg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LuOOpETs;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dJ/rxFyz;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LuOOpETs;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dJ/rxFyz;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Omar Sandoval <osandov@fb.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 085/161] loop: dont call into filesystem while holding lo_ctl_mutex
-Date: Thu, 24 May 2018 11:38:30 +0200
-Message-Id: <20180524093028.668538813@linuxfoundation.org>
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 084/161] xhci: Show what USB release number the xHC supports from protocol capablity
+Date: Thu, 24 May 2018 11:38:29 +0200
+Message-Id: <20180524093028.551719646@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338712721159846?=
-X-GMAIL-MSGID: =?utf-8?q?1601339299126316949?=
+X-GMAIL-THRID: =?utf-8?q?1601338910140685754?=
+X-GMAIL-MSGID: =?utf-8?q?1601339295598572583?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,105 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 2d1d4c1e591fd40bd7dafd868a249d7d00e215d5 upstream.
+[ Upstream commit 0ee78c101425aae681c631ba59c6ac7f44b1d83a ]
 
-We hit an issue where a loop device on NFS was stuck in
-loop_get_status() doing vfs_getattr() after the NFS server died, which
-caused a pile-up of uninterruptible processes waiting on lo_ctl_mutex.
-There's no reason to hold this lock while we wait on the filesystem;
-let's drop it so that other processes can do their thing. We need to
-grab a reference on lo_backing_file while we use it, and we can get rid
-of the check on lo_device, which has been unnecessary since commit
-a34c0ae9ebd6 ("[PATCH] loop: remove the bio remapping capability") in
-the linux-history tree.
+xhci driver displays the supported xHC USB revision in a message during
+driver load:
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+"Host supports USB 3.1 Enhanced SuperSpeed"
+
+Get the USB minor revision number from the xhci protocol capability.
+This will show the correct supported revisions for new USB 3.2 and later
+hosts
+
+Don't rely on the SBRN (serial bus revision number) register, it's often
+showing 0x30 (USB3.0) for hosts that support USB 3.1
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/loop.c |   38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+ drivers/usb/host/xhci.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1171,21 +1171,17 @@ loop_set_status(struct loop_device *lo,
- static int
- loop_get_status(struct loop_device *lo, struct loop_info64 *info)
- {
--	struct file *file = lo->lo_backing_file;
-+	struct file *file;
- 	struct kstat stat;
--	int error;
-+	int ret;
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -4769,6 +4769,7 @@ int xhci_gen_setup(struct usb_hcd *hcd,
+ 	 * quirks
+ 	 */
+ 	struct device		*dev = hcd->self.sysdev;
++	unsigned int		minor_rev;
+ 	int			retval;
  
--	if (lo->lo_state != Lo_bound)
-+	if (lo->lo_state != Lo_bound) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
- 		return -ENXIO;
--	error = vfs_getattr(&file->f_path, &stat,
--			    STATX_INO, AT_STATX_SYNC_AS_STAT);
--	if (error)
--		return error;
-+	}
+ 	/* Accept arbitrarily long scatter-gather lists */
+@@ -4796,12 +4797,19 @@ int xhci_gen_setup(struct usb_hcd *hcd,
+ 		 */
+ 		hcd->has_tt = 1;
+ 	} else {
+-		/* Some 3.1 hosts return sbrn 0x30, can't rely on sbrn alone */
+-		if (xhci->sbrn == 0x31 || xhci->usb3_rhub.min_rev >= 1) {
+-			xhci_info(xhci, "Host supports USB 3.1 Enhanced SuperSpeed\n");
++		/*
++		 * Some 3.1 hosts return sbrn 0x30, use xhci supported protocol
++		 * minor revision instead of sbrn
++		 */
++		minor_rev = xhci->usb3_rhub.min_rev;
++		if (minor_rev) {
+ 			hcd->speed = HCD_USB31;
+ 			hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
+ 		}
++		xhci_info(xhci, "Host supports USB 3.%x %s SuperSpeed\n",
++			  minor_rev,
++			  minor_rev ? "Enhanced" : "");
 +
- 	memset(info, 0, sizeof(*info));
- 	info->lo_number = lo->lo_number;
--	info->lo_device = huge_encode_dev(stat.dev);
--	info->lo_inode = stat.ino;
--	info->lo_rdevice = huge_encode_dev(lo->lo_device ? stat.rdev : stat.dev);
- 	info->lo_offset = lo->lo_offset;
- 	info->lo_sizelimit = lo->lo_sizelimit;
- 	info->lo_flags = lo->lo_flags;
-@@ -1198,7 +1194,19 @@ loop_get_status(struct loop_device *lo,
- 		memcpy(info->lo_encrypt_key, lo->lo_encrypt_key,
- 		       lo->lo_encrypt_key_size);
- 	}
--	return 0;
-+
-+	/* Drop lo_ctl_mutex while we call into the filesystem. */
-+	file = get_file(lo->lo_backing_file);
-+	mutex_unlock(&lo->lo_ctl_mutex);
-+	ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
-+			  AT_STATX_SYNC_AS_STAT);
-+	if (!ret) {
-+		info->lo_device = huge_encode_dev(stat.dev);
-+		info->lo_inode = stat.ino;
-+		info->lo_rdevice = huge_encode_dev(stat.rdev);
-+	}
-+	fput(file);
-+	return ret;
- }
- 
- static void
-@@ -1378,7 +1386,8 @@ static int lo_ioctl(struct block_device
- 		break;
- 	case LOOP_GET_STATUS:
- 		err = loop_get_status_old(lo, (struct loop_info __user *) arg);
--		break;
-+		/* loop_get_status() unlocks lo_ctl_mutex */
-+		goto out_unlocked;
- 	case LOOP_SET_STATUS64:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-@@ -1387,7 +1396,8 @@ static int lo_ioctl(struct block_device
- 		break;
- 	case LOOP_GET_STATUS64:
- 		err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
--		break;
-+		/* loop_get_status() unlocks lo_ctl_mutex */
-+		goto out_unlocked;
- 	case LOOP_SET_CAPACITY:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-@@ -1548,7 +1558,7 @@ static int lo_compat_ioctl(struct block_
- 		mutex_lock(&lo->lo_ctl_mutex);
- 		err = loop_get_status_compat(
- 			lo, (struct compat_loop_info __user *) arg);
--		mutex_unlock(&lo->lo_ctl_mutex);
-+		/* loop_get_status() unlocks lo_ctl_mutex */
- 		break;
- 	case LOOP_SET_CAPACITY:
- 	case LOOP_CLR_FD:
+ 		/* xHCI private pointer was set in xhci_pci_probe for the second
+ 		 * registered roothub.
+ 		 */
