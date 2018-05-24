@@ -1,88 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968034AbeEXRir (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:38:47 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52324 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965756AbeEXRio (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:38:44 -0400
-X-Google-Smtp-Source: AB8JxZrvbrUYsvAyfpI9geCLhoAQSH8VsIl6Y8xP3g2EekDwcQPEOAfRjxqx0SAZHFas7q7T9La4Kg==
-From: Thierry Escande <thierry.escande@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: apq8096-db820c: Removed bt-en-1-8v regulator
-Date: Thu, 24 May 2018 19:38:36 +0200
-Message-Id: <20180524173836.22719-1-thierry.escande@linaro.org>
-X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
+        id S1030317AbeEXRjW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:39:22 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:37970 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968103AbeEXRjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 13:39:17 -0400
+From: Logan Gunthorpe <logang@deltatee.com>
+To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-ntb@googlegroups.com
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Doug Meyer <dmeyer@gigaio.com>
+Date: Thu, 24 May 2018 11:39:13 -0600
+Message-Id: <20180524173913.4506-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, logang@deltatee.com, bhelgaas@google.com, alex.williamson@redhat.com, dmeyer@gigaio.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v2] PCI: Expand documentation for pci_add_dma_alias()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the unused bt-en-1-8v regulator and moves the
-bt_en_gios claim to the pm8994_gpios node.
+Seeing there's been some confusion about the use of pci_add_dma_alias(),
+expand the comment to describe why it must be called early and how
+early it must be called.
 
-This bt_en_gpio could have been moved to the bluetooth serial node but
-instead this node declares an 'enable' gpio addressing the bt_en_gpio.
-This is needed by the Qualcomm QCA6174 WLAN/BT combo chip that needs to
-have the bt_en_gpio claimed even if only WLAN is used.
+Also, expand on the purpose of this function and common reasons it would
+be used.
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+[The comment was reworded to some extent by Alex Williamson]
+
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Doug Meyer <dmeyer@gigaio.com>
 ---
- arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi |  2 +-
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi           | 14 --------------
- 2 files changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-index 6167af955659..a6ad3d7fe655 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-@@ -4,7 +4,7 @@
- &pm8994_gpios {
- 
- 	pinctrl-names = "default";
--	pinctrl-0 = <&ls_exp_gpio_f>;
-+	pinctrl-0 = <&ls_exp_gpio_f &bt_en_gpios>;
- 
- 	ls_exp_gpio_f: pm8994_gpio5 {
- 		pinconf {
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 8be666ea92bd..affd4486e10e 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -171,19 +171,6 @@
- 			pinctrl-0 = <&usb2_vbus_det_gpio>;
- 		};
- 
--		bt_en: bt-en-1-8v {
--			pinctrl-names = "default";
--			pinctrl-0 = <&bt_en_gpios>;
--			compatible = "regulator-fixed";
--			regulator-name = "bt-en-regulator";
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <1800000>;
--
--			/* WLAN card specific delay */
--			startup-delay-us = <70000>;
--			enable-active-high;
--		};
--
- 		wlan_en: wlan-en-1-8v {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&wlan_en_gpios>;
-@@ -204,7 +191,6 @@
- 				status = "okay";
- 				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
- 				vddpe-supply = <&wlan_en>;
--				vddpe1-supply = <&bt_en>;
- 			};
- 
- 			pcie@608000 {
--- 
-2.14.1
+v2: Reworked the patch with Alex's suggested wording.
+
+  drivers/pci/pci.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index dbfe7c4f3776..1c0c1ea23b90 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+  * @dev: the PCI device for which alias is added
+  * @devfn: alias slot and function
+  *
+- * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
+- * It should be called early, preferably as PCI fixup header quirk.
++ * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
++ * which is used to program permissible BDF source addresses for DMA
++ * requests in an IOMMU. These aliases factor into IOMMU group creation
++ * and are useful for devices generating DMA requests beyond or different
++ * from their logical bus devfn. Examples include device quirks where the
++ * device simply uses the wronge devfn, as well as non-transparent bridges
++ * where the alias may be a proxy for devices in another domain.
++ *
++ * IOMMU group creation is performed during device discovery or addition,
++ * prior to any potential DMA mapping and therefore prior to driver probing
++ * (especially for userspace assigned devices where IOMMU group definition
++ * cannot be left as a userspace activity). DMA aliases should therefore
++ * be configured via quirks, such as the PCI fixup header quirk.
+  */
+ void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
+ {
+--
+2.11.0
