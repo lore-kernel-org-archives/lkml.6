@@ -1,156 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969323AbeEXVHj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:07:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39194 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967133AbeEXVHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:07:38 -0400
-Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
- device driver
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Jaewon Kim <jaewon31.kim@samsung.com>,
-        Jan Kara <jack@suse.cz>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
-References: <20180523151151.6730-1-david@redhat.com>
- <20180524075327.GU20441@dhcp22.suse.cz>
- <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
- <20180524093121.GZ20441@dhcp22.suse.cz>
- <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
- <20180524120341.GF20441@dhcp22.suse.cz>
- <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
- <20180524142241.GJ20441@dhcp22.suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <819e45c5-6ae3-1dff-3f1d-c0411b6e2e1d@redhat.com>
-Date: Thu, 24 May 2018 23:07:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S971553AbeEXVLv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:11:51 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37721 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967133AbeEXVLq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 17:11:46 -0400
+X-Google-Smtp-Source: AB8JxZpGUuGwJgCCnJerdWTKC1Warq8lGqhK88BxDJsQGcYTLp1qfMi7om8y1N5BbCKrcNWZw/iGQr30wS20sWjAgaA=
 MIME-Version: 1.0
-In-Reply-To: <20180524142241.GJ20441@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c21d18e-954a-f3a8-9817-0117b7cb7e4f@nvidia.com>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-10-git-send-email-ulf.hansson@linaro.org> <1c21d18e-954a-f3a8-9817-0117b7cb7e4f@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 24 May 2018 23:11:44 +0200
+Message-ID: <CAPDyKFozm88OM8cDFXXwvgdMirrt2=HhZtBdyhNjo2bgjHV2Mg@mail.gmail.com>
+Subject: Re: [PATCH 9/9] PM / Domains: Add dev_pm_domain_attach_by_id() to
+ manage multi PM domains
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 16:22, Michal Hocko wrote:
-> I will go over the rest of the email later I just wanted to make this
-> point clear because I suspect we are talking past each other.
+On 24 May 2018 at 17:48, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> On 18/05/18 11:31, Ulf Hansson wrote:
+>>
+>> The existing dev_pm_domain_attach() function, allows a single PM domain to
+>> be attached per device. To be able to support devices that are partitioned
+>> across multiple PM domains, let's introduce a new interface,
+>> dev_pm_domain_attach_by_id().
+>>
+>> The dev_pm_domain_attach_by_id() returns a new allocated struct device
+>> with
+>> the corresponding attached PM domain. This enables for example a driver to
+>> operate on the new device from a power management point of view. The
+>> driver
+>> may then also benefit from using the received device, to set up so called
+>> device-links towards its original device. Depending on the situation,
+>> these
+>> links may then be dynamically changed.
+>>
+>> The new interface is typically called by drivers during their probe phase,
+>> in case they manages devices which uses multiple PM domains. If that is
+>> the
+>> case, the driver also becomes responsible of managing the detaching of the
+>> PM domains, which typically should be done at the remove phase. Detaching
+>> is done by calling the existing dev_pm_domain_detach() function and for
+>> each of the received devices from dev_pm_domain_attach_by_id().
+>>
+>> Note, currently its only genpd that supports multiple PM domains per
+>> device, but dev_pm_domain_attach_by_id() can easily by extended to cover
+>> other PM domain types, if/when needed.
+>>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> ---
+>>   drivers/base/power/common.c | 33 ++++++++++++++++++++++++++++++++-
+>>   include/linux/pm_domain.h   |  7 +++++++
+>>   2 files changed, 39 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+>> index 7ae62b6..d3db974 100644
+>> --- a/drivers/base/power/common.c
+>> +++ b/drivers/base/power/common.c
+>> @@ -117,13 +117,44 @@ int dev_pm_domain_attach(struct device *dev, bool
+>> power_on)
+>>   EXPORT_SYMBOL_GPL(dev_pm_domain_attach);
+>>     /**
+>> + * dev_pm_domain_attach_by_id - Attach a device to one of its PM domains.
+>
+>
+> Isn't this more of a 'get'?
 
-It sounds like we are now talking about how to solve the problem. I like
-that :)
+I don't think so, at least according to the common understanding of
+how we use get and put APIs.
 
-> 
-> On Thu 24-05-18 16:04:38, David Hildenbrand wrote:
-> [...]
->> The point I was making is: I cannot allocate 8MB/128MB using the buddy
->> allocator. All I want to do is manage the memory a virtio-mem device
->> provides as flexible as possible.
-> 
-> I didn't mean to use the page allocator to isolate pages from it. We do
-> have other means. Have a look at the page isolation framework and have a
-> look how the current memory hotplug (ab)uses it. In short you mark the
-> desired physical memory range as isolated (nobody can allocate from it)
-> and then simply remove it from the page allocator. And you are done with
-> it. Your particular range is gone, nobody will ever use it. If you mark
-> those struct pages reserved then pfn walkers should already ignore them.
-> If you keep those pages with ref count 0 then even hotplug should work
-> seemlessly (I would have to double check).
-> 
-> So all I am arguing is that whatever your driver wants to do can be
-> handled without touching the hotplug code much. You would still need
-> to add new ranges in the mem section units and manage on top of that.
-> You need to do that anyway to keep track of what parts are in use or
-> offlined anyway right? Now the mem sections. You have to do that anyway
-> for memmaps. Our sparse memory model simply works in those units. Even
-> if you make a part of that range unavailable then the section will still
-> be there.
-> 
-> Do I make at least some sense or I am completely missing your point?
-> 
+For example, clk_get() returns a cookie to a clk, which you then can
+do a hole bunch of different clk specific operations on.
 
-I think we're heading somewhere. I understand that you want to separate
-this "semi" offline part from the general offlining code. If so, we
-should definitely enforce segment alignment for online_pages/offline_pages.
+This is different, there are no specific PM domain operations the
+caller can or should do. Instead the idea is to keep drivers more or
+less transparent, still using runtime PM as before. The only care the
+caller need to take is to use device links, which BTW isn't a PM
+domain specific thing.
 
-Importantly, what I need is:
+>
+>> + * @index: The index of the PM domain.
+>> + * @dev: Device to attach.
+>
+>
+> Isn't this just the device associated with the PM domain we are getting?
 
-1. Indicate and prepare memory sections to be used for adding memory
-   chunks (right now add_memory())
-2. Make memory chunks of a section available to the system (right now
-   online_pages())
-3. Remove memory chunks of a section from the system (right now
-   offline_pages())
-4. Remove memory sections from the system (right now remove_memory())
-5. Hinder dumping tools from reading memory chunks that are logically
-   offline (right now PageOffline())
-6. For 3. find removable memory chunks in a certain memory range with a
-   variable size.
+Correct, but please note, as stated above, I don't think it's a good
+idea to return a special PM domain cookie, because we don't want the
+caller to run special PM domain operations.
 
-In an ideal world, 2. would never fail (in contrast to online_pages()
-right now). This might make some further developments I have in mind
-easier :) So if we can come up with an approach that can guarantee that,
-extra points.
+>
+>> + *
+>> + * As @dev may only be attached to a single PM domain, the backend PM
+>> domain
+>> + * provider should create a virtual device to attach instead. As
+>> attachment
+>> + * succeeds, the ->detach() callback in the struct dev_pm_domain should
+>> be
+>> + * assigned by the corresponding backend attach function.
+>> + *
+>> + * This function should typically be invoked from drivers during probe
+>> phase.
+>> + * Especially for those that manages devices which requires power
+>> management
+>> + * through more than one PM domain.
+>> + *
+>> + * Callers must ensure proper synchronization of this function with power
+>> + * management callbacks.
+>> + *
+>> + * Returns the virtual attached device in case successfully attached PM
+>> domain,
+>> + * NULL in case @dev don't need a PM domain, else a PTR_ERR().
+>
+>
+> Should this be 'NULL in the case where the @dev already has a power-domain'?
 
-So what I think you are talking about is the following.
+Yes, I think so. The intent is to be consistent with how
+dev_pm_domain_attach() works and according to the latest changes I did
+for it. It's queued for 4.18, please have a look in Rafael's tree and
+you will see.
 
-For 1. Use add_memory() followed by online_pages(). Don't actually
-       online the pages, keep them reserved (like XEN balloon). Fixup
-       stats.
-For 2. Expose reserved pages to Buddy allocator. Clear reserved bit.
-       Fixup stats. This can never fail. (yay)
-For 3. Isolate pages, try to move everything away (basically but not
-       comletely offlining code). Set reserved flag. Fixup flags.
-For 4. offline_pages() followed by remove_memory().
-       -> Q: How to distinguish reserved offline from other reserved
-             pages? offline_pages() has to be able to deal with that
-For 5. I don't think we can use reserved flag here.
-       -> Q: What else to use?
-For 6. Scan for movable ranges. The use
+>
+>> + */
+>> +struct device *dev_pm_domain_attach_by_id(struct device *dev,
+>> +                                         unsigned int index)
+>> +{
+>> +       if (dev->pm_domain)
+>
+>
+> I wonder if this is worthy of a ...
+>
+>         if (WARN_ON(dev->pm_domain))
+>
+>> +               return NULL;
+>
+>
+> Don't we consider this an error case? I wonder why not return PTR_ERR here
+> as well? This would be consistent with dev_pm_domain_attach().
 
+Please see above comment.
 
-"You need to do that anyway to keep track of what parts are in use or
- offlined anyway right?"
-
-I would manually track which chunks of a section is logically offline (I
-do that right now already).
-
-Is that what you had in mind? If not, where does your idea differ.
-How could we solve 4/5. Of course, PageOffline() is again an option.
-
-Thanks!
-
--- 
-
-Thanks,
-
-David / dhildenb
+Kind regards
+Uffe
