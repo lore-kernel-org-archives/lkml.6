@@ -1,92 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156349-2-4570198488051568750
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156348; b=IqyVGzJRnDdYZuj/ADQ+ywkq892HA6fkGwGkoinRUZ6s7YImEw
-    E/0b3mQbiVdwQNrLSjZP6XD2Z9gxMWsOalYLFYTjPyuxFcF/zSayQvDu+r+Ut6Vq
-    HPD90vrkWkQxczfJFd4vB1wg4fGc0w5UobhQ6g+9b0itmfr5MZTPQQgXg3Gs+ZIS
-    R9Mp8YSJBKPN+U3/sqGt/S1P+uqRst9ZwG6dH8BvrMTZ98/cLo/swf657AihqpHO
-    0+EQsUKhJBTbwsej9C4oRPOcdXAiGPTvy3DbCwATWRxH1WdApi4bAQd71xepZfZs
-    etf5rYgRg7yFeJh8CRNrazARuGqqJvuLdJsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156348; bh=zWzLfT54AEQrB4r2ZLxouDCie7JntE
-    Wrw5KbV51aii8=; b=GO/Drnfaw0YK7lLBsqM3QGWNCeLO7ayWw8l1oY4NGtvwfV
-    guiAyk5hScdhEUuPN7WdLMgzKapXMQPoXOIgkAKaxM5i0Al+DcBBXIp85NzZA0yB
-    HGTvBfSyS4Gh/Cghq9qn9irMqVPkB3R95z45mGnwfcMQdjBOFM7EaZOyKhvUdS04
-    m7ni0uJpB5uCsJg4/BA6DVrJDEbObltYMmrEa6u/ufifbzIrsT1Bc7VNx8YIIAZu
-    xIp6GfXW+hzxF2Xu87GstOyVki2ov3ZnB8OhYS04X5lAlSMZvG6ObzIZi7dbywju
-    fbAJyx92KVLfW7cdVXM8urUndC6UbIbSCLE0dzPw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ykX7RU9m x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ykX7RU9m x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMJo6LlJRdFaKU9Grufx/shfcmhMwHJGABp9txHgIf+OIPDZNZJId3vQ3bMMZnsqWaTielOmA9CRq5TR++4z94mK2kZIU20x5aB0I0CenBrmuralSSBL
-    gOPkTp//FkI8+Ra1arYcPMGZ5mx0ZTg/LoioesfKxRwNIHqG2ANB3VupZv18yXiZq4yOkpragQwQJnhaSnPcXAuKT4IFqHEG3uSMNhTJ4rpbfdxMsZ4aV3L5
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=sozttTNsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=detmJ2bfGwl12fOR2OwA:9
-    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031315AbeEXKFp (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:05:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031229AbeEXKFn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:05:43 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrdk2Y7RL0kZiAihEjTZH9jo6xr7B7ciGS8rg4R/+8OmR6z7jjSlNtTwEu4psRKFQkQcANn
+ARC-Seal: i=1; a=rsa-sha256; t=1527156348; cv=none;
+        d=google.com; s=arc-20160816;
+        b=f+nBJA2sNZ0i61wZ0cChJvvtA9TGIOClLpMHo3bDi+TjG9Wd6kaCWIoT3fLD+PzdsV
+         0ApHLxdG97kYqT6iPWrLLYsePyKNcECYx9Mfbq4tkxj7dw03ZkgWDsGXnI0UiqHgotcu
+         nKMNIJqqLcmepEqshDuEyAWUZEkHdeNc026qiDSgsalTXmlcyQm+F39cmLfbaUkWBCRb
+         LNp/aH0C6uYsXSrYLPJLuKtfcGy089bQxAXmwBSIOXgQzpFQQdIa69xWVAssGfwvKnOD
+         yvf0qAdYW5AeDvutRvDxriRiYGuGUA/ZLg5C1KK5vn8WokwSUM5MoSStQ1FF8uexfIif
+         wTow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=QIo7dnH352tHRgZXdLZfyiLKdAoowaYazHeE3fEhUdE=;
+        b=QY7qEOYbU3Jlntd/dTqfFgsfbVjKHRpJre4hQyxXyaxPxBekXcSW638/UzjOuoe9t6
+         9n+RzZAUDmIsCypQv15Bs05tMefx/iQ5201nspbb+Brn2fGHsrAWCCkiDoipZuQ1deyG
+         Uf0XY018zcoueKx5tpzAx3zionifBMAnDktfMAgpZqxoIr6ITYgVDKcB2YkPjQdcFVLV
+         a8LE4Jit/T8UqMEffU0UqNhq1fGzYu8V56LSKNK4nOITG6ZDwf8cgfQZGtssoZFm8ngy
+         s1e9GVA/fXAqBprj8mOcITZy2UtncdlbnEHabblJPVY1GKCRCVZ0HLKNZDfRv4ZEclGA
+         fgNw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Z/svxqEk;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Z/svxqEk;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 153/161] serial: 8250: Dont service RX FIFO if interrupts are disabled
-Date: Thu, 24 May 2018 11:39:38 +0200
-Message-Id: <20180524093036.547964383@linuxfoundation.org>
+	stable@vger.kernel.org,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Tobias Klauser <tklauser@distanz.ch>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 154/161] serial: altera: ensure port->regshift is honored consistently
+Date: Thu, 24 May 2018 11:39:39 +0200
+Message-Id: <20180524093036.688598872@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -94,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601339065589910831?=
+X-GMAIL-MSGID: =?utf-8?q?1601339495622729845?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -104,37 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit 2e9fe539108320820016f78ca7704a7342788380 ]
+[ Upstream commit 0e254963b6ba4d63ac911e79537fea38dd03dc50 ]
 
-Currently, data in RX FIFO is read based on UART_LSR register state even
-if RDI and RLSI interrupts are disabled in UART_IER register.
-This is because when IRQ handler is called due to TX FIFO empty event,
-RX FIFO is serviced based on UART_LSR register status instead of
-UART_IIR status. This defeats the purpose of disabling UART RX
-FIFO interrupts during throttling(see, omap_8250_throttle()) as IRQ
-handler continues to drain UART RX FIFO resulting in overflow of buffer
-at tty layer.
-Fix this by making sure that driver drains UART RX FIFO only when
-UART_IIR_RDI is set along with UART_LSR_BI or UART_LSR_DR bits.
+Most register accesses in the altera driver honor port->regshift by
+using altera_uart_writel(). There are a few accesses however that were
+missed when the driver was converted to use port->regshift and some
+others were added later in commit 4d9d7d896d77 ("serial: altera_uart:
+add earlycon support").
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+Fixes: 2780ad42f5fe ("tty: serial: altera_uart: Use port->regshift to store bus shift")
+Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
+Acked-by: Tobias Klauser <tklauser@distanz.ch>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/8250_port.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/altera_uart.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1867,7 +1867,8 @@ int serial8250_handle_irq(struct uart_po
+--- a/drivers/tty/serial/altera_uart.c
++++ b/drivers/tty/serial/altera_uart.c
+@@ -327,7 +327,7 @@ static int altera_uart_startup(struct ua
  
- 	status = serial_port_in(port, UART_LSR);
+ 	/* Enable RX interrupts now */
+ 	pp->imr = ALTERA_UART_CONTROL_RRDY_MSK;
+-	writel(pp->imr, port->membase + ALTERA_UART_CONTROL_REG);
++	altera_uart_writel(port, pp->imr, ALTERA_UART_CONTROL_REG);
  
--	if (status & (UART_LSR_DR | UART_LSR_BI)) {
-+	if (status & (UART_LSR_DR | UART_LSR_BI) &&
-+	    iir & UART_IIR_RDI) {
- 		if (!up->dma || handle_rx_dma(up, iir))
- 			status = serial8250_rx_chars(up, status);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+@@ -343,7 +343,7 @@ static void altera_uart_shutdown(struct
+ 
+ 	/* Disable all interrupts now */
+ 	pp->imr = 0;
+-	writel(pp->imr, port->membase + ALTERA_UART_CONTROL_REG);
++	altera_uart_writel(port, pp->imr, ALTERA_UART_CONTROL_REG);
+ 
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+@@ -432,7 +432,7 @@ static void altera_uart_console_putc(str
+ 		 ALTERA_UART_STATUS_TRDY_MSK))
+ 		cpu_relax();
+ 
+-	writel(c, port->membase + ALTERA_UART_TXDATA_REG);
++	altera_uart_writel(port, c, ALTERA_UART_TXDATA_REG);
+ }
+ 
+ static void altera_uart_console_write(struct console *co, const char *s,
+@@ -502,13 +502,13 @@ static int __init altera_uart_earlycon_s
+ 		return -ENODEV;
+ 
+ 	/* Enable RX interrupts now */
+-	writel(ALTERA_UART_CONTROL_RRDY_MSK,
+-	       port->membase + ALTERA_UART_CONTROL_REG);
++	altera_uart_writel(port, ALTERA_UART_CONTROL_RRDY_MSK,
++			   ALTERA_UART_CONTROL_REG);
+ 
+ 	if (dev->baud) {
+ 		unsigned int baudclk = port->uartclk / dev->baud;
+ 
+-		writel(baudclk, port->membase + ALTERA_UART_DIVISOR_REG);
++		altera_uart_writel(port, baudclk, ALTERA_UART_DIVISOR_REG);
  	}
+ 
+ 	dev->con->write = altera_uart_earlycon_write;
