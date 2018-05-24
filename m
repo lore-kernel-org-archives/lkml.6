@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162536-2-14248772871993545513
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162515-4-10781412359756281890
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162535; b=btks6Jl4ZoTzkCs5cMi8ADvSzbUyjsIcCl7Z6FQuyzVO9VNMYm
-    OFHA1+LIYmQ/fwSD7TcHpiyTzWo3kLk/HjgYaLKNGDHJZUwh+BtkOsbBrlrjqJDj
-    1fVc5KKCAO41FOStBqAmWXciERWAMA9uSrvybNBc+LGKp0qy4F3xc31p/9rZ66ti
-    +sLY25rV31lE7fwfRjU2Tkw0bRSs+lvbJ8oq+yEjEwHbXTEZgv2YD2ut/4uF6VsY
-    yMWHKsXKTw8a0CM38hp5BbDFCgcRYN8PfefF6CaN2yFpRU1daxxp5LN9qbkbWu0p
-    AeymItiMP72pvFFAHhTU9sHUpFLW2zYVJGAQ==
+    1527162514; b=hkXH+kMY5Jp7z67PRA+zVxqRuGh5XHWUceAvNDX8W9IjMPlJmf
+    u2ZYNC+//gqwDuGBSnZ3i0C1A7zod9uJ+VlgmTHR2sdVIoxvVv8I2NqYXOqqgdha
+    80YPHI+36bkRjffRgH0PQRGRIgoikzjZWCvd9YTjyuZv/GhMjA/7bIFO1TSp+8Dm
+    Oq6ii4yuSWkdok70SlvtocaQkVOKkw24nrEAA4gL5UTOqlHtBh3Dg4I++cfvGqZa
+    9JiRLDvqLxKWvTIIr/Sln1REAgx6n+DiLabnL2HZ2NTwaibBRkFCdB9HGUNsFj7L
+    54WnaOD+RzutH7ZRd5eXj1vKWl9EM2LVZwKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162535; bh=j8jiJV112ETMNBgyHh6h0qjO+Oas5K
-    sho7Wg/mTH3RI=; b=f7KJXapvp5Z9A2Q4K2awAbOZ7FTNy3Fg2dVDzrJW3KA9pL
-    EYahvlHTTB6fxAk2v5OOYVP/v68b6ynRif0mxrrRJWEWdTgg2Q3y0TytrrBLeApU
-    58XMSZRULcI0VRODvl9KomTqlP8UI9r9i+1mYHdErxreW1gnYJRUp07e4Ljz5+29
-    EMYyWQN6l++5a/PyI8Dj2WHLyido31JtXcLee/ITWuIOvXo2LVkXxjhc7Hc9YqI1
-    /YrgpjFkzDw2sWUbvFiybHO6v4ULCBshPrZrbHaKMzQBRIiN0MLOEqkd7SH8Y6K4
-    pq4UWONxyOt9pafNOC9aSzKHzMiS8w8nUtnwrtnQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162514; bh=6sIC4eKMdCpiympq4I1ZBUjOC6WLJX
+    kaUgV0vWU9w7A=; b=Gd7Vff0HeJ0xqKee0pWrLISN9ALeaFowwNaVitGAC0E7gn
+    ycLkvJjHbwMxUOXx8wXC5zjlUcG00qgMsAmLwsugOlLQEUzbMVjZPrujeO3Btt8X
+    akTjGKe0xWzwlVud98K7gYR0apn82WM3H7BrG8RVAAvrGfm+kRE1k0xr6j7ZhiOR
+    Y+ZoF1MKDCxiJ5VtN5hWl4hg29lCsV02lxSWs10TfIRnp7dr64i+aw3Xj7JkcZ8I
+    r/GVHqZXBX8KTA1/VPgPEk8rEddThzdLxJzLXKIqnpSyXOlVI65PCPwBdg6I/U32
+    SBWY+I7uMpCjm76ORGb1FgRodFg58awksEA2y3eA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=lWhsbG2A x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=f0SaSoW2 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=lWhsbG2A x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=f0SaSoW2 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,28 +65,29 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL3gi9PXjiaegbPJLGFlLbomLhOD3nC/F/9IEo4qTR4J2evxU9bP3+5ESIPVeUncZxqyxQm9Fesf03RsWq+/ENMISEbTizFoPGY+VMzQeUxY4udgA+Y8
-    hdeMIcBTOnSePspXS8B909FzvfSyZMFbTz393zx4HC+mBSvfyoKdvvCMUHKb3cVqEHnBsK6/yCg7v1wDvJbkUYNTZHFqaiQPuXtkllVbYCE6fFCz1fMVFYqA
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNCbd03aCvbRqpml7kn6t/FM79pyE/T8FtCLEkDkG7ITCuuku0VibY7D7sk3y0EcRTj8OfW6KmBbDqS3D4tBneiMYn0N181M+JqQhNXjJq/SxFdZXdUR
+    FQuEGEzj5xApTT+Nd4gY7lTtML29OErmm1hgWOyz7OjvPtSpZvu3BgDf8mPd6zy9L3FDVrUJlqDjSQ7Uj1MHqIDA0XjIzIThqfEgYxnJQUXmh3bGHi3yvfbG
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=1jzKh_6GKXueggxyDnkA:9
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=4AVweTjIB319inlOEd8A:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967101AbeEXLsj (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:48:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59726 "EHLO mail.kernel.org"
+        id S967218AbeEXLsR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:48:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967032AbeEXJrR (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:47:17 -0400
+        id S966609AbeEXJrU (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:47:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 13/96] s390/ftrace: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:37:56 +0200
-Message-Id: <20180524093606.333977968@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: [PATCH 4.9 14/96] s390/kernel: use expoline for indirect branches
+Date: Thu, 24 May 2018 11:37:57 +0200
+Message-Id: <20180524093606.388094392@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -105,139 +107,156 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 23a4d7fd34856da8218c4cfc23dba7a6ec0a423a ]
+[ Upstream commit c50c84c3ac4d5db683904bdb3257798b6ef980ae ]
 
-The return from the ftrace_stub, _mcount, ftrace_caller and
-return_to_handler functions is done with "br %r14" and "br %r1".
-These are indirect branches as well and need to use execute
-trampolines for CONFIG_EXPOLINE=y.
-
-The ftrace_caller function is a special case as it returns to the
-start of a function and may only use %r0 and %r1. For a pre z10
-machine the standard execute trampoline uses a LARL + EX to do
-this, but this requires *two* registers in the range %r1..%r15.
-To get around this the 'br %r1' located in the lowcore is used,
-then the EX instruction does not need an address register.
-But the lowcore trick may only be used for pre z14 machines,
-with noexec=on the mapping for the first page may not contain
-instructions. The solution for that is an ALTERNATIVE in the
-expoline THUNK generated by 'GEN_BR_THUNK %r1' to switch to
-EXRL, this relies on the fact that a machine that supports
-noexec=on has EXRL as well.
+The assember code in arch/s390/kernel uses a few more indirect branches
+which need to be done with execute trampolines for CONFIG_EXPOLINE=y.
 
 Cc: stable@vger.kernel.org # 4.16
 Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-insn.h |   13 +++++++++++++
- arch/s390/kernel/asm-offsets.c      |    1 +
- arch/s390/kernel/mcount.S           |   14 +++++++++-----
- 3 files changed, 23 insertions(+), 5 deletions(-)
+ arch/s390/kernel/base.S   |   24 ++++++++++++++----------
+ arch/s390/kernel/reipl.S  |    7 +++++--
+ arch/s390/kernel/swsusp.S |    9 ++++++---
+ 3 files changed, 25 insertions(+), 15 deletions(-)
 
---- a/arch/s390/include/asm/nospec-insn.h
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -2,10 +2,15 @@
- #ifndef _ASM_S390_NOSPEC_ASM_H
- #define _ASM_S390_NOSPEC_ASM_H
+--- a/arch/s390/kernel/base.S
++++ b/arch/s390/kernel/base.S
+@@ -8,18 +8,22 @@
  
-+#include <asm/alternative-asm.h>
-+#include <asm/asm-offsets.h>
-+
- #ifdef __ASSEMBLY__
- 
- #ifdef CONFIG_EXPOLINE
- 
-+_LC_BR_R1 = __LC_BR_R1
-+
- /*
-  * The expoline macros are used to create thunks in the same format
-  * as gcc generates them. The 'comdat' section flag makes sure that
-@@ -76,13 +81,21 @@
- 	.endm
- 
- 	.macro __THUNK_EX_BR reg,ruse
-+	# Be very careful when adding instructions to this macro!
-+	# The ALTERNATIVE replacement code has a .+10 which targets
-+	# the "br \reg" after the code has been patched.
- #ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
- 	exrl	0,555f
- 	j	.
- #else
-+	.ifc \reg,%r1
-+	ALTERNATIVE "ex %r0,_LC_BR_R1", ".insn ril,0xc60000000000,0,.+10", 35
-+	j	.
-+	.else
- 	larl	\ruse,555f
- 	ex	0,0(\ruse)
- 	j	.
-+	.endif
- #endif
- 555:	br	\reg
- 	.endm
---- a/arch/s390/kernel/asm-offsets.c
-+++ b/arch/s390/kernel/asm-offsets.c
-@@ -175,6 +175,7 @@ int main(void)
- 	OFFSET(__LC_MACHINE_FLAGS, lowcore, machine_flags);
- 	OFFSET(__LC_GMAP, lowcore, gmap);
- 	OFFSET(__LC_PASTE, lowcore, paste);
-+	OFFSET(__LC_BR_R1, lowcore, br_r1_trampoline);
- 	/* software defined ABI-relevant lowcore locations 0xe00 - 0xe20 */
- 	OFFSET(__LC_DUMP_REIPL, lowcore, ipib);
- 	/* hardware defined lowcore locations 0x1000 - 0x18ff */
---- a/arch/s390/kernel/mcount.S
-+++ b/arch/s390/kernel/mcount.S
-@@ -8,13 +8,17 @@
  #include <linux/linkage.h>
  #include <asm/asm-offsets.h>
- #include <asm/ftrace.h>
 +#include <asm/nospec-insn.h>
  #include <asm/ptrace.h>
- #include <asm/export.h>
+ #include <asm/sigp.h>
  
-+	GEN_BR_THUNK %r1
++	GEN_BR_THUNK %r9
 +	GEN_BR_THUNK %r14
 +
- 	.section .kprobes.text, "ax"
- 
- ENTRY(ftrace_stub)
--	br	%r14
-+	BR_EX	%r14
- 
- #define STACK_FRAME_SIZE  (STACK_FRAME_OVERHEAD + __PT_SIZE)
- #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
-@@ -22,7 +26,7 @@ ENTRY(ftrace_stub)
- #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
- 
- ENTRY(_mcount)
--	br	%r14
-+	BR_EX	%r14
- 
- EXPORT_SYMBOL(_mcount)
- 
-@@ -52,7 +56,7 @@ ENTRY(ftrace_caller)
- #endif
- 	lgr	%r3,%r14
- 	la	%r5,STACK_PTREGS(%r15)
+ ENTRY(s390_base_mcck_handler)
+ 	basr	%r13,0
+ 0:	lg	%r15,__LC_PANIC_STACK	# load panic stack
+ 	aghi	%r15,-STACK_FRAME_OVERHEAD
+ 	larl	%r1,s390_base_mcck_handler_fn
+-	lg	%r1,0(%r1)
+-	ltgr	%r1,%r1
++	lg	%r9,0(%r1)
++	ltgr	%r9,%r9
+ 	jz	1f
 -	basr	%r14,%r1
-+	BASR_EX	%r14,%r1
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- # The j instruction gets runtime patched to a nop instruction.
- # See ftrace_enable_ftrace_graph_caller.
-@@ -67,7 +71,7 @@ ftrace_graph_caller_end:
- #endif
- 	lg	%r1,(STACK_PTREGS_PSW+8)(%r15)
- 	lmg	%r2,%r15,(STACK_PTREGS_GPRS+2*8)(%r15)
++	BASR_EX	%r14,%r9
+ 1:	la	%r1,4095
+ 	lmg	%r0,%r15,__LC_GPREGS_SAVE_AREA-4095(%r1)
+ 	lpswe	__LC_MCK_OLD_PSW
+@@ -36,10 +40,10 @@ ENTRY(s390_base_ext_handler)
+ 	basr	%r13,0
+ 0:	aghi	%r15,-STACK_FRAME_OVERHEAD
+ 	larl	%r1,s390_base_ext_handler_fn
+-	lg	%r1,0(%r1)
+-	ltgr	%r1,%r1
++	lg	%r9,0(%r1)
++	ltgr	%r9,%r9
+ 	jz	1f
+-	basr	%r14,%r1
++	BASR_EX	%r14,%r9
+ 1:	lmg	%r0,%r15,__LC_SAVE_AREA_ASYNC
+ 	ni	__LC_EXT_OLD_PSW+1,0xfd	# clear wait state bit
+ 	lpswe	__LC_EXT_OLD_PSW
+@@ -56,10 +60,10 @@ ENTRY(s390_base_pgm_handler)
+ 	basr	%r13,0
+ 0:	aghi	%r15,-STACK_FRAME_OVERHEAD
+ 	larl	%r1,s390_base_pgm_handler_fn
+-	lg	%r1,0(%r1)
+-	ltgr	%r1,%r1
++	lg	%r9,0(%r1)
++	ltgr	%r9,%r9
+ 	jz	1f
+-	basr	%r14,%r1
++	BASR_EX	%r14,%r9
+ 	lmg	%r0,%r15,__LC_SAVE_AREA_SYNC
+ 	lpswe	__LC_PGM_OLD_PSW
+ 1:	lpswe	disabled_wait_psw-0b(%r13)
+@@ -116,7 +120,7 @@ ENTRY(diag308_reset)
+ 	larl	%r4,.Lcontinue_psw	# Restore PSW flags
+ 	lpswe	0(%r4)
+ .Lcontinue:
+-	br	%r14
++	BR_EX	%r14
+ .align 16
+ .Lrestart_psw:
+ 	.long	0x00080000,0x80000000 + .Lrestart_part2
+--- a/arch/s390/kernel/reipl.S
++++ b/arch/s390/kernel/reipl.S
+@@ -6,8 +6,11 @@
+ 
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
++#include <asm/nospec-insn.h>
+ #include <asm/sigp.h>
+ 
++	GEN_BR_THUNK %r9
++
+ #
+ # Issue "store status" for the current CPU to its prefix page
+ # and call passed function afterwards
+@@ -66,9 +69,9 @@ ENTRY(store_status)
+ 	st	%r4,0(%r1)
+ 	st	%r5,4(%r1)
+ 	stg	%r2,8(%r1)
+-	lgr	%r1,%r2
++	lgr	%r9,%r2
+ 	lgr	%r2,%r3
 -	br	%r1
-+	BR_EX	%r1
++	BR_EX	%r9
  
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	.section .bss
+ 	.align	8
+--- a/arch/s390/kernel/swsusp.S
++++ b/arch/s390/kernel/swsusp.S
+@@ -12,6 +12,7 @@
+ #include <asm/ptrace.h>
+ #include <asm/thread_info.h>
+ #include <asm/asm-offsets.h>
++#include <asm/nospec-insn.h>
+ #include <asm/sigp.h>
  
-@@ -80,6 +84,6 @@ ENTRY(return_to_handler)
- 	aghi	%r15,STACK_FRAME_OVERHEAD
- 	lgr	%r14,%r2
- 	lmg	%r2,%r5,32(%r15)
+ /*
+@@ -23,6 +24,8 @@
+  * (see below) in the resume process.
+  * This function runs with disabled interrupts.
+  */
++	GEN_BR_THUNK %r14
++
+ 	.section .text
+ ENTRY(swsusp_arch_suspend)
+ 	stmg	%r6,%r15,__SF_GPRS(%r15)
+@@ -102,7 +105,7 @@ ENTRY(swsusp_arch_suspend)
+ 	spx	0x318(%r1)
+ 	lmg	%r6,%r15,STACK_FRAME_OVERHEAD + __SF_GPRS(%r15)
+ 	lghi	%r2,0
 -	br	%r14
 +	BR_EX	%r14
  
- #endif
+ /*
+  * Restore saved memory image to correct place and restore register context.
+@@ -200,7 +203,7 @@ pgm_check_entry:
+ 	lghi	%r1,0
+ 	sam31
+ 	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
+-	basr	%r14,%r3
++	brasl	%r14,_sclp_print_early
+ 	larl	%r3,.Ldisabled_wait_31
+ 	lpsw	0(%r3)
+ 4:
+@@ -266,7 +269,7 @@ restore_registers:
+ 	/* Return 0 */
+ 	lmg	%r6,%r15,STACK_FRAME_OVERHEAD + __SF_GPRS(%r15)
+ 	lghi	%r2,0
+-	br	%r14
++	BR_EX	%r14
+ 
+ 	.section .data..nosave,"aw",@progbits
+ 	.align	8
