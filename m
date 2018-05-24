@@ -1,40 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrGFQTKKkYmr34h7T1dZCDHQKIeDpVQ0zyoVeaxOTZFTuIKZpRB/+M6PaanERN8hvDTj607
-ARC-Seal: i=1; a=rsa-sha256; t=1527156218; cv=none;
+X-Google-Smtp-Source: AB8JxZodASkbMd2uYgf46mmeshfTA8pYlUQoG9e7CAO1cgdpJWgBUHdXSRiLMrEtuJJrDBEi8JCa
+ARC-Seal: i=1; a=rsa-sha256; t=1527156215; cv=none;
         d=google.com; s=arc-20160816;
-        b=mAFa9nDaciX76lOQNd4IFBcKNnqFvwLpcf8QaK75z0ep27IuqOTSj75ib+VtD4SqQ7
-         0432ONqtHHyc2Ot45xexD4cM+e4bAbu0/+oJwnkpxQ+BaptKZB6A3aLXcDycfyxKLxUY
-         EMpdshA2HZh9g/rZsB84CKvPspwLvncSyl9bkqFwg6xh4WKeEQuoKOAp59t6tilcGH3Q
-         2z1sAffhS7GgiK0yOo0f2iOlE3mTQEb4qQpgpEwQ70UpwdXwnoTJVCA8lxFd8n/m+ipM
-         awijP6TyPUasFRUvgyuj4KcCzvJ5YOVTb4Xpe7kVY36UFt5p7od7fp+tmTX9u/J+BOzc
-         zrXQ==
+        b=LAcuJlnGIfUqueUbmYzDmsXUbsiCciY5Wa8WnSL0BYABDd39CXceEHdfa0ecfJnFl/
+         hckhdE6rWAPW1h6WAqvTMhT6OIyhqf4RvOtQWIy5fgJYqf5RQzWzC1rh1NRWvkURYVhe
+         2j6v40vW/HcDJ83wHxsCs3egD0nuy6S3bnkywfB+yUqkdlyWgPtmpAqammyOxAf37jgz
+         GK1uM+EMUhmbl8KblwR0keUPyOR8Ssla+18mSmy7Z+df2hhSMsGSCjvMesixdijWefDM
+         ZsLKfbb6b5Fu5s0eMXRxej5+PD/9dgn92G1x/WLywCFlIf5Otz+deLsgUBOuOttcvA6W
+         VtlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=0HQEB0Dn1/HI0KaISQUiXC7g0NqrrThbgbEtTzVV1kg=;
-        b=CmBvgvFwJVFrmVK2mow7Mz5JnFnqjHkjG9GmtMxVjvN3WPhvqspWvLbwmV+3L8zHp+
-         V6KNUQYmCJuazascm4nbEEPxBs364CBxYBRTOEc2rpevWNaR3Rs2JVwOl9NUsl/30LZj
-         GCEJRkgiyxG1vKBfShiX2FYz8hL+LpM6xAcRDxLJsTIRsa7kztNOY7/Eytqdzv/BoXbU
-         zsXldavymR+P8AmoFmyL0EegWqH2zGLyJL5bdUGqt6PxH76B4Rnj6l/rWgNZSlDvez6v
-         /ZPhsAfCGiZcIhj4EhsztZ/AcZ8LvOogRY4pQGwERv4pLfqyXWenlIZ6BD9FjtkdoSi3
-         JE1w==
+        bh=LGFpVT2dXtvWt4R8FXz7mC4nnENvPXT/lS8Lpszo6qo=;
+        b=ch6oA95Acqq4haYPJT0SH0U69VxeWslVlUxTSZZgrjU9U/W2SWjjlCZMiQgPXqkuPd
+         kg02G37rrf6jw3gSlbE8lx7TWhlIDI1wGzl47E4YER0wMqWVi14hCW6LHLqASVkWJD7o
+         fNrMe8WtKvkIq7Y52wcMJ2gGEdz66MOUbACPrW9wsmsaJATpV30l8VsCvRQ24slQg4Vx
+         TbpyMkifBIF2doB+fiaVnBLB4daUsDtYDDo6E86/df7QLl+jV66SDcqBJ4potrpt+kI0
+         FE7XLgABcQfQW8JYOmE8jzTzC+RzMMMBipNhnawr41F1qdEiBmTuG6g5z3LvaiLEWI3S
+         nRXA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=L7i4BkUm;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Q5Oln3H2;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=L7i4BkUm;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Q5Oln3H2;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dave Carroll <david.carroll@microsemi.com>,
-	Raghava Aditya Renukunta <raghavaaditya.renukunta@microsemi.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 107/161] scsi: aacraid: Insure command thread is not recursively stopped
-Date: Thu, 24 May 2018 11:38:52 +0200
-Message-Id: <20180524093031.218601146@linuxfoundation.org>
+Subject: [PATCH 4.16 106/161] crypto: inside-secure - fix the invalidation step during cra_exit
+Date: Thu, 24 May 2018 11:38:51 +0200
+Message-Id: <20180524093031.098530213@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338552415130255?=
-X-GMAIL-MSGID: =?utf-8?q?1601339358629622070?=
+X-GMAIL-THRID: =?utf-8?q?1601338854833570204?=
+X-GMAIL-MSGID: =?utf-8?q?1601339355657469969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,87 +52,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Carroll <david.carroll@microsemi.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 1c6b41fb92936fa5facea464d5d7cbf855966d04 ]
+[ Upstream commit b7007dbccd92f7b8c00e590020bee542a48c6a2c ]
 
-If a recursive IOP_RESET is invoked, usually due to the eh_thread
-handling errors after the first reset, be sure we flag that the command
-thread has been stopped to avoid an Oops of the form;
+When exiting a transformation, the cra_exit() helper is called in each
+driver providing one. The Inside Secure SafeXcel driver has one, which
+is responsible of freeing some areas and of sending one invalidation
+request to the crypto engine, to invalidate the context that was used
+during the transformation.
 
- [ 336.620256] CPU: 28 PID: 1193 Comm: scsi_eh_0 Kdump: loaded Not tainted 4.14.0-49.el7a.ppc64le #1
- [ 336.620297] task: c000003fd630b800 task.stack: c000003fd61a4000
- [ 336.620326] NIP: c000000000176794 LR: c00000000013038c CTR: c00000000024bc10
- [ 336.620361] REGS: c000003fd61a7720 TRAP: 0300 Not tainted (4.14.0-49.el7a.ppc64le)
- [ 336.620395] MSR: 9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE> CR: 22084022 XER: 20040000
- [ 336.620435] CFAR: c000000000130388 DAR: 0000000000000000 DSISR: 40000000 SOFTE: 1
- [ 336.620435] GPR00: c00000000013038c c000003fd61a79a0 c0000000014c7e00 0000000000000000
- [ 336.620435] GPR04: 000000000000000c 000000000000000c 9000000000009033 0000000000000477
- [ 336.620435] GPR08: 0000000000000477 0000000000000000 0000000000000000 c008000010f7d940
- [ 336.620435] GPR12: c00000000024bc10 c000000007a33400 c0000000001708a8 c000003fe3b881d8
- [ 336.620435] GPR16: c000003fe3b88060 c000003fd61a7d10 fffffffffffff000 000000000000001e
- [ 336.620435] GPR20: 0000000000000001 c000000000ebf1a0 0000000000000001 c000003fe3b88000
- [ 336.620435] GPR24: 0000000000000003 0000000000000002 c000003fe3b88840 c000003fe3b887e8
- [ 336.620435] GPR28: c000003fe3b88000 c000003fc8181788 0000000000000000 c000003fc8181700
- [ 336.620750] NIP [c000000000176794] exit_creds+0x34/0x160
- [ 336.620775] LR [c00000000013038c] __put_task_struct+0x8c/0x1f0
- [ 336.620804] Call Trace:
- [ 336.620817] [c000003fd61a79a0] [c000003fe3b88000] 0xc000003fe3b88000 (unreliable)
- [ 336.620853] [c000003fd61a79d0] [c00000000013038c] __put_task_struct+0x8c/0x1f0
- [ 336.620889] [c000003fd61a7a00] [c000000000171418] kthread_stop+0x1e8/0x1f0
- [ 336.620922] [c000003fd61a7a40] [c008000010f7448c] aac_reset_adapter+0x14c/0x8d0 [aacraid]
- [ 336.620959] [c000003fd61a7b00] [c008000010f60174] aac_eh_host_reset+0x84/0x100 [aacraid]
- [ 336.621010] [c000003fd61a7b30] [c000000000864f24] scsi_try_host_reset+0x74/0x180
- [ 336.621046] [c000003fd61a7bb0] [c000000000867ac0] scsi_eh_ready_devs+0xc00/0x14d0
- [ 336.625165] [c000003fd61a7ca0] [c0000000008699e0] scsi_error_handler+0x550/0x730
- [ 336.632101] [c000003fd61a7dc0] [c000000000170a08] kthread+0x168/0x1b0
- [ 336.639031] [c000003fd61a7e30] [c00000000000b528] ret_from_kernel_thread+0x5c/0xb4
- [ 336.645971] Instruction dump:
- [ 336.648743] 384216a0 7c0802a6 fbe1fff8 f8010010 f821ffd1 7c7f1b78 60000000 60000000
- [ 336.657056] 39400000 e87f0838 f95f0838 7c0004ac <7d401828> 314affff 7d40192d 40c2fff4
- [ 336.663997] -[ end trace 4640cf8d4945ad95 ]-
+We could see in some setups (when lots of transformations were being
+used with a short lifetime, and hence lots of cra_exit() calls) NULL
+pointer dereferences and other weird issues. All these issues were
+coming from accessing the tfm context.
 
-So flag when the thread is stopped by setting the thread pointer to NULL.
+The issue is the invalidation request completion is checked using a
+wait_for_completion_interruptible() call in both the cipher and hash
+cra_exit() helpers. In some cases this was interrupted while the
+invalidation request wasn't processed yet. And then cra_exit() returned,
+and its caller was freeing the tfm instance. Only then the request was
+being handled by the SafeXcel driver, which lead to the said issues.
 
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Raghava Aditya Renukunta <raghavaaditya.renukunta@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This patch fixes this by using wait_for_completion() calls in these
+specific cases.
+
+Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/aacraid/commsup.c |    4 +++-
- drivers/scsi/aacraid/linit.c   |    1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/crypto/inside-secure/safexcel_cipher.c |    2 +-
+ drivers/crypto/inside-secure/safexcel_hash.c   |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -1502,9 +1502,10 @@ static int _aac_reset_adapter(struct aac
- 	host = aac->scsi_host_ptr;
- 	scsi_block_requests(host);
- 	aac_adapter_disable_int(aac);
--	if (aac->thread->pid != current->pid) {
-+	if (aac->thread && aac->thread->pid != current->pid) {
- 		spin_unlock_irq(host->host_lock);
- 		kthread_stop(aac->thread);
-+		aac->thread = NULL;
- 		jafo = 1;
- 	}
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -456,7 +456,7 @@ static int safexcel_cipher_exit_inv(stru
+ 	queue_work(priv->ring[ring].workqueue,
+ 		   &priv->ring[ring].work_data.work);
  
-@@ -1591,6 +1592,7 @@ static int _aac_reset_adapter(struct aac
- 					  aac->name);
- 		if (IS_ERR(aac->thread)) {
- 			retval = PTR_ERR(aac->thread);
-+			aac->thread = NULL;
- 			goto out;
- 		}
- 	}
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1562,6 +1562,7 @@ static void __aac_shutdown(struct aac_de
- 				up(&fib->event_wait);
- 		}
- 		kthread_stop(aac->thread);
-+		aac->thread = NULL;
- 	}
+-	wait_for_completion_interruptible(&result.completion);
++	wait_for_completion(&result.completion);
  
- 	aac_send_shutdown(aac);
+ 	if (result.error) {
+ 		dev_warn(priv->dev,
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -496,7 +496,7 @@ static int safexcel_ahash_exit_inv(struc
+ 	queue_work(priv->ring[ring].workqueue,
+ 		   &priv->ring[ring].work_data.work);
+ 
+-	wait_for_completion_interruptible(&result.completion);
++	wait_for_completion(&result.completion);
+ 
+ 	if (result.error) {
+ 		dev_warn(priv->dev, "hash: completion error (%d)\n",
