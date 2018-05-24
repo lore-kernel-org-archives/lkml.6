@@ -1,39 +1,41 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrpDYglIBI3D01AYuDV1Boc5atBeJqD94WpVtYC8kdnAQRvY33luuq5+rCc8N31kwq90R69
-ARC-Seal: i=1; a=rsa-sha256; t=1527156198; cv=none;
+X-Google-Smtp-Source: AB8JxZoWXOX/j+k7wU4x1xT8gmkBaEV184s4gUR4bLe9S4a9vxkHG93TXd3fQtfSFrhnNQbefOIV
+ARC-Seal: i=1; a=rsa-sha256; t=1527156195; cv=none;
         d=google.com; s=arc-20160816;
-        b=jJGkyqzFtmN88NSw56mGmmw6kmsbEkZvfx5eBNqySdu7xeBCz+wEJefJ6exv1Bap/z
-         zXozwknB2uc34m6OXf3uCukGhDy/2611GjYZjm/65EFf8a3fDVYMAL9XIk5zDN5iV25T
-         ju5D6qUtZGj+Hot59KR4AWvASSoMedQHjRA6Gq0rPpprkTAQRlHJV5dlVPyP2ma4MRKO
-         583iSAIJNOZoYWoE2/9plEOuD7BXLm/d+f/4+v3jK8cFfCZI2kHI/Aaj+Ts9yKEm1mPI
-         nTB7A6Ny7UntlfFIqXrQ7mF7/DjKwRTEUYLiotR4ag422z6g6bwVdOVFmM1NJJZqYmWv
-         sKHA==
+        b=CnxL5HJlSSK/QH2xDQmUI5PPYF80NyLPMzgKoM6R68IAa5oPpXF24zYTRws+fCSXdT
+         zFbnoiR55+W5aROFta+Rt+0AG5jQXi4JsESk+LYZeD8VNqbHCcqbOHk6obzkEoQDH/NN
+         lMPFcImHQtVlFkX1Iog4Wxz/N+83VhxSPRns4HDAdveJ5lV3Wj6bo4BxiiUSgUa9XFka
+         bpoXohCt2ZtEJGphYtFfGiZrHWMlPpTAhMsA7GhCrUh1RaTsAYlEicZ73D3Cw8EmwpR6
+         /Cum6dgVSFMIzGtSXM4xTTWa7GBnSa1X059cnw63Kz3x6pEWJTwh4hvu4bWWxKo+Covq
+         KAEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=M0/4u0cfTqaReopLuymWK2Gl1YH7CMfXhgdUUAUfHao=;
-        b=Ev/66WfbWHJcTO6u9P0H4pgzA6J6ioTxjA75kB6ELj8eI1GdZmKvohSEMRi9Z/EKks
-         zeL5Kch28CPVzDMweL81nzjgFclsGBXwLKgvrUMbOzVuCCczvpizdhtPM1Ga65S48E85
-         ODAuua0cCMt0kRG5ag29V4qR4ZiyHQhDwEhICEOIYs50mQPpIUn12X1gySySAmH4YOxO
-         Xz3UPp5PioUNQqz2v71iI6UjT7tTG3BP8TtLdgPdaAzQZLtIZLTtClaxhL9nHB4big2j
-         VGqWtTTqYogJcMTeMNxT+oHIu7XdUldkb6jrf+WXe/HKJsEYw/gZb2df2NHm6k1JTy2Q
-         Rv3Q==
+        bh=ymEk8T/ICJxK+tUx6tLYwSxU86rd4VFN5xi+EgCy2fQ=;
+        b=x5s3VsNtnpp2tUaPizHh/ua8D9yCn4ZXDHO0uy5L4qjYzbPM9I9XoptXiefh9vSmy2
+         Ma0ObCSf8OUXJnpGYQA2/nxF+FyAv5n/YofgSbmgnPA6qzq91pud9dPjIEPGK+gj2Q59
+         oA3iH5vBbMaqDvkznzy6beup7TYnRmm2qe0VtcH7227ifR3/WaAzM4l95Hp7RmjaPR25
+         dLI+KoZsKf4LywPw3XVvsp8Ajhs7WC3tHSoF9u+IenvafWAlYBk6ZpsTUnBhdvW+bAGz
+         WtkoH7j8rmg3cki5pd5urtvUwnsYHxzBy3r5WPaiaVcNAw4Bheg/XWxscgtkYWe7YXgU
+         B0Lg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=m3AvPlVi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ih5qJWSx;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=m3AvPlVi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ih5qJWSx;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vicente Bergas <vicencb@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 066/161] Bluetooth: btusb: Add USB ID 7392:a611 for Edimax EW-7611ULB
-Date: Thu, 24 May 2018 11:38:11 +0200
-Message-Id: <20180524093026.395831529@linuxfoundation.org>
+	Sebastian Ott <sebott@linux.ibm.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Benjamin Block <bblock@linux.vnet.ibm.com>,
+	Steffen Maier <maier@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.16 065/161] scsi: zfcp: fix infinite iteration on ERP ready list
+Date: Thu, 24 May 2018 11:38:10 +0200
+Message-Id: <20180524093026.288566814@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338389720784307?=
-X-GMAIL-MSGID: =?utf-8?q?1601339338094874560?=
+X-GMAIL-THRID: =?utf-8?q?1601338310664115267?=
+X-GMAIL-MSGID: =?utf-8?q?1601339335213387489?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,72 +54,180 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vicente Bergas <vicencb@gmail.com>
+From: Jens Remus <jremus@linux.ibm.com>
 
-[ Upstream commit a41e0796396eeceff673af4a38feaee149c6ff86 ]
+commit fa89adba1941e4f3b213399b81732a5c12fd9131 upstream.
 
-This WiFi/Bluetooth USB dongle uses a Realtek chipset, so, use btrtl for it.
+zfcp_erp_adapter_reopen() schedules blocking of all of the adapter's
+rports via zfcp_scsi_schedule_rports_block() and enqueues a reopen
+adapter ERP action via zfcp_erp_action_enqueue(). Both are separately
+processed asynchronously and concurrently.
 
-Product information:
-https://wikidevi.com/wiki/Edimax_EW-7611ULB
+Blocking of rports is done in a kworker by zfcp_scsi_rport_work(). It
+calls zfcp_scsi_rport_block(), which then traces a DBF REC "scpdely" via
+zfcp_dbf_rec_trig().  zfcp_dbf_rec_trig() acquires the DBF REC spin lock
+and then iterates with list_for_each() over the adapter's ERP ready list
+without holding the ERP lock. This opens a race window in which the
+current list entry can be moved to another list, causing list_for_each()
+to iterate forever on the wrong list, as the erp_ready_head is never
+encountered as terminal condition.
 
->From /sys/kernel/debug/usb/devices
-T:  Bus=02 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  3 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=7392 ProdID=a611 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Edimax Wi-Fi N150 Bluetooth4.0 USB Adapter
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 6 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtl8723bu
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=03(Int.) MxPS=  64 Ivl=500us
-E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Meanwhile the ERP action can be processed in the ERP thread by
+zfcp_erp_thread(). It calls zfcp_erp_strategy(), which acquires the ERP
+lock and then calls zfcp_erp_action_to_running() to move the ERP action
+from the ready to the running list.  zfcp_erp_action_to_running() can
+move the ERP action using list_move() just during the aforementioned
+race window. It then traces a REC RUN "erator1" via zfcp_dbf_rec_run().
+zfcp_dbf_rec_run() tries to acquire the DBF REC spin lock. If this is
+held by the infinitely looping kworker, it effectively spins forever.
 
-Tested-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Example Sequence Diagram:
+
+Process                ERP Thread             rport_work
+-------------------    -------------------    -------------------
+zfcp_erp_adapter_reopen()
+zfcp_erp_adapter_block()
+zfcp_scsi_schedule_rports_block()
+lock ERP                                      zfcp_scsi_rport_work()
+zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER)
+list_add_tail() on ready                      !(rport_task==RPORT_ADD)
+wake_up() ERP thread                          zfcp_scsi_rport_block()
+zfcp_dbf_rec_trig()    zfcp_erp_strategy()    zfcp_dbf_rec_trig()
+unlock ERP                                    lock DBF REC
+zfcp_erp_wait()        lock ERP
+|                      zfcp_erp_action_to_running()
+|                                             list_for_each() ready
+|                      list_move()              current entry
+|                        ready to running
+|                      zfcp_dbf_rec_run()       endless loop over running
+|                      zfcp_dbf_rec_run_lvl()
+|                      lock DBF REC spins forever
+
+Any adapter recovery can trigger this, such as setting the device offline
+or reboot.
+
+V4.9 commit 4eeaa4f3f1d6 ("zfcp: close window with unblocked rport
+during rport gone") introduced additional tracing of (un)blocking of
+rports. It missed that the adapter->erp_lock must be held when calling
+zfcp_dbf_rec_trig().
+
+This fix uses the approach formerly introduced by commit aa0fec62391c
+("[SCSI] zfcp: Fix sparse warning by providing new entry in dbf") that got
+later removed by commit ae0904f60fab ("[SCSI] zfcp: Redesign of the debug
+tracing for recovery actions.").
+
+Introduce zfcp_dbf_rec_trig_lock(), a wrapper for zfcp_dbf_rec_trig() that
+acquires and releases the adapter->erp_lock for read.
+
+Reported-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Jens Remus <jremus@linux.ibm.com>
+Fixes: 4eeaa4f3f1d6 ("zfcp: close window with unblocked rport during rport gone")
+Cc: <stable@vger.kernel.org> # 2.6.32+
+Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/bluetooth/btusb.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -367,6 +367,9 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x13d3, 0x3459), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3494), .driver_info = BTUSB_REALTEK },
+---
+ drivers/s390/scsi/zfcp_dbf.c  |   23 ++++++++++++++++++++++-
+ drivers/s390/scsi/zfcp_ext.h  |    5 ++++-
+ drivers/s390/scsi/zfcp_scsi.c |   14 +++++++-------
+ 3 files changed, 33 insertions(+), 9 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -4,7 +4,7 @@
+  *
+  * Debug traces for zfcp.
+  *
+- * Copyright IBM Corp. 2002, 2017
++ * Copyright IBM Corp. 2002, 2018
+  */
  
-+	/* Additional Realtek 8723BU Bluetooth devices */
-+	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
+ #define KMSG_COMPONENT "zfcp"
+@@ -308,6 +308,27 @@ void zfcp_dbf_rec_trig(char *tag, struct
+ 	spin_unlock_irqrestore(&dbf->rec_lock, flags);
+ }
+ 
++/**
++ * zfcp_dbf_rec_trig_lock - trace event related to triggered recovery with lock
++ * @tag: identifier for event
++ * @adapter: adapter on which the erp_action should run
++ * @port: remote port involved in the erp_action
++ * @sdev: scsi device involved in the erp_action
++ * @want: wanted erp_action
++ * @need: required erp_action
++ *
++ * The adapter->erp_lock must not be held.
++ */
++void zfcp_dbf_rec_trig_lock(char *tag, struct zfcp_adapter *adapter,
++			    struct zfcp_port *port, struct scsi_device *sdev,
++			    u8 want, u8 need)
++{
++	unsigned long flags;
 +
- 	/* Additional Realtek 8821AE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
++	read_lock_irqsave(&adapter->erp_lock, flags);
++	zfcp_dbf_rec_trig(tag, adapter, port, sdev, want, need);
++	read_unlock_irqrestore(&adapter->erp_lock, flags);
++}
+ 
+ /**
+  * zfcp_dbf_rec_run_lvl - trace event related to running recovery
+--- a/drivers/s390/scsi/zfcp_ext.h
++++ b/drivers/s390/scsi/zfcp_ext.h
+@@ -4,7 +4,7 @@
+  *
+  * External function declarations.
+  *
+- * Copyright IBM Corp. 2002, 2016
++ * Copyright IBM Corp. 2002, 2018
+  */
+ 
+ #ifndef ZFCP_EXT_H
+@@ -35,6 +35,9 @@ extern int zfcp_dbf_adapter_register(str
+ extern void zfcp_dbf_adapter_unregister(struct zfcp_adapter *);
+ extern void zfcp_dbf_rec_trig(char *, struct zfcp_adapter *,
+ 			      struct zfcp_port *, struct scsi_device *, u8, u8);
++extern void zfcp_dbf_rec_trig_lock(char *tag, struct zfcp_adapter *adapter,
++				   struct zfcp_port *port,
++				   struct scsi_device *sdev, u8 want, u8 need);
+ extern void zfcp_dbf_rec_run(char *, struct zfcp_erp_action *);
+ extern void zfcp_dbf_rec_run_lvl(int level, char *tag,
+ 				 struct zfcp_erp_action *erp);
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -4,7 +4,7 @@
+  *
+  * Interface to Linux SCSI midlayer.
+  *
+- * Copyright IBM Corp. 2002, 2017
++ * Copyright IBM Corp. 2002, 2018
+  */
+ 
+ #define KMSG_COMPONENT "zfcp"
+@@ -618,9 +618,9 @@ static void zfcp_scsi_rport_register(str
+ 	ids.port_id = port->d_id;
+ 	ids.roles = FC_RPORT_ROLE_FCP_TARGET;
+ 
+-	zfcp_dbf_rec_trig("scpaddy", port->adapter, port, NULL,
+-			  ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD,
+-			  ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD);
++	zfcp_dbf_rec_trig_lock("scpaddy", port->adapter, port, NULL,
++			       ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD,
++			       ZFCP_PSEUDO_ERP_ACTION_RPORT_ADD);
+ 	rport = fc_remote_port_add(port->adapter->scsi_host, 0, &ids);
+ 	if (!rport) {
+ 		dev_err(&port->adapter->ccw_device->dev,
+@@ -642,9 +642,9 @@ static void zfcp_scsi_rport_block(struct
+ 	struct fc_rport *rport = port->rport;
+ 
+ 	if (rport) {
+-		zfcp_dbf_rec_trig("scpdely", port->adapter, port, NULL,
+-				  ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL,
+-				  ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL);
++		zfcp_dbf_rec_trig_lock("scpdely", port->adapter, port, NULL,
++				       ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL,
++				       ZFCP_PSEUDO_ERP_ACTION_RPORT_DEL);
+ 		fc_remote_port_delete(rport);
+ 		port->rport = NULL;
+ 	}
