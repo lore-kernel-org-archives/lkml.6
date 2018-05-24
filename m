@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965062AbeEXHJQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:09:16 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:38894 "EHLO
+        id S965000AbeEXHHr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:07:47 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:55965 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755122AbeEXHHc (ORCPT
+        with ESMTP id S964959AbeEXHHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:07:32 -0400
+        Thu, 24 May 2018 03:07:37 -0400
 X-ME-Helo: belgarion.home
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Thu, 24 May 2018 09:07:31 +0200
+X-ME-Date: Thu, 24 May 2018 09:07:35 +0200
 X-ME-IP: 90.55.202.35
 From: Robert Jarzmik <robert.jarzmik@free.fr>
 To: Daniel Mack <daniel@zonque.org>,
@@ -28,9 +28,9 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH v2 04/13] media: pxa_camera: remove the dmaengine compat need
-Date: Thu, 24 May 2018 09:06:54 +0200
-Message-Id: <20180524070703.11901-5-robert.jarzmik@free.fr>
+Subject: [PATCH v2 07/13] net: smc91x: remove the dmaengine compat need
+Date: Thu, 24 May 2018 09:06:57 +0200
+Message-Id: <20180524070703.11901-8-robert.jarzmik@free.fr>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180524070703.11901-1-robert.jarzmik@free.fr>
 References: <20180524070703.11901-1-robert.jarzmik@free.fr>
@@ -46,62 +46,46 @@ This patch simplifies the dma resource acquisition, using the more
 generic function dma_request_slave_channel().
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- drivers/media/platform/pxa_camera.c | 22 +++-------------------
- 1 file changed, 3 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/smsc/smc91x.c | 12 +-----------
+ drivers/net/ethernet/smsc/smc91x.h |  1 -
+ 2 files changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
-index c71a00736541..4c82d1880753 100644
---- a/drivers/media/platform/pxa_camera.c
-+++ b/drivers/media/platform/pxa_camera.c
-@@ -2357,8 +2357,6 @@ static int pxa_camera_probe(struct platform_device *pdev)
- 		.src_maxburst = 8,
- 		.direction = DMA_DEV_TO_MEM,
- 	};
--	dma_cap_mask_t mask;
--	struct pxad_param params;
- 	char clk_name[V4L2_CLK_NAME_SIZE];
- 	int irq;
- 	int err = 0, i;
-@@ -2432,34 +2430,20 @@ static int pxa_camera_probe(struct platform_device *pdev)
- 	pcdev->base = base;
- 
- 	/* request dma */
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--	dma_cap_set(DMA_PRIVATE, mask);
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 080428762858..4c600f430f6d 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -2018,18 +2018,8 @@ static int smc_probe(struct net_device *dev, void __iomem *ioaddr,
+ 	lp->cfg.flags |= SMC91X_USE_DMA;
+ #  endif
+ 	if (lp->cfg.flags & SMC91X_USE_DMA) {
+-		dma_cap_mask_t mask;
+-		struct pxad_param param;
 -
--	params.prio = 0;
--	params.drcmr = 68;
--	pcdev->dma_chans[0] =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &params, &pdev->dev, "CI_Y");
-+	pcdev->dma_chans[0] = dma_request_slave_channel(&pdev->dev, "CI_Y");
- 	if (!pcdev->dma_chans[0]) {
- 		dev_err(&pdev->dev, "Can't request DMA for Y\n");
- 		return -ENODEV;
+-		dma_cap_zero(mask);
+-		dma_cap_set(DMA_SLAVE, mask);
+-		param.prio = PXAD_PRIO_LOWEST;
+-		param.drcmr = -1UL;
+-
+ 		lp->dma_chan =
+-			dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-							 &param, &dev->dev,
+-							 "data");
++			dma_request_slave_channel(lp->device, "data");
  	}
+ #endif
  
--	params.drcmr = 69;
--	pcdev->dma_chans[1] =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &params, &pdev->dev, "CI_U");
-+	pcdev->dma_chans[1] = dma_request_slave_channel(&pdev->dev, "CI_U");
- 	if (!pcdev->dma_chans[1]) {
- 		dev_err(&pdev->dev, "Can't request DMA for Y\n");
- 		err = -ENODEV;
- 		goto exit_free_dma_y;
- 	}
+diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+index b337ee97e0c0..a27352229fc2 100644
+--- a/drivers/net/ethernet/smsc/smc91x.h
++++ b/drivers/net/ethernet/smsc/smc91x.h
+@@ -301,7 +301,6 @@ struct smc_local {
+  * as RX which can overrun memory and lose packets.
+  */
+ #include <linux/dma-mapping.h>
+-#include <linux/dma/pxa-dma.h>
  
--	params.drcmr = 70;
--	pcdev->dma_chans[2] =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &params, &pdev->dev, "CI_V");
-+	pcdev->dma_chans[2] = dma_request_slave_channel(&pdev->dev, "CI_V");
- 	if (!pcdev->dma_chans[2]) {
- 		dev_err(&pdev->dev, "Can't request DMA for V\n");
- 		err = -ENODEV;
+ #ifdef SMC_insl
+ #undef SMC_insl
 -- 
 2.11.0
