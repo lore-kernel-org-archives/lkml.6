@@ -1,58 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965345AbeEXIUC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:20:02 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34507 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935631AbeEXIT5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:19:57 -0400
-X-Google-Smtp-Source: AB8JxZq22rmwqSBPpFuqX1UlfATiW3k3QNNq4iQOOQeiSysiOuA33q2BoyKCe00MZI62lQlxGXc1+KHiT19mrklIGOw=
+        id S965357AbeEXIUv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:20:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51879 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935631AbeEXIUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:20:48 -0400
+Date: Thu, 24 May 2018 10:20:44 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
+ charge to memcg
+Message-ID: <20180524082044.GW20441@dhcp22.suse.cz>
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+ <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
+ <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
+ <20180522185407.GC20441@dhcp22.suse.cz>
+ <455b1a07-d7e3-102b-65e7-3892947b7675@ascade.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180522204753.GA260493@dtor-ws>
-References: <20180522204753.GA260493@dtor-ws>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 24 May 2018 10:19:55 +0200
-Message-ID: <CACRpkdabMV1Vy5dGjW-eRVxY9yAcVhukMY1RNnb7nbYc7keHGw@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <455b1a07-d7e3-102b-65e7-3892947b7675@ascade.co.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:47 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Thu 24-05-18 13:39:59, TSUKADA Koutaro wrote:
+> On 2018/05/23 3:54, Michal Hocko wrote:
+[...]
+> > I am also quite confused why you keep distinguishing surplus hugetlb
+> > pages from regular preallocated ones. Being a surplus page is an
+> > implementation detail that we use for an internal accounting rather than
+> > something to exhibit to the userspace even more than we do currently.
+> 
+> I apologize for having confused.
+> 
+> The hugetlb pages obtained from the pool do not waste the buddy pool.
 
-> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
-> in ACPI tables, they will also update BOARD version number from 1.0
-> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-> numbers on Strago boards to those that still carry older BIOSes.
->
-> Note that ideally not BOARD but BIOS version should have been updated.
-> However the BIOS version used by Chrome devices has format of
-> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-> we do not have "less than" match mode for DMI data.
->
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->
-> v1->v2:
->
-> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+Because they have already allocated from the buddy allocator so the end
+result is very same.
 
-Patch applied for fixes.
+> On
+> the other hand, surplus hugetlb pages waste the buddy pool. Due to this
+> difference in property, I thought it could be distinguished.
 
-Should this also be tagged for stable?
+But this is simply not correct. Surplus pages are fluid. If you increase
+the hugetlb size they will become regular persistent hugetlb pages.
+ 
+> Although my memcg knowledge is extremely limited, memcg is accounting for
+> various kinds of pages obtained from the buddy pool by the task belonging
+> to it. I would like to argue that surplus hugepage has specificity in
+> terms of obtaining from the buddy pool, and that it is specially permitted
+> charge requirements for memcg.
 
-Yours,
-Linus Walleij
+Not really. Memcg accounts primarily for reclaimable memory. We do
+account for some non-reclaimable slabs but the life time should be at
+least bound to a process life time. Otherwise the memcg oom killer
+behavior is not guaranteed to unclutter the situation. Hugetlb pages are
+simply persistent. Well, to be completely honest tmpfs pages have a
+similar problem but lacking the swap space for them is kinda
+configuration bug.
+
+> It seems very strange that charge hugetlb page to memcg, but essentially
+> it only charges the usage of the compound page obtained from the buddy pool,
+> and even if that page is used as hugetlb page after that, memcg is not
+> interested in that.
+
+Ohh, it is very much interested. The primary goal of memcg is to enforce
+the limit. How are you going to do that in an absence of the reclaimable
+memory? And quite a lot of it because hugetlb pages usually consume a
+lot of memory.
+
+> I will completely apologize if my way of thinking is wrong. It would be
+> greatly appreciated if you could mention why we can not charge surplus
+> hugepages to memcg.
+> 
+> > Just look at what [sw]hould when you need to adjust accounting - e.g.
+> > due to the pool resize. Are you going to uncharge those surplus pages
+> > ffrom memcg to reflect their persistence?
+> > 
+> 
+> I could not understand the intention of this question, sorry. When resize
+> the pool, I think that the number of surplus hugepages in use does not
+> change. Could you explain what you were concerned about?
+
+It does change when ou change the hugetlb pool size, migrate pages
+between per-numa pools (have a look at adjust_pool_surplus).
+-- 
+Michal Hocko
+SUSE Labs
