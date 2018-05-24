@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163349-2-9194447027664144929
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163331-2-8666964808768788099
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163346; b=lzKu4kZJogPKubjp/8y4GW+/L3WC6YPv5C2rmsf6Ztd1XOGlIP
-    RCVTbfmKefHqMDs8iM2AVFBG7LccJ5nu377g6e1xw/qzT1p3a0FpJbV6yxctRPbK
-    wbjyc6u/zouoNiSHTySuVvq0jZtTclI5XU5CdU1/abUNBVxhN6qtpcCFrptYfO8o
-    RhYwshz8lLbkqHPnH07bQFY4FLiWm14++kuS014SvHhP2rmG5nPFcpvd8s5mYFeU
-    QnFSlkd6yBoppqjEfodhS6wLnxbXwpB6lQnqw+sW4V6JVFeIr4poZfOtYxLFwYju
-    VhZsGAh3yt2NUZnU76lmAZdP0hhqTJHauxNw==
+    1527163330; b=RQdU1D7IK65DOWz8pRlrA68JycWc+gfRO1A5v/ZPJ3TPeAsaAG
+    myXceIeJdFopw/gzYEY4g5xVW9RAKasFOhtbvLOQyqcXb43N8FX4onjSED4dAbek
+    XxgfLbMTAs0QCiwNGMaT/Puv1blkfaa5zvrawuRvYBWEU69SPztejCzLloJBFAHp
+    dIrFZsYibQzSLbu/QzsiHC/ifH5ICtJSYBdKdGtht5aD178azDkMNQ7Q/f86hNGY
+    tNoCO/ZM5Kxs4x72GDxpSx2U6aMr38UoRR8M59Rx9zqUG1HkSwdPdRl4P2dCBbc+
+    LQrX7aQ1ExgkGTLSg6qzAhtoNheZgJx8Hy2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163346; bh=IKXTcH4/plMCCbX0RDtrPVTdnYkFXW
-    /Xnn2aleSGxyI=; b=e30/QvhyTDaDap5UgszpGa24iNR9TRVZv+jrUEdwQomm/x
-    WTHhUNu6FAJwYsNwBBSg+xp8vEEgmx6M3T9sFXTMTPNGa8RavW4kmLIhj0Sdw/ul
-    NOjftO3UW570mVxw0ZepTHaxFg0dQFknBGpC806oXJiuJuEbVNjpQ04VCtVTcGx8
-    lUvB66fIQBeX4Ca91ro0p1DW7Bm6Lqy/uc6NfrL25D2haQ+b9SoIiU+kS264W+t8
-    Pi6PcWLER2DTweVfl3WucWrj1xPfosQVXqEF0abkB1ftCWmN61l312RJ6tejgvAm
-    1z8rFf6uZy1k3sqFkwc7JibXHMSmG4nZ0jGj7v0g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163330; bh=WrCrO6LpLPMKD+ZtlUiuKe/3MuHRLW
+    aHrp8DtDgcrM0=; b=VQWOOShLMsg5E630sDXoPPaeLlACewE8nBUMqRkqbPsjMe
+    3/jdnpqdEc3zTlhxxevOC/WHf6VcvQDfxSEU7EHY1jayBkfS6XlnyR/Z3PZQVwYy
+    pcm9USkyifltR/CFn13ckHp8Q/L3airUDJGBXzquFPxqV6tFqvtq3ZWNvs2E7o3b
+    edQpLO/gFQhbRK0AR/OnDM/Ds2BInckuz6OaFLWKbQecNxvCaY0H1nC+0juxSAne
+    9/3yv9Jn1lt/FcJApZuFkCiiYy8P0RFltZOjJyRY29AFKkvDWR9gt+3QAsrLiEgO
+    YaCyxSkeKKVe8T1KJYn2pT+uRzCkNLmaVV4FO/Og==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=kXnyVyx2 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ngfDPH8m x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=kXnyVyx2 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ngfDPH8m x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,30 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN+Ubc8l2vnb2JH7H3kpqEmAcd2KJKQsyOJVPZazh4Zep2sKRtLb7w4uyLKiCGT8rJRdgxTj3C+GbVLRf6z2u+ZBOAzMDayuExTaKQ1eK6pyV+ZQNLe7
-    hUk9qysQQv5qPUggLwFJ9p0CUl3Y/cYH7sijH0X8lXSJ+xVo2tAgUGoI5XgbDd9liGYAPCBFI3IxtKcGo5JD+IntuyQVdZ2KENdLvOMkJlKKkT4PHULSpZvR
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDu0LYUGQV3jngSBo0V2pnliX11sFCOKunoBIHYFiAZkQwruqOYWZ8HoHhvw/TPiv7O35R0ByPqsb0Wrwj/LhJPpfgq3mLKRCMeaTxTScAgkZxn3JpWJ
+    xT2LT6RPlOiAl+cSZTzcfe/+fFb29ksM3zS93JICydg7iwNCdT4qVwRRnixKTKumMtmK+6D7StHqyPjLpbfa4aekKaZtNm+FhuvkauFfkvbSybwM+i8kUs+k
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=brYE-qls9YapW1p9bzMA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=meVymXHHAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=ag1SF4gXAAAA:8
+    a=XRH7TU2YvASs1ZvYd64A:9 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966539AbeEXJoq (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:44:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55964 "EHLO mail.kernel.org"
+        id S966744AbeEXMCE (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:02:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966686AbeEXJon (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:44:43 -0400
+        id S966367AbeEXJoy (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:44:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 14/92] sctp: use the old asoc when making the cookie-ack chunk in dupcook_d
-Date: Thu, 24 May 2018 11:37:51 +0200
-Message-Id: <20180524093200.536707515@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 53/92] tracing/x86/xen: Remove zero data size trace events trace_xen_mmu_flush_tlb{_all}
+Date: Thu, 24 May 2018 11:38:30 +0200
+Message-Id: <20180524093204.465524453@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -107,38 +105,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit 46e16d4b956867013e0bbd7f2bad206f4aa55752 ]
+commit 45dd9b0666a162f8e4be76096716670cf1741f0e upstream.
 
-When processing a duplicate cookie-echo chunk, for case 'D', sctp will
-not process the param from this chunk. It means old asoc has nothing
-to be updated, and the new temp asoc doesn't have the complete info.
+Doing an audit of trace events, I discovered two trace events in the xen
+subsystem that use a hack to create zero data size trace events. This is not
+what trace events are for. Trace events add memory footprint overhead, and
+if all you need to do is see if a function is hit or not, simply make that
+function noinline and use function tracer filtering.
 
-So there's no reason to use the new asoc when creating the cookie-ack
-chunk. Otherwise, like when auth is enabled for cookie-ack, the chunk
-can not be set with auth, and it will definitely be dropped by peer.
+Worse yet, the hack used was:
 
-This issue is there since very beginning, and we fix it by using the
-old asoc instead.
+ __array(char, x, 0)
 
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Which creates a static string of zero in length. There's assumptions about
+such constructs in ftrace that this is a dynamic string that is nul
+terminated. This is not the case with these tracepoints and can cause
+problems in various parts of ftrace.
+
+Nuke the trace events!
+
+Link: http://lkml.kernel.org/r/20180509144605.5a220327@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/sm_statefuns.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -1959,7 +1959,7 @@ static sctp_disposition_t sctp_sf_do_dup
- 		}
- 	}
+---
+ arch/x86/xen/mmu.c         |    4 ----
+ include/trace/events/xen.h |   16 ----------------
+ 2 files changed, 20 deletions(-)
+
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -1316,8 +1316,6 @@ void xen_flush_tlb_all(void)
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
  
--	repl = sctp_make_cookie_ack(new_asoc, chunk);
-+	repl = sctp_make_cookie_ack(asoc, chunk);
- 	if (!repl)
- 		goto nomem;
+-	trace_xen_mmu_flush_tlb_all(0);
+-
+ 	preempt_disable();
  
+ 	mcs = xen_mc_entry(sizeof(*op));
+@@ -1335,8 +1333,6 @@ static void xen_flush_tlb(void)
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
+ 
+-	trace_xen_mmu_flush_tlb(0);
+-
+ 	preempt_disable();
+ 
+ 	mcs = xen_mc_entry(sizeof(*op));
+--- a/include/trace/events/xen.h
++++ b/include/trace/events/xen.h
+@@ -377,22 +377,6 @@ DECLARE_EVENT_CLASS(xen_mmu_pgd,
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_pin);
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_unpin);
+ 
+-TRACE_EVENT(xen_mmu_flush_tlb_all,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+-TRACE_EVENT(xen_mmu_flush_tlb,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+ TRACE_EVENT(xen_mmu_flush_tlb_single,
+ 	    TP_PROTO(unsigned long addr),
+ 	    TP_ARGS(addr),
