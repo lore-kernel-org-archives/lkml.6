@@ -1,96 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969244AbeEXLnk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:43:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:42084 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969147AbeEXLnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:43:35 -0400
-Date: Thu, 24 May 2018 12:43:30 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>
-Subject: Re: [PATCH 07/14] arm64: ssbd: Skip apply_ssbd if not using dynamic
- mitigation
-Message-ID: <20180524114330.e2fb3edfqaqi2nvg@lakrids.cambridge.arm.com>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-8-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522150648.28297-8-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S969268AbeEXLn6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:43:58 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33165 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967235AbeEXLnw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:43:52 -0400
+X-Google-Smtp-Source: AB8JxZrYcuhW/209zdlb73zcY+yOmK+OLvbsG2hKkvIkol40+DroJs1D2s3gPDJ7U5fZ+6Fb81/0vA==
+From: Michal Hocko <mhocko@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Subject: [PATCH] doc: document scope NOFS, NOIO APIs
+Date: Thu, 24 May 2018 13:43:41 +0200
+Message-Id: <20180524114341.1101-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180424183536.GF30619@thunk.org>
+References: <20180424183536.GF30619@thunk.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 04:06:41PM +0100, Marc Zyngier wrote:
-> In order to avoid checking arm64_ssbd_callback_required on each
-> kernel entry/exit even if no mitigation is required, let's
-> add yet another alternative that by default jumps over the mitigation,
-> and that gets nop'ed out if we're doing dynamic mitigation.
-> 
-> Think of it as a poor man's static key...
+From: Michal Hocko <mhocko@suse.com>
 
-I guess in future we can magic up a more general asm static key if we
-need them elsewhere.
+Although the api is documented in the source code Ted has pointed out
+that there is no mention in the core-api Documentation and there are
+people looking there to find answers how to use a specific API.
 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: David Sterba <dsterba@suse.cz>
+Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Hi Johnatan,
+Ted has proposed this at LSFMM and then we discussed that briefly on the
+mailing list [1]. I received some useful feedback from Darrick and Dave
+which has been (hopefully) integrated. Then the thing fall off my radar
+rediscovering it now when doing some cleanup. Could you take the patch
+please?
 
-Mark.
+[1] http://lkml.kernel.org/r/20180424183536.GF30619@thunk.org
+ .../core-api/gfp_mask-from-fs-io.rst          | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
 
-> ---
->  arch/arm64/kernel/cpu_errata.c | 14 ++++++++++++++
->  arch/arm64/kernel/entry.S      |  3 +++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index f1d4e75b0ddd..8f686f39b9c1 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -283,6 +283,20 @@ void __init arm64_update_smccc_conduit(struct alt_instr *alt,
->  	*updptr = cpu_to_le32(insn);
->  }
->  
-> +void __init arm64_enable_wa2_handling(struct alt_instr *alt,
-> +				      __le32 *origptr, __le32 *updptr,
-> +				      int nr_inst)
-> +{
-> +	BUG_ON(nr_inst != 1);
-> +	/*
-> +	 * Only allow mitigation on EL1 entry/exit and guest
-> +	 * ARCH_WORKAROUND_2 handling if the SSBD state allows it to
-> +	 * be flipped.
-> +	 */
-> +	if (arm64_get_ssbd_state() == ARM64_SSBD_EL1_ENTRY)
-> +		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
-> +}
-> +
->  static void do_ssbd(bool state)
->  {
->  	switch (psci_ops.conduit) {
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index 29ad672a6abd..e6f6e2339b22 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -142,6 +142,9 @@ alternative_else_nop_endif
->  	// to save/restore them if required.
->  	.macro	apply_ssbd, state, targ, tmp1, tmp2
->  #ifdef CONFIG_ARM64_SSBD
-> +alternative_cb	arm64_enable_wa2_handling
-> +	b	\targ
-> +alternative_cb_end
->  	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
->  	cbz	\tmp2, \targ
->  	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-> -- 
-> 2.14.2
-> 
+diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+new file mode 100644
+index 000000000000..e8b2678e959b
+--- /dev/null
++++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+@@ -0,0 +1,55 @@
++=================================
++GFP masks used from FS/IO context
++=================================
++
++:Date: Mapy, 2018
++:Author: Michal Hocko <mhocko@kernel.org>
++
++Introduction
++============
++
++Code paths in the filesystem and IO stacks must be careful when
++allocating memory to prevent recursion deadlocks caused by direct
++memory reclaim calling back into the FS or IO paths and blocking on
++already held resources (e.g. locks - most commonly those used for the
++transaction context).
++
++The traditional way to avoid this deadlock problem is to clear __GFP_FS
++resp. __GFP_IO (note the later implies clearing the first as well) in
++the gfp mask when calling an allocator. GFP_NOFS resp. GFP_NOIO can be
++used as shortcut. It turned out though that above approach has led to
++abuses when the restricted gfp mask is used "just in case" without a
++deeper consideration which leads to problems because an excessive use
++of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
++reclaim issues.
++
++New API
++========
++
++Since 4.12 we do have a generic scope API for both NOFS and NOIO context
++``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
++``memalloc_noio_restore`` which allow to mark a scope to be a critical
++section from the memory reclaim recursion into FS/IO POV. Any allocation
++from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
++mask so no memory allocation can recurse back in the FS/IO.
++
++FS/IO code then simply calls the appropriate save function right at the
++layer where a lock taken from the reclaim context (e.g. shrinker) and
++the corresponding restore function when the lock is released. All that
++ideally along with an explanation what is the reclaim context for easier
++maintenance.
++
++What about __vmalloc(GFP_NOFS)
++==============================
++
++vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
++GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
++to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
++almost always a bug. The good news is that the NOFS/NOIO semantic can be
++achieved by the scope api.
++
++In the ideal world, upper layers should already mark dangerous contexts
++and so no special care is required and vmalloc should be called without
++any problems. Sometimes if the context is not really clear or there are
++layering violations then the recommended way around that is to wrap ``vmalloc``
++by the scope API with a comment explaining the problem.
+-- 
+2.17.0
