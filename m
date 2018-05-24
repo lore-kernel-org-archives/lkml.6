@@ -1,214 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969692AbeEXMDw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:03:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41963 "EHLO mx2.suse.de"
+        id S969676AbeEXMHc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:07:32 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:34242 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966462AbeEXMDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:03:48 -0400
-Date: Thu, 24 May 2018 14:03:41 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Jaewon Kim <jaewon31.kim@samsung.com>,
-        Jan Kara <jack@suse.cz>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
- device driver
-Message-ID: <20180524120341.GF20441@dhcp22.suse.cz>
-References: <20180523151151.6730-1-david@redhat.com>
- <20180524075327.GU20441@dhcp22.suse.cz>
- <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
- <20180524093121.GZ20441@dhcp22.suse.cz>
- <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
+        id S966644AbeEXMH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:07:26 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Levin Du <djw@t-chip.com.cn>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+Date: Thu, 24 May 2018 14:07:09 +0200
+Message-ID: <3307687.qJF5Pr3uHG@phil>
+In-Reply-To: <CAL_Jsq+VBspzCaLD2Wy=fyC-S+LKGZbVsB+b+Etkx91ioXOCuQ@mail.gmail.com>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <1685755.J6GI985WX3@diego> <CAL_Jsq+VBspzCaLD2Wy=fyC-S+LKGZbVsB+b+Etkx91ioXOCuQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24-05-18 12:45:50, David Hildenbrand wrote:
-> On 24.05.2018 11:31, Michal Hocko wrote:
-> > On Thu 24-05-18 10:31:30, David Hildenbrand wrote:
-[...]
-> >> Allowing to unplug such small chunks is actually the interesting thing.
-> > 
-> > Not really. The vmemmap will stay behind and so you are still wasting
-> > memory. Well, unless you want to have small ptes for the hotplug memory
-> > which is just too suboptimal
-> > 
-> >> Try unplugging a 128MB DIMM. With ZONE_NORMAL: pretty much impossible.
-> >> With ZONE_MOVABLE: maybe possible.
-> > 
-> > It should be always possible. We have some players who pin pages for
-> > arbitrary amount of time even from zone movable but we should focus on
-> > fixing them or come with a way to handle that. Zone movable is about
-> > movable memory pretty much by definition.
-> 
-> You exactly describe what has been the case for way too long. But this
-> is only the tip of the ice berg. Simply adding all memory to
-> ZONE_MOVABLE is not going to work (we create an imbalance - e.g. page
-> tables have to go into ZONE_NORMAL. this imbalance will have to be
-> managed later on). That's why I am rather thinking about said assignment
-> to different zones in the future. For now using ZONE_NORMAL is the
-> easiest approach.
+Hi Rob,
 
-Well, I think it would be fair to say that memory hotplug is not really
-suitable for balancing memory between guests. Exactly because of the
-offline part. If you want to have a reliable offline you just screw
-yourself to the highmem land problems. This is the primary reason why I
-really detest any balooning like solutions based on the memory hotplug.
-I can see the case for adding memory to increase the initial guests
-sizes but that can be achieved with what we have currently without any
-additional complexity in the generic code. So you really have to have
-some seriously convincing arguments in hands. So far I haven't heard
-any, to be honest. This is just yet another thing that can be achieved
-with what other ballooning solutions are doing. I might be wrong because
-this is not really my area and I might underestimate some nuances but
-as already said, you have to be really convincing...
-
-> >> Try to find one 4MB chunk of a
-> >> "128MB" DIMM that can be unplugged: With ZONE_NORMAL
-> >> maybe possible. With ZONE_MOVABLE: likely possible.
+Am Mittwoch, 23. Mai 2018, 21:53:53 CEST schrieb Rob Herring:
+> On Wed, May 23, 2018 at 10:12 AM, Heiko Stübner <heiko@sntech.de> wrote:
+> > Am Mittwoch, 23. Mai 2018, 16:43:07 CEST schrieb Rob Herring:
+> >> On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
+> >> > On 2018-05-23 2:02 AM, Rob Herring wrote:
+> >> >> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+> >> >>> From: Levin Du <djw@t-chip.com.cn>
+> >> >>>
+> >> >>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+> >> >>> which do not belong to the general pinctrl.
+> >> >>>
+> >> >>> Adding gpio-syscon support makes controlling regulator or
+> >> >>> LED using these special pins very easy by reusing existing
+> >> >>> drivers, such as gpio-regulator and led-gpio.
+> >> >>>
+> >> >>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> >> >>>
+> >> >>> ---
+> >> >>>
+> >> >>> Changes in v2:
+> >> >>> - Rename gpio_syscon10 to gpio_mute in doc
+> >> >>>
+> >> >>> Changes in v1:
+> >> >>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> >> >>> - Add doc rockchip,gpio-syscon.txt
+> >> >>>
+> >> >>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
+> >> >>>
+> >> >>> ++++++++++++++++++++++
+> >> >>>
+> >> >>>   drivers/gpio/gpio-syscon.c                         | 30
+> >> >>>
+> >> >>> ++++++++++++++++
+> >> >>>
+> >> >>>   2 files changed, 71 insertions(+)
+> >> >>>   create mode 100644
+> >> >>>
+> >> >>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>>
+> >> >>> diff --git
+> >> >>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>> new file mode 100644
+> >> >>> index 0000000..b1b2a67
+> >> >>> --- /dev/null
+> >> >>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>> @@ -0,0 +1,41 @@
+> >> >>> +* Rockchip GPIO support for GRF_SOC_CON registers
+> >> >>> +
+> >> >>> +Required properties:
+> >> >>> +- compatible: Should contain "rockchip,gpio-syscon".
+> >> >>> +- gpio-controller: Marks the device node as a gpio controller.
+> >> >>> +- #gpio-cells: Should be two. The first cell is the pin number and
+> >> >>> +  the second cell is used to specify the gpio polarity:
+> >> >>> +    0 = Active high,
+> >> >>> +    1 = Active low.
+> >> >>
+> >> >> There's no need for this child node. Just make the parent node a gpio
+> >> >> controller.
+> >> >>
+> >> >> Rob
+> >> >
+> >> > Hi Rob, it is not clear to me. Do you suggest that the grf node should be
+> >> > a
+> >> > gpio controller,
+> >> > like below?
+> >> >
+> >> > +    grf: syscon at ff100000 {
+> >> > +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
+> >> > "syscon", "simple-mfd";
 > >>
-> >> But let's not go into the discussion of ZONE_MOVABLE vs. ZONE_NORMAL, I
-> >> plan to work on that in the future.
-> >>
-> >> Think about it that way: A compromise between section based memory
-> >> hotplug and page based ballooning.
-> >>
-> >>
-> >> 2. memory hotplug and 128MB size
-> >>
-> >> Interesting point. One thing to note is that "The whole memory hotplug
-> >> is centered around memory sections and those are 128MB in size" is
-> >> simply the current state how it is implemented in Linux, nothing more.
-> > 
-> > Yes, and we do care about that because the whole memory hotplug is a
-> > bunch of hacks duct taped together to address very specific usecases.
-> > It took me one year to put it into a state that my eyes do not bleed
-> > anytime I have to look there. There are still way too many problems to
-> > address. I certainly do not want to add more complication. Quite
-> > contrary, the whole code cries for cleanups and sanity.
+> >> Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
+> >
+> > I would disagree quite a bit here. The grf are the "general register files",
+> > a bunch of registers used for quite a lot of things, and so it seems
+> > among other users, also a gpio-controller for some more random pins
+> > not controlled through the regular gpio controllers.
+> >
+> > For a more fully stocked grf, please see
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/rk3288.dtsi#n855
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3399.dtsi#n1338
+> >
+> > So the gpio controller should definitly also be a subnode.
 > 
-> And I highly appreciate your effort. But look at the details: I am even
-> cleaning up online_pages() and offline_pages(). And this is not the end
-> of my contributions :) This is one step into that direction. It
-> showcases what is easily possible right now. With existing interfaces.
+> Sigh, yes, if there are a bunch of functions needing subnodes like the
+> above, then yes that makes sense. But that's not what has been
+> presented. Please make some attempt at defining *all* the functions.
+> An actual binding would be nice, but I'll settle for just a list of
+> things. The list should have functions that have DT dependencies (like
+> clocks for phys in the above) because until you do, you don't need
+> child nodes.
 
-If you can bring some cleanups then great. I would suggest pulling those
-out and post separately.
- 
-> >> I want to avoid what balloon drivers do: rip out random pages,
-> >> fragmenting guest memory until we eventually trigger the OOM killer. So
-> >> instead, using 4MB chunks produces no fragmentation. And if I can't find
-> >> such a chunk anymore: bad luck. At least I won't be risking stability of
-> >> my guest.
-> >>
-> >> Does that answer your question?
-> > 
-> > So you basically pull out those pages from the page allocator and mark
-> > them offline (reserved what ever)? Why do you need any integration to
-> > the hotplug code base then? You should be perfectly fine to work on
-> > top and only teach that hotplug code to recognize your pages are being
-> > free when somebody decides to offline the whole section. I can think of
-> > a callback that would allow that.
-> > 
-> > But then you are, well a balloon driver, aren't you?
+That's the problem with the Rockchip-GRF, you only realize its content
+when implementing specific features. 
+
+Like on the rk3399 the table of the register-list of the GRF alone is 11
+pages long with the register details tables taking up another 230 pages.
+And functional description is often somewhat thin.
+
+So I'm not sure I fully understand what you're asking, but in general
+we define the bindings for sub-devices when tackling these individual
+components, see for example
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=72580a49a837c2c7da83f698c00592eac41537d8
+
+which also has a real phy-driver behind it and binding against that
+subnode of the GRF simple-mfd.
+
+These are real IP blocks somewhere on the socs, with regular supplies
+like resets, clocks etc in most cases. Only their controlling registers
+got dumped into the GRF for some reason.
+
+And in retrospect it really looks like we're doing something right,
+because it seems these bindings seem quite stable over time.
+
+
+> > The gpio in question is called "mute", so I'd think the gpio-syscon driver
+> > should just define a "rockchip,rk3328-gpio-mute" compatible and contain
+> > all the register voodoo in the driver itself and not define it in the dt.
 > 
-> Pointing you at: [1]
-> 
-> I *cannot* use the page allocator. Using it would be a potential addon
-> (for special cases!) in the future. I really scan for removable chunks
-> in the memory region a certain virtio-mem device owns. Why can't I do it:
-> 
-> 1. I have to allocate memory in certain physical address range (the
-> range that belongs to a virtio-mem device). Well, we could write an
-> allocator.
+> Is there really just one GPIO? If it has a defined function, then is
+> it really GP? Can you control direction? I know Linus W doesn't like
+> that kind of abuse of GPIO.
 
-Not really. Why cannot you simply mimic what the hotplug already does?
-Scan a pfn range and isolate/migrate it? We can abstract such
-functionality to be better usable.
+looks like I convinced Linus that we're not abusing anything with this :-) .
 
-> 2. I might have to deal with chunks that are bigger than MAX_ORDER - 1.
-> Say my virito-mem device has a block size of 8MB and I only can allocate
-> 4MB. I'm out of luck then.
 
-Confused again. So you are managing 4M chunks in 8M units?
-
-> So, no, virtio-mem is not a balloon driver :)
-[...]
-> >> 1. "hotplug should simply not depend on kdump at all"
-> >>
-> >> In theory yes. In the current state we already have to trigger kdump to
-> >> reload whenever we add/remove a memory block.
-> > 
-> > More details please.
-> 
-> I just had another look at the whole complexity of
-> makedumfile/kdump/uevents and I'll follow up with a detailed description.
-> 
-> kdump.service is definitely reloaded when setting a memory block
-> online/offline (not when adding/removing as I wrongly claimed before).
-> 
-> I'll follow up with a more detailed description and all the pointers.
-
-Please make sure to describe what is the architecture then. I have no
-idea what kdump.servise is supposed to do for example.
-
-> >> 2. kdump part
-> >>
-> >> Whenever we offline a page and tell the hypervisor about it ("unplug"),
-> >> we should not assume that we can read that page again. Now, if dumping
-> >> tools assume they can read all memory that is offline, we are in trouble.
-> > 
-> > Sure. Just make those pages reserved. Nobody should touch those IIRC.
-> 
-> I think I answered that question already (see [1]) in another thread: We
-> have certain buffers that are marked reserved. Reserved does not imply
-> don't dump. all dump tools I am aware of will dump reserved pages. I
-> cannot use reserved to mark sections offline once all pages are offline.
-
-Then fix those dump tools. They shouldn't have any business touching
-reserved memory, should they? That memory can be in an arbitrary state.
- 
-> And I don't think the current approach of using a mapcount value is the
-> problematic part. This is straight forward now.
-
-The thing is that struct page space is extremely scarce. Anytime you
-take a bit or there somebody else will have to scratch his head much
-harder in the future. So if we can go with the existing infrastructure
-then it should be preferable. And we do have "this page is mine do not
-even think about touching it" - PageReserved.
--- 
-Michal Hocko
-SUSE Labs
+Heiko
