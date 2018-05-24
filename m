@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159121-2-17424451869306406328
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159106-2-14447245672697876890
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159121; b=PRfWrTwaN9hECOqqutAAk3sdWTdC4VXlcaIcjpthDOTu20W8dM
-    njLNtHaGol+ioN8ANjjGNg7I9mJvpsWdE3duzxW+TixoxjeAG5WKsY17vlaSE8J+
-    H2sP9ljUexbcYdxe+vnCjifmUkgcO5g9W6Z2enapvtyYhDpd8iOtQM508y56wnlY
-    Kt/LLJma2caHGJy/+rP9Oxc8N32HC639Sp9HbIlU8ypNrNAd7XYE8HcyduIOFF9A
-    LYWaLCw4IH1qtbAE6zNMbueIVUmhB+SoIS2nnLHuIklQup7jegISj+cBagNmUNXS
-    447Ws/X0IxYovdv3FrK+MLPoGzRK2KdZksOA==
+    1527159106; b=QVBva0BCFfn4zDlMClWqQWfeay9jmJp7a0IZbTKPRIZagvKmwQ
+    PoGZEdEWXm5AUBh2FUczA0zxP+erU67RIlckQV1W3+zC+EmNWDQhehIg+cz5eCwG
+    A1eNcAPzOIxHp5Y25HwJjQZTGH1oK/CdhmN5ZzvwbgppsogMC46DjS4fVidN26PA
+    0kMzVcil7x571HLDSYGRQH4Hp2qJXm6JGmvz5OJx5O9m71HB2ZJ1NAe4+dvgabEb
+    bzrYpTeyQLr3sU5cKxf/EnzJBUqE3BiOYPl+zQxHlzPsmPO9mTjJWECFbJBLNnpQ
+    L4r0axDa/D9PiBh28SwTfcbe5xvlm4ahcbrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159121; bh=cxvyDde8uihV4X3d0Natd7ndjKxvme
-    vBjlGRMSDqbtQ=; b=j5CdCsza1t1ndiv/ggkMOL+YE4rQuWljdHGwBfwMcnyZL+
-    UeNWPUvtiqHC7h2gappvMz2ganvcIfLBSqkk0nQOAjmIzeAg94hpwRrLjcbj4EWR
-    QIXCba2JfKDelikvORMSaqQ9vkav2hF1ardKbqdQcRaOKexFkS1rltGRZ7FFjRIS
-    xO2iauuYnIn4w7Y+YX6Z3EU+/BZLCNvkgc9ZhIK/JQ1RuliNgXkV2KzAC2LWOMJe
-    z6rZyrwP/rb8ppAMNIHMMM0FspOMfAvrM7LtoOqQllfhGgxKiTwKRxc5pk4jTSsi
-    97Yn3Vuni/Yg45QsnFDf4b5Z/fg2+LoFIa5gOEKg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159106; bh=j/v6rHnjU5NgLYlrsP1n9nhzo9uD1e
+    3t1nt9kD7HaZk=; b=MwhkEvVFg1rShPwJDmFbWCg0Qr4TfeaZLVjEOPGQKOYKKe
+    w5OS+B2KhFiDnPSNLRT/qWy/dtIRy05bnhwwtxAYa255jUUw0jPXwRgEbkl9eI5J
+    LKfnqC+rj6GQBxYd94RNlYc2ix905eJM5okEjsLCKyHo7nUXm79xWjYrK/clDeVs
+    /8+vU2p4UMZ++xaoK0eLHDtKo3W3YCltGvyFXbvpUUHXJbH8vdpzBT66Hp3c3gdM
+    fY2wqyfV90XYKGroMeyRiiXLvOy25kF57G+bALYGeOCY4i+HEv5PH1neb65EVWGy
+    rO4rF81kO6e8egctMFxMA4ebPidZPsunToJq1ZsQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=n2tFI5q+ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=qC9N/3Zo x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=n2tFI5q+ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=qC9N/3Zo x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,34 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLbV+Ns4zAVeCkMO3aoHB17g0TuyfEgk7Z+qTyT+MXB4BMSCjdU81KdRYx3IdmRhq9ZjNqau0Tk0Oa1ksF3Y14iRKwi8bwth1dyDT6TN18DtSzY2KSQp
-    xGknF1CX3pCIvUx0aGMiETu7u6NIJVGvkkooj25XMPDs/uxSpRRaGN91eWs8YRGAcluKkpfTamL64SRD1Sl3PP805tsoxLOrefQDm7bxhFWLLmFuGxxOuwEG
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE9ZPxFVegz9nf1WeuC3xhk+OJ7wOFSoiXwRLnIwqwE8QXkbndGgM1RZs/km0Yd4zN2KE61N2TxEKKMK517f6AZ1/Nt2kxvoI4r65K+z6pVJfhXkSC/U
+    NxoV8sPz2qVAJJ7JFdc08e6J5/7V1aKWMCxghyrb7dHtMHSGyckAOox0h6wMD6orM4gOfqmN0WWlXcLHBfO5zeKpVWiB1aIbBUUqAf2W01KGZzu2ScaHSk0I
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=qKmdj21Zsmxc0eqd690A:9
-    a=QEXdDO2ut3YA:10 a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=vQBBkBfzAAAA:8 a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=pwKNJtFcxakrAafEM-oA:9 a=QEXdDO2ut3YA:10
+    a=NGXS0kB0m_rannUenejW:22 a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032619AbeEXKt7 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:49:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
+        id S1030467AbeEXKuG (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030487AbeEXJ5f (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:35 -0400
+        id S1030470AbeEXJ53 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 141/165] media: cx23885: Set subdev host data to clk_freq pointer
-Date: Thu, 24 May 2018 11:39:07 +0200
-Message-Id: <20180524093627.782272390@linuxfoundation.org>
+Subject: [PATCH 4.14 139/165] media: ov5645: add missing of_node_put() in error path
+Date: Thu, 24 May 2018 11:39:05 +0200
+Message-Id: <20180524093627.703247266@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -105,34 +109,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 5ceade1d97fc6687e050c44c257382c192f56276 ]
+[ Upstream commit 06fe932307d58108a11c3e603517dd2a73a57b80 ]
 
-Currently clk_freq is ignored entirely, because the cx235840 driver
-configures the xtal at the chip defaults. This is an issue if a
-board is produced with a non-default frequency crystal. If clk_freq
-is not zero the cx25840 will attempt to use the setting provided,
-or fall back to defaults otherwise.
+The device node obtained with of_graph_get_next_endpoint() should be
+released by calling of_node_put().  But it was not released when
+v4l2_fwnode_endpoint_parse() failed.
 
-Signed-off-by: Brad Love <brad@nextdimension.cc>
+This change moves the of_node_put() call before the error check and
+fixes the issue.
+
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Todor Tomov <todor.tomov@linaro.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/cx23885/cx23885-cards.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/i2c/ov5645.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/media/pci/cx23885/cx23885-cards.c
-+++ b/drivers/media/pci/cx23885/cx23885-cards.c
-@@ -2286,6 +2286,10 @@ void cx23885_card_setup(struct cx23885_d
- 				&dev->i2c_bus[2].i2c_adap,
- 				"cx25840", 0x88 >> 1, NULL);
- 		if (dev->sd_cx25840) {
-+			/* set host data for clk_freq configuration */
-+			v4l2_set_subdev_hostdata(dev->sd_cx25840,
-+						&dev->clk_freq);
+--- a/drivers/media/i2c/ov5645.c
++++ b/drivers/media/i2c/ov5645.c
+@@ -1131,13 +1131,14 @@ static int ov5645_probe(struct i2c_clien
+ 
+ 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint),
+ 					 &ov5645->ep);
 +
- 			dev->sd_cx25840->grp_id = CX23885_HW_AV_CORE;
- 			v4l2_subdev_call(dev->sd_cx25840, core, load_fw);
- 		}
++	of_node_put(endpoint);
++
+ 	if (ret < 0) {
+ 		dev_err(dev, "parsing endpoint node failed\n");
+ 		return ret;
+ 	}
+ 
+-	of_node_put(endpoint);
+-
+ 	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2) {
+ 		dev_err(dev, "invalid bus type, must be CSI2\n");
+ 		return -EINVAL;
