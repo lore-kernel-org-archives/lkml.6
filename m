@@ -1,40 +1,40 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp0K5sFwzGFWJ6ye60tjQbGcvMbIv4g6CWo5qbqCIrQqi9mLbp/17ICNZM0ss/H6jyfCYe7
-ARC-Seal: i=1; a=rsa-sha256; t=1527156226; cv=none;
+X-Google-Smtp-Source: AB8JxZpM+h7xCIWasmnlGA8h4yOnwsZHMtToeevTBKvtHPxvxBWcsYOg0/bP2U2ThPHj2lSGjWuT
+ARC-Seal: i=1; a=rsa-sha256; t=1527156223; cv=none;
         d=google.com; s=arc-20160816;
-        b=OGdEmynXXKXkSjlkxjUQ3qqHSRRb5nnlv75Uu/6Nh5pn98CqydbiyQJ+5tOH7GruBp
-         5eAJy4hdzXJiNCatotz2qxRsmA+mrsbJPgMgRNOL10VUEhfsHVwfLb2tfDRwhR6cUM80
-         OsNo98lYEAB2AD7/77H/4SOMyAWe4xa3aVG+j9H+nTjK6zJjTF06NXYrfPL68XE/HnMF
-         8jhQAs8RCsheGnRa9HkrASOUImgcxRUFlJETNp4w1n7Wqg+djTiMfdOZMwcH5u39BwIp
-         aEk/gn7/TeFub3ednDJPS3i/TJsuFw6yo0mcPO28MyIpQBAQl0/kG+ACOXrVeYGwwsAY
-         8Q+g==
+        b=AcDWpcTzRgCJx9TxKevsis0B9bgzOEFsPs+7q/N6Jpe5e8X7Beq2Tyf8sNuiaGG+3F
+         9WM/+0NVLyC2/mroBs29DRzTaaqynC/fXyDS7yH7O+EwtjXF1A0RAhMWkduv4PYUtFBl
+         C7VNXBlGf4OtqNQRE+s7IgUc/cRMmX1mRkIvZ9Nr4IJx//AW/hr+EZnNTWXBdGFci8qs
+         eIx5mo8ZEftNsqpDhbsv+gUiNDsUnQh0wQfpOFxDt46SZLiN/iG/VWVIzZCMPqAhlHgG
+         QDzJPRCCQMoN7LbFixUHmcM7KDRlDxRffsc1wl9xllibourMEP/F/Hyq+bEQEgN3xK//
+         vE9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Qk+MBQhGMMQUCXIoUmloiNhT6VGn9Fd8xaaghzJ/si4=;
-        b=fzd0+PkS52KWvJWFckc1MQ0GGBB7cAKsGGA3kfwKJ7RhlS6sEFWLIJVxBJ80pvh16E
-         yrnZ+8J6m6qh3AtH5vNGojin/U0SdR1Qz8R+sGH9sEzTVPK4V5D16ifXse/jNEsIfHaT
-         nH7z43Sg5+TxzpJ4Vx1jmGZtkDVpMegU4U1NUe4yISM1Iz1VznRPvDSC3Vxr7LdWTCbc
-         TliDmPa7DXhS+YQian5Bb7pCFIxDieWfClORFV+LIpbSgFx3CiC6guJoHibUDgO03CIk
-         yu2U+kKX4AhB2bXl/Tu7Af6alVJI+C3/9KmpeJC5eKnuovJ/kOq6xIJGebC0wLamS/jR
-         /uiw==
+        bh=h12Y9VF6C5XY37Pu9pqpgEF3NiqQug/EB5Wf+MeRu4U=;
+        b=od1/MSjJ64C6GoBsN2toiKUjpf8QKNmxzq2vk9eYVmV0FCLRrOK/58+9xD3iXkHdyt
+         i6vgxTFFxqR9cWHlbUtsArVYrD4vFZ+BVpcm3clEyk14T0iowgLg5OAj9wKhXoMK7Ceo
+         lOYM6sTQ+hY9sQW43tbLVEIwYeSiVIraierUaQUYMgSKejL0ARZfPD+MdozMQ8PG39TG
+         x7d29l6hV/9SCGf9Xmi4DQ2gPZfQgJ6r3qYJnx1To1d6/CgjEQRuKf+hnQhKmw9qwNMi
+         /dew7zdbV0SnuZrA9u0FuAcETCpcjYABwFaOOz8rU1TLkzZDFCb/R6duDE7iBbXHTXdu
+         zopA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=K9i6jVHW;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GDiBRtst;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=K9i6jVHW;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GDiBRtst;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Douglas Gilbert <dgilbert@interlog.com>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	James Smart <james.smart@broadcom.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 110/161] scsi: core: Make SCSI Status CONDITION MET equivalent to GOOD
-Date: Thu, 24 May 2018 11:38:55 +0200
-Message-Id: <20180524093031.545799659@linuxfoundation.org>
+Subject: [PATCH 4.16 109/161] scsi: lpfc: Fix NVME Initiator FirstBurst
+Date: Thu, 24 May 2018 11:38:54 +0200
+Message-Id: <20180524093031.445200161@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338983932544112?=
-X-GMAIL-MSGID: =?utf-8?q?1601339367399507645?=
+X-GMAIL-THRID: =?utf-8?q?1601339363920053969?=
+X-GMAIL-MSGID: =?utf-8?q?1601339363920053969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,60 +53,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Douglas Gilbert <dgilbert@interlog.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 1875ede02ed5e176a18dccbca84abc28d5b3e141 ]
+[ Upstream commit 0709263abe0de70a798dcdf481d5dd489ca4752e ]
 
-The SCSI PRE-FETCH (10 or 16) command is present both on hard disks
-and some SSDs. It is useful when the address of the next block(s) to
-be read is known but it is not following the LBA of the current READ
-(so read-ahead won't help). It returns two "good" SCSI Status values.
-If the requested blocks have fitted (or will most likely fit (when
-the IMMED bit is set)) into the disk's cache, it returns CONDITION
-MET. If it didn't (or will not) fit then it returns GOOD status.
+First Burst support was not properly indicated in NVMe PRLI.
 
-The goal of this patch is to stop the SCSI subsystem treating the
-CONDITION MET SCSI status as an error. The current state makes the
-PRE-FETCH command effectively unusable via pass-throughs.
+Correct the bit position and the logic to check and set first burst support.
 
-Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_lib.c |   11 +++++++++++
- include/scsi/scsi.h     |    2 ++
- 2 files changed, 13 insertions(+)
+ drivers/scsi/lpfc/lpfc_nportdisc.c |   15 ++++++++++++++-
+ drivers/scsi/lpfc/lpfc_nvme.h      |    2 ++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -856,6 +856,17 @@ void scsi_io_completion(struct scsi_cmnd
- 		/* for passthrough error may be set */
- 		error = BLK_STS_OK;
- 	}
-+	/*
-+	 * Another corner case: the SCSI status byte is non-zero but 'good'.
-+	 * Example: PRE-FETCH command returns SAM_STAT_CONDITION_MET when
-+	 * it is able to fit nominated LBs in its cache (and SAM_STAT_GOOD
-+	 * if it can't fit). Treat SAM_STAT_CONDITION_MET and the related
-+	 * intermediate statuses (both obsolete in SAM-4) as good.
-+	 */
-+	if (status_byte(result) && scsi_status_is_good(result)) {
-+		result = 0;
-+		error = BLK_STS_OK;
-+	}
+--- a/drivers/scsi/lpfc/lpfc_nportdisc.c
++++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
+@@ -1998,8 +1998,14 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vp
+ 			ndlp->nlp_type |= NLP_NVME_TARGET;
+ 			if (bf_get_be32(prli_disc, nvpr))
+ 				ndlp->nlp_type |= NLP_NVME_DISCOVERY;
++
++			/*
++			 * If prli_fba is set, the Target supports FirstBurst.
++			 * If prli_fb_sz is 0, the FirstBurst size is unlimited,
++			 * otherwise it defines the actual size supported by
++			 * the NVME Target.
++			 */
+ 			if ((bf_get_be32(prli_fba, nvpr) == 1) &&
+-			    (bf_get_be32(prli_fb_sz, nvpr) > 0) &&
+ 			    (phba->cfg_nvme_enable_fb) &&
+ 			    (!phba->nvmet_support)) {
+ 				/* Both sides support FB. The target's first
+@@ -2008,6 +2014,13 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vp
+ 				ndlp->nlp_flag |= NLP_FIRSTBURST;
+ 				ndlp->nvme_fb_size = bf_get_be32(prli_fb_sz,
+ 								 nvpr);
++
++				/* Expressed in units of 512 bytes */
++				if (ndlp->nvme_fb_size)
++					ndlp->nvme_fb_size <<=
++						LPFC_NVME_FB_SHIFT;
++				else
++					ndlp->nvme_fb_size = LPFC_NVME_MAX_FB;
+ 			}
+ 		}
  
- 	/*
- 	 * special case: failed zero length commands always need to
---- a/include/scsi/scsi.h
-+++ b/include/scsi/scsi.h
-@@ -47,6 +47,8 @@ static inline int scsi_status_is_good(in
- 	 */
- 	status &= 0xfe;
- 	return ((status == SAM_STAT_GOOD) ||
-+		(status == SAM_STAT_CONDITION_MET) ||
-+		/* Next two "intermediate" statuses are obsolete in SAM-4 */
- 		(status == SAM_STAT_INTERMEDIATE) ||
- 		(status == SAM_STAT_INTERMEDIATE_CONDITION_MET) ||
- 		/* FIXME: this is obsolete in SAM-3 */
+--- a/drivers/scsi/lpfc/lpfc_nvme.h
++++ b/drivers/scsi/lpfc/lpfc_nvme.h
+@@ -27,6 +27,8 @@
+ 
+ #define LPFC_NVME_WAIT_TMO              10
+ #define LPFC_NVME_EXPEDITE_XRICNT	8
++#define LPFC_NVME_FB_SHIFT		9
++#define LPFC_NVME_MAX_FB		(1 << 20)	/* 1M */
+ 
+ struct lpfc_nvme_qhandle {
+ 	uint32_t index;		/* WQ index to use */
