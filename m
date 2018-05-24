@@ -1,143 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935549AbeEXCPA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 22:15:00 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37414 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935126AbeEXCO4 (ORCPT
+        id S935573AbeEXCQI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 22:16:08 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33461 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935126AbeEXCQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 22:14:56 -0400
-X-Google-Smtp-Source: AB8JxZqT2K1jyuzjpfO5l32ZUMWHAo3OQqxx3xPL1nCgE2TN2fpnkSw2hkZik/WQzLFQzuTImdAtZQ==
-Date: Thu, 24 May 2018 11:14:51 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        dvyukov@google.com, sergey.senozhatsky@gmail.com,
-        syzkaller@googlegroups.com, rostedt@goodmis.org,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20180524021451.GA23443@jagdpanzerIV>
-References: <20180511014515.GA895@jagdpanzerIV>
- <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
- <20180511062151.GA18160@jagdpanzerIV>
- <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
- <20180511095004.GA6575@jagdpanzerIV>
- <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
- <20180517112135.GB20796@jagdpanzerIV>
- <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
+        Wed, 23 May 2018 22:16:05 -0400
+X-Google-Smtp-Source: AB8JxZrPRbEAhdN+bjRUjzYZo6vopcPGJ71qkdCq2pgbSqimuB0kAXIWBCzayxskmGCEE278FnnbVA==
+Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        Mark Wielaard <mjw@fedoraproject.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+References: <20180523001939.9431-1-labbott@redhat.com>
+ <20180523001939.9431-3-labbott@redhat.com>
+ <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
+ <15dcff14-ea1b-18c8-4cd1-06586cf6f05b@redhat.com>
+ <CAK7LNARMJ0WNnxWXPxpyq_K_osBTRZB+0-Vo5XS_ME9GyZ0UxQ@mail.gmail.com>
+ <CAK7LNARYXqx6U+fA2AuY00vMkMDbcNSf-VG_Avf+9j5AMLSsJw@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <f930aa34-c8d1-6e78-2c0f-363c0be1c9a6@redhat.com>
+Date: Wed, 23 May 2018 19:16:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAK7LNARYXqx6U+fA2AuY00vMkMDbcNSf-VG_Avf+9j5AMLSsJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (05/18/18 14:15), Petr Mladek wrote:
-> > Dunno...
-> > For instance, can we store context tracking info as a extended record
-> > data? We have that dict/dict_len thing. So may we can store tracking
-> > info there? Extended records will appear on the serial console /* if
-> > console supports extended data */ or can be read in via devkmsg_read().
-> > Any other options?
+On 05/23/2018 06:43 PM, Masahiro Yamada wrote:
+> 2018-05-24 9:11 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> 2018-05-24 7:53 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+>>> On 05/22/2018 05:33 PM, Andy Lutomirski wrote:
+>>>>
+>>>> On Tue, May 22, 2018 at 5:19 PM Laura Abbott <labbott@redhat.com> wrote:
+>>>>
+>>>>
+>>>>> The vDSO is linked separately from the kernel and modules. Ensure it
+>>>>> picks
+>>>>> up the comment section, if available.
+>>>>
+>>>>
+>>>> Did you end up preferring this to just sticking the kernel version in a
+>>>> .comment in the vDSO for some reason?
+>>>>
+>>>
+>>> Actually I remember now why this is necessary: there is not a simple way
+>>> to encode a string into a linker file as it has to be spit out byte
+>>> by byte. The autogeneration was the easiest way to make that happen.
+>>> Maybe there's some horrific c preprocessing or other generation that
+>>> could happen but I doubt that's any worse than the generated linker
+>>> script.
+>>>
+>>
+>>
+>> I am personally prefer CONFIG option (as you did in v2) to KERNELVERSION.
+>>
+>>
+>> If you use "hex" type instead of "string" type in Kconfig,
+>> and LONG() instead of BYTE() in the script script,
+>> this can be much simpler, right?
+>>
+>>
+>>
+>>
+>>
+>> config BUILD_ID_SALT
+>>          hex "Build ID Salt"
+>>          help
+>>             ...
+>>
+>>
+>>
+>>
+>> Then, in scripts/Makefile,
+>>
+>>
+>> define filechk_build-salt.lds
+>>          { \
+>>                  echo "SECTIONS {"; \
+>>                  echo ".comment (INFO) : { LONG($(CONFIG_BUILD_ID_SALT)); }"; \
+>>                  echo "}"; \
+>>          }
+>> endef
+>>
+>> $(obj)/build-salt.lds: $(src)/Makefile FORCE
+>>          $(call filechk,build-salt.lds)
+>>
+>>
+>>
+>>
+>> This is now so simple that we can even remove the shell script.
 > 
-> This sounds interesting. Well, we would need to handle different dict
-> items different ways. I still wonder if we really need these "hacks".
-
-Well, it doesn't look like a complete hack. Extended records are there
-exactly for the "this printk line came from context (device, subsystem) ABC"
-type of thing. Those entries are multi-key/value already, we just can
-add one more key/value pair. E.g. appending CONTEXT to already existing
-SUBSYSTEM/DEVICE lines:
-
-6,575,3130042,-;snd_hda_codec_generic hdaudioC1D0:    dig-out=0x4/0x5
- CONTEXT=4/99 PREEMPT=0/0/0/0
- SUBSYSTEM=hdaudio
- DEVICE=+hdaudio:hdaudioC1D
-
-But I'm not pushing for this particular solution. It just looked
-reasonable and very "cheap", as we don't break anything.
-
 > 
-> IMHO, we could change struct printk_log if we provide related
-> patches for crashdump and crash utilities.
-
-Yep.
-
-> First, we should ask what we expect from this feature.
-
-Yeah. Can't really comment on this, it's up to Tetsuo and Dmitry to
-decide. So far I've seen slightly different requirements/expectations.
-
-> Different information might be needed in different situations.
-> In general, people might want to know:
 > 
->   + CPUid even in task context
->   + exact interrupt context (soft, hard, NMI)
-
-Agreed.
-
->   + whether preemption or interrupts are enabled
-
-preemption and irqs are already disabled this far in printk() internals.
-
-> It still looks bearable. But what if people want more,
-> e.g. context switch counts, task state, pending signals,
-> mem usage, cgroup stuff.
-
-Right. Extended records [dicts] can be up to 8k each, so I'd say
-that we can have as many key/value pairs as we want to.
-
-> Is this information useful for all messages or only
-> selected ones?
-
-No idea :)
-
-> Is it acceptable when message prefix is longer than, let's
-> say 40 characters?
-
-If we talk about embedding this info into normal message payload
-then, yes, we better keep it as small as possible. Because we are
-limited by LOG_LINE_MAX + PREFIX_MAX chars [~1024 bytes, if I recall
-correctly], the more we steal for context info the less we have for
-the message.
-
-> Is the extended output worth having even on slow consoles?
-
-My expectation was that syzkaller is mostly executed in qemu environment.
-But if someone would want to run it on a device with a slow console, then
-it might be painful.
-
-> By other words, I wonder if you wanted similar feature in many
-> situations in the past and could provide more use cases.
-
-Sorry, can you explain a bit more?
-
-> Note:
+> I had not noticed the comments from Linus and Andy
+> before I posted mine.
 > 
-> The proposed patch enabled the extra info with a config option
-> => you need to rebuild the kernel => you could just modify
-> the problematic message. We could just add some printk_ helpers
-> to make it easier.
+> 
+> Maybe, we should not add binary data into the .comment section.
+> 
+> 
+> 
 
-Yes. As far as I know syzkaller folks are completely fine with
-the .config based solution and can rebuild the kernel as many times
-as needed, modifying the kernel code, at the same time, is not an
-option.
+The comments from Linus and Andy apply to the vDSO but I don't
+think they work for the kernel/modules. We need something that
+can apply to every module and the kernel and the linker script
+seems like easiest way to do that. The vDSO is a self-contained
+binary so it makes sense to not use the linker script there and
+instead throw something in one of the existing files.
 
-> Alternatively, I wonder if it might be enough to add a tracepoint
-> into printk() and get the extra info via
-> /sys/kernel/debug/tracing/events/.
+I'm kind of iffy about making the build-id salt a hex string
+since that requires bit more work to generate. I'll experiment
+in a new version.
 
-Sounds good to me.
-
-> We would need to prevent recursion when trace buffer is flushed by
-> printk() but...
-
-Agreed.
-
-	-ss
+Thanks,
+Laura
