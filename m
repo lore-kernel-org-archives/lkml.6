@@ -1,100 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970003AbeEXMTc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:19:32 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:36936 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969756AbeEXMTW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:19:22 -0400
+        id S970085AbeEXMXB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:23:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43342 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966097AbeEXMW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:22:58 -0400
+Date: Thu, 24 May 2018 13:22:53 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+Subject: Re: [PATCH 13/14] arm64: KVM: Handle guest's ARCH_WORKAROUND_2
+ requests
+Message-ID: <20180524122253.nl4nrxu3f7pd6mrb@lakrids.cambridge.arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-14-marc.zyngier@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Thu, 24 May 2018 14:19:18 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180524135335.6aa0b7a4@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
- <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
- <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
- <20180524135335.6aa0b7a4@bbrezillon>
-Message-ID: <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[25];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.00)[15.53%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522150648.28297-14-marc.zyngier@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 13:53, Boris Brezillon wrote:
-> Hi Benjamin,
+On Tue, May 22, 2018 at 04:06:47PM +0100, Marc Zyngier wrote:
+> In order to forward the guest's ARCH_WORKAROUND_2 calls to EL3,
+> add a small(-ish) sequence to handle it at EL2. Special care must
+> be taken to track the state of the guest itself by updating the
+> workaround flags. We also rely on patching to enable calls into
+> the firmware.
 > 
-> On Thu, 24 May 2018 13:30:14 +0200
-> Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
+> Note that since we need to execute branches, this always executes
+> after the Spectre-v2 mitigation has been applied.
 > 
->> Hi Stefan,
->>
->> It seems to me that a probe similar to what the BootROM does shouldn't
->> be awfully complicated to implement - just cycle through the switch
->> cases in case of an ECC error. But I guess that's more of an idea for
->> further improvements rather than a comment to the patch set under
->> review.
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  arch/arm64/kernel/asm-offsets.c |  1 +
+>  arch/arm64/kvm/hyp/hyp-entry.S  | 38 +++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 38 insertions(+), 1 deletion(-)
 > 
-> Nope, not really an option, because you're not guaranteed that the NAND
-> will be used as a boot media, and the first page or first set of pages
-> might just be erased.
+> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+> index 5bdda651bd05..323aeb5f2fe6 100644
+> --- a/arch/arm64/kernel/asm-offsets.c
+> +++ b/arch/arm64/kernel/asm-offsets.c
+> @@ -136,6 +136,7 @@ int main(void)
+>  #ifdef CONFIG_KVM_ARM_HOST
+>    DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));
+>    DEFINE(VCPU_FAULT_DISR,	offsetof(struct kvm_vcpu, arch.fault.disr_el1));
+> +  DEFINE(VCPU_WORKAROUND_FLAGS,	offsetof(struct kvm_vcpu, arch.workaround_flags));
+>    DEFINE(CPU_GP_REGS,		offsetof(struct kvm_cpu_context, gp_regs));
+>    DEFINE(CPU_USER_PT_REGS,	offsetof(struct kvm_regs, regs));
+>    DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
+> diff --git a/arch/arm64/kvm/hyp/hyp-entry.S b/arch/arm64/kvm/hyp/hyp-entry.S
+> index bffece27b5c1..5b1fa37ca1f4 100644
+> --- a/arch/arm64/kvm/hyp/hyp-entry.S
+> +++ b/arch/arm64/kvm/hyp/hyp-entry.S
+> @@ -106,8 +106,44 @@ el1_hvc_guest:
+>  	 */
+>  	ldr	x1, [sp]				// Guest's x0
+>  	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
+> +	cbz	w1, wa_epilogue
+> +
+> +	/* ARM_SMCCC_ARCH_WORKAROUND_2 handling */
+> +	eor	w1, w1, #(ARM_SMCCC_ARCH_WORKAROUND_1 ^ \
+> +			  ARM_SMCCC_ARCH_WORKAROUND_2)
+
+... that took me a second. Lovely. :)
+
+>  	cbnz	w1, el1_trap
+> -	mov	x0, x1
+> +
+> +#ifdef CONFIG_ARM64_SSBD
+> +alternative_cb	arm64_enable_wa2_handling
+> +	b	wa2_end
+> +alternative_cb_end
+> +	get_vcpu_ptr	x2, x0
+> +	ldr	x0, [x2, #VCPU_WORKAROUND_FLAGS]
+> +
+> +	/* Sanitize the argument and update the guest flags*/
+
+Nit: space before the trailing '*/'. Either that or use a '//' comment.
+
+Otherwise, this looks fine, so with that fixed:
+
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> +	ldr	x1, [sp, #8]			// Guest's x1
+> +	clz	w1, w1				// Murphy's device:
+> +	lsr	w1, w1, #5			// w1 = !!w1 without using
+> +	eor	w1, w1, #1			// the flags...
+> +	bfi	x0, x1, #VCPU_WORKAROUND_2_FLAG_SHIFT, #1
+> +	str	x0, [x2, #VCPU_WORKAROUND_FLAGS]
+> +
+> +	/* Check that we actually need to perform the call */
+> +	hyp_ldr_this_cpu x0, arm64_ssbd_callback_required, x2
+> +	cbz	x0, wa2_end
+> +
+> +	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+> +	smc	#0
+> +
+> +	/* Don't leak data from the SMC call */
+> +	mov	x3, xzr
+> +wa2_end:
+> +	mov	x2, xzr
+> +	mov	x1, xzr
+> +#endif
+> +
+> +wa_epilogue:
+> +	mov	x0, xzr
+>  	add	sp, sp, #16
+>  	eret
+>  
+> -- 
+> 2.14.2
 > 
-
-Yeah I did not meant probing like the Boot ROM does.
-
-What I meant was using only the ECC modes which are supported by the
-Boot ROM when the driver tries to choose a viable mode. So that would
-be:
-- RS t=4
-- BCH t=8
-- BCH t=16
-
-Maybe we could add a property to enable that behavior:
-
-tegra,use-bootable-ecc-only;
-
->>
->> However, I think that allowing for an override of the oobsize
->> inference would be a good idea before merging, no? This could just be
->> a trivial #ifdef (at least temporarily). If you agree but don't feel
->> like doing it yourself, I'd be happy to pitch in. Let me know.
-> 
-> That's why we have nand-ecc-xxx properties in the DT.
-> 
-
-Yes, nand-ecc-strength is the first thing I plan to implement, that way
-strength can be defined in dt.
-
---
-Stefan
