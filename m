@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161926-2-15827133161570001426
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161909-2-11192522063778167477
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161925; b=ZKOyiE2n9JfkxiQ57KQkcVIK3mMWsrUw8akUMQxMVVb9jI1xLC
-    UoDlkLG3WmRfOBROvjD+Kvu03FMKdumIUeLF8M3wd/FJFhntNi3X5lLmrvXvoLKR
-    cecLAbHbPAXofKpVxrxMvC+7B2aUONOMRevYuVmuM3X3T3f/1tfAis1cKuwwBiCd
-    m4FrvOodM5ybdQlGA4bCXG1i+OUSUKdU/K8w7+Lgmnu9TaLPYH2wQIOz2N6Dumw6
-    eRswmfGcgYYSqz2HcGPH+ff6w/Sn4FPpN1ywytYDlMWEhIQr10gUWYcjTJhJqySV
-    uwAo69IQj4qEp14MZNtSlrk8gYGSPzqi4z0g==
+    1527161909; b=mjBj/UshihlOM3eEBGyT6UiMMZHQew+/OMjmA2g8xby4eyUD2v
+    6L7SdAV9wJGlC1/UCqtf1OddrqGU3WLTiZdtEB+snt285j/oK8vSfZw2FjzgUvjX
+    YS10rXJ5Vc4kfcPVLlGis5prGAYEsDoGFDY8fQmO7MZ0S9oGwvd5/6iiRJCK9Eyg
+    AQq4GpeB3yjFGxj0qQf0O9NT4UyvVO4oBTDGT1833mgHEquw5r1nYqyOrQfvawky
+    2E+/+amSVIM0dTmkA1uZSjkOTLNQdIUtFXmUsg2TqxkldtJdN2yCo17cRzMtuoX0
+    IquQvTYW01X6vGBF1VJD4FdWSNfEflek7reQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161925; bh=YhZiQLIFkGtZklukEdPobZycJzZAXE
-    goj5wJ392yTO0=; b=dDkrkdKW4v6BUXXbcGqlb1RHpoKBzNymnMNwSVrtrG8ikq
-    P12d3Athj8WUi28Ug4bW+y6+gS/yZtO9HPKhu5jQc+wcWXdu8CTfO9/ux/kV0DgE
-    UpE832gUbDtntS072WAp+ZE1cUwPiJvUL2D/F9Qfi7PfDkeogey3B/MvIP/LGxOi
-    tz4EMh5HjdPHSJ48EigXnAeuxEaTkZ6/oXwQpYSGKXRgu81yr8VvkpEd1nhSSL/T
-    lfCNHLfbKzq1t0wRBsxL/DwFz7MdoLvjf2RggRryw41wTqaJ7G/ChbN/KMVucw4e
-    +742mKl+JntCalvWGVjDm9G7/Rr6AqSOmTGNRbwg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161909; bh=nqfNy5VkPAB6cKv3O0BS36Hg08Lo6y
+    Cedqe94sjAn90=; b=lFx+tY+7L3jNckrvEE1niom5+Cg1zZwFG4Wu6RMg2iae8t
+    AACIMJu2hZV+8ep7eJj909kvTvEmr4bfF8SS8F2HZnLnkoAWOD853odeJktsMM9k
+    E8xISXosCcm/1gvc7e1GKa/whnXuCY+OhdGAPnOG2HDK2EvnfPpx5LisCjH7CTk1
+    XgdOchCQe34QKj8Ka/sR8mDFwTSmsfs7VlXxVeSVHesuptp4/o18wRvT1YpO8psh
+    fEndhZRBNDSgwlDgaEw50uMhos9hECGbls/zbkYhzDvuqWTBjywF6LRFHjj9WG+Q
+    9FZLwNQ6sS+lg9LidWr9EzUFyo87h0zigId3OrLQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=tK0rsKPY x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=qoMof33e x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=tK0rsKPY x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=qoMof33e x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,31 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCyBT9NS0Bqv8OLwkTqD7M6bxwzXuzmPxFDRNi0ZHzZPcYlJPdJyAhmsnci85ya0eV123rphqtFQ2irrkR7zlJU954NcCedqnELn+cLmDYyfc00W1FxW
-    Q1qg498vwkx5aPMm9uWJ8Kn003/bGtvZN+X6I7yk7KyePEfhIyzx3qSUt/g1LIk/3oIZ9by5ckRndo/p9fpZbtDQR2OpVb1ATPoyNO/pzWHmiFZ9LYZmhfDM
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHtOIZl2U7hA7WKATf995FYvNW6GEKiJVfIuIW32ZIcfahVplAhyYVL2yUhta+OS4kf5AE6ifosKjl61hp78zW9aKMGc3foLT68qxuDAZ6Gu2BFOIFuW
+    pNemv4KfqiYsEJNi5KiidHcTVQ1r5uhvVUmjRXBDEqTzvwO8bVLozUqoeoBGoKiDBXc9lE0+Xwzv67zwVzjkQFbMMPsWvFWnSeb9aUH1tUdjnM9SFhSxmJWm
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=JF9118EUAAAA:8 a=zAyngx5bAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=UKgGvQLnO4sDRP_H8wUA:9 a=QEXdDO2ut3YA:10
-    a=xVlTc564ipvMDusKsbsT:22 a=4LA4qAFo6bo561LpWNDU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=P1VUzUOK4a2cKhXD81cA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967447AbeEXLi0 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:38:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967308AbeEXJtT (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S966936AbeEXJtT (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:49:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967350AbeEXJtR (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Laurence Oberman <loberman@redhat.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 56/96] scsi: qla2xxx: Avoid triggering undefined behavior in qla2x00_mbx_completion()
-Date: Thu, 24 May 2018 11:38:39 +0200
-Message-Id: <20180524093608.717835490@linuxfoundation.org>
+Subject: [PATCH 4.9 55/96] scsi: mptfusion: Add bounds check in mptctl_hp_targetinfo()
+Date: Thu, 24 May 2018 11:38:38 +0200
+Message-Id: <20180524093608.662126741@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -109,76 +106,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c02189e12ce3bf3808cb880569d3b10249f50bd9 ]
+[ Upstream commit a7043e9529f3c367cc4d82997e00be034cbe57ca ]
 
-A left shift must shift less than the bit width of the left argument.
-Avoid triggering undefined behavior if ha->mbx_count == 32.
+My static checker complains about an out of bounds read:
 
-This patch avoids that UBSAN reports the following complaint:
+    drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
+    error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
 
-UBSAN: Undefined behaviour in drivers/scsi/qla2xxx/qla_isr.c:275:14
-shift exponent 32 is too large for 32-bit type 'int'
-Call Trace:
- dump_stack+0x4e/0x6c
- ubsan_epilogue+0xd/0x3b
- __ubsan_handle_shift_out_of_bounds+0x112/0x14c
- qla2x00_mbx_completion+0x1c5/0x25d [qla2xxx]
- qla2300_intr_handler+0x1ea/0x3bb [qla2xxx]
- qla2x00_mailbox_command+0x77b/0x139a [qla2xxx]
- qla2x00_mbx_reg_test+0x83/0x114 [qla2xxx]
- qla2x00_chip_diag+0x354/0x45f [qla2xxx]
- qla2x00_initialize_adapter+0x2c2/0xa4e [qla2xxx]
- qla2x00_probe_one+0x1681/0x392e [qla2xxx]
- pci_device_probe+0x10b/0x1f1
- driver_probe_device+0x21f/0x3a4
- __driver_attach+0xa9/0xe1
- bus_for_each_dev+0x6e/0xb5
- driver_attach+0x22/0x3c
- bus_add_driver+0x1d1/0x2ae
- driver_register+0x78/0x130
- __pci_register_driver+0x75/0xa8
- qla2x00_module_init+0x21b/0x267 [qla2xxx]
- do_one_initcall+0x5a/0x1e2
- do_init_module+0x9d/0x285
- load_module+0x20db/0x38e3
- SYSC_finit_module+0xa8/0xbc
- SyS_finit_module+0x9/0xb
- do_syscall_64+0x77/0x271
- entry_SYSCALL64_slow_path+0x25/0x25
+It's true that we probably should have a bounds check here.
 
-Reported-by: Meelis Roos <mroos@linux.ee>
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/qla2xxx/qla_isr.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/message/fusion/mptctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -272,7 +272,8 @@ qla2x00_mbx_completion(scsi_qla_host_t *
- 	struct device_reg_2xxx __iomem *reg = &ha->iobase->isp;
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -2698,6 +2698,8 @@ mptctl_hp_targetinfo(unsigned long arg)
+ 				__FILE__, __LINE__, iocnum);
+ 		return -ENODEV;
+ 	}
++	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
++		return -EINVAL;
+ 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
+ 	    ioc->name));
  
- 	/* Read all mbox registers? */
--	mboxes = (1 << ha->mbx_count) - 1;
-+	WARN_ON_ONCE(ha->mbx_count > 32);
-+	mboxes = (1ULL << ha->mbx_count) - 1;
- 	if (!ha->mcp)
- 		ql_dbg(ql_dbg_async, vha, 0x5001, "MBX pointer ERROR.\n");
- 	else
-@@ -2516,7 +2517,8 @@ qla24xx_mbx_completion(scsi_qla_host_t *
- 	struct device_reg_24xx __iomem *reg = &ha->iobase->isp24;
- 
- 	/* Read all mbox registers? */
--	mboxes = (1 << ha->mbx_count) - 1;
-+	WARN_ON_ONCE(ha->mbx_count > 32);
-+	mboxes = (1ULL << ha->mbx_count) - 1;
- 	if (!ha->mcp)
- 		ql_dbg(ql_dbg_async, vha, 0x504e, "MBX pointer ERROR.\n");
- 	else
