@@ -1,95 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033264AbeEXO0J (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:26:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44170 "EHLO mail.kernel.org"
+        id S1033340AbeEXO26 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:28:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39315 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030656AbeEXO0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:26:05 -0400
-X-Google-Smtp-Source: ADUXVKIfAFWja9wPVQAxCJSvhW3ib/6/iywpVjcDJA83l+VePGtt9lTSUwOAnZG/nvidX212uneeC2OppGXxn5dd3Ro=
+        id S1033260AbeEXO2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:28:54 -0400
+Date: Thu, 24 May 2018 15:24:14 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
+ charge to memcg
+Message-ID: <20180524132414.GI20441@dhcp22.suse.cz>
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+ <240f1b14-ed7d-4983-6c52-be4899d4caa5@oracle.com>
+ <8711fed5-fc35-a11a-3a17-740a9dca1f2a@ascade.co.jp>
+ <20180522185407.GC20441@dhcp22.suse.cz>
+ <455b1a07-d7e3-102b-65e7-3892947b7675@ascade.co.jp>
+ <20180524082044.GW20441@dhcp22.suse.cz>
+ <b2afbff6-b59f-7105-3808-64d41bd4a3a8@ascade.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180521101425.GC9887@linaro.org>
-References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
- <20180425062629.29404-8-takahiro.akashi@linaro.org> <0aba6388-8a73-d371-7b92-3594639eb27e@arm.com>
- <20180518153552.GA23468@rob-hp-laptop> <20180521101425.GC9887@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 24 May 2018 09:25:43 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLGgDTfhz6XqgMzDM_KL_W9HRtVOwjeP6rfk3+Tn-Stgg@mail.gmail.com>
-Message-ID: <CAL_JsqLGgDTfhz6XqgMzDM_KL_W9HRtVOwjeP6rfk3+Tn-Stgg@mail.gmail.com>
-Subject: Re: [PATCH v9 07/11] arm64: kexec_file: add crash dump support
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Rob Herring <robh@kernel.org>, James Morse <james.morse@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2afbff6-b59f-7105-3808-64d41bd4a3a8@ascade.co.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 5:14 AM, AKASHI Takahiro
-<takahiro.akashi@linaro.org> wrote:
-> Hi Rob,
->
-> On Fri, May 18, 2018 at 10:35:52AM -0500, Rob Herring wrote:
->> On Tue, May 15, 2018 at 06:12:59PM +0100, James Morse wrote:
->> > Hi guys,
->> >
->> > (CC: +RobH, devicetree list)
->>
->> Thanks.
->>
->> > On 25/04/18 07:26, AKASHI Takahiro wrote:
->> > > Enabling crash dump (kdump) includes
->> > > * prepare contents of ELF header of a core dump file, /proc/vmcore,
->> > >   using crash_prepare_elf64_headers(), and
->> > > * add two device tree properties, "linux,usable-memory-range" and
->> > >   "linux,elfcorehdr", which represent repsectively a memory range
->> > >   to be used by crash dump kernel and the header's location
->>
->> BTW, I intend to move existing parsing these out of the arch code.
->> Please don't add more DT handling to arch/ unless it is *really* arch
->> specific. I'd assume that the next arch to add kexec support will use
->> these bindings instead of the powerpc way.
->
-> So do you expect all the fdt-related stuff in my current implementation
-> for arm64 to be put into libfdt, or at least drivers/of, from the beginning?
+On Thu 24-05-18 21:58:49, TSUKADA Koutaro wrote:
+> On 2018/05/24 17:20, Michal Hocko wrote:
+> > On Thu 24-05-18 13:39:59, TSUKADA Koutaro wrote:
+> >> On 2018/05/23 3:54, Michal Hocko wrote:
+> > [...]
+> >>> I am also quite confused why you keep distinguishing surplus hugetlb
+> >>> pages from regular preallocated ones. Being a surplus page is an
+> >>> implementation detail that we use for an internal accounting rather than
+> >>> something to exhibit to the userspace even more than we do currently.
+> >>
+> >> I apologize for having confused.
+> >>
+> >> The hugetlb pages obtained from the pool do not waste the buddy pool.
+> > 
+> > Because they have already allocated from the buddy allocator so the end
+> > result is very same.
+> > 
+> >> On
+> >> the other hand, surplus hugetlb pages waste the buddy pool. Due to this
+> >> difference in property, I thought it could be distinguished.
+> > 
+> > But this is simply not correct. Surplus pages are fluid. If you increase
+> > the hugetlb size they will become regular persistent hugetlb pages.
+> 
+> I really can not understand what's wrong with this. That page is obviously
+> released before being added to the persistent pool, and at that time it is
+> uncharged from memcg to which the task belongs(This assumes my patch-set).
+> After that, the same page obtained from the pool is not surplus hugepage
+> so it will not be charged to memcg again.
 
-Yes.
+I do not see anything like that. adjust_pool_surplus is simply and
+accounting thing. At least the last time I've checked. Maybe your
+patchset handles that?
+ 
+> >> Although my memcg knowledge is extremely limited, memcg is accounting for
+> >> various kinds of pages obtained from the buddy pool by the task belonging
+> >> to it. I would like to argue that surplus hugepage has specificity in
+> >> terms of obtaining from the buddy pool, and that it is specially permitted
+> >> charge requirements for memcg.
+> > 
+> > Not really. Memcg accounts primarily for reclaimable memory. We do
+> > account for some non-reclaimable slabs but the life time should be at
+> > least bound to a process life time. Otherwise the memcg oom killer
+> > behavior is not guaranteed to unclutter the situation. Hugetlb pages are
+> > simply persistent. Well, to be completely honest tmpfs pages have a
+> > similar problem but lacking the swap space for them is kinda
+> > configuration bug.
+> 
+> Absolutely you are saying the right thing, but, for example, can mlock(2)ed
+> pages be swapped out by reclaim?(What is the difference between mlock(2)ed
+> pages and hugetlb page?)
 
-> I'm not sure how arch-specific the properties here are. For instance,
-> it is only arm64 that uses "linux,usable-memory-range" right now but
-> if some other arch follows, it is no more arch-specific.
-> # I remember that you didn't like this property :)
+No mlocked pages cannot be reclaimed and that is why we restrict them to
+a relatively small amount.
+ 
+> >> It seems very strange that charge hugetlb page to memcg, but essentially
+> >> it only charges the usage of the compound page obtained from the buddy pool,
+> >> and even if that page is used as hugetlb page after that, memcg is not
+> >> interested in that.
+> > 
+> > Ohh, it is very much interested. The primary goal of memcg is to enforce
+> > the limit. How are you going to do that in an absence of the reclaimable
+> > memory? And quite a lot of it because hugetlb pages usually consume a
+> > lot of memory.
+> 
+> Simply kill any of the tasks belonging to that memcg. Maybe, no one wants
+> reclaim at the time of account of with surplus hugepages.
 
-The question I guess is what will the next arch use. I don't think any
-other DT based arch supports crashdump or kexec yet.
+But that will not release the hugetlb memory, does it?
+ 
+> [...]
+> >> I could not understand the intention of this question, sorry. When resize
+> >> the pool, I think that the number of surplus hugepages in use does not
+> >> change. Could you explain what you were concerned about?
+> > 
+> > It does change when you change the hugetlb pool size, migrate pages
+> > between per-numa pools (have a look at adjust_pool_surplus).
+> 
+> As I looked at, what kind of fatal problem is caused by charging surplus
+> hugepages to memcg by just manipulating counter of statistical information?
 
->> > > +{
->> > > + void *buf, *prop;
->> > > + size_t buf_size;
->> > > + int result;
->> > > +
->> > > + buf_size = (__dt_root_addr_cells + __dt_root_size_cells) * sizeof(u32);
->> > > + prop = buf = vmalloc(buf_size);
->>
->> This can go on the stack instead (and would be required to to work in
->> libfdt).
->
-> Well, I can't agree with you here since we are now in effort, as far as
-> I correctly understand, of purging all the variable-sized arrays on a local
-> stack out of the kernel code.
-
-You don't need a variable sized array. The array size just needs to
-the the maximum size (16 bytes).
-
-Rob
+Fatal? Not sure. It simply tries to add an alien memory to the memcg
+concept so I would pressume an unexpected behavior (e.g. not being able
+to reclaim memcg or, over reclaim, trashing etc.).
+-- 
+Michal Hocko
+SUSE Labs
