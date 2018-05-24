@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161966-2-10875708962968263599
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161945-2-14002343529875365967
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161965; b=dBhUzSqzzyQHvvmJI366Rm1M0hGIvvDxqPDMJKBr6uLPjWss8N
-    sZMxs0mx/tV65aN1wbJuysy0ZYRDWtPlbFLqpxwfFAOLx2SXHPCQCm86bM5eJ4nO
-    V5/F29qy5b9Rtam8vz5JA+bVsuT7CE/jrd3p3qXyUNe5KImU9wrPmuQtUKNf1xK3
-    II+JFmRKcQEvzmr6sN8YhA6ZRexJFeS+75ywTAZ9qroZMgUnCiQYhstfW/fQK4to
-    J/yA5MbK1wVJKEpP7234oInqBLaJGp/Sx52yJkJOx6lCFqHq8ZMYxAPptlTSNcLg
-    e+ni6CEG1Il3ZR9q+nQQ17lGDZnL5RnImdXQ==
+    1527161945; b=boHWYznrKbfUbjN5cd5lU6EYcbphUG/nTEOXW3XPILy/0Ypoiy
+    V1dYpr1Q+TfptbomBXm4whjqXLWT5LbHuLDyRzb01g4M9BtrvtJnOL7xyqu8yt3F
+    C3H8KxPL3hkYGBgYDd4s0cfhDP4DXhCPitWkYm4J3iHzV20nYW6CS/l+MUHMH/GG
+    a8T7lYGeQRek3it5tIF5Gp1Cl8OxdcWovV0Anz1Z86Ed807yPStSs5nnCsPCiVJo
+    Ut/1HeKa8K1mTo7wDYVi3nD4Szq6cbHM6DAMKdTYtzLPls7z+v9C4rN9ri3/alD5
+    OyzmCmDkj7kSnfzl+UadNyo2WsgjLIOvjXoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161965; bh=Lhwo0Is2btd2FrUindojBb68qzzhwQ
-    OrgEut/EhhAS4=; b=Z+bIFMBhCIpHFtqefyUtx7TUAqnsWKUbYsqjrsx22+Gr5y
-    gQrvHWqK5SnSVYyyMrk5d7onx726fGh4s3W8GmwONjK4i1vSHsmnHSE/crIzNVuN
-    mR/SI1/b6Tlfg9O0OUcT0TDRvXSJENR8kp+R4g6H1CiTS3za9uKjgM6GKlcynGsI
-    ohbDChviw7UvRV1cQyYROTsO7aSSQEd/IPLmcrUdy7f+GHiymruWvnooDleqvy55
-    U96iuAZShpw84qDES//CLx2Q1zjbMYWFrBBOwgK/rQSLaEEVgKcSz2x8Y1R5/Jv/
-    FvXR+TV1r/YcxPo6r1P5vYB0PGasNR+adJVEqRtA==
+    :list-id; s=fm2; t=1527161945; bh=OtnT9EctqtAgxPRd3Di8YKbvUiSbUY
+    KfLjLfTwCYrqA=; b=b+Z3zfTe4fjLFwDYR29ioRkoVyuf45K23LC6GYve7Fm2uV
+    9YEdAh/jZ0Jmcv0Xo2/gKLGYl7CXRouYhu6QVgCiR4BHm54UZA1bnKq9WwgPE5E0
+    yQhBSV8NzK7IR+NUvVF87dpVpbH9hp7H8Lx7WOLNB0IQMQkajMSxJDy/gcJUCrSy
+    /lWHdDtYYZ/ENM8TiIFwMR1c8WaIqSUAO/glXm4YTsTtaFJnIdpSBBcDVhPItv3J
+    rbWDYgWL7klbUQZ+L6CYFdN4mOnx7f8FyjJCBzI7X/6dvhljs5z6zbwIhnBrKTNP
+    YmjxJvsxDe+U2egs8wCeOd9z6rF0+dlMFJTPewtQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=pHNiL6z/ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=d8So+MTp x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=pHNiL6z/ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=d8So+MTp x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,32 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGev7rUKEqGgFGaK+n31tdd0DgaQkGyATkGAQpKKEnfwZmLTyS8/HHRQiPPSPMpdboNXLcnyXMWJkH9KGLPxAps0MyU2BkqBAcSdVECCQK4R83rjVmu1
-    myiBWbSPbomzjlSgB7wj4QAgZgPmTKifysVfuH1RcAwZ9iOcMZye5dPUHaxerxXb2nJKpr8XOfsI+EvGqVtQZ8Y/hfqWspAtyeXmE6HRiVlWdhia1v5I5zTj
+X-CM-Envelope: MS4wfEMKhQSP6rt2N9knSriZ2B5Hj428xzhtH4xsSaCL6s6vrC5bd3Wh8RxlC4vYgUjNT9m9QrL9CxrKC/C+R7TvMLrB7zotunt9zOCdP81i0mfddECeI5zI
+    +2ZxnoRhCKCijfIHlIa0jQSymRCfDV6E9qSodcdhZk4XxVkz7pPjk3gR84n+HKsJI4Fpoh1NAorqZDltc0IONh0z+l4HuMfvPHZunap8hclPyCimWevAJiWa
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=Utfb4SCxKVlw79s-hMwA:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=zAyngx5bAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=zuh-aFpa40O1fhjOi1YA:9 a=QEXdDO2ut3YA:10
+    a=4LA4qAFo6bo561LpWNDU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967323AbeEXJtJ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:49:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36110 "EHLO mail.kernel.org"
+        id S967335AbeEXJtN (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:49:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967308AbeEXJtD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:03 -0400
+        id S967308AbeEXJtL (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Chad Dupuis <chad.dupuis@cavium.com>,
+        Laurence Oberman <loberman@redhat.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 51/96] scsi: fas216: fix sense buffer initialization
-Date: Thu, 24 May 2018 11:38:34 +0200
-Message-Id: <20180524093608.403952441@linuxfoundation.org>
+Subject: [PATCH 4.9 53/96] scsi: bnx2fc: Fix check in SCSI completion handler for timed out request
+Date: Thu, 24 May 2018 11:38:36 +0200
+Message-Id: <20180524093608.545099158@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -105,39 +107,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Chad Dupuis <chad.dupuis@cavium.com>
 
-[ Upstream commit 96d5eaa9bb74d299508d811d865c2c41b38b0301 ]
+[ Upstream commit ecf7ff49945f5741fa1da112f994939f942031d3 ]
 
-While testing with the ARM specific memset() macro removed, I ran into a
-compiler warning that shows an old bug:
+When a request times out we set the io_req flag BNX2FC_FLAG_IO_COMPL so
+that if a subsequent completion comes in on that task ID we will ignore
+it.  The issue is that in the check for this flag there is a missing
+return so we will continue to process a request which may have already
+been returned to the ownership of the SCSI layer.  This can cause
+unpredictable results.
 
-drivers/scsi/arm/fas216.c: In function 'fas216_rq_sns_done':
-drivers/scsi/arm/fas216.c:2014:40: error: argument to 'sizeof' in 'memset' call is the same expression as the destination; did you mean to provide an explicit length? [-Werror=sizeof-pointer-memaccess]
+Solution is to add in the missing return.
 
-It turns out that the definition of the scsi_cmd structure changed back
-in linux-2.6.25, so now we clear only four bytes (sizeof(pointer))
-instead of 96 (SCSI_SENSE_BUFFERSIZE). I did not check whether we
-actually need to initialize the buffer here, but it's clear that if we
-do it, we should use the correct size.
+[mkp: typo plus title shortening]
 
-Fixes: de25deb18016 ("[SCSI] use dynamically allocated sense buffer")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Chad Dupuis <chad.dupuis@cavium.com>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/arm/fas216.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/bnx2fc/bnx2fc_io.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/arm/fas216.c
-+++ b/drivers/scsi/arm/fas216.c
-@@ -2011,7 +2011,7 @@ static void fas216_rq_sns_done(FAS216_In
- 		 * have valid data in the sense buffer that could
- 		 * confuse the higher levels.
- 		 */
--		memset(SCpnt->sense_buffer, 0, sizeof(SCpnt->sense_buffer));
-+		memset(SCpnt->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
- //printk("scsi%d.%c: sense buffer: ", info->host->host_no, '0' + SCpnt->device->id);
- //{ int i; for (i = 0; i < 32; i++) printk("%02x ", SCpnt->sense_buffer[i]); printk("\n"); }
- 	/*
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -1869,6 +1869,7 @@ void bnx2fc_process_scsi_cmd_compl(struc
+ 		/* we will not receive ABTS response for this IO */
+ 		BNX2FC_IO_DBG(io_req, "Timer context finished processing "
+ 			   "this scsi cmd\n");
++		return;
+ 	}
+ 
+ 	/* Cancel the timeout_work, as we received IO completion */
