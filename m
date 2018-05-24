@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160784-2-12732242230827501910
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160781-2-1377638313870687031
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160784; b=Qs/kPf52c93Spi57TRghmsjIZEFGKv1RewxfpLhKwuZXBibm/2
-    u8y3TC+HCCpNLsdr3MPlCkGS/kC4+HUTVmHCGwJxWPTCKxa/kZiwK3wqZUHssnb8
-    5R+dRM+q/UNMOK/vFgox6G0jArtTVSBTELIxGe07mbD4jfBkmwTydvfetZpJDZo1
-    dLpeGFCD1I2EwP0hFsGvBr5HYnxisDIeEpRr6ttQDqofKcx1/0voTiSMBDdLoYvq
-    weGz0jWtqgvBCcYugexzZfzurkLRO60CRKEW4E3Jxymga0Lg0CbNzfgRIa7dX5ml
-    rsJ5/BgKPiVOn5QtiUtlSzC2c6etGM/t6YIA==
+    1527160781; b=ErJrgvPnRq+PHQN40bnDg+KyZ+MD+LLPBC7dKd64p9MNB/jqWD
+    Jdupt5L2hmkFVOhDq6wfD1p4ZXdOtITLnYzrOgbHoMiuKurdRcaQ+2/LSUjbbABg
+    EI25BY3wo21bTUjALC2PONyxRy2WM9x0rINMbLs9zs2fczQaLaa4OyZjfRWbX83B
+    /n0MjzZHpXBPURV9a1M4LlwS4bIFsEinMLdZtqwh/KPDIotgOmRZcq3gWeOoXWxi
+    lUJwdnDZEQ+guYgzyaHjsx8GexhcOD7Kd0LGNifY0jRrXySQxDtenYz+Gar9GLAF
+    sOUZXH6SzzkSP2Y5q2Glcly4KIX6uJC7Drug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160784; bh=gAxwZcFUA4YEfwJpO5UpoQStd0WAtd
-    0jsfV9NDZAo7g=; b=BXIzTpPxX6LaPLFa8I8aVac0m9XilnqiVpSFXlmt/A3xIw
-    yJ4RfPyYPC4nI0ohFdYvyPsc5V9pfKnsMpsgAXeKjj/wVTzRjvAghQE3r0wtRP4x
-    HHvKmsLAMdjj0W9ab0wtTOFtQZD6z/9IqDJHUDJNz+dcUnaNEgmBHrib7UuY/vLh
-    tjY9erYoeOOCuQAq3OFnksFTDeH0Wx89VynH0K72GAJSMKnFKi0oqP8gFFtt4K7t
-    Nq/y1zPeXG7ln0OXQjlGNmuSu2GZH0+jekRKLDlOr05RN3/LPRklvRnP83tfbEUj
-    n2yolsFblA1se5X2SMYY9tfET6fTPV+Fp8UyoctQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527160781; bh=XbN0Jx9TFOhw3fcVg08VOkNIv1J4h6
+    J3CQksERoUxVk=; b=dyLOtfI+LpmzpZW/NgfSBAKm6oi47vS7v0cJMbffpjlqs8
+    oXP1H2IsPinhoaBDxIjlncJgAp3wX7HwGR3MBB/6eXTk2IwAP+Wkz/50YhLkxzFQ
+    b0/Yil8f0nnuqrXrsq1Tz02s1ymN0rL+xotwi7apZUy4XBY/0iLX6Mf8U1gPws3O
+    EcEwKi0yiaRyPOx+geTK74ff9PH59sgJsHCjFSu2Ihpxc/Ts0zjt8S0D7k8tgOx/
+    mHkeyev2qGtCXhhpbBOF68VdxrZHmw6ZMXwialQF8ucpARi11U1cvxdh3u7ZVMDa
+    nFF8MP9G8pHkjtQ/ZmRbU90XQNwSyWuiN8ZR+BFg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ScaXWmit x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=WPCVEgCG x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ScaXWmit x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=WPCVEgCG x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,29 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHyKuMBWnaDSVo0coQvpEnNpP3dMG7S63zbiFd06KNeVGzmbAFKuWS+xg9w2awTOREpu2ArgLfX2S/jgKvmnrZLty9lTK5eQ9LWQ3Z/B5zjbcQOIaZlw
-    zesRhUNgCB5DE3qW8Bo/0/NLsg4tZOsNEs/eijUzdxa1Pwy7PasISNwk4ovlSiaQDbWmbpeK276RaPy36n4MCrbeHW7kaehBas2F6m2wcYKnj6h9U0yEPPD+
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCm8T3l8scORQe/DDsxaCrBhrP1C7kM8O8Kk9LQFW4lDDI8ef1hlcgx0wc6iWEUKH5AaNyfclZAg7kx9HvwYPKwa9Kzfl51uEqu96ub+ozZWRKU7104Q
+    hohov7rdDTBw6E5n2omLjJPsoHldwDqQrfNrI38HwyRJzwqWKaQ2VCTiM8q1YZQDa98EJHjio7zKYvngfgI4kJcNl7MzbeFmszflYt9RRg5mcODXuRX0Ku/1
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=vK4zaOes0TvFME1_7LIA:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=20KFwNOVAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=M6g0FbP6dAQHMZKsyzYA:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967615AbeEXLTk (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:19:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53728 "EHLO mail.kernel.org"
+        id S967463AbeEXJwr (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:52:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967925AbeEXJwq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:52:46 -0400
+        id S967615AbeEXJwo (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:52:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mohammed Gamal <mgamal@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 034/165] hv_netvsc: Fix net device attach on older Windows hosts
-Date: Thu, 24 May 2018 11:37:20 +0200
-Message-Id: <20180524093623.353204390@linuxfoundation.org>
+Subject: [PATCH 4.14 033/165] hv_netvsc: Ensure correct teardown message sequence order
+Date: Thu, 24 May 2018 11:37:19 +0200
+Message-Id: <20180524093623.316542446@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,34 +106,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Mohammed Gamal <mgamal@redhat.com>
 
-[ Commit 55be9f25be1ca5bda75c39808fc77e42691bc07f upstream. ]
+[ Commit a56d99d714665591fed8527b90eef21530ea61e0 upstream. ]
 
-On older windows hosts the net_device instance is returned to
-the caller of rndis_filter_device_add() without having the presence
-bit set first. This would cause any subsequent calls to network device
-operations (e.g. MTU change, channel change) to fail after the device
-is detached once, returning -ENODEV.
+Prior to commit 0cf737808ae7 ("hv_netvsc: netvsc_teardown_gpadl() split")
+the call sequence in netvsc_device_remove() was as follows (as
+implemented in netvsc_destroy_buf()):
+1- Send NVSP_MSG1_TYPE_REVOKE_RECV_BUF message
+2- Teardown receive buffer GPADL
+3- Send NVSP_MSG1_TYPE_REVOKE_SEND_BUF message
+4- Teardown send buffer GPADL
+5- Close vmbus
 
-Instead of returning the device instabce, we take the exit path where
-we call netif_device_attach()
+This didn't work for WS2016 hosts. Commit 0cf737808ae7
+("hv_netvsc: netvsc_teardown_gpadl() split") rearranged the
+teardown sequence as follows:
+1- Send NVSP_MSG1_TYPE_REVOKE_RECV_BUF message
+2- Send NVSP_MSG1_TYPE_REVOKE_SEND_BUF message
+3- Close vmbus
+4- Teardown receive buffer GPADL
+5- Teardown send buffer GPADL
 
-Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
+That worked well for WS2016 hosts, but it prevented guests on older hosts from
+shutting down after changing network settings. Commit 0ef58b0a05c1
+("hv_netvsc: change GPAD teardown order on older versions") ensured the
+following message sequence for older hosts
+1- Send NVSP_MSG1_TYPE_REVOKE_RECV_BUF message
+2- Send NVSP_MSG1_TYPE_REVOKE_SEND_BUF message
+3- Teardown receive buffer GPADL
+4- Teardown send buffer GPADL
+5- Close vmbus
+
+However, with this sequence calling `ip link set eth0 mtu 1000` hangs and the
+process becomes uninterruptible. On futher analysis it turns out that on tearing
+down the receive buffer GPADL the kernel is waiting indefinitely
+in vmbus_teardown_gpadl() for a completion to be signaled.
+
+Here is a snippet of where this occurs:
+int vmbus_teardown_gpadl(struct vmbus_channel *channel, u32 gpadl_handle)
+{
+        struct vmbus_channel_gpadl_teardown *msg;
+        struct vmbus_channel_msginfo *info;
+        unsigned long flags;
+        int ret;
+
+        info = kmalloc(sizeof(*info) +
+                       sizeof(struct vmbus_channel_gpadl_teardown), GFP_KERNEL);
+        if (!info)
+                return -ENOMEM;
+
+        init_completion(&info->waitevent);
+        info->waiting_channel = channel;
+[....]
+        ret = vmbus_post_msg(msg, sizeof(struct vmbus_channel_gpadl_teardown),
+                             true);
+
+        if (ret)
+                goto post_msg_err;
+
+        wait_for_completion(&info->waitevent);
+[....]
+}
+
+The completion is signaled from vmbus_ongpadl_torndown(), which gets called when
+the corresponding message is received from the host, which apparently never happens
+in that case.
+This patch works around the issue by restoring the first mentioned message sequence
+for older hosts
+
+Fixes: 0ef58b0a05c1 ("hv_netvsc: change GPAD teardown order on older versions")
 Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
-Reviewed-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/rndis_filter.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1276,7 +1276,7 @@ struct netvsc_device *rndis_filter_devic
- 		   rndis_device->link_state ? "down" : "up");
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -571,8 +571,17 @@ void netvsc_device_remove(struct hv_devi
+ 		= rtnl_dereference(net_device_ctx->nvdev);
+ 	int i;
  
- 	if (net_device->nvsp_version < NVSP_PROTOCOL_VERSION_5)
--		return net_device;
-+		goto out;
++	/*
++	 * Revoke receive buffer. If host is pre-Win2016 then tear down
++	 * receive buffer GPADL. Do the same for send buffer.
++	 */
+ 	netvsc_revoke_recv_buf(device, net_device);
++	if (vmbus_proto_version < VERSION_WIN10)
++		netvsc_teardown_recv_gpadl(device, net_device);
++
+ 	netvsc_revoke_send_buf(device, net_device);
++	if (vmbus_proto_version < VERSION_WIN10)
++		netvsc_teardown_send_gpadl(device, net_device);
  
- 	rndis_filter_query_link_speed(rndis_device, net_device);
+ 	RCU_INIT_POINTER(net_device_ctx->nvdev, NULL);
  
+@@ -586,15 +595,13 @@ void netvsc_device_remove(struct hv_devi
+ 	 */
+ 	netdev_dbg(ndev, "net device safe to remove\n");
+ 
+-	/* older versions require that buffer be revoked before close */
+-	if (vmbus_proto_version < VERSION_WIN10) {
+-		netvsc_teardown_recv_gpadl(device, net_device);
+-		netvsc_teardown_send_gpadl(device, net_device);
+-	}
+-
+ 	/* Now, we can close the channel safely */
+ 	vmbus_close(device->channel);
+ 
++	/*
++	 * If host is Win2016 or higher then we do the GPADL tear down
++	 * here after VMBus is closed.
++	*/
+ 	if (vmbus_proto_version >= VERSION_WIN10) {
+ 		netvsc_teardown_recv_gpadl(device, net_device);
+ 		netvsc_teardown_send_gpadl(device, net_device);
