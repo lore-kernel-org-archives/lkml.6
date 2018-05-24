@@ -1,201 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969307AbeEXLtD convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:49:03 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.3]:6861 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967032AbeEXLs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:48:57 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGKsWRWlGSWpSXmKPExsUSt3Opse7yZWz
-  RBo/niVtMffiEzWLu7EmMFve/HmW0uLxrDpvF1pfvmCwerpzDYnF0zz1mi75z7g4cHhPP6nrs
-  nHWX3WPTqk42jzvX9rB5PFu4nsXj8ya5ALYo1sy8pPyKBNaMab/jCnYqVxw4sJalgbFVrouRk
-  0NIYBmjxMJ2aRCbTcBQYt6b94wgtohAusS7CwuAbC4OZoGzTBKXF25mBkkIC1hK3J7WzwZRZC
-  XR8vQBK4RtJHHywVWwOIuAqsS3l8/A4rwCARKrfz1gg1hWJXGqqYMdxOYUcJaYMv82WJxRQFb
-  iS+NqsPnMAuISt57MZwKxJQQEJJbsOc8MYYtKvHz8jxXCVpC4/6YbKm4v8freO5YuRg4gW1+i
-  r7EYImwosWraAaiwucSZPZEQ03UkFuz+xAZha0ssW/iaGeJKQYmTM5+wTGAUn4XkiFlIWmYha
-  ZmFpGUBI8sqRrOkosz0jJLcxMwcXUMDA11DQyNdQ0tjXQu9xCrdRL3UUt3y1OISXUO9xPJive
-  LK3OScFL281JJNjMA4ZwCCHYw7LyQfYpTkYFIS5XViZosW4kvKT6nMSCzOiC8qzUktPsQow8G
-  hJMHbvRQoJ1iUmp5akZaZA0w4MGkJDh4lEd4nS4DSvMUFibnFmekQqVOMuhzHLk/rYRZiycvP
-  S5US51UAmSEAUpRRmgc3Apb8LjHKSgnzMgIdJcRTkFqUm1mCKv+KUZyDUUmYtxRkCk9mXgncp
-  ldARzABHXFxOTPIESWJCCmpBkbN+UHLdPs0+K6vOfNf4fP1rxdTyp8tvy3+s77F6VZfjnQm57
-  Jjl97W3+W9ZX7j7b9u/6O+njoP1ubfvdIiO9kp8+O3zA9XWk1XVi6NaJnFEnjOM74/qef8xbC
-  qZ/P36/7lm2Qx/+uOvJLoholO1S6l0lmiG8rdHZw+qj9edvyin/IjJ5f6zRxKLMUZiYZazEXF
-  iQCTJFYNeQMAAA==
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-17.tower-268.messagelabs.com!1527162535!482216!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 6/6] mfd: da9063: Add DA9063L support
-Thread-Topic: [PATCH 6/6] mfd: da9063: Add DA9063L support
-Thread-Index: AQHT8os5coxuzP+3QEWWx7/bQ2GX+6Q+vSzw
-Date: Thu, 24 May 2018 11:48:54 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941A47F0@SW-EX-MBX02.diasemi.com>
-References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
- <20180523114230.10109-6-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180523114230.10109-6-marek.vasut+renesas@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.35.206]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 24/05/2018 10:04:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S969386AbeEXLw7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:52:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42420 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966510AbeEXLwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:52:54 -0400
+Subject: Re: [PATCH 05/14] arm64: Add 'ssbd' command-line option
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-6-marc.zyngier@arm.com>
+ <20180524114031.ehtumruiyuu4z2oo@lakrids.cambridge.arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <c5d4566b-d1de-d16b-a21a-d20ff8224620@arm.com>
+Date: Thu, 24 May 2018 12:52:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180524114031.ehtumruiyuu4z2oo@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Marek,
+On 24/05/18 12:40, Mark Rutland wrote:
+> On Tue, May 22, 2018 at 04:06:39PM +0100, Marc Zyngier wrote:
+>> On a system where the firmware implements ARCH_WORKAROUND_2,
+>> it may be useful to either permanently enable or disable the
+>> workaround for cases where the user decides that they'd rather
+>> not get a trap overhead, and keep the mitigation permanently
+>> on or off instead of switching it on exception entry/exit.
+>>
+>> In any case, default to the mitigation being enabled.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  Documentation/admin-guide/kernel-parameters.txt |  17 ++++
+>>  arch/arm64/include/asm/cpufeature.h             |   6 ++
+>>  arch/arm64/kernel/cpu_errata.c                  | 102 ++++++++++++++++++++----
+>>  3 files changed, 109 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index f2040d46f095..646e112c6f63 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -4092,6 +4092,23 @@
+>>  			expediting.  Set to zero to disable automatic
+>>  			expediting.
+>>  
+>> +	ssbd=		[ARM64,HW]
+>> +			Speculative Store Bypass Disable control
+>> +
+>> +			On CPUs that are vulnerable to the Speculative
+>> +			Store Bypass vulnerability and offer a
+>> +			firmware based mitigation, this parameter
+>> +			indicates how the mitigation should be used:
+>> +
+>> +			force-on:  Unconditionnaly enable mitigation for
+>> +				   for both kernel and userspace
+>> +			force-off: Unconditionnaly disable mitigation for
+>> +				   for both kernel and userspace
+>> +			kernel:    Always enable mitigation in the
+>> +				   kernel, and offer a prctl interface
+>> +				   to allow userspace to register its
+>> +				   interest in being mitigated too.
+>> +
+>>  	stack_guard_gap=	[MM]
+>>  			override the default stack gap protection. The value
+>>  			is in page units and it defines how many pages prior
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index 09b0f2a80c8f..9bc548e22784 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -537,6 +537,12 @@ static inline u64 read_zcr_features(void)
+>>  	return zcr;
+>>  }
+>>  
+>> +#define ARM64_SSBD_UNKNOWN		-1
+>> +#define ARM64_SSBD_FORCE_DISABLE	0
+>> +#define ARM64_SSBD_EL1_ENTRY		1
+> 
+> The EL1_ENTRY part of the name is a bit misleading, since this doesn't
+> apply to EL1->EL1 exceptions (and as with many other bits of the arm64
+> code, it's arguably misleading in the VHE case).
+> 
+> Perhaps ARM64_SSBD_KERNEL, which would align with the parameter name?
 
-> On 23 May 2018 12:43 Marek Vasut wrote,
->
-> To: linux-kernel@vger.kernel.org
-> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>; Geert Uytterhoeven <geert+renesas@glider.be>;
-> Lee Jones <lee.jones@linaro.org>; Mark Brown <broonie@kernel.org>; Steve Twiss <stwiss.opensource@diasemi.com>;
-> Wolfram Sang <wsa+renesas@sang-engineering.com>; linux-renesas-soc@vger.kernel.org
-> Subject: [PATCH 6/6] mfd: da9063: Add DA9063L support
->
-> Add support for DA9063L, which is a reduced variant of the DA9063 with less regulators and without RTC.
->
+I was just waiting for someone to sort out the naming for me, thanks for
+falling into that trap! ;-)
 
-There's potentially more to this file. Without an RTC the regmap access tables would change and the
-usual DA9063 (BB silicon) tables would become invalid.
-The tables for da9063_bb_readable_ranges, da9063_bb_writeable_ranges, da9063_bb_volatile_ranges,
-would need to be updated for DA9063L, if a new chip model was needed.
+I'll update that.
 
-The new ranges would be this (see below), and would remove any RTC accesses in the new chip model.
+> Not a big deal either way, and otherwise this looks good to me.
+> Regardless:
+> 
+> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 
-static const struct regmap_range da9063l_bb_readable_ranges[] = {
-	{
-		.range_min = DA9063_REG_PAGE_CON,
-		.range_max = DA9063_REG_MON_A10_RES,
-	}, {
-		.range_min = DA9063_REG_SEQ,
-		.range_max = DA9063_REG_ID_32_31,
-	}, {
-		.range_min = DA9063_REG_SEQ_A,
-		.range_max = DA9063_REG_AUTO3_LOW,
-	}, {
-		.range_min = DA9063_REG_T_OFFSET,
-		.range_max = DA9063_BB_REG_GP_ID_19,
-	}, {
-		.range_min = DA9063_REG_CHIP_ID,
-		.range_max = DA9063_REG_CHIP_VARIANT,
-	},
-};
+Thanks,
 
-static const struct regmap_range da9063l_bb_writeable_ranges[] = {
-	{
-		.range_min = DA9063_REG_PAGE_CON,
-		.range_max = DA9063_REG_PAGE_CON,
-	}, {
-		.range_min = DA9063_REG_FAULT_LOG,
-		.range_max = DA9063_REG_VSYS_MON,
-	}, {
-		.range_min = DA9063_REG_SEQ,
-		.range_max = DA9063_REG_ID_32_31,
-	}, {
-		.range_min = DA9063_REG_SEQ_A,
-		.range_max = DA9063_REG_AUTO3_LOW,
-	}, {
-		.range_min = DA9063_REG_CONFIG_I,
-		.range_max = DA9063_BB_REG_MON_REG_4,
-	}, {
-		.range_min = DA9063_BB_REG_GP_ID_0,
-		.range_max = DA9063_BB_REG_GP_ID_19,
-	},
-};
-
-static const struct regmap_range da9063l_bb_volatile_ranges[] = {
-	{
-		.range_min = DA9063_REG_PAGE_CON,
-		.range_max = DA9063_REG_EVENT_D,
-	}, {
-		.range_min = DA9063_REG_CONTROL_A,
-		.range_max = DA9063_REG_CONTROL_B,
-	}, {
-		.range_min = DA9063_REG_CONTROL_E,
-		.range_max = DA9063_REG_CONTROL_F,
-	}, {
-		.range_min = DA9063_REG_BCORE2_CONT,
-		.range_max = DA9063_REG_LDO11_CONT,
-	}, {
-		.range_min = DA9063_REG_DVC_1,
-		.range_max = DA9063_REG_ADC_MAN,
-	}, {
-		.range_min = DA9063_REG_ADC_RES_L,
-		.range_max = DA9063_REG_MON_A10_RES,
-	}, {
-		.range_min = DA9063_REG_SEQ,
-		.range_max = DA9063_REG_SEQ,
-	}, {
-		.range_min = DA9063_REG_EN_32K,
-		.range_max = DA9063_REG_EN_32K,
-	}, {
-		.range_min = DA9063_BB_REG_MON_REG_5,
-		.range_max = DA9063_BB_REG_MON_REG_6,
-	},
-};
-
-However this is a larger and more wide-ranging change compared to the one proposed by Marek,
-and would require other alterations to fit this in. Also I'm undecided to what it would really add
-apart from a new chip model: I have been told accessing the DA9063 RTC register locations has
-no effect in the DA9063L.
-
-If the maintainers are happy with this, and if a chip model addition is really needed in future
-it can be added later if required.
-
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-
-Regards,
-Steve
-
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  drivers/mfd/da9063-i2c.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c index 5544ce8e3363..84bbd2bbcd2a 100644
-> --- a/drivers/mfd/da9063-i2c.c
-> +++ b/drivers/mfd/da9063-i2c.c
-> @@ -232,6 +232,7 @@ static struct regmap_config da9063_regmap_config = {
->  
->  static const struct of_device_id da9063_dt_ids[] = {
->  	{ .compatible = "dlg,da9063", },
-> +	{ .compatible = "dlg,da9063l", },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, da9063_dt_ids); @@ -282,6 +283,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
->  
->  static const struct i2c_device_id da9063_i2c_id[] = {
->  	{ "da9063", PMIC_TYPE_DA9063 },
-> +	{ "da9063l", PMIC_TYPE_DA9063L },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
-> --
-> 2.16.2
+	M.
+-- 
+Jazz is not dead. It just smells funny...
