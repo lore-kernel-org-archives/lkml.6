@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031134AbeEXRud (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:50:33 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:39480 "EHLO
+        id S1031315AbeEXRun (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:50:43 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:34623 "EHLO
         mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966518AbeEXRu3 (ORCPT
+        with ESMTP id S1031146AbeEXRug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:50:29 -0400
-X-Google-Smtp-Source: AB8JxZqyiNESI7hGDLNVMygrX/86LcwwJjkxfD4Dyho2Wwx4xfm2ng7zcqtDLYEAEvGxnKCs3iPp+A==
+        Thu, 24 May 2018 13:50:36 -0400
+X-Google-Smtp-Source: AB8JxZp9kB6y6KEqfkpbIUpJB67ktNLqKek8B2etwY0iTBaEjhmzOQxudo3hMQysDCkgVMNhyfqryQ==
 From: Rob Herring <robh@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -21,66 +21,105 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         boot-architecture@lists.linaro.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/8] Make deferring probe forever optional
-Date: Thu, 24 May 2018 12:50:16 -0500
-Message-Id: <20180524175024.19874-1-robh@kernel.org>
+Subject: [PATCH v2 2/8] driver core: add a deferred probe timeout
+Date: Thu, 24 May 2018 12:50:18 -0500
+Message-Id: <20180524175024.19874-3-robh@kernel.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180524175024.19874-1-robh@kernel.org>
+References: <20180524175024.19874-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series came out of a discussion on the ARM boot-architecture
-list[1] about DT forwards and backwards compatibility issues. There are
-issues with newer DTs breaking on older, stable kernels. Some of these
-are difficult to solve, but cases of optional devices not having
-kernel support should be solvable.
+Deferring probe can wait forever on dependencies that may never appear
+for a variety of reasons. This can be difficult to debug especially if
+the console has dependencies or userspace fails to boot to a shell. Add
+a timeout to retry probing without possibly optional dependencies and to
+dump out the deferred probe pending list after retrying.
 
-I tested this on a RPi3 B with the pinctrl driver forced off. With this
-change, the MMC/SD and UART drivers can function without the pinctrl
-driver.
+This mechanism is intended for debug purposes. It won't work for the
+console which needs to be enabled before userspace starts. However, if
+the console's dependencies are resolved, then the kernel log will be
+printed (as opposed to no output).
 
-v2:
- - Add a DT property for pinctrl to flag using defaults
- - Add a debug timeout to stop deferring some number of seconds after
-   initcalls are done (giving modules a chance to load)
- - Split pinctrl support to its own patch
- - WARN when we stop deferring probe for a device
- - Add IOMMU support
- - Add PM domain support
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../admin-guide/kernel-parameters.txt         |  7 +++++
+ drivers/base/dd.c                             | 28 ++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-Rob
-
-[1] https://lists.linaro.org/pipermail/boot-architecture/2018-April/000466.html
-
-
-Rob Herring (8):
-  driver core: make deferring probe after init optional
-  driver core: add a deferred probe timeout
-  dt-bindings: pinctrl: add a 'pinctrl-use-default' property
-  arm: dts: bcm283x: mark the UART pin muxing nodes with
-    pinctrl-use-default
-  pinctrl: optionally stop deferring probe at end of initcalls
-  iommu: Stop deferring probe at end of initcalls
-  iommu: Remove IOMMU_OF_DECLARE
-  PM / Domains: Stop deferring probe at the end of initcall
-
- .../admin-guide/kernel-parameters.txt         |  7 +++
- .../bindings/pinctrl/pinctrl-bindings.txt     |  6 +++
- arch/arm/boot/dts/bcm283x.dtsi                |  2 +
- drivers/base/dd.c                             | 43 +++++++++++++++++++
- drivers/base/power/domain.c                   |  2 +-
- drivers/iommu/arm-smmu-v3.c                   |  2 -
- drivers/iommu/arm-smmu.c                      |  7 ---
- drivers/iommu/exynos-iommu.c                  |  2 -
- drivers/iommu/ipmmu-vmsa.c                    |  3 --
- drivers/iommu/msm_iommu.c                     |  2 -
- drivers/iommu/of_iommu.c                      | 21 +--------
- drivers/iommu/qcom_iommu.c                    |  2 -
- drivers/iommu/rockchip-iommu.c                |  2 -
- drivers/pinctrl/devicetree.c                  | 14 ++++--
- include/linux/device.h                        |  2 +
- include/linux/of_iommu.h                      |  4 --
- 16 files changed, 73 insertions(+), 48 deletions(-)
-
---
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..dd3f40b34a24 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -809,6 +809,13 @@
+ 			Defaults to the default architecture's huge page size
+ 			if not specified.
+ 
++	deferred_probe_timeout=
++			[KNL] Set a timeout in seconds for deferred probe to
++			give up waiting on dependencies to probe. Only specific
++			dependencies (subsystems or drivers) that have opted in
++			will be ignored. This option also dumps out devices
++			still on the deferred probe list after retrying.
++
+ 	dhash_entries=	[KNL]
+ 			Set number of hash buckets for dentry cache.
+ 
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index d6034718da6f..4133b240c7e4 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -226,9 +226,17 @@ void device_unblock_probing(void)
+ 	driver_deferred_probe_trigger();
+ }
+ 
++static int deferred_probe_timeout = -1;
++static int __init deferred_probe_timeout_setup(char *str)
++{
++	deferred_probe_timeout = simple_strtol(str, NULL, 0);
++	return 1;
++}
++__setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
++
+ int driver_deferred_probe_check_init_done(struct device *dev, bool optional)
+ {
+-	if (optional && initcalls_done) {
++	if ((optional || !deferred_probe_timeout) && initcalls_done) {
+ 		dev_WARN(dev, "ignoring dependency for device, assuming no driver");
+ 		return -ENODEV;
+ 	}
+@@ -236,6 +244,19 @@ int driver_deferred_probe_check_init_done(struct device *dev, bool optional)
+ 	return -EPROBE_DEFER;
+ }
+ 
++static void deferred_probe_timeout_work_func(struct work_struct *work)
++{
++	struct device_private *private, *p;
++
++	deferred_probe_timeout = 0;
++	driver_deferred_probe_trigger();
++	flush_work(&deferred_probe_work);
++
++	list_for_each_entry_safe(private, p, &deferred_probe_pending_list, deferred_probe)
++		dev_info(private->device, "deferred probe pending");
++}
++static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_work_func);
++
+ /**
+  * deferred_probe_initcall() - Enable probing of deferred devices
+  *
+@@ -257,6 +278,11 @@ static int deferred_probe_initcall(void)
+ 	 */
+ 	driver_deferred_probe_trigger();
+ 	flush_work(&deferred_probe_work);
++
++	if (deferred_probe_timeout > 0) {
++		schedule_delayed_work(&deferred_probe_timeout_work,
++			deferred_probe_timeout * HZ);
++	}
+ 	return 0;
+ }
+ late_initcall(deferred_probe_initcall);
+-- 
 2.17.0
