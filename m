@@ -1,96 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156270-2-14768443485113368509
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156268; b=LpyVQUDSxu1XcXHFIoK4knrWEvVXKvaaklyQqvVZ7o+ITchIk0
-    WICeDJvWhQxNLEdFZ21MYyjX0eckX/cEHUtdv3GB2NMFvkV8cOnJmWvxEm3OjkJ4
-    jtjHVpNzqwn5kucc757ElWg52IsdlApFgFSNMYoDjtdn3nNsp1p3Rr+jqTw+HWwX
-    PLo5ps35tafPBjIDckOtFVt/WNn280cG3oA4IMdeADNjXQUv+lAlX7zWfZ6wfsYs
-    iKVQzQmKjzRjyI0koH1BlA1jt5MBWYtaTzcvYqz1NYaKuhE1OnnpuzJSVRGZzS5L
-    b68tuMcgXFCNd0wnnJ+8EgwsPvJ68rCg4HGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156268; bh=SJFg4MwbYn8C6f+WBwM3X4vJZEJznh
-    9zBVPNtZrfVtg=; b=G9+mK53tf7vYQx3Idv20qzg8od7plkr9ar4u93vu4kQWIH
-    cenDKKPM1ZisOQGRZfPmP88qOxyYw8h+vLcHzfYoDlZbr2KTzal0Y3gOKU03k7an
-    SfFeRAaV+VQ/zlK+4xfYVYPxqgSyIKGVh13DsdhlRpt3I/qwf1gGh8ezMvWIDF/b
-    RpNG7Ty8r6RZee9F2qRzzLnvm0A3xgthNpaBnQLlJvdkCm+MRNhelQQ+jQKimhWT
-    nND0ePPrCiqqBHNXaXJ4CYpHhi570BEFVXqhSTcw12RWkBrX3G3/Lx2FQR+GqXxU
-    xVPayaJz895kqz9lRmSo4Ij3rmpeE110/I1Nx2yA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=GQX7A8Wg x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=GQX7A8Wg x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLRu18cj95n1gm9AzJNv3EXh45qDbTwGNZ5UeZV3nxc2EwDJ7KVTbpvF+A0DaLu+9Il9YJMFxGQVahu9mwD7bWWqc9EJimEbCUsJwEtEIAkLBWMq19y+
-    eGKbV7E7Fx6yIRiaJ/r2+1Ahm0KRwa4qdjZsIzJigm5lFv11wBKmXhxbLLH3JadVUbfwdnlrIOMhk/oHCVAmA9Pa3LZyuThO5hj+pVNguKvRvje/QwWWABNU
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=s8YR1HE3AAAA:8 a=IpJZQVW2AAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=yARby3lnm6p1CmaUAsUA:9 a=QEXdDO2ut3YA:10
-    a=jGH_LyMDp9YhSvY-UuyI:22 a=IawgGOuG5U0WyFbmm1f5:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030517AbeEXKEZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:04:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031035AbeEXKEW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:04:22 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoJT96fW48JmvXxhmucXLXvUYT886C7syHwSYBe7VpG/7v85ImtsDd5B6GAZKwyz5SKN/D5
+ARC-Seal: i=1; a=rsa-sha256; t=1527156270; cv=none;
+        d=google.com; s=arc-20160816;
+        b=J4eAMHYPqGlfnBvVk/PrTtyDZBhbhy9u+4fjsv3rP4P206+9oKnMfsB1okIsxlMLzZ
+         rS7rvbwH1Yjb2Rt0DQrytFqYYp9AqP6NkIYJkvkXOZcI4LmjCQfO7tkIcDQpB6OSDLWe
+         xZhyzfjpTtJYKRfrjUx+fyYHkP/zCQq72DsF+KDhIrgpgJS6vzwnF+x9nzFabWYzCLYU
+         6NH6453mMhNZUNAkIrxGvwNwhicD5rWcFou3P8i94z3wzoP9psNGtijpeje58VfWe8j2
+         6UwovI1Oj+0p4zAly/FD1JbXLPz9Ep0C9Gb9W8AxPxtU4owT9UptAw0buCXi4kOwKf/n
+         gw6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=ZJXV6cFI66zld1YvpxoTwgMS5FvcTWcU5znmCj8kWRI=;
+        b=Uv87IeQ1PgM5X57ebq+Ls24S1YwKHdjbKVEcIHChBFJlscuQxzOQEUKVbOUJhMfUao
+         iRkFFdn/eGI4l72iGrPcWSspgAsr9bmNg6QlC8Hvj+dtDhn1bq9dzk6C/sjd5pXazWkD
+         BEHPqi+OXxyhk3DEuZho3gl+QLBSM4/VzJDR9ui0sChharXaG8tsEywBbTfmXTCpcjxS
+         qt0njVHjI+YLXAro2DTLmPPKXwbCmSx9GM+50lBqj2B82kbtLE5karul94Ag9iwbccVc
+         0QcbLWoxc2Xi8xhQSPWDC9dt7yi/GwzUzn7JXz+zKu9A+ES/JqaV7GRYxf/pr6EJnWV3
+         np7g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dJldi74D;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dJldi74D;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 122/161] clk: Dont show the incorrect clock phase
-Date: Thu, 24 May 2018 11:39:07 +0200
-Message-Id: <20180524093032.901943225@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 125/161] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
+Date: Thu, 24 May 2018 11:39:10 +0200
+Message-Id: <20180524093033.285232799@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -98,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338506602768448?=
+X-GMAIL-MSGID: =?utf-8?q?1601339413220140392?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -110,50 +54,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit 1f9c63e8de3d7b377c9d74e4a17524cfb60e6384 ]
+[ Upstream commit 4bf59902b50012b1dddeeaa23b217d9c4956cdda ]
 
-It's found that the clock phase output from clk_summary is
-wrong compared to the actual phase reading from the register.
-
-cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-sdio_sample     0        1        0 50000000          0 -22
-
-It exposes an issue that clk core, clk_core_get_phase, always
-returns the cached core->phase which should be either updated
-by calling clk_set_phase or directly from the first place the
-clk was registered.
-
-When registering the clk, the core->phase geting from ->get_phase()
-may return negative value indicating error. This is quite common
-since the clk's phase may be highly related to its parent chain,
-but it was temporarily orphan when registered, since its parent
-chains hadn't be ready at that time, so the clk drivers decide to
-return error in this case. However, if no clk_set_phase is called or
-maybe the ->set_phase() isn't even implemented, the core->phase would
-never be updated. This is wrong, and we should try to update it when
-all its parent chains are settled down, like the way of updating clock
-rate for that. But it's not deserved to complicate the code now and
-just update it anyway when calling clk_core_get_phase, which would be
-much simple and enough.
+The MMC sample and drv clock for rockchip platforms are derived from
+the bus clock output to the MMC/SDIO card. So it should never happens
+that the clk rate is zero given it should inherits the clock rate from
+its parent. If something goes wrong and makes the clock rate to be zero,
+the calculation would be wrong but may still make the mmc tuning process
+work luckily. However it makes people harder to debug when the following
+data transfer is unstable.
 
 Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/rockchip/clk-mmc-phase.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2375,6 +2375,9 @@ static int clk_core_get_phase(struct clk
- 	int ret;
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct
+ 	u16 degrees;
+ 	u32 delay_num = 0;
  
- 	clk_prepare_lock();
-+	/* Always try to update cached phase if possible */
-+	if (core->ops->get_phase)
-+		core->phase = core->ops->get_phase(core->hw);
- 	ret = core->phase;
- 	clk_prepare_unlock();
++	/* See the comment for rockchip_mmc_set_phase below */
++	if (!rate) {
++		pr_err("%s: invalid clk rate\n", __func__);
++		return -EINVAL;
++	}
++
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
+ 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
+@@ -84,6 +90,23 @@ static int rockchip_mmc_set_phase(struct
+ 	u32 raw_value;
+ 	u32 delay;
+ 
++	/*
++	 * The below calculation is based on the output clock from
++	 * MMC host to the card, which expects the phase clock inherits
++	 * the clock rate from its parent, namely the output clock
++	 * provider of MMC host. However, things may go wrong if
++	 * (1) It is orphan.
++	 * (2) It is assigned to the wrong parent.
++	 *
++	 * This check help debug the case (1), which seems to be the
++	 * most likely problem we often face and which makes it difficult
++	 * for people to debug unstable mmc tuning results.
++	 */
++	if (!rate) {
++		pr_err("%s: invalid clk rate\n", __func__);
++		return -EINVAL;
++	}
++
+ 	nineties = degrees / 90;
+ 	remainder = (degrees % 90);
  
