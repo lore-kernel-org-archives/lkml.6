@@ -1,49 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969448AbeEXNgo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:36:44 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49072 "EHLO mga05.intel.com"
+        id S969488AbeEXNjP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:39:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965823AbeEXNgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:36:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
-   d="scan'208";a="41881738"
-Date: Thu, 24 May 2018 07:38:59 -0600
-From: Keith Busch <keith.busch@linux.intel.com>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 2/2] nvme-pci: don't send delete cq command when allocate
- sq return -EINTR
-Message-ID: <20180524133859.GH11037@localhost.localdomain>
-References: <1527155494-1891-1-git-send-email-jianchao.w.wang@oracle.com>
- <1527155494-1891-2-git-send-email-jianchao.w.wang@oracle.com>
+        id S965530AbeEXNjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 09:39:10 -0400
+X-Google-Smtp-Source: ADUXVKKFBMsU/C8+F15DJthSPUcQp6pE03/xWI7sDV69kF21ObkRY7foAtZ9JWKDE+yf4CjoJzAwr1HAheMcF5a5rWc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527155494-1891-2-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <3307687.qJF5Pr3uHG@phil>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1685755.J6GI985WX3@diego> <CAL_Jsq+VBspzCaLD2Wy=fyC-S+LKGZbVsB+b+Etkx91ioXOCuQ@mail.gmail.com>
+ <3307687.qJF5Pr3uHG@phil>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 May 2018 08:38:48 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKO+1KpESJ1E58QcfWoNOpfVw6M_JVkAruZhFF5thEg7g@mail.gmail.com>
+Message-ID: <CAL_JsqKO+1KpESJ1E58QcfWoNOpfVw6M_JVkAruZhFF5thEg7g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Levin Du <djw@t-chip.com.cn>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4ODdKwp028951
 
-On Thu, May 24, 2018 at 05:51:34PM +0800, Jianchao Wang wrote:
->  	result = adapter_alloc_sq(dev, qid, nvmeq);
-> -	if (result < 0)
-> +	/*
-> +	 * If return -EINTR, it means the allocate sq command times out and is completed
-> +	 * with NVME_REQ_CANCELLED. At the time, the controller has been disabled
-> +	 * and admin request queue has been quiesced. So don't try to send delete cq
-> +	 * command any more.
-> +	 */
-> +	if (result == -EINTR)
-> +		goto out;
-> +	else if (result < 0)
->  		goto release_cq;
+On Thu, May 24, 2018 at 7:07 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Hi Rob,
+>
+> Am Mittwoch, 23. Mai 2018, 21:53:53 CEST schrieb Rob Herring:
+>> On Wed, May 23, 2018 at 10:12 AM, Heiko Stübner <heiko@sntech.de> wrote:
+>> > Am Mittwoch, 23. Mai 2018, 16:43:07 CEST schrieb Rob Herring:
+>> >> On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
+>> >> > On 2018-05-23 2:02 AM, Rob Herring wrote:
+>> >> >> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+>> >> >>> From: Levin Du <djw@t-chip.com.cn>
+>> >> >>>
+>> >> >>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+>> >> >>> which do not belong to the general pinctrl.
+>> >> >>>
+>> >> >>> Adding gpio-syscon support makes controlling regulator or
+>> >> >>> LED using these special pins very easy by reusing existing
+>> >> >>> drivers, such as gpio-regulator and led-gpio.
+>> >> >>>
+>> >> >>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>> >> >>>
+>> >> >>> ---
+>> >> >>>
+>> >> >>> Changes in v2:
+>> >> >>> - Rename gpio_syscon10 to gpio_mute in doc
+>> >> >>>
+>> >> >>> Changes in v1:
+>> >> >>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+>> >> >>> - Add doc rockchip,gpio-syscon.txt
+>> >> >>>
+>> >> >>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
+>> >> >>>
+>> >> >>> ++++++++++++++++++++++
+>> >> >>>
+>> >> >>>   drivers/gpio/gpio-syscon.c                         | 30
+>> >> >>>
+>> >> >>> ++++++++++++++++
+>> >> >>>
+>> >> >>>   2 files changed, 71 insertions(+)
+>> >> >>>   create mode 100644
+>> >> >>>
+>> >> >>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> >> >>>
+>> >> >>> diff --git
+>> >> >>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> >> >>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> >> >>> new file mode 100644
+>> >> >>> index 0000000..b1b2a67
+>> >> >>> --- /dev/null
+>> >> >>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> >> >>> @@ -0,0 +1,41 @@
+>> >> >>> +* Rockchip GPIO support for GRF_SOC_CON registers
+>> >> >>> +
+>> >> >>> +Required properties:
+>> >> >>> +- compatible: Should contain "rockchip,gpio-syscon".
+>> >> >>> +- gpio-controller: Marks the device node as a gpio controller.
+>> >> >>> +- #gpio-cells: Should be two. The first cell is the pin number and
+>> >> >>> +  the second cell is used to specify the gpio polarity:
+>> >> >>> +    0 = Active high,
+>> >> >>> +    1 = Active low.
+>> >> >>
+>> >> >> There's no need for this child node. Just make the parent node a gpio
+>> >> >> controller.
+>> >> >>
+>> >> >> Rob
+>> >> >
+>> >> > Hi Rob, it is not clear to me. Do you suggest that the grf node should be
+>> >> > a
+>> >> > gpio controller,
+>> >> > like below?
+>> >> >
+>> >> > +    grf: syscon at ff100000 {
+>> >> > +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
+>> >> > "syscon", "simple-mfd";
+>> >>
+>> >> Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
+>> >
+>> > I would disagree quite a bit here. The grf are the "general register files",
+>> > a bunch of registers used for quite a lot of things, and so it seems
+>> > among other users, also a gpio-controller for some more random pins
+>> > not controlled through the regular gpio controllers.
+>> >
+>> > For a more fully stocked grf, please see
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/rk3288.dtsi#n855
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3399.dtsi#n1338
+>> >
+>> > So the gpio controller should definitly also be a subnode.
+>>
+>> Sigh, yes, if there are a bunch of functions needing subnodes like the
+>> above, then yes that makes sense. But that's not what has been
+>> presented. Please make some attempt at defining *all* the functions.
+>> An actual binding would be nice, but I'll settle for just a list of
+>> things. The list should have functions that have DT dependencies (like
+>> clocks for phys in the above) because until you do, you don't need
+>> child nodes.
+>
+> That's the problem with the Rockchip-GRF, you only realize its content
+> when implementing specific features.
+>
+> Like on the rk3399 the table of the register-list of the GRF alone is 11
+> pages long with the register details tables taking up another 230 pages.
+> And functional description is often somewhat thin.
 
-Since you're touching this part anyway, you'd really only want to goto
-the release_cq if result is > 0.
+But surely one can scan thru it and have some clue what functions
+there are. For example, does this chip have phy registers in GRF?
+
+> So I'm not sure I fully understand what you're asking, but in general
+> we define the bindings for sub-devices when tackling these individual
+> components, see for example
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=72580a49a837c2c7da83f698c00592eac41537d8
+
+Yes, and in that case it makes sense. The individual functions
+themselves have resources defined in DT like clocks. What I don't want
+to see are child nodes defining *only* a compatible and any provider
+properties (e.g. #gpio-cells). The only reason to do that is to make
+Linux bind a driver, but DT is not a list of drivers to bind.
+
+This is what I don't want to see:
+
+syscon {
+  compatible = "foo,soc-sysctrl", "syscon", "simple-mfd";
+  reg = <...>;
+  clock-controller {
+    compatible = "foo,soc-sysctrl-clocks";
+    #clock-cells = <1>;
+  };
+  reset-controller {
+    compatible = "foo,soc-sysctrl-resets";
+    #reset-cells = <1>;
+  };
+  gpio {
+    compatible = "foo,soc-sysctrl-gpios";
+    #gpio-cells = <2>;
+    gpio-controller;
+  };
+};
+
+But rather:
+
+syscon {
+  compatible = "foo,soc-sysctrl";
+  reg = <...>;
+  #clock-cells = <1>;
+  #reset-cells = <1>;
+  #gpio-cells = <2>;
+  gpio-controller;
+};
+
+> which also has a real phy-driver behind it and binding against that
+> subnode of the GRF simple-mfd.
+>
+> These are real IP blocks somewhere on the socs, with regular supplies
+> like resets, clocks etc in most cases. Only their controlling registers
+> got dumped into the GRF for some reason.
+
+I can tell that from your examples, but I can't tell that with this
+binding. For this binding, it looks like you are adding a sub-node for
+1 register bit. That wouldn't scale if you have 11 page register list.
+
+> And in retrospect it really looks like we're doing something right,
+> because it seems these bindings seem quite stable over time.
+>
+>
+>> > The gpio in question is called "mute", so I'd think the gpio-syscon driver
+>> > should just define a "rockchip,rk3328-gpio-mute" compatible and contain
+>> > all the register voodoo in the driver itself and not define it in the dt.
+>>
+>> Is there really just one GPIO? If it has a defined function, then is
+>> it really GP? Can you control direction? I know Linus W doesn't like
+>> that kind of abuse of GPIO.
+>
+> looks like I convinced Linus that we're not abusing anything with this :-) .
+
+Okay, but still my question remains: is it really only 1 GPIO?
+Dropping "-mute" would be more future proof if not.
+
+Rob
