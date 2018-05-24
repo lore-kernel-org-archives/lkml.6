@@ -1,58 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969749AbeEXVih convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:38:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47165 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161426AbeEXVie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:38:34 -0400
-Date: Thu, 24 May 2018 14:38:21 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com> <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com> <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
+        id S1161453AbeEXVjV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:39:21 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39506 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966304AbeEXVjS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 17:39:18 -0400
+Date: Thu, 24 May 2018 22:38:59 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Ramon Fried <ramon.fried@gmail.com>
+Cc: Baruch Siach <baruch@tkos.co.il>, catalin.marinas@arm.com,
+        will.deacon@arm.com, open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: uImage target support on arm64
+Message-ID: <20180524213859.GA17671@n2100.armlinux.org.uk>
+References: <CA+Kvs9=mgW4Z=UcBZZLL82fJ=c--OXF3=B2Zbho+CfMTr8Wk-Q@mail.gmail.com>
+ <20180524193449.jql27apudwaevwpf@tarshish>
+ <CA+Kvs9=x4kxkj-amni+E_KVjH2qjq_mXU88Dr-x5NNyz64gfuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: Nick Desaulniers <ndesaulniers@google.com>
-CC: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
-From: hpa@zytor.com
-Message-ID: <EB0D8B9E-0646-4D27-8F3D-750AF09BFAE4@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+Kvs9=x4kxkj-amni+E_KVjH2qjq_mXU88Dr-x5NNyz64gfuA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 24, 2018 1:52:16 PM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote:
->On Thu, May 24, 2018 at 1:26 PM Nick Desaulniers
-><ndesaulniers@google.com>
->wrote:
->> On Thu, May 24, 2018 at 11:59 AM <hpa@zytor.com> wrote:
->> > Issue 3: Let's face it, reading and writing the flags should be
->builtins,
->> exactly because it has to do stack operations, which really means the
->> compiler should be involved.
->
->> I'm happy to propose that as a feature request to llvm+gcc.
->
->Oh, looks like both clang and gcc have:
->__builtin_ia32_readeflags_u64()
->
->https://godbolt.org/g/SwPjhq
->
->Maybe native_save_fl() and native_restore_fl() should be replaced in
->the
->kernel with
->__builtin_ia32_readeflags_u64() and __builtin_ia32_writeeflags_u64()?
+On Thu, May 24, 2018 at 11:17:19PM +0300, Ramon Fried wrote:
+> On Thu, May 24, 2018 at 10:34 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+> > Hi Ramon,
+> >
+> > On Thu, May 24, 2018 at 10:05:15PM +0300, Ramon Fried wrote:
+> >> I've noticed that it's not supported.
+> >> Is it on purpose ?
+> >
+> > Yes. The 32bit load address in the uImage header in pretty limited when
+> > applied to 64bit ARM64. Even for ARM zImage is the preferred kernel format for
+> > quite some time now, since it allows flexible load address, as well as
+> > multi-platform kernels.
+> Hi Baruch.
+> I though that in terms of U-boot, the new FIT image is the preferred
+> kernel format.
 
-It should, at least when the compiler supports them (we keep support in for old compilers back to about gcc 3.4 or 4.1 or so for x86, but they are intently special cases.)
+u-boot keeps inventing new image formats for itself that are specific
+to u-boot.  Not every boot loader is u-boot.
 
-For the PV case, I think we should create it as an explicit assembly function, meaning it should be an extern inline in C code. That way we're fixing the kernel right.
+For 32-bit ARM, zImage has _always_ since day one been the preferred
+format.
 
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
