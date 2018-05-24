@@ -1,96 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033425AbeEXPWU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:22:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45038 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966472AbeEXPWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:22:16 -0400
-Subject: Re: [PATCH v8 3/6] cpuset: Add cpuset.sched.load_balance flag to v2
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-4-git-send-email-longman@redhat.com>
- <20180524143614.GC3948@localhost.localdomain>
- <4bd31510-4f73-e263-8dc1-5edb0fe63b59@redhat.com>
- <20180524151656.GD3948@localhost.localdomain>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <5f409ed7-3850-f1ea-58cf-4326605d1570@redhat.com>
-Date: Thu, 24 May 2018 11:22:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S970905AbeEXPWx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 11:22:53 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34586 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966339AbeEXPWu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 11:22:50 -0400
+X-Google-Smtp-Source: AB8JxZrVmxQug4l11p9AHveDcyMqxi6cMTDcwsGIPW9otys/4l5A4rC3VG9rGQ6rrO8yNahFGMjhIQ==
+Date: Thu, 24 May 2018 17:22:46 +0200
+From: Carlos Maiolino <cmaiolino@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: remove iterate_supers_type
+Message-ID: <20180524152246.5qb7az2paicc4mfm@odin.usersys.redhat.com>
+Mail-Followup-To: Carlos Maiolino <cmaiolino@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20180517154737.18877-1-jlayton@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180524151656.GD3948@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180517154737.18877-1-jlayton@kernel.org>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/2018 11:16 AM, Juri Lelli wrote:
-> On 24/05/18 11:09, Waiman Long wrote:
->> On 05/24/2018 10:36 AM, Juri Lelli wrote:
->>> On 17/05/18 16:55, Waiman Long wrote:
->>>
->>> [...]
->>>
->>>> +	A parent cgroup cannot distribute all its CPUs to child
->>>> +	scheduling domain cgroups unless its load balancing flag is
->>>> +	turned off.
->>>> +
->>>> +  cpuset.sched.load_balance
->>>> +	A read-write single value file which exists on non-root
->>>> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
->>>> +	either "0" (off) or a non-zero value (on).  This flag is set
->>>> +	by the parent and is not delegatable.
->>>> +
->>>> +	When it is on, tasks within this cpuset will be load-balanced
->>>> +	by the kernel scheduler.  Tasks will be moved from CPUs with
->>>> +	high load to other CPUs within the same cpuset with less load
->>>> +	periodically.
->>>> +
->>>> +	When it is off, there will be no load balancing among CPUs on
->>>> +	this cgroup.  Tasks will stay in the CPUs they are running on
->>>> +	and will not be moved to other CPUs.
->>>> +
->>>> +	The initial value of this flag is "1".	This flag is then
->>>> +	inherited by child cgroups with cpuset enabled.  Its state
->>>> +	can only be changed on a scheduling domain cgroup with no
->>>> +	cpuset-enabled children.
->>> [...]
->>>
->>>> +	/*
->>>> +	 * On default hierachy, a load balance flag change is only allowed
->>>> +	 * in a scheduling domain with no child cpuset.
->>>> +	 */
->>>> +	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) && balance_flag_changed &&
->>>> +	   (!is_sched_domain(cs) || css_has_online_children(&cs->css))) {
->>>> +		err = -EINVAL;
->>>> +		goto out;
->>>> +	}
->>> The rule is actually
->>>
->>>  - no child cpuset
->>>  - and it must be a scheduling domain
->>>
->>> Right?
->> Yes, because it doesn't make sense to have a cpu in one cpuset that has
->> loading balance off while, at the same time, in another cpuset with load
->> balancing turned on. This restriction is there to make sure that the
->> above condition will not happen. I may be wrong if there is a realistic
->> use case where the above condition is desired.
-> Yep, makes sense to me.
->
-> Maybe add the second condition to the comment and documentation.
+On Thu, May 17, 2018 at 11:47:37AM -0400, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
+> 
+> Nothing calls this.
+> 
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
 
-Sure. Will do.
+looks like there are no reviews here yet, and it looks good to me, so, feel free
+to add.
 
--Longman
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+
+> ---
+>  fs/super.c         | 36 ------------------------------------
+>  include/linux/fs.h |  2 --
+>  2 files changed, 38 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 30b7490bd049..456276033e59 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -631,42 +631,6 @@ void iterate_supers(void (*f)(struct super_block *, int), int arg)
+>  	spin_unlock(&sb_lock);
+>  }
+>  
+> -/**
+> - *	iterate_supers_type - call function for superblocks of given type
+> - *	@type: fs type
+> - *	@f: function to call
+> - *	@arg: argument to pass to it
+> - *
+> - *	Scans the superblock list and calls given function, passing it
+> - *	locked superblock and given argument.
+> - */
+> -void iterate_supers_type(struct file_system_type *type,
+> -	void (*f)(struct super_block *, void *), void *arg)
+> -{
+> -	struct super_block *sb, *p = NULL;
+> -
+> -	spin_lock(&sb_lock);
+> -	hlist_for_each_entry(sb, &type->fs_supers, s_instances) {
+> -		sb->s_count++;
+> -		spin_unlock(&sb_lock);
+> -
+> -		down_read(&sb->s_umount);
+> -		if (sb->s_root && (sb->s_flags & SB_BORN))
+> -			f(sb, arg);
+> -		up_read(&sb->s_umount);
+> -
+> -		spin_lock(&sb_lock);
+> -		if (p)
+> -			__put_super(p);
+> -		p = sb;
+> -	}
+> -	if (p)
+> -		__put_super(p);
+> -	spin_unlock(&sb_lock);
+> -}
+> -
+> -EXPORT_SYMBOL(iterate_supers_type);
+> -
+>  static struct super_block *__get_super(struct block_device *bdev, bool excl)
+>  {
+>  	struct super_block *sb;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 7107d291d853..c4761eba3b44 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3116,8 +3116,6 @@ extern struct super_block *get_active_super(struct block_device *bdev);
+>  extern void drop_super(struct super_block *sb);
+>  extern void drop_super_exclusive(struct super_block *sb);
+>  extern void iterate_supers(void (*)(struct super_block *, int), int);
+> -extern void iterate_supers_type(struct file_system_type *,
+> -			        void (*)(struct super_block *, void *), void *);
+>  
+>  extern int dcache_dir_open(struct inode *, struct file *);
+>  extern int dcache_dir_close(struct inode *, struct file *);
+> -- 
+> 2.17.0
+> 
+
+-- 
+Carlos
