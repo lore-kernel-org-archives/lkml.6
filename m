@@ -1,145 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971497AbeEXUwm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:52:42 -0400
-Received: from ms.lwn.net ([45.79.88.28]:51920 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966499AbeEXUwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:52:40 -0400
-Date: Thu, 24 May 2018 14:52:02 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Sterba <dsterba@suse.cz>
-Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
-Message-ID: <20180524145202.7d5a55c3@lwn.net>
-In-Reply-To: <20180524114341.1101-1-mhocko@kernel.org>
-References: <20180424183536.GF30619@thunk.org>
-        <20180524114341.1101-1-mhocko@kernel.org>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        id S971517AbeEXUzf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:55:35 -0400
+Received: from mailout3.hostsharing.net ([176.9.242.54]:54097 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969426AbeEXUzc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:55:32 -0400
+X-Mailbox-Line: From 8f770886632640321592873e4c902218d42c436b Mon Sep 17 00:00:00 2001
+Message-Id: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de>
+From: Lukas Wunner <lukas@wunner.de>
+Date: Thu, 24 May 2018 22:45:30 +0200
+Subject: [PATCH] genirq: Synchronize only with single thread on free_irq()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018 13:43:41 +0200
-Michal Hocko <mhocko@kernel.org> wrote:
+When pciehp is converted to threaded IRQ handling, removal of unplugged
+devices below a PCIe hotplug port happens synchronously in the IRQ
+thread.  Removal of devices typically entails a call to free_irq() by
+their drivers.
 
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Although the api is documented in the source code Ted has pointed out
-> that there is no mention in the core-api Documentation and there are
-> people looking there to find answers how to use a specific API.
-> 
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: David Sterba <dsterba@suse.cz>
-> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
-> 
-> Hi Johnatan,
-> Ted has proposed this at LSFMM and then we discussed that briefly on the
-> mailing list [1]. I received some useful feedback from Darrick and Dave
-> which has been (hopefully) integrated. Then the thing fall off my radar
-> rediscovering it now when doing some cleanup. Could you take the patch
-> please?
-> 
-> [1] http://lkml.kernel.org/r/20180424183536.GF30619@thunk.org
->  .../core-api/gfp_mask-from-fs-io.rst          | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
+If those devices share their IRQ with the hotplug port, free_irq()
+deadlocks because it calls synchronize_irq() to wait for all hard IRQ
+handlers as well as all threads sharing the IRQ to finish.
 
-So you create the rst file, but don't add it in index.rst; that means it
-won't be a part of the docs build and Sphinx will complain.
+Actually it's sufficient to wait only for the IRQ thread of the removed
+device, so call synchronize_hardirq() to wait for all hard IRQ handlers
+to finish, but no longer for any threads.  Compensate by rearranging the
+control flow in irq_wait_for_interrupt() such that the device's thread
+is allowed to run one last time after kthread_stop() has been called.
 
-> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> new file mode 100644
-> index 000000000000..e8b2678e959b
-> --- /dev/null
-> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> @@ -0,0 +1,55 @@
-> +=================================
-> +GFP masks used from FS/IO context
-> +=================================
-> +
-> +:Date: Mapy, 2018
+Stack trace for posterity:
+    INFO: task irq/17-pciehp:94 blocked for more than 120 seconds.
+    schedule+0x28/0x80
+    synchronize_irq+0x6e/0xa0
+    __free_irq+0x15a/0x2b0
+    free_irq+0x33/0x70
+    pciehp_release_ctrl+0x98/0xb0
+    pcie_port_remove_service+0x2f/0x40
+    device_release_driver_internal+0x157/0x220
+    bus_remove_device+0xe2/0x150
+    device_del+0x124/0x340
+    device_unregister+0x16/0x60
+    remove_iter+0x1a/0x20
+    device_for_each_child+0x4b/0x90
+    pcie_port_device_remove+0x1e/0x30
+    pci_device_remove+0x36/0xb0
+    device_release_driver_internal+0x157/0x220
+    pci_stop_bus_device+0x7d/0xa0
+    pci_stop_bus_device+0x3d/0xa0
+    pci_stop_and_remove_bus_device+0xe/0x20
+    pciehp_unconfigure_device+0xb8/0x160
+    pciehp_disable_slot+0x84/0x130
+    pciehp_ist+0x158/0x190
+    irq_thread_fn+0x1b/0x50
+    irq_thread+0x143/0x1a0
+    kthread+0x111/0x130
 
-Ah...the wonderful month of Mapy....:)
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+---
+ kernel/irq/manage.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-> +:Author: Michal Hocko <mhocko@kernel.org>
-> +
-> +Introduction
-> +============
-> +
-> +Code paths in the filesystem and IO stacks must be careful when
-> +allocating memory to prevent recursion deadlocks caused by direct
-> +memory reclaim calling back into the FS or IO paths and blocking on
-> +already held resources (e.g. locks - most commonly those used for the
-> +transaction context).
-> +
-> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
-> +resp. __GFP_IO (note the later implies clearing the first as well) in
-
-"resp." is indeed a bit terse.  Even spelled out as "respectively", though,
-I'm not sure what the word is intended to mean here.  Did you mean "or"?
-
-> +the gfp mask when calling an allocator. GFP_NOFS resp. GFP_NOIO can be
-
-Here too.
-
-> +used as shortcut. It turned out though that above approach has led to
-> +abuses when the restricted gfp mask is used "just in case" without a
-> +deeper consideration which leads to problems because an excessive use
-> +of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
-> +reclaim issues.
-> +
-> +New API
-> +========
-> +
-> +Since 4.12 we do have a generic scope API for both NOFS and NOIO context
-> +``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
-> +``memalloc_noio_restore`` which allow to mark a scope to be a critical
-> +section from the memory reclaim recursion into FS/IO POV. Any allocation
-
-"from a filesystem or I/O point of view" ?
-
-> +from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
-> +mask so no memory allocation can recurse back in the FS/IO.
-
-Wouldn't it be nice if those functions had kerneldoc comments that could be
-pulled in here! :)
-
-> +FS/IO code then simply calls the appropriate save function right at the
-> +layer where a lock taken from the reclaim context (e.g. shrinker) and
-
-where a lock *is* taken ?
-
-> +the corresponding restore function when the lock is released. All that
-> +ideally along with an explanation what is the reclaim context for easier
-> +maintenance.
-> +
-> +What about __vmalloc(GFP_NOFS)
-> +==============================
-> +
-> +vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
-> +GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
-> +to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
-> +almost always a bug. The good news is that the NOFS/NOIO semantic can be
-> +achieved by the scope api.
-
-Agree with others on "API"
-
-> +In the ideal world, upper layers should already mark dangerous contexts
-> +and so no special care is required and vmalloc should be called without
-> +any problems. Sometimes if the context is not really clear or there are
-> +layering violations then the recommended way around that is to wrap ``vmalloc``
-> +by the scope API with a comment explaining the problem.
-
-Thanks,
-
-jon
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index e3336d904f64..603d2672f942 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -756,9 +756,19 @@ static irqreturn_t irq_forced_secondary_handler(int irq, void *dev_id)
+ 
+ static int irq_wait_for_interrupt(struct irqaction *action)
+ {
+-	set_current_state(TASK_INTERRUPTIBLE);
++	for (;;) {
++		set_current_state(TASK_INTERRUPTIBLE);
+ 
+-	while (!kthread_should_stop()) {
++		if (kthread_should_stop()) {
++			/* may need to run one last time. */
++			if (test_and_clear_bit(IRQTF_RUNTHREAD,
++					       &action->thread_flags)) {
++				__set_current_state(TASK_RUNNING);
++				return 0;
++			}
++			__set_current_state(TASK_RUNNING);
++			return -1;
++		}
+ 
+ 		if (test_and_clear_bit(IRQTF_RUNTHREAD,
+ 				       &action->thread_flags)) {
+@@ -766,10 +776,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
+ 			return 0;
+ 		}
+ 		schedule();
+-		set_current_state(TASK_INTERRUPTIBLE);
+ 	}
+-	__set_current_state(TASK_RUNNING);
+-	return -1;
+ }
+ 
+ /*
+@@ -990,7 +997,7 @@ static int irq_thread(void *data)
+ 	/*
+ 	 * This is the regular exit path. __free_irq() is stopping the
+ 	 * thread via kthread_stop() after calling
+-	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
++	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
+ 	 * oneshot mask bit can be set. We cannot verify that as we
+ 	 * cannot touch the oneshot mask at this point anymore as
+ 	 * __setup_irq() might have given out currents thread_mask
+@@ -1595,7 +1602,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+ 	unregister_handler_proc(irq, action);
+ 
+ 	/* Make sure it's not being used on another CPU: */
+-	synchronize_irq(irq);
++	synchronize_hardirq(irq);
+ 
+ #ifdef CONFIG_DEBUG_SHIRQ
+ 	/*
+-- 
+2.17.0
