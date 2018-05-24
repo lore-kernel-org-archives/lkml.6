@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160594-2-604811628105005034
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160588-2-1702048272313457234
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160593; b=OpcjemHRjGsNESTvcJIVW9EGTH6wOmJAYhmlANXMtKIfSUbZd3
-    E5FKkTQ6jijk6stg8w31tdc7wYQfKLyW9tMFeJ3Oz5g1zGd76h1bwpiBZB2syYkf
-    y4HfB003KeP3Sx127H0GKTe9q2vcMK98LTw15YOzmaRw19s6OiRIDBUapBBpadhB
-    psBfXnIoCsl9EAepsjwpxQu7yC/V2GulaCi7bD49qfhLYvDFUPFWOkNx/2SC+WbJ
-    epPrGD/mrsVhiRc2up1MG+zIKhTl1pSbS+sAN2wYRSbFnZib6FutyhqQKvoCzHXV
-    ADp81yx09g7KT+/fBTNV7sYyh/B/e+t/YJYg==
+    1527160588; b=CqXNqgS1uCmTeto3wOKUlAcXNUh84u3+rFqORXdRD4tkOi3TT4
+    TAO6Ju5eV9b9VbTXADcw/LtIVus5Cl2lWLM0aFTsZAaEl2Q4hwYb1GWtZqo1Q4p9
+    fmwfmUkTASp8G68y43DZKzNn/lz4LrAXJU9CDko50iQqxG+1/dvoFt0+oR0HyDsx
+    yxsemzXI2FZMcnw5X4FVq0nyxSL1irV5YzS7/s9ycDpyMCqhCXy6ELoQofbhd0CF
+    uLEW4nlnjQsPENc57SPtPEWZsm7AaKS3RBgeZE59Vj70GDklXy0qQYh1tAhT6iac
+    GC5Hxu5L9n3FDbbG9/jmtiuaIS9G/N2RopCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160593; bh=QWqU9g+aevjRoEzVBnpuhLm4Jajndp
-    t99nLVm8ljuuU=; b=flM/93iO3zb33EWOnhsU+nml4Tr8XU5wCOv/Am/xxwNP3x
-    HsEQwwEfDsX8vp/L8go8UXUJABwG/96f0gvL4ej7FoR+l/6tc04fKW7oqgy4QwML
-    dq5gelLRn8Vr47oRzsPbtzjwd8QADjub/SslgslosT9yxktRK9jOiVeL79UibwX/
-    8/Tr4nlmbuFxoiW2fxwm943Yy1ZYI6B2BXAUWsP53pHptg/IrKOdeDvCEFjUvmXc
-    WWHFj+Qt2q9FmzHU/HIsJ2lmFglXfzozVQ9D8mKS2ZjoyBlEOF6dCBMDw2c0sUdI
-    AyrGDOAZESeWhXyjB9KwD0QgjbaT7+iNQSRJvcfQ==
+    :list-id; s=fm2; t=1527160588; bh=BAF+52YCD3VGSdHFWJHhh5OIlbYoNI
+    5aOqbSg72NrVQ=; b=eY5Cy5Un8nZmApdAWAznFTt56ieNYCoubn8f6JaV94lk1M
+    278ymfy7h18E6cZwcxaAqPgaxeUQ/TYxNc0jKqsBdhi63aFuk9AUmyVXLNB5V45M
+    VwkN9m88bHE52U23RdZtYm2j83/+Cvbu/A/E6DBtmKLDHNt8pNJDavenzGhZm9ge
+    Eh+TbIq5BQ/CDf6O5YdfDZ7CPzEt4nT1dTxoYx/4cqGatTOngZ1f8+Hx6w2ChrCR
+    TsbcFl/Sm81RpA2LFn77vVSzcBKSoi/Uk5RV4y75IQKFEdzngISZuq0lq+Rm0XAd
+    GpV8khre/WxoiVRYQW3DWhX18W5ADH/SFnAjxEHg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=SQrhnUiK x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=bktt73oA x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -38,17 +38,17 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-cm=none score=100;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=-51 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=SQrhnUiK x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=bktt73oA x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -56,38 +56,48 @@ Authentication-Results: mx4.messagingengine.com;
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-cm=none score=100;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linuxfoundation.org header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCKQl97q+vxA4y6SEIfSGXvORldOFDGmguSFGxkRNLWA9V/y/widFhrrNWyaZYE7Yo6sCBQEnzMDmIkqVo2WBxDThlm0nn8flzyttbz85KEyRogLgTOD
-    kkpXM8bmD4RfWn9OIGn7mT6Eiaempyqj4B5iXoyzwK7nXjzTe0DXiuEl/HNjZ0jRHkr9w+iyZ0Xa4y1PvTduyadwYjn8MFcQOaJ44w1iuJVGH6e/p3Ay9O0C
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=-O5xsKu7cXiJXXyVPtwA:9
-    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
+X-CM-Envelope: MS4wfERlMhNY9RHPc323qMsYTR6WI377i/F3HKYvCGF4G5TQ1BHunqbnKcT0ms7+DeWivN/4X3GCOQSpbcRHfcfqyIrhW0eLK/JBIPi/3WeMfncegch3G6GQ
+    /oyvscOSnS7pQm4D2n4udLBFYz4EMcdnbHuJC1prA3eGPs+xgeptAdMuqWajmdHvbf8xRRUgAXDYbmmibhn+QsAWh/+Ut8xpPYjZ587tn0tE7PIXbogAptFI
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 p=wCmvBT1CAAAA:8
+    a=UK1r566ZdBxH71SXbqIOeA==:117 a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10
+    a=VUJBJC2UJ8kA:10 a=edf1wS77AAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8
+    a=drOt6m5kAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=ag1SF4gXAAAA:8 a=1IQeFdjzDtnnfWY1XQAA:9 a=QEXdDO2ut3YA:10
+    a=DcSpbTIhAlouE1Uv7lRv:22 a=AjGcO6oz07-iQ99wixmX:22 a=cQPPKAXgyycSBL8etih5:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=6z96SAwNL0f8klobD5od:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 100
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968044AbeEXJxc (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:53:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59494 "EHLO mail.kernel.org"
+        id S968058AbeEXJxf (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:53:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968037AbeEXJx1 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:27 -0400
+        id S967570AbeEXJx3 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:53:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 051/165] cfg80211: limit wiphy names to 128 bytes
-Date: Thu, 24 May 2018 11:37:37 +0200
-Message-Id: <20180524093624.091129328@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 052/165] hfsplus: stop workqueue when fill_super() failed
+Date: Thu, 24 May 2018 11:37:38 +0200
+Message-Id: <20180524093624.128429328@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -105,49 +115,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit a7cfebcb7594a24609268f91299ab85ba064bf82 upstream.
+commit 66072c29328717072fd84aaff3e070e3f008ba77 upstream.
 
-There's currently no limit on wiphy names, other than netlink
-message size and memory limitations, but that causes issues when,
-for example, the wiphy name is used in a uevent, e.g. in rfkill
-where we use the same name for the rfkill instance, and then the
-buffer there is "only" 2k for the environment variables.
+syzbot is reporting ODEBUG messages at hfsplus_fill_super() [1].  This
+is because hfsplus_fill_super() forgot to call cancel_delayed_work_sync().
 
-This was reported by syzkaller, which used a 4k name.
+As far as I can see, it is hfsplus_mark_mdb_dirty() from
+hfsplus_new_inode() in hfsplus_fill_super() that calls
+queue_delayed_work().  Therefore, I assume that hfsplus_new_inode() does
+not fail if queue_delayed_work() was called, and the out_put_hidden_dir
+label is the appropriate location to call cancel_delayed_work_sync().
 
-Limit the name to something reasonable, I randomly picked 128.
+[1] https://syzkaller.appspot.com/bug?id=a66f45e96fdbeb76b796bf46eb25ea878c42a6c9
 
-Reported-by: syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Link: http://lkml.kernel.org/r/964a8b27-cd69-357c-fe78-76b066056201@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/nl80211.h |    2 ++
- net/wireless/core.c          |    3 +++
- 2 files changed, 5 insertions(+)
+ fs/hfsplus/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -2604,6 +2604,8 @@ enum nl80211_attrs {
- #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
- #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -588,6 +588,7 @@ static int hfsplus_fill_super(struct sup
+ 	return 0;
  
-+#define NL80211_WIPHY_NAME_MAXLEN		128
-+
- #define NL80211_MAX_SUPP_RATES			32
- #define NL80211_MAX_SUPP_HT_RATES		77
- #define NL80211_MAX_SUPP_REG_RULES		64
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -95,6 +95,9 @@ static int cfg80211_dev_check_name(struc
- 
- 	ASSERT_RTNL();
- 
-+	if (strlen(newname) > NL80211_WIPHY_NAME_MAXLEN)
-+		return -EINVAL;
-+
- 	/* prohibit calling the thing phy%d when %d is not its number */
- 	sscanf(newname, PHY_NAME "%d%n", &wiphy_idx, &taken);
- 	if (taken == strlen(newname) && wiphy_idx != rdev->wiphy_idx) {
+ out_put_hidden_dir:
++	cancel_delayed_work_sync(&sbi->sync_work);
+ 	iput(sbi->hidden_dir);
+ out_put_root:
+ 	dput(sb->s_root);
