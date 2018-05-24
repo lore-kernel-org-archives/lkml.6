@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691124-1527154943-2-6105776681944315620
+X-Cyrus-Session-Id: sloti22d1t05-1691124-1527154933-2-4747678131255986884
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527154943; b=DBkgDdGaTj0xqZsbIBebjXStlRHhAPF5Ou3Pf0IHofaMGACNV1
-    gvMO36NXBua19HPDygZwk1167iifX9mYTm3WBNs0Fwn3Eu4gScCvChREpT0CpZ5R
-    1TeqceTonfQa/P4h9z5ApOnmB77Z9ReyWBbnubLxB8OdjyJakGepuOeEmpkzelvi
-    Xfj1fXvQeA+mlDMSuvEs9k22vhwhtqGWsW2phclzZwFUknjevJ7lez188Jsi4qCj
-    M8Q3nByhXQZttPAbfWKLv1VA38AGc+jvbIst5wdnDKMp+3R5UAs4c73jp9BZxqUI
-    Vw62XFSKo7z1Ywll/vgEgMBk9R/aNbzz4rmw==
+    1527154933; b=Sh0LywcqDJP3sfRjcZcBHwkP/fy40lXtb7tljgzz1udUbQlQ47
+    +6ZKUyxTKEtGtoxL2SRCyYZx9Q+SMjggILDMDIuTt1xggFs2fKg6J11ecbZ5ovee
+    7LVSIwxyqYFI48T/25SzVBtg2snAsEtBdTHJKRn6Od0ilzDKJAFwfmuA2Vi+TzaL
+    jc9hWOS/mbnLdwZjrCrvK8JDkVtXXSMoC360CDrb9WXNUgx7sNI6ykOyTrMFWbCO
+    o+RdbK5JKWPc/Pt3Sf/sq5BLr1zgVUNxWZkQYoTP9IX9Spdtd6lOBBKigmkPHnAv
+    mbvMHAdSpUK68ZJ6D4r2afV7XrZQiqJ4jqiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527154943; bh=BC8QYowRQ57Uiu/uv5HRfA0Z5AVB7j
-    9aVPKY2czErBU=; b=LbCcOMyxF1e/2VcCXpg9hPIkZYl2x0QCuhfEMpgX56gZW6
-    mrHVkx5ymKDY/OPwgVvMtJXe9Cs+lMva5IO4Xn6aEfCd0fOfYWZjBsZsQwkDzZ62
-    kOWSUVZGDXBq0xy+9zZ43osVjNe7Xug3e0i77nv+2F7hBjN+iJQ3Gm3s270B0wBJ
-    hMdgBb4dZVn4kkdLkV/V4V2RSZhmquIkWCQ3sbhN2P0ZN5JYqnUdP+oh3b1ZiUKq
-    zRS1r1ZI4dMG8DulQr9botBfwhKZwth1Sq5Acj+NzAvdMo4uMXkq7z6ZqzDAUDyR
-    SNgGOFsAprwFgktUMtYsFpyjtqaZYULovJzhcWtw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527154933; bh=wkd9Z68I7PyAyK0nH9sPDX8hOe4IEs
+    QPBlXFg8uqL/s=; b=JCGQ3Gkksw2NaoXjv6iG0Sp0SqDI7yWTeI5Uvy2B0afv3P
+    rc0aDagOcDXrfwFvKV4bhQfhz3b4VAeyWP3abKUmzt+pjtjajBBb+umXSuE5/TDF
+    JaUeFG9VjYt79Cs92j86bDuO1WSnQysqwchqhZeYwnR7e6uIzEP1oow2aEep5C2j
+    TzzGdzcGdKIMOETHYCJuJYTxgyAsai3Wgu3rpB+5vut158BWcwbI3RGvHDkoYmQW
+    DgP1MjQu8b0Aub3s9r5gWWXO3Pmo9qGULtznHOaJqGmxtTvgYU8NZSITdOqxBUCP
+    vfdZ5Ski4riTifTvCbJFeIipNIzptG+AxqasVmeQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=lFvfrRx0 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=CfJvR2ZV x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=lFvfrRx0 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=CfJvR2ZV x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,34 +64,34 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK0hfFdX7CWp4S87IuJcwcBpRCDZ3oV94xSUq4lBT1VCKH+vB168zRaKkVDAlq60RaAzxNHGQ1SVGvCMehu7xelIpvgllOJREVCmTag/P1m28lxA6zZy
-    KNldMOLQd3YXUhstmmwmV3qwk2tG8g8VozveStUx31Zcz23zpCBQHo+vdaqfpVSv5+8Tn8hfgDwx+N5fXFCp0zLNKtJmjDC1IyHhWw4U6KWjbgVBft4nhwBB
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNtTf9oHniWmp5s2/bUbK8NB+BwtZsNdlEfrn0acECma/SUveESGyB4LN1BB+SJMZRYNi8vCvOCxYyLgl/UCoHEXhi7VRfP9mEJu1RjePBow8kMxGFze
+    H71PQohia1Ta4rYDOA0rv/QNum0QueFmfgBLwn1iSpLKK1ltGFpID03A/5tCXLz7y3nytj1Z5vdqng7wEBgw0YyXY0MkF+jbwHY1wrye1z8au1Va1quqIyH3
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=i0EeH86SAAAA:8 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8 a=_jlGtV7tAAAA:8
-    a=ag1SF4gXAAAA:8 a=5VKkRt6m1sbennSuhUsA:9 a=QEXdDO2ut3YA:10
-    a=nlm17XC03S6CtCLSeiRr:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=ag1SF4gXAAAA:8 a=8AirrxEcAAAA:8 a=1EsaE_6oAAAA:8 a=VwQbUJbxAAAA:8
+    a=yMhMjlubAAAA:8 a=8loL1zC9vO88QqH-WeIA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=ST-jHhOKWsTCqRlWije3:22 a=3ZumFrijQQ-2J9H5h8ct:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965977AbeEXJmU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:42:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53962 "EHLO mail.kernel.org"
+        id S966298AbeEXJmL (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:42:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966326AbeEXJmS (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:18 -0400
+        id S966025AbeEXJmF (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Yan <yanaijie@huawei.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3.18 41/45] scsi: libsas: defer ata device eh commands to libata
-Date: Thu, 24 May 2018 11:38:49 +0200
-Message-Id: <20180524093126.164208523@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 19/45] Revert "ARM: dts: imx6qdl-wandboard: Fix audio channel swap"
+Date: Thu, 24 May 2018 11:38:27 +0200
+Message-Id: <20180524093122.989133479@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -110,130 +109,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 318aaf34f1179b39fa9c30fa0f3288b645beee39 upstream.
+This reverts commit 2ebf343cbed76773563223761586fd5edcd0dc61 which was
+commit 79935915300c5eb88a0e94fa9148a7505c14a02a upstream.
 
-When ata device doing EH, some commands still attached with tasks are
-not passed to libata when abort failed or recover failed, so libata did
-not handle these commands. After these commands done, sas task is freed,
-but ata qc is not freed. This will cause ata qc leak and trigger a
-warning like below:
+As Ben points out:
+	This depends on:
 
-WARNING: CPU: 0 PID: 28512 at drivers/ata/libata-eh.c:4037
-ata_eh_finish+0xb4/0xcc
-CPU: 0 PID: 28512 Comm: kworker/u32:2 Tainted: G     W  OE 4.14.0#1
-......
-Call trace:
-[<ffff0000088b7bd0>] ata_eh_finish+0xb4/0xcc
-[<ffff0000088b8420>] ata_do_eh+0xc4/0xd8
-[<ffff0000088b8478>] ata_std_error_handler+0x44/0x8c
-[<ffff0000088b8068>] ata_scsi_port_error_handler+0x480/0x694
-[<ffff000008875fc4>] async_sas_ata_eh+0x4c/0x80
-[<ffff0000080f6be8>] async_run_entry_fn+0x4c/0x170
-[<ffff0000080ebd70>] process_one_work+0x144/0x390
-[<ffff0000080ec100>] worker_thread+0x144/0x418
-[<ffff0000080f2c98>] kthread+0x10c/0x138
-[<ffff0000080855dc>] ret_from_fork+0x10/0x18
+	commit 570c70a60f53ca737ead4e5966c446bf0d39fac9
+	Author: Fabio Estevam <fabio.estevam@nxp.com>
+	Date:   Wed Apr 5 11:32:34 2017 -0300
 
-If ata qc leaked too many, ata tag allocation will fail and io blocked
-for ever.
+	    ASoC: sgtl5000: Allow LRCLK pad drive strength to be changed
 
-As suggested by Dan Williams, defer ata device commands to libata and
-merge sas_eh_finish_cmd() with sas_eh_defer_cmd(). libata will handle
-ata qcs correctly after this.
+which did not show up until 4.13, so this makes no sense to have in this
+stable branch.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: Xiaofei Tan <tanxiaofei@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/libsas/sas_scsi_host.c |   33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/imx6qdl-wandboard.dtsi |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/scsi/libsas/sas_scsi_host.c
-+++ b/drivers/scsi/libsas/sas_scsi_host.c
-@@ -250,6 +250,7 @@ out_done:
- static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
- {
- 	struct sas_ha_struct *sas_ha = SHOST_TO_SAS_HA(cmd->device->host);
-+	struct domain_device *dev = cmd_to_domain_dev(cmd);
- 	struct sas_task *task = TO_SAS_TASK(cmd);
+--- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+@@ -86,7 +86,6 @@
+ 		clocks = <&clks 201>;
+ 		VDDA-supply = <&reg_2p5v>;
+ 		VDDIO-supply = <&reg_3p3v>;
+-		lrclk-strength = <3>;
+ 	};
+ };
  
- 	/* At this point, we only get called following an actual abort
-@@ -258,6 +259,14 @@ static void sas_eh_finish_cmd(struct scs
- 	 */
- 	sas_end_task(cmd, task);
- 
-+	if (dev_is_sata(dev)) {
-+		/* defer commands to libata so that libata EH can
-+		 * handle ata qcs correctly
-+		 */
-+		list_move_tail(&cmd->eh_entry, &sas_ha->eh_ata_q);
-+		return;
-+	}
-+
- 	/* now finish the command and move it on to the error
- 	 * handler done list, this also takes it off the
- 	 * error handler pending list.
-@@ -265,22 +274,6 @@ static void sas_eh_finish_cmd(struct scs
- 	scsi_eh_finish_cmd(cmd, &sas_ha->eh_done_q);
- }
- 
--static void sas_eh_defer_cmd(struct scsi_cmnd *cmd)
--{
--	struct domain_device *dev = cmd_to_domain_dev(cmd);
--	struct sas_ha_struct *ha = dev->port->ha;
--	struct sas_task *task = TO_SAS_TASK(cmd);
--
--	if (!dev_is_sata(dev)) {
--		sas_eh_finish_cmd(cmd);
--		return;
--	}
--
--	/* report the timeout to libata */
--	sas_end_task(cmd, task);
--	list_move_tail(&cmd->eh_entry, &ha->eh_ata_q);
--}
--
- static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd *my_cmd)
- {
- 	struct scsi_cmnd *cmd, *n;
-@@ -288,7 +281,7 @@ static void sas_scsi_clear_queue_lu(stru
- 	list_for_each_entry_safe(cmd, n, error_q, eh_entry) {
- 		if (cmd->device->sdev_target == my_cmd->device->sdev_target &&
- 		    cmd->device->lun == my_cmd->device->lun)
--			sas_eh_defer_cmd(cmd);
-+			sas_eh_finish_cmd(cmd);
- 	}
- }
- 
-@@ -678,12 +671,12 @@ static void sas_eh_handle_sas_errors(str
- 		case TASK_IS_DONE:
- 			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
- 				    task);
--			sas_eh_defer_cmd(cmd);
-+			sas_eh_finish_cmd(cmd);
- 			continue;
- 		case TASK_IS_ABORTED:
- 			SAS_DPRINTK("%s: task 0x%p is aborted\n",
- 				    __func__, task);
--			sas_eh_defer_cmd(cmd);
-+			sas_eh_finish_cmd(cmd);
- 			continue;
- 		case TASK_IS_AT_LU:
- 			SAS_DPRINTK("task 0x%p is at LU: lu recover\n", task);
-@@ -694,7 +687,7 @@ static void sas_eh_handle_sas_errors(str
- 					    "recovered\n",
- 					    SAS_ADDR(task->dev),
- 					    cmd->device->lun);
--				sas_eh_defer_cmd(cmd);
-+				sas_eh_finish_cmd(cmd);
- 				sas_scsi_clear_queue_lu(work_q, cmd);
- 				goto Again;
- 			}
