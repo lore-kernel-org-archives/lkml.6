@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161189-2-14014423420298744918
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161171-2-16515785637718584879
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161189; b=dYfzLKYf+ocPCTlTh5a50sZoVnNzchxEEe7TbnzPCC+cZJNyxU
-    fakmklJyQMUwGP/Ik4NhAMLnAVVj0gnGaKY9igcc8AtIj4jApC4UXFu1Y/j9ogkY
-    T3qqjdzZmXDYvA3GdlnNrBN3viPEbVq5AERRXsJh8+3Dy2ERgoBEAW31TM/Nz2HE
-    4/pf9cPCtu6c5QOuFVYQQIOD6gzW11aaXhEThmHCZq2l9I1jIBeJCMdH8ou12HC5
-    G0IH/4/cBANaEJvVgTOyPIf6LMTNzbkpIHbWh9ha626QDZ9KTB3h/qoE2bzSLfvz
-    mHVz2iLSvGS2G+ORdiiyH/aU77tsUFfxcDAw==
+    1527161170; b=bfQCGshO+FUTKKAmx0ARWk68koLg/1l/6AioWGGfqy/xFWbUMy
+    uBmLpW38unW3+UlldCExbHX8FR+Go3S5Og/qMyNeYBqR+wBRRnOvKoL6LkPup1+L
+    GlU0Y4Uwf1XS41Id0YOTzxg/CNM9IG07q6279Ow5+WkKvp8HfbZEIE/15AulLYWn
+    ddK8GD2GDFMY0pAxC8NN/1qWwDbpRnJRhGOCYpl6QpG4Y7v1K0M1eIIU/O2Tcd2M
+    aJNz/Y2tc192P8w84y5Qjpcd4CvJ3xGhOSDIWHDcSdzYfciVVN1TOnxtsR1R6nR4
+    Ot9JMGvTp5TEE6tSiIROAFNdeATx6yETGiTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161189; bh=BMs5DGlzUbByceHiZUIw3HGVICAsmr
-    SBitLcP6PtMXA=; b=FKLUWFwrGBwiRmyQdHu3JfOovaWxHlQwezxwiFGHY/1tYA
-    v9AFblroPNMl7959VFg3t9k2w94hb/OEKT/tzvswxDeBdGeMMX6N4Wb378501bH2
-    Rzd00yde9eA+LJS0c0y4hcmUmYEC/DSwaOirGZHPDo3DmZad0B0RiNwil2SLH60m
-    oG4H/tmfhOU6YkLKWns/iOv/2Xl/FQvVcQGa7NVte1TxRiP7aq4PhumoffgMEBGp
-    AHxvRKFsJRTjR2CBMWdS2QdEgShEuYWggGxwZdT70fpjLYMBhC1FuKRXTzt0BYVD
-    PlWs0SoiC0f1yAsPWAhR9Ryfsb4oW/rJvEzJDSuw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161170; bh=wtrvhOKWlDCR43FwXlOy8WJivC8PZO
+    YM4Hgc7tQjoa0=; b=hm30oclJHUA7w7EntoQgdEjdJG+TkTDmGrtspZHikcKLgJ
+    6ivFhWhl7Gk7Kc71BFl4wycCqh3syBjz3RXJZVn5w3blqkm+SNsxhXclGmOFGY6D
+    ljKyew4uNjDTAn0eDQg/6P/T3m1OLPeINgQXX9jxS39hBNXJy1aVJwcuU0shV4wg
+    2BtTKPQZIEz2tnmX+lYJpbuDrbVuL+ky8XMYoN5K07PzI+d8xVuIVtP0HKNAHupr
+    85g1OQGTt+cWcHWhDcUfwZVep6nvBoL4Ob+era985oWHXkm3gA7n26f6zOUggdXI
+    OZlsgbNDpNktbHS6ZR1+PyWbRgzwPaKFNhsnoUmQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=tFHjVFiR x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=c9lhv2X9 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=tFHjVFiR x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=c9lhv2X9 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,35 +64,37 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGjMTwauLDzz+XemtDNzW8+nOV2vSmOIIjNd5Rn1OXSEIPyAQTr2iBtKy+cY+QWc7VX+oDXErBL8LNjwrqGCW4+wQ6sc9suvi28d+/ggyhu6RHAed3E6
-    wmX+qNd3yKkzCvHkzEPPqgdi2vvUw8MhUJTYd3gITOcVqBctlQSSYZQTGP8A0YVFWJf40hY8kAdfYlUBEOFRTudyOoYx7hhzP6s4rl1mdR5XRWZTIHcOzhH5
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLACAPoU1+wNHaJpPkbrgp1S0LpZXF+4PQVidOVN6jJE+EeG8qJJ0jsQluVehyrGElsd0BZO3UxGGmGcRec6meMYhYfVTrmpLJG0d2o50BE1CKMzKEJ2
+    pSSm5/IpX2GgRWH1ZAoHGL7ye8fDOQMSNxTl5sEJgQMlAgNKvDIePmVurN6aJe6HqkwWIh2aJbHyMWVpalsDlTAb5wkc12AhAWuYHyrOg5bY16t24uXL0Iks
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=2p9LEKB4N3oWEMUFAacA:9
-    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=20KFwNOVAAAA:8 a=A7XncKjpAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=Wyb3ZWrwXr8amsfg3uAA:9 a=QEXdDO2ut3YA:10 a=R9rPLQDAdC6-Ub70kJmZ:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967731AbeEXJvf (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:51:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
+        id S967749AbeEXL0J (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:26:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967707AbeEXJvd (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:33 -0400
+        id S967737AbeEXJvi (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:51:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
+        stable@vger.kernel.org, Roman Mashak <mrv@mojatatu.com>,
+        Davide Caratti <dcaratti@redhat.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 001/165] net: Fix a bug in removing queues from XPS map
-Date: Thu, 24 May 2018 11:36:47 +0200
-Message-Id: <20180524093622.035784561@linuxfoundation.org>
+Subject: [PATCH 4.14 003/165] net/sched: fix refcnt leak in the error path of tcf_vlan_init()
+Date: Thu, 24 May 2018 11:36:49 +0200
+Message-Id: <20180524093622.111576919@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -105,31 +107,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amritha Nambiar <amritha.nambiar@intel.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 6358d49ac23995fdfe157cc8747ab0f274d3954b ]
+[ Upstream commit 5a4931ae0193f8a4a97e8260fd0df1d705d83299 ]
 
-While removing queues from the XPS map, the individual CPU ID
-alone was used to index the CPUs map, this should be changed to also
-factor in the traffic class mapping for the CPU-to-queue lookup.
+Similarly to what was done with commit a52956dfc503 ("net sched actions:
+fix refcnt leak in skbmod"), fix the error path of tcf_vlan_init() to avoid
+refcnt leaks when wrong value of TCA_VLAN_PUSH_VLAN_PROTOCOL is given.
 
-Fixes: 184c449f91fe ("net: Add support for XPS with QoS via traffic classes")
-Signed-off-by: Amritha Nambiar <amritha.nambiar@intel.com>
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Fixes: 5026c9b1bafc ("net sched: vlan action fix late binding")
+CC: Roman Mashak <mrv@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/act_vlan.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2058,7 +2058,7 @@ static bool remove_xps_queue_cpu(struct
- 		int i, j;
- 
- 		for (i = count, j = offset; i--; j++) {
--			if (!remove_xps_queue(dev_maps, cpu, j))
-+			if (!remove_xps_queue(dev_maps, tci, j))
+--- a/net/sched/act_vlan.c
++++ b/net/sched/act_vlan.c
+@@ -154,6 +154,8 @@ static int tcf_vlan_init(struct net *net
+ 			case htons(ETH_P_8021AD):
  				break;
- 		}
- 
+ 			default:
++				if (exists)
++					tcf_idr_release(*a, bind);
+ 				return -EPROTONOSUPPORT;
+ 			}
+ 		} else {
