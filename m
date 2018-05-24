@@ -1,41 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrdpL9IELcvNkGrrE5rv4Mpz5y8hjQq1HYs0qYCu4MF2gUldR33beVSwYSef0Kme855Cb2v
-ARC-Seal: i=1; a=rsa-sha256; t=1527156381; cv=none;
+X-Google-Smtp-Source: AB8JxZrGHo16+a2yzOL0AZJm4Jv1lidKD9QYAlbkF0X1aFw6oKL4UBmdcnn/IyLMGAbmiMTrSvoA
+ARC-Seal: i=1; a=rsa-sha256; t=1527156354; cv=none;
         d=google.com; s=arc-20160816;
-        b=dpU8sA87kiD0Q5sSBIeDSqDdfEc9fG0AHTzNwAvhpnvc4TUGvgdA95NCA0RFRRNb/Y
-         KGiWlI3SXSyMSsZ8i4rWVvJQDX9FFsyZmUndDs46sXizFuVCDOg3NAth/69dF1rIT42w
-         dLjxIgBg4c1aXwxgvoEnz5Lm++ZK3E5JGDdW86smKGHtknpLT0dRL0OPCCxGMpK1/xS4
-         jSz8+ip0DQe9clhXrgab21fnY0oyJTdQ2wr8DvlAsMWBWsBz0Zrj8RzBfeRYphcjL7PH
-         BLvU3m6wmIIDIz95nyqgVWGJhWlhngim+ofk7klnD2VM9+gmewJ3/fHryDGpdPe0Txb4
-         VSog==
+        b=jFiTvGa7UrsqSG0T3VhSmmJq7ZNkT2Lr9h66JDN4sb5nvvd2ZwbfT6S6al4anla2HC
+         Dw9N94aBx6kLN4dkgH/7upTWpEzYqwvKzAp/e7lNDW5Hisxiz344dkotbWHctTGXZ457
+         dCzHtEA4YUcOhbtD6bkZNJ9yaybAVqZdqQyya/dbNr5YX/lJyq7HPDB2nSx1UuglhVPa
+         8J1cWwGKNfsts7iFbdA5V7pYou5B4bOIADqRSugJ2yapTV+tvVDwfOHUFLNw/82U92/9
+         oKJVKvJ/TuziYfRqW9d0gjl3aOBUS7qEkypgLAqU53PEJ9HiPFE31B45gPB7vjtRPjFQ
+         lO4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=48Bf8V9klqlwaOV3tEQtSyHQoPjQRXmBFfhqWSHNZF0=;
-        b=mwutLfW7/pvRqcm+RGq71tIX8X0t5AAOreu8Rn4JMOPTU9Q4VaI6PZ8KSi5mgvnZWg
-         jJOGxk4NKgKb+CVzjTHRCRsDtqLZpOxa2KYUHgRy95ZVw9dOEeQ5N/qtA0pKC0cXiQA/
-         Zbk+HJzzoyH1XTY3jzoc01lLqo2IXWyxeQFu9exuEHDN03OvJr2rb8EwH7j3sCE5rvmT
-         xZPB/vZNfBoFH3Q0oRMBlmDz2QUBu9Z/mC/bpLovnouu4O7uUiUN617a+QvZWgW0a8v6
-         6wnBi6DZMSZkb2nx17olw/29rXY/s/frYb08FjMaKPNV+G5q5X5XcyNT79e8+rIE2yX6
-         LghQ==
+        bh=CE+kouUcWUsalEOckoJXoYJ90qIzFe8SnWRxJBfIgAA=;
+        b=AWqI+9y6bMs/0HAUk3Vx4eIdxmaw0xqzXUwvqGFT0F1DZibU+52tn2KuT8tOYsdT+a
+         uphX33kEJxEIi5x8jh+fTnJOQs0MU6oDCBxt5NEnagEogOtqdWYALqPyud3penMBZq6b
+         jdO1Ai6aX0k+pSdd6DyLsfFN/ZnujKODo0icDeqxDOAwKZRVPise2WwtIR/5TGABDfi3
+         ROjlEhaWOXDaAQixkOnKVTl1iEwtIYla15Tt157RJEyoRj7tS4157Fl97sfDjbEYDmVq
+         9SX47CQPU7s1hL5psmUT8tbS0m9ZahfBhRJYKRqrx/NFg5os0GYSlkXR3ToGI16wekXB
+         VClw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=B2nPsXig;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Wurec2he;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=B2nPsXig;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Wurec2he;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 141/161] media: i2c: adv748x: fix HDMI field heights
-Date: Thu, 24 May 2018 11:39:26 +0200
-Message-Id: <20180524093035.238130761@linuxfoundation.org>
+Subject: [PATCH 4.16 156/161] rtc: hctosys: Ensure system time doesnt overflow time_t
+Date: Thu, 24 May 2018 11:39:41 +0200
+Message-Id: <20180524093036.909880365@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338995847294247?=
-X-GMAIL-MSGID: =?utf-8?q?1601339529724557482?=
+X-GMAIL-THRID: =?utf-8?q?1601338572452094265?=
+X-GMAIL-MSGID: =?utf-8?q?1601339501210790813?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,41 +52,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 9f564184e6cc21a86c26bab920afac1bab7653ff ]
+[ Upstream commit b3a5ac42ab18b7d1a8f2f072ca0ee76a3b754a43 ]
 
-The ADV748x handles interlaced media using V4L2_FIELD_ALTERNATE field
-types.  The correct specification for the height on the mbus is the
-image height, in this instance, the field height.
+On 32bit platforms, time_t is still a signed 32bit long. If it is
+overflowed, userspace and the kernel cant agree on the current system time.
+This causes multiple issues, in particular with systemd:
+https://github.com/systemd/systemd/issues/1143
 
-The AFE component already correctly adjusts the height on the mbus, but
-the HDMI component got left behind.
+A good workaround is to simply avoid using hctosys which is something I
+greatly encourage as the time is better set by userspace.
 
-Adjust the mbus height to correctly describe the image height of the
-fields when processing interlaced video for HDMI pipelines.
+However, many distribution enable it and use systemd which is rendering the
+system unusable in case the RTC holds a date after 2038 (and more so after
+2106). Many drivers have workaround for this case and they should be
+eliminated so there is only one place left to fix when userspace is able to
+cope with dates after the 31bit overflow.
 
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/adv748x/adv748x-hdmi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/rtc/hctosys.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -105,6 +105,9 @@ static void adv748x_hdmi_fill_format(str
+--- a/drivers/rtc/hctosys.c
++++ b/drivers/rtc/hctosys.c
+@@ -49,6 +49,11 @@ static int __init rtc_hctosys(void)
  
- 	fmt->width = hdmi->timings.bt.width;
- 	fmt->height = hdmi->timings.bt.height;
+ 	tv64.tv_sec = rtc_tm_to_time64(&tm);
+ 
++#if BITS_PER_LONG == 32
++	if (tv64.tv_sec > INT_MAX)
++		goto err_read;
++#endif
 +
-+	if (fmt->field == V4L2_FIELD_ALTERNATE)
-+		fmt->height /= 2;
- }
+ 	err = do_settimeofday64(&tv64);
  
- static void adv748x_fill_optional_dv_timings(struct v4l2_dv_timings *timings)
+ 	dev_info(rtc->dev.parent,
