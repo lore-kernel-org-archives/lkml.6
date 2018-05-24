@@ -1,79 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966521AbeEXXN1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 19:13:27 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.234]:39025 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965389AbeEXXNX (ORCPT
+        id S965518AbeEXXSr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 19:18:47 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44952 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964852AbeEXXSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 19:13:23 -0400
-X-Authority-Reason: nr=8
-Date: Thu, 24 May 2018 18:13:22 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Kalle Valo <kvalo@qca.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ath6kl: mark expected switch fall-throughs
-Message-ID: <20180524231322.GA22704@embeddedor.com>
+        Thu, 24 May 2018 19:18:44 -0400
+X-Google-Smtp-Source: AB8JxZqEGMk4wTpc2loNP3nEYZZRHR2RnTuEjs4bw5TJC6CuFJBcREEuuvleLSwHyHA9AY8oj7Kyxw==
+Date: Thu, 24 May 2018 16:18:40 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Benson Leung <bleung@google.com>
+Cc: bleung@chromium.org, linux-input@vger.kernel.org, dtor@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] IB chrome-platform/input for atmel_mxt_ts &
+ chromeos_laptop for device properties
+Message-ID: <20180524231840.GD177107@dtor-ws>
+References: <20180523195645.GA92470@decatoncale.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.93
-X-Source-L: No
-X-Exim-ID: 1fLzQA-003L5d-GY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-93.static.axtel.net (embeddedor) [187.162.252.93]:49066
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180523195645.GA92470@decatoncale.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Wed, May 23, 2018 at 12:56:45PM -0700, Benson Leung wrote:
+> Hi Dmitry,
+> 
+> The following changes since commit 96a938aa214e965d5b4a2f10443b29cad14289b9:
+> 
+>   Input: atmel_mxt_ts - remove platform data support (2018-04-09 22:55:16 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git ib-chrome-platform-atmel-mxt-ts-device-properties
+> 
+> for you to fetch changes up to 5020cd29d8bfcb3f3add43ea7d58b07011ab96d8:
+> 
+>   platform/chrome: chromeos_laptop - supply properties for ACPI devices (2018-05-23 12:48:31 -0700)
+> 
+> ----------------------------------------------------------------
+> Dmitry Torokhov (1):
+>       platform/chrome: chromeos_laptop - supply properties for ACPI devices
+> 
+>  drivers/platform/chrome/chromeos_laptop.c | 307 +++++++++++++++++++++++++++---
+>  1 file changed, 278 insertions(+), 29 deletions(-)
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/ath/ath6kl/cfg80211.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks Benson!
 
-diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-index 2ba8cf3..29e32cd 100644
---- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-+++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-@@ -3898,17 +3898,17 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
- 	wiphy->max_scan_ie_len = 1000; /* FIX: what is correct limit? */
- 	switch (ar->hw.cap) {
- 	case WMI_11AN_CAP:
--		ht = true;
-+		ht = true; /* fall through */
- 	case WMI_11A_CAP:
- 		band_5gig = true;
- 		break;
- 	case WMI_11GN_CAP:
--		ht = true;
-+		ht = true; /* fall through */
- 	case WMI_11G_CAP:
- 		band_2gig = true;
- 		break;
- 	case WMI_11AGN_CAP:
--		ht = true;
-+		ht = true; /* fall through */
- 	case WMI_11AG_CAP:
- 		band_2gig = true;
- 		band_5gig = true;
 -- 
-2.7.4
+Dmitry
