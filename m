@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163286-2-14557970844551689398
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163248-2-14329085004774026134
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163284; b=as2JwWZqY1uPHiJw/KCL8qvwYRoDQcyzWUTTLYL8PzhrLcOYvY
-    Mbh8hxb9WMGuqrboX8woOJh5CUJSEI3t35hQX2ma2nLXVEJ8YNSVoPwzo7UwDd6U
-    m9pEZMyBG5FKy9waqG90adoMSi2dMkVnMjN5cFMV9k3B+j+IRaVwnVnYbKlsWgPw
-    jw30xUi2XmJpWSoenc6jcj4uQpUuh1BK1QPdfcAKez5V8dHjnxHljd8e34vCBhwe
-    1BJWOe52GCjng3AYkyL75PalzRCUMMJmRLWEgKxjlxwIh8/cr+NhWWTT1jv6eimL
-    gqV63/jrasIKVK3CiNWkp4ksNU6yFXK/QtXw==
+    1527163247; b=e6cszHgpBbunabMfep5RdCvBFh7A2KdDyBy+ljHhMsBtuJbpiQ
+    rVcGhHqKveFwL7hiDTjjun45+kAukBz/dwGsW5Uof9816s9qHr8Ld+PxaSEWSbV3
+    5eKO4mB+SXlAbjF/30JWLEquostRm5suLxHyPtR3LphDfGsm95y12DdqioCq7Vn4
+    hyQr0y796brRt4U2ibL+lDPNiApQ5R2b0rs6Iqo5hRrt/gXj/Oxv+l6ItH401Xw0
+    Z69/A8V2YPEGr7A+svCMqJiM9rs8VX/3bufQrXLdv7zcaNCu3A4uIHWYXlT7Jo8Q
+    RKL6ltedBuHo8U8dD1VM8ZX/UirX8hcwXHZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163284; bh=qoOBhIzX/RlSM+bPqdQQ3VgwmE7M/C
-    8xxYwtqwNkrK0=; b=RTb3NIrhHJFt/rN76WymYESW+66Pg6fF3GgWmbbWigut2e
-    x8UsAzbFw4PVaq2PL1MW2BBjwpSJiALDz9uad0ZQ+zHhciu5IDmpRJM+AiTxt2zQ
-    DLwmG04B4VquvhmVPFMP8E5b+kkTiETZDhW5ewUMdnFdbUVc2TOhTuVAn7QHyrDT
-    7K0bC3gQ/HceUZV9SA0RLeBkJTmp4OH7fjdx5hYhGUkfuunjTnWak8NDpQNOCcQQ
-    cfYXFUwni3B8n300h1F2ZLg2BBrjo5Y0xkwAIhqjaPAjdamvc02pVRyop9Ob+zy2
-    FIgu+z9tfSwzEH906Gr0FiXOt4/i9IRECjejDFEQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163247; bh=Cs9pt71wZX4ooE/LmbHZ0up6ISc12N
+    UqBfcQYwi8F4o=; b=GFIlz/pccocFPtavJmgaQQFzfWLu/sxOkZr3txvbQ8MjLN
+    EGSDbcVipGxVv2PZk8K2ZgsLUWIRdggSJcnDcDbG3sRKgAPQy1cuySkWXiRLviTF
+    Mp6DLgMazP5AZwfafyP6Nl9qJ1GF7O6vcE/yAShohRdH6Z4XwqLsaBFjQZGu/Se8
+    Q9GU4/01dmgowsZHySud9b0zRS0dp76dKtotMHR+PPMRbMk1i9ilvFmbxi8AOGqh
+    qgzWSYz4cWnNzD9IppkMbuBPiZ30WXYIseaqzy/SGg3Z7DZ50L5+b3dqiTf4Ti8U
+    2eivutcm68W0fNeB2AsCwRWtgNTbGDOoQWhdKLOw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=mhnCOgFJ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=eEnlN6+b x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=mhnCOgFJ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=eEnlN6+b x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,44 +64,29 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFUdBkxzcsZbOJ3EsZx2DT6JbLt5vPqhCVdB0frFSPOgVazscdDKjHW7DBVvuTx9da+7Y+xXRYZnCEaFMA///vnYA8fSpoo96V/wl7HYZ2h2t8dJdr4V
-    ajKhN4xvNJFy56Udzm5/8vpFovyuiJFuf+ghrtkx70HhIUtPkOvm61DyNJ0mattES/ozaIUhmodcO9d4kwCQBcbs5wZaL7+C0bcEMF8lZUSEzT93XPIfjsts
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJ4CRPYsXG48PsPs4LPXusTYQ7ZKTIlUVgkaxcdTbI60ALitmeiflOJ+blY0lqrf9pVv/jfQal3uRBSR6WdZHQAiG0NZFTT9OpIZtGDioPwJRCX3oaiM
+    r8s1v/AsSZZU4Y/ShpbQm/F7D0nfl66ZNPDczvCY0ItOqRoikJoaqmUACgwK7GrfwWMNvLsEH60VwiPSYsMLtyHxIUgLq4vVK8OxxJn/fE7d2YfYg5SeG6f1
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=Z4Rwk6OoAAAA:8 a=cm27Pg_UAAAA:8 a=drOt6m5kAAAA:8
-    a=6rqHouBjAAAA:8 a=pGLkceISAAAA:8 a=DfNHnWVPAAAA:8 a=KKAkSRfTAAAA:8
-    a=FOH2dFAWAAAA:8 a=O6nNToy4AAAA:8 a=ag1SF4gXAAAA:8 a=9aXN0AnECsDKHPtgd0YA:9
-    a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=xmb-EsYY8bH0VWELuYED:22
-    a=RMMjzBEyIzXRtoq5n5K6:22 a=Hx1yvPaMooE3kwe23bt7:22 a=rjTVMONInIDnV1a_A2c_:22
-    a=cvBusfyB2V15izCimMoJ:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=WHP_vYRDmbjazZPeRM4b:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=_Gl1HcQ-4U4wQ9qHoBsA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966802AbeEXMAr (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:00:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56156 "EHLO mail.kernel.org"
+        id S966724AbeEXMAc (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:00:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966098AbeEXJo7 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:44:59 -0400
+        id S966717AbeEXJpC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janis Danisevskis <jdanis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        David Rientjes <rientjes@google.com>,
-        Minfei Huang <mnfhuang@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Calvin Owens <calvinowens@fb.com>, Jann Horn <jann@thejh.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 55/92] procfs: fix pthread cross-thread naming if !PR_DUMPABLE
-Date: Thu, 24 May 2018 11:38:32 +0200
-Message-Id: <20180524093204.603778122@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 56/92] powerpc/powernv: Fix NVRAM sleep in invalid context when crashing
+Date: Thu, 24 May 2018 11:38:33 +0200
+Message-Id: <20180524093204.697899221@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -119,97 +104,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Janis Danisevskis <jdanis@google.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 1b3044e39a89cb1d4d5313da477e8dfea2b5232d upstream.
+commit c1d2a31397ec51f0370f6bd17b19b39152c263cb upstream.
 
-The PR_DUMPABLE flag causes the pid related paths of the proc file
-system to be owned by ROOT.
+Similarly to opal_event_shutdown, opal_nvram_write can be called in
+the crash path with irqs disabled. Special case the delay to avoid
+sleeping in invalid context.
 
-The implementation of pthread_set/getname_np however needs access to
-/proc/<pid>/task/<tid>/comm.  If PR_DUMPABLE is false this
-implementation is locked out.
-
-This patch installs a special permission function for the file "comm"
-that grants read and write access to all threads of the same group
-regardless of the ownership of the inode.  For all other threads the
-function falls back to the generic inode permission check.
-
-[akpm@linux-foundation.org: fix spello in comment]
-Signed-off-by: Janis Danisevskis <jdanis@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Cyrill Gorcunov <gorcunov@openvz.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Minfei Huang <mnfhuang@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Calvin Owens <calvinowens@fb.com>
-Cc: Jann Horn <jann@thejh.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 3b8070335f75 ("powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops")
+Cc: stable@vger.kernel.org # v3.2
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/base.c |   42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/opal-nvram.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3083,6 +3083,44 @@ int proc_pid_readdir(struct file *file,
+--- a/arch/powerpc/platforms/powernv/opal-nvram.c
++++ b/arch/powerpc/platforms/powernv/opal-nvram.c
+@@ -44,6 +44,10 @@ static ssize_t opal_nvram_read(char *buf
+ 	return count;
  }
  
- /*
-+ * proc_tid_comm_permission is a special permission function exclusively
-+ * used for the node /proc/<pid>/task/<tid>/comm.
-+ * It bypasses generic permission checks in the case where a task of the same
-+ * task group attempts to access the node.
-+ * The rationale behind this is that glibc and bionic access this node for
-+ * cross thread naming (pthread_set/getname_np(!self)). However, if
-+ * PR_SET_DUMPABLE gets set to 0 this node among others becomes uid=0 gid=0,
-+ * which locks out the cross thread naming implementation.
-+ * This function makes sure that the node is always accessible for members of
-+ * same thread group.
-+ */
-+static int proc_tid_comm_permission(struct inode *inode, int mask)
-+{
-+	bool is_same_tgroup;
-+	struct task_struct *task;
-+
-+	task = get_proc_task(inode);
-+	if (!task)
-+		return -ESRCH;
-+	is_same_tgroup = same_thread_group(current, task);
-+	put_task_struct(task);
-+
-+	if (likely(is_same_tgroup && !(mask & MAY_EXEC))) {
-+		/* This file (/proc/<pid>/task/<tid>/comm) can always be
-+		 * read or written by the members of the corresponding
-+		 * thread group.
-+		 */
-+		return 0;
-+	}
-+
-+	return generic_permission(inode, mask);
-+}
-+
-+static const struct inode_operations proc_tid_comm_inode_operations = {
-+		.permission = proc_tid_comm_permission,
-+};
-+
 +/*
-  * Tasks
-  */
- static const struct pid_entry tid_base_stuff[] = {
-@@ -3100,7 +3138,9 @@ static const struct pid_entry tid_base_s
- #ifdef CONFIG_SCHED_DEBUG
- 	REG("sched",     S_IRUGO|S_IWUSR, proc_pid_sched_operations),
- #endif
--	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
-+	NOD("comm",      S_IFREG|S_IRUGO|S_IWUSR,
-+			 &proc_tid_comm_inode_operations,
-+			 &proc_pid_set_comm_operations, {}),
- #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
- 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
- #endif
++ * This can be called in the panic path with interrupts off, so use
++ * mdelay in that case.
++ */
+ static ssize_t opal_nvram_write(char *buf, size_t count, loff_t *index)
+ {
+ 	s64 rc = OPAL_BUSY;
+@@ -58,10 +62,16 @@ static ssize_t opal_nvram_write(char *bu
+ 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
+ 		rc = opal_write_nvram(__pa(buf), count, off);
+ 		if (rc == OPAL_BUSY_EVENT) {
+-			msleep(OPAL_BUSY_DELAY_MS);
++			if (in_interrupt() || irqs_disabled())
++				mdelay(OPAL_BUSY_DELAY_MS);
++			else
++				msleep(OPAL_BUSY_DELAY_MS);
+ 			opal_poll_events(NULL);
+ 		} else if (rc == OPAL_BUSY) {
+-			msleep(OPAL_BUSY_DELAY_MS);
++			if (in_interrupt() || irqs_disabled())
++				mdelay(OPAL_BUSY_DELAY_MS);
++			else
++				msleep(OPAL_BUSY_DELAY_MS);
+ 		}
+ 	}
+ 
