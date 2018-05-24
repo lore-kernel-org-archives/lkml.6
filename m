@@ -1,56 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965869AbeEXJP1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:15:27 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:51894 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965445AbeEXJPV (ORCPT
+        id S965884AbeEXJQS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:16:18 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35503 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965784AbeEXJQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:15:21 -0400
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: qla2xxx-upstream@cavium.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: qla2xxx: reduce the time granularity of the qla2x00_eh_wait_on_command
-Date: Thu, 24 May 2018 17:16:10 +0800
-Message-Id: <1527153370-1741-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=787
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805240111
+        Thu, 24 May 2018 05:16:14 -0400
+X-Google-Smtp-Source: AB8JxZr2kVfmZW4+OSNBu5GcXdRtc7RB39oGbi2dwcYNV4l0NieSNuxyqu99JmFo9lQKvleMSR47Da37nktAthPp+/c=
+MIME-Version: 1.0
+In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
+References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 24 May 2018 11:16:13 +0200
+Message-ID: <CAPDyKFoZ16vhVvriLjyUSKwfym7HxHwn6Y92Q2ukXu9BG5GykA@mail.gmail.com>
+Subject: Re: [PATCH v7 00/26] PM / Domains: Support hierarchical CPU
+ arrangement (PSCI/ARM)
+To: Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Lina Iyer <ilina@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the cmd has not be returned after aborted by qla2x00_eh_abort,
-when qla2x00_eh_wait_on_command is invoked, it has to wait for it.
-However, the time is 1000ms at least currently. If there are a lot
-cmds need to be aborted, the delay could be long enough to lead to
-panic due to such as hung task, ocfs2 heartbeat, etc, just before
-scsi recovery work completes and get back the HBA.
+Sudeep, Lorenzo, Mark
 
-Change the granularity to 1ms, even though more context switches
-would be introduced, but it should be ok as it is not hot path.
+On 12 April 2018 at 13:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> Changes in v7:
+>  - Addressed comments concerning the PSCI changes from Mark Rutland, which moves
+>    the psci firmware driver to a new firmware subdir and change to force PSCI PC
+>    mode during boot to cope with kexec'ed booted kernels.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/scsi/qla2xxx/qla_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Are you guys happy in general with the PSCI specific parts from this
+series? It would be nice if you could provide me with acks or
+reviewed-by tags for the rest of them in such case.
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 15eaa6d..9ea4e02 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1064,7 +1064,7 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
- static int
- qla2x00_eh_wait_on_command(struct scsi_cmnd *cmd)
- {
--#define ABORT_POLLING_PERIOD	1000
-+#define ABORT_POLLING_PERIOD	1
- #define ABORT_WAIT_ITER		((2 * 1000) / (ABORT_POLLING_PERIOD))
- 	unsigned long wait_iter = ABORT_WAIT_ITER;
- 	scsi_qla_host_t *vha = shost_priv(cmd->device->host);
--- 
-2.7.4
+I intend to re-post a new version very soon.
+
+[...]
+
+Kind regards
+Uffe
