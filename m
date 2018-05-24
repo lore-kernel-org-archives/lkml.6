@@ -1,110 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971618AbeEXVVf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:21:35 -0400
-Received: from mail-io0-f182.google.com ([209.85.223.182]:38803 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967358AbeEXVVb (ORCPT
+        id S1033191AbeEXVW6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:22:58 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39696 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966832AbeEXVW4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:21:31 -0400
-X-Google-Smtp-Source: AB8JxZqDyNp5QxLUZdkKo7kWGGenPvqXeBd36ET9ozWI73HZdC2360tOfGqM4vU42Tn4lYE2HcfJiiCHxq/K2jQMRy4=
+        Thu, 24 May 2018 17:22:56 -0400
+X-Google-Smtp-Source: AB8JxZrB5++EKsPkcrtTAvomCYp/jPFZDqxcGMr9UjYcnMB1/Lz0h/mskjpodYH9pty5HBY85gKcTQ==
+Date: Thu, 24 May 2018 14:22:53 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [rfc patch] mm, oom: fix unnecessary killing of additional
+ processes
+Message-ID: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <96169281-49b2-121f-0b7e-f54aae66db91@nvidia.com>
-References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
- <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
- <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com> <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
- <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com> <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
- <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com>
- <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com> <CAPDyKFo8e5FMrxF2ggxVZ+HQjw4s1Wtx-tMf5ka67knJpZMQcA@mail.gmail.com>
- <1687797a-93f1-7e5c-6060-01c12c070964@nvidia.com> <CAPDyKFravSx3h6UnsjNGM2ViZtkxvPMULyVQnoVT9jsEP5az+A@mail.gmail.com>
- <96169281-49b2-121f-0b7e-f54aae66db91@nvidia.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 24 May 2018 23:21:30 +0200
-Message-ID: <CAPDyKFp3nMoUoM0LfxcSvJKthwrAKK7yCLAkZMGW-oapUsK7GA@mail.gmail.com>
-Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
- device to genpd
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
+it cannot reap an mm.  This can happen for a variety of reasons,
+including:
 
->>>
->>> * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
->>> * @dev: Device to attach.
->>> * @index: The index of the PM domain.
->>>
->>> This naming and description is a bit misleading, because really it is not
->>> attaching the device that is passed, but creating a new device to attach
->>> a
->>> PM domain to. So we should consider renaming and changing the description
->>> and indicate that users need to link the device.
->>
->>
->> I picked the name to be consistent with the existing
->> genpd_dev_pm_attach(). Do you have a better suggestion?
->
->
-> Well, it appears to get more of a 'get' function and so I don't see why we
-> could not have 'genpd_dev_get_by_id()' and then we could have a
-> genpd_dev_put() as well (which would call genpd_dev_pm_detach).
->
->> I agree, some details is missing to the description, let me try to
->> improve it. Actually, I was trying to follow existing descriptions
->> from genpd_dev_pm_attach(), so perhaps that also needs a little
->> update.
->>
->> However, do note that, neither genpd_dev_pm_attach() or
->> genpd_dev_pm_attach_by_id() is supposed to be called by drivers, but
->> rather only by the driver core. So description may not be so
->> important.
->>
->> In regards to good descriptions, for sure the API added in patch9,
->> dev_pm_domain_attach_by_id(), needs a good one, as this is what
->> drivers should be using.
->
->
-> OK. Same appears to apply here to the description as I mentioned above.
-> Still seems to be more of a 'get' than an attach. So I wonder if it should
-> be dev_pm_domain_get_by_id() instead?
+ - the inability to grab mm->mmap_sem in a sufficient amount of time,
 
-Regarding "get" vs "attach", I suggest we continue to discuss that in
-patch 9. Whatever is decided, $subject patch needs to follow.
+ - when the mm has blockable mmu notifiers that could cause the oom reaper
+   to stall indefinitely,
 
->
->>> Finally, how is a PM domain attached via calling
->>> genpd_dev_pm_attach_by_id()
->>> detached?
->>
->>
->> Via the existing genpd_dev_pm_detach(), according to what I have
->> described in the change log. I clarify the description in regards to
->> this as well.
->
->
-> OK, so this bit is a to-do as that is not yet exposed AFAICT. I see that you
-> said 'although we need to extend it to cover cleanup of the earlier
-> registered device, via calling device_unregister().' So if we do this then
-> that would be fine.
+but we can also add a third when the oom reaper can "reap" an mm but doing
+so is unlikely to free any amount of memory:
 
-Let me clarify the changelog. It's not a to-do, as it's already done
-as part of $subject patch.
+ - when the mm's memory is fully mlocked.
 
-So I guess we are in agreement that we don't need another API to deal
-with detach?
+When all memory is mlocked, the oom reaper will not be able to free any
+substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
+unmap and free its memory in exit_mmap() and subsequent oom victims are
+chosen unnecessarily.  This is trivial to reproduce if all eligible
+processes on the system have mlocked their memory: the oom killer calls
+panic() even though forward progress can be made.
 
-Kind regards
-Uffe
+This is the same issue where the exit path sets MMF_OOM_SKIP before
+unmapping memory and additional processes can be chosen unnecessarily
+because the oom killer is racing with exit_mmap().
+
+We can't simply defer setting MMF_OOM_SKIP, however, because if there is
+a true oom livelock in progress, it never gets set and no additional
+killing is possible.
+
+To fix this, this patch introduces a per-mm reaping timeout, initially set
+at 10s.  It requires that the oom reaper's list becomes a properly linked
+list so that other mm's may be reaped while waiting for an mm's timeout to
+expire.
+
+The exit path will now set MMF_OOM_SKIP only after all memory has been
+freed, so additional oom killing is justified, and rely on MMF_UNSTABLE to
+determine when it can race with the oom reaper.
+
+The oom reaper will now set MMF_OOM_SKIP only after the reap timeout has
+lapsed because it can no longer guarantee forward progress.
+
+The reaping timeout is intentionally set for a substantial amount of time
+since oom livelock is a very rare occurrence and it's better to optimize
+for preventing additional (unnecessary) oom killing than a scenario that
+is much more unlikely.
+
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ include/linux/mm_types.h |  4 ++
+ include/linux/sched.h    |  2 +-
+ mm/mmap.c                | 12 +++---
+ mm/oom_kill.c            | 85 ++++++++++++++++++++++++++--------------
+ 4 files changed, 66 insertions(+), 37 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -462,6 +462,10 @@ struct mm_struct {
+ #ifdef CONFIG_MMU_NOTIFIER
+ 	struct mmu_notifier_mm *mmu_notifier_mm;
+ #endif
++#ifdef CONFIG_MMU
++	/* When to give up on oom reaping this mm */
++	unsigned long reap_timeout;
++#endif
+ #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
+ 	pgtable_t pmd_huge_pte; /* protected by page_table_lock */
+ #endif
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1151,7 +1151,7 @@ struct task_struct {
+ #endif
+ 	int				pagefault_disabled;
+ #ifdef CONFIG_MMU
+-	struct task_struct		*oom_reaper_list;
++	struct list_head		oom_reap_list;
+ #endif
+ #ifdef CONFIG_VMAP_STACK
+ 	struct vm_struct		*stack_vm_area;
+diff --git a/mm/mmap.c b/mm/mmap.c
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3059,11 +3059,10 @@ void exit_mmap(struct mm_struct *mm)
+ 	if (unlikely(mm_is_oom_victim(mm))) {
+ 		/*
+ 		 * Manually reap the mm to free as much memory as possible.
+-		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
+-		 * this mm from further consideration.  Taking mm->mmap_sem for
+-		 * write after setting MMF_OOM_SKIP will guarantee that the oom
+-		 * reaper will not run on this mm again after mmap_sem is
+-		 * dropped.
++		 * Then, set MMF_UNSTABLE to avoid racing with the oom reaper.
++		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
++		 * guarantee that the oom reaper will not run on this mm again
++		 * after mmap_sem is dropped.
+ 		 *
+ 		 * Nothing can be holding mm->mmap_sem here and the above call
+ 		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
+@@ -3077,7 +3076,7 @@ void exit_mmap(struct mm_struct *mm)
+ 		__oom_reap_task_mm(mm);
+ 		mutex_unlock(&oom_lock);
+ 
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
++		set_bit(MMF_UNSTABLE, &mm->flags);
+ 		down_write(&mm->mmap_sem);
+ 		up_write(&mm->mmap_sem);
+ 	}
+@@ -3105,6 +3104,7 @@ void exit_mmap(struct mm_struct *mm)
+ 	unmap_vmas(&tlb, vma, 0, -1);
+ 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	tlb_finish_mmu(&tlb, 0, -1);
++	set_bit(MMF_OOM_SKIP, &mm->flags);
+ 
+ 	/*
+ 	 * Walk the list again, actually closing and freeing it,
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -476,7 +476,7 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
+  */
+ static struct task_struct *oom_reaper_th;
+ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
+-static struct task_struct *oom_reaper_list;
++static LIST_HEAD(oom_reaper_list);
+ static DEFINE_SPINLOCK(oom_reaper_lock);
+ 
+ void __oom_reap_task_mm(struct mm_struct *mm)
+@@ -558,12 +558,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 	}
+ 
+ 	/*
+-	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
++	 * MMF_UNSTABLE is set by exit_mmap when the OOM reaper can't
++	 * work on the mm anymore. The check for MMF_UNSTABLE must run
+ 	 * under mmap_sem for reading because it serializes against the
+ 	 * down_write();up_write() cycle in exit_mmap().
+ 	 */
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
++	if (test_bit(MMF_UNSTABLE, &mm->flags)) {
+ 		up_read(&mm->mmap_sem);
+ 		trace_skip_task_reaping(tsk->pid);
+ 		goto unlock_oom;
+@@ -589,31 +589,49 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ #define MAX_OOM_REAP_RETRIES 10
+ static void oom_reap_task(struct task_struct *tsk)
+ {
+-	int attempts = 0;
+ 	struct mm_struct *mm = tsk->signal->oom_mm;
++	bool ret = true;
+ 
+-	/* Retry the down_read_trylock(mmap_sem) a few times */
+-	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
+-		schedule_timeout_idle(HZ/10);
++	/*
++	 * If this mm has either been fully unmapped, or the oom reaper has
++	 * given up on it, nothing left to do except drop the refcount.
++	 */
++	if (test_bit(MMF_OOM_SKIP, &mm->flags))
++		goto drop;
+ 
+-	if (attempts <= MAX_OOM_REAP_RETRIES ||
+-	    test_bit(MMF_OOM_SKIP, &mm->flags))
+-		goto done;
++	/*
++	 * If this mm has already been reaped, doing so again will not likely
++	 * free additional memory.
++	 */
++	if (!test_bit(MMF_UNSTABLE, &mm->flags))
++		ret = oom_reap_task_mm(tsk, mm);
++
++	if (time_after(jiffies, mm->reap_timeout)) {
++		if (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
++			pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
++				task_pid_nr(tsk), tsk->comm);
++			debug_show_all_locks();
+ 
+-	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+-		task_pid_nr(tsk), tsk->comm);
+-	debug_show_all_locks();
++			/*
++			 * Reaping has failed for the timeout period, so give up
++			 * and allow additional processes to be oom killed.
++			 */
++			set_bit(MMF_OOM_SKIP, &mm->flags);
++		}
++		goto drop;
++	}
+ 
+-done:
+-	tsk->oom_reaper_list = NULL;
++	if (!ret)
++		schedule_timeout_idle(HZ/10);
+ 
+-	/*
+-	 * Hide this mm from OOM killer because it has been either reaped or
+-	 * somebody can't call up_write(mmap_sem).
+-	 */
+-	set_bit(MMF_OOM_SKIP, &mm->flags);
++	/* Enqueue to be reaped again */
++	spin_lock(&oom_reaper_lock);
++	list_add(&tsk->oom_reap_list, &oom_reaper_list);
++	spin_unlock(&oom_reaper_lock);
++	return;
+ 
+-	/* Drop a reference taken by wake_oom_reaper */
++drop:
++	/* Drop the reference taken by wake_oom_reaper() */
+ 	put_task_struct(tsk);
+ }
+ 
+@@ -622,11 +640,13 @@ static int oom_reaper(void *unused)
+ 	while (true) {
+ 		struct task_struct *tsk = NULL;
+ 
+-		wait_event_freezable(oom_reaper_wait, oom_reaper_list != NULL);
++		wait_event_freezable(oom_reaper_wait,
++				     !list_empty(&oom_reaper_list));
+ 		spin_lock(&oom_reaper_lock);
+-		if (oom_reaper_list != NULL) {
+-			tsk = oom_reaper_list;
+-			oom_reaper_list = tsk->oom_reaper_list;
++		if (!list_empty(&oom_reaper_list)) {
++			tsk = list_entry(&oom_reaper_list, struct task_struct,
++					 oom_reap_list);
++			list_del(&tsk->oom_reap_list);
+ 		}
+ 		spin_unlock(&oom_reaper_lock);
+ 
+@@ -637,17 +657,22 @@ static int oom_reaper(void *unused)
+ 	return 0;
+ }
+ 
++/* How long to wait to oom reap an mm before selecting another process */
++#define OOM_REAP_TIMEOUT_MSECS	(10 * 1000)
+ static void wake_oom_reaper(struct task_struct *tsk)
+ {
+-	/* tsk is already queued? */
+-	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
++	/*
++	 * Set the reap timeout; if it's already set, the mm is enqueued and
++	 * this tsk can be ignored.
++	 */
++	if (cmpxchg(&tsk->signal->oom_mm->reap_timeout, 0UL,
++			jiffies + msecs_to_jiffies(OOM_REAP_TIMEOUT_MSECS)))
+ 		return;
+ 
+ 	get_task_struct(tsk);
+ 
+ 	spin_lock(&oom_reaper_lock);
+-	tsk->oom_reaper_list = oom_reaper_list;
+-	oom_reaper_list = tsk;
++	list_add(&tsk->oom_reap_list, &oom_reaper_list);
+ 	spin_unlock(&oom_reaper_lock);
+ 	trace_wake_reaper(tsk->pid);
+ 	wake_up(&oom_reaper_wait);
