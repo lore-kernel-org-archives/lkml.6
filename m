@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966020AbeEXJe0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:34:26 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:56218 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965664AbeEXJeW (ORCPT
+        id S966034AbeEXJej (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:34:39 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:28395 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965664AbeEXJef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:34:22 -0400
+        Thu, 24 May 2018 05:34:35 -0400
 X-IronPort-AV: E=Sophos;i="5.49,436,1520866800";
-   d="scan'208";a="281940851"
+   d="scan'208";a="281940873"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,9 +19,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-Date: Thu, 24 May 2018 10:28:40 +0100
-Message-Id: <1527154169-32380-3-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Date: Thu, 24 May 2018 10:28:41 +0100
+Message-Id: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -29,51 +29,108 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Renesas R9A06G032 SYSCTRL node description.
+This adds the Renesas R9A06G032 bare bone support.
+
+This currently only handles generic parts (gic, architected timer)
+and a UART.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+ arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
 new file mode 100644
-index 0000000..63eb66cd
+index 0000000..9534f1b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-@@ -0,0 +1,32 @@
-+* Renesas R9A06G032 SYSCTRL
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
 +
-+Required Properties:
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r9a06g032-sysctrl.h>
 +
-+  - compatible: Must be:
-+    - "renesas,r9a06g032-sysctrl"
-+  - reg: Base address and length of the SYSCTRL IO block.
-+  - #clock-cells: Must be 1
++/ {
++	compatible = "renesas,r9a06g032";
++	#address-cells = <1>;
++	#size-cells = <1>;
 +
-+Examples
-+--------
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+  - SYSCTRL node:
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++		};
 +
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl";
-+		reg = <0x4000c000 0x1000>;
-+		#clock-cells = <1>;
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++		};
 +	};
 +
-+  - Other nodes can use the clocks provided by SYSCTRL as in:
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
 +
-+	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+	uart0: serial@40060000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x40060000 0x400>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+		clock-names = "baudclk";
++		sysctrl: sysctrl@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&sysctrl R9A06G032_CLK_UART0>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
 +	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
 2.7.4
