@@ -1,59 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034626AbeEXUXJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:23:09 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36902 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033098AbeEXUXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:23:04 -0400
-X-Google-Smtp-Source: ADUXVKIo0GDGMkTy5yU+Rwn/Fuv1/e2YL9TJonXmAOh0u/ASCukF0uKo3z6w7bKTH+3o/ne7edemtegV61zYaYaSkfw=
+        id S968881AbeEXUZc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:25:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967470AbeEXUZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:25:28 -0400
+X-Google-Smtp-Source: ADUXVKIfARRst21gBPMwvIC9YlmJTapwInLcBRoGZ3x0wONCD3klx5jBJ1SI+CZ3DlURvb1PoBlFT4xJ6VznIALxNNk=
 MIME-Version: 1.0
-In-Reply-To: <620f060d-afab-e79c-43a6-3024d728157a@kernel.org>
-References: <20180522170505.5846-1-ahiliation@yahoo.co.in> <620f060d-afab-e79c-43a6-3024d728157a@kernel.org>
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Fri, 25 May 2018 01:53:03 +0530
-Message-ID: <CAG=yYwkROsGvMCSamJx0feiSuR0hLNfAfzAY81opWZWVv6R1qw@mail.gmail.com>
-Subject: Re: [PATCH] selftests: intel_pstate: Fixes for the testing script for
- Intel P-State driver
-To: Shuah Khan <shuah@kernel.org>
-Cc: Jeffrin Jose T <ahiliation@yahoo.co.in>, gregkh@linuxfoundation.org,
-        =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>, thomas@m3y3r.de,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kselftest@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180524181834.GF4828@sirena.org.uk>
+References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
+ <20180524181834.GF4828@sirena.org.uk>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 May 2018 15:25:06 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+xHbW8S4ZMsZp8BJ=wq=t6z2gGTacBnYGgkgBG0dVdYg@mail.gmail.com>
+Message-ID: <CAL_Jsq+xHbW8S4ZMsZp8BJ=wq=t6z2gGTacBnYGgkgBG0dVdYg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 10:11 PM, Shuah Khan <shuah@kernel.org> wrote:
-> The commit log doesn't match the commit summary. Please rephrase both the
-> commit summary and log to indicate why this fix is necessary.
+On Thu, May 24, 2018 at 1:18 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, May 24, 2018 at 12:50:17PM -0500, Rob Herring wrote:
+>
+>> Subsystems or drivers may opt-in to this behavior by calling
+>> driver_deferred_probe_check_init_done() instead of just returning
+>> -EPROBE_DEFER. They may use additional information from DT or kernel's
+>> config to decide whether to continue to defer probe or not.
+>
+> Should userspace have some involvement in this decision?  It knows if
+> it's got any intention of loading modules for example.  Kernel config
+> checks might be good enough, though it's going to be a pain to work out
+> if the relevant driver is built as a module for example.
 
-i will work related to that
+I looked into whether we could hook into uevents in some way. If we
+knew when all the coldplug events had been handled, that would be
+sufficient. But it doesn't look to me like we can tell when that
+happens with the uevent netlink socket. I think about the only thing
+we can tell is if userspace has opened a socket. I'm not all that
+familiar with how the whole sequence works, so other opinions on this
+would be helpful.
 
+Also, for this to work with serial consoles, we have to make the
+decision before we get to userspace. I couldn't get systemd to create
+serial gettys either if we deferred later. There's some dependence on
+/dev/console, but I didn't get to the bottom of it.
 
-> Odd. I don't see your patch posted on the linux-kselftest patchwork and not
-> even on lkml archive.
-
-i think may be it is yahoo mail issue or issues.they are not showing
-"delivery failure"
-message. i have now configured to use gmail account
-
-
-
-> You signed off doesn't match your from. Are you using git send-email to send
-> patches?
-
-iam using git send-mail.
-iam not able to send mail currently using my work account using git send-email.
-and i want to show that i work for that
-institution(rajagiritech.edu.in). they currently
-allow web interface as now iam using it.
-anyway now i  like to use both email address same(may be ahiliation@gmail.com)
-
-
-
--- 
-software engineer
-rajagiri school of engineering and technology
+Rob
