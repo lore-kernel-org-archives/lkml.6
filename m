@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoU3Alg9KqWxeCtkqGGKXbCzEeS38TLzHj5ZMshEJf7Kfi4+rFbwoGjgXdMeaC25Pke/wpa
-ARC-Seal: i=1; a=rsa-sha256; t=1527156008; cv=none;
+X-Google-Smtp-Source: AB8JxZp0niFYIVFZTyzHNulZVbbxvFYywfUpZGd3FB/Uq56uzFfzhYHdYUSeP2n1N1b9Lo1dJ6zN
+ARC-Seal: i=1; a=rsa-sha256; t=1527155999; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hqqw0IcvjAJ4mUfpe/jHOsPcwV0Y5fzDgwc5x40gQpQjoaTO9X0Fz63STXtmqc8RWI
-         iW+zxba1Jq8GzAxx3E0Bf4Dc0wIycBrZGldgo0kVmqhWT1SiJZxMVBVmjngFQ6+hpGm2
-         IH0fOcDav5V1biKN+KwixGTHx20MN2+HG0BwX4uzrpI6oWH7Swlv2nnLthu0nilz0feC
-         UoW3Pz456y0zih6qk0XAZYU4DAI/avNaakYCVgi153gHI2hqW6R4GEmQgcnS7LFUeAsy
-         nZDI/emn15qu4csogWAgJNcVH8MGWjlN+RzVHwWF9Kr4KBU2pRskyVgawduIcLf08DX9
-         ZXlA==
+        b=LSXkuwlVk3S9ERWGmIFUUHOBDd5KJDOH8tt+kCkjh5IY0oUNRqjaROGQ3Xk6xSqWHS
+         bHLs/5Y0HjVifY7+OyB6smWk6xT2AuPz+SaLrmYISzELeFQLPTeCT4VxFCRB7n209M5B
+         UgTpmwOPBjPiCMva4o8saW8/5Qw4bRm/r0K/4SIdTT32cb8O8EcixQ1S5aZMQgqzXAkl
+         6q0M+z1kT++xER9cy/IFxkwTAgHB16zYN8pqV/1mRef1Y2SFmVYJnCAWAkBXDg8bSXp3
+         qpYIF95oxMghhalKrHwnoECWoa4lVuuU0ofg6BR5c9atgNQCHetV8iXdvz1N5tcENqRP
+         bcHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DHIDjDb4+Kdh20VSztjDVv7WVTNnLsU9tEzcleyZ98Y=;
-        b=DGgv9l2wk9Cjj6czmwdGNetlQb762dDj+0asibkqKYA7VZTT1igreqrOAVptpbzLoO
-         5terXtL5CHh1h/qTMqHchV1pchGfeMHN445BEXjLsOSyOiKjmHeuGZ54JQQxljSl33q3
-         QsWRvB6nsOEFeKSwsCAThHRb4O9KgDTNTdkvnV1tw/FbiSMcianCvBpUFHP+b2nniiN+
-         DOg48L6PQ6XMdHc2iUHyQczmUVoq86W4lJOhLEckeIrorlOtK36lrz80A/94ESYQgjgk
-         Ye63rRl2PCaQ54SR6VH1NBWI/1HpC8hPDVCCEO1IKyvTAM7A2DM2cH3UZNL3iOHGC566
-         Oovw==
+        bh=/UsMwv1tDO6lEPIV5BmeOG/T7/X3+BPvO+Lr/aNT/6Q=;
+        b=HIZFL/OypifkNMGpWcbOd4HHTVY7Mqbz35MOtGqtnmrjQhaWRZKmfSYp02UD2NRR2W
+         PETHtrZtxguUtgPJTa1yVB0A8QSWwNgi1DVLTXN3D9i23w3Ehbd2aG9gzKjccAiHDngk
+         XzDV95hviOYsvApn5wY0nQpLFtCfR/dnetjTe3fJimYk0lgj4lialuWeUAxgC/EHijWM
+         7OJfklm+4h41VC6/cgWM3f9YrpMyisZfCjYnjP9Jx5fcQTS39AR2/T+kg9/pfrd6UrUt
+         rIBvoO7Mbl1yf9oiFkyERL7Ebk/o1OwxyFYRmCJTEqExKzYv+M1SDOhi37a3bHQ6AwVj
+         Ad1g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=PUbEqhDa;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j2n1vO8e;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=PUbEqhDa;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j2n1vO8e;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Petr Machata <petrm@mellanox.com>,
-	William Tu <u9012063@gmail.com>,
+	syzbot+71d74a5406d02057d559@syzkaller.appspotmail.com,
+	Willem de Bruijn <willemb@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 023/161] net: ip6_gre: Fix headroom request in ip6erspan_tunnel_xmit()
-Date: Thu, 24 May 2018 11:37:28 +0200
-Message-Id: <20180524093021.141910303@linuxfoundation.org>
+Subject: [PATCH 4.16 008/161] packet: in packet_snd start writing at link layer allocation
+Date: Thu, 24 May 2018 11:37:13 +0200
+Message-Id: <20180524093019.375532134@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339138740230507?=
-X-GMAIL-MSGID: =?utf-8?q?1601339138740230507?=
+X-GMAIL-THRID: =?utf-8?q?1601338239482107484?=
+X-GMAIL-MSGID: =?utf-8?q?1601339129180717775?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,191 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 5691484df961aff897d824bcc26cd1a2aa036b5b ]
+[ Upstream commit b84bbaf7a6c8cca24f8acf25a2c8e46913a947ba ]
 
-dev->needed_headroom is not primed until ip6_tnl_xmit(), so it starts
-out zero. Thus the call to skb_cow_head() fails to actually make sure
-there's enough headroom to push the ERSPAN headers to. That can lead to
-the panic cited below. (Reproducer below that).
+Packet sockets allow construction of packets shorter than
+dev->hard_header_len to accommodate protocols with variable length
+link layer headers. These packets are padded to dev->hard_header_len,
+because some device drivers interpret that as a minimum packet size.
 
-Fix by requesting either needed_headroom if already primed, or just the
-bare minimum needed for the header otherwise.
+packet_snd reserves dev->hard_header_len bytes on allocation.
+SOCK_DGRAM sockets call skb_push in dev_hard_header() to ensure that
+link layer headers are stored in the reserved range. SOCK_RAW sockets
+do the same in tpacket_snd, but not in packet_snd.
 
-[  190.703567] kernel BUG at net/core/skbuff.c:104!
-[  190.708384] invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-[  190.714007] Modules linked in: act_mirred cls_matchall ip6_gre ip6_tunnel tunnel6 gre sch_ingress vrf veth x86_pkg_temp_thermal mlx_platform nfsd e1000e leds_mlxcpld
-[  190.728975] CPU: 1 PID: 959 Comm: kworker/1:2 Not tainted 4.17.0-rc4-net_master-custom-139 #10
-[  190.737647] Hardware name: Mellanox Technologies Ltd. "MSN2410-CB2F"/"SA000874", BIOS 4.6.5 03/08/2016
-[  190.747006] Workqueue: ipv6_addrconf addrconf_dad_work
-[  190.752222] RIP: 0010:skb_panic+0xc3/0x100
-[  190.756358] RSP: 0018:ffff8801d54072f0 EFLAGS: 00010282
-[  190.761629] RAX: 0000000000000085 RBX: ffff8801c1a8ecc0 RCX: 0000000000000000
-[  190.768830] RDX: 0000000000000085 RSI: dffffc0000000000 RDI: ffffed003aa80e54
-[  190.776025] RBP: ffff8801bd1ec5a0 R08: ffffed003aabce19 R09: ffffed003aabce19
-[  190.783226] R10: 0000000000000001 R11: ffffed003aabce18 R12: ffff8801bf695dbe
-[  190.790418] R13: 0000000000000084 R14: 00000000000006c0 R15: ffff8801bf695dc8
-[  190.797621] FS:  0000000000000000(0000) GS:ffff8801d5400000(0000) knlGS:0000000000000000
-[  190.805786] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  190.811582] CR2: 000055fa929aced0 CR3: 0000000003228004 CR4: 00000000001606e0
-[  190.818790] Call Trace:
-[  190.821264]  <IRQ>
-[  190.823314]  ? ip6erspan_tunnel_xmit+0x5e4/0x1982 [ip6_gre]
-[  190.828940]  ? ip6erspan_tunnel_xmit+0x5e4/0x1982 [ip6_gre]
-[  190.834562]  skb_push+0x78/0x90
-[  190.837749]  ip6erspan_tunnel_xmit+0x5e4/0x1982 [ip6_gre]
-[  190.843219]  ? ip6gre_tunnel_ioctl+0xd90/0xd90 [ip6_gre]
-[  190.848577]  ? debug_check_no_locks_freed+0x210/0x210
-[  190.853679]  ? debug_check_no_locks_freed+0x210/0x210
-[  190.858783]  ? print_irqtrace_events+0x120/0x120
-[  190.863451]  ? sched_clock_cpu+0x18/0x210
-[  190.867496]  ? cyc2ns_read_end+0x10/0x10
-[  190.871474]  ? skb_network_protocol+0x76/0x200
-[  190.875977]  dev_hard_start_xmit+0x137/0x770
-[  190.880317]  ? do_raw_spin_trylock+0x6d/0xa0
-[  190.884624]  sch_direct_xmit+0x2ef/0x5d0
-[  190.888589]  ? pfifo_fast_dequeue+0x3fa/0x670
-[  190.892994]  ? pfifo_fast_change_tx_queue_len+0x810/0x810
-[  190.898455]  ? __lock_is_held+0xa0/0x160
-[  190.902422]  __qdisc_run+0x39e/0xfc0
-[  190.906041]  ? _raw_spin_unlock+0x29/0x40
-[  190.910090]  ? pfifo_fast_enqueue+0x24b/0x3e0
-[  190.914501]  ? sch_direct_xmit+0x5d0/0x5d0
-[  190.918658]  ? pfifo_fast_dequeue+0x670/0x670
-[  190.923047]  ? __dev_queue_xmit+0x172/0x1770
-[  190.927365]  ? preempt_count_sub+0xf/0xd0
-[  190.931421]  __dev_queue_xmit+0x410/0x1770
-[  190.935553]  ? ___slab_alloc+0x605/0x930
-[  190.939524]  ? print_irqtrace_events+0x120/0x120
-[  190.944186]  ? memcpy+0x34/0x50
-[  190.947364]  ? netdev_pick_tx+0x1c0/0x1c0
-[  190.951428]  ? __skb_clone+0x2fd/0x3d0
-[  190.955218]  ? __copy_skb_header+0x270/0x270
-[  190.959537]  ? rcu_read_lock_sched_held+0x93/0xa0
-[  190.964282]  ? kmem_cache_alloc+0x344/0x4d0
-[  190.968520]  ? cyc2ns_read_end+0x10/0x10
-[  190.972495]  ? skb_clone+0x123/0x230
-[  190.976112]  ? skb_split+0x820/0x820
-[  190.979747]  ? tcf_mirred+0x554/0x930 [act_mirred]
-[  190.984582]  tcf_mirred+0x554/0x930 [act_mirred]
-[  190.989252]  ? tcf_mirred_act_wants_ingress.part.2+0x10/0x10 [act_mirred]
-[  190.996109]  ? __lock_acquire+0x706/0x26e0
-[  191.000239]  ? sched_clock_cpu+0x18/0x210
-[  191.004294]  tcf_action_exec+0xcf/0x2a0
-[  191.008179]  tcf_classify+0xfa/0x340
-[  191.011794]  __netif_receive_skb_core+0x8e1/0x1c60
-[  191.016630]  ? debug_check_no_locks_freed+0x210/0x210
-[  191.021732]  ? nf_ingress+0x500/0x500
-[  191.025458]  ? process_backlog+0x347/0x4b0
-[  191.029619]  ? print_irqtrace_events+0x120/0x120
-[  191.034302]  ? lock_acquire+0xd8/0x320
-[  191.038089]  ? process_backlog+0x1b6/0x4b0
-[  191.042246]  ? process_backlog+0xc2/0x4b0
-[  191.046303]  process_backlog+0xc2/0x4b0
-[  191.050189]  net_rx_action+0x5cc/0x980
-[  191.053991]  ? napi_complete_done+0x2c0/0x2c0
-[  191.058386]  ? mark_lock+0x13d/0xb40
-[  191.062001]  ? clockevents_program_event+0x6b/0x1d0
-[  191.066922]  ? print_irqtrace_events+0x120/0x120
-[  191.071593]  ? __lock_is_held+0xa0/0x160
-[  191.075566]  __do_softirq+0x1d4/0x9d2
-[  191.079282]  ? ip6_finish_output2+0x524/0x1460
-[  191.083771]  do_softirq_own_stack+0x2a/0x40
-[  191.087994]  </IRQ>
-[  191.090130]  do_softirq.part.13+0x38/0x40
-[  191.094178]  __local_bh_enable_ip+0x135/0x190
-[  191.098591]  ip6_finish_output2+0x54d/0x1460
-[  191.102916]  ? ip6_forward_finish+0x2f0/0x2f0
-[  191.107314]  ? ip6_mtu+0x3c/0x2c0
-[  191.110674]  ? ip6_finish_output+0x2f8/0x650
-[  191.114992]  ? ip6_output+0x12a/0x500
-[  191.118696]  ip6_output+0x12a/0x500
-[  191.122223]  ? ip6_route_dev_notify+0x5b0/0x5b0
-[  191.126807]  ? ip6_finish_output+0x650/0x650
-[  191.131120]  ? ip6_fragment+0x1a60/0x1a60
-[  191.135182]  ? icmp6_dst_alloc+0x26e/0x470
-[  191.139317]  mld_sendpack+0x672/0x830
-[  191.143021]  ? igmp6_mcf_seq_next+0x2f0/0x2f0
-[  191.147429]  ? __local_bh_enable_ip+0x77/0x190
-[  191.151913]  ipv6_mc_dad_complete+0x47/0x90
-[  191.156144]  addrconf_dad_completed+0x561/0x720
-[  191.160731]  ? addrconf_rs_timer+0x3a0/0x3a0
-[  191.165036]  ? mark_held_locks+0xc9/0x140
-[  191.169095]  ? __local_bh_enable_ip+0x77/0x190
-[  191.173570]  ? addrconf_dad_work+0x50d/0xa20
-[  191.177886]  ? addrconf_dad_work+0x529/0xa20
-[  191.182194]  addrconf_dad_work+0x529/0xa20
-[  191.186342]  ? addrconf_dad_completed+0x720/0x720
-[  191.191088]  ? __lock_is_held+0xa0/0x160
-[  191.195059]  ? process_one_work+0x45d/0xe20
-[  191.199302]  ? process_one_work+0x51e/0xe20
-[  191.203531]  ? rcu_read_lock_sched_held+0x93/0xa0
-[  191.208279]  process_one_work+0x51e/0xe20
-[  191.212340]  ? pwq_dec_nr_in_flight+0x200/0x200
-[  191.216912]  ? get_lock_stats+0x4b/0xf0
-[  191.220788]  ? preempt_count_sub+0xf/0xd0
-[  191.224844]  ? worker_thread+0x219/0x860
-[  191.228823]  ? do_raw_spin_trylock+0x6d/0xa0
-[  191.233142]  worker_thread+0xeb/0x860
-[  191.236848]  ? process_one_work+0xe20/0xe20
-[  191.241095]  kthread+0x206/0x300
-[  191.244352]  ? process_one_work+0xe20/0xe20
-[  191.248587]  ? kthread_stop+0x570/0x570
-[  191.252459]  ret_from_fork+0x3a/0x50
-[  191.256082] Code: 14 3e ff 8b 4b 78 55 4d 89 f9 41 56 41 55 48 c7 c7 a0 cf db 82 41 54 44 8b 44 24 2c 48 8b 54 24 30 48 8b 74 24 20 e8 16 94 13 ff <0f> 0b 48 c7 c7 60 8e 1f 85 48 83 c4 20 e8 55 ef a6 ff 89 74 24
-[  191.275327] RIP: skb_panic+0xc3/0x100 RSP: ffff8801d54072f0
-[  191.281024] ---[ end trace 7ea51094e099e006 ]---
-[  191.285724] Kernel panic - not syncing: Fatal exception in interrupt
-[  191.292168] Kernel Offset: disabled
-[  191.295697] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+Syzbot was able to send a zero byte packet to a device with massive
+116B link layer header, causing padding to cross over into skb_shinfo.
+Fix this by writing from the start of the llheader reserved range also
+in the case of packet_snd/SOCK_RAW.
 
-Reproducer:
+Update skb_set_network_header to the new offset. This also corrects
+it for SOCK_DGRAM, where it incorrectly double counted reserve due to
+the skb_push in dev_hard_header.
 
-	ip link add h1 type veth peer name swp1
-	ip link add h3 type veth peer name swp3
-
-	ip link set dev h1 up
-	ip address add 192.0.2.1/28 dev h1
-
-	ip link add dev vh3 type vrf table 20
-	ip link set dev h3 master vh3
-	ip link set dev vh3 up
-	ip link set dev h3 up
-
-	ip link set dev swp3 up
-	ip address add dev swp3 2001:db8:2::1/64
-
-	ip link set dev swp1 up
-	tc qdisc add dev swp1 clsact
-
-	ip link add name gt6 type ip6erspan \
-		local 2001:db8:2::1 remote 2001:db8:2::2 oseq okey 123
-	ip link set dev gt6 up
-
-	sleep 1
-
-	tc filter add dev swp1 ingress pref 1000 matchall skip_hw \
-		action mirred egress mirror dev gt6
-	ping -I h1 192.0.2.2
-
-Fixes: e41c7c68ea77 ("ip6erspan: make sure enough headroom at xmit.")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Acked-by: William Tu <u9012063@gmail.com>
+Fixes: 9ed988cd5915 ("packet: validate variable length ll headers")
+Reported-by: syzbot+71d74a5406d02057d559@syzkaller.appspotmail.com
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_gre.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/packet/af_packet.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -908,7 +908,7 @@ static netdev_tx_t ip6erspan_tunnel_xmit
- 		truncate = true;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2903,13 +2903,15 @@ static int packet_snd(struct socket *soc
+ 	if (skb == NULL)
+ 		goto out_unlock;
+ 
+-	skb_set_network_header(skb, reserve);
++	skb_reset_network_header(skb);
+ 
+ 	err = -EINVAL;
+ 	if (sock->type == SOCK_DGRAM) {
+ 		offset = dev_hard_header(skb, dev, ntohs(proto), addr, NULL, len);
+ 		if (unlikely(offset < 0))
+ 			goto out_free;
++	} else if (reserve) {
++		skb_push(skb, reserve);
  	}
  
--	if (skb_cow_head(skb, dev->needed_headroom))
-+	if (skb_cow_head(skb, dev->needed_headroom ?: t->hlen))
- 		goto tx_err;
- 
- 	t->parms.o_flags &= ~TUNNEL_KEY;
+ 	/* Returns -EFAULT on error */
