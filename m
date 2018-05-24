@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527164137-2-16939610495952711651
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164079-2-1746631701519541725
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164136; b=PxmMHVf0z0htLRnwSVcyqbAeeclf5QHTI+t13IlK1i0ObePm2r
-    wT5J0OUBgIaCuwsZrR2d4zdmqHWH3q/5PwTPidWkaw0GmrUt4Mk7Olq60IEhAyUo
-    6LMNVvwS+cMe4u8CnYiGUJC1+LGK45byJnwoDIixk+puqblyJapFAuAxhdEw+WGT
-    kcIrUjdlU79WrJnTsAnHpZbX8cVZRf8e6viyDRjSkKltRBSZIVb9vN7tmfdTASUq
-    DPPmB6ScPGkSr7XuPa6t7g/GvytFx/mU70DHwsD5Y+dXj7zWunrlj6T1aIrytGqS
-    PfdJzCE2DHwIOqYc1lB0I3LjaycC7zYdZFsA==
+    1527164078; b=LIEHd/NFl3ehEds9kYy3r79UdtW25pZ46FiZf6bxoyd1bJ5WXQ
+    3TN5xZiJeoTdzUc9VgjKk6cEymku4cjWIoczXiu6EGiHyBbQz/QwEoH55pnnjWLu
+    Iv6HS+GMft3yVaVB+v/kQ4Uv1jL6AqU+3q9vGZ5PBAEcZc9gjunILqY87g+UBv2w
+    IVi2dBZsAn68QcozE4ATyF74P1x96tIrJeRT23UFz0SgxKgzN66b9VqtXGuc9SZ7
+    39IW1yOVWUYkgC7PKtsueQidmBkF1SG2y7QBRrVl0jyqyKNdM2jwoc9YzUKN92w6
+    hNx56bJwvxdIjIbKJFL2mQuPyHxafmX0pEFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164136; bh=hgkrX3lm5j1hXGp74LIQv0sKNLtikY
-    i68luJp2WSo3U=; b=NhU42XxES2Ar7aPX1mH19L1QRB4UnedKIC+USDhawI3una
-    hLu+09rGEFoUBSvEX+X1sTE0WwvmDdFPJt8dUGjQ8vzgoHRnuMbhDcVop7TlIY3C
-    DFKNUXAhjc4fMsZojuyDWWa6Xy77BuhttKRrfQnRjQFpJ3lXDl/LQIElDusR2VZD
-    A266Tz6t2JpmLpJ7csM8808liGaokjbMJUBuPZRqny+9qY8EjFxBBfJWcIzmYH8E
-    j0gDuPnw5tOwGhRsz8wHTsttRHdNXAVsX1H4/rP7CLFwa28liIPR0Se4lrlRifB1
-    heh8BwbEzoQPX8js9rri693+tqjPEjUA8jTkAlXQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164078; bh=e3qN3l5KPU6ngoRqA3GwFcUFgerv3M
+    G/uUEM/LfUaKI=; b=FOMW42v0csjFxIB2N7vNlNAF6D4Zjf7CZ7cqS1mrLll8eR
+    u8CKLhw8W9FYgv0bQ25oK87FCDie2u6F4YedOQM3LzuEth3Mzzq2DmbCvY+PmM9o
+    kxpR1yNAzzqvF+r8OIl0hB2yGePM2IXF3APdZCYSGeRe+GKkZEZHT//sqZZRIKwk
+    jnMsS81DWJlvAshY0U0M8bA/Wkf40FQuaOCIh/RlfwLAOmoemlAdgzprAhbOVNwH
+    ylPDFXB6zomaCopNkQVywzogx0U2LBtotF9wH/DHneMiHyc3O+Yix5WF4E6LBwaH
+    UtBHIEt2BmSt+YB2siU6r0qKMfIy6eeZ86CL8P9A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=aoELOYx2 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=hGcCLEaa x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=aoELOYx2 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=hGcCLEaa x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,35 +64,30 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJtJVYVRwk1ha86R99eoef64Qo3sYgw/peP6I8CMzEMy+VXm9FgIv1pDS+AJcCY3jeERbViT4k3XpBACkHBM0sNY9m+MnZg09WsjpBh8xE39eEGYrFJv
-    sW2qjXwb7BFM+pOSzIhLSi/GRfoji9v+3+Bz9WGEo6n9AXyarI4aerJyReLkJfqBI+oh+npS9zSlNHsVoJN6xERGvW/w6JnWLiFGyc2L675vilE9PHaUTwJQ
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfP7IgZMAw3MrCUowzwfJHVggznmpuxZZ+4VyyiyTfJzx5YvwJbe46WY85/1MX58CV2FWg6BYZXTG25a/iLEdADxCDIAs08tiyJq/Zw36w5NV0k2fvD5S
+    E/KAc2Lkfeikku78+Jz//FJ9HuTJRhbs4fw1cAHbuDrWe4NhW0J4+s94pdiIdcH2PGBikwM3gUsQB4D85NqUOjIfRe6R+yn+OE0DU5TVAf0e3Asf8+hGN6fP
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=NCkSHYsgAAAA:8
-    a=yPCof4ZbAAAA:8 a=ag1SF4gXAAAA:8 a=NiwbD6wQrM2umdzaVFgA:9 a=QEXdDO2ut3YA:10
-    a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22 a=AnMw66Xr5OuzjdxB04dI:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=-O5xsKu7cXiJXXyVPtwA:9
+    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969670AbeEXMPI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:15:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53984 "EHLO mail.kernel.org"
+        id S966390AbeEXMOf (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:14:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966330AbeEXJmU (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:20 -0400
+        id S966338AbeEXJmX (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 3.18 42/45] scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()
-Date: Thu, 24 May 2018 11:38:50 +0200
-Message-Id: <20180524093126.325649557@linuxfoundation.org>
+        syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 3.18 43/45] cfg80211: limit wiphy names to 128 bytes
+Date: Thu, 24 May 2018 11:38:51 +0200
+Message-Id: <20180524093126.477631162@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -110,33 +105,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit a45b599ad808c3c982fdcdc12b0b8611c2f92824 upstream.
+commit a7cfebcb7594a24609268f91299ab85ba064bf82 upstream.
 
-This shall help avoid copying uninitialized memory to the userspace when
-calling ioctl(fd, SG_IO) with an empty command.
+There's currently no limit on wiphy names, other than netlink
+message size and memory limitations, but that causes issues when,
+for example, the wiphy name is used in a uevent, e.g. in rfkill
+where we use the same name for the rfkill instance, and then the
+buffer there is "only" 2k for the environment variables.
 
-Reported-by: syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This was reported by syzkaller, which used a 4k name.
+
+Limit the name to something reasonable, I randomly picked 128.
+
+Reported-by: syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/nl80211.h |    2 ++
+ net/wireless/core.c          |    3 +++
+ 2 files changed, 5 insertions(+)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -1950,7 +1950,7 @@ retry:
- 		num = (rem_sz > scatter_elem_sz_prev) ?
- 			scatter_elem_sz_prev : rem_sz;
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2026,6 +2026,8 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
  
--		schp->pages[k] = alloc_pages(gfp_mask, order);
-+		schp->pages[k] = alloc_pages(gfp_mask | __GFP_ZERO, order);
- 		if (!schp->pages[k])
- 			goto out;
++#define NL80211_WIPHY_NAME_MAXLEN		128
++
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
+ #define NL80211_MAX_SUPP_REG_RULES		32
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -94,6 +94,9 @@ int cfg80211_dev_rename(struct cfg80211_
  
+ 	ASSERT_RTNL();
+ 
++	if (strlen(newname) > NL80211_WIPHY_NAME_MAXLEN)
++		return -EINVAL;
++
+ 	/* prohibit calling the thing phy%d when %d is not its number */
+ 	sscanf(newname, PHY_NAME "%d%n", &wiphy_idx, &taken);
+ 	if (taken == strlen(newname) && wiphy_idx != rdev->wiphy_idx) {
