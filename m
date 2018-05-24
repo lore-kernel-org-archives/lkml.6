@@ -1,184 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968822AbeEXXmV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 19:42:21 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37317 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964936AbeEXXmS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 19:42:18 -0400
-X-Google-Smtp-Source: AB8JxZr7OIfZy1vdNO8v485ikT5sTtAD8K2t8FkoIDONniLGsbsdx4uIsq9/UXtI4wACGuJT7nT7ew==
-Date: Thu, 24 May 2018 16:42:13 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Cc: lee.jones@linaro.org, ravisadineni@google.com, dtor@google.com,
-        tbroch@google.com, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, rajatja@google.com, bleung@google.com
-Subject: Re: [PATCH] cros_ec_keyb: Increment the wakeup count to the specific
- mfd device.
-Message-ID: <20180524234213.GE177107@dtor-ws>
-References: <20180523182958.25195-1-ravisadineni@chromium.org>
+        id S969243AbeEXXrq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 19:47:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965337AbeEXXro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 19:47:44 -0400
+X-Google-Smtp-Source: ADUXVKIvlXiY/wXpZyRHrs1BIJSFFfPoHs//gIHRbUHqRCdD3Otv0VZWE7UJzg/yDm9yO6SElUiVeDXR37oG3bk8NF4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523182958.25195-1-ravisadineni@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180524222855.GD14924@minitux>
+References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
+ <20180524222855.GD14924@minitux>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 May 2018 18:47:21 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLZFTszxs=t1=R0FQ3vP0scvpUBa6=Fb2S9LrTEvx4d_g@mail.gmail.com>
+Message-ID: <CAL_JsqLZFTszxs=t1=R0FQ3vP0scvpUBa6=Fb2S9LrTEvx4d_g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ravi,
+On Thu, May 24, 2018 at 5:28 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Thu 24 May 10:50 PDT 2018, Rob Herring wrote:
+>
+>> Deferred probe will currently wait forever on dependent devices to probe,
+>> but sometimes a driver will never exist. It's also not always critical for
+>> a driver to exist. Platforms can rely on default configuration from the
+>> bootloader or reset defaults for things such as pinctrl and power domains.
+>> This is often the case with initial platform support until various drivers
+>> get enabled. There's at least 2 scenarios where deferred probe can render
+>> a platform broken. Both involve using a DT which has more devices and
+>> dependencies than the kernel supports. The 1st case is a driver may be
+>> disabled in the kernel config. The 2nd case is the kernel version may
+>> simply not have the dependent driver. This can happen if using a newer DT
+>> (provided by firmware perhaps) with a stable kernel version.
+>>
+>> Subsystems or drivers may opt-in to this behavior by calling
+>> driver_deferred_probe_check_init_done() instead of just returning
+>> -EPROBE_DEFER. They may use additional information from DT or kernel's
+>> config to decide whether to continue to defer probe or not.
+>>
+>
+> For builtin drivers this still looks reasonable.
+>
+> But I would like to have an additional clarification here stating that
+> drivers that might be targeted by this query must not be compiled as
+> modules.
+>
+> And I would prefer to see an ack from e.g. Arnd that arm-soc is okay
+> that we drop "tristate" on drivers affected by this; e.g. if we put this
+> in the pinctrl core then all pinctrl drivers should be "bool" and so
+> should any i2c, ssbi and spmi buses and drivers be.
 
-On Wed, May 23, 2018 at 11:29:58AM -0700, Ravi Chandra Sadineni wrote:
-> If the IRQ is processed during resume, increment the wakeup count to the
-> specific mfd device based on the event, if the mfd device is wake enabled.
-> This helps in identifying the specific device that caused the wake.
-> 
-> Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-> ---
->  drivers/input/keyboard/cros_ec_keyb.c | 20 +++++++++++++++-----
->  drivers/mfd/cros_ec.c                 | 25 +++++++++++--------------
->  2 files changed, 26 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-> index 79eb29550c348..9b39289774405 100644
-> --- a/drivers/input/keyboard/cros_ec_keyb.c
-> +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> @@ -245,12 +245,16 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
->  	switch (ckdev->ec->event_data.event_type) {
->  	case EC_MKBP_EVENT_KEY_MATRIX:
->  		/*
-> -		 * If EC is not the wake source, discard key state changes
-> -		 * during suspend.
-> +		 * If keyb input device is not wake enabled, discard key
-> +		 * state changes during suspend.
->  		 */
-> -		if (queued_during_suspend)
-> +		if (queued_during_suspend && ckdev->idev
-> +		    && !device_may_wakeup(&ckdev->idev->dev))
->  			return NOTIFY_OK;
->  
-> +		else if (queued_during_suspend && ckdev->idev)
-> +			pm_wakeup_event(&ckdev->idev->dev, 0);
+For pinctrl, you are not affected now unless you change your DT. I
+made pinctrl opt-in since as you said it could lead to some
+intermittent problems. If iommu or power domains are required, then it
+should fail pretty hard.
 
-Are we reporting wakeup event on the right device? Normally we only
-report wakeups on hardware device whereas here we using input devices
-which are logical abstractions...
+However, good luck getting your serial console to work if it has a
+pinctrl dependency and that's a module. It won't work because the
+console has to be up before userspace. Of course, you can just rely on
+earlycon, but that just proves that pinctrl is not required (at least
+for 1 serial pin). :)
 
-In any case this can be collapsed a bit:
+Rob
 
-		if (queued_during_suspend && ckdev->idev) {
-			if (!device_may_wakeup(&ckdev->idev->dev)
-				return NOTIFY_OK;
-
-			pm_wakeup_event(&ckdev->idev->dev, 0);
-		}
-
-But I think you should actually look at ckdev->dev device here.
-
-Also, why do we ignore EC_MKBP_EVENT_SYSRQ event?
-
-> +
->  		if (ckdev->ec->event_size != ckdev->cols) {
->  			dev_err(ckdev->dev,
->  				"Discarded incomplete key matrix event.\n");
-> @@ -270,13 +274,17 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
->  	case EC_MKBP_EVENT_BUTTON:
->  	case EC_MKBP_EVENT_SWITCH:
->  		/*
-> -		 * If EC is not the wake source, discard key state
-> +		 * If bs is not wake enabled, discard key state
->  		 * changes during suspend. Switches will be re-checked in
->  		 * cros_ec_keyb_resume() to be sure nothing is lost.
->  		 */
-> -		if (queued_during_suspend)
-> +		if (queued_during_suspend && ckdev->bs_idev
-> +		    && !device_may_wakeup(&ckdev->bs_idev->dev))
->  			return NOTIFY_OK;
->  
-> +		else if (queued_during_suspend && ckdev->bs_idev)
-> +			pm_wakeup_event(&ckdev->bs_idev->dev, 0);
-> +
->  		if (ckdev->ec->event_data.event_type == EC_MKBP_EVENT_BUTTON) {
->  			val = get_unaligned_le32(
->  					&ckdev->ec->event_data.data.buttons);
-> @@ -522,6 +530,7 @@ static int cros_ec_keyb_register_bs(struct cros_ec_keyb *ckdev)
->  		return ret;
->  	}
->  
-> +	device_init_wakeup(&idev->dev, true);
->  	return 0;
->  }
->  
-> @@ -598,6 +607,7 @@ static int cros_ec_keyb_register_matrix(struct cros_ec_keyb *ckdev)
->  		return err;
->  	}
->  
-> +	device_init_wakeup(&idev->dev, true);
->  	return 0;
->  }
->  
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index d61024141e2b6..df9520365e54b 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -64,12 +64,14 @@ static irqreturn_t ec_irq_thread(int irq, void *data)
->  	 * cros_ec_get_next_event() returned an error (default value for
->  	 * wake_event is true)
->  	 */
-> -	if (wake_event && device_may_wakeup(ec_dev->dev))
-> +	if (device_may_wakeup(ec_dev->dev) && wake_event
-> +	    && ec_dev->wake_enabled)
->  		pm_wakeup_event(ec_dev->dev, 0);
->  
->  	if (ret > 0)
->  		blocking_notifier_call_chain(&ec_dev->event_notifier,
-> -					     0, ec_dev);
-> +					     wake_event && ec_dev->wake_enabled,
-> +					     ec_dev);
->  	return IRQ_HANDLED;
->  }
->  
-> @@ -229,7 +231,7 @@ int cros_ec_suspend(struct cros_ec_device *ec_dev)
->  }
->  EXPORT_SYMBOL(cros_ec_suspend);
->  
-> -static void cros_ec_drain_events(struct cros_ec_device *ec_dev)
-> +static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
->  {
->  	while (cros_ec_get_next_event(ec_dev, NULL) > 0)
->  		blocking_notifier_call_chain(&ec_dev->event_notifier,
-> @@ -253,21 +255,16 @@ int cros_ec_resume(struct cros_ec_device *ec_dev)
->  		dev_dbg(ec_dev->dev, "Error %d sending resume event to ec",
->  			ret);
->  
-> -	/*
-> -	 * In some cases, we need to distinguish between events that occur
-> -	 * during suspend if the EC is not a wake source. For example,
-> -	 * keypresses during suspend should be discarded if it does not wake
-> -	 * the system.
-> -	 *
-> -	 * If the EC is not a wake source, drain the event queue and mark them
-> -	 * as "queued during suspend".
-> -	 */
->  	if (ec_dev->wake_enabled) {
->  		disable_irq_wake(ec_dev->irq);
->  		ec_dev->wake_enabled = 0;
-> -	} else {
-> -		cros_ec_drain_events(ec_dev);
->  	}
-> +	/*
-> +	 * Let the mfd devices know about events that occur during
-> +	 * suspend. This way the clients know what to do with them.
-> +	 */
-> +	cros_ec_report_events_during_suspend(ec_dev);
-> +
->  
->  	return 0;
->  }
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
-
--- 
-Dmitry
+>
+> Regards,
+> Bjorn
+>
+>> Cc: Alexander Graf <agraf@suse.de>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  drivers/base/dd.c      | 17 +++++++++++++++++
+>>  include/linux/device.h |  2 ++
+>>  2 files changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>> index c9f54089429b..d6034718da6f 100644
+>> --- a/drivers/base/dd.c
+>> +++ b/drivers/base/dd.c
+>> @@ -226,6 +226,16 @@ void device_unblock_probing(void)
+>>       driver_deferred_probe_trigger();
+>>  }
+>>
+>> +int driver_deferred_probe_check_init_done(struct device *dev, bool optional)
+>> +{
+>> +     if (optional && initcalls_done) {
+>> +             dev_WARN(dev, "ignoring dependency for device, assuming no driver");
+>> +             return -ENODEV;
+>> +     }
+>> +
+>> +     return -EPROBE_DEFER;
+>> +}
+>> +
+>>  /**
+>>   * deferred_probe_initcall() - Enable probing of deferred devices
+>>   *
+>> @@ -240,6 +250,13 @@ static int deferred_probe_initcall(void)
+>>       /* Sort as many dependencies as possible before exiting initcalls */
+>>       flush_work(&deferred_probe_work);
+>>       initcalls_done = true;
+>> +
+>> +     /*
+>> +      * Trigger deferred probe again, this time we won't defer anything
+>> +      * that is optional
+>> +      */
+>> +     driver_deferred_probe_trigger();
+>> +     flush_work(&deferred_probe_work);
+>>       return 0;
+>>  }
+>>  late_initcall(deferred_probe_initcall);
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index 477956990f5e..f3dafd44c285 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -334,6 +334,8 @@ struct device *driver_find_device(struct device_driver *drv,
+>>                                 struct device *start, void *data,
+>>                                 int (*match)(struct device *dev, void *data));
+>>
+>> +int driver_deferred_probe_check_init_done(struct device *dev, bool optional);
+>> +
+>>  /**
+>>   * struct subsys_interface - interfaces to device functions
+>>   * @name:       name of the device function
+>> --
+>> 2.17.0
+>>
