@@ -1,62 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031862AbeEXKOV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:14:21 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50151 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031515AbeEXKOM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:14:12 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Martitz <kugel@rockbox.org>, Lukas Wunner <lukas@wunner.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] PM / core: Fix direct_complete handling for devices with no callbacks
-Date: Thu, 24 May 2018 12:13:30 +0200
-Message-ID: <1553668.SPIWpq1Qe9@aspire.rjw.lan>
-In-Reply-To: <CAPDyKFonGtpv+oEW5bm1XAO7VNuqRR7ZQ7NT5ow3OuoQJQPwmg@mail.gmail.com>
-References: <6238546.EnOBWIOf9o@aspire.rjw.lan> <CAPDyKFonGtpv+oEW5bm1XAO7VNuqRR7ZQ7NT5ow3OuoQJQPwmg@mail.gmail.com>
+        id S1031897AbeEXKTF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:19:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60866 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031410AbeEXKTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 06:19:02 -0400
+Date: Thu, 24 May 2018 12:19:00 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jan Kara <jack@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH] bdi: Move cgroup bdi_writeback to a dedicated low
+ concurrency workqueue
+Message-ID: <20180524101900.m5vqd74rwaqw2pap@quack2.suse.cz>
+References: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, May 22, 2018 1:41:06 PM CEST Ulf Hansson wrote:
-> On 22 May 2018 at 13:02, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
-> > driver flags) inadvertently prevented the power.direct_complete flag
-> > from being set for devices without PM callbacks and with disabled
-> > runtime PM which also prevents power.direct_complete from being set
-> > for their parents.  That led to problems including a resume crash on
-> > HP ZBook 14u.
-> >
-> > Restore the previous behavior by causing power.direct_complete to be
-> > set for those devices again, but do that in a more direct way to
-> > avoid overlooking that case in the future.
-> >
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
-> > Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
-> > Reported-by: Thomas Martitz <kugel@rockbox.org>
-> > Tested-by: Thomas Martitz <kugel@rockbox.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed 23-05-18 10:56:32, Tejun Heo wrote:
+> From 0aa2e9b921d6db71150633ff290199554f0842a8 Mon Sep 17 00:00:00 2001
+> From: Tejun Heo <tj@kernel.org>
+> Date: Wed, 23 May 2018 10:29:00 -0700
 > 
-> It seems like the resume path of HP ZBook 14u is kind of fragile,
+> cgwb_release() punts the actual release to cgwb_release_workfn() on
+> system_wq.  Depending on the number of cgroups or block devices, there
+> can be a lot of cgwb_release_workfn() in flight at the same time.
+> 
+> We're periodically seeing close to 256 kworkers getting stuck with the
+> following stack trace and overtime the entire system gets stuck.
 
-Yes, it is.
+OK, but that means that you have to have 256 block devices, don't you? As
+we have a bdi per device and we call synchronize_rcu_expedited() only when
+unregistering bdi (and the corresponding request queue must be gone at that
+point as well as that's otherwise holding a reference). Am I understanding
+the situation correctly?
 
-> in case it *requires* dev->power.direct_complete to be set for devices
-> like these. And that makes me wonder, that perhaps we should try to
-> address that issue as well, no?
+>   [<ffffffff810ee40c>] _synchronize_rcu_expedited.constprop.72+0x2fc/0x330
+>   [<ffffffff810ee634>] synchronize_rcu_expedited+0x24/0x30
+>   [<ffffffff811ccf23>] bdi_unregister+0x53/0x290
+>   [<ffffffff811cd1e9>] release_bdi+0x89/0xc0
+>   [<ffffffff811cd645>] wb_exit+0x85/0xa0
+>   [<ffffffff811cdc84>] cgwb_release_workfn+0x54/0xb0
+>   [<ffffffff810a68d0>] process_one_work+0x150/0x410
+>   [<ffffffff810a71fd>] worker_thread+0x6d/0x520
+>   [<ffffffff810ad3dc>] kthread+0x12c/0x160
+>   [<ffffffff81969019>] ret_from_fork+0x29/0x40
+>   [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> The events leading to the lockup are...
+> 
+> 1. A lot of cgwb_release_workfn() is queued at the same time and all
+>    system_wq kworkers are assigned to execute them.
+> 
+> 2. They all end up calling synchronize_rcu_expedited().  One of them
+>    wins and tries to perform the expedited synchronization.
+> 
+> 3. However, that invovles queueing rcu_exp_work to system_wq and
+>    waiting for it.  Because #1 is holding all available kworkers on
+>    system_wq, rcu_exp_work can't be executed.  cgwb_release_workfn()
+>    is waiting for synchronize_rcu_expedited() which in turn is waiting
+>    for cgwb_release_workfn() to free up some of the kworkers.
+> 
+> We shouldn't be scheduling hundreds of cgwb_release_workfn() at the
+> same time.  There's nothing to be gained from that.  This patch
+> updates cgwb release path to use a dedicated percpu workqueue with
+> @max_active of 1.
 
-Yes, in principle.
+As Rik wrote, some paralelism is good to reduce number of forced grace
+periods so raising this to 16 is good. I was thinking whether we could not
+batch rcu grace periods in some explicit way but that would be difficult to
+do.
 
-But since the direct_complete handling needs to be fixed anyway, it doesn't
-matter a lot in practice, because the resume issue on HP ZBook 14u will not
-be reproducible anyway then.  And since the dependency clearly is on a device
-with no callbacks, I'm not worried too much about that.
+But thinking a bit more about this, if we made bdi RCU freed, we could just
+avoid the synchronize_rcu_expedited() in bdi_remove_from_list() altogether.
+The uses of bdi list are pretty limited and everybody ends up testing
+WB_registered bit before doing anything anyway... What do you think?
+ 
+Other than that you can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+to this patch when updated to increase concurrency as that's a good short
+term solution (for stable kernels) anyway.
+
+								Honza
+
+> While this resolves the problem at hand, it might be a good idea to
+> isolate rcu_exp_work to its own workqueue too as it can be used from
+> various paths and is prone to this sort of indirect A-A deadlocks.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: stable@vger.kernel.org
+
+
+
+> ---
+>  mm/backing-dev.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> index 7441bd9..8fe3ebd 100644
+> --- a/mm/backing-dev.c
+> +++ b/mm/backing-dev.c
+> @@ -412,6 +412,7 @@ static void wb_exit(struct bdi_writeback *wb)
+>   * protected.
+>   */
+>  static DEFINE_SPINLOCK(cgwb_lock);
+> +static struct workqueue_struct *cgwb_release_wq;
+>  
+>  /**
+>   * wb_congested_get_create - get or create a wb_congested
+> @@ -522,7 +523,7 @@ static void cgwb_release(struct percpu_ref *refcnt)
+>  {
+>  	struct bdi_writeback *wb = container_of(refcnt, struct bdi_writeback,
+>  						refcnt);
+> -	schedule_work(&wb->release_work);
+> +	queue_work(cgwb_release_wq, &wb->release_work);
+>  }
+>  
+>  static void cgwb_kill(struct bdi_writeback *wb)
+> @@ -784,6 +785,21 @@ static void cgwb_bdi_register(struct backing_dev_info *bdi)
+>  	spin_unlock_irq(&cgwb_lock);
+>  }
+>  
+> +static int __init cgwb_init(void)
+> +{
+> +	/*
+> +	 * There can be many concurrent release work items overwhelming
+> +	 * system_wq.  Put them in a separate wq and limit concurrency.
+> +	 * There's no point in executing many of these in parallel.
+> +	 */
+> +	cgwb_release_wq = alloc_workqueue("cgwb_release", 0, 1);
+> +	if (!cgwb_release_wq)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +subsys_initcall(cgwb_init);
+> +
+>  #else	/* CONFIG_CGROUP_WRITEBACK */
+>  
+>  static int cgwb_bdi_init(struct backing_dev_info *bdi)
+> -- 
+> 2.9.5
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
