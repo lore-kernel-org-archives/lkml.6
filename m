@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164236-2-6094520452633444036
+X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164227-2-15848319570044917156
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164235; b=ZsS0qDqbPY/aGnzMkkCpgkDp1hwODwecl/fj/Og+rJNoxGdX3M
-    7NdbD9eCVeOc3K29E0EdO6yYP7l9S4Sgq2aH1oWgZTKsZgzURlMP2Qq1iDLiwYrN
-    wsxqbICaFrd/Is1SraKQY0QZs/arU3DV3IgMLHGPKCgUr1Wukj5r8U47HlR+akpc
-    VQNDI0wOHNoUlw9ZjnyHY0RzW/G+mAOeMz66PknBlUCStw9PcDsQiNOOC1CP977l
-    FM885zswkOQcDLyb+/n2k/l/B4nI78qRwFAiSrVVghjQwWfmqd06G5FKiReE0MJ+
-    1bLacul16TPh2/rUV4QR5kKPcBW3vGg+sMKw==
+    1527164227; b=lWTqkoSA6rfKCnNoqE83PTDjunHalQgHKCKtaXs5z/e5MGRFI4
+    Xv5HLZkObYnolHz7+wvSg7e8sq97G1yxO7rvHoXQiuJO0pvWvQm4oz4KylUKbKeZ
+    /VECJRZTc7mKX9ImpoK40R0Af1+RwQDYZFSY2ZAyEYG0HCsyiULWW+G2a7SnJhwK
+    TP/W1jMAyhuW3AXrCsJPbr9HHgD8VoK2ocltJY96Y/MGlTFUGTBrWynCppMTY7xt
+    sm2fnpc9KfLBcwrVtQS5/80p7lSoqvR6N3xWaNwPmLeV4Yo7BBvxqfBBiOIdhYI2
+    cGBd8ytUwCXKwBg56bm8C4BGWiVmKX1C1wgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164235; bh=DmlA/L+yBnLoYgoHTqSEbRKnxpbRbV
-    Y8CKlDd9IXNLc=; b=ge0CWKTn5NXuvCUj6HXBl2YGRg17RUGb1NuCiTSL7VCoAZ
-    PNdzcKYskz9xZJG1Z/4m0cTq1GM+BtU4LoEIcMgBLwgaoXCCPOnYjKEUJg2W6jop
-    WT8pivil04Djoi8wZfbsANx9IcCScqoVFZpTBO4auJuZEAbNICjXeB3JzaM901SK
-    00r/fIBgcKmZ9a9mypUXF8IAWNftDh6HQC1SBc0mEVqfbTzmd2K1g5+t7Z7fcjLn
-    XQ/DHHizkjX6vxOow56Wuf8Adb+uvCbDvZV5CplIQB3UmvAzMVb5BbkfBctgCCO8
-    40Q+FJDdadzUVIMp0uMt54M1O9/l0y9Ke1BYVp3g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164227; bh=IfRD0iZvyXJyo24MfVQ/HF5Zz38RYV
+    KvjUL82k0AOOU=; b=N79Pg8939ndukl41wWuWP9Tw2cq9FnaMKGIjqNLzKNXliv
+    th6VG4BTTv3MyTBbT1+9mWo3mnwABmuKtVKy8jjbUmJxsKD0xFEscSBmor9mN1CF
+    eyUr2Mg2iMvFFGmLQK12mQ8FhbdEZVjWtni331LqXjNGiD7c7X/a0Lub1m5f6HZe
+    9/fV4DFJZGB2aDvDhEgFLCdRCaAkc8QQ4NB4tDQZlOTqlNXMJ5n0TagUwmn42vYV
+    ANaw0Hjg6qA8/RmQF4JeBcWcGYBm7fKM7F29TBl0xmOXS7jWOlv6xwfL0MOc5K2y
+    OzKGDtRPkptVcUw4gw99Vmfvqnk+AvtXIk17ETdA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=o8mWpKKE x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=NCmcywyA x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=o8mWpKKE x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=NCmcywyA x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMStPRHdXxdUJBDs9ManRXYN7r6iFxPlhaCKVpS8FoNjslpC1q035MhYk2McdycD3tueEr5fi4sMIt+mfoOG3rtSGLbnTlK7octi7ddvr1U6yuYS35PI
-    HKUbbsRGroXgCzHOoKqZqhQNnOLWrHAEaq24JA2CU+r7cU9xUYPrKPlYmfJOd28wEP0qIdKzdYRfRpP1ORHPpRzA1YmlXKJgvojs3lAMBj0ZFWeaCV+qSEzH
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfANFnG/+6eSD45g7GO13YM9HVdBfRCSIBMyDA4Ls9EF6UX83ygaGXxPHoWRDwkpxlsaHV28rmISqbd6KBpoXbhxteCELgXTHMqreFzWLiCz9yfSGWPol
+    Xek22RkakeF8Zw707oKQ6LH39pKGTQoxcA+QK4QrMBd2bC3fthABctoq5IAn7XHMnw44e7l/7TItqRzuxKNtqxzwqvff5ppZQOj27FVqcD51aZY/mWHnzWLA
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=_Gl1HcQ-4U4wQ9qHoBsA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=PHq6YzTAAAAA:8 a=ag1SF4gXAAAA:8 a=1xjQt4pIUNXleNVYppwA:9
+    a=FOFD_0Mp1XFBZlU-:21 a=mxM1O23oZlYCg8nu:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=ZKzU8r6zoKMcqsNulkmm:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966260AbeEXJl6 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:41:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53652 "EHLO mail.kernel.org"
+        id S966417AbeEXMQm (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:16:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966025AbeEXJlx (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:41:53 -0400
+        id S966216AbeEXJl7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:41:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 33/45] powerpc/powernv: Fix NVRAM sleep in invalid context when crashing
-Date: Thu, 24 May 2018 11:38:41 +0200
-Message-Id: <20180524093124.842743719@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 3.18 35/45] ARM: 8771/1: kprobes: Prohibit kprobes on do_undefinstr
+Date: Thu, 24 May 2018 11:38:43 +0200
+Message-Id: <20180524093125.189371405@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -104,53 +105,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit c1d2a31397ec51f0370f6bd17b19b39152c263cb upstream.
+commit eb0146daefdde65665b7f076fbff7b49dade95b9 upstream.
 
-Similarly to opal_event_shutdown, opal_nvram_write can be called in
-the crash path with irqs disabled. Special case the delay to avoid
-sleeping in invalid context.
+Prohibit kprobes on do_undefinstr because kprobes on
+arm is implemented by undefined instruction. This means
+if we probe do_undefinstr(), it can cause infinit
+recursive exception.
 
-Fixes: 3b8070335f75 ("powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops")
-Cc: stable@vger.kernel.org # v3.2
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 24ba613c9d6c ("ARM kprobes: core code")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal-nvram.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/arm/kernel/traps.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/opal-nvram.c
-+++ b/arch/powerpc/platforms/powernv/opal-nvram.c
-@@ -43,6 +43,10 @@ static ssize_t opal_nvram_read(char *buf
- 	return count;
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -19,6 +19,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/hardirq.h>
+ #include <linux/kdebug.h>
++#include <linux/kprobes.h>
+ #include <linux/module.h>
+ #include <linux/kexec.h>
+ #include <linux/bug.h>
+@@ -395,7 +396,8 @@ void unregister_undef_hook(struct undef_
+ 	raw_spin_unlock_irqrestore(&undef_lock, flags);
  }
  
-+/*
-+ * This can be called in the panic path with interrupts off, so use
-+ * mdelay in that case.
-+ */
- static ssize_t opal_nvram_write(char *buf, size_t count, loff_t *index)
+-static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
++static nokprobe_inline
++int call_undef_hook(struct pt_regs *regs, unsigned int instr)
  {
- 	s64 rc = OPAL_BUSY;
-@@ -57,10 +61,16 @@ static ssize_t opal_nvram_write(char *bu
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_write_nvram(__pa(buf), count, off);
- 		if (rc == OPAL_BUSY_EVENT) {
--			msleep(OPAL_BUSY_DELAY_MS);
-+			if (in_interrupt() || irqs_disabled())
-+				mdelay(OPAL_BUSY_DELAY_MS);
-+			else
-+				msleep(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
- 		} else if (rc == OPAL_BUSY) {
--			msleep(OPAL_BUSY_DELAY_MS);
-+			if (in_interrupt() || irqs_disabled())
-+				mdelay(OPAL_BUSY_DELAY_MS);
-+			else
-+				msleep(OPAL_BUSY_DELAY_MS);
- 		}
- 	}
+ 	struct undef_hook *hook;
+ 	unsigned long flags;
+@@ -468,6 +470,7 @@ die_sig:
  
+ 	arm_notify_die("Oops - undefined instruction", regs, &info, 0, 6);
+ }
++NOKPROBE_SYMBOL(do_undefinstr)
+ 
+ /*
+  * Handle FIQ similarly to NMI on x86 systems.
