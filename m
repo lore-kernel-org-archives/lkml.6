@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1817771-1527159887-2-2008451095933263004
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159885-2-11044920590027973855
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159886; b=Q45ZXKnEpkAvpCA87OTL4xJywocE2Z8pOrbVp1q+LvVsABzqlU
-    H33L76Hz/0Jkwktm845xP+6QcC0YIvVe/G9L3yS1mfkTwDUQ2/YRt+ZgAj2gFnds
-    22Lj4+yZ8sumDEdewlOZHJTbqwDVyhyOheWoV5jMnexWlT4/djNE86R25Qg/sY1Y
-    ygV8T2I9EZUZgzkk3Ol/PMMDPcqsFhXd22eh1ZM36E0ZdJr9fx+5rODi/CiKcaBi
-    Fr6GXy6260Yuwte7oZKbyxRAPw3RQBF2vtU10r4mUDjHOfSatW6vliSC5yXR2sc9
-    RhExq5NYO1nR1VXvt8dmHl+UAzxIm7ltHfjA==
+    1527159884; b=i0rfaw77aC3TjCIisCotIEUrti0bdFITL+00GzOnFF0XVi326/
+    pd/uWebi/QsDOS3UvXjPSJQs426nflIAdkqlLCodvaQ+14KMnVQ2oyGKlftUs65d
+    on5SAt4B5EqXqO5udvRnGNmwlQFspO3YwXk2oNoJjgUgMXZ/l2s6SFH6LcpXMA5d
+    gHErAIhOmRHAPrlVGqlb19HezYtQOc2tl53IVbifTgYP4RHf90wj9fcZ5X6dnhb5
+    gEeRyLvPc+9xb2tasDvdRYjwUhzmjVzJKdLZzuY7O9rjm4OmJS+svAoykONH2lxu
+    8YPhOqBymVsXokEJ58VP0OoytpRJnkA7vqqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159886; bh=e2+P9MOMT6hd9Lc4Xhju6idD4pKsII
-    5q99nU7GGGSNI=; b=Rca4OVm8bR6HFCzfowggKORfg4nrp3FgsLN1L4DBbGnAZD
-    mb8Va8jADOQh9jagntOIwj5Mkh5bTPK2WuJACAMvEA70WjuRvsW0qVB074f6Ilff
-    Q604OkigrTRZ4aLHSxV18gX8ARuPznJRxtqVAtWc1JUjnAeUA1offkvG+mwi3s+q
-    8a6HyyYaqWrPqhVUKxjv1vU33Ch1zS9/mhv3cmN7O7ClPHeEw/ro65+oRJWL96Sk
-    EIfnSCmuuZX4GiboAahV6LExU4u4HzpgB897S7JRKpAPzt3tl2Qh6wFyQLm+Ktj0
-    FS2Q0DmV87uxkDqe1dhjB+LbRPeZD5dc49HAVKlQ==
+    :list-id; s=fm2; t=1527159884; bh=DUUOGNzSUweyFgZp64VfNdfW/Is5x4
+    +sUj9/476A/QI=; b=CMRznL7g1HxJjWwBqah7Gh7VYdC85Oj/xxgQPU4n9qH80h
+    Ec43Zkc+fGhJwaU6CGYOne2I4X7J+DSErQD/ow7KCz1XI94aln3ovtjeJnBACfRt
+    6/1AmCBNZJpBgTR34PCJgaCrqV3Jjpd7tS6OCitJCT/gNHXtx+sxm6qZ9FDYcMqd
+    Nsf+qlQCqN3KhJRPmflZPCHDcSCd+Zfu/TO7US2H6s2xttEmzLpYsQNoo9GmUF6R
+    UKDsTc+NzgRQe+tPitRKK72mnYQNZ52xlVzCAh1QHAznB7eHempvMe6hwaj6Joh2
+    p6ljjUZZMV6XhLHkAxyM40JsJLrRyMLfDLe9ICUg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=T7jthiHd x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=dgMp9Zde x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=T7jthiHd x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=dgMp9Zde x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,32 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFIhk7PMW7Wxj0smF5qXARm7OWdeXfEKVDiijd6wGSaOAxjjOlz7EoaGLJpnIffvtw/UoKxy5/nIF6c7javGW8guhRxFfID7mcT1rZo0oyJbZCaXMeZQ
-    8sTrpcXjgrclfbUoSvt8kCi3NkLRgXtNLUEjysT1WmwYLRK5B5UjbflJdhAM9LzWLx4/hg/NIiXNAN6SnF83O30vvf/G5jE2Gmcgkqf7GN4pGgcx0jJIKax9
+X-CM-Envelope: MS4wfMco86mycpDFoafCvz8txbN8FTb5a7ZT/ypgd6riz5yino3sENteYutm4fWS5lIYwQkapZ9LhZEDcESF6oraLg804md+wKljOWGTbtHIBYqx03xhSBP4
+    H3X0E00rmSBhlRDAmcAbHXJGu4QKCQudv3YwLUi4qlzCcLPgPjUK6qr3+r/bASt52dh9L+PBq2s4aF0LZbo+p/3ImukvskeaMWRQU2a6dFbCCKPmktu0Ycpc
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=P-IC7800AAAA:8 a=FNyBlpCuAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=py21UxDLYLCECys3kJ0A:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
-    a=RlW-AWeGUCXs_Nkyno-6:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=zd2uoN0lAAAA:8 a=FNyBlpCuAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=T6WSELt1YKfGCVLqg8wA:9 a=QEXdDO2ut3YA:10 a=RlW-AWeGUCXs_Nkyno-6:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968067AbeEXLEp (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:04:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968351AbeEXJzY (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S968348AbeEXJzY (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:55:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35450 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968350AbeEXJzV (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
+        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 094/165] crypto: inside-secure - do not process request if no command was issued
-Date: Thu, 24 May 2018 11:38:20 +0200
-Message-Id: <20180524093625.824194216@linuxfoundation.org>
+Subject: [PATCH 4.14 093/165] crypto: ccp - dont disable interrupts while setting up debugfs
+Date: Thu, 24 May 2018 11:38:19 +0200
+Message-Id: <20180524093625.785791316@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,39 +107,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 95831ceafc0de7d94a5fe86ebb1c2042317cc2cd ]
+[ Upstream commit 79eb382b5e06a6dca5806465d7195d686a463ab0 ]
 
-This patch adds a check in the SafeXcel dequeue function, to avoid
-processing request further if no hardware command was issued. This can
-happen in certain cases where the ->send() function caches all the data
-that would have been send.
+I don't why we need take a single write lock and disable interrupts
+while setting up debugfs. This is what what happens when we try anyway:
 
-Fixes: 809778e02cd4 ("crypto: inside-secure - fix hash when length is a multiple of a block")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+|ccp 0000:03:00.2: enabling device (0000 -> 0002)
+|BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:69
+|in_atomic(): 1, irqs_disabled(): 1, pid: 3, name: kworker/0:0
+|irq event stamp: 17150
+|hardirqs last  enabled at (17149): [<0000000097a18c49>] restore_regs_and_return_to_kernel+0x0/0x23
+|hardirqs last disabled at (17150): [<000000000773b3a9>] _raw_write_lock_irqsave+0x1b/0x50
+|softirqs last  enabled at (17148): [<0000000064d56155>] __do_softirq+0x3b8/0x4c1
+|softirqs last disabled at (17125): [<0000000092633c18>] irq_exit+0xb1/0xc0
+|CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0-rc2+ #30
+|Workqueue: events work_for_cpu_fn
+|Call Trace:
+| dump_stack+0x7d/0xb6
+| ___might_sleep+0x1eb/0x250
+| down_write+0x17/0x60
+| start_creating+0x4c/0xe0
+| debugfs_create_dir+0x9/0x100
+| ccp5_debugfs_setup+0x191/0x1b0
+| ccp5_init+0x8a7/0x8c0
+| ccp_dev_init+0xb8/0xe0
+| sp_init+0x6c/0x90
+| sp_pci_probe+0x26e/0x590
+| local_pci_probe+0x3f/0x90
+| work_for_cpu_fn+0x11/0x20
+| process_one_work+0x1ff/0x650
+| worker_thread+0x1d4/0x3a0
+| kthread+0xfe/0x130
+| ret_from_fork+0x27/0x50
+
+If any locking is required, a simple mutex will do it.
+
+Cc: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Acked-by: Gary R Hook <gary.hook@amd.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/inside-secure/safexcel.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/crypto/ccp/ccp-debugfs.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -462,6 +462,15 @@ void safexcel_dequeue(struct safexcel_cr
- 		if (backlog)
- 			backlog->complete(backlog, -EINPROGRESS);
+--- a/drivers/crypto/ccp/ccp-debugfs.c
++++ b/drivers/crypto/ccp/ccp-debugfs.c
+@@ -278,7 +278,7 @@ static const struct file_operations ccp_
+ };
  
-+		/* In case the send() helper did not issue any command to push
-+		 * to the engine because the input data was cached, continue to
-+		 * dequeue other requests as this is valid and not an error.
-+		 */
-+		if (!commands && !results) {
-+			kfree(request);
-+			continue;
-+		}
-+
- 		spin_lock_bh(&priv->ring[ring].egress_lock);
- 		list_add_tail(&request->list, &priv->ring[ring].list);
- 		spin_unlock_bh(&priv->ring[ring].egress_lock);
+ static struct dentry *ccp_debugfs_dir;
+-static DEFINE_RWLOCK(ccp_debugfs_lock);
++static DEFINE_MUTEX(ccp_debugfs_lock);
+ 
+ #define	MAX_NAME_LEN	20
+ 
+@@ -290,16 +290,15 @@ void ccp5_debugfs_setup(struct ccp_devic
+ 	struct dentry *debugfs_stats;
+ 	struct dentry *debugfs_q_instance;
+ 	struct dentry *debugfs_q_stats;
+-	unsigned long flags;
+ 	int i;
+ 
+ 	if (!debugfs_initialized())
+ 		return;
+ 
+-	write_lock_irqsave(&ccp_debugfs_lock, flags);
++	mutex_lock(&ccp_debugfs_lock);
+ 	if (!ccp_debugfs_dir)
+ 		ccp_debugfs_dir = debugfs_create_dir(KBUILD_MODNAME, NULL);
+-	write_unlock_irqrestore(&ccp_debugfs_lock, flags);
++	mutex_unlock(&ccp_debugfs_lock);
+ 	if (!ccp_debugfs_dir)
+ 		return;
+ 
