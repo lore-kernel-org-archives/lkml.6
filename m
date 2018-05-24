@@ -1,61 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034114AbeEXRHE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:07:04 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:44406 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033609AbeEXRHB (ORCPT
+        id S1031124AbeEXRHx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:07:53 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41253 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031376AbeEXRHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:07:01 -0400
-X-Google-Smtp-Source: AB8JxZolcchuUbcN+kqVbFzeVCg0RGtb5triQ0XCEScLEyTL6a/b+Az+V6fim0hKSc7g+svqx2aie6IMOPwGNsC/QMY=
+        Thu, 24 May 2018 13:07:48 -0400
+X-Google-Smtp-Source: AB8JxZrGdE0CQ16zWsJ8K3JZ90L/ehL+riBUlCoDWdbWPHhvIwcMK6oyAsS3v2Me89JX4ttclQ1UIw==
+Date: Thu, 24 May 2018 10:07:44 -0700
+From: Moritz Fischer <mdf@kernel.org>
+To: Alan Tull <atull@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH 06/14] fpga: mgr: kernel-doc fixes
+Message-ID: <20180524170744.GC4051@archbook>
+References: <20180516235007.3951-1-atull@kernel.org>
+ <20180516235007.3951-7-atull@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180524080015.GA2866@infradead.org>
-References: <20180522191309.GA23615@infradead.org> <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
- <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk> <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
- <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk> <20180523142545.GA16248@infradead.org>
- <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk> <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
- <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk> <20180524080015.GA2866@infradead.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 24 May 2018 10:06:59 -0700
-X-Google-Sender-Auth: VmWqvy8w8DwTh_izJajC8PWytXU
-Message-ID: <CAGXu5j+pRUWgny+h5ToVQXBP8nANjreVhnXjk5TVgy84ufNsRg@mail.gmail.com>
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516235007.3951-7-atull@kernel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 1:00 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Wed, May 23, 2018 at 03:14:19PM -0600, Jens Axboe wrote:
->> Ugh, so that would necessitate a change there too. As I said before,
->> I don't really care where it lives. I know the SCSI folks seem bothered
->> by moving it, but in reality, it's not like this stuff will likely ever
->> really change. Of the two choices (select entire SCSI stack, or just move
->> this little bit), I know what I would consider the saner option...
->
-> Oh well.  How about something like this respin of Kees' series?
->
-> http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/sense-cleanup
-
-Does the CONFIG_PCMCIA in drivers/scsi/Makefile now get exposed in
-weird config cases?
-
-Otherwise, yeah, looks good to me. Thanks!
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+On Wed, May 16, 2018 at 06:49:59PM -0500, Alan Tull wrote:
+> Clean up the kernel-doc documentation in fpga-mgr.c and fix the
+> following warnings when documentation is built:
+> 
+> ./drivers/fpga/fpga-mgr.c:252: warning: Function parameter or member
+> 'info' not described in 'fpga_mgr_buf_load'
+> 
+> ./drivers/fpga/fpga-mgr.c:252: warning: Excess function parameter
+> 'flags' description in 'fpga_mgr_buf_load'
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+> ---
+>  drivers/fpga/fpga-mgr.c | 38 +++++++++++++++++++++++++++++---------
+>  1 file changed, 29 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+> index 151ac36..5fffeef 100644
+> --- a/drivers/fpga/fpga-mgr.c
+> +++ b/drivers/fpga/fpga-mgr.c
+> @@ -21,6 +21,12 @@
+>  static DEFINE_IDA(fpga_mgr_ida);
+>  static struct class *fpga_mgr_class;
+>  
+> +/**
+> + * fpga_image_info_alloc - Allocate a FPGA image info struct
+> + * @dev: owning device
+> + *
+> + * Return: struct fpga_image_info or NULL
+> + */
+>  struct fpga_image_info *fpga_image_info_alloc(struct device *dev)
+>  {
+>  	struct fpga_image_info *info;
+> @@ -39,6 +45,10 @@ struct fpga_image_info *fpga_image_info_alloc(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(fpga_image_info_alloc);
+>  
+> +/**
+> + * fpga_image_info_free - Free a FPGA image info struct
+> + * @info: FPGA image info struct to free
+> + */
+>  void fpga_image_info_free(struct fpga_image_info *info)
+>  {
+>  	struct device *dev;
+> @@ -223,7 +233,7 @@ static int fpga_mgr_buf_load_mapped(struct fpga_manager *mgr,
+>  /**
+>   * fpga_mgr_buf_load - load fpga from image in buffer
+>   * @mgr:	fpga manager
+> - * @flags:	flags setting fpga confuration modes
+> + * @info:	fpga image info
+>   * @buf:	buffer contain fpga image
+>   * @count:	byte count of buf
+>   *
+> @@ -332,6 +342,16 @@ static int fpga_mgr_firmware_load(struct fpga_manager *mgr,
+>  	return ret;
+>  }
+>  
+> +/**
+> + * fpga_mgr_load - load FPGA from scatter/gather table, buffer, or firmware
+> + * @mgr:	fpga manager
+> + * @info:	fpga image information.
+> + *
+> + * Load the FPGA from an image which is indicated in @info.  If successful, the
+> + * FPGA ends up in operating mode.
+> + *
+> + * Return: 0 on success, negative error code otherwise.
+> + */
+>  int fpga_mgr_load(struct fpga_manager *mgr, struct fpga_image_info *info)
+>  {
+>  	if (info->sgt)
+> @@ -418,11 +438,9 @@ static int fpga_mgr_dev_match(struct device *dev, const void *data)
+>  }
+>  
+>  /**
+> - * fpga_mgr_get - get a reference to a fpga mgr
+> + * fpga_mgr_get - Given a device, get a reference to a fpga mgr.
+>   * @dev:	parent device that fpga mgr was registered with
+>   *
+> - * Given a device, get a reference to a fpga mgr.
+> - *
+>   * Return: fpga manager struct or IS_ERR() condition containing error code.
+>   */
+>  struct fpga_manager *fpga_mgr_get(struct device *dev)
+> @@ -442,10 +460,9 @@ static int fpga_mgr_of_node_match(struct device *dev, const void *data)
+>  }
+>  
+>  /**
+> - * of_fpga_mgr_get - get a reference to a fpga mgr
+> - * @node:	device node
+> + * of_fpga_mgr_get - Given a device node, get a reference to a fpga mgr.
+>   *
+> - * Given a device node, get a reference to a fpga mgr.
+> + * @node:	device node
+>   *
+>   * Return: fpga manager struct or IS_ERR() condition containing error code.
+>   */
+> @@ -478,7 +495,10 @@ EXPORT_SYMBOL_GPL(fpga_mgr_put);
+>   * @mgr:	fpga manager
+>   *
+>   * Given a pointer to FPGA Manager (from fpga_mgr_get() or
+> - * of_fpga_mgr_put()) attempt to get the mutex.
+> + * of_fpga_mgr_put()) attempt to get the mutex. The user should call
+> + * fpga_mgr_lock() and verify that it returns 0 before attempting to
+> + * program the FPGA.  Likewise, the user should call fpga_mgr_unlock
+> + * when done programming the FPGA.
+>   *
+>   * Return: 0 for success or -EBUSY
+>   */
+> @@ -494,7 +514,7 @@ int fpga_mgr_lock(struct fpga_manager *mgr)
+>  EXPORT_SYMBOL_GPL(fpga_mgr_lock);
+>  
+>  /**
+> - * fpga_mgr_unlock - Unlock FPGA manager
+> + * fpga_mgr_unlock - Unlock FPGA manager after done programming
+>   * @mgr:	fpga manager
+>   */
+>  void fpga_mgr_unlock(struct fpga_manager *mgr)
+> -- 
+> 2.7.4
+> 
