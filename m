@@ -1,51 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161467AbeEXVjd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:39:33 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44659 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966304AbeEXVjb (ORCPT
+        id S971623AbeEXVky (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:40:54 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41489 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966227AbeEXVkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:39:31 -0400
-X-Google-Smtp-Source: AB8JxZpStD8SxqKIjJo9hDSGOPJwvrPfrcaC88znUmcl1fK37euDjSmkgmX1maEOT7t3NmTg/AXZzw==
-From: Jon Maxwell <jmaxwell37@gmail.com>
-To: davem@davemloft.net
-Cc: dsahern@gmail.com, mschiffer@universe-factory.net,
-        zhangshengju@cmss.chinamobile.com, ktkhai@virtuozzo.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmaxwell@redhat.com
-Subject: [PATCH net-next] ifb: fix packets checksum
-Date: Fri, 25 May 2018 07:38:29 +1000
-Message-Id: <20180524213829.15208-1-jmaxwell37@gmail.com>
-X-Mailer: git-send-email 2.13.6
+        Thu, 24 May 2018 17:40:52 -0400
+X-Google-Smtp-Source: AB8JxZpQlkCO8z7nzt7Ia/eDx9v12iSCsbOijXouMvxqG2LzJm9E/dCuMlu0tl/MTVMTAzCnZXmVnQ==
+Date: Thu, 24 May 2018 15:40:47 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 rdma-next 4/4] RDMA/hns: Fix the illegal memory
+ operation when cross page
+Message-ID: <20180524214047.GF3948@ziepe.ca>
+References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
+ <1527070590-94399-5-git-send-email-xavier.huwei@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527070590-94399-5-git-send-email-xavier.huwei@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixup the checksum for CHECKSUM_COMPLETE when pulling skbs on RX path. 
-Otherwise we get splats when tc mirred is used to redirect packets to ifb.
+On Wed, May 23, 2018 at 06:16:30PM +0800, Wei Hu (Xavier) wrote:
+> This patch fixed the potential illegal operation when using the
+> extend sge buffer cross page in post send operation. The bug
+> will cause the calltrace.
 
-Before fix:
+Should include the oops for reference here..
 
-nic: hw csum failure
+> Reported-by: Jie Chen <chenjie103@huawei.com>
+> Reported-by: Xiping Zhang (Francis) <zhangxiping3@huawei.com>
+> Fixes: b1c158350968("RDMA/hns: Get rid of virt_to_page and vmap calls after dma_alloc_coherent")
+> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+> 
+> v1->v2: Modify the Fixes statement according to Leon's comment.
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 70 +++++++++++++++++++++---------
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.h |  1 +
+>  2 files changed, 51 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> index a70d07b..62c1eb5 100644
+> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> @@ -52,6 +52,52 @@ static void set_data_seg_v2(struct hns_roce_v2_wqe_data_seg *dseg,
+>  	dseg->len  = cpu_to_le32(sg->length);
+>  }
+>  
+> +static void set_extend_sge(struct hns_roce_qp *qp, struct ib_send_wr *wr,
+> +			   unsigned int *sge_ind)
+> +{
+> +	struct hns_roce_v2_wqe_data_seg *dseg;
+> +	struct ib_sge *sg;
+> +	int num_in_wqe = 0;
+> +	int extend_sge_num;
+> +	int fi_sge_num;
+> +	int se_sge_num;
+> +	int shift;
+> +	int i;
+> +
+> +	if (qp->ibqp.qp_type == IB_QPT_RC || qp->ibqp.qp_type == IB_QPT_UC)
+> +		num_in_wqe = HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE;
+> +	extend_sge_num = wr->num_sge - num_in_wqe;
+> +	sg = wr->sg_list + num_in_wqe;
+> +	shift = qp->hr_buf.page_shift;
+> +
+> +	/*
+> +	 * Check whether wr->num_sge sges are in the same page. If not, we
+> +	 * should calculate how many sges in the first page and the second
+> +	 * page.
+> +	 */
+> +	dseg = get_send_extend_sge(qp, (*sge_ind) & (qp->sge.sge_cnt - 1));
+> +	fi_sge_num = (((((u64)dseg >> shift) + 1) << shift) - (u64)dseg) /
+> +		      sizeof(struct hns_roce_v2_wqe_data_seg);
 
-Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
----
- drivers/net/ifb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+desg is a pointer.. that u64 should be a uinptr_t
 
-diff --git a/drivers/net/ifb.c b/drivers/net/ifb.c
-index 5f2897ec0edc..d345c61d476c 100644
---- a/drivers/net/ifb.c
-+++ b/drivers/net/ifb.c
-@@ -102,7 +102,7 @@ static void ifb_ri_tasklet(unsigned long _txp)
- 		if (!skb->tc_from_ingress) {
- 			dev_queue_xmit(skb);
- 		} else {
--			skb_pull(skb, skb->mac_len);
-+			skb_pull_rcsum(skb, skb->mac_len);
- 			netif_receive_skb(skb);
- 		}
- 	}
--- 
-2.13.6
+And it is better written as
+
+  (round_up((uintptr_t)dseg, 1 << shift) - (uintptr)desg)/sizeof(struct hns_roce_v2_wqe_data_seg)
+
+if I got it right..
+
+Jason
