@@ -1,131 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935257AbeEXB0q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:26:46 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:48013 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935109AbeEXB0o (ORCPT
+        id S935298AbeEXB10 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:27:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35806 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935109AbeEXB1X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:26:44 -0400
-X-UUID: aac887fa17554ad0b86689d3af60da13-20180524
-Message-ID: <1527125197.6406.10.camel@mtksdaap41>
-Subject: Re: [PATCH v2 2/4] drm/mediatek: Add support for mediatek SOC MT2712
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date: Thu, 24 May 2018 09:26:37 +0800
-In-Reply-To: <1527067696.19074.28.camel@mtksdaap41>
-References: <20180523022517.12103-1-stu.hsieh@mediatek.com>
-         <20180523022517.12103-3-stu.hsieh@mediatek.com>
-         <1527053036.10410.18.camel@mtksdaap41>
-         <1527067696.19074.28.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+        Wed, 23 May 2018 21:27:23 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3] nvme-rdma: stop queue first before free it in config admin queue
+Date: Thu, 24 May 2018 09:27:38 +0800
+Message-Id: <1527125258-15825-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805240014
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+When any of cases after nvme_rdma_start_queue in
+nvme_rdma_configure_admin_queue fails, the ctrl->queues[0] will be
+freed but the NVME_RDMA_Q_LIVE is still set. If nvme_rdma_stop_queue
+is invoked, we will incur use-after-free which will cause memory
+corruption.
+BUG: KASAN: use-after-free in rdma_disconnect+0x1f/0xe0 [rdma_cm]
+Read of size 8 at addr ffff8801dc3969c0 by task kworker/u16:3/9304
 
-On Wed, 2018-05-23 at 17:28 +0800, Stu Hsieh wrote:
-> On Wed, 2018-05-23 at 13:23 +0800, CK Hu wrote:
-> > Hi, Stu:
-> > 
-> > I've some inline comment.
-> > 
-> > On Wed, 2018-05-23 at 10:25 +0800, Stu Hsieh wrote:
-> > > This patch add support for the Mediatek MT2712 DISP subsystem.
-> > > There are two OVL engine and three disp output in MT2712.
-> > > 
-> > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > > ---
-> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 50 +++++++++++++++++++++++++++--
-> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c |  8 +++--
-> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  7 ++--
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 47 +++++++++++++++++++++++++--
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.h      |  7 ++--
-> > >  5 files changed, 108 insertions(+), 11 deletions(-)
-> > > 
-> > > +#define MT2712_MUTEX_MOD_DISP_AAL0		BIT(20)
-> > > +#define MT2712_MUTEX_MOD_DISP_UFOE		BIT(22)
-> > > +#define MT2712_MUTEX_MOD_DISP_PWM0		BIT(23)
-> > > +#define MT2712_MUTEX_MOD_DISP_PWM1		BIT(24)
-> > > +#define MT2712_MUTEX_MOD_DISP_PWM2		BIT(10)
-> > > +#define MT2712_MUTEX_MOD_DISP_OD0		BIT(25)
-> > > +/* modules more than 32, add BIT(31) when using DISP_REG_MUTEX_MOD2 bit */
-> > > +#define MT2712_MUTEX_MOD2_DISP_AAL1		(BIT(1) | BIT(31))
-> > 
-> > I think a better definition is
-> > 
-> > #define MT2712_MUTEX_MOD2_DISP_AAL1		BIT(33)
-> > 
-> > when you need to access this register,
-> > 
-> > if (ddp->mutex_mod[id] < BIT(32)) {
-> > 	offset = DISP_REG_MUTEX_MOD(mutex->id);
-> > 	reg = readl_relaxed(ddp->regs + offset);
-> > 	reg |= ddp->mutex_mod[id];
-> > 	writel_relaxed(reg, ddp->regs + offset);
-> > } else {
-> > 	offset = DISP_REG_MUTEX_MOD2(mutex->id);
-> > 	reg = readl_relaxed(ddp->regs + offset);
-> > 	reg |= (ddp->mutex_mod[id] >> 32);
-> > 	writel_relaxed(reg, ddp->regs + offset);
-> > }
-> > 
-> > because DISP_REG_MUTEX_MOD BIT(31) could be used for some module.
-> 
-> This modification is workable, but result some build warning like
-> following:
-> 1. #define BIT(nr)   (1UL << (nr)) in include/linux/bitops.h
-> 2. [DDP_COMPONENT_AAL1] = MT2712_MUTEX_MOD2_DISP_AAL1,
->    => we need to modify the definition about "static const unsigned int
-> mt2712_mutex_mod"
-> 
+CPU: 3 PID: 9304 Comm: kworker/u16:3 Kdump: loaded Tainted: G        W         4.17.0-rc3+ #20
+Workqueue: nvme-delete-wq nvme_delete_ctrl_work
+Call Trace:
+ dump_stack+0x91/0xeb
+ print_address_description+0x6b/0x290
+ kasan_report+0x261/0x360
+ rdma_disconnect+0x1f/0xe0 [rdma_cm]
+ nvme_rdma_stop_queue+0x25/0x40 [nvme_rdma]
+ nvme_rdma_shutdown_ctrl+0xf3/0x150 [nvme_rdma]
+ nvme_delete_ctrl_work+0x98/0xe0
+ process_one_work+0x3ca/0xaa0
+ worker_thread+0x4e2/0x6c0
+ kthread+0x18d/0x1e0
+ ret_from_fork+0x24/0x30
 
-Currently, mutex_mod is a bitwise definition. I think it could be
-changed to index definition such as
+To fix it, call nvme_rdma_stop_queue for all the failed cases after
+nvme_rdma_start_queue.
+
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Suggested-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+---
+
+V3:
+add Suggested-by Sagi
+
+V2:
+based on Sagi's suggestion, add out_stop_queue lable and invoke
+nvme_rdma_stop_queue in all the failed cases after nvme_rdma_start_queue
 
 
-#define MT2712_MUTEX_MOD_DISP_PWM2		10
-#define MT2712_MUTEX_MOD_DISP_OD0		25
-#define MT2712_MUTEX_MOD2_DISP_AAL1		33
+ drivers/nvme/host/rdma.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-when you need to access this register,
-
-if (ddp->mutex_mod[id] < 32) {
-	offset = DISP_REG_MUTEX_MOD(mutex->id);
-	reg = readl_relaxed(ddp->regs + offset);
-	reg |= 1 << ddp->mutex_mod[id];
-	writel_relaxed(reg, ddp->regs + offset);
-} else {
-	offset = DISP_REG_MUTEX_MOD2(mutex->id);
-	reg = readl_relaxed(ddp->regs + offset);
-	reg |= 1 << (ddp->mutex_mod[id] - 32);
-	writel_relaxed(reg, ddp->regs + offset);
-}
-
-Regards,
-CK
-
-> > > +#define MT2712_MUTEX_MOD2_DISP_OD1		(BIT(2) | BIT(31))
-> > > +
-> > >  #define MT2701_MUTEX_MOD_DISP_OVL		BIT(3)
-> > >  #define MT2701_MUTEX_MOD_DISP_WDMA		BIT(6)
-> > >  #define MT2701_MUTEX_MOD_DISP_COLOR		BIT(7)
-> > > @@ -74,6 +96,7 @@
-> > >  
-> > >  
-> > 
-> > 
-> 
-> 
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index 1eb4438..2181299 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -778,7 +778,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
+ 	if (error) {
+ 		dev_err(ctrl->ctrl.device,
+ 			"prop_get NVME_REG_CAP failed\n");
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 	}
+ 
+ 	ctrl->ctrl.sqsize =
+@@ -786,23 +786,25 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
+ 
+ 	error = nvme_enable_ctrl(&ctrl->ctrl, ctrl->ctrl.cap);
+ 	if (error)
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 
+ 	ctrl->ctrl.max_hw_sectors =
+ 		(ctrl->max_fr_pages - 1) << (ilog2(SZ_4K) - 9);
+ 
+ 	error = nvme_init_identify(&ctrl->ctrl);
+ 	if (error)
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 
+ 	error = nvme_rdma_alloc_qe(ctrl->queues[0].device->dev,
+ 			&ctrl->async_event_sqe, sizeof(struct nvme_command),
+ 			DMA_TO_DEVICE);
+ 	if (error)
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 
+ 	return 0;
+ 
++out_stop_queue:
++	nvme_rdma_stop_queue(&ctrl->queues[0]);
+ out_cleanup_queue:
+ 	if (new)
+ 		blk_cleanup_queue(ctrl->ctrl.admin_q);
+-- 
+2.7.4
