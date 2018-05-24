@@ -1,69 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970237AbeEXN7J (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:59:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35346 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967113AbeEXN7C (ORCPT
+        id S969580AbeEXOAO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:00:14 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:36564 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965515AbeEXOAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:59:02 -0400
-Date: Thu, 24 May 2018 14:58:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Liam Girdwood <lgirdwood@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 08/13] ASoC: pxa: remove the dmaengine compat need
-Message-ID: <20180524135836.GR4828@sirena.org.uk>
-References: <20180524070703.11901-1-robert.jarzmik@free.fr>
- <20180524070703.11901-9-robert.jarzmik@free.fr>
+        Thu, 24 May 2018 10:00:13 -0400
+X-Google-Smtp-Source: AB8JxZpEho1l9EQle7La5SsE6iMAHoBmvgEnhtTpgWgF0SuzlFdKC33pQGWEp7BCU+kN0XZZitaNDA==
+Date: Thu, 24 May 2018 07:00:09 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jan Kara <jack@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH] bdi: Move cgroup bdi_writeback to a dedicated low
+ concurrency workqueue
+Message-ID: <20180524140009.GB1351649@devbig577.frc2.facebook.com>
+References: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
+ <20180524101900.m5vqd74rwaqw2pap@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="brdEIFGMNIjz5YJG"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180524070703.11901-9-robert.jarzmik@free.fr>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180524101900.m5vqd74rwaqw2pap@quack2.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello, Jan.
 
---brdEIFGMNIjz5YJG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, May 24, 2018 at 12:19:00PM +0200, Jan Kara wrote:
+> > We're periodically seeing close to 256 kworkers getting stuck with the
+> > following stack trace and overtime the entire system gets stuck.
+> 
+> OK, but that means that you have to have 256 block devices, don't you? As
 
-On Thu, May 24, 2018 at 09:06:58AM +0200, Robert Jarzmik wrote:
-> As the pxa architecture switched towards the dmaengine slave map, the
-> old compatibility mechanism to acquire the dma requestor line number and
-> priority are not needed anymore.
+It'd be a product of the number of cgroups being deleted at the same
+time and the number of block devices they were accessing.  With
+multiple loop devices and multiple cgroup removals, it doesn't seem
+too difficult to hit.  It's rare but we do see it happening repeatedly
+in one of the setups.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+> we have a bdi per device and we call synchronize_rcu_expedited() only when
+> unregistering bdi (and the corresponding request queue must be gone at that
+> point as well as that's otherwise holding a reference). Am I understanding
+> the situation correctly?
 
---brdEIFGMNIjz5YJG
-Content-Type: application/pgp-signature; name="signature.asc"
+Yeah, I think so.
 
------BEGIN PGP SIGNATURE-----
+> > We shouldn't be scheduling hundreds of cgwb_release_workfn() at the
+> > same time.  There's nothing to be gained from that.  This patch
+> > updates cgwb release path to use a dedicated percpu workqueue with
+> > @max_active of 1.
+> 
+> As Rik wrote, some paralelism is good to reduce number of forced grace
+> periods so raising this to 16 is good. I was thinking whether we could not
+> batch rcu grace periods in some explicit way but that would be difficult to
+> do.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGxQsACgkQJNaLcl1U
-h9AOOQf+ICndtAhAUcJYotu2F1wfe6zK/SmwQs2RaAzNMRnQTNmdgQDHaITOBSE0
-juDyVbEzdIjDwHmu3lB6bZ+mj3MDpGeJ1DPvvi6aI+pkDH/J16XMXXTchXyo3NI0
-db1lLlmXYiTbnsVGU2bO6hMCG588Us7ZyHzt2pxD0f9LqNzy3f617uD3fSQZSzrd
-a5JyJZMHQfoIhO58gKX7fQ+JVum/7BFb2S4eFv/DZPZsU9Gy96h0viVcyImmE+ri
-qS4cfZJlV/PC7m4GYIP8V23Dl6rj8wsh7YvKUUtat6tIqGRkZtHFEo6BCQedA3Ka
-+7F7zfmpLYaC8VeKI0Fp8fxfDYF0Jg==
-=gxiC
------END PGP SIGNATURE-----
+Agreed, already sent a patch to increase @max_active to 16.
 
---brdEIFGMNIjz5YJG--
+> But thinking a bit more about this, if we made bdi RCU freed, we could just
+> avoid the synchronize_rcu_expedited() in bdi_remove_from_list() altogether.
+> The uses of bdi list are pretty limited and everybody ends up testing
+> WB_registered bit before doing anything anyway... What do you think?
+>  
+> Other than that you can add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+
+Thanks.
+
+-- 
+tejun
