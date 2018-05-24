@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965138AbeEXHjw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:39:52 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39441 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965135AbeEXHjs (ORCPT
+        id S965149AbeEXHkf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:40:35 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35549 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965135AbeEXHkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:39:48 -0400
-X-Google-Smtp-Source: AB8JxZoYexhLk0A8cPukXjErASLmwm1cz326J2rErOcKbvqLmnUf0zBUiUKybKS/cRw6n/V8KB/b4G4Zt2GN9baU7M8=
+        Thu, 24 May 2018 03:40:33 -0400
+X-Google-Smtp-Source: AB8JxZpu3CjJsx3Eu90YOSTPiql9rF3GTtb1/zUdNKSoQ5STrYuJHfLx7EZAYhjMfj5SfBELeNngPpOTotRDl8V4mCQ=
 MIME-Version: 1.0
-In-Reply-To: <39738efefe94e3a4fb7668a27dd73ae49695dc3b.1526835466.git.sean.wang@mediatek.com>
-References: <cover.1526835466.git.sean.wang@mediatek.com> <39738efefe94e3a4fb7668a27dd73ae49695dc3b.1526835466.git.sean.wang@mediatek.com>
+In-Reply-To: <72462fb7aab16463a42066998ac3b4bf35ada416.1526835466.git.sean.wang@mediatek.com>
+References: <cover.1526835466.git.sean.wang@mediatek.com> <72462fb7aab16463a42066998ac3b4bf35ada416.1526835466.git.sean.wang@mediatek.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 24 May 2018 09:39:47 +0200
-Message-ID: <CACRpkdYFZLCMJCZ0csV2cU3zGq4c7R2O0PSLk7XiZsj=cyAK7A@mail.gmail.com>
-Subject: Re: [PATCH v1 4/7] pinctrl: mediatek: use generic EINT register maps
- for each SoC
+Date: Thu, 24 May 2018 09:40:31 +0200
+Message-ID: <CACRpkdYD-N7uLOZmYSKaTJpsa+8N3KStVRpKfR45j2OFveNveQ@mail.gmail.com>
+Subject: Re: [PATCH v1 5/7] pinctrl: mediatek: remove unused fields in struct mtk_eint_hw
 To: Sean Wang <sean.wang@mediatek.com>
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -35,10 +34,8 @@ On Sun, May 20, 2018 at 7:01 PM,  <sean.wang@mediatek.com> wrote:
 
 > From: Sean Wang <sean.wang@mediatek.com>
 >
-> So far, EINT on each SoC all used exactly identical register map and thus
-> it's better that we apply generic register map already supported in EINT
-> library and stop copy-n-pasting the same data block and filling into its
-> platform data.
+> The .name field has been not being used in existent code logic, so
+> it's better that we remove them all.
 >
 > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
