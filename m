@@ -1,97 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155639-2-16684214234330462829
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155638; b=dcjIF3L1MeIoUx5G/yLlMh143JTzo/oEgZbdWqxSiRjHHhhth5
-    1pSEQ/7cprvPMg7w4iP7v6gBoUVZeQiM+UEvoTIclb+jNgRTULRSTZNmSfyCjL4P
-    1fxgJC3V3ceCosdZH1AmLzhQ+MnPquLTj/xqatarCKkAPN1HpcVzYy2Lb2meZb8I
-    oiVOUDZaqy0TJvP1ShwoaWiRN+3e0CaotuL54bg4NnmwQ36yUC0wRPFbloXCuCSD
-    TtvpZeMlhS0XASaNK9PKmXOJw5FWerRtOlWiAPq8LlzPGIqXrWsoBQ9j47xWS/Q6
-    n9v4i3pJNSXag/9BB6uwBwyxaBx+CNyR4pRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155638; bh=kLzua9xBzZcbC+lhk8A/gHpcONU3h2
-    nil4HshN53Ki4=; b=NJiGm1VM8SUPeM1kKpIlD5B6YOAIvF/yyxyHdKm0KVF9Jd
-    JgoGLTVB1HRvSkQUau0ICjSxAZqQbbN/Q3RzDk9QOrN9CDyyIhWXwQ7gRdAkSPjN
-    euCVRnLrIU5Am3BSJdurApw83r5V3dS4ufS9gOgM8hOXrWm3G5rhTqjgnu8w+hau
-    5G40vJt3bHT3a0HuCzTAaW/9DddQxNbZMXvUAogk5LvyMzzAnIfwZy/yZhcKNLcl
-    MB6cx479jGa8YhoQUOS7cXgGDgISLS1Pwk7zH2bJXixCTLc2NXBRARDliFqR83nS
-    MGnLRJpSBs4U6+D4EVJvSSAWCXj/dVT1BiaVz4OA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=WmmD/0wX x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=WmmD/0wX x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH+GrbFRRLpjdw0wV4SGJfLT0jD6mpmRj4gEE1IkGYZo5aWiGLqVgT2k0rw81+F23ZY0KuY1YmaS8KNzs8mA1qxHiCVISGo3trxquww0q0YkdX/rZKyk
-    RSoUlvaA+N2iWxbnRG0XQDSgVLVtg0bxtP2pEElJOt/KxNJ6K0QFp1RcCBVL/CXITHj8M+ksPxPtXuV/k8eoQWWj9YGQvD7nycWZiJSqUt/E5QCj2sg9JV6Q
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=jIQo8A4GAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=X51Z8Hf4FAapsldMHMkA:9 a=QEXdDO2ut3YA:10 a=Lf5xNeLK5dgiOs8hzIjU:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968054AbeEXJxz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:53:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968088AbeEXJxv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:53:51 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqzQO4p7PLMVwr/1JvYJpx+s7lGOJ8xoJEKQKwMMxLZCTEcQoiOgu3mELJh7fdaiH8tRYDZ
+ARC-Seal: i=1; a=rsa-sha256; t=1527155639; cv=none;
+        d=google.com; s=arc-20160816;
+        b=F3UYQOwUkryFjAZdhpv3u13YtS13wGWDnDi3D0O+vLLrcMsL7YNPlRQBVCfTEIgqAd
+         nr2yGndGGoWE/P1GxwWwEA6TL8jw5ZugmhWH5MXuJDYZFCtznwutO2krIeJTROFGp2p/
+         GxmBud5i+KiKnCL4vwkr983z42B9tenxse84/nWQFMHhWJH9b2JMEsXAW+Kr+Zk3FhS4
+         SSMEtQIxuIGmPnP9nn8bbdVksryBqwTZ7tnCBHFzT3jGpcMjMM1CEWL5UYpQP4POLDIy
+         koYcfQD1mt18/eidFJF46VB6tNcliW/aKOLSZwS+XMXzyshuQdRpTfBNv1WOT0qnHCsh
+         BJoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=+adEIoncwfqtlDDu+bR8PuPfBstenlLq/QGJ+vAIZNg=;
+        b=EnxvUqvcPdWSWIxXJ94j1bRXBgeczYy0SFKr1GKiraLtsirD5W6MhUzUeB9YW34Azm
+         5yOReIGXa62T5qmSxCcMrieAmjkxdd1dMAuQ66bKIXhH8m9tsElunqCa8tT+rXVu/HdK
+         7vuy/AUAwPLB3vCb/twms77HKS2kbSnPOyuF6t87lCQqtuFKMLKmxuBUGJsgryB/tvLA
+         U4XE3HxqiXZzrH0JSdz7xOgZWHGmxL1W+dotSOJ9/9rY5uoTEajRTaQwaBiW88Szj6Vi
+         ZhYo5OHN3Gk9/PAk5ur4/Xj52l9ushwqKVjAy7JTLUjftit/qA/FhmxinMh0Us+1CdzA
+         uLwg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0g4AgEgv;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0g4AgEgv;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Youn <johnyoun@synopsys.com>,
-        Vardan Mikayelyan <mvardan@synopsys.com>,
-        Grigor Tovmasyan <tovmasya@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 059/165] usb: dwc2: Fix dwc2_hsotg_core_init_disconnected()
-Date: Thu, 24 May 2018 11:37:45 +0200
-Message-Id: <20180524093624.403719551@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 062/165] ARM: dts: imx7d-sdb: Fix regulator-usb-otg2-vbus node name
+Date: Thu, 24 May 2018 11:37:48 +0200
+Message-Id: <20180524093624.532661414@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -99,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338751390392814?=
+X-GMAIL-MSGID: =?utf-8?q?1601338751390392814?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -109,53 +53,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vardan Mikayelyan <mvardan@synopsys.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit 755d739534f998d92e348fba8ffb0478416576e7 ]
+[ Upstream commit 970656b3246d30955894951ed16bd658e42d8c24 ]
 
-We should call dwc2_hsotg_enqueue_setup() after properly
-setting lx_state. Because it may cause error-out from
-dwc2_hsotg_enqueue_setup() due to wrong value in lx_state.
+The two usb-otg regulators for imx7d-sdb are both called
+"regulator-usb-otg1-vbus" and they effectively override each other.
 
-Issue can be reproduced by loading driver while connected
-A-Connector (start in A-HOST mode) then disconnect A-Connector
-to switch to B-DEVICE.
+This is most likely a copy-paste error.
 
-Acked-by: John Youn <johnyoun@synopsys.com>
-Signed-off-by: Vardan Mikayelyan <mvardan@synopsys.com>
-Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: b877039aa1fe ("ARM: dts: imx7d-sdb: Adjust the regulator nodes")
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/gadget.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/imx7d-sdb.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -3414,12 +3414,6 @@ void dwc2_hsotg_core_init_disconnected(s
- 	dwc2_writel(dwc2_hsotg_ep0_mps(hsotg->eps_out[0]->ep.maxpacket) |
- 	       DXEPCTL_USBACTEP, hsotg->regs + DIEPCTL0);
+--- a/arch/arm/boot/dts/imx7d-sdb.dts
++++ b/arch/arm/boot/dts/imx7d-sdb.dts
+@@ -82,7 +82,7 @@
+ 		enable-active-high;
+ 	};
  
--	dwc2_hsotg_enqueue_setup(hsotg);
--
--	dev_dbg(hsotg->dev, "EP0: DIEPCTL0=0x%08x, DOEPCTL0=0x%08x\n",
--		dwc2_readl(hsotg->regs + DIEPCTL0),
--		dwc2_readl(hsotg->regs + DOEPCTL0));
--
- 	/* clear global NAKs */
- 	val = DCTL_CGOUTNAK | DCTL_CGNPINNAK;
- 	if (!is_usb_reset)
-@@ -3430,6 +3424,12 @@ void dwc2_hsotg_core_init_disconnected(s
- 	mdelay(3);
- 
- 	hsotg->lx_state = DWC2_L0;
-+
-+	dwc2_hsotg_enqueue_setup(hsotg);
-+
-+	dev_dbg(hsotg->dev, "EP0: DIEPCTL0=0x%08x, DOEPCTL0=0x%08x\n",
-+		dwc2_readl(hsotg->regs + DIEPCTL0),
-+		dwc2_readl(hsotg->regs + DOEPCTL0));
- }
- 
- static void dwc2_hsotg_core_disconnect(struct dwc2_hsotg *hsotg)
+-	reg_usb_otg2_vbus: regulator-usb-otg1-vbus {
++	reg_usb_otg2_vbus: regulator-usb-otg2-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb_otg2_vbus";
+ 		regulator-min-microvolt = <5000000>;
