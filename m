@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156395-2-14675378161470084242
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156388-2-12371559761266601972
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156394; b=e8Hh3h/3oBsT6rSpRz6udIswMQWfxW8BOCE6Jrn0DpUSY7NAj0
-    FTp2YccminTXtVfSoDbxrsElLynH7vOgK8W7NlBvO1DACBeRTXSWU7Bg1rc5BUDH
-    RKEM1BTmyy0YHQgvWuxrAnK92QanXp2U8RyMDRE+hvua4IkVBcPipXsungtNA7H+
-    IGydcHQhrwyhzQ/aqXQDLmwceybYvWDXc6mHI4RyQeLYym3WkeuOMBFof9dm+G25
-    qzNd7U8CaOi5EFtbSy1iEeeaFMl0bj7ZdiT/eUHqxizRt7ahOnZF6lG1MWHzb7K6
-    NPg2LIJEtEKXPCZu7lcZfqkWLDkQhdxuLz1w==
+    1527156387; b=E4A7/ahGNqyjwalCNVoW2NOBGAUaxaPoMZjFXBEz6f5yseXDjx
+    BXlmdBOnNpAI6D08+yHr1ZR4CILo6SVzp7nZw+p4GYa91FnJZdgvnAJvJ/Jxr8zP
+    K0CbTUl9qMmCG9LVHfZPUymAyNGMlOrotzsRV1oGSChv5oXF25v2UpLJPUa/5BVt
+    4/XjzOQXkmm/6GxP1cSQib2Li5xTfpssw6UZ3UT69nI6F6PaSkrydQ4uhnzpHiQr
+    A0SGWzkkDG2UjcopD+gmr9RgE31pHR8OyECTeY90Zsnk5k697VrXVdMxk+AMAU/3
+    Ssqq8xHtqrK9FLMwFHu6ice4YKuVMHcmBFxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156394; bh=dIT1LI0FnG8jeZ0km509YJpcqHM0tt
-    441VGrvVQkIGI=; b=EsZK+fK9Jf2qLjrK17ajjCXwwHbpmI5wVQiAKg+AO36oEZ
-    hjhzSVZRtwaU3rWvp6XTYukIpgVNaxIhbRE65Sp8OQGcjW2mLkHIybHQ1R2JFt+F
-    HQjWWuiAEbPGb8p0SE1Yj8vlQoz5RV9X58Y6VrUPKQTrwg0oFjDXCbCZ3YUFJlhR
-    JiEkky8xL4JmPANwl3bR0lxKPmemhFnJWs1yQ7iukWRUV8xND09Nt4zgukqhXCU8
-    wa3J5KtaujuAHc6jpG/T+Y8RLIW69VAgwTGooAslFM+QdfPw194yH2EU74C/ZdV8
-    R/5KD8dDgK1q4k5w+aeuY/eDz+4Gvy65yPzCwoEA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527156387; bh=riW6Epxj6DOS9Pqj+o1MFJbMdcx8Jd
+    9ckDtMUcv9Uf0=; b=DM6Kg1zmItM3AHkxZoAdSy/nNp1/Qm1Rdf4JsrnLhaWdtJ
+    jxIscplY59OqcvCP8EFba9EbX9z2auNoleTi/niXLQDm8DmghDOEUFyeCP/vBojr
+    UVppR1KX03aFrN1jEQUvv7V1G+VEUZbbmWDit2wgAT+WqkdjhscyHSQ3q6ubilYj
+    GfPxzMz98qGlB6ezkKvc4QNC9MyaKk7xZ7a7+7WdS018iboOxwWVzk6mG+QnKI8Q
+    j0kWoLxkdFPcy3BcTKX7lt3KdADkqHcyPBLAMyHZQ+dn6q9bOw2Bg1u+ucb4/hq+
+    uN9GPJbc4a3KbLORtTadcxbQEs54yb7h1wIIDedA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=U+RQT1hY x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=O6coU3ZE x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=U+RQT1hY x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=O6coU3ZE x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,34 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGEF3YKxRM3PDxQIrfYHIzNqzAQdiiQD3Byv8/fjcPFWudzoE5v4HmxxGZJ09p+Z4a62xKYQ1Tv7jxF7f09K4MFNUqq4wNz+/TmXWJ6TB3mHPq3F2GAH
-    fFU/Cx8F7ZqVCftmBcsWAnXwHKy3mkT0P3Wm6qRQuL3E0EppTCgNAJfvRdaUom0FU1VGde+1sVUF8dBRQo9msP6LODVyRL3p8hkATU9LbiD+7W6hD/I7G2fj
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCCD5ZlyOvcLckwZQANnYNLVna83BQsLyYUFUh81WQBvon+yiGjFizxUqYA90lo/kA7rQrG0dsAS5yROqhyFl1fjhe+pZEUVJFXSi87UZzdp/ZijWO10
+    STxlbWOpXL3yLka29KA8ayvPZjRINVAB7B0wGfe/lkBqQa6PE7YTwTuYCpt7joq/y+rxP17YOlVnBqF0rAP8MBayUvaFabBFbDbvihes1L2uQG0sODrrP+Us
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=vQBBkBfzAAAA:8 a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=pwKNJtFcxakrAafEM-oA:9 a=QEXdDO2ut3YA:10
-    a=NGXS0kB0m_rannUenejW:22 a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=P1BnusSwAAAA:8 a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=Vm4PyTQkU4XbjhRmH8IA:9 a=S4BvozYCWri5y0aB:21 a=7i-VzYy7KgjUr4U4:21
+    a=QEXdDO2ut3YA:10 a=D0XLA9XvdZm18NrgonBM:22 a=NGXS0kB0m_rannUenejW:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031695AbeEXKGb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:06:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55504 "EHLO mail.kernel.org"
+        id S1031710AbeEXKGX (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:06:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031724AbeEXKG3 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:06:29 -0400
+        id S1031705AbeEXKGS (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:06:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 134/161] media: ov5645: add missing of_node_put() in error path
-Date: Thu, 24 May 2018 11:39:19 +0200
-Message-Id: <20180524093034.408896200@linuxfoundation.org>
+Subject: [PATCH 4.16 140/161] media: v4l: vsp1: Fix display stalls when requesting too many inputs
+Date: Thu, 24 May 2018 11:39:25 +0200
+Message-Id: <20180524093035.126474183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -109,44 +109,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 06fe932307d58108a11c3e603517dd2a73a57b80 ]
+[ Upstream commit 5e3e4cb5e24b92773b194aa90066170b12133bc6 ]
 
-The device node obtained with of_graph_get_next_endpoint() should be
-released by calling of_node_put().  But it was not released when
-v4l2_fwnode_endpoint_parse() failed.
+Make sure we don't accept more inputs than the hardware can handle. This
+is a temporary fix to avoid display stall, we need to instead allocate
+the BRU or BRS to display pipelines dynamically based on the number of
+planes they each use.
 
-This change moves the of_node_put() call before the error check and
-fixes the issue.
-
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Todor Tomov <todor.tomov@linaro.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/ov5645.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -1131,13 +1131,14 @@ static int ov5645_probe(struct i2c_clien
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -530,6 +530,15 @@ void vsp1_du_atomic_flush(struct device
+ 		struct vsp1_rwpf *rpf = vsp1->rpf[i];
+ 		unsigned int j;
  
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint),
- 					 &ov5645->ep);
++		/*
++		 * Make sure we don't accept more inputs than the hardware can
++		 * handle. This is a temporary fix to avoid display stall, we
++		 * need to instead allocate the BRU or BRS to display pipelines
++		 * dynamically based on the number of planes they each use.
++		 */
++		if (pipe->num_inputs >= pipe->bru->source_pad)
++			pipe->inputs[i] = NULL;
 +
-+	of_node_put(endpoint);
-+
- 	if (ret < 0) {
- 		dev_err(dev, "parsing endpoint node failed\n");
- 		return ret;
- 	}
+ 		if (!pipe->inputs[i])
+ 			continue;
  
--	of_node_put(endpoint);
--
- 	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2) {
- 		dev_err(dev, "invalid bus type, must be CSI2\n");
- 		return -EINVAL;
