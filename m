@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164194-2-12516114089639468633
+X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164178-2-15319947144402554085
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164194; b=QiwRPWTXikpm3BS4loqJvOT2phYs/ETUDMEzaOvZdl0w7wOxcc
-    AL9b0My8e2BdZsgsdYRDQyWKfQUbiD4d+xuh5pxtzJNHmJieuSBuuAR7JEFitE+G
-    SwQ7eKH50g4RqcKSCv9e7GJ0y08AIF3n2FBOLLYAG1T8q7u5BinEPZFWWZ/m9tBh
-    oR/gWUj6t+CtDvmfCc6PX4rtY74AB1jGJ8Zb8+S9VT8804H161S+dStkAqyoZf/0
-    DFxSSBQOVWgCBHPSgcgPWHu1eNHPT39RBV/1bptE1kOTgl4zbD1x5NRsHT1o/Z1W
-    x2UB/ukL73oDXtcv7XWwjS6ShfzwO/o7SuZA==
+    1527164178; b=M9r670RwtlJcuPrc15KOwfQQf6PdbH0epmusqktBuL3nnPH+5C
+    jHJvD9Bk9nPRxcvpvI6kwdltB53HQ3WgQzbnJmIbL0EJWPk3A4kQweQDjIHru+ao
+    jGwtxI2ZnGOfrNPfUhaK4DsfKH/iyarYq0kyHY6wDtbWba+tycnOtDFsxguNWpUH
+    +OtHeYqhkxoARxnfARR5Ye6SRojkB3wMlA2K6hGSennSIA+qoEhZ7Aph5nFhlxug
+    eUfLPbf2zeAtBSG5/Aq2Jp/2urKZ6HXF/4OrEqSRA2A3OMRvrTvTayLNO9S0kTTn
+    tB1ZPjk+R03cGCww22MQ6L4Qv/HO5SlJrgEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164194; bh=j09sftvpOOAaCkgELEB0298E2Hwird
-    +MS/wPzeHaCB0=; b=AZPpyp8i9dPI9zN9ChDYXKTu3SGmEgMqUhrL3VknzeFBEz
-    xB4w5iVQSnx4TB9ujKqQU0H8qBl4SwJMXLW7RowzIGIOPeiSfgIBF36YUpk7AuDW
-    98wJZAEKqZHt7uQ6WPC0mRqssKlDnCsWXXjksIaqWBtQhxkriJoNfoRJWyzsnBzU
-    v4nJ8VyOQQdvw2TMVHCZcuK4aBqArQL5KQx3qi5qY3pgR/toslapXisyaqs1gIec
-    bafZh9jlefIsr+3QlEk2xhXa1YaQ26JwtfTT6qM7sBFsGVqfRMD7KU17IcPq4i22
-    W/AiUOnPChaEXXKwG0gNGoXdRMnGkPeqQ6MhY9UA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164178; bh=1+CVbk1q5c5SilvHFhaXTYZ6RtvrMY
+    lZHthwWd4ahqg=; b=XXuyZv8xxlrZBadO40K9yD+7NiDeGtY2D+j0rn0otRN98i
+    AgZgvVDrJlHtHlwyY/J7TwT90Gmp6MJhyEQJv/KkWoeVbesdx8o8Dt6MnKuGYNcy
+    RpSg0i+g7zePcUh1mACq1m0Af3CedqrEsHPBiLh27Gl7OcPd3TLTVLNhbwXyr43f
+    bweEZYsB8r88WvLyHkPc9aG1DJNCi5kb9YFU9d5VZoAwHAgTVvdZNEEtaPHaY9Lu
+    9s1Trk42SrN4NoGd18ZfbbZ7HUV1FczCjiNt4Nvut7vOhqYKgdz3HcGZsr6XfrZL
+    HhrG31pp9aKxXjFlVTCcCNbLAUoDGEFN4HYMXaIA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Ockp+oBo x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=xEQh53J4 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Ockp+oBo x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=xEQh53J4 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +65,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPHOwo+ia0QpoB74iEvg1BrfGBdTPbmK7CnFZWxOk933rMDJutCd90NAdPnRGt88UUq1QY4FndN88GlAVl8xSMsrK5t9okJ8NP5PlDiLa9Fc2wBc9rov
-    OsAg7eqKXkkKw9AFOgPfyn3LIGbhvx/VH3WU0ho84akUJ9+EhFcFKaVJz/8rp8QcaRfbWcD9UEEkCJMlYMMQqKO/Z6/drSmuRorH7TDBdKeUVOhLzsEswRgN
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOtJAtcwti/x+jBOzoj2Z2cLkNqF+juJ/K/s/mISjJIyTYjH5T+DH+w2LVngXmo75f3Ifp3yMR9A/fZZsKfkxAfRTgCy6MQ7wW8w7IQlhkxbpqy2rVsT
+    nfymCpcBORUdGbOm/7C1PcUZREwWo2Gkge6n6qxTqjjX+qum5PrTakFCrTSJya6YVYLFWHGUC1xkXj9iQ7IsK+IRAKE9LBp9wYszUKqIURB+feHd7GP1nKbw
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=FDWzJhBSr47RAHrKXxYA:9
-    a=m1orogXz6u1sxzPJ:21 a=XfC4L9z_rsF2_Xuf:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=PHq6YzTAAAAA:8 a=ag1SF4gXAAAA:8 a=Bm5lvbky7RdN8-YtJ6kA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=ZKzU8r6zoKMcqsNulkmm:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966288AbeEXMQR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:16:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53876 "EHLO mail.kernel.org"
+        id S966302AbeEXJmM (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:42:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966278AbeEXJmK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:10 -0400
+        id S965977AbeEXJmH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 38/45] net: test tailroom before appending to linear skb
-Date: Thu, 24 May 2018 11:38:46 +0200
-Message-Id: <20180524093125.654005307@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 3.18 37/45] ARM: 8772/1: kprobes: Prohibit kprobes on get_user functions
+Date: Thu, 24 May 2018 11:38:45 +0200
+Message-Id: <20180524093125.494745514@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -106,52 +106,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 113f99c3358564a0647d444c2ae34e8b1abfd5b9 ]
+commit 0d73c3f8e7f6ee2aab1bb350f60c180f5ae21a2c upstream.
 
-Device features may change during transmission. In particular with
-corking, a device may toggle scatter-gather in between allocating
-and writing to an skb.
+Since do_undefinstr() uses get_user to get the undefined
+instruction, it can be called before kprobes processes
+recursive check. This can cause an infinit recursive
+exception.
+Prohibit probing on get_user functions.
 
-Do not unconditionally assume that !NETIF_F_SG at write time implies
-that the same held at alloc time and thus the skb has sufficient
-tailroom.
-
-This issue predates git history.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 24ba613c9d6c ("ARM kprobes: core code")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_output.c  |    3 ++-
- net/ipv6/ip6_output.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1028,7 +1028,8 @@ alloc_new_skb:
- 		if (copy > length)
- 			copy = length;
+---
+ arch/arm/include/asm/assembler.h |   10 ++++++++++
+ arch/arm/lib/getuser.S           |   10 ++++++++++
+ 2 files changed, 20 insertions(+)
+
+--- a/arch/arm/include/asm/assembler.h
++++ b/arch/arm/include/asm/assembler.h
+@@ -448,4 +448,14 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
+ #endif
+ 	.endm
  
--		if (!(rt->dst.dev->features&NETIF_F_SG)) {
-+		if (!(rt->dst.dev->features&NETIF_F_SG) &&
-+		    skb_tailroom(skb) >= copy) {
- 			unsigned int off;
++#ifdef CONFIG_KPROBES
++#define _ASM_NOKPROBE(entry)				\
++	.pushsection "_kprobe_blacklist", "aw" ;	\
++	.balign 4 ;					\
++	.long entry;					\
++	.popsection
++#else
++#define _ASM_NOKPROBE(entry)
++#endif
++
+ #endif /* __ASM_ASSEMBLER_H__ */
+--- a/arch/arm/lib/getuser.S
++++ b/arch/arm/lib/getuser.S
+@@ -38,6 +38,7 @@ ENTRY(__get_user_1)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_1)
++_ASM_NOKPROBE(__get_user_1)
  
- 			off = skb->len;
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1462,7 +1462,8 @@ alloc_new_skb:
- 		if (copy > length)
- 			copy = length;
+ ENTRY(__get_user_2)
+ 	check_uaccess r0, 2, r1, r2, __get_user_bad
+@@ -58,6 +59,7 @@ rb	.req	r0
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_2)
++_ASM_NOKPROBE(__get_user_2)
  
--		if (!(rt->dst.dev->features&NETIF_F_SG)) {
-+		if (!(rt->dst.dev->features&NETIF_F_SG) &&
-+		    skb_tailroom(skb) >= copy) {
- 			unsigned int off;
+ ENTRY(__get_user_4)
+ 	check_uaccess r0, 4, r1, r2, __get_user_bad
+@@ -65,6 +67,7 @@ ENTRY(__get_user_4)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_4)
++_ASM_NOKPROBE(__get_user_4)
  
- 			off = skb->len;
+ ENTRY(__get_user_8)
+ 	check_uaccess r0, 8, r1, r2, __get_user_bad
+@@ -78,6 +81,7 @@ ENTRY(__get_user_8)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_8)
++_ASM_NOKPROBE(__get_user_8)
+ 
+ #ifdef __ARMEB__
+ ENTRY(__get_user_32t_8)
+@@ -91,6 +95,7 @@ ENTRY(__get_user_32t_8)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_32t_8)
++_ASM_NOKPROBE(__get_user_32t_8)
+ 
+ ENTRY(__get_user_64t_1)
+ 	check_uaccess r0, 1, r1, r2, __get_user_bad8
+@@ -98,6 +103,7 @@ ENTRY(__get_user_64t_1)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_64t_1)
++_ASM_NOKPROBE(__get_user_64t_1)
+ 
+ ENTRY(__get_user_64t_2)
+ 	check_uaccess r0, 2, r1, r2, __get_user_bad8
+@@ -114,6 +120,7 @@ rb	.req	r0
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_64t_2)
++_ASM_NOKPROBE(__get_user_64t_2)
+ 
+ ENTRY(__get_user_64t_4)
+ 	check_uaccess r0, 4, r1, r2, __get_user_bad8
+@@ -121,6 +128,7 @@ ENTRY(__get_user_64t_4)
+ 	mov	r0, #0
+ 	ret	lr
+ ENDPROC(__get_user_64t_4)
++_ASM_NOKPROBE(__get_user_64t_4)
+ #endif
+ 
+ __get_user_bad8:
+@@ -131,6 +139,8 @@ __get_user_bad:
+ 	ret	lr
+ ENDPROC(__get_user_bad)
+ ENDPROC(__get_user_bad8)
++_ASM_NOKPROBE(__get_user_bad)
++_ASM_NOKPROBE(__get_user_bad8)
+ 
+ .pushsection __ex_table, "a"
+ 	.long	1b, __get_user_bad
