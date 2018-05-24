@@ -1,28 +1,28 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpiI/GR/TGq2i1pV2OtQAj3yyf6DutEQbVyPtcoyWG+HtmOLlnbZ4et7jGpzVOsuV9ztWHb
-ARC-Seal: i=1; a=rsa-sha256; t=1527155663; cv=none;
+X-Google-Smtp-Source: AB8JxZqMblk1/iFTokL94JxBXV4hm3TlmujZYV5kvXCwwmB4ylrI11JgnbinQ4zJIxalC2NODgVD
+ARC-Seal: i=1; a=rsa-sha256; t=1527155661; cv=none;
         d=google.com; s=arc-20160816;
-        b=FJrXYTjH0k+ZLTSPHqt4JtIheajQ7yE026VqYlCuU/mKlCsrUFLpjVya6NF6Z+U6IQ
-         ywig6TTmaqnJo6xBVfa3OFCP9rxxdshQ/wFXwlFn9XCY+Hx21gC4Kz09ofE5jblUbCG0
-         h/uTekwzqqCG7btXD1nuKGPucYbsI3ZVWl3xjGY6cGPl4F8gtFadswdbgdFnb7ydyZVm
-         G03pnYARC8C/81ytcHNfb6+nr7ygwc3JpUIoWY1YUW7UUuqr0VORnbdhYeSwhLGKH1xk
-         x2JiuFBNzfr2Ave2NJllReKLaQCXIXdaXh11+mqCVaJ0XLZ923I9aupW59ZiZ2u5YUvm
-         pX/w==
+        b=mlh67oxyFYZkdbc7ycwhH9+AlH7/C+odnqe8zCwWziChkSfKwW3uJVJP+8lhd7KiVJ
+         dSZ7cZE1xxisWTBEBRQLFZejWOUhn9WkeehE3i2dQPm6AiF/9m/V+X3VArSerzigPao0
+         dgobYATCz1TRgtn7dEdK9nSmBfbe05P+hVtklpoL/oadYWxvXPNaS/mIz9tgL2aqMnAB
+         DxbXh0CY8k/NVhOgMEPT71O9tONA1p/4I6yFsANXsWaa5htv+4t3AXkxbCqwn4rVOMqI
+         lzHf4htEoYbO4oyj6QpbvW/I1GYGnqgXdf1r8u+QMno2o844fFFBwDydqtrYjhsX27ZX
+         yxQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=XXWlA3xJJpo5UUywVsJ92OqUVPh93WBhjN1+DXZcWfU=;
-        b=zsxOJfaSMlQb0jxeaa/rWA2YvZB2MwUd1vPCPVJGI/d+MYu13uL0/ZTPTy0/McgsPI
-         V+yDKfVBEcfuso0nb2Ygvam4GAtqr1oOWpFFKpUG2koyge6nYQsI0BMGfVpDBv5qH2iK
-         kZUdb2cwz25OGy+AuAn0cZTLgIx3ExGQrOQUIQ7OseNsFo8k2nkpTTQ8lLMQ5+z7Xjfh
-         I+MPybDRmIqlqDb0T2sL0FWhptg8gvTp6gynKAAd8QqrPYDIdiN6Go3NHQOm/tHBnqJx
-         D/WBNgSBODbpZcHR6/g74TPwdcnWWAgp6M5p+qIq8fDoiQTg50QqG7C5G1Lm/UKc0MMo
-         PRcA==
+        bh=nV+FYAuRN6N4olWyHeuHwKcVTdZKylrJQOgyqDB/R+g=;
+        b=HIpvXZlpx73PSH90vc7qtHrkLRtxabvLkGVilvwbK3tnoEjO7hCZniMxskXjbDVqjz
+         2SOqX6EqX5ku0O+CWQ1UdXdtyt83N0pqaLsPSupLWXxxGI4KLgp3TrKu7531nX6k+j0T
+         xdxLfFXaDuh6BBAtcr3zvrNnbCjsvw/qhiMHmjmy7U4NNl8BqDa5/UjmyQmNhdRp4Zub
+         L1qfAU4NyXA49A8tSX+X7aH58pxPUN6QFZFq4CMU/DY3aI9SsvgCL1u1HQuqhcYlLVYX
+         a/gQ/hGMTapuRmrLcmflAY4ryuUMV6Oc4SGSU9OFkBSTHJZLGza96YJHmQGzigCx8dD+
+         iDzg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=arQRMlis;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1AJoRn0w;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=arQRMlis;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1AJoRn0w;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thinh Nguyen <thinhn@synopsys.com>,
 	Felipe Balbi <felipe.balbi@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 070/165] usb: dwc3: Update DWC_usb31 GTXFIFOSIZ reg fields
-Date: Thu, 24 May 2018 11:37:56 +0200
-Message-Id: <20180524093624.848187934@linuxfoundation.org>
+Subject: [PATCH 4.14 069/165] usb: dwc3: Add SoftReset PHY synchonization delay
+Date: Thu, 24 May 2018 11:37:55 +0200
+Message-Id: <20180524093624.811696897@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338397422467721?=
-X-GMAIL-MSGID: =?utf-8?q?1601338777342701995?=
+X-GMAIL-THRID: =?utf-8?q?1601338394714654901?=
+X-GMAIL-MSGID: =?utf-8?q?1601338774707657530?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,36 +54,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-[ Upstream commit 0cab8d26d6e5e053b2bed3356992aaa71dc93628 ]
+[ Upstream commit fab3833338779e1e668bd58d1f76d601657304b8 ]
 
-Update two GTXFIFOSIZ bit fields for the DWC_usb31 controller. TXFDEP
-is a 15-bit value instead of 16-bit value, and bit 15 is TXFRAMNUM.
-
-The GTXFIFOSIZ register for DWC_usb31 is as follows:
- +-------+-----------+----------------------------------+
- | BITS  | Name      | Description                      |
- +=======+===========+==================================+
- | 31:16 | TXFSTADDR | Transmit FIFOn RAM Start Address |
- | 15    | TXFRAMNUM | Asynchronous/Periodic TXFIFO     |
- | 14:0  | TXFDEP    | TXFIFO Depth                     |
- +-------+-----------+----------------------------------+
+>From DWC_usb31 programming guide section 1.3.2, once DWC3_DCTL_CSFTRST
+bit is cleared, we must wait at least 50ms before accessing the PHY
+domain (synchronization delay).
 
 Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/core.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/dwc3/core.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -249,6 +249,8 @@
- #define DWC3_GUSB3PIPECTL_TX_DEEPH(n)	((n) << 1)
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -243,7 +243,7 @@ static int dwc3_core_soft_reset(struct d
+ 	do {
+ 		reg = dwc3_readl(dwc->regs, DWC3_DCTL);
+ 		if (!(reg & DWC3_DCTL_CSFTRST))
+-			return 0;
++			goto done;
  
- /* Global TX Fifo Size Register */
-+#define DWC31_GTXFIFOSIZ_TXFRAMNUM	BIT(15)		/* DWC_usb31 only */
-+#define DWC31_GTXFIFOSIZ_TXFDEF(n)	((n) & 0x7fff)	/* DWC_usb31 only */
- #define DWC3_GTXFIFOSIZ_TXFDEF(n)	((n) & 0xffff)
- #define DWC3_GTXFIFOSIZ_TXFSTADDR(n)	((n) & 0xffff0000)
+ 		udelay(1);
+ 	} while (--retries);
+@@ -252,6 +252,17 @@ static int dwc3_core_soft_reset(struct d
+ 	phy_exit(dwc->usb2_generic_phy);
  
+ 	return -ETIMEDOUT;
++
++done:
++	/*
++	 * For DWC_usb31 controller, once DWC3_DCTL_CSFTRST bit is cleared,
++	 * we must wait at least 50ms before accessing the PHY domain
++	 * (synchronization delay). DWC_usb31 programming guide section 1.3.2.
++	 */
++	if (dwc3_is_usb31(dwc))
++		msleep(50);
++
++	return 0;
+ }
+ 
+ /*
