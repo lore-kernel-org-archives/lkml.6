@@ -1,122 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965448AbeEXIoG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:44:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44483 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965007AbeEXIoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:44:03 -0400
-Date: Thu, 24 May 2018 10:43:51 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 05/15] drm/sun4i: Add TCON TOP driver
-Message-ID: <20180524084351.x4ugbbsz3mqv6fh7@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
- <20180519183127.2718-6-jernej.skrabec@siol.net>
- <20180521080517.3qmlfajqpn4uw7jv@flea>
- <5965231.6ucpJrPIQ5@jernej-laptop>
+        id S965493AbeEXIo0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:44:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38312 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965042AbeEXIoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:44:20 -0400
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jia He <hejianet@gmail.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+ <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+ <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+ <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
+Message-ID: <6c417ab1-a808-72ea-9618-3d76ec203684@arm.com>
+Date: Thu, 24 May 2018 09:44:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kvr5sekewcbcwxr4"
-Content-Disposition: inline
-In-Reply-To: <5965231.6ucpJrPIQ5@jernej-laptop>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14/05/18 10:45, Suzuki K Poulose wrote:
+> On 10/05/18 00:31, Andrew Morton wrote:
+>> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
+>>
+>>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
+>>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
+>>> and run memhog in the host).
+>>>
+>>> ...
+>>>
+>>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+>>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+>>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+>>>
+>>> This patch fixes it by ignoring(not removing) the low bits of address when
+>>> doing rmap_walk_ksm.
+>>>
+>>> Signed-off-by: jia.he@hxt-semitech.com
+>>
+>> I assumed you wanted this patch to be committed as
+>> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
+>> made that change.  Please let me know if this was inappropriate.
+>>
+>> You can do this yourself by adding an explicit From: line to the very
+>> start of the patch's email text.
+>>
+>> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
+>> misbehaviour which this bug causes?  Do you think the fix should be
+>> backported into earlier kernels?
+>>
 
---kvr5sekewcbcwxr4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Jia, Andrew,
 
-On Mon, May 21, 2018 at 05:15:15PM +0200, Jernej =C5=A0krabec wrote:
-> > > +	/*
-> > > +	 * Default register values might have some reserved bits set, which
-> > > +	 * prevents TCON TOP from working properly. Set them to 0 here.
-> > > +	 */
-> > > +	writel(0, tcon_top->regs + TCON_TOP_PORT_SEL_REG);
-> > > +	writel(0, tcon_top->regs + TCON_TOP_GATE_SRC_REG);
-> > > +
-> > > +	for (i =3D 0; i < CLK_NUM; i++) {
-> > > +		const char *parent_name =3D "bus-tcon-top";
-> >=20
-> > I guess retrieving the parent's clock name at runtime would be more
-> > flexible.
->=20
-> It is, but will it ever be anything else?
+What is the status of this patch ?
 
-Probably not, but when the complexity is exactly the same (using
-__clk_get_name), we'd better use the more appropriate solution. If we
-ever need to change that clock name, or to use the driver with an SoC
-that wouldn't have the same clock name for whatever reason, it will
-just work.
+Suzuki
 
-> > > +		struct clk_init_data init;
-> > > +		struct clk_gate *gate;
-> > > +
-> > > +		gate =3D devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-> > > +		if (!gate) {
-> > > +			ret =3D -ENOMEM;
-> > > +			goto err_disable_clock;
-> > > +		}
-> > > +
-> > > +		init.name =3D gates[i].name;
-> > > +		init.ops =3D &clk_gate_ops;
-> > > +		init.flags =3D CLK_IS_BASIC;
-> > > +		init.parent_names =3D &parent_name;
-> > > +		init.num_parents =3D 1;
-> > > +
-> > > +		gate->reg =3D tcon_top->regs + TCON_TOP_GATE_SRC_REG;
-> > > +		gate->bit_idx =3D gates[i].bit;
-> > > +		gate->lock =3D &tcon_top->reg_lock;
-> > > +		gate->hw.init =3D &init;
-> > > +
-> > > +		ret =3D devm_clk_hw_register(dev, &gate->hw);
-> > > +		if (ret)
-> > > +			goto err_disable_clock;
-> >=20
-> > Isn't it what clk_hw_register_gate is doing?
->=20
-> Almost, but not exactly. My goal was to use devm_* functions, so there is=
- no=20
-> need to do any special cleanup.
-
-Is it the only difference? If so, you can just create a
-devm_clk_hw_register gate.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kvr5sekewcbcwxr4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsGe0YACgkQ0rTAlCFN
-r3SvMRAAintWbKcM2W88tuLS7//ZtN3s+bLHkyZKOlgtObyic0uHw767yRdiY6Ye
-Z2hiqBp6oLDCjVmsHbF1OrhLnsvpPngyjf4WUWhvXb0zfipjYJOCuFnX0p21C0/A
-kfcryXXpsoALkLeKWpY1fJx86wUYhNGvnIwJDe8YSRPtyLNRkEHVT9YXixw4EN5L
-uyyE2fh9uhGW89sFrBX43ZtB84SNxTspDr1wdRc8mYBwmtgWrJo5U7dR9/pTTAk8
-zleDd63x0vETbqwcCfWQIUGTfsjhhfKpcIqAbctrmtGjeBm9tyOtDLNj3D2WBbQU
-AhQrRZd6m+fL02N5lAFQDtd+9Nlz3j51UxJGw4Ii65BiQJpxsNEdLXdcbBGbJdr8
-lsiENAbm8Qs8atFSkLJ7kiP6qUnZ+DQL+LqIn5aNM2HvGy6pqMEqAlqzq14aVlq9
-T9PbqhFnKEEFuK1W5IzNS4q3mN9Iri0lvk2MlCceAoO/whYVQ5B+gXT8gQd3q/UL
-c0oprMYZFUgkLYw8bPdhFdSfeqeeM00aIaLwNuWInlUxHVWQ/poASf5CGmOAVtQe
-+3hZ29jSVmWEPSVA6LbLknVaTzw4++bJoDqbXilelPD4zz6fBIqnwqLqRot6hwqs
-FxwtTql2d4M8Sdeto79m44fhXnU8NVQWRwGmvtGHwziF/nCXR/M=
-=Z5mI
------END PGP SIGNATURE-----
-
---kvr5sekewcbcwxr4--
+> 
+> I think its just not the WARN_ON(). We do more than what is probably
+> intended with an unaligned address. i.e, We could be modifying the
+> flags for other pages that were not affected.
+> 
+> e.g :
+> 
+> In the original report [0], the trace looked like :
+> 
+> 
+> [  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
+> [  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
+> [  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
+> [  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
+> [  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
+> [  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
+> [  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
+> [  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
+> [  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
+> [  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
+> [  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
+> [  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
+> [  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
+> [  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
+> [  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
+> [  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
+> [  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
+> [  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
+> [  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
+> [  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
+> [  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
+> [  800.633066] ---[ end trace 944c130b5252fb01 ]---
+> 
+> Now, the ksm wants to mark *a page* as referenced via page_referenced_one(),
+> passing it an unaligned address. This could eventually turn out to be
+> one of :
+> 
+> ptep_clear_flush_young_notify(address, address + PAGE_SIZE)
+> 
+> or
+> 
+> pmdp_clear_flush_young_notify(address, address + PMD_SIZE)
+> 
+> which now spans two pages/pmds and the notifier consumer might
+> take an action on the second page as well, which is not something
+> intended. So, I do think that old behavior is wrong and has other
+> side effects as mentioned above.
+> 
+> [0] https://lkml.kernel.org/r/1525244911-5519-1-git-send-email-hejianet@gmail.com
+> 
+> Suzuki
