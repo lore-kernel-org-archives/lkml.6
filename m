@@ -1,79 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935806AbeEXWhH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 18:37:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39448 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755191AbeEXWhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 18:37:06 -0400
-Date: Thu, 24 May 2018 15:38:39 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        id S935848AbeEXWlC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 18:41:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935813AbeEXWlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 18:41:00 -0400
+Date: Thu, 24 May 2018 18:40:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
         Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
         kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 1/4] rcu: Speed up calling of RCU tasks callbacks
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180523063815.198302-1-joel@joelfernandes.org>
- <20180523063815.198302-2-joel@joelfernandes.org>
- <20180523155734.GK3803@linux.vnet.ibm.com>
- <20180523124531.7b0e972a@gandalf.local.home>
- <20180523170303.GR3803@linux.vnet.ibm.com>
- <20180523151337.469bba34@gandalf.local.home>
- <20180523200458.GD3803@linux.vnet.ibm.com>
- <20180524174752.0928d562@gandalf.local.home>
+Subject: [PATCH v3] rcu: Speed up calling of RCU tasks callbacks
+Message-ID: <20180524184057.10d32568@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524174752.0928d562@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052422-0056-0000-0000-00000454A45E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009065; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036001; UDB=6.00529949; IPR=6.00815130;
- MB=3.00021234; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-24 22:37:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052422-0057-0000-0000-00000898C1D6
-Message-Id: <20180524223839.GU3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805240255
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 05:47:52PM -0400, Steven Rostedt wrote:
-> On Wed, 23 May 2018 13:04:58 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > Looks plausible to me!
-> > 
-> 
-> BTW looking at the code:
-> 
-> > 		/* Invoke the callbacks. */
-> > 		while (list) {
-> > 			next = list->next;
-> > 			local_bh_disable();
-> > 			list->func(list);
-> > 			local_bh_enable();
-> > 			list = next;
-> > 			cond_resched();
-> > 		}
-> > 		schedule_timeout_uninterruptible(HZ/10);
-> 
-> What's the purpose of this final sleep?
 
-To avoid any possibility of rcu_tasks_kthread() getting into a tight loop.
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-							Thanx, Paul
+Joel Fernandes found that the synchronize_rcu_tasks() was taking a
+significant amount of time. He demonstrated it with the following test:
+
+ # cd /sys/kernel/tracing
+ # while [ 1 ]; do x=1; done &
+ # echo '__schedule_bug:traceon' > set_ftrace_filter
+ # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+
+real	0m1.064s
+user	0m0.000s
+sys	0m0.004s
+
+Where it takes a little over a second to perform the synchronize,
+because there's a loop that waits 1 second at a time for tasks to get
+through their quiescent points when there's a task that must be waited
+for.
+
+After discussion we came up with a simple way to wait for holdouts but
+increase the time for each iteration of the loop but no more than a
+full second.
+
+I also noticed that there's a final HZ/10 wait at the end of the loop
+for no apparent reason (at least there's nothing documenting why
+there's a sleep), so I removed that as well.
+
+With the new patch we have:
+
+ # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+
+real	0m0.124s
+user	0m0.000s
+sys	0m0.004s
+
+Which drops it down to 12% of what the original wait time was.
+
+Link: http://lkml.kernel.org/r/20180523063815.198302-2-joel@joelfernandes.org
+Reported-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Suggested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 68fa19a5e7bd..0f6091097abc 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -715,6 +715,7 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 	struct rcu_head *list;
+ 	struct rcu_head *next;
+ 	LIST_HEAD(rcu_tasks_holdouts);
++	int fract;
+ 
+ 	/* Run on housekeeping CPUs by default.  Sysadm can move if desired. */
+ 	housekeeping_affine(current, HK_FLAG_RCU);
+@@ -796,13 +797,25 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 		 * holdouts.  When the list is empty, we are done.
+ 		 */
+ 		lastreport = jiffies;
+-		while (!list_empty(&rcu_tasks_holdouts)) {
++
++		/* Start off with HZ/10 wait and slowly back off to 1 HZ wait*/
++		fract = 10;
++
++		for (;;) {
+ 			bool firstreport;
+ 			bool needreport;
+ 			int rtst;
+ 			struct task_struct *t1;
+ 
+-			schedule_timeout_interruptible(HZ);
++			if (list_empty(&rcu_tasks_holdouts))
++				break;
++
++			/* Slowly back off waiting for holdouts */
++			schedule_timeout_interruptible(HZ/fract);
++
++			if (fract > 1)
++				fract--;
++
+ 			rtst = READ_ONCE(rcu_task_stall_timeout);
+ 			needreport = rtst > 0 &&
+ 				     time_after(jiffies, lastreport + rtst);
+@@ -848,7 +861,6 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 			list = next;
+ 			cond_resched();
+ 		}
+-		schedule_timeout_uninterruptible(HZ/10);
+ 	}
+ }
+ 
