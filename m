@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965602AbeEXIzM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:55:12 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42038 "EHLO
+        id S965636AbeEXIzY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:55:24 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44763 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965007AbeEXIzH (ORCPT
+        with ESMTP id S965604AbeEXIzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:55:07 -0400
-X-Google-Smtp-Source: AB8JxZobODmWmgvNPYYs5mUOIH0Ap7D95KrpIxeyZFh+sdqsPf1C/pJTcJUgdNi8vXhSlu+l1a2jRA==
+        Thu, 24 May 2018 04:55:13 -0400
+X-Google-Smtp-Source: AB8JxZrO5gyqJolhdVL79kWBzDwCDYyv3E5oafLv8zp/MoLKB3M7TOi5xlSF/WDXROHTFUyY6VhVVw==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -17,91 +17,134 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         eballetbo@gmail.com
-Subject: [PATCH v5 0/6] Add ChromeOS EC CEC Support
-Date: Thu, 24 May 2018 10:54:55 +0200
-Message-Id: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH v5 4/6] mfd: cros-ec: Introduce CEC commands and events definitions.
+Date: Thu, 24 May 2018 10:54:59 +0200
+Message-Id: <1527152101-17278-5-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
+References: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+The EC can expose a CEC bus, this patch adds the CEC related definitions
+needed by the cros-ec-cec driver.
 
-The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
-through it's Embedded Controller, to enable the Linux CEC Core to communicate
-with it and get the CEC Physical Address from the correct HDMI Connector, the
-following must be added/changed:
-- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
-- Add the CEC related commands and events definitions into the EC MFD driver
-- Add a way to get a CEC notifier with it's (optional) connector name
-- Add the CEC notifier to the i915 HDMI driver
-- Add the proper ChromeOS EC CEC Driver
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+ include/linux/mfd/cros_ec_commands.h | 85 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-The CEC notifier with the connector name is the tricky point, since even on
-Device-Tree platforms, there is no way to distinguish between multiple HDMI
-connectors from the same DRM driver. The solution I implemented is pretty
-simple and only adds an optional connector name to eventually distinguish
-an HDMI connector notifier from another if they share the same device.
-
-Feel free to comment this patchset !
-
-Changes since v4:
- - Split patch 3 to move the mkbp event size change into a separate patch
-
-Changes since v3 (incorrectly reported as v2):
- - Renamed "Chrome OS" to "ChromeOS"
- - Updated cros_ec_commands.h new structs definitions to kernel doc format
- - Added Reviwed-By tags
-
-Changes since v2:
- - Add i915 port_identifier() and use this stable name as cec_notifier conn name
- - Fixed and cleaned up the CEC commands and events handling
- - Rebased the CEC sub-device registration on top of Enric's serie
- - Fixed comments typo on cec driver
- - Protected the DMI match only with PCI and DMI Kconfigs
-
-Changes since v1:
- - Added cec_notifier_put to intel_hdmi
- - Fixed all small reported issues on the EC CEC driver
- - Moved the cec_notifier_get out of the #if .. #else .. #endif
-
-Changes since RFC:
- - Moved CEC sub-device registration after CEC commands and events definitions patch
- - Removed get_notifier_get_byname
- - Added CEC_CORE select into i915 Kconfig
- - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
- - Fixed CEC core return type on error
- - Moved to cros-ec-cec media platform directory
- - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
- - Fix Logical Address setup
- - Added comment about HW support
- - Removed memset of msg structures
-
-Neil Armstrong (6):
-  media: cec-notifier: Get notifier by device and connector name
-  drm/i915: hdmi: add CEC notifier to intel_hdmi
-  mfd: cros-ec: Increase maximum mkbp event size
-  mfd: cros-ec: Introduce CEC commands and events definitions.
-  mfd: cros_ec_dev: Add CEC sub-device registration
-  media: platform: Add ChromeOS EC CEC driver
-
- drivers/gpu/drm/i915/Kconfig                     |   1 +
- drivers/gpu/drm/i915/intel_display.h             |  20 ++
- drivers/gpu/drm/i915/intel_drv.h                 |   2 +
- drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
- drivers/media/cec/cec-notifier.c                 |  11 +-
- drivers/media/platform/Kconfig                   |  11 +
- drivers/media/platform/Makefile                  |   2 +
- drivers/media/platform/cros-ec-cec/Makefile      |   1 +
- drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
- drivers/mfd/cros_ec_dev.c                        |  16 ++
- drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
- include/linux/mfd/cros_ec.h                      |   2 +-
- include/linux/mfd/cros_ec_commands.h             | 104 +++++++
- include/media/cec-notifier.h                     |  27 +-
- 14 files changed, 581 insertions(+), 16 deletions(-)
- create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
- create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index cc0768e..ea9646f 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -804,6 +804,8 @@ enum ec_feature_code {
+ 	EC_FEATURE_MOTION_SENSE_FIFO = 24,
+ 	/* EC has RTC feature that can be controlled by host commands */
+ 	EC_FEATURE_RTC = 27,
++	/* EC supports CEC commands */
++	EC_FEATURE_CEC = 35,
+ };
+ 
+ #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
+@@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
+ 	/* EC sent a sysrq command */
+ 	EC_MKBP_EVENT_SYSRQ = 6,
+ 
++	/* Notify the AP that something happened on CEC */
++	EC_MKBP_CEC_EVENT = 8,
++
++	/* Send an incoming CEC message to the AP */
++	EC_MKBP_EVENT_CEC_MESSAGE = 9,
++
+ 	/* Number of MKBP events */
+ 	EC_MKBP_EVENT_COUNT,
+ };
+@@ -2850,6 +2858,83 @@ struct ec_params_reboot_ec {
+ 
+ /*****************************************************************************/
+ /*
++ * HDMI CEC commands
++ *
++ * These commands are for sending and receiving message via HDMI CEC
++ */
++#define MAX_CEC_MSG_LEN 16
++
++/* CEC message from the AP to be written on the CEC bus */
++#define EC_CMD_CEC_WRITE_MSG 0x00B8
++
++/**
++ * struct ec_params_cec_write - Message to write to the CEC bus
++ * @msg: message content to write to the CEC bus
++ */
++struct ec_params_cec_write {
++	uint8_t msg[MAX_CEC_MSG_LEN];
++} __packed;
++
++/* Set various CEC parameters */
++#define EC_CMD_CEC_SET 0x00BA
++
++/**
++ * struct ec_params_cec_set - CEC parameters set
++ * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
++ * @enable: in case cmd is CEC_CMD_ENABLE, this field can be 0 to disable CEC
++ * 	or 1 to enable CEC functionnality
++ * @address: in case cmd is CEC_CMD_LOGICAL_ADDRESS, this field encodes the
++ *	requested logical address between 0 and 15 or 0xff to unregister
++ */
++struct ec_params_cec_set {
++	uint8_t cmd; /* enum cec_command */
++	union {
++		uint8_t enable;
++		uint8_t address;
++	};
++} __packed;
++
++/* Read various CEC parameters */
++#define EC_CMD_CEC_GET 0x00BB
++
++/**
++ * struct ec_params_cec_get - CEC parameters get
++ * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
++ */
++struct ec_params_cec_get {
++	uint8_t cmd; /* enum cec_command */
++} __packed;
++
++/**
++ * struct ec_response_cec_get - CEC parameters get response
++ * @enable: in case cmd was CEC_CMD_ENABLE, this field will 0 if CEC is
++ * 	disabled or 1 if CEC functionnality is enabled
++ * @address: in case cmd was CEC_CMD_LOGICAL_ADDRESS, this will encode the
++ *	configured logical address between 0 and 15 or 0xff if unregistered
++ */
++struct ec_response_cec_get {
++	union {
++		uint8_t enable;
++		uint8_t address;
++	};
++} __packed;
++
++/* CEC parameters command */
++enum cec_command {
++	/* CEC reading, writing and events enable */
++	CEC_CMD_ENABLE,
++	/* CEC logical address  */
++	CEC_CMD_LOGICAL_ADDRESS,
++};
++
++/* Events from CEC to AP */
++enum mkbp_cec_event {
++	EC_MKBP_CEC_SEND_OK			= BIT(0),
++	EC_MKBP_CEC_SEND_FAILED			= BIT(1),
++};
++
++/*****************************************************************************/
++/*
+  * Special commands
+  *
+  * These do not follow the normal rules for commands.  See each command for
 -- 
 2.7.4
