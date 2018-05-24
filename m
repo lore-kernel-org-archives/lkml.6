@@ -1,431 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966006AbeEXJan (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:30:43 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:34990 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965936AbeEXJak (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:30:40 -0400
+        id S965959AbeEXJb3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:31:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57123 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965832AbeEXJb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 05:31:27 -0400
+Date: Thu, 24 May 2018 11:31:21 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Young <dyoung@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@kernel.org>, Jaewon Kim <jaewon31.kim@samsung.com>,
+        Jan Kara <jack@suse.cz>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
+ device driver
+Message-ID: <20180524093121.GZ20441@dhcp22.suse.cz>
+References: <20180523151151.6730-1-david@redhat.com>
+ <20180524075327.GU20441@dhcp22.suse.cz>
+ <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Thu, 24 May 2018 11:30:38 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCH v7 2/4] ARM: dts: tegra: Fix unit_address_vs_reg DTC
- warnings for /memory
-In-Reply-To: <1527144833-24285-2-git-send-email-krzk@kernel.org>
-References: <1527144833-24285-1-git-send-email-krzk@kernel.org>
- <1527144833-24285-2-git-send-email-krzk@kernel.org>
-Message-ID: <f7115418ec6eb4dadee12114278bce67@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 08:53, Krzysztof Kozlowski wrote:
-> Add a generic /memory node in each Tegra DTSI (with empty reg property,
-> to be overidden by each DTS) and set proper unit address for /memory
-> nodes to fix the DTC warnings:
+On Thu 24-05-18 10:31:30, David Hildenbrand wrote:
+> On 24.05.2018 09:53, Michal Hocko wrote:
+> > I've had some questions before and I am not sure they are fully covered.
+> > At least not in the cover letter (I didn't get much further yet) which
+> > should give us a highlevel overview of the feature.
 > 
->     arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
->         /memory: node has a reg or ranges property, but no unit name
-> 
-> The DTB after the change is the same as before except adding
-> unit-address to /memory node.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+> Sure, I can give you more details. Adding all details to the cover
+> letter will result in a cover letter that nobody will read :)
 
-Looks good to me! Thanks!
+Well, these are not details. Those are mostly highlevel design points
+and integration with the existing hotplug scheme. I am definitely not
+suggesting describing the code etc...
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+> > On Wed 23-05-18 17:11:41, David Hildenbrand wrote:
+> >> This is now the !RFC version. I did some additional tests and inspected
+> >> all memory notifiers. At least page_ext and kasan need fixes.
+> >>
+> >> ==========
+> >>
+> >> I am right now working on a paravirtualized memory device ("virtio-mem").
+> >> These devices control a memory region and the amount of memory available
+> >> via it. Memory will not be indicated/added/onlined via ACPI and friends,
+> >> the device driver is responsible for it.
+> >>
+> >> When the device driver starts up, it will add and online the requested
+> >> amount of memory from its assigned physical memory region. On request, it
+> >> can add (online) either more memory or try to remove (offline) memory. As
+> >> it will be a virtio module, we also want to be able to have it as a loadable
+> >> kernel module.
+> > 
+> > How do you handle the offline case? Do you online all the memory to
+> > zone_movable?
+> 
+> Right now everything is added to ZONE_NORMAL. I have some plans to
+> change that, but that will require more work (auto assigning to
+> ZONE_MOVABLE or ZONE_NORMAL depending on certain heuristics). For now
+> this showcases that offlining of memory actually works on that
+> granularity and it can be used in some scenarios. To make unplug more
+> reliable, more work is needed.
 
---
-Stefan
+Spell that out then. Memory offline is basically unusable for
+zone_normal. So you are talking about adding memory only in practice and
+it would be fair to be explicit about that.
 
-> ---
+> >> Such a device can be thought of like a "resizable DIMM" or a "huge
+> >> number of 4MB DIMMS" that can be automatically managed.
+> > 
+> > Why do we need such a small granularity? The whole memory hotplug is
+> > centered around memory sections and those are 128MB in size. Smaller
+> > sizes simply do not fit into that concept. How do you deal with that?
 > 
-> Changes since v6:
-> 1. Fix unit addresses for tegra124 and minor nits (suggested by Stefan).
+> 1. Why do we need such a small granularity?
 > 
-> Changes since v5:
-> 1. Split with skeleton.dtsi removal (suggested by Stefan).
+> Because we can :) No, honestly, on s390x it is 256MB and if I am not
+> wrong on certain x86/arm machines it is even 1 or 2GB. This simply gives
+> more flexibility when plugging memory. (thinking about cloud environments)
+
+We can but if that makes the memory hotplug (cluttered enough in the
+current state) more complicated then we simply won't. Or at least I will
+not ack anything that will go that direction.
+ 
+> Allowing to unplug such small chunks is actually the interesting thing.
+
+Not really. The vmemmap will stay behind and so you are still wasting
+memory. Well, unless you want to have small ptes for the hotplug memory
+which is just too suboptimal
+
+> Try unplugging a 128MB DIMM. With ZONE_NORMAL: pretty much impossible.
+> With ZONE_MOVABLE: maybe possible.
+
+It should be always possible. We have some players who pin pages for
+arbitrary amount of time even from zone movable but we should focus on
+fixing them or come with a way to handle that. Zone movable is about
+movable memory pretty much by definition.
+
+> Try to find one 4MB chunk of a
+> "128MB" DIMM that can be unplugged: With ZONE_NORMAL
+> maybe possible. With ZONE_MOVABLE: likely possible.
 > 
-> Changes since v4:
-> 1. None
-> ---
->  arch/arm/boot/dts/tegra114-dalmore.dts      | 2 +-
->  arch/arm/boot/dts/tegra114-roth.dts         | 2 +-
->  arch/arm/boot/dts/tegra114-tn7.dts          | 2 +-
->  arch/arm/boot/dts/tegra114.dtsi             | 3 ++-
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
->  arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 2 +-
->  arch/arm/boot/dts/tegra124-nyan.dtsi        | 2 +-
->  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
->  arch/arm/boot/dts/tegra124.dtsi             | 3 ++-
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 2 +-
->  arch/arm/boot/dts/tegra20-harmony.dts       | 2 +-
->  arch/arm/boot/dts/tegra20-paz00.dts         | 2 +-
->  arch/arm/boot/dts/tegra20-seaboard.dts      | 2 +-
->  arch/arm/boot/dts/tegra20-tamonten.dtsi     | 2 +-
->  arch/arm/boot/dts/tegra20-trimslice.dts     | 2 +-
->  arch/arm/boot/dts/tegra20-ventana.dts       | 2 +-
->  arch/arm/boot/dts/tegra20.dtsi              | 3 ++-
->  arch/arm/boot/dts/tegra30-apalis.dtsi       | 4 ++--
->  arch/arm/boot/dts/tegra30-beaver.dts        | 2 +-
->  arch/arm/boot/dts/tegra30-cardhu.dtsi       | 2 +-
->  arch/arm/boot/dts/tegra30-colibri.dtsi      | 2 +-
->  arch/arm/boot/dts/tegra30.dtsi              | 3 ++-
->  23 files changed, 28 insertions(+), 24 deletions(-)
+> But let's not go into the discussion of ZONE_MOVABLE vs. ZONE_NORMAL, I
+> plan to work on that in the future.
 > 
-> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts
-> b/arch/arm/boot/dts/tegra114-dalmore.dts
-> index eafff16765b4..1788556b4977 100644
-> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
-> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-> @@ -23,7 +23,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
-> b/arch/arm/boot/dts/tegra114-roth.dts
-> index 7ed7370ee67a..3d3835591cd2 100644
-> --- a/arch/arm/boot/dts/tegra114-roth.dts
-> +++ b/arch/arm/boot/dts/tegra114-roth.dts
-> @@ -28,7 +28,7 @@
->  		};
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		/* memory >= 0x79600000 is reserved for firmware usage */
->  		reg = <0x80000000 0x79600000>;
->  	};
-> diff --git a/arch/arm/boot/dts/tegra114-tn7.dts
-> b/arch/arm/boot/dts/tegra114-tn7.dts
-> index 7fc4a8b31e45..bfdd1bf61816 100644
-> --- a/arch/arm/boot/dts/tegra114-tn7.dts
-> +++ b/arch/arm/boot/dts/tegra114-tn7.dts
-> @@ -28,7 +28,7 @@
->  		};
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		/* memory >= 0x37e00000 is reserved for firmware usage */
->  		reg = <0x80000000 0x37e00000>;
->  	};
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-> index 27ef515e5640..85488a150701 100644
-> --- a/arch/arm/boot/dts/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/tegra114.dtsi
-> @@ -11,8 +11,9 @@
->  	#address-cells = <1>;
->  	#size-cells = <1>;
->  
-> -	memory {
-> +	memory@80000000 {
->  		device_type = "memory";
-> +		reg = <0x80000000 0x0>;
->  	};
->  
->  	host1x@50000000 {
-> diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> index bb67edb016c5..acb5b379e896 100644
-> --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-> @@ -15,7 +15,7 @@
->  	compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
->  		     "nvidia,tegra124";
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi
-> b/arch/arm/boot/dts/tegra124-apalis.dtsi
-> index 65a2161b9b8e..08518e424448 100644
-> --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-> @@ -50,7 +50,7 @@
->  	model = "Toradex Apalis TK1";
->  	compatible = "toradex,apalis-tk1", "nvidia,tegra124";
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> index 6dbcf84dafbc..9151b3ebb839 100644
-> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> @@ -24,7 +24,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
-> b/arch/arm/boot/dts/tegra124-nyan.dtsi
-> index 3609367037a6..d5f11d6d987e 100644
-> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-> @@ -13,7 +13,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts
-> b/arch/arm/boot/dts/tegra124-venice2.dts
-> index 89bcc178994d..82d139648ef1 100644
-> --- a/arch/arm/boot/dts/tegra124-venice2.dts
-> +++ b/arch/arm/boot/dts/tegra124-venice2.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x0 0x80000000 0x0 0x80000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-> index 951feea784af..183c5acafb22 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -13,8 +13,9 @@
->  	#address-cells = <2>;
->  	#size-cells = <2>;
->  
-> -	memory {
-> +	memory@80000000 {
->  		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x0 0x0>;
->  	};
->  
->  	pcie@1003000 {
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> index 5c202b3e3bb1..5623ff8d128c 100644
-> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> @@ -10,7 +10,7 @@
->  		rtc1 = "/rtc@7000e000";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x20000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts
-> b/arch/arm/boot/dts/tegra20-harmony.dts
-> index 628a55a9318b..1d96d92b72a7 100644
-> --- a/arch/arm/boot/dts/tegra20-harmony.dts
-> +++ b/arch/arm/boot/dts/tegra20-harmony.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
-> b/arch/arm/boot/dts/tegra20-paz00.dts
-> index 30436969adc0..ef245291924f 100644
-> --- a/arch/arm/boot/dts/tegra20-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
-> @@ -19,7 +19,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x20000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
-> b/arch/arm/boot/dts/tegra20-seaboard.dts
-> index 284aae351ff2..f91441683aad 100644
-> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
-> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> index 872046d48709..20137fc578b1 100644
-> --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> @@ -15,7 +15,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x20000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts
-> b/arch/arm/boot/dts/tegra20-trimslice.dts
-> index d55c6b240a30..9eb26dc15f6b 100644
-> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
-> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts
-> b/arch/arm/boot/dts/tegra20-ventana.dts
-> index ee3fbf941e79..f44551e2d9d0 100644
-> --- a/arch/arm/boot/dts/tegra20-ventana.dts
-> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
-> @@ -18,7 +18,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@0 {
->  		reg = <0x00000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index 88dd1afb5877..55581c0e5105 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -13,8 +13,9 @@
->  	chosen { };
->  	aliases { };
->  
-> -	memory {
-> +	memory@0 {
->  		device_type = "memory";
-> +		reg = <0 0>;
->  	};
->  
->  	iram@40000000 {
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 6f29cbad6e8a..9465fc592b7b 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -10,8 +10,8 @@
->  	model = "Toradex Apalis T30";
->  	compatible = "toradex,apalis_t30", "nvidia,tegra30";
->  
-> -	memory {
-> -		reg = <0 0>;
-> +	memory@80000000 {
-> +		reg = <0x80000000 0x40000000>;
->  	};
->  
->  	pcie@3000 {
-> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts
-> b/arch/arm/boot/dts/tegra30-beaver.dts
-> index ae52a5039506..1434d50438f9 100644
-> --- a/arch/arm/boot/dts/tegra30-beaver.dts
-> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
-> @@ -17,7 +17,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x7ff00000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> index 92a9740c533f..33b73dca16a3 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> @@ -40,7 +40,7 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index c44d8c40c410..9bf3327665d3 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -10,7 +10,7 @@
->  	model = "Toradex Colibri T30";
->  	compatible = "toradex,colibri_t30", "nvidia,tegra30";
->  
-> -	memory {
-> +	memory@80000000 {
->  		reg = <0x80000000 0x40000000>;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index 19237c08c166..bc42f791d791 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -14,8 +14,9 @@
->  	chosen { };
->  	aliases { };
->  
-> -	memory {
-> +	memory@80000000 {
->  		device_type = "memory";
-> +		reg = <0x80000000 0x0>;
->  	};
->  
->  	pcie@3000 {
+> Think about it that way: A compromise between section based memory
+> hotplug and page based ballooning.
+> 
+> 
+> 2. memory hotplug and 128MB size
+> 
+> Interesting point. One thing to note is that "The whole memory hotplug
+> is centered around memory sections and those are 128MB in size" is
+> simply the current state how it is implemented in Linux, nothing more.
+
+Yes, and we do care about that because the whole memory hotplug is a
+bunch of hacks duct taped together to address very specific usecases.
+It took me one year to put it into a state that my eyes do not bleed
+anytime I have to look there. There are still way too many problems to
+address. I certainly do not want to add more complication. Quite
+contrary, the whole code cries for cleanups and sanity.
+ 
+> E.g. Windows supports 1MB DIMMs So the statement "Smaller sizes simply
+> do not fit into that concept" is wrong. It simply does not fit
+> *perfectly* into the way it is implemented right now in Linux. But as
+> this patch series shows, this is just a minor drawback we can easily
+> work around.
+> 
+> "How do you deal with that?"
+> 
+> I think the question is answered below: add a section and online only
+> parts of it.
+> 
+> 
+> > 
+> >> As we want to be able to add/remove small chunks of memory to a VM without
+> >> fragmenting guest memory ("it's not what the guest pays for" and "what if
+> >> the hypervisor wants to use huge pages"), it looks like we can do that
+> >> under Linux in a 4MB granularity by using online_pages()/offline_pages()
+> > 
+> > Please expand on this some more. Larger logical units usually lead to a
+> > smaller fragmentation.
+> 
+> I want to avoid what balloon drivers do: rip out random pages,
+> fragmenting guest memory until we eventually trigger the OOM killer. So
+> instead, using 4MB chunks produces no fragmentation. And if I can't find
+> such a chunk anymore: bad luck. At least I won't be risking stability of
+> my guest.
+> 
+> Does that answer your question?
+
+So you basically pull out those pages from the page allocator and mark
+them offline (reserved what ever)? Why do you need any integration to
+the hotplug code base then? You should be perfectly fine to work on
+top and only teach that hotplug code to recognize your pages are being
+free when somebody decides to offline the whole section. I can think of
+a callback that would allow that.
+
+But then you are, well a balloon driver, aren't you?
+ 
+> >> We add a segment and online only 4MB blocks of it on demand. So the other
+> >> memory might not be accessible.
+> > 
+> > But you still allocate vmemmap for the full memory section, right? That
+> > would mean that you spend 2MB to online 4MB of memory. Sounds quite
+> > wasteful to me.
+> 
+> This is true for the first 4MB chunk of a section, but not for the
+> remaining ones. Of course, I try to minimize the number of such sections
+> (ideally, this would only be one "open section" for a virtio-mem device
+> when only plugging memory). So once we online further 4MB chunk, the
+> overhead gets smaller and smaller.
+> 
+> > 
+> >> For kdump and onlining/offlining code, we
+> >> have to mark pages as offline before a new segment is visible to the system
+> >> (e.g. as these pages might not be backed by real memory in the hypervisor).
+> > 
+> > Please expand on the kdump part. That is really confusing because
+> > hotplug should simply not depend on kdump at all. Moreover why don't you
+> > simply mark those pages reserved and pull them out from the page
+> > allocator?
+> 
+> 1. "hotplug should simply not depend on kdump at all"
+> 
+> In theory yes. In the current state we already have to trigger kdump to
+> reload whenever we add/remove a memory block.
+
+More details please.
+ 
+> 2. kdump part
+> 
+> Whenever we offline a page and tell the hypervisor about it ("unplug"),
+> we should not assume that we can read that page again. Now, if dumping
+> tools assume they can read all memory that is offline, we are in trouble.
+
+Sure. Just make those pages reserved. Nobody should touch those IIRC.
+
+> It is the same thing as we already have with Pg_hwpoison. Just a
+> different meaning - "don't touch this page, it is offline" compared to
+> "don't touch this page, hw is broken".
+> 
+> Balloon drivers solve this problem by always allowing to read unplugged
+> memory. In virtio-mem, this cannot and should even not be guaranteed.
+> 
+> And what we have to do to make this work is actually pretty simple: Just
+> like Pg_hwpoison, track per page if it is online and provide this
+> information to kdump.
+
+If somebody doesn't check your new flag then you are screwed anyway.
+Existing code should be quite used to PageReserved.
+ 
+> 3. Marking pages reserved and pulling them out of the page allocator
+> 
+> This is basically what e.g. the XEN balloon does. I don't see how that
+> helps related to kdump. Can you explain how that would solve any of the
+> problems I am trying to solve here? This does neither solve the unplug
+> part nor the "tell dump tools to not read such memory" part.
+
+I still do not understand the unplug part, to be honest. And the rest
+should be pretty much solveable. Or what do I miss. Your 4MB can be
+perfectly emulated on top of existing sections and pulling pages out of
+the allocator. How you mark those pages is an implementation detail.
+PageReserved sounds like the easiest way forward.
+-- 
+Michal Hocko
+SUSE Labs
