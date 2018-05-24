@@ -1,56 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034281AbeEXSUx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 14:20:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034253AbeEXSUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 14:20:46 -0400
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 2/2] arm64: dts: exynos: Second round for v4.18
-Date: Thu, 24 May 2018 20:20:16 +0200
-Message-Id: <20180524182016.5866-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180524182016.5866-1-krzk@kernel.org>
-References: <20180524182016.5866-1-krzk@kernel.org>
+        id S1034306AbeEXSVv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 14:21:51 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37615 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034293AbeEXSVo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 14:21:44 -0400
+X-Google-Smtp-Source: AB8JxZoS3o2UmVIetmWLSQbkT4NOVZue948Cl8VZQVHHLVl/be1FIDbhOLJJ/PWSDh1+BSDDJbSyKO8WhOHdr3XiSVc=
+MIME-Version: 1.0
+References: <CAFNjLiXZk3Zigfpy9Hj2uY92sPGB7msUxoZHf6pFDOWSuBwkBA@mail.gmail.com>
+ <20180524135240.10881-1-peda@axentia.se>
+In-Reply-To: <20180524135240.10881-1-peda@axentia.se>
+From: John Sperbeck <jsperbeck@google.com>
+Date: Thu, 24 May 2018 11:21:31 -0700
+Message-ID: <CAFNjLiVZ+g6eeHjpwMm+KiAA69Kpm_nVjWxkm2wCuV58RZwj4A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] Re: Problem: lockdep warning with nested instances
+ of i2c-mux
+To: peda@axentia.se
+Cc: linux-kernel@vger.kernel.org, wsa@the-dreams.de, peterz@infradead.org,
+        mingo@redhat.com, will.deacon@arm.com, dave@stgolabs.net,
+        pombredanne@nexb.com, tglx@linutronix.de, gregkh@linuxfoundation.org,
+        linux-i2c@vger.kernel.org, Peter Chang <dpf@google.com>,
+        Deepa Dinamani <deepadinamani@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, May 24, 2018 at 6:52 AM Peter Rosin <peda@axentia.se> wrote:
 
-On top of previous pull request.
+> Hi!
 
-Best regards,
-Krzysztof
+> Sorry for spamming. At least I'm finding these embarrassing f$&%ups
+> myself, not that it helps all that much, but...
+
+> Changes since v2    https://lkml.org/lkml/2018/5/24/176
+> - EXPORT_SYMBOL_GPL(rt_mutex_lock_nested) is more appropriate (the
+>    rt_ prefix was missing).
 
 
-The following changes since commit 8dd6203f32f20cb83469eb859efded9e403b3e9f:
-
-  arm64: dts: exynos: Add mem-2-mem Scaler devices (2018-05-13 11:26:13 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.18-2
-
-for you to fetch changes up to f0b5e8a21e6604980c35eeeba1ee3a124f45ad1f:
-
-  arm64: dts: exynos: Add more clocks to Exynos5433 Decon/DeconTV (2018-05-23 20:23:24 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v4.18, part 2
-
-1. Add clocks necessary for DECON hardware windows no 4 and 5 on
-   Exynos5433.
-
-----------------------------------------------------------------
-Marek Szyprowski (1):
-      arm64: dts: exynos: Add more clocks to Exynos5433 Decon/DeconTV
-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Yes, after fixing the "rt_" typo, this addresses our use case.  Thanks for
+the quick response.
