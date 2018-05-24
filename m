@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527164408-2-4107767153037729336
+X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164312-2-3643891793952938659
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164407; b=fPxhvGlp3V71kA2FnjpTSCrf5iFokYYHRY+qEIAdIjfYcZ9VJD
-    40TjKxVC6PNWZthnE7KEVvjMa/FK1jJBQU63BFXPTDvyFHhPEBMfFIn8zmCopGaK
-    WddPN+9Roh4toedAMNrazJQ0lQvk4+gU4VRCaBL8tYf1DQFb5Mh/6qef43BoWqbJ
-    ruB49eV+zoUm/nRA+lbDWYH9pAcWK83fhWfpcX9lS1guU1lVMeOX6YjpISnUSxSX
-    p6OmCl2tbvNTnw5yag5p5kfujtGEvR6WaU0Xe7xW5ZzzIJFgKBfimzHTmKNS9erv
-    sthDFxh8nwn8mNK8rbt7pKTdG2tTtStaVUpA==
+    1527164312; b=G5dy8bkmcVT2UKMVqoMq9MoXNzRvwitw0WVDsscpgmTrqlY5Gw
+    VwNl9mKpm7XoYAeg3Wp5btccmdjTCez3vwbXFDgZD8u21d+BemJLoO5bR7FcLPaD
+    RIlD0jWpMRj4O9EiOfQMftCj0AQJl14U5a9X6UaOzG4APyUhuNF53CH7G2KtCDKn
+    lBluHK+HYx5KQTqBWKZvMl8QSNjljMJdSp468IftgEWLP5PRiQ+mWQAp3rwdTSrM
+    4RHtHxhMQ28h8bBS1wrDGdZ8Ej/8eEuWsJsm2GrcQfUnk5RCQO9/8zaa5WyYat3T
+    Dslck7fOi4RG3IjKjbTFkmm3K9m2VxUu2D0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164407; bh=c9MSvzkzPKASWz+Gkf6+7einzyggDX
-    XS/mH0JqM2qL8=; b=mRze5DRmIny0/WFWfiKYaBiAqAfHO4sDXVzbi2EXhSihk6
-    Xy3uFInWZ/WodM+Dzz9/3qP0kIpU2Yb/x0dg/pBDE/mgaFd+8Yy5Z0suLrGiKn/i
-    juvfy9KwK3muZtQQ0b8/tf84WFCEafB1rBlSuIt/k5C8yYFpPT+/4YcPoNWGfFVi
-    mYndd6UyZ/C/9d3AkLdibfvjxFdzhktmvEa10XQsX+DCWHg8fUjolLcIr6+Tm0Zk
-    XKNEjwtnj+dnCSRwnz8GEg5E/vJRtI1Tz73wx8pIAnjHGp/h5Ut6uHK5lHxb9nBS
-    3gzhTLki94ocmCABsuBpBYRTDZ1AGSknp9zAxoHQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164312; bh=YFu3fOZfk8FyxxOrTCvuBq3YNkwbNK
+    6sxNJcwG2kt9E=; b=ILozSMc8/c9hyspkUPv8B/1mw2IW4ZmpyuEeBj4KLiRKzc
+    WmJJEzoeiQi740rg8DeaZ4FZp/UYBTCBZWmxq3bLXs3LUhWng6riwjZrinKyGdV4
+    0+nt8fNqMMWDFkHUJBnY4HiQlTwJ47n/Trbk3OTj9XQroVJCwwJMLBJVX3lX/sii
+    JHS3awZY6z8FD06pi8eiiAr1K1z6KHeIgMZpbN/8ZP4jgbON1EkCe2+2jK1BxlkS
+    L1wDfPm7soa60cbarz9ACK9AENpTX5cOPJVLnsBudKXsPF6viyOnnFzDsDk+8F4j
+    XfX4isUClGKS1rmIKTLWzEp1wx34XaxWqrUxnyeQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=RE5+/L6K x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=MZ7xRx8w x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=RE5+/L6K x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=MZ7xRx8w x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfADrsdEr2SSNl0AdsTHJKplFHuWrriP2u+28rxiRXbTuDH8bx8FaFSRNYhZtWdTBdehtgbcsvByhZ/+pOfEZbKjbexHvwjc7oVQVS1Rxg3LfvuiPBQ0h
-    nccemSMfwFs9D33SJXX5P6A6e/k01lqfOI8UhOecUq+9yaN3vqa8TZqoaAZpouR0avQzYTPiUYRr7/arDI2pq9WPEQIorVP/VjPbIbURMVF+YMLxk2hoEbiW
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfC6d/LSc0rjzgXUbxQYXK4XggABVpnRoze2Nfl8Z1AWEea65/gqHoBq1HXAtvxGJ4fYXOI0BtBnIxPk2zXPHLZaehv3g18Cy0Mo81J6Wf/6FJYd0qOsZ
+    lkSgjYy2oLtumkVP8z6ews2mhMboLssJdhKXUHvdHFN5tM+BaaSyyqZmkqIUyG0PElryGmyb4PpglJl85nCfzCyrK5oFaO4OEfD2UCaoVe1CyPGjiGcWHegi
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=qTCTqAxlTHOC2uTrnRkA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=TYBLyS7eAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=1EsaE_6oAAAA:8
+    a=ag1SF4gXAAAA:8 a=kYNcxVwlaozHNDceCMsA:9 a=QEXdDO2ut3YA:10
+    a=zvYvwCWiE4KgVXXeO06c:22 a=AjGcO6oz07-iQ99wixmX:22 a=3ZumFrijQQ-2J9H5h8ct:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966286AbeEXMS3 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:18:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966221AbeEXJlj (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S966223AbeEXJlj (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:41:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966216AbeEXJld (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:41:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 3.18 28/45] usbip: usbip_host: fix bad unlock balance during stub_probe()
-Date: Thu, 24 May 2018 11:38:36 +0200
-Message-Id: <20180524093124.168539885@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 18/45] lockd: lost rollback of set_grace_period() in lockd_down_net()
+Date: Thu, 24 May 2018 11:38:26 +0200
+Message-Id: <20180524093122.781930188@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -104,52 +107,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit c171654caa875919be3c533d3518da8be5be966e upstream.
+commit 3a2b19d1ee5633f76ae8a88da7bc039a5d1732aa upstream.
 
-stub_probe() calls put_busid_priv() in an error path when device isn't
-found in the busid_table. Fix it by making put_busid_priv() safe to be
-called with null struct bus_id_priv pointer.
+Commit efda760fe95ea ("lockd: fix lockd shutdown race") is incorrect,
+it removes lockd_manager and disarm grace_period_end for init_net only.
 
-This problem happens when "usbip bind" is run without loading usbip_host
-driver and then running modprobe. The first failed bind attempt unbinds
-the device from the original driver and when usbip_host is modprobed,
-stub_probe() runs and doesn't find the device in its busid table and calls
-put_busid_priv(0 with null bus_id_priv pointer.
+If nfsd was started from another net namespace lockd_up_net() calls
+set_grace_period() that adds lockd_manager into per-netns list
+and queues grace_period_end delayed work.
 
-usbip-host 3-10.2: 3-10.2 is not in match_busid table...  skip!
+These action should be reverted in lockd_down_net().
+Otherwise it can lead to double list_add on after restart nfsd in netns,
+and to use-after-free if non-disarmed delayed work will be executed after netns destroy.
 
-[  367.359679] =====================================
-[  367.359681] WARNING: bad unlock balance detected!
-[  367.359683] 4.17.0-rc4+ #5 Not tainted
-[  367.359685] -------------------------------------
-[  367.359688] modprobe/2768 is trying to release lock (
-[  367.359689]
-==================================================================
-[  367.359696] BUG: KASAN: null-ptr-deref in print_unlock_imbalance_bug+0x99/0x110
-[  367.359699] Read of size 8 at addr 0000000000000058 by task modprobe/2768
-
-[  367.359705] CPU: 4 PID: 2768 Comm: modprobe Not tainted 4.17.0-rc4+ #5
-
-Fixes: 22076557b07c ("usbip: usbip_host: fix NULL-ptr deref and use-after-free errors") in usb-linus
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+Fixes: efda760fe95e ("lockd: fix lockd shutdown race")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/lockd/svc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/usbip/stub_main.c
-+++ b/drivers/usb/usbip/stub_main.c
-@@ -96,7 +96,8 @@ struct bus_id_priv *get_busid_priv(const
- 
- void put_busid_priv(struct bus_id_priv *bid)
- {
--	spin_unlock(&bid->busid_lock);
-+	if (bid)
-+		spin_unlock(&bid->busid_lock);
- }
- 
- static int add_match_busid(char *busid)
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -271,6 +271,8 @@ static void lockd_down_net(struct svc_se
+ 	if (ln->nlmsvc_users) {
+ 		if (--ln->nlmsvc_users == 0) {
+ 			nlm_shutdown_hosts_net(net);
++			cancel_delayed_work_sync(&ln->grace_period_end);
++			locks_end_grace(&ln->lockd_manager);
+ 			svc_shutdown_net(serv, net);
+ 			dprintk("lockd_down_net: per-net data destroyed; net=%p\n", net);
+ 		}
