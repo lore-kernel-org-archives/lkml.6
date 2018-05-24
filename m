@@ -1,105 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030411AbeEXOKt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:10:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50040 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967947AbeEXOKk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1030659AbeEXOLM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:11:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45480 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S970395AbeEXOKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 May 2018 10:10:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D041601E8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: <ilialin@codeaurora.org>
-To: "'Sudeep Holla'" <sudeep.holla@arm.com>
-Cc: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vireshk@kernel.org>, <nm@ti.com>,
-        <sboyd@kernel.org>, <robh@kernel.org>, <mark.rutland@arm.com>,
-        <rjw@rjwysocki.net>
-References: <1527152242-31281-1-git-send-email-ilialin@codeaurora.org> <1527152242-31281-2-git-send-email-ilialin@codeaurora.org> <860be68b-cac0-9efc-b3c7-cc75b391a4c3@arm.com> <000501d3f35f$96794910$c36bdb30$@codeaurora.org> <b4e221af-57f7-fd11-942d-6bc6f6b55a73@arm.com>
-In-Reply-To: <b4e221af-57f7-fd11-942d-6bc6f6b55a73@arm.com>
-Subject: RE: [PATCH v12 1/2] cpufreq: Add Kryo CPU scaling driver
-Date: Thu, 24 May 2018 17:10:32 +0300
-Message-ID: <000701d3f368$fd31e410$f795ac30$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGZT1zPRN1vy0pjuCXFwimP3N8iDQLFSuT5Ahbt958CVipr1gDt4VB6pHMwwbA=
-Content-Language: en-us
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: [PATCH v3 2/2] sched/fair: util_est: update before schedutil
+Date: Thu, 24 May 2018 15:10:23 +0100
+Message-Id: <20180524141023.13765-3-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180524141023.13765-1-patrick.bellasi@arm.com>
+References: <20180524141023.13765-1-patrick.bellasi@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4OEAsK8032582
 
-Thank you for the explanation. However, could you suggest, which condition should I check then? Device tree?
+When a task is enqueue the estimated utilization of a CPU is updated
+to better support the selection of the required frequency.
+However, schedutil is (implicitly) updated by update_load_avg() which
+always happens before util_est_{en,de}queue(), thus potentially
+introducing a latency between estimated utilization updates and
+frequency selections.
 
-> -----Original Message-----
-> From: Sudeep Holla <sudeep.holla@arm.com>
-> Sent: Thursday, May 24, 2018 17:01
-> To: ilialin@codeaurora.org; vireshk@kernel.org; nm@ti.com;
-> sboyd@kernel.org; robh@kernel.org; mark.rutland@arm.com;
-> rjw@rjwysocki.net
-> Cc: Sudeep Holla <sudeep.holla@arm.com>; linux-pm@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v12 1/2] cpufreq: Add Kryo CPU scaling driver
-> 
-> 
-> 
-> On 24/05/18 14:03, ilialin@codeaurora.org wrote:
-> >
-> >
-> 
-> [...]
-> 
-> >>> +
-> >>> +	ret = PTR_ERR_OR_ZERO(platform_device_register_simple(
-> >>> +		"qcom-cpufreq-kryo", -1, NULL, 0));
-> >>
-> >>
-> >> You simply can't do this unconditionally here. This will blow up on
-> >> platforms where this driver is not supposed to work. The probe will
-> >> be called on non- QCOM or non-Kryo QCOM platforms and I reckon it
-> >> will crash trying to execute something in qcom_smem_get.
-> >
-> > What do you mean by 'unconditionally'?
-> 
-> Why should you even add/register a device "qcom-cpufreq-kryo" on other
-> platforms. Drivers can get registered, but only devices that are present or
-> required by the platform need to be registered.
-> 
-> > The driver depends on the smem and nvmem drivers, which depend on
-> ARCH_QCOM:
-> >  +	depends on QCOM_QFPROM
-> >  +	depends on QCOM_SMEM
-> >
-> 
-> Sure, but we have something called single image for all ARM64 platforms.
-> May be QCOM still used to tweeking config to build binary for your particular
-> mobile platform but the distro kernel need single binary to work on all
-> platforms. We have moved far away from platform specific builds long back
-> now IIRC.
-> 
-> > And if SMEM read in the probe returns something other than Kryo, it will
-> exit.
-> >
-> 
-> Check what this driver does ?
-> 
-> 	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY,
-> MSM_ID_SMEM, &len);
-> 	msm_id++;
-> 	switch ((enum _msm_id)*msm_id)
-> 
-> I think it *will and should* crash here ? You need to check the return value
-> for sure. But since qcom_smem_get return -EPROBE_DEFER, we keep
-> retrying even on non QCOM platforms which is something I would like to
-> avoid.
-> 
-> Therefore that's not the main concern. Why do I have to see "qcom-cpufreq-
-> kryo" device registered on my non QCOM platform ?
-> 
-> --
-> Regards,
-> Sudeep
+Let's update util_est at the beginning of enqueue_task_fair(),
+which will ensure that all schedutil updates will see the most
+updated estimated utilization value for a CPU.
+
+Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Fixes: 7f65ea42eb00 ("sched/fair: Add util_est on top of PELT")
+
+---
+Changes in v3:
+ - add "Acked-by" Vincent tags
+
+Changes in v2:
+ - improve comment in enqueue_task_fair() (Peter)
+ - add "Fixes" tag
+ - add "Acked-by" Viresh tag
+---
+ kernel/sched/fair.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 748cb054fefd..e497c05aab7f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5385,6 +5385,14 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	struct cfs_rq *cfs_rq;
+ 	struct sched_entity *se = &p->se;
+ 
++	/*
++	 * The code below (indirectly) updates schedutil which looks at
++	 * the cfs_rq utilization to select a frequency.
++	 * Let's add the task's estimated utilization to the cfs_rq's
++	 * estimated utilization, before we update schedutil.
++	 */
++	util_est_enqueue(&rq->cfs, p);
++
+ 	/*
+ 	 * If in_iowait is set, the code below may not trigger any cpufreq
+ 	 * utilization updates, so do it here explicitly with the IOWAIT flag
+@@ -5426,7 +5434,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!se)
+ 		add_nr_running(rq, 1);
+ 
+-	util_est_enqueue(&rq->cfs, p);
+ 	hrtick_update(rq);
+ }
+ 
+-- 
+2.15.1
