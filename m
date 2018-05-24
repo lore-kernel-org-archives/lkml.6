@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966034AbeEXJej (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:34:39 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:28395 "EHLO
+        id S966047AbeEXJex (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:34:53 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:64379 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965664AbeEXJef (ORCPT
+        by vger.kernel.org with ESMTP id S965664AbeEXJet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:34:35 -0400
+        Thu, 24 May 2018 05:34:49 -0400
 X-IronPort-AV: E=Sophos;i="5.49,436,1520866800";
-   d="scan'208";a="281940873"
+   d="scan'208";a="281940893"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,9 +19,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Date: Thu, 24 May 2018 10:28:41 +0100
-Message-Id: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v7 4/5] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Thu, 24 May 2018 10:28:42 +0100
+Message-Id: <1527154169-32380-5-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -29,108 +29,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the Renesas R9A06G032 bare bone support.
-
-This currently only handles generic parts (gic, architected timer)
-and a UART.
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f4753b0..6157897 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -814,6 +814,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 new file mode 100644
-index 0000000..9534f1b
+index 0000000..292af58
 --- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,86 @@
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,29 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ * Device Tree Source for the RZN1D-DB Board
 + *
 + * Copyright (C) 2018 Renesas Electronics Europe Limited
 + *
 + */
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a06g032-sysctrl.h>
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
 +
 +/ {
-+	compatible = "renesas,r9a06g032";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db",
++			"renesas,r9a06g032";
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clocks = <&sysctrl R9A06G032_DIV_CA7>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clocks = <&sysctrl R9A06G032_DIV_CA7>;
-+		};
++	chosen {
++		stdout-path = "serial0:115200n8";
 +	};
 +
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		sysctrl: sysctrl@4000c000 {
-+			compatible = "renesas,r9a06g032-sysctrl";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
++	aliases {
++		serial0 = &uart0;
 +	};
++};
 +
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
++&uart0 {
++	status = "okay";
 +};
 -- 
 2.7.4
