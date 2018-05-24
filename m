@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164079-2-1746631701519541725
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527164075-2-2550861391114649616
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES endasv, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164078; b=LIEHd/NFl3ehEds9kYy3r79UdtW25pZ46FiZf6bxoyd1bJ5WXQ
-    3TN5xZiJeoTdzUc9VgjKk6cEymku4cjWIoczXiu6EGiHyBbQz/QwEoH55pnnjWLu
-    Iv6HS+GMft3yVaVB+v/kQ4Uv1jL6AqU+3q9vGZ5PBAEcZc9gjunILqY87g+UBv2w
-    IVi2dBZsAn68QcozE4ATyF74P1x96tIrJeRT23UFz0SgxKgzN66b9VqtXGuc9SZ7
-    39IW1yOVWUYkgC7PKtsueQidmBkF1SG2y7QBRrVl0jyqyKNdM2jwoc9YzUKN92w6
-    hNx56bJwvxdIjIbKJFL2mQuPyHxafmX0pEFA==
+    1527164074; b=GPtqiU8alGFVgONU76P47NUQz5EauNtOX6FGM22fswp2lUw/Zh
+    2/a2fsL9xWUbnWQAo49DXSuQFe7vB/s5KTuVGW7wh78gr+3uQ5OphqzqAHnE4y2o
+    eS1mxfcluVM/a2sFWvj6kpNQ5yL66B7P9EcoqG1asBcBfWb/oqgy3Lpj7JBBeROC
+    /sOib/5EoYZi+eM3mX/qFoHplQJAEUMQUMadTMM7QI8JtAcJJXRUGBH29irX/ZFa
+    FAPjsKcsaKQubdyHun1crKu8x+AWp1BfZ7qjgMhTEHyTIcFkMjPEUiK0l/ZtMoFY
+    6AGn4NXXOQDqXrNxRBnFt8FuHjMt0EoSVKgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164078; bh=e3qN3l5KPU6ngoRqA3GwFcUFgerv3M
-    G/uUEM/LfUaKI=; b=FOMW42v0csjFxIB2N7vNlNAF6D4Zjf7CZ7cqS1mrLll8eR
-    u8CKLhw8W9FYgv0bQ25oK87FCDie2u6F4YedOQM3LzuEth3Mzzq2DmbCvY+PmM9o
-    kxpR1yNAzzqvF+r8OIl0hB2yGePM2IXF3APdZCYSGeRe+GKkZEZHT//sqZZRIKwk
-    jnMsS81DWJlvAshY0U0M8bA/Wkf40FQuaOCIh/RlfwLAOmoemlAdgzprAhbOVNwH
-    ylPDFXB6zomaCopNkQVywzogx0U2LBtotF9wH/DHneMiHyc3O+Yix5WF4E6LBwaH
-    UtBHIEt2BmSt+YB2siU6r0qKMfIy6eeZ86CL8P9A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164074; bh=DRJbhNZqJBK42h4FVEA3yZhB9QenBv
+    3Z/B+mVGiozLI=; b=agPer+mtCW/q5iTOau6bZc2kgT5oTdGACrVmI7zm2/sDbY
+    xVoKFDhkyQYeChvYRAhcXKs0a72o4Dbbrq6D7ZTmkcOjKqEeTuYdsa4svy5GaqmE
+    jzL0iGVDPTlPxXJ2DL/jvkcERVhmMc7W2LZyJsgx2vb4ahCVSVlG+WadzansePYP
+    EMeAb32cbCTrEEmbF/1DeIogK/JfiObNoSM1LiMtrqd3hKGdaFYz4DZNSJBXp7YY
+    yigbmuYuqILvhK77ePf74wGivwNkyW7j6Ep6jUMh5BFSL8sRPFk7oPtCP9aGQiu6
+    LjJKqU8/xFYhUOjr0K9f7+pa4igGvIKiIFCcvdCw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=hGcCLEaa x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=uecEDenv x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -44,11 +45,11 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=hGcCLEaa x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=uecEDenv x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -62,32 +63,43 @@ Authentication-Results: mx4.messagingengine.com;
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linuxfoundation.org header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP7IgZMAw3MrCUowzwfJHVggznmpuxZZ+4VyyiyTfJzx5YvwJbe46WY85/1MX58CV2FWg6BYZXTG25a/iLEdADxCDIAs08tiyJq/Zw36w5NV0k2fvD5S
-    E/KAc2Lkfeikku78+Jz//FJ9HuTJRhbs4fw1cAHbuDrWe4NhW0J4+s94pdiIdcH2PGBikwM3gUsQB4D85NqUOjIfRe6R+yn+OE0DU5TVAf0e3Asf8+hGN6fP
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfN93Pidw5d1iWJKWTItWQoEqqo/iii3lA3cU/n9+pxGzGM5EI7gsTLI+mrLwakTFI3fGXJvQUJY2pzSLZbj/YfrrUDRZ46rViH0h3uxz1zLtMjx2aeBK
+    RLwf7nFO2cuX13hGlagADD4tjlBFvfsTIJQoqYbdexCXH4nw+9k+RobLMF8lgMZ+j4cd9ij0yFSMPLWwt3D8wF6Sb7JqwJ+PDuA5ZIA2OBJJ2SKFxJkOvT3w
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=hSkVLCK3AAAA:8 a=ag1SF4gXAAAA:8 a=-O5xsKu7cXiJXXyVPtwA:9
-    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=20KFwNOVAAAA:8 a=zd2uoN0lAAAA:8
+    a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8 a=4RBUngkUAAAA:8 a=KKAkSRfTAAAA:8
+    a=oGMlB6cnAAAA:8 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=4nylR2gx3NDDJxsWytsA:9 a=QEXdDO2ut3YA:10 a=DcSpbTIhAlouE1Uv7lRv:22
+    a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22 a=cvBusfyB2V15izCimMoJ:22
+    a=NdAtdrkLVvyUPsUoGJp4:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966390AbeEXMOf (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:14:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54018 "EHLO mail.kernel.org"
+        id S966410AbeEXMOU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:14:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966338AbeEXJmX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:42:23 -0400
+        id S965900AbeEXJm2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:42:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3.18 43/45] cfg80211: limit wiphy names to 128 bytes
-Date: Thu, 24 May 2018 11:38:51 +0200
-Message-Id: <20180524093126.477631162@linuxfoundation.org>
+        syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Baoquan He <bhe@redhat.com>, thomas.lendacky@amd.com,
+        prudo@linux.vnet.ibm.com, Huang Ying <ying.huang@intel.com>,
+        syzkaller-bugs@googlegroups.com, takahiro.akashi@linaro.org,
+        "H. Peter Anvin" <hpa@zytor.com>, akpm@linux-foundation.org,
+        dyoung@redhat.com, kirill.shutemov@linux.intel.com
+Subject: [PATCH 3.18 45/45] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
+Date: Thu, 24 May 2018 11:38:53 +0200
+Message-Id: <20180524093126.768103561@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -105,49 +117,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit a7cfebcb7594a24609268f91299ab85ba064bf82 upstream.
+commit a466ef76b815b86748d9870ef2a430af7b39c710 upstream.
 
-There's currently no limit on wiphy names, other than netlink
-message size and memory limitations, but that causes issues when,
-for example, the wiphy name is used in a uevent, e.g. in rfkill
-where we use the same name for the rfkill instance, and then the
-buffer there is "only" 2k for the environment variables.
+>From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 9 May 2018 12:12:39 +0900
+Subject: [PATCH 3.18 45/45] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
 
-This was reported by syzkaller, which used a 4k name.
+syzbot is reporting crashes after memory allocation failure inside
+do_kexec_load() [1]. This is because free_transition_pgtable() is called
+by both init_transition_pgtable() and machine_kexec_cleanup() when memory
+allocation failed inside init_transition_pgtable().
 
-Limit the name to something reasonable, I randomly picked 128.
+Regarding 32bit code, machine_kexec_free_page_tables() is called by both
+machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
+allocation failed inside machine_kexec_alloc_page_tables().
 
-Reported-by: syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fix this by leaving the error handling to machine_kexec_cleanup()
+(and optionally setting NULL after free_page()).
+
+[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
+
+Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
+Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
+Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: thomas.lendacky@amd.com
+Cc: prudo@linux.vnet.ibm.com
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: takahiro.akashi@linaro.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: akpm@linux-foundation.org
+Cc: dyoung@redhat.com
+Cc: kirill.shutemov@linux.intel.com
+Link: https://lkml.kernel.org/r/201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/nl80211.h |    2 ++
- net/wireless/core.c          |    3 +++
- 2 files changed, 5 insertions(+)
+ arch/x86/kernel/machine_kexec_32.c |    6 +++++-
+ arch/x86/kernel/machine_kexec_64.c |    4 +++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -2026,6 +2026,8 @@ enum nl80211_attrs {
- #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
- #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -70,12 +70,17 @@ static void load_segments(void)
+ static void machine_kexec_free_page_tables(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.pgd);
++	image->arch.pgd = NULL;
+ #ifdef CONFIG_X86_PAE
+ 	free_page((unsigned long)image->arch.pmd0);
++	image->arch.pmd0 = NULL;
+ 	free_page((unsigned long)image->arch.pmd1);
++	image->arch.pmd1 = NULL;
+ #endif
+ 	free_page((unsigned long)image->arch.pte0);
++	image->arch.pte0 = NULL;
+ 	free_page((unsigned long)image->arch.pte1);
++	image->arch.pte1 = NULL;
+ }
  
-+#define NL80211_WIPHY_NAME_MAXLEN		128
-+
- #define NL80211_MAX_SUPP_RATES			32
- #define NL80211_MAX_SUPP_HT_RATES		77
- #define NL80211_MAX_SUPP_REG_RULES		32
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -94,6 +94,9 @@ int cfg80211_dev_rename(struct cfg80211_
+ static int machine_kexec_alloc_page_tables(struct kimage *image)
+@@ -92,7 +97,6 @@ static int machine_kexec_alloc_page_tabl
+ 	    !image->arch.pmd0 || !image->arch.pmd1 ||
+ #endif
+ 	    !image->arch.pte0 || !image->arch.pte1) {
+-		machine_kexec_free_page_tables(image);
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -34,8 +34,11 @@ static struct kexec_file_ops *kexec_file
+ static void free_transition_pgtable(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.pud);
++	image->arch.pud = NULL;
+ 	free_page((unsigned long)image->arch.pmd);
++	image->arch.pmd = NULL;
+ 	free_page((unsigned long)image->arch.pte);
++	image->arch.pte = NULL;
+ }
  
- 	ASSERT_RTNL();
+ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+@@ -76,7 +79,6 @@ static int init_transition_pgtable(struc
+ 	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC));
+ 	return 0;
+ err:
+-	free_transition_pgtable(image);
+ 	return result;
+ }
  
-+	if (strlen(newname) > NL80211_WIPHY_NAME_MAXLEN)
-+		return -EINVAL;
-+
- 	/* prohibit calling the thing phy%d when %d is not its number */
- 	sscanf(newname, PHY_NAME "%d%n", &wiphy_idx, &taken);
- 	if (taken == strlen(newname) && wiphy_idx != rdev->wiphy_idx) {
