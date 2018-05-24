@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156509-2-13291200128636304942
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156479-2-10779683534489464479
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156508; b=dHb0OV7CyUkl50rVjAXdgVHvhrwEysd+kww0dzlTLep0JyW5lZ
-    Q6gndsMj5DRRq7E13YiqAIk+LNOB0IRz/61pTE8QKzWYd8kVrYdWBeqMRAPLFiQA
-    LlTaPQUKMXiMXqgJLVxchz1y1zzn5rglUBUMlv89/O5PtuboC+81Rlad/dp3E14S
-    HJbb4NSZb+iPQurhWNDTBE9puRGiUmudU69zi6pukdjzGYToo5ZoYUvaxSZdeuGi
-    EhY+ZI5oC4SIIGjzVENqFvAxY0sIZrvipcV5VaqHNnPk5N5gq/hqvPOogbSHHOUJ
-    SlRVnesHQrGmdVMyTVpFQHQL+ZWIk0smk21w==
+    1527156479; b=kgnrd2QYXm6BbgQa+Yixqw3nTyE5jVafM2rR1twN6xXKXeHkBc
+    tzQyRjzMJWM0ERXX8DWGEQog/E/R3ArmBtt4LRiCJqQxMUBY7W/oGh3soh+8BXjv
+    +3+s3O/a+yt1oIfyp3vKG6gAkdZEnlYdyORSjBFyEWd5A9Y628cDSf/1cKwf59h+
+    EV/olCBlekM09n1Zkpw461ZdDX41/8DEhQEQMKR5EGAedSS4bt/0Uj0RRJfscu4+
+    OqkTCJ9fT69pEroxMLG07JxwnU4J/UfRpbmPTyudqTqcXCXFsJNwRb6w1I9a8JhW
+    spoP8DP8Y6L6HE/cft24FZmmId32IyKFInDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156508; bh=GDkFr7qcNeHc1QxQDAPeCKPIxqZm7O
-    yD7806VUY75ME=; b=cmsDml9u6Z1jTxIbAY/ywxUzcwbajTSdGJl54mhVoH/pEJ
-    VGlPOJrS7eP1ZeS6dpJvjLsMu/8V8peDyibFAX5f2foqzsQxCTIgWAMYuLLecTN7
-    +avwBLCzq8GK+OpcKIeBw+oMbovQIy8kr5DT9ESTzklb5uBPcCoBjBsTTHMAMXaB
-    T9HOPXgQ2kZuqPBCN2oUUljnTCe3k7F5cBHVtPfj+sXdbLmH8odoPkJw7sQ7qDrI
-    JKWcd7plF8qAeIVmXHy9f7GZnRnikGeB5iWniNvC0iJnB8VynUTrsUQgnNZBddy/
-    415YrYXoXjC+fRhNSyCYMvh8lfw4zPPpfG0JvKwA==
+    :list-id; s=fm2; t=1527156479; bh=QmSuHcjRHDlkIkclg0D09ADVMutpzB
+    Vu1T06xaQvV9U=; b=nUhywQ6mQnEwO6NYe+Bj1v0SXu5MLlHq5g+neCydiwo4E7
+    HzCnWLNUBoqtohu7Y+OZmaWW9uHl2dNep0sGAVfxtHbQyh07oFAeg74/WsowsiMi
+    SzWC07Z4DsiHi6a5zJFvCbEzStHRLVJDNYm+0+lL1jfuNYNfozOuQ3DTZX0H+1/l
+    gmxl5s0IzrZaBFse64oeh09RjAIEHvfOYXMbQQe/sNNd6buPnkNc5RPo37ke+Pjb
+    vo/KdFJLePl2UMSWf+WGbU1KX5K3I7Y5TIEAwTcjJFsjbUKMF2jRvH5VZCjfMwcN
+    x+8lMELk6sVQXC4XbJ7swVao1wzuZvOBMFskCTyA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=z5yHFVmV x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=zHbM4XJj x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=z5yHFVmV x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=zHbM4XJj x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,36 +64,34 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIJvzgzwpsf+7bgTzzFBZGKenmhd6nR6UhW/hoHPNjO/DbCvi47/i/0ERisGf2H9JaoFxx3j0BiOTY9PY9hQMgC9Ygm+l4bdJcmV61h0WDfDF7wWH9zf
-    6nvqTZCO9bVZ9otm1kFftW28fQ4YRia9V9U3vWVzkfedNgtmijOOsT6vcG9VhE1RKRgAf/ZfcAworHnQpgOM3RDN5lSk+PTXk11OXcmEXm3npH+EXFt1BQr+
+X-CM-Envelope: MS4wfHoUovNnGqvoPhpyUHOU90LaEvmFdghJiKSURXtoV18rVIBm2blKzs0AhoXAsCeXODLj9lVj++KejVVLFtlUW5iY3/1//ZNCl8pSbX29lN/m7JepaHUw
+    V8cXx5OboX8uri311nKZZz3raCBBW55QrQIy9GyI+flLgD7AePTvKfg19MpipTmX+gZsv2xfTGclCF4+3an8urwIo83eqfNYZEo/vIgvLJt10Dxh+1G2r46u
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=gPJu0pBYAAAA:8 a=uP1ucDPQAAAA:8 a=P-IC7800AAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=jjfiZMD5hr0tgOtWbhUA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=AlIIF0cMT2hfDT4axODj:22 a=9a9ggB8z3XFZH39hjkD6:22
-    a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=mDV3o1hIAAAA:8 a=P1BnusSwAAAA:8 a=QyXUC8HyAAAA:8 a=vQBBkBfzAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=sQARDKgQixnSql7upBYA:9 a=QEXdDO2ut3YA:10
+    a=_FVE-zBwftR9WsbkzFJk:22 a=D0XLA9XvdZm18NrgonBM:22 a=NGXS0kB0m_rannUenejW:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031492AbeEXKIM (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:08:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55146 "EHLO mail.kernel.org"
+        id S1031409AbeEXKH4 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:07:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031682AbeEXKGI (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:06:08 -0400
+        id S1031688AbeEXKGK (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:06:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        Miodrag Dinic <miodrag.dinic@mips.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 161/161] rtc: goldfish: Add missing MODULE_LICENSE
-Date: Thu, 24 May 2018 11:39:46 +0200
-Message-Id: <20180524093037.531987302@linuxfoundation.org>
+Subject: [PATCH 4.16 137/161] media: s3c-camif: fix out-of-bounds array access
+Date: Thu, 24 May 2018 11:39:22 +0200
+Message-Id: <20180524093034.772463817@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -111,34 +109,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 82d632b85eb89f97051530f556cb49ee1c04bde7 ]
+[ Upstream commit a398e043637a4819a0e96467bfecaabf3224dd62 ]
 
-Fix the following warning in MIPS allmodconfig by adding a
-MODULE_LICENSE() at the end of rtc-goldfish.c, based on the file header
-comment which says GNU General Public License version 2:
+While experimenting with older compiler versions, I ran
+into a warning that no longer shows up on gcc-4.8 or newer:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/rtc/rtc-goldfish.o
+drivers/media/platform/s3c-camif/camif-capture.c: In function '__camif_subdev_try_format':
+drivers/media/platform/s3c-camif/camif-capture.c:1265:25: error: array subscript is below array bounds
 
-Fixes: f22d9cdcb5eb ("rtc: goldfish: Add RTC driver for Android emulator")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Cc: Miodrag Dinic <miodrag.dinic@mips.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-rtc@vger.kernel.org
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This is an off-by-one bug, leading to an access before the start of the
+array, while newer compilers silently assume this undefined behavior
+cannot happen and leave the loop at index 0 if no other entry matches.
+
+As Sylvester explains, we actually need to ensure that the
+value is within the range, so this reworks the loop to be
+easier to parse correctly, and an additional check to fall
+back on the first format value for any unexpected input.
+
+I found an existing gcc bug for it and added a reduced version
+of the function there.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69249#c3
+Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-goldfish.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/s3c-camif/camif-capture.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/rtc/rtc-goldfish.c
-+++ b/drivers/rtc/rtc-goldfish.c
-@@ -235,3 +235,5 @@ static struct platform_driver goldfish_r
- };
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -1256,16 +1256,17 @@ static void __camif_subdev_try_format(st
+ {
+ 	const struct s3c_camif_variant *variant = camif->variant;
+ 	const struct vp_pix_limits *pix_lim;
+-	int i = ARRAY_SIZE(camif_mbus_formats);
++	unsigned int i;
  
- module_platform_driver(goldfish_rtc);
-+
-+MODULE_LICENSE("GPL v2");
+ 	/* FIXME: constraints against codec or preview path ? */
+ 	pix_lim = &variant->vp_pix_limits[VP_CODEC];
+ 
+-	while (i-- >= 0)
++	for (i = 0; i < ARRAY_SIZE(camif_mbus_formats); i++)
+ 		if (camif_mbus_formats[i] == mf->code)
+ 			break;
+ 
+-	mf->code = camif_mbus_formats[i];
++	if (i == ARRAY_SIZE(camif_mbus_formats))
++		mf->code = camif_mbus_formats[0];
+ 
+ 	if (pad == CAMIF_SD_PAD_SINK) {
+ 		v4l_bound_align_image(&mf->width, 8, CAMIF_MAX_PIX_WIDTH,
