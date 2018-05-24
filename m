@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754944AbeEXFha (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:37:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41771 "EHLO
+        id S1754979AbeEXFhl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:37:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36613 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754806AbeEXFh1 (ORCPT
+        with ESMTP id S1751814AbeEXFhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:37:27 -0400
-Date: Wed, 23 May 2018 22:36:51 -0700
+        Thu, 24 May 2018 01:37:40 -0400
+Date: Wed, 23 May 2018 22:37:20 -0700
 From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-e2bdbe80a0b7dea9ba73582701b8a67c01e1da4f@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        kan.liang@linux.intel.com, yao.jin@linux.intel.com, jolsa@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, acme@redhat.com
-Reply-To: peterz@infradead.org, acme@redhat.com, tglx@linutronix.de,
-        jolsa@kernel.org, kan.liang@linux.intel.com, yao.jin@linux.intel.com,
-        hpa@zytor.com, ak@linux.intel.com, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <1526914666-31839-2-git-send-email-yao.jin@linux.intel.com>
-References: <1526914666-31839-2-git-send-email-yao.jin@linux.intel.com>
+Message-ID: <tip-a26bb0ba706aef4f42cc9377c0d4e849378574a4@git.kernel.org>
+Cc: jolsa@kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
+        kan.liang@linux.intel.com, yao.jin@linux.intel.com, acme@redhat.com,
+        ak@linux.intel.com, alexander.shishkin@linux.intel.com
+Reply-To: yao.jin@linux.intel.com, kan.liang@linux.intel.com,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        ak@linux.intel.com, acme@redhat.com, jolsa@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org
+In-Reply-To: <1526914666-31839-3-git-send-email-yao.jin@linux.intel.com>
+References: <1526914666-31839-3-git-send-email-yao.jin@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evlist: Introduce force_leader() method
-Git-Commit-ID: e2bdbe80a0b7dea9ba73582701b8a67c01e1da4f
+Subject: [tip:perf/core] perf report: Use perf_evlist__force_leader to
+ support '--group'
+Git-Commit-ID: a26bb0ba706aef4f42cc9377c0d4e849378574a4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,22 +36,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e2bdbe80a0b7dea9ba73582701b8a67c01e1da4f
-Gitweb:     https://git.kernel.org/tip/e2bdbe80a0b7dea9ba73582701b8a67c01e1da4f
+Commit-ID:  a26bb0ba706aef4f42cc9377c0d4e849378574a4
+Gitweb:     https://git.kernel.org/tip/a26bb0ba706aef4f42cc9377c0d4e849378574a4
 Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Mon, 21 May 2018 22:57:44 +0800
+AuthorDate: Mon, 21 May 2018 22:57:45 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 21 May 2018 14:40:54 -0300
+CommitDate: Mon, 21 May 2018 14:41:01 -0300
 
-perf evlist: Introduce force_leader() method
+perf report: Use perf_evlist__force_leader to support '--group'
 
-For non-explicit group (e.g. those created with -e '{eventA,eventB}'),
-'perf report' supports a option '--group' which can enable group output.
-
-We also need to support 'perf annotate' with the same '--group'.
-
-Create a new function perf_evlist__force_leader() which contains common
-code to force setting the group leader.
+Since we created a new function perf_evlist__force_leader(), remove the
+old code and use that new evlist method.
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
@@ -59,45 +55,36 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1526914666-31839-2-git-send-email-yao.jin@linux.intel.com
+Link: http://lkml.kernel.org/r/1526914666-31839-3-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 15 +++++++++++++++
- tools/perf/util/evlist.h |  3 +++
- 2 files changed, 18 insertions(+)
+ tools/perf/builtin-report.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index a59281d64368..e7a4b31a84fb 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1795,3 +1795,18 @@ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist)
- 
- 	return true;
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 4c931afb2e80..ad978e3ee2b8 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -194,20 +194,11 @@ out:
+ 	return err;
  }
-+
-+/*
-+ * Events in data file are not collect in groups, but we still want
-+ * the group display. Set the artificial group and set the leader's
-+ * forced_leader flag to notify the display code.
-+ */
-+void perf_evlist__force_leader(struct perf_evlist *evlist)
-+{
-+	if (!evlist->nr_groups) {
-+		struct perf_evsel *leader = perf_evlist__first(evlist);
-+
-+		perf_evlist__set_leader(evlist);
-+		leader->forced_leader = true;
-+	}
-+}
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 6c41b2f78713..dc66436add98 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -309,4 +309,7 @@ struct perf_evsel *perf_evlist__event2evsel(struct perf_evlist *evlist,
- 					    union perf_event *event);
  
- bool perf_evlist__exclude_kernel(struct perf_evlist *evlist);
-+
-+void perf_evlist__force_leader(struct perf_evlist *evlist);
-+
- #endif /* __PERF_EVLIST_H */
+-/*
+- * Events in data file are not collect in groups, but we still want
+- * the group display. Set the artificial group and set the leader's
+- * forced_leader flag to notify the display code.
+- */
+ static void setup_forced_leader(struct report *report,
+ 				struct perf_evlist *evlist)
+ {
+-	if (report->group_set && !evlist->nr_groups) {
+-		struct perf_evsel *leader = perf_evlist__first(evlist);
+-
+-		perf_evlist__set_leader(evlist);
+-		leader->forced_leader = true;
+-	}
++	if (report->group_set)
++		perf_evlist__force_leader(evlist);
+ }
+ 
+ static int process_feature_event(struct perf_tool *tool,
