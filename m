@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527163888-2-11335327610583361814
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163876-2-9758676740969245856
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163887; b=aQ6k1WVHv+hIUPXY015uSgPrCaRmIYgfdytYYnxrHvlY1ILVKA
-    QXE18K81oZ4OCCTQjCHVBh0rZJ/Zwo2Dteg09qTNXSwP86FlnBPgxF7Oq41lZDMV
-    kIyVzfCYsjsZN/VRWeoUamH4FQEYYanktR6qPIMfkctqHwMq2vvTGwLJYuKTdVmU
-    DD/J408gGTrdt6bf1PdZTOQdIzs6xxtEJ+yIxttFaofCUatD5ggsN/LKhoRTJXze
-    WCZI+g0VLqwfXsNrd9ekv7gwAxEdrzur21hkzTo7L91x3Abhs77+wSeekb1obtV4
-    O/7oDxTUKU/9zxNXVcJc36eOQ0khpzP7WDpA==
+    1527163875; b=b0mKWzExK9rjIL/lWtWHDWjUbEpKyF47G6QBlcbajWbcZyqvMS
+    zUwZLOofT6zHd7ggBgDH6G+Z7onKn83Zec5NLPpnrDNiqDw3CNgM4JY9/YRIAiM+
+    1r2SzhNMo9I/8QXd6RGlS/qxDfMgryVxdw06hkfHmm62aIMWgR6SwBLtG4YMkErM
+    EAU7FC3dQOdstBuKR+O527AD2SaOOzBm99L4BJpyDawPL1kDjAbD5KYt40fdfNor
+    r47Nk/fiUz2spcskHs2uxpQWUnNkw/rKKvMbFx9NPhaqJ5XsiiF4z+QDfU0x6pxi
+    uUHGi46QJK0drRQ3DxkJ1m3idoJTRea7HsmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163887; bh=pwGCsBAORvoWDXbZvgcdmz7K31WVbX
-    jhpbSmMEVOEws=; b=hoGilgmMPtVFhVL2P8qHbO0c4h1R1jo3xvmR5lgr5JI7ly
-    Am8Ahus9S1C9tkzDI1ecazb8lwh+2D6x6T6i4riGy3XzzoS42bqJPYiK4DJnMynK
-    V91LchJtrSr02823ol5u7WyDjP1JAJkuXChs0nmCpJAr1cUwQxf47gKsIMHsGx9u
-    cV2e6JoLK27u55w3hAxcTjalfUDa6UjgWhg1EFzbYIZU2pi2tNjy2t4nDr/CYy3v
-    mwkxx5VcZW4/BVApKPk81iUqUo0p3/XmsCKrKwcwvq52zGu+cPSvTje402jtqfLh
-    ocig6iZ9XWm0qeJvTjawBxnR+gbfYoDQbVUwUkyA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163875; bh=53xBQJNV5rL66GQnQGMxDf49pPExt0
+    DxcBeEyl/c0ro=; b=jzVoFSmXUmkiKNAa+DB3mvHXWL7C+YjsMXJbNtyltX0s1y
+    HOLa5GMTVoKBrEDN+/KDl+N5d9LJRbaMn8JuL2t6VGLB+C0WdL6ZKy0U9xGlzfEW
+    GVW6oz1d3JcS7PCw3W5vevRXGrd6RPnLfw+OglgOJEyUAv5njBXnsYQ3sbZ89uXL
+    PbU/+ufdk66Q0q8ZW4ik3qf0AldR82lC4RbhU63Qv/BL+IRIxnivRd2HjT15gl9S
+    Oy/7weZjuGLzPmbje/K3bPUfNhxnzO4JeCE42ntaaoN1+s4gQyRhBZFDt19xf3EN
+    JhKVqyAHZ59u0rAF56JsazWUCwhIQLOcIbUWWmUw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=o3icjI9o x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=bv+GnpAO x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=o3icjI9o x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=bv+GnpAO x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,33 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK7Rmxla8Y1c7klkKHyS6UcSe7YyGkVoMBbWG0XmWIUuwfrBK3NV0sXBn+fmUEEDgbsNJg7fLDsQ9u2q7R8i3K4xseTvvBCKLxt1eL8qcQLGnSU1Zi9Y
-    NtMadqFLLzpikCtiXOomvAzobrkFGFERqFwyNx07LRZof8NKf/7DT1WgptRSx2qB5CYG7yr9WimN8Nuta1pILQv30piAkWuUYFDQW3YXY15fdBzG5PTpcKfz
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJw57PbDAY/LlE2dv3S4t0E3cf2QxfqfkQIrN03TfP8K6C+naYn+7MZePV5BrIlbap7uZoONRrNnCRJAi0/i6qxEK8F9NFD1Rd4HcyARx2uc32AtyAyD
+    CarXKOGxPUYc1gCAQVvwEDSqckf/znXZph+2LMR5xc8xcg9i8ThNaMswbkYpxs788yJzPjAY/6BM6bvtoFEpet3pezUz6b5VzIP/RcykGUV8AndRkkmOTzcI
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=X7Ea-ya5AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=-QkFZ1CkDEvVFEUcWrEA:9
-    a=QEXdDO2ut3YA:10 a=f3QdawHiMRSDlnPgGXNW:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=2wpadlajvgCyii3yq2kA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965925AbeEXMLM (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:11:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54708 "EHLO mail.kernel.org"
+        id S966522AbeEXMK5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965956AbeEXJnM (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:12 -0400
+        id S965925AbeEXJnP (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Debabrata Banerjee <dbanerje@akamai.com>,
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 16/92] bonding: do not allow rlb updates to invalid mac
-Date: Thu, 24 May 2018 11:37:53 +0200
-Message-Id: <20180524093200.686610227@linuxfoundation.org>
+Subject: [PATCH 4.4 17/92] tcp: ignore Fast Open on repair mode
+Date: Thu, 24 May 2018 11:37:54 +0200
+Message-Id: <20180524093200.749702545@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,29 +108,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Debabrata Banerjee <dbanerje@akamai.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit 4fa8667ca3989ce14cf66301fa251544fbddbdd0 ]
+[ Upstream commit 16ae6aa1705299789f71fdea59bfb119c1fbd9c0 ]
 
-Make sure multicast, broadcast, and zero mac's cannot be the output of rlb
-updates, which should all be directed arps. Receive load balancing will be
-collapsed if any of these happen, as the switch will broadcast.
+The TCP repair sequence of operation is to first set the socket in
+repair mode, then inject the TCP stats into the socket with repair
+socket options, then call connect() to re-activate the socket. The
+connect syscall simply returns and set state to ESTABLISHED
+mode. As a result Fast Open is meaningless for TCP repair.
 
-Signed-off-by: Debabrata Banerjee <dbanerje@akamai.com>
+However allowing sendto() system call with MSG_FASTOPEN flag half-way
+during the repair operation could unexpectedly cause data to be
+sent, before the operation finishes changing the internal TCP stats
+(e.g. MSS).  This in turn triggers TCP warnings on inconsistent
+packet accounting.
+
+The fix is to simply disallow Fast Open operation once the socket
+is in the repair mode.
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Reviewed-by: Neal Cardwell <ncardwell@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_alb.c |    2 +-
+ net/ipv4/tcp.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/bonding/bond_alb.c
-+++ b/drivers/net/bonding/bond_alb.c
-@@ -453,7 +453,7 @@ static void rlb_update_client(struct rlb
- {
- 	int i;
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1108,7 +1108,7 @@ int tcp_sendmsg(struct sock *sk, struct
+ 	lock_sock(sk);
  
--	if (!client_info->slave)
-+	if (!client_info->slave || !is_valid_ether_addr(client_info->mac_dst))
- 		return;
- 
- 	for (i = 0; i < RLB_ARP_BURST_SIZE; i++) {
+ 	flags = msg->msg_flags;
+-	if (flags & MSG_FASTOPEN) {
++	if ((flags & MSG_FASTOPEN) && !tp->repair) {
+ 		err = tcp_sendmsg_fastopen(sk, msg, &copied_syn, size);
+ 		if (err == -EINPROGRESS && copied_syn > 0)
+ 			goto out;
