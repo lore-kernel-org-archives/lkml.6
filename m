@@ -1,39 +1,37 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr88RT9q7flChdRx9azXdy5ZI3EQIknX7RY43XQ+SsjpsHSULu+7FUeaBfQG+WxafqATIJ7
-ARC-Seal: i=1; a=rsa-sha256; t=1527156069; cv=none;
+X-Google-Smtp-Source: AB8JxZof/Z1gFZCj+vsu4TWePbZJkwOsmd1wuCutQkMcdp8FrPoY37YvdUcTFeq5WecQ4yYQv8UX
+ARC-Seal: i=1; a=rsa-sha256; t=1527156064; cv=none;
         d=google.com; s=arc-20160816;
-        b=CuXmQcseu/Sv20MAt46PIEojFHJ597rdjqWS2zwIQvwTE175J/yFNaSHlrjuFEJsOE
-         skVij1zoZxw1ayvX+U6rgCP5nT5ucIoCQJM7dCcHCxYfHkFF7b2IHPHkV4Gk4AmpLz75
-         LdJGPVZYMR9xyH6/v6zZsIZ5fSgRlsv2XaJ+U1/HJ6xOy+yHKOWl1SVr+H7KhgeG4NmU
-         3EbLaN4Ejhf3dyoVBu4eDtpEhI67tzXN3NBOibD5UFjm9d0DR+5Nqzzz5NxeC1GMgDq1
-         AG4KDOuCxIo1wN7ZnfeOnHjOpK0XQZ+cwNIFkXHnekiWnVwiYzjoPgxVdNn4jrAzICMV
-         X99g==
+        b=cSpG1dxwnNzwoLI06BZ055zc7ZwSxOlfZsrj7Dy9/LQNV0y2l/6qvWiL5wP8JI0h4m
+         ZXcO5QiT3BcjDEORm8SOEH8ryeKFAjYYu1ru0b9Hti5uYPYk6eYiGMSUwq1ld9Udx06C
+         b23MCipdZIHiSX/j4QCghxhKH6FcmGMQEta5LJuBDwboo9v/cPaP8WuDQXpDSNusuAay
+         Hj+RuyGv6Ka2LWCCQE148VwRGA8m1TKDDhYLvYYua4LLyHc7Wp5vuGtiw1pZ/XGD1utz
+         lSdyylW2daakP1c1IphmGeXmmY0O35qzdRsT5jqU+HSkub9El435KqOJQ1AO1sWTq2Uy
+         YQGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Hkj8cA0eOyx8iQFIqB+A9QQ5Y0E2gEUDBcr9/BpmoZA=;
-        b=Pz3lkUE2HLNMusHeqCKpi4cj1bw2RRhxOrO/g1ywA1fDO33g1SiQ4Sqo86+aK088o6
-         F7LnBrePfuys5oEtnyM5o26oFY2ov7VDsFeExIB2wMjYhTvktg8XCCVCo8catureKQMe
-         hKLj6GnX0QNGXH8w/aBcbiB8EuQ/YKK0QxIi8cZZhaymgtuH2AcJYou8yPc42cJsHjuf
-         EquzHWyfIeos0K2ql/jhopFR9CEjlXfHgrGtka5QqvQZRRIxK0EvoCWhVq0BotkMElCd
-         ueIap1VZU/eVxABYzakhcDAdPdkaT0rQRgIwrVbWVAuxb3mAY1f7VVKtA6oKD0vUAHjG
-         MmsQ==
+        bh=z3sA9cngb499wUZFbY04Q7+rWHMv0Y43VEoDq8/TvYQ=;
+        b=LVZqrCIJRmEDcPVnznlswB251abFAnAqMlH+L0vhfFPZntOONa95PCI4Cn0vsxYlg1
+         m8MWZJgwCWbmUJkKpUA4oAHgVFMLdomG1irHrssf63Zku9wK242ye/qoBuwoiv8nI6f1
+         4qC/uVZMn3dT9yVjUoapNUcXw9mjLt9H2kS3cNz1C0yjhFU/zYO/sNC1YtuTfkGp+P8+
+         QDhOO0/mkvPSvIcMKG0YTDC3KRXVIpW3c76KLBp5KEW147nnaDUyUxu/PdLNLXJCXKin
+         f7ILpoy/q4F38HzC90yM8cxhlxTOFyjLXIUurcZilcm7c/wefiCsOIZUMpXdXt3QoRvJ
+         bb9w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SfH7rhtf;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OvwV2alP;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SfH7rhtf;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OvwV2alP;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Petr Machata <petrm@mellanox.com>,
-	William Tu <u9012063@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 025/161] net: ip6_gre: Split up ip6gre_tnl_change()
-Date: Thu, 24 May 2018 11:37:30 +0200
-Message-Id: <20180524093021.371976848@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.16 050/161] s390: add automatic detection of the spectre defense
+Date: Thu, 24 May 2018 11:37:55 +0200
+Message-Id: <20180524093024.452281026@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339203001612379?=
-X-GMAIL-MSGID: =?utf-8?q?1601339203001612379?=
+X-GMAIL-THRID: =?utf-8?q?1601339196974304182?=
+X-GMAIL-MSGID: =?utf-8?q?1601339196974304182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,46 +50,229 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit a6465350ef495f5cbd76a3e505d25a01d648477e ]
+[ Upstream commit 6e179d64126b909f0b288fa63cdbf07c531e9b1d ]
 
-Split a reusable function ip6gre_tnl_copy_tnl_parm() from
-ip6gre_tnl_change(). This will allow ERSPAN-specific code to
-reuse the common parts while customizing the behavior for ERSPAN.
+Automatically decide between nobp vs. expolines if the spectre_v2=auto
+kernel parameter is specified or CONFIG_EXPOLINE_AUTO=y is set.
 
-Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Acked-by: William Tu <u9012063@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The decision made at boot time due to CONFIG_EXPOLINE_AUTO=y being set
+can be overruled with the nobp, nospec and spectre_v2 kernel parameters.
+
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_gre.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/s390/Kconfig                     |    2 -
+ arch/s390/Makefile                    |    2 -
+ arch/s390/include/asm/nospec-branch.h |    6 +--
+ arch/s390/kernel/alternative.c        |    1 
+ arch/s390/kernel/module.c             |   11 ++---
+ arch/s390/kernel/nospec-branch.c      |   68 +++++++++++++++++++++-------------
+ 6 files changed, 52 insertions(+), 38 deletions(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1106,8 +1106,8 @@ static void ip6gre_tnl_link_config(struc
- 	ip6gre_tnl_link_config_route(t, set_mtu, ip6gre_calc_hlen(t));
- }
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -576,7 +576,7 @@ choice
+ config EXPOLINE_OFF
+ 	bool "spectre_v2=off"
  
--static int ip6gre_tnl_change(struct ip6_tnl *t,
--	const struct __ip6_tnl_parm *p, int set_mtu)
-+static void ip6gre_tnl_copy_tnl_parm(struct ip6_tnl *t,
-+				     const struct __ip6_tnl_parm *p)
- {
- 	t->parms.laddr = p->laddr;
- 	t->parms.raddr = p->raddr;
-@@ -1123,6 +1123,12 @@ static int ip6gre_tnl_change(struct ip6_
- 	t->parms.o_flags = p->o_flags;
- 	t->parms.fwmark = p->fwmark;
- 	dst_cache_reset(&t->dst_cache);
-+}
-+
-+static int ip6gre_tnl_change(struct ip6_tnl *t, const struct __ip6_tnl_parm *p,
-+			     int set_mtu)
-+{
-+	ip6gre_tnl_copy_tnl_parm(t, p);
- 	ip6gre_tnl_link_config(t, set_mtu);
+-config EXPOLINE_MEDIUM
++config EXPOLINE_AUTO
+ 	bool "spectre_v2=auto"
+ 
+ config EXPOLINE_FULL
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -84,7 +84,7 @@ ifdef CONFIG_EXPOLINE
+     CC_FLAGS_EXPOLINE += -mfunction-return=thunk
+     CC_FLAGS_EXPOLINE += -mindirect-branch-table
+     export CC_FLAGS_EXPOLINE
+-    cflags-y += $(CC_FLAGS_EXPOLINE)
++    cflags-y += $(CC_FLAGS_EXPOLINE) -DCC_USING_EXPOLINE
+   endif
+ endif
+ 
+--- a/arch/s390/include/asm/nospec-branch.h
++++ b/arch/s390/include/asm/nospec-branch.h
+@@ -6,12 +6,10 @@
+ 
+ #include <linux/types.h>
+ 
+-extern int nospec_call_disable;
+-extern int nospec_return_disable;
++extern int nospec_disable;
+ 
+ void nospec_init_branches(void);
+-void nospec_call_revert(s32 *start, s32 *end);
+-void nospec_return_revert(s32 *start, s32 *end);
++void nospec_revert(s32 *start, s32 *end);
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+--- a/arch/s390/kernel/alternative.c
++++ b/arch/s390/kernel/alternative.c
+@@ -2,6 +2,7 @@
+ #include <linux/module.h>
+ #include <asm/alternative.h>
+ #include <asm/facility.h>
++#include <asm/nospec-branch.h>
+ 
+ #define MAX_PATCH_LEN (255 - 1)
+ 
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -159,7 +159,7 @@ int module_frob_arch_sections(Elf_Ehdr *
+ 	me->core_layout.size += me->arch.got_size;
+ 	me->arch.plt_offset = me->core_layout.size;
+ 	if (me->arch.plt_size) {
+-		if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_call_disable)
++		if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_disable)
+ 			me->arch.plt_size += PLT_ENTRY_SIZE;
+ 		me->core_layout.size += me->arch.plt_size;
+ 	}
+@@ -318,8 +318,7 @@ static int apply_rela(Elf_Rela *rela, El
+ 				info->plt_offset;
+ 			ip[0] = 0x0d10e310;	/* basr 1,0  */
+ 			ip[1] = 0x100a0004;	/* lg	1,10(1) */
+-			if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-			    !nospec_call_disable) {
++			if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_disable) {
+ 				unsigned int *ij;
+ 				ij = me->core_layout.base +
+ 					me->arch.plt_offset +
+@@ -440,7 +439,7 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 	void *aseg;
+ 
+ 	if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-	    !nospec_call_disable && me->arch.plt_size) {
++	    !nospec_disable && me->arch.plt_size) {
+ 		unsigned int *ij;
+ 
+ 		ij = me->core_layout.base + me->arch.plt_offset +
+@@ -467,11 +466,11 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+ 		    (!strcmp(".nospec_call_table", secname)))
+-			nospec_call_revert(aseg, aseg + s->sh_size);
++			nospec_revert(aseg, aseg + s->sh_size);
+ 
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+ 		    (!strcmp(".nospec_return_table", secname)))
+-			nospec_return_revert(aseg, aseg + s->sh_size);
++			nospec_revert(aseg, aseg + s->sh_size);
+ 	}
+ 
+ 	jump_label_apply_nops(me);
+--- a/arch/s390/kernel/nospec-branch.c
++++ b/arch/s390/kernel/nospec-branch.c
+@@ -10,10 +10,17 @@ static int __init nobp_setup_early(char
+ 	rc = kstrtobool(str, &enabled);
+ 	if (rc)
+ 		return rc;
+-	if (enabled && test_facility(82))
++	if (enabled && test_facility(82)) {
++		/*
++		 * The user explicitely requested nobp=1, enable it and
++		 * disable the expoline support.
++		 */
+ 		__set_facility(82, S390_lowcore.alt_stfle_fac_list);
+-	else
++		if (IS_ENABLED(CONFIG_EXPOLINE))
++			nospec_disable = 1;
++	} else {
+ 		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
++	}
  	return 0;
  }
+ early_param("nobp", nobp_setup_early);
+@@ -27,31 +34,46 @@ early_param("nospec", nospec_setup_early
+ 
+ #ifdef CONFIG_EXPOLINE
+ 
+-int nospec_call_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+-int nospec_return_disable = !IS_ENABLED(CONFIG_EXPOLINE_FULL);
++int nospec_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+ 
+ static int __init nospectre_v2_setup_early(char *str)
+ {
+-	nospec_call_disable = 1;
+-	nospec_return_disable = 1;
++	nospec_disable = 1;
+ 	return 0;
+ }
+ early_param("nospectre_v2", nospectre_v2_setup_early);
+ 
++static int __init spectre_v2_auto_early(void)
++{
++	if (IS_ENABLED(CC_USING_EXPOLINE)) {
++		/*
++		 * The kernel has been compiled with expolines.
++		 * Keep expolines enabled and disable nobp.
++		 */
++		nospec_disable = 0;
++		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
++	}
++	/*
++	 * If the kernel has not been compiled with expolines the
++	 * nobp setting decides what is done, this depends on the
++	 * CONFIG_KERNEL_NP option and the nobp/nospec parameters.
++	 */
++	return 0;
++}
++#ifdef CONFIG_EXPOLINE_AUTO
++early_initcall(spectre_v2_auto_early);
++#endif
++
+ static int __init spectre_v2_setup_early(char *str)
+ {
+ 	if (str && !strncmp(str, "on", 2)) {
+-		nospec_call_disable = 0;
+-		nospec_return_disable = 0;
+-	}
+-	if (str && !strncmp(str, "off", 3)) {
+-		nospec_call_disable = 1;
+-		nospec_return_disable = 1;
+-	}
+-	if (str && !strncmp(str, "auto", 4)) {
+-		nospec_call_disable = 0;
+-		nospec_return_disable = 1;
++		nospec_disable = 0;
++		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
+ 	}
++	if (str && !strncmp(str, "off", 3))
++		nospec_disable = 1;
++	if (str && !strncmp(str, "auto", 4))
++		spectre_v2_auto_early();
+ 	return 0;
+ }
+ early_param("spectre_v2", spectre_v2_setup_early);
+@@ -104,15 +126,9 @@ static void __init_or_module __nospec_re
+ 	}
+ }
+ 
+-void __init_or_module nospec_call_revert(s32 *start, s32 *end)
+-{
+-	if (nospec_call_disable)
+-		__nospec_revert(start, end);
+-}
+-
+-void __init_or_module nospec_return_revert(s32 *start, s32 *end)
++void __init_or_module nospec_revert(s32 *start, s32 *end)
+ {
+-	if (nospec_return_disable)
++	if (nospec_disable)
+ 		__nospec_revert(start, end);
+ }
+ 
+@@ -120,8 +136,8 @@ extern s32 __nospec_call_start[], __nosp
+ extern s32 __nospec_return_start[], __nospec_return_end[];
+ void __init nospec_init_branches(void)
+ {
+-	nospec_call_revert(__nospec_call_start, __nospec_call_end);
+-	nospec_return_revert(__nospec_return_start, __nospec_return_end);
++	nospec_revert(__nospec_call_start, __nospec_call_end);
++	nospec_revert(__nospec_return_start, __nospec_return_end);
+ }
+ 
+ #endif /* CONFIG_EXPOLINE */
