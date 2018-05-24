@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527163777-2-4458082868990680829
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527163762-2-8246812807944599188
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163777; b=Yx8b0GInZsEiT13cFVulpAygULeRxBHTXbmIlN6qj3EEgoU7l3
-    ZjeUXEm60nqt5Jal4VVMYrAwn9JHFzcbTWsjtuMqM2zxVyQSXSrRYiRHeIR9h8za
-    Hhx4kea3p0DZHuN8T/7CJtpFYFcbg0+dHcHYk0anbg1MBMHsSlBIfQNGGM6w/fo2
-    2wsLNlq9jCVUiSq9ehb2SrgPudpfRydCpeLXPNIc14c/58zY44/CreuhwK8ZFak2
-    y80R6rC0lPh4ief8u4ElmmDrl9DyEb1+7ZwaGmw/Bzn/tLc3VFeegdOObQhHnzWC
-    nMPGwUnILwI5SOlHM/OTdsqlJK6zb04za6kg==
+    1527163762; b=Nuj92KeD/QKXN7NWNZVUsqaCIiXLudhZ3qApOgU7lHwG5aHnYT
+    Pox4DQzh0juTvYamo0XHFByCXpnRsCmUeQSq4u/Gr129/cl9+H80OCpp+MV3MnlD
+    2QGHRKHcUnOzme7BOF5rKyFq6gy1XHx2sO4q4YlUIEFEqnnuCNLbBuxIK2SOiSRZ
+    OM5Vl/c7ANS7EwuV88RJVvnE7Bg+c2Dz8nOUJKWja8KpS+2itTJghklAexKXL7I1
+    de0ZxEEwqLQSMFTpzonsdbGAO69vbJmoVusJaku99c3eMd1dk/7eLUhNdZQTUunp
+    jS3a4zyngvkuGbVsZ2hIPiXqFd++Y1NITD9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163777; bh=DL6d4rcFNsbbE4LQNJPV2Ax3rn5YRC
-    iHnMPcQsKZ6hg=; b=lcmH82QGbeSZ/kgJ2MrvVMd0dNVFsqbPL3Gys2UHN+R/30
-    W8AK5t7tMRpSQrGeB9tDEHez7VXn3VWge+1CVcfUIHEYXGNOZzv7Ci1eno3WVsPe
-    IlvMdmh7hKqyov2fTqx4wp9tBrIyheAcBz874OmVMFRy6P3LDsjQISHpMiXOxOL/
-    JvSn8+COFqInYanqb4yscisQukHQdv6LV8cdvbavty6aLehq6IAXJP4evmbqy19n
-    osJCYCQSaTAPAOcU0oQN3VSz1b/QJKRLA5fVc2Op9+1OFf6I3r2nn7e+7BUbq7O/
-    wbz5MDLudFTWo497/qhswacqOqshZsImzRT4wKfw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163762; bh=fw5LrBe8n02zidKL+z1IAEqdK2U2Xd
+    DeO03a2XOnDm4=; b=h7L+YI0pBqr6ekVLxSiJjyu+8rd05TmJA1wbrQ5NQALGLn
+    JLb+E9l3H6GJkFkgsxhz9YD0Ym6n8GqS5s1MiyZnV8HpLtJVmgUeMuLH56MExrpN
+    HT5r36PsEIKhbDwvoUXE7Oee5uXQ+RjQjFSBeuPe0VjsInQQGT1fYiZsj6ZG4urw
+    sBVLNqov9J25EVHMpXhOwgVKUp5NT5CxVmAC7ti8WGyu0BSQSAKf69RC9igW2g0k
+    SxbIbMCXPFUq8TyDWmavj+xVcSmYXCCaX5yQUD4KM4UdOSFWxwWVqB72Ue+Boc+3
+    wzfYkPDqgdTuvPmZhS3G6do+b72+2LBAz60KAo5w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=Z6P7xKCG x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Wo80XnFt x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=Z6P7xKCG x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Wo80XnFt x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,31 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA5rwyTgS2Acay2kplL/CAv0rX9J+gymxHSINogMqnKuwGJ0yJCmXSpsY739W0SvXskk0rj9ocHuF9sHFYVcFNw3zNoJoiQFALwOQ/zB4vx06om99ccA
-    by4/gKoSjhLzCkcrWIoKMK2deBGDVVAeFMY/uQ4DjPQv+IRvv9U7rG151dK8n3i0Gx7Uz3oW/X241rH+MAQ8RDdsFwxkomFA0I7nSpcnmQVWy8YIyC97BHpJ
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfODyOdhWW7SUB5Zx/at1IuC4UzPTb99dghqfwUP/IWFdK3DVeTjBzBr9nNz3UJNWlBq8H5JWJC9RQmGymYNWrDfCeQMrKkwZ3ED4pQwREdVel6jmpO91
+    ygvs/Jj0+yUq+l+pY4EQoaHkSTLsDnRLDnM5r1TqBI4OjGKyRouJwRVNE/zkesCkxi3GkHqHqEV5aPtq6jQztvcs4LbXbTV6bJcK5hU9CHfPYXBufWPUB6as
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=KKAkSRfTAAAA:8 a=7CQSdrXTAAAA:8 a=ag1SF4gXAAAA:8 a=bhZMS0Sl6ytBHf_z0TsA:9
-    a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=20KFwNOVAAAA:8 a=xVhDTqbCAAAA:8 a=1EsaE_6oAAAA:8 a=ag1SF4gXAAAA:8
+    a=iFqXARc6UK7X9jn39JAA:9 a=QEXdDO2ut3YA:10 a=GrmWmAYt4dzCMttCBZOh:22
+    a=3ZumFrijQQ-2J9H5h8ct:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966019AbeEXMJU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:09:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54922 "EHLO mail.kernel.org"
+        id S966487AbeEXJn3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:43:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966486AbeEXJn2 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:28 -0400
+        id S966470AbeEXJn0 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 4.4 22/92] arm64: introduce mov_q macro to move a constant into a 64-bit register
-Date: Thu, 24 May 2018 11:37:59 +0200
-Message-Id: <20180524093201.122741037@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 21/92] audit: move calcs after alloc and check when logging set loginuid
+Date: Thu, 24 May 2018 11:37:58 +0200
+Message-Id: <20180524093201.053650632@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -107,48 +106,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Richard Guy Briggs <rgb@redhat.com>
 
-commit 30b5ba5cf333cc650e474eaf2cc1ae91bc7cf89f upstream.
+commit 76a658c20efd541a62838d9ff68ce94170d7a549 upstream.
 
-Implement a macro mov_q that can be used to move an immediate constant
-into a 64-bit register, using between 2 and 4 movz/movk instructions
-(depending on the operand)
+Move the calculations of values after the allocation in case the
+allocation fails.  This avoids wasting effort in the rare case that it
+fails, but more importantly saves us extra logic to release the tty
+ref.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/assembler.h |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ kernel/auditsc.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -204,4 +204,24 @@ lr	.req	x30		// link register
- 	.size	__pi_##x, . - x;	\
- 	ENDPROC(x)
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1981,14 +1981,15 @@ static void audit_log_set_loginuid(kuid_
+ 	if (!audit_enabled)
+ 		return;
  
-+	/*
-+	 * mov_q - move an immediate constant into a 64-bit register using
-+	 *         between 2 and 4 movz/movk instructions (depending on the
-+	 *         magnitude and sign of the operand)
-+	 */
-+	.macro	mov_q, reg, val
-+	.if (((\val) >> 31) == 0 || ((\val) >> 31) == 0x1ffffffff)
-+	movz	\reg, :abs_g1_s:\val
-+	.else
-+	.if (((\val) >> 47) == 0 || ((\val) >> 47) == 0x1ffff)
-+	movz	\reg, :abs_g2_s:\val
-+	.else
-+	movz	\reg, :abs_g3:\val
-+	movk	\reg, :abs_g2_nc:\val
-+	.endif
-+	movk	\reg, :abs_g1_nc:\val
-+	.endif
-+	movk	\reg, :abs_g0_nc:\val
-+	.endm
++	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_LOGIN);
++	if (!ab)
++		return;
 +
- #endif	/* __ASM_ASSEMBLER_H */
+ 	uid = from_kuid(&init_user_ns, task_uid(current));
+ 	oldloginuid = from_kuid(&init_user_ns, koldloginuid);
+ 	loginuid = from_kuid(&init_user_ns, kloginuid),
+ 	tty = audit_get_tty(current);
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_LOGIN);
+-	if (!ab)
+-		return;
+ 	audit_log_format(ab, "pid=%d uid=%u", task_pid_nr(current), uid);
+ 	audit_log_task_context(ab);
+ 	audit_log_format(ab, " old-auid=%u auid=%u tty=%s old-ses=%u ses=%u res=%d",
