@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160765-2-13631768718006115269
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160752-3-4830907967274548745
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enca, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160764; b=cwa7csbtrMLTui0Vk/bEdu8BPiMhmPL84YlrdHOruKiu9Ubzjc
-    kmo5KCnyM390tQhNWjDNxQrHDuDgj58qyxVCauTpy48WhiIMu0tRIWtXx/tf7LFF
-    6+9QOn5e9ltqWcKfXUCvAqx531NCrTWk/woQeLU6kQFDImm8RSuBmEX6qdiexit2
-    SRmYDiD7hMkMrUE9UNSRFWqW8VHqrbLPMsruW/1WyAkoJw5b7s82Ceyq0HiVQMgl
-    nc1c+h5gs1BpUU7QC9RaFJxauHACoJR4GOhyhJnMDDuK6WqUIOAZ5BoTRLq55bo1
-    8ikWQ1PqNMHmOIfcHpXaFPSBgh9IS7OHnzvg==
+    1527160750; b=mtil9+B+vZaehOSHL4up3Od7qhqBu2hxPjHg81bGb6FzsiIgxc
+    5mUXcweISAPdpzO7e70j1uxpgdYSzcK7ANA4UeJk49ZEHbhguyXWPsOv5dWaUMpr
+    MrfRwEK4LoEQpbVKARt+wnUPPwpMC55jC0yVuzzLNo8cu+5U4I7ms/Aq978YfxaR
+    4KF/yX7pIsgwfuc7DII2/YynivyRwKqon3HNHIni51DM7Q+pNEXGDFoHyVmychES
+    6NQXfDbs4DUlx2HEhLB+Wc1eJljeBqMfBOZUd5C+o/nGUhEB9ko2XI2BcoG4jv5e
+    nBZVQrVykj/M6wmNOmWH/a8jLBe4Fuotg3YQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160764; bh=IXoj0YIg27glLSBwbYIQ9I9xAXaJyc
-    3+y0zbpToc9O8=; b=XuFlGSjp9i6J5csYZJ0FXy+hMCYne0GyC99NAHJz9s7N84
-    KzCOe3EQ5Dwt3rFgB3zo8RqQvGYDohw7dBsnsQVTqlWYlh4VOd2KQxp4B6DoZ5Pn
-    xtb8NBCahcWCZ472E6bXybSggORa3zKSJhGjqYVti9eCTdMQNd/wvTiSL3Yd7DEB
-    JFART/WovJBYVdkhuQTzQsqDemPTTIkMqdJSxjO9yCWCc2LIxbehmPJ7CLxLFp6i
-    s5YLpkEJYzkpyLBNCT30XU6pPwcXK2Jq+WxOXAiKnMlADMsOvSFjqsoyyUepQbJl
-    Z9CkhUbQXVvazLJhZnyyrz0eJf26Z0z3alSDZ28Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527160750; bh=ZEkW/XvxAICBnEFFFvTvbmWdCatMED
+    VdcgVnNzbH6pU=; b=Jl+Y+C42eSe7lNvw28H4QVYFmcC11rXSh6qFblVP//ri8F
+    s+xi7i+R2v//w9VLR9n7XgiBIYK/Kh/EBmIHrosoqDxNs7QzumdqFlF8uURqMOKg
+    EYHer+n7vE1NK5kEaOYsjPFYdlsVMMgxIs5ncdc2gwOoalKfpoh5ajbnkvuFW6wX
+    085zxr9Kr3VT9MGchewwehGvUvPwhOKWBg+tcmzy6LFF8v7BQVIehl5Fj/I8JxtE
+    icQ699tHKXj5SbQhwv/yyOiVR0vusCkqsOW4rpp3e3VeRx/NkEszBJmQJHtoxLws
+    YNTKTPUoE/xCpWJ3oVyxx/HVaUCaYAeu0AJzC23w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=YGrN3KHj x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=JNmohnaj x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=YGrN3KHj x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=JNmohnaj x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIRc0tB4+/8ZEqqSppCsAR4xmsSfNJFDCJICmrsq9izk7liIARmeeV7nT+Fnw9m3lP1DtnwJuqXj2ETXxooDgYqdHXTW2ZpOjq0UocZMeT0MZRl/6NKD
-    GsAt1Ad/sVGDOnSdY0fgeuxGiTfVj6ydCh8us+c18x7r10aQjrl9PdunASk0EnUObUf9WZWfIVHEkIuZwq/Eq8cHKvX0MFANxweIMI07uXpICiShY7jBgZTz
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHFyaAjFzwQQEpY/gLd5WZ2ZlgR5lRbRG9VaEq5u7YzTCjNIig1yujHF22oVimcrp0/HvYEgfn1zK3TIk3iqGehvGCXsY9C6Gp2dOZqM77yIXjoEGIfw
+    6gcYaFHu9GygE54ZyLrnSDYe5cq6U6/41BDL12Q74hxMKctu7Gk3+64t9zwycdso091qo5KM22G3MT05UFBx2K8h0h0V09eSP29vkwkFu/qaA6LBU1LfxJI1
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=fVyeVDDlV0fLwxxXKt0A:9
-    a=PgTiWG9JWcHCFaKu:21 a=eegscuS1BbSmLFCX:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=iMImQnbvsJ8DnYXdvQIA:9
+    a=nY-GhDmAe0MnQO6p:21 a=_UTuHhq-9TYV9EGs:21 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968692AbeEXLTK (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:19:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55488 "EHLO mail.kernel.org"
+        id S966500AbeEXJw6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:52:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967253AbeEXJw5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:52:57 -0400
+        id S966810AbeEXJwy (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:52:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 038/165] s390: move expoline assembler macros to a header
-Date: Thu, 24 May 2018 11:37:24 +0200
-Message-Id: <20180524093623.514120445@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.vnet.ibm.com>
+Subject: [PATCH 4.14 037/165] s390: add assembler macros for CPU alternatives
+Date: Thu, 24 May 2018 11:37:23 +0200
+Message-Id: <20180524093623.474749698@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -106,403 +107,140 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 6dd85fbb87d1d6b87a3b1f02ca28d7b2abd2e7ba ]
+[ Upstream commit fba9eb7946251d6e420df3bdf7bc45195be7be9a ]
 
-To be able to use the expoline branches in different assembler
-files move the associated macros from entry.S to a new header
-nospec-insn.h.
+Add a header with macros usable in assembler files to emit alternative
+code sequences. It works analog to the alternatives for inline assmeblies
+in C files, with the same restrictions and capabilities.
+The syntax is
 
-While we are at it make the macros a bit nicer to use.
+     ALTERNATIVE "<default instructions sequence>", \
+		 "<alternative instructions sequence>", \
+		 "<features-bit>"
+and
 
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+     ALTERNATIVE_2 "<default instructions sequence>", \
+		   "<alternative instructions sqeuence #1>", \
+		   "<feature-bit #1>",
+		   "<alternative instructions sqeuence #2>", \
+		   "<feature-bit #2>"
+
+Reviewed-by: Vasily Gorbik <gor@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-insn.h |  125 ++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/entry.S            |  105 ++++++------------------------
- 2 files changed, 149 insertions(+), 81 deletions(-)
- create mode 100644 arch/s390/include/asm/nospec-insn.h
+ arch/s390/include/asm/alternative-asm.h |  108 ++++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+ create mode 100644 arch/s390/include/asm/alternative-asm.h
 
 --- /dev/null
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -0,0 +1,125 @@
++++ b/arch/s390/include/asm/alternative-asm.h
+@@ -0,0 +1,108 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_S390_NOSPEC_ASM_H
-+#define _ASM_S390_NOSPEC_ASM_H
++#ifndef _ASM_S390_ALTERNATIVE_ASM_H
++#define _ASM_S390_ALTERNATIVE_ASM_H
 +
 +#ifdef __ASSEMBLY__
 +
-+#ifdef CONFIG_EXPOLINE
++/*
++ * Check the length of an instruction sequence. The length may not be larger
++ * than 254 bytes and it has to be divisible by 2.
++ */
++.macro alt_len_check start,end
++	.if ( \end - \start ) > 254
++	.error "cpu alternatives does not support instructions blocks > 254 bytes\n"
++	.endif
++	.if ( \end - \start ) % 2
++	.error "cpu alternatives instructions length is odd\n"
++	.endif
++.endm
 +
 +/*
-+ * The expoline macros are used to create thunks in the same format
-+ * as gcc generates them. The 'comdat' section flag makes sure that
-+ * the various thunks are merged into a single copy.
++ * Issue one struct alt_instr descriptor entry (need to put it into
++ * the section .altinstructions, see below). This entry contains
++ * enough information for the alternatives patching code to patch an
++ * instruction. See apply_alternatives().
 + */
-+	.macro __THUNK_PROLOG_NAME name
-+	.pushsection .text.\name,"axG",@progbits,\name,comdat
-+	.globl \name
-+	.hidden \name
-+	.type \name,@function
-+\name:
-+	.cfi_startproc
-+	.endm
++.macro alt_entry orig_start, orig_end, alt_start, alt_end, feature
++	.long	\orig_start - .
++	.long	\alt_start - .
++	.word	\feature
++	.byte	\orig_end - \orig_start
++	.byte	\alt_end - \alt_start
++.endm
 +
-+	.macro __THUNK_EPILOG
-+	.cfi_endproc
++/*
++ * Fill up @bytes with nops. The macro emits 6-byte nop instructions
++ * for the bulk of the area, possibly followed by a 4-byte and/or
++ * a 2-byte nop if the size of the area is not divisible by 6.
++ */
++.macro alt_pad_fill bytes
++	.fill	( \bytes ) / 6, 6, 0xc0040000
++	.fill	( \bytes ) % 6 / 4, 4, 0x47000000
++	.fill	( \bytes ) % 6 % 4 / 2, 2, 0x0700
++.endm
++
++/*
++ * Fill up @bytes with nops. If the number of bytes is larger
++ * than 6, emit a jg instruction to branch over all nops, then
++ * fill an area of size (@bytes - 6) with nop instructions.
++ */
++.macro alt_pad bytes
++	.if ( \bytes > 0 )
++	.if ( \bytes > 6 )
++	jg	. + \bytes
++	alt_pad_fill \bytes - 6
++	.else
++	alt_pad_fill \bytes
++	.endif
++	.endif
++.endm
++
++/*
++ * Define an alternative between two instructions. If @feature is
++ * present, early code in apply_alternatives() replaces @oldinstr with
++ * @newinstr. ".skip" directive takes care of proper instruction padding
++ * in case @newinstr is longer than @oldinstr.
++ */
++.macro ALTERNATIVE oldinstr, newinstr, feature
++	.pushsection .altinstr_replacement,"ax"
++770:	\newinstr
++771:	.popsection
++772:	\oldinstr
++773:	alt_len_check 770b, 771b
++	alt_len_check 772b, 773b
++	alt_pad ( ( 771b - 770b ) - ( 773b - 772b ) )
++774:	.pushsection .altinstructions,"a"
++	alt_entry 772b, 774b, 770b, 771b, \feature
 +	.popsection
-+	.endm
++.endm
 +
-+	.macro __THUNK_PROLOG_BR r1,r2
-+	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
-+	.endm
-+
-+	.macro __THUNK_BR r1,r2
-+	jg	__s390x_indirect_jump_r\r2\()use_r\r1
-+	.endm
-+
-+	.macro __THUNK_BRASL r1,r2,r3
-+	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
-+	.endm
-+
-+	.macro	__DECODE_RR expand,reg,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \reg,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r2
-+	\expand \r1,\r2
-+	.set __decode_fail,0
++/*
++ * Define an alternative between two instructions. If @feature is
++ * present, early code in apply_alternatives() replaces @oldinstr with
++ * @newinstr. ".skip" directive takes care of proper instruction padding
++ * in case @newinstr is longer than @oldinstr.
++ */
++.macro ALTERNATIVE_2 oldinstr, newinstr1, feature1, newinstr2, feature2
++	.pushsection .altinstr_replacement,"ax"
++770:	\newinstr1
++771:	\newinstr2
++772:	.popsection
++773:	\oldinstr
++774:	alt_len_check 770b, 771b
++	alt_len_check 771b, 772b
++	alt_len_check 773b, 774b
++	.if ( 771b - 770b > 772b - 771b )
++	alt_pad ( ( 771b - 770b ) - ( 774b - 773b ) )
++	.else
++	alt_pad ( ( 772b - 771b ) - ( 774b - 773b ) )
 +	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_RR failed"
-+	.endif
-+	.endm
-+
-+	.macro	__DECODE_RRR expand,rsave,rtarget,ruse
-+	.set __decode_fail,1
-+	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \rsave,%r\r1
-+	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \rtarget,%r\r2
-+	.irp r3,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-+	.ifc \ruse,%r\r3
-+	\expand \r1,\r2,\r3
-+	.set __decode_fail,0
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.endif
-+	.endr
-+	.if __decode_fail == 1
-+	.error "__DECODE_RRR failed"
-+	.endif
-+	.endm
-+
-+	.macro __THUNK_EX_BR reg,ruse
-+#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
-+	exrl	0,555f
-+	j	.
-+#else
-+	larl	\ruse,555f
-+	ex	0,0(\ruse)
-+	j	.
-+#endif
-+555:	br	\reg
-+	.endm
-+
-+	.macro GEN_BR_THUNK reg,ruse=%r1
-+	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
-+	__THUNK_EX_BR \reg,\ruse
-+	__THUNK_EPILOG
-+	.endm
-+
-+	.macro BR_EX reg,ruse=%r1
-+557:	__DECODE_RR __THUNK_BR,\reg,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	557b-.
++775:	.pushsection .altinstructions,"a"
++	alt_entry 773b, 775b, 770b, 771b,\feature1
++	alt_entry 773b, 775b, 771b, 772b,\feature2
 +	.popsection
-+	.endm
++.endm
 +
-+	.macro BASR_EX rsave,rtarget,ruse=%r1
-+559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
-+	.pushsection .s390_indirect_branches,"a",@progbits
-+	.long	559b-.
-+	.popsection
-+	.endm
++#endif	/*  __ASSEMBLY__  */
 +
-+#else
-+	.macro GEN_BR_THUNK reg,ruse=%r1
-+	.endm
-+
-+	 .macro BR_EX reg,ruse=%r1
-+	br	\reg
-+	.endm
-+
-+	.macro BASR_EX rsave,rtarget,ruse=%r1
-+	basr	\rsave,\rtarget
-+	.endm
-+#endif
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_S390_NOSPEC_ASM_H */
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -25,6 +25,7 @@
- #include <asm/setup.h>
- #include <asm/nmi.h>
- #include <asm/export.h>
-+#include <asm/nospec-insn.h>
- 
- __PT_R0      =	__PT_GPRS
- __PT_R1      =	__PT_GPRS + 8
-@@ -221,67 +222,9 @@ _PIF_WORK	= (_PIF_PER_TRAP | _PIF_SYSCAL
- 	.popsection
- 	.endm
- 
--#ifdef CONFIG_EXPOLINE
--
--	.macro GEN_BR_THUNK name,reg,tmp
--	.section .text.\name,"axG",@progbits,\name,comdat
--	.globl \name
--	.hidden \name
--	.type \name,@function
--\name:
--	.cfi_startproc
--#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
--	exrl	0,0f
--#else
--	larl	\tmp,0f
--	ex	0,0(\tmp)
--#endif
--	j	.
--0:	br	\reg
--	.cfi_endproc
--	.endm
--
--	GEN_BR_THUNK __s390x_indirect_jump_r1use_r9,%r9,%r1
--	GEN_BR_THUNK __s390x_indirect_jump_r1use_r14,%r14,%r1
--	GEN_BR_THUNK __s390x_indirect_jump_r11use_r14,%r14,%r11
--
--	.macro BASR_R14_R9
--0:	brasl	%r14,__s390x_indirect_jump_r1use_r9
--	.pushsection .s390_indirect_branches,"a",@progbits
--	.long	0b-.
--	.popsection
--	.endm
--
--	.macro BR_R1USE_R14
--0:	jg	__s390x_indirect_jump_r1use_r14
--	.pushsection .s390_indirect_branches,"a",@progbits
--	.long	0b-.
--	.popsection
--	.endm
--
--	.macro BR_R11USE_R14
--0:	jg	__s390x_indirect_jump_r11use_r14
--	.pushsection .s390_indirect_branches,"a",@progbits
--	.long	0b-.
--	.popsection
--	.endm
--
--#else	/* CONFIG_EXPOLINE */
--
--	.macro BASR_R14_R9
--	basr	%r14,%r9
--	.endm
--
--	.macro BR_R1USE_R14
--	br	%r14
--	.endm
--
--	.macro BR_R11USE_R14
--	br	%r14
--	.endm
--
--#endif /* CONFIG_EXPOLINE */
--
-+	GEN_BR_THUNK %r9
-+	GEN_BR_THUNK %r14
-+	GEN_BR_THUNK %r14,%r11
- 
- 	.section .kprobes.text, "ax"
- .Ldummy:
-@@ -298,7 +241,7 @@ _PIF_WORK	= (_PIF_PER_TRAP | _PIF_SYSCAL
- ENTRY(__bpon)
- 	.globl __bpon
- 	BPON
--	BR_R1USE_R14
-+	BR_EX	%r14
- 
- /*
-  * Scheduler resume function, called by switch_to
-@@ -325,7 +268,7 @@ ENTRY(__switch_to)
- 	TSTMSK	__LC_MACHINE_FLAGS,MACHINE_FLAG_LPP
- 	jz	0f
- 	.insn	s,0xb2800000,__LC_LPP		# set program parameter
--0:	BR_R1USE_R14
-+0:	BR_EX	%r14
- 
- .L__critical_start:
- 
-@@ -392,7 +335,7 @@ sie_exit:
- 	xgr	%r5,%r5
- 	lmg	%r6,%r14,__SF_GPRS(%r15)	# restore kernel registers
- 	lg	%r2,__SF_EMPTY+16(%r15)		# return exit reason code
--	BR_R1USE_R14
-+	BR_EX	%r14
- .Lsie_fault:
- 	lghi	%r14,-EFAULT
- 	stg	%r14,__SF_EMPTY+16(%r15)	# set exit reason code
-@@ -451,7 +394,7 @@ ENTRY(system_call)
- 	lgf	%r9,0(%r8,%r10)			# get system call add.
- 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
- 	jnz	.Lsysc_tracesys
--	BASR_R14_R9				# call sys_xxxx
-+	BASR_EX	%r14,%r9			# call sys_xxxx
- 	stg	%r2,__PT_R2(%r11)		# store return value
- 
- .Lsysc_return:
-@@ -628,7 +571,7 @@ ENTRY(system_call)
- 	lmg	%r3,%r7,__PT_R3(%r11)
- 	stg	%r7,STACK_FRAME_OVERHEAD(%r15)
- 	lg	%r2,__PT_ORIG_GPR2(%r11)
--	BASR_R14_R9			# call sys_xxx
-+	BASR_EX	%r14,%r9		# call sys_xxx
- 	stg	%r2,__PT_R2(%r11)	# store return value
- .Lsysc_tracenogo:
- 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
-@@ -652,7 +595,7 @@ ENTRY(ret_from_fork)
- 	lmg	%r9,%r10,__PT_R9(%r11)	# load gprs
- ENTRY(kernel_thread_starter)
- 	la	%r2,0(%r10)
--	BASR_R14_R9
-+	BASR_EX	%r14,%r9
- 	j	.Lsysc_tracenogo
- 
- /*
-@@ -731,7 +674,7 @@ ENTRY(pgm_check_handler)
- 	je	.Lpgm_return
- 	lgf	%r9,0(%r10,%r1)		# load address of handler routine
- 	lgr	%r2,%r11		# pass pointer to pt_regs
--	BASR_R14_R9			# branch to interrupt-handler
-+	BASR_EX	%r14,%r9		# branch to interrupt-handler
- .Lpgm_return:
- 	LOCKDEP_SYS_EXIT
- 	tm	__PT_PSW+1(%r11),0x01	# returning to user ?
-@@ -1041,7 +984,7 @@ ENTRY(psw_idle)
- 	stpt	__TIMER_IDLE_ENTER(%r2)
- .Lpsw_idle_lpsw:
- 	lpswe	__SF_EMPTY(%r15)
--	BR_R1USE_R14
-+	BR_EX	%r14
- .Lpsw_idle_end:
- 
- /*
-@@ -1083,7 +1026,7 @@ ENTRY(save_fpu_regs)
- .Lsave_fpu_regs_done:
- 	oi	__LC_CPU_FLAGS+7,_CIF_FPU
- .Lsave_fpu_regs_exit:
--	BR_R1USE_R14
-+	BR_EX	%r14
- .Lsave_fpu_regs_end:
- EXPORT_SYMBOL(save_fpu_regs)
- 
-@@ -1129,7 +1072,7 @@ load_fpu_regs:
- .Lload_fpu_regs_done:
- 	ni	__LC_CPU_FLAGS+7,255-_CIF_FPU
- .Lload_fpu_regs_exit:
--	BR_R1USE_R14
-+	BR_EX	%r14
- .Lload_fpu_regs_end:
- 
- .L__critical_end:
-@@ -1301,7 +1244,7 @@ cleanup_critical:
- 	jl	0f
- 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
- 	jl	.Lcleanup_load_fpu_regs
--0:	BR_R11USE_R14
-+0:	BR_EX	%r14
- 
- 	.align	8
- .Lcleanup_table:
-@@ -1337,7 +1280,7 @@ cleanup_critical:
- 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
- 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
- 	larl	%r9,sie_exit			# skip forward to sie_exit
--	BR_R11USE_R14
-+	BR_EX	%r14
- #endif
- 
- .Lcleanup_system_call:
-@@ -1391,7 +1334,7 @@ cleanup_critical:
- 	stg	%r15,56(%r11)		# r15 stack pointer
- 	# set new psw address and exit
- 	larl	%r9,.Lsysc_do_svc
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_system_call_insn:
- 	.quad	system_call
- 	.quad	.Lsysc_stmg
-@@ -1403,7 +1346,7 @@ cleanup_critical:
- 
- .Lcleanup_sysc_tif:
- 	larl	%r9,.Lsysc_tif
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- .Lcleanup_sysc_restore:
- 	# check if stpt has been executed
-@@ -1420,14 +1363,14 @@ cleanup_critical:
- 	mvc	0(64,%r11),__PT_R8(%r9)
- 	lmg	%r0,%r7,__PT_R0(%r9)
- 1:	lmg	%r8,%r9,__LC_RETURN_PSW
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_sysc_restore_insn:
- 	.quad	.Lsysc_exit_timer
- 	.quad	.Lsysc_done - 4
- 
- .Lcleanup_io_tif:
- 	larl	%r9,.Lio_tif
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- .Lcleanup_io_restore:
- 	# check if stpt has been executed
-@@ -1441,7 +1384,7 @@ cleanup_critical:
- 	mvc	0(64,%r11),__PT_R8(%r9)
- 	lmg	%r0,%r7,__PT_R0(%r9)
- 1:	lmg	%r8,%r9,__LC_RETURN_PSW
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_io_restore_insn:
- 	.quad	.Lio_exit_timer
- 	.quad	.Lio_done - 4
-@@ -1494,17 +1437,17 @@ cleanup_critical:
- 	# prepare return psw
- 	nihh	%r8,0xfcfd		# clear irq & wait state bits
- 	lg	%r9,48(%r11)		# return from psw_idle
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- .Lcleanup_idle_insn:
- 	.quad	.Lpsw_idle_lpsw
- 
- .Lcleanup_save_fpu_regs:
- 	larl	%r9,save_fpu_regs
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- .Lcleanup_load_fpu_regs:
- 	larl	%r9,load_fpu_regs
--	BR_R11USE_R14
-+	BR_EX	%r14,%r11
- 
- /*
-  * Integer constants
++#endif /* _ASM_S390_ALTERNATIVE_ASM_H */
