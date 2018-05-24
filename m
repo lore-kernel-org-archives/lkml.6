@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161811-2-11599417426484885613
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161794-2-16265153503906548119
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161810; b=ccZLR75CwGWpf0XdQJA3JotFCQwc5Co0zPugXPr+TEzPLr2JL4
-    LHTmymC/zx2EJ11Q9Jgrt4MfUsQZluegOUt6B2AvIaV6x2I8ZfXCWHDcNvlV9z8F
-    tYXs0ug4vxA3az2xtUe4tpZ9jbURLWf8+NDpUV3/Lt/wYmdmiFdTChpiCZ7ADoYk
-    FD7Pniu0DJj4ZD79wM35jBFk3w5/ngrv5/eIh+EIsx1YcTHbiUgWRLB2hSdGDKDv
-    Roe3XacMVliIrGEn7yHcLIUK8SMMzBf6Q7GJJp5nwcuG20Bp4doIFZcHPGmhWM5h
-    mIfzAWyo/xzPSPAz6xBKsMMHr4cheGYNoFiA==
+    1527161794; b=HsKNAj27+g2zrhQ7w4o+z589+cxzzy8lt0+iI4082NcPkC+LXX
+    lv8vdst+acxMEfYVstQPpSLefsOJh4Iev9tX9GHuIa2FfT8vpBpKPRyZ5SQRaO+m
+    Sm0g1jY342SOP4zuTJ5Ppp+t/2GKxxqmBKeHs5eo6ZtgsfAU0XGyUMrckVsI0hS9
+    KlPBm5kRLN7NnUjzhU3EvP1SinqY2uksJ/7e4U0f1Kf2qzAICscpul7+79zJ4J49
+    +aJwlFZvjucSwVkQGGw9KBKYBIfti74B9u1/oit+ddCQ4Jh8Mk/5yB0Kax0G79+F
+    nCzcXDhqXNkZnn+cU6jzoJKvtdO7aFDY5HAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161810; bh=fikzMe1XC84N2aGwB5fqnFfHB9njw2
-    es3gUgeiJe/xY=; b=BP8b1C8YGKmcZSpOjkAI7RV5mspZ/TczQKJkV1QNAVy2dQ
-    1XEzBnwhoAWmrfn2tqRCB9KAB4owDwoa9kX8LuSRHOZXtqc18mrXdrnYwNG9zjnB
-    +v8vEQ+TBgpfFbay2h/ndy2pHj0rzgZO85+oZ/5hSBOHm9PPcKhSNE5RH+xRD3UB
-    rzoFBbntp6Uq+ME087wXPWyGEtRmZjLl7nwaPrTPxNTcKa9OxAnHiqlfu6n0wNW2
-    Jvg4E0ZiR0buCJuMJXUwZEl3px/n+gFMLvu8JcQZSpAOFhCgy2vTvS2BuWEdEnUA
-    bp/H2lsmJIHUxJ7lq6/y8hK1nXGg9jeC+FNS6bUg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161794; bh=IHvJncXlpHQh7fyWqMWcSqTpj49oSp
+    aSN0++dgkFzGU=; b=C8ayH6MCVwC1x2CQH0j/r/6osV1sgqRDgfeKNOfCxIQG+C
+    kvb7qonF24CrRzIbLfenBEmDiUl5O+EJdxvWGr+KjeRxeQUMnq0MU8FxrQZFiU6X
+    L0khWVx5npeGZhjOVUpi8BRvAhhwLt8y+EaxW+vlN7W/xuByRvP0R0FcUaYpJqtE
+    0yRit6DOF2N8PDOflDl2XbOBraQ6mkJZC2T//GwxholNkdaKCH8uZFv7PepC5p3p
+    MEgnT/BTJ4PF2TH4TRuzfgaWBEmq0+oIwbbvLZVke1+PRteulDlcH+woW2YM7Mg7
+    K662b3t4k8jnz9B4eLzH/iBbE8VrxaeVC4XPA5pw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=K6HMsPZx x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=CiiLwp8S x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,11 +45,11 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=K6HMsPZx x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=CiiLwp8S x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -63,43 +63,34 @@ Authentication-Results: mx5.messagingengine.com;
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linuxfoundation.org header.result=pass
       header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEtSy2TLZMOObey6jRmJzFjCCBtaw0K9hVWfU3ykkorGiGx+03N5QUVFd4e+peXUgNzbRrTO8nJXMOnsP2Vll8HPyI4Arx5DLnIi3VW585hafFCYZcuW
-    prSLKXGiazWD3hY+MreW1I2tYRdgkzxDv65C723M0UxVi6i9YKh2WxK9Yk5Iq87uYFw7VI4KfCemBvYvLbfv6QNspHtiGnxOl+vs3bdEy3LbysRorDUhRydZ
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJI+uPCbmnYQi75cyL0BNpK87bAX8SCuiwTrXCSe5zhYtFKkiBEI6Oi/F8tD9E2pawJIY38ImPKFIq/NsbNwrWJYLS/mhPt8in+MVu/8BRPxOijS3Tt8
+    FbeyVOdKyoy2BhnlocCdMeFPO0ZqQ2NXHKBT1AJnXi9XnSuzoy0LIjGYG+hUJOFwkwr1wPk5Aduu2dnyNuZ9fa5XsbbojmrQWLrACTu4l5xs9M2igHaZ19LT
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=20KFwNOVAAAA:8 a=zd2uoN0lAAAA:8
-    a=VnNF1IyMAAAA:8 a=QyXUC8HyAAAA:8 a=4RBUngkUAAAA:8 a=KKAkSRfTAAAA:8
-    a=oGMlB6cnAAAA:8 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=4nylR2gx3NDDJxsWytsA:9 a=QEXdDO2ut3YA:10 a=DcSpbTIhAlouE1Uv7lRv:22
-    a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22 a=cvBusfyB2V15izCimMoJ:22
-    a=NdAtdrkLVvyUPsUoGJp4:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=7ZN4cI0QAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=ebhwineD2bcmPdRjz5UA:9 a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967500AbeEXLgf (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:36:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
+        id S967118AbeEXJtq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:49:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966961AbeEXJtp (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:45 -0400
+        id S967432AbeEXJtm (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Baoquan He <bhe@redhat.com>, thomas.lendacky@amd.com,
-        prudo@linux.vnet.ibm.com, Huang Ying <ying.huang@intel.com>,
-        syzkaller-bugs@googlegroups.com, takahiro.akashi@linaro.org,
-        "H. Peter Anvin" <hpa@zytor.com>, akpm@linux-foundation.org,
-        dyoung@redhat.com, kirill.shutemov@linux.intel.com
-Subject: [PATCH 4.9 23/96] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
-Date: Thu, 24 May 2018 11:38:06 +0200
-Message-Id: <20180524093606.923671272@linuxfoundation.org>
+        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 32/96] net/usb/qmi_wwan.c: Add USB id for lt4120 modem
+Date: Thu, 24 May 2018 11:38:15 +0200
+Message-Id: <20180524093607.385121858@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -117,99 +108,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 
-commit a466ef76b815b86748d9870ef2a430af7b39c710 upstream.
+[ Upstream commit f3d801baf118c9d452ee7c278df16880c892e669 ]
 
->From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Wed, 9 May 2018 12:12:39 +0900
-Subject: [PATCH 4.9 23/96] x86/kexec: Avoid double free_page() upon do_kexec_load() failure
+This is needed to support the modem found in HP EliteBook 820 G3.
 
-syzbot is reporting crashes after memory allocation failure inside
-do_kexec_load() [1]. This is because free_transition_pgtable() is called
-by both init_transition_pgtable() and machine_kexec_cleanup() when memory
-allocation failed inside init_transition_pgtable().
-
-Regarding 32bit code, machine_kexec_free_page_tables() is called by both
-machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
-allocation failed inside machine_kexec_alloc_page_tables().
-
-Fix this by leaving the error handling to machine_kexec_cleanup()
-(and optionally setting NULL after free_page()).
-
-[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
-
-Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
-Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
-Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Baoquan He <bhe@redhat.com>
-Cc: thomas.lendacky@amd.com
-Cc: prudo@linux.vnet.ibm.com
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: syzkaller-bugs@googlegroups.com
-Cc: takahiro.akashi@linaro.org
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: akpm@linux-foundation.org
-Cc: dyoung@redhat.com
-Cc: kirill.shutemov@linux.intel.com
-Link: https://lkml.kernel.org/r/201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp
+Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/machine_kexec_32.c |    6 +++++-
- arch/x86/kernel/machine_kexec_64.c |    4 +++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/machine_kexec_32.c
-+++ b/arch/x86/kernel/machine_kexec_32.c
-@@ -71,12 +71,17 @@ static void load_segments(void)
- static void machine_kexec_free_page_tables(struct kimage *image)
- {
- 	free_page((unsigned long)image->arch.pgd);
-+	image->arch.pgd = NULL;
- #ifdef CONFIG_X86_PAE
- 	free_page((unsigned long)image->arch.pmd0);
-+	image->arch.pmd0 = NULL;
- 	free_page((unsigned long)image->arch.pmd1);
-+	image->arch.pmd1 = NULL;
- #endif
- 	free_page((unsigned long)image->arch.pte0);
-+	image->arch.pte0 = NULL;
- 	free_page((unsigned long)image->arch.pte1);
-+	image->arch.pte1 = NULL;
- }
- 
- static int machine_kexec_alloc_page_tables(struct kimage *image)
-@@ -93,7 +98,6 @@ static int machine_kexec_alloc_page_tabl
- 	    !image->arch.pmd0 || !image->arch.pmd1 ||
- #endif
- 	    !image->arch.pte0 || !image->arch.pte1) {
--		machine_kexec_free_page_tables(image);
- 		return -ENOMEM;
- 	}
- 	return 0;
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -37,8 +37,11 @@ static struct kexec_file_ops *kexec_file
- static void free_transition_pgtable(struct kimage *image)
- {
- 	free_page((unsigned long)image->arch.pud);
-+	image->arch.pud = NULL;
- 	free_page((unsigned long)image->arch.pmd);
-+	image->arch.pmd = NULL;
- 	free_page((unsigned long)image->arch.pte);
-+	image->arch.pte = NULL;
- }
- 
- static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
-@@ -79,7 +82,6 @@ static int init_transition_pgtable(struc
- 	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC));
- 	return 0;
- err:
--	free_transition_pgtable(image);
- 	return result;
- }
- 
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -942,6 +942,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x413c, 0x81b6, 8)},	/* Dell Wireless 5811e */
+ 	{QMI_FIXED_INTF(0x413c, 0x81b6, 10)},	/* Dell Wireless 5811e */
+ 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
++	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
+ 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
+ 	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0125, 4)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
