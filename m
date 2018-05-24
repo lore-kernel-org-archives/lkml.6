@@ -1,83 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965382AbeEXI1t (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:27:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:21923 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965350AbeEXI1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:27:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
-   d="scan'208";a="43824544"
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [GIT PULL 1/2] stm class: Use vmalloc for the master map
-Date: Thu, 24 May 2018 11:27:26 +0300
-Message-Id: <20180524082727.28990-2-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180524082727.28990-1-alexander.shishkin@linux.intel.com>
-References: <20180524082727.28990-1-alexander.shishkin@linux.intel.com>
+        id S965417AbeEXI2w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:28:52 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33475 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965401AbeEXI2q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:28:46 -0400
+X-Google-Smtp-Source: AB8JxZqZZOpkpv8AqMs8W8DMLumUFJcC8I4hA/hPtdvxBFvk9QTopMiCfwL92XO155g6cBbshpVJ6+dQC9Hl70TEcCM=
+MIME-Version: 1.0
+In-Reply-To: <1685755.J6GI985WX3@diego>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn> <CAL_Jsq+_QEBWdxW=J4oVGWeokc-+nMzxzX_pgCayaxg-ehivfQ@mail.gmail.com>
+ <1685755.J6GI985WX3@diego>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 24 May 2018 10:28:44 +0200
+Message-ID: <CACRpkdYCdNZ=ASw1uz4zKXC4AMd1EGbvG_G5K5cwSpH5eGPgKA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Levin Du <djw@t-chip.com.cn>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4O8SuUw005251
 
-Fengguang is running into a warning from the buddy allocator:
+On Wed, May 23, 2018 at 5:12 PM, Heiko Stübner <heiko@sntech.de> wrote:
 
-> swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #262
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> Call Trace:
-...
->  __kmalloc+0x14b/0x180: ____cache_alloc at mm/slab.c:3127
->  stm_register_device+0xf3/0x5c0: stm_register_device at drivers/hwtracing/stm/core.c:695
-...
+> So the gpio controller should definitly also be a subnode.
+>
+> The gpio in question is called "mute", so I'd think the gpio-syscon driver
+> should just define a "rockchip,rk3328-gpio-mute" compatible and contain
+> all the register voodoo in the driver itself and not define it in the dt.
+>
+> So it should probably look like
+>
+> grf: syscon at ff100000 {
+>         compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+>
+>         [all the other syscon sub-devices]
+>
+>         gpio_mute: gpio-mute {
+>                 compatible = "rockchip,rk3328-gpio-mute";
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>         };
 
-Which is basically a result of the stm class trying to allocate ~512kB
-for the dummy_stm with its default parameters. There's no reason, however,
-for it not to be vmalloc()ed instead, which is what this patch does.
+I'm sceptic.
 
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: stable@vger.kernel.org # v4.4+
----
- drivers/hwtracing/stm/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+That doesn't sound like "general purpose input output" at all.
 
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index 05386b76465e..657badb479a5 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -674,7 +674,7 @@ static void stm_device_release(struct device *dev)
- {
- 	struct stm_device *stm = to_stm_device(dev);
- 
--	kfree(stm);
-+	vfree(stm);
- }
- 
- int stm_register_device(struct device *parent, struct stm_data *stm_data,
-@@ -691,7 +691,7 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
- 		return -EINVAL;
- 
- 	nmasters = stm_data->sw_end - stm_data->sw_start + 1;
--	stm = kzalloc(sizeof(*stm) + nmasters * sizeof(void *), GFP_KERNEL);
-+	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
- 	if (!stm)
- 		return -ENOMEM;
- 
-@@ -744,7 +744,7 @@ int stm_register_device(struct device *parent, struct stm_data *stm_data,
- 	/* matches device_initialize() above */
- 	put_device(&stm->dev);
- err_free:
--	kfree(stm);
-+	vfree(stm);
- 
- 	return err;
- }
--- 
-2.17.0
+It sounds like special purpose, for a mute button.
+
+Does it use IRQ? I would recommend implementing
+drivers/input/keyboard/syscon-keys.c in the same vein
+as drivers/leds/leds-syscon.c so you can avoid indirection
+through GPIO for no good reason at all.
+
+I already have other good uses for such a generic
+input driver.
+
+Yours,
+Linus Walleij
