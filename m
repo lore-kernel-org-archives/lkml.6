@@ -1,87 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935341AbeEXA7O (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 20:59:14 -0400
-Received: from imap.thunk.org ([74.207.234.97]:47146 "EHLO imap.thunk.org"
+        id S935362AbeEXBAb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:00:31 -0400
+Received: from mga07.intel.com ([134.134.136.100]:34349 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935196AbeEXA7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 20:59:12 -0400
-Date: Wed, 23 May 2018 20:59:06 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Eric Sandeen <sandeen@sandeen.net>, Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: Bugs involving maliciously crafted file system
-Message-ID: <20180524005906.GC3434@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster>
- <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain>
- <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
- <20180523234114.GA3434@thunk.org>
- <20180524004931.GB23861@dastard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524004931.GB23861@dastard>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        id S935196AbeEXBA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:00:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,435,1520924400";
+   d="scan'208";a="42362508"
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>, Andi Kleen <andi.kleen@intel.com>,
+        Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH -V2 -mm 0/4] mm, huge page: Copy target sub-page last when copy huge page
+Date: Thu, 24 May 2018 08:58:47 +0800
+Message-Id: <20180524005851.4079-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 10:49:31AM +1000, Dave Chinner wrote:
-> 
-> We've learnt this lesson the hard way over and over again: don't
-> parse untrusted input in privileged contexts. How many times do we
-> have to make the same mistakes before people start to learn from
-> them?
+From: Huang Ying <ying.huang@intel.com>
 
-Good question.  For how many years (or is it decades, now) has Fedora
-auto-mounted USB sticks?  :-) Let me know when you successfully get
-Fedora to turn of a feature which appears to have great user appeal.
+Huge page helps to reduce TLB miss rate, but it has higher cache
+footprint, sometimes this may cause some issue.  For example, when
+copying huge page on x86_64 platform, the cache footprint is 4M.  But
+on a Xeon E5 v3 2699 CPU, there are 18 cores, 36 threads, and only 45M
+LLC (last level cache).  That is, in average, there are 2.5M LLC for
+each core and 1.25M LLC for each thread.
 
-And I'll note that Eric Beiderman just posted a patch series allowing
-unprivileged processes to mount file systems in containers.
+If the cache contention is heavy when copying the huge page, and we
+copy the huge page from the begin to the end, it is possible that the
+begin of huge page is evicted from the cache after we finishing
+copying the end of the huge page.  And it is possible for the
+application to access the begin of the huge page after copying the
+huge page.
 
-And remember the mantra which the containner people keep chanting.
-Containers are just as secure as VM's.   Hahahaha.....
+In commit c79b57e462b5d ("mm: hugetlb: clear target sub-page last when
+clearing huge page"), to keep the cache lines of the target subpage
+hot, the order to clear the subpages in the huge page in
+clear_huge_page() is changed to clearing the subpage which is furthest
+from the target subpage firstly, and the target subpage last.  The
+similar order changing helps huge page copying too.  That is
+implemented in this patchset.
 
-> User automounting of removable storage should be done via a
-> privilege separation mechanism and hence avoid this whole class of
-> security problems. We can get this separation by using FUSE in these
-> situations, right?
+The patchset is a generic optimization which should benefit quite some
+workloads, not for a specific use case.  To demonstrate the
+performance benefit of the patchset, we have tested it with
+vm-scalability run on transparent huge page.
 
-FUSE is a pretty terrible security boundary.  And not all file systems
-have FUSE support.  As I had suggested earlier, probably better to use
-9P, and mount the file system in a VM.
+With this patchset, the throughput increases ~16.6% in vm-scalability
+anon-cow-seq test case with 36 processes on a 2 socket Xeon E5 v3 2699
+system (36 cores, 72 threads).  The test case set
+/sys/kernel/mm/transparent_hugepage/enabled to be always, mmap() a big
+anonymous memory area and populate it, then forked 36 child processes,
+each writes to the anonymous memory area from the begin to the end, so
+cause copy on write.  For each child process, other child processes
+could be seen as other workloads which generate heavy cache pressure.
+At the same time, the IPC (instruction per cycle) increased from 0.63
+to 0.78, and the time spent in user space is reduced ~7.2%.
 
-> Bugs don't have to be exploitable to be a "security issue". Detected
-> filesystem corruptions on a errors=panic mount, or undetected
-> problems that cause a x/NULL deref are still a user-triggerable
-> kernel crash (i.e. a DOS) and therefore considered a security
-> problem.
+Changelog:
 
-I disagree here.  I think it's worth it to disambiguate the two.  If
-you have physical access to the machine, you can also apply AC mains
-voltage to the USB port, which will likely cause the system to crash.
-And at least for Chrome OS, it reboots really quickly.  :-)
+V2:
 
-If someone can gain control of the system so they can exfiltrate data,
-or be able to modify files owned as root, that's a much bigger deal
-that crashing the machcine in my view.
+- As suggested by Mike Kravetz, put subpage order algorithm into a
+  separate patch to avoid code duplication and reduce maintenance
+  overhead.
 
-							- Ted
+- Add hugetlbfs support
+
+Best Regards,
+Huang, Ying
