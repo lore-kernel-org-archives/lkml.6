@@ -1,64 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034481AbeEXTIb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:08:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41548 "EHLO mail.kernel.org"
+        id S1034500AbeEXTMj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:12:39 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:39160 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034424AbeEXTIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:08:24 -0400
-Date: Thu, 24 May 2018 21:08:06 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
-        stable@vger.kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, linux@roeck-us.net
-Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
-Message-ID: <20180524190806.GE31019@kroah.com>
-References: <20180524093159.286472249@linuxfoundation.org>
- <20180524180652.7bqyquqfe2nqdxfg@xps>
+        id S1034448AbeEXTMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:12:37 -0400
+Date: Thu, 24 May 2018 21:12:32 +0200
+From: Christian Brauner <christian@brauner.io>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [REVIEW][PATCH 2/6] vfs: Allow userns root to call mknod on
+ owned filesystems.
+Message-ID: <20180524191232.GA7573@mailbox.org>
+References: <87o9h6554f.fsf@xmission.com>
+ <20180523232538.4880-2-ebiederm@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180524180652.7bqyquqfe2nqdxfg@xps>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180523232538.4880-2-ebiederm@xmission.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 01:06:52PM -0500, Dan Rue wrote:
-> On Thu, May 24, 2018 at 11:37:37AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.133 release.
-> > There are 92 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat May 26 09:31:28 UTC 2018.
-> > Anything received after that time might be too late.
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm and x86_64.
-> 
-> Summary
-> ------------------------------------------------------------------------
-> 
-> kernel: 4.4.133-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-4.4.y
-> git commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
-> git describe: v4.4.132-93-g915a3d7cdea9
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a3d7cdea9
-> 
-> 
-> No regressions (compared to build v4.4.132-71-g180635995c36)
+On Wed, May 23, 2018 at 06:25:34PM -0500, Eric W. Biederman wrote:
+> These filesystems already always set SB_I_NODEV so mknod will not be
+> useful for gaining control of any devices no matter their permissions.
+> This will allow overlayfs and applications to fakeroot to use device
+> nodes to represent things on disk.
 
-It should have gotten better, as there was a fix in here for at least 2
-LTP tests that we previously were not passing.  I don't know why you all
-were not reporting that in the past, it took someone else randomly
-deciding to run LTP to report it to me...
+Excellent.
 
-Why did an improvement in results not show up?
+Acked-by: Christian Brauner <christian@brauner.io>
 
-thanks,
-
-greg k-h
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/namei.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 942c1f096f6b..20335896dcce 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3679,7 +3679,8 @@ int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+>  	if (error)
+>  		return error;
+>  
+> -	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
+> +	if ((S_ISCHR(mode) || S_ISBLK(mode)) &&
+> +	    !ns_capable(dentry->d_sb->s_user_ns, CAP_MKNOD))
+>  		return -EPERM;
+>  
+>  	if (!dir->i_op->mknod)
+> -- 
+> 2.14.1
+> 
