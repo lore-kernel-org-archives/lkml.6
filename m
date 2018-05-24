@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032255AbeEXR53 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:57:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40100 "EHLO
+        id S1032597AbeEXR7s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:59:48 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44006 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030352AbeEXR5Z (ORCPT
+        with ESMTP id S1030352AbeEXR7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:57:25 -0400
-Date: Thu, 24 May 2018 18:57:21 +0100
+        Thu, 24 May 2018 13:59:44 -0400
+Date: Thu, 24 May 2018 18:59:40 +0100
 From: Mark Brown <broonie@kernel.org>
 To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
 Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -22,17 +22,16 @@ Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
         "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <20180524175721.GB4828@sirena.org.uk>
-References: <20180524055752.GE4249@localhost.localdomain>
- <20180524140118.GS4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180524175940.GC4828@sirena.org.uk>
+References: <20180524060036.GI4249@localhost.localdomain>
+ <20180524141427.GU4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WxezjuMNsgvRf6mf"
+        protocol="application/pgp-signature"; boundary="GD+uNaHYxbVPHaQt"
 Content-Disposition: inline
-In-Reply-To: <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+In-Reply-To: <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
 X-Cookie: Excellent day to have a rotten day.
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,59 +39,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---WxezjuMNsgvRf6mf
+--GD+uNaHYxbVPHaQt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 24, 2018 at 05:30:57PM +0000, Vaittinen, Matti wrote:
-> > > On Thu, May 24, 2018 at 08:57:52AM +0300, Matti Vaittinen wrote:
-> >
-> > > +Required properties:
-> > > + - compatible: should be "rohm,bd71837-pmic".
-> > > + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., =
-"ldo7"
-> >
-> > The MFD is for a single device, there should be no need for compatibles
-> > on subfunctions.
->=20
-> I will check this. I must admit I am not sure what is the de-facto mechan=
-ism
-> for assigning the correct device-tree nodes to sub devices if compatibles
-> are not used? I think I saw device-tree node name being used for regulato=
-rs
+On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
 
-You can look at the regulators node within the parent device, you know
-that in Linux the parent device will be the MFD.  Having a compatible
-string within the device makes no difference here.  There's quite a few
-in tree examples of this.
+> > what is the lock doing and what is this wrapper function intended to do?
 
-> Also, another thing I was wondering is how supply regulators should be
-> handled? In this case the LDO5 is supplied by BUCK6 and LDO6 by
-> BUCK7.=20
+> This was the other spot which I was unsure how to handle. Datasheet for
+> the chip says that if voltage is to be changed, the regulator must be
+> disabled. Thus my voltage changing function checks if regulator is enabled
 
-> From generic regulator bindings
-> /Documentation/devicetree/bindings/regulator/regulator.txt
-> I found statement:
+Ugh, this chip is not very good is it?  Don't bounce the supply to
+change the voltage silently, that's clearly a bad idea - the devices
+using the supply are going to get very upset when the power gets removed
+just because they changed the voltage.  Instead implement a custom set
+operation that returns an error if the user attempts to change the
+voltage while the regualtor is enabled.
 
-> > - <name>-supply: phandle to the parent supply/regulator node
-
-None of that stuff uses compatible strings, just handle it as covered in
-the bindings.
-
---WxezjuMNsgvRf6mf
+--GD+uNaHYxbVPHaQt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG/QAACgkQJNaLcl1U
-h9AHrwf+I5QHGPl/Ix4blMQJui270VI4vajg2PzTVHSlND62fWGf2+K6hzxJuRIX
-0k4++LcNMX6Nxdww+O/TnXrnQKrHq/wtnihAnnXv3oOttOqMVIkFeV4k1cfl2SGV
-isvpM+6HA8ac0SqXMZLxyo42ETc04gEcSk9O5UZ+D09d9zVKUfh615qcM/oR6NTm
-ZFeDvuGad5rHqGxHgTJI/kNpCU1/x5ScJKzIDOm6c3QoWiDloZrYMsuXhz5LvEIW
-rUAB97nrVAubeC0Zgb7W2BuMRzI4/eU8iXeLbIyExC+JLisBjXH1GULAg3WQ0g8R
-l/7n1VK64rUqO/0EP2zMzC/0/chzmQ==
-=gwWb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG/YwACgkQJNaLcl1U
+h9BXpQf/WYbuiSe8ThB/68hLWXcXe3R37BpLnhEleUsosoSpg1qIgd5EcyLZol1P
+4xry9Bl24RtomPJWJhsxaYEp9sRNJOr2CZ6UDoxvFzGN9EGFlDaDFyu2Zy4QmvCl
+f1OtoRzlLsB4iDPdpcG1Z9nPPWwS/FV7R8fN/f5sEj0GsL+6m6fo4KL0ZGl7Awln
+qgNLzK3U+QvstXEW7izC9C3KGi4rNDSrJL7geZDuwYcRp8nZnRRg3LPa4Zdad+gz
+w+yIxJEfxdqr0M0ZcDbihsfm2j76Mn8PI+4JgolZVDfyN6iaief0ANSH2R/6kI0x
+aT2Mc98aWauj7tVBmCeen3QNVSt1SQ==
+=unJ+
 -----END PGP SIGNATURE-----
 
---WxezjuMNsgvRf6mf--
+--GD+uNaHYxbVPHaQt--
