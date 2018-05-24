@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161102-2-9212845277923645507
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161085-3-13825016360363828265
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES endask.us-ascii, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161102; b=VtY2tp/LsFmEbpDhFhh0HOJme8UEEZpDHvro2h1zGaYD2AyUM8
-    O04rKUv0/Ni3o5Wnrtj7+oHzm5WbIW5Pfk5QMaSv37B1V3/6oH3u96fXxhER+AlE
-    TNjLF4t/eg4pffNNb0aYIzeNORYfzqXXdhLaw7QFXcS3s5POOW4m1d0h2+Jjye9P
-    Zw1LSS+LPCDnRgTvivGlUIDiTHska0qVQT4w1u2NA1Lf9cHn2elMI7QOi/rDD/hF
-    7Y3JMpZDohC2ZyojBViljK+UyxbpTC16Uo/rbUw8/Pi4NDDhQEygGqQRmlPUN+4Y
-    ehF2pNwFRAf9bxGoee8XKnHIMQCPqrAblJVA==
+    1527161084; b=EUBpYJDgnVv7vOSkPlKulQR4Dpv4duaa2LCet1RDK/z8lXNim+
+    p4i5rcIPK0I8mLGI6epqXMSXr3ROBTu0SoWk7OV2/ohv6xw2fHgieXMK2+ij3CrC
+    RMpYgKoKca9NygxBWqpaFayFq4G+nNgBorJiPppiRC8siYADdco/CYli5Kn6+mht
+    QDlDUhklF7CLw8lB4nWuXE1pfjAfgCidyFp/Zg6JEfyNBb4ZJ2zvKOE90dQ5Jcb6
+    /sCNsfpe/w9X4Enh1Nf9N+wob/FyR1fCvnk4a+dYb5oD5BbTI7kGb2K/ZXwVPwYo
+    SaTq6u/WvBRxJa8vjnObcJpbWkfg8gPTMEMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161102; bh=VkUnHwBRRCSw7Z+c20EkhM/KRcKMC3
-    VBmHXGmNjmCnY=; b=GvC8t1/jZKUTEdpo+xYPMtOO3cwYJPRiMMWsCi9kzocIJm
-    CT22gA1pWeeObydnHCwBiMPO+eykGa0YPmndslSoFdOeeSY6R1FwwDcGoLu7Z/4f
-    iG7MSXfr98mCNWh3D5dZoW/LcrXqhjNz2T5bWPpjiKqkSZtSdNKyEU7VWgsCJ02K
-    1cW8YU45PJ2sO4UeNBXCbGgJM+bjGuydfnP/I7nNteRcfdW2oK0AQsBL8S165Ri5
-    a8vREmcjbEeo+UDyU3k1ZCVoqnhqKvH+Z6Bp/gjQ0xOUvzBT6tdE4YYlqboa6ydv
-    GH1EZLY9g0sKP4bAV9VS09dnWx/k0VoYeRD2BXaQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161084; bh=c9MVv+7M1zrBdBxws6g0UC0JjKAp/D
+    3UH/c8JztciQo=; b=HecrNj7lI2HnSjyhrp3DzIQv/TK7FFPsyix20QwJ3MU9sZ
+    rBt+OSMe3zCLw4ioZ+tves7f6CcfoPGFPo/KIqgfhKccJyRYUjC4mb+o6VR80BHP
+    ccT6EYHLcS42dIiytYqzGeUW1T+WnEk9jwbuM7exf2g9ccz4cPJXeZ5FmgBeVX7m
+    7esi7W4Pbi3B31bERLEqvl9EFh99wWceEZRPk+ETJJ6JExw2QP9AaoOT7wayRSMe
+    1sYjNOibi8WyF/Ay66vCFH51mYKl5kdve1v+WpA0MaGgpT1SzioYWcyKU6ffvNHV
+    +3FI2bCq2vn6Px+CS8kzAVTrkDy2bK/LSEYy/Png==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=YI9CwqGQ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=n3wg4Pt2 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=YI9CwqGQ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=n3wg4Pt2 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,30 +64,30 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDfVbEg8lg51ym85xgNTo4Qr+iX4TVW4zUT1vZvIUzY01yKKTOzuwR5vsQO+TONCbn6hKevZiP72y6vJ8tks4+y3Qgjsgl8bvz0H3JggLcw4RU/l0pIp
-    pO6MJyWL72hB8imRZILnRZ87bCKA3cxPBZzvJarAoO4fZWaeDBNC9z28XcD3pzGJ2BF4w+MjPkyX1F0iu6EXeUN0f3FKH5guYND1gA494IwWTwifWu0/q5WA
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfErK074jEWEpv3kNTRK1IGqwxew28RkxK+/eTBVTziNZLoUxy036f9gKJv4hrbSqBVKojZXZV6w2GHeJWpEmBVO5OInrbadsrg7DZFQr/ZIXoQuD1kOr
+    ux72hQXPXK0EsGrF2bsLhLnkKC1twbjw1jyL+pgyN653sam+oSEdq7V5EmnAejT6m7J5EaOdH+okToq9R5opoKIeakKgGzUtikGRiBSXA4WBOcGxNuw3zagl
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=40Sf997Ef6FVB49e-4oA:9
-    a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=4wj1V9UaH3AHkzC6NEoA:9
+    a=KdtO2MLwL6aJPTgH:21 a=GAe7UlhCpXq27DCJ:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967776AbeEXJvu (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:51:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48002 "EHLO mail.kernel.org"
+        id S967440AbeEXLY2 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967380AbeEXJvq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:46 -0400
+        id S967780AbeEXJvw (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:51:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 014/165] hv_netvsc: Rename tx_send_table to tx_table
-Date: Thu, 24 May 2018 11:37:00 +0200
-Message-Id: <20180524093622.562075743@linuxfoundation.org>
+Subject: [PATCH 4.14 016/165] hv_netvsc: Set tx_table to equal weight after subchannels open
+Date: Thu, 24 May 2018 11:37:02 +0200
+Message-Id: <20180524093622.641047740@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,51 +107,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Commit 39e91cfbf6f5fb26ba64cc2e8874372baf1671e7 upstream. ]
+[ Commit a6fb6aa3cfa9047b62653dbcfc9bcde6e2272b41 upstream. ]
 
-Simplify the variable name: tx_send_table
+In some cases, like internal vSwitch, the host doesn't provide
+send indirection table updates. This patch sets the table to be
+equal weight after subchannels are all open. Otherwise, all workload
+will be on one TX channel.
+
+As tested, this patch has largely increased the throughput over
+internal vSwitch.
 
 Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/hyperv_net.h |    2 +-
- drivers/net/hyperv/netvsc.c     |    2 +-
- drivers/net/hyperv/netvsc_drv.c |    4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/hyperv/rndis_filter.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -734,7 +734,7 @@ struct net_device_context {
+--- a/drivers/net/hyperv/rndis_filter.c
++++ b/drivers/net/hyperv/rndis_filter.c
+@@ -1114,6 +1114,9 @@ void rndis_set_subchannel(struct work_st
+ 	netif_set_real_num_tx_queues(ndev, nvdev->num_chn);
+ 	netif_set_real_num_rx_queues(ndev, nvdev->num_chn);
  
- 	u32 tx_checksum_mask;
++	for (i = 0; i < VRSS_SEND_TAB_SIZE; i++)
++		ndev_ctx->tx_table[i] = i % nvdev->num_chn;
++
+ 	rtnl_unlock();
+ 	return;
  
--	u32 tx_send_table[VRSS_SEND_TAB_SIZE];
-+	u32 tx_table[VRSS_SEND_TAB_SIZE];
- 
- 	/* Ethtool settings */
- 	bool udp4_l4_hash;
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1107,7 +1107,7 @@ static void netvsc_send_table(struct hv_
- 		      nvmsg->msg.v5_msg.send_table.offset);
- 
- 	for (i = 0; i < count; i++)
--		net_device_ctx->tx_send_table[i] = tab[i];
-+		net_device_ctx->tx_table[i] = tab[i];
- }
- 
- static void netvsc_send_vf(struct net_device_context *net_device_ctx,
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -234,8 +234,8 @@ static inline int netvsc_get_tx_queue(st
- 	struct sock *sk = skb->sk;
- 	int q_idx;
- 
--	q_idx = ndc->tx_send_table[netvsc_get_hash(skb, ndc) &
--				   (VRSS_SEND_TAB_SIZE - 1)];
-+	q_idx = ndc->tx_table[netvsc_get_hash(skb, ndc) &
-+			      (VRSS_SEND_TAB_SIZE - 1)];
- 
- 	/* If queue index changed record the new value */
- 	if (q_idx != old_idx &&
