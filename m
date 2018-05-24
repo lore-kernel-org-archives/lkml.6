@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162117-5-647072539833488212
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162081-2-9411476308028444663
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162117; b=GhKVY95G+JA8Qws10eC1nJhsb8kbdtvxlZ0nT0FOFv9KvkbJmr
-    932jyJ4pMPPMABW/AGHoSykDM255iKN5jgWv07dX2knLaVeR8h+yQPtSowbYKpmP
-    ciAJsytG5ZUUKbx5Mm3lZwkiThc8JpXTPs+4ROiW78woret8dAXvIyPIlbP1OPFL
-    ELPoffiYfIkqz0kduGeZI4FbMF7kA14lRuOjmt5uqt7P5mRg/BE41wFSYKHg35M1
-    O2VYAoBgW05NkiG6g9txFdkOwLrywjffEpNZ05+C4TI/bp8Cjts5nQqUBPjeON2l
-    5xdEUZJgn+MLm9iBMJKmL3j+maUWIyvrhngQ==
+    1527162080; b=UYN7GpjexCBijfx6nFQQGZj1KV2cXh04EAtbLhewLU+Je9fzUy
+    sAdnaxsBiP9okvZ5FjAo810b7WVSPT9PCStpYnR5gIGGTCEi9gyfkJuIoFiWFoDm
+    zoXcCHc9LehE9XO0FvXshny/N01PaEI2S0NZJ8s5NdIdYTvjDr2M6DTPo2zKPK22
+    Hzt8M+f+XHAT1Ek/3P06NM70SlwdHkmZ5YPtDZdN0mElfvUbAWG80lPY3TAz3JM8
+    xO2wcE1bTg8fStCTuO7uL3HFp1GUhVQPcuJV5d3LnYYuJH8228gMRJGg1fNk4LRp
+    w3vS23mEq+4WOWNTgBgI0niUs5/oUMqj2PEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162117; bh=W/zk9wMpztVxasYmtjLcF7cuBArHPE
-    zN1cmhvgHckNk=; b=SS9fNcZwCPo4A7RpIB6q5fNnDd8LYpj1SwDI89r0zjr+el
-    Slpj6l/HxYIRSnMeGs2ljAZB/oJ9MKC6bFZXQPWlGIeNnu8qMLCJO0AyrX5zOhjT
-    k4ad9Z1nwuiZmxCblGIZvWnXWQG3hOFNkCfrhz8M7iudGaeqWL/EYs7unDwP4DhN
-    r0f1ixR4LX/wNmMvjTOjPT8H356ZCpcUaZpzoA32rfuQw0KW2QO614XwC9kTem5S
-    zRefJWhcOB1Qs2PXREDIfphnxduj7yCxkDerf5GjzmrahXMmWcYe+hFAVhV1OdxG
-    b3EHUK+edRuZcIKwy8dqvdu72O499z1U7Gkzv2Yg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162080; bh=iLVKCAAi+YoBI0J3R0ox/m4vM9qXOG
+    rXShkPFyIFqBI=; b=XLLbYFaAm7pWvsaysKUDGGc7QLXIeaGz0yzMVlaxzrM9DW
+    YYwWjtMvTdbtXYtUq5GVY+f8GN7+fCK5R6RD6B6fwG2fPNifUwF/KYz2xP3v5TjS
+    cX6+IkMWdiZbtPBDik4fIlF7V9nMxVR2n7ySGBsXLBYbNGHNnAfZsVkx8M/tVHtC
+    Te1XtN+oDVf7W3XVVXUBPQRWmxQGY38lZ0o/iV9O7j++7JkUzA87FnbEPwzQLprd
+    f/GYy0B8rmAOmhxqn0aenzx7GCLB2fWXas3q9f76ay2RmqEgBHIHAZHHwwVrSJ2H
+    avn5dmLD1T5379DhApNzRfRLrgbifdiv8nrsBXfg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=teqVMbQ8 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=XCX/ofe0 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=teqVMbQ8 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=XCX/ofe0 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,33 +64,32 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOVoEgLS6hy8UJjzYH6mgzydlAGAfFORqMNRJk7IZtiY3meKPEwWLoAtf6wbkmuwyEAtuCI60/86NMYH9cyVGdoE9VBVum+l2DEHbfCOjEUfsCoz1tq8
-    ZQchtalhRDZlCsS7gxmUeqb+NeRWWTOtecvJGvr8mv5iJOdhkWHnZHqtvWL6RIFgORoS7I1k7JVkEpxUVfSI9dUexrnC1F7GjjxsYAqRnyBzLHJVo3B7aQtr
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAUwBat2O9MnNMlATYQoyNrGetkjs94/PWrAsonvKHBv3Vek1/UPLadakYT+2ALicI1Q1r9IuFECTDPWk60Q9KFN1dyPVBlCDFK4JPJ5d7sMo81GdaoF
+    h/8VSR4BM5EKENoniHbxLtgz+EZawn9j95xdsBc+fIqsBga2YpaclmyzGbi4jSA5S1n9Sw8rco/EavpDOiQteI3Ce7EWnEXLJsH/wDhqc7zTsTlKt3Yu8wX9
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=LDBv8-xUAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=0kv7T4GisTnoiZl4V4AA:9 a=QEXdDO2ut3YA:10 a=DZeXCJrVpAJBw65Qk4Ds:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=KtuSVvygwG24pxXr48oA:9 a=RvjDLRO5Ld9O7eUi:21 a=h_NTAUzmfRHWsXK-:21
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967295AbeEXLll (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:41:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34162 "EHLO mail.kernel.org"
+        id S967337AbeEXLlH (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:41:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967252AbeEXJsl (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:41 -0400
+        id S967258AbeEXJso (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Dickens <christopher.a.dickens@gmail.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 43/96] usb: gadget: udc: change comparison to bitshift when dealing with a mask
-Date: Thu, 24 May 2018 11:38:26 +0200
-Message-Id: <20180524093607.989213851@linuxfoundation.org>
+Subject: [PATCH 4.9 44/96] usb: gadget: composite: fix incorrect handling of OS desc requests
+Date: Thu, 24 May 2018 11:38:27 +0200
+Message-Id: <20180524093608.034948643@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -109,30 +107,156 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Chris Dickens <christopher.a.dickens@gmail.com>
 
-[ Upstream commit ac87e560f7c0f91b62012e9a159c0681a373b922 ]
+[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+When handling an OS descriptor request, one of the first operations is
+to zero out the request buffer using the wLength from the setup packet.
+There is no bounds checking, so a wLength > 4096 would clobber memory
+adjacent to the request buffer. Fix this by taking the min of wLength
+and the request buffer length prior to the memset. While at it, define
+the buffer length in a header file so that magic numbers don't appear
+throughout the code.
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+When returning data to the host, the data length should be the min of
+the wLength and the valid data we have to return. Currently we are
+returning wLength, thus requests for a wLength greater than the amount
+of data in the OS descriptor buffer would return invalid (albeit zero'd)
+data following the valid descriptor data. Fix this by counting the
+number of bytes when constructing the data and using this when
+determining the length of the request.
+
+Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/goku_udc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
+ include/linux/usb/composite.h  |    3 +++
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
---- a/drivers/usb/gadget/udc/goku_udc.h
-+++ b/drivers/usb/gadget/udc/goku_udc.h
-@@ -28,7 +28,7 @@ struct goku_udc_regs {
- #	define INT_EP1DATASET		0x00040
- #	define INT_EP2DATASET		0x00080
- #	define INT_EP3DATASET		0x00100
--#define INT_EPnNAK(n)		(0x00100 < (n))		/* 0 < n < 4 */
-+#define INT_EPnNAK(n)		(0x00100 << (n))	/* 0 < n < 4 */
- #	define INT_EP1NAK		0x00200
- #	define INT_EP2NAK		0x00400
- #	define INT_EP3NAK		0x00800
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1421,7 +1421,7 @@ static int count_ext_compat(struct usb_c
+ 	return res;
+ }
+ 
+-static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
++static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
+ {
+ 	int i, count;
+ 
+@@ -1448,10 +1448,12 @@ static void fill_ext_compat(struct usb_c
+ 				buf += 23;
+ 			}
+ 			count += 24;
+-			if (count >= 4096)
+-				return;
++			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
++				return count;
+ 		}
+ 	}
++
++	return count;
+ }
+ 
+ static int count_ext_prop(struct usb_configuration *c, int interface)
+@@ -1496,25 +1498,20 @@ static int fill_ext_prop(struct usb_conf
+ 	struct usb_os_desc *d;
+ 	struct usb_os_desc_ext_prop *ext_prop;
+ 	int j, count, n, ret;
+-	u8 *start = buf;
+ 
+ 	f = c->interface[interface];
++	count = 10; /* header length */
+ 	for (j = 0; j < f->os_desc_n; ++j) {
+ 		if (interface != f->os_desc_table[j].if_id)
+ 			continue;
+ 		d = f->os_desc_table[j].os_desc;
+ 		if (d)
+ 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
+-				/* 4kB minus header length */
+-				n = buf - start;
+-				if (n >= 4086)
+-					return 0;
+-
+-				count = ext_prop->data_len +
++				n = ext_prop->data_len +
+ 					ext_prop->name_len + 14;
+-				if (count > 4086 - n)
+-					return -EINVAL;
+-				usb_ext_prop_put_size(buf, count);
++				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
++					return count;
++				usb_ext_prop_put_size(buf, n);
+ 				usb_ext_prop_put_type(buf, ext_prop->type);
+ 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
+ 							    ext_prop->name_len);
+@@ -1540,11 +1537,12 @@ static int fill_ext_prop(struct usb_conf
+ 				default:
+ 					return -EINVAL;
+ 				}
+-				buf += count;
++				buf += n;
++				count += n;
+ 			}
+ 	}
+ 
+-	return 0;
++	return count;
+ }
+ 
+ /*
+@@ -1822,6 +1820,7 @@ unknown:
+ 			req->complete = composite_setup_complete;
+ 			buf = req->buf;
+ 			os_desc_cfg = cdev->os_desc_config;
++			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
+ 			memset(buf, 0, w_length);
+ 			buf[5] = 0x01;
+ 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
+@@ -1845,8 +1844,8 @@ unknown:
+ 					count += 16; /* header */
+ 					put_unaligned_le32(count, buf);
+ 					buf += 16;
+-					fill_ext_compat(os_desc_cfg, buf);
+-					value = w_length;
++					value = fill_ext_compat(os_desc_cfg, buf);
++					value = min_t(u16, w_length, value);
+ 				}
+ 				break;
+ 			case USB_RECIP_INTERFACE:
+@@ -1875,8 +1874,7 @@ unknown:
+ 							      interface, buf);
+ 					if (value < 0)
+ 						return value;
+-
+-					value = w_length;
++					value = min_t(u16, w_length, value);
+ 				}
+ 				break;
+ 			}
+@@ -2151,8 +2149,8 @@ int composite_os_desc_req_prepare(struct
+ 		goto end;
+ 	}
+ 
+-	/* OS feature descriptor length <= 4kB */
+-	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
++	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
++					 GFP_KERNEL);
+ 	if (!cdev->os_desc_req->buf) {
+ 		ret = -ENOMEM;
+ 		usb_ep_free_request(ep0, cdev->os_desc_req);
+--- a/include/linux/usb/composite.h
++++ b/include/linux/usb/composite.h
+@@ -53,6 +53,9 @@
+ /* big enough to hold our biggest descriptor */
+ #define USB_COMP_EP0_BUFSIZ	1024
+ 
++/* OS feature descriptor length <= 4kB */
++#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
++
+ #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
+ struct usb_configuration;
+ 
