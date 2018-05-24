@@ -1,96 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156148-5-3629435657596351827
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156145; b=XGj9tzyBmdSq32PYzbZGIHG5SLI2ZUC+KWuL3Ts8PxP9G1qj/t
-    EdajASLGnRn4LT8pkUvu3B0p/4wDFEzlhn62mgjgGxmqkYAbQaWNoIiRBXXlFGIB
-    EH0DsuPnkGoH7pgQ6/7oesG6FO0zYwsMidPEBsC47DoVEsvYz4pOs4HFyMAham3R
-    WM2kY9kEB0o/V1zi0JdsHdGx2sZkEkBxh8flGUp1CIhIFrUYyQQ8Wk3ff+9t9CuZ
-    nbWZs3MHnxwTdgpdoNckjigDFzaNwZY09y3lWJqauhef4OhyZaypyxP9BpWzbL7j
-    DF2vivFUpMMRjHTjqUsAIzc32cvjSWGcfdzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156145; bh=dLW7ZbkBtWZIGzx74pBtZAn5l4CKn/
-    wnR0M2f0J2kKM=; b=MusxhoAJEDKfsuDmf1Kc0ur5ApOjwUJpiIArdxBI4Kc7iL
-    lM2Dj8oKeWAEn+wCek8+SfrsXlF9JKaGHrhc+R/k/T+sMRoGov8Egh5HcbJYiyst
-    5cBqKM1LbMVX7Mwjp2e0gB0CjKfOxgXIrAWWrbLDmf8QZYaC/Ok1OSVzxHAunpnp
-    /eHdQJOAHhrruYyCYrvyseODzWun3KvHwAS1iqVFNvTSioqGrmHY8y6Xd8BFFe8H
-    7v541ja6lXeOMlsZrF9TgYN4NwLMZh88GVh4CCgeFvsJQp+tJELusf2EI7wothGl
-    hn7ApaS+ZpnBSJdc8gzclj/yhBdX8r1in2AYDvHw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=PZa++6MA x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=PZa++6MA x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEKsOK3gq3hP7zxFE8V8O1esbsypLyYJF6wFYb/yLci0BQSpYGFT65dqUje369BrKVnk9y4kqjrMqscQ+HSjyZk0RsmJOPpl/8m5loLIlCDXdYp++76S
-    zSRejCljkpon1tvCpuj6w2Ad0N+QHA22SdRotNljI9up4B/qnRCkPwjlBA6SegYzR58FS+eDb7MbaLRNnmrWZHKkfLT8zc89SciUEJaunEdlu5ypSPXDPjzd
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=8T59DR07AAAA:8 a=pGLkceISAAAA:8 a=xNf9USuDAAAA:8 a=ag1SF4gXAAAA:8
-    a=yMhMjlubAAAA:8 a=IvCaZrooO7ogT-dQfBAA:9 a=am8goDzG9P2-dyos:21
-    a=PTmAhtiLbD1F0RJj:21 a=QEXdDO2ut3YA:10 a=nH4QB3FtVBqZfhiODIJV:22
-    a=SEwjQc04WA-l_NiBhQ7s:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031081AbeEXKCT (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:02:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030775AbeEXKCQ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:02:16 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoaO7olscW3a4yEX1ot/XxXEioYME+n7/njvYuMLTNj7WGT1UGeX8uYIEJu1ijqpSzD7jo+
+ARC-Seal: i=1; a=rsa-sha256; t=1527156147; cv=none;
+        d=google.com; s=arc-20160816;
+        b=YAVPAaw7iBO9MIb2LC0TRwJC5MtaU2ETNFDjA9yD4jUBGRQjsZKnqhsacWvlJMiAs2
+         e7PNvVUpACjCzDK1CjvtX8ZFzuSSsfyvmAf1ynjY0TRV+m9036mb0WfN0dd67pwXpquy
+         NZE65TR/wfySt99zZ+XA3ljZ8Pmdv6VK6WLGbyh3LpjO5IsMCQZ5JVjemwJi+1dt2z7j
+         qz7ndn6P8GV0SuK+SkNm31fkAUuXCxIZWiSlBpRHmsUUH212yuUUOtmSw1DYpEzq2rej
+         DS5ObDxc7Ln2r9b2IagPB8J2h8sFG7uFepo9zlFBQzUu70a+MqCbPEnJe57fKwjfTr9o
+         xSDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=TvzYsSS4xMB9x75+pBuS5Cs6o/abky/dv7bBSe4xJ6c=;
+        b=jx+MM+rFfUz74D9uzOcmvl2+uGTrMGX12yAaqy6vUefFfOaMY0t78ofP4WiE0TBPDl
+         auy91EWs+mnP7FFhX67eZ9Hjz1yju1Y34gjoZxXTL9q2XJB0ZdgGBIuc9LidZquXmQQk
+         th3OHxbd7cuRMOAsU5PsjXJyUqGFvWQELjil4lzzMFJkU70vHuu/94+IYtXEIyf1ME1X
+         ZaC4Anrkq/bnIKMDMpeBowvovBHxKIJbCP5QVWPj+BGYgyHyd7tUDD8ZCLzqoVw+R6Yv
+         7vDM/bS9Sm6ZhyoM4on2TXmtyNYMt49roCvn0dvGv9F0ztTVbX73MXsL12qyjWCWL91K
+         1s1Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GUXqoB6n;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GUXqoB6n;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gianluigi Tiesi <sherpya@netfarm.it>,
-        Borissh1983 <borissh1983@gmail.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 077/161] usbip: Correct maximum value of CONFIG_USBIP_VHCI_HC_PORTS
-Date: Thu, 24 May 2018 11:38:22 +0200
-Message-Id: <20180524093027.758983366@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Brad Love <brad@nextdimension.cc>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 080/161] media: lgdt3306a: Fix module count mismatch on usb unplug
+Date: Thu, 24 May 2018 11:38:25 +0200
+Message-Id: <20180524093028.135291434@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -98,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338901910602447?=
+X-GMAIL-MSGID: =?utf-8?q?1601339284590574520?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -108,33 +52,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit 351a8d4837ae0d61744e64262c3a80ab92ff3e42 ]
+[ Upstream commit 835d66173a38538c072a7c393d02360dcfac8582 ]
 
-Now that usbip supports USB3, the maximum number of ports allowed
-on a hub is 15 (USB_SS_MAXPORTS), not 31 (USB_MAXCHILDREN).
+When used as an i2c device there is a module usage count mismatch on
+removal, preventing the driver from being used thereafter. dvb_attach
+increments the usage count so it is properly balanced on removal.
 
-Reported-by: Gianluigi Tiesi <sherpya@netfarm.it>
-Reported-by: Borissh1983 <borissh1983@gmail.com>
-References: https://bugs.debian.org/878866
-Fixes: 1c9de5bf4286 ("usbip: vhci-hcd: Add USB3 SuperSpeed support")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On disconnect of Hauppauge SoloHD/DualHD before:
+
+lsmod | grep lgdt3306a
+lgdt3306a              28672  -1
+i2c_mux                16384  1 lgdt3306a
+
+On disconnect of Hauppauge SoloHD/DualHD after:
+
+lsmod | grep lgdt3306a
+lgdt3306a              28672  0
+i2c_mux                16384  1 lgdt3306a
+
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/usbip/Kconfig |    2 +-
+ drivers/media/dvb-frontends/lgdt3306a.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/usbip/Kconfig
-+++ b/drivers/usb/usbip/Kconfig
-@@ -27,7 +27,7 @@ config USBIP_VHCI_HCD
+--- a/drivers/media/dvb-frontends/lgdt3306a.c
++++ b/drivers/media/dvb-frontends/lgdt3306a.c
+@@ -2169,7 +2169,7 @@ static int lgdt3306a_probe(struct i2c_cl
+ 			sizeof(struct lgdt3306a_config));
  
- config USBIP_VHCI_HC_PORTS
- 	int "Number of ports per USB/IP virtual host controller"
--	range 1 31
-+	range 1 15
- 	default 8
- 	depends on USBIP_VHCI_HCD
- 	---help---
+ 	config->i2c_addr = client->addr;
+-	fe = lgdt3306a_attach(config, client->adapter);
++	fe = dvb_attach(lgdt3306a_attach, config, client->adapter);
+ 	if (fe == NULL) {
+ 		ret = -ENODEV;
+ 		goto err_fe;
