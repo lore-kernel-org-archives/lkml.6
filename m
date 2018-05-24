@@ -1,38 +1,40 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo8pkIAXIX5NeggDASbvnO5IxlZnu9LVXygQS26OU4hTHJpDRiex7c577Xd+BXQ3SHdCkhX
-ARC-Seal: i=1; a=rsa-sha256; t=1527156158; cv=none;
+X-Google-Smtp-Source: AB8JxZr8zp6a8/U2wgNUsaaC7I6h6v0QNVSfjw+6x0JttNIcrC+OBoeyrSpSged3HjPNpPW+q7T1
+ARC-Seal: i=1; a=rsa-sha256; t=1527156152; cv=none;
         d=google.com; s=arc-20160816;
-        b=pkPwAN887bAU9QuMwfoOVkbLI6wmnxSd2NCBqDadmVynUbx1Tzq3ZXxiQBvOB/OpV6
-         X0CUenBFx0P1pQbus1GpX0RiLrPUmWS4rVZuagADBG7e6TAGbpQA6AChCSEJ45m5U9F7
-         q7dE/SEM43puxbwJD356hv8Yr4BJ8JYa2vfLD4ZTuaqwApEION6dI530IxT5s3iXxWCi
-         t96yBL6bksZRevnJb/ENGkKz153HMT/+XYNu3KtsucD2McdOgKPPqCOwGZO7FTHUBgpn
-         vGyWlzjETcu4hHaAVzyn8/RqWIEW9ZIA9TDIMX5sfYQBkVITPKarg2aJY5eR3Z4gjOD1
-         txiw==
+        b=eLqO66j1efyVbFr8u/1BrqasTZHt9N15Ro58jmMdDHILfHUdoo11U3vs8mHiQu3nBa
+         UxOYvDamYPkeZ6MsUEOGhD39zVoWtWLIKiawiKMcLzI0d1tXUlHUh47UM/ROCbmbJn5N
+         bZCG1v1MJuhx8zB6tUBY68slzn7do+c9bU/ehYwbI+bFAyvSy6T+x1Or0c/KZBw6W0/1
+         MHUx0u0yIXfy86xuRtOFPePH4Kk5klTxHoBWra90wYp7LtFgwIsVvo4CsL84fivoM2tz
+         t6blYZJ9oEomfTebM2ysRJuMsZ+U2yaYH2wKGFH8RTHymw3yYV1dBr0HSV+3tcK7oL5V
+         oJpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=0mXDSZBTtYOmqpKIXj+v392COcqYWwF0ShjztECMpuY=;
-        b=qRv4opHjXMpBYbk7QpvpOPUxXZrnzKMuXalKV8Wn861vAekI2Mkq1PKsjy3bUn4XDH
-         ComsCIHBXRvSvtux0wR7mUUI7/6y2Em60AZic8/QO1RmTs+oBsshKMviA3drqgDGTXYf
-         ah1pvWI+l41DPchiUYwVWKErXWc6iE+0XsN5yIcU95EY7kWSDPVQ+RoAWhGocwcZrEf1
-         aCk0BRf+FueCXHWgK0cLM6wX7/MxkOuED5eAY9rwbHgVFHpVXlLxQhrT6azY5sSyawsG
-         /kEFg/aQqHCSUQ95BGj86syC+7TyfXHKp4p0vhTAfb0753hvC2PT/oSm8eJHKfzOd3Zc
-         siUg==
+        bh=eGWrcWGpb5u42nm7f13ChXxusykTFEL2mkEgjxfsV0c=;
+        b=t55KK5h39Q0vXNLwYENtmMY8R2B9f5LBMHSmZgMnTFMq/UzsKpc1rkwWlWGOcDey8Y
+         0TcqEuX6zKvwHSkq7CMugmVNZdwqO4NrkEH6bewP68R2d88xOoDHsPPz0UxBadQiVrdp
+         EW1NcmBb++xc6+u5SfCFoAjUsyOiJI2uNYwUcV9WsaaPKdHXy7vTHo+6GRz8pApVEO/1
+         zRvMaqyHLPQw/x3dNazUzw3EnmtFFsncQF7GW42l8pG+GmQfRkrAOt8FNQfGTl1UeRpb
+         QolEX4iC6TNRcstf3zyJd6IAzQNyXTyrA6DoBdbH5U/OnYdEPeBvIbA2+vW7cPxG+0bc
+         WCvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dJ/rxFyz;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rkerjsrT;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=dJ/rxFyz;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rkerjsrT;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Hon Weng Chong <honwchong@gmail.com>,
+	Larry Finger <Larry.Finger@lwfinger.net>,
+	Marcel Holtmann <marcel@holtmann.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 084/161] xhci: Show what USB release number the xHC supports from protocol capablity
-Date: Thu, 24 May 2018 11:38:29 +0200
-Message-Id: <20180524093028.551719646@linuxfoundation.org>
+Subject: [PATCH 4.16 082/161] Bluetooth: btusb: Add device ID for RTL8822BE
+Date: Thu, 24 May 2018 11:38:27 +0200
+Message-Id: <20180524093028.358986286@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338910140685754?=
-X-GMAIL-MSGID: =?utf-8?q?1601339295598572583?=
+X-GMAIL-THRID: =?utf-8?q?1601338426796685500?=
+X-GMAIL-MSGID: =?utf-8?q?1601339289579232565?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +53,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-[ Upstream commit 0ee78c101425aae681c631ba59c6ac7f44b1d83a ]
+[ Upstream commit fed03fe7e55b7dc16077f672bd9d7bbe92b3a691 ]
 
-xhci driver displays the supported xHC USB revision in a message during
-driver load:
+The Asus Z370-I contains a Realtek RTL8822BE device with an associated
+BT chip using a USB ID of 0b05:185c. This device is added to the driver.
 
-"Host supports USB 3.1 Enhanced SuperSpeed"
-
-Get the USB minor revision number from the xhci protocol capability.
-This will show the correct supported revisions for new USB 3.2 and later
-hosts
-
-Don't rely on the SBRN (serial bus revision number) register, it's often
-showing 0x30 (USB3.0) for hosts that support USB 3.1
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Hon Weng Chong <honwchong@gmail.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/xhci.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/bluetooth/btusb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -4769,6 +4769,7 @@ int xhci_gen_setup(struct usb_hcd *hcd,
- 	 * quirks
- 	 */
- 	struct device		*dev = hcd->self.sysdev;
-+	unsigned int		minor_rev;
- 	int			retval;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -377,6 +377,9 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x13d3, 0x3461), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3462), .driver_info = BTUSB_REALTEK },
  
- 	/* Accept arbitrarily long scatter-gather lists */
-@@ -4796,12 +4797,19 @@ int xhci_gen_setup(struct usb_hcd *hcd,
- 		 */
- 		hcd->has_tt = 1;
- 	} else {
--		/* Some 3.1 hosts return sbrn 0x30, can't rely on sbrn alone */
--		if (xhci->sbrn == 0x31 || xhci->usb3_rhub.min_rev >= 1) {
--			xhci_info(xhci, "Host supports USB 3.1 Enhanced SuperSpeed\n");
-+		/*
-+		 * Some 3.1 hosts return sbrn 0x30, use xhci supported protocol
-+		 * minor revision instead of sbrn
-+		 */
-+		minor_rev = xhci->usb3_rhub.min_rev;
-+		if (minor_rev) {
- 			hcd->speed = HCD_USB31;
- 			hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
- 		}
-+		xhci_info(xhci, "Host supports USB 3.%x %s SuperSpeed\n",
-+			  minor_rev,
-+			  minor_rev ? "Enhanced" : "");
++	/* Additional Realtek 8822BE Bluetooth devices */
++	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
 +
- 		/* xHCI private pointer was set in xhci_pci_probe for the second
- 		 * registered roothub.
- 		 */
+ 	/* Silicon Wave based devices */
+ 	{ USB_DEVICE(0x0c10, 0x0000), .driver_info = BTUSB_SWAVE },
+ 
