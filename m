@@ -1,40 +1,40 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp16B6kYbPlfBUM3FEBzkDwouM3dUQ6QFZss1cgYf6oXrj6tA5gw6jWw3tJjLHx0Ayqp0Lf
-ARC-Seal: i=1; a=rsa-sha256; t=1527155988; cv=none;
+X-Google-Smtp-Source: AB8JxZor245elgKM2Mmp1M1X29bsasHwJABPXV26K13NCC9njFmN5LoqIgLLuoHXZ1Oj2Ut60DMQ
+ARC-Seal: i=1; a=rsa-sha256; t=1527155986; cv=none;
         d=google.com; s=arc-20160816;
-        b=ecSiclCiYEIUnVuOjxOCNSpYvIK/+Rp1jtfJWqOIiHLcnZwW85d7TNTN+30DO/ZZOd
-         xHnJE0DMgEXFp1tJJiHdMbz4PqVzWLYsYYBMAuzUrFrERr3jUr57KyV+x8iTrx/HgiBs
-         lm+poLaAnEJIupz6pHjmcTPkcCNlkLHfa9fz+oWQ+xpSVVGKDy/lzUQ9V3q7Rz18UWqG
-         +LKzpFfSNFP9JgGajonRlEQ2VHbXp/cV+6nq/9+tfxthLHfX8bme3ew+Quuy2wjNnaaS
-         +WXlSlA7n4ZOmoLjmKEJtVatTkXXl42lynkBw3gLKl2cRRpR8ouj74+dZxZOOWJEU2XD
-         uxcg==
+        b=mreYbNULQUHDSeUGCsu9PUrop4fkdAAy9gqoQXxrXYuFb/zAhyUk1nV8fThadLisq1
+         Ez9oSnTOrU2EzFGlO41jdy7oLKq9mJQ0Idf18mjjbLSmUsuDz1EtWdSnoIeFU/rm2l/p
+         wuw4gJaSb/LTmYLNvZPj9+4BLGK2yC3Id7n2q5GwQapNlC3aIAlrscuXU32KTxYShk4x
+         huH13h/REPNkFwl/KxTQHyaUBtmllCl1ncA48xAQNodOjDzOmUdWZoD/Kp1OzGT8bzdD
+         4JwRtMElBMXLHZWPhXyXUvA94f086EXM0NdI11Nu0rnGH3mGk3y1TWQ/m2anafpemkUg
+         83vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=kxRTwnqKW+jxLk8LHj6dy1Y8/kMVsOwkJeJpdHgL4q0=;
-        b=z63zYnzGoWsGs7OfpZ6m1vuuY/qSZQuPg9C2dXgGUGwLs8ZyNQgHIJmhH28vT/SV9z
-         r4vRAA4OaPQ6qm8M7I42SgnhQwIMj0cDeoNimgEnqholASb2BbBWD6vUjXHhUCUGNHJO
-         b4Ii9Yfiw6Qoh+SNtYPsOmf6V30w7WBOacCr3TQpBN/NA2tFm0MDcUX1Mo36GPELtrYW
-         ADSnNJ9Pq0lzMzUTR6hg/DQCGBaBsl/390MzGHAfcKvimUrKNpLT9x8bMVXhj33p7zQX
-         59i26lEsmPOn74gYE+9aVEUInrgOyb1auyWT7i2vXKg5Etd2Cpu0NBJmtfk7lQPDdEw1
-         teTw==
+        bh=GwXCXX+98CUs0S5cpSIHI4dcEzSElbjIJf1+kcFIGWc=;
+        b=NxJtzJuEvfo91l0f6xlAzhtG3sZCGrAE+TLXEWbZXCzEAubzddh9jKbXxZdzhuPo6I
+         +VqRx0F1t2JlvTyGWCNvxwymunHKkEeB03fi2pGTeCdExSzCJn/neK8BtQitcHPIlvaS
+         r/2tqGz+ngUNTUDRUsNKmSNWW+V4hHT4CcKqFwiQV9wJrPtWDnPHrpoxD7fvf9ZS4Ujr
+         khR2hm/NISe7MzsVBiyPtHbe2v06Pc1+5XKS+v7yNVcD3FW8kGNIyAJXpsFepuzO3IxM
+         ZLsJN+WRE95Z3SS6l7ai6D05Iy4yIqDpbJxYmDscyIRhrLhqde1NHCCxz9q546jcd8QQ
+         eHwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nABJRlBr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EZupQmOr;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nABJRlBr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EZupQmOr;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roman Mashak <mrv@mojatatu.com>,
-	Davide Caratti <dcaratti@redhat.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Tarick Bedeir <tarick@google.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Tariq Toukan <tariqt@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 004/161] net/sched: fix refcnt leak in the error path of tcf_vlan_init()
-Date: Thu, 24 May 2018 11:37:09 +0200
-Message-Id: <20180524093018.881882967@linuxfoundation.org>
+Subject: [PATCH 4.16 003/161] net/mlx4_core: Fix error handling in mlx4_init_port_info.
+Date: Thu, 24 May 2018 11:37:08 +0200
+Message-Id: <20180524093018.765532985@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338604245785674?=
-X-GMAIL-MSGID: =?utf-8?q?1601339117914525945?=
+X-GMAIL-THRID: =?utf-8?q?1601338319391384707?=
+X-GMAIL-MSGID: =?utf-8?q?1601339115482914388?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,32 +53,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Tarick Bedeir <tarick@google.com>
 
-[ Upstream commit 5a4931ae0193f8a4a97e8260fd0df1d705d83299 ]
+[ Upstream commit 57f6f99fdad9984801cde05c1db68fe39b474a10 ]
 
-Similarly to what was done with commit a52956dfc503 ("net sched actions:
-fix refcnt leak in skbmod"), fix the error path of tcf_vlan_init() to avoid
-refcnt leaks when wrong value of TCA_VLAN_PUSH_VLAN_PROTOCOL is given.
+Avoid exiting the function with a lingering sysfs file (if the first
+call to device_create_file() fails while the second succeeds), and avoid
+calling devlink_port_unregister() twice.
 
-Fixes: 5026c9b1bafc ("net sched: vlan action fix late binding")
-CC: Roman Mashak <mrv@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+In other words, either mlx4_init_port_info() succeeds and returns zero, or
+it fails, returns non-zero, and requires no cleanup.
+
+Fixes: 096335b3f983 ("mlx4_core: Allow dynamic MTU configuration for IB ports")
+Signed-off-by: Tarick Bedeir <tarick@google.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_vlan.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/sched/act_vlan.c
-+++ b/net/sched/act_vlan.c
-@@ -161,6 +161,8 @@ static int tcf_vlan_init(struct net *net
- 			case htons(ETH_P_8021AD):
- 				break;
- 			default:
-+				if (exists)
-+					tcf_idr_release(*a, bind);
- 				return -EPROTONOSUPPORT;
- 			}
- 		} else {
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -3007,6 +3007,7 @@ static int mlx4_init_port_info(struct ml
+ 		mlx4_err(dev, "Failed to create file for port %d\n", port);
+ 		devlink_port_unregister(&info->devlink_port);
+ 		info->port = -1;
++		return err;
+ 	}
+ 
+ 	sprintf(info->dev_mtu_name, "mlx4_port%d_mtu", port);
+@@ -3028,9 +3029,10 @@ static int mlx4_init_port_info(struct ml
+ 				   &info->port_attr);
+ 		devlink_port_unregister(&info->devlink_port);
+ 		info->port = -1;
++		return err;
+ 	}
+ 
+-	return err;
++	return 0;
+ }
+ 
+ static void mlx4_cleanup_port_info(struct mlx4_port_info *info)
