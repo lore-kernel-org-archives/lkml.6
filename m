@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161945-2-14002343529875365967
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161934-2-12579514404999604646
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161945; b=boHWYznrKbfUbjN5cd5lU6EYcbphUG/nTEOXW3XPILy/0Ypoiy
-    V1dYpr1Q+TfptbomBXm4whjqXLWT5LbHuLDyRzb01g4M9BtrvtJnOL7xyqu8yt3F
-    C3H8KxPL3hkYGBgYDd4s0cfhDP4DXhCPitWkYm4J3iHzV20nYW6CS/l+MUHMH/GG
-    a8T7lYGeQRek3it5tIF5Gp1Cl8OxdcWovV0Anz1Z86Ed807yPStSs5nnCsPCiVJo
-    Ut/1HeKa8K1mTo7wDYVi3nD4Szq6cbHM6DAMKdTYtzLPls7z+v9C4rN9ri3/alD5
-    OyzmCmDkj7kSnfzl+UadNyo2WsgjLIOvjXoQ==
+    1527161934; b=iQZn6iPMmRuawYfgSlMiS9QQsWxLZBUGXPhoyyO/LuP4V4RO7x
+    4TqjhqP7p0dCEaAd3WX6GzRqTdPL/pDGW+9NqFFIR/aA9hXsJlRMgVvtgNmjSStE
+    VfSe4bqpw6zNEudtn7aIaHiGBBuWdS0faafhAA+gDvVjR5vzA+C1MBmpYUFMDzop
+    8hdMzY6YMnCI8dS4ImYPIltKTU3DAiC2/o7Da83534XZ6fS3sPYxoWqMWfAxJlz+
+    QJascHzhE/tsFOY44JxTvCSoaORgAwqTx9JdZXPkoE5G8NslFO0Qb+Ys21NA578T
+    RqexTb9Jrwv/jLpJ7YFE5KtkCPR0Caqz020w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161945; bh=OtnT9EctqtAgxPRd3Di8YKbvUiSbUY
-    KfLjLfTwCYrqA=; b=b+Z3zfTe4fjLFwDYR29ioRkoVyuf45K23LC6GYve7Fm2uV
-    9YEdAh/jZ0Jmcv0Xo2/gKLGYl7CXRouYhu6QVgCiR4BHm54UZA1bnKq9WwgPE5E0
-    yQhBSV8NzK7IR+NUvVF87dpVpbH9hp7H8Lx7WOLNB0IQMQkajMSxJDy/gcJUCrSy
-    /lWHdDtYYZ/ENM8TiIFwMR1c8WaIqSUAO/glXm4YTsTtaFJnIdpSBBcDVhPItv3J
-    rbWDYgWL7klbUQZ+L6CYFdN4mOnx7f8FyjJCBzI7X/6dvhljs5z6zbwIhnBrKTNP
-    YmjxJvsxDe+U2egs8wCeOd9z6rF0+dlMFJTPewtQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161934; bh=N2z6xizFl7G+xxwW9THVISaud650Ek
+    Z7YALlLZnm9JE=; b=iZnlfOAocsUle2RzPRpEzgQFMqjkqC309CqtrH3UdHef/3
+    IOycoaqiY4xFyRX/djIA0dffIN2ZFDzr1Vw3iFA+KBkBp3OiFIYiLNu7GYsZ3gTm
+    7R37IQ7d+5OeAG0XVn29lYmPfmWz+NGNLDPjq9eCmcvW58vPWA6C/ii6XkJUkln4
+    n2EVNmAuX38o6zI8f/SN6e+g0f+3pWr0KTXM/cAGjhIvJqIzZZcRAFCIl5XWAuoU
+    sO2aGSXzS14wFQwMqb4hTmfIx7cs1+SpChELaGRdSF1nhv9k2aXQ5N5fzRawqq/V
+    47mPBx9Fw9ongZKhVjT/h4CMNx0bfIXsKD3uStww==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=d8So+MTp x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=hGuDug23 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=d8So+MTp x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=hGuDug23 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,32 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEMKhQSP6rt2N9knSriZ2B5Hj428xzhtH4xsSaCL6s6vrC5bd3Wh8RxlC4vYgUjNT9m9QrL9CxrKC/C+R7TvMLrB7zotunt9zOCdP81i0mfddECeI5zI
-    +2ZxnoRhCKCijfIHlIa0jQSymRCfDV6E9qSodcdhZk4XxVkz7pPjk3gR84n+HKsJI4Fpoh1NAorqZDltc0IONh0z+l4HuMfvPHZunap8hclPyCimWevAJiWa
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfN2bi3fSmZpwfzPJ3Bj/g31VgCR06+7FB8LJd/i3wptpWVDv9ad6/uNcP9AEHZWO0c5OQZiiywGuYbpacKkgyIu+TIJLGjwBMGTAD0eEfksTmz3FeXoL
+    Ne+oO7xghnh0STwvof1a/45DDmdBGwUrFdN27UK07ca0FPFwQobEYVqvlgCAHyisaFi6/oMSjKUO2CQuRz1WxMkiK/ExWixz0bQ29+0o8zL9BsYSUK2hC/7+
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=zAyngx5bAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=zuh-aFpa40O1fhjOi1YA:9 a=QEXdDO2ut3YA:10
-    a=4LA4qAFo6bo561LpWNDU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=x3GXP8Dy4zAY1LmwQykA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967335AbeEXJtN (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:49:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
+        id S967353AbeEXJtR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:49:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967308AbeEXJtL (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:11 -0400
+        id S967345AbeEXJtO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chad Dupuis <chad.dupuis@cavium.com>,
-        Laurence Oberman <loberman@redhat.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 53/96] scsi: bnx2fc: Fix check in SCSI completion handler for timed out request
-Date: Thu, 24 May 2018 11:38:36 +0200
-Message-Id: <20180524093608.545099158@linuxfoundation.org>
+Subject: [PATCH 4.9 54/96] scsi: sym53c8xx_2: iterator underflow in sym_getsync()
+Date: Thu, 24 May 2018 11:38:37 +0200
+Message-Id: <20180524093608.611763912@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -107,38 +107,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chad Dupuis <chad.dupuis@cavium.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit ecf7ff49945f5741fa1da112f994939f942031d3 ]
+[ Upstream commit e6f791d95313c85f3dd4a26141e28e50ae9aa0ae ]
 
-When a request times out we set the io_req flag BNX2FC_FLAG_IO_COMPL so
-that if a subsequent completion comes in on that task ID we will ignore
-it.  The issue is that in the check for this flag there is a missing
-return so we will continue to process a request which may have already
-been returned to the ownership of the SCSI layer.  This can cause
-unpredictable results.
+We wanted to exit the loop with "div" set to zero, but instead, if we
+don't hit the break then "div" is -1 when we finish the loop.  It leads
+to an array underflow a few lines later.
 
-Solution is to add in the missing return.
-
-[mkp: typo plus title shortening]
-
-Signed-off-by: Chad Dupuis <chad.dupuis@cavium.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Tested-by: Laurence Oberman <loberman@redhat.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Matthew Wilcox <mawilcox@microsoft.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_io.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/sym53c8xx_2/sym_hipd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-@@ -1869,6 +1869,7 @@ void bnx2fc_process_scsi_cmd_compl(struc
- 		/* we will not receive ABTS response for this IO */
- 		BNX2FC_IO_DBG(io_req, "Timer context finished processing "
- 			   "this scsi cmd\n");
-+		return;
- 	}
+--- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
++++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+@@ -536,7 +536,7 @@ sym_getsync(struct sym_hcb *np, u_char d
+ 	 *  Look for the greatest clock divisor that allows an 
+ 	 *  input speed faster than the period.
+ 	 */
+-	while (div-- > 0)
++	while (--div > 0)
+ 		if (kpc >= (div_10M[div] << 2)) break;
  
- 	/* Cancel the timeout_work, as we received IO completion */
+ 	/*
