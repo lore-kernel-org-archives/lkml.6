@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163539-2-13494176055884107290
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163516-2-1054428305519383331
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163537; b=GpQ8A1c5kri/oBnI44pLAhCt8thnQbiq4X5IvOBejzvfMJfSKF
-    LufMJl43GeBlTVxk7GOwq7ti6mqsaHldQuk2njwG38jwN96UK8i3PjPFsBuJSfD0
-    4dU9LiAOnzcS+73Jb7WMUEsmi9uh/xYZdHq2ENbkO7gIuvhB8310Mr+MkGkzCFFR
-    Dza0mwfk982c7BMbQ6xqRE7XBPc7Yi4X6+9FEsUFlR57W74oce+3hRip66/M/6g5
-    wdLlkbz30wW2KLGIoxVIkyUpgiK+p0qDYYv8bFMfDOmHJRAUmCHllagWlJjTt11J
-    /J6k2PXwtADeMHhxoY/LySRidnoua0jIIjVw==
+    1527163516; b=b1VGzPC3WDie4zaya3IdnxiCUMuVB9z3dcp+m/VdLi/+AuVRT2
+    9fV2uo8UbIOGX3a03GW2JTHmGUdAG+LDCezj1kf64IKjR2+UG8VRRph72Lf4JFhW
+    paSWg9TXblWEnAPguBFU1OxpqtgQBV4VSm8hACspGu5ffwPqljc6tby4n9Zme/Zr
+    GnzXJHZNrGllhcDI1BRt/ID3ld98Pr9bst+52CpZrwIqsG9t708SYcijQASdZOXN
+    hYRKHrx96IA9NQq7/La16S0P4HAyDuPfdRffilGbo9/EUwYJGM+uKlXVkPHe4FlS
+    j0yawWVBtpLOVWoWSwXjw9hbgSSMOdn0Rydg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163537; bh=UNoKujPongjZWUsteUjKl3CVx58WMf
-    iAM7Jc821e2Ek=; b=QvNePHWnRED4PZQjAhHGIrW1E9+UbEmmi5Z3NE80qoX993
-    Zz5SPfQCkfmhb80ZouCzCVpSF5FoflxMLpvAJcJh9P6AF9MWO0cENdaNBiklX6k8
-    GInVB0cm0mYHg36bloRPA71/JCL1+a53Jc2urWJQZ1Ougq5t+d6iHqhndLTeYy56
-    bC0Lxg9l9uOlIzUt9i5iSqWL9EynqOm/recOjzFsCBQ5NINrWs3MsOwM+zaSWcuF
-    pQjJWS9CTIycyKgpm4A4JxbYX9yrKEOAJPI5jJcrpcTvM/tuanCFaaiAx37vP2jK
-    8YEdxX4z4aVCZG6CQrCVLxNDfmseEHpdSOpV9gsQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163516; bh=8PfS/oXMGemrpxY1+3z9lA1CfiiKZT
+    ceiZLHKcxclDg=; b=jpKyiALMW6J0St9D6zEpiJoDSZldzMt56aiws/nj7CRNJ0
+    aiYT8/crpNVRyg5hoBjkL9j5w+UumJkPc+LizgNhFV36WklkAMU7qP/94RvikUIZ
+    pfu18M8UCarm12M8oHxpDJeQLgCxu+HXJUklmkmjSDwndPnXgcgLU/QWFF6sd1Rc
+    zy855+xLuUbQUO+pBG+EbWlGDQmzrkIrb+Hes/KdpSijF7dom0etjHiVnF1xbR+w
+    +FCnyfp0cXQqefWQsif8bo7AEh3RuOYCVxrp1BYXOGCRnaSMFVwUhpPzcxFE/YSq
+    3IkhReidtVP+oKpnlsLPla/PSd9tWkWFDL0KcDww==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=sS5/pXtH x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=t74q8mdU x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=sS5/pXtH x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=t74q8mdU x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,31 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB26GgpGYkmcF0n4o7Z7aaXzRpk8pDa4trLcXOhBPAc9h/ftFm5SmojdJn36plRULm0ZbfHnI9gdn2sAwoGeCaCqYo4iWwO8cMhtbR5EyTTuuXXICWFJ
-    WYQDC9qPwFS0CZGHIu3qWA3e3xeDxpqDArO2NFlooJC9Lq0cLcg2RusN4nsAQSfhD0CJBZwHJEHXN5lwLNMZlsduRYRwf4OUaoPh7MOmcv6Hb9B8SxRhiWso
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIyoGcz5BkYMvIhqBRXBLjQJXG+cNOHjZpaMHQFoGED5hnWDKa7Z5HOB8YiYpiaSHkjY1x1nhpr4n9oj5AgqOh6HvrSVyAvxz6BL7vkWYYMdeycLUQHk
+    z80/j1gF6KMODHL7AsHmCz29XUcNRwKh36JT5bHGsYzbJSekyYQwDVU5PgvawLKPTQ8b6HHizHupHQ9GoBHdgl+pjc5bhqjpSDaSkWoP/1BLXLQCFqUAyvJ3
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=J2zoVyZDAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=ZwEik9AnzkoCkD7mK00A:9
-    a=QEXdDO2ut3YA:10 a=DvW0qZC7_2Hvvf243_-1:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=BLZoak4jdz2zqNjCJHsA:9
+    a=RzOXaV8w69EVQCyD:21 a=Hg-IJv2aXcJdoT2Z:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966619AbeEXMFU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:05:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55634 "EHLO mail.kernel.org"
+        id S966645AbeEXMEr (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:04:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966623AbeEXJoS (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:44:18 -0400
+        id S966641AbeEXJo0 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:44:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Federico Cuello <fedux@fedux.com.ar>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 38/92] ALSA: usb: mixer: volume quirk for CM102-A+/102S+
-Date: Thu, 24 May 2018 11:38:15 +0200
-Message-Id: <20180524093202.638183551@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 41/92] spi: pxa2xx: Allow 64-bit DMA
+Date: Thu, 24 May 2018 11:38:18 +0200
+Message-Id: <20180524093202.956762538@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,42 +106,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Federico Cuello <fedux@fedux.com.ar>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 21493316a3c4598f308d5a9fa31cc74639c4caff upstream.
+commit efc4a13724b852ddaa3358402a8dec024ffbcb17 upstream.
 
-Currently it's not possible to set volume lower than 26% (it just mutes).
+Currently the 32-bit device address only is supported for DMA. However,
+starting from Intel Sunrisepoint PCH the DMA address of the device FIFO
+can be 64-bit.
 
-Also fixes this warning:
+Change the respective variable to be compatible with DMA engine
+expectations, i.e. to phys_addr_t.
 
-  Warning! Unlikely big volume range (=9472), cval->res is probably wrong.
-  [13] FU [PCM Playback Volume] ch = 2, val = -9473/-1/1
-
-, and volume works fine for full range.
-
-Signed-off-by: Federico Cuello <fedux@fedux.com.ar>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 34cadd9c1bcb ("spi: pxa2xx: Add support for Intel Sunrisepoint")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/spi/spi-pxa2xx.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -904,6 +904,14 @@ static void volume_control_quirks(struct
- 		}
- 		break;
+--- a/drivers/spi/spi-pxa2xx.h
++++ b/drivers/spi/spi-pxa2xx.h
+@@ -38,7 +38,7 @@ struct driver_data {
  
-+	case USB_ID(0x0d8c, 0x0103):
-+		if (!strcmp(kctl->id.name, "PCM Playback Volume")) {
-+			usb_audio_info(chip,
-+				 "set volume quirk for CM102-A+/102S+\n");
-+			cval->min = -256;
-+		}
-+		break;
-+
- 	case USB_ID(0x0471, 0x0101):
- 	case USB_ID(0x0471, 0x0104):
- 	case USB_ID(0x0471, 0x0105):
+ 	/* SSP register addresses */
+ 	void __iomem *ioaddr;
+-	u32 ssdr_physical;
++	phys_addr_t ssdr_physical;
+ 
+ 	/* SSP masks*/
+ 	u32 dma_cr1;
