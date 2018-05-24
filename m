@@ -1,39 +1,93 @@
-Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo3PNmBbVv7amAY3C/JJz49CL4w+bXfA87dx6MQbVjwMrFLexSHLoO7+6PUxPFMIuliIxSO
-ARC-Seal: i=1; a=rsa-sha256; t=1527155625; cv=none;
-        d=google.com; s=arc-20160816;
-        b=IYup6nQPzNHzlW5xvHU7JpehFHjzrKzufGgpoYnlMcMOuM+sNXaUFZZ+5J2eT3GwrI
-         eLFC3/o98ufWlCLxlHa/s9QS6fFXGs+iO1Ds5YdeOR5lmX3wZ80jgGWLn+r4InNcHAB/
-         iK/MXSpue/GfDmiyy7gJUFAJVjfGHKWLOKB1ciUVvsuYm3bARdfQ1Gc8r6WNioAyCafu
-         agfGEui9dYLYWDKEqnFCuVlqz2afrkkJ5xKvD6eN78uZcPu0GJCS23u2xrprzLU+t78O
-         Z7TOMNW3Jh6q4xjZfbfsqU7vaRhZgcg+dHpSYOuLml87B7x5KKFw7ptm4uZkuDr8qAHj
-         NKEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=pGj8DST3WKy0akzw6REKetrVwht4gHuwyXX4dqrgbUQ=;
-        b=eoayLF6Ja6MXZxvWlYfJnoY6JcyUg4v3evNw+D9BSxFsbpmLqJQS1TWtCzjXD4TL3f
-         1oHeh8xE8BRBWu2vZpGYeb1ZErqIzPuCiUjYtJkE15Rj1SyInEIKYOrn5qyFOKhI7qVQ
-         UlkT/yh/QNX2VzjqvNKnEx7lJgdEoDjqYmYgpuOYLZHB82PUTDWVXlBhhpHI8G2qF91L
-         3lng/qQCPdJN7pwwq0bJVHJDnplGmLC5GRK7l2thw15J4JG42qHUh7FBMo+2rMfTwNRi
-         UzIbAlemzhEnKCsse/s/3Cd4ZK1MkcL15sie9s8YKQEpf2wI5JWHpLJ5Wai0uuMaLcwe
-         wC7g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pmcPP+Fi;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pmcPP+Fi;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155607-2-7797644365191408029
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES endafr, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527155606; b=GzDyLYLtFGGy69fIf8EQTUNxCXGw39XuLEsKPCi3tLOPcVoySB
+    lF/s47okElUlHD5sZ5uSmA+aR7Szub74tQHpMotO1bo86BTfWL6R2nmLAR+ZMkfS
+    eNSVChl2AWbqaScfQb8ZtgA6qv830i0ialM8vTAlKXMouKZvnw9QGF6jEafyG22M
+    4J1PFgsqUm+2k01Bxdp+qu1QAyXvOjsLLS8LpMpeaiMTrmfmbmhh4fsYhP5ihUTc
+    Jjdax4sRTlQA26wFsFw+/95bWtiy6H2HljiuNIWfNkuUKTZjJODGuj0udGY4qTGE
+    VJ+0i5sEfAurWMlhz8YSrwhLxnZJuU/1H2aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527155606; bh=CRHBAGfqwMsXowRgKZm7NfWeQp56Jj
+    QEqR29zT3qDaY=; b=mazPuS4SA4QMPAB/HP97/ZtUcQWid8GuLX9fy8c/W5ryyz
+    KuIEHDyS169oJ3z+LymixUTaXi1n6OuQs67FZzQMoWMs/jTTiN+rQ+cBfzSF0TWT
+    O7yrmiH8R+elBGWtY9SKkmCw1t+mpmFVFjE5CJJ+slzXqRAYFbqr3l8t+hGCweCY
+    eYvQgU89+G8cEvM8HRfPX1kouG4CAQMTXDS/nw/ab35lII4Nw/fMqqm+/U7aFZM1
+    SILN3/4Xts2F/FM+jY66LJU0DmIr1b5VG1Gj0Ak+LuhDcRtFBog4YY8lbZ+mdUUm
+    jlL2IXt+JxDClCcqLl5B3W2Hylrb/wBH/tblHsPA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=DPRrGfU+ x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=DPRrGfU+ x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJMTNfTBCXQDD75/ZjebHyH0ALNuSrDzR1wQZ7ZFSv1UEZfO+CMxsKYBil7MLq16JgjXvlj8Wm8kKPipJGDYZXdfx5Jrb+LiRpZg30ug5P4LW9t26nZG
+    jEiM5BaH4srR9dWBIrn6i9Dz9UIN7cQHm0wXXMJScpEMud9ZNO4JSSjDzJaeXf37jmkOpa+H5PzSYWnFH0bDhfY0qrpULVxnZv1SFP0EF9QAmnbJ4An5CC8N
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=cr4mjWP-PH8plK2SDcIA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S968028AbeEXJxW (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:53:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967476AbeEXJxT (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:53:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 058/165] usb: gadget: fsl_udc_core: fix ep valid checks
-Date: Thu, 24 May 2018 11:37:44 +0200
-Message-Id: <20180524093624.366302510@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: [PATCH 4.14 040/165] s390/lib: use expoline for indirect branches
+Date: Thu, 24 May 2018 11:37:26 +0200
+Message-Id: <20180524093623.603335457@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -41,10 +95,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338470588432637?=
-X-GMAIL-MSGID: =?utf-8?q?1601338737648020962?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,45 +105,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 20c63f4089cceab803438c383631963e34c4d8e5 ]
+[ Upstream commit 97489e0663fa700d6e7febddc43b58df98d7bcda ]
 
-Clang reports the following warning:
-  drivers/usb/gadget/udc/fsl_udc_core.c:1312:10: warning: address of array
-  'ep->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
-        if (ep->name)
-        ~~  ~~~~^~~~
+The return from the memmove, memset, memcpy, __memset16, __memset32 and
+__memset64 functions are done with "br %r14". These are indirect branches
+as well and need to use execute trampolines for CONFIG_EXPOLINE=y.
 
-It seems that the authors intention was to check if the ep has been
-configured through struct_ep_setup. Check whether struct usb_ep name
-pointer has been set instead.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org # 4.16
+Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/fsl_udc_core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/lib/mem.S |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/gadget/udc/fsl_udc_core.c
-+++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-@@ -1309,7 +1309,7 @@ static void udc_reset_ep_queue(struct fs
- {
- 	struct fsl_ep *ep = get_ep_by_pipe(udc, pipe);
+--- a/arch/s390/lib/mem.S
++++ b/arch/s390/lib/mem.S
+@@ -7,6 +7,9 @@
  
--	if (ep->name)
-+	if (ep->ep.name)
- 		nuke(ep, -ESHUTDOWN);
- }
+ #include <linux/linkage.h>
+ #include <asm/export.h>
++#include <asm/nospec-insn.h>
++
++	GEN_BR_THUNK %r14
  
-@@ -1697,7 +1697,7 @@ static void dtd_complete_irq(struct fsl_
- 		curr_ep = get_ep_by_pipe(udc, i);
- 
- 		/* If the ep is configured */
--		if (curr_ep->name == NULL) {
-+		if (!curr_ep->ep.name) {
- 			WARNING("Invalid EP?");
- 			continue;
- 		}
+ /*
+  * void *memmove(void *dest, const void *src, size_t n)
+@@ -33,14 +36,14 @@ ENTRY(memmove)
+ .Lmemmove_forward_remainder:
+ 	larl	%r5,.Lmemmove_mvc
+ 	ex	%r4,0(%r5)
+-	br	%r14
++	BR_EX	%r14
+ .Lmemmove_reverse:
+ 	ic	%r0,0(%r4,%r3)
+ 	stc	%r0,0(%r4,%r1)
+ 	brctg	%r4,.Lmemmove_reverse
+ 	ic	%r0,0(%r4,%r3)
+ 	stc	%r0,0(%r4,%r1)
+-	br	%r14
++	BR_EX	%r14
+ .Lmemmove_mvc:
+ 	mvc	0(1,%r1),0(%r3)
+ EXPORT_SYMBOL(memmove)
+@@ -77,7 +80,7 @@ ENTRY(memset)
+ .Lmemset_clear_remainder:
+ 	larl	%r3,.Lmemset_xc
+ 	ex	%r4,0(%r3)
+-	br	%r14
++	BR_EX	%r14
+ .Lmemset_fill:
+ 	stc	%r3,0(%r2)
+ 	cghi	%r4,1
+@@ -94,7 +97,7 @@ ENTRY(memset)
+ .Lmemset_fill_remainder:
+ 	larl	%r3,.Lmemset_mvc
+ 	ex	%r4,0(%r3)
+-	br	%r14
++	BR_EX	%r14
+ .Lmemset_xc:
+ 	xc	0(1,%r1),0(%r1)
+ .Lmemset_mvc:
+@@ -117,7 +120,7 @@ ENTRY(memcpy)
+ .Lmemcpy_remainder:
+ 	larl	%r5,.Lmemcpy_mvc
+ 	ex	%r4,0(%r5)
+-	br	%r14
++	BR_EX	%r14
+ .Lmemcpy_loop:
+ 	mvc	0(256,%r1),0(%r3)
+ 	la	%r1,256(%r1)
