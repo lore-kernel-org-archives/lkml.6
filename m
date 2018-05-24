@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032481AbeEXKrG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:47:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41560 "EHLO
+        id S1032528AbeEXKre (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:47:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42060 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032445AbeEXKq5 (ORCPT
+        with ESMTP id S1030544AbeEXKrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:46:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42C4C60392
+        Thu, 24 May 2018 06:47:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D022060C55
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From: Raju P L S S S N <rplsssn@codeaurora.org>
@@ -17,9 +17,9 @@ Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
         dianders@chromium.org, mka@chromium.org, rplsssn@codeaurora.org,
         ilina@codeaurora.org
-Subject: [PATCH v9 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
-Date: Thu, 24 May 2018 16:15:24 +0530
-Message-Id: <1527158731-17685-4-git-send-email-rplsssn@codeaurora.org>
+Subject: [PATCH v9 07/10] drivers: qcom: rpmh: cache sleep/wake state requests
+Date: Thu, 24 May 2018 16:15:28 +0530
+Message-Id: <1527158731-17685-8-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
 References: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
@@ -29,183 +29,353 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lina Iyer <ilina@codeaurora.org>
 
-Log sent RPMH requests and interrupt responses in FTRACE.
+Active state requests are sent immediately to the RSC controller, while
+sleep and wake state requests are cached in this driver to avoid taxing
+the RSC controller repeatedly. The cached values will be sent to the
+controller when the rpmh_flush() is called.
+
+Generally, flushing is a system PM activity and may be called from the
+system PM drivers when the system is entering suspend or deeper sleep
+modes during cpuidle.
+
+Also allow invalidating the cached requests, so they may be re-populated
+again.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
-
-Changes in v7:
-	- varible name changes and white space
+Changes in v9:
+	- Remove EXPORT_SYMBOL
+	- Rename lock to cache_lock
+	- Improve comments
 
 Changes in v6:
-	- struct tcs_response was removed. Fix in trace as well.
-Changes in v4:
-	- fix compilation issues, use __assign_str
-	- use %#x instead of 0x%08x
-Changes in v3:
-	- Use __string() instead of char *
-	- fix TRACE_INCLUDE_PATH
----
- drivers/soc/qcom/Makefile     |  1 +
- drivers/soc/qcom/rpmh-rsc.c   | 11 +++++-
- drivers/soc/qcom/trace-rpmh.h | 82 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/qcom/trace-rpmh.h
+	- replace rpmh_client with device *
 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 39d3a05..cb6300f 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+CFLAGS_rpmh-rsc.o := -I$(src)
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 99b23b7..664f89b 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -24,6 +24,9 @@
+Changes in v4:
+	- remove locking for ->dirty in invalidate
+	- fix send_single
+Changes in v3:
+	- Remove locking for flush function
+	- Improve comments
+---
+ drivers/soc/qcom/rpmh.c | 215 ++++++++++++++++++++++++++++++++++++++++++++++--
+ include/soc/qcom/rpmh.h |  11 +++
+ 2 files changed, 221 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index c542c2c..ed96d25 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -8,10 +8,12 @@
+ #include <linux/interrupt.h>
+ #include <linux/jiffies.h>
+ #include <linux/kernel.h>
++#include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
+ #include <linux/types.h>
+ #include <linux/wait.h>
  
- #include "rpmh-internal.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include "trace-rpmh.h"
-+
- #define RSC_DRV_TCS_OFFSET		672
- #define RSC_DRV_CMD_OFFSET		20
- 
-@@ -136,7 +139,7 @@ static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
- static irqreturn_t tcs_tx_done(int irq, void *p)
- {
- 	struct rsc_drv *drv = p;
--	int i, j;
-+	int i, j, err;
- 	unsigned long irq_status;
- 	const struct tcs_request *req;
- 	struct tcs_cmd *cmd;
-@@ -150,6 +153,7 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
- 			goto skip;
- 		}
- 
-+		err = 0;
- 		for (j = 0; j < req->num_cmds; j++) {
- 			u32 sts;
- 
-@@ -160,8 +164,11 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
- 			   !(sts & CMD_STATUS_COMPL))) {
- 				pr_err("Incomplete request: %s: addr=%#x data=%#x",
- 				       drv->name, cmd->addr, cmd->data);
-+				err = -EIO;
- 			}
- 		}
-+
-+		trace_rpmh_tx_done(drv, i, req, err);
- skip:
- 		/* Reclaim the TCS */
- 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
-@@ -195,9 +202,11 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
- 		cmd_complete |= cmd->wait << j;
- 		msgid = cmd_msgid;
- 		msgid |= cmd->wait ? CMD_MSGID_RESP_REQ : 0;
-+
- 		write_tcs_cmd(drv, RSC_DRV_CMD_MSGID, tcs_id, j, msgid);
- 		write_tcs_cmd(drv, RSC_DRV_CMD_ADDR, tcs_id, j, cmd->addr);
- 		write_tcs_cmd(drv, RSC_DRV_CMD_DATA, tcs_id, j, cmd->data);
-+		trace_rpmh_send_msg(drv, tcs_id, j, msgid, cmd);
+@@ -35,6 +37,21 @@
  	}
  
- 	write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, tcs_id, cmd_complete);
-diff --git a/drivers/soc/qcom/trace-rpmh.h b/drivers/soc/qcom/trace-rpmh.h
-new file mode 100644
-index 0000000..feb0cb4
---- /dev/null
-+++ b/drivers/soc/qcom/trace-rpmh.h
-@@ -0,0 +1,82 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+ /**
++ * struct cache_req: the request object for caching
++ *
++ * @addr: the address of the resource
++ * @sleep_val: the sleep vote
++ * @wake_val: the wake vote
++ * @list: linked list obj
 + */
++struct cache_req {
++	u32 addr;
++	u32 sleep_val;
++	u32 wake_val;
++	struct list_head list;
++};
 +
-+#if !defined(_TRACE_RPMH_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_RPMH_H
++/**
+  * struct rpmh_request: the message to be sent to rpmh-rsc
+  *
+  * @msg: the request
+@@ -55,9 +72,15 @@ struct rpmh_request {
+  * struct rpmh_ctrlr: our representation of the controller
+  *
+  * @drv: the controller instance
++ * @cache: the list of cached requests
++ * @cache_lock: synchronize access to the cache data
++ * @dirty: was the cache updated since flush
+  */
+ struct rpmh_ctrlr {
+ 	struct rsc_drv *drv;
++	struct list_head cache;
++	spinlock_t cache_lock;
++	bool dirty;
+ };
+ 
+ static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_CTRLR];
+@@ -92,6 +115,8 @@ static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
+ 				break;
+ 			}
+ 			rpmh_rsc[i].drv = drv;
++			spin_lock_init(&rpmh_rsc[i].cache_lock);
++			INIT_LIST_HEAD(&rpmh_rsc[i].cache);
+ 			ctrlr = &rpmh_rsc[i];
+ 			break;
+ 		}
+@@ -118,29 +143,109 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
+ 		complete(compl);
+ }
+ 
++static struct cache_req *__find_req(struct rpmh_ctrlr *ctrlr, u32 addr)
++{
++	struct cache_req *p, *req = NULL;
 +
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM rpmh
++	list_for_each_entry(p, &ctrlr->cache, list) {
++		if (p->addr == addr) {
++			req = p;
++			break;
++		}
++	}
 +
-+#include <linux/tracepoint.h>
-+#include "rpmh-internal.h"
++	return req;
++}
 +
-+TRACE_EVENT(rpmh_tx_done,
++static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
++					   enum rpmh_state state,
++					   struct tcs_cmd *cmd)
++{
++	struct cache_req *req;
++	unsigned long flags;
 +
-+	TP_PROTO(struct rsc_drv *d, int m, const struct tcs_request *r, int e),
++	spin_lock_irqsave(&ctrlr->cache_lock, flags);
++	req = __find_req(ctrlr, cmd->addr);
++	if (req)
++		goto existing;
 +
-+	TP_ARGS(d, m, r, e),
++	req = kzalloc(sizeof(*req), GFP_ATOMIC);
++	if (!req) {
++		req = ERR_PTR(-ENOMEM);
++		goto unlock;
++	}
 +
-+	TP_STRUCT__entry(
-+			 __string(name, d->name)
-+			 __field(int, m)
-+			 __field(u32, addr)
-+			 __field(u32, data)
-+			 __field(int, err)
-+	),
++	req->addr = cmd->addr;
++	req->sleep_val = req->wake_val = UINT_MAX;
++	INIT_LIST_HEAD(&req->list);
++	list_add_tail(&req->list, &ctrlr->cache);
 +
-+	TP_fast_assign(
-+		       __assign_str(name, d->name);
-+		       __entry->m = m;
-+		       __entry->addr = r->cmds[0].addr;
-+		       __entry->data = r->cmds[0].data;
-+		       __entry->err = e;
-+	),
++existing:
++	switch (state) {
++	case RPMH_ACTIVE_ONLY_STATE:
++		if (req->sleep_val != UINT_MAX)
++			req->wake_val = cmd->data;
++		break;
++	case RPMH_WAKE_ONLY_STATE:
++		req->wake_val = cmd->data;
++		break;
++	case RPMH_SLEEP_STATE:
++		req->sleep_val = cmd->data;
++		break;
++	default:
++		break;
++	};
 +
-+	TP_printk("%s: ack: tcs-m: %d addr: %#x data: %#x errno: %d",
-+		  __get_str(name), __entry->m, __entry->addr, __entry->data,
-+		  __entry->err)
-+);
++	ctrlr->dirty = true;
++unlock:
++	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
 +
-+TRACE_EVENT(rpmh_send_msg,
++	return req;
++}
 +
-+	TP_PROTO(struct rsc_drv *d, int m, int n, u32 h,
-+		 const struct tcs_cmd *c),
+ /**
+- * __rpmh_write: send the RPMH request
++ * __rpmh_write: Cache and send the RPMH request
+  *
+  * @dev: The device making the request
+  * @state: Active/Sleep request type
+  * @rpm_msg: The data that needs to be sent (cmds).
++ *
++ * Cache the RPMH request and send if the state is ACTIVE_ONLY.
++ * SLEEP/WAKE_ONLY requests are not sent to the controller at
++ * this time. Use rpmh_flush() to send them to the controller.
+  */
+ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
+ 			struct rpmh_request *rpm_msg)
+ {
+ 	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++	int ret = -EINVAL;
++	struct cache_req *req;
++	int i;
+ 
+ 	if (IS_ERR(ctrlr))
+ 		return PTR_ERR(ctrlr);
+ 
+ 	rpm_msg->msg.state = state;
+ 
+-	if (state != RPMH_ACTIVE_ONLY_STATE)
+-		return -EINVAL;
++	/* Cache the request in our store and link the payload */
++	for (i = 0; i < rpm_msg->msg.num_cmds; i++) {
++		req = cache_rpm_request(ctrlr, state, &rpm_msg->msg.cmds[i]);
++		if (IS_ERR(req))
++			return PTR_ERR(req);
++	}
 +
-+	TP_ARGS(d, m, n, h, c),
++	rpm_msg->msg.state = state;
+ 
+-	WARN_ON(irqs_disabled());
++	if (state == RPMH_ACTIVE_ONLY_STATE) {
++		WARN_ON(irqs_disabled());
++		ret = rpmh_rsc_send_data(ctrlr->drv, &rpm_msg->msg);
++	} else {
++		ret = rpmh_rsc_write_ctrl_data(ctrlr->drv, &rpm_msg->msg);
++		/* Clean up our call by spoofing tx_done */
++		rpmh_tx_done(&rpm_msg->msg, ret);
++	}
+ 
+-	return rpmh_rsc_send_data(ctrlr->drv, &rpm_msg->msg);
++	return ret;
+ }
+ 
+ /**
+@@ -174,3 +279,103 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	WARN_ON(!ret);
+ 	return (ret > 0) ? 0 : -ETIMEDOUT;
+ }
 +
-+	TP_STRUCT__entry(
-+			 __string(name, d->name)
-+			 __field(int, m)
-+			 __field(int, n)
-+			 __field(u32, hdr)
-+			 __field(u32, addr)
-+			 __field(u32, data)
-+			 __field(bool, wait)
-+	),
++static int is_req_valid(struct cache_req *req)
++{
++	return (req->sleep_val != UINT_MAX &&
++		req->wake_val != UINT_MAX &&
++		req->sleep_val != req->wake_val);
++}
 +
-+	TP_fast_assign(
-+		       __assign_str(name, d->name);
-+		       __entry->m = m;
-+		       __entry->n = n;
-+		       __entry->hdr = h;
-+		       __entry->addr = c->addr;
-+		       __entry->data = c->data;
-+		       __entry->wait = c->wait;
-+	),
++static int send_single(const struct device *dev, enum rpmh_state state,
++		       u32 addr, u32 data)
++{
++	DEFINE_RPMH_MSG_ONSTACK(dev, state, NULL, rpm_msg);
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
 +
-+	TP_printk("%s: send-msg: tcs(m): %d cmd(n): %d msgid: %#x addr: %#x data: %#x complete: %d",
-+		  __get_str(name), __entry->m, __entry->n, __entry->hdr,
-+		  __entry->addr, __entry->data, __entry->wait)
-+);
++	if (IS_ERR(ctrlr))
++		return PTR_ERR(ctrlr);
 +
-+#endif /* _TRACE_RPMH_H */
++	/* Wake sets are always complete and sleep sets are not */
++	rpm_msg.msg.wait_for_compl = (state == RPMH_WAKE_ONLY_STATE);
++	rpm_msg.cmd[0].addr = addr;
++	rpm_msg.cmd[0].data = data;
++	rpm_msg.msg.num_cmds = 1;
 +
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
++	return rpmh_rsc_write_ctrl_data(ctrlr->drv, &rpm_msg.msg);
++}
 +
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace-rpmh
++/**
++ * rpmh_flush: Flushes the buffered active and sleep sets to TCS
++ *
++ * @dev: The device making the request
++ *
++ * Return: -EBUSY if the controller is busy, probably waiting on a response
++ * to a RPMH request sent earlier.
++ *
++ * This function is always called from the sleep code from the last CPU
++ * that is powering down the entire system. Since no other RPMH API would be
++ * executing at this time, it is safe to run lockless.
++ */
++int rpmh_flush(const struct device *dev)
++{
++	struct cache_req *p;
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++	int ret;
 +
-+#include <trace/define_trace.h>
++	if (IS_ERR(ctrlr))
++		return PTR_ERR(ctrlr);
++
++	if (!ctrlr->dirty) {
++		pr_debug("Skipping flush, TCS has latest data.\n");
++		return 0;
++	}
++
++	/*
++	 * Nobody else should be calling this function other than system PM,
++	 * hence we can run without locks.
++	 */
++	list_for_each_entry(p, &ctrlr->cache, list) {
++		if (!is_req_valid(p)) {
++			pr_debug("%s: skipping RPMH req: a:%#x s:%#x w:%#x",
++				 __func__, p->addr, p->sleep_val, p->wake_val);
++			continue;
++		}
++		ret = send_single(dev, RPMH_SLEEP_STATE, p->addr, p->sleep_val);
++		if (ret)
++			return ret;
++		ret = send_single(dev, RPMH_WAKE_ONLY_STATE,
++				  p->addr, p->wake_val);
++		if (ret)
++			return ret;
++	}
++
++	ctrlr->dirty = false;
++
++	return 0;
++}
++
++/**
++ * rpmh_invalidate: Invalidate all sleep and active sets
++ * sets.
++ *
++ * @dev: The device making the request
++ *
++ * Invalidate the sleep and active values in the TCS blocks.
++ */
++int rpmh_invalidate(const struct device *dev)
++{
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++	int ret;
++
++	if (IS_ERR(ctrlr))
++		return PTR_ERR(ctrlr);
++
++	ctrlr->dirty = true;
++
++	do {
++		ret = rpmh_rsc_invalidate(ctrlr->drv);
++	} while (ret == -EAGAIN);
++
++	return ret;
++}
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index c1d0f90..42e62a0 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -14,12 +14,23 @@
+ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	       const struct tcs_cmd *cmd, u32 n);
+ 
++int rpmh_flush(const struct device *dev);
++
++int rpmh_invalidate(const struct device *dev);
++
+ #else
+ 
+ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 			     const struct tcs_cmd *cmd, u32 n)
+ { return -ENODEV; }
+ 
++
++static inline int rpmh_flush(const struct device *dev)
++{ return -ENODEV; }
++
++static inline int rpmh_invalidate(const struct device *dev)
++{ return -ENODEV; }
++
+ #endif /* CONFIG_QCOM_RPMH */
+ 
+ #endif /* __SOC_QCOM_RPMH_H__ */
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
