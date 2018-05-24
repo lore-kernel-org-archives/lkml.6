@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161793-2-6875154842891852642
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527161777-2-8887292772176169738
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161793; b=fGIxjfvGQEqNNEEIoM79JKlWLNtBvBZ52JYQKHaTT4BjCmU+9O
-    QTW9T1WTrK5rxC6hsYWG63Us7m35Okbv017fbzawyvaN6qBkr+tAqJQ922hsk4kP
-    Jx7KByP+RkZXTY1qbSUDk4UPr09go7451kGbPqEWZZISO+jFAI64T9OBzeNfbT64
-    fh21gecEixQwI8BtfjcOs3Gp7TMn5EDzeGDNeuUaMKpGXhwB7N463B07YShNhq/C
-    xcJaIFpQR7o6UXNlMwIau1rSnd2nA6AoxhS5fm/D1bJYezlRQZzxyCbScqY2r5B9
-    oeikFtySIbWUsqxLCtJXP9yhd937SDXT9C8g==
+    1527161776; b=YN3qZGC9nJdymRaEjZTD9EtB7co8CZwBrYm7qh6KxxkGpVhBwq
+    aIRzZbiVwpWhO2bi+otI2VO3odvkz4BQKXg66GxrbMRxdC1iNKUJdhsACPdw4vGT
+    RbDi0OtbXLBlXwCHPb3b+7kpVAvkt8R22+iFd4PRZONt3YQT+SPFPQWG42SQMkRp
+    tbLlH64qpb0cis27ll/laCwR155pLbR2uL1Eu78zLLU2n0KwuCtW/dOX7OZ74UO1
+    XwmbYuhwiABDZadyma44ajt8TFwIWkqDdpz0GmbuveVSVT5nmmrwpgUcjVsccXQh
+    VyGsxDZoFxoyGXKq2ud+YSOQP9grOGtxQDvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161793; bh=ouUZAIpDvODIzU0YdoEYXuce6g6wgQ
-    QHIDrv8qzjalI=; b=AEp6QlJ7vhNqEpEU/3m/Hqv25kR78tdqEc/QrnvRDw8IF4
-    rH+VHgleJ19rSBDdnW7B/bn2/vxmxuHVRjSIpB/LS1voeCcx8K9/xFfECAyKi8up
-    ew6N2ikR9UBAbn3BRh4ehmUBlytlcmKzLqq2rbr2Oale1nEFpmHEy4AK7m6jO0Vy
-    xYltKfKUHyz9xdktJsac8pEA9NDi6e1YqZekbDWQ9rOUFACykQgtjyVgZ80QI9Jk
-    XTsKqM1zdEUSfhh3z3Gnoez7s1qcU9/30xlEXXbnIV03Zzo7YuKUzVni72gVafdI
-    5iGcAyi5X7vqx1jDjVRiEbK58sOyHuJbQA6WlLPQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161776; bh=/pP7Crt3JE0sQ5sb7YzULT0Y/+Ug/D
+    eLsyUATcf8pOw=; b=KoHanGNGaroWVcXcjX+H5YcCw11gLVFgEccVvBZT1oBjOo
+    JQvSfRNEao0u5yuWtwns0qXpuDJ92EY+Yw2z/uXmeGFlWzxtXfyF4rVvGYHljequ
+    QRABBnJ4+5yx5eg/mdEmk1eiAf4GAq/HAXv14ypoQ96voWFdY3CHtUhz3Y6yjrv4
+    RLN/9gzOEAqmHwlqZXi/gnCnXAytQ+vMNRqXB+C6xIzhp0C/YkBqDAYeeo4QS0xX
+    OWeK314TwVUa3dew5yXU+Zb7A9EIiWQp0ryw2ZSDjJuIotviXQkqWHu29PV69cCx
+    2PXDasByI9rD7Mz2JkksW77m2yfYLYhj3qF+Zceg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=JOIlXFaM x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=m8YqvnT7 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=JOIlXFaM x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=m8YqvnT7 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,36 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJI+uPCbmnYQi75cyL0BNpK87bAX8SCuiwTrXCSe5zhYtFKkiBEI6Oi/F8tD9E2pawJIY38ImPKFIq/NsbNwrWJYLS/mhPt8in+MVu/8BRPxOijS3Tt8
-    FbeyVOdKyoy2BhnlocCdMeFPO0ZqQ2NXHKBT1AJnXi9XnSuzoy0LIjGYtSzJwT0TEvZIzk9IPjzQKSrA4NRAaZPJcAk/m2DRXk2soRVimitEt/SG0Z33KZvs
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNNlQc/NwPMBGe0o6Dp6KjL8ZSCIAYiiHBzNbDMtIx5OJuXZwS1znA9gmnlZ1nFxpYZZSVfUwyZpWF16dwPh4cqYtPP0FMKME9+ICM6NVz/aoyMZUP7/
+    5hgku5UHOiqGoAfa6Ft2jIaUN2bvEVFk6Wi80r549Sv5rWaEOAlbM+2Aon5TNaYGC+m2ktUELgpn6QIXuApQYhDldZtRkoT5Le26cZuiQakCCEyBy9MeC31w
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=s8YR1HE3AAAA:8 a=IpJZQVW2AAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=yARby3lnm6p1CmaUAsUA:9 a=QEXdDO2ut3YA:10
-    a=jGH_LyMDp9YhSvY-UuyI:22 a=IawgGOuG5U0WyFbmm1f5:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Q-fNiiVtAAAA:8 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=fJIh7McZu9Cm0UNqPSsA:9 a=QEXdDO2ut3YA:10
+    a=Fp8MccfUoT0GBdDC_Lng:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967562AbeEXLgR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:36:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39854 "EHLO mail.kernel.org"
+        id S967502AbeEXJt6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:49:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967500AbeEXJt5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:49:57 -0400
+        id S967432AbeEXJts (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 71/96] clk: Dont show the incorrect clock phase
-Date: Thu, 24 May 2018 11:38:54 +0200
-Message-Id: <20180524093609.470469718@linuxfoundation.org>
+Subject: [PATCH 4.9 60/96] scsi: mpt3sas: Do not mark fw_event workqueue as WQ_MEM_RECLAIM
+Date: Thu, 24 May 2018 11:38:43 +0200
+Message-Id: <20180524093608.904820655@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -108,52 +111,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Hannes Reinecke <hare@suse.de>
 
-[ Upstream commit 1f9c63e8de3d7b377c9d74e4a17524cfb60e6384 ]
+[ Upstream commit 864449eea7c600596e305ffdc4a6a846414b222c ]
 
-It's found that the clock phase output from clk_summary is
-wrong compared to the actual phase reading from the register.
+The firmware event workqueue should not be marked as WQ_MEM_RECLAIM
+as it's doesn't need to make forward progress under memory pressure.
+In the current state it will result in a deadlock if the device had been
+forcefully removed.
 
-cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-sdio_sample     0        1        0 50000000          0 -22
-
-It exposes an issue that clk core, clk_core_get_phase, always
-returns the cached core->phase which should be either updated
-by calling clk_set_phase or directly from the first place the
-clk was registered.
-
-When registering the clk, the core->phase geting from ->get_phase()
-may return negative value indicating error. This is quite common
-since the clk's phase may be highly related to its parent chain,
-but it was temporarily orphan when registered, since its parent
-chains hadn't be ready at that time, so the clk drivers decide to
-return error in this case. However, if no clk_set_phase is called or
-maybe the ->set_phase() isn't even implemented, the core->phase would
-never be updated. This is wrong, and we should try to update it when
-all its parent chains are settled down, like the way of updating clock
-rate for that. But it's not deserved to complicate the code now and
-just update it anyway when calling clk_core_get_phase, which would be
-much simple and enough.
-
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1929,6 +1929,9 @@ static int clk_core_get_phase(struct clk
- 	int ret;
- 
- 	clk_prepare_lock();
-+	/* Always try to update cached phase if possible */
-+	if (core->ops->get_phase)
-+		core->phase = core->ops->get_phase(core->hw);
- 	ret = core->phase;
- 	clk_prepare_unlock();
- 
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -8853,7 +8853,7 @@ _scsih_probe(struct pci_dev *pdev, const
+ 	snprintf(ioc->firmware_event_name, sizeof(ioc->firmware_event_name),
+ 	    "fw_event_%s%d", ioc->driver_name, ioc->id);
+ 	ioc->firmware_event_thread = alloc_ordered_workqueue(
+-	    ioc->firmware_event_name, WQ_MEM_RECLAIM);
++	    ioc->firmware_event_name, 0);
+ 	if (!ioc->firmware_event_thread) {
+ 		pr_err(MPT3SAS_FMT "failure at %s:%d/%s()!\n",
+ 		    ioc->name, __FILE__, __LINE__, __func__);
