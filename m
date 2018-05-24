@@ -1,55 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935823AbeEXIA0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:00:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41064 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935508AbeEXIAV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:00:21 -0400
-Date: Thu, 24 May 2018 01:00:15 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kees Cook <keescook@chromium.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-Message-ID: <20180524080015.GA2866@infradead.org>
-References: <20180522191309.GA23615@infradead.org>
- <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
- <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
- <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
- <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
- <20180523142545.GA16248@infradead.org>
- <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk>
- <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
- <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk>
+        id S965199AbeEXIAP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:00:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49625 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935508AbeEXIAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:00:13 -0400
+Date: Thu, 24 May 2018 10:00:11 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] mm: do not warn on offline nodes unless the specific
+ node is explicitly requested
+Message-ID: <20180524080011.GV20441@dhcp22.suse.cz>
+References: <20180523125555.30039-1-mhocko@kernel.org>
+ <20180523125555.30039-3-mhocko@kernel.org>
+ <11e26a4e-552e-b1dc-316e-ce3e92973556@linux.vnet.ibm.com>
+ <20180523140601.GQ20441@dhcp22.suse.cz>
+ <094afec3-5682-f99d-81bb-230319c78d5d@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <094afec3-5682-f99d-81bb-230319c78d5d@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 03:14:19PM -0600, Jens Axboe wrote:
-> Ugh, so that would necessitate a change there too. As I said before,
-> I don't really care where it lives. I know the SCSI folks seem bothered
-> by moving it, but in reality, it's not like this stuff will likely ever
-> really change. Of the two choices (select entire SCSI stack, or just move
-> this little bit), I know what I would consider the saner option...
+On Thu 24-05-18 08:52:14, Anshuman Khandual wrote:
+> On 05/23/2018 07:36 PM, Michal Hocko wrote:
+> > On Wed 23-05-18 19:15:51, Anshuman Khandual wrote:
+> >> On 05/23/2018 06:25 PM, Michal Hocko wrote:
+> >>> when adding memory to a node that is currently offline.
+> >>>
+> >>> The VM_WARN_ON is just too loud without a good reason. In this
+> >>> particular case we are doing
+> >>> 	alloc_pages_node(node, GFP_KERNEL|__GFP_RETRY_MAYFAIL|__GFP_NOWARN, order)
+> >>>
+> >>> so we do not insist on allocating from the given node (it is more a
+> >>> hint) so we can fall back to any other populated node and moreover we
+> >>> explicitly ask to not warn for the allocation failure.
+> >>>
+> >>> Soften the warning only to cases when somebody asks for the given node
+> >>> explicitly by __GFP_THISNODE.
+> >>
+> >> node hint passed here eventually goes into __alloc_pages_nodemask()
+> >> function which then picks up the applicable zonelist irrespective of
+> >> the GFP flag __GFP_THISNODE.
+> > 
+> > __GFP_THISNODE should enforce the given node without any fallbacks
+> > unless something has changed recently.
+> 
+> Right. I was just saying requiring given preferred node to be online
+> whose zonelist (hence allocation zone fallback order) is getting picked
+> up during allocation and warning when that is not online still makes
+> sense.
 
-Oh well.  How about something like this respin of Kees' series?
+Why? We have a fallback and that is expected to be used. How does
+offline differ from depleted node from the semantical point of view?
 
-http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/sense-cleanup
+> We should only hide the warning if the allocation request has
+> __GFP_NOWARN.
+> 
+> > 
+> >> Though we can go into zones of other
+> >> nodes if the present node (whose zonelist got picked up) does not
+> >> have any memory in it's zones. So warning here might not be without
+> >> any reason.
+> > 
+> > I am not sure I follow. Are you suggesting a different VM_WARN_ON?
+> 
+> I am just suggesting this instead.
+> 
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index 036846fc00a6..7f860ea29ec6 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -464,7 +464,7 @@ static inline struct page *
+>  __alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
+>  {
+>  	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
+> -	VM_WARN_ON(!node_online(nid));
+> +	VM_WARN_ON(!(gfp_mask & __GFP_NOWARN) && !node_online(nid));
+>  
+>  	return __alloc_pages(gfp_mask, order, nid);
+>  }
+
+I have considered that but I fail to see why should we warn about
+regular GFP_KERNEL allocations as mentioned above. Just consider an
+allocation for the preffered node. Do you want to warn just because that
+node went offline?
+-- 
+Michal Hocko
+SUSE Labs
