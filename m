@@ -1,144 +1,155 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1691124-1527153540-2-12278056121216573444
+X-Cyrus-Session-Id: sloti22d1t05-1599868-1527149977-2-9430759896367691369
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527153539; b=doxcgcbLP8Jk1TGOP/1ryNcx1qZ0Y4jFAVfWM3vN0F9nX7APUb
-    HP+XfrkH/2y/jDoOEOCaVER8NQ/Rj8MdMSlkC58hRPsP91ERaYFrmuyk52IcbHAw
-    APYWuMCD4ob9GYlE8EiHij0URaL22BlSZZ8EqfHsolBG74hAvrUrpysYpCMUcHJM
-    gc25h9cfDWRf1qEOpGW5jvu8a2ncrqgQ/rzYbIgJc34GKnE5iJlJyt+3yLXgblvn
-    DiRPtiWnVKEC0VXI6hVH4P8UqtS3Z456Ta5Jd3Fltku+K7hs4euYiiRTi6tEFXJL
-    T8qLnYYSs+EzvKoGI/hGJurprBW5Xjw6eLvg==
+    1527149976; b=R5wQSTap9KXJEkrgx6C5lVGPtRDUapn3NLcUHy35odhrcJ5Oz+
+    N/oBDg68Z6JzJiOwpCPpU9Em/oh+kaFK3Cv8qIoNm2zTYVLKNmYLkrIF+aAcyQNo
+    RahkivmMHbeeJu8zbQYjPa/hNVOlL24iXvBmflgR07vZTCPsdYdelGLRjIVg2G1g
+    RoCXsPepNVKyKpRXMQtLgb7UZIZyXj1G7vwL1LyFJ7LuEN5V6GqrdRNBfSWAhs1f
+    c3f2++0d96gvjd/iZHq9IuD42rr9M3MIcwc0OiPupf2vfYQSg5S0fOqS2aUvXeSX
+    UT740/9ZtyG/P3G6BBhRPTwjUXzWKaUPBHRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527153539;
-    bh=fmbPzlsuQnXfVOspttlvcEOKozOSd4IC4ATH4TlZ5hw=; b=JTRpLGbGWKhm
-    mEW445Y8R+wIhQj/MMh14ox7yq/rCEl/Ws1sR7f9KcGKQnYCRx5wNgXYsWitz+sq
-    jWeUbGYXSWEEC5nEU1FF09bGHAJp16IswiCbb1EsugxkKp0Jsmlbe1cF07YKncAD
-    lfdBQ/gszpp6/of9eTqVHAqpDPTjt844kitjqvHpZGiETr7cwEikK8TqXg7qgwTf
-    JhaRq7TTOysuYA+AWvXzmqR6Eg9WT0R6m6jVe1dQG+B65q7OhxKsseQjMtGFQSri
-    t+vN8gFnDzeLfNCo9/i1gW3eKisE71EfFiKdB73ET4G1gFG7pxRxB1te2iTANt2U
-    IYlQnp3i8Q==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527149976; bh=
+    upuW049LXffRev3Q0kjmVHKLZteY7wMI0n4dmvj4QVc=; b=WuuTZ9/QOqLF7/8l
+    2TkNZDqz6W8kGUIO5aSZLuvqa+u0pxO+JujDbnQiwEoIZNwGB1y3f4WXqTABfRYU
+    jmx/jVSHRCeyBfbW8lhCX/HY/9M5kdMEZv17CQREfva+xj6HEvtW18J+lptlQAm/
+    cFt392vIO9PbD/GnMp9qH7FCkSn8/CQXC4rZM7MI1gTwtc0hVQbi3lDsfQcQJ5fR
+    /ekAjCkQeyBzaN+OryyAoguniwbQDr0wH2jr+i/SCKj28RBSEi30qYjhnO4LCA/X
+    jA06fS5y9QkYZ2SJCk6WRR8H8eJduwaIUDaom6j6Fb6cFQUK4kN8A90ANiWNab8x
+    hmYuiA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=WbYdrKXh x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=pT1n6vve;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=roeck-us.net header.result=pass
-    header_is_org_domain=yes;
+    header.domain=linux.intel.com header.result=pass
+    header_org.domain=intel.com header_org.result=pass
+    header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=WbYdrKXh x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=pT1n6vve;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=roeck-us.net header.result=pass
-      header_is_org_domain=yes;
+      header.domain=linux.intel.com header.result=pass
+      header_org.domain=intel.com header_org.result=pass
+      header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGDaKTOa2FZOlw9VkEhKAOfO9Ek1imnTTd6s/iq/qCRX+iFiZE9vLRtR8G8i9B/uIdaoWtw/7JH0cRd/SFUIjzIzrDa3lclA+jCnOnaAg1Pbo7bB6JRR
-    lnuzD7z/XrQWSK++39IjaiTP0CrrBPG7bL4osqIL5g+fdgteYpHHvre6np7ygXA9C+Zu9nx8+RzJYONLBEZszp/7dkRun0j6phBKNtKZXEylsFIBW2GKyIV8
+X-CM-Envelope: MS4wfD+lkSSCU76ylNl0KdgyvTDTgU+T3F6wsukwcV9lBj2uNuBNJJWBwSKcuroea8Uy6Zxdwjroy2RVnO4cO0jEbwPX+Moz5TT08bApZEfXfNF44r/fXQ+m
+    yH9/9KCCG5My53XlA+cH6FjpsgYG6Z7R7vxHBFCKAQu+c1coRgqQaK+Vom8mzGNK5iev1+PVhgvkbh0T2vlaDgd7IS4tx5bTCimy+0Ctm8x+weEiuFijTOad
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=_jlGtV7tAAAA:8 a=VwQbUJbxAAAA:8 a=EWnOtJgLcj20acoOMwIA:9
-    a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=nlm17XC03S6CtCLSeiRr:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
+    a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=dMCGVNs7E_557hWTc14A:9 a=x8gzFH9gYPwA:10
+    a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965907AbeEXJSp (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:18:45 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38313 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965664AbeEXJSn (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 24 May 2018 05:18:43 -0400
-X-Google-Smtp-Source: AB8JxZrWiUQsOAPLhpKjB+eA1KQfDQpJPQ61AKP9J13BJkWGetO+lxJouAnhVcVsY22zpjtpMEgHEg==
-Subject: Re: [PATCH v3 3/4] usb: typec: fusb302: Fix debugfs issue
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S965330AbeEXITb (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 04:19:31 -0400
+Received: from mga17.intel.com ([192.55.52.151]:65275 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965204AbeEXISf (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Thu, 24 May 2018 04:18:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
+   d="scan'208";a="58073600"
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Hans de Goede <hdegoede@redhat.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Darren Hart <dvhart@infradead.org>
+Subject: [PATCH v3 2/4] platform: x86: intel_cht_int33fe: Fix dependencies
+Date: Thu, 24 May 2018 11:18:25 +0300
+Message-Id: <20180524081827.37861-3-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180524081827.37861-1-heikki.krogerus@linux.intel.com>
 References: <20180524081827.37861-1-heikki.krogerus@linux.intel.com>
- <20180524081827.37861-4-heikki.krogerus@linux.intel.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <2b9c6203-c4c4-ecae-9d50-d8180aec4a54@roeck-us.net>
-Date: Thu, 24 May 2018 02:18:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180524081827.37861-4-heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/24/2018 01:18 AM, Heikki Krogerus wrote:
-> Removing the "fusb302" debugfs directory when unloading
-> the driver. That allows the driver to be loaded more then
-> one time. The directory will not get actually removed until
-> it is empty, so only after the last instance has been
-> removed.
-> 
-> This fixes an issue where the driver can't be re-loaded if
-> it has been unloaded as the "fusb302" debugfs directory
-> already exists.
-> 
-> Fixes: 76f0c53d08b9 ("usb: typec: fusb302: Move out of staging")
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+The driver will not probe unless bq24190 is loaded, so
+making it a dependency.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/i2c/busses/Kconfig   | 3 +--
+ drivers/platform/x86/Kconfig | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-> ---
->   drivers/usb/typec/fusb302/fusb302.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
-> index eba6bb890b17..9c1eba9ea004 100644
-> --- a/drivers/usb/typec/fusb302/fusb302.c
-> +++ b/drivers/usb/typec/fusb302/fusb302.c
-> @@ -234,6 +234,7 @@ static int fusb302_debugfs_init(struct fusb302_chip *chip)
->   static void fusb302_debugfs_exit(struct fusb302_chip *chip)
->   {
->   	debugfs_remove(chip->dentry);
-> +	debugfs_remove(rootdir);
->   }
->   
->   #else
-> 
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 99edffae27f6..4f8df2ec87b1 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -202,8 +202,7 @@ config I2C_CHT_WC
+ 
+ 	  Note this controller is hooked up to a TI bq24292i charger-IC,
+ 	  combined with a FUSB302 Type-C port-controller as such it is advised
+-	  to also select CONFIG_CHARGER_BQ24190=m and CONFIG_TYPEC_FUSB302=m
+-	  (the fusb302 driver currently is in drivers/staging).
++	  to also select CONFIG_TYPEC_FUSB302=m.
+ 
+ config I2C_NFORCE2
+ 	tristate "Nvidia nForce2, nForce3 and nForce4"
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 566644bb496a..f27cb186437d 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -866,6 +866,7 @@ config ACPI_CMPC
+ config INTEL_CHT_INT33FE
+ 	tristate "Intel Cherry Trail ACPI INT33FE Driver"
+ 	depends on X86 && ACPI && I2C && REGULATOR
++	depends on CHARGER_BQ24190=y || (CHARGER_BQ24190=m && m)
+ 	---help---
+ 	  This driver add support for the INT33FE ACPI device found on
+ 	  some Intel Cherry Trail devices.
+@@ -877,8 +878,7 @@ config INTEL_CHT_INT33FE
+ 	  i2c drivers for these chips can bind to the them.
+ 
+ 	  If you enable this driver it is advised to also select
+-	  CONFIG_TYPEC_FUSB302=m, CONFIG_CHARGER_BQ24190=m and
+-	  CONFIG_BATTERY_MAX17042=m.
++	  CONFIG_TYPEC_FUSB302=m and CONFIG_BATTERY_MAX17042=m.
+ 
+ config INTEL_INT0002_VGPIO
+ 	tristate "Intel ACPI INT0002 Virtual GPIO driver"
+-- 
+2.17.0
 
