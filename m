@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159933-2-1929702652198722883
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527159930-2-6013472162015930611
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159931; b=L4GZx8yiAda7A7knpFf3L/eNqhOWcBKUBbC/XU/bnr6XjopVim
-    gYkBMPYTbaWdPVRz8YB7ddK487ri81zVCKUhN3DRGy/zJ381qBlZbtmnQlmCZegW
-    u7fXWUz1VynR1e051qQFwnV67oNpUMbGmfd2/Ac+koPlDzxkjoe80EWmU9WueJwA
-    qTEVYkupd/8JWlQ4Dcd7sP4w7KqRNcBAvXchdZxENSRmJ9tyZbZ2OOcrMcq4CDTZ
-    IccvAaMTKVdtDLfkpiQTnXXUlvtyFZaRmMnvrNDf+UhlbjaaXzgqh8UjBY4F029A
-    1W46NT9dCPlLbhWRRxfCCqPNYUssh8NESgOA==
+    1527159929; b=JU6eQ7z0iqtfxvn+U1SrdvAZIFn4z4bRg1LnE1hXYoYQU350dX
+    96NyTLpDtmZo5yOjYpWbkgNNe+OVsLI/c/+8fCCZEEDr+HWAOk3LP9334M9ZTHmv
+    QEpeqsDeKWP0+QOMxGttLyeyYZzYui1j9lELDIXIAmQ4Oaxe0GcgrPZtX0KiWttJ
+    1MLADHGiOxcnbKHHUyIjcA1GRr9iW2BYvvhgZuxArdYhPoplwPbnCoqPQvqGXFYt
+    H2NR5Pk4Few3yEsQ0PQ1VWRmp5sOFpwuhvfubmD7VERSnjiK2Ox6TnwQhxyGynks
+    +IsB6mv1XTrONDTNzxp36XVb5oIiO76OsZwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159931; bh=cJNZXs4FXDsHIbMvTWaruoltkzAUWD
-    s+36pCc0w3N9U=; b=THlh1oJnzZNvGK/zNbdfRC+CKOSBr6/cK6UPdnBm7358Vv
-    Wzhu5QUXh/XaXGAFRjV366ENwi77lJTWv6uqLyCmhRHlbXE5UD+Tbjf0cRcCV5Oi
-    hvbYOO4V/mKuBUIa4D+v24cgAj56IfEDyGsBmsKAsWQZ6V9S1Gn/c0xVxHutq2AU
-    7QMKL5KC0uPqvSoAtqA+QVz+eEOCK/4ipI5BebsKZPOyZQeDX8w2QitoaMGtnpm5
-    KtUHPe70XmCpDzE2tZH07JkUVUVQDXu7SWqrTksl8VBrgWxmEnEgePynHUilRYUR
-    sYEClkKSfDwT8k+s8SQ+odYt11upuvIdFDyNcCeQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159929; bh=O3A3XOc2buO3UDT5ca+Yr+X+F7HsPu
+    T6Tk2UBMtMiaw=; b=Ex2ZyODISB2cO68TXmywn8J9D/1vCxNwQRc2AG1XIsQikH
+    DBCcVtKB1iCOpFqFKEwPhWL4HdaWLWgmZPX+7Og+KbtpeSOK8VE9fb0D0zWDgWeF
+    R+/vPz1W8qY2zuYJIlI2wphYpbziL9ND5bfqL/wTvHRYRnM6vLyu7/jRIzX5YBD9
+    r8nTI2UbHrWqxe6zwkG/oK5ymr8y80IW1DC3PYrhIIKdwcvN7/kJIn8g9niiw2GQ
+    /ZqK0Z7WIo4dLlKxfeI3V8h9DNsBGkM9qoGpf8mfmNFD1nwQSLMmggj/oVk0lGDp
+    o4fcLiIakLucLJJZbETka/qc+V84UgDzgrJpAm1Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ICyMt+4v x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=rcgTB+Ee x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ICyMt+4v x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=rcgTB+Ee x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,31 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOOPj4FFpXXcBOiRC+Byd099oK07CqhwH97rvJ6x0oSf05e6hi14XpAaACUSGY23U9U5hcAvyFc6s8OIvsW70Hq7NESVuVsT2ZynS/aBvu7O24/oqWpw
-    wwQhfqVhqG1cNg2SVIz0UIEP/tjBSILXL/IMBRIUe4UIT5UuvfEWhuoEVvXwtH+N6rzAQWDiL1a6ULgnwicYs5SSMmd8JsS4cWmMJRrRkLOrpg4JRlBjothM
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCUa9FcDNVcJnq1o4+2/c1GdNBe8Z8wRjF3e2u5SP0jMwDciQM0T6GbxYw7vSVN8bt/FKUM6RtrPfbjQMmif19xkMvpjkPxt27fMzQ0zJI2prHcockQ1
+    73gCFrKSr2/uAGyQh00u3FRU6Sigfcg+jokAJQtgLIT7ymPuSfbBVnzOvBjmooxTW6DkaMoQ9MCTL6QnvqLwHYNw8FDwV+gP6QuH82k2WR8msQp9aOv2RJU2
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=P-IC7800AAAA:8 a=M5GUcnROAAAA:8 a=FNyBlpCuAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=ZFebjw2IMqqkrzxeGdgA:9 a=QEXdDO2ut3YA:10
-    a=d3PnA9EDa4IxuAV0gXij:22 a=OBjm3rFKGHvpk9ecZwUJ:22 a=RlW-AWeGUCXs_Nkyno-6:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=iox4zFpeAAAA:8 a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=NWo6yD48tLJsfen1gqcA:9 a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030216AbeEXLF3 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:05:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968304AbeEXJzQ (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S968306AbeEXJzQ (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:55:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968019AbeEXJzN (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ofer Heifetz <oferh@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        James Simmons <jsimmons@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 091/165] crypto: inside-secure - wait for the request to complete if in the backlog
-Date: Thu, 24 May 2018 11:38:17 +0200
-Message-Id: <20180524093625.706758718@linuxfoundation.org>
+Subject: [PATCH 4.14 090/165] staging: lustre: lmv: correctly iput lmo_root
+Date: Thu, 24 May 2018 11:38:16 +0200
+Message-Id: <20180524093625.670726153@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,32 +106,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: NeilBrown <neilb@suse.com>
 
-[ Upstream commit 4dc5475ae0375ea4f9283dfd9b2ddc91b20d4c4b ]
+[ Upstream commit 17556cdbe6ed70a6a20e597b228628f7f34387f8 ]
 
-This patch updates the safexcel_hmac_init_pad() function to also wait
-for completion when the digest return code is -EBUSY, as it would mean
-the request is in the backlog to be processed later.
+Commit 8f18c8a48b73 ("staging: lustre: lmv: separate master object
+with master stripe") changed how lmo_root inodes were managed,
+particularly when LMV_HASH_FLAG_MIGRATION is not set.
+Previously lsm_md_oinfo[0].lmo_root was always a borrowed
+inode reference and didn't need to by iput().
+Since the change, that special case only applies when
+LMV_HASH_FLAG_MIGRATION is set
 
-Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-Suggested-by: Ofer Heifetz <oferh@marvell.com>
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+In the upstream (lustre-release) version of this patch [Commit
+60e07b972114 ("LU-4690 lod: separate master object with master
+stripe")] the for loop in the lmv_unpack_md() was changed to count
+from 0 and to ignore entry 0 if LMV_HASH_FLAG_MIGRATION is set.
+In the patch that got applied to Linux, that change was missing,
+so lsm_md_oinfo[0].lmo_root is never iput().
+This results in a "VFS: Busy inodes" warning at unmount.
+
+Fixes: 8f18c8a48b73 ("staging: lustre: lmv: separate master object with master stripe")
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: James Simmons <jsimmons@infradead.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/inside-secure/safexcel_hash.c |    2 +-
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -819,7 +819,7 @@ static int safexcel_hmac_init_pad(struct
- 		init_completion(&result.completion);
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -2694,7 +2694,7 @@ static int lmv_unpackmd(struct obd_expor
+ 	if (lsm && !lmm) {
+ 		int i;
  
- 		ret = crypto_ahash_digest(areq);
--		if (ret == -EINPROGRESS) {
-+		if (ret == -EINPROGRESS || ret == -EBUSY) {
- 			wait_for_completion_interruptible(&result.completion);
- 			ret = result.error;
- 		}
+-		for (i = 1; i < lsm->lsm_md_stripe_count; i++) {
++		for (i = 0; i < lsm->lsm_md_stripe_count; i++) {
+ 			/*
+ 			 * For migrating inode, the master stripe and master
+ 			 * object will be the same, so do not need iput, see
