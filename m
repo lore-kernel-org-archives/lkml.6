@@ -1,72 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970664AbeEXPDA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:03:00 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:55244 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S970650AbeEXPC6 (ORCPT
+        id S970684AbeEXPDr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 11:03:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58818 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966863AbeEXPDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:02:58 -0400
-Date: Thu, 24 May 2018 11:02:57 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Martin Liu <liumartin@google.com>
-cc: gregkh@linuxfoundation.org, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <jenhaochen@google.com>
-Subject: Re: [RFC] driver core: don't hold dev's parent lock when using async
- probe
-In-Reply-To: <20180524140021.GA214888@google.com>
-Message-ID: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Thu, 24 May 2018 11:03:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A0FDB60262
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, rjw@rjwysocki.net
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ilialin@codeaurora.org
+Subject: [PATCH v13 0/2] Kryo CPU scaling driver
+Date: Thu, 24 May 2018 18:03:38 +0300
+Message-Id: <1527174220-13244-1-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Martin Liu wrote:
+[v13]
+ * Addressed comment from Sudeep about DT compatible check on init
 
-> On Tue, May 22, 2018 at 01:09:44PM -0400, Alan Stern wrote:
-> > On Tue, 22 May 2018, martin_liu wrote:
-> > 
-> > > not sure if we still need 'bf74ad5bc417 ("[PATCH] Hold the
-> > > device's parent's lock during probe and remove")' since it has
-> > > been there over 10 years. If we still need it and hard to fix it
-> > > , the simple way is to find a place not to allow USB subsystem
-> > > drivers to have async probe capability. Any suggestion is welcome.
-> > 
-> > I don't think the "allows_async_probing" attribute is the best way to 
-> > attack this.  Some other approach, like a special-purpose flag, might 
-> > be better.
-> > 
-> > Yes, USB still needs to have parent's locks held during probing.  
-> > Here's the reason.  A USB device can have multiple interfaces, each
-> > bound to its own driver.  A driver may sometimes need to issue a reset,
-> > but in USB there's no way to reset a single interface.  Only the entire
-> > device can be reset, and of course this affects all the interfaces.  
-> > Therefore a driver needs to acquire the device lock before it can issue
-> > a reset.
-> > 
-> > The problem is that the driver's thread may already hold the device
-> > lock.  During a normal probe sequence, for example, the interfaces get
-> > probed by the hub driver while it owns the device lock.  But for probes
-> > under other circumstances (for example, if the user writes to the
-> > driver's "bind" attribute in sysfs), the device lock might not be held.
-> > 
-> > A driver cannot tell these two cases apart.  The only way to make it
-> > work all the time is to have the caller _always_ hold the device lock
-> > while the driver is probed (or the removed, for that matter).
-> > 
-> > Alan Stern
-> 
-> Thanks for the reply and more detail about the backgroud. I'd like to
-> have a conclusion about it. Please kindly correct me if my understanding
-> is wrong. Regarding to the "special-purpose flag", do you mean we could
-> find a place in USB subsystem to have the flag set (not sure if it's
-> easy to find it). Driver core would be base on the flag to decide if we
-> need to hold the device's parent's lock.
+[v12]
+ * Addressed comments from Sudeep and Viresh about the single init
 
-Yes, except that the flag would not be in the USB subsystem.  It would 
-be in the device, device_type, or bus_type structure, so that the 
-driver core could access it.
+[v11]
+ * Addressed comment from Russel about device_node reference
+ * Addressed comment from Sudeep about the late_initcall
+ * Transformed init into probe to take care of deferals
 
-Alan Stern
+[v10]
+ * Split the series into domains
+ * Addressed comments from Viresh and Sudeep about logical CPU numbering.
+
+The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
+The driver reads eFuse information and chooses the required OPP subset
+by passing the OPP supported-hw parameter.
+
+The series depends on the series from Viresh:
+https://patchwork.kernel.org/patch/10418139/
+
+The previous spin was here:
+https://patchwork.kernel.org/patch/10423137/
+
+Ilia Lin (2):
+  cpufreq: Add Kryo CPU scaling driver
+  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+
+ .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  10 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c                | 206 +++++++
+ 5 files changed, 900 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+
+-- 
+1.9.1
