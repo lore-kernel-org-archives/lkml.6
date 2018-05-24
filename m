@@ -1,40 +1,40 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr8zp6a8/U2wgNUsaaC7I6h6v0QNVSfjw+6x0JttNIcrC+OBoeyrSpSged3HjPNpPW+q7T1
-ARC-Seal: i=1; a=rsa-sha256; t=1527156152; cv=none;
+X-Google-Smtp-Source: AB8JxZqpywxSw/YYktZkmVw5kr0EqvLK1krlecxRZBG9gucNK9e+wYwHTG4Q5Q7x6JfAaBjA/ZRM
+ARC-Seal: i=1; a=rsa-sha256; t=1527156149; cv=none;
         d=google.com; s=arc-20160816;
-        b=eLqO66j1efyVbFr8u/1BrqasTZHt9N15Ro58jmMdDHILfHUdoo11U3vs8mHiQu3nBa
-         UxOYvDamYPkeZ6MsUEOGhD39zVoWtWLIKiawiKMcLzI0d1tXUlHUh47UM/ROCbmbJn5N
-         bZCG1v1MJuhx8zB6tUBY68slzn7do+c9bU/ehYwbI+bFAyvSy6T+x1Or0c/KZBw6W0/1
-         MHUx0u0yIXfy86xuRtOFPePH4Kk5klTxHoBWra90wYp7LtFgwIsVvo4CsL84fivoM2tz
-         t6blYZJ9oEomfTebM2ysRJuMsZ+U2yaYH2wKGFH8RTHymw3yYV1dBr0HSV+3tcK7oL5V
-         oJpw==
+        b=id4EOXopXENGf7kMcHnBgx4wCXfZ1R3xRDC2Bb2qq8MRQslg4GOtQDHx+m05hYdwt2
+         ndufJ5Hg2R7X8sEyFhcZ8cQN1ZD3dYCYWSGRoxedJHi9csId24QgcFV53C5JT+3wNFex
+         7fdtXUW9HeIfAs5eMXxOR4MljbkuJlo6QvhVDiCMn0DNjE5mwvJkW34XxsIMgz8EF9Oa
+         fjMXGfvsPNXLcq/Qfja26ohLXXDJIMocipFvEWPzYvoF1oY7jj4pOHpFOSXONS3UuMe/
+         SOvEiRlwsB5vj0jT++cKlWewNIuqM80FiuU+U/+0+waC1JnpLq6m9GaOYpKdFXxCbN06
+         uULg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=eGWrcWGpb5u42nm7f13ChXxusykTFEL2mkEgjxfsV0c=;
-        b=t55KK5h39Q0vXNLwYENtmMY8R2B9f5LBMHSmZgMnTFMq/UzsKpc1rkwWlWGOcDey8Y
-         0TcqEuX6zKvwHSkq7CMugmVNZdwqO4NrkEH6bewP68R2d88xOoDHsPPz0UxBadQiVrdp
-         EW1NcmBb++xc6+u5SfCFoAjUsyOiJI2uNYwUcV9WsaaPKdHXy7vTHo+6GRz8pApVEO/1
-         zRvMaqyHLPQw/x3dNazUzw3EnmtFFsncQF7GW42l8pG+GmQfRkrAOt8FNQfGTl1UeRpb
-         QolEX4iC6TNRcstf3zyJd6IAzQNyXTyrA6DoBdbH5U/OnYdEPeBvIbA2+vW7cPxG+0bc
-         WCvQ==
+        bh=QE9vsZ9r5ojRLLGlgkfS0JRIGyKyigyWKzvcwqSPNMY=;
+        b=VFd6RS4nTPRizfWvzckXG0P+E0VWkbIMF7lE5FjLCww8XipJLCYx/Z5ixt0qufTIJG
+         IteM6o5dG+0JI1ZvhG3pslBjMIL4st3Ck0ysBgmLvIUXlgTTR96gl6a/UB51VNuTyo4i
+         REjGa96DiII9ilqWrpIXrcmMEl66uV8FvaVUrlDQ4gm4NSLjpduSoPjQclAMzcQGprWs
+         ZscFLRg+xzSVcZYd6sUCC8r/SW9sRNBnnDSYRxEpyOVEp5RL6NrkvpWgzfg9kJtrOjw7
+         NPg4ckQacWPdB6T8tuwbLRa0B4lShHn9sKZ07HWzrL8iH/hNCGh8ULunq3oESdZYO2BB
+         jGpA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=rkerjsrT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=b6XoJEIB;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=rkerjsrT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=b6XoJEIB;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hon Weng Chong <honwchong@gmail.com>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Marcel Holtmann <marcel@holtmann.org>,
+	Brad Love <brad@nextdimension.cc>,
+	Michael Ira Krufky <mkrufky@linuxtv.org>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 082/161] Bluetooth: btusb: Add device ID for RTL8822BE
-Date: Thu, 24 May 2018 11:38:27 +0200
-Message-Id: <20180524093028.358986286@linuxfoundation.org>
+Subject: [PATCH 4.16 081/161] media: em28xx: USB bulk packet size fix
+Date: Thu, 24 May 2018 11:38:26 +0200
+Message-Id: <20180524093028.261972329@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338426796685500?=
-X-GMAIL-MSGID: =?utf-8?q?1601339289579232565?=
+X-GMAIL-THRID: =?utf-8?q?1601338423784474514?=
+X-GMAIL-MSGID: =?utf-8?q?1601339287010109742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,31 +53,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit fed03fe7e55b7dc16077f672bd9d7bbe92b3a691 ]
+[ Upstream commit c7c7e8d7803406daa21e96d00c357de8b77b6764 ]
 
-The Asus Z370-I contains a Realtek RTL8822BE device with an associated
-BT chip using a USB ID of 0b05:185c. This device is added to the driver.
+Hauppauge em28xx bulk devices exhibit continuity errors and corrupted
+packets, when run in VMWare virtual machines. Unknown if other
+manufacturers bulk models exhibit the same issue. KVM/Qemu is unaffected.
 
-Signed-off-by: Hon Weng Chong <honwchong@gmail.com>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+According to documentation the maximum packet multiplier for em28xx in bulk
+transfer mode is 256 * 188 bytes. This changes the size of bulk transfers
+to maximum supported value and have a bonus beneficial alignment.
+
+Before:
+
+After:
+
+This sets up USB to expect just as many bytes as the em28xx is set to emit.
+
+Successful usage under load afterwards natively and in both VMWare
+and KVM/Qemu virtual machines.
+
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Reviewed-by: Michael Ira Krufky <mkrufky@linuxtv.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btusb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/usb/em28xx/em28xx.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -377,6 +377,9 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x13d3, 0x3461), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3462), .driver_info = BTUSB_REALTEK },
+--- a/drivers/media/usb/em28xx/em28xx.h
++++ b/drivers/media/usb/em28xx/em28xx.h
+@@ -191,7 +191,7 @@
+    USB 2.0 spec says bulk packet size is always 512 bytes
+  */
+ #define EM28XX_BULK_PACKET_MULTIPLIER 384
+-#define EM28XX_DVB_BULK_PACKET_MULTIPLIER 384
++#define EM28XX_DVB_BULK_PACKET_MULTIPLIER 94
  
-+	/* Additional Realtek 8822BE Bluetooth devices */
-+	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
-+
- 	/* Silicon Wave based devices */
- 	{ USB_DEVICE(0x0c10, 0x0000), .driver_info = BTUSB_SWAVE },
+ #define EM28XX_INTERLACED_DEFAULT 1
  
