@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156585-2-12895395568531848834
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156576-2-15939839681378474811
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES endaro, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156585; b=FN8lMjcPpsFGch9ba8ADgEkWWe40M4KjiUkYTAMxR4/NaVhadt
-    Ac95ZjWktgUPbggx+qKaV9i3I3vY0C4Tq290CE+zRlIwpDpE+IZu/xUrDXBlgvAJ
-    ZS3BepOMQMOtYJIRxBt+SmEcoRxFzugxA+NTvB1M9CwS8dAYD/7pNV89wn3blIuW
-    pL7lt3JLzMx82/Zw9xcU1yyTIC+YhJDVEcfNQM1FpuGuPqQuxrI5xithoNlOkRu6
-    e2HmNLH6gqdgMGyRqrxEnJG2WvlXUMqLYCOaNDtjhF3aGypaMQVHR1M5FY7BZeLy
-    /XZATVBLBDyZTuz9M+IsfkqOAH9i/jv7X7ew==
+    1527156575; b=F2TRNqHvkTCa3eC7ERIRK949fEOvYQoFwfLYT5W9PwKnGCRyQf
+    ekSEGss6/nPGZURqHGFhEwIYMPR3qdr1nhvlcJ0oU6aqws0Z7pgd3X4kMbOuMO1U
+    6lNdA9lHdk7iBWuM06OVsElL+kuDFHUwt8T89L69RgyYA6c9z9CUYOGv4HbiYNEN
+    D8dS1emo44q6i+D7NzirXqdWdQgnAI6Kbj+bSHG215cgkLOQ7ttrEzymXCw35qcK
+    r9x4PAtmKcM2tRD0Horwu+bqbJjeHx29YEErPVCZqbjW889Zci+a6MnDVjY9WlK+
+    +H2/rKif2kXGAarBnyM06Ja11+zMu5wTJTQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156585; bh=bEX8Wbp7lB7l+WVauOIGxfRDmdHSP8
-    b583ihm5e8BOM=; b=SGDo8Fhj+cmlFkmFHc2fyxqr4V2IOZoNqoNRXLTy6JaE76
-    7sUc5lrPouTFGiBg7/mUm4jcvY0fXQEMzmfst/wfvLxLqqUFSHmhp/0olPgPswXs
-    +UvC0zS7MddvrW8tVl+shlemsvZvmAKu/lbGvaDPs5LQjdKfYyd0uTx2Kf/Mk+rb
-    Dt74sQk+UAuSNFNs/l33nWAN9n8HSiRE5LMq+SBbf10Y3SufwCb/cXZGMQS2SYhZ
-    dIMiV9o84GuHO47hV6QocLDcKd18DGXrzYKm7E/zFu4DMof1Y0a78ToiHMn+vg7S
-    BDRBKPEXA50hdibb3oYhAZymC6Qt+zD2d0gm5pkw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527156575; bh=RL4D6LLXsF0e7ICbSRkNxPzuxzKbVE
+    A+ljofZbYtZzQ=; b=iHs8AfFEC0t0r6XEtYEYG5qoOYGw+jh+Nl1q4Tba97kF/S
+    pih9SE5dSYvGqLkpLqJXwjoxmrY3iXEgjjsKm5/+39AeIOOAABfXmauXIyDyIG7N
+    jk1KG7Y3wZoZsJEqsvys8sFu4A9J4CaUZad8XjywYxHrdYlk5CsyKXqwaP5yzSkQ
+    xYhZTgxABQFYZo6bU6P/ogrvpL+kLLUVfpkVxwveaA0FGKhoqzO44NNGnPCWoZ8j
+    CDwfxkfKk+9xmTmznK8J733b4QxbdwDqw0UrDxL7DKykaazVueMC5cR18gKv1uOz
+    xSaYED60yB1ycLScm6t6s/TBbOzg2OuHFmoMKEOw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=ndXhUCfS x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=mGEOPlhp x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=ndXhUCfS x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=mGEOPlhp x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,33 +64,30 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNiJrSAahKzUIKK8kBumvIL1N23BkoWIc3Ts2e7waaDmJmOEVO0tZtWWE/QXpF66egBIiLQvnLnqAfAY12gTlVgTA2uc5Kgo6VgGWtnaWaYapZ11j4hN
-    KOYtg+YGZKaZdFw8TuU6X3VVStdjWUMh3Xb+mPjjO2h7KDt/SgXxt7Q3mJA6V7ZDXCmyZg79e+fzcPNFbTrXlqNqEW6dIHY2IbpoSN5yUzaSwTQKkppVIacw
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfB4nDlrqqT18e1WG30Frop24yZbltHqUNp4gslHjXr20Ws9qZAHfT+amlWgarNorQldN+pGNutYCewgS7khRoJe5wOF5k5gpbIw94GjbVzjA8k3A6kfQ
+    besbfABDWwxP7CiRqby85ZywSd8mtnkvfuvHtmzvM9htLgCr5TU8eqs9Kg2aeL4ZlMsSVk62AeQNo/ATRiUl+H8KGfBGISydWxBxv84Yesc4uwQRWQewAMOV
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=KKAkSRfTAAAA:8 a=P-IC7800AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=sfgkyT37IKWEnqeQgUwA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-    a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=P-IC7800AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=jMSxsYAmotoHhWNEieEA:9
+    a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031635AbeEXKFx (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:05:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54918 "EHLO mail.kernel.org"
+        id S1031725AbeEXKJU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:09:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031229AbeEXKFv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:05:51 -0400
+        id S1031645AbeEXKF4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:05:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bryan ODonoghue <pure.logic@nexus-software.ie>,
-        Shawn Guo <shawn.guo@linaro.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 155/161] rtc: snvs: Fix usage of snvs_rtc_enable
-Date: Thu, 24 May 2018 11:39:40 +0200
-Message-Id: <20180524093036.793891318@linuxfoundation.org>
+Subject: [PATCH 4.16 157/161] rtc: rk808: fix possible race condition
+Date: Thu, 24 May 2018 11:39:42 +0200
+Message-Id: <20180524093037.019031273@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -109,89 +105,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 1485991c024603b2fb4ae77beb7a0d741128a48e ]
+[ Upstream commit 201fac95e799c3d0304ec724d555e1251b9f6e84 ]
 
-commit 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver") introduces
-the SNVS RTC driver with a function snvs_rtc_enable().
+The probe function is not allowed to fail after registering the RTC because
+the following may happen:
 
-snvs_rtc_enable() can return an error on the enable path however this
-driver does not currently trap that failure on the probe() path and
-consequently if enabling the RTC fails we encounter a later error spinning
-forever in rtc_write_sync_lp().
+CPU0:                                CPU1:
+sys_load_module()
+ do_init_module()
+  do_one_initcall()
+   cmos_do_probe()
+    rtc_device_register()
+     __register_chrdev()
+     cdev->owner = struct module*
+                                     open("/dev/rtc0")
+    rtc_device_unregister()
+  module_put()
+  free_module()
+   module_free(mod->module_core)
+   /* struct module *module is now
+      freed */
+                                      chrdev_open()
+                                       spin_lock(cdev_lock)
+                                       cdev_get()
+                                        try_module_get()
+                                         module_is_live()
+                                         /* dereferences already
+                                            freed struct module* */
 
-[   36.093481] [<c010d630>] (__irq_svc) from [<c0c2e9ec>] (_raw_spin_unlock_irqrestore+0x34/0x44)
-[   36.102122] [<c0c2e9ec>] (_raw_spin_unlock_irqrestore) from [<c072e32c>] (regmap_read+0x4c/0x5c)
-[   36.110938] [<c072e32c>] (regmap_read) from [<c085d0f4>] (rtc_write_sync_lp+0x6c/0x98)
-[   36.118881] [<c085d0f4>] (rtc_write_sync_lp) from [<c085d160>] (snvs_rtc_alarm_irq_enable+0x40/0x4c)
-[   36.128041] [<c085d160>] (snvs_rtc_alarm_irq_enable) from [<c08567b4>] (rtc_timer_do_work+0xd8/0x1a8)
-[   36.137291] [<c08567b4>] (rtc_timer_do_work) from [<c01441b8>] (process_one_work+0x28c/0x76c)
-[   36.145840] [<c01441b8>] (process_one_work) from [<c01446cc>] (worker_thread+0x34/0x58c)
-[   36.153961] [<c01446cc>] (worker_thread) from [<c014aee4>] (kthread+0x138/0x150)
-[   36.161388] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
-[   36.168635] rcu_sched kthread starved for 2602 jiffies! g496 c495 f0x2 RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
-[   36.178564] rcu_sched       R  running task        0     8      2 0x00000000
-[   36.185664] [<c0c288b0>] (__schedule) from [<c0c29134>] (schedule+0x3c/0xa0)
-[   36.192739] [<c0c29134>] (schedule) from [<c0c2db80>] (schedule_timeout+0x78/0x4e0)
-[   36.200422] [<c0c2db80>] (schedule_timeout) from [<c01a7ab0>] (rcu_gp_kthread+0x648/0x1864)
-[   36.208800] [<c01a7ab0>] (rcu_gp_kthread) from [<c014aee4>] (kthread+0x138/0x150)
-[   36.216309] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
+Switch to devm_rtc_allocate_device/rtc_register_device to register the rtc
+as late as possible.
 
-This patch fixes by parsing the result of rtc_write_sync_lp() and
-propagating both in the probe and elsewhere. If the RTC doesn't start we
-don't proceed loading the driver and don't get into this loop mess later
-on.
-
-Fixes: 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver")
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-snvs.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/rtc/rtc-rk808.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -132,20 +132,23 @@ static int snvs_rtc_set_time(struct devi
- {
- 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
- 	unsigned long time;
-+	int ret;
+--- a/drivers/rtc/rtc-rk808.c
++++ b/drivers/rtc/rtc-rk808.c
+@@ -416,12 +416,11 @@ static int rk808_rtc_probe(struct platfo
  
- 	rtc_tm_to_time(tm, &time);
+ 	device_init_wakeup(&pdev->dev, 1);
  
- 	/* Disable RTC first */
--	snvs_rtc_enable(data, false);
-+	ret = snvs_rtc_enable(data, false);
-+	if (ret)
+-	rk808_rtc->rtc = devm_rtc_device_register(&pdev->dev, "rk808-rtc",
+-						  &rk808_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(rk808_rtc->rtc)) {
+-		ret = PTR_ERR(rk808_rtc->rtc);
+-		return ret;
+-	}
++	rk808_rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(rk808_rtc->rtc))
++		return PTR_ERR(rk808_rtc->rtc);
++
++	rk808_rtc->rtc->ops = &rk808_rtc_ops;
+ 
+ 	rk808_rtc->irq = platform_get_irq(pdev, 0);
+ 	if (rk808_rtc->irq < 0) {
+@@ -438,9 +437,10 @@ static int rk808_rtc_probe(struct platfo
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request alarm IRQ %d: %d\n",
+ 			rk808_rtc->irq, ret);
 +		return ret;
+ 	}
  
- 	/* Write 32-bit time to 47-bit timer, leaving 15 LSBs blank */
- 	regmap_write(data->regmap, data->offset + SNVS_LPSRTCLR, time << CNTR_TO_SECS_SH);
- 	regmap_write(data->regmap, data->offset + SNVS_LPSRTCMR, time >> (32 - CNTR_TO_SECS_SH));
- 
- 	/* Enable RTC again */
--	snvs_rtc_enable(data, true);
-+	ret = snvs_rtc_enable(data, true);
- 
--	return 0;
-+	return ret;
+-	return ret;
++	return rtc_register_device(rk808_rtc->rtc);
  }
  
- static int snvs_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-@@ -288,7 +291,11 @@ static int snvs_rtc_probe(struct platfor
- 	regmap_write(data->regmap, data->offset + SNVS_LPSR, 0xffffffff);
- 
- 	/* Enable RTC */
--	snvs_rtc_enable(data, true);
-+	ret = snvs_rtc_enable(data, true);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to enable rtc %d\n", ret);
-+		goto error_rtc_device_register;
-+	}
- 
- 	device_init_wakeup(&pdev->dev, true);
- 
+ static struct platform_driver rk808_rtc_driver = {
