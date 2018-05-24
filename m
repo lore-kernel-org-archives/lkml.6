@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163328-2-10279353775472091790
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163286-2-14557970844551689398
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163325; b=hHmpiaQEC4DqU9SmpMMWTew6rTXQ8GGDsQuYfeBdUxrpOpTXNi
-    c3M0jZuj8WgbFrrdUprKcDYmr4DeZWyOgGZWcezK9KlRlacVJEzNFh7nnEArdRP9
-    wCjvi5PXGVjWB2XIzRxgC5KthT8CnvgMA1rkV333cPzKLz5R7lNXcAIACEI+jLBR
-    455vUelsbjT/k0biaCggDYFF+MDpMMcT6mCFxZ2VDWwVCgDTbDqP+Yw0ZqWi7fnt
-    uBh9KJr1Uz/yifqASFt/UkG4w4ona1o7t8AsuU3WtQ6WyXPqHkZ6SE3uiTBxIRqs
-    ro286v5wCcn2+YVfllYwatCStnqngB2BQj/g==
+    1527163284; b=as2JwWZqY1uPHiJw/KCL8qvwYRoDQcyzWUTTLYL8PzhrLcOYvY
+    Mbh8hxb9WMGuqrboX8woOJh5CUJSEI3t35hQX2ma2nLXVEJ8YNSVoPwzo7UwDd6U
+    m9pEZMyBG5FKy9waqG90adoMSi2dMkVnMjN5cFMV9k3B+j+IRaVwnVnYbKlsWgPw
+    jw30xUi2XmJpWSoenc6jcj4uQpUuh1BK1QPdfcAKez5V8dHjnxHljd8e34vCBhwe
+    1BJWOe52GCjng3AYkyL75PalzRCUMMJmRLWEgKxjlxwIh8/cr+NhWWTT1jv6eimL
+    gqV63/jrasIKVK3CiNWkp4ksNU6yFXK/QtXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163325; bh=kTNDxz74pGBjn+N8fQBHQgHhkSVvVu
-    zOb6LOzZ8LDAc=; b=VK+ezgkT4SxsZRzu7UoNvFpju77IeaJqkEh/2x19vadZgS
-    fYo5HYirRmA56PVf+lEf8wNJVEPVc669xiVjNRjAg7AyUblFOCNMs86jsOeSbBlD
-    ZLbhhgU03iwHJ4OWc5gANuhc6tIo0kSO4rvqPPYb1zSdld/ycd+Nsssz82rkBAEs
-    97M+GiEjYlOM7Tb3fW5id284SBuxdtAoF2wpNrkvSi4PiQZcmW1/U5+64ypIfS2V
-    Ibg9/01XHGKYe3Z9tTWTsCS6FCh9BYJZOmWJzkR3sUSpNpu6to2wFmPBZS+hX2Rp
-    Bmh/LVUK06faCBRDiQDyoHLnPZ1/IAaOxjVKEDSg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163284; bh=qoOBhIzX/RlSM+bPqdQQ3VgwmE7M/C
+    8xxYwtqwNkrK0=; b=RTb3NIrhHJFt/rN76WymYESW+66Pg6fF3GgWmbbWigut2e
+    x8UsAzbFw4PVaq2PL1MW2BBjwpSJiALDz9uad0ZQ+zHhciu5IDmpRJM+AiTxt2zQ
+    DLwmG04B4VquvhmVPFMP8E5b+kkTiETZDhW5ewUMdnFdbUVc2TOhTuVAn7QHyrDT
+    7K0bC3gQ/HceUZV9SA0RLeBkJTmp4OH7fjdx5hYhGUkfuunjTnWak8NDpQNOCcQQ
+    cfYXFUwni3B8n300h1F2ZLg2BBrjo5Y0xkwAIhqjaPAjdamvc02pVRyop9Ob+zy2
+    FIgu+z9tfSwzEH906Gr0FiXOt4/i9IRECjejDFEQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=RTQ/l3iy x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=mhnCOgFJ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=RTQ/l3iy x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=mhnCOgFJ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,44 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIgEjuAucAU7YaeFJeW4OuPl6jx4vwJTzp4vs1mBjj0n4tlllrs/0ySNxm9Ia8hhG8x8C3vWr/MJzedcK/B34ZTSRnW9ZkklkGddnYaiNPrvMZVNGtlC
-    HOG6hS9pWW5RJU4ly2G4hmJjH4BOsyBHNnKPZ8CzuzG2MYFV4rM7/8pAt/2MR2K2uheWUn19HYeQZOj3Q8P+MDFu/7rutnkmd2DROo9f5cyvxoEOX7ZTaXU6
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFUdBkxzcsZbOJ3EsZx2DT6JbLt5vPqhCVdB0frFSPOgVazscdDKjHW7DBVvuTx9da+7Y+xXRYZnCEaFMA///vnYA8fSpoo96V/wl7HYZ2h2t8dJdr4V
+    ajKhN4xvNJFy56Udzm5/8vpFovyuiJFuf+ghrtkx70HhIUtPkOvm61DyNJ0mattES/ozaIUhmodcO9d4kwCQBcbs5wZaL7+C0bcEMF8lZUSEzT93XPIfjsts
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=PoMdBBFvNJcjPcX58mEA:9 a=QEXdDO2ut3YA:10
+    a=1XWaLZrsAAAA:8 a=Z4Rwk6OoAAAA:8 a=cm27Pg_UAAAA:8 a=drOt6m5kAAAA:8
+    a=6rqHouBjAAAA:8 a=pGLkceISAAAA:8 a=DfNHnWVPAAAA:8 a=KKAkSRfTAAAA:8
+    a=FOH2dFAWAAAA:8 a=O6nNToy4AAAA:8 a=ag1SF4gXAAAA:8 a=9aXN0AnECsDKHPtgd0YA:9
+    a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=Hx1yvPaMooE3kwe23bt7:22 a=rjTVMONInIDnV1a_A2c_:22
+    a=cvBusfyB2V15izCimMoJ:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=WHP_vYRDmbjazZPeRM4b:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966423AbeEXJoz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:44:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56032 "EHLO mail.kernel.org"
+        id S966802AbeEXMAr (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:00:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966695AbeEXJot (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:44:49 -0400
+        id S966098AbeEXJo7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:44:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Galbraith <mgalbraith@suse.de>
-Subject: [PATCH 4.4 43/92] powerpc/powernv: Remove OPALv2 firmware define and references
-Date: Thu, 24 May 2018 11:38:20 +0200
-Message-Id: <20180524093203.419078826@linuxfoundation.org>
+        stable@vger.kernel.org, Janis Danisevskis <jdanis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        David Rientjes <rientjes@google.com>,
+        Minfei Huang <mnfhuang@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Calvin Owens <calvinowens@fb.com>, Jann Horn <jann@thejh.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 55/92] procfs: fix pthread cross-thread naming if !PR_DUMPABLE
+Date: Thu, 24 May 2018 11:38:32 +0200
+Message-Id: <20180524093204.603778122@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,107 +119,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stewart Smith <stewart@linux.vnet.ibm.com>
+From: Janis Danisevskis <jdanis@google.com>
 
-commit 7261aafc095763b119136a562540dea7b1ccf657 upstream.
+commit 1b3044e39a89cb1d4d5313da477e8dfea2b5232d upstream.
 
-OPALv2 only ever existed in the lab and didn't escape to the world.
-All OPAL systems in the wild are OPALv3.
+The PR_DUMPABLE flag causes the pid related paths of the proc file
+system to be owned by ROOT.
 
-The probability of there being an OPALv2 system still powered on
-anywhere inside IBM is approximately zero, let alone anyone
-expecting to run mainline kernels.
+The implementation of pthread_set/getname_np however needs access to
+/proc/<pid>/task/<tid>/comm.  If PR_DUMPABLE is false this
+implementation is locked out.
 
-So, start to remove references to OPALv2.
+This patch installs a special permission function for the file "comm"
+that grants read and write access to all threads of the same group
+regardless of the ownership of the inode.  For all other threads the
+function falls back to the generic inode permission check.
 
-Signed-off-by: Stewart Smith <stewart@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Mike Galbraith <mgalbraith@suse.de>
+[akpm@linux-foundation.org: fix spello in comment]
+Signed-off-by: Janis Danisevskis <jdanis@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Cyrill Gorcunov <gorcunov@openvz.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Minfei Huang <mnfhuang@gmail.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Calvin Owens <calvinowens@fb.com>
+Cc: Jann Horn <jann@thejh.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/firmware.h    |    4 +---
- arch/powerpc/platforms/powernv/opal.c  |    8 ++------
- arch/powerpc/platforms/powernv/setup.c |    4 ----
- arch/powerpc/platforms/powernv/smp.c   |    4 ++--
- 4 files changed, 5 insertions(+), 15 deletions(-)
+ fs/proc/base.c |   42 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/firmware.h
-+++ b/arch/powerpc/include/asm/firmware.h
-@@ -47,7 +47,6 @@
- #define FW_FEATURE_VPHN		ASM_CONST(0x0000000004000000)
- #define FW_FEATURE_XCMO		ASM_CONST(0x0000000008000000)
- #define FW_FEATURE_OPAL		ASM_CONST(0x0000000010000000)
--#define FW_FEATURE_OPALv2	ASM_CONST(0x0000000020000000)
- #define FW_FEATURE_SET_MODE	ASM_CONST(0x0000000040000000)
- #define FW_FEATURE_BEST_ENERGY	ASM_CONST(0x0000000080000000)
- #define FW_FEATURE_TYPE1_AFFINITY ASM_CONST(0x0000000100000000)
-@@ -70,8 +69,7 @@ enum {
- 		FW_FEATURE_SET_MODE | FW_FEATURE_BEST_ENERGY |
- 		FW_FEATURE_TYPE1_AFFINITY | FW_FEATURE_PRRN,
- 	FW_FEATURE_PSERIES_ALWAYS = 0,
--	FW_FEATURE_POWERNV_POSSIBLE = FW_FEATURE_OPAL | FW_FEATURE_OPALv2 |
--		FW_FEATURE_OPALv3,
-+	FW_FEATURE_POWERNV_POSSIBLE = FW_FEATURE_OPAL | FW_FEATURE_OPALv3,
- 	FW_FEATURE_POWERNV_ALWAYS = 0,
- 	FW_FEATURE_PS3_POSSIBLE = FW_FEATURE_LPAR | FW_FEATURE_PS3_LV1,
- 	FW_FEATURE_PS3_ALWAYS = FW_FEATURE_LPAR | FW_FEATURE_PS3_LV1,
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -100,7 +100,6 @@ int __init early_init_dt_scan_opal(unsig
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3083,6 +3083,44 @@ int proc_pid_readdir(struct file *file,
+ }
  
- 	powerpc_firmware_features |= FW_FEATURE_OPAL;
- 	if (of_flat_dt_is_compatible(node, "ibm,opal-v3")) {
--		powerpc_firmware_features |= FW_FEATURE_OPALv2;
- 		powerpc_firmware_features |= FW_FEATURE_OPALv3;
- 		pr_info("OPAL V3 detected !\n");
- 	} else {
-@@ -349,7 +348,7 @@ int opal_put_chars(uint32_t vtermno, con
- 	 * enough room and be done with it
- 	 */
- 	spin_lock_irqsave(&opal_write_lock, flags);
--	if (firmware_has_feature(FW_FEATURE_OPALv2)) {
-+	if (firmware_has_feature(FW_FEATURE_OPALv3)) {
- 		rc = opal_console_write_buffer_space(vtermno, &olen);
- 		len = be64_to_cpu(olen);
- 		if (rc || len < total_len) {
-@@ -693,10 +692,7 @@ static int __init opal_init(void)
- 	}
- 
- 	/* Register OPAL consoles if any ports */
--	if (firmware_has_feature(FW_FEATURE_OPALv2))
--		consoles = of_find_node_by_path("/ibm,opal/consoles");
--	else
--		consoles = of_node_get(opal_node);
-+	consoles = of_find_node_by_path("/ibm,opal/consoles");
- 	if (consoles) {
- 		for_each_child_of_node(consoles, np) {
- 			if (strcmp(np->name, "serial"))
---- a/arch/powerpc/platforms/powernv/setup.c
-+++ b/arch/powerpc/platforms/powernv/setup.c
-@@ -142,10 +142,6 @@ static void pnv_show_cpuinfo(struct seq_
- 	seq_printf(m, "machine\t\t: PowerNV %s\n", model);
- 	if (firmware_has_feature(FW_FEATURE_OPALv3))
- 		seq_printf(m, "firmware\t: OPAL v3\n");
--	else if (firmware_has_feature(FW_FEATURE_OPALv2))
--		seq_printf(m, "firmware\t: OPAL v2\n");
--	else if (firmware_has_feature(FW_FEATURE_OPAL))
--		seq_printf(m, "firmware\t: OPAL v1\n");
- 	else
- 		seq_printf(m, "firmware\t: BML\n");
- 	of_node_put(root);
---- a/arch/powerpc/platforms/powernv/smp.c
-+++ b/arch/powerpc/platforms/powernv/smp.c
-@@ -65,10 +65,10 @@ static int pnv_smp_kick_cpu(int nr)
- 	BUG_ON(nr < 0 || nr >= NR_CPUS);
- 
- 	/*
--	 * If we already started or OPALv2 is not supported, we just
-+	 * If we already started or OPALv3 is not supported, we just
- 	 * kick the CPU via the PACA
- 	 */
--	if (paca[nr].cpu_start || !firmware_has_feature(FW_FEATURE_OPALv2))
-+	if (paca[nr].cpu_start || !firmware_has_feature(FW_FEATURE_OPALv3))
- 		goto kick;
- 
- 	/*
+ /*
++ * proc_tid_comm_permission is a special permission function exclusively
++ * used for the node /proc/<pid>/task/<tid>/comm.
++ * It bypasses generic permission checks in the case where a task of the same
++ * task group attempts to access the node.
++ * The rationale behind this is that glibc and bionic access this node for
++ * cross thread naming (pthread_set/getname_np(!self)). However, if
++ * PR_SET_DUMPABLE gets set to 0 this node among others becomes uid=0 gid=0,
++ * which locks out the cross thread naming implementation.
++ * This function makes sure that the node is always accessible for members of
++ * same thread group.
++ */
++static int proc_tid_comm_permission(struct inode *inode, int mask)
++{
++	bool is_same_tgroup;
++	struct task_struct *task;
++
++	task = get_proc_task(inode);
++	if (!task)
++		return -ESRCH;
++	is_same_tgroup = same_thread_group(current, task);
++	put_task_struct(task);
++
++	if (likely(is_same_tgroup && !(mask & MAY_EXEC))) {
++		/* This file (/proc/<pid>/task/<tid>/comm) can always be
++		 * read or written by the members of the corresponding
++		 * thread group.
++		 */
++		return 0;
++	}
++
++	return generic_permission(inode, mask);
++}
++
++static const struct inode_operations proc_tid_comm_inode_operations = {
++		.permission = proc_tid_comm_permission,
++};
++
++/*
+  * Tasks
+  */
+ static const struct pid_entry tid_base_stuff[] = {
+@@ -3100,7 +3138,9 @@ static const struct pid_entry tid_base_s
+ #ifdef CONFIG_SCHED_DEBUG
+ 	REG("sched",     S_IRUGO|S_IWUSR, proc_pid_sched_operations),
+ #endif
+-	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
++	NOD("comm",      S_IFREG|S_IRUGO|S_IWUSR,
++			 &proc_tid_comm_inode_operations,
++			 &proc_pid_set_comm_operations, {}),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
+ #endif
