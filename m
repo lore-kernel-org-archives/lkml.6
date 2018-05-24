@@ -1,107 +1,53 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155959-2-10398620408355895840
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155958; b=dKEjQwxohayb+/PxnarP8IiOV0RwfqpOtui94t8d0w0OAuzZl4
-    D+1Cfgk6yusc4hykpdbfEHmnabexiSR4X4UdLpolJ0CFaDz1XIXjVzWoUgYdjyS9
-    QvsWviVe3GFCDE1Ahfy2RoO9KoCXX1HzWYFWMA+STjJA0mlFClDSXQEDCZq/EX01
-    eXoGDOIWxPD0Zd77AdH+twPekMkz8dMEJa2OHD3lBzzW5jO8iVwlblIuhL/HFGZP
-    iAm7ZKhkDgK+5DVOyDwGOtVUUF1/BODoVK1M2PWdLjsMmofsuhoqU6rytVFLhgIg
-    XaKvVna0QS/y2funehqmxyJSvQZ//Ql3lezA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155958; bh=HUQTy0TuvV/p6/CnWUXc5tN/ekxqDm
-    4VkHkWY5YcgS0=; b=ME7RcX9YpHIPkq0rDdYQitlZO538vVQAYv1sfGH6EsYCxs
-    FxqVpAF2kgWmOIjEfiLlxZMYVHd9/LOAf2i9Jc04b/wk9z6Ug6l+O3/F/uXHAxFK
-    CYWgAJRGCuJR535Ave/yozppF+WMld+jp8SRQSo8KmppXwmLNsk8IpGYZiFMBbUW
-    kf2aJkEJBdq/gpd3iuT9X9KpFBXJO9BE+OOBH8MMF6TSk0+lKRm3pQeot/24gLW7
-    mSPNeQ5fPCV800FG5erWGb9nSrFypv7ynHQf4MFDpkdJbkSe6FYbwV4w3JivtxUC
-    Wf77j2VQ6OZEbTvBOOhlhLTKwc0UM+9XA4xoz5UQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=bepc+vkW x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=bepc+vkW x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA9R95OYxGZl5qR0bh3Eo11l3d4xHRYUFnz05f4fZcjq7D7ZcahviyEufG1Nc27chPOKrzkkUZ4KnZkEApSaKjj1P8NK+SwNhBDguP7Ht1EEBcE0Zsan
-    sDnsJIdvR/XysDuiR7DpKVDFxwLuRPSSU8Yvuik5dRxH1xQNiAgYpE6PT7l9o9k+jBwNy6pfcUyeFT4KDv0qOeEBOwJX2qHqHxdeOE1JOc8HZ+weGWY/PcG1
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=jxzauDbPASHEnw4kFhcA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030729AbeEXJ7M (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:59:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030719AbeEXJ7J (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:59:09 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoX04u5+QSs2KzhmlxokleqrPrQ06QRLPcBz/iPzEpMgzNAVXG2B5npDJhRV6+tSDJsX/Ce
+ARC-Seal: i=1; a=rsa-sha256; t=1527155946; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Wur7hvT+w/rUfzUhJJJcEJ7vMaZsxOLf2f1vbDB+hcYQZYnsCnYz7T67VNbOWQbTVR
+         lD1z8OJRvWGAOR6di+hrB1ykIFgNHKpwqzzi+Z+ef1ByU5T0JzHTkTtIy1kbK/+7nsNy
+         Obup4+19pSOZr8nTSNzOAzVXuY3GOtpur69sV+SVxRMbaT96imz51X0lEH6oxesMOh0A
+         yBPeX6lnk45rV3h1oRdZ/Iglkc2q9DHsapQviBm94ZdteG8BdZHuwpJRDAmlX+SYb4UG
+         M5ILv1PXgeDSLK13VgJZ791tJLR4R9eJ9hAd2tQu6DgNXq/l9+oa8odWP8b+uk2Hsy7q
+         1bGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=fT6O2vCKgA2vvgUnwFSewmEL3zqMblHrkbTd7OfLQOw=;
+        b=RfyeCLAwVCVkk+hum9Ei3RdNujf8qeVEtbIFO9AEOTPAEWsay/b40zwTh6cB0chJjU
+         LxAZLy+HfD7ISILNFsK8JukqcAu0eXS7JfyVmZcufIDpoMlxzFwAByrm4A+3mpZRBpiI
+         1ij7NMl19767wZX7P+vygJSA89pPnL3Q0A0pryfdUMfxuTuyLsr+5tLDi1jfVyGgKH8u
+         wFqte06Yz87b/438QMQJzmmIrIo+oP1+uchvwNAhPDnk3YDoweBT/njH0X47QbAQgIqB
+         SheYodDztYOSrPKATMnpArljv2HepIK7BInHZgPxND5sSnuh9TpT3rbAIzEHHuprYsHn
+         yqPA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zZtxkpAr;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zZtxkpAr;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 010/161] tcp: purge write queue in tcp_connect_init()
-Date: Thu, 24 May 2018 11:37:15 +0200
-Message-Id: <20180524093019.619210464@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Saeed Mahameed <saeedm@mellanox.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Israel Rukshin <israelr@mellanox.com>,
+	kbuild test robot <lkp@intel.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 001/161] net/mlx5: Fix build break when CONFIG_SMP=n
+Date: Thu, 24 May 2018 11:37:06 +0200
+Message-Id: <20180524093018.518558261@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601339073820003217?=
+X-GMAIL-MSGID: =?utf-8?q?1601339073820003217?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -109,86 +55,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 7f582b248d0a86bae5788c548d7bb5bca6f7691a ]
+commit e3ca34880652250f524022ad89e516f8ba9a805b upstream.
 
-syzkaller found a reliable way to crash the host, hitting a BUG()
-in __tcp_retransmit_skb()
+Avoid using the kernel's irq_descriptor and return IRQ vector affinity
+directly from the driver.
 
-Malicous MSG_FASTOPEN is the root cause. We need to purge write queue
-in tcp_connect_init() at the point we init snd_una/write_seq.
+This fixes the following build break when CONFIG_SMP=n
 
-This patch also replaces the BUG() by a less intrusive WARN_ON_ONCE()
+include/linux/mlx5/driver.h: In function ‘mlx5_get_vector_affinity_hint’:
+include/linux/mlx5/driver.h:1299:13: error:
+        ‘struct irq_desc’ has no member named ‘affinity_hint’
 
-kernel BUG at net/ipv4/tcp_output.c:2837!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 5276 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #51
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__tcp_retransmit_skb+0x2992/0x2eb0 net/ipv4/tcp_output.c:2837
-RSP: 0000:ffff8801dae06ff8 EFLAGS: 00010206
-RAX: ffff8801b9fe61c0 RBX: 00000000ffc18a16 RCX: ffffffff864e1a49
-RDX: 0000000000000100 RSI: ffffffff864e2e12 RDI: 0000000000000005
-RBP: ffff8801dae073a0 R08: ffff8801b9fe61c0 R09: ffffed0039c40dd2
-R10: ffffed0039c40dd2 R11: ffff8801ce206e93 R12: 00000000421eeaad
-R13: ffff8801ce206d4e R14: ffff8801ce206cc0 R15: ffff8801cd4f4a80
-FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000096bc900
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000001c47b6000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- tcp_retransmit_skb+0x2e/0x250 net/ipv4/tcp_output.c:2923
- tcp_retransmit_timer+0xc50/0x3060 net/ipv4/tcp_timer.c:488
- tcp_write_timer_handler+0x339/0x960 net/ipv4/tcp_timer.c:573
- tcp_write_timer+0x111/0x1d0 net/ipv4/tcp_timer.c:593
- call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1d1/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:525 [inline]
- smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-
-Fixes: cf60af03ca4e ("net-tcp: Fast Open client - sendmsg(MSG_FASTOPEN)")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Yuchung Cheng <ycheng@google.com>
-Cc: Neal Cardwell <ncardwell@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Fixes: 6082d9c9c94a ("net/mlx5: Fix mlx5_get_vector_affinity function")
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+CC: Randy Dunlap <rdunlap@infradead.org>
+CC: Guenter Roeck <linux@roeck-us.net>
+CC: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Israel Rukshin <israelr@mellanox.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_output.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2860,8 +2860,10 @@ int __tcp_retransmit_skb(struct sock *sk
- 		return -EBUSY;
+---
+ include/linux/mlx5/driver.h |   12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -1271,17 +1271,7 @@ enum {
+ static inline const struct cpumask *
+ mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
+ {
+-	struct irq_desc *desc;
+-	unsigned int irq;
+-	int eqn;
+-	int err;
+-
+-	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
+-	if (err)
+-		return NULL;
+-
+-	desc = irq_to_desc(irq);
+-	return desc->affinity_hint;
++	return dev->priv.irq_info[vector].mask;
+ }
  
- 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
--		if (before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))
--			BUG();
-+		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
-+			WARN_ON_ONCE(1);
-+			return -EINVAL;
-+		}
- 		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
- 			return -ENOMEM;
- 	}
-@@ -3369,6 +3371,7 @@ static void tcp_connect_init(struct sock
- 	sock_reset_flag(sk, SOCK_DONE);
- 	tp->snd_wnd = 0;
- 	tcp_init_wl(tp, 0);
-+	tcp_write_queue_purge(sk);
- 	tp->snd_una = tp->write_seq;
- 	tp->snd_sml = tp->write_seq;
- 	tp->snd_up = tp->write_seq;
+ #endif /* MLX5_DRIVER_H */
