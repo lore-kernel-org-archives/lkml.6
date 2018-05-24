@@ -1,94 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971247AbeEXTv2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:51:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968151AbeEXTv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:51:26 -0400
-Date: Thu, 24 May 2018 21:51:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Architecture Mailman List <boot-architecture@lists.linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/8] driver core: add a deferred probe timeout
-Message-ID: <20180524195107.GA4917@kroah.com>
-References: <20180524175024.19874-1-robh@kernel.org>
- <20180524175024.19874-3-robh@kernel.org>
- <20180524190126.GC31019@kroah.com>
- <CAL_Jsq+wMJ+9JTGFGSsSW2Vww_mvAkzc3ujmftgbpQxDTrLHag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+wMJ+9JTGFGSsSW2Vww_mvAkzc3ujmftgbpQxDTrLHag@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1032988AbeEXTxS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:53:18 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51601 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967986AbeEXTxP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:53:15 -0400
+X-Google-Smtp-Source: ADUXVKIlnGDGPisGHi/ZVVnVqekRjx26AD1sHLHvKtb1jsF11W4WEAYQQpecMVrECx6gOOqKaFw1lA==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: add PhoenixRC Flight Controller Adapter
+Date: Thu, 24 May 2018 21:52:59 +0200
+Message-Id: <20180524195259.15280-1-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 02:45:48PM -0500, Rob Herring wrote:
-> On Thu, May 24, 2018 at 2:01 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Thu, May 24, 2018 at 12:50:18PM -0500, Rob Herring wrote:
-> >> Deferring probe can wait forever on dependencies that may never appear
-> >> for a variety of reasons. This can be difficult to debug especially if
-> >> the console has dependencies or userspace fails to boot to a shell. Add
-> >> a timeout to retry probing without possibly optional dependencies and to
-> >> dump out the deferred probe pending list after retrying.
-> >>
-> >> This mechanism is intended for debug purposes. It won't work for the
-> >> console which needs to be enabled before userspace starts. However, if
-> >> the console's dependencies are resolved, then the kernel log will be
-> >> printed (as opposed to no output).
-> >>
-> >> Signed-off-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >>  .../admin-guide/kernel-parameters.txt         |  7 +++++
-> >>  drivers/base/dd.c                             | 28 ++++++++++++++++++-
-> >>  2 files changed, 34 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> >> index 11fc28ecdb6d..dd3f40b34a24 100644
-> >> --- a/Documentation/admin-guide/kernel-parameters.txt
-> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> >> @@ -809,6 +809,13 @@
-> >>                       Defaults to the default architecture's huge page size
-> >>                       if not specified.
-> >>
-> >> +     deferred_probe_timeout=
-> >> +                     [KNL] Set a timeout in seconds for deferred probe to
-> >> +                     give up waiting on dependencies to probe. Only specific
-> >> +                     dependencies (subsystems or drivers) that have opted in
-> >> +                     will be ignored. This option also dumps out devices
-> >> +                     still on the deferred probe list after retrying.
-> >
-> > Doesn't sound like a debugging-only option.  I can see devices enabling
-> > this when they figure out that's the only way their platform can boot :)
-> 
-> Here's some rope...
-> 
-> No doubt it can be abused. So are you saying don't call it a debug
-> option or hide it behind a config option? And for the latter, what's
-> one that distros don't just turn on?
+Add MAINTAINERS entry for PhoenixRC Flight Controller Adapter
 
-If it is a debug option, make it obvious it's only for debugging.  The
-commit log here says it's a debug option, but your documentation does
-not say that at all, and that's what people will read.
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
 
-Well, they might read it, probably not.  But at least give us something
-to point at when they mess things up :)
+Notes:
+    v2:
+    	Add proper mailing list
 
-thanks,
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-greg k-h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9ce5062dc028..d8b5d9f810e4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11103,6 +11103,13 @@ S:	Maintained
+ F:	include/linux/personality.h
+ F:	include/uapi/linux/personality.h
+ 
++PHOENIX RC FLIGHT CONTROLLER ADAPTER
++M:	Marcus Folkesson <marcus.folkesson@gmail.com>
++L:	linux-input@vger.kernel.org
++S:	Maintained
++F:	Documentation/input/devices/pxrc.rst
++F:	drivers/input/joystick/pxrc.c
++
+ PHONET PROTOCOL
+ M:	Remi Denis-Courmont <courmisch@gmail.com>
+ S:	Supported
+-- 
+2.16.2
