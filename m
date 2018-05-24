@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159332-2-1128214732299251840
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159316-2-3679802989693220765
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enfr, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159331; b=aXlavtsWyCTzgYk4G1S98rAkBna/p9eLeK7hTpF5qYbR0hQwq8
-    VqnmSsPycMfP4PftxWZpcxdnprcTMoC4/l9wm5WKmjx+bPPPzkQXzunRQr5Ewmmq
-    q484HjoAg/Cv9fL4QDCV3dNKbOtcH4AzflYXwd4b25x/7Ep57IgfAODlTGo0knj7
-    UDeixLoC8Kym+UYxzrvkW2no9cU0MAMxT9bTNGUteXY8xUImvQM0jXtxXhSxVi1U
-    +omS5qQc3wEKvTmkGK969ZJg10Bz4odtC10LIOmUUn+p8Fcidj8K8ZWOiRMSq2QJ
-    AVLNxrXzusPlcYQuQYdv5pJlSMrVTsGypaSg==
+    1527159315; b=btbJcJrK6pn5Sh+L1L5webTETc0DwXGq+wHo9SrEzKaiOzfGrP
+    tIrr3TUJGZ0dYUVLeM7Ye+8f3TmNOsEJ5E2B5Nw6s0Vv9A7WB3fJfKS2NoG+mmVw
+    oQkWUAfDDcTUUk4nKH1X9op/+d3CA6ci8C3zX+xOBlOema8l1Ot2iD3C8JFo4rtk
+    e9QwTlzKW9XGC/Y6QxGr7qwnmIvzD5At/Qb91OYCL+iN2Z6640JLGGRniKFApIXj
+    1v6/GddFILxTATS5pq32KZiKkWmK3VShuiihmmoHzeRHw7SNIqqKuAek9Y5MSXoF
+    +LB3g/XefXtpfMlAy3B4edWfWijoBzJQKPbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159331; bh=v1Wapt3mgRCQfKYM8ayl9Oxvr8kygt
-    hz8egbXPI0cF0=; b=IuKBRCmrnwuLQ9KWXlrV9zXzSeUm+RSaSUj391B/zWqYWl
-    L++XvKVVuKVp8a7w8BiuTNzAud4Ncl2AE/jwM75Y+vZz9p/gypr5l73Kl0Itbovg
-    NbwvA8ahiJTXN9HFZszHoRUlKmAgcSGb53lZiP7CvMHGp45Asn1gh848zVWgeyCP
-    uaMf3MBD5dOaGG6xrR0YBwhbeQH7hqdlSb5suHJ5yyLZozdYICysncsnleVmHfgk
-    PPGcY02jokB1oXMh1o1dKwy8Xudh0Zx0GEsvWczVI54ppgbe5h4HX8TLHwSTiVCB
-    bjQbI+Zo1rcQrl+9zVoZdyvm3VuSMQpQpyMiHViw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159315; bh=n9uSzW/WuGQu29Zt+d0VvdLVkICn38
+    92n5NuteWXqIY=; b=HdYZ2m4JY6+ufH04YZNA+9lXAW8zqVb0a8kfQc3PJAk6dN
+    P+ftBPhlj/1YCy2GSFfJMbcjOg/dXBRTSuR/yLYukqmVepJnL/ZfwzaShi+breu3
+    yUaxi9OnX8MRTA5G0023UM6R/OjJfo1L+ncVqRrodCZI+xPcF2nd1SfcUXUGNvqt
+    IgnZ9oHzNRsWCMeD9doeJa53XPsKgHR7/WhoRFJDCzCJDns8XOPxZY4QKI39m+D3
+    NEPcVJ4Ym/lxDUvR1ZOIfw0aOe2ZfQXohoXc79aaPuP0U9fDDYj3fFiXgZs8UeVo
+    N8ymLe9r7LwUzpSXg+mjNBGBYdE++BDlfsOYCYpQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=IHhQOFfw x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=FdSQTX5P x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=IHhQOFfw x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=FdSQTX5P x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,33 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJXxG0xznFP7iSUwI2bkahz0uy2hx1bMxVUs6FQ4rZ4uRRmqSbKx0AZGHrXCZX6EI0SOdXo59po23UlAQBtjQVsDWU5QBvZA2wPMhsDoFpAr4XMnPYpb
-    HNOB++AxiBHTazSsJv2miaYJvBZ0/IchQyU84NEOSAkR5GVCcgR0Wn8UWfShWNHJ3gbL1TXwmvb987aNnmgK/dtRjr6VmKEtoJq4EAlA3qZnbW+hRyRN9eiz
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEGl5TBbnWPoPSCn7pis8WEEzWgO0etaAz9DzM2kcBEwGevYXKQC4wSgEzSAeOeU2wmCE4kQobBLMe0m0CRcC8SmHKFoB086Kgqcaqa8q+yjNnbxj5ln
+    /f0Te2/gYv75Gm4mo/eofLvLG9g1M/NDIErH+eDRfVlej0EmAd6/Q43ELfpDimnuYBv8atIBXXWVmIl/YmstbtteaETLTSdIVWwgUowb/Xs0HKwpEbCCS+9u
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=JX2Zv6e58hTcoUBVBSsA:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=NXlBA2qRaL4NBMo5rs0A:9 a=TLV9n937QN4VAHxZ:21
+    a=aXV4Ic71RibZEedW:21 a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030431AbeEXKzS (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:55:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36496 "EHLO mail.kernel.org"
+        id S968195AbeEXJ4n (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:56:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967802AbeEXJ4i (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:56:38 -0400
+        id S968435AbeEXJ4l (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:56:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Chris Leech <cleech@redhat.com>, Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/165] usb: gadget: ffs: Execute copy_to_user() with USER_DS set
-Date: Thu, 24 May 2018 11:38:03 +0200
-Message-Id: <20180524093625.143647534@linuxfoundation.org>
+Subject: [PATCH 4.14 114/165] scsi: iscsi_tcp: set BDI_CAP_STABLE_WRITES when data digest enabled
+Date: Thu, 24 May 2018 11:38:40 +0200
+Message-Id: <20180524093626.631443000@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -105,66 +108,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit 4058ebf33cb0be88ca516f968eda24ab7b6b93e4 ]
+[ Upstream commit 89d0c804392bb962553f23dc4c119d11b6bd1675 ]
 
-When using a AIO read() operation on the function FS gadget driver a URB is
-submitted asynchronously and on URB completion the received data is copied
-to the userspace buffer associated with the read operation.
+iscsi tcp will first send out data, then calculate and send data
+digest. If we don't have BDI_CAP_STABLE_WRITES, the page cache will be
+written in spite of the on going writeback. Consequently, wrong digest
+will be got and sent to target.
 
-This is done from a kernel worker thread invoking copy_to_user() (through
-copy_to_iter()). And while the user space process memory is made available
-to the kernel thread using use_mm(), some architecture require in addition
-to this that the operation runs with USER_DS set. Otherwise the userspace
-memory access will fail.
+To fix this, set BDI_CAP_STABLE_WRITES when data digest is enabled
+in iscsi_tcp .slave_configure callback.
 
-For example on ARM64 with Privileged Access Never (PAN) and User Access
-Override (UAO) enabled the following crash occurs.
-
-	Internal error: Accessing user space memory with fs=KERNEL_DS: 9600004f [#1] SMP
-	Modules linked in:
-	CPU: 2 PID: 1636 Comm: kworker/2:1 Not tainted 4.9.0-04081-g8ab2dfb-dirty #487
-	Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
-	Workqueue: events ffs_user_copy_worker
-	task: ffffffc87afc8080 task.stack: ffffffc87a00c000
-	PC is at __arch_copy_to_user+0x190/0x220
-	LR is at copy_to_iter+0x78/0x3c8
-	[...]
-	[<ffffff800847b790>] __arch_copy_to_user+0x190/0x220
-	[<ffffff80086f25d8>] ffs_user_copy_worker+0x70/0x130
-	[<ffffff80080b8c64>] process_one_work+0x1dc/0x460
-	[<ffffff80080b8f38>] worker_thread+0x50/0x4b0
-	[<ffffff80080bf5a0>] kthread+0xd8/0xf0
-	[<ffffff8008083680>] ret_from_fork+0x10/0x50
-
-Address this by placing a set_fs(USER_DS) before of the copy operation
-and revert it again once the copy operation has finished.
-
-This patch is analogous to commit d7ffde35e31a ("vhost: use USER_DS in
-vhost_worker thread") which addresses the same underlying issue.
-
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Acked-by: Chris Leech <cleech@redhat.com>
+Acked-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/f_fs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/iscsi_tcp.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -759,9 +759,13 @@ static void ffs_user_copy_worker(struct
- 	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -37,6 +37,7 @@
+ #include <linux/kfifo.h>
+ #include <linux/scatterlist.h>
+ #include <linux/module.h>
++#include <linux/backing-dev.h>
+ #include <net/tcp.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <scsi/scsi_device.h>
+@@ -952,6 +953,13 @@ static int iscsi_sw_tcp_slave_alloc(stru
  
- 	if (io_data->read && ret > 0) {
-+		mm_segment_t oldfs = get_fs();
+ static int iscsi_sw_tcp_slave_configure(struct scsi_device *sdev)
+ {
++	struct iscsi_sw_tcp_host *tcp_sw_host = iscsi_host_priv(sdev->host);
++	struct iscsi_session *session = tcp_sw_host->session;
++	struct iscsi_conn *conn = session->leadconn;
 +
-+		set_fs(USER_DS);
- 		use_mm(io_data->mm);
- 		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
- 		unuse_mm(io_data->mm);
-+		set_fs(oldfs);
- 	}
- 
- 	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
++	if (conn->datadgst_en)
++		sdev->request_queue->backing_dev_info->capabilities
++			|= BDI_CAP_STABLE_WRITES;
+ 	blk_queue_bounce_limit(sdev->request_queue, BLK_BOUNCE_ANY);
+ 	blk_queue_dma_alignment(sdev->request_queue, 0);
+ 	return 0;
