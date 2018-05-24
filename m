@@ -1,197 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966782AbeEXVbv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:31:51 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38455 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966019AbeEXVbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:31:48 -0400
-X-Google-Smtp-Source: AB8JxZoxv+Lwb5o8TgKoc/wOgGb03pNRCBj03dJr8L/cDFveA/5DP0PZYSmfr0Vl/ZDh8nqYE/Vcnw==
-Date: Thu, 24 May 2018 15:31:43 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 rdma-next 3/4] RDMA/hns: Add reset process for RoCE in
- hip08
-Message-ID: <20180524213143.GE3948@ziepe.ca>
-References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
- <1527070590-94399-4-git-send-email-xavier.huwei@huawei.com>
+        id S969456AbeEXVd6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:33:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56921 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966457AbeEXVd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 17:33:56 -0400
+Date: Thu, 24 May 2018 14:33:45 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <195ec03a-0ccb-43f2-e455-c61b91aaf9eb@redhat.com>
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com> <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com> <195ec03a-0ccb-43f2-e455-c61b91aaf9eb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527070590-94399-4-git-send-email-xavier.huwei@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: tstellar@redhat.com, Tom Stellard <tstellar@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+CC: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>
+From: hpa@zytor.com
+Message-ID: <D1A1643C-17FE-450B-872B-C2F736FAFA68@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 06:16:29PM +0800, Wei Hu (Xavier) wrote:
-> This patch added reset process for RoCE in hip08.
-> 
-> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
-> 
-> v1->v2: 1.Delete handle->priv = NULL in hns_roce_hw_v2_uninit_instance.
-> 	2.Add hns_roce_hw_v2_reset_notify_init callback function,
-> 	  When RoCE reinit failed in this function, inform NIC driver.
-> 	The related link of Jason's commets:
-> 	https://www.spinics.net/lists/linux-rdma/msg65009.html
->  drivers/infiniband/hw/hns/hns_roce_cmd.c    |  3 ++
->  drivers/infiniband/hw/hns/hns_roce_device.h |  2 +
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 76 +++++++++++++++++++++++++++++
->  drivers/infiniband/hw/hns/hns_roce_main.c   |  7 +++
->  4 files changed, 88 insertions(+)
-> 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
-> index 9ebe839..a0ba19d 100644
-> +++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
-> @@ -176,6 +176,9 @@ int hns_roce_cmd_mbox(struct hns_roce_dev *hr_dev, u64 in_param, u64 out_param,
->  		      unsigned long in_modifier, u8 op_modifier, u16 op,
->  		      unsigned long timeout)
->  {
-> +	if (hr_dev->is_reset)
-> +		return 0;
-> +
->  	if (hr_dev->cmd.use_events)
->  		return hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
->  					      in_modifier, op_modifier, op,
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> index 412297d4..da8512b 100644
-> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> @@ -774,6 +774,8 @@ struct hns_roce_dev {
->  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
->  	spinlock_t		sm_lock;
->  	spinlock_t		bt_cmd_lock;
-> +	bool			active;
-> +	bool			is_reset;
->  	struct hns_roce_ib_iboe iboe;
->  
->  	struct list_head        pgdir_list;
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> index e0ab672..a70d07b 100644
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> @@ -768,6 +768,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
->  	int ret = 0;
->  	int ntc;
->  
-> +	if (hr_dev->is_reset)
-> +		return 0;
-> +
->  	spin_lock_bh(&csq->lock);
->  
->  	if (num > hns_roce_cmq_space(csq)) {
-> @@ -4790,14 +4793,87 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->  {
->  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
->  
-> +	if (!hr_dev)
-> +		return;
-> +
->  	hns_roce_exit(hr_dev);
->  	kfree(hr_dev->priv);
->  	ib_dealloc_device(&hr_dev->ib_dev);
->  }
->  
-> +static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
-> +{
-> +	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
-> +	struct ib_event event;
-> +
-> +	if (!hr_dev) {
-> +		dev_err(&handle->pdev->dev,
-> +			"Input parameter handle->priv is NULL!\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	hr_dev->active = false;
-> +	hr_dev->is_reset = true;
-> +
-> +	event.event = IB_EVENT_DEVICE_FATAL;
-> +	event.device = &hr_dev->ib_dev;
-> +	event.element.port_num = 1;
-> +	ib_dispatch_event(&event);
-> +
-> +	return 0;
-> +}
-> +
-> +static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
-> +{
-> +	int ret;
-> +
-> +	ret = hns_roce_hw_v2_init_instance(handle);
-> +	if (ret) {
-> +		/* when reset notify type is HNAE3_INIT_CLIENT In reset notify
-> +		 * callback function, RoCE Engine reinitialize. If RoCE reinit
-> +		 * failed, we should inform NIC driver.
-> +		 */
-> +		handle->priv = NULL;
-> +		dev_err(&handle->pdev->dev,
-> +			"In reset process RoCE reinit failed %d.\n", ret);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
-> +{
-> +	msleep(100);
-> +	hns_roce_hw_v2_uninit_instance(handle, false);
-> +	return 0;
-> +}
-> +
-> +static int hns_roce_hw_v2_reset_notify(struct hnae3_handle *handle,
-> +				       enum hnae3_reset_notify_type type)
-> +{
-> +	int ret = 0;
-> +
-> +	switch (type) {
-> +	case HNAE3_DOWN_CLIENT:
-> +		ret = hns_roce_hw_v2_reset_notify_down(handle);
-> +		break;
-> +	case HNAE3_INIT_CLIENT:
-> +		ret = hns_roce_hw_v2_reset_notify_init(handle);
-> +		break;
-> +	case HNAE3_UNINIT_CLIENT:
-> +		ret = hns_roce_hw_v2_reset_notify_uninit(handle);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static const struct hnae3_client_ops hns_roce_hw_v2_ops = {
->  	.init_instance = hns_roce_hw_v2_init_instance,
->  	.uninit_instance = hns_roce_hw_v2_uninit_instance,
-> +	.reset_notify = hns_roce_hw_v2_reset_notify,
->  };
->  
->  static struct hnae3_client hns_roce_hw_v2_client = {
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-> index 1b79a38..ac51372 100644
-> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-> @@ -332,6 +332,9 @@ static struct ib_ucontext *hns_roce_alloc_ucontext(struct ib_device *ib_dev,
->  	struct hns_roce_ib_alloc_ucontext_resp resp = {};
->  	struct hns_roce_dev *hr_dev = to_hr_dev(ib_dev);
->  
-> +	if (!hr_dev->active)
-> +		return ERR_PTR(-EAGAIN);
+On May 24, 2018 12:49:56 PM PDT, Tom Stellard <tstellar@redhat.com> wrote:
+>On 05/24/2018 11:19 AM, hpa@zytor.com wrote:
+>> On May 23, 2018 3:08:19 PM PDT, Nick Desaulniers
+><ndesaulniers@google.com> wrote:
+>>> H. Peter,
+>>>
+>>> It was reported [0] that compiling the Linux kernel with Clang +
+>>> CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(),
+>due
+>>> to
+>>> how GCC does not emit a stack guard for static inline functions (see
+>>> Alistair's excellent report in [1]) but Clang does.
+>>>
+>>> When working with the LLVM release maintainers, Tom had suggested
+>[2]
+>>> changing the inline assembly constraint in native_save_fl() from
+>'=rm'
+>>> to
+>>> '=r', and Alistair had verified the disassembly:
+>>>
+>>> (good) code generated w/o -fstack-protector-strong:
+>>>
+>>> native_save_fl:
+>>>          pushfq
+>>>          popq    -8(%rsp)
+>>>          movq    -8(%rsp), %rax
+>>>          retq
+>>>
+>>> (good) code generated w/ =r input constraint:
+>>>
+>>> native_save_fl:
+>>>          pushfq
+>>>          popq    %rax
+>>>          retq
+>>>
+>>> (bad) code generated with -fstack-protector-strong:
+>>>
+>>> native_save_fl:
+>>>          subq    $24, %rsp
+>>>          movq    %fs:40, %rax
+>>>          movq    %rax, 16(%rsp)
+>>>          pushfq
+>>>          popq    8(%rsp)
+>>>          movq    8(%rsp), %rax
+>>>          movq    %fs:40, %rcx
+>>>          cmpq    16(%rsp), %rcx
+>>>          jne     .LBB0_2
+>>>          addq    $24, %rsp
+>>>          retq
+>>> .LBB0_2:
+>>>          callq   __stack_chk_fail
+>>>
+>>> It looks like the sugguestion is actually a revert of your commit:
+>>> ab94fcf528d127fcb490175512a8910f37e5b346:
+>>> x86: allow "=rm" in native_save_fl()
+>>>
+>>> It seemed like there was a question internally about why worry about
+>>> pop
+>>> adjusting the stack if the stack could be avoided altogether.
+>>>
+>>> I think Sedat can retest this, but I was curious as well about the
+>>> commit
+>>> message in ab94fcf528d: "[ Impact: performance ]", but Alistair's
+>>> analysis
+>>> of the disassembly seems to indicate there is no performance impact
+>(in
+>>> fact, looks better as there's one less mov).
+>>>
+>>> Is there a reason we should not revert ab94fcf528d12, or maybe a
+>better
+>>> approach?
+>>>
+>>> [0] https://lkml.org/lkml/2018/5/7/534
+>>> [1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
+>>> [2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
+>> 
+>> A stack canary on an *inlined* function? That's bound to break things
+>elsewhere too sooner or later.
+>> 
+>> It feels like *once again* clang is asking for the Linux kernel to
+>change to paper over technical or compatibility problems in clang/LLVM.
+>This is not exactly helping the feeling that we should just rip out any
+>and all clang hacks and call it a loss.
+>> 
+>
+>In this case this fix is working-around a bug in the kernel.  The
+>problem
+>here is that the caller of native_save_fl() assumes that it won't
+>clobber any of the general purpose register even though the function
+>is defined as a normal c function which tells the compiler that it's
+>OK to clobber the registers.
+>
+>This is something that really needs to be fixed in the kernel.  Relying
+>on heuristics of internal compiler algorithms in order for code to work
+>correctly is always going to lead to problems like this.
+>
+>-Tom
 
-This still doesn't make sense, ib_unregister_device already makes sure
-that hns_roce_alloc_ucontext isn't running and won't be called before
-returning, don't need another flag to do that.
-
-Since this is the only place the active flag is tested it can just be deleted
-entirely.
-
-> @@ -425,6 +428,7 @@ static void hns_roce_unregister_device(struct hns_roce_dev *hr_dev)
->  {
->  	struct hns_roce_ib_iboe *iboe = &hr_dev->iboe;
->  
-> +	hr_dev->active = false;
->  	unregister_netdevice_notifier(&iboe->nb);
->  	ib_unregister_device(&hr_dev->ib_dev);
-
-Jason
+Ok, yet another problem (this time with paravirtualization, no surprise there.). Good, let's find the actual problems and fix them where they should be fixed.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
