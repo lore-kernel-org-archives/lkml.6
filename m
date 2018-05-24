@@ -1,104 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033041AbeEXL2P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:28:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:41732 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967383AbeEXL2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:28:09 -0400
-Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
- between EL0 and EL1
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-3-marc.zyngier@arm.com>
- <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
- <20180524112305.ld3jghzmb6a35h73@lakrids.cambridge.arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <797320e5-55bc-3010-ee12-9b1f5b406d97@arm.com>
-Date: Thu, 24 May 2018 12:28:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S968886AbeEXL1m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:27:42 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7740 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967768AbeEXL1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:27:37 -0400
+From: YueHaibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <fugang.duan@nxp.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: fec: remove stale comment
+Date: Thu, 24 May 2018 19:27:07 +0800
+Message-ID: <20180524112707.3580-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20180524112305.ld3jghzmb6a35h73@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/18 12:23, Mark Rutland wrote:
-> On Thu, May 24, 2018 at 12:00:58PM +0100, Mark Rutland wrote:
->> On Tue, May 22, 2018 at 04:06:36PM +0100, Marc Zyngier wrote:
->>> In order for the kernel to protect itself, let's call the SSBD mitigation
->>> implemented by the higher exception level (either hypervisor or firmware)
->>> on each transition between userspace and kernel.
->>>
->>> We must take the PSCI conduit into account in order to target the
->>> right exception level, hence the introduction of a runtime patching
->>> callback.
->>>
->>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->>> ---
->>>  arch/arm64/kernel/cpu_errata.c | 18 ++++++++++++++++++
->>>  arch/arm64/kernel/entry.S      | 22 ++++++++++++++++++++++
->>>  include/linux/arm-smccc.h      |  5 +++++
->>>  3 files changed, 45 insertions(+)
->>>
->>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
->>> index a900befadfe8..46b3aafb631a 100644
->>> --- a/arch/arm64/kernel/cpu_errata.c
->>> +++ b/arch/arm64/kernel/cpu_errata.c
->>> @@ -232,6 +232,24 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
->>>  }
->>>  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
->>>  
->>> +#ifdef CONFIG_ARM64_SSBD
->>> +void __init arm64_update_smccc_conduit(struct alt_instr *alt,
->>> +				       __le32 *origptr, __le32 *updptr,
->>> +				       int nr_inst)
->>> +{
->>> +	u32 insn;
->>> +
->>> +	BUG_ON(nr_inst != 1);
->>> +
->>> +	if (psci_ops.conduit == PSCI_CONDUIT_HVC)
->>> +		insn = aarch64_insn_get_hvc_value();
->>> +	else
->>> +		insn = aarch64_insn_get_smc_value();
->>
->> Shouldn't this also handle the case where there is no conduit?
-> 
-> Due to the config symbol not being defined yet, and various other fixups
-> in later patches, this is actually benign.
-> 
-> However, if you make this:
-> 
-> 	switch (psci_ops.conduit) {
-> 	case PSCI_CONDUIT_NONE:
-> 		return;
-> 	case PSCI_CONDUIT_HVC:
-> 		insn = aarch64_insn_get_hvc_value();
-> 		break;
-> 	case PSCI_CONDUIT_SMC:
-> 		insn = aarch64_insn_get_smc_value();
-> 		break;
-> 	}
-> 
-> ... then we won't even bother patching the nop in the default case
-> regardless, which is nicer, IMO.
+This comment is outdated as fec_ptp_ioctl has been replaced by fec_ptp_set/fec_ptp_get 
+since commit 1d5244d0e43b ("fec: Implement the SIOCGHWTSTAMP ioctl")
 
-Yup, looks better to me too. I'll fold that in.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/freescale/fec_ptp.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Thanks,
-
-	M.
+diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
+index f814397..d438ef8 100644
+--- a/drivers/net/ethernet/freescale/fec_ptp.c
++++ b/drivers/net/ethernet/freescale/fec_ptp.c
+@@ -466,12 +466,6 @@ static int fec_ptp_enable(struct ptp_clock_info *ptp,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-/**
+- * fec_ptp_hwtstamp_ioctl - control hardware time stamping
+- * @ndev: pointer to net_device
+- * @ifreq: ioctl data
+- * @cmd: particular ioctl requested
+- */
+ int fec_ptp_set(struct net_device *ndev, struct ifreq *ifr)
+ {
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
 -- 
-Jazz is not dead. It just smells funny...
+2.7.0
