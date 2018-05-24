@@ -1,72 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034700AbeEXWGW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 18:06:22 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33927 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034671AbeEXWGS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 18:06:18 -0400
-X-Google-Smtp-Source: AB8JxZrYMSeLw2nsgDnIE+fL8kSiUIVSgNI5FbqKNFpn9Df7IWpbJScCWogs09ImncGD+ocncREbtA==
-Date: Fri, 25 May 2018 00:06:10 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        yamada.masahiro@socionext.com
-Subject: Re: [PATCH 6/9] asm-generic/bitops/atomic.h: Rewrite using
- atomic_fetch_*
-Message-ID: <20180524220610.GA7607@andrea>
-References: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
- <1527159586-8578-7-git-send-email-will.deacon@arm.com>
- <20180524124410.GF12198@hirez.programming.kicks-ass.net>
- <20180524124734.GE8689@arm.com>
- <20180524130948.f37eltocl5tnittp@lakrids.cambridge.arm.com>
+        id S1034713AbeEXWHJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 18:07:09 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:43056 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966031AbeEXWHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 18:07:03 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Ezequiel Garcia <ezequiel@collabora.com>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Enric =?ISO-8859-1?Q?Balletb=F2?=
+        <enric.balletbo@collabora.co.uk>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.co.uk>,
+        Robin Murphy <robin.murphy@arm.com>, jcliang@chromium.org,
+        xxm@rock-chips.com, tfiga@chromium.org,
+        linux-rockchip@lists.infradead.org, iommu@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/rockchip: vop: fix irq disabled after vop driver probed
+Date: Fri, 25 May 2018 00:06:39 +0200
+Message-ID: <25470133.K8n9sLBzRS@diego>
+In-Reply-To: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com>
+References: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524130948.f37eltocl5tnittp@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+From: Sandy Huang <hjc@rock-chips.com>
 
-> As an aside, If I complete the autogeneration stuff, it'll be possible
-> to generate those. I split out the necessary barriers in [1], but I
-> still have a lot of other preparatory cleanup to do.
+The vop irq is shared between vop and iommu and irq probing in the
+iommu driver moved to the probe function recently. This can in some
+cases lead to a stall if the irq is triggered while the vop driver
+still has it disabled.
 
-I do grasp the rationale behind that naming:
+But there is no real need to disable the irq, as the vop can simply
+also track its enabled state and ignore irqs in that case.
 
-  __atomic_mb_{before,after}_{acquire,release,fence}()
+So remove the enable/disable handling and add appropriate condition
+to the irq handler.
 
-and yet I remain puzzled by it:
+Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+[added an actual commit message]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+Hi Ezequiel,
 
-For example, can you imagine (using):
+this patch came from a discussion I had with Rockchip people over the
+iommu changes and resulting issues back in april, but somehow was
+forgotten and not posted to the lists. Correcting that now.
 
-  __atomic_mb_before_acquire() ?
+So removing the enable/disable voodoo on the shared interrupt is
+the preferred way.
 
-(as your __atomic_mb_after_acquire() is whispering me "acquire-fences"...)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 13 ++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Another example:
-
-  the "atomic" in that "smp_mb__{before,after}_atomic" is so "suggestive"!
-   
-(think at x86...), but it's not explicit in the proposed names.
-
-I don't have other names to suggest at the moment...  ;/ (aka just saying)
-
-  Andrea
-
-
-> 
-> IIUC, the void-returning atomic ops are relaxed, so trying to unify that
-> with the usual rule that no suffix means fence will slow things down
-> unless we want to do a treewide substitition to fixup for that.
-> 
-> Thanks,
-> Mark.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?h=atomics/api-unification&id=c6b9ff2627d06776e427a7f1a7f83caeff3db536
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 510cdf0..61493d4 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -549,8 +549,6 @@ static int vop_enable(struct drm_crtc *crtc)
+ 
+ 	spin_unlock(&vop->reg_lock);
+ 
+-	enable_irq(vop->irq);
+-
+ 	drm_crtc_vblank_on(crtc);
+ 
+ 	return 0;
+@@ -596,8 +594,6 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
+ 
+ 	vop_dsp_hold_valid_irq_disable(vop);
+ 
+-	disable_irq(vop->irq);
+-
+ 	vop->is_enabled = false;
+ 
+ 	/*
+@@ -1168,6 +1164,13 @@ static irqreturn_t vop_isr(int irq, void *data)
+ 	int ret = IRQ_NONE;
+ 
+ 	/*
++	 * since the irq is shared with iommu, iommu irq is enabled before vop
++	 * enable, so before vop enable we do nothing.
++	 */
++	if (!vop->is_enabled)
++		return IRQ_NONE;
++
++	/*
+ 	 * interrupt register has interrupt status, enable and clear bits, we
+ 	 * must hold irq_lock to avoid a race with enable/disable_vblank().
+ 	*/
+@@ -1586,9 +1588,6 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 	if (ret)
+ 		goto err_disable_pm_runtime;
+ 
+-	/* IRQ is initially disabled; it gets enabled in power_on */
+-	disable_irq(vop->irq);
+-
+ 	return 0;
+ 
+ err_disable_pm_runtime:
+-- 
+2.7.4
