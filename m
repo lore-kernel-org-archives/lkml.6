@@ -1,131 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969456AbeEXVd6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:33:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56921 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966457AbeEXVd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:33:56 -0400
-Date: Thu, 24 May 2018 14:33:45 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <195ec03a-0ccb-43f2-e455-c61b91aaf9eb@redhat.com>
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com> <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com> <195ec03a-0ccb-43f2-e455-c61b91aaf9eb@redhat.com>
+        id S1161421AbeEXVef (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:34:35 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53721 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966489AbeEXVea (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 17:34:30 -0400
+X-Google-Smtp-Source: AB8JxZoNBhO4OoAsx4snlxqVj7mk5fjdy3kQPhG6rfUaE76S1d+KkR+rQjXo7Rc+JYGeIb7P2Hmb/Kdsg5lVQNUyANw=
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: tstellar@redhat.com, Tom Stellard <tstellar@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-CC: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>
-From: hpa@zytor.com
-Message-ID: <D1A1643C-17FE-450B-872B-C2F736FAFA68@zytor.com>
+In-Reply-To: <20180524181739.GB13327@roeck-us.net>
+References: <20180524093159.286472249@linuxfoundation.org> <20180524180652.7bqyquqfe2nqdxfg@xps>
+ <20180524181739.GB13327@roeck-us.net>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 25 May 2018 03:04:28 +0530
+Message-ID: <CA+G9fYuB=H6Dzd3u9hEOGcb1rCy2uvuLzhvgZ7LpmVeSXgYqvA@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4OLYeVB027422
 
-On May 24, 2018 12:49:56 PM PDT, Tom Stellard <tstellar@redhat.com> wrote:
->On 05/24/2018 11:19 AM, hpa@zytor.com wrote:
->> On May 23, 2018 3:08:19 PM PDT, Nick Desaulniers
-><ndesaulniers@google.com> wrote:
->>> H. Peter,
->>>
->>> It was reported [0] that compiling the Linux kernel with Clang +
->>> CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(),
->due
->>> to
->>> how GCC does not emit a stack guard for static inline functions (see
->>> Alistair's excellent report in [1]) but Clang does.
->>>
->>> When working with the LLVM release maintainers, Tom had suggested
->[2]
->>> changing the inline assembly constraint in native_save_fl() from
->'=rm'
->>> to
->>> '=r', and Alistair had verified the disassembly:
->>>
->>> (good) code generated w/o -fstack-protector-strong:
->>>
->>> native_save_fl:
->>>          pushfq
->>>          popq    -8(%rsp)
->>>          movq    -8(%rsp), %rax
->>>          retq
->>>
->>> (good) code generated w/ =r input constraint:
->>>
->>> native_save_fl:
->>>          pushfq
->>>          popq    %rax
->>>          retq
->>>
->>> (bad) code generated with -fstack-protector-strong:
->>>
->>> native_save_fl:
->>>          subq    $24, %rsp
->>>          movq    %fs:40, %rax
->>>          movq    %rax, 16(%rsp)
->>>          pushfq
->>>          popq    8(%rsp)
->>>          movq    8(%rsp), %rax
->>>          movq    %fs:40, %rcx
->>>          cmpq    16(%rsp), %rcx
->>>          jne     .LBB0_2
->>>          addq    $24, %rsp
->>>          retq
->>> .LBB0_2:
->>>          callq   __stack_chk_fail
->>>
->>> It looks like the sugguestion is actually a revert of your commit:
->>> ab94fcf528d127fcb490175512a8910f37e5b346:
->>> x86: allow "=rm" in native_save_fl()
->>>
->>> It seemed like there was a question internally about why worry about
->>> pop
->>> adjusting the stack if the stack could be avoided altogether.
->>>
->>> I think Sedat can retest this, but I was curious as well about the
->>> commit
->>> message in ab94fcf528d: "[ Impact: performance ]", but Alistair's
->>> analysis
->>> of the disassembly seems to indicate there is no performance impact
->(in
->>> fact, looks better as there's one less mov).
->>>
->>> Is there a reason we should not revert ab94fcf528d12, or maybe a
->better
->>> approach?
->>>
->>> [0] https://lkml.org/lkml/2018/5/7/534
->>> [1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
->>> [2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
->> 
->> A stack canary on an *inlined* function? That's bound to break things
->elsewhere too sooner or later.
->> 
->> It feels like *once again* clang is asking for the Linux kernel to
->change to paper over technical or compatibility problems in clang/LLVM.
->This is not exactly helping the feeling that we should just rip out any
->and all clang hacks and call it a loss.
->> 
+On 24 May 2018 at 23:47, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Thu, May 24, 2018 at 01:06:52PM -0500, Dan Rue wrote:
+>> On Thu, May 24, 2018 at 11:37:37AM +0200, Greg Kroah-Hartman wrote:
+>> > This is the start of the stable review cycle for the 4.4.133 release.
+>> > There are 92 patches in this series, all will be posted as a response
+>> > to this one.  If anyone has any issues with these being applied, please
+>> > let me know.
+>> >
+>> > Responses should be made by Sat May 26 09:31:28 UTC 2018.
+>> > Anything received after that time might be too late.
+>>
+>> Results from Linaro’s test farm.
+>> No regressions on arm64, arm and x86_64.
+>>
+>> Summary
+>> ------------------------------------------------------------------------
+>>
+>> kernel: 4.4.133-rc1
+>> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+>> git branch: linux-4.4.y
+>> git commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
+>> git describe: v4.4.132-93-g915a3d7cdea9
+>> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a3d7cdea9
+>>
+>>
+>> No regressions (compared to build v4.4.132-71-g180635995c36)
+>>
 >
->In this case this fix is working-around a bug in the kernel.  The
->problem
->here is that the caller of native_save_fl() assumes that it won't
->clobber any of the general purpose register even though the function
->is defined as a normal c function which tells the compiler that it's
->OK to clobber the registers.
+> Shouldn't this compare against v4.4.132 ?
 >
->This is something that really needs to be fixed in the kernel.  Relying
->on heuristics of internal compiler algorithms in order for code to work
->correctly is always going to lead to problems like this.
+> I looked into kselftest/rtnetlink.sh test results.
+> The test history is a bit confusing.
 >
->-Tom
+> - v4.4.131-57-ge33795f7a573 and earlier passed
+> - v4.4.132 failed
+> - v4.4.132-30-ga102378c6551 passed
+> ...
+> - v4.4.132-70-gaa7ab28e9c5e passed
+> - v4.4.132-71-g180635995c36 and later failed
+>
+> Does that mean that this specific test is unreliable ?
 
-Ok, yet another problem (this time with paravirtualization, no surprise there.). Good, let's find the actual problems and fix them where they should be fixed.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+kselftest rtnetlink.sh test case failure is not a regression on 4.16,
+4.14, 4.9 and 4.4 builds.
+Because it used to skip due to missing tc tool.
+
+Now the ''tc' tool added to Open Embedded build and test running and
+reported failed.
+This is not a regression in the kernel.
+It is a change in the user space.
+
+Old output
+============
+SKIP: Could not run test without the tc tool
+selftests: rtnetlink.sh [PASS]
+https://lkft.validation.linaro.org/scheduler/job/225015#L2255
+
+
+New output
+=============
+RTNETLINK answers: Operation not supported
+Cannot find device \"test-dummy0\"
+FAIL: cannot add dummy interface
+selftests: rtnetlink.sh [FAIL]
+https://lkft.validation.linaro.org/scheduler/job/226352#L3375
+
+Ref bug link:
+https://bugs.linaro.org/show_bug.cgi?id=3834
+
+- Naresh
