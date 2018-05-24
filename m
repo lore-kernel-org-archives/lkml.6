@@ -1,403 +1,334 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971968AbeEYAKg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 20:10:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36020 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S971845AbeEYAHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 20:07:55 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 23/32] VFS: Implement logging through fs_context [ver #8]
-From: David Howells <dhowells@redhat.com>
-To: viro@zeniv.linux.org.uk
-Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 25 May 2018 01:07:53 +0100
-Message-ID: <152720687323.9073.8203139324888988263.stgit@warthog.procyon.org.uk>
-In-Reply-To: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
-References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S971981AbeEYAKn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 20:10:43 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16305 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935560AbeEYAKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 20:10:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,437,1520924400";
+   d="scan'208";a="44035552"
+Date: Fri, 25 May 2018 07:59:37 +0800
+From: Wu Hao <hao.wu@intel.com>
+To: Alan Tull <atull@kernel.org>
+Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>
+Subject: Re: [PATCH v5 20/28] fpga: dfl: add fpga bridge platform driver for
+ FME
+Message-ID: <20180524235937.GA26561@hao-dev>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
+ <1525229431-3087-21-git-send-email-hao.wu@intel.com>
+ <CANk1AXS3M=GyTtdk=YYMadD22VqDPbB_XRYrnoue6nXrNQqqkQ@mail.gmail.com>
+ <20180523152841.GA23834@hao-dev>
+ <CANk1AXR-0=O2Ypyxn+wnyPmfdqG7Rmk_oK9et0YLkAkNHzbqLw@mail.gmail.com>
+ <20180523234213.GA24455@hao-dev>
+ <CANk1AXRSVsC6uQkQsxzRYAB2U+119W6iP=vwPWA2X1R6xwYTzQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXRSVsC6uQkQsxzRYAB2U+119W6iP=vwPWA2X1R6xwYTzQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the ability for filesystems to log error, warning and
-informational messages through the fs_context.  These can be extracted by
-userspace by reading from an fd created by fsopen().
+On Thu, May 24, 2018 at 12:26:09PM -0500, Alan Tull wrote:
+> On Wed, May 23, 2018 at 6:42 PM, Wu Hao <hao.wu@intel.com> wrote:
+> > On Wed, May 23, 2018 at 04:06:17PM -0500, Alan Tull wrote:
+> >> On Wed, May 23, 2018 at 10:28 AM, Wu Hao <hao.wu@intel.com> wrote:
+> >> > On Wed, May 23, 2018 at 10:15:00AM -0500, Alan Tull wrote:
+> >> >> On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+> >> >>
+> >> >> Hi Hao,
+> >> >>
+> >> >> > This patch adds fpga bridge platform driver for FPGA Management Engine.
+> >> >> > It implements the enable_set callback for fpga bridge.
+> >> >> >
+> >> >> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> >> >> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> >> >> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> >> >> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> >> >> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> >> >> > Acked-by: Alan Tull <atull@kernel.org>
+> >> >> > Acked-by: Moritz Fischer <mdf@kernel.org>
+> >> >> > ---
+> >> >> > v3: rename driver to fpga-dfl-fme-br
+> >> >> >     remove useless dev_dbg in probe function.
+> >> >> >     rebased due to fpga api change.
+> >> >> > v4: rename to dfl-fme-br and fix SPDX license issue
+> >> >> >     include dfl-fme-pr.h instead of dfl-fme.h
+> >> >> >     add Acked-by from Alan and Moritz
+> >> >> > v5: rebase due to API changes.
+> >> >> >     defer port and its ops finding when really need.
+> >> >> > ---
+> >> >> >  drivers/fpga/Kconfig      |   6 +++
+> >> >> >  drivers/fpga/Makefile     |   1 +
+> >> >> >  drivers/fpga/dfl-fme-br.c | 114 ++++++++++++++++++++++++++++++++++++++++++++++
+> >> >> >  3 files changed, 121 insertions(+)
+> >> >> >  create mode 100644 drivers/fpga/dfl-fme-br.c
+> >> >> >
+> >> >> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> >> >> > index 89f76e8..a8f939a 100644
+> >> >> > --- a/drivers/fpga/Kconfig
+> >> >> > +++ b/drivers/fpga/Kconfig
+> >> >> > @@ -156,6 +156,12 @@ config FPGA_DFL_FME_MGR
+> >> >> >         help
+> >> >> >           Say Y to enable FPGA Manager driver for FPGA Management Engine.
+> >> >> >
+> >> >> > +config FPGA_DFL_FME_BRIDGE
+> >> >> > +       tristate "FPGA DFL FME Bridge Driver"
+> >> >> > +       depends on FPGA_DFL_FME
+> >> >> > +       help
+> >> >> > +         Say Y to enable FPGA Bridge driver for FPGA Management Engine.
+> >> >> > +
+> >> >> >  config FPGA_DFL_PCI
+> >> >> >         tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
+> >> >> >         depends on PCI && FPGA_DFL
+> >> >> > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> >> >> > index f82814a..75096e9 100644
+> >> >> > --- a/drivers/fpga/Makefile
+> >> >> > +++ b/drivers/fpga/Makefile
+> >> >> > @@ -32,6 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)          += of-fpga-region.o
+> >> >> >  obj-$(CONFIG_FPGA_DFL)                 += dfl.o
+> >> >> >  obj-$(CONFIG_FPGA_DFL_FME)             += dfl-fme.o
+> >> >> >  obj-$(CONFIG_FPGA_DFL_FME_MGR)         += dfl-fme-mgr.o
+> >> >> > +obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)      += dfl-fme-br.o
+> >> >> >
+> >> >> >  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
+> >> >> >
+> >> >> > diff --git a/drivers/fpga/dfl-fme-br.c b/drivers/fpga/dfl-fme-br.c
+> >> >> > new file mode 100644
+> >> >> > index 0000000..5c51b08
+> >> >> > --- /dev/null
+> >> >> > +++ b/drivers/fpga/dfl-fme-br.c
+> >> >> > @@ -0,0 +1,114 @@
+> >> >> > +// SPDX-License-Identifier: GPL-2.0
+> >> >> > +/*
+> >> >> > + * FPGA Bridge Driver for FPGA Management Engine (FME)
+> >> >> > + *
+> >> >> > + * Copyright (C) 2017 Intel Corporation, Inc.
+> >> >> > + *
+> >> >> > + * Authors:
+> >> >> > + *   Wu Hao <hao.wu@intel.com>
+> >> >> > + *   Joseph Grecco <joe.grecco@intel.com>
+> >> >> > + *   Enno Luebbers <enno.luebbers@intel.com>
+> >> >> > + *   Tim Whisonant <tim.whisonant@intel.com>
+> >> >> > + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> >> >> > + *   Henry Mitchel <henry.mitchel@intel.com>
+> >> >> > + */
+> >> >> > +
+> >> >> > +#include <linux/module.h>
+> >> >> > +#include <linux/fpga/fpga-bridge.h>
+> >> >> > +
+> >> >> > +#include "dfl.h"
+> >> >> > +#include "dfl-fme-pr.h"
+> >> >> > +
+> >> >> > +struct fme_br_priv {
+> >> >> > +       struct dfl_fme_br_pdata *pdata;
+> >> >> > +       struct dfl_fpga_port_ops *port_ops;
+> >> >> > +       struct platform_device *port_pdev;
+> >> >> > +};
+> >> >> > +
+> >> >> > +static int fme_bridge_enable_set(struct fpga_bridge *bridge, bool enable)
+> >> >> > +{
+> >> >> > +       struct fme_br_priv *priv = bridge->priv;
+> >> >> > +       struct platform_device *port_pdev;
+> >> >> > +       struct dfl_fpga_port_ops *ops;
+> >> >> > +
+> >> >> > +       if (!priv->port_pdev) {
+> >> >> > +               port_pdev = dfl_fpga_cdev_find_port(priv->pdata->cdev,
+> >> >> > +                                                   &priv->pdata->port_id,
+> >> >> > +                                                   dfl_fpga_check_port_id);
+> >> >> > +               if (!port_pdev)
+> >> >> > +                       return -ENODEV;
+> >> >> > +
+> >> >> > +               priv->port_pdev = port_pdev;
+> >> >> > +       }
+> >> >> > +
+> >> >> > +       if (priv->port_pdev && !priv->port_ops) {
+> >> >> > +               ops = dfl_fpga_get_port_ops(priv->port_pdev);
+> >> >> > +               if (!ops || !ops->enable_set)
+> >> >> > +                       return -ENOENT;
+> >> >> > +
+> >> >> > +               priv->port_ops = ops;
+> >> >> > +       }
+> >> >>
+> >> >> This is saving some pointers.  Is it possible that the port_pdev or
+> >> >> port_ops could go away?
+> >> >
+> >> > Hi Alan
+> >> >
+> >> > Thanks for the comments.
+> >> >
+> >> > The find_port function will get the port device to prevent that.
+> >> > You can see put device in remove function. And it's similar for the
+> >> > port ops. In dfl_fpga_get_port_ops function, it will prevent unexpected
+> >> > port ops removing by try module get.
+> >>
+> >> OK, good, and I see the find_port function documents that put_device
+> >> is needed, so that's good too.
+> >>
+> >> When we previously discussed this [1] you described a procedure of
+> >> hot-unplugging the VF AFU from the VM and turning it back to PF before
+> >> doing the FPGA programming.   Some comments on that would be helpful,
+> >> maybe located with the port_ops functions.
+> >>
+> >
+> > Hi Alan
+> >
+> > Actually I plan to add those descriptions about virtualization in the
+> > documenation/fpga/dfl.txt, together with the patch which enables the
+> > virtualization support for Intel FPGA device (e.g Intel PAC card).
+> 
+> Great
+> 
+> > I
+> > think dfl.txt is a better place to have that procedure documented.
+> > How do you think?
+> 
+> If it is only in the dff.txt, it may remain unclear (in the code) that
+> that is an issue that the code is working around.
 
-Error messages are prefixed with "e ", warnings with "w " and informational
-messages with "i ".
+No problem, I will add more comments in the code too.
 
-Inside the kernel, formatted messages are malloc'd but unformatted messages
-are not copied if they're either in the core .rodata section or in the
-.rodata section of the filesystem module pinned by fs_context::fs_type.
-The messages are only good till the fs_type is released.
+> 
+> >
+> >
+> >> [1] https://lkml.org/lkml/2018/4/6/180
+> >>
+> >> >
+> >> >>
+> >> >> Also, the port ops routines probably should be named
+> >> >> dfl_fpga_port_ops_get/find_port/etc
+> >> >>
+> >> >
+> >> > Hm.. as I see there are functions named as get_device(), put_device(), so
+> >> > I just name it as ..._get_port_ops and ..._put_port_ops in similar way. :)
+> >> > If you think that could be a better name, it's fine for me to change them.
+> >>
+> >> Yes, I've seen that too.  I think keeping the prefix the same helps to
+> >> organize the namespace.  Plus :) if I'm grepping through the code, I
+> >> can be lazy and not have to use a regex to find the port ops
+> >> functions.
+> >
+> > so we good with current naming?
+> 
+> Recently GregKH give us some guidance about using a common prefix [2].
 
-Note that the logging object is shared between duplicated fs_context
-structures.  This is so that such as NFS which do a mount within a mount
-can get at least some of the errors from the inner mount.
+I see, Thanks.
 
-Five logging functions are provided for this:
+> 
+> >
+> > some places we find it's get_device() and put_device(), but other functions
+> > like device_add(), device_del(). actually it's not a big problem I think, :)
+> > currently port_ops has a unified style ..._add/del/get/put_port_ops. I am
+> > fine with both kind of naming, if you prefer ...port_ops_add/del/get/put
+> > style, please let me know, I can change them in the next version.
+> 
+> Since you have struct dfl_fpga_port_ops, you can just add _{action} to
+> the name of the struct and you have dfl_fpga_port_ops_add/del/get/pu
 
- (1) void logfc(struct fs_context *fc, const char *fmt, ...);
+Sure, I will change them in the next version.
 
-     This logs a message into the context.  If the buffer is full, the
-     earliest message is discarded.
+Hao
 
- (2) void errorf(fc, fmt, ...);
-
-     This wraps logfc() to log an error.
-
- (3) void invalf(fc, fmt, ...);
-
-     This wraps errorf() and returns -EINVAL for convenience.
-
- (4) void warnf(fc, fmt, ...);
-
-     This wraps logfc() to log a warning.
-
- (5) void infof(fc, fmt, ...);
-
-     This wraps logfc() to log an informational message.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/fs_context.c            |   92 ++++++++++++++++++++++++++++++++++++++++++++
- fs/fsopen.c                |   71 ++++++++++++++++++++++++++++++++++
- include/linux/fs_context.h |   58 ++++++++++++++++++++++++++++
- 3 files changed, 220 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index bef68a12ddb5..326a334b8860 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -11,6 +11,7 @@
-  */
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+#include <linux/module.h>
- #include <linux/fs_context.h>
- #include <linux/fs.h>
- #include <linux/mount.h>
-@@ -23,6 +24,7 @@
- #include <linux/pid_namespace.h>
- #include <linux/user_namespace.h>
- #include <net/net_namespace.h>
-+#include <asm/sections.h>
- #include "mount.h"
- 
- enum legacy_fs_param {
-@@ -327,7 +329,7 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
- 	int ret;
- 
- 	if (!src_fc->ops->dup)
--		return ERR_PTR(-ENOTSUPP);
-+		return ERR_PTR(-EOPNOTSUPP);
- 
- 	fc = kmemdup(src_fc, sizeof(struct legacy_fs_context), GFP_KERNEL);
- 	if (!fc)
-@@ -340,6 +342,8 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
- 	get_net(fc->net_ns);
- 	get_user_ns(fc->user_ns);
- 	get_cred(fc->cred);
-+	if (fc->log)
-+		refcount_inc(&fc->log->usage);
- 
- 	/* Can't call put until we've called ->dup */
- 	ret = fc->ops->dup(fc, src_fc);
-@@ -357,6 +361,91 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
- }
- EXPORT_SYMBOL(vfs_dup_fs_context);
- 
-+/**
-+ * logfc - Log a message to a filesystem context
-+ * @fc: The filesystem context to log to.
-+ * @fmt: The format of the buffer.
-+ */
-+void logfc(struct fs_context *fc, const char *fmt, ...)
-+{
-+	static const char store_failure[] = "OOM: Can't store error string";
-+	struct fc_log *log = fc->log;
-+	unsigned int logsize = ARRAY_SIZE(log->buffer);
-+	const char *p;
-+	va_list va;
-+	char *q;
-+	u8 freeable, index;
-+
-+	if (!log)
-+		return;
-+
-+	va_start(va, fmt);
-+	if (!strchr(fmt, '%')) {
-+		p = fmt;
-+		goto unformatted_string;
-+	}
-+	if (strcmp(fmt, "%s") == 0) {
-+		p = va_arg(va, const char *);
-+		goto unformatted_string;
-+	}
-+
-+	q = kvasprintf(GFP_KERNEL, fmt, va);
-+copied_string:
-+	if (!q)
-+		goto store_failure;
-+	freeable = 1;
-+	goto store_string;
-+
-+unformatted_string:
-+	if ((unsigned long)p >= (unsigned long)__start_rodata &&
-+	    (unsigned long)p <  (unsigned long)__end_rodata)
-+		goto const_string;
-+	if (within_module_core((unsigned long)p, log->owner))
-+		goto const_string;
-+	q = kstrdup(p, GFP_KERNEL);
-+	goto copied_string;
-+
-+store_failure:
-+	p = store_failure;
-+const_string:
-+	q = (char *)p;
-+	freeable = 0;
-+store_string:
-+	index = log->head & (logsize - 1);
-+	if ((int)log->head - (int)log->tail == 8) {
-+		/* The buffer is full, discard the oldest message */
-+		if (log->need_free & (1 << index))
-+			kfree(log->buffer[index]);
-+		log->tail++;
-+	}
-+
-+	log->buffer[index] = q;
-+	log->need_free &= ~(1 << index);
-+	log->need_free |= freeable << index;
-+	log->head++;
-+	va_end(va);
-+}
-+EXPORT_SYMBOL(logfc);
-+
-+/*
-+ * Free a logging structure.
-+ */
-+static void put_fc_log(struct fs_context *fc)
-+{
-+	struct fc_log *log = fc->log;
-+	int i;
-+
-+	if (log) {
-+		if (refcount_dec_and_test(&log->usage)) {
-+			fc->log = NULL;
-+			for (i = 0; i <= 7; i++)
-+				if (log->need_free & (1 << i))
-+					kfree(log->buffer[i]);
-+			kfree(log);
-+		}
-+	}
-+}
-+
- /**
-  * put_fs_context - Dispose of a superblock configuration context.
-  * @fc: The context to dispose of.
-@@ -385,6 +474,7 @@ void put_fs_context(struct fs_context *fc)
- 	if (fc->cred)
- 		put_cred(fc->cred);
- 	kfree(fc->subtype);
-+	put_fc_log(fc);
- 	put_filesystem(fc->fs_type);
- 	kfree(fc->source);
- 	kfree(fc);
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index d69155b9303e..df3f603001a3 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -159,7 +159,57 @@ static ssize_t fscontext_fs_write(struct file *file,
- 	goto err_unlock;
- }
- 
-+/*
-+ * Allow the user to read back any error, warning or informational messages.
-+ */
-+static ssize_t fscontext_fs_read(struct file *file,
-+				 char __user *_buf, size_t len, loff_t *pos)
-+{
-+	struct fs_context *fc = file->private_data;
-+	struct fc_log *log = fc->log;
-+	struct inode *inode = file_inode(file);
-+	unsigned int logsize = ARRAY_SIZE(log->buffer);
-+	ssize_t ret;
-+	char *p;
-+	bool need_free;
-+	int index, n;
-+
-+	ret = inode_lock_killable(inode);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = -ENODATA;
-+	if (log->head != log->tail) {
-+		index = log->tail & (logsize - 1);
-+		p = log->buffer[index];
-+		need_free = log->need_free & (1 << index);
-+		log->buffer[index] = NULL;
-+		log->need_free &= ~(1 << index);
-+		log->tail++;
-+		ret = 0;
-+	}
-+
-+	inode_unlock(inode);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = -EMSGSIZE;
-+	n = strlen(p);
-+	if (n > len)
-+		goto err_free;
-+	ret = -EFAULT;
-+	if (copy_to_user(_buf, p, n) != 0)
-+		goto err_free;
-+	ret = n;
-+
-+err_free:
-+	if (need_free)
-+		kfree(p);
-+	return ret;
-+}
-+
- const struct file_operations fscontext_fs_fops = {
-+	.read		= fscontext_fs_read,
- 	.write		= fscontext_fs_write,
- 	.release	= fscontext_fs_release,
- 	.llseek		= no_llseek,
-@@ -330,6 +380,7 @@ SYSCALL_DEFINE5(fsopen, const char __user *, _fs_name, unsigned int, flags,
- 	struct file_system_type *fs_type;
- 	struct fs_context *fc;
- 	const char *fs_name;
-+	int ret;
- 
- 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
-@@ -353,7 +404,18 @@ SYSCALL_DEFINE5(fsopen, const char __user *, _fs_name, unsigned int, flags,
- 
- 	fc->phase = FS_CONTEXT_CREATE_PARAMS;
- 
-+	ret = -ENOMEM;
-+	fc->log = kzalloc(sizeof(*fc->log), GFP_KERNEL);
-+	if (!fc->log)
-+		goto err_fc;
-+	refcount_set(&fc->log->usage, 1);
-+	fc->log->owner = fs_type->owner;
-+
- 	return fsopen_create_fd(fc, flags & FSOPEN_CLOEXEC);
-+
-+err_fc:
-+	put_fs_context(fc);
-+	return ret;
- }
- 
- /*
-@@ -396,9 +458,18 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char *, path, unsigned int, flags)
- 
- 	fc->phase = FS_CONTEXT_RECONF_PARAMS;
- 
-+	ret = -ENOMEM;
-+	fc->log = kzalloc(sizeof(*fc->log), GFP_KERNEL);
-+	if (!fc->log)
-+		goto err_fc;
-+	refcount_set(&fc->log->usage, 1);
-+	fc->log->owner = fc->fs_type->owner;
-+
- 	path_put(&target);
- 	return fsopen_create_fd(fc, flags & FSPICK_CLOEXEC);
- 
-+err_fc:
-+	put_fs_context(fc);
- err_path:
- 	path_put(&target);
- err:
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index bec4022e3f4b..c6c4c403b3f9 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -13,6 +13,7 @@
- #define _LINUX_FS_CONTEXT_H
- 
- #include <linux/kernel.h>
-+#include <linux/refcount.h>
- #include <linux/errno.h>
- 
- struct cred;
-@@ -64,6 +65,7 @@ struct fs_context {
- 	struct user_namespace	*user_ns;	/* The user namespace for this mount */
- 	struct net		*net_ns;	/* The network namespace for this mount */
- 	const struct cred	*cred;		/* The mounter's credentials */
-+	struct fc_log		*log;		/* Logging buffer */
- 	char			*source;	/* The source name (eg. dev path) */
- 	char			*subtype;	/* The subtype to set on the superblock */
- 	void			*security;	/* The LSM context */
-@@ -117,4 +119,60 @@ extern int vfs_get_super(struct fs_context *fc,
- 
- extern const struct file_operations fscontext_fs_fops;
- 
-+/*
-+ * Mount error, warning and informational message logging.  This structure is
-+ * shareable between a mount and a subordinate mount.
-+ */
-+struct fc_log {
-+	refcount_t	usage;
-+	u8		head;		/* Insertion index in buffer[] */
-+	u8		tail;		/* Removal index in buffer[] */
-+	u8		need_free;	/* Mask of kfree'able items in buffer[] */
-+	struct module	*owner;		/* Owner module for strings that don't then need freeing */
-+	char		*buffer[8];
-+};
-+
-+extern __attribute__((format(printf, 2, 3)))
-+void logfc(struct fs_context *fc, const char *fmt, ...);
-+
-+/**
-+ * infof - Store supplementary informational message
-+ * @fc: The context in which to log the informational message
-+ * @fmt: The format string
-+ *
-+ * Store the supplementary informational message for the process if the process
-+ * has enabled the facility.
-+ */
-+#define infof(fc, fmt, ...) ({ logfc(fc, "i "fmt, ## __VA_ARGS__); })
-+
-+/**
-+ * warnf - Store supplementary warning message
-+ * @fc: The context in which to log the error message
-+ * @fmt: The format string
-+ *
-+ * Store the supplementary warning message for the process if the process has
-+ * enabled the facility.
-+ */
-+#define warnf(fc, fmt, ...) ({ logfc(fc, "w "fmt, ## __VA_ARGS__); })
-+
-+/**
-+ * errorf - Store supplementary error message
-+ * @fc: The context in which to log the error message
-+ * @fmt: The format string
-+ *
-+ * Store the supplementary error message for the process if the process has
-+ * enabled the facility.
-+ */
-+#define errorf(fc, fmt, ...) ({ logfc(fc, "e "fmt, ## __VA_ARGS__); })
-+
-+/**
-+ * invalf - Store supplementary invalid argument error message
-+ * @fc: The context in which to log the error message
-+ * @fmt: The format string
-+ *
-+ * Store the supplementary error message for the process if the process has
-+ * enabled the facility and return -EINVAL.
-+ */
-+#define invalf(fc, fmt, ...) ({	errorf(fc, fmt, ## __VA_ARGS__); -EINVAL; })
-+
- #endif /* _LINUX_FS_CONTEXT_H */
+> 
+> Thanks,
+> Alan
+> 
+> [2] https://lkml.org/lkml/2018/3/15/709
+> 
+> >
+> > Thanks
+> > Hao
+> >
+> >>
+> >> Alan
+> >>
+> >> >
+> >> > Thanks
+> >> > Hao
+> >> >
+> >> >> Alan
+> >> >>
+> >> >> > +
+> >> >> > +       return priv->port_ops->enable_set(priv->port_pdev, enable);
+> >> >> > +}
+> >> >> > +
+> >> >> > +static const struct fpga_bridge_ops fme_bridge_ops = {
+> >> >> > +       .enable_set = fme_bridge_enable_set,
+> >> >> > +};
+> >> >> > +
+> >> >> > +static int fme_br_probe(struct platform_device *pdev)
+> >> >> > +{
+> >> >> > +       struct device *dev = &pdev->dev;
+> >> >> > +       struct fme_br_priv *priv;
+> >> >> > +       struct fpga_bridge *br;
+> >> >> > +       int ret;
+> >> >> > +
+> >> >> > +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> >> >> > +       if (!priv)
+> >> >> > +               return -ENOMEM;
+> >> >> > +
+> >> >> > +       priv->pdata = dev_get_platdata(dev);
+> >> >> > +
+> >> >> > +       br = fpga_bridge_create(dev, "DFL FPGA FME Bridge",
+> >> >> > +                               &fme_bridge_ops, priv);
+> >> >> > +       if (!br)
+> >> >> > +               return -ENOMEM;
+> >> >> > +
+> >> >> > +       platform_set_drvdata(pdev, br);
+> >> >> > +
+> >> >> > +       ret = fpga_bridge_register(br);
+> >> >> > +       if (ret)
+> >> >> > +               fpga_bridge_free(br);
+> >> >> > +
+> >> >> > +       return ret;
+> >> >> > +}
+> >> >> > +
+> >> >> > +static int fme_br_remove(struct platform_device *pdev)
+> >> >> > +{
+> >> >> > +       struct fpga_bridge *br = platform_get_drvdata(pdev);
+> >> >> > +       struct fme_br_priv *priv = br->priv;
+> >> >> > +
+> >> >> > +       fpga_bridge_unregister(br);
+> >> >> > +
+> >> >> > +       if (priv->port_pdev)
+> >> >> > +               put_device(&priv->port_pdev->dev);
+> >> >> > +       if (priv->port_ops)
+> >> >> > +               dfl_fpga_put_port_ops(priv->port_ops);
+> >> >> > +
+> >> >> > +       return 0;
+> >> >> > +}
+> >> >> > +
+> >> >> > +static struct platform_driver fme_br_driver = {
+> >> >> > +       .driver = {
+> >> >> > +               .name    = DFL_FPGA_FME_BRIDGE,
+> >> >> > +       },
+> >> >> > +       .probe   = fme_br_probe,
+> >> >> > +       .remove  = fme_br_remove,
+> >> >> > +};
+> >> >> > +
+> >> >> > +module_platform_driver(fme_br_driver);
+> >> >> > +
+> >> >> > +MODULE_DESCRIPTION("FPGA Bridge for DFL FPGA Management Engine");
+> >> >> > +MODULE_AUTHOR("Intel Corporation");
+> >> >> > +MODULE_LICENSE("GPL v2");
+> >> >> > +MODULE_ALIAS("platform:dfl-fme-bridge");
+> >> >> > --
+> >> >> > 1.8.3.1
+> >> >> >
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
