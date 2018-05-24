@@ -1,49 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755120AbeEXN1B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:27:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40426 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755082AbeEXN0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755076AbeEXN0z convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
         Thu, 24 May 2018 09:26:55 -0400
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-nfs@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH] locking/rwsem: Fix up_read_non_owner() warning with DEBUG_RWSEMS
-Date: Thu, 24 May 2018 09:26:38 -0400
-Message-Id: <1527168398-4291-1-git-send-email-longman@redhat.com>
+Received: from Galois.linutronix.de ([146.0.238.70]:49845 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755000AbeEXN0v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 09:26:51 -0400
+Date: Thu, 24 May 2018 15:26:48 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2] sched,tracing: Correct trace_sched_pi_setprio() for
+ deboosting
+Message-ID: <20180524132647.gg6ziuogczdmjjzu@linutronix.de>
+References: <20180523141107.6417-1-bigeasy@linutronix.de>
+ <20180523172819.GW12198@hirez.programming.kicks-ass.net>
+ <20180524074413.dukslrbgqfvaab5b@linutronix.de>
+ <20180524083754.GD12198@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180524083754.GD12198@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was found that the use of up_read_non_owner() in NFS was causing
-the following warning when DEBUG_RWSEMS was configured.
+Since commit b91473ff6e97 ("sched,tracing: Update
+trace_sched_pi_setprio()") the sched_pi_setprio trace point shows the
+"newprio" during a deboost:
+|futex sched_pi_setprio: comm=futex_requeue_p pid=2234 oldprio=98 newprio=98
+|futex sched_switch: prev_comm=futex_requeue_p prev_pid=2234 prev_prio=120
 
-  DEBUG_LOCKS_WARN_ON(sem->owner != ((struct task_struct *)(1UL << 0)))
+This patch open codes __rt_effective_prio() in the tracepoint as the
+`newprio' to get the old behaviour back / the correct priority:
 
-Looking into the rwsem.c file, it was discovered that the corresponding
-down_read_non_owner() function was not setting the owner field properly.
-This is fixed now, and the warning should be gone.
+|futex sched_pi_setprio: comm=futex_requeue_p pid=2220 oldprio=98 newprio=120
+|futex sched_switch: prev_comm=futex_requeue_p prev_pid=2220 prev_prio=120
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+Peter suggested to open code the new priority so people using tracehook
+could get the deadline data out.
+
+Reported-by: Mansky Christian <man@keba.com>
+Fixes: b91473ff6e97 ("sched,tracing: Update trace_sched_pi_setprio()")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/locking/rwsem.c | 1 +
- 1 file changed, 1 insertion(+)
+v1…v2: Open code __rt_effective_prio() in sched_pi_setprio macro as
+suggested by PeterZ.
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index bc1e507..776308d 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -181,6 +181,7 @@ void down_read_non_owner(struct rw_semaphore *sem)
- 	might_sleep();
+ include/trace/events/sched.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index bc01e06bc716..0be866c91f62 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -435,7 +435,9 @@ TRACE_EVENT(sched_pi_setprio,
+ 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
+ 		__entry->pid		= tsk->pid;
+ 		__entry->oldprio	= tsk->prio;
+-		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
++		__entry->newprio	= pi_task ?
++				min(tsk->normal_prio, pi_task->prio) :
++				tsk->normal_prio;
+ 		/* XXX SCHED_DEADLINE bits missing */
+ 	),
  
- 	__down_read(sem);
-+	rwsem_set_reader_owned(sem);
- }
- 
- EXPORT_SYMBOL(down_read_non_owner);
 -- 
-1.8.3.1
+2.17.0
