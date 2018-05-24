@@ -1,174 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965840AbeEXNct (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:32:49 -0400
-Received: from muru.com ([72.249.23.125]:44424 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965390AbeEXNcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965708AbeEXNcp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:32:45 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33065 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965572AbeEXNcl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 May 2018 09:32:41 -0400
-Date: Thu, 24 May 2018 06:32:37 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: OMAP serial runtime PM and autosuspend (was: Re: [PATCH 4/7]
- dt-bindings: gnss: add u-blox binding))
-Message-ID: <20180524133237.GA98604@atomide.com>
-References: <20180508154756.GW98604@atomide.com>
- <20180508155405.GX98604@atomide.com>
- <20180508164904.GZ98604@atomide.com>
- <20180509131003.GC2285@localhost>
- <20180509135706.GB98604@atomide.com>
- <20180517100948.GI30172@localhost>
- <20180517171038.GL98604@atomide.com>
- <20180521134830.GR30172@localhost>
- <20180521154832.GY98604@atomide.com>
- <20180524091742.GZ30172@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524091742.GZ30172@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Google-Smtp-Source: AB8JxZqDmBwSrRfCaSDPEG3pDPrbuQT2ByIgQNNFHbGziV2q5rwQg3AjsIEmutL1LAHxuT0wlVVZEw==
+From: Oleg Keri <ezhi99@gmail.com>
+Cc: Oleg Keri <ezhi99@gmail.com>, Ike Panhc <ike.pan@canonical.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: ideapad-laptop: Fix rfkill invert
+Date: Thu, 24 May 2018 16:32:31 +0300
+Message-Id: <20180524133231.8433-1-ezhi99@gmail.com>
+X-Mailer: git-send-email 2.17.0
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Johan Hovold <johan@kernel.org> [180524 09:20]:
-> On Mon, May 21, 2018 at 08:48:32AM -0700, Tony Lindgren wrote:
-> > 
-> > Yes the bug for closed ports needs to be fixed for sure.
-> 
-> I did some forensic on this and it seems this problem has "always" been
-> there. Specifically, closed ports have never been runtime suspended
-> unless a non-negative autosuspend delay has been set by user space since
-> fcdca75728ac ("ARM: OMAP2+: UART: Add runtime pm support for omap-serial
-> driver") which was merged seven years ago.
->
-> So while it would certainly be nice to save some more power by default,
-> this would really be a new feature rather than a bug or regression fix
-> (which reduces the urgency for this issue somewhat too).
+There are a lot of reports on the Internet about rfkill lock on
+modern Yoga Ideapad laptops while loading ideapad_laptop platform module.
+This patch offers the fix. Obviously it's impossible for me
+to test this patch on all ideapad laptops, so i've made an module
+parameter init_rfkill_inverted to keep old behavior. Comments are
+welcome.
 
-Yes it's been there since the start.
+Signed-off-by: Oleg Keri <ezhi99@gmail.com>
+---
+ drivers/platform/x86/ideapad-laptop.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> > > > > 	2. aggressive serial RPM, where the controller is allowed to
-> > > > > 	   suspend while the port is open even though this may result in
-> > > > > 	   lost characters when waking up on incoming data
-> > > > 
-> > > > In this case it seems that the only thing needed is to just
-> > > > configure the autosuspend delay for the parent port. The use of
-> > > > -1 has been around since the start of runtime PM AFAIK, so maybe
-> > > > we should just document it. I guess we could also introduce
-> > > > pm_runtime_block_autoidle_unless_configured() :)
-> > > 
-> > > The implications of a negative autosuspend delay are already documented
-> > > (in Documentation/power/runtime_pm.txt); it's just the omap drivers that
-> > > gets it wrong when trying to do things which aren't currently supported
-> > > (and never have been).
-> > > 
-> > > So I still think we need a new mechanism for this.
-> > 
-> > Well if you have some better mechanism in mind let's try it out. Short of
-> > sprinkling pm_runtime_force_suspend/resume calls all over, I'm out of ideas
-> > right now.
-> 
-> Yeah, that would be too much of a hack and likely wouldn't work either
-> (and we really should do away with those _force calls altogether).
-> 
-> I've been thinking a bit too much about this already, but it may be
-> possible to use the pm QoS framework for this. A resume latency can be
-> set through sysfs where "n/a" is defined to mean "no latency accepted"
-> (i.e. controller remains always-on while port is open) and "0" means
-> "any latency accepted" (i.e. omap aggressive serial RPM is allowed).
-
-Oh yeah, PM QoS might work here!
-
-> Now, implementing this may get a little tricky as we want to be able to
-> change this setting on the fly (consider consoles) and we need to figure
-> out the interaction with serdev (user space should probably not be
-> allowed to request a resume latency for ports used by serdev).
-
-It sounds like Andy Shevchenko has a series of patches that just might
-allow us to make this all generic for Linux serial framework. So adding
-Andy to Cc, I don't think he has posted all the patches yet.
-
-Andy, see the PM QoS comment above for console idling :)
-
-> I'd be happy to dig into this some more, but not in my spare time I'm
-> afraid.
-
-Indeed.
-
-> > > > > For normal ttys, we need a user-space interface for selecting between
-> > > > > the two, and for serdev we may want a way to select the RPM scheme from
-> > > > > within the kernel.
-> > > > > 
-> > > > > Note that with my serdev controller runtime PM patch, serdev core could
-> > > > > always opt for aggressive PM (as by default serdev core holds an RPM
-> > > > > reference for the controller while the port is open).
-> > > > 
-> > > > So if your serdev controller was to set the parent autosuspend
-> > > > delay on open() and set it back on close() this should work?
-> > > 
-> > > Is it really the job of a serdev driver to set the autosuspend delay of
-> > > a parent controller? Isn't this somethings which depends on the
-> > > characteristics of the controller (possibly configurable by user space)
-> > > such as the cost of runtime suspending and resuming?
-> > 
-> > Only in some cases will the serdev driver know it's safe to configure
-> > the parent controller. Configuring the parent controller from userspace
-> > works just fine as we've seen for years now.
-> 
-> Yes, user space may override the default settings provided by the serial
-> driver, but a serdev driver, in contrast, knows nothing about the
-> underlying serial hardware.
-> 
-> > > The patch I posted works with what we have today; if a parent serial
-> > > controller driver uses aggressive runtime PM by default or after having
-> > > been configured through sysfs to do so.
-> > 
-> > Yeah let's stick with configuring the parent controller from userspace
-> > for now at least.
-> 
-> Yep, status quo works for the time being (since this isn't a
-> regression). 
-> 
-> > > What I'm getting at here is that the delay should be set by the serial
-> > > driver implementing aggressive runtime PM. Then all we need is a
-> > > mechanism to determine whether an extra RPM reference should be taken at
-> > > tty open or not (configurable by user space, defaulting to yes).
-> > 
-> > OK yeah some additional on/off switch seems to be missing here.
-> 
-> As mentioned above, PM QoS resume latency may possibly be used, and
-> otherwise me may able to define a new (generic) QoS flag for this.
-
-Good idea.
-
-> > > Specifically, the serial drivers themselves would always use
-> > > autosuspend and not have to deal with supporting the two RPM schemes
-> > > (normal vs aggressive runtime PM).
-> > 
-> > OK. So if I understand your idea right, we could have autosuspend timeout
-> > set to 3000ms in the 8250_omap.c but still default to RPM blocked?
-> > Then user can enable aggressive PM via /sys as desired, right?
-> 
-> Not RPM blocked; the ports must always be able to suspend when the port
-> is closed. But user space should be able to enable the aggressive
-> (active) runtime PM via sysfs independently of the autosuspend delay,
-> yes.
-
-Yup OK, I like the PM QoS approach.
-
-Regards,
-
-Tony
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 535199c9e6bc..1eeda7bc74a3 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -110,6 +110,10 @@ static bool no_bt_rfkill;
+ module_param(no_bt_rfkill, bool, 0444);
+ MODULE_PARM_DESC(no_bt_rfkill, "No rfkill for bluetooth.");
+ 
++static bool init_rfkill_inverted;
++module_param(init_rfkill_inverted, bool, 0444);
++MODULE_PARM_DESC(init_rfkill_inverted, "Invert rfkill on initialization");
++
+ /*
+  * ACPI Helpers
+  */
+@@ -604,7 +608,9 @@ static int ideapad_register_rfkill(struct ideapad_private *priv, int dev)
+ 			 &sw_blocked)) {
+ 		rfkill_init_sw_state(priv->rfk[dev], 0);
+ 	} else {
+-		sw_blocked = !sw_blocked;
++		/* Do not apply invert for ideapads which haven't hw switch */
++		if (priv->has_hw_rfkill_switch || init_rfkill_inverted)
++			sw_blocked = !sw_blocked;
+ 		rfkill_init_sw_state(priv->rfk[dev], sw_blocked);
+ 	}
+ 
+-- 
+2.17.0
