@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163014-2-9375911936153714342
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163006-2-16226788867381012392
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163013; b=I6ceFOK89sAJhVkSYvqj9NgV8h5umGZ9K75MD1jU4s/GEY0acg
-    DUY+0u+OuyoYsgLIkDrlVpFImfc7SExFR33mU3iSwAXb4G74cR3grzFsMLhunCm4
-    Bc+mOUTuSf4M5BXPb/klvBoj9M93QHOqbmKNgWppkG+p203mbWe+rOZPCd4Bo316
-    MAmzXdZJs1n0uvKK6FBZF+buWWFBiqOYPtwlL4ql5bL4NjwXeeCbc6i6gTt5tF7V
-    s46xMFORtabObylnn/o2PjB9KGF/+lIt5C8eqbonm7w1Uqstpi8KMB0idKWvVcnc
-    s+NG+J0jPbLjbfCdRWZSMmNpNHT7Rva/YcUA==
+    1527163005; b=YR7PeifjYsAAILytOmEmpGw8m0tsQzbP3tqjPwk17inW6jU6P8
+    CikRdD7twxOENZp3zPvuu/2Afwln78EiNrkoxsEc0tqsV/ki/QMmaXgX8sScVAAC
+    ZYYl4dhwe+xvqu6tJHilzVeXu3j8pJMlKSdBTMFhLpYW9d5BAhGhHOMhqJ4oreUm
+    5okGUcqMjH/eYa1YiHKbrTPsdLbkS3HN9ibRWMz7RKz7cXr8HFigReZh36sR+53D
+    lKZKEW+XduGzwkhzA43YrP6KtPvKvSyvNXMriNpHCbwKtUskSu4h2k33mckdWVzL
+    3/EXPAu4++UpHkcAYPENZQATZnCUGjFyISWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163013; bh=Wk+Jhwg//dMHFIzN6I397rHbq2eqow
-    oXbK6SwFrD5FE=; b=iatiuYoY9kc/JzW9yrwbvjkoQpJXRFyXxZpVjC1z0HuZCo
-    GjRt22y6+wxL6Rfx7l9+7lFbMK944p+2/TDVUCSkxu5DFAkccHDulDxpoXjGFkzT
-    ge8AWskrRRhOVwZog0/KxIUm9C4pCqam9Obc5wCr6RvV5eUNiYPyWh22DQda/Tf0
-    mLQOzj2axBQNZ8B6yOugbIRuI+Oc4xG7CnyU7ZTonK/wVhF75myxMggk/Bou05Gf
-    PrtTfZWf+KgmIf0WLXlzdgwLnnFgkl7x/ON1YrmYoWKtSTjvIuvT/OgHy6EFLr2n
-    wXjLXkuOZztSDL66Gs2sHHPuCKcwvHsAw/EUgdig==
+    :list-id; s=fm2; t=1527163005; bh=JLU9O5UeOsa+0ncVhx+j7sWgOxNAxE
+    MqOS8c8kxPUjo=; b=iMsgDXryi/H3aCSHuRkz7COkRbzYpvByRpfJEg/KGSZIEo
+    JeqaI7XINGb4BzQV8RTJxpfEtkCQOAuQxfJvc+iXLWZigV3jfcAol/6T8hYzAG24
+    qXWkS8JheL34hWfVOg9y+YtKxyxPmgMTEfU8g32jIJNF5iBAorFvY0bJ90h7fFJU
+    4R/Y5GY2htd23VQsLgCfV7OvJYWKyms/Xlwb7uyUADuRW8pwR9wjyqNfdUz/SDXp
+    6/zA4AUq/mWmL91xc2gBgIA8245ObgBuoVXbZTkT2S+ZjxH2ijNiGDaWV404AoHE
+    F37+wt/I7FhQEcnYerNOStiatj5luMkNirXx7GdA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=01Lfoi5H x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=MHCq8+ry x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=01Lfoi5H x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=MHCq8+ry x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,33 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGji0O9xWUlsu3EMbAQRnzh8Lsw3WbrwAX80XCyqI1auCarEJvUlBcZhSWOGlXpndsy+j5fkIgFm80B3nEhJ2It554U8Ozx1167BwGYGJC6ggUGM/3Pj
-    HQSy/ay6OVRQRTXpIB1JD56JtWEoRxSuCLWZ4et3uWGXifIKQ6u/+1rfGLPQqqqcDwdmHtU9yf7tVpiYcFsLk/884O3I7m3/aQ56VF5bzFME5qppcDXrgUkc
+X-CM-Envelope: MS4wfPAKxecnG132CfgMokg6WIAFcOyHVHAzNbhpcBV5wJZYSdpZ/vanHnV7qter1KfWtiJsgxl9fFL4EQ+Eshdyp5zhuEdFZ7Ft+CiaLifPoH8Vq5clJm9S
+    xdrN8EmEZ1vGt4y8nNm8HnBLAp5DKgyRKswOe0d1V4Knb4Ctp3svSx2YJZrbgZ6bF9JJx1u/8jgLWvzbpl4k3AHJkmcaPfx+h9BKOhj4+TjfI7Sc5uAwJ2Pd
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=SRrdq9N9AAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=ag1SF4gXAAAA:8
-    a=TU_DJ3MC0Tpo-rwQ4GkA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=G8Vht56IOoz3jrsCRGQA:9 a=7CZQgDGIAkha4vUH:21 a=ise_7HGtSiYG6tJr:21
+    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966541AbeEXJpr (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:45:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56876 "EHLO mail.kernel.org"
+        id S966438AbeEXL4R (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:56:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966818AbeEXJpn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:43 -0400
+        id S966843AbeEXJpv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Filipe Manana <fdmanana@suse.com>, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH 4.4 70/92] btrfs: fix reading stale metadata blocks after degraded raid1 mounts
-Date: Thu, 24 May 2018 11:38:47 +0200
-Message-Id: <20180524093206.062830692@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+71d74a5406d02057d559@syzkaller.appspotmail.com,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 72/92] packet: in packet_snd start writing at link layer allocation
+Date: Thu, 24 May 2018 11:38:49 +0200
+Message-Id: <20180524093206.227673739@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -107,94 +108,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 02a3307aa9c20b4f6626255b028f07f6cfa16feb upstream.
+[ Upstream commit b84bbaf7a6c8cca24f8acf25a2c8e46913a947ba ]
 
-If a btree block, aka. extent buffer, is not available in the extent
-buffer cache, it'll be read out from the disk instead, i.e.
+Packet sockets allow construction of packets shorter than
+dev->hard_header_len to accommodate protocols with variable length
+link layer headers. These packets are padded to dev->hard_header_len,
+because some device drivers interpret that as a minimum packet size.
 
-btrfs_search_slot()
-  read_block_for_search()  # hold parent and its lock, go to read child
-    btrfs_release_path()
-    read_tree_block()  # read child
+packet_snd reserves dev->hard_header_len bytes on allocation.
+SOCK_DGRAM sockets call skb_push in dev_hard_header() to ensure that
+link layer headers are stored in the reserved range. SOCK_RAW sockets
+do the same in tpacket_snd, but not in packet_snd.
 
-Unfortunately, the parent lock got released before reading child, so
-commit 5bdd3536cbbe ("Btrfs: Fix block generation verification race") had
-used 0 as parent transid to read the child block.  It forces
-read_tree_block() not to check if parent transid is different with the
-generation id of the child that it reads out from disk.
+Syzbot was able to send a zero byte packet to a device with massive
+116B link layer header, causing padding to cross over into skb_shinfo.
+Fix this by writing from the start of the llheader reserved range also
+in the case of packet_snd/SOCK_RAW.
 
-A simple PoC is included in btrfs/124,
+Update skb_set_network_header to the new offset. This also corrects
+it for SOCK_DGRAM, where it incorrectly double counted reserve due to
+the skb_push in dev_hard_header.
 
-0. A two-disk raid1 btrfs,
-
-1. Right after mkfs.btrfs, block A is allocated to be device tree's root.
-
-2. Mount this filesystem and put it in use, after a while, device tree's
-   root got COW but block A hasn't been allocated/overwritten yet.
-
-3. Umount it and reload the btrfs module to remove both disks from the
-   global @fs_devices list.
-
-4. mount -odegraded dev1 and write some data, so now block A is allocated
-   to be a leaf in checksum tree.  Note that only dev1 has the latest
-   metadata of this filesystem.
-
-5. Umount it and mount it again normally (with both disks), since raid1
-   can pick up one disk by the writer task's pid, if btrfs_search_slot()
-   needs to read block A, dev2 which does NOT have the latest metadata
-   might be read for block A, then we got a stale block A.
-
-6. As parent transid is not checked, block A is marked as uptodate and
-   put into the extent buffer cache, so the future search won't bother
-   to read disk again, which means it'll make changes on this stale
-   one and make it dirty and flush it onto disk.
-
-To avoid the problem, parent transid needs to be passed to
-read_tree_block().
-
-In order to get a valid parent transid, we need to hold the parent's
-lock until finishing reading child.
-
-This patch needs to be slightly adapted for stable kernels, the
-&first_key parameter added to read_tree_block() is from 4.16+
-(581c1760415c4). The fix is to replace 0 by 'gen'.
-
-Fixes: 5bdd3536cbbe ("Btrfs: Fix block generation verification race")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-[ update changelog ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Fixes: 9ed988cd5915 ("packet: validate variable length ll headers")
+Reported-by: syzbot+71d74a5406d02057d559@syzkaller.appspotmail.com
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/btrfs/ctree.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/packet/af_packet.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -2497,10 +2497,8 @@ read_block_for_search(struct btrfs_trans
- 	if (p->reada)
- 		reada_for_search(root, p, level, slot, key->objectid);
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2771,13 +2771,15 @@ static int packet_snd(struct socket *soc
+ 	if (skb == NULL)
+ 		goto out_unlock;
  
--	btrfs_release_path(p);
--
- 	ret = -EAGAIN;
--	tmp = read_tree_block(root, blocknr, 0);
-+	tmp = read_tree_block(root, blocknr, gen);
- 	if (!IS_ERR(tmp)) {
- 		/*
- 		 * If the read above didn't mark this buffer up to date,
-@@ -2512,6 +2510,8 @@ read_block_for_search(struct btrfs_trans
- 			ret = -EIO;
- 		free_extent_buffer(tmp);
+-	skb_set_network_header(skb, reserve);
++	skb_reset_network_header(skb);
+ 
+ 	err = -EINVAL;
+ 	if (sock->type == SOCK_DGRAM) {
+ 		offset = dev_hard_header(skb, dev, ntohs(proto), addr, NULL, len);
+ 		if (unlikely(offset < 0))
+ 			goto out_free;
++	} else if (reserve) {
++		skb_push(skb, reserve);
  	}
-+
-+	btrfs_release_path(p);
- 	return ret;
- }
  
+ 	/* Returns -EFAULT on error */
