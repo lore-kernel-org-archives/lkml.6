@@ -1,111 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967670AbeEXJvS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:51:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36250 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967312AbeEXJvK (ORCPT
+        id S1030198AbeEXJ5g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:57:36 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50838 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030450AbeEXJ50 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:10 -0400
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] nvme-pci: set nvmeq->cq_vector after alloc cq/sq
-Date: Thu, 24 May 2018 17:51:33 +0800
-Message-Id: <1527155494-1891-1-git-send-email-jianchao.w.wang@oracle.com>
+        Thu, 24 May 2018 05:57:26 -0400
+X-Google-Smtp-Source: AB8JxZoQSwdTU8yZFWW1MiSSvxoDn8N1LDP02Qe9xASBdj2DsO5sEGwKZcpqZkKhNTqxJvidTLo6eQ==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+Subject: [PATCH v6 0/6] Add ChromeOS EC CEC Support
+Date: Thu, 24 May 2018 11:57:15 +0200
+Message-Id: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8902 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805240119
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently nvmeq->cq_vector is set before alloc cq/sq. If the alloc
-cq/sq command timeout, nvme_suspend_queue will invoke free_irq
-for the nvmeq because the cq_vector is valid, this will cause warning
-'Trying to free already-free IRQ xxx'. set nvmeq->cq_vector after
-alloc cq/sq successes to fix this.
+Hi All,
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/nvme/host/pci.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+through it's Embedded Controller, to enable the Linux CEC Core to communicate
+with it and get the CEC Physical Address from the correct HDMI Connector, the
+following must be added/changed:
+- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+- Add the CEC related commands and events definitions into the EC MFD driver
+- Add a way to get a CEC notifier with it's (optional) connector name
+- Add the CEC notifier to the i915 HDMI driver
+- Add the proper ChromeOS EC CEC Driver
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 17a0190..70b79f2 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1070,7 +1070,7 @@ static int adapter_delete_queue(struct nvme_dev *dev, u8 opcode, u16 id)
- }
- 
- static int adapter_alloc_cq(struct nvme_dev *dev, u16 qid,
--						struct nvme_queue *nvmeq)
-+						struct nvme_queue *nvmeq, int cq_vector)
- {
- 	struct nvme_command c;
- 	int flags = NVME_QUEUE_PHYS_CONTIG | NVME_CQ_IRQ_ENABLED;
-@@ -1085,7 +1085,7 @@ static int adapter_alloc_cq(struct nvme_dev *dev, u16 qid,
- 	c.create_cq.cqid = cpu_to_le16(qid);
- 	c.create_cq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
- 	c.create_cq.cq_flags = cpu_to_le16(flags);
--	c.create_cq.irq_vector = cpu_to_le16(nvmeq->cq_vector);
-+	c.create_cq.irq_vector = cpu_to_le16(cq_vector);
- 
- 	return nvme_submit_sync_cmd(dev->ctrl.admin_q, &c, NULL, 0);
- }
-@@ -1459,6 +1459,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- {
- 	struct nvme_dev *dev = nvmeq->dev;
- 	int result;
-+	int cq_vector;
- 
- 	if (dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
- 		unsigned offset = (qid - 1) * roundup(SQ_SIZE(nvmeq->q_depth),
-@@ -1471,15 +1472,21 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- 	 * A queue's vector matches the queue identifier unless the controller
- 	 * has only one vector available.
- 	 */
--	nvmeq->cq_vector = dev->num_vecs == 1 ? 0 : qid;
--	result = adapter_alloc_cq(dev, qid, nvmeq);
-+	cq_vector = dev->num_vecs == 1 ? 0 : qid;
-+	result = adapter_alloc_cq(dev, qid, nvmeq, cq_vector);
- 	if (result < 0)
--		goto release_vector;
-+		goto out;
- 
- 	result = adapter_alloc_sq(dev, qid, nvmeq);
- 	if (result < 0)
- 		goto release_cq;
- 
-+	/*
-+	 * set cq_vector after alloc cq/sq, otherwise, if alloc cq/sq command
-+	 * timeout, nvme_suspend_queue will invoke free_irq for it and cause warning
-+	 * 'Trying to free already-free IRQ xxx'
-+	 */
-+	nvmeq->cq_vector = cq_vector;
- 	nvme_init_queue(nvmeq, qid);
- 	result = queue_request_irq(nvmeq);
- 	if (result < 0)
-@@ -1487,13 +1494,13 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- 
- 	return result;
- 
-- release_sq:
-+release_sq:
-+	nvmeq->cq_vector = -1;
- 	dev->online_queues--;
- 	adapter_delete_sq(dev, qid);
-- release_cq:
-+release_cq:
- 	adapter_delete_cq(dev, qid);
-- release_vector:
--	nvmeq->cq_vector = -1;
-+out:
- 	return result;
- }
- 
+The CEC notifier with the connector name is the tricky point, since even on
+Device-Tree platforms, there is no way to distinguish between multiple HDMI
+connectors from the same DRM driver. The solution I implemented is pretty
+simple and only adds an optional connector name to eventually distinguish
+an HDMI connector notifier from another if they share the same device.
+
+Feel free to comment this patchset !
+
+Changes since v5:
+ - Small fixups on include/linux/mfd/cros_ec_commands.h
+ - Fixed on cros-ec-cec driver accordingly
+ - Added Reviewed-By tags
+
+Changes since v4:
+ - Split patch 3 to move the mkbp event size change into a separate patch
+
+Changes since v3 (incorrectly reported as v2):
+ - Renamed "Chrome OS" to "ChromeOS"
+ - Updated cros_ec_commands.h new structs definitions to kernel doc format
+ - Added Reviewed-By tags
+
+Changes since v2:
+ - Add i915 port_identifier() and use this stable name as cec_notifier conn name
+ - Fixed and cleaned up the CEC commands and events handling
+ - Rebased the CEC sub-device registration on top of Enric's serie
+ - Fixed comments typo on cec driver
+ - Protected the DMI match only with PCI and DMI Kconfigs
+
+Changes since v1:
+ - Added cec_notifier_put to intel_hdmi
+ - Fixed all small reported issues on the EC CEC driver
+ - Moved the cec_notifier_get out of the #if .. #else .. #endif
+
+Changes since RFC:
+ - Moved CEC sub-device registration after CEC commands and events definitions patch
+ - Removed get_notifier_get_byname
+ - Added CEC_CORE select into i915 Kconfig
+ - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+ - Fixed CEC core return type on error
+ - Moved to cros-ec-cec media platform directory
+ - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+ - Fix Logical Address setup
+ - Added comment about HW support
+ - Removed memset of msg structures
+
+Neil Armstrong (6):
+  media: cec-notifier: Get notifier by device and connector name
+  drm/i915: hdmi: add CEC notifier to intel_hdmi
+  mfd: cros-ec: Increase maximum mkbp event size
+  mfd: cros-ec: Introduce CEC commands and events definitions.
+  mfd: cros_ec_dev: Add CEC sub-device registration
+  media: platform: Add ChromeOS EC CEC driver
+
+ drivers/gpu/drm/i915/Kconfig                     |   1 +
+ drivers/gpu/drm/i915/intel_display.h             |  20 ++
+ drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+ drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+ drivers/media/cec/cec-notifier.c                 |  11 +-
+ drivers/media/platform/Kconfig                   |  11 +
+ drivers/media/platform/Makefile                  |   2 +
+ drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+ drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c                        |  16 ++
+ drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+ include/linux/mfd/cros_ec.h                      |   2 +-
+ include/linux/mfd/cros_ec_commands.h             | 100 +++++++
+ include/media/cec-notifier.h                     |  27 +-
+ 14 files changed, 577 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+ create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+
 -- 
 2.7.4
