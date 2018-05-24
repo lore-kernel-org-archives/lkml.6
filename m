@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163748-2-17354878503135265328
+X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163721-8-6587802727499831631
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163747; b=Xxp1UykPZYMZSeLdUes6v7tugsbT8KkSJ963W4AiVPlurHCcTG
-    RVc8hDBKiAd4Mb2YU+zxyydXos5keJ7pOXYRpk0XHEnRuT9lIEYi6TLIiTk+YXcZ
-    aeYct66O11bkY74eZUGSg+1vmk6f5LVs/Z/ARNlTnSkubgSoSayMFtJ/FZQTrZkI
-    IvbVfIwIbOM88+6veP9cTjOn1STC6Kz2aL1/Xh2VAp7A52tdr/+w8V2Z5UjY1LDs
-    wPmCrlu7roVgD5FgCOfufLXV6mzmu5pcb+21khYvctezzp2PlcuepLg4VBeygsVg
-    zROttQX+YlJxf1v8Gy0Sp6KMbZw7MAObmwqw==
+    1527163721; b=UWl4sLZw3LxqfZhkalxHMJUbO1JkFUpGEpAffanOJfqUOeo86k
+    xs7oDB6uMcLOLlLB/1thkwhAKWukazi1ZhjZ/2W965Yox24Xfgc337pQnAApjVmH
+    nqBcu02oA9QBD5IRwVnFnRZtysL7h5F5FtNtvGij68UreJDCjTlll1skUH0Up7lX
+    XmxhnqSZ1JiFDMu0FwPEXHymXyK4PAD99thB1+J049aY/hCXuUbdMpLAMv13XqJR
+    bY589Mv9gY2welnhXg0MiDY9jkd6jXLIkdXTOpOAajyFlZpZKlbokUewQ1LP0+7I
+    EEbVavhUbmtXowXSHEZsrSVs+JWTaxO9trKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163747; bh=K8suFdM8Cut7r4HbawjIxLg/GU4h9i
-    wFEDWQhriqIkk=; b=FCZtV2jxeSUh1Fx8C8/qaH1HXkIDKe3hDPvsdwzC4GuilH
-    zWuXIuKp0TCk1mrHsl1SZLrSMZM/IA7iBeWgQHqIkqEFk+PUFIA8b/8+A+LQO7l9
-    xMqEo9d5KaK6hvhVvHdnEBsJtzxRPlRNLEhNGNEM02VvwLewxqFWGhNxlYyNRkjX
-    TKtkwPLuRyICbggp7YHRM1VrMn2Lfu+oNyWprrISGBuTFNPzBmUE+XDXYZcJfwnr
-    nIki4Qc19W774eLjBEw5I0TwHFb1mADCPKOr6y7gwMPmuMC6nfJBoDindCIOPDZz
-    RmAH3k5V6jwr3US8o/A/bTIERS6royQr3isUTHlg==
+    :list-id; s=fm2; t=1527163721; bh=a84bwZeZ+5F3HOZcBcYLtXz6X4yJTp
+    tc2wF7mUti+u8=; b=hAfbEEjW/Rj6jfj2+DfO/IIzbZxrF3ArGTWE8rYv/8mZBt
+    zdhstrOgz4+97RWJAOJrrOsB74YEiFxfnWgC9wXxdLoyzJwbl4TGLUT9NkJ3Rd0k
+    xqIkY5T/IiZIp7XW2af461v3rFiIKYBx2UeKRzzE2JiTVOde2IKyxpCJvcv2CyLi
+    hvkytGOtxVnFBp8703ucU3uXmSL55aNMAUloBotAoq3Maksn1h9Uj+VrbQz4I5nZ
+    Yr699G5YHN+xUKkGQPsxFoS2tldmYb9dMwXobTRiL/zSMAUQE5vPjq98i8PchU5A
+    ZhfbgdX3TMvD3u3VvGqrHk10FlezCEKD+bTyUD/g==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=REs4J37Y x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ZBMjO0Nb x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=REs4J37Y x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ZBMjO0Nb x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,32 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN6q/rOdvyH8APMFOFNQ6fi+RV8I6qSb3nKlItCZJ25nDQ7ftUoovuD6Pl3EyVaSpUvnmKV5PyU2lPyXajrXnAsOU1EBYOaM1FnmWpUA0HTiOmXj8Ou3
-    TTHCDIvEpUEmh45DibufYf7qnPHSPqOWLfwHgdLikvLGAtQVTSJWEMezn2ScnwAUeGs0fcBsVv/HQcNny7MTpWHMp42PCb08GVwKvaW75j1xcRuYeDCzIUVz
+X-CM-Envelope: MS4wfPujnLXjOTsbhwtxWiMUz+2whbA2vIQ4JvLi84s4tSkHNYGv5A6sW/1MlFkbBbVgOkFDEJnEWPwKxODyq6lztuDWo+JFQhwcDq4EhNqB6Mvbji/jLVlQ
+    PSIe95+uU/b+OoqcwTol3XiXIKKhGcwK5muU4BoYzOgLi8wOc9QKpizqbP11C9j9AlXiy3+TFDT8aStUMxaZvFD6r5wbMBxlt0dxHNQo/qjTQjDjpe90xGE/
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=1EsaE_6oAAAA:8 a=ag1SF4gXAAAA:8 a=slupqQmDAudJdxUzSA0A:9
-    a=ys9DF2YAJlsp0ms6:21 a=IJZE8uwCOMZLE3_G:21 a=QEXdDO2ut3YA:10
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=3ZumFrijQQ-2J9H5h8ct:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=TYBLyS7eAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=1EsaE_6oAAAA:8
+    a=ag1SF4gXAAAA:8 a=kYNcxVwlaozHNDceCMsA:9 a=QEXdDO2ut3YA:10
+    a=zvYvwCWiE4KgVXXeO06c:22 a=AjGcO6oz07-iQ99wixmX:22 a=3ZumFrijQQ-2J9H5h8ct:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966778AbeEXMIo (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:08:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54966 "EHLO mail.kernel.org"
+        id S966519AbeEXJns (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:43:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966019AbeEXJne (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:34 -0400
+        id S966245AbeEXJnp (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 24/92] futex: Remove unnecessary warning from get_futex_key
-Date: Thu, 24 May 2018 11:38:01 +0200
-Message-Id: <20180524093201.292871511@linuxfoundation.org>
+Subject: [PATCH 4.4 27/92] lockd: lost rollback of set_grace_period() in lockd_down_net()
+Date: Thu, 24 May 2018 11:38:04 +0200
+Message-Id: <20180524093201.562199829@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -109,123 +107,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mel Gorman <mgorman@suse.de>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 48fb6f4db940e92cfb16cd878cddd59ea6120d06 upstream.
+commit 3a2b19d1ee5633f76ae8a88da7bc039a5d1732aa upstream.
 
-Commit 65d8fc777f6d ("futex: Remove requirement for lock_page() in
-get_futex_key()") removed an unnecessary lock_page() with the
-side-effect that page->mapping needed to be treated very carefully.
+Commit efda760fe95ea ("lockd: fix lockd shutdown race") is incorrect,
+it removes lockd_manager and disarm grace_period_end for init_net only.
 
-Two defensive warnings were added in case any assumption was missed and
-the first warning assumed a correct application would not alter a
-mapping backing a futex key.  Since merging, it has not triggered for
-any unexpected case but Mark Rutland reported the following bug
-triggering due to the first warning.
+If nfsd was started from another net namespace lockd_up_net() calls
+set_grace_period() that adds lockd_manager into per-netns list
+and queues grace_period_end delayed work.
 
-  kernel BUG at kernel/futex.c:679!
-  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-  Modules linked in:
-  CPU: 0 PID: 3695 Comm: syz-executor1 Not tainted 4.13.0-rc3-00020-g307fec773ba3 #3
-  Hardware name: linux,dummy-virt (DT)
-  task: ffff80001e271780 task.stack: ffff000010908000
-  PC is at get_futex_key+0x6a4/0xcf0 kernel/futex.c:679
-  LR is at get_futex_key+0x6a4/0xcf0 kernel/futex.c:679
-  pc : [<ffff00000821ac14>] lr : [<ffff00000821ac14>] pstate: 80000145
+These action should be reverted in lockd_down_net().
+Otherwise it can lead to double list_add on after restart nfsd in netns,
+and to use-after-free if non-disarmed delayed work will be executed after netns destroy.
 
-The fact that it's a bug instead of a warning was due to an unrelated
-arm64 problem, but the warning itself triggered because the underlying
-mapping changed.
-
-This is an application issue but from a kernel perspective it's a
-recoverable situation and the warning is unnecessary so this patch
-removes the warning.  The warning may potentially be triggered with the
-following test program from Mark although it may be necessary to adjust
-NR_FUTEX_THREADS to be a value smaller than the number of CPUs in the
-system.
-
-    #include <linux/futex.h>
-    #include <pthread.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <sys/mman.h>
-    #include <sys/syscall.h>
-    #include <sys/time.h>
-    #include <unistd.h>
-
-    #define NR_FUTEX_THREADS 16
-    pthread_t threads[NR_FUTEX_THREADS];
-
-    void *mem;
-
-    #define MEM_PROT  (PROT_READ | PROT_WRITE)
-    #define MEM_SIZE  65536
-
-    static int futex_wrapper(int *uaddr, int op, int val,
-                             const struct timespec *timeout,
-                             int *uaddr2, int val3)
-    {
-        syscall(SYS_futex, uaddr, op, val, timeout, uaddr2, val3);
-    }
-
-    void *poll_futex(void *unused)
-    {
-        for (;;) {
-            futex_wrapper(mem, FUTEX_CMP_REQUEUE_PI, 1, NULL, mem + 4, 1);
-        }
-    }
-
-    int main(int argc, char *argv[])
-    {
-        int i;
-
-        mem = mmap(NULL, MEM_SIZE, MEM_PROT,
-               MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-        printf("Mapping @ %p\n", mem);
-
-        printf("Creating futex threads...\n");
-
-        for (i = 0; i < NR_FUTEX_THREADS; i++)
-            pthread_create(&threads[i], NULL, poll_futex, NULL);
-
-        printf("Flipping mapping...\n");
-        for (;;) {
-            mmap(mem, MEM_SIZE, MEM_PROT,
-                 MAP_FIXED | MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-        }
-
-        return 0;
-    }
-
-Reported-and-tested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Mel Gorman <mgorman@suse.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@vger.kernel.org # 4.7+
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: efda760fe95e ("lockd: fix lockd shutdown race")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/futex.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/lockd/svc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -666,13 +666,14 @@ again:
- 		 * this reference was taken by ihold under the page lock
- 		 * pinning the inode in place so i_lock was unnecessary. The
- 		 * only way for this check to fail is if the inode was
--		 * truncated in parallel so warn for now if this happens.
-+		 * truncated in parallel which is almost certainly an
-+		 * application bug. In such a case, just retry.
- 		 *
- 		 * We are not calling into get_futex_key_refs() in file-backed
- 		 * cases, therefore a successful atomic_inc return below will
- 		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
- 		 */
--		if (WARN_ON_ONCE(!atomic_inc_not_zero(&inode->i_count))) {
-+		if (!atomic_inc_not_zero(&inode->i_count)) {
- 			rcu_read_unlock();
- 			put_page(page_head);
- 
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -271,6 +271,8 @@ static void lockd_down_net(struct svc_se
+ 	if (ln->nlmsvc_users) {
+ 		if (--ln->nlmsvc_users == 0) {
+ 			nlm_shutdown_hosts_net(net);
++			cancel_delayed_work_sync(&ln->grace_period_end);
++			locks_end_grace(&ln->lockd_manager);
+ 			svc_shutdown_net(serv, net);
+ 			dprintk("lockd_down_net: per-net data destroyed; net=%p\n", net);
+ 		}
