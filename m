@@ -1,71 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970252AbeEXOAa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:00:30 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42814 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965515AbeEXOA1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:00:27 -0400
-X-Google-Smtp-Source: AB8JxZrNIrGKM8FLtVljJD+zKBZel/6Ei2fIeWGaiHbnqOeOunbkk0FfDbtPc2Zrz1BK4tsoPbAuIg==
-Date: Thu, 24 May 2018 22:00:21 +0800
-From: Martin Liu <liumartin@google.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jenhaochen@google.com,
-        liumartin@google.com
-Subject: Re: [RFC] driver core: don't hold dev's parent lock when using async
- probe
-Message-ID: <20180524140021.GA214888@google.com>
-References: <20180522141227.GA118442@google.com>
- <Pine.LNX.4.44L0.1805221250480.1466-100000@iolanthe.rowland.org>
+        id S970266AbeEXOBV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:01:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45344 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965515AbeEXOBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:01:20 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 1/2] cpufreq: Add Kryo CPU scaling driver
+To: ilialin@codeaurora.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net
+References: <1527152242-31281-1-git-send-email-ilialin@codeaurora.org>
+ <1527152242-31281-2-git-send-email-ilialin@codeaurora.org>
+ <860be68b-cac0-9efc-b3c7-cc75b391a4c3@arm.com>
+ <000501d3f35f$96794910$c36bdb30$@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <b4e221af-57f7-fd11-942d-6bc6f6b55a73@arm.com>
+Date: Thu, 24 May 2018 15:01:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1805221250480.1466-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <000501d3f35f$96794910$c36bdb30$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 01:09:44PM -0400, Alan Stern wrote:
-> On Tue, 22 May 2018, martin_liu wrote:
-> 
-> > not sure if we still need 'bf74ad5bc417 ("[PATCH] Hold the
-> > device's parent's lock during probe and remove")' since it has
-> > been there over 10 years. If we still need it and hard to fix it
-> > , the simple way is to find a place not to allow USB subsystem
-> > drivers to have async probe capability. Any suggestion is welcome.
-> 
-> I don't think the "allows_async_probing" attribute is the best way to 
-> attack this.  Some other approach, like a special-purpose flag, might 
-> be better.
-> 
-> Yes, USB still needs to have parent's locks held during probing.  
-> Here's the reason.  A USB device can have multiple interfaces, each
-> bound to its own driver.  A driver may sometimes need to issue a reset,
-> but in USB there's no way to reset a single interface.  Only the entire
-> device can be reset, and of course this affects all the interfaces.  
-> Therefore a driver needs to acquire the device lock before it can issue
-> a reset.
-> 
-> The problem is that the driver's thread may already hold the device
-> lock.  During a normal probe sequence, for example, the interfaces get
-> probed by the hub driver while it owns the device lock.  But for probes
-> under other circumstances (for example, if the user writes to the
-> driver's "bind" attribute in sysfs), the device lock might not be held.
-> 
-> A driver cannot tell these two cases apart.  The only way to make it
-> work all the time is to have the caller _always_ hold the device lock
-> while the driver is probed (or the removed, for that matter).
-> 
-> Alan Stern
 
-Thanks for the reply and more detail about the backgroud. I'd like to
-have a conclusion about it. Please kindly correct me if my understanding
-is wrong. Regarding to the "special-purpose flag", do you mean we could
-find a place in USB subsystem to have the flag set (not sure if it's
-easy to find it). Driver core would be base on the flag to decide if we
-need to hold the device's parent's lock.
 
-Martin
+On 24/05/18 14:03, ilialin@codeaurora.org wrote:
+> 
+> 
+
+[...]
+
+>>> +
+>>> +	ret = PTR_ERR_OR_ZERO(platform_device_register_simple(
+>>> +		"qcom-cpufreq-kryo", -1, NULL, 0));
+>>
+>>
+>> You simply can't do this unconditionally here. This will blow up on platforms
+>> where this driver is not supposed to work. The probe will be called on non-
+>> QCOM or non-Kryo QCOM platforms and I reckon it will crash trying to
+>> execute something in qcom_smem_get.
+> 
+> What do you mean by 'unconditionally'?
+
+Why should you even add/register a device "qcom-cpufreq-kryo" on other
+platforms. Drivers can get registered, but only devices that are present
+or required by the platform need to be registered.
+
+> The driver depends on the smem and nvmem drivers, which depend on ARCH_QCOM:
+>  +	depends on QCOM_QFPROM
+>  +	depends on QCOM_SMEM
+> 
+
+Sure, but we have something called single image for all ARM64 platforms.
+May be QCOM still used to tweeking config to build binary for your
+particular mobile platform but the distro kernel need single binary to
+work on all platforms. We have moved far away from platform specific
+builds long back now IIRC.
+
+> And if SMEM read in the probe returns something other than Kryo, it will exit.
+> 
+
+Check what this driver does ?
+
+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
+	msm_id++;
+	switch ((enum _msm_id)*msm_id)
+
+I think it *will and should* crash here ? You need to check the return
+value for sure. But since qcom_smem_get return -EPROBE_DEFER, we keep
+retrying even on non QCOM platforms which is something I would like to
+avoid.
+
+Therefore that's not the main concern. Why do I have to see
+"qcom-cpufreq-kryo" device registered on my non QCOM platform ?
+
+-- 
+Regards,
+Sudeep
