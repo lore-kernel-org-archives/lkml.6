@@ -1,162 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935566AbeEXBtW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:49:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34732 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935218AbeEXBtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:49:17 -0400
-Date: Thu, 24 May 2018 09:49:05 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Petr Tesarik <ptesarik@suse.cz>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, dzickus@redhat.com,
-        Neil Horman <nhorman@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        bhe@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        id S935576AbeEXBuS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:50:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:32915 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935218AbeEXBuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:50:17 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anton Vorontsov <avorontsov@ru.mvista.com>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180524014905.GB2031@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
- <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
- <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
- <877enucqr0.fsf@xmission.com>
- <20180523222236.5a96732e@ezekiel.suse.cz>
+        Paul Mackerras <paulus@samba.org>
+Subject: Re: [PATCH 10/13] atomics/powerpc: define atomic64_fetch_add_unless()
+In-Reply-To: <20180523133533.1076-11-mark.rutland@arm.com>
+References: <20180523133533.1076-1-mark.rutland@arm.com> <20180523133533.1076-11-mark.rutland@arm.com>
+Date: Thu, 24 May 2018 11:50:15 +1000
+Message-ID: <87lgc9styg.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523222236.5a96732e@ezekiel.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
+Hi Mark,
 
-On 05/23/18 at 10:22pm, Petr Tesarik wrote:
-> On Wed, 23 May 2018 10:53:55 -0500
-> ebiederm@xmission.com (Eric W. Biederman) wrote:
-> 
-> > Dave Young <dyoung@redhat.com> writes:
-> > 
-> > > [snip]
-> > >  
-> > >> >  
-> > >> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
-> > >> > +	int "System memory size threshold for kdump memory default reserving"
-> > >> > +	depends on CRASH_CORE
-> > >> > +	default 0
-> > >> > +	help
-> > >> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
-> > >> > +	  the system memory size is equal or bigger than the threshold.  
-> > >> 
-> > >> "the threshold" is rather vague.  Can it be clarified?
-> > >> 
-> > >> In fact I'm really struggling to understand the logic here....
-> > >> 
-> > >>   
-> > >> > +config CRASHKERNEL_DEFAULT_MB
-> > >> > +	int "Default crashkernel memory size reserved for kdump"
-> > >> > +	depends on CRASH_CORE
-> > >> > +	default 0
-> > >> > +	help
-> > >> > +	  This is used as the default kdump reserved memory size in MB.
-> > >> > +	  crashkernel=X kernel cmdline can overwrite this value.
-> > >> > +
-> > >> >  config HAVE_IMA_KEXEC
-> > >> >  	bool
-> > >> >  
-> > >> > @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
-> > >> >  	return 0;
-> > >> >  }
-> > >> >  
-> > >> > +static int __init get_crashkernel_default(unsigned long long system_ram,
-> > >> > +					  unsigned long long *size)
-> > >> > +{
-> > >> > +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
-> > >> > +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
-> > >> > +
-> > >> > +	thres *= SZ_1M;
-> > >> > +	sz *= SZ_1M;
-> > >> > +
-> > >> > +	if (sz >= system_ram || system_ram < thres) {
-> > >> > +		pr_debug("crashkernel default size can not be used.\n");
-> > >> > +		return -EINVAL;  
-> > >> 
-> > >> In other words,
-> > >> 
-> > >> 	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
-> > >> 	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
-> > >> 		fail;
-> > >> 
-> > >> yes?
-> > >> 
-> > >> How come?  What's happening here?  Perhaps a (good) explanatory comment
-> > >> is needed.  And clearer Kconfig text.
-> > >> 
-> > >> All confused :(  
-> > >
-> > > Andrew, I tuned it a bit, removed the check of sz >= system_ram, so if
-> > > the size is too large and kernel can not find enough memory it will
-> > > still fail in latter code.
-> > >
-> > > Is below version looks clearer?  
-> > 
-> > What is the advantage of providing this in a kconfig option rather
-> > than on the kernel command line as we can now?
-> 
-> Yeah, I was about to ask the very same question.
-> 
-> Having spent quite some time on estimating RAM required to save a crash
-> dump, I can tell you that there is no silver bullet. My main objection
-> is that core dumps are saved from user space, and the kernel cannot
-> have a clue what it is going to be.
-> 
-> First, the primary kernel cannot know how much memory will be needed
-> for the panic kernel (not necessarily same as the primary kernel) and
-> the panic initrd. If you build a minimal initrd for your system, then
-> at least it depends on which modules must be included, which in turn
-> depends on where you want to store the resulting dump. Mounting a local
-> ext2 partition will require less software than mounting an LVM logical
-> volume in a PV accessed through iSCSI over two bonded Ethernet NICs.
-> 
-> Second, run-time requirements may vary wildly. While sending the data
-> over a simple TCP connection (e.g. using FTP) consumes just a few
-> megabytes even on 10G Ethernet, dm block devices tend to consume much
-> more, because of the additional buffers allocated by device mapper.
-> 
-> Third, systems should be treated as "big" not so much because of the
-> amount of RAM, but more so because of the amount of attached devices.
-> I've seen a machine with devices from /dev/sda to /dev/sdvm; try to
-> calculate how much kernel memory is taken just by their in-kernel
-> representation...
-> 
-> Fourth, quite often there is a trade-off between how much memory is
-> reserved for the panic environment, and how long dumping will take. For
-> example, you may take advantage of multi-threading in makedumpfile, but
-> obviously, the additional threads need more memory (or makedumpfile
-> will have to do its job in more cycles, reducing speed again). Oh, did
-> I mention that even bringing up more CPUs has an impact on kernel
-> runtime memory requirements?
-> 
-> In short, if one size fits none, what good is it to hardcode that "one
-> size" into the kernel image?
+Mark Rutland <mark.rutland@arm.com> writes:
+> As a step towards unifying the atomic/atomic64/atomic_long APIs, this
+> patch converts the arch/powerpc implementation of atomic64_add_unless()
+> into an implementation of atomic64_fetch_add_unless().
+>
+> A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
+> this, provided it is given a preprocessor definition.
+>
+> No functional change is intended as a result of this patch.
+>
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  arch/powerpc/include/asm/atomic.h | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+> index b5646c079c16..233dbf31911c 100644
+> --- a/arch/powerpc/include/asm/atomic.h
+> +++ b/arch/powerpc/include/asm/atomic.h
+> @@ -525,7 +525,7 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
+>  #define atomic64_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new))
+>  
+>  /**
+> - * atomic64_add_unless - add unless the number is a given value
+> + * atomic64_fetch_add_unless - add unless the number is a given value
+>   * @v: pointer of type atomic64_t
+>   * @a: the amount to add to v...
+>   * @u: ...unless v is equal to u.
+> @@ -533,13 +533,13 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
+>   * Atomically adds @a to @v, so long as it was not @u.
+>   * Returns the old value of @v.
 
-I agreed with all the things that we can not know the exact memory
-requirement for 100% use cases.  But that does not means this is useless
-it is still useful for common use cases of no special and memory hog
-requirements as I mentioned in another reply it can simplify the kdump
-deployment for those people who do not need the special setup.
+Comment was wrong, but is right now. Win.
 
-For example, if this is a workstation I just want to break into a shell
-to collect some panic info, then I just need a very minimal initrd, then
-the Kconfig will work just fine.
+>   */
+> -static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
+> +static __inline__ long atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
+>  {
+>  	long t;
+>  
+>  	__asm__ __volatile__ (
+>  	PPC_ATOMIC_ENTRY_BARRIER
+> -"1:	ldarx	%0,0,%1		# atomic_fetch_add_unless\n\
+> +"1:	ldarx	%0,0,%1		# atomic64_fetch_add_unless\n\
+>  	cmpd	0,%0,%3 \n\
+>  	beq	2f \n\
+>  	add	%0,%2,%0 \n"
 
-Thanks
-Dave
+We overwrite t here with the new value ...
+
+> @@ -552,8 +552,9 @@ static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
+
+But then in the context above here we do:
+
+"	subf	%0,%2,%0 \n\
+
+Which puts the old value back into t.
+
+>  	: "r" (&v->counter), "r" (a), "r" (u)
+>  	: "cc", "memory");
+>  
+> -	return t != u;
+> +	return t;
+
+ie. this is correct.
+
+I'm not sure why we wrote it that way, to add and then subtract, but
+that's not your problem.
+
+So LGTM.
+
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+
+cheers
