@@ -1,106 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032268AbeEXKkA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:40:00 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43752 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032130AbeEXKjn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:39:43 -0400
-X-Google-Smtp-Source: AB8JxZpPd9Rz5CkullRl/5uMbSF5z+dyc2HH6Y72KkJH/bmgwpCVXQxqrqzl+0cxsz3qP9jltiSfCA==
-Date: Thu, 24 May 2018 12:39:38 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize
- isolated_cpus
-Message-ID: <20180524103938.GB3948@localhost.localdomain>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-5-git-send-email-longman@redhat.com>
- <20180523173453.GY30654@e110439-lin>
- <bf4cb72b-9ff3-eb8b-ca2c-f6c4fee5c123@redhat.com>
- <20180524090430.GZ30654@e110439-lin>
+        id S1032303AbeEXKlc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:41:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39624 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030678AbeEXJ6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 05:58:47 -0400
+Subject: Re: [PATCH 04/14] arm64: Add ARCH_WORKAROUND_2 probing
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-5-marc.zyngier@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <6c3e7b31-0bb6-353b-1b82-7ebdf3be1323@arm.com>
+Date: Thu, 24 May 2018 10:58:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524090430.GZ30654@e110439-lin>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180522150648.28297-5-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/18 10:04, Patrick Bellasi wrote:
+On 22/05/18 16:06, Marc Zyngier wrote:
+> As for Spectre variant-2, we rely on SMCCC 1.1 to provide the
+> discovery mechanism for detecting the SSBD mitigation.
+> 
+> A new capability is also allocated for that purpose, and a
+> config option.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-[...]
 
-> From 84bb8137ce79f74849d97e30871cf67d06d8d682 Mon Sep 17 00:00:00 2001
-> From: Patrick Bellasi <patrick.bellasi@arm.com>
-> Date: Wed, 23 May 2018 16:33:06 +0100
-> Subject: [PATCH 1/1] cgroup/cpuset: disable sched domain rebuild when not
->  required
-> 
-> The generate_sched_domains() already addresses the "special case for 99%
-> of systems" which require a single full sched domain at the root,
-> spanning all the CPUs. However, the current support is based on an
-> expensive sequence of operations which destroy and recreate the exact
-> same scheduling domain configuration.
-> 
-> If we notice that:
-> 
->  1) CPUs in "cpuset.isolcpus" are excluded from load balancing by the
->     isolcpus= kernel boot option, and will never be load balanced
->     regardless of the value of "cpuset.sched_load_balance" in any
->     cpuset.
-> 
->  2) the root cpuset has load_balance enabled by default at boot and
->     it's the only parameter which userspace can change at run-time.
-> 
-> we know that, by default, every system comes up with a complete and
-> properly configured set of scheduling domains covering all the CPUs.
-> 
-> Thus, on every system, unless the user explicitly disables load balance
-> for the top_cpuset, the scheduling domains already configured at boot
-> time by the scheduler/topology code and updated in consequence of
-> hotplug events, are already properly configured for cpuset too.
-> 
-> This configuration is the default one for 99% of the systems,
-> and it's also the one used by most of the Android devices which never
-> disable load balance from the top_cpuset.
-> 
-> Thus, while load balance is enabled for the top_cpuset,
-> destroying/rebuilding the scheduling domains at every cpuset.cpus
-> reconfiguration is a useless operation which will always produce the
-> same result.
-> 
-> Let's anticipate the "special" optimization within:
-> 
->    rebuild_sched_domains_locked()
-> 
-> thus completely skipping the expensive:
-> 
->    generate_sched_domains()
->    partition_sched_domains()
-> 
-> for all the cases we know that the scheduling domains already defined
-> will not be affected by whatsoever value of cpuset.cpus.
-
-[...]
-
-> +	/* Special case for the 99% of systems with one, full, sched domain */
-> +	if (!top_cpuset.isolation_count &&
-> +	    is_sched_load_balance(&top_cpuset))
-> +		goto out;
+> +static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+> +				    int scope)
+> +{
+> +	struct arm_smccc_res res;
+> +	bool supported = true;
 > +
+> +	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+> +
+> +	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+> +		return false;
+> +
+> +	/*
+> +	 * The probe function return value is either negative
+> +	 * (unsupported or mitigated), positive (unaffected), or zero
+> +	 * (requires mitigation). We only need to do anything in the
+> +	 * last case.
+> +	 */
+> +	switch (psci_ops.conduit) {
+> +	case PSCI_CONDUIT_HVC:
+> +		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+> +				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
+> +		if ((int)res.a0 != 0)
+> +			supported = false;
+> +		break;
+> +
+> +	case PSCI_CONDUIT_SMC:
+> +		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+> +				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
+> +		if ((int)res.a0 != 0)
+> +			supported = false;
+> +		break;
+> +
+> +	default:
+> +		supported = false;
+> +	}
+> +
+> +	if (supported) {
+> +		__this_cpu_write(arm64_ssbd_callback_required, 1);
+> +		do_ssbd(true);
+> +	}
 
-Mmm, looks like we still need to destroy e recreate if there is a
-new_topology (see arch_update_cpu_topology() in partition_sched_
-domains).
 
-Maybe we could move the check you are proposing in update_cpumasks_
-hier() ?
+Marc,
+
+As discussed, we have minor issue with the "corner case". If a CPU
+is hotplugged in which requires the mitigation, after the system has
+finalised the cap to "not available", the CPU could go ahead and
+do the "work around" as above, while not effectively doing anything
+about it at runtime for KVM guests (as thats the only place where
+we rely on the CAP being set).
+
+But, yes this is real corner case. There is no easy way to solve it
+other than
+
+1) Allow late modifications to CPU hwcaps
+
+OR
+
+2) Penalise the fastpath to always check per-cpu setting.
+
+
+Regardless,
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
