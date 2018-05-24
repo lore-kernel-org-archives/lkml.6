@@ -1,75 +1,128 @@
-Return-Path: <shuah@kernel.org>
-X-Google-Smtp-Source: ADUXVKK+rK6acclPIz6ZxQN5g6NRMIcX8qKKdnys+KUfQv3l4gCLHtTvJh66MqJexs5WpbhWr3qs
-ARC-Seal: i=1; a=rsa-sha256; t=1527190015; cv=none;
+Return-Path: <dan.rue@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1527185059; cv=none;
         d=google.com; s=arc-20160816;
-        b=c7AmoNA+BTKQ8glL08ag+Msz3SHMzvgjpUU4uyLPu5m6L8+5Xqm/VYOVSiU49Tz0Kc
-         wUOVCObP52zWbJKifA+VJ0qtBdnGtYvzlBsoFstBd5sCWW+B+PCJSfSJDwf4NvxJQE02
-         3FDWikM9Jil5SE0mL5ykSbXXjxaZ/a87BdXvFDyFwizaHs74XHU8RP9SGuwV7ucJgmxd
-         oZDXJnbHr1OAdvXdjbZL13HZOjBCBHzSj1GNK+IpomHSGfpAjfDZLOvSkQwTJ+GICsEW
-         9nTJugKd/zbdeBoOeIvaZJcCPbhxdpgKTxzXBTH5b8khNH/i7bOiIuyIKAwVy4lvpdLq
-         ANsw==
+        b=Juz8n690uEpynhI5/+cZy9D+Tmh5/XknzFRsMqrQbME4ckoKrJvrSOqW3Z4ZWgBumF
+         YL9qe/nfD/8Y0UglX0TAc2RA39E/KsqPj1ot0gVEmIa7XEaIWuxmz7Efe9MemMX87Bs2
+         sK7doYd9pfvBnTeW0LvrypgG1CVR9js6TvkDP+YBV8oSK5BPkT9axcWUlpdKt1qL/mek
+         o7OIes1kyCBzO4BcZ2P3yeX4oy3u08+Ill0t+8m+vLghDXJMsCuAdLnt+0JFb2y009LY
+         Zu7egC7+qKkYyfopbsUTvw0ZbQk1KdRMcWpOd8elZtPFwNnQJmiCU49B3g4MEqtIAPGC
+         spsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:mail-followup-to
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=bozRO5R6BLhBoHbCisMFFIHfEhh4XWBzDU/UV7dkTXk=;
-        b=xVhCOE+Cno0gxn4LtmE4wZIPP3ltDiAY2gJi1IKIELWCxszGMG6gKyLyIoiq9XBBOM
-         0/RIzCyGql1B1XStkBbl1IPAYFYoW6OPHLr2lcOBfGGbN5+ZWatDcj1rMWrH8wMk7E3w
-         qwNsPlejOf66v24EH7j6rHA+pxugtXKLW4YxJYCwdD0dSCclwxkH62NH55O2zUMswWkR
-         kGScPVf6XqgQfRwroG6P/sa07DEjD9V7kO5BtVVrbYRGfL+kozhY9FK5hXupLwPT3E+Q
-         i2NivqRvj+3U5r/Sy5xoIUN+g18gnsnJ+u29f0iAn6kGK+Cfdddjbjh3Lfo6K6KlxDB8
-         9y+w==
+        bh=qDNZuALH2WYlic4+xtgVKZcDD00aNr++B57HFQGVExk=;
+        b=nT47psudXjg3CHCaLuTgqlmBDQkKRMzE85XeRgamevnMDFpjbNIGSclKpa9Bx7ldkF
+         my4D/HbWSYhPLtcV8QaNSz6dFKFduIrItkOuohPmZenm43rnbTPnRBW8ab/0TS5fWKIL
+         BG64DlzRwMwWKQmOSjo5rVpf9JIlM4z1IGEiDYLFrHKMK+S5Vka9uBu7gATdMQPS0eer
+         68LbDlAdq43JaPhR//GCgD2TyU8OlvORXz5uGubzhja3W5QSLwWx0IPFWFWHXzqxc1/6
+         4niHWL2gDkJz2PWcpFQ1cKh4zDaSphjCtGKk/qm5v5fd3P7fvd0lmM1tzoKfyvNXFuB5
+         YAyA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=dna5aaoz;
+       spf=pass (google.com: domain of dan.rue@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.rue@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=dna5aaoz;
+       spf=pass (google.com: domain of dan.rue@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.rue@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZptj6wEJwQ5KDPv1Xjlb6QO+PMoTTKvlJXAd9WD74YD6uWDtesxg1KY2VjqPZ7mnZWzTAYsRQ==
+Date: Thu, 24 May 2018 13:04:16 -0500
+From: Dan Rue <dan.rue@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Subject: Re: [PATCH 4.9 00/96] 4.9.103-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
+Message-ID: <20180524180416.2eoynar7cgda2uq5@xps>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org, stable@vger.kernel.org
 References: <20180524093605.602125311@linuxfoundation.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <e884983d-84af-efdb-eb9c-d72d4d4467ee@kernel.org>
-Date: Thu, 24 May 2018 13:26:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
+User-Agent: NeoMutt/20180512
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1601338380744330487?=
-X-GMAIL-MSGID: =?utf-8?q?1601374797243358981?=
+X-GMAIL-MSGID: =?utf-8?q?1601369600481182403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/24/2018 03:37 AM, Greg Kroah-Hartman wrote:
+On Thu, May 24, 2018 at 11:37:43AM +0200, Greg Kroah-Hartman wrote:
 > This is the start of the stable review cycle for the 4.9.103 release.
 > There are 96 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
 > Responses should be made by Sat May 26 09:35:42 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.103-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+Results from Linaro’s test farm.
+No regressions on arm64, arm and x86_64.
 
-thanks,
--- Shuah
+You may notice the report format has changed. I've removed a lot of the
+duplication that we had, while still trying to give an overall sense of
+the scope of testing.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.103-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.9.y
+git commit: 190b92e2b8d4d190a6b059732180a71f1ff17c4d
+git describe: v4.9.102-97-g190b92e2b8d4
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.102-97-g190b92e2b8d4
+
+
+No regressions (compared to build v4.9.102)
+
+
+Ran 11084 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
