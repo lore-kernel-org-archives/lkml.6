@@ -1,116 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034669AbeEXWFU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 18:05:20 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38108 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966031AbeEXWFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 18:05:18 -0400
-X-Google-Smtp-Source: AB8JxZp0ZNmh+tNmfac9S+kNSAcqhN8E/txwO1kG3Fz5s25JSFYqwgUs6Fo8hzfBnfFondZuthXfiAnMrGLp8agDyuU=
+        id S1034685AbeEXWF7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 18:05:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45289 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1034671AbeEXWF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 18:05:58 -0400
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com>
+ <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com>
+Date: Thu, 24 May 2018 15:05:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180524162157.GA26662@kroah.com>
-References: <20180523021656.122455-1-drinkcat@chromium.org>
- <Pine.LNX.4.44L0.1805230958590.1481-100000@iolanthe.rowland.org>
- <20180523163936.GE12456@kroah.com> <CANMq1KD8SpPQ7UTy2wN0J84dsA86Skmbb5q0OjkG+-BZShiv-A@mail.gmail.com>
- <20180524162157.GA26662@kroah.com>
-From: Nicolas Boichat <drinkcat@chromium.org>
-Date: Fri, 25 May 2018 06:05:16 +0800
-Message-ID: <CANMq1KBmE9i=Th46q06+3bY34LuLwd=U-otTxj5D9M0H2Kcaqw@mail.gmail.com>
-Subject: Re: [PATCH] usb: hub: Per-port setting to use old enumeration scheme
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Eugene Korenevsky <ekorenevsky@gmail.com>,
-        Peter Chen <peter.chen@nxp.com>, Daniel Drake <drake@endlessm.com>,
-        Joe Perches <joe@perches.com>, Johan Hovold <johan@kernel.org>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 12:21 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Thu, May 24, 2018 at 07:42:00AM +0800, Nicolas Boichat wrote:
->> On Thu, May 24, 2018 at 12:39 AM, Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->> > On Wed, May 23, 2018 at 10:03:55AM -0400, Alan Stern wrote:
->> >> On Wed, 23 May 2018, Nicolas Boichat wrote:
->> >>
->> >> > The "old" enumeration scheme is considerably faster (it takes
->> >> > ~294ms instead of ~439ms to get the descriptor).
->> >> >
->> >> > It is currently only possible to use the old scheme globally
->> >> > (/sys/module/usbcore/parameters/old_scheme_first), which is not
->> >> > desirable as the new scheme was introduced to increase compatibility
->> >> > with more devices.
->> >> >
->> >> > However, in our case, we care about time-to-active for a specific
->> >> > USB device (which we make the firmware for), on a specific port
->> >> > (that is pogo-pin based: not a standard USB port). This new
->> >> > sysfs option makes it possible to use the old scheme on a single
->> >> > port only.
->> >> >
->> >> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
->> >> > ---
->> >> >
->> >> > There are other "quirks" that we could add to reduce further
->> >> > enumeration time (e.g. reduce USB debounce time, reduce TRSTRCY
->> >> > to 10ms instead of 50ms as used currently), but the logic is quite
->> >> > similar, so it'd be good to have this reviewed first.
->> >>
->> >> I'm not opposed to the idea in principle, although I don't like your
->> >> implementation because it breaks the original old_scheme_first
->> >> parameter.
->>
->> I don't think it breaks the original parameter? I mean,
->> /sys/module/usbcore/parameters/old_scheme_first is still a global
->> default, while bit 0 of /sys/bus/usb/devices/x/y/z/quirks becomes a
->> port-specific override.
->>
->> >> Let's see what some other people think.
->> >>
->> >> Yours is a rather special case, because you know exactly what device
->> >> will be attached to a specific port.  Still, I can see that sort of
->> >> thing happening in constrained and special-purpose settings.
->> >>
->> >> How do you arrange to set the new quirk before the device is
->> >> discovered?
->> >
->> > Yeah, this last question is what I had when looking at this.  Or does it
->> > not matter at first boot and only matters for wake-up?
->>
->> It does not matter on boot, we have plenty of time to enumerate the
->> device. We use USB (auto-)suspend and remote wake, so no
->> re-enumeration there either. It only matters on unplug/replug where
->> the device needs to be re-enumerated.
->
-> How does this device get unplugged/replugged if it is connected directly
-> to the device?
+On 05/24/18 13:26, Nick Desaulniers wrote:
+> 
+> Considering the bigger picture is why we have this thread going.  You have
+> much more context about the kernel than I or the llvm maintainers do.  We
+> can't consider the bigger picture until we ask.
+> 
 
-It is external. Essentially, this is a tablet with a detachable
-keyboard/touchpad. The interface between tablet and base is USB, over
-pogo pins. The port is non-standard (pogo, not normal USB), and we
-fully control the firmware on the base side as well, which allows us
-to take shortcuts like this: we know exactly what device will be
-connected on that port.
+And this is correct. However, *every* LLVM request we get seem to be of
+the form "if you apply this patch it will patch over one particular
+instance of a problem with the kernel-LLVM."
 
->> Somewhere in an init script, we would do this (we know in advance that
->> usb1 port2 is the bus/port where we have our pogo-pin USB interface,
->> so we can hard-code the path):
->> echo 1 > /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port2/quirks
->>
->> We could try to add ACPI support (just like connect_type), but we
->> don't strictly need it for our application.
->
-> Isn't there an "internal" ACPI flag for USB ports, or is that
-> what connect_type is?  Why wouldn't that work here instead?
+There are two problems with that:
 
-What we may need here is something like "external but non-standard, so
-we can ignore compatibility constraints when enumerating"...
+1. It focuses narrowly on an issue, which might (and more than a handful
+   of times have) mask much more fundamental, serious bugs, in both the
+   kernel and LLVM.
 
-Thanks,
+2. It makes it sound like an LLVM problem that wants to be hacked in the
+   kernel. More than a handful of times that is exactly what they have
+   been.
+
+Look how many fundamental issues we have uncovered from this simple
+issue, which would have gotten completely lost had we just applied this
+patch.
+
+>> Issue 1: Fundamentally,
+> 
+> Fundamentally, the Linux kernel should not rely on GCC's heuristics for
+> adding or not adding a stack protector to functions with custom calling
+> conventions that are not marked in any way to let the compiler know.
+
+This is true, although it is actually NOT the fundamental issue (see
+below) but you also deleted the exact LLVM problem that I pointed out:
+
+COMPILER AR: "=rm" should NEVER generate worse code than "=r". That is
+unequivocally a compiler bug.
+
+The other problem here is that omitting the stack canary is really not
+the right thing to do, either. The right thing to do is to add a
+mechanism for the compiler to know to reserve some number of stack
+slots. Ideally this should work even if a function includes an inline
+function or macro that contains the actual inline assembly.
+
+COMPILER AR: Add a mechanism for the compiler to know that inline
+assembly needs a certain amount of slack stack space. In the ideal
+universe, this should ALSO mean the compiler offsets all "m" references
+that contain references to the stack pointer.
+
+KERNEL AR: Add those annotations to all cases of inline assembly that
+modifies the stack pointer.
+
+>> You are claiming it doesn't buy us anything, but you are only looking at
+> the paravirt case which is kind of "special" (in the short bus kind of way),
+> 
+> That's fair.  Is another possible solution to have paravirt maybe not use
+> native_save_fl() then, but its own non-static-inline-without-m-constraint
+> implementation?
+
+KERNEL AR: change native_save_fl() to an extern inline with an assembly
+out-of-line implementation, to satisfy the paravirt requirement that no
+GPRs other than %rax are clobbered.
+
+>> Issue 3: Let's face it, reading and writing the flags should be builtins,
+> exactly because it has to do stack operations, which really means the
+> compiler should be involved.
+> 
+> I'm happy to propose that as a feature request to llvm+gcc.
+
+Being discussed elsewhere, of course.
+
+	-hpa
