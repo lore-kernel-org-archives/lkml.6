@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155408-2-11847205247931119166
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527155376-2-17019623606199407434
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155407; b=i1xhlQ1g067QBRCkOYSvpvh++3BniOrsh0il/rBSnHWk2KiaXa
-    l9K6DxrlxgWSEnYM2RVJ+xcOPcmeLFe5azWP8ExMCvHE+WZ0J1yPvCpukBjH6pQQ
-    k16zWIBlLW12TE6R7rO3DeVaDKYAL8USta2ZNt1FuDjkDmFJxbr0wK9BNp5iarmU
-    uA7DtTRwSmnqyOHDDysQoYTK8+CfIkMxvlmVgDvsHYy9ay1zR9SjboQgiiaV6ame
-    Y/hrAzwqPu8lpGduu4ZLxrIDdqo0tYfNez3kmQVqs+OPy+UfZ8zLVS7sdmL7sV3o
-    H/tVeausRZAl9b4bzs5aX4iGfBcb0ZHVka8Q==
+    1527155375; b=l/O1w/awlNvDbtXCd046MGxVNm7hDFc0KUALB8zHbFfMfDg3qB
+    HFgkazGyfkYh8VApbXKBsCbqvKMnYe82pCfnhgxTbUk57Hq4tdS0i1/hb0ZBsN/I
+    JRalesD9mjdz7KxRG5zTqCa5mkXpeSegeETJmvzBBBAOzuNd7Fgg4QQ2vp/3sA14
+    vdFTvhZcmfcIl5JZtDTcR4Egvyg37ca4/EolKyxbAo3W34xZJt1QvxAJLPDfbW8w
+    rRQ++NZ43khRA5vM3+7CEicO5qG3wK0j3KGS0GMroFPzJbXvvyNYEkvS+lwMIPy3
+    nOdBDsbnqs4hujXL7JGFxrYTZZzkkzDELAXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155407; bh=AhFR2XV1t03viSOJq6TyeAQAakxIvf
-    /2FrO2U5VJCPs=; b=SNImz2+Fz4oL6keJTu75fjKWp4wPy2MWGQgn+BkfhHYfLl
-    ax7yxVU5moqKLEZpYWZedARCh33VJw8B2USkFdPqRQZ+9DN+f/AtQWx5iKKVrcXH
-    Abg1nK4jg5STh4sieZVRQUgO8QTvHowmS5n1ebJRYjixX9PxuuYt7NYoW9ZztUk7
-    kZoi2C/C7RDM5ZrJMynnjUE5DKZfHh4TfLENGwVlXmAKIbKCfHqVNpLOn6tZf6/p
-    3Bqp0soVVLpVxYaWdbc2MhPs9E0h1CLXh8X98X75iCwSucZrLZUuAaoBTwnrt+mp
-    ep396AVy5R28PXzOn+FTg4OhPE0HUsp1tE15sg4Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155375; bh=YAAzd/9adddi/jxpflj8fDwwy6Pahh
+    VswdYWxEZgPHY=; b=T0WraaSqR3dHw6D1LFzXWJBtfstvnGKKaTZ0Nq2DNdkot5
+    UjHSnLGAVCnmgDCdRXsLJ8BFI5QuijgYulvm+TzflFpIb63hn729JsUnwRETRzxB
+    X02sIaMt3xiL9DVujjtuckG22iVCa5D6BBiDs6/QOj8we9T6fgoXSPJiMYaKavS9
+    f+Lg+VCzErGDo1DVW/XkOSM127ob3W4Dk4Irycl9x4pSKU78QXaSpKDP8I0CjyFj
+    Odyypq4zDD/EF/sO8DL73ayT++MPR4d3CwiV1Mu9XqCGjZzkKOwKenG9Mq9umFlW
+    SOhgVF5Y/AHJa294+mlDWnJ5Ig3ZBiCffUZ8N6zg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=AqUfB7FF x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=mYZWFqnt x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=AqUfB7FF x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=mYZWFqnt x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF2zJKJyucW2/Yt9wS56TZgn3TZy+FW6RdZ5Tu1sZ8i7wdY0zNKUcngeAfkgmnM0bAB42EYzibfuIj8pHj76W0CShi/mysXXGqIFk1Z/wWboIq69Xurr
-    TqfU1LkvvIVMSSkRZcDZgL5Xy6mtbLmAJ37oOlHwC0O/GZopfvFZYPGy/ZoCkTXlYcDJujI/jRWbj5GR41knkbKmxCcCLkn1kGd8e5vLkwFbO9JK+uOiimKa
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJCh/VDf5DZp1hQoftP2RNM4BoaUdKeKReDE0WfGJ9P2Gip8IOC7jT3wSkoeD8kHJFjl1j9M+PPQjkMVoB4T1fqAwrfb6UpE37q07RB3qi55uiAxq+JS
+    FaDVx6mUrEYcXT9dn/Gkn7VHtJBqFEUPPP2Y4VrT74BM1CzhA/dmWcJsFvMsHZEwSDsTGN6DD5L+qhMgW0/xaY/GSMQc6Hcy0V5HhAGf6nha8gCmCU/s+acW
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=qKmdj21Zsmxc0eqd690A:9
-    a=QEXdDO2ut3YA:10 a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=uBuKx8GwAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=XjZB3Db1R4rdm5aNK6sA:9 a=QEXdDO2ut3YA:10 a=wZgZ3yaTFkxMEWn-yT5t:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967480AbeEXJuE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:50:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40248 "EHLO mail.kernel.org"
+        id S967350AbeEXJta (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:49:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967432AbeEXJuC (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:50:02 -0400
+        id S967384AbeEXJtZ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:49:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Dave Carroll <david.carroll@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 73/96] media: cx23885: Set subdev host data to clk_freq pointer
-Date: Thu, 24 May 2018 11:38:56 +0200
-Message-Id: <20180524093609.575549271@linuxfoundation.org>
+Subject: [PATCH 4.9 58/96] scsi: aacraid: fix shutdown crash when init fails
+Date: Thu, 24 May 2018 11:38:41 +0200
+Message-Id: <20180524093608.811627745@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -105,34 +107,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Meelis Roos <mroos@linux.ee>
 
-[ Upstream commit 5ceade1d97fc6687e050c44c257382c192f56276 ]
+[ Upstream commit 00c20cdc79259c6c5bf978b21af96c2d3edb646d ]
 
-Currently clk_freq is ignored entirely, because the cx235840 driver
-configures the xtal at the chip defaults. This is an issue if a
-board is produced with a non-default frequency crystal. If clk_freq
-is not zero the cx25840 will attempt to use the setting provided,
-or fall back to defaults otherwise.
+When aacraid init fails with "AAC0: adapter self-test failed.", shutdown
+leads to UBSAN warning and then oops:
 
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+[154316.118423] ================================================================================
+[154316.118508] UBSAN: Undefined behaviour in drivers/scsi/scsi_lib.c:2328:27
+[154316.118566] member access within null pointer of type 'struct Scsi_Host'
+[154316.118631] CPU: 2 PID: 14530 Comm: reboot Tainted: G        W        4.15.0-dirty #89
+[154316.118701] Hardware name: Hewlett Packard HP NetServer/HP System Board, BIOS 4.06.46 PW 06/25/2003
+[154316.118774] Call Trace:
+[154316.118848]  dump_stack+0x48/0x65
+[154316.118916]  ubsan_epilogue+0xe/0x40
+[154316.118976]  __ubsan_handle_type_mismatch+0xfb/0x180
+[154316.119043]  scsi_block_requests+0x20/0x30
+[154316.119135]  aac_shutdown+0x18/0x40 [aacraid]
+[154316.119196]  pci_device_shutdown+0x33/0x50
+[154316.119269]  device_shutdown+0x18a/0x390
+[...]
+[154316.123435] BUG: unable to handle kernel NULL pointer dereference at 000000f4
+[154316.123515] IP: scsi_block_requests+0xa/0x30
+
+This is because aac_shutdown() does
+
+        struct Scsi_Host *shost = pci_get_drvdata(dev);
+        scsi_block_requests(shost);
+
+and that assumes shost has been assigned with pci_set_drvdata().
+
+However, pci_set_drvdata(pdev, shost) is done in aac_probe_one() far
+after bailing out with error from calling the init function
+((*aac_drivers[index].init)(aac)), and when the init function fails, no
+error is returned from aac_probe_one() so PCI layer assumes there is
+driver attached, and tries to shut it down later.
+
+Fix it by returning error from aac_probe_one() when card-specific init
+function fails.
+
+This fixes reboot on my HP NetRAID-4M with dead battery.
+
+Signed-off-by: Meelis Roos <mroos@linux.ee>
+Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/cx23885/cx23885-cards.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/aacraid/linit.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/media/pci/cx23885/cx23885-cards.c
-+++ b/drivers/media/pci/cx23885/cx23885-cards.c
-@@ -2282,6 +2282,10 @@ void cx23885_card_setup(struct cx23885_d
- 				&dev->i2c_bus[2].i2c_adap,
- 				"cx25840", 0x88 >> 1, NULL);
- 		if (dev->sd_cx25840) {
-+			/* set host data for clk_freq configuration */
-+			v4l2_set_subdev_hostdata(dev->sd_cx25840,
-+						&dev->clk_freq);
-+
- 			dev->sd_cx25840->grp_id = CX23885_HW_AV_CORE;
- 			v4l2_subdev_call(dev->sd_cx25840, core, load_fw);
- 		}
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -1203,8 +1203,10 @@ static int aac_probe_one(struct pci_dev
+ 	 *	Map in the registers from the adapter.
+ 	 */
+ 	aac->base_size = AAC_MIN_FOOTPRINT_SIZE;
+-	if ((*aac_drivers[index].init)(aac))
++	if ((*aac_drivers[index].init)(aac)) {
++		error = -ENODEV;
+ 		goto out_unmap;
++	}
+ 
+ 	if (aac->sync_mode) {
+ 		if (aac_sync_mode)
