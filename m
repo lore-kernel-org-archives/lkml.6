@@ -1,159 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033153AbeEXLXP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:23:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41598 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967840AbeEXLXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:23:10 -0400
-Date: Thu, 24 May 2018 12:23:06 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
- between EL0 and EL1
-Message-ID: <20180524112305.ld3jghzmb6a35h73@lakrids.cambridge.arm.com>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-3-marc.zyngier@arm.com>
- <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
+        id S967989AbeEXLYr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:24:47 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:57671 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967779AbeEXLY2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:24:28 -0400
+Subject: Re: [PATCH v6 5/6] mfd: cros_ec_dev: Add CEC sub-device registration
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+References: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
+ <1527155841-28494-6-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5fa2ded2-3072-6dba-dd7f-1dc39fdc4d23@xs4all.nl>
+Date: Thu, 24 May 2018 13:24:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524110058.mrkwc3rx5l3v6wad@lakrids.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1527155841-28494-6-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfG7O1qtiOtosQTIq224GLZB9cesuFpvbrjjIkPgcgYgnDNFZW1OJqZqWh+tO0OqBYG04Gz77WXZD0bgQZBiTNzaZzABcCqFXiiI5vXqi7z6N5FlN3Pxh
+ cRkbOtuBHFVIGbWhztXI4pWBLNPfdMUzyJ52UEL9bvOhVBIadrxz45dIpfFVbO5s4LyAvpU1r9NGCO/ZhoUfgsy4oKaWuORYDhImTSXzhUPnCDCBs/64j8h3
+ r0s/7gcNADfrzlVzyAsFWCxXzfAomYqFldOJ2iu6eapq27oM+iIawv060Kdt3ycnl53/5ZueWNNTOTWHCwnfxk3G5K7a1FbpethzOlGyf/o8TvwCv8K2yMag
+ 1WYN5uglo4gQEwn0ioMU7hPW52OMwtLLv2W2oOse5Ytd7meNByI6ZwILOSx0LPmo1QUfsI0tP6HF42vpyou+2Vo5v6zuNBJ4CHyl+zsWQHwqCZOAJxVUDKFs
+ l4ESx0ElhDcrojxvnBjBubGPg7zVIbEKXTfN8OdB3xk0sXocY9+PWHhNY5mN7fK2gRuNXmXsCLPywLdr6w6YJIJCl4BmIhTF4LdJNdPD+19KpEos8zvtxcgs
+ DUwMQvMYTXufv6CzTdG/uDiQDBwHmn/JsmBNXqOA6uQKwzBbQbGzIaVO+iGgLcuuZJdywzLt2uRhtUMfkA0MYpDfG6xEV3HBS2SHs2aprDdokniMWiJJDlal
+ mqrHhOdB9+vQDeh9j40t7CM2HjzIdyeZ1fhSbIuQnIrl8aNsXmw5AvRt9pzuw5TbgJ7XqivexT0w9euDN/v/zBcAVatYPSihbvoe5bt73l12tej/XZo6SdEE
+ 0BtjnU8yDfLAJGklPSg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 12:00:58PM +0100, Mark Rutland wrote:
-> On Tue, May 22, 2018 at 04:06:36PM +0100, Marc Zyngier wrote:
-> > In order for the kernel to protect itself, let's call the SSBD mitigation
-> > implemented by the higher exception level (either hypervisor or firmware)
-> > on each transition between userspace and kernel.
-> > 
-> > We must take the PSCI conduit into account in order to target the
-> > right exception level, hence the introduction of a runtime patching
-> > callback.
-> > 
-> > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> > ---
-> >  arch/arm64/kernel/cpu_errata.c | 18 ++++++++++++++++++
-> >  arch/arm64/kernel/entry.S      | 22 ++++++++++++++++++++++
-> >  include/linux/arm-smccc.h      |  5 +++++
-> >  3 files changed, 45 insertions(+)
-> > 
-> > diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> > index a900befadfe8..46b3aafb631a 100644
-> > --- a/arch/arm64/kernel/cpu_errata.c
-> > +++ b/arch/arm64/kernel/cpu_errata.c
-> > @@ -232,6 +232,24 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
-> >  }
-> >  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
-> >  
-> > +#ifdef CONFIG_ARM64_SSBD
-> > +void __init arm64_update_smccc_conduit(struct alt_instr *alt,
-> > +				       __le32 *origptr, __le32 *updptr,
-> > +				       int nr_inst)
-> > +{
-> > +	u32 insn;
-> > +
-> > +	BUG_ON(nr_inst != 1);
-> > +
-> > +	if (psci_ops.conduit == PSCI_CONDUIT_HVC)
-> > +		insn = aarch64_insn_get_hvc_value();
-> > +	else
-> > +		insn = aarch64_insn_get_smc_value();
+On 24/05/18 11:57, Neil Armstrong wrote:
+> The EC can expose a CEC bus, thus add the cros-ec-cec MFD sub-device
+> when the CEC feature bit is present.
 > 
-> Shouldn't this also handle the case where there is no conduit?
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Due to the config symbol not being defined yet, and various other fixups
-in later patches, this is actually benign.
+For whatever it is worth:
 
-However, if you make this:
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-	switch (psci_ops.conduit) {
-	case PSCI_CONDUIT_NONE:
-		return;
-	case PSCI_CONDUIT_HVC:
-		insn = aarch64_insn_get_hvc_value();
-		break;
-	case PSCI_CONDUIT_SMC:
-		insn = aarch64_insn_get_smc_value();
-		break;
-	}
+Regards,
 
-... then we won't even bother patching the nop in the default case
-regardless, which is nicer, IMO.
+	Hans
 
-With that:
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
-
+> ---
+>  drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> See below comment in apply_ssbd for rationale.
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index 1d6dc5c..272969e 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -383,6 +383,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+>  	kfree(msg);
+>  }
+>  
+> +static const struct mfd_cell cros_ec_cec_cells[] = {
+> +	{ .name = "cros-ec-cec" }
+> +};
+> +
+>  static const struct mfd_cell cros_ec_rtc_cells[] = {
+>  	{ .name = "cros-ec-rtc" }
+>  };
+> @@ -426,6 +430,18 @@ static int ec_device_probe(struct platform_device *pdev)
+>  	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+>  		cros_ec_sensors_register(ec);
+>  
+> +	/* Check whether this EC instance has CEC host command support */
+> +	if (cros_ec_check_features(ec, EC_FEATURE_CEC)) {
+> +		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
+> +					 cros_ec_cec_cells,
+> +					 ARRAY_SIZE(cros_ec_cec_cells),
+> +					 NULL, 0, NULL);
+> +		if (retval)
+> +			dev_err(ec->dev,
+> +				"failed to add cros-ec-cec device: %d\n",
+> +				retval);
+> +	}
+> +
+>  	/* Check whether this EC instance has RTC host command support */
+>  	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
+>  		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
 > 
-> > +
-> > +	*updptr = cpu_to_le32(insn);
-> > +}
-> > +#endif	/* CONFIG_ARM64_SSBD */
-> > +
-> >  #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
-> >  	.matches = is_affected_midr_range,			\
-> >  	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
-> > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> > index ec2ee720e33e..f33e6aed3037 100644
-> > --- a/arch/arm64/kernel/entry.S
-> > +++ b/arch/arm64/kernel/entry.S
-> > @@ -18,6 +18,7 @@
-> >   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> >   */
-> >  
-> > +#include <linux/arm-smccc.h>
-> >  #include <linux/init.h>
-> >  #include <linux/linkage.h>
-> >  
-> > @@ -137,6 +138,18 @@ alternative_else_nop_endif
-> >  	add	\dst, \dst, #(\sym - .entry.tramp.text)
-> >  	.endm
-> >  
-> > +	// This macro corrupts x0-x3. It is the caller's duty
-> > +	// to save/restore them if required.
-> > +	.macro	apply_ssbd, state
-> > +#ifdef CONFIG_ARM64_SSBD
-> > +	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
-> > +	mov	w1, #\state
-> > +alternative_cb	arm64_update_smccc_conduit
-> > +	nop					// Patched to SMC/HVC #0
-> > +alternative_cb_end
-> > +#endif
-> > +	.endm
-> 
-> If my system doesn't have SMCCC1.1, or the FW doesn't have an
-> implementation of ARCH_WORKAROUND_2, does this stay as a NOP?
-> 
-> It looks like this would be patched to an SMC, which would be fatal on
-> systems without EL3 FW.
-> 
-> > +
-> >  	.macro	kernel_entry, el, regsize = 64
-> >  	.if	\regsize == 32
-> >  	mov	w0, w0				// zero upper 32 bits of x0
-> > @@ -163,6 +176,13 @@ alternative_else_nop_endif
-> >  	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
-> >  	disable_step_tsk x19, x20		// exceptions when scheduling.
-> >  
-> > +	apply_ssbd 1
-> 
-> 
-> ... and thus kernel_entry would be fatal.
-> 
-> Thanks,
-> Mark.
