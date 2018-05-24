@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162119-2-21162153033230037
+X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162117-5-647072539833488212
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162118; b=VQ8E+ipuPZ0ZolXJYcGmdhq2A8zR9J8eAMOeQDYeIEINdjG8Ml
-    +0WbvEVlBBAEwjKwhl12vO57YQjs6UpItpEJEkX+tvS1MLlIj724p3XGqZ+hMQMD
-    QZGMnIgRQPrSrWm9gg+8Pth0WurbxnNNHbfveosaKLZoNvbqcrHVYArxy52cHzXe
-    xOk3w8KVNoGtQksTqvpdZhdq/FnAYiTv2kem5E38jOzWYqUcQkysOVUqmjlMhSYz
-    UhLDkxigYP6UwB/ZQXybSrdkT00ZvowriGt5MJNG9TF7kahZzzzcfYSPprLsvF+Z
-    y2UZMoYsIeAusRC1wp7qKiOi/TKoPIt79NNA==
+    1527162117; b=GhKVY95G+JA8Qws10eC1nJhsb8kbdtvxlZ0nT0FOFv9KvkbJmr
+    932jyJ4pMPPMABW/AGHoSykDM255iKN5jgWv07dX2knLaVeR8h+yQPtSowbYKpmP
+    ciAJsytG5ZUUKbx5Mm3lZwkiThc8JpXTPs+4ROiW78woret8dAXvIyPIlbP1OPFL
+    ELPoffiYfIkqz0kduGeZI4FbMF7kA14lRuOjmt5uqt7P5mRg/BE41wFSYKHg35M1
+    O2VYAoBgW05NkiG6g9txFdkOwLrywjffEpNZ05+C4TI/bp8Cjts5nQqUBPjeON2l
+    5xdEUZJgn+MLm9iBMJKmL3j+maUWIyvrhngQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162118; bh=wMYpC46QAK2q1pp+Hw2rRi0xB5dLSo
-    QOYij7dATAUNY=; b=I87cBXTGEX8F+xHUs8t704C5SLc7H2ZGzwg7twUSNjSJU1
-    O7/v57XGho5jx/XSUeAopgUP0tUWGXEoRSjFfRZ212AhpJlLlw8wnGX40yuDGDi1
-    aX8NTlt4ZYMMNmE8qhV5lKXABFZDVwVHfqu88KzVTFfMvYTo1IsvrRbO/I2nYXKC
-    dJ5Kn35BmplVSU11HRZxeYHlWFlUJcVgnjm4GcHC/CdjccPUQHtnayGdswKtb2h6
-    Iog3CX/LyDHBt8Z8/U/qKuO5JZ4co7VolzWS+wk+UBk07IDbDDrZxnUMvdzxCc4L
-    ZY0jh3XwjjH4XWXbBuXW0noToVr2V79LyQdNXpRg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162117; bh=W/zk9wMpztVxasYmtjLcF7cuBArHPE
+    zN1cmhvgHckNk=; b=SS9fNcZwCPo4A7RpIB6q5fNnDd8LYpj1SwDI89r0zjr+el
+    Slpj6l/HxYIRSnMeGs2ljAZB/oJ9MKC6bFZXQPWlGIeNnu8qMLCJO0AyrX5zOhjT
+    k4ad9Z1nwuiZmxCblGIZvWnXWQG3hOFNkCfrhz8M7iudGaeqWL/EYs7unDwP4DhN
+    r0f1ixR4LX/wNmMvjTOjPT8H356ZCpcUaZpzoA32rfuQw0KW2QO614XwC9kTem5S
+    zRefJWhcOB1Qs2PXREDIfphnxduj7yCxkDerf5GjzmrahXMmWcYe+hFAVhV1OdxG
+    b3EHUK+edRuZcIKwy8dqvdu72O499z1U7Gkzv2Yg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=HSF3C1sX x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=teqVMbQ8 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +46,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=HSF3C1sX x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=teqVMbQ8 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +65,33 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfATEYIQULTePZOfT2aGLEo6zf4NMD8etgdsXB0rftHxAPvBKW3OJZiTzQIZUmM2Dp+s2NF5G0NhzTFU2GlTYfYBezi3or3PTQuTWwbTf2WG8Fg/YC57u
-    XBr6hTFy0XD3npKhF79+0kvDPfbacoxVvOWJKicDLpAzOiC1e1/SoOxVL+B7ISe7jsH211WIO0FU0jhEh3oMGATMUOaUBEDUdEnsnumYTtcWVIReiAfjGyWN
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOVoEgLS6hy8UJjzYH6mgzydlAGAfFORqMNRJk7IZtiY3meKPEwWLoAtf6wbkmuwyEAtuCI60/86NMYH9cyVGdoE9VBVum+l2DEHbfCOjEUfsCoz1tq8
+    ZQchtalhRDZlCsS7gxmUeqb+NeRWWTOtecvJGvr8mv5iJOdhkWHnZHqtvWL6RIFgORoS7I1k7JVkEpxUVfSI9dUexrnC1F7GjjxsYAqRnyBzLHJVo3B7aQtr
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=cm27Pg_UAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=ZKxVQLLyKNuEoxJIKRcA:9 a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22
+    a=LDBv8-xUAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=0kv7T4GisTnoiZl4V4AA:9 a=QEXdDO2ut3YA:10 a=DZeXCJrVpAJBw65Qk4Ds:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966723AbeEXJsk (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:48:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34076 "EHLO mail.kernel.org"
+        id S967295AbeEXLll (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:41:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966976AbeEXJsi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:38 -0400
+        id S967252AbeEXJsl (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 25/96] usb: dwc3: Undo PHY init if soft reset fails
-Date: Thu, 24 May 2018 11:38:08 +0200
-Message-Id: <20180524093607.024831157@linuxfoundation.org>
+Subject: [PATCH 4.9 43/96] usb: gadget: udc: change comparison to bitshift when dealing with a mask
+Date: Thu, 24 May 2018 11:38:26 +0200
+Message-Id: <20180524093607.989213851@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -106,32 +109,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[ Upstream commit 00b42170c86f90ac9dea83a7dfcd3f0c38098fe2 ]
+[ Upstream commit ac87e560f7c0f91b62012e9a159c0681a373b922 ]
 
-In this function, we init the USB2 and USB3 PHYs, but if soft reset
-times out, we don't unwind this.
+Due to a typo, the mask was destroyed by a comparison instead of a bit
+shift.
 
-Noticed by inspection.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/gadget/udc/goku_udc.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -166,6 +166,9 @@ static int dwc3_core_soft_reset(struct d
- 		udelay(1);
- 	} while (--retries);
- 
-+	phy_exit(dwc->usb3_generic_phy);
-+	phy_exit(dwc->usb2_generic_phy);
-+
- 	return -ETIMEDOUT;
- }
- 
+--- a/drivers/usb/gadget/udc/goku_udc.h
++++ b/drivers/usb/gadget/udc/goku_udc.h
+@@ -28,7 +28,7 @@ struct goku_udc_regs {
+ #	define INT_EP1DATASET		0x00040
+ #	define INT_EP2DATASET		0x00080
+ #	define INT_EP3DATASET		0x00100
+-#define INT_EPnNAK(n)		(0x00100 < (n))		/* 0 < n < 4 */
++#define INT_EPnNAK(n)		(0x00100 << (n))	/* 0 < n < 4 */
+ #	define INT_EP1NAK		0x00200
+ #	define INT_EP2NAK		0x00400
+ #	define INT_EP3NAK		0x00800
