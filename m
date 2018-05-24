@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031503AbeEXKIt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:08:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39792 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031216AbeEXKIo (ORCPT
+        id S1031815AbeEXKJr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:09:47 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33717 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031485AbeEXKJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:08:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1E0160213
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgens?= =?utf-8?Q?en?=
-        <toke@toke.dk>,
-        linux-wireless <linux-wireless@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mac80211-next tree
-References: <20180509145624.643d2e56@canb.auug.org.au>
-        <87po221j08.fsf@purkki.adurom.net>
-        <CAK8P3a1tdhO6FX76vMXdpd6FxN87RjhLeKW4ws8GgOHqAwr4qA@mail.gmail.com>
-        <87muwpd76a.fsf@kamboji.qca.qualcomm.com>
-        <CAK8P3a3MMjg5oDVM_OAZ_nKeJ4zKK5PrDE+6UgQQfNxwEhRbMA@mail.gmail.com>
-Date: Thu, 24 May 2018 13:08:38 +0300
-In-Reply-To: <CAK8P3a3MMjg5oDVM_OAZ_nKeJ4zKK5PrDE+6UgQQfNxwEhRbMA@mail.gmail.com>
-        (Arnd Bergmann's message of "Thu, 24 May 2018 10:51:17 +0200")
-Message-ID: <87efi1cqmx.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 24 May 2018 06:09:41 -0400
+X-Google-Smtp-Source: AB8JxZojCLvZcVzK0Ct/BJ0WQ9eny3/ESIdXPiHURKdvSJVzvMclLUQoH9pjfL7Hu4IgUHtZ+qu/xS4wzPOZr3KLZNc=
 MIME-Version: 1.0
-Content-Type: text/plain
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 May 2018 12:09:40 +0200
+X-Google-Sender-Auth: uVFmtYpRm6ry7hkpYITraHKMJmk
+Message-ID: <CAJZ5v0jEH2=cAh9EGZmOq-XvdKgZB9wUruFdKDKLYzotm+7KTg@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v4.17-rc7
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+Hi Linus,
 
-> On Thu, May 24, 2018 at 6:11 AM, Kalle Valo <kvalo@codeaurora.org> wrote:
->> Arnd Bergmann <arnd@arndb.de> writes:
->>> I also bisected this new warning to the same commit above:
->>>
->>> net/batman-adv/bat_v_elp.c: In function 'batadv_v_elp_get_throughput':
->>> net/batman-adv/bat_v_elp.c:154:1: warning: the frame size of 1736
->>> bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>
->> This should fix it:
->>
->> 8689c051a201 cfg80211: dynamically allocate per-tid stats for station info
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git/commit/?id=8689c051a20195b228e19acb155c7d6e48a86753
->
-> Thanks for the pointer, I'll just wait for that to make it into
-> linux-next (which hasn't been released in a few days now) then.
+Please pull from the tag
 
-Yeah, Stephen announced that he won't be making linux-next builds this
-week. I think he will be back next week.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.17-rc7
 
--- 
-Kalle Valo
+with top-most commit c62ec4610c40bcc44f2d3d5ed1c312737279e2f3
+
+ PM / core: Fix direct_complete handling for devices with no callbacks
+
+on top of commit 771c577c23bac90597c685971d7297ea00f99d11
+
+ Linux 4.17-rc6
+
+to receive a power management fix for 4.17-rc7.
+
+This fixes a regression from the 4.15 cycle that caused the system
+suspend and resume overhead to increase on many systems and triggered
+more serious problems on some of them (Rafael Wysocki).
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      PM / core: Fix direct_complete handling for devices with no callbacks
+
+---------------
+
+ drivers/base/power/main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
