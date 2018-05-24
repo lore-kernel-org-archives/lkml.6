@@ -1,101 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527156229-2-10606172468512945401
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527156228; b=GZ/Rie9Vv7Ktby4Q49Bk6WpNnOC3YPWpnJ7RRYSx1o/Gg3OC+6
-    I/Lra2d7Bip5WFIVMGPLnYqj1VHq90Y2wy6LmTm4/Ufg4RxxAnybymDHQOKLMht4
-    6+7V2HU42OxVx2cbLrer2Phr3Z4E76y+9ioXGzAPR6gXbuBs7ZUJfA0Me5jNUv+x
-    hc+GpnGVu/aHkrxULy/e3CH5vwuI6iZxouWWQzaNsvVw6zEVrdfDBDnglmm3X/YP
-    UPISiUU885pmCCWWHOnoKQx4Km3HUZOvkcddrDekYkeWrxYsjpED+fC6vMX8vzIX
-    JlWr93oU3hPlmqzTaflWZHlLqJ5goipxvzNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527156228; bh=ROu3naTUp3eIzvzvaNIWhVASnQv7ev
-    w4VvbZgGGWk+s=; b=fuL4cFcwK8HriB6Jy3GFSxGvMBIM0YfD1hBRY2UeowJlRo
-    r37AiNVE5zV3hbodDYArabEYb+b0Fyus84icJTehVDnjJKMYMVBThCBM6CDd9dSl
-    W0RgD6k3/ZLwrtfChgxOH7heInp2VCViwGr/LFTquRazg0NyLarzaqU5cdh2REtH
-    lnHVO4saY1SlT7dM7knQjDSxNFDlTYDSdaDAIADldKFJdfSXFta3QKfA30hekZ+I
-    Q1gJBFZ3LEYPRoB93Rzqnf5OVDDzri2sLfxpbV7EPyx9GGg8IopQ4t3TNZu3pYf/
-    FOs94szoB1hqIG/2BgS12kTtev1E2Y256jzkqQWA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=JjMWQ2qk x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=JjMWQ2qk x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDdiAHJqQsLRVOrndvFhInSyLGdcCyE4lF8JCKwkBewGEqSua78FabmF4tdJIe89ZZq3IqjfhcUQghUsDfOubx/7vPhWckvR9XJYO3OKELCGpwny+S1/
-    4YlyZ+tCZRzh1M9tIpZNqXgVHjMjMTg13QO2WLhJd3iYbMPVHLA8tKX4IUz34/3oyrnZjikFHmKYWst8G8zwF9g34uvaXBkom/H0JQ6k/u+xmGJBCECKyC1H
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=gu6fZOg2AAAA:8 a=MvuuwTCpAAAA:8 a=3Up_VBsHAAAA:8
-    a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=CgnBGgMzA0uDPexRqTwA:9 a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10
-    a=NWVoK91CQyQA:10 a=2RSlZUUhi9gRBrsHwhhZ:22 a=dVHiktpip_riXrfdqayU:22
-    a=p-kn8v_atdPrL5O0KNWa:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030931AbeEXKDn (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:03:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030922AbeEXKDk (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:03:40 -0400
+Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZp0K5sFwzGFWJ6ye60tjQbGcvMbIv4g6CWo5qbqCIrQqi9mLbp/17ICNZM0ss/H6jyfCYe7
+ARC-Seal: i=1; a=rsa-sha256; t=1527156226; cv=none;
+        d=google.com; s=arc-20160816;
+        b=OGdEmynXXKXkSjlkxjUQ3qqHSRRb5nnlv75Uu/6Nh5pn98CqydbiyQJ+5tOH7GruBp
+         5eAJy4hdzXJiNCatotz2qxRsmA+mrsbJPgMgRNOL10VUEhfsHVwfLb2tfDRwhR6cUM80
+         OsNo98lYEAB2AD7/77H/4SOMyAWe4xa3aVG+j9H+nTjK6zJjTF06NXYrfPL68XE/HnMF
+         8jhQAs8RCsheGnRa9HkrASOUImgcxRUFlJETNp4w1n7Wqg+djTiMfdOZMwcH5u39BwIp
+         aEk/gn7/TeFub3ednDJPS3i/TJsuFw6yo0mcPO28MyIpQBAQl0/kG+ACOXrVeYGwwsAY
+         8Q+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=Qk+MBQhGMMQUCXIoUmloiNhT6VGn9Fd8xaaghzJ/si4=;
+        b=fzd0+PkS52KWvJWFckc1MQ0GGBB7cAKsGGA3kfwKJ7RhlS6sEFWLIJVxBJ80pvh16E
+         yrnZ+8J6m6qh3AtH5vNGojin/U0SdR1Qz8R+sGH9sEzTVPK4V5D16ifXse/jNEsIfHaT
+         nH7z43Sg5+TxzpJ4Vx1jmGZtkDVpMegU4U1NUe4yISM1Iz1VznRPvDSC3Vxr7LdWTCbc
+         TliDmPa7DXhS+YQian5Bb7pCFIxDieWfClORFV+LIpbSgFx3CiC6guJoHibUDgO03CIk
+         yu2U+kKX4AhB2bXl/Tu7Af6alVJI+C3/9KmpeJC5eKnuovJ/kOq6xIJGebC0wLamS/jR
+         /uiw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=K9i6jVHW;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=K9i6jVHW;
+       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Cheung <anthony.cheung@hpe.com>,
-        Takahiro Yasui <takahiro.yasui@hitachivantara.com>,
-        Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        SCSI ML <linux-scsi@vger.kernel.org>,
-        Xose Vazquez Perez <xose.vazquez@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 108/161] scsi: devinfo: add HP DISK-SUBSYSTEM device, for HP XP arrays
-Date: Thu, 24 May 2018 11:38:53 +0200
-Message-Id: <20180524093031.355250272@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Douglas Gilbert <dgilbert@interlog.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 110/161] scsi: core: Make SCSI Status CONDITION MET equivalent to GOOD
+Date: Thu, 24 May 2018 11:38:55 +0200
+Message-Id: <20180524093031.545799659@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -103,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1601338983932544112?=
+X-GMAIL-MSGID: =?utf-8?q?1601339367399507645?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -113,41 +53,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xose Vazquez Perez <xose.vazquez@gmail.com>
+From: Douglas Gilbert <dgilbert@interlog.com>
 
-[ Upstream commit 5f96f42b76e00e2871033745ff029056cc725c76 ]
+[ Upstream commit 1875ede02ed5e176a18dccbca84abc28d5b3e141 ]
 
-"The DISK-SUBSYSTEM is a special model name returned when LUs
-are not installed. For example, when LU#0 is not installed in "OPEN-"
-models, LU#0 is detected as the DISK-SUBSYSTEM model":
-https://marc.info/?l=linux-scsi&m=125424006417825
+The SCSI PRE-FETCH (10 or 16) command is present both on hard disks
+and some SSDs. It is useful when the address of the next block(s) to
+be read is known but it is not following the LBA of the current READ
+(so read-ahead won't help). It returns two "good" SCSI Status values.
+If the requested blocks have fitted (or will most likely fit (when
+the IMMED bit is set)) into the disk's cache, it returns CONDITION
+MET. If it didn't (or will not) fit then it returns GOOD status.
 
-It's missing for HP XP rebranded arrays, "HP"/"OPEN-".
-Only the HITACHI one is present:
-13f7e5acc8b329080672c13f05f252ace5b79825
-627511e3e67553b04f6917c03e39b797df210e04
+The goal of this patch is to stop the SCSI subsystem treating the
+CONDITION MET SCSI status as an error. The current state makes the
+PRE-FETCH command effectively unusable via pass-throughs.
 
-Cc: Anthony Cheung <anthony.cheung@hpe.com>
-Cc: Takahiro Yasui <takahiro.yasui@hitachivantara.com>
-Cc: Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_devinfo.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/scsi_lib.c |   11 +++++++++++
+ include/scsi/scsi.h     |    2 ++
+ 2 files changed, 13 insertions(+)
 
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@ -189,6 +189,7 @@ static struct {
- 	{"HP", "C5713A", NULL, BLIST_NOREPORTLUN},
- 	{"HP", "DF400", "*", BLIST_REPORTLUN2},
- 	{"HP", "DF500", "*", BLIST_REPORTLUN2},
-+	{"HP", "DISK-SUBSYSTEM", "*", BLIST_REPORTLUN2},
- 	{"HP", "OP-C-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
- 	{"HP", "3380-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
- 	{"HP", "3390-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -856,6 +856,17 @@ void scsi_io_completion(struct scsi_cmnd
+ 		/* for passthrough error may be set */
+ 		error = BLK_STS_OK;
+ 	}
++	/*
++	 * Another corner case: the SCSI status byte is non-zero but 'good'.
++	 * Example: PRE-FETCH command returns SAM_STAT_CONDITION_MET when
++	 * it is able to fit nominated LBs in its cache (and SAM_STAT_GOOD
++	 * if it can't fit). Treat SAM_STAT_CONDITION_MET and the related
++	 * intermediate statuses (both obsolete in SAM-4) as good.
++	 */
++	if (status_byte(result) && scsi_status_is_good(result)) {
++		result = 0;
++		error = BLK_STS_OK;
++	}
+ 
+ 	/*
+ 	 * special case: failed zero length commands always need to
+--- a/include/scsi/scsi.h
++++ b/include/scsi/scsi.h
+@@ -47,6 +47,8 @@ static inline int scsi_status_is_good(in
+ 	 */
+ 	status &= 0xfe;
+ 	return ((status == SAM_STAT_GOOD) ||
++		(status == SAM_STAT_CONDITION_MET) ||
++		/* Next two "intermediate" statuses are obsolete in SAM-4 */
+ 		(status == SAM_STAT_INTERMEDIATE) ||
+ 		(status == SAM_STAT_INTERMEDIATE_CONDITION_MET) ||
+ 		/* FIXME: this is obsolete in SAM-3 */
