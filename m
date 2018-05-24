@@ -1,118 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971275AbeEXTuB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:50:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57894 "EHLO mx1.redhat.com"
+        id S971247AbeEXTv2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:51:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S971121AbeEXTt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:49:57 -0400
-Reply-To: tstellar@redhat.com
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com, Nick Desaulniers <ndesaulniers@google.com>
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com>
-From: Tom Stellard <tstellar@redhat.com>
-Organization: Red Hat
-Message-ID: <195ec03a-0ccb-43f2-e455-c61b91aaf9eb@redhat.com>
-Date: Thu, 24 May 2018 12:49:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S968151AbeEXTv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:51:26 -0400
+Date: Thu, 24 May 2018 21:51:07 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/8] driver core: add a deferred probe timeout
+Message-ID: <20180524195107.GA4917@kroah.com>
+References: <20180524175024.19874-1-robh@kernel.org>
+ <20180524175024.19874-3-robh@kernel.org>
+ <20180524190126.GC31019@kroah.com>
+ <CAL_Jsq+wMJ+9JTGFGSsSW2Vww_mvAkzc3ujmftgbpQxDTrLHag@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+wMJ+9JTGFGSsSW2Vww_mvAkzc3ujmftgbpQxDTrLHag@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/2018 11:19 AM, hpa@zytor.com wrote:
-> On May 23, 2018 3:08:19 PM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote:
->> H. Peter,
->>
->> It was reported [0] that compiling the Linux kernel with Clang +
->> CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(), due
->> to
->> how GCC does not emit a stack guard for static inline functions (see
->> Alistair's excellent report in [1]) but Clang does.
->>
->> When working with the LLVM release maintainers, Tom had suggested [2]
->> changing the inline assembly constraint in native_save_fl() from '=rm'
->> to
->> '=r', and Alistair had verified the disassembly:
->>
->> (good) code generated w/o -fstack-protector-strong:
->>
->> native_save_fl:
->>          pushfq
->>          popq    -8(%rsp)
->>          movq    -8(%rsp), %rax
->>          retq
->>
->> (good) code generated w/ =r input constraint:
->>
->> native_save_fl:
->>          pushfq
->>          popq    %rax
->>          retq
->>
->> (bad) code generated with -fstack-protector-strong:
->>
->> native_save_fl:
->>          subq    $24, %rsp
->>          movq    %fs:40, %rax
->>          movq    %rax, 16(%rsp)
->>          pushfq
->>          popq    8(%rsp)
->>          movq    8(%rsp), %rax
->>          movq    %fs:40, %rcx
->>          cmpq    16(%rsp), %rcx
->>          jne     .LBB0_2
->>          addq    $24, %rsp
->>          retq
->> .LBB0_2:
->>          callq   __stack_chk_fail
->>
->> It looks like the sugguestion is actually a revert of your commit:
->> ab94fcf528d127fcb490175512a8910f37e5b346:
->> x86: allow "=rm" in native_save_fl()
->>
->> It seemed like there was a question internally about why worry about
->> pop
->> adjusting the stack if the stack could be avoided altogether.
->>
->> I think Sedat can retest this, but I was curious as well about the
->> commit
->> message in ab94fcf528d: "[ Impact: performance ]", but Alistair's
->> analysis
->> of the disassembly seems to indicate there is no performance impact (in
->> fact, looks better as there's one less mov).
->>
->> Is there a reason we should not revert ab94fcf528d12, or maybe a better
->> approach?
->>
->> [0] https://lkml.org/lkml/2018/5/7/534
->> [1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
->> [2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
+On Thu, May 24, 2018 at 02:45:48PM -0500, Rob Herring wrote:
+> On Thu, May 24, 2018 at 2:01 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Thu, May 24, 2018 at 12:50:18PM -0500, Rob Herring wrote:
+> >> Deferring probe can wait forever on dependencies that may never appear
+> >> for a variety of reasons. This can be difficult to debug especially if
+> >> the console has dependencies or userspace fails to boot to a shell. Add
+> >> a timeout to retry probing without possibly optional dependencies and to
+> >> dump out the deferred probe pending list after retrying.
+> >>
+> >> This mechanism is intended for debug purposes. It won't work for the
+> >> console which needs to be enabled before userspace starts. However, if
+> >> the console's dependencies are resolved, then the kernel log will be
+> >> printed (as opposed to no output).
+> >>
+> >> Signed-off-by: Rob Herring <robh@kernel.org>
+> >> ---
+> >>  .../admin-guide/kernel-parameters.txt         |  7 +++++
+> >>  drivers/base/dd.c                             | 28 ++++++++++++++++++-
+> >>  2 files changed, 34 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> >> index 11fc28ecdb6d..dd3f40b34a24 100644
+> >> --- a/Documentation/admin-guide/kernel-parameters.txt
+> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> >> @@ -809,6 +809,13 @@
+> >>                       Defaults to the default architecture's huge page size
+> >>                       if not specified.
+> >>
+> >> +     deferred_probe_timeout=
+> >> +                     [KNL] Set a timeout in seconds for deferred probe to
+> >> +                     give up waiting on dependencies to probe. Only specific
+> >> +                     dependencies (subsystems or drivers) that have opted in
+> >> +                     will be ignored. This option also dumps out devices
+> >> +                     still on the deferred probe list after retrying.
+> >
+> > Doesn't sound like a debugging-only option.  I can see devices enabling
+> > this when they figure out that's the only way their platform can boot :)
 > 
-> A stack canary on an *inlined* function? That's bound to break things elsewhere too sooner or later.
+> Here's some rope...
 > 
-> It feels like *once again* clang is asking for the Linux kernel to change to paper over technical or compatibility problems in clang/LLVM. This is not exactly helping the feeling that we should just rip out any and all clang hacks and call it a loss.
-> 
+> No doubt it can be abused. So are you saying don't call it a debug
+> option or hide it behind a config option? And for the latter, what's
+> one that distros don't just turn on?
 
-In this case this fix is working-around a bug in the kernel.  The problem
-here is that the caller of native_save_fl() assumes that it won't
-clobber any of the general purpose register even though the function
-is defined as a normal c function which tells the compiler that it's
-OK to clobber the registers.
+If it is a debug option, make it obvious it's only for debugging.  The
+commit log here says it's a debug option, but your documentation does
+not say that at all, and that's what people will read.
 
-This is something that really needs to be fixed in the kernel.  Relying
-on heuristics of internal compiler algorithms in order for code to work
-correctly is always going to lead to problems like this.
+Well, they might read it, probably not.  But at least give us something
+to point at when they mess things up :)
 
--Tom
+thanks,
+
+greg k-h
