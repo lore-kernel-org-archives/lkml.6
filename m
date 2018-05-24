@@ -1,65 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971564AbeEXVNL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:13:11 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40098 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969310AbeEXVNH (ORCPT
+        id S971577AbeEXVOR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:14:17 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:51202 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967358AbeEXVOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:13:07 -0400
-X-Google-Smtp-Source: AB8JxZqRRacTf6JzMfH6tyd1TE2CcSUncAN3MZD9I9AVpopPguxKn2nq9TOQGYEJClvZz0mv94v9ZJ3C7S8HItWZihM=
+        Thu, 24 May 2018 17:14:14 -0400
+X-Google-Smtp-Source: AB8JxZomeNky/loeRugOxyutaAzJTNgOw2hrJzcXA8CfKW8kTe112ZUO8UjY+4Fn81C5mwuUt3Rmng==
+Date: Thu, 24 May 2018 23:14:05 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        psodagud@codeaurora.org, Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>, sherryy@android.com,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sasha Levin <alexander.levin@verizon.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        paulmck@linux.vnet.ibm.com, stern@rowland.harvard.edu
+Subject: Re: write_lock_irq(&tasklist_lock)
+Message-ID: <20180524211405.GA7206@andrea>
+References: <0879f797135033e05e8e9166a3c85628@codeaurora.org>
+ <20180523130547.GF26965@arm.com>
+ <CA+55aFwKLBKdf3gdWkJSdewQYYXYYfN29SPT+etPqpopxA0CMQ@mail.gmail.com>
+ <20180523153607.GD2983@arm.com>
+ <CA+55aFy9mVCJUniAMVvJjqaa=ke2mx6HfkPhCGP54ncdh70peQ@mail.gmail.com>
+ <20180524124928.GH8689@arm.com>
+ <20180524135158.GA19987@tardis>
 MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
-In-Reply-To: <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 24 May 2018 14:12:54 -0700
-Message-ID: <CAKwvOdkd480hmHduDHnV2ekoAm_dyPnApU9jc7TARyD072KOGA@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524135158.GA19987@tardis>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 1:52 PM Nick Desaulniers <ndesaulniers@google.com>
-wrote:
-> On Thu, May 24, 2018 at 1:26 PM Nick Desaulniers <ndesaulniers@google.com>
-> wrote:
-> > On Thu, May 24, 2018 at 11:59 AM <hpa@zytor.com> wrote:
-> > > Issue 3: Let's face it, reading and writing the flags should be
-> builtins,
-> > exactly because it has to do stack operations, which really means the
-> > compiler should be involved.
+> Yeah, lemme put some details here:
+> 
+> So we have three cases:
+> 
+> Case #1 (from Will)
+> 
+> 	P0:			P1:			P2:
+> 
+> 	spin_lock(&slock)	read_lock(&rwlock)
+> 							write_lock(&rwlock)
+> 	read_lock(&rwlock)	spin_lock(&slock)
+> 
+> , which is a deadlock, and couldn't not be detected by lockdep yet. And
+> lockdep could detect this with the patch I attach at the end of the
+> mail.
+> 
+> Case #2
+> 
+> 	P0:			P1:			P2:
+> 
+> 	<in irq handler>
+> 	spin_lock(&slock)	read_lock(&rwlock)
+> 							write_lock(&rwlock)
+> 	read_lock(&rwlock)	spin_lock_irq(&slock)
+> 
+> , which is not a deadlock, as the read_lock() on P0 can use the unfair
+> fastpass.
+> 
+> Case #3
+> 
+> 	P0:			P1:			P2:
+> 
+> 				<in irq handler>
+> 	spin_lock_irq(&slock)	read_lock(&rwlock)
+> 							write_lock_irq(&rwlock)
+> 	read_lock(&rwlock)	spin_lock(&slock)
+> 
+> , which is a deadlock, as the read_lock() on P0 cannot use the fastpass.
 
-> > I'm happy to propose that as a feature request to llvm+gcc.
+Mmh, I'm starting to think that, maybe, we need a model (a tool) to
+distinguish these and other(?) cases (sorry, I could not resist ;-)
 
-> Oh, looks like both clang and gcc have:
-> __builtin_ia32_readeflags_u64()
+[...]
 
-> https://godbolt.org/g/SwPjhq
 
-> Maybe native_save_fl() and native_restore_fl() should be replaced in the
-> kernel with
-> __builtin_ia32_readeflags_u64() and __builtin_ia32_writeeflags_u64()?
-> --
-> Thanks,
-> ~Nick Desaulniers
+> ------------------->8
+> Subject: [PATCH] locking: More accurate annotations for read_lock()
+> 
+> On the archs using QUEUED_RWLOCKS, read_lock() is not always a recursive
+> read lock, actually it's only recursive if in_interrupt() is true. So
 
-Looks like those builtins got added to GCC around the 4.9 timeframe:
-https://godbolt.org/g/9VS2E9
+Mmh, taking the "common denominator" over archs/Kconfig options and
+CPU states, this would suggest that read_lock() is non-recursive;
 
-Problematically, it seems that GCC does not have __has_builtin to do
-feature detection:
-https://clang.llvm.org/docs/LanguageExtensions.html#feature-checking-macros
-https://godbolt.org/g/oku8ux
--- 
-Thanks,
-~Nick Desaulniers
+it looks like I can say "good-bye" to my idea to define (formalize)
+consistent executions/the memory ordering of RW-LOCKS "by following"
+the following _emulation_:
+
+void read_lock(rwlock_t *s)
+{
+	r0 = atomic_fetch_inc_acquire(&s->val);
+}
+
+void read_unlock(rwlock_t *s)
+{
+	r0 = atomic_fetch_sub_release(&s->val);
+}
+
+void write_lock(rwlock_t *s)
+{
+	r0 = atomic_cmpxchg_acquire(&s->val, 0, -1);
+}
+
+void write_unlock(rwlock_t *s)
+{
+	atomic_set_release(&s->val, 0);
+}
+
+filter (~read_lock:r0=-1 /\ write_lock:r0=0)
+
+[...]
+
+
+> The code is done, I'm just working on the rework for documention stuff,
+> so if anyone is interested, could try it out ;-)
+
+Any idea on how to "educate" the LKMM about this code/documentation?
+
+  Andrea
