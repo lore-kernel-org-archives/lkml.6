@@ -1,69 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030304AbeEXP7u (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:59:50 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:34124 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968272AbeEXP7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:59:48 -0400
-Date: Thu, 24 May 2018 17:59:44 +0200
-From: Christian Brauner <christian@brauner.io>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [REVIEW][PATCH 6/6] fs: Allow CAP_SYS_ADMIN in s_user_ns to
- freeze and thaw filesystems
-Message-ID: <20180524155943.GC19932@mailbox.org>
-References: <87o9h6554f.fsf@xmission.com>
- <20180523232538.4880-6-ebiederm@xmission.com>
+        id S1033429AbeEXQCE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:02:04 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34183 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030215AbeEXQCB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 12:02:01 -0400
+X-Google-Smtp-Source: AB8JxZqpJsHHeabGN0Zjq/MGV83mEVWKI+B9BnKcbul5QAXCw4wk9uBCoW4zXDjVPOrlHwC/tFiVCw==
+Date: Thu, 24 May 2018 09:01:54 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
+ version 1.0
+Message-ID: <20180524160154.GA177107@dtor-ws>
+References: <20180522204753.GA260493@dtor-ws>
+ <CACRpkdabMV1Vy5dGjW-eRVxY9yAcVhukMY1RNnb7nbYc7keHGw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523232538.4880-6-ebiederm@xmission.com>
+In-Reply-To: <CACRpkdabMV1Vy5dGjW-eRVxY9yAcVhukMY1RNnb7nbYc7keHGw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 06:25:38PM -0500, Eric W. Biederman wrote:
-> From: Seth Forshee <seth.forshee@canonical.com>
-> 
-> The user in control of a super block should be allowed to freeze
-> and thaw it. Relax the restrictions on the FIFREEZE and FITHAW
-> ioctls to require CAP_SYS_ADMIN in s_user_ns.
+Hi Linus,
 
-Acked-by: Christian Brauner <christian@brauner.io>
+On Thu, May 24, 2018 at 10:19:55AM +0200, Linus Walleij wrote:
+> On Tue, May 22, 2018 at 10:47 PM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> 
+> > As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
+> > virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
+> > in ACPI tables, they will also update BOARD version number from 1.0
+> > to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
+> > numbers on Strago boards to those that still carry older BIOSes.
+> >
+> > Note that ideally not BOARD but BIOS version should have been updated.
+> > However the BIOS version used by Chrome devices has format of
+> > Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
+> > we do not have "less than" match mode for DMI data.
+> >
+> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >
+> > v1->v2:
+> >
+> > - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+> 
+> Patch applied for fixes.
+> 
+> Should this also be tagged for stable?
 
-> 
-> Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> ---
->  fs/ioctl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 4823431d1c9d..b445b13fc59b 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -549,7 +549,7 @@ static int ioctl_fsfreeze(struct file *filp)
->  {
->  	struct super_block *sb = file_inode(filp)->i_sb;
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
->  		return -EPERM;
->  
->  	/* If filesystem doesn't support freeze feature, return. */
-> @@ -566,7 +566,7 @@ static int ioctl_fsthaw(struct file *filp)
->  {
->  	struct super_block *sb = file_inode(filp)->i_sb;
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
->  		return -EPERM;
->  
->  	/* Thaw */
-> -- 
-> 2.14.1
-> 
+No, I do not think so. The workaround being active does not cause any
+issues on boxes with updated firmware, so there is no point in trying to
+get the patch to older kernels. It is going forward that we want the
+"proper" behavior, when possible.
+
+Also, I am not quite sure when the new firmware version will get
+qualified for release.
+
+Thanks.
+
+-- 
+Dmitry
