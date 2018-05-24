@@ -1,92 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755123AbeEXFnR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:43:17 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40409 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755106AbeEXFnP (ORCPT
+        id S1755144AbeEXFnj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:43:39 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37889 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754971AbeEXFnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:43:15 -0400
-Date: Wed, 23 May 2018 22:42:53 -0700
-From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-c9dd1d894958b81a329ec01e7dd03b92eca52789@git.kernel.org>
-Cc: peterz@infradead.org, ak@linux.intel.com, tglx@linutronix.de,
-        acme@redhat.com, luto@kernel.org, dave.hansen@linux.intel.com,
-        adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        alexander.shishkin@linux.intel.com, joro@8bytes.org
-Reply-To: alexander.shishkin@linux.intel.com, hpa@zytor.com, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, joro@8bytes.org, adrian.hunter@intel.com,
-        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        ak@linux.intel.com, acme@redhat.com, dave.hansen@linux.intel.com,
-        luto@kernel.org
-In-Reply-To: <1526986485-6562-13-git-send-email-adrian.hunter@intel.com>
-References: <1526986485-6562-13-git-send-email-adrian.hunter@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf kcore_copy: Calculate offset from phnum
-Git-Commit-ID: c9dd1d894958b81a329ec01e7dd03b92eca52789
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 24 May 2018 01:43:37 -0400
+X-Google-Smtp-Source: AB8JxZo1qqDUeUxjGnnLgucuYOYRl1edRXZ/s4ZkyWvwmTskrMP5kUtY1wgYIuqWQsqH7dT72/UXDw==
+Date: Thu, 24 May 2018 11:13:33 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
+ bindings
+Message-ID: <20180524054333.56vga66xrkfuqtkr@vireshk-i7>
+References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
+ <1526751291-17873-2-git-send-email-tdas@codeaurora.org>
+ <20180522193139.GA21623@rob-hp-laptop>
+ <20180523054846.zn7gftt6aqyibd26@vireshk-i7>
+ <CAL_JsqL7VdSjerOioc5cSOyKAAXJuVnPJqp_WbTtwr11UUxq=A@mail.gmail.com>
+ <cba1616d-ad12-599b-4351-3c7240de852a@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cba1616d-ad12-599b-4351-3c7240de852a@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c9dd1d894958b81a329ec01e7dd03b92eca52789
-Gitweb:     https://git.kernel.org/tip/c9dd1d894958b81a329ec01e7dd03b92eca52789
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Tue, 22 May 2018 13:54:40 +0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 23 May 2018 10:26:41 -0300
+On 24-05-18, 10:48, Taniya Das wrote:
+> Hello Rob, Viresh,
+> 
+> Thank you for the comments. If I understand correctly, the device tree nodes
+> should look something like the below.
+> 
+> Though I am not sure if any vendor name could be associated in the cpu
+> nodes.
 
-perf kcore_copy: Calculate offset from phnum
+Well Rob said Yes to that I think.
 
-In preparation to add more program headers, calculate offset from the
-number of phdrs.
+> Please suggest if my understanding is wrong.
+> 
+> cpu@0 {
+> 	qcom,freq-domain = <&freq_domain_table0>;
+> 	…
+> };
+> 
+> same follows for cpu 1/2/3
+> 
+> cpu@400 {
+> 	qcom,freq-domain = <&freq_domain_table1>;
+> 	…
+> };
+> same follows for cpu 5/6/7
+> 
+> freq_domain_table0 : freq_table {
+> 	reg = < >, < >, < > ;
+> 	reg-names = "perf_base", "lut_base", "en_base";
+> };
+> 
+> freq_domain_table1 : freq_table {
+> 	reg = < >, < >, < > ;
+> 	reg-names = "perf_base", "lut_base", "en_base";
+> };
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1526986485-6562-13-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/symbol-elf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Mostly yes.
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 4e7b71e8ac0e..4aec12102e19 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -1682,7 +1682,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	struct kcore kcore;
- 	struct kcore extract;
- 	int idx = 0, err = -1;
--	off_t offset = page_size, sz, modules_offset = 0;
-+	off_t offset, sz, modules_offset = 0;
- 	struct kcore_copy_info kci = { .stext = 0, };
- 	char kcore_filename[PATH_MAX];
- 	char extract_filename[PATH_MAX];
-@@ -1710,6 +1710,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
- 		goto out_extract_close;
- 
-+	offset = gelf_fsize(extract.elf, ELF_T_EHDR, 1, EV_CURRENT) +
-+		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
-+	offset = round_up(offset, page_size);
-+
- 	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
- 			    kci.kernel_map.len))
- 		goto out_extract_close;
+-- 
+viresh
