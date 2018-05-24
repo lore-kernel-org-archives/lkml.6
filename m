@@ -1,82 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033514AbeEXQQe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:16:34 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:53100 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030730AbeEXQQa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:16:30 -0400
-Date: Thu, 24 May 2018 09:16:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v3 2/6] Documentation: DT: Add optional 'timeout-sec'
- property for sp805
-Message-ID: <20180524161628.GA28425@roeck-us.net>
-References: <1527120924-12131-1-git-send-email-ray.jui@broadcom.com>
- <1527120924-12131-3-git-send-email-ray.jui@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527120924-12131-3-git-send-email-ray.jui@broadcom.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1033516AbeEXQRU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:17:20 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:16178 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030620AbeEXQRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 12:17:19 -0400
+Message-Id: <54d0574dbb33251ba241620d038b716d90fe0632.1527178313.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/32: implement strlen() in assembly
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Thu, 24 May 2018 16:17:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 05:15:20PM -0700, Ray Jui wrote:
-> Update the SP805 binding document to add optional 'timeout-sec'
-> devicetree property
-> 
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> ---
->  Documentation/devicetree/bindings/watchdog/arm,sp805.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
-> index 0fa3629..1debea3 100644
-> --- a/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/arm,sp805.txt
-> @@ -19,6 +19,8 @@ Required properties:
->  
->  Optional properties:
->  - interrupts:  Should specify WDT interrupt number
-> +- timeout-sec: Should specify default WDT timeout in seconds. If unset, the
-> +               default timeout in the driver is 30 seconds
+The generic implementation of strlen() reads strings byte per byte.
 
-"... the default timeout is determined by the driver" might be better.
-If you want to mandate a default here (not sure if that is a good idea),
-I would suggest to use something like "should be 30 seconds".
+This patch implements strlen() in assembly for PPC32 based on
+a read of entire words, in the same spirit as what some other
+arches and glibc do.
 
-Guenter
+For long strings, the time spent in strlen is reduced by 50-60%
 
->  
->  Example:
->  	watchdog@66090000 {
-> -- 
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ Applies after the patch 'powerpc/lib: move PPC32 specific functions out of string.S'
+
+ arch/powerpc/include/asm/string.h |  3 +++
+ arch/powerpc/lib/string_32.S      | 40 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
+index 0f41686b6243..23ee2a0f2b21 100644
+--- a/arch/powerpc/include/asm/string.h
++++ b/arch/powerpc/include/asm/string.h
+@@ -15,6 +15,9 @@
+ #define __HAVE_ARCH_MEMCHR
+ #define __HAVE_ARCH_MEMSET16
+ #define __HAVE_ARCH_MEMCPY_FLUSHCACHE
++#ifdef CONFIG_PPC32
++#define __HAVE_ARCH_STRLEN
++#endif
+ 
+ extern char * strcpy(char *,const char *);
+ extern __kernel_size_t strlen(const char *);
+diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+index c4e70123d245..31575a698c97 100644
+--- a/arch/powerpc/lib/string_32.S
++++ b/arch/powerpc/lib/string_32.S
+@@ -62,6 +62,46 @@ _GLOBAL(memcmp)
+ 	blr
+ EXPORT_SYMBOL(memcmp)
+ 
++_GLOBAL(strlen)
++	andi.   r9, r3, 3
++	addi	r10, r3, -4
++	beq+	2f
++1:	lbz	r9, 4(r10)
++	addi	r10, r10, 1
++	cmpwi	cr0, r9, 0
++	beq	19f
++	andi.	r9, r10, 3
++	bne	1b
++2:	lis	r6, 0x8080
++	ori	r6, r6, 0x8080
++	rlwinm	r7, r6, 1, 0xffffffff
++3:	lwzu	r9, 4(r10)
++	subf	r8, r7, r9
++	andc	r11, r6, r9
++	and.	r8, r8, r11
++	beq+	3b
++	rlwinm.	r8, r9, 0, 0xff000000
++	beq	20f
++	rlwinm.	r8, r9, 0, 0x00ff0000
++	beq	21f
++	rlwinm.	r8, r9, 0, 0x0000ff00
++	beq	22f
++	rlwinm.	r8, r9, 0, 0x000000ff
++	bne	3b
++23:	subf	r3, r3, r10
++	addi	r3, r3, 3
++	blr
++22:	subf	r3, r3, r10
++	addi	r3, r3, 2
++	blr
++21:	subf	r3, r3, r10
++	addi	r3, r3, 1
++	blr
++19:	addi	r10, r10, 3
++20:	subf	r3, r3, r10
++	blr
++EXPORT_SYMBOL(strlen)
++
+ CACHELINE_BYTES = L1_CACHE_BYTES
+ LG_CACHELINE_BYTES = L1_CACHE_SHIFT
+ CACHELINE_MASK = (L1_CACHE_BYTES-1)
+-- 
+2.13.3
