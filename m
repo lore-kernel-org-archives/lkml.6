@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1900785-1527163857-2-10915968703912137236
+X-Cyrus-Session-Id: sloti22d1t05-1900785-1527163847-5-214588475202819470
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163857; b=YZ00gxc2k/dzw6tbQzPIb3xVQBIg+xGvrTtVUyERdxDNli/F1s
-    Lvleo7Fl+J/KRmZUCvlRYqwU3lGJoSpKop6MM/pDb/amvimcs0hQayM7Ft/wMXpI
-    23qRqaGfysum/O/4LmOHGCwPsqksOEzr/aaZJYjYFeLte5yO7PxAd0mstd3D4jKZ
-    EzoKdE0EGIwCa3LnNtLpLGIzIonvkJSE6VqCCMNqL4EzA3Uo/7bwN7f8aanjMRfa
-    RVAKYNdfg+lIw+zkVXfHh6M2H0dQ1sXH9YnKaAcNqaWUwLQb7cTsneiYvPD5pRxL
-    htHDuYhnNd8E4r0Jh1orB1t6M7SkT3+0Ip0w==
+    1527163847; b=HKZX12euUI8nAF0vCEl75zngzwNkYsREBjIhgWpmsVINJmi0VM
+    rVcwazYUQCf8hlL9i+uP9mZREWf3IyILgGpRa0v+MrOWR0MFq5tumj2pRCjv/qkP
+    B9kB8U/+E+n/CbaTdHV6wXPYYnqeRYKweTcQwSXbzCjJrzdLysoBtBoLclVKqiXM
+    5WypRtp2aTDju+OqgGW9wCfwE9it7bl60qrKxAvQjPXvKsFJDmwbAp5aryZIVkE/
+    +09AMJP6exMOvy8T3TGme+n2zAYP86pe0FgvYcKpu95gif1EPaXyAjySOLSmLoyh
+    5wr1s+qDsPeJvC087HlBmO7mwAC7RZ+uDzLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163857; bh=WHdd52TkqWR4ikojmKyAm3Wr5bHImY
-    i0nCrEt+ZWHg0=; b=eaNgAGUHtsfnTjSKrHltRwGs2opX3+lX1SQnwBSIbZ4sYK
-    w/0bc6iu8WaXaxZPE1OjHCmwgMwdMket7nnVbOdYGTl3oCP06Dtrk7YtQbFFGp0+
-    VGmodzkOEQaaBFodRgPUi+glVw5/2nNvxgPkdLc164voCXb/w+l9nZl+i+74cYAp
-    g55Qq9S8mb5dp7AmlB/V65+lRl0Fk8ZE7+N144yIB27QY4pLSFeBZ6NvxbUu5X3k
-    DfmHgeZmZN6VTMxfwhSO0Y+iHKraA+QDXpWF2T/yBaLs+p1xU8jxlA+1EUX23dLq
-    KYEtHQp5Gw4YYasjb2OQ4wdFAtqa1/TWP1fg9Lrg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163847; bh=EhzoPgfxy91tFrE9WVh3id0QY+PFmJ
+    6FJZpdyco/STM=; b=ALw/MczMPS1Ohn0c/aM+ylzUtjCl58em+t+c6PFTdx9tXP
+    PxtPwQJKTU6bOQNupgDDgFyJaxWHTAnPFrC6tEWc88UXtlWxQfMzdYMxmio7tb+4
+    PcpB2BTcCqfDLBVgK2QDAGDtSkSB1Z1bP2s6EfqGNq2j9HHWwZONaXhOnRwuATig
+    FjZ45xQMVY2Lx7h1m/HoKSQc4cP4LBPVL9XhkWy6TL33Mk0HPn2rPo7ir/sChOKE
+    GzQG1VSDBZ7RKRiAbfDg4X6OAjULaOlglStmcOiuIDGIc/LuEe9sMp/d2Q17HQW8
+    M3ya4SqNqcXdzCOeHDQEMX7oCspcBq5vhLobohxA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=gfU0j+uN x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=usVOvFT7 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=gfU0j+uN x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=usVOvFT7 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,32 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJaW0hGAKx+INFLBOoH1u4LOpRlfzSjrZ54Dx4NZVnOmmwtWTxgJlpdLbKv7hXvSwVOu+TkQ2zealAf9Hbx1Ki3SSbPXFQ4BmRNCwVwap4PyX1wzGHnH
-    ZC9NV83Y1dxEkL6c7ZTqlXqPOZYRIyN5ODIbWuMTJ18gAx9707NSxIdzte9SmXtzQWe+UsGpmioZFW+ggkyOZeuztEI+rn6e4JE0Ezx3GPf6RO7gK62IT668
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfM/9N4FoX7zM9Ln8iFyxft23kHJoR+gl8Hr7yKmGdNSqBgZ0Pnlx3tYXbN/PnWmwQEGGTRWd7Sftw3kLdiXF29JgG20gn7GVA14eRWIywEhAovIFbiYx
+    CqUvVmug2UvYbrDZprcJRu0dBjwOkE7T9ZTWHq+10UmeRNvZjSvUzRokEZ8K4oeEhpae/qDyE7ybvCTpMH0vPgtaxSE17kb0E00mj/6vWB7+o8JFMiEuDRgK
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=Q-fNiiVtAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=JRk18abXo-UP5clGnZsA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
+    a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=L1WlcYRJYCfth8W4ZAIA:9 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966445AbeEXJnP (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:43:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
+        id S966531AbeEXMKG (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:10:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966180AbeEXJnJ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:43:09 -0400
+        id S966457AbeEXJnS (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:43:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zumeng Chen <zumeng.chen@gmail.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 15/92] tg3: Fix vunmap() BUG_ON() triggered from tg3_free_consistent().
-Date: Thu, 24 May 2018 11:37:52 +0200
-Message-Id: <20180524093200.638969190@linuxfoundation.org>
+Subject: [PATCH 4.4 18/92] sctp: fix the issue that the cookie-ack with auth cant get processed
+Date: Thu, 24 May 2018 11:37:55 +0200
+Message-Id: <20180524093200.827087772@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -106,55 +107,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit d89a2adb8bfe6f8949ff389acdb9fa298b6e8e12 ]
+[ Upstream commit ce402f044e4e432c296f90eaabb8dbe8f3624391 ]
 
-tg3_free_consistent() calls dma_free_coherent() to free tp->hw_stats
-under spinlock and can trigger BUG_ON() in vunmap() because vunmap()
-may sleep.  Fix it by removing the spinlock and relying on the
-TG3_FLAG_INIT_COMPLETE flag to prevent race conditions between
-tg3_get_stats64() and tg3_free_consistent().  TG3_FLAG_INIT_COMPLETE
-is always cleared under tp->lock before tg3_free_consistent()
-and therefore tg3_get_stats64() can safely access tp->hw_stats
-under tp->lock if TG3_FLAG_INIT_COMPLETE is set.
+When auth is enabled for cookie-ack chunk, in sctp_inq_pop, sctp
+processes auth chunk first, then continues to the next chunk in
+this packet if chunk_end + chunk_hdr size < skb_tail_pointer().
+Otherwise, it will go to the next packet or discard this chunk.
 
-Fixes: f5992b72ebe0 ("tg3: Fix race condition in tg3_get_stats64().")
-Reported-by: Zumeng Chen <zumeng.chen@gmail.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+However, it missed the fact that cookie-ack chunk's size is equal
+to chunk_hdr size, which couldn't match that check, and thus this
+chunk would not get processed.
+
+This patch fixes it by changing the check to chunk_end + chunk_hdr
+size <= skb_tail_pointer().
+
+Fixes: 26b87c788100 ("net: sctp: fix remote memory pressure from excessive queueing")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ net/sctp/inqueue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -8722,14 +8722,15 @@ static void tg3_free_consistent(struct t
- 	tg3_mem_rx_release(tp);
- 	tg3_mem_tx_release(tp);
+--- a/net/sctp/inqueue.c
++++ b/net/sctp/inqueue.c
+@@ -178,7 +178,7 @@ struct sctp_chunk *sctp_inq_pop(struct s
+ 	skb_pull(chunk->skb, sizeof(sctp_chunkhdr_t));
+ 	chunk->subh.v = NULL; /* Subheader is no longer valid.  */
  
--	/* Protect tg3_get_stats64() from reading freed tp->hw_stats. */
--	tg3_full_lock(tp, 0);
-+	/* tp->hw_stats can be referenced safely:
-+	 *     1. under rtnl_lock
-+	 *     2. or under tp->lock if TG3_FLAG_INIT_COMPLETE is set.
-+	 */
- 	if (tp->hw_stats) {
- 		dma_free_coherent(&tp->pdev->dev, sizeof(struct tg3_hw_stats),
- 				  tp->hw_stats, tp->stats_mapping);
- 		tp->hw_stats = NULL;
- 	}
--	tg3_full_unlock(tp);
- }
- 
- /*
-@@ -14163,7 +14164,7 @@ static struct rtnl_link_stats64 *tg3_get
- 	struct tg3 *tp = netdev_priv(dev);
- 
- 	spin_lock_bh(&tp->lock);
--	if (!tp->hw_stats) {
-+	if (!tp->hw_stats || !tg3_flag(tp, INIT_COMPLETE)) {
- 		*stats = tp->net_stats_prev;
- 		spin_unlock_bh(&tp->lock);
- 		return stats;
+-	if (chunk->chunk_end + sizeof(sctp_chunkhdr_t) <
++	if (chunk->chunk_end + sizeof(sctp_chunkhdr_t) <=
+ 	    skb_tail_pointer(chunk->skb)) {
+ 		/* This is not a singleton */
+ 		chunk->singleton = 0;
