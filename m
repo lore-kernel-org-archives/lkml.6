@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163039-2-9755757121889631535
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163032-2-11022537055013972529
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163039; b=gr1maxK0pKT0YynB4b1fcZDAvEwfXUxRWAuXK2Kxqobq8qodwJ
-    18exo+ArERoaD+KHS9FIkdIRTaUgMDFGao6u3F9JbCDLJzsY1KZFfrVQ8cgiW2QT
-    AByXeDqs4pofAtsWhwkbgs5vQueia9Fge3Xk44P6CkWaxmfEp7uOq4RluiwbKC+v
-    M38NuSB1BukXnLg0XLM4/tWcgHBtMwJJzftDGQ/QM9MJKdNXzk4xGG29T1Pict/+
-    1/x8MXAUEkm78AXFeeqoCJ3xnoZ1iqVCzzGshkYmx2SZtGe6oSxt/o5WnWTwsQQR
-    gg0Fkw/dJfe2yMbFipB0+0ClpmsqoeCnogIQ==
+    1527163031; b=F1pgDFJyOqbYmnXMXQHPgycMq2Q/UzXPH5dxkrfY7bcWcgSp6w
+    zTYO5k6Lh+HLQ9maNFa+BrRjqEnjG127tDzrSf8TxRtCibtnpIaPa/p7FuQahOKn
+    Auyo4q6B8hXKdMmPQTu/AIz4pPDG1/9ch1BjnfJL1E2KIN3fHHuz3mSKCHopOm3e
+    Wzwafg+bzIElDJGFggKsJPoCa34jJoP6EHB0G0GYLRx1dyRVkASZnFBRdf0inCJw
+    ehM1qJ5EuTh8Z4IYG2dNd9+1bcDclBl7PP9STfS6C/o2asLpzSiKuEjtMdy0Txyt
+    jd9G+onn9W9BfmiZNVJ0WI7//DacStwgsjoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163039; bh=yphp+Zr1qGMjNi/65X36Nz0UxP1G3z
-    DKQvLoZ32YI0w=; b=Bs01Lpsg3+WbBSgL8x6ahWGtWaVrjssiK8BkfQct2PUWvN
-    bRFteyGNMGmIO6N895xzKxmet2ObPNVwso4NmKtmrEX7bOjLu5/Su3he4SVRJJfB
-    PV3DzFowi2ROS3k4aO+2LGT/wUgyYlhCaO/eVXFTBxFt/7A30Pw6+JFC09L/L3jG
-    YwGjgLVTXx1f49Oi4AKZPKEat1gA+CdpXBZhTr1w84sE5b7gLWpi42B2gVD6QpB5
-    kSel4sgPmB7cNsdrjrj0nMsp5pPeS8iFaA5mXyZ/cq8Zs+6W/o635+InDJgmQGuu
-    9fMelRjVapKeHmz2XfcLpJhF6bDk9CmdVp/PZMog==
+    :list-id; s=fm2; t=1527163031; bh=zJoZ3MZLVLIpMA+g4i2l76XhzwSwah
+    0D48+H2OiZF0M=; b=JYGn69vbeHSnTgr4lGyJDGBFqRUCFwPhHSP+yBbt/9DPqD
+    OUJEoquKNOly8Z3Rxj0CXf6axMUZpbLMXr5u/GHUj54pjtCBd0mkoEkacD3pjlpA
+    tdgAxRv5fOO8LFyvJFdS/gGewtsEAAZN6b7sIy5NA2XRTRmb0lv4ndHm4c21TcdZ
+    vZkztX3fuEl8f3aT8JEc1vOTzIx1eip61mUtQQDbiL7zBOCydl+qgYEB9HQvPNwf
+    BLYtWcqn2+xR8uS6Z/b2pI2LeAU5BWgSz5SQa2w9lZzA/2gjLJc9PNZDlLp4L4Bb
+    JuhpSX1MR8iIxl6v8XP4tg0b7WzKexVgwrpNRL5w==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=aTXACcrx x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=UYizxom0 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=aTXACcrx x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=UYizxom0 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,31 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE+6/8n/dCaVu8CpZ18UVqhc6/LOktIAKiODf43vN0z5BcP+3c+MraCMY4S9e7ig1eqPfO5kMIZdTFHSshxrzEFK/BDDTxUhM+9ywetGBmlXkGilJEXU
-    wManiH6oegrdqQvs7blSyp3e9liEIYaVHBK437lIcTVGAwEXlXmKFyhfGH5mVIDQfMmQ3ELGUksgnkTlaBW6esG0bfpSTKcVAxXidwFLQEj4LWgdZ4y6ipSp
+X-CM-Envelope: MS4wfFPGFlNRSK9GxbhOpfWJq/bnVgVHOxcDr+ApL3rZtFjeYwIgDnadu5+X9wXkb9a/Ao/R3MnZDgoyxyZjyvqtObTHlgfkvZlk3THFHi0hzxnMewplSN/T
+    qXIR8j1RgBPhdXiVYBnyKIcWdKvfewox9yN6t97cg1VYFxg28JPNNCrq6IEvAzlICvtef03SyGh6vJ/dBjt4iTO8IDTP1kDq3olYaD9x84c2hMETyABMCJl1
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=OoizzLiirw8PgB2rMYsA:9
-    a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=FDWzJhBSr47RAHrKXxYA:9
+    a=NEIUmRbUyShVYMNE:21 a=XfC4L9z_rsF2_Xuf:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966816AbeEXJpm (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:45:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56794 "EHLO mail.kernel.org"
+        id S966878AbeEXL4w (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:56:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966782AbeEXJph (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:37 -0400
+        id S966369AbeEXJpp (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 68/92] Btrfs: fix xattr loss after power failure
-Date: Thu, 24 May 2018 11:38:45 +0200
-Message-Id: <20180524093205.854008094@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 71/92] net: test tailroom before appending to linear skb
+Date: Thu, 24 May 2018 11:38:48 +0200
+Message-Id: <20180524093206.154970920@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,78 +106,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 9a8fca62aacc1599fea8e813d01e1955513e4fad upstream.
+[ Upstream commit 113f99c3358564a0647d444c2ae34e8b1abfd5b9 ]
 
-If a file has xattrs, we fsync it, to ensure we clear the flags
-BTRFS_INODE_NEEDS_FULL_SYNC and BTRFS_INODE_COPY_EVERYTHING from its
-inode, the current transaction commits and then we fsync it (without
-either of those bits being set in its inode), we end up not logging
-all its xattrs. This results in deleting all xattrs when replying the
-log after a power failure.
+Device features may change during transmission. In particular with
+corking, a device may toggle scatter-gather in between allocating
+and writing to an skb.
 
-Trivial reproducer
+Do not unconditionally assume that !NETIF_F_SG at write time implies
+that the same held at alloc time and thus the skb has sufficient
+tailroom.
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
+This issue predates git history.
 
-  $ touch /mnt/foobar
-  $ setfattr -n user.xa -v qwerty /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
-
-  $ sync
-
-  $ xfs_io -c "pwrite -S 0xab 0 64K" /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
-  <power failure>
-
-  $ mount /dev/sdb /mnt
-  $ getfattr --absolute-names --dump /mnt/foobar
-  <empty output>
-  $
-
-So fix this by making sure all xattrs are logged if we log a file's inode
-item and neither the flags BTRFS_INODE_NEEDS_FULL_SYNC nor
-BTRFS_INODE_COPY_EVERYTHING were set in the inode.
-
-Fixes: 36283bf777d9 ("Btrfs: fix fsync xattr loss in the fast fsync path")
-Cc: <stable@vger.kernel.org> # 4.2+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/btrfs/tree-log.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ net/ipv4/ip_output.c  |    3 ++-
+ net/ipv6/ip6_output.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4568,6 +4568,7 @@ static int btrfs_log_inode(struct btrfs_
- 	struct extent_map_tree *em_tree = &BTRFS_I(inode)->extent_tree;
- 	u64 logged_isize = 0;
- 	bool need_log_inode_item = true;
-+	bool xattrs_logged = false;
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -1062,7 +1062,8 @@ alloc_new_skb:
+ 		if (copy > length)
+ 			copy = length;
  
- 	path = btrfs_alloc_path();
- 	if (!path)
-@@ -4808,6 +4809,7 @@ next_slot:
- 	err = btrfs_log_all_xattrs(trans, root, inode, path, dst_path);
- 	if (err)
- 		goto out_unlock;
-+	xattrs_logged = true;
- 	if (max_key.type >= BTRFS_EXTENT_DATA_KEY && !fast_search) {
- 		btrfs_release_path(path);
- 		btrfs_release_path(dst_path);
-@@ -4820,6 +4822,11 @@ log_extents:
- 	btrfs_release_path(dst_path);
- 	if (need_log_inode_item) {
- 		err = log_inode_item(trans, log, dst_path, inode);
-+		if (!err && !xattrs_logged) {
-+			err = btrfs_log_all_xattrs(trans, root, inode, path,
-+						   dst_path);
-+			btrfs_release_path(path);
-+		}
- 		if (err)
- 			goto out_unlock;
- 	}
+-		if (!(rt->dst.dev->features&NETIF_F_SG)) {
++		if (!(rt->dst.dev->features&NETIF_F_SG) &&
++		    skb_tailroom(skb) >= copy) {
+ 			unsigned int off;
+ 
+ 			off = skb->len;
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1529,7 +1529,8 @@ alloc_new_skb:
+ 		if (copy > length)
+ 			copy = length;
+ 
+-		if (!(rt->dst.dev->features&NETIF_F_SG)) {
++		if (!(rt->dst.dev->features&NETIF_F_SG) &&
++		    skb_tailroom(skb) >= copy) {
+ 			unsigned int off;
+ 
+ 			off = skb->len;
