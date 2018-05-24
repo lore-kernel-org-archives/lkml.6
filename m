@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1862185-1527162328-2-14496089931474349443
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162325-2-11784314035970199133
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162328; b=CDxnxOKvgE1EbMPIu3dwbBpg0CSdx2NdJ9LUhWPCRSEJjSS6GA
-    SJXjB6a9s0mOeSfg+3C8jLzYVOk5UeT9AynxRfPreheZcdqFp807s1vq2RMe9fEw
-    z/XCSeD0WmO+u5vSyhGtu6mv0K3Ps+YBETFn/3XKw1ePOI8SMWRjyNlztnGAsaFH
-    mGMu+jCZK3fJzHiYYV+9d7/QPxtHDyd3OXx+TbBABh8vGRur5xrstouhXKYgfuy6
-    pLEuMH/CUDPSbQKac3TowfJtGt6wNGnINXWyZworajLUUlsLXRZkfZadAQDeOuZS
-    q63qEZhkuI/0a7RFWehPLSyh5l3Ktg8DS8pA==
+    1527162325; b=lkHYCK+TQ1Njt8c5SqWOptbcvERwbBZfNqdEQTHyRNhPwDr4a1
+    ZEfvBAgPEdgmmcMBiyWFxsieVCHyU4rxDfvTyuNYm+SitnhtmEAwS5YFkhTHfZHa
+    QLqLTqSj15dB5UbF+3xD7UB4o43Bndl0LQT0vVPI2lhPde1uPvtOnDNS//ZHJjZN
+    9Fhbw6BaJ7uBkcQ6fIcJAZLr8qWO2qBTKKiINWb+tQdVLdlfEvVdIp8paeZFaQGI
+    nmmSTTT3T/NI0g3qpKU0sDw+YP2n0PtLPmwln/HFGDizRIZwYEHjw2hsrMkt15pw
+    I3fFUaAbXwDsPMeRxaWDm6PiStPJ8gH5W23w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162328; bh=TLB7D1L9YVvBkK/+dJJTwI7LaMAxzM
-    c1JbbFwCS9R8s=; b=FVPa6QPRS7V0wwQ1HDqJ4c4TvHuHtOUWKoCJPdcKJ+N3s9
-    XN0MayqG2uFgL4piDhAW60e0lHnrQAEQ16qSAvVn6RL04U8C5fYb8j0GO9H64ufa
-    ROcbzuH0z04gooq5qtoMAsesOIP0yKxC6EVzWzLwzzn+o6v8hqgxM9UEZ5QuVKYN
-    mBn6r/iyY6TjtGHf2urRPVyyR3DRIbJMJ+5e9Q+8RFlAu3pi24QMYCHPBPoNL/Vj
-    KTAAC4dRzFq83kiKxXEHYMA8bko2BSR8Z3B6esIRGPh/qDRZFCG1dXz4wlLimk2F
-    lPxSUkHnkdu/CeuNmZId35L/64jVAxuLCjMBLc8Q==
+    :list-id; s=fm2; t=1527162325; bh=48eJ/WPgN7yGqqYRdWj6aIL5M9YWOT
+    ZkPwcFr+jFyL8=; b=ar2sbam7VrHdX5YiOnjTijwdxvIpvWR5LYf5YJbGtEliCM
+    Gbg5pYkTlsxb8p59a1gc7Iq1sd+i2fcE/h0GRLRkKzSBL0ebTbOJ4jObFKwfgwsd
+    f2Nxfc0lr4nLwliU5QpDC5BIv4zR5ZWltbKz4Y5ymXK4yS9nXQYmclQx/LayK3Hc
+    74xodkjXFrkq6iPhFIIhqNajIUw5H03nhPhDgcPfBrQbwdOWY3pLRcDhOus5Y0rA
+    DostLDt+AhrVYoJ0vZ973EL9DhpRgDlyCHXONvLR9w5vxuowBHMix17SwMWql9/4
+    dJR64V3xAorKhui7lI3qUuBECrvyJIHrbb8gQMAw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=KcP0yplq x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=UGlEc9h6 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=KcP0yplq x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=UGlEc9h6 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDsXdZA+wovGC8L/6Bdb77wGAF9v2C7pPij4u0DhtroJrKSovamsywwnIvHTTSlHwZJC9uJIEv1gY740fham/IYE0wWXDmOMvSnghk11ZPZSvCUc06Md
-    S17yuCdhuwMnqPs7sKYm/qBvJ6BhGd8NUQcALK7Sspk0MwqfMbPp9BxKNfLt4FR9FdgMhlE8+810RtK9y4+zg3+sDZGaheE8BjNg/oRpKlatfRr6PCTU2V2e
+X-CM-Envelope: MS4wfIMhH0thjrzN/yNypwPq09QtoaWW7ym1EhP8q0NjeNKjYkIKr72zGg7Mo9gEpskZZRfsGZvQCu8Xb3JjDy9Lgoh74MF6n5atMlS64HK9MtRNiMHyd5YT
+    g7OqG3vnZDky5nLj/ZBcR7Fi6szymFIdfz4bXXrDDS5wlOtSyz+T7Eb1h6PF4/jiZXKS0MJM6IMYvj4rDfzj8mSEcU5HpaGCvVFXg44NBg4OL/eSxI/FHKXv
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=PPvH6gBIAAAA:8 a=hD80L64hAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=mXfCqF82CJrjqBmwVF0A:9 a=QEXdDO2ut3YA:10
-    a=N5Oz3-3tIhgPr_IzXtv_:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=iMImQnbvsJ8DnYXdvQIA:9
+    a=PpTosmxdeus9aiTI:21 a=_UTuHhq-9TYV9EGs:21 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969077AbeEXLou (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:44:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33206 "EHLO mail.kernel.org"
+        id S969236AbeEXLow (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:44:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966607AbeEXJsI (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:48:08 -0400
+        id S967163AbeEXJsD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:48:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Opasiak <k.opasiak@samsung.com>,
-        John Keeping <john@metanate.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 24/96] usb: gadget: f_uac2: fix bFirstInterface in composite gadget
-Date: Thu, 24 May 2018 11:38:07 +0200
-Message-Id: <20180524093606.976127859@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.vnet.ibm.com>
+Subject: [PATCH 4.9 09/96] s390: add assembler macros for CPU alternatives
+Date: Thu, 24 May 2018 11:37:52 +0200
+Message-Id: <20180524093606.130138989@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -107,32 +105,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Keeping <john@metanate.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 8813a59ed892305b5ac1b5b901740b1ad4b5fefa ]
+[ Upstream commit fba9eb7946251d6e420df3bdf7bc45195be7be9a ]
 
-If there are multiple functions associated with a configuration, then
-the UAC2 interfaces may not start at zero.  Set the correct first
-interface number in the association descriptor so that the audio
-interfaces are enumerated correctly in this case.
+Add a header with macros usable in assembler files to emit alternative
+code sequences. It works analog to the alternatives for inline assmeblies
+in C files, with the same restrictions and capabilities.
+The syntax is
 
-Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
-Signed-off-by: John Keeping <john@metanate.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+     ALTERNATIVE "<default instructions sequence>", \
+		 "<alternative instructions sequence>", \
+		 "<features-bit>"
+and
+
+     ALTERNATIVE_2 "<default instructions sequence>", \
+		   "<alternative instructions sqeuence #1>", \
+		   "<feature-bit #1>",
+		   "<alternative instructions sqeuence #2>", \
+		   "<feature-bit #2>"
+
+Reviewed-by: Vasily Gorbik <gor@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/f_uac2.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/s390/include/asm/alternative-asm.h |  108 ++++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+ create mode 100644 arch/s390/include/asm/alternative-asm.h
 
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -1040,6 +1040,8 @@ afunc_bind(struct usb_configuration *cfg
- 		dev_err(dev, "%s:%d Error!\n", __func__, __LINE__);
- 		return ret;
- 	}
-+	iad_desc.bFirstInterface = ret;
+--- /dev/null
++++ b/arch/s390/include/asm/alternative-asm.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_S390_ALTERNATIVE_ASM_H
++#define _ASM_S390_ALTERNATIVE_ASM_H
 +
- 	std_ac_if_desc.bInterfaceNumber = ret;
- 	agdev->ac_intf = ret;
- 	agdev->ac_alt = 0;
++#ifdef __ASSEMBLY__
++
++/*
++ * Check the length of an instruction sequence. The length may not be larger
++ * than 254 bytes and it has to be divisible by 2.
++ */
++.macro alt_len_check start,end
++	.if ( \end - \start ) > 254
++	.error "cpu alternatives does not support instructions blocks > 254 bytes\n"
++	.endif
++	.if ( \end - \start ) % 2
++	.error "cpu alternatives instructions length is odd\n"
++	.endif
++.endm
++
++/*
++ * Issue one struct alt_instr descriptor entry (need to put it into
++ * the section .altinstructions, see below). This entry contains
++ * enough information for the alternatives patching code to patch an
++ * instruction. See apply_alternatives().
++ */
++.macro alt_entry orig_start, orig_end, alt_start, alt_end, feature
++	.long	\orig_start - .
++	.long	\alt_start - .
++	.word	\feature
++	.byte	\orig_end - \orig_start
++	.byte	\alt_end - \alt_start
++.endm
++
++/*
++ * Fill up @bytes with nops. The macro emits 6-byte nop instructions
++ * for the bulk of the area, possibly followed by a 4-byte and/or
++ * a 2-byte nop if the size of the area is not divisible by 6.
++ */
++.macro alt_pad_fill bytes
++	.fill	( \bytes ) / 6, 6, 0xc0040000
++	.fill	( \bytes ) % 6 / 4, 4, 0x47000000
++	.fill	( \bytes ) % 6 % 4 / 2, 2, 0x0700
++.endm
++
++/*
++ * Fill up @bytes with nops. If the number of bytes is larger
++ * than 6, emit a jg instruction to branch over all nops, then
++ * fill an area of size (@bytes - 6) with nop instructions.
++ */
++.macro alt_pad bytes
++	.if ( \bytes > 0 )
++	.if ( \bytes > 6 )
++	jg	. + \bytes
++	alt_pad_fill \bytes - 6
++	.else
++	alt_pad_fill \bytes
++	.endif
++	.endif
++.endm
++
++/*
++ * Define an alternative between two instructions. If @feature is
++ * present, early code in apply_alternatives() replaces @oldinstr with
++ * @newinstr. ".skip" directive takes care of proper instruction padding
++ * in case @newinstr is longer than @oldinstr.
++ */
++.macro ALTERNATIVE oldinstr, newinstr, feature
++	.pushsection .altinstr_replacement,"ax"
++770:	\newinstr
++771:	.popsection
++772:	\oldinstr
++773:	alt_len_check 770b, 771b
++	alt_len_check 772b, 773b
++	alt_pad ( ( 771b - 770b ) - ( 773b - 772b ) )
++774:	.pushsection .altinstructions,"a"
++	alt_entry 772b, 774b, 770b, 771b, \feature
++	.popsection
++.endm
++
++/*
++ * Define an alternative between two instructions. If @feature is
++ * present, early code in apply_alternatives() replaces @oldinstr with
++ * @newinstr. ".skip" directive takes care of proper instruction padding
++ * in case @newinstr is longer than @oldinstr.
++ */
++.macro ALTERNATIVE_2 oldinstr, newinstr1, feature1, newinstr2, feature2
++	.pushsection .altinstr_replacement,"ax"
++770:	\newinstr1
++771:	\newinstr2
++772:	.popsection
++773:	\oldinstr
++774:	alt_len_check 770b, 771b
++	alt_len_check 771b, 772b
++	alt_len_check 773b, 774b
++	.if ( 771b - 770b > 772b - 771b )
++	alt_pad ( ( 771b - 770b ) - ( 774b - 773b ) )
++	.else
++	alt_pad ( ( 772b - 771b ) - ( 774b - 773b ) )
++	.endif
++775:	.pushsection .altinstructions,"a"
++	alt_entry 773b, 775b, 770b, 771b,\feature1
++	alt_entry 773b, 775b, 771b, 772b,\feature2
++	.popsection
++.endm
++
++#endif	/*  __ASSEMBLY__  */
++
++#endif /* _ASM_S390_ALTERNATIVE_ASM_H */
