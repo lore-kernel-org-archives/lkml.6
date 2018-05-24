@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqY+TpRj1QGK5dP05rVh6DAa83LlywYGplp2g8AEPaHEUWsefwfCwx/dh3oeHEFQu7Geqzo
-ARC-Seal: i=1; a=rsa-sha256; t=1527155655; cv=none;
+X-Google-Smtp-Source: AB8JxZq152/WOhw15g+cE1KAgsVqXQrqQ+uUG3J35eMdRetu2hYIaqquBYGXgIE9nb/rGkJm/LlE
+ARC-Seal: i=1; a=rsa-sha256; t=1527155652; cv=none;
         d=google.com; s=arc-20160816;
-        b=YHpjLhRiLPEuJ/p5/and3rDZlFLgUO+dQDCwjOgSLyzVPkP4MigHHfjpBQ/MkvIbGi
-         ug3hjeoxiD4xrXZwc0ClvvojeBJpjp6BfVWDKYHMqAotI5xbpJipTbk8CYxM6KOUbidz
-         IAPvlIOncvTk4DvLsY9dhdDkYsPPQYZB17wpgxz+C4jfOYIA5TzK+6aAeD6vnFX1yLo9
-         bXtLvTvZuLnvsctT5WaZ4Eln2KbJFTER4ZKDE5qtNACeO/BZ6a7rXZarvKg9gmBPo2fY
-         EnYFpF5E0674908YQBfVarVbBCAwvh/dkdlalxQZCd0yvR+WsMnlP7IUXR94GJIUEh1f
-         RwVg==
+        b=JWuKomt6PAaUxa/0TaD9WHesZJj7Q7C7JG6lUb6aF7KmF9FoV0/kYamTnRWmqcDNLN
+         P4xsKSzvhbtPKdPVljI/uZJZE/HHc6+Q5qYcEh7cOEnwHGi/mUJRMmUnpjkRyFzcw6Zr
+         63DUjJwbfDH+3osP4AEPGutIprR5wytDl0A8WIBOwdNqFSox470sDRAtZb3XM6C3Hi9V
+         6yJk2agCD1lkhW8YElV6oHpyBakJbUug+TGG8suIAobYX67VkyC9c+w7J1LrnO8ZjFHM
+         QloaPd5v0WE24oo8pwQnH2rLNafGlImPUn4EnlSF1st70D7QAwWMBV5DM6wPNRG0DN30
+         LeYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Ld10qYlCFtGmpkT6/SSWkh+5mzrkGggZBqmNuwRg9bc=;
-        b=uuIkYyIHYJn85qmQ8fKqiSApx8cMkFhb3e1td2eZUEiKh55X0c7jI57q4smkD3IrR2
-         kCgy7R3w9Vq9At5aweukAE9B3aaw9RtrjtR9dOst8Y5a6EKJRLwpPBtX19C4KR81ghrr
-         7i9WFhsHK9H0xYEcuYWbbYDkt3WlBdOh51zpnYMo7BTs02sWvie4dScQFrYvJfAltjGO
-         eVQwMSkbwKbN2ei6Z8tOORpjvFDTb9grMmPPe0IHnVTkq6QCLvCdwR6MbmPp5rVqRjP3
-         3lL4oQSXHW3TK6JmhC2FPFGlgW+kDMgjsB97PxMLOvRJwOrws36lCx57QRyxOE+O7xU6
-         C1xQ==
+        bh=lLtRpVY9ANnp367MppQp7oo71OfanjESLin25zJVAbU=;
+        b=zHZuZtgZbLnHUf7mDVpovYwlR6HiBnN8ZZk/ffIeVd2t5HURIAcLyIXc4QoVSsldX2
+         z/MxGolbMm4sVEqQI3nX3jN1BydVUDL/LwfCXB191PCIwqZA4MDK3nDrjG/dpZZtGwwR
+         y86or7GBG3r/OQNGoI2TdU49W2uvcfB0ndObL9q3q28rOvj0bvU/zCs0IQN3Y0iB8iOZ
+         J3d92rZGwcyaDreAr0qYAIx1Mo9i87m2uUus2hNMU09PrYKNDeGHPNdxGQFScnYMqoI2
+         mKBKmLP1xcztaHwo/TfzFWWjMfxl8pGwFjUSXGqtGsnIFFbEUZQdgAgXvi+B+OBiiVRv
+         PJlw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EF+Hu+k+;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mqZI85ck;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EF+Hu+k+;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mqZI85ck;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nobutaka Okabe <nob77413@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>,
+	Vicente Bergas <vicencb@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/165] ALSA: usb-audio: Add native DSD support for Luxman DA-06
-Date: Thu, 24 May 2018 11:37:54 +0200
-Message-Id: <20180524093624.773796914@linuxfoundation.org>
+Subject: [PATCH 4.14 067/165] Bluetooth: btusb: Add USB ID 7392:a611 for Edimax EW-7611ULB
+Date: Thu, 24 May 2018 11:37:53 +0200
+Message-Id: <20180524093624.732354315@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338392140395852?=
-X-GMAIL-MSGID: =?utf-8?q?1601338768332237979?=
+X-GMAIL-THRID: =?utf-8?q?1601338389720784307?=
+X-GMAIL-MSGID: =?utf-8?q?1601338765727228066?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,129 +52,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nobutaka Okabe <nob77413@gmail.com>
+From: Vicente Bergas <vicencb@gmail.com>
 
-[ Upstream commit 71426535f49fe6034d0e0db77608b91a0c1a022d ]
+[ Upstream commit a41e0796396eeceff673af4a38feaee149c6ff86 ]
 
-Add native DSD support quirk for Luxman DA-06 DAC, by adding the
-PID/VID 1852:5065.
+This WiFi/Bluetooth USB dongle uses a Realtek chipset, so, use btrtl for it.
 
-Rename "is_marantz_denon_dac()" function to "is_itf_usb_dsd_2alts_dac()"
-to cover broader device family sharing the same USB audio
-implementation(*).
-For the same reason, rename "is_teac_dsd_dac()" function to
-"is_itf_usb_dsd_3alts_dac()".
+Product information:
+https://wikidevi.com/wiki/Edimax_EW-7611ULB
 
-(*)
-These devices have the same USB controller "ITF-USB DSD", supplied by
-INTERFACE Co., Ltd.
-"ITF-USB DSD" USB controller has two patterns,
+>From /sys/kernel/debug/usb/devices
+T:  Bus=02 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  3 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=7392 ProdID=a611 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=Edimax Wi-Fi N150 Bluetooth4.0 USB Adapter
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 6 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtl8723bu
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=87(I) Atr=03(Int.) MxPS=  64 Ivl=500us
+E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-Pattern 1. (2 altsets version)
-- Altset 0: for control
-- Altset 1: for stream (S32)
-- Altset 2: for stream (S32, DSD_U32)
-
-Pattern 2. (3 altsets version)
-- Altset 0: for control
-- Altset 1: for stream (S16)
-- Altset 2: for stream (S32)
-- Altset 3: for stream (S32, DSD_U32)
-
-"is_itf_usb_dsd_2alts_dac()" returns true, if the DAC has "Pattern 1"
-USB controller, and "is_itf_usb_dsd_3alts_dac()" returns true, if
-"Pattern2".
-
-Signed-off-by: Nobutaka Okabe <nob77413@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Tested-by: Vicente Bergas <vicencb@gmail.com>
+Signed-off-by: Vicente Bergas <vicencb@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/usb/quirks.c |   29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ drivers/bluetooth/btusb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1155,24 +1155,27 @@ bool snd_usb_get_sample_rate_quirk(struc
- 	return false;
- }
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -370,6 +370,9 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x13d3, 0x3459), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3494), .driver_info = BTUSB_REALTEK },
  
--/* Marantz/Denon USB DACs need a vendor cmd to switch
-+/* ITF-USB DSD based DACs need a vendor cmd to switch
-  * between PCM and native DSD mode
-+ * (2 altsets version)
-  */
--static bool is_marantz_denon_dac(unsigned int id)
-+static bool is_itf_usb_dsd_2alts_dac(unsigned int id)
- {
- 	switch (id) {
- 	case USB_ID(0x154e, 0x1003): /* Denon DA-300USB */
- 	case USB_ID(0x154e, 0x3005): /* Marantz HD-DAC1 */
- 	case USB_ID(0x154e, 0x3006): /* Marantz SA-14S1 */
-+	case USB_ID(0x1852, 0x5065): /* Luxman DA-06 */
- 		return true;
- 	}
- 	return false;
- }
- 
--/* TEAC UD-501/UD-503/NT-503 USB DACs need a vendor cmd to switch
-- * between PCM/DOP and native DSD mode
-+/* ITF-USB DSD based DACs need a vendor cmd to switch
-+ * between PCM and native DSD mode
-+ * (3 altsets version)
-  */
--static bool is_teac_dsd_dac(unsigned int id)
-+static bool is_itf_usb_dsd_3alts_dac(unsigned int id)
- {
- 	switch (id) {
- 	case USB_ID(0x0644, 0x8043): /* TEAC UD-501/UD-503/NT-503 */
-@@ -1189,7 +1192,7 @@ int snd_usb_select_mode_quirk(struct snd
- 	struct usb_device *dev = subs->dev;
- 	int err;
- 
--	if (is_marantz_denon_dac(subs->stream->chip->usb_id)) {
-+	if (is_itf_usb_dsd_2alts_dac(subs->stream->chip->usb_id)) {
- 		/* First switch to alt set 0, otherwise the mode switch cmd
- 		 * will not be accepted by the DAC
- 		 */
-@@ -1210,7 +1213,7 @@ int snd_usb_select_mode_quirk(struct snd
- 			break;
- 		}
- 		mdelay(20);
--	} else if (is_teac_dsd_dac(subs->stream->chip->usb_id)) {
-+	} else if (is_itf_usb_dsd_3alts_dac(subs->stream->chip->usb_id)) {
- 		/* Vendor mode switch cmd is required. */
- 		switch (fmt->altsetting) {
- 		case 3: /* DSD mode (DSD_U32) requested */
-@@ -1306,10 +1309,10 @@ void snd_usb_ctl_msg_quirk(struct usb_de
- 	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
- 		mdelay(20);
- 
--	/* Marantz/Denon devices with USB DAC functionality need a delay
-+	/* ITF-USB DSD based DACs functionality need a delay
- 	 * after each class compliant request
- 	 */
--	if (is_marantz_denon_dac(chip->usb_id)
-+	if (is_itf_usb_dsd_2alts_dac(chip->usb_id)
- 	    && (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
- 		mdelay(20);
- 
-@@ -1396,14 +1399,14 @@ u64 snd_usb_interface_dsd_format_quirks(
- 		break;
- 	}
- 
--	/* Denon/Marantz devices with USB DAC functionality */
--	if (is_marantz_denon_dac(chip->usb_id)) {
-+	/* ITF-USB DSD based DACs (2 altsets version) */
-+	if (is_itf_usb_dsd_2alts_dac(chip->usb_id)) {
- 		if (fp->altsetting == 2)
- 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
- 	}
- 
--	/* TEAC devices with USB DAC functionality */
--	if (is_teac_dsd_dac(chip->usb_id)) {
-+	/* ITF-USB DSD based DACs (3 altsets version) */
-+	if (is_itf_usb_dsd_3alts_dac(chip->usb_id)) {
- 		if (fp->altsetting == 3)
- 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
- 	}
++	/* Additional Realtek 8723BU Bluetooth devices */
++	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
++
+ 	/* Additional Realtek 8821AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
