@@ -1,154 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031991AbeEXOTd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:19:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45614 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030516AbeEXOT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:19:28 -0400
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: [PATCH v2 1/5] crypto: ccree: correct host regs offset
-Date: Thu, 24 May 2018 15:19:06 +0100
-Message-Id: <1527171551-21979-2-git-send-email-gilad@benyossef.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+        id S1032708AbeEXOUG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:20:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42432 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032250AbeEXOUB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:20:01 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: anatop: Switch to SPDX identifier" to the regulator tree
+In-Reply-To: <1527103058-8422-2-git-send-email-festevam@gmail.com>
+Message-Id: <E1fLr5y-0002xN-6b@debutante>
+Date: Thu, 24 May 2018 15:19:58 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The product signature and HW revision register have different offset on the
-older HW revisions.
-This fixes the problem of the driver failing sanity check on silicon
-despite working on the FPGA emulation systems.
+The patch
 
-Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+   regulator: anatop: Switch to SPDX identifier
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From c07bbfe70263a443a59ec20f1af87af469a1e5b2 Mon Sep 17 00:00:00 2001
+From: Fabio Estevam <fabio.estevam@nxp.com>
+Date: Wed, 23 May 2018 16:17:35 -0300
+Subject: [PATCH] regulator: anatop: Switch to SPDX identifier
+
+Adopt the SPDX license identifier headers to ease license compliance
+management.
+
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/crypto/ccree/cc_debugfs.c   | 7 +++++--
- drivers/crypto/ccree/cc_driver.c    | 8 ++++++--
- drivers/crypto/ccree/cc_driver.h    | 2 ++
- drivers/crypto/ccree/cc_host_regs.h | 6 ++++--
- 4 files changed, 17 insertions(+), 6 deletions(-)
+ drivers/regulator/anatop-regulator.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_debugfs.c b/drivers/crypto/ccree/cc_debugfs.c
-index 08f8db4..5ca184e 100644
---- a/drivers/crypto/ccree/cc_debugfs.c
-+++ b/drivers/crypto/ccree/cc_debugfs.c
-@@ -26,7 +26,8 @@ struct cc_debugfs_ctx {
- static struct dentry *cc_debugfs_dir;
+diff --git a/drivers/regulator/anatop-regulator.c b/drivers/regulator/anatop-regulator.c
+index 7d6478e6a503..d9d8155ed8cb 100644
+--- a/drivers/regulator/anatop-regulator.c
++++ b/drivers/regulator/anatop-regulator.c
+@@ -1,22 +1,6 @@
+-/*
+- * Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+- */
+-
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+-
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+-
+- * You should have received a copy of the GNU General Public License along
+- * with this program; if not, write to the Free Software Foundation, Inc.,
+- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
  
- static struct debugfs_reg32 debug_regs[] = {
--	CC_DEBUG_REG(HOST_SIGNATURE),
-+	{ .name = "SIGNATURE" }, /* Must be 0th */
-+	{ .name = "VERSION" }, /* Must be 1st */
- 	CC_DEBUG_REG(HOST_IRR),
- 	CC_DEBUG_REG(HOST_POWER_DOWN_EN),
- 	CC_DEBUG_REG(AXIM_MON_ERR),
-@@ -34,7 +35,6 @@ static struct debugfs_reg32 debug_regs[] = {
- 	CC_DEBUG_REG(HOST_IMR),
- 	CC_DEBUG_REG(AXIM_CFG),
- 	CC_DEBUG_REG(AXIM_CACHE_PARAMS),
--	CC_DEBUG_REG(HOST_VERSION),
- 	CC_DEBUG_REG(GPR_HOST),
- 	CC_DEBUG_REG(AXIM_MON_COMP),
- };
-@@ -58,6 +58,9 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
- 	struct debugfs_regset32 *regset;
- 	struct dentry *file;
- 
-+	debug_regs[0].offset = drvdata->sig_offset;
-+	debug_regs[1].offset = drvdata->ver_offset;
-+
- 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index 89ce013..6f93ce7 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -207,9 +207,13 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	if (hw_rev->rev >= CC_HW_REV_712) {
- 		new_drvdata->hash_len_sz = HASH_LEN_SIZE_712;
- 		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP);
-+		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_712);
-+		new_drvdata->ver_offset = CC_REG(HOST_VERSION_712);
- 	} else {
- 		new_drvdata->hash_len_sz = HASH_LEN_SIZE_630;
- 		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP8);
-+		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_630);
-+		new_drvdata->ver_offset = CC_REG(HOST_VERSION_630);
- 	}
- 
- 	platform_set_drvdata(plat_dev, new_drvdata);
-@@ -276,7 +280,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	}
- 
- 	/* Verify correct mapping */
--	signature_val = cc_ioread(new_drvdata, CC_REG(HOST_SIGNATURE));
-+	signature_val = cc_ioread(new_drvdata, new_drvdata->sig_offset);
- 	if (signature_val != hw_rev->sig) {
- 		dev_err(dev, "Invalid CC signature: SIGNATURE=0x%08X != expected=0x%08X\n",
- 			signature_val, hw_rev->sig);
-@@ -287,7 +291,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 
- 	/* Display HW versions */
- 	dev_info(dev, "ARM CryptoCell %s Driver: HW version 0x%08X, Driver version %s\n",
--		 hw_rev->name, cc_ioread(new_drvdata, CC_REG(HOST_VERSION)),
-+		 hw_rev->name, cc_ioread(new_drvdata, new_drvdata->ver_offset),
- 		 DRV_MODULE_VERSION);
- 
- 	rc = init_cc_regs(new_drvdata, true);
-diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
-index 2048fde..95f82b2 100644
---- a/drivers/crypto/ccree/cc_driver.h
-+++ b/drivers/crypto/ccree/cc_driver.h
-@@ -129,6 +129,8 @@ struct cc_drvdata {
- 	enum cc_hw_rev hw_rev;
- 	u32 hash_len_sz;
- 	u32 axim_mon_offset;
-+	u32 sig_offset;
-+	u32 ver_offset;
- };
- 
- struct cc_crypto_alg {
-diff --git a/drivers/crypto/ccree/cc_host_regs.h b/drivers/crypto/ccree/cc_host_regs.h
-index f510018..616b2e1 100644
---- a/drivers/crypto/ccree/cc_host_regs.h
-+++ b/drivers/crypto/ccree/cc_host_regs.h
-@@ -45,7 +45,8 @@
- #define CC_HOST_ICR_DSCRPTR_WATERMARK_QUEUE0_CLEAR_BIT_SIZE	0x1UL
- #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SHIFT	0x17UL
- #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SIZE	0x1UL
--#define CC_HOST_SIGNATURE_REG_OFFSET	0xA24UL
-+#define CC_HOST_SIGNATURE_712_REG_OFFSET	0xA24UL
-+#define CC_HOST_SIGNATURE_630_REG_OFFSET	0xAC8UL
- #define CC_HOST_SIGNATURE_VALUE_BIT_SHIFT	0x0UL
- #define CC_HOST_SIGNATURE_VALUE_BIT_SIZE	0x20UL
- #define CC_HOST_BOOT_REG_OFFSET	0xA28UL
-@@ -105,7 +106,8 @@
- #define CC_HOST_BOOT_ONLY_ENCRYPT_LOCAL_BIT_SIZE	0x1UL
- #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SHIFT	0x1EUL
- #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SIZE	0x1UL
--#define CC_HOST_VERSION_REG_OFFSET	0xA40UL
-+#define CC_HOST_VERSION_712_REG_OFFSET	0xA40UL
-+#define CC_HOST_VERSION_630_REG_OFFSET	0xAD8UL
- #define CC_HOST_VERSION_VALUE_BIT_SHIFT	0x0UL
- #define CC_HOST_VERSION_VALUE_BIT_SIZE	0x20UL
- #define CC_HOST_KFDE0_VALID_REG_OFFSET	0xA60UL
+ #include <linux/slab.h>
+ #include <linux/device.h>
 -- 
-2.7.4
+2.17.0
