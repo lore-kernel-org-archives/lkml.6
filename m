@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155769-2-272785780912668828
+X-Cyrus-Session-Id: sloti22d1t05-1732752-1527155758-2-2402222476535438955
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527155769; b=dohgkYqi1JZOBCvfgjMfLSkkmyabMr6Uh3zD5GkdBmk6hTzuRD
-    GEzGlhKc1QZt/pmRauZTgG2xDiQ+LRozZEsCgaULDDq9r+3RHvObgANDHygNPxPm
-    JrsV9mxcrSWv+GQDGXxWsfsRwEm2lItCGpRP6iUAnDwqBGKhosUunYUjCEmkyaPI
-    +nMAfnGwyxWhbtUfDTBLmGaTggZUfAuqCGIJu5uTwDYnpUGMNFHwFZ8xkEpSagD4
-    JBdH0sWMrPHu5AlPO7kY6zla/ycp+AE1iYlwPvuBJ63vprvIRKMV8faXRPvVY71t
-    cSTiZk08YpxKXS41buCAge6FhTIWA0OaKh5w==
+    1527155757; b=L/husWY2uHl5McIB0TJf1R4rS+a2dWuIEPgRIYF60KzQiDL0ig
+    4qhTSUQWdoIImbvuXN26KSiNIfCe0D6tp8BQRxYj5RigMifCPBRfcn4CBNeYKmHA
+    fEyMEteQbNhc6Z7+r6IGqiOdQt45N955s7Dtq92NwXN+zqBueDzy/bO0BBTCRkCV
+    PDVDbCeN69e+zBGzM6Z1h9kJGIM96fbHH3NcsqmzyoSNemQi6jn+EublUDW+ZqMU
+    2FtEnrZaQEAB5yb+vgHnIN3HFImQKrsYg29pZkRLe0D6k+AJem952lJwTKmSj3gU
+    j6LmFyg796jGT+G9NESj5TvI5xl4tqZr4wZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527155769; bh=bOWxQkWRi2jM4zY5ebfVfGZRVq0Y2j
-    /ITmoslkGvVpA=; b=RgkFTEVD4bio/bLHjMKG1t83ajaiUHVeu8CL20u4lrAOqe
-    E+/NnmAME25WPfSqsRRmUhs1UiGPQ0z+CGf23aRoF0pvI6BLoWyhWlMb7S7hm86j
-    T9v/jYP75CPpP7jK/ZKnCG79LWrwhPf9Ang683mZQGsZEC4ivLdYTigyHE6CG63X
-    E4mNzwANq81vYHT1Sw8mus7dkVwYrgyoocJgEd0YZR0J4w7c1eYo+MqGZLtHZlgK
-    sZo92h5hQKoSdL/B2hfpzh2iH1S+pZomrhAIptk9QOvVCgslNBCotZQdDq8AvhlY
-    fx+MXUI2K+pieR4ZzdwFsAlAiPjV8VciTf3QOOVg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527155757; bh=Hou3ddALr4QQVeYo3CyBvaeySWC2Zf
+    gSu5wcy+1d++4=; b=S4j7+pbYTdP8G7B3j11usrC9xFGIGdW2Hq5y66R9kqhtzK
+    e766ymEIb0nKshs5+9w0xuEZ78iyKVvQBrC8IViun7buSTOg4/AKKZwLczfSdf9/
+    iAd66e6alkdDgaY6dBu7CXbyBVq139o+D8up6z7ZTSbSnz/YYFMHS0+IEEtyxjQY
+    dOA1TBT7FD4yZsiQ37vw3MeNmm9FY2fWgwpyAKP/gS5bUiMzFfZfmGJqVshiFlYG
+    jHv/5LHyp2VKRKl1YaYKYnKrT5MzuoS6i7FwSPKnJqByz210puQvdUzK/yZuKpt3
+    6su5tM30kKEVh3qXNzY5lBsYITcrkCWpk2EP3OHw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=VJx6D7o9 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=d95VygIX x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=VJx6D7o9 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=d95VygIX x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,32 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI8MZndS5A+5D2iS1O/yLLJvlgF5FSD0kLItMaf6u1aCa7l52ioOdnOj9RyNnp/sEb31LKHp94H+D/OEPpJwMHU58zqTFhajUlkxMkdHr8hioetW9Fw8
-    /n1/KLuFkE9qbKkjKK0hnBxTWvl+1+kOkXoWVurw0fo6xe0FpTP04VAd3wjU7HJvsfhf+BNwdy+czM5o4B97sumP7vIDbyrs14gjmexpHK24M/ENWJVZrTes
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFhr9KQgxIf1LyyJ1OVmYa+4FNDVkL4AupdMC73eaGakxomEsNJfcptLBH0PXinvEoOF8gDQv5O9+Sk5AKmitGFQlytIihZN4uwfQiaUSIXm9//Ot4An
+    Mfynsq0f7cGXt1lo83hVeT6vTfIm7paAB/GNltPFZxcarl21iRlndVbTPWZnNDPY82Jlds2EiOfLJjlVL8ymNURLvPZYF8vjz3BQk5EKlm9giZv+YRfBuc6b
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=P1VUzUOK4a2cKhXD81cA:9
+    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=x3GXP8Dy4zAY1LmwQykA:9
     a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030225AbeEXJz4 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:55:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030210AbeEXJzy (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1030214AbeEXJzy (ORCPT <rfc822;greg@kroah.com>);
         Thu, 24 May 2018 05:55:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030206AbeEXJzv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:55:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 104/165] scsi: mptfusion: Add bounds check in mptctl_hp_targetinfo()
-Date: Thu, 24 May 2018 11:38:30 +0200
-Message-Id: <20180524093626.225525353@linuxfoundation.org>
+Subject: [PATCH 4.14 103/165] scsi: sym53c8xx_2: iterator underflow in sym_getsync()
+Date: Thu, 24 May 2018 11:38:29 +0200
+Message-Id: <20180524093626.183969575@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,32 +109,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit a7043e9529f3c367cc4d82997e00be034cbe57ca ]
+[ Upstream commit e6f791d95313c85f3dd4a26141e28e50ae9aa0ae ]
 
-My static checker complains about an out of bounds read:
-
-    drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
-    error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
-
-It's true that we probably should have a bounds check here.
+We wanted to exit the loop with "div" set to zero, but instead, if we
+don't hit the break then "div" is -1 when we finish the loop.  It leads
+to an array underflow a few lines later.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Matthew Wilcox <mawilcox@microsoft.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/message/fusion/mptctl.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/sym53c8xx_2/sym_hipd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -2698,6 +2698,8 @@ mptctl_hp_targetinfo(unsigned long arg)
- 				__FILE__, __LINE__, iocnum);
- 		return -ENODEV;
- 	}
-+	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
-+		return -EINVAL;
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
- 	    ioc->name));
+--- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
++++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+@@ -536,7 +536,7 @@ sym_getsync(struct sym_hcb *np, u_char d
+ 	 *  Look for the greatest clock divisor that allows an 
+ 	 *  input speed faster than the period.
+ 	 */
+-	while (div-- > 0)
++	while (--div > 0)
+ 		if (kpc >= (div_10M[div] << 2)) break;
  
+ 	/*
