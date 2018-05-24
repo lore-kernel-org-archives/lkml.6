@@ -1,142 +1,300 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967183AbeEXMuR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:50:17 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:50470 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935296AbeEXMuL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:50:11 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDKsWRWlGSWpSXmKPExsUSt3OpsS7TVrZ
-  og5l7OSymPnzCZjF39iRGi/tfjzJaXN41h81i68t3TBYPV85hsTi65x6zRd85dwcOj4lndT12
-  zrrL7rFpVSebx51re9g8ni1cz+LxeZNcAFsUa2ZeUn5FAmvGnocbWQtuiVcsvJ7RwNgg0sXIx
-  SEksIxR4ujV+SxdjJwcbAKGEvPevGcEsUUE0iXeXVjACFLELHCWSeLyws3MIAlhAVuJ9ccWs0
-  IU2Uns3PIAyjaS2HD7MpjNIqAq0XDmDZDNwcErECDxrsEUxBQSqJL40wFWwSngLHG9rRdsFaO
-  ArMSXxtVg05kFxCVuPZnPBGJLCAhILNlznhnCFpV4+fgfK4StIHH/TTdU3F7i9b13LBC2vsSj
-  x48YIWxDiVXTDkDFzSU+nG2Hmq8jsWD3JzYIW1ti2cLXYHFeAUGJkzOfsExgFJ+F5IxZSFpmI
-  WmZhaRlASPLKkbzpKLM9IyS3MTMHF1DAwNdQ0NjXRNdM73EKt0kvdRS3eTUvJKiRKCcXmJ5sV
-  5xZW5yTopeXmrJJkZgrDMAwQ7GK2+TDzFKcjApifKGPWWOFuJLyk+pzEgszogvKs1JLT7EKMP
-  BoSTB6/MWKCdYlJqeWpGWmQNMOjBpCQ4eJRFeBpA0b3FBYm5xZjpE6hSjopQ4rxJIQgAkkVGa
-  B9cGS3SXGGWlhHkZgQ4R4ilILcrNLEGVf8UozsGoJMybADKFJzOvBG76K6DFTECLLy4HW1ySi
-  JCSamAM/t4ydQ3HhstzM67WHrj4/Vd6n+CVpkqnX/M+rfYXvr9j9a5FPhWB+h841i74b1UZ/O
-  6Hc9XqkmNF4vnX902dW7wvvSH3tb/YzNRCw+mLbeWfyh4//0lccnfx9Ql5h2Mni8/84n9pE7u
-  FZorrpr2f3/ZLrslckWNr19kY8fTMLxOh/Q7XsrdsUWIpzkg01GIuKk4EAK+vYjFvAwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-14.tower-239.messagelabs.com!1527166209!744531!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
-Thread-Topic: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
-Thread-Index: AQHT8osyzhJTN0cRsUGP0zmiJT/5I6Q+zGHA
-Date: Thu, 24 May 2018 12:50:08 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941A488A@SW-EX-MBX02.diasemi.com>
-References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
- <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.35.206]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 24/05/2018 11:32:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S967330AbeEXMwF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:52:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:44060 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964863AbeEXMwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:52:01 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 1/2] cpufreq: Add Kryo CPU scaling driver
+To: Ilia Lin <ilialin@codeaurora.org>, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net
+References: <1527152242-31281-1-git-send-email-ilialin@codeaurora.org>
+ <1527152242-31281-2-git-send-email-ilialin@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <860be68b-cac0-9efc-b3c7-cc75b391a4c3@arm.com>
+Date: Thu, 24 May 2018 13:51:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <1527152242-31281-2-git-send-email-ilialin@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Marek,
+Hi Ilia,
 
-On 23 May 2018 12:42 Marek Vasut wrote,
 
-> To: linux-kernel@vger.kernel.org
-> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Lee Jones <lee.jones@linaro.org>; Mark Brown <broonie@kernel.org>; Steve Twiss <stwiss.opensource@diasemi.com>; Wolfram Sang <wsa+renesas@sang-engineering.com>; linux-renesas-soc@vger.kernel.org
-> Subject: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
->
-> The DA9063L does not contain RTC block, unlike the full DA9063.
-> Do not allow binding RTC driver on this variant of the chip.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
+On 24/05/18 09:57, Ilia Lin wrote:
+> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> the CPU frequency subset and voltage value of each OPP varies
+> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 > ---
->  drivers/mfd/da9063-core.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c index 7360b76b4f72..263c83006413 100644
-> --- a/drivers/mfd/da9063-core.c
-> +++ b/drivers/mfd/da9063-core.c
-> @@ -101,14 +101,14 @@ static const struct mfd_cell da9063_devs[] = {
->  		.of_compatible = "dlg,da9063-onkey",
->  	},
->  	{
-> +		.name		= DA9063_DRVNAME_VIBRATION,
-> +	},
-> +	{	/* Only present on DA9063 , not on DA9063L */
->  		.name		= DA9063_DRVNAME_RTC,
->  		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
->  		.resources	= da9063_rtc_resources,
->  		.of_compatible	= "dlg,da9063-rtc",
->  	},
-> -	{
-> -		.name		= DA9063_DRVNAME_VIBRATION,
-> -	},
->  };
+>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>  drivers/cpufreq/Makefile             |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+>  drivers/cpufreq/qcom-cpufreq-kryo.c  | 194 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 208 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index de55c7d..0bfd40e 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+>  	depends on ARCH_OMAP2PLUS
+>  	default ARCH_OMAP2PLUS
 >  
->  static int da9063_clear_fault_log(struct da9063 *da9063) @@ -163,7 +163,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)  {
->  	struct da9063_pdata *pdata = da9063->dev->platform_data;
->  	int model, variant_id, variant_code;
-> -	int ret;
-> +	int da9063_devs_len, ret;
->  
->  	ret = da9063_clear_fault_log(da9063);
->  	if (ret < 0)
-> @@ -225,9 +225,13 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
->  
->  	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
->  
-> -	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
-> -			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
-> -			      NULL);
-> +	da9063_devs_len = ARRAY_SIZE(da9063_devs);
-> +	/* RTC, the last device in the list, is only present on DA9063 */
-> +	if (da9063->type == PMIC_TYPE_DA9063L)
-> +		da9063_devs_len -= 1;
+> +config ARM_QCOM_CPUFREQ_KRYO
+> +	bool "Qualcomm Kryo based CPUFreq"
+> +	depends on QCOM_QFPROM
+> +	depends on QCOM_SMEM
+> +	select PM_OPP
+> +	help
+> +	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
 > +
-> +	ret = mfd_add_devices(da9063->dev, -1, da9063_devs, da9063_devs_len,
-> +			      NULL, da9063->irq_base, NULL);
->  	if (ret)
->  		dev_err(da9063->dev, "Cannot add MFD cells\n");
+> +	  If in doubt, say N.
+> +
+>  config ARM_S3C_CPUFREQ
+>  	bool
+>  	help
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 8d24ade..fb4a2ec 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index 3b585e4..77d6ab8 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -118,6 +118,9 @@
 >  
-> --
-> 2.16.2
+>  	{ .compatible = "nvidia,tegra124", },
+>  
+> +	{ .compatible = "qcom,apq8096", },
+> +	{ .compatible = "qcom,msm8996", },
+> +
+>  	{ .compatible = "st,stih407", },
+>  	{ .compatible = "st,stih410", },
+>  
+> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> new file mode 100644
+> index 0000000..9fe379c
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> @@ -0,0 +1,194 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +/*
+> + * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> + * the CPU frequency subset and voltage value of each OPP varies
+> + * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> + * defines the voltage and frequency value based on the msm-id in SMEM
+> + * and speedbin blown in the efuse combination.
+> + * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> + * to provide the OPP framework with required information.
+> + * This is used to determine the voltage and frequency value for each OPP of
+> + * operating-points-v2 table when it is parsed by the OPP framework.
+> + */
+> +
+> +#include <linux/cpu.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-consumer.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/slab.h>
+> +#include <linux/soc/qcom/smem.h>
+> +
+> +#define MSM_ID_SMEM	137
+> +
+> +enum _msm_id {
+> +	MSM8996V3 = 0xF6ul,
+> +	APQ8096V3 = 0x123ul,
+> +	MSM8996SG = 0x131ul,
+> +	APQ8096SG = 0x138ul,
+> +};
+> +
+> +enum _msm8996_version {
+> +	MSM8996_V3,
+> +	MSM8996_SG,
+> +	NUM_OF_MSM8996_VERSIONS,
+> +};
+> +
+> +static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
+> +{
+> +	size_t len;
+> +	u32 *msm_id;
+> +	enum _msm8996_version version;
+> +
+> +	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
+> +	/* The first 4 bytes are format, next to them is the actual msm-id */
+> +	msm_id++;
+> +
+> +	switch ((enum _msm_id)*msm_id) {
+> +	case MSM8996V3:
+> +	case APQ8096V3:
+> +		version = MSM8996_V3;
+> +		break;
+> +	case MSM8996SG:
+> +	case APQ8096SG:
+> +		version = MSM8996_SG;
+> +		break;
+> +	default:
+> +		version = NUM_OF_MSM8996_VERSIONS;
+> +	}
+> +
+> +	return version;
+> +}
+> +
+> +static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+> +{
+> +	struct opp_table *opp_tables[NR_CPUS] = {0};
+> +	struct platform_device *cpufreq_dt_pdev;
+> +	enum _msm8996_version msm8996_version;
+> +	struct nvmem_cell *speedbin_nvmem;
+> +	struct device_node *np;
+> +	struct device *cpu_dev;
+> +	unsigned cpu;
+> +	u8 *speedbin;
+> +	u32 versions;
+> +	size_t len;
+> +	int ret;
+> +
+> +	cpu_dev = get_cpu_device(0);
+> +	if (NULL == cpu_dev)
+> +		return -ENODEV;
+> +
+> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> +		dev_err(cpu_dev, "Not Snapdragon 820/821!");
+> +		return -ENODEV;
+> +	}
+> +
+> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+> +	if (IS_ERR(np))
+> +		return PTR_ERR(np);
+> +
+> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+> +		of_node_put(np);
+> +		return -ENOENT;
+> +	}
+> +
+> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+> +	of_node_put(np);
+> +	if (IS_ERR(speedbin_nvmem)) {
+> +		dev_err(cpu_dev, "Could not get nvmem cell: %ld\n",
+> +			PTR_ERR(speedbin_nvmem));
+> +		return PTR_ERR(speedbin_nvmem);
+> +	}
+> +
+> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> +	nvmem_cell_put(speedbin_nvmem);
+> +
+> +	switch (msm8996_version) {
+> +	case MSM8996_V3:
+> +		versions = 1 << (unsigned int)(*speedbin);
+> +		break;
+> +	case MSM8996_SG:
+> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> +		break;
+> +	default:
+> +		BUG();
+> +		break;
+> +	}
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		cpu_dev = get_cpu_device(cpu);
+> +		if (NULL == cpu_dev) {
+> +			ret = -ENODEV;
+> +			goto free_opp;
+> +		}
+> +
+> +		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
+> +							      &versions, 1);
+> +		if (IS_ERR(opp_tables[cpu])) {
+> +			ret = PTR_ERR(opp_tables[cpu]);
+> +			dev_err(cpu_dev, "Failed to set supported hardware\n");
+> +			goto free_opp;
+> +		}
+> +	}
+> +
+> +	cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1,
+> +							  NULL, 0);
+> +	if (!IS_ERR(cpufreq_dt_pdev))
+> +		return 0;
+> +
+> +	ret = PTR_ERR(cpufreq_dt_pdev);
+> +	dev_err(cpu_dev, "Failed to register platform device\n");
+> +
+> +free_opp:
+> +	for_each_possible_cpu(cpu) {
+> +		if (IS_ERR_OR_NULL(opp_tables[cpu]))
+> +			break;
+> +		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static struct platform_driver qcom_cpufreq_kryo_driver = {
+> +	.probe = qcom_cpufreq_kryo_probe,
+> +	.driver = {
+> +		.name = "qcom-cpufreq-kryo",
+> +	},
+> +};
+> +
+> +/*
+> + * Since the driver depends on smem and nvmem drivers, which may
+> + * return EPROBE_DEFER, all the real activity is done in the probe,
+> + * which may be defered as well. The init here is only registering
+> + * the driver and the platform device.
+> + */
+> +static int __init qcom_cpufreq_kryo_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = platform_driver_register(&qcom_cpufreq_kryo_driver);
+> +	if (unlikely(ret < 0))
+> +		return ret;
+> +
+> +	ret = PTR_ERR_OR_ZERO(platform_device_register_simple(
+> +		"qcom-cpufreq-kryo", -1, NULL, 0));
 
-MFD cells definitely has less impact than regmap_range and regmap_irq.
-I agree, there's no point in having a completely new 
-static const struct mfd_cell da9063l_devs[] = { ... }  for DA9063L
 
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+You simply can't do this unconditionally here. This will blow up on
+platforms where this driver is not supposed to work. The probe will be
+called on non-QCOM or non-Kryo QCOM platforms and I reckon it will
+crash trying to execute something in qcom_smem_get.
 
+-- 
 Regards,
-Steve
+Sudeep
