@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1758260-1527157603-2-14933920567921915577
+X-Cyrus-Session-Id: sloti22d1t05-1757396-1527157585-2-5121166485076436873
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527157603; b=gIbzMrB9MWfa6K3YaRiomBe8XI8ZRx+BtMkGHqBVwyngrhK7rN
-    PtkENlj6h63de4/8lNGFrrdJDgAbmK7i0sZcUk3VIhgNwr79V+mcbDmdDdx9JXg9
-    AeIl/FPknz3DvcEIFnP3VRbWCiVPfBKbQtZ93gIOWEqzXcd09DT7ksugRCIrwWoH
-    otIywuecu53AzvzR4Z8aNca+IhklYyqegqtzeuzKHowIJaLJb+6gylTS9WsY8Fgq
-    EqeiYeUbaMrywGuoKGvEDzaUG+tqmt+4cBFCB4DwOIiAklRzEs6TmGl10k/43lG/
-    xexAvxwFBSp2vBXF5xQ3oX+8IMsiG+XIFGKw==
+    1527157585; b=RJDWwdK0pF4xKeetPs9tR0VbAhs5kA0YEV3vi16QD52bZ2S3i3
+    YlbnqeXOC/AGgXYzI3LGFdNnHW1gyKkNxf9GHyf96eyxS4zJYlkVWH1UGMyzwahf
+    1yyyk62HXpBynmKf0mGJbtp5JQPno7jsn83x6qftIzTQf1A91LC5OLl2oHd3ngSB
+    xEqXrLe3W/vroTHPpAQmf6hlTuU7wvj7fCd81Geq2DKbiZTvuI8wjHYaDIdry6KC
+    mAgBT4R1gYsNAYxSEwtLRNHbDsnmtL0amYEOpIGnQVpekXOjAQI2kOY1+35lVG4J
+    8Jy36iP2p2SxxPyfjreJDTASQuIoyEI32Thw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527157603; bh=x5JR7RnQKuYGc68WLy6Fbv1sm7/Qnk
-    GRogEvEj+PZDk=; b=GB2tWbtsKDUSN0NgLUIP+Hc0FTBZK3vK0kChZngSnq9GZE
-    7Ie8pi1LPLcQ5QNslk+LcBKMR/XfmBCKI0jN9rj7AUaXbW54TZWCsU1H8kFSVQWw
-    mXP3WjmSJ/8zV5BK7ClEgOpU9BKBmu6DxPYjJu2qO2wD7/fqsGC5YMU46NK90KR6
-    hSTVFnptQ2Fx1bJZOZhIURLkHz32umBYW5STqGbT0RlUQfV2Gd2Tey60um4I5Dcx
-    oT35VSKKIOxPKOM79CFHvsSwN09ZFpl6NOXC50mDhOAJOo2deqimsvoPMmc4+aNS
-    2L7UhtXgF0h4lHRAdDohW73LFslx1VMYhJYQXcAA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527157585; bh=p1aFHun3s7+lA6VY3vlFjU19bWt+Jl
+    FMX89cB3Mi3nM=; b=TczzQ5P2h2O99WvjYfhB2nZ2LP6s2V2Q3egv7LeuFVVXMp
+    Osg67TA3ne9hPPQ/u+kigikLH56xjWq+YRzYgnO7G2zOAoJFwXz7sJ6UGaybmGJq
+    7Pp1ToU/PTPDnV8KfgVrabC6923z6k9SumQuQjJZ7w7bVsVUajJ7l9LJjkCa7Lpo
+    bdrdaf/ac/7Pkyi3HHfj2vQd9mWNfDInKnNILwUrAqdknUh4H9KkVUejMJHCYOdF
+    O4i0cLnodmjeaHfhVapKBvRP3WdKG65WvIzbpsMXGKjcYcM8Ko6TGPCittWGqsN0
+    QomcXqEDGppmAkukXL9NWScOk+GRQZcriHMl5YZA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=nWeyRlzN x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=V4uoO+yt x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=nWeyRlzN x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=V4uoO+yt x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,30 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMNlJlRDohBz9hsGm/0PkL7eoILXbbpNpG/NGxXFXwPagkDgMZexUqlcgJ2CbPTV91DDEh1v1vFWP1GeoWPsrexBlJD1mrkzL5a4G2yQ47MmRJccjcuz
-    nqzk+Ez0UeLMbFW9fwFh+ewFVh5+x8AhKAYAxWixq71xNFEzD/3Egx17yJzBiqkjusTTsA6WVQAvrbfV8WHF/Lm/nYPxy4X05x+E/BMARoUaf4whOm87PE1P
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOPUZ1toPc8Ql6mNui8VMH3srkgO1sSOu/FR1cDlvJSRsYAX968X+Nyeh4Q7GZ3siVAY47KxvNM0XJxkisT9ce/lhZslsPbY6clzVS6DcB2k4PTTotlJ
+    9TnftlUP8+KzGbEVg0qvfsW7UuHijqqu9zKzTcCUBcF4muIL5Fzgucce8WQRy6nC2B04q9sJuPBsd0VZDpfTMLGZyJjIFeyA0zy/gmK9BGuZIn9Q5J/x4UOR
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=HtlbcJ_Q4UZFFvZ5v7sA:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=yMhMjlubAAAA:8 a=ky6cq47XyTU6ZtwUwboA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031480AbeEXK03 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:26:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48184 "EHLO mail.kernel.org"
+        id S1031126AbeEXK0H (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:26:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031015AbeEXKB5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:01:57 -0400
+        id S1031028AbeEXKB7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:01:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 070/161] usb: dwc3: Makefile: fix link error on randconfig
-Date: Thu, 24 May 2018 11:38:15 +0200
-Message-Id: <20180524093026.901898446@linuxfoundation.org>
+Subject: [PATCH 4.16 071/161] xhci: zero usb device slot_id member when disabling and freeing a xhci slot
+Date: Thu, 24 May 2018 11:38:16 +0200
+Message-Id: <20180524093027.003996417@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -106,30 +105,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit de948a74ad6f0eefddf36d765b8f2dd6df82caa0 ]
+[ Upstream commit a400efe455f7b61ac9a801ac8d0d01f8c8d82dd5 ]
 
-If building a kernel without FTRACE but with TRACING, dwc3.ko fails to
-link due to missing trace events. Fix this by using the correct
-Kconfig symbol on Makefile.
+set udev->slot_id to zero when disabling and freeing the xhci slot.
+Prevents usb core from calling xhci with a stale slot id.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+xHC controller may be reset during resume to recover from some error.
+All slots are unusable as they are disabled and freed.
+xhci driver starts slot enumeration again from 1 in the order they are
+enabled. In the worst case a stale udev->slot_id for one device matches
+a newly enabled slot_id for a different device, causing us to
+perform a action on the wrong device.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/xhci-mem.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/dwc3/Makefile
-+++ b/drivers/usb/dwc3/Makefile
-@@ -6,7 +6,7 @@ obj-$(CONFIG_USB_DWC3)			+= dwc3.o
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -913,6 +913,8 @@ void xhci_free_virt_device(struct xhci_h
+ 	if (dev->out_ctx)
+ 		xhci_free_container_ctx(xhci, dev->out_ctx);
  
- dwc3-y					:= core.o
- 
--ifneq ($(CONFIG_FTRACE),)
-+ifneq ($(CONFIG_TRACING),)
- 	dwc3-y				+= trace.o
- endif
- 
++	if (dev->udev && dev->udev->slot_id)
++		dev->udev->slot_id = 0;
+ 	kfree(xhci->devs[slot_id]);
+ 	xhci->devs[slot_id] = NULL;
+ }
