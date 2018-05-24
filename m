@@ -1,128 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755010AbeEXFh5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 01:37:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38947 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754993AbeEXFhy (ORCPT
+        id S1755023AbeEXFjP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 01:39:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42587 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751845AbeEXFjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 01:37:54 -0400
-X-Google-Smtp-Source: AB8JxZqym8MoLo6j9+bo/sA+pEj5cmkjFGY9I+KMlD9uhlX+yFSckdtGGIfNjZqskTOTcnQA9Zz/5w==
-Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
- source
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180523160020.15291-1-digetx@gmail.com>
- <20180523160020.15291-2-digetx@gmail.com>
- <20180524043040.25pld3ezs4lpabro@vireshk-i7>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
-Date: Thu, 24 May 2018 08:37:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 24 May 2018 01:39:13 -0400
+Date: Wed, 23 May 2018 22:37:52 -0700
+From: tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-7ebaf4890f63eb90856b76864a0847413cdf6c86@git.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, yao.jin@linux.intel.com,
+        peterz@infradead.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, acme@redhat.com, hpa@zytor.com,
+        kan.liang@linux.intel.com, tglx@linutronix.de, mingo@kernel.org
+Reply-To: hpa@zytor.com, kan.liang@linux.intel.com, mingo@kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, peterz@infradead.org,
+        yao.jin@linux.intel.com, alexander.shishkin@linux.intel.com
+In-Reply-To: <1526914666-31839-4-git-send-email-yao.jin@linux.intel.com>
+References: <1526914666-31839-4-git-send-email-yao.jin@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf annotate: Support '--group' option
+Git-Commit-ID: 7ebaf4890f63eb90856b76864a0847413cdf6c86
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180524043040.25pld3ezs4lpabro@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 07:30, Viresh Kumar wrote:
-> On 23-05-18, 19:00, Dmitry Osipenko wrote:
->> PLL_C is running at 600MHz which is significantly higher than the 216MHz
->> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
->> running on that PLL. Let's use PLL_C as intermediate clock source, making
->> CPU snappier a tad during of the frequency transition.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
->>  1 file changed, 21 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->> index 3ad6bded6efc..4bf5ba7da40b 100644
->> --- a/drivers/cpufreq/tegra20-cpufreq.c
->> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->> @@ -25,12 +25,13 @@
->>  #include <linux/types.h>
->>  
->>  #define PLL_P_FREQ	216000
->> +#define PLL_C_FREQ	600000
->>  
->>  static struct cpufreq_frequency_table freq_table[] = {
->>  	{ .frequency = 216000 },
->>  	{ .frequency = 312000 },
->>  	{ .frequency = 456000 },
->> -	{ .frequency = 608000 },
->> +	{ .frequency = 600000 },
->>  	{ .frequency = 760000 },
->>  	{ .frequency = 816000 },
->>  	{ .frequency = 912000 },
->> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
->>  	struct clk *cpu_clk;
->>  	struct clk *pll_x_clk;
->>  	struct clk *pll_p_clk;
->> +	struct clk *pll_c_clk;
->>  	bool pll_x_prepared;
->>  };
->>  
->> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
->>  	if (index == 0 || policy->cur == PLL_P_FREQ)
->>  		return 0;
->>  
->> -	return PLL_P_FREQ;
->> +	if (index == 3 || policy->cur == PLL_C_FREQ)
->> +		return 0;
-> 
-> So we can choose between two different intermediate frequencies ? And
-> I didn't like the way magic number 3 is used here. Its prone to errors
-> and we better use a macro or something else here.
-> 
-> Like instead of doing index == 3, what about freq_table[index].freq ==
-> PLL_C_FREQ ? Same for the previous patch as well.
+Commit-ID:  7ebaf4890f63eb90856b76864a0847413cdf6c86
+Gitweb:     https://git.kernel.org/tip/7ebaf4890f63eb90856b76864a0847413cdf6c86
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Mon, 21 May 2018 22:57:46 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 21 May 2018 14:41:25 -0300
 
-The frequency is determined by the parent clock of CCLK (CPU clock), we can
-choose between different parents for the CCLK. PLL_C as PLL_P and PLL_X are
-among the available parents for the CCLK to choose from and there some others.
+perf annotate: Support '--group' option
 
-I don't mind to use freq_table[index].freq, though I'd like to keep compiled
-assembly minimal where possible. Hence the freq_table should be made constant to
-tell compiler that it doesn't need to emit data fetches for the table values and
-could embed the constants into the code where appropriate.
+With the '--group' option, even for non-explicit group, 'perf annotate'
+will enable the group output.
 
-Could we constify the "struct cpufreq_frequency_table" within the cpufreq core?
-Seems nothing prevents this (I already tried to constify - there are no
-obstacles), unless some cpufreq driver would try to modify
-policy->freq_table->... within the cpufreq callback implementation.
+For example,
+
+  $ perf record -e cycles,branches ./div
+  $ perf annotate main --stdio --group
+
+                 :            Disassembly of section .text:
+                 :
+                 :            00000000004004b0 <main>:
+                 :            main():
+                 :
+                 :                    return i;
+                 :            }
+                 :
+                 :            int main(void)
+                 :            {
+    0.00    0.00 :   4004b0:       push   %rbx
+                 :                    int i;
+                 :                    int flag;
+                 :                    volatile double x = 1212121212, y = 121212;
+                 :
+                 :                    s_randseed = time(0);
+    0.00    0.00 :   4004b1:       xor    %edi,%edi
+                 :                    srand(s_randseed);
+    0.00    0.00 :   4004b3:       mov    $0x77359400,%ebx
+                 :
+                 :                    return i;
+                 :            }
+                 :
+
+But if without --group, there is only one event reported.
+
+  $ perf annotate main --stdio
+
+         :            Disassembly of section .text:
+         :
+         :            00000000004004b0 <main>:
+         :            main():
+         :
+         :                    return i;
+         :            }
+         :
+         :            int main(void)
+         :            {
+    0.00 :   4004b0:       push   %rbx
+         :                    int i;
+         :                    int flag;
+         :                    volatile double x = 1212121212, y = 121212;
+         :
+         :                    s_randseed = time(0);
+    0.00 :   4004b1:       xor    %edi,%edi
+         :                    srand(s_randseed);
+    0.00 :   4004b3:       mov    $0x77359400,%ebx
+         :
+         :                    return i;
+         :            }
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1526914666-31839-4-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-annotate.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 6e5d9f718154..da5704240239 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -45,6 +45,7 @@ struct perf_annotate {
+ 	bool	   print_line;
+ 	bool	   skip_missing;
+ 	bool	   has_br_stack;
++	bool	   group_set;
+ 	const char *sym_hist_filter;
+ 	const char *cpu_list;
+ 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
+@@ -508,6 +509,9 @@ int cmd_annotate(int argc, const char **argv)
+ 		    "Don't shorten the displayed pathnames"),
+ 	OPT_BOOLEAN(0, "skip-missing", &annotate.skip_missing,
+ 		    "Skip symbols that cannot be annotated"),
++	OPT_BOOLEAN_SET(0, "group", &symbol_conf.event_group,
++			&annotate.group_set,
++			"Show event group information together"),
+ 	OPT_STRING('C', "cpu", &annotate.cpu_list, "cpu", "list of cpus to profile"),
+ 	OPT_CALLBACK(0, "symfs", NULL, "directory",
+ 		     "Look for files with symbols relative to this directory",
+@@ -570,6 +574,9 @@ int cmd_annotate(int argc, const char **argv)
+ 	annotate.has_br_stack = perf_header__has_feat(&annotate.session->header,
+ 						      HEADER_BRANCH_STACK);
+ 
++	if (annotate.group_set)
++		perf_evlist__force_leader(annotate.session->evlist);
++
+ 	ret = symbol__annotation_init();
+ 	if (ret < 0)
+ 		goto out_delete;
