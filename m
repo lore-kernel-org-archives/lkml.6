@@ -1,28 +1,28 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqOGiFJfex62AX0saEonjVVZCGAIBohYwTnTlCiKXdikJYv17Cpgf1Ocyj5yML+kYBYVKQT
-ARC-Seal: i=1; a=rsa-sha256; t=1527156283; cv=none;
+X-Google-Smtp-Source: AB8JxZqKyJ6Y46JzwEbpitfyNc3EpfGCz0VS2w/0kXIpvONSE9WV6WvJv57B3NBlK1ZDIhiLiE1c
+ARC-Seal: i=1; a=rsa-sha256; t=1527156281; cv=none;
         d=google.com; s=arc-20160816;
-        b=k+VwWrV39SwD1a5ilsCeMVIJDq4Wae5+JdostbDWKuFU7Q5l2y+7KX4qOFLPe2RgA7
-         aRCHW2BPBV3kz7Z7ubqtnkhVQ+qqnRjIpt3KEZwe2TL7+UnAlMQOcpAr2QLTI18wB6GT
-         GatHikSZs4Oqas5sTX7K1BXhPgjWon0hrGnTTv8cQQ6agDeWgH59j9eTaB//XXL8dZK8
-         4h56FudhKHpLQt4RFrkB/RmafrBEdpNz6LWnNGstef+VW+LEkDhITDAD6dvdiiXy2o5/
-         M/1Q4wQHKLZkWW8j05QgaZQjk9PUdMHORPHPU7ifbJTm950dwoeiUWlBkd6e1Vo9ybnX
-         7KWw==
+        b=EQR6AR157Vq7z/ynpSiU45hVy77OnxwTC1etYKcacfzPC09ZtqWduZf1nWOeXCVUg6
+         LYPB8s3FOvUFT84KlQpwE4XMQWfXF0saZ35ymho06Fd3+6txZi/J8Ly4eHzTbYmyUAFI
+         Mu3mC7TZ2TnxoKkhTvZNgAdYfKV9D5pPNRMeZEhl9he6DQXVXwzqydqAtb8lVrNdFQuT
+         FbRYFjUYGVKXvN1ztjDgPyfC9/xfsUrOVd5o+u2tsH1w5XlJW51WZdePyhma1mB6xW/r
+         J2z5aOqFRy4yvaEkcNMEqR+BROf/WiJbT8/644IV6oBkPBgEf+WiVjCYn5tLlkP6edSr
+         7QHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ZzaUMyD15xsrfUiwQbNSbefdAxP+727Vs15OEJ6DNyU=;
-        b=SbVPEviHQb0UMv/v9Vt/EQf2JBSfMuhj8Kt4ZXVy0DaK6IdfNU7bNpm+qa99jbquze
-         hDOz3eiOTIPRFOoDz0Yu/TWlmgVoeckPO+ROZSGjXrKiCgvCBhn+gizACnsTVekhHoqm
-         2qWmkJNZ74Zo1dKkbhNpRhlYHDWPjETR1EkWzvoFE+JkHW1fDEc3CUaQ3cV58T39ogMs
-         O9a+QfZNqPMjMAIbbGx7V/KLXOkQPNNkD5VkKMDv0eVeGPxjEugQHFEPgqc6Vu5jpMUB
-         Ky9t4luXUIS3L9xRZmPWZZ7aHvyyIi6S3kHvMZqZQUADOv2ME+zn3dByyw3NIYU+vO/d
-         MPjA==
+        bh=7KPjDocPo/YDap4eH/qDVGO76VnLql/xj7SNLqlwW+0=;
+        b=eRBf861Z1yFhShK4iv93NDN09qlCOpkXwCu3on8v2j5fy5Ev1LmDVvsbSdEHm8WJBY
+         rb6I8gvkCy8Jwe6Uqi0QbTToTWwtbc2m1mdT/yeMPaEm7PF2VS89Rga688KfLdc47mM3
+         fTP4JHOES6eB+bDvL71O9Crb6G51F73wj0IAPC/nTPD4+flvhrYGrK7sN7SV2avM0I62
+         jRCInd0JquYXQAP7qHFX9pcfYkMiBBxU/1eD+xUdokn1xco6Yy1f58bCqGZUdy8xb3A+
+         venj/xCG7ZFu4ZvnicMwx2ZYmpgzcy3clAbUHRef6pc1dNN9OhDW0isItIhjONdSkwZZ
+         /L7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Hk1XOgU5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=hHKZl4sJ;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Hk1XOgU5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=hHKZl4sJ;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -33,9 +33,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 129/161] clk: samsung: exynos5433: Fix PLL rates
-Date: Thu, 24 May 2018 11:39:14 +0200
-Message-Id: <20180524093033.808546894@linuxfoundation.org>
+Subject: [PATCH 4.16 128/161] clk: samsung: exynos5260: Fix PLL rates
+Date: Thu, 24 May 2018 11:39:13 +0200
+Message-Id: <20180524093033.660803435@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338518076958484?=
-X-GMAIL-MSGID: =?utf-8?q?1601339427840870245?=
+X-GMAIL-THRID: =?utf-8?q?1601338515019995107?=
+X-GMAIL-MSGID: =?utf-8?q?1601339424748478716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,7 +56,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit ab0447845cffc0fd752df2ccd6b4e34006000ce4 ]
+[ Upstream commit cdb68fbd4e7962be742c4f29475220c5bf28d8a5 ]
 
 Rates declared in PLL rate tables should match exactly rates calculated from
 the PLL coefficients. If that is not the case, rate of the PLL's child clock
@@ -78,35 +78,17 @@ Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos5433.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/samsung/clk-exynos5260.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -729,7 +729,7 @@ static const struct samsung_pll_rate_tab
- 	PLL_35XX_RATE(800000000U,  400, 6,  1),
- 	PLL_35XX_RATE(733000000U,  733, 12, 1),
- 	PLL_35XX_RATE(700000000U,  175, 3,  1),
--	PLL_35XX_RATE(667000000U,  222, 4,  1),
-+	PLL_35XX_RATE(666000000U,  222, 4,  1),
- 	PLL_35XX_RATE(633000000U,  211, 4,  1),
- 	PLL_35XX_RATE(600000000U,  500, 5,  2),
- 	PLL_35XX_RATE(552000000U,  460, 5,  2),
-@@ -757,12 +757,12 @@ static const struct samsung_pll_rate_tab
- /* AUD_PLL */
- static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
- 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
--	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
-+	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
- 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
--	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
--	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
--	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
--	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
-+	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
-+	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
-+	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
-+	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
- 	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
- 	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
- 	{ /* sentinel */ }
+--- a/drivers/clk/samsung/clk-exynos5260.c
++++ b/drivers/clk/samsung/clk-exynos5260.c
+@@ -65,7 +65,7 @@ static const struct samsung_pll_rate_tab
+ 	PLL_36XX_RATE(480000000, 160, 2, 2, 0),
+ 	PLL_36XX_RATE(432000000, 144, 2, 2, 0),
+ 	PLL_36XX_RATE(400000000, 200, 3, 2, 0),
+-	PLL_36XX_RATE(394073130, 459, 7, 2, 49282),
++	PLL_36XX_RATE(394073128, 459, 7, 2, 49282),
+ 	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
+ 	PLL_36XX_RATE(300000000, 100, 2, 2, 0),
+ 	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
