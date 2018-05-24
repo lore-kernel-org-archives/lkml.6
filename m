@@ -1,74 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970852AbeEXPJz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:09:55 -0400
-Received: from smtp-1b.atlantis.sk ([80.94.52.26]:50216 "EHLO
-        smtp-1b.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970769AbeEXPJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:09:37 -0400
-From: Ondrej Zary <linux@rainbow-software.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] gspca_zc3xx: Fix exposure with power line frequency for OV7648
-Date: Thu, 24 May 2018 17:09:31 +0200
-Message-Id: <20180524150931.26574-3-linux@rainbow-software.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180524150931.26574-1-linux@rainbow-software.org>
-References: <20180524150931.26574-1-linux@rainbow-software.org>
+        id S970866AbeEXPLF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 11:11:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:18348 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S970839AbeEXPLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 11:11:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
+   d="scan'208";a="58173451"
+Date: Thu, 24 May 2018 23:10:14 +0800
+From: "Liu, Changcheng" <changcheng.liu@intel.com>
+To: jiangshanlai@gmail.com, tj@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: define struct workqueue_struct in C file
+Message-ID: <20180524151013.GA175207@sofia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 50Hz and 60Hz power line frequency settings disable short (1/120s
-and 1/100s) exposure times for banding filter, causing overexposed
-image near lamps. No flicker setting enables them (when banding
-filter is disabled and they're not used).
+Hi all,
+	I have one confusion about workqueue_struct:
+	1) Why struct workqueue_struct is defined in C file instead of
+	header file?
+	   I'm trying to print "workqueue_struct:name" field in one external
+	   build module. "workqueue_struct:name" can't be accessed directly.
 
-Seems that the logic is just the wrong way around. Fix it.
-(This bug came from the Windows driver.)
+	2) struct work_struct is defined in "workqueue.h", could struct
+	workqueue_struct also be defined in it?
 
-Signed-off-by: Ondrej Zary <linux@rainbow-software.org>
----
- drivers/media/usb/gspca/zc3xx.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/zc3xx.c b/drivers/media/usb/gspca/zc3xx.c
-index 9a78420e8ad8..299ea70bfb67 100644
---- a/drivers/media/usb/gspca/zc3xx.c
-+++ b/drivers/media/usb/gspca/zc3xx.c
-@@ -3188,7 +3188,9 @@ static const struct usb_action ov7620_50HZ[] = {
- 				 * don't change autoexposure */
- 	{0xdd, 0x00, 0x0100},	/* 00,01,00,dd */
- 	{0xaa, 0x2b, 0x0096},	/* 00,2b,96,aa */
--	{0xaa, 0x75, 0x008a},	/* 00,75,8a,aa */
-+/*	{0xaa, 0x75, 0x008a},	 * 00,75,8a,aa */
-+	/* enable 1/120s & 1/100s exposures for banding filter */
-+	{0xaa, 0x75, 0x008e},
- 	{0xaa, 0x2d, 0x0005},	/* 00,2d,05,aa */
- 	{0xa0, 0x00, ZC3XX_R190_EXPOSURELIMITHIGH},	/* 01,90,00,cc */
- 	{0xa0, 0x04, ZC3XX_R191_EXPOSURELIMITMID},	/* 01,91,04,cc */
-@@ -3208,7 +3210,9 @@ static const struct usb_action ov7620_60HZ[] = {
- 				 * don't change autoexposure */
- 	{0xdd, 0x00, 0x0100},			/* 00,01,00,dd */
- 	{0xaa, 0x2b, 0x0000},			/* 00,2b,00,aa */
--	{0xaa, 0x75, 0x008a},			/* 00,75,8a,aa */
-+/*	{0xaa, 0x75, 0x008a},			 * 00,75,8a,aa */
-+	/* enable 1/120s & 1/100s exposures for banding filter */
-+	{0xaa, 0x75, 0x008e},
- 	{0xaa, 0x2d, 0x0005},			/* 00,2d,05,aa */
- 	{0xa0, 0x00, ZC3XX_R190_EXPOSURELIMITHIGH}, /* 01,90,00,cc */
- 	{0xa0, 0x04, ZC3XX_R191_EXPOSURELIMITMID}, /* 01,91,04,cc */
-@@ -3231,7 +3235,9 @@ static const struct usb_action ov7620_NoFliker[] = {
- 				 * don't change autoexposure */
- 	{0xdd, 0x00, 0x0100},			/* 00,01,00,dd */
- 	{0xaa, 0x2b, 0x0000},			/* 00,2b,00,aa */
--	{0xaa, 0x75, 0x008e},			/* 00,75,8e,aa */
-+/*	{0xaa, 0x75, 0x008e},			 * 00,75,8e,aa */
-+	/* disable 1/120s & 1/100s exposures for banding filter */
-+	{0xaa, 0x75, 0x008a},
- 	{0xaa, 0x2d, 0x0001},			/* 00,2d,01,aa */
- 	{0xa0, 0x00, ZC3XX_R190_EXPOSURELIMITHIGH}, /* 01,90,00,cc */
- 	{0xa0, 0x04, ZC3XX_R191_EXPOSURELIMITMID}, /* 01,91,04,cc */
--- 
-Ondrej Zary
+--Thanks
+Changcheng
