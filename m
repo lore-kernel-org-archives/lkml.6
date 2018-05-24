@@ -1,38 +1,39 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527164384-2-2655747565221999225
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161189-2-14014423420298744918
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164384; b=cxBPgontVW9LOSu6x/sT9oGtRKorUG+c0egGQ3eNt5AiE/8uG+
-    vo8BvTymGf+Ie9S8nNOFGB5DFmaTk5PEVR5PoGV9IgD88Vz25nAFP+FCDqkkhEvQ
-    GqD6pKPwcyIOlayHrnHQJ5HaBPDGu3HwO0mcFzCDTWfSivQzib1g8XK2baNJsdUX
-    +2UIFF7koTDWZHGNLey3RrtKuLJJEqTSAFtQKZUreomB34w41YcxkaETzRjMixlS
-    SiFypYjTF+w0vqoKkp3WApojj9gts1+/rbzc+prknkUzqXmXqdVYqOClUhSNBy7k
-    NBP5mtfK0OYY9bsbVOv0euRexQko2EerCB6w==
+    1527161189; b=dYfzLKYf+ocPCTlTh5a50sZoVnNzchxEEe7TbnzPCC+cZJNyxU
+    fakmklJyQMUwGP/Ik4NhAMLnAVVj0gnGaKY9igcc8AtIj4jApC4UXFu1Y/j9ogkY
+    T3qqjdzZmXDYvA3GdlnNrBN3viPEbVq5AERRXsJh8+3Dy2ERgoBEAW31TM/Nz2HE
+    4/pf9cPCtu6c5QOuFVYQQIOD6gzW11aaXhEThmHCZq2l9I1jIBeJCMdH8ou12HC5
+    G0IH/4/cBANaEJvVgTOyPIf6LMTNzbkpIHbWh9ha626QDZ9KTB3h/qoE2bzSLfvz
+    mHVz2iLSvGS2G+ORdiiyH/aU77tsUFfxcDAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:date
-    :mime-version:in-reply-to:content-type:content-transfer-encoding
-    :message-id:sender:list-id; s=fm2; t=1527164384; bh=Hrim0uu89BOp
-    TrZXc4em751xhHcHoSalidKvxT2TQZU=; b=ZWIeyRm+Wc9rbGK/MWHHpyiUWplw
-    OOnVDcN6pSSy9vs+C/ueL9XWfaOpjZM+Ia9nGTzaJlEdwxZYmVvaGAF4DZu0avqr
-    OkZEPXoQNO5GgsFdNPIw5BAk8IUvtqqu8pVaxdyA7kEsVzqohmJsi1Xqb/JtSz3A
-    T072RxeZuuQZJEdTJDbtG6JZ5TEAdUVnqsUOlkoMMQOMJQIQ/3taP0Ej70S8JIBn
-    /GLfE0FtMjZHmOea7earss50yk5+p1yvyfhBQgjfZnCIkt1RnaNMHKXRCOKAByeX
-    BpKyzqVesj2ZwvWs9bVHuYFgeN8VdbqNWckclD5D0wjWO5ixZf0fuCDqaQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527161189; bh=BMs5DGlzUbByceHiZUIw3HGVICAsmr
+    SBitLcP6PtMXA=; b=FKLUWFwrGBwiRmyQdHu3JfOovaWxHlQwezxwiFGHY/1tYA
+    v9AFblroPNMl7959VFg3t9k2w94hb/OEKT/tzvswxDeBdGeMMX6N4Wb378501bH2
+    Rzd00yde9eA+LJS0c0y4hcmUmYEC/DSwaOirGZHPDo3DmZad0B0RiNwil2SLH60m
+    oG4H/tmfhOU6YkLKWns/iOv/2Xl/FQvVcQGa7NVte1TxRiP7aq4PhumoffgMEBGp
+    AHxvRKFsJRTjR2CBMWdS2QdEgShEuYWggGxwZdT70fpjLYMBhC1FuKRXTzt0BYVD
+    PlWs0SoiC0f1yAsPWAhR9Ryfsb4oW/rJvEzJDSuw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=tFHjVFiR x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -41,14 +42,16 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=tFHjVFiR x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -57,147 +60,76 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJw+1ESItkVk5XAB3tY7utoXRUaO5/+PXsoI8+aonl9DIashuAth/XsXq6+Ej4TSJlvPLCZ0Dr5Nwdgb88kxm/Yyx8aFnKV2bMC2+iYSIL5FE/ShjCCv
-    20foPgHGaYzKx1NArcpTC7yPjF3k0fwlOzQ7i+7uscGpLj+FeDAmCHWrrJ1vWLwi8ScNH/ywxlTHhyDC4RJDCQPLYMcukEmw5H+yguI+ADDmrzje0t0f4g6u
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGjMTwauLDzz+XemtDNzW8+nOV2vSmOIIjNd5Rn1OXSEIPyAQTr2iBtKy+cY+QWc7VX+oDXErBL8LNjwrqGCW4+wQ6sc9suvi28d+/ggyhu6RHAed3E6
+    wmX+qNd3yKkzCvHkzEPPqgdi2vvUw8MhUJTYd3gITOcVqBctlQSSYZQTGP8A0YVFWJf40hY8kAdfYlUBEOFRTudyOoYx7hhzP6s4rl1mdR5XRWZTIHcOzhH5
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=JF9118EUAAAA:8 a=iox4zFpeAAAA:8 a=NCkSHYsgAAAA:8 a=VwQbUJbxAAAA:8
-    a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=Lh2iM_emvY-ES8JQXb4A:9
-    a=QEXdDO2ut3YA:10 a=xVlTc564ipvMDusKsbsT:22 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=AnMw66Xr5OuzjdxB04dI:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=2p9LEKB4N3oWEMUFAacA:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966236AbeEXMTl (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 08:19:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S969756AbeEXMTh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 24 May 2018 08:19:37 -0400
-Subject: Re: [PATCH 4.14 110/165] scsi: core: return BLK_STS_OK for DID_OK in
- __scsi_error_from_host_byte()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Bart Van Assche <bart.vanassche@wdc.com>
-Cc: stable@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
+        id S967731AbeEXJvf (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:51:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967707AbeEXJvd (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:51:33 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Amritha Nambiar <amritha.nambiar@intel.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 001/165] net: Fix a bug in removing queues from XPS map
+Date: Thu, 24 May 2018 11:36:47 +0200
+Message-Id: <20180524093622.035784561@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
- <20180524093626.469402002@linuxfoundation.org>
-From: Steffen Maier <maier@linux.ibm.com>
-Date: Thu, 24 May 2018 14:19:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-In-Reply-To: <20180524093626.469402002@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052412-0044-0000-0000-000005564100
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052412-0045-0000-0000-000028984420
-Message-Id: <fdd36949-3a0c-0b7d-1946-34fd253569c5@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805240146
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hopefully I haven't missed it in the stable queue, but do we need the 
-following on top (effectively not applying e39a97353e53)?:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-commit cbe095e2b584623b882ebaf6c18e0b9077baa3f7
-Author: Bart Van Assche <bart.vanassche@wdc.com>
-Date:   Thu Apr 5 10:32:59 2018 -0700
+------------------
 
-     Revert "scsi: core: return BLK_STS_OK for DID_OK in 
-__scsi_error_from_host_byte()"
+From: Amritha Nambiar <amritha.nambiar@intel.com>
 
-     The description of commit e39a97353e53 is wrong: it mentions that 
-commit
-     2a842acab109 introduced a bug in __scsi_error_from_host_byte() 
-although that
-     commit did not change the behavior of that function.  Additionally, 
-commit
-     e39a97353e53 introduced a bug: it causes commands that fail with
-     hostbyte=DID_OK and driverbyte=DRIVER_SENSE to be completed with
-     BLK_STS_OK. Hence revert that commit.
+[ Upstream commit 6358d49ac23995fdfe157cc8747ab0f274d3954b ]
 
-     Fixes: e39a97353e53 ("scsi: core: return BLK_STS_OK for DID_OK in 
-__scsi_error_from_host_byte()")
-     Reported-by: Damien Le Moal <damien.lemoal@wdc.com>
-     Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-     Cc: Hannes Reinecke <hare@suse.com>
-     Cc: Douglas Gilbert <dgilbert@interlog.com>
-     Cc: Damien Le Moal <damien.lemoal@wdc.com>
-     Cc: Christoph Hellwig <hch@lst.de>
-     Cc: Lee Duncan <lduncan@suse.com>
-     Cc: stable@vger.kernel.org
-     Reviewed-by: Christoph Hellwig <hch@lst.de>
-     Reviewed-by: Hannes Reinecke <hare@suse.com>
-     Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+While removing queues from the XPS map, the individual CPU ID
+alone was used to index the CPUs map, this should be changed to also
+factor in the traffic class mapping for the CPU-to-queue lookup.
 
+Fixes: 184c449f91fe ("net: Add support for XPS with QoS via traffic classes")
+Signed-off-by: Amritha Nambiar <amritha.nambiar@intel.com>
+Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 05/24/2018 11:38 AM, Greg Kroah-Hartman wrote:
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Hannes Reinecke <hare@suse.de>
-> 
-> [ Upstream commit e39a97353e5378eb46bf01679799c5704d397f32 ]
-> 
-> When converting __scsi_error_from_host_byte() to BLK_STS error codes the
-> case DID_OK was forgotten, resulting in it always returning an error.
-> 
-> Fixes: 2a842acab109 ("block: introduce new block status code type")
-> Cc: Doug Gilbert <dgilbert@interlog.com>
-> Signed-off-by: Hannes Reinecke <hare@suse.com>
-> Reviewed-by: Douglas Gilbert <dgilbert@interlog.com>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->   drivers/scsi/scsi_lib.c |    2 ++
->   1 file changed, 2 insertions(+)
-> 
-> --- a/drivers/scsi/scsi_lib.c
-> +++ b/drivers/scsi/scsi_lib.c
-> @@ -720,6 +720,8 @@ static blk_status_t __scsi_error_from_ho
->   		int result)
->   {
->   	switch (host_byte(result)) {
-> +	case DID_OK:
-> +		return BLK_STS_OK;
->   	case DID_TRANSPORT_FAILFAST:
->   		return BLK_STS_TRANSPORT;
->   	case DID_TARGET_FAILURE:
-> 
-> 
-
-
--- 
-Mit freundlichen Gruessen / Kind regards
-Steffen Maier
-
-Linux on IBM Z Development
-
-IBM Deutschland Research & Development GmbH
-Vorsitzende des Aufsichtsrats: Martina Koederitz
-Geschaeftsfuehrung: Dirk Wittkopp
-Sitz der Gesellschaft: Boeblingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2058,7 +2058,7 @@ static bool remove_xps_queue_cpu(struct
+ 		int i, j;
+ 
+ 		for (i = count, j = offset; i--; j++) {
+-			if (!remove_xps_queue(dev_maps, cpu, j))
++			if (!remove_xps_queue(dev_maps, tci, j))
+ 				break;
+ 		}
+ 
