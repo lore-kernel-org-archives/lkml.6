@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq152/WOhw15g+cE1KAgsVqXQrqQ+uUG3J35eMdRetu2hYIaqquBYGXgIE9nb/rGkJm/LlE
-ARC-Seal: i=1; a=rsa-sha256; t=1527155652; cv=none;
+X-Google-Smtp-Source: AB8JxZrAN4rW6hroeMoNCksacNYDef3Y/VXHELJkP4ykWtECwZl86YvnKkxj+bw2OqZX1NeUY8Wf
+ARC-Seal: i=1; a=rsa-sha256; t=1527155650; cv=none;
         d=google.com; s=arc-20160816;
-        b=JWuKomt6PAaUxa/0TaD9WHesZJj7Q7C7JG6lUb6aF7KmF9FoV0/kYamTnRWmqcDNLN
-         P4xsKSzvhbtPKdPVljI/uZJZE/HHc6+Q5qYcEh7cOEnwHGi/mUJRMmUnpjkRyFzcw6Zr
-         63DUjJwbfDH+3osP4AEPGutIprR5wytDl0A8WIBOwdNqFSox470sDRAtZb3XM6C3Hi9V
-         6yJk2agCD1lkhW8YElV6oHpyBakJbUug+TGG8suIAobYX67VkyC9c+w7J1LrnO8ZjFHM
-         QloaPd5v0WE24oo8pwQnH2rLNafGlImPUn4EnlSF1st70D7QAwWMBV5DM6wPNRG0DN30
-         LeYg==
+        b=rnhKvw0q4EQA08MvztlgxHu0ikmbJYO1xZYsDOxEwV+QuBNWex9acdLA4Q8ef/PbaW
+         PE3rxPDGze/zNs+X+VyArlba/cdhiytiAUlSTXUisTK8eOv80cATR5ssqMBhm5PkiHwd
+         9WCk6zaLxJB83YQeDVWTHaoY+UhFNvCG5L6pZhZor4YphtaSZ7GMYLm24x781QFF0uYf
+         85cN9Nvf9bUw16VbXI1xvbbVrOh49tkW6fsr7NX2jS1Cu4WlABovDWv85QC5k/zzlvVm
+         85FpK94szGi6gkROOPREldlchE11LFCoiXTRTKLSUeDGuitIiwV74Mo9Dqf7tkd+mmOl
+         yYYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=lLtRpVY9ANnp367MppQp7oo71OfanjESLin25zJVAbU=;
-        b=zHZuZtgZbLnHUf7mDVpovYwlR6HiBnN8ZZk/ffIeVd2t5HURIAcLyIXc4QoVSsldX2
-         z/MxGolbMm4sVEqQI3nX3jN1BydVUDL/LwfCXB191PCIwqZA4MDK3nDrjG/dpZZtGwwR
-         y86or7GBG3r/OQNGoI2TdU49W2uvcfB0ndObL9q3q28rOvj0bvU/zCs0IQN3Y0iB8iOZ
-         J3d92rZGwcyaDreAr0qYAIx1Mo9i87m2uUus2hNMU09PrYKNDeGHPNdxGQFScnYMqoI2
-         mKBKmLP1xcztaHwo/TfzFWWjMfxl8pGwFjUSXGqtGsnIFFbEUZQdgAgXvi+B+OBiiVRv
-         PJlw==
+        bh=2yJGQkSYmOJWzT+NDqs1QYmHVxiN2Dcz5lQ5I15zd0I=;
+        b=uS4vxbiQwihzGffTsKvGAEqvSQTCeFyFmR4Tww13ZjKLtbU4OTTYONWKAhSTfG4hXt
+         4Dwwqc7HZ69PYJQJeGu2V+g9P1ZgZg9fkoNdUFGQrCkUE1A6AhAku2TQnCHwG86rtOk4
+         Cfv5ANEI94eECyLESBpGG7ETz21B/7USq65WgA61jVi0F9ouzuqJkf0cBq3oEzrJBTct
+         Dxe3zfsqzGnm8tQ4hZ+vLpx2p+M0Wuef2joCGik3x/jBSoC6odwrv/einFtJNm4w9bkT
+         LNhcRopejBhKNoSe42USWYZLqUNUL1IV38fdepL2AwHzwwLaHCq7BBRjdGHX9rkBluMr
+         xuiw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mqZI85ck;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gReN7lCU;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mqZI85ck;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gReN7lCU;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vicente Bergas <vicencb@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
+	Giuseppe Lippolis <giu.lippolis@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 067/165] Bluetooth: btusb: Add USB ID 7392:a611 for Edimax EW-7611ULB
-Date: Thu, 24 May 2018 11:37:53 +0200
-Message-Id: <20180524093624.732354315@linuxfoundation.org>
+Subject: [PATCH 4.14 066/165] net-usb: add qmi_wwan if on lte modem wistron neweb d18q1
+Date: Thu, 24 May 2018 11:37:52 +0200
+Message-Id: <20180524093624.692262147@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338389720784307?=
-X-GMAIL-MSGID: =?utf-8?q?1601338765727228066?=
+X-GMAIL-THRID: =?utf-8?q?1601338386337055800?=
+X-GMAIL-MSGID: =?utf-8?q?1601338763249750965?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,72 +52,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vicente Bergas <vicencb@gmail.com>
+From: Giuseppe Lippolis <giu.lippolis@gmail.com>
 
-[ Upstream commit a41e0796396eeceff673af4a38feaee149c6ff86 ]
+[ Upstream commit d4c4bc11353f3bea6754f7d21e3612c9f32d1d64 ]
 
-This WiFi/Bluetooth USB dongle uses a Realtek chipset, so, use btrtl for it.
+This modem is embedded on dlink dwr-921 router.
+    The oem configuration states:
 
-Product information:
-https://wikidevi.com/wiki/Edimax_EW-7611ULB
+    T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480 MxCh= 0
+    D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+    P:  Vendor=1435 ProdID=0918 Rev= 2.32
+    S:  Manufacturer=Android
+    S:  Product=Android
+    S:  SerialNumber=0123456789ABCDEF
+    C:* #Ifs= 7 Cfg#= 1 Atr=80 MxPwr=500mA
+    I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+    E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+    E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+    E:  Ad=84(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+    E:  Ad=86(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+    E:  Ad=88(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+    E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 6 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
+    E:  Ad=8b(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
 
->From /sys/kernel/debug/usb/devices
-T:  Bus=02 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  3 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=7392 ProdID=a611 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Edimax Wi-Fi N150 Bluetooth4.0 USB Adapter
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 6 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtl8723bu
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=03(Int.) MxPS=  64 Ivl=500us
-E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Tested on openwrt distribution
 
-Tested-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Giuseppe Lippolis <giu.lippolis@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btusb.c |    3 +++
+ drivers/net/usb/qmi_wwan.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -370,6 +370,9 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x13d3, 0x3459), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3494), .driver_info = BTUSB_REALTEK },
- 
-+	/* Additional Realtek 8723BU Bluetooth devices */
-+	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
-+
- 	/* Additional Realtek 8821AE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1105,6 +1105,9 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x0846, 0x68a2, 8)},
+ 	{QMI_FIXED_INTF(0x12d1, 0x140c, 1)},	/* Huawei E173 */
+ 	{QMI_FIXED_INTF(0x12d1, 0x14ac, 1)},	/* Huawei E1820 */
++	{QMI_FIXED_INTF(0x1435, 0xd181, 3)},	/* Wistron NeWeb D18Q1 */
++	{QMI_FIXED_INTF(0x1435, 0xd181, 4)},	/* Wistron NeWeb D18Q1 */
++	{QMI_FIXED_INTF(0x1435, 0xd181, 5)},	/* Wistron NeWeb D18Q1 */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6003, 0)},	/* CMOTech 6003 */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6007, 0)},	/* CMOTech CHE-628S */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6008, 0)},	/* CMOTech CMU-301 */
