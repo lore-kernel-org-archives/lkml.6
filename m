@@ -1,72 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965568AbeEXIy0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:54:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33356 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965545AbeEXIyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:54:22 -0400
-Subject: Re: [PATCH RFCv2 1/4] ACPI: NUMA: export pxm_to_node
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-References: <20180523182404.11433-1-david@redhat.com>
- <20180523182404.11433-2-david@redhat.com>
- <CAJZ5v0jar8TqC5MGRPcAVZfM3LmmoSV3fT3Sgok=r6D9cDG0+w@mail.gmail.com>
- <5342a59c-4ca1-2cf5-a1d4-07a6d6f03587@redhat.com>
- <CAJZ5v0grgYRi24oyFP0xcjip5Z5apLE5ozn8znahdtkqKvD_MA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <9cf4c5f3-f1ee-67c2-967e-07aa568685c4@redhat.com>
-Date: Thu, 24 May 2018 10:54:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965581AbeEXIyn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:54:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45040 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965007AbeEXIyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:54:39 -0400
+Date: Thu, 24 May 2018 10:54:27 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3] arm64: allwinner: a64: Add Amarula A64-Relic initial
+ support
+Message-ID: <20180524085427.xs6yzhpa42zop6e5@flea>
+References: <20180522132228.6564-1-jagan@amarulasolutions.com>
+ <20180522143044.pgwawojiwnk2lzxb@flea>
+ <CAMty3ZD3JT-ToGAUHN_uj7uVK-jkyAwfEdTBCmJSj34bACFpYQ@mail.gmail.com>
+ <20180523081830.4ly6sj34reabbttn@flea>
+ <CAMty3ZC-N-6WzYg+kYd2+V3wbQdQmvU706Nog_Urd_EUaWnQjQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0grgYRi24oyFP0xcjip5Z5apLE5ozn8znahdtkqKvD_MA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e7gzo5xpcsc36slw"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZC-N-6WzYg+kYd2+V3wbQdQmvU706Nog_Urd_EUaWnQjQ@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 10:47, Rafael J. Wysocki wrote:
-> On Thu, May 24, 2018 at 10:33 AM, David Hildenbrand <david@redhat.com> wrote:
->> On 24.05.2018 10:12, Rafael J. Wysocki wrote:
->>> On Wed, May 23, 2018 at 8:24 PM, David Hildenbrand <david@redhat.com> wrote:
->>>> Will be needed by paravirtualized memory devices.
->>>
->>> That's a little information.
->>>
->>> It would be good to see the entire series at least.
->>
->> It's part of this series (guess you only received the cover letter and
->> this patch). Here a link to the patch using it:
->>
->> https://lkml.org/lkml/2018/5/23/803
-> 
-> OK, thanks!
-> 
-> It looks like you have a reason to use it in there, but please note
-> that CONFIG_ACPI_NUMA depends on CONFIG_NUMA, so you don't need to use
-> the latter directly in the #ifdef.  Also wouldn't IS_ENABLED() work
-> there?
 
-Thanks for the tip on CONFIG_ACPI_NUMA. Wouldn't IS_ENABLED() require to
-have a dummy implementation of pxm_to_node() in case drivers/acpi/numa.c
-is not compiled?
+--e7gzo5xpcsc36slw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Moreover, you don't need the local node variable in
-> virtio_mem_translate_node_id().
-> 
+On Wed, May 23, 2018 at 03:57:05PM +0530, Jagan Teki wrote:
+> On Wed, May 23, 2018 at 1:48 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Wed, May 23, 2018 at 11:44:56AM +0530, Jagan Teki wrote:
+> >> On Tue, May 22, 2018 at 8:00 PM, Maxime Ripard
+> >> <maxime.ripard@bootlin.com> wrote:
+> >> > On Tue, May 22, 2018 at 06:52:28PM +0530, Jagan Teki wrote:
+> >> >> Amarula A64-Relic is Allwinner A64 based IoT device, which support
+> >> >> - Allwinner A64 Cortex-A53
+> >> >> - Mali-400MP2 GPU
+> >> >> - AXP803 PMIC
+> >> >> - 1GB DDR3 RAM
+> >> >> - 8GB eMMC
+> >> >> - AP6330 Wifi/BLE
+> >> >> - MIPI-DSI
+> >> >> - CSI: OV5640 sensor
+> >> >> - USB OTG
+> >> >
+> >> > You claim that this is doing OTG...
+> >> >
+> >> > [..]
+> >> >
+> >> >> +&usb_otg {
+> >> >> +     dr_mode =3D "peripheral";
+> >> >> +     status =3D "okay";
+> >> >> +};
+> >> >
+> >> > ... and yet you're setting it as peripheral...
+> >>
+> >> Though it claims OTG, board doesn't have any USB ports to operate(not
+> >> even Mini-AB) the only way to use the board as peripheral to transfer
+> >> images from host.
+> >
+> > I'm not sure what you mean here. If there's no USB connector, why do
+> > you even enable it?
+>=20
+> I'm saying there is no host port on board. Board has connector
+> header[1] comes with few pins includes USB D+, D-, ID, VBUS, GROUND,
+> UART0 TX, RX etc. we have to connect wires to these pins to make
+> pluggable USB to host pc. and here USB pins used for transferring data
+> from host pc to target board like in peripheral mode.
 
-Indeed, thanks!
+I'm still unsure how it's relevant. If the wire is plugged on your
+board's header, is there anything that prevents using it as a host
+assuming you have a proper connector on the other end of your wire?
 
--- 
+Maxime
 
-Thanks,
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-David / dhildenb
+--e7gzo5xpcsc36slw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsGfcIACgkQ0rTAlCFN
+r3TBKw/6A1UzH7IDmW8Z8xjLBcDnrJiwZko3JMOHLVOX97DMqkhguyq7SqW9ripF
+p4Xac/SNzae1XIVn3dgOEIHO2VANxI4zt7RAPB6Pc51CRI42Epw+vod63P96uqI6
+LcduDNHPNkqNWzm1XIRoHpTyLu/KfcwturxG3gvjL+wVl64AZnoferBoF10dxXp6
+r+MaiB0JdobQWTxc+D43hjd5yQSxyIBkDJh9ptOt/ZyZA5FWsoFhuHXsXUeSQaar
+hBFguvzttpldLPbJLZHC9FYxAlwU+6wg/3eqCNUO5/GMU9OTtMIopn7WQ61rCd8f
+EpO5cXVr7XA4P8aSywJVy2c2riHKgTwAr6kbA/+Amy+lfACkbuKeC4yREeMEd3Ib
+jRDSjuonMNOJGM1UbQMNQGuV7zqJqUZT2VnEEXFGgFq6DYOdyKv7neAnQso2S8Nw
+5LmugK1NbIa2WDmaEW18Pnwye8JE3EF1rBHlS/KlTM8cUAYiwov+cNtLHcXvXrb0
+UdLSyoXUKrADKAY3zbyV93beu2iEj+Y2ER1BU1uJpn0uJTTlnRZ/HCJF5cUNCREo
+rtyRYaQJb/oeF1KCraSGyRrWaAMjAO6fg6Sc4f3rNvqGh3CRIdPK2aoL/FNJyQlt
+Wcnajz3dczIa3LgMzrBq+pFCqW3xVWOwyUB/6Wfl03rgD9fm9IU=
+=2Lkk
+-----END PGP SIGNATURE-----
+
+--e7gzo5xpcsc36slw--
