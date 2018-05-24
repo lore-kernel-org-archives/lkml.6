@@ -1,73 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935564AbeEXGxy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 02:53:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45898 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751158AbeEXGxx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 02:53:53 -0400
-Date: Thu, 24 May 2018 12:23:45 +0530
-From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: npiggin@gmail.com, ego@linux.vnet.ibm.com, mpe@ellerman.id.au
-Subject: Re: [PATCH] cpuidle/powernv : init all present cpus for deep states
-References: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170306 (1.8.0)
-X-TM-AS-GCONF: 00
-x-cbid: 18052406-0040-0000-0000-0000043D4AB3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052406-0041-0000-0000-000026428605
-Message-Id: <20180524065345.yuqb76aerxjnn3pk@aksadiga.ibm>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805240083
+        id S964818AbeEXGyF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 02:54:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935582AbeEXGyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 02:54:00 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v7 1/4] ARM: dts: tegra: Remove usage of deprecated skeleton.dtsi
+Date: Thu, 24 May 2018 08:53:50 +0200
+Message-Id: <1527144833-24285-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 05:32:14PM +0530, Akshay Adiga wrote:
-> Init all present cpus for deep states instead of "all possible" cpus.
-> Init fails if the possible cpu is gaurded. Resulting in making only
-> non-deep states available for cpuidle/hotplug.
-> 
-> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-> ---
->  arch/powerpc/platforms/powernv/idle.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
-> index 1f12ab1..1c5d067 100644
-> --- a/arch/powerpc/platforms/powernv/idle.c
-> +++ b/arch/powerpc/platforms/powernv/idle.c
-> @@ -79,7 +79,7 @@ static int pnv_save_sprs_for_deep_states(void)
->  	uint64_t msr_val = MSR_IDLE;
->  	uint64_t psscr_val = pnv_deepest_stop_psscr_val;
-> 
-> -	for_each_possible_cpu(cpu) {
-> +	for_each_present_cpu(cpu) {
->  		uint64_t pir = get_hard_smp_processor_id(cpu);
->  		uint64_t hsprg0_val = (uint64_t)paca_ptrs[cpu];
-> 
-> @@ -814,7 +814,7 @@ static int __init pnv_init_idle_states(void)
->  		int cpu;
-> 
->  		pr_info("powernv: idle: Saving PACA pointers of all CPUs in their thread sibling PACA\n");
-> -		for_each_possible_cpu(cpu) {
-> +		for_each_present_cpu(cpu) {
->  			int base_cpu = cpu_first_thread_sibling(cpu);
->  			int idx = cpu_thread_in_core(cpu);
->  			int i;
-> -- 
-> 2.5.5
->
+Remove the usage of skeleton.dtsi because it was deprecated since commit
+9c0da3cc61f1 ("ARM: dts: explicitly mark skeleton.dtsi as deprecated").
+It also allows later to fix DTC warnings for missing unit name in
+/memory nodes.
 
-Missed CC'ing to  mpe@ellerman.id.au 
+The /chosen and /aliases nodes are added only when dependent DTSes do
+not define them.  Compiled DTB is the same as before this commit.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+---
+
+Changes since v6:
+1. Add Stefan's reviewed-by tag.
+
+Changes since v5:
+1. New patch, split with skeleton.dtsi removal (suggested by Stefan).
+---
+ arch/arm/boot/dts/tegra114.dtsi       |  8 ++++++--
+ arch/arm/boot/dts/tegra124.dtsi       |  6 ++++--
+ arch/arm/boot/dts/tegra20.dtsi        | 11 +++++++++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi |  4 ++++
+ arch/arm/boot/dts/tegra30.dtsi        | 11 +++++++++--
+ 5 files changed, 32 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 0e4a13295d8a..27ef515e5640 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -5,11 +5,15 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra114";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	memory {
++		device_type = "memory";
++	};
+ 
+ 	host1x@50000000 {
+ 		compatible = "nvidia,tegra114-host1x", "simple-bus";
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 174092bfac90..951feea784af 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -7,14 +7,16 @@
+ #include <dt-bindings/reset/tegra124-car.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra124";
+ 	interrupt-parent = <&lic>;
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	memory {
++		device_type = "memory";
++	};
++
+ 	pcie@1003000 {
+ 		compatible = "nvidia,tegra124-pcie";
+ 		device_type = "pci";
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..88dd1afb5877 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -4,11 +4,18 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra20";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	chosen { };
++	aliases { };
++
++	memory {
++		device_type = "memory";
++	};
+ 
+ 	iram@40000000 {
+ 		compatible = "mmio-sram";
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d1d21ec2a844..6f29cbad6e8a 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -10,6 +10,10 @@
+ 	model = "Toradex Apalis T30";
+ 	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+ 
++	memory {
++		reg = <0 0>;
++	};
++
+ 	pcie@3000 {
+ 		avdd-pexa-supply = <&vdd2_reg>;
+ 		vdd-pexa-supply = <&vdd2_reg>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index a110cf84d85f..19237c08c166 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -5,11 +5,18 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra30";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	chosen { };
++	aliases { };
++
++	memory {
++		device_type = "memory";
++	};
+ 
+ 	pcie@3000 {
+ 		compatible = "nvidia,tegra30-pcie";
+-- 
+2.7.4
