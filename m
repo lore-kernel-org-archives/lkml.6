@@ -1,40 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZor245elgKM2Mmp1M1X29bsasHwJABPXV26K13NCC9njFmN5LoqIgLLuoHXZ1Oj2Ut60DMQ
-ARC-Seal: i=1; a=rsa-sha256; t=1527155986; cv=none;
+X-Google-Smtp-Source: AB8JxZqSvxpwyr8cZLTtXER+o7vOSJKy9lVX8ntO+mO7UKS+hQcdMWxN/LP1Q3nL2fOw0jHRhpcl
+ARC-Seal: i=1; a=rsa-sha256; t=1527155983; cv=none;
         d=google.com; s=arc-20160816;
-        b=mreYbNULQUHDSeUGCsu9PUrop4fkdAAy9gqoQXxrXYuFb/zAhyUk1nV8fThadLisq1
-         Ez9oSnTOrU2EzFGlO41jdy7oLKq9mJQ0Idf18mjjbLSmUsuDz1EtWdSnoIeFU/rm2l/p
-         wuw4gJaSb/LTmYLNvZPj9+4BLGK2yC3Id7n2q5GwQapNlC3aIAlrscuXU32KTxYShk4x
-         huH13h/REPNkFwl/KxTQHyaUBtmllCl1ncA48xAQNodOjDzOmUdWZoD/Kp1OzGT8bzdD
-         4JwRtMElBMXLHZWPhXyXUvA94f086EXM0NdI11Nu0rnGH3mGk3y1TWQ/m2anafpemkUg
-         83vA==
+        b=mrRugDwgX7x+FquhQyTQfwAtPVHyEwUbTCCirNLoUDKr3pRli7x4xZsyGgMxt5tpVX
+         SagELkgiPZ5BL6CG+K5EQlwGb1WNtzsqw9/Jn8uokudQRyR6AFxd6MNjzV8t+WW1p0kz
+         79vxBNe08c4pKaeuKLhzHkvCGNQGa6XGmfh/dH+FIOliuwzxmLNwDOAgctG8r9LiwST5
+         jDgV8TR+QUDrAsckNR5CEPmed/B6tQP6A8Y/VFyojrdN8noQ+hMVMduDBoCnv0QZBCXI
+         JMyPGUgBVreQ4NFfxGLDEM+o+PqvUsjKuMhs6RoH0ioJtXymqPOzlbxWxhs7lDaVm/m5
+         O8hQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=GwXCXX+98CUs0S5cpSIHI4dcEzSElbjIJf1+kcFIGWc=;
-        b=NxJtzJuEvfo91l0f6xlAzhtG3sZCGrAE+TLXEWbZXCzEAubzddh9jKbXxZdzhuPo6I
-         +VqRx0F1t2JlvTyGWCNvxwymunHKkEeB03fi2pGTeCdExSzCJn/neK8BtQitcHPIlvaS
-         r/2tqGz+ngUNTUDRUsNKmSNWW+V4hHT4CcKqFwiQV9wJrPtWDnPHrpoxD7fvf9ZS4Ujr
-         khR2hm/NISe7MzsVBiyPtHbe2v06Pc1+5XKS+v7yNVcD3FW8kGNIyAJXpsFepuzO3IxM
-         ZLsJN+WRE95Z3SS6l7ai6D05Iy4yIqDpbJxYmDscyIRhrLhqde1NHCCxz9q546jcd8QQ
-         eHwA==
+        bh=M1UKdTDKG9u/DDxF2t6Ab9UFFHeB47OTMQ3JCdcA1xU=;
+        b=tfThThzmwRbJaqeoVDHV0MRE08B0kIBNR4oW80OSPnEWabTBows0VyMTPG7sWs/dsz
+         OlU18rIk4nrmZj4zrfGH7erA3GhFBKfA2IvjiCehGVy0fq6u96OdTg3Zpc0WbY3goEeM
+         IFo+m1hQ9OVwR3QLZK72vPlh8HIzyRiicKwe2CZVoOI99KwKcbIFXcFKI5tiGob4z4B1
+         UQ/qYLDquVh3xlh9fI43Z71yPRE/DJcB2EYQVyHD54b2AVzDXPxzxm9JmuPNKaQKk6LG
+         DMAN43lryi05lVcynQJxTuwnMxFfksHQtKDLMQGvxt72WFy7iEnIMLx7qOfvJzzoalv5
+         /0Tw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EZupQmOr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=IiUMOI/E;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EZupQmOr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=IiUMOI/E;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tarick Bedeir <tarick@google.com>,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Tariq Toukan <tariqt@mellanox.com>,
+	Regis Duchesne <hpreg@vmware.com>,
+	Ronak Doshi <doshir@vmware.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 003/161] net/mlx4_core: Fix error handling in mlx4_init_port_info.
-Date: Thu, 24 May 2018 11:37:08 +0200
-Message-Id: <20180524093018.765532985@linuxfoundation.org>
+Subject: [PATCH 4.16 021/161] vmxnet3: use DMA memory barriers where required
+Date: Thu, 24 May 2018 11:37:26 +0200
+Message-Id: <20180524093020.868537445@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338319391384707?=
-X-GMAIL-MSGID: =?utf-8?q?1601339115482914388?=
+X-GMAIL-THRID: =?utf-8?q?1601338372705205544?=
+X-GMAIL-MSGID: =?utf-8?q?1601339112166893965?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,46 +52,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tarick Bedeir <tarick@google.com>
+From: "hpreg@vmware.com" <hpreg@vmware.com>
 
-[ Upstream commit 57f6f99fdad9984801cde05c1db68fe39b474a10 ]
+[ Upstream commit f3002c1374fb2367c9d8dbb28852791ef90d2bac ]
 
-Avoid exiting the function with a lingering sysfs file (if the first
-call to device_create_file() fails while the second succeeds), and avoid
-calling devlink_port_unregister() twice.
+The gen bits must be read first from (resp. written last to) DMA memory.
+The proper way to enforce this on Linux is to call dma_rmb() (resp.
+dma_wmb()).
 
-In other words, either mlx4_init_port_info() succeeds and returns zero, or
-it fails, returns non-zero, and requires no cleanup.
-
-Fixes: 096335b3f983 ("mlx4_core: Allow dynamic MTU configuration for IB ports")
-Signed-off-by: Tarick Bedeir <tarick@google.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Regis Duchesne <hpreg@vmware.com>
+Acked-by: Ronak Doshi <doshir@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |   22 ++++++++++++++++++++++
+ drivers/net/vmxnet3/vmxnet3_int.h |    4 ++--
+ 2 files changed, 24 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/main.c
-@@ -3007,6 +3007,7 @@ static int mlx4_init_port_info(struct ml
- 		mlx4_err(dev, "Failed to create file for port %d\n", port);
- 		devlink_port_unregister(&info->devlink_port);
- 		info->port = -1;
-+		return err;
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -369,6 +369,11 @@ vmxnet3_tq_tx_complete(struct vmxnet3_tx
+ 
+ 	gdesc = tq->comp_ring.base + tq->comp_ring.next2proc;
+ 	while (VMXNET3_TCD_GET_GEN(&gdesc->tcd) == tq->comp_ring.gen) {
++		/* Prevent any &gdesc->tcd field from being (speculatively)
++		 * read before (&gdesc->tcd)->gen is read.
++		 */
++		dma_rmb();
++
+ 		completed += vmxnet3_unmap_pkt(VMXNET3_TCD_GET_TXIDX(
+ 					       &gdesc->tcd), tq, adapter->pdev,
+ 					       adapter);
+@@ -1103,6 +1108,11 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
+ 		gdesc->txd.tci = skb_vlan_tag_get(skb);
  	}
  
- 	sprintf(info->dev_mtu_name, "mlx4_port%d_mtu", port);
-@@ -3028,9 +3029,10 @@ static int mlx4_init_port_info(struct ml
- 				   &info->port_attr);
- 		devlink_port_unregister(&info->devlink_port);
- 		info->port = -1;
-+		return err;
- 	}
++	/* Ensure that the write to (&gdesc->txd)->gen will be observed after
++	 * all other writes to &gdesc->txd.
++	 */
++	dma_wmb();
++
+ 	/* finally flips the GEN bit of the SOP desc. */
+ 	gdesc->dword[2] = cpu_to_le32(le32_to_cpu(gdesc->dword[2]) ^
+ 						  VMXNET3_TXD_GEN);
+@@ -1298,6 +1308,12 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx
+ 			 */
+ 			break;
+ 		}
++
++		/* Prevent any rcd field from being (speculatively) read before
++		 * rcd->gen is read.
++		 */
++		dma_rmb();
++
+ 		BUG_ON(rcd->rqID != rq->qid && rcd->rqID != rq->qid2 &&
+ 		       rcd->rqID != rq->dataRingQid);
+ 		idx = rcd->rxdIdx;
+@@ -1528,6 +1544,12 @@ rcd_done:
+ 		ring->next2comp = idx;
+ 		num_to_alloc = vmxnet3_cmd_ring_desc_avail(ring);
+ 		ring = rq->rx_ring + ring_idx;
++
++		/* Ensure that the writes to rxd->gen bits will be observed
++		 * after all other writes to rxd objects.
++		 */
++		dma_wmb();
++
+ 		while (num_to_alloc) {
+ 			vmxnet3_getRxDesc(rxd, &ring->base[ring->next2fill].rxd,
+ 					  &rxCmdDesc);
+--- a/drivers/net/vmxnet3/vmxnet3_int.h
++++ b/drivers/net/vmxnet3/vmxnet3_int.h
+@@ -69,12 +69,12 @@
+ /*
+  * Version numbers
+  */
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.15.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.16.0-k"
  
--	return err;
-+	return 0;
- }
+ /* Each byte of this 32-bit integer encodes a version number in
+  * VMXNET3_DRIVER_VERSION_STRING.
+  */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01040f00
++#define VMXNET3_DRIVER_VERSION_NUM      0x01041000
  
- static void mlx4_cleanup_port_info(struct mlx4_port_info *info)
+ #if defined(CONFIG_PCI_MSI)
+ 	/* RSS only makes sense if MSI-X is supported. */
