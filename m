@@ -1,146 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969243AbeEXXrq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 19:47:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965337AbeEXXro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 19:47:44 -0400
-X-Google-Smtp-Source: ADUXVKIvlXiY/wXpZyRHrs1BIJSFFfPoHs//gIHRbUHqRCdD3Otv0VZWE7UJzg/yDm9yO6SElUiVeDXR37oG3bk8NF4=
-MIME-Version: 1.0
-In-Reply-To: <20180524222855.GD14924@minitux>
-References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
- <20180524222855.GD14924@minitux>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 24 May 2018 18:47:21 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLZFTszxs=t1=R0FQ3vP0scvpUBa6=Fb2S9LrTEvx4d_g@mail.gmail.com>
-Message-ID: <CAL_JsqLZFTszxs=t1=R0FQ3vP0scvpUBa6=Fb2S9LrTEvx4d_g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Architecture Mailman List <boot-architecture@lists.linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S969575AbeEXXtL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 19:49:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52246 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964788AbeEXXtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 19:49:10 -0400
+Date: Thu, 24 May 2018 18:49:08 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Gargi Sharma <gs051095@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Rik van Riel <riel@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] coresight: allow to build as modules
+Message-Id: <20180524184908.3648cf67456510261a1afe16@arm.com>
+In-Reply-To: <20180522213906.GC25658@xps15>
+References: <20180517070643.GC13919@kroah.com>
+        <20180518012024.22645-1-kim.phillips@arm.com>
+        <20180518012024.22645-6-kim.phillips@arm.com>
+        <20180522213906.GC25658@xps15>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 5:28 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Thu 24 May 10:50 PDT 2018, Rob Herring wrote:
->
->> Deferred probe will currently wait forever on dependent devices to probe,
->> but sometimes a driver will never exist. It's also not always critical for
->> a driver to exist. Platforms can rely on default configuration from the
->> bootloader or reset defaults for things such as pinctrl and power domains.
->> This is often the case with initial platform support until various drivers
->> get enabled. There's at least 2 scenarios where deferred probe can render
->> a platform broken. Both involve using a DT which has more devices and
->> dependencies than the kernel supports. The 1st case is a driver may be
->> disabled in the kernel config. The 2nd case is the kernel version may
->> simply not have the dependent driver. This can happen if using a newer DT
->> (provided by firmware perhaps) with a stable kernel version.
->>
->> Subsystems or drivers may opt-in to this behavior by calling
->> driver_deferred_probe_check_init_done() instead of just returning
->> -EPROBE_DEFER. They may use additional information from DT or kernel's
->> config to decide whether to continue to defer probe or not.
->>
->
-> For builtin drivers this still looks reasonable.
->
-> But I would like to have an additional clarification here stating that
-> drivers that might be targeted by this query must not be compiled as
-> modules.
->
-> And I would prefer to see an ack from e.g. Arnd that arm-soc is okay
-> that we drop "tristate" on drivers affected by this; e.g. if we put this
-> in the pinctrl core then all pinctrl drivers should be "bool" and so
-> should any i2c, ssbi and spmi buses and drivers be.
+On Tue, 22 May 2018 15:39:06 -0600
+Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
 
-For pinctrl, you are not affected now unless you change your DT. I
-made pinctrl opt-in since as you said it could lead to some
-intermittent problems. If iommu or power domains are required, then it
-should fail pretty hard.
+> On Thu, May 17, 2018 at 08:20:24PM -0500, Kim Phillips wrote:
+> > Allow to build coresight as modules.  This greatly enhances developer
+> > efficiency by allowing the development to take place exclusively on the
+> > target, and without needing to reboot in between changes.
+> > 
+> > - Kconfig bools become tristates, to allow =m
+> > 
+> > - use -objs to denote merge object directives in Makefile, adds a
+> >   coresight-core nomenclature for the base module.
+> > 
+> > - Export core functions so as to be able to be used by
+> >   non-core modules.
+> > 
+> > - add a coresight_exit() that unregisters the coresight bus, add
+> >   remove fns for most others.
+> > 
+> > - fix up modules with ID tables for autoloading on boot
+> > 
+> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+> > ---
+> >  drivers/hwtracing/coresight/Kconfig           | 48 +++++++++++++++----
+> >  drivers/hwtracing/coresight/Makefile          | 28 +++++++----
+> >  .../hwtracing/coresight/coresight-cpu-debug.c |  2 +
+> >  .../coresight/coresight-dynamic-replicator.c  | 26 ++++++++--
+> >  drivers/hwtracing/coresight/coresight-etb10.c | 27 +++++++++--
+> >  .../hwtracing/coresight/coresight-etm-perf.c  |  9 +++-
+> >  .../coresight/coresight-etm3x-sysfs.c         |  1 +
+> >  drivers/hwtracing/coresight/coresight-etm3x.c | 32 +++++++++++--
+> >  .../coresight/coresight-etm4x-sysfs.c         |  1 +
+> >  drivers/hwtracing/coresight/coresight-etm4x.c | 33 +++++++++++--
+> >  .../hwtracing/coresight/coresight-funnel.c    | 26 ++++++++--
+> >  drivers/hwtracing/coresight/coresight-priv.h  |  1 -
+> >  .../coresight/coresight-replicator.c          | 28 +++++++++--
+> >  drivers/hwtracing/coresight/coresight-stm.c   | 23 ++++++++-
+> >  drivers/hwtracing/coresight/coresight-tmc.c   | 18 ++++++-
+> >  drivers/hwtracing/coresight/coresight-tpiu.c  | 26 ++++++++--
+> >  drivers/hwtracing/coresight/coresight.c       | 14 ++++++
+> >  17 files changed, 299 insertions(+), 44 deletions(-)
+> 
+> For the next revision please split the work based on files.
 
-However, good luck getting your serial console to work if it has a
-pinctrl dependency and that's a module. It won't work because the
-console has to be up before userspace. Of course, you can just rely on
-earlycon, but that just proves that pinctrl is not required (at least
-for 1 serial pin). :)
+If I read that literally, one file-by-one would break build
+bisectability.  Do you mean split by source files depending on the
+logical modules they belong to, e.g., etm3x, etm4x, etb10, etc.?  If
+so, I think it would look like the coresight-core would be first,
+followed by the rest, but I also think there are cross-dependencies.
+Hmm, OK, I'll have a look, but there's also one more thing:  I think
+the Makefile  obj '-core' nomenclature was to change the name of the
+module to not be the same as the core source file, so what do you think
+about renaming the core source file instead of the module name?  e.g.:
 
-Rob
+Instead of this:
 
->
-> Regards,
-> Bjorn
->
->> Cc: Alexander Graf <agraf@suse.de>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> ---
->>  drivers/base/dd.c      | 17 +++++++++++++++++
->>  include/linux/device.h |  2 ++
->>  2 files changed, 19 insertions(+)
->>
->> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->> index c9f54089429b..d6034718da6f 100644
->> --- a/drivers/base/dd.c
->> +++ b/drivers/base/dd.c
->> @@ -226,6 +226,16 @@ void device_unblock_probing(void)
->>       driver_deferred_probe_trigger();
->>  }
->>
->> +int driver_deferred_probe_check_init_done(struct device *dev, bool optional)
->> +{
->> +     if (optional && initcalls_done) {
->> +             dev_WARN(dev, "ignoring dependency for device, assuming no driver");
->> +             return -ENODEV;
->> +     }
->> +
->> +     return -EPROBE_DEFER;
->> +}
->> +
->>  /**
->>   * deferred_probe_initcall() - Enable probing of deferred devices
->>   *
->> @@ -240,6 +250,13 @@ static int deferred_probe_initcall(void)
->>       /* Sort as many dependencies as possible before exiting initcalls */
->>       flush_work(&deferred_probe_work);
->>       initcalls_done = true;
->> +
->> +     /*
->> +      * Trigger deferred probe again, this time we won't defer anything
->> +      * that is optional
->> +      */
->> +     driver_deferred_probe_trigger();
->> +     flush_work(&deferred_probe_work);
->>       return 0;
->>  }
->>  late_initcall(deferred_probe_initcall);
->> diff --git a/include/linux/device.h b/include/linux/device.h
->> index 477956990f5e..f3dafd44c285 100644
->> --- a/include/linux/device.h
->> +++ b/include/linux/device.h
->> @@ -334,6 +334,8 @@ struct device *driver_find_device(struct device_driver *drv,
->>                                 struct device *start, void *data,
->>                                 int (*match)(struct device *dev, void *data));
->>
->> +int driver_deferred_probe_check_init_done(struct device *dev, bool optional);
->> +
->>  /**
->>   * struct subsys_interface - interfaces to device functions
->>   * @name:       name of the device function
->> --
->> 2.17.0
->>
+obj-$(CONFIG_CORESIGHT) += coresight-core.o
+coresight-core-objs := coresight.o \
+                       of_coresight.o
+
+we have this:
+
+obj-$(CONFIG_CORESIGHT) += coresight.o
+coresight-objs := coresight-core.o \
+                  of_coresight.o
+
+and e.g., instead of this:
+
+obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x-core.o
+coresight-etm3x-core-objs := coresight-etm3x.o \
+                             coresight-etm-cp14.o \
+                             coresight-etm3x-sysfs.o
+
+we have this:
+
+obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
+coresight-etm3x-objs := coresight-etm3x-core.o \
+                        coresight-etm-cp14.o \
+                        coresight-etm3x-sysfs.o
+
+?
+
+> > +static int __exit tmc_remove(struct amba_device *adev)
+> > +{
+> > +	struct tmc_drvdata *drvdata = dev_get_drvdata(&adev->dev);
+> > +
+> > +	/* free ETB/ETF or ETR memory */
+> > +	tmc_read_unprepare(drvdata);
+> > +
+> > +	misc_deregister(&drvdata->miscdev);
+> > +	coresight_unregister(drvdata->csdev);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> Right now I can remove the module for a TMC link or sink when part of an active
+> session, something I pointed out during an earlier revision.
+
+Right, I missed that :(
+
+So would the first thing tmc_remove does is this:
+
+if (drvdata->reading)
+	return -EBUSY;
+
+work, or would we need to introduce a new sentinel?
+
+> I also think we need to deal with driver removal cases when the TMC buffer
+> (ETR or ETF) is being read from sysFS.
+
+OK, I thought the:
+
+struct file_operations tmc_fops = {
+	.owner = THIS_MODULE,
+
+would prevent module unload whilst sysfs access was being performed,
+but I'll double check.
+
+Thanks,
+
+Kim
