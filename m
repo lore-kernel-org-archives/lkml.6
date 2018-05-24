@@ -1,78 +1,89 @@
-Return-Path: <linux@roeck-us.net>
-X-Google-Smtp-Source: AB8JxZoTzbvcZj46bge0aCTGZaY7gGR+aGW+jcESTXR2lZ5VfGOhprs5b1e4V4jTcWSwJDxCG4Ac
-ARC-Seal: i=1; a=rsa-sha256; t=1527183174; cv=none;
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1527171988; cv=none;
         d=google.com; s=arc-20160816;
-        b=GJFSMdqh4SApbmHDqJrJWexAPj37eu5CwCVFDlIHQ0tyJlhbDF1KQeUfUbj6ygE+He
-         ObMBEX3mwEVe4kI9RgN0iF1OTesWmyT2I/cL5FHWDSnUM3ZpQO8OsqUXaRJz4QRMvsAe
-         QF2EyuNh4MraWSA9c5lSVZPvwKmYWjy21u44du31MN/lCG4O2NkaZjsNEPn+3m778Dig
-         0uymeSH96nSpzh4CAK+OLEnIh1bVPMkkHg0tOUdStHD+FpZasjbND/D+7si83W0NzqMo
-         664li/YAqHTtxJMNEdgGXehC0sCJkxjgGSdpm5R4pjO0hucwpwzAeWEZk2Ygm34RqWAt
-         ILWQ==
+        b=07CixmRfOMvu2wneVT4DLTcoJaIpIGzsg/pbslrikM29F9n6Wnv4SMmqXBk8O6DQsL
+         q9lM/H9pc4QQ9z8AZy/+EyBXeUBPryaBd7ZeHz3z4k4dxSg/DgZU3xFNZ1GqN2Qx8bKs
+         xO+3Iea3N+e4+9nyA+Vz+MeqIWBnkTybv2YpJ1XsSzs8J826icalIrQN3WqR82QDb7Ul
+         AcZLBFir3FxZGnkYzsYr9znknN/GUq3xwe11Hz8svNpJujL/VuVyoXDOa7dseFLQThIt
+         treYX/uC6jJTdCI0/9IlF7RLuRqqKD5F09ua0tqHVU/bOSGWEzORO/DXcyoWOtu43uPd
+         3mzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=ahPlumn6arWUZo82WNBsHZLfA2pcj9XsxzehCYmlliA=;
-        b=Qe5JYD89TpTSqt6eLxj7St7opkpPVbKDFx3Pe7kffeMPrxN8rrWswCtxstKs/3cfHK
-         CSsDLHaQEIIsUSxj/KAjkqYtv59hrjH+Wfm54XHUYGaSHvyYcb7ideQV3O2slFMZTd8N
-         QMUC7eWArA2juRbuk27RhuZ2YNthhZSFjyM68BUd38a/BU6m/ptwiBAwTiz7pjGg+hXQ
-         ord9dywzyQup2BDhVALax7dCwX2ohamHhwv08Tb4ZNMXCsUdBLdmZ5STZoWpz5ctLLWh
-         94LgPx3Rmu0pLjjyJ39bYFy7CYxeRchY30ipgQZtmhAclP2+COhxsA56oiW8jLaAg87Z
-         q/pg==
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=VnoCEDSzaaIIUKhRHa/Bj5ZKNhfGKlyo7z1evf2OG4Q=;
+        b=1KgNrRjKJUwIEE+jCv7zN4bIF9FpYyQRjC1GcmH/YUK2ZhVanUr4sQGDMUeZ/GHRCo
+         Yr7a/euSShVXogHUxLgV6mxhDuQxbzlQ4cugtAze16tpJxrT2rm9BNItuQXqnmcfxP8E
+         Y2Wq6Rm4Bss1IDwK1j1Arg0K76j0jFO8OPHXwkQ/Z/ybizXYLZXON8ue/UURGO4pk/xm
+         xhUu+HMKLyhhUwmMCqWGe3wImWocM8Yvh+doi2WhKDKTP1KvBkFJTiZz7MtxrS4Lr5vv
+         8Ufrkj0RwwdD6gZt7/SUtuyDN1bAyQEQZ6ixIilAZzzHyZxUxy3M8qZnNU/5WcnLSSRP
+         fj8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@roeck-us.net header.s=default header.b=g6vYQtby;
-       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@roeck-us.net header.s=default header.b=g6vYQtby;
-       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
-Date: Thu, 24 May 2018 10:32:52 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/96] 4.9.103-stable review
-Message-ID: <20180524173252.GC11172@roeck-us.net>
-References: <20180524093605.602125311@linuxfoundation.org>
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AB8JxZpHs7WdW4dYDG1dbfo+To2nYiIOKC54+ZJuOV9oPWhrmdK4HN++LQBnvXp7vqqDl6go5n4hDw==
+Message-ID: <5b06cb93.1c69fb81.6088d.282e@mx.google.com>
+Date: Thu, 24 May 2018 07:26:27 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.9.102-97-g190b92e2b8d4
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - linuxfoundation.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20180524093605.602125311@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/96] 4.9.103-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1601338380744330487?=
-X-GMAIL-MSGID: =?utf-8?q?1601367624467298361?=
+X-GMAIL-MSGID: =?utf-8?q?1601355894815196230?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 24, 2018 at 11:37:43AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.103 release.
-> There are 96 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat May 26 09:35:42 UTC 2018.
-> Anything received after that time might be too late.
-> 
+stable-rc/linux-4.9.y boot: 111 boots: 1 failed, 107 passed with 3 offline =
+(v4.9.102-97-g190b92e2b8d4)
 
-Build results:
-	total: 146 pass: 146 fail: 0
-Qemu test results:
-	total: 137 pass: 137 fail: 0
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.9.y/kernel/v4.9.102-97-g190b92e2b8d4/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
+/kernel/v4.9.102-97-g190b92e2b8d4/
 
-Details are available at http://kerneltests.org/builders/.
+Tree: stable-rc
+Branch: linux-4.9.y
+Git Describe: v4.9.102-97-g190b92e2b8d4
+Git Commit: 190b92e2b8d4d190a6b059732180a71f1ff17c4d
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 55 unique boards, 23 SoC families, 18 builds out of 183
 
-Guenter
+Boot Failure Detected:
+
+arm64:
+
+    defconfig
+        synquacer-acpi: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    imx_v6_v7_defconfig:
+        imx7s-warp: 1 offline lab
+
+    multi_v7_defconfig:
+        imx7s-warp: 1 offline lab
+
+arm64:
+
+    defconfig:
+        meson-gxbb-p200: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
