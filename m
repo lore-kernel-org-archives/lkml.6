@@ -1,95 +1,132 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1527180388; cv=none;
-        d=google.com; s=arc-20160816;
-        b=FL2H/XkU9Galk0+oMclZcg2hTs7OSj7glAAuoGEWIEfd8Z9bdSIiZzaiZd1yG9xSKI
-         wV0OsQBuPEjGWeT/o/XtGEKdvig7JFwxMir9TIPDv2GcbTzLdGAhyJcsreH2bKs6eD7r
-         WawwySuNQWgo0OM9OSiq3LmsYPOgowxmxRmAtADaAXa/zwe7E9edJZ+UIWkWn2woQfNq
-         TjtbcySVnhTdfwE9kUaOtv0r0RZ2VHirP/aVYQWZi03mPctelIwn54BNfs/bGsyzLfNg
-         BliG31h+lBJfonHjSL7kAqbP1yFjsqUxPZvJXX/XkDTmT2ddLroQnRJrOsTRPyL7q7S6
-         TE/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=Dkff9dtRhirXie8CYTnSj9cSOmfo/I7z72ycuUhqmA0=;
-        b=CzbDtIW4USdEgj3CuQR+EuhCu6o8n9ozPC3De1o+HmjxjYcfDqpGG5ZGBsmT+QWYEZ
-         4+VLZcZFvOQD07M2MvWpbk6/GT1ORYgFcHzBdW6rAZuU9mDckMnNueA8PQ209CFDivjL
-         17nWAHEDTo55fon9HZOovyCwJGdnmGrtkdWXjfjHxVheA7beWIXk58Nnm2bNNTuoDqp0
-         aZuU6F6GzXFl/+45MPxF4WBkij5xqW76DL1hBqEuhSEBTcxrTp8dYEzBqOoXYljaygs3
-         a7vT1YRj9KhMyj8iIoYlH4/Ly40zNf5lM3CNiBgkyY0lplOQpjdj6dtqA7o4OtHtgl4T
-         Nd2w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZpUFI2HZZ7iuBTDFn7wLKVw26G8DQebbTEW7sEHRYzCSVE9JZfrzpP2pVPlz5rkmNoaRgnnOQ==
-Message-ID: <5b06ec63.1c69fb81.9fd61.1eec@mx.google.com>
-Date: Thu, 24 May 2018 09:46:27 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.4.132-93-g915a3d7cdea9
-In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
-References: <20180524093159.286472249@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2090925-1527173083-2-1630185789623854625
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527173083; b=ZqzY0wB32NaoEnZZRwGPHoI3BiALBWoAElgdRe8w953eJJ8qS2
+    5/NCrD0NCNpCeKMUCPwnz1QnlN0eQb+p2UySe64I5ZJEyjoPXCPLz/UJGpFhRLSY
+    9Du8nQBEZ2Oz9Dvu/zauLPCY2C0/LJhnzmbrKOb1F6Nl0CEJ2RrmzLSoJHWr05wh
+    Y2PgjFKGKD9y/XWdoEqktJ6HvdBQ4LbWdPZvw2BtuyNfhVq4GZpGlapx3Bvi8Et3
+    o2qSRmQqx29HTzznK2qc4ExSb5Rb/I9HqDbzQAYQ853T0I7EABl8ZgCQGXb/aG9L
+    5lqdumt8uLhNNxBHX9GNiKSYfpLOyWjF4kuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1527173083; bh=hCG3Ya83EoyRDYavNFwdmAUh0I62OV
+    DF1QU8MOBKKMc=; b=X+gLN9mFy9B3n9cv4MCupgyK4pID3UzHGcnmwoqvDbnvX6
+    FE/o3BSS9iI5XZwpYv/XIQ8EGUxtttGxocnLyZN/dno7ysF0VozyqPUQS6VVlQiB
+    PIYM7uFAyXr3vG4tvKxEkm/tREZz2LV1CQp6F2AeFMD5xt3LzigplAYfr0oqMZCd
+    RQpGRGSN2JEYb7SGYd3Suthb1WTswMpJlOVwnyI6ukm3HNKUbY27OMcJ1GXUk6VE
+    qc39Dol6vTtndQQ0NEdxNugAAm6bFeP15VbDrQWyHrbIjObIEBSoPG1KYt4gd8PK
+    i5u51newWOktrZvnt4CoY6P+PbLv5FdviXHGRHjw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+    header.i=@gmail.com header.b=FwgnccKx x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=GJSasjHL;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+      header.i=@gmail.com header.b=FwgnccKx x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=GJSasjHL;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEA0Y0w8eXE7OjEvxCrUbPu00nzIZfbmIokYnrWk0SDMMaHyAx5wOD6v3l+jgpdyhrcnLvFMIBUJ0ZTj6Skb54AV/eETh+6uSgKoc5ikQd4gJ1tI/pXi
+    STNRrjOlaV33aayxsUTggns3XRU1R2Smaihu6Re6HOrNAgA8vcVd2skuPNg1tYsWnoh6IC6ED5B2W72ghtKpvlym13uROtumh/bCJEVMPx2UHZd8DwKq7NIC
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=TpujumX0jH7REod0KhDaHZOp9kI=:19
+    a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10 a=vY_346TuTMEA:10 a=zhKW8NK6TxkA:10
+    a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=sPiy1xkkMUnSoSMqoVQA:9
+    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S970477AbeEXOom (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 10:44:42 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54614 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966153AbeEXOol (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 24 May 2018 10:44:41 -0400
+X-Google-Smtp-Source: AB8JxZqEkgfWuf+kX+aEsIA+RBRq0NQP9XA0ISZJD89wsdYoVcuDWA9JDWul/tAhxqMm9KsfiuQXlA==
+Date: Thu, 24 May 2018 07:45:17 -0700
+From: Nathan Chancellor <natechancellor@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Message-ID: <20180524144517.GB9229@flashbox>
+References: <20180524093159.286472249@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601338064912967268?=
-X-GMAIL-MSGID: =?utf-8?q?1601364703000090586?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.4.y boot: 95 boots: 1 failed, 93 passed with 1 conflict (=
-v4.4.132-93-g915a3d7cdea9)
+On Thu, May 24, 2018 at 11:37:37AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.133 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat May 26 09:31:28 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.133-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.132-93-g915a3d7cdea9/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.132-93-g915a3d7cdea9/
+Merged, compiled with -Werror, and installed onto my Pixel 2 XL and
+OnePlus 5.
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.132-93-g915a3d7cdea9
-Git Commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 45 unique boards, 21 SoC families, 15 builds out of 178
+No initial issues noticed in dmesg or general usage.
 
-Boot Regressions Detected:
-
-x86:
-
-    x86_64_defconfig:
-        qemu:
-            lab-baylibre: failing since 2 days (last pass: v4.4.132-70-gaa7=
-ab28e9c5e - first fail: v4.4.132-71-g180635995c36)
-
-Boot Failure Detected:
-
-arm64:
-
-    defconfig
-        synquacer-acpi: 1 failed lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-x86:
-
-    x86_64_defconfig:
-        qemu:
-            lab-linaro-lkft: PASS
-            lab-mhart: PASS
-            lab-collabora: PASS
-            lab-baylibre: FAIL
-
----
-For more info write to <info@kernelci.org>
+Thanks!
+Nathan
