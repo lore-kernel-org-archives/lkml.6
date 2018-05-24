@@ -1,42 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935661AbeEXHOY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:14:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40784 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeEXHOX (ORCPT
+        id S964920AbeEXHPA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:15:00 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:41484 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935637AbeEXHO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:14:23 -0400
-Date: Thu, 24 May 2018 09:14:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shaohua Li <shli@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
-        linux-raid@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: Re: [PATCH 3/8] md: raid5: use refcount_t for reference counting
- instead atomic_t
-Message-ID: <20180524071413.GC12198@hirez.programming.kicks-ass.net>
-References: <20180509193645.830-1-bigeasy@linutronix.de>
- <20180509193645.830-4-bigeasy@linutronix.de>
- <20180523132119.GC19987@bombadil.infradead.org>
- <20180523174904.GY12198@hirez.programming.kicks-ass.net>
- <20180523192239.GA59657@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523192239.GA59657@kernel.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 24 May 2018 03:14:58 -0400
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Thu, 24 May 2018 09:07:26 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: [PATCH v2 01/13] dmaengine: pxa: use a dma slave map
+Date: Thu, 24 May 2018 09:06:51 +0200
+Message-Id: <20180524070703.11901-2-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180524070703.11901-1-robert.jarzmik@free.fr>
+References: <20180524070703.11901-1-robert.jarzmik@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 12:22:39PM -0700, Shaohua Li wrote:
-> I don't know what is changed in the refcount, such raid5 change has attempted
-> before and didn't work. 0 for the stripe count is a valid usage and we do
-> inc-from-zero in several places.
+In order to remove the specific knowledge of the dma mapping from PXA
+drivers, add a default slave map for pxa architectures.
 
-Nothing much has changed with refcount; and the above does indeed still
-appear to be an issue. Thanks for confirming.
+This won't impact MMP architecture, but is aimed only at all PXA boards.
+
+This is the first step, and once all drivers are converted,
+pxad_filter_fn() will be made static, and the DMA resources removed from
+device.c.
+
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/dma/pxa_dma.c                 | 10 +++++++++-
+ include/linux/platform_data/mmp_dma.h |  4 ++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
+index b53fb618bbf6..9505334f9c6e 100644
+--- a/drivers/dma/pxa_dma.c
++++ b/drivers/dma/pxa_dma.c
+@@ -179,6 +179,8 @@ static unsigned int pxad_drcmr(unsigned int line)
+ 	return 0x1000 + line * 4;
+ }
+ 
++bool pxad_filter_fn(struct dma_chan *chan, void *param);
++
+ /*
+  * Debug fs
+  */
+@@ -1396,9 +1398,10 @@ static int pxad_probe(struct platform_device *op)
+ {
+ 	struct pxad_device *pdev;
+ 	const struct of_device_id *of_id;
++	const struct dma_slave_map *slave_map = NULL;
+ 	struct mmp_dma_platdata *pdata = dev_get_platdata(&op->dev);
+ 	struct resource *iores;
+-	int ret, dma_channels = 0, nb_requestors = 0;
++	int ret, dma_channels = 0, nb_requestors = 0, slave_map_cnt = 0;
+ 	const enum dma_slave_buswidth widths =
+ 		DMA_SLAVE_BUSWIDTH_1_BYTE   | DMA_SLAVE_BUSWIDTH_2_BYTES |
+ 		DMA_SLAVE_BUSWIDTH_4_BYTES;
+@@ -1429,6 +1432,8 @@ static int pxad_probe(struct platform_device *op)
+ 	} else if (pdata && pdata->dma_channels) {
+ 		dma_channels = pdata->dma_channels;
+ 		nb_requestors = pdata->nb_requestors;
++		slave_map = pdata->slave_map;
++		slave_map_cnt = pdata->slave_map_cnt;
+ 	} else {
+ 		dma_channels = 32;	/* default 32 channel */
+ 	}
+@@ -1440,6 +1445,9 @@ static int pxad_probe(struct platform_device *op)
+ 	pdev->slave.device_prep_dma_memcpy = pxad_prep_memcpy;
+ 	pdev->slave.device_prep_slave_sg = pxad_prep_slave_sg;
+ 	pdev->slave.device_prep_dma_cyclic = pxad_prep_dma_cyclic;
++	pdev->slave.filter.map = slave_map;
++	pdev->slave.filter.mapcnt = slave_map_cnt;
++	pdev->slave.filter.fn = pxad_filter_fn;
+ 
+ 	pdev->slave.copy_align = PDMA_ALIGNMENT;
+ 	pdev->slave.src_addr_widths = widths;
+diff --git a/include/linux/platform_data/mmp_dma.h b/include/linux/platform_data/mmp_dma.h
+index d1397c8ed94e..6397b9c8149a 100644
+--- a/include/linux/platform_data/mmp_dma.h
++++ b/include/linux/platform_data/mmp_dma.h
+@@ -12,9 +12,13 @@
+ #ifndef MMP_DMA_H
+ #define MMP_DMA_H
+ 
++struct dma_slave_map;
++
+ struct mmp_dma_platdata {
+ 	int dma_channels;
+ 	int nb_requestors;
++	int slave_map_cnt;
++	const struct dma_slave_map *slave_map;
+ };
+ 
+ #endif /* MMP_DMA_H */
+-- 
+2.11.0
