@@ -1,111 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032937AbeEXLaY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:30:24 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:33600 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968870AbeEXLaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:30:18 -0400
-Date: Thu, 24 May 2018 14:30:12 +0300
-From: Baruch Siach <baruch@tkos.co.il>
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Jacob Chen <jacob-chen@iotwrt.com>,
-        ARM/Rockchip SoC <linux-rockchip@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        IOMMU DRIVERS <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?utf-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
-        Eddie Cai <eddie.cai.linux@gmail.com>,
-        Jeffy <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        =?utf-8?B?6ZmI5Z+O?= <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Subject: Re: [PATCH v6 05/17] media: rkisp1: add Rockchip ISP1 subdev driver
-Message-ID: <20180524113012.mt5b2f2vrhfrn3d7@tarshish>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
- <20180308094807.9443-6-jacob-chen@iotwrt.com>
- <20180503090909.o3dyhukzs2y7em5z@tarshish>
- <CAAFQd5CvBv4hkE=PSHBJTYa9Lj0SyggxpMBEAYD=if0=T0uzHw@mail.gmail.com>
- <20180507063814.vweb4p3nfgnoc3td@tarshish>
- <CAAFQd5A7gAK4fXH9YVrobR5_QX_5f8xa272R_56v5YUghV6Sxw@mail.gmail.com>
+        id S968956AbeEXLa1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:30:27 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:41249 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968877AbeEXLaQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:30:16 -0400
+X-Google-Smtp-Source: AB8JxZqZvJq/zRZpFOl+e4IaxTp7gKSUUUJ2VRododJlnGKp7dgQ26L8Ku8QwZCfKZ95nDzf2Aej1b4R5ryStNJbRK0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAFQd5A7gAK4fXH9YVrobR5_QX_5f8xa272R_56v5YUghV6Sxw@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch> <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com> <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+From: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
+Date: Thu, 24 May 2018 13:30:14 +0200
+Message-ID: <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+To: Stefan Agner <stefan@agner.ch>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
+        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+Hi Stefan,
 
-On Mon, May 07, 2018 at 06:41:50AM +0000, Tomasz Figa wrote:
-> On Mon, May 7, 2018 at 3:38 PM Baruch Siach <baruch@tkos.co.il> wrote:
-> > On Mon, May 07, 2018 at 06:13:27AM +0000, Tomasz Figa wrote:
-> > > On Thu, May 3, 2018 at 6:09 PM Baruch Siach <baruch@tkos.co.il> wrote:
-> > > > On Thu, Mar 08, 2018 at 05:47:55PM +0800, Jacob Chen wrote:
-> > > > > +static int rkisp1_isp_sd_s_power(struct v4l2_subdev *sd, int on)
-> > > > > +{
-> > > > > +     struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
-> > > > > +     int ret;
-> > > > > +
-> > > > > +     v4l2_dbg(1, rkisp1_debug, &isp_dev->v4l2_dev, "s_power: %d\n",
-> > > on);
-> > > > > +
-> > > > > +     if (on) {
-> > > > > +             ret = pm_runtime_get_sync(isp_dev->dev);
-> > > > > +             if (ret < 0)
-> > > > > +                     return ret;
-> > > > > +
-> > > > > +             rkisp1_config_clk(isp_dev);
-> > > > > +     } else {
-> > > > > +             ret = pm_runtime_put(isp_dev->dev);
-> > >
-> > > > I commented this line out to make more than one STREAMON work.
-> Otherwise,
-> > > > the second STREAMON hangs. I guess the bug is not this driver.
-> Probably
-> > > > something in drivers/soc/rockchip/pm_domains.c. Just noting that in
-> case
-> > > > you or someone on Cc would like to investigate it further.
-> > > >
-> > > > I tested v4.16-rc4 on the Tinkerboard.
-> > >
-> > > Looks like that version doesn't include the IOMMU PM and clock handling
-> > > rework [1], which should fix a lot of runtime PM issues. FWIW,
-> linux-next
-> > > seems to already include it.
-> > >
-> > > [1] https://lkml.org/lkml/2018/3/23/44
-> 
-> > Thanks for the reference.
-> 
-> > It looks like the iommu driver part is in Linus' tree already. The DT
-> part is
-> > in the v4.18-armsoc/dts32 branch of Heiko's tree. Am I missing anything?
-> 
-> You're right, most of the series made it in time for 4.17. However, the DT
-> part (precisely, the clocks properties added to IOMMU nodes) is crucial for
-> the fixes to be effective.
-> 
-> > Anyway, I'll take a look.
-> 
-> Thanks for testing. :) (Forgot to mention in my previous email...)
+It seems to me that a probe similar to what the BootROM does shouldn't
+be awfully complicated to implement - just cycle through the switch
+cases in case of an ECC error. But I guess that's more of an idea for
+further improvements rather than a comment to the patch set under
+review.
 
-I finally got around to testing. Unfortunately, kernel v4.17-rc6 with 
-cherry-pick of commit c78751f91c0b (ARM: dts: rockchip: add clocks in iommu 
-nodes) from Heiko's tree still exhibit the same problem. STREAMON hangs on 
-second try. The same workaround "fixes" it.
+However, I think that allowing for an override of the oobsize
+inference would be a good idea before merging, no? This could just be
+a trivial #ifdef (at least temporarily). If you agree but don't feel
+like doing it yourself, I'd be happy to pitch in. Let me know.
 
-baruch
+Best regards,
+Benjamin
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+2018-05-24 13:00 GMT+02:00 Stefan Agner <stefan@agner.ch>:
+> On 24.05.2018 09:45, Benjamin Lindqvist wrote:
+>> Hi Stefan (and all),
+>>
+>> First off, I apoloigize in advance if I'm deviating from common
+>> kernel mailing list courtesy -- this is my first time responding.
+>> I just have a comment on the NAND driver that I'd like to bring
+>> to the public.
+>>
+>
+> Welcome!
+>
+>>> +       switch (mtd->oobsize) {
+>>> ...
+>>> +       case 224:
+>>> +               mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
+>>> +               chip->ecc.strength = 8;
+>>> +               chip->ecc.bytes = 18;
+>>> +               value |= CFG_ECC_SEL | CFG_TVAL_8;
+>>> +               break; +       case 224:
+>>
+>> I am not sure how you arrived at this oobsize-based inference. I
+>> have not seen any explicit relation between oob size and ECC
+>> algorithm used in the reference manual. Indeed, the U-Boot I was
+>> working on (a fork of the Toradex 2015.04 U-Boot) always has
+>> oobsize == 224 but used either BCH[t=16] or RS[t=4]. In fact, we
+>> tried choosing RS[t=8] in U-Boot but we failed to make the
+>> BootROM decode this at all. So we had to use RS[t=4]. But
+>> changing the algorithm did not automatically change the oobsize,
+>> at least it didn't for us. So maybe you should consider if this
+>> is really the way to go about deciding which algorithm is used.
+>
+> The oobsize based inference to set the HW ECC mode comes from the
+> patchset I picked up. Typically, the size of the OOB area is such that
+> it allows "good enough" error correction required for that chip. So
+> using it as indicator for the ECC algorithm is not entirely off...
+>
+> But yeah I agree we have better means, and I already started working on
+> a better mechanism. Also, I worked on BCH support, and it looks pretty
+> good already.
+>
+> If we want to auto select mode we can use the ECC requirements from
+> ONFI/JEDEC/parameter page. Or we could use device tree only.
+>
+> Thanks for bringing up the Boot ROM issue. In fact I investigated the
+> supported modes the recent days too. First off, as you mentioned, the
+> boot ROM seems to probe different modes until it succeeds. By trying
+> through all RS and BCH modes, it seems that it only probes some modes:
+> - RS t=4
+> - BCH t=8
+> - BCH t=16
+>
+> I guess those are preferred modes in practise. Not sure if we should
+> make sure the auto selection such that it only chooses from this list...
+>
+>>
+>> Note that we're in fact using this patch set in Linux today, but
+>> we had to remove the oobsize inference part. Currently we're
+>> simply hard coding it to CFG_TVAL_4, but maybe it would be
+>> cleaner to add ECC algo as a board config instead, e.g. in the
+>> .dts file or whatever. This seems to be done by other vendors
+>> already, see for example excerpt of
+>> Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
+>>
+>>  - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
+>> "sw" 1-bit Hamming ecc code via software
+>> "hw" <deprecated> use "ham1" instead
+>> "hw-romcode" <deprecated> use "ham1" instead
+>> "ham1" 1-bit Hamming ecc code
+>> "bch4" 4-bit BCH ecc code
+>> "bch8" 8-bit BCH ecc code
+>> "bch16" 16-bit BCH ECC code
+>> Refer below "How to select correct ECC scheme for your device ?"
+>>
+>> It seems as if this method would be equally applicable to Tegra NAND.
+>
+> Yeah, ideally we can reuse "nand-ecc-algo". Although, Reed-Solomon is
+> not yet in the list.  So using this property would require to extend
+> this standard property.
+>
+> --
+> Stefan
