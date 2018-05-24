@@ -1,52 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033361AbeEXOar (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:30:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37316 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1033346AbeEXO3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:29:45 -0400
-Date: Thu, 24 May 2018 16:29:40 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.ibm.com,
-        pmorel@linux.ibm.com
-Subject: Re: [PATCH v4 0/4] vfio: ccw: error handling fixes and improvements
-Message-ID: <20180524162940.13d3b2df.cohuck@redhat.com>
-In-Reply-To: <20180523122129.5f765d24.cohuck@redhat.com>
-References: <20180523025645.8978-1-bjsdjshi@linux.ibm.com>
-        <20180523122129.5f765d24.cohuck@redhat.com>
-Organization: Red Hat GmbH
+        id S968170AbeEXOdp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:33:45 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38681 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965599AbeEXOdm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:33:42 -0400
+X-Google-Smtp-Source: AB8JxZrdx6hHzoEPavRTQXI3uTgtppkuSSAa3W43I3TrEpsVvImtMdwpgS0wZWFvRlN56YMcqbU+rzcJllobuhGt0D0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180524114341.1101-1-mhocko@kernel.org>
+References: <20180424183536.GF30619@thunk.org> <20180524114341.1101-1-mhocko@kernel.org>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Thu, 24 May 2018 07:33:39 -0700
+Message-ID: <CALvZod6CmkNgkYkSchFXsPefnuNUDjOEhPXtEUOJaeuSiXCUKg@mail.gmail.com>
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 12:21:29 +0200
-Cornelia Huck <cohuck@redhat.com> wrote:
+On Thu, May 24, 2018 at 4:43 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> From: Michal Hocko <mhocko@suse.com>
+>
+> Although the api is documented in the source code Ted has pointed out
+> that there is no mention in the core-api Documentation and there are
+> people looking there to find answers how to use a specific API.
+>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: David Sterba <dsterba@suse.cz>
+> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>
+> Hi Johnatan,
+> Ted has proposed this at LSFMM and then we discussed that briefly on the
+> mailing list [1]. I received some useful feedback from Darrick and Dave
+> which has been (hopefully) integrated. Then the thing fall off my radar
+> rediscovering it now when doing some cleanup. Could you take the patch
+> please?
+>
+> [1] http://lkml.kernel.org/r/20180424183536.GF30619@thunk.org
+>  .../core-api/gfp_mask-from-fs-io.rst          | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
+>
+> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> new file mode 100644
+> index 000000000000..e8b2678e959b
+> --- /dev/null
+> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> @@ -0,0 +1,55 @@
+> +=================================
+> +GFP masks used from FS/IO context
+> +=================================
+> +
+> +:Date: Mapy, 2018
+> +:Author: Michal Hocko <mhocko@kernel.org>
+> +
+> +Introduction
+> +============
+> +
+> +Code paths in the filesystem and IO stacks must be careful when
+> +allocating memory to prevent recursion deadlocks caused by direct
+> +memory reclaim calling back into the FS or IO paths and blocking on
+> +already held resources (e.g. locks - most commonly those used for the
+> +transaction context).
+> +
+> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
+> +resp. __GFP_IO (note the later implies clearing the first as well) in
 
-> On Wed, 23 May 2018 04:56:41 +0200
-> Dong Jia Shi <bjsdjshi@linux.ibm.com> wrote:
-> 
-> > Dear Reviewers,
-> > 
-> > Here is a new version for this patch series.
-> > 
-> > We didn't get agreement on patch #4 (#5 in v2) in the former cycle though,
-> > I made it based on my understanding. We can continue discussing on it.  
-> 
-> I'll probably go ahead and queue 1-3 (would not mind r-bs, though) in
-> any case.
-> 
-> I hope we can queue the tracing patch as well, as any tracing beats no
-> tracing :)
+Is resp. == respectively? Why not use the full word (here and below)?
 
-OK, I've pushed this out to the vfio-ccw branch.
-
-Would still be great to get some R-bs.
-
-What about sending a pull req next week, so that we get this ready for
-the 4.18 merge window?
+> +the gfp mask when calling an allocator. GFP_NOFS resp. GFP_NOIO can be
+> +used as shortcut. It turned out though that above approach has led to
+> +abuses when the restricted gfp mask is used "just in case" without a
+> +deeper consideration which leads to problems because an excessive use
+> +of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
+> +reclaim issues.
+> +
+> +New API
+> +========
+> +
+> +Since 4.12 we do have a generic scope API for both NOFS and NOIO context
+> +``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
+> +``memalloc_noio_restore`` which allow to mark a scope to be a critical
+> +section from the memory reclaim recursion into FS/IO POV. Any allocation
+> +from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
+> +mask so no memory allocation can recurse back in the FS/IO.
+> +
+> +FS/IO code then simply calls the appropriate save function right at the
+> +layer where a lock taken from the reclaim context (e.g. shrinker) and
+> +the corresponding restore function when the lock is released. All that
+> +ideally along with an explanation what is the reclaim context for easier
+> +maintenance.
+> +
+> +What about __vmalloc(GFP_NOFS)
+> +==============================
+> +
+> +vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
+> +GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
+> +to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
+> +almost always a bug. The good news is that the NOFS/NOIO semantic can be
+> +achieved by the scope api.
+> +
+> +In the ideal world, upper layers should already mark dangerous contexts
+> +and so no special care is required and vmalloc should be called without
+> +any problems. Sometimes if the context is not really clear or there are
+> +layering violations then the recommended way around that is to wrap ``vmalloc``
+> +by the scope API with a comment explaining the problem.
+> --
+> 2.17.0
+>
