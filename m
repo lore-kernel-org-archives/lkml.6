@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527164517-2-12649461769829624217
+X-Cyrus-Session-Id: sloti22d1t05-1906373-1527164515-2-8635595018837335762
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527164517; b=e9hlWvYYS8PJk5OyaLgNdDXVG7WYfc01C94FVazkXT/MrB1DF5
-    lPnUuePJHr6yJpAXzkmuTzwf0V/zu4v7v2lG82BR9V5cKPrA4MbgasM4++XU4gUX
-    irq3qrGtvZqNbNfyWBWyvlEM0bzGiEccM/Evl9BgCs5gdnW3bH9iDbanWOAoYBPX
-    jfMZJxrFqe+mHSYs9dEF5Jjw48hL5rO+ATtKo+Z4ZphYPqHO2pjMu3PJDSwIYYfj
-    8I7KkXz3RaRdTO0VWMUXhBwB3DUnQTXbbvaooPGPDmnl0IJHz8N2aaEbHwEHQ8qT
-    g3LooQzACDGbcgLXwug947FCzorgBxQ7s4gQ==
+    1527164515; b=MLwzqpE9xjiO4Z1RNkMJbtjTp4aBaa8xQyXBxp4nlV3dbT1xrc
+    SC3e/1ph1HVGgki5E0IqpILCfnF4CxYNeFWWSflqPXmJlQzWpa531cHXovYXvL7k
+    M3LsKRftD05cmYjR2GTti9qmjoSQDNGzqc+3FrFdkTs8vqGYFdbilEGMHp5fGi5O
+    hM1S9b4kK/uDaQfA8HBnfQr9fcYTRhh5gzshnHwS1bQ/VgF5JD2uh8yp6Upxrn4d
+    onZkVldGFGuwuQerkEVuiSp6D+p2n5yYGTJw8lODzXiyfa8SnVIM/td2zPA39AVO
+    ISP9tZX6NBdqhQ4OehpA0DRtaDDy2m6vXYzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527164517; bh=1G7Rxbm3/9nVbSnUshoMR2tQiDmVqx
-    O05TUEfbBaeFw=; b=OFRScq8UZQhcL1cOAygJqVpZ1s3nRP+kMUf+NuVZInkY5L
-    Bx/TLB+c7FR8CxFj00lF8exVddC4R2Xsjx05rlYaLsuBPlRGcA7tJQC5oXS6S5HX
-    WFtCwt+LkU3By1Jstwoxq78PKk6Tqv1/yByNbjTXLT1cEGD8VUkB7k1mXyEVhas/
-    cj8A2IJ5ONP3Z9YgLdc3w0Fn2IOqFsdpXCRuJlRJw0BGt0gmTV8UwN5FgNzfXdwY
-    AJZhb/etZqt2RvTve6tq/l81z4ha6f8fl9kh4u0pPmMDuUet6ha7s5ZwB1cZ4n+C
-    XPZdneunnmEShkMJQ6hm6QYbAIIQJ9hptdvh5xlw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527164515; bh=KVfzl73amKq+DsvpOUDxknSbBhGEFC
+    dEKfHJdDXN+9g=; b=ar5yUJ90mULxXk6MXp5iNAUz00kCCLw5CV5lHPFNYPl1kX
+    7/lm/hqynoMxTalzprL2MQ4I7XobeTauJCbkIH8n/A0dStAna0UQTmgm6kSMS9dE
+    eujTzHofwdLvV/NvSfiQEQeFjz8Lfca88XJd4OUq+ZbAjCS8Un2jqoMgH/tcPQj+
+    bDNPVnmUgyvUIADEerkgWWx0eQDMIklNCLjfm013QAEZEIDqb8QVUYAmmfp1vg+/
+    m5zqsCHCvRVhEnAKguzA2sOZAHnxdl71AEhDPiaZe7lA/BdzoFjiOujDy6o7mVrD
+    LUNTxj0wkBj7M40o846uM5js7bNX95h7/nTllhXg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=N6R8H6wr x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=HmilEjV6 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=N6R8H6wr x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=HmilEjV6 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,30 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPQi4k2AQ6LkVEaEp0juzYmnr8pFBEQyr+Ulbyyats8myKlbqETGQIJZyw39ttW7PsvwDuxbOABOcIdf+AXdG84yVXz+KgijrsS7WMjr0vkzX9/T5rl0
-    D2Xua6Ss3pT7g+WciKVnTUqPPFzp90dXQnhTNXTr42qalembibYlWT5Io/bF+O7DTB9Lg7QrraWwSVOmPSJYekIFha2Ih+Uq/5NVBji1XCw0BnMDOs2BEXo7
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJ4aEQYJ+N6MMA4640ZiwXdvNtJU+W1q7BM0ITFaqK0VFQ7idYYCXavCoe0j2DkmwT2mZzGubVSN5/UaypMuqAbpnyvKdnfr8Eenk01MQeoMN4mqsjn6
+    Tu0zVYBx2T20++vzR72eSitadc0XXXtWZ+xzpJFY/LImiXRHHS+zWcKNMA4L7LOHtx9LbKpLHeq4Ljs7qELY2baS9kdj/l06y3aBiK5yYAhE+I+Y+xj9jX4e
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=hSkVLCK3AAAA:8 a=CDq0vqnqAAAA:8 a=J1Y8HTJGAAAA:8
-    a=ag1SF4gXAAAA:8 a=fRGPA_HIdNiQ8ehJAToA:9 a=QEXdDO2ut3YA:10
-    a=cQPPKAXgyycSBL8etih5:22 a=Xn7iXEen_xUG9zZOO_Hb:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=FOH2dFAWAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=0ho8uy10ve2BAXLJD4AA:9
+    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=y1Q9-5lHfBjTkpIzbSAN:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966158AbeEXJlO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:41:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53100 "EHLO mail.kernel.org"
+        id S966227AbeEXMVY (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 08:21:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966153AbeEXJlI (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:41:08 -0400
+        id S965759AbeEXJlO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:41:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        stable@vger.kernel.org, Andrey Ignatov <rdna@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 02/45] bridge: check iface upper dev when setting master via ioctl
-Date: Thu, 24 May 2018 11:38:10 +0200
-Message-Id: <20180524093120.851911577@linuxfoundation.org>
+Subject: [PATCH 3.18 04/45] ipv4: fix memory leaks in udp_sendmsg, ping_v4_sendmsg
+Date: Thu, 24 May 2018 11:38:12 +0200
+Message-Id: <20180524093121.103500882@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093120.599252450@linuxfoundation.org>
 References: <20180524093120.599252450@linuxfoundation.org>
@@ -109,40 +105,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Andrey Ignatov <rdna@fb.com>
 
-[ Upstream commit e8238fc2bd7b4c3c7554fa2df067e796610212fc ]
+[ Upstream commit 1b97013bfb11d66f041de691de6f0fec748ce016 ]
 
-When we set a bond slave's master to bridge via ioctl, we only check
-the IFF_BRIDGE_PORT flag. Although we will find the slave's real master
-at netdev_master_upper_dev_link() later, it already does some settings
-and allocates some resources. It would be better to return as early
-as possible.
+Fix more memory leaks in ip_cmsg_send() callers. Part of them were fixed
+earlier in 919483096bfe.
 
-v1 -> v2:
-use netdev_master_upper_dev_get() instead of netdev_has_any_upper_dev()
-to check if we have a master, because not all upper devs are masters,
-e.g. vlan device.
+* udp_sendmsg one was there since the beginning when linux sources were
+  first added to git;
+* ping_v4_sendmsg one was copy/pasted in c319b4d76b9e.
 
-Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Whenever return happens in udp_sendmsg() or ping_v4_sendmsg() IP options
+have to be freed if they were allocated previously.
+
+Add label so that future callers (if any) can use it instead of kfree()
+before return that is easy to forget.
+
+Fixes: c319b4d76b9e (net: ipv4: add IPPROTO_ICMP socket kind)
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/br_if.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/ping.c |    7 +++++--
+ net/ipv4/udp.c  |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/net/bridge/br_if.c
-+++ b/net/bridge/br_if.c
-@@ -445,8 +445,8 @@ int br_add_if(struct net_bridge *br, str
- 	if (dev->netdev_ops->ndo_start_xmit == br_dev_xmit)
- 		return -ELOOP;
+--- a/net/ipv4/ping.c
++++ b/net/ipv4/ping.c
+@@ -771,8 +771,10 @@ static int ping_v4_sendmsg(struct kiocb
+ 	ipc.addr = faddr = daddr;
  
--	/* Device is already being bridged */
--	if (br_port_exists(dev))
-+	/* Device has master upper dev */
-+	if (netdev_master_upper_dev_get(dev))
- 		return -EBUSY;
+ 	if (ipc.opt && ipc.opt->opt.srr) {
+-		if (!daddr)
+-			return -EINVAL;
++		if (!daddr) {
++			err = -EINVAL;
++			goto out_free;
++		}
+ 		faddr = ipc.opt->opt.faddr;
+ 	}
+ 	tos = get_rttos(&ipc, inet);
+@@ -837,6 +839,7 @@ back_from_confirm:
  
- 	/* No bridging devices that dislike that (e.g. wireless) */
+ out:
+ 	ip_rt_put(rt);
++out_free:
+ 	if (free)
+ 		kfree(ipc.opt);
+ 	if (!err) {
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -975,8 +975,10 @@ int udp_sendmsg(struct kiocb *iocb, stru
+ 	ipc.addr = faddr = daddr;
+ 
+ 	if (ipc.opt && ipc.opt->opt.srr) {
+-		if (!daddr)
+-			return -EINVAL;
++		if (!daddr) {
++			err = -EINVAL;
++			goto out_free;
++		}
+ 		faddr = ipc.opt->opt.faddr;
+ 		connected = 0;
+ 	}
+@@ -1081,6 +1083,7 @@ do_append_data:
+ 
+ out:
+ 	ip_rt_put(rt);
++out_free:
+ 	if (free)
+ 		kfree(ipc.opt);
+ 	if (!err)
