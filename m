@@ -1,120 +1,69 @@
-Return-Path: <sean.wang@mediatek.com>
-X-Google-Smtp-Source: AB8JxZp86yOqOpCgOQ7VeI/1Ls4Funnz35Au3nMBNl118joCs5pAInNTZOx8in9uWhQNDl4PwUZL
-ARC-Seal: i=1; a=rsa-sha256; t=1527130347; cv=none;
+Return-Path: <jakub.kicinski@netronome.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1527125638; cv=none;
         d=google.com; s=arc-20160816;
-        b=YHFZLQO9kW42rkXSmdM8oq3220iPdFylEOePPfnJyJQ1zh8y71J+wYT32+sLyUSaUq
-         33fVtS79z6V20DPh3ThFY2D0/njhzNVvE8Eaa4QferWM136mI0oSD/r5HP7Txpeqixvg
-         s877zzbe+66jWj5nqywxOk2mEf3U6o5qN+jfgcVbF+RKPnazGi6ZuiGOtcC01CYoGAAU
-         aiPYflbT1I/Y03FgjKjBujPKVjSPNQ7bInivVID6yIe1R754F8H8ApyVfyWAdnQeJFxs
-         SDsSmunA3D52plCueHH8BoFEjOJCy1/NseTudP6Aw54klM+rhZLdWUD0pnrVTSPxu83O
-         xO4A==
+        b=v4C36wzewyuMDgmpjKsirljDArP77f5nPqSkNb3u5v9LoJo2TRTka8A4tRcPCRlwtl
+         w8/U2UK/CqH1iv3wvAKj92CPf87SqhrinUdSo/eBOpwUtOPJ0wYRpQUEdlnvy5Z70dsA
+         9NWS80QyjmIERilFWZU3SfP+x47YR8l+SP8N4GIoqttmm17pBt9CyWIET1o4dt/vuZKk
+         AJsQFVuosP6dnNJrXwU6GTn4EUaZV8rzIl7Oqo/WdKvUtAaGzrwv3oB73qMA3bbKyyq5
+         6Di4D3HJSI5Pq4MLHF14nvHXuX+dqrIMDyMqyjtdlYwG/ZSLpoJdBBG1jYwIEf7TQRo8
+         L60Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=rZuK/c0OIaqC8KH6Tdkk02snkyhmkBOuNYdBWecwC7c=;
-        b=daQz637irKakwSHcoB3VljZ12ilnwZYK+hVikps3M4v7icMK59iXN8X9SLJcZzcaeJ
-         tb+6aDGnH7D6P6AQaAfh4LwseywE7fKDWuIB00c5swAD8/2XH6mzmOZKHu2cFhIbl4qt
-         59mcoOKRk2Z8F+TeGcgIbr9HH/Cgv1a/csOp3rM4Oy/omLmyiVUvqiH3+fLhy5/DcUYj
-         IBzSeBNdpobEEaSAkdh4a3beF+boLQKxWjWiiCOIF/dP50llLruL5jRd7UT5e+Z0Lben
-         Yhbx/UOxVFzK/UEgYlu56E1Gcsz4dq+JvAF9oXEqb9wx0QHWVooxIRZzNr+VWW1BnCb7
-         2iWw==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=t+XmRALHh5eiYcPjdJzt5GESxrhGgLxb5o2gXZa9gdk=;
+        b=xTNzcKfMuZYL6eBxGfvyfmsjYiMjk/sZEGvP023qwJRWAwt9VC4OyWAiEyrqG3XA1D
+         Gi0cRbZ9gc0DXs6J8Qp5CVC5Dw732l0Apcl6Xczdi1vlIXXL43cEnGLsdVzjG1UJadvl
+         f70RJ1fe22tmiGqZVGkNbsCjSGi6IlcXgsJzW/v1aP9P7nH5HxT2l8ReB5pqa5mm3B+l
+         SZiN4Asy8kB1VHGh3yR+HOOK2lLMe/CET//G7LWrlmmP4ksG/ArekkYWXTdXsCSEFApY
+         Wb47pieylJCKOtrA/hgV67yexexRHI+iQJLzEv8/pTcxYuJj7YRmT1QD8EXz17jr/Da4
+         hogQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sean.wang@mediatek.com designates 210.61.82.184 as permitted sender) smtp.mailfrom=sean.wang@mediatek.com
+       dkim=pass header.i=@netronome-com.20150623.gappssmtp.com header.s=20150623 header.b=VnuzGw67;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of jakub.kicinski@netronome.com) smtp.mailfrom=jakub.kicinski@netronome.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sean.wang@mediatek.com designates 210.61.82.184 as permitted sender) smtp.mailfrom=sean.wang@mediatek.com
-X-UUID: 755ebc2ac05d4fd29b14fd7394ba41d4-20180524
-Message-ID: <1527130342.4607.27.camel@mtkswgap22>
-Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
-From: Sean Wang <sean.wang@mediatek.com>
-To: Lee Jones <lee.jones@linaro.org>
-CC: <matthias.bgg@kernel.org>, <ulrich.hecht+renesas@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <ck.hu@mediatek.com>,
-	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<davem@davemloft.net>, <gregkh@linuxfoundation.org>, <mchehab@kernel.org>,
-	<rdunlap@infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Matthias Brugger <mbrugger@suse.com>
-Date: Thu, 24 May 2018 10:52:22 +0800
-In-Reply-To: <20180430101826.GC5147@dell>
-References: <cover.1524820923.git.mbrugger@suse.com>
-	 <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
-	 <20180430101826.GC5147@dell>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@netronome-com.20150623.gappssmtp.com header.s=20150623 header.b=VnuzGw67;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of jakub.kicinski@netronome.com) smtp.mailfrom=jakub.kicinski@netronome.com
+X-Google-Smtp-Source: ADUXVKLoFoOb7Ay7diY/NGlkrorzBzhu+aHhxuacMrPF3N478W3X5pt8lHD1X82hYlyNBSqz0e2+NA==
+Date: Wed, 23 May 2018 18:33:52 -0700
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>, <daniel@iogearbox.net>,
+ <torvalds@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+ <luto@amacapital.net>, <mcgrof@kernel.org>, <keescook@chromium.org>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-team@fb.com>
+Subject: Re: [PATCH v3 net-next 0/2] bpfilter
+Message-ID: <20180523183352.7ccc3f5d@cakuba>
+In-Reply-To: <20180522022230.2492505-1-ast@kernel.org>
+References: <20180522022230.2492505-1-ast@kernel.org>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598890783825363754?=
-X-GMAIL-MSGID: =?utf-8?q?1601312231605267243?=
+X-GMAIL-THRID: =?utf-8?q?1601129157450149170?=
+X-GMAIL-MSGID: =?utf-8?q?1601307294007279561?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-04-30 at 11:18 +0100, Lee Jones wrote:
-> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-> 
-> > From: Matthias Brugger <mbrugger@suse.com>
-> > 
-> > The MMSYS subsystem includes clocks and drm components.
-> > This patch adds a MFD device to probe both drivers from the same
-> > device tree compatible.
-> > 
-> > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> > ---
-> >  drivers/mfd/Kconfig     |  9 ++++++
-> >  drivers/mfd/Makefile    |  2 ++
-> >  drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+Minor glitch with Ubuntu 18.04:
 
-[ ... ]
+$ gcc --version
+gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
 
-> > +};
-> 
-> This driver is pretty pointless.  It doesn't actually do anything.
-> 
-> I think you just want to use "simple-mfd" instead.
-> 
+In file included from /usr/include/fcntl.h:290:0,
+                 from ../net/bpfilter/main.c:7:
+In function =E2=80=98open=E2=80=99,
+    inlined from =E2=80=98main=E2=80=99 at ../net/bpfilter/main.c:58:13:
+/usr/include/x86_64-linux-gnu/bits/fcntl2.h:50:4: error: call to =E2=80=98_=
+_open_missing_mode=E2=80=99 declared with attribute error: open with O_CREA=
+T or O_TMPFILE in second argument needs 3 arguments
+    __open_missing_mode ();
+    ^~~~~~~~~~~~~~~~~~~~~~
+scripts/Makefile.host:107: recipe for target 'net/bpfilter/main.o' failed
+make[3]: *** [net/bpfilter/main.o] Error 1
 
-
-Hi, Matthias
-
-Why not embedded a platform_device_register_data call into existent
-MMSYS driver ?
-
-It looks elegant and makes sense that mmsys device is being as parent
-device for all its DRM components device and no need to create an
-additional node representing the same device with mmsys simply in order
-to probe its DRM components.
-
-I'm planing to send a bunch of HDMI, MIPI related to MMSYS nodes for
-MT7623 SoC when 4.18 rc1 comes out, so we should want to solve the
-dt-binding violation issue first.
-
-Though there are two same mmsys-compatible strings involving in dts
-though, it seems that hdmi still can work fine in my setup.
-
-	Sean
-
-
-> > +static const struct of_device_id of_match_mmsys[] = {
-> > +	{ .compatible = "mediatek,mt2701-mmsys",
-> > +	  .data = (void *) MMSYS_MT2701,
-> > +	},
-> > +	{ /* sentinel */ },
-> > +};
-> > +
-> > +static struct platform_driver mmsys_drv = {
-> > +	.probe = mmsys_probe,
-> > +	.driver = {
-> > +		.name = "mediatek-mmysys",
-> > +		.of_match_table = of_match_ptr(of_match_mmsys),
-> > +	},
-> > +};
-> > +
-> > +builtin_platform_driver(mmsys_drv);
-> > +
-> > +MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
-> > +MODULE_LICENSE("GPL");
-> 
+I can't repro on Fedora 27 gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5),
+perhaps the GCC is broken on that Ubuntu 18.04 box of mine.  The warning/
+/error, however, looks potentially legit?
