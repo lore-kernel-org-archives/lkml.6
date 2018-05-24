@@ -1,73 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755076AbeEXN0z convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:26:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49845 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755000AbeEXN0v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:26:51 -0400
-Date: Thu, 24 May 2018 15:26:48 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2] sched,tracing: Correct trace_sched_pi_setprio() for
- deboosting
-Message-ID: <20180524132647.gg6ziuogczdmjjzu@linutronix.de>
-References: <20180523141107.6417-1-bigeasy@linutronix.de>
- <20180523172819.GW12198@hirez.programming.kicks-ass.net>
- <20180524074413.dukslrbgqfvaab5b@linutronix.de>
- <20180524083754.GD12198@hirez.programming.kicks-ass.net>
+        id S965840AbeEXNct (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:32:49 -0400
+Received: from muru.com ([72.249.23.125]:44424 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965390AbeEXNcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 09:32:41 -0400
+Date: Thu, 24 May 2018 06:32:37 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: OMAP serial runtime PM and autosuspend (was: Re: [PATCH 4/7]
+ dt-bindings: gnss: add u-blox binding))
+Message-ID: <20180524133237.GA98604@atomide.com>
+References: <20180508154756.GW98604@atomide.com>
+ <20180508155405.GX98604@atomide.com>
+ <20180508164904.GZ98604@atomide.com>
+ <20180509131003.GC2285@localhost>
+ <20180509135706.GB98604@atomide.com>
+ <20180517100948.GI30172@localhost>
+ <20180517171038.GL98604@atomide.com>
+ <20180521134830.GR30172@localhost>
+ <20180521154832.GY98604@atomide.com>
+ <20180524091742.GZ30172@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180524083754.GD12198@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180524091742.GZ30172@localhost>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit b91473ff6e97 ("sched,tracing: Update
-trace_sched_pi_setprio()") the sched_pi_setprio trace point shows the
-"newprio" during a deboost:
-|futex sched_pi_setprio: comm=futex_requeue_p pid=2234 oldprio=98 newprio=98
-|futex sched_switch: prev_comm=futex_requeue_p prev_pid=2234 prev_prio=120
+* Johan Hovold <johan@kernel.org> [180524 09:20]:
+> On Mon, May 21, 2018 at 08:48:32AM -0700, Tony Lindgren wrote:
+> > 
+> > Yes the bug for closed ports needs to be fixed for sure.
+> 
+> I did some forensic on this and it seems this problem has "always" been
+> there. Specifically, closed ports have never been runtime suspended
+> unless a non-negative autosuspend delay has been set by user space since
+> fcdca75728ac ("ARM: OMAP2+: UART: Add runtime pm support for omap-serial
+> driver") which was merged seven years ago.
+>
+> So while it would certainly be nice to save some more power by default,
+> this would really be a new feature rather than a bug or regression fix
+> (which reduces the urgency for this issue somewhat too).
 
-This patch open codes __rt_effective_prio() in the tracepoint as the
-`newprio' to get the old behaviour back / the correct priority:
+Yes it's been there since the start.
 
-|futex sched_pi_setprio: comm=futex_requeue_p pid=2220 oldprio=98 newprio=120
-|futex sched_switch: prev_comm=futex_requeue_p prev_pid=2220 prev_prio=120
+> > > > > 	2. aggressive serial RPM, where the controller is allowed to
+> > > > > 	   suspend while the port is open even though this may result in
+> > > > > 	   lost characters when waking up on incoming data
+> > > > 
+> > > > In this case it seems that the only thing needed is to just
+> > > > configure the autosuspend delay for the parent port. The use of
+> > > > -1 has been around since the start of runtime PM AFAIK, so maybe
+> > > > we should just document it. I guess we could also introduce
+> > > > pm_runtime_block_autoidle_unless_configured() :)
+> > > 
+> > > The implications of a negative autosuspend delay are already documented
+> > > (in Documentation/power/runtime_pm.txt); it's just the omap drivers that
+> > > gets it wrong when trying to do things which aren't currently supported
+> > > (and never have been).
+> > > 
+> > > So I still think we need a new mechanism for this.
+> > 
+> > Well if you have some better mechanism in mind let's try it out. Short of
+> > sprinkling pm_runtime_force_suspend/resume calls all over, I'm out of ideas
+> > right now.
+> 
+> Yeah, that would be too much of a hack and likely wouldn't work either
+> (and we really should do away with those _force calls altogether).
+> 
+> I've been thinking a bit too much about this already, but it may be
+> possible to use the pm QoS framework for this. A resume latency can be
+> set through sysfs where "n/a" is defined to mean "no latency accepted"
+> (i.e. controller remains always-on while port is open) and "0" means
+> "any latency accepted" (i.e. omap aggressive serial RPM is allowed).
 
-Peter suggested to open code the new priority so people using tracehook
-could get the deadline data out.
+Oh yeah, PM QoS might work here!
 
-Reported-by: Mansky Christian <man@keba.com>
-Fixes: b91473ff6e97 ("sched,tracing: Update trace_sched_pi_setprio()")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v1…v2: Open code __rt_effective_prio() in sched_pi_setprio macro as
-suggested by PeterZ.
+> Now, implementing this may get a little tricky as we want to be able to
+> change this setting on the fly (consider consoles) and we need to figure
+> out the interaction with serdev (user space should probably not be
+> allowed to request a resume latency for ports used by serdev).
 
- include/trace/events/sched.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+It sounds like Andy Shevchenko has a series of patches that just might
+allow us to make this all generic for Linux serial framework. So adding
+Andy to Cc, I don't think he has posted all the patches yet.
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index bc01e06bc716..0be866c91f62 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -435,7 +435,9 @@ TRACE_EVENT(sched_pi_setprio,
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
- 		__entry->pid		= tsk->pid;
- 		__entry->oldprio	= tsk->prio;
--		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
-+		__entry->newprio	= pi_task ?
-+				min(tsk->normal_prio, pi_task->prio) :
-+				tsk->normal_prio;
- 		/* XXX SCHED_DEADLINE bits missing */
- 	),
- 
--- 
-2.17.0
+Andy, see the PM QoS comment above for console idling :)
+
+> I'd be happy to dig into this some more, but not in my spare time I'm
+> afraid.
+
+Indeed.
+
+> > > > > For normal ttys, we need a user-space interface for selecting between
+> > > > > the two, and for serdev we may want a way to select the RPM scheme from
+> > > > > within the kernel.
+> > > > > 
+> > > > > Note that with my serdev controller runtime PM patch, serdev core could
+> > > > > always opt for aggressive PM (as by default serdev core holds an RPM
+> > > > > reference for the controller while the port is open).
+> > > > 
+> > > > So if your serdev controller was to set the parent autosuspend
+> > > > delay on open() and set it back on close() this should work?
+> > > 
+> > > Is it really the job of a serdev driver to set the autosuspend delay of
+> > > a parent controller? Isn't this somethings which depends on the
+> > > characteristics of the controller (possibly configurable by user space)
+> > > such as the cost of runtime suspending and resuming?
+> > 
+> > Only in some cases will the serdev driver know it's safe to configure
+> > the parent controller. Configuring the parent controller from userspace
+> > works just fine as we've seen for years now.
+> 
+> Yes, user space may override the default settings provided by the serial
+> driver, but a serdev driver, in contrast, knows nothing about the
+> underlying serial hardware.
+> 
+> > > The patch I posted works with what we have today; if a parent serial
+> > > controller driver uses aggressive runtime PM by default or after having
+> > > been configured through sysfs to do so.
+> > 
+> > Yeah let's stick with configuring the parent controller from userspace
+> > for now at least.
+> 
+> Yep, status quo works for the time being (since this isn't a
+> regression). 
+> 
+> > > What I'm getting at here is that the delay should be set by the serial
+> > > driver implementing aggressive runtime PM. Then all we need is a
+> > > mechanism to determine whether an extra RPM reference should be taken at
+> > > tty open or not (configurable by user space, defaulting to yes).
+> > 
+> > OK yeah some additional on/off switch seems to be missing here.
+> 
+> As mentioned above, PM QoS resume latency may possibly be used, and
+> otherwise me may able to define a new (generic) QoS flag for this.
+
+Good idea.
+
+> > > Specifically, the serial drivers themselves would always use
+> > > autosuspend and not have to deal with supporting the two RPM schemes
+> > > (normal vs aggressive runtime PM).
+> > 
+> > OK. So if I understand your idea right, we could have autosuspend timeout
+> > set to 3000ms in the 8250_omap.c but still default to RPM blocked?
+> > Then user can enable aggressive PM via /sys as desired, right?
+> 
+> Not RPM blocked; the ports must always be able to suspend when the port
+> is closed. But user space should be able to enable the aggressive
+> (active) runtime PM via sysfs independently of the autosuspend delay,
+> yes.
+
+Yup OK, I like the PM QoS approach.
+
+Regards,
+
+Tony
