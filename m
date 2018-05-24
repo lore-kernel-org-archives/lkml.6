@@ -1,127 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033261AbeEXOYi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:24:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50219 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030656AbeEXOYh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:24:37 -0400
-Date: Thu, 24 May 2018 16:24:26 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>
-Subject: [PATCH RFC] suspend: Prevent might sleep splats
-Message-ID: <20180524142426.jeyszeqdrjvb3tob@linutronix.de>
+        id S1033264AbeEXO0J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:26:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030656AbeEXO0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:26:05 -0400
+X-Google-Smtp-Source: ADUXVKIfAFWja9wPVQAxCJSvhW3ib/6/iywpVjcDJA83l+VePGtt9lTSUwOAnZG/nvidX212uneeC2OppGXxn5dd3Ro=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180521101425.GC9887@linaro.org>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-8-takahiro.akashi@linaro.org> <0aba6388-8a73-d371-7b92-3594639eb27e@arm.com>
+ <20180518153552.GA23468@rob-hp-laptop> <20180521101425.GC9887@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 May 2018 09:25:43 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLGgDTfhz6XqgMzDM_KL_W9HRtVOwjeP6rfk3+Tn-Stgg@mail.gmail.com>
+Message-ID: <CAL_JsqLGgDTfhz6XqgMzDM_KL_W9HRtVOwjeP6rfk3+Tn-Stgg@mail.gmail.com>
+Subject: Re: [PATCH v9 07/11] arm64: kexec_file: add crash dump support
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Rob Herring <robh@kernel.org>, James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Howells <dhowells@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, dyoung@redhat.com,
+        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bhsharma@redhat.com,
+        kexec@lists.infradead.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Mon, May 21, 2018 at 5:14 AM, AKASHI Takahiro
+<takahiro.akashi@linaro.org> wrote:
+> Hi Rob,
+>
+> On Fri, May 18, 2018 at 10:35:52AM -0500, Rob Herring wrote:
+>> On Tue, May 15, 2018 at 06:12:59PM +0100, James Morse wrote:
+>> > Hi guys,
+>> >
+>> > (CC: +RobH, devicetree list)
+>>
+>> Thanks.
+>>
+>> > On 25/04/18 07:26, AKASHI Takahiro wrote:
+>> > > Enabling crash dump (kdump) includes
+>> > > * prepare contents of ELF header of a core dump file, /proc/vmcore,
+>> > >   using crash_prepare_elf64_headers(), and
+>> > > * add two device tree properties, "linux,usable-memory-range" and
+>> > >   "linux,elfcorehdr", which represent repsectively a memory range
+>> > >   to be used by crash dump kernel and the header's location
+>>
+>> BTW, I intend to move existing parsing these out of the arch code.
+>> Please don't add more DT handling to arch/ unless it is *really* arch
+>> specific. I'd assume that the next arch to add kexec support will use
+>> these bindings instead of the powerpc way.
+>
+> So do you expect all the fdt-related stuff in my current implementation
+> for arm64 to be put into libfdt, or at least drivers/of, from the beginning?
 
-timekeeping suspend/resume calls read_persistent_clock() which takes
-rtc_lock. That results in might sleep warnings because at that point
-we run with interrupts disabled.
+Yes.
 
-We cannot convert rtc_lock to a raw spinlock as that would trigger
-other might sleep warnings.
+> I'm not sure how arch-specific the properties here are. For instance,
+> it is only arm64 that uses "linux,usable-memory-range" right now but
+> if some other arch follows, it is no more arch-specific.
+> # I remember that you didn't like this property :)
 
-As a workaround we disable the might sleep warnings by setting
-system_state to SYSTEM_SUSPEND before calling sysdev_suspend() and
-restoring it to SYSTEM_RUNNING afer sysdev_resume().
+The question I guess is what will the next arch use. I don't think any
+other DT based arch supports crashdump or kexec yet.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/kernel.h   |    1 +
- kernel/power/hibernate.c |    7 +++++++
- kernel/power/suspend.c   |    4 ++++
- 3 files changed, 12 insertions(+)
+>> > > +{
+>> > > + void *buf, *prop;
+>> > > + size_t buf_size;
+>> > > + int result;
+>> > > +
+>> > > + buf_size = (__dt_root_addr_cells + __dt_root_size_cells) * sizeof(u32);
+>> > > + prop = buf = vmalloc(buf_size);
+>>
+>> This can go on the stack instead (and would be required to to work in
+>> libfdt).
+>
+> Well, I can't agree with you here since we are now in effort, as far as
+> I correctly understand, of purging all the variable-sized arrays on a local
+> stack out of the kernel code.
 
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -532,6 +532,7 @@ extern enum system_states {
- 	SYSTEM_HALT,
- 	SYSTEM_POWER_OFF,
- 	SYSTEM_RESTART,
-+	SYSTEM_SUSPEND,
- } system_state;
- 
- #define TAINT_PROPRIETARY_MODULE	0
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -287,6 +287,8 @@ static int create_image(int platform_mod
- 
- 	local_irq_disable();
- 
-+	system_state = SYSTEM_SUSPEND;
-+
- 	error = syscore_suspend();
- 	if (error) {
- 		pr_err("Some system devices failed to power down, aborting hibernation\n");
-@@ -317,6 +319,7 @@ static int create_image(int platform_mod
- 	syscore_resume();
- 
-  Enable_irqs:
-+	system_state = SYSTEM_RUNNING;
- 	local_irq_enable();
- 
-  Enable_cpus:
-@@ -445,6 +448,7 @@ static int resume_target_kernel(bool pla
- 		goto Enable_cpus;
- 
- 	local_irq_disable();
-+	system_state = SYSTEM_SUSPEND;
- 
- 	error = syscore_suspend();
- 	if (error)
-@@ -478,6 +482,7 @@ static int resume_target_kernel(bool pla
- 	syscore_resume();
- 
-  Enable_irqs:
-+	system_state = SYSTEM_RUNNING;
- 	local_irq_enable();
- 
-  Enable_cpus:
-@@ -563,6 +568,7 @@ int hibernation_platform_enter(void)
- 		goto Enable_cpus;
- 
- 	local_irq_disable();
-+	system_state = SYSTEM_SUSPEND;
- 	syscore_suspend();
- 	if (pm_wakeup_pending()) {
- 		error = -EAGAIN;
-@@ -575,6 +581,7 @@ int hibernation_platform_enter(void)
- 
-  Power_up:
- 	syscore_resume();
-+	system_state = SYSTEM_RUNNING;
- 	local_irq_enable();
- 
-  Enable_cpus:
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -428,6 +428,8 @@ static int suspend_enter(suspend_state_t
- 	arch_suspend_disable_irqs();
- 	BUG_ON(!irqs_disabled());
- 
-+	system_state = SYSTEM_SUSPEND;
-+
- 	error = syscore_suspend();
- 	if (!error) {
- 		*wakeup = pm_wakeup_pending();
-@@ -443,6 +445,8 @@ static int suspend_enter(suspend_state_t
- 		syscore_resume();
- 	}
- 
-+	system_state = SYSTEM_RUNNING;
-+
- 	arch_suspend_enable_irqs();
- 	BUG_ON(irqs_disabled());
- 
+You don't need a variable sized array. The array size just needs to
+the the maximum size (16 bytes).
+
+Rob
