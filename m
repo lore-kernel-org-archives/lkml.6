@@ -1,84 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964910AbeEXHD0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 03:03:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49128 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeEXHDX (ORCPT
+        id S935539AbeEXHFB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 03:05:01 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40846 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754940AbeEXHE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 03:03:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2A2E60618
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH v9 3/4] arm64: Implement page table free interfaces
-To: "Kani, Toshi" <toshi.kani@hpe.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
-        "kristina.martsenko@arm.com" <kristina.martsenko@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "pelcan@codeaurora.org" <pelcan@codeaurora.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <1525074094-25839-1-git-send-email-cpandya@codeaurora.org>
- <1525074094-25839-4-git-send-email-cpandya@codeaurora.org>
- <20180523140157.GG26965@arm.com> <1527085967.14039.10.camel@hpe.com>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <5a0481d4-4ac0-e65a-e00e-4ac63c4306c9@codeaurora.org>
-Date: Thu, 24 May 2018 12:33:13 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 24 May 2018 03:04:56 -0400
+X-Google-Smtp-Source: AB8JxZrRxUFNAbUvsCKRUgKVz7S6vuIlYY72uZZOK3wpAy+Qv//ENr977H3kD4tfODcxapqaU9p38057vCQXUUNVA3E=
 MIME-Version: 1.0
-In-Reply-To: <1527085967.14039.10.camel@hpe.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-9-git-send-email-ulf.hansson@linaro.org>
+ <f5589b88-acf8-b491-df79-e359e596c8d0@nvidia.com> <CAPDyKFr_7hbs-MC1jQn5uAgSnb1UGufXZdEmUqNTM63KemTe1g@mail.gmail.com>
+ <5a79d3a2-d090-645b-da69-524b7e7a4d90@nvidia.com> <51f7de26-579a-8b9e-4e79-f4eee923ab38@codeaurora.org>
+ <CAPDyKFo_69kSS6UzdsJeyeiiED=S=chsdkP+R43qMHDEbZ8n_A@mail.gmail.com> <3838f17a-2ac8-bf3f-f0b1-f69bbe17629c@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 24 May 2018 09:04:54 +0200
+Message-ID: <CAPDyKFo8e5FMrxF2ggxVZ+HQjw4s1Wtx-tMf5ka67knJpZMQcA@mail.gmail.com>
+Subject: Re: [PATCH 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/23/2018 8:04 PM, Kani, Toshi wrote:
-> On Wed, 2018-05-23 at 15:01 +0100, Will Deacon wrote:
->> Hi Chintan,
+On 23 May 2018 at 11:07, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> On 23/05/18 07:12, Ulf Hansson wrote:
+>
+> ...
+>
+>
+>>>>>> Thanks for sending this. Believe it or not this has still been on my
+>>>>>> to-do list
+>>>>>> and so we definitely need a solution for Tegra.
+>>>>>>
+>>>>>> Looking at the above it appears that additional power-domains exposed
+>>>>>> as devices
+>>>>>> to the client device. So I assume that this means that the drivers for
+>>>>>> devices
+>>>>>> with multiple power-domains will need to call RPM APIs for each of
+>>>>>> these
+>>>>>> additional power-domains. Is that correct?
+>>>>>
+>>>>>
+>>>>> They can, but should not!
+>>>>>
+>>>>> Instead, the driver shall use device_link_add() and device_link_del(),
+>>>>> dynamically, depending on what PM domain that their original device
+>>>>> needs for the current running use case.
+>>>>>
+>>>>> In that way, they keep existing runtime PM deployment, operating on
+>>>>> its original device.
+>>>>
+>>>>
+>>>> OK, sounds good. Any reason why the linking cannot be handled by the
+>>>> above API? Is there a use-case where you would not want it linked?
+>>>
+>>>
+>>> I am guessing the linking is what would give the driver the ability to
+>>> decide which subset of powerdomains it actually wants to control
+>>> at any point using runtime PM. If we have cases wherein the driver would
+>>> want to turn on/off _all_ its associated powerdomains _always_
+>>> then a default linking of all would help.
 >>
->> [as a side note: I'm confused on the status of this patch series, as part
->>   of it was reposted separately by Toshi. Please can you work together?]
-> 
-> I do not know the status of my patch series, either... That being said,
-> I made my x86 patches based off from Chintan's 1/4 patch (which changes
-> both x86 and arm) so that my series won't conflict with his.
-> 
-> Chintan,
-Hi Toshi,
+>>
+>> First, I think we need to decide on *where* the linking should be
+>> done, not at both places, as that would just mess up synchronization
+>> of who is responsible for calling the device_link_del() at detach.
+>>
+>> Second, It would in principle be fine to call device_link_add() and
+>> device_link_del() as a part of the attach/detach APIs. However, there
+>> is a downside to such solution, which would be that the driver then
+>> needs call the detach API, just to do device_link_del(). Of course
+>> then it would also needs to call the attach API later if/when needed.
+>> Doing this adds unnecessary overhead - comparing to just let the
+>> driver call device_link_add|del() when needed. On the upside, yes, it
+>> would put less burden on the drivers as it then only needs to care
+>> about using one set of functions.
+>>
+>> Which solution do you prefer?
+>
+>
+> Any reason why we could not add a 'boolean' argument to the API to indicate
+> whether the new device should be linked? I think that I prefer the API
+> handles it, but I can see there could be instances where drivers may wish to
+> handle it themselves.
 
-> If you need to update your series before mine's accepted, please make
-> sure to use the updated 1/4 below. I've updated the descriptions per
-> review comment.
-> https://patchwork.kernel.org/patch/10407065/
-For the sake of completeness, I will re-push my previous 1/4 but will
-take your version of change log. I've seen this and your change log
-describes the change better.
+Coming back to this question. Both Tegra XUSB and Qcom Camera use
+case, would benefit from doing the linking themselves, as it needs
+different PM domains to be powered on depending on the current use
+case - as to avoid wasting power.
 
-> 
-> Thanks,
-> -Toshi
-> 
+However, I can understand that you prefer some simplicity over
+optimizations, as you told us. Then, does it mean that you are
+insisting on extending the APIs with a boolean for linking, or are you
+fine with the driver to call device_link_add()?
 
-Chintan
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+[...]
+
+Kind regards
+Uffe
