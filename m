@@ -1,191 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965776AbeEXJEj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:04:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38686 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965526AbeEXJEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:04:35 -0400
-Date: Thu, 24 May 2018 10:04:30 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize
- isolated_cpus
-Message-ID: <20180524090430.GZ30654@e110439-lin>
-References: <1526590545-3350-1-git-send-email-longman@redhat.com>
- <1526590545-3350-5-git-send-email-longman@redhat.com>
- <20180523173453.GY30654@e110439-lin>
- <bf4cb72b-9ff3-eb8b-ca2c-f6c4fee5c123@redhat.com>
+        id S965804AbeEXJEr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:04:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57428 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965526AbeEXJEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 05:04:45 -0400
+Subject: Re: [PATCH RFCv2 1/4] ACPI: NUMA: export pxm_to_node
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+References: <20180523182404.11433-1-david@redhat.com>
+ <20180523182404.11433-2-david@redhat.com>
+ <CAJZ5v0jar8TqC5MGRPcAVZfM3LmmoSV3fT3Sgok=r6D9cDG0+w@mail.gmail.com>
+ <5342a59c-4ca1-2cf5-a1d4-07a6d6f03587@redhat.com>
+ <CAJZ5v0grgYRi24oyFP0xcjip5Z5apLE5ozn8znahdtkqKvD_MA@mail.gmail.com>
+ <9cf4c5f3-f1ee-67c2-967e-07aa568685c4@redhat.com>
+ <CAJZ5v0ionYbXse8++6c80FXajVKYLSYD7hC5RntygKJ9+PQpYg@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <173eaf59-0f48-c1d0-2317-840dcb932ba7@redhat.com>
+Date: Thu, 24 May 2018 11:04:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf4cb72b-9ff3-eb8b-ca2c-f6c4fee5c123@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAJZ5v0ionYbXse8++6c80FXajVKYLSYD7hC5RntygKJ9+PQpYg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-May 16:18, Waiman Long wrote:
-> On 05/23/2018 01:34 PM, Patrick Bellasi wrote:
-> > Hi Waiman,
-> >
-> > On 17-May 16:55, Waiman Long wrote:
-> >
-> > [...]
-> >
-> >> @@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
-> >>  	int ndoms = 0;		/* number of sched domains in result */
-> >>  	int nslot;		/* next empty doms[] struct cpumask slot */
-> >>  	struct cgroup_subsys_state *pos_css;
-> >> +	bool root_load_balance = is_sched_load_balance(&top_cpuset);
-> >>  
-> >>  	doms = NULL;
-> >>  	dattr = NULL;
-> >>  	csa = NULL;
-> >>  
-> >>  	/* Special case for the 99% of systems with one, full, sched domain */
-> >> -	if (is_sched_load_balance(&top_cpuset)) {
-> >> +	if (root_load_balance && !top_cpuset.isolation_count) {
-> > Perhaps I'm missing something but, it seems to me that, when the two
-> > conditions above are true, then we are going to destroy and rebuild
-> > the exact same scheduling domains.
-> >
-> > IOW, on 99% of systems where:
-> >
-> >    is_sched_load_balance(&top_cpuset)
-> >    top_cpuset.isolation_count = 0
-> >
-> > since boot time and forever, then every time we update a value for
-> > cpuset.cpus we keep rebuilding the same SDs.
-> >
-> > It's not strictly related to this patch, the same already happens in
-> > mainline based just on the first condition, but since you are extending
-> > that optimization, perhaps you can tell me where I'm possibly wrong or
-> > which cases I'm not considering.
-> >
-> > I'm interested mainly because on Android systems those conditions
-> > are always true and we see SDs rebuilds every time we write
-> > something in cpuset.cpus, which ultimately accounts for almost all the
-> > 6-7[ms] time required for the write to return, depending on the CPU
-> > frequency.
-> >
-> > Cheers Patrick
-> >
-> Yes, that is true. I will look into how to further optimize this. Thanks
-> for the suggestion.
+On 24.05.2018 11:01, Rafael J. Wysocki wrote:
+> On Thu, May 24, 2018 at 10:54 AM, David Hildenbrand <david@redhat.com> wrote:
+>> On 24.05.2018 10:47, Rafael J. Wysocki wrote:
+>>> On Thu, May 24, 2018 at 10:33 AM, David Hildenbrand <david@redhat.com> wrote:
+>>>> On 24.05.2018 10:12, Rafael J. Wysocki wrote:
+>>>>> On Wed, May 23, 2018 at 8:24 PM, David Hildenbrand <david@redhat.com> wrote:
+>>>>>> Will be needed by paravirtualized memory devices.
+>>>>>
+>>>>> That's a little information.
+>>>>>
+>>>>> It would be good to see the entire series at least.
+>>>>
+>>>> It's part of this series (guess you only received the cover letter and
+>>>> this patch). Here a link to the patch using it:
+>>>>
+>>>> https://lkml.org/lkml/2018/5/23/803
+>>>
+>>> OK, thanks!
+>>>
+>>> It looks like you have a reason to use it in there, but please note
+>>> that CONFIG_ACPI_NUMA depends on CONFIG_NUMA, so you don't need to use
+>>> the latter directly in the #ifdef.  Also wouldn't IS_ENABLED() work
+>>> there?
+>>
+>> Thanks for the tip on CONFIG_ACPI_NUMA. Wouldn't IS_ENABLED() require to
+>> have a dummy implementation of pxm_to_node() in case drivers/acpi/numa.c
+>> is not compiled?
+> 
+> Yes, it would.
+> 
+> But since you want export it, you can very well add one, can't you?
+> I'd even say that it would be prudent to do so.
+> 
 
-FWIW, following is my take on top of your series.
-
-With the following patch applied I see a reduction of the average
-execution time for a rebuild_sched_domains_locked() from 1.4[ms] to
-40[us] while running 60 /tg1/cpuset.cpus switches in a loop on an
-JunoR2 Arm board using the performance cpufreq governor.
-
----8<---
->From 84bb8137ce79f74849d97e30871cf67d06d8d682 Mon Sep 17 00:00:00 2001
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-Date: Wed, 23 May 2018 16:33:06 +0100
-Subject: [PATCH 1/1] cgroup/cpuset: disable sched domain rebuild when not
- required
-
-The generate_sched_domains() already addresses the "special case for 99%
-of systems" which require a single full sched domain at the root,
-spanning all the CPUs. However, the current support is based on an
-expensive sequence of operations which destroy and recreate the exact
-same scheduling domain configuration.
-
-If we notice that:
-
- 1) CPUs in "cpuset.isolcpus" are excluded from load balancing by the
-    isolcpus= kernel boot option, and will never be load balanced
-    regardless of the value of "cpuset.sched_load_balance" in any
-    cpuset.
-
- 2) the root cpuset has load_balance enabled by default at boot and
-    it's the only parameter which userspace can change at run-time.
-
-we know that, by default, every system comes up with a complete and
-properly configured set of scheduling domains covering all the CPUs.
-
-Thus, on every system, unless the user explicitly disables load balance
-for the top_cpuset, the scheduling domains already configured at boot
-time by the scheduler/topology code and updated in consequence of
-hotplug events, are already properly configured for cpuset too.
-
-This configuration is the default one for 99% of the systems,
-and it's also the one used by most of the Android devices which never
-disable load balance from the top_cpuset.
-
-Thus, while load balance is enabled for the top_cpuset,
-destroying/rebuilding the scheduling domains at every cpuset.cpus
-reconfiguration is a useless operation which will always produce the
-same result.
-
-Let's anticipate the "special" optimization within:
-
-   rebuild_sched_domains_locked()
-
-thus completely skipping the expensive:
-
-   generate_sched_domains()
-   partition_sched_domains()
-
-for all the cases we know that the scheduling domains already defined
-will not be affected by whatsoever value of cpuset.cpus.
-
-The proposed solution is the minimal variation to optimize the case for
-systems with load balance enabled at the root level and without isolated
-CPUs. As soon as one of these conditions is not more valid, we fall back
-to the original behavior.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Li Zefan <lizefan@huawei.com>
-Cc: Tejun Heo <tj@kernel.org>,
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Paul Turner <pjt@google.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: kernel-team@fb.com
-Cc: cgroups@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- kernel/cgroup/cpuset.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 8f586e8bdc98..cff14be94678 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -874,6 +874,11 @@ static void rebuild_sched_domains_locked(void)
- 	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
- 		goto out;
- 
-+	/* Special case for the 99% of systems with one, full, sched domain */
-+	if (!top_cpuset.isolation_count &&
-+	    is_sched_load_balance(&top_cpuset))
-+		goto out;
-+
- 	/* Generate domain masks and attrs */
- 	ndoms = generate_sched_domains(&doms, &attr);
- 
--- 
-2.15.1
----8<---
-
+Sure, can do that :)
 
 -- 
-#include <best/regards.h>
 
-Patrick Bellasi
+Thanks,
+
+David / dhildenb
