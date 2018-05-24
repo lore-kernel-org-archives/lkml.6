@@ -1,76 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965723AbeEXOx1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:53:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965306AbeEXOxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:53:24 -0400
-X-Google-Smtp-Source: AB8JxZqrsDbDQbgLodP9J3vXiMTC4iG43f7I15aZ3WLsrYszjw3asstKhw36BnHnOgh6AvPRxAM/EzehTUdC4fHqNhs=
-MIME-Version: 1.0
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net> <3ecedd91-1c01-6fc5-4648-89eaf5ff0930@linux.intel.com>
- <20180510101406.GA12217@hirez.programming.kicks-ass.net> <7051f72e-2570-68c8-1488-33ad1b024031@linux.intel.com>
- <20180523130950.GB12217@hirez.programming.kicks-ass.net> <137eab54-86df-cc7d-4618-bce49dfbc2d2@linux.intel.com>
-In-Reply-To: <137eab54-86df-cc7d-4618-bce49dfbc2d2@linux.intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 24 May 2018 07:52:33 -0700
-X-Gmail-Original-Message-ID: <CALCETrVpMECGntOcADCwZrXn9YihHxVskXMa2Df8bKPP2dNQdg@mail.gmail.com>
-Message-ID: <CALCETrVpMECGntOcADCwZrXn9YihHxVskXMa2Df8bKPP2dNQdg@mail.gmail.com>
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a sample
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
+        id S965967AbeEXOyE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:54:04 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38434 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965332AbeEXOyA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 10:54:00 -0400
+X-Google-Smtp-Source: AB8JxZp/cZf87ZiP+KBcGPx2x94OCuvtCB+CKgNTFwk5UbDr5YaESpE7Zm6cZVy+3n0oI53EQR795w==
+Message-ID: <1527173636.2822.66.camel@baylibre.com>
+Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Date: Thu, 24 May 2018 16:53:56 +0200
+In-Reply-To: <20180423182136.43156.94025@harbor.lan>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
+         <151373031022.33554.13905466641279532222@resonance>
+         <20171222021520.GO7997@codeaurora.org>
+         <1517217778.3153.1.camel@baylibre.com>
+         <20180201174307.GC23162@codeaurora.org>
+         <1517575828.3153.23.camel@baylibre.com>
+         <20180423182136.43156.94025@harbor.lan>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 7:37 AM Alexey Budankov <
-alexey.budankov@linux.intel.com> wrote:
+On Mon, 2018-04-23 at 11:21 -0700, Michael Turquette wrote:
+> Quoting Jerome Brunet (2018-02-02 04:50:28)
+> > On Thu, 2018-02-01 at 09:43 -0800, Stephen Boyd wrote:
+> > > > > > Applied to clk-protect-rate, with the exception that I did not apply
+> > > > > > "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
+> > > > > > qcom clk code.
+> > > > > > 
+> > > > > > Stephen, do you plan to fix up the qcom clock code so that the
+> > > > > > SET_RATE_GATE improvement can go in?
+> > > > > > 
+> > > > > 
+> > > > > I started working on it a while back. Let's see if I can finish
+> > > > > it off this weekend.
+> > > > > 
+> > > > 
+> > > > Hi Stephen,
+> > > > 
+> > > > Have you been able find something to fix the qcom code regarding this issue ?
+> > > > 
+> > > 
+> > > This is what I have. I'm unhappy with a few things. First, I made
+> > > a spinlock for each clk, which is overkill. Most likely, just a
+> > > single spinlock is needed per clk-controller device. Second, I
+> > > haven't finished off the branch/gate part, so gating/ungating of
+> > > branches needs to be locked as well to prevent branches from
+> > > turning on while rates change. And finally, the 'branches' list is
+> > > duplicating a bunch of information about the child clks of an
+> > > RCG, so it feels like we need a core framework API to enable and
+> > > disable clks forcibly while remembering what is enabled/disabled
+> > > or at least to walk the clk tree and call some function.
+> > 
+> > Looks similar to Mike's CCR idea ;)
+> 
+> Giving clk provider drivers more control over the clocks that they
+> provide is a similar concept, but the ancient ccr series dealt almost
+> exclusively with set_rate and set_parent ops. 
+> 
+> > 
+> > > 
+> > > The spinlock per clk-controller is duplicating the regmap lock we
+> > > already have, so we may want a regmap API to grab the lock, and
+> > > then another regmap API to do reads/writes without grabbing the
+> > > lock, and then finally release the lock with a regmap unlock API.
+> > 
+> > There is 'regsequence' for multiple write in a burst, but that's only if you do
+> > write only ... I suppose you are more in read/update/writeback mode, so it
+> > probably does not help much.
+> > 
+> > Maybe we could extend regmap's regsequence, to do a sequence of
+> > regmap_update_bits() ?
+> > 
+> > Another possibility could be to provide your own lock/unlock ops when
+> > registering the regmap. With this, you might be able to supply your own spinlock
+> > to regmap. This is already supported by regmap, would it help ?
+> 
+> Stephen, was there ever an update on your end? This patch has been
+> dangling for a while and I thought it was time to ping on it.
+> 
+> Regards,
+> Mike
 
-> Hi,
+Mike, Stephen,
+The patch as been sitting on list for 6 months now and CLK_SET_RATE_GATE still
+does not really do what it should, at least not completely.
+How can we progress on this ?
 
-> On 23.05.2018 16:09, Peter Zijlstra wrote:
-> > On Wed, May 23, 2018 at 01:06:58PM +0300, Alexey Budankov wrote:
-> >
-> >> Is the patch ready to be up streamed now?
-> >
-> > Please post a new one where you modify the comment about the syscalls
-> > not saving registers and ideally find the commit that made it so.
+As explained in this mail [0] from March, I think there is a fairly simple way
+to deal with platforms relying on the broken implementation, such as qcom and
+the mmci driver.
 
-> Sent v3 with adjusted comment.
-> As far comments become outdated quickly tried to be terse.
+[0]: https://lkml.kernel.org/r/1522398050.3871.12.camel@baylibre.com
 
-> >
-> > Also; I think Andy would appreciate a comment near the syscall code that
-> > refers back to this code and states what registers we rely upon being
-> > there (+BP for this patch).
+Regards
+Jerome
 
-> Not sure if I can find all proper places to put comments there.
-> However there is PUSH_AND_CLEAR_REGS macro that is employed at system
-> call implementation so it is possible to put something like this there:
-
-> .macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax save_ret=0
->          /*
->           ...
->           * perf/core subsystem relies on bp register value stored
->           * at pt_regs->bp; see arch/x86/kernel/perf_regs.c:
-perf_get_regs_user()
->           * for more details;
->           ...
->           */
-
-
-Near the top of entry_SYSCALL_64 would be reasonable, as would no comment
-at all, I think.
-
-> Thanks,
-> Alexey
-> >
-> >
+> 
+> > 
+> > > This part is mostly an optimization, but it would be nice to have
+> > > so that multiple writes could be done in sequence. This way, the
+> > > RCG code could do the special locking sequence and the branch
+> > > code could do the fire and forget single bit update.
+> 
+>  
