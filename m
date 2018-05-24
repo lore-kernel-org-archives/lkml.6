@@ -1,109 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970799AbeEXPJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 11:09:57 -0400
-Received: from smtp-1b.atlantis.sk ([80.94.52.26]:37689 "EHLO
+        id S970784AbeEXPJj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 11:09:39 -0400
+Received: from smtp-1b.atlantis.sk ([80.94.52.26]:59177 "EHLO
         smtp-1b.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970768AbeEXPJh (ORCPT
+        with ESMTP id S970767AbeEXPJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 11:09:37 -0400
+        Thu, 24 May 2018 11:09:36 -0400
 From: Ondrej Zary <linux@rainbow-software.org>
 To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] gspca_zc3xx: Implement proper autogain and exposure control for OV7648
-Date: Thu, 24 May 2018 17:09:29 +0200
-Message-Id: <20180524150931.26574-1-linux@rainbow-software.org>
+Subject: [PATCH 2/3] gspca_zc3xx: Fix power line frequency settings for OV7648
+Date: Thu, 24 May 2018 17:09:30 +0200
+Message-Id: <20180524150931.26574-2-linux@rainbow-software.org>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180524150931.26574-1-linux@rainbow-software.org>
+References: <20180524150931.26574-1-linux@rainbow-software.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ZS0211 internal autogain causes pumping and flickering with OV7648
-sensor on 0ac8:307b webcam.
-Implement OV7648 autogain and exposure control and use that instead.
+Power line frequency settings for OV7648 sensor contain autogain
+and exposure commands, affecting unrelated controls. Remove them.
 
 Signed-off-by: Ondrej Zary <linux@rainbow-software.org>
 ---
- drivers/media/usb/gspca/zc3xx.c | 42 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 8 deletions(-)
+ drivers/media/usb/gspca/zc3xx.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/media/usb/gspca/zc3xx.c b/drivers/media/usb/gspca/zc3xx.c
-index 25b4dbe8e049..992918b3ad0c 100644
+index 992918b3ad0c..9a78420e8ad8 100644
 --- a/drivers/media/usb/gspca/zc3xx.c
 +++ b/drivers/media/usb/gspca/zc3xx.c
-@@ -5778,16 +5778,34 @@ static void setcontrast(struct gspca_dev *gspca_dev,
- 
- static s32 getexposure(struct gspca_dev *gspca_dev)
- {
--	return (i2c_read(gspca_dev, 0x25) << 9)
--		| (i2c_read(gspca_dev, 0x26) << 1)
--		| (i2c_read(gspca_dev, 0x27) >> 7);
-+	struct sd *sd = (struct sd *) gspca_dev;
-+
-+	switch (sd->sensor) {
-+	case SENSOR_HV7131R:
-+		return (i2c_read(gspca_dev, 0x25) << 9)
-+			| (i2c_read(gspca_dev, 0x26) << 1)
-+			| (i2c_read(gspca_dev, 0x27) >> 7);
-+	case SENSOR_OV7620:
-+		return i2c_read(gspca_dev, 0x10);
-+	default:
-+		return -1;
-+	}
- }
- 
- static void setexposure(struct gspca_dev *gspca_dev, s32 val)
- {
--	i2c_write(gspca_dev, 0x25, val >> 9, 0x00);
--	i2c_write(gspca_dev, 0x26, val >> 1, 0x00);
--	i2c_write(gspca_dev, 0x27, val << 7, 0x00);
-+	struct sd *sd = (struct sd *) gspca_dev;
-+
-+	switch (sd->sensor) {
-+	case SENSOR_HV7131R:
-+		i2c_write(gspca_dev, 0x25, val >> 9, 0x00);
-+		i2c_write(gspca_dev, 0x26, val >> 1, 0x00);
-+		i2c_write(gspca_dev, 0x27, val << 7, 0x00);
-+		break;
-+	case SENSOR_OV7620:
-+		i2c_write(gspca_dev, 0x10, val, 0x00);
-+		break;
-+	}
- }
- 
- static void setquality(struct gspca_dev *gspca_dev)
-@@ -5918,7 +5936,12 @@ static void setlightfreq(struct gspca_dev *gspca_dev, s32 val)
- 
- static void setautogain(struct gspca_dev *gspca_dev, s32 val)
- {
--	reg_w(gspca_dev, val ? 0x42 : 0x02, 0x0180);
-+	struct sd *sd = (struct sd *) gspca_dev;
-+
-+	if (sd->sensor == SENSOR_OV7620)
-+		i2c_write(gspca_dev, 0x13, val ? 0xa3 : 0x80, 0x00);
-+	else
-+		reg_w(gspca_dev, val ? 0x42 : 0x02, 0x0180);
- }
- 
- /*
-@@ -6439,6 +6462,9 @@ static int sd_init_controls(struct gspca_dev *gspca_dev)
- 	if (sd->sensor == SENSOR_HV7131R)
- 		sd->exposure = v4l2_ctrl_new_std(hdl, &zcxx_ctrl_ops,
- 			V4L2_CID_EXPOSURE, 0x30d, 0x493e, 1, 0x927);
-+	else if (sd->sensor == SENSOR_OV7620)
-+		sd->exposure = v4l2_ctrl_new_std(hdl, &zcxx_ctrl_ops,
-+			V4L2_CID_EXPOSURE, 0, 255, 1, 0x41);
- 	sd->autogain = v4l2_ctrl_new_std(hdl, &zcxx_ctrl_ops,
- 			V4L2_CID_AUTOGAIN, 0, 1, 1, 1);
- 	if (sd->sensor != SENSOR_OV7630C)
-@@ -6458,7 +6484,7 @@ static int sd_init_controls(struct gspca_dev *gspca_dev)
- 		return hdl->error;
- 	}
- 	v4l2_ctrl_cluster(3, &sd->gamma);
--	if (sd->sensor == SENSOR_HV7131R)
-+	if (sd->sensor == SENSOR_HV7131R || sd->sensor == SENSOR_OV7620)
- 		v4l2_ctrl_auto_cluster(2, &sd->autogain, 0, true);
- 	return 0;
- }
+@@ -3184,7 +3184,8 @@ static const struct usb_action ov7620_InitialScale[] = {	/* 320x240 */
+ 	{}
+ };
+ static const struct usb_action ov7620_50HZ[] = {
+-	{0xaa, 0x13, 0x00a3},	/* 00,13,a3,aa */
++/*	{0xaa, 0x13, 0x00a3},	 * 00,13,a3,aa
++				 * don't change autoexposure */
+ 	{0xdd, 0x00, 0x0100},	/* 00,01,00,dd */
+ 	{0xaa, 0x2b, 0x0096},	/* 00,2b,96,aa */
+ 	{0xaa, 0x75, 0x008a},	/* 00,75,8a,aa */
+@@ -3195,15 +3196,16 @@ static const struct usb_action ov7620_50HZ[] = {
+ 	{0xa0, 0x00, ZC3XX_R195_ANTIFLICKERHIGH},	/* 01,95,00,cc */
+ 	{0xa0, 0x00, ZC3XX_R196_ANTIFLICKERMID},	/* 01,96,00,cc */
+ 	{0xa0, 0x83, ZC3XX_R197_ANTIFLICKERLOW},	/* 01,97,83,cc */
+-	{0xaa, 0x10, 0x0082},				/* 00,10,82,aa */
++/*	{0xaa, 0x10, 0x0082},	 * 00,10,82,aa
++				 * don't change exposure */
+ 	{0xaa, 0x76, 0x0003},				/* 00,76,03,aa */
+ /*	{0xa0, 0x40, ZC3XX_R002_CLOCKSELECT},		 * 00,02,40,cc
+ 							 * if mode0 (640x480) */
+ 	{}
+ };
+ static const struct usb_action ov7620_60HZ[] = {
+-	{0xaa, 0x13, 0x00a3},			/* 00,13,a3,aa */
+-						/* (bug in zs211.inf) */
++/*	{0xaa, 0x13, 0x00a3},	 * 00,13,a3,aa
++				 * don't change autoexposure */
+ 	{0xdd, 0x00, 0x0100},			/* 00,01,00,dd */
+ 	{0xaa, 0x2b, 0x0000},			/* 00,2b,00,aa */
+ 	{0xaa, 0x75, 0x008a},			/* 00,75,8a,aa */
+@@ -3214,7 +3216,8 @@ static const struct usb_action ov7620_60HZ[] = {
+ 	{0xa0, 0x00, ZC3XX_R195_ANTIFLICKERHIGH}, /* 01,95,00,cc */
+ 	{0xa0, 0x00, ZC3XX_R196_ANTIFLICKERMID}, /* 01,96,00,cc */
+ 	{0xa0, 0x83, ZC3XX_R197_ANTIFLICKERLOW}, /* 01,97,83,cc */
+-	{0xaa, 0x10, 0x0020},			/* 00,10,20,aa */
++/*	{0xaa, 0x10, 0x0020},	 * 00,10,20,aa
++				 * don't change exposure */
+ 	{0xaa, 0x76, 0x0003},			/* 00,76,03,aa */
+ /*	{0xa0, 0x40, ZC3XX_R002_CLOCKSELECT},	 * 00,02,40,cc
+ 						 * if mode0 (640x480) */
+@@ -3224,8 +3227,8 @@ static const struct usb_action ov7620_60HZ[] = {
+ 	{}
+ };
+ static const struct usb_action ov7620_NoFliker[] = {
+-	{0xaa, 0x13, 0x00a3},			/* 00,13,a3,aa */
+-						/* (bug in zs211.inf) */
++/*	{0xaa, 0x13, 0x00a3},	 * 00,13,a3,aa
++				 * don't change autoexposure */
+ 	{0xdd, 0x00, 0x0100},			/* 00,01,00,dd */
+ 	{0xaa, 0x2b, 0x0000},			/* 00,2b,00,aa */
+ 	{0xaa, 0x75, 0x008e},			/* 00,75,8e,aa */
 -- 
 Ondrej Zary
