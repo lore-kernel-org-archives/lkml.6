@@ -1,57 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969922AbeEXWbT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 18:31:19 -0400
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:44914 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966192AbeEXWbS (ORCPT
+        id S969968AbeEXWba (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 18:31:30 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38883 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966128AbeEXWb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 18:31:18 -0400
-X-Google-Smtp-Source: AB8JxZp7D0WYs3YYJV6CnYgLzsqEEcnfAR/T63zhAlb6BxZn9L888MuZ7MD5l3phOvwQWb48MtLWdATMOIvVfKkjVfA=
-MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com>
-In-Reply-To: <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 24 May 2018 15:31:05 -0700
-Message-ID: <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 24 May 2018 18:31:26 -0400
+X-Google-Smtp-Source: AB8JxZpSxiQXdlQEyuXaAdyDRPtwDJ/mxZdzK+PMOrmwa4gRCcjfy6Q6Eu/6gk0BNOcqNXz76kkV7Q==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: msm8996: Use UFS_GDSC for UFS
+Date: Thu, 24 May 2018 15:31:22 -0700
+Message-Id: <20180524223122.12601-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 3:05 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> COMPILER AR: "=rm" should NEVER generate worse code than "=r". That is
-> unequivocally a compiler bug.
+The UFS host controller occationally (20%) fails to enable
+gcc_ufs_axi_clk because the UFS GDSC is not enabled. In most cases it's
+enabled through the UFS phy driver, but to make sure it's enabled let's
+enable it directly from the UFS host controller directly as well.
 
-Filed: https://bugs.llvm.org/show_bug.cgi?id=37583
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> >> You are claiming it doesn't buy us anything, but you are only looking
-at
-> > the paravirt case which is kind of "special" (in the short bus kind of
-way),
-> >
-> > That's fair.  Is another possible solution to have paravirt maybe not
-use
-> > native_save_fl() then, but its own
-non-static-inline-without-m-constraint
-> > implementation?
-
-> KERNEL AR: change native_save_fl() to an extern inline with an assembly
-> out-of-line implementation, to satisfy the paravirt requirement that no
-> GPRs other than %rax are clobbered.
-
-i'm happy to add that, do you have a recommendation if it should go in an
-existing .S file or a new one (and if so where/what shall I call it?).
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 380e14591686..03c7904bda14 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -674,6 +674,8 @@
+ 			vccq-max-microamp = <450000>;
+ 			vccq2-max-microamp = <450000>;
+ 
++			power-domains = <&gcc UFS_GDSC>;
++
+ 			clock-names =
+ 				"core_clk_src",
+ 				"core_clk",
 -- 
-Thanks,
-~Nick Desaulniers
+2.17.0
