@@ -1,126 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034435AbeEXTGb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:06:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030244AbeEXTG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:06:29 -0400
-Date: Thu, 24 May 2018 21:06:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Jan Kara <jack@suse.cz>, linux-kernel <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>
-Subject: Re: [PATCH 4.4 50/92] mm: filemap: avoid unnecessary calls to
- lock_page when waiting for IO to complete during a read
-Message-ID: <20180524190611.GD31019@kroah.com>
-References: <20180524093159.286472249@linuxfoundation.org>
- <20180524093204.290399449@linuxfoundation.org>
- <20180524105011.jkmjrmoyqtogtgnn@quack2.suse.cz>
- <20180524110546.GA16171@kroah.com>
- <CANsGZ6bsz-J9XB_O5+B+mmRV2CGaJ8e+Aa=N3WnE7YNARWsAnw@mail.gmail.com>
- <20180524112841.GA17626@kroah.com>
- <CANsGZ6anzAW3dcEQqgfRGxnk+n4ih_PpKOCGdcHv_SF86x2-0g@mail.gmail.com>
+        id S1034449AbeEXTGw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:06:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45748 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1030244AbeEXTGu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:06:50 -0400
+Date: Thu, 24 May 2018 22:06:40 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Pavel Emelyanov <xemul@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrei Vagin <avagin@virtuozzo.com>
+Subject: Re: [PATCH] userfaultfd: prevent non-cooperative events vs
+ mcopy_atomic races
+References: <1527061324-19949-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <0e1ce040-1beb-fd96-683c-1b18eb635fd6@virtuozzo.com>
+ <20180524115613.GA16908@rapoport-lnx>
+ <e42a383f-491a-b42a-347c-effe4b86b982@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANsGZ6anzAW3dcEQqgfRGxnk+n4ih_PpKOCGdcHv_SF86x2-0g@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <e42a383f-491a-b42a-347c-effe4b86b982@virtuozzo.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18052419-0040-0000-0000-0000045D2705
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052419-0041-0000-0000-000021018598
+Message-Id: <20180524190639.GD16908@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805240218
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 10:27:59AM -0700, Hugh Dickins wrote:
-> On Thu, May 24, 2018 at 4:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Thu, May 24, 2018 at 04:17:12AM -0700, Hugh Dickins wrote:
-> > >   Thu, May 24, 2018 at 4:06 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org>
-> > > wrote:
-> > >
-> > > > On Thu, May 24, 2018 at 12:50:11PM +0200, Jan Kara wrote:
-> > > > > On Thu 24-05-18 11:38:27, Greg Kroah-Hartman wrote:
-> > > > > > 4.4-stable review patch.  If anyone has any objections, please
-> let me
-> > > know.
-> > > > >
-> > > > > Just one objection: Why does stable care about this (and the
-> previous
-> > > > > patch)? I've checked the stable queue and I don't see anything that
-> > > would
-> > > > > have these patches as a prerequisite. And on their own, they are
-> only
-> > > > > cleanups without substantial gains.
-> > >
-> > > > There's a small gain here:
-> > >
-> > > > > > paralleldd
-> > > > > >                                     4.4.0                 4.4.0
-> > > > > >                                   vanilla             avoidlock
-> > > > > > Amean    Elapsd-1          5.28 (  0.00%)        5.15 (  2.50%)
-> > > > > > Amean    Elapsd-4          5.29 (  0.00%)        5.17 (  2.12%)
-> > > > > > Amean    Elapsd-7          5.28 (  0.00%)        5.18 (  1.78%)
-> > > > > > Amean    Elapsd-12         5.20 (  0.00%)        5.33 ( -2.50%)
-> > > > > > Amean    Elapsd-21         5.14 (  0.00%)        5.21 ( -1.41%)
-> > > > > > Amean    Elapsd-30         5.30 (  0.00%)        5.12 (  3.38%)
-> > > > > > Amean    Elapsd-48         5.78 (  0.00%)        5.42 (  6.21%)
-> > > > > > Amean    Elapsd-79         6.78 (  0.00%)        6.62 (  2.46%)
-> > > > > > Amean    Elapsd-110        9.09 (  0.00%)        8.99 (  1.15%)
-> > > > > > Amean    Elapsd-128       10.60 (  0.00%)       10.43 (  1.66%)
-> > > > > >
-> > > > > > The impact is small but intuitively, it makes sense to avoid
-> > > unnecessary
-> > > > > > calls to lock_page.
-> > >
-> > > > Yes, it's small, but it's marked in the SLES kernel as "needs to be
-> > > > merged into stable", so obviously it matters to someone :)
-> > >
-> > > Hmm. I had the same reaction to these two as Jan, but assumed that they
-> > > made applying later patches easier, and didn't take the trouble he did
-> to
-> > > find that's not so.
-> > >
-> > > I've no wish to be disputatious, but it does seem that the definition of
-> > > "stable" has changed, and not necessarily for the better, if it's now a
-> > > home for small gains: I thought we left those to upstream.
+On Thu, May 24, 2018 at 07:40:07PM +0300, Pavel Emelyanov wrote:
+> On 05/24/2018 02:56 PM, Mike Rapoport wrote:
+> > On Thu, May 24, 2018 at 02:24:37PM +0300, Pavel Emelyanov wrote:
+> >> On 05/23/2018 10:42 AM, Mike Rapoport wrote:
+> >>> If a process monitored with userfaultfd changes it's memory mappings or
+> >>> forks() at the same time as uffd monitor fills the process memory with
+> >>> UFFDIO_COPY, the actual creation of page table entries and copying of the
+> >>> data in mcopy_atomic may happen either before of after the memory mapping
+> >>> modifications and there is no way for the uffd monitor to maintain
+> >>> consistent view of the process memory layout.
+> >>>
+> >>> For instance, let's consider fork() running in parallel with
+> >>> userfaultfd_copy():
+> >>>
+> >>> process        		         |	uffd monitor
+> >>> ---------------------------------+------------------------------
+> >>> fork()        		         | userfaultfd_copy()
+> >>> ...        		         | ...
+> >>>     dup_mmap()        	         |     down_read(mmap_sem)
+> >>>     down_write(mmap_sem)         |     /* create PTEs, copy data */
+> >>>         dup_uffd()               |     up_read(mmap_sem)
+> >>>         copy_page_range()        |
+> >>>         up_write(mmap_sem)       |
+> >>>         dup_uffd_complete()      |
+> >>>             /* notify monitor */ |
+> >>>
+> >>> If the userfaultfd_copy() takes the mmap_sem first, the new page(s) will be
+> >>> present by the time copy_page_range() is called and they will appear in the
+> >>> child's memory mappings. However, if the fork() is the first to take the
+> >>> mmap_sem, the new pages won't be mapped in the child's address space.
+> >>
+> >> But in this case child should get an entry, that emits a message to uffd when step upon!
+> >> And uffd will just userfaultfd_copy() it again. No?
+> >  
+> > There will be a message, indeed. But there is no way for monitor to tell
+> > whether the pages it copied are present or not in the child.
 > 
-> > This is in the SLES kernel for a reason, and again, it's in the section
-> > that says "this should be pushed to stable".  So if it's good enough for
-> > the SLES kernel, why isn't it good enough for all users of this kernel
-> > tree?
+> If there's a message, then they are not present, that's for sure :)
+
+If the pages are not present and child tries to access them, the monitor
+will get page fault notification and everything is fine.
+However, if the pages *are present*, the child can access them without uffd
+noticing. And if we copy them into child it'll see the wrong data.
+Since we are talking about background copy, we'd need to decide whether the
+pages should be copied or not regardless #PF notifications.
+ 
+> > Since the monitor cannot assume that the process will access all its memory
+> > it has to copy some pages "in the background". A simple monitor may look
+> > like:
+> > 
+> > 	for (;;) {
+> > 		wait_for_uffd_events(timeout);
+> > 		handle_uffd_events();
+> > 		uffd_copy(some not faulted pages);
+> > 	}
+> > 
+> > Then, if the "background" uffd_copy() races with fork, the pages we've
+> > copied may be already present in parent's mappings before the call to
+> > copy_page_range() and may be not.
+> > 
+> > If the pages were not present, uffd_copy'ing them again to the child's
+> > memory would be ok.
 > 
-> > If you all think it should be dropped in both places, that's fine with
-> > me :)
+> Yes.
 > 
-> I think they are perfectly fine in SLES: folding in good work is a part of
-> what distros are about.
+> > But if uffd_copy() was first to catch mmap_sem, and we would uffd_copy them
+> > again, child process will get memory corruption.
+> 
+> You mean the background uffd_copy()?
 
-And it's also what stable is for.  We have had backports of performance
-improvements in the past, along with lots of other things over the
-years.  This is a performance improvement.  A tiny one, yes, but getting
-rid of a lock is a good thing, and I picked it up as part of my review
-of what a distro decided was worth adding for their users, as that's a
-huge signal that might be of value to others.
+Yes.
 
-> But I cannot find anything in stable-kernel-rules.rst that would admit them
-> - perhaps that's just out of date?
+> But doesn't it race even with regular PF handling, not only the fork? How
+> do we handle this race?
 
-Nope, that's the list I use to say "no" to.  You can't describe
-everything in that file, it's a judgement call.
+With the regular #PF handing, the faulting thread patiently waits until
+page fault is resolved. With fork(), mremap() etc the thread that caused
+the event resumes once the uffd message is read by the monitor. That's
+surely way before monitor had chance to somehow process that message.
 
-> If -stable is to be a compendium of "this looks nice, you might like to
-> include it", so be it: but the rules should then be updated.
+> -- Pavel
+> 
 
-This is a "a bunch of people I trust took it in their kernel, and it's
-been running on zillion of machines for a while and causes no harm and a
-slight benefit, so let's add it!" type of thing.  It's not the only
-patch in this series that was like that, but for some reason this one is
-the one the triggered the debate, which is funny to me as this does have
-numbers in it showing that it is an improvement :)
-
-thanks,
-
-greg k-h
+-- 
+Sincerely yours,
+Mike.
