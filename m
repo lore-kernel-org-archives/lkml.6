@@ -1,93 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968113AbeEXUIT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:08:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967287AbeEXUIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:08:17 -0400
-Date: Thu, 24 May 2018 16:08:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: nixiaoming <nixiaoming@huawei.com>
-Cc: <ard.biesheuvel@linaro.org>, <akpm@linux-foundation.org>,
-        <yamada.masahiro@socionext.com>, <caoj.fnst@cn.fujitsu.com>,
-        <linux@roeck-us.net>, <peterz@infradead.org>, <jhogan@kernel.org>,
-        <linux-kernel@vger.kernel.org>, trivial@kernel.org
-Subject: Re: [PATCH] scripts: Fixed printf format mismatch
-Message-ID: <20180524160813.26dbf222@gandalf.local.home>
-In-Reply-To: <20180524031612.79723-1-nixiaoming@huawei.com>
-References: <20180524031612.79723-1-nixiaoming@huawei.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S968618AbeEXUI2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:08:28 -0400
+Received: from gateway20.websitewelcome.com ([192.185.59.4]:11081 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967287AbeEXUIY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:08:24 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] rtlwifi: remove duplicate code
+To: Joe Perches <joe@perches.com>, Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180524185450.GA2875@embeddedor.com>
+ <57f2881d031de041a6ce95cf8adc5ce80551ce19.camel@perches.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <cc0b9d9a-88c2-4b93-0fa8-ca0f62e9f135@embeddedor.com>
+Date: Thu, 24 May 2018 14:47:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <57f2881d031de041a6ce95cf8adc5ce80551ce19.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fLwCy-0012qM-Hi
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:47376
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018 11:16:12 +0800
-nixiaoming <nixiaoming@huawei.com> wrote:
+Hi Joe,
 
-> scripts/kallsyms.c: function write_src:
-> "printf", the #1 format specifier "d" need arg type "int",
-> but the according arg "table_cnt" has type "unsigned int"
+On 05/24/2018 02:24 PM, Joe Perches wrote:
+> On Thu, 2018-05-24 at 13:54 -0500, Gustavo A. R. Silva wrote:
+>> Remove and refactor some code in order to avoid having identical code
+>> for different branches.
 > 
-> scripts/recordmcount.c: function do_file:
-> "fprintf", the #1 format specifier "d" need arg type "int",
-> but the according arg "(*w2)(ehdr->e_machine)" has type "unsigned int"
+> True and nice tool and patch submittal thanks.
 > 
-> scripts/recordmcount.h: function find_secsym_ndx:
-> "fprintf", the #1 format specifier "d" need arg type "int",
-> but the according arg "txtndx" has type "unsigned int"
+>> Notice that the logic has been there since 2014.
+> 
+> But perhaps the original logic is a defective copy/paste
+> and it should be corrected instead.
+> 
+> Can anyone from realtek verify this?
+> 
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+I actually used gitk to track down the last changes made to this code 
+and, it doesn't look like a copy/paste issue:
 
--- Steve
+commit: c6821613e653aae4f54c75689e229e3f063b7f69
+commit: 27a31a60a4de4c1b45e371152bb6e701e1a8cc40
 
-> 
-> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
-> ---
->  scripts/kallsyms.c     | 2 +-
->  scripts/recordmcount.c | 2 +-
->  scripts/recordmcount.h | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-> index 5abfbf1..e0c416a 100644
-> --- a/scripts/kallsyms.c
-> +++ b/scripts/kallsyms.c
-> @@ -424,7 +424,7 @@ static void write_src(void)
->  	}
->  
->  	output_label("kallsyms_num_syms");
-> -	printf("\tPTR\t%d\n", table_cnt);
-> +	printf("\tPTR\t%u\n", table_cnt);
->  	printf("\n");
->  
->  	/* table of offset markers, that give the offset in the compressed stream
-> diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
-> index 8c9691c..895c40e 100644
-> --- a/scripts/recordmcount.c
-> +++ b/scripts/recordmcount.c
-> @@ -500,7 +500,7 @@ do_file(char const *const fname)
->  	gpfx = 0;
->  	switch (w2(ehdr->e_machine)) {
->  	default:
-> -		fprintf(stderr, "unrecognized e_machine %d %s\n",
-> +		fprintf(stderr, "unrecognized e_machine %u %s\n",
->  			w2(ehdr->e_machine), fname);
->  		fail_file();
->  		break;
-> diff --git a/scripts/recordmcount.h b/scripts/recordmcount.h
-> index b9897e2..2e77937 100644
-> --- a/scripts/recordmcount.h
-> +++ b/scripts/recordmcount.h
-> @@ -441,7 +441,7 @@ static unsigned find_secsym_ndx(unsigned const txtndx,
->  			return symp - sym0;
->  		}
->  	}
-> -	fprintf(stderr, "Cannot find symbol for section %d: %s.\n",
-> +	fprintf(stderr, "Cannot find symbol for section %u: %s.\n",
->  		txtndx, txtname);
->  	fail_file();
->  }
+Thanks
+--
+Gustavo
+
+>> Addresses-Coverity-ID: 1426199 ("Identical code for different branches")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   .../realtek/rtlwifi/btcoexist/halbtc8723b2ant.c    | 23 ++++------------------
+>>   1 file changed, 4 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+>> index 279fe01..df3facc 100644
+>> --- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+>> +++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+>> @@ -2876,25 +2876,10 @@ static void btc8723b2ant_action_hid(struct btc_coexist *btcoexist)
+>>   		btc8723b2ant_ps_tdma(btcoexist, NORMAL_EXEC, true, 13);
+>>   
+>>   	/* sw mechanism */
+>> -	if (BTC_WIFI_BW_HT40 == wifi_bw) {
+>> -		if ((wifi_rssi_state == BTC_RSSI_STATE_HIGH) ||
+>> -		    (wifi_rssi_state == BTC_RSSI_STATE_STAY_HIGH)) {
+>> -			btc8723b2ant_sw_mechanism(btcoexist, true, true,
+>> -						  false, false);
+>> -		} else {
+>> -			btc8723b2ant_sw_mechanism(btcoexist, true, true,
+>> -						  false, false);
+>> -		}
+>> -	} else {
+>> -		if ((wifi_rssi_state == BTC_RSSI_STATE_HIGH) ||
+>> -		    (wifi_rssi_state == BTC_RSSI_STATE_STAY_HIGH)) {
+>> -			btc8723b2ant_sw_mechanism(btcoexist, false, true,
+>> -						  false, false);
+>> -		} else {
+>> -			btc8723b2ant_sw_mechanism(btcoexist, false, true,
+>> -						  false, false);
+>> -		}
+>> -	}
+>> +	if (wifi_bw == BTC_WIFI_BW_HT40)
+>> +		btc8723b2ant_sw_mechanism(btcoexist, true, true, false, false);
+>> +	else
+>> +		btc8723b2ant_sw_mechanism(btcoexist, false, true, false, false);
+>>   }
+>>   
+>>   /* A2DP only / PAN(EDR) only/ A2DP+PAN(HS) */
