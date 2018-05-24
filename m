@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032547AbeEXKrl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:47:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42134 "EHLO
+        id S1032481AbeEXKrG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:47:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41560 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032509AbeEXKr3 (ORCPT
+        with ESMTP id S1032445AbeEXKq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:47:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50E7D60392
+        Thu, 24 May 2018 06:46:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42C4C60392
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From: Raju P L S S S N <rplsssn@codeaurora.org>
@@ -17,9 +17,9 @@ Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
         dianders@chromium.org, mka@chromium.org, rplsssn@codeaurora.org,
         ilina@codeaurora.org
-Subject: [PATCH v9 08/10] drivers: qcom: rpmh: allow requests to be sent asynchronously
-Date: Thu, 24 May 2018 16:15:29 +0530
-Message-Id: <1527158731-17685-9-git-send-email-rplsssn@codeaurora.org>
+Subject: [PATCH v9 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+Date: Thu, 24 May 2018 16:15:24 +0530
+Message-Id: <1527158731-17685-4-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
 References: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org>
@@ -29,147 +29,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lina Iyer <ilina@codeaurora.org>
 
-Platform drivers that want to send a request but do not want to block
-until the RPMH request completes have now a new API -
-rpmh_write_async().
-
-The API allocates memory and send the requests and returns the control
-back to the platform driver. The tx_done callback from the controller is
-handled in the context of the controller's thread and frees the
-allocated memory. This API allows RPMH requests from atomic contexts as
-well.
+Log sent RPMH requests and interrupt responses in FTRACE.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
 
-Changes in v9:
-	- Remove EXPORT_SYMBOL
-	- check to free dynamically allocated request object
-	- free request object after notifying completion
+Changes in v7:
+	- varible name changes and white space
+
 Changes in v6:
-	- replace rpmh_client with device *
+	- struct tcs_response was removed. Fix in trace as well.
+Changes in v4:
+	- fix compilation issues, use __assign_str
+	- use %#x instead of 0x%08x
+Changes in v3:
+	- Use __string() instead of char *
+	- fix TRACE_INCLUDE_PATH
 ---
- drivers/soc/qcom/rpmh.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/rpmh.h |  7 +++++++
- 2 files changed, 59 insertions(+)
+ drivers/soc/qcom/Makefile     |  1 +
+ drivers/soc/qcom/rpmh-rsc.c   | 11 +++++-
+ drivers/soc/qcom/trace-rpmh.h | 82 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 93 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/qcom/trace-rpmh.h
 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index ed96d25..415ad7d 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -34,6 +34,7 @@
- 		.cmd = { { 0 } },			\
- 		.completion = q,			\
- 		.dev = dev,				\
-+		.needs_free = false,				\
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 39d3a05..cb6300f 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++CFLAGS_rpmh-rsc.o := -I$(src)
+ obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+ obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index 99b23b7..664f89b 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -24,6 +24,9 @@
+ 
+ #include "rpmh-internal.h"
+ 
++#define CREATE_TRACE_POINTS
++#include "trace-rpmh.h"
++
+ #define RSC_DRV_TCS_OFFSET		672
+ #define RSC_DRV_CMD_OFFSET		20
+ 
+@@ -136,7 +139,7 @@ static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
+ static irqreturn_t tcs_tx_done(int irq, void *p)
+ {
+ 	struct rsc_drv *drv = p;
+-	int i, j;
++	int i, j, err;
+ 	unsigned long irq_status;
+ 	const struct tcs_request *req;
+ 	struct tcs_cmd *cmd;
+@@ -150,6 +153,7 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
+ 			goto skip;
+ 		}
+ 
++		err = 0;
+ 		for (j = 0; j < req->num_cmds; j++) {
+ 			u32 sts;
+ 
+@@ -160,8 +164,11 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
+ 			   !(sts & CMD_STATUS_COMPL))) {
+ 				pr_err("Incomplete request: %s: addr=%#x data=%#x",
+ 				       drv->name, cmd->addr, cmd->data);
++				err = -EIO;
+ 			}
+ 		}
++
++		trace_rpmh_tx_done(drv, i, req, err);
+ skip:
+ 		/* Reclaim the TCS */
+ 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
+@@ -195,9 +202,11 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
+ 		cmd_complete |= cmd->wait << j;
+ 		msgid = cmd_msgid;
+ 		msgid |= cmd->wait ? CMD_MSGID_RESP_REQ : 0;
++
+ 		write_tcs_cmd(drv, RSC_DRV_CMD_MSGID, tcs_id, j, msgid);
+ 		write_tcs_cmd(drv, RSC_DRV_CMD_ADDR, tcs_id, j, cmd->addr);
+ 		write_tcs_cmd(drv, RSC_DRV_CMD_DATA, tcs_id, j, cmd->data);
++		trace_rpmh_send_msg(drv, tcs_id, j, msgid, cmd);
  	}
  
- /**
-@@ -59,6 +60,7 @@ struct cache_req {
-  * @completion: triggered when request is done
-  * @dev: the device making the request
-  * @err: err return from the controller
-+ * @needs_free: check to free dynamically allocated request object
-  */
- struct rpmh_request {
- 	struct tcs_request msg;
-@@ -66,6 +68,7 @@ struct rpmh_request {
- 	struct completion *completion;
- 	const struct device *dev;
- 	int err;
-+	bool needs_free;
- };
- 
- /**
-@@ -141,6 +144,9 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
- 	/* Signal the blocking thread we are done */
- 	if (compl)
- 		complete(compl);
-+
-+	if (rpm_msg->needs_free)
-+		kfree(rpm_msg);
- }
- 
- static struct cache_req *__find_req(struct rpmh_ctrlr *ctrlr, u32 addr)
-@@ -248,6 +254,52 @@ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
- 	return ret;
- }
- 
-+static struct rpmh_request *__get_rpmh_msg_async(enum rpmh_state state,
-+						 const struct tcs_cmd *cmd,
-+						 u32 n)
-+{
-+	struct rpmh_request *req;
-+
-+	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
-+		return ERR_PTR(-EINVAL);
-+
-+	req = kzalloc(sizeof(*req), GFP_ATOMIC);
-+	if (!req)
-+		return ERR_PTR(-ENOMEM);
-+
-+	memcpy(req->cmd, cmd, n * sizeof(*cmd));
-+
-+	req->msg.state = state;
-+	req->msg.cmds = req->cmd;
-+	req->msg.num_cmds = n;
-+	req->needs_free = true;
-+
-+	return req;
-+}
-+
-+/**
-+ * rpmh_write_async: Write a set of RPMH commands
-+ *
-+ * @dev: The device making the request
-+ * @state: Active/sleep set
-+ * @cmd: The payload data
-+ * @n: The number of elements in payload
-+ *
-+ * Write a set of RPMH commands, the order of commands is maintained
-+ * and will be sent as a single shot.
+ 	write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, tcs_id, cmd_complete);
+diff --git a/drivers/soc/qcom/trace-rpmh.h b/drivers/soc/qcom/trace-rpmh.h
+new file mode 100644
+index 0000000..feb0cb4
+--- /dev/null
++++ b/drivers/soc/qcom/trace-rpmh.h
+@@ -0,0 +1,82 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
 + */
-+int rpmh_write_async(const struct device *dev, enum rpmh_state state,
-+		     const struct tcs_cmd *cmd, u32 n)
-+{
-+	struct rpmh_request *rpm_msg;
 +
-+	rpm_msg = __get_rpmh_msg_async(state, cmd, n);
-+	if (IS_ERR(rpm_msg))
-+		return PTR_ERR(rpm_msg);
++#if !defined(_TRACE_RPMH_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_RPMH_H
 +
-+	return __rpmh_write(dev, state, rpm_msg);
-+}
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM rpmh
 +
- /**
-  * rpmh_write: Write a set of RPMH commands and block until response
-  *
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-index 42e62a0..1161a5c 100644
---- a/include/soc/qcom/rpmh.h
-+++ b/include/soc/qcom/rpmh.h
-@@ -14,6 +14,9 @@
- int rpmh_write(const struct device *dev, enum rpmh_state state,
- 	       const struct tcs_cmd *cmd, u32 n);
- 
-+int rpmh_write_async(const struct device *dev, enum rpmh_state state,
-+		     const struct tcs_cmd *cmd, u32 n);
++#include <linux/tracepoint.h>
++#include "rpmh-internal.h"
 +
- int rpmh_flush(const struct device *dev);
- 
- int rpmh_invalidate(const struct device *dev);
-@@ -24,6 +27,10 @@ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
- 			     const struct tcs_cmd *cmd, u32 n)
- { return -ENODEV; }
- 
-+static inline int rpmh_write_async(const struct device *dev,
-+				   enum rpmh_state state,
-+				   const struct tcs_cmd *cmd, u32 n)
-+{ return -ENODEV; }
- 
- static inline int rpmh_flush(const struct device *dev)
- { return -ENODEV; }
++TRACE_EVENT(rpmh_tx_done,
++
++	TP_PROTO(struct rsc_drv *d, int m, const struct tcs_request *r, int e),
++
++	TP_ARGS(d, m, r, e),
++
++	TP_STRUCT__entry(
++			 __string(name, d->name)
++			 __field(int, m)
++			 __field(u32, addr)
++			 __field(u32, data)
++			 __field(int, err)
++	),
++
++	TP_fast_assign(
++		       __assign_str(name, d->name);
++		       __entry->m = m;
++		       __entry->addr = r->cmds[0].addr;
++		       __entry->data = r->cmds[0].data;
++		       __entry->err = e;
++	),
++
++	TP_printk("%s: ack: tcs-m: %d addr: %#x data: %#x errno: %d",
++		  __get_str(name), __entry->m, __entry->addr, __entry->data,
++		  __entry->err)
++);
++
++TRACE_EVENT(rpmh_send_msg,
++
++	TP_PROTO(struct rsc_drv *d, int m, int n, u32 h,
++		 const struct tcs_cmd *c),
++
++	TP_ARGS(d, m, n, h, c),
++
++	TP_STRUCT__entry(
++			 __string(name, d->name)
++			 __field(int, m)
++			 __field(int, n)
++			 __field(u32, hdr)
++			 __field(u32, addr)
++			 __field(u32, data)
++			 __field(bool, wait)
++	),
++
++	TP_fast_assign(
++		       __assign_str(name, d->name);
++		       __entry->m = m;
++		       __entry->n = n;
++		       __entry->hdr = h;
++		       __entry->addr = c->addr;
++		       __entry->data = c->data;
++		       __entry->wait = c->wait;
++	),
++
++	TP_printk("%s: send-msg: tcs(m): %d cmd(n): %d msgid: %#x addr: %#x data: %#x complete: %d",
++		  __get_str(name), __entry->m, __entry->n, __entry->hdr,
++		  __entry->addr, __entry->data, __entry->wait)
++);
++
++#endif /* _TRACE_RPMH_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE trace-rpmh
++
++#include <trace/define_trace.h>
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
