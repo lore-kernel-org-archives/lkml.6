@@ -1,116 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965581AbeEXIyn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:54:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45040 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965007AbeEXIyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:54:39 -0400
-Date: Thu, 24 May 2018 10:54:27 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3] arm64: allwinner: a64: Add Amarula A64-Relic initial
- support
-Message-ID: <20180524085427.xs6yzhpa42zop6e5@flea>
-References: <20180522132228.6564-1-jagan@amarulasolutions.com>
- <20180522143044.pgwawojiwnk2lzxb@flea>
- <CAMty3ZD3JT-ToGAUHN_uj7uVK-jkyAwfEdTBCmJSj34bACFpYQ@mail.gmail.com>
- <20180523081830.4ly6sj34reabbttn@flea>
- <CAMty3ZC-N-6WzYg+kYd2+V3wbQdQmvU706Nog_Urd_EUaWnQjQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="e7gzo5xpcsc36slw"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZC-N-6WzYg+kYd2+V3wbQdQmvU706Nog_Urd_EUaWnQjQ@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+        id S965602AbeEXIzM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:55:12 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42038 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965007AbeEXIzH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:55:07 -0400
+X-Google-Smtp-Source: AB8JxZobODmWmgvNPYYs5mUOIH0Ap7D95KrpIxeyZFh+sdqsPf1C/pJTcJUgdNi8vXhSlu+l1a2jRA==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+Subject: [PATCH v5 0/6] Add ChromeOS EC CEC Support
+Date: Thu, 24 May 2018 10:54:55 +0200
+Message-Id: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi All,
 
---e7gzo5xpcsc36slw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+through it's Embedded Controller, to enable the Linux CEC Core to communicate
+with it and get the CEC Physical Address from the correct HDMI Connector, the
+following must be added/changed:
+- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+- Add the CEC related commands and events definitions into the EC MFD driver
+- Add a way to get a CEC notifier with it's (optional) connector name
+- Add the CEC notifier to the i915 HDMI driver
+- Add the proper ChromeOS EC CEC Driver
 
-On Wed, May 23, 2018 at 03:57:05PM +0530, Jagan Teki wrote:
-> On Wed, May 23, 2018 at 1:48 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Wed, May 23, 2018 at 11:44:56AM +0530, Jagan Teki wrote:
-> >> On Tue, May 22, 2018 at 8:00 PM, Maxime Ripard
-> >> <maxime.ripard@bootlin.com> wrote:
-> >> > On Tue, May 22, 2018 at 06:52:28PM +0530, Jagan Teki wrote:
-> >> >> Amarula A64-Relic is Allwinner A64 based IoT device, which support
-> >> >> - Allwinner A64 Cortex-A53
-> >> >> - Mali-400MP2 GPU
-> >> >> - AXP803 PMIC
-> >> >> - 1GB DDR3 RAM
-> >> >> - 8GB eMMC
-> >> >> - AP6330 Wifi/BLE
-> >> >> - MIPI-DSI
-> >> >> - CSI: OV5640 sensor
-> >> >> - USB OTG
-> >> >
-> >> > You claim that this is doing OTG...
-> >> >
-> >> > [..]
-> >> >
-> >> >> +&usb_otg {
-> >> >> +     dr_mode =3D "peripheral";
-> >> >> +     status =3D "okay";
-> >> >> +};
-> >> >
-> >> > ... and yet you're setting it as peripheral...
-> >>
-> >> Though it claims OTG, board doesn't have any USB ports to operate(not
-> >> even Mini-AB) the only way to use the board as peripheral to transfer
-> >> images from host.
-> >
-> > I'm not sure what you mean here. If there's no USB connector, why do
-> > you even enable it?
->=20
-> I'm saying there is no host port on board. Board has connector
-> header[1] comes with few pins includes USB D+, D-, ID, VBUS, GROUND,
-> UART0 TX, RX etc. we have to connect wires to these pins to make
-> pluggable USB to host pc. and here USB pins used for transferring data
-> from host pc to target board like in peripheral mode.
+The CEC notifier with the connector name is the tricky point, since even on
+Device-Tree platforms, there is no way to distinguish between multiple HDMI
+connectors from the same DRM driver. The solution I implemented is pretty
+simple and only adds an optional connector name to eventually distinguish
+an HDMI connector notifier from another if they share the same device.
 
-I'm still unsure how it's relevant. If the wire is plugged on your
-board's header, is there anything that prevents using it as a host
-assuming you have a proper connector on the other end of your wire?
+Feel free to comment this patchset !
 
-Maxime
+Changes since v4:
+ - Split patch 3 to move the mkbp event size change into a separate patch
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Changes since v3 (incorrectly reported as v2):
+ - Renamed "Chrome OS" to "ChromeOS"
+ - Updated cros_ec_commands.h new structs definitions to kernel doc format
+ - Added Reviwed-By tags
 
---e7gzo5xpcsc36slw
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v2:
+ - Add i915 port_identifier() and use this stable name as cec_notifier conn name
+ - Fixed and cleaned up the CEC commands and events handling
+ - Rebased the CEC sub-device registration on top of Enric's serie
+ - Fixed comments typo on cec driver
+ - Protected the DMI match only with PCI and DMI Kconfigs
 
------BEGIN PGP SIGNATURE-----
+Changes since v1:
+ - Added cec_notifier_put to intel_hdmi
+ - Fixed all small reported issues on the EC CEC driver
+ - Moved the cec_notifier_get out of the #if .. #else .. #endif
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsGfcIACgkQ0rTAlCFN
-r3TBKw/6A1UzH7IDmW8Z8xjLBcDnrJiwZko3JMOHLVOX97DMqkhguyq7SqW9ripF
-p4Xac/SNzae1XIVn3dgOEIHO2VANxI4zt7RAPB6Pc51CRI42Epw+vod63P96uqI6
-LcduDNHPNkqNWzm1XIRoHpTyLu/KfcwturxG3gvjL+wVl64AZnoferBoF10dxXp6
-r+MaiB0JdobQWTxc+D43hjd5yQSxyIBkDJh9ptOt/ZyZA5FWsoFhuHXsXUeSQaar
-hBFguvzttpldLPbJLZHC9FYxAlwU+6wg/3eqCNUO5/GMU9OTtMIopn7WQ61rCd8f
-EpO5cXVr7XA4P8aSywJVy2c2riHKgTwAr6kbA/+Amy+lfACkbuKeC4yREeMEd3Ib
-jRDSjuonMNOJGM1UbQMNQGuV7zqJqUZT2VnEEXFGgFq6DYOdyKv7neAnQso2S8Nw
-5LmugK1NbIa2WDmaEW18Pnwye8JE3EF1rBHlS/KlTM8cUAYiwov+cNtLHcXvXrb0
-UdLSyoXUKrADKAY3zbyV93beu2iEj+Y2ER1BU1uJpn0uJTTlnRZ/HCJF5cUNCREo
-rtyRYaQJb/oeF1KCraSGyRrWaAMjAO6fg6Sc4f3rNvqGh3CRIdPK2aoL/FNJyQlt
-Wcnajz3dczIa3LgMzrBq+pFCqW3xVWOwyUB/6Wfl03rgD9fm9IU=
-=2Lkk
------END PGP SIGNATURE-----
+Changes since RFC:
+ - Moved CEC sub-device registration after CEC commands and events definitions patch
+ - Removed get_notifier_get_byname
+ - Added CEC_CORE select into i915 Kconfig
+ - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+ - Fixed CEC core return type on error
+ - Moved to cros-ec-cec media platform directory
+ - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+ - Fix Logical Address setup
+ - Added comment about HW support
+ - Removed memset of msg structures
 
---e7gzo5xpcsc36slw--
+Neil Armstrong (6):
+  media: cec-notifier: Get notifier by device and connector name
+  drm/i915: hdmi: add CEC notifier to intel_hdmi
+  mfd: cros-ec: Increase maximum mkbp event size
+  mfd: cros-ec: Introduce CEC commands and events definitions.
+  mfd: cros_ec_dev: Add CEC sub-device registration
+  media: platform: Add ChromeOS EC CEC driver
+
+ drivers/gpu/drm/i915/Kconfig                     |   1 +
+ drivers/gpu/drm/i915/intel_display.h             |  20 ++
+ drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+ drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+ drivers/media/cec/cec-notifier.c                 |  11 +-
+ drivers/media/platform/Kconfig                   |  11 +
+ drivers/media/platform/Makefile                  |   2 +
+ drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+ drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c                        |  16 ++
+ drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+ include/linux/mfd/cros_ec.h                      |   2 +-
+ include/linux/mfd/cros_ec_commands.h             | 104 +++++++
+ include/media/cec-notifier.h                     |  27 +-
+ 14 files changed, 581 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+ create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+
+-- 
+2.7.4
