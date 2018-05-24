@@ -1,131 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161115AbeEXQh3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:37:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51006 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031249AbeEXQh1 (ORCPT
+        id S1033773AbeEXQgl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:36:41 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:44596 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033756AbeEXQgc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:37:27 -0400
-Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
-To: Michal Hocko <mhocko@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Sterba <dsterba@suse.cz>
-References: <20180424183536.GF30619@thunk.org>
- <20180524114341.1101-1-mhocko@kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6c9df175-df6c-2531-b90c-318e4fff72bb@infradead.org>
-Date: Thu, 24 May 2018 09:37:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thu, 24 May 2018 12:36:32 -0400
+X-Google-Smtp-Source: AB8JxZqbbtBZ4deyN1Q9EEqrQuwawiI6T18SLFRPGBlS/B7WbzckZNIYB2hSX04jRnjiMugiiCtIVA==
+Subject: Re: [PATCH v3 4/6] watchdog: sp805: set WDOG_HW_RUNNING when
+ appropriate
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+References: <1527120924-12131-1-git-send-email-ray.jui@broadcom.com>
+ <1527120924-12131-5-git-send-email-ray.jui@broadcom.com>
+ <20180524161901.GB28425@roeck-us.net>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <5e3d05f2-d526-9108-e2fd-13573458be85@broadcom.com>
+Date: Thu, 24 May 2018 09:36:25 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180524114341.1101-1-mhocko@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180524161901.GB28425@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/2018 04:43 AM, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+
+
+On 5/24/2018 9:19 AM, Guenter Roeck wrote:
+> On Wed, May 23, 2018 at 05:15:22PM -0700, Ray Jui wrote:
+>> If the watchdog hardware is already enabled during the boot process,
+>> when the Linux watchdog driver loads, it should reset the watchdog and
+>> tell the watchdog framework. As a result, ping can be generated from
+>> the watchdog framework, until the userspace watchdog daemon takes over
+>> control
+>>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>> Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 > 
-> Although the api is documented in the source code Ted has pointed out
-> that there is no mention in the core-api Documentation and there are
-> people looking there to find answers how to use a specific API.
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: David Sterba <dsterba@suse.cz>
-> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
+> I have one question, though: Is it really correct that both
+> INT_ENABLE _and_ RESET_ENABLE have to be set to enable the watdog ?
+> What if only RESET_ENABLE is set ?
+
+According to the SP805 TRM, INT_ENABLE needs to be set to high to enable 
+the counter and the interrupt. Counter will be stopped if INT_ENABLE is 
+cleared. So yes, INT_ENABLE needs to be set.
+
+Thanks,
+
+Ray
+
 > 
-> Hi Johnatan,
-> Ted has proposed this at LSFMM and then we discussed that briefly on the
-> mailing list [1]. I received some useful feedback from Darrick and Dave
-> which has been (hopefully) integrated. Then the thing fall off my radar
-> rediscovering it now when doing some cleanup. Could you take the patch
-> please?
+> Thanks,
+> Guenter
 > 
-> [1] http://lkml.kernel.org/r/20180424183536.GF30619@thunk.org
->  .../core-api/gfp_mask-from-fs-io.rst          | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
-> 
-> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> new file mode 100644
-> index 000000000000..e8b2678e959b
-> --- /dev/null
-> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> @@ -0,0 +1,55 @@
-> +=================================
-> +GFP masks used from FS/IO context
-> +=================================
-> +
-> +:Date: Mapy, 2018
-> +:Author: Michal Hocko <mhocko@kernel.org>
-> +
-> +Introduction
-> +============
-> +
-> +Code paths in the filesystem and IO stacks must be careful when
-> +allocating memory to prevent recursion deadlocks caused by direct
-> +memory reclaim calling back into the FS or IO paths and blocking on
-> +already held resources (e.g. locks - most commonly those used for the
-> +transaction context).
-> +
-> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
-> +resp. __GFP_IO (note the later implies clearing the first as well) in
-
-                            latter
-
-> +the gfp mask when calling an allocator. GFP_NOFS resp. GFP_NOIO can be
-> +used as shortcut. It turned out though that above approach has led to
-> +abuses when the restricted gfp mask is used "just in case" without a
-> +deeper consideration which leads to problems because an excessive use
-> +of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
-> +reclaim issues.
-> +
-> +New API
-> +========
-> +
-> +Since 4.12 we do have a generic scope API for both NOFS and NOIO context
-> +``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
-> +``memalloc_noio_restore`` which allow to mark a scope to be a critical
-> +section from the memory reclaim recursion into FS/IO POV. Any allocation
-
-s/POV/point of view/ or whatever it is.
-
-> +from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
-> +mask so no memory allocation can recurse back in the FS/IO.
-> +
-> +FS/IO code then simply calls the appropriate save function right at the
-> +layer where a lock taken from the reclaim context (e.g. shrinker) and
-> +the corresponding restore function when the lock is released. All that
-> +ideally along with an explanation what is the reclaim context for easier
-> +maintenance.
-> +
-> +What about __vmalloc(GFP_NOFS)
-> +==============================
-> +
-> +vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
-> +GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
-> +to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
-> +almost always a bug. The good news is that the NOFS/NOIO semantic can be
-> +achieved by the scope api.
-
-I would prefer s/api/API/ throughout.
-
-> +
-> +In the ideal world, upper layers should already mark dangerous contexts
-> +and so no special care is required and vmalloc should be called without
-> +any problems. Sometimes if the context is not really clear or there are
-> +layering violations then the recommended way around that is to wrap ``vmalloc``
-> +by the scope API with a comment explaining the problem.
-> 
-
-
--- 
-~Randy
+>> ---
+>>   drivers/watchdog/sp805_wdt.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+>> index 1484609..d662a6f 100644
+>> --- a/drivers/watchdog/sp805_wdt.c
+>> +++ b/drivers/watchdog/sp805_wdt.c
+>> @@ -42,6 +42,7 @@
+>>   	/* control register masks */
+>>   	#define	INT_ENABLE	(1 << 0)
+>>   	#define	RESET_ENABLE	(1 << 1)
+>> +	#define	ENABLE_MASK	(INT_ENABLE | RESET_ENABLE)
+>>   #define WDTINTCLR		0x00C
+>>   #define WDTRIS			0x010
+>>   #define WDTMIS			0x014
+>> @@ -74,6 +75,15 @@ module_param(nowayout, bool, 0);
+>>   MODULE_PARM_DESC(nowayout,
+>>   		"Set to 1 to keep watchdog running after device release");
+>>   
+>> +/* returns true if wdt is running; otherwise returns false */
+>> +static bool wdt_is_running(struct watchdog_device *wdd)
+>> +{
+>> +	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>> +	u32 wdtcontrol = readl_relaxed(wdt->base + WDTCONTROL);
+>> +
+>> +	return (wdtcontrol & ENABLE_MASK) == ENABLE_MASK;
+>> +}
+>> +
+>>   /* This routine finds load value that will reset system in required timout */
+>>   static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
+>>   {
+>> @@ -239,6 +249,15 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>>   	watchdog_init_timeout(&wdt->wdd, 0, &adev->dev);
+>>   	wdt_setload(&wdt->wdd, wdt->wdd.timeout);
+>>   
+>> +	/*
+>> +	 * If HW is already running, enable/reset the wdt and set the running
+>> +	 * bit to tell the wdt subsystem
+>> +	 */
+>> +	if (wdt_is_running(&wdt->wdd)) {
+>> +		wdt_enable(&wdt->wdd);
+>> +		set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
+>> +	}
+>> +
+>>   	ret = watchdog_register_device(&wdt->wdd);
+>>   	if (ret) {
+>>   		dev_err(&adev->dev, "watchdog_register_device() failed: %d\n",
+>> -- 
+>> 2.1.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
