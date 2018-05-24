@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpE4xxjnTOpQh4jgE7uU/LXQypNJBgNRucgzMa3AscgWzFcbVkdlyXVxCNrffvS4irdhWBv
-ARC-Seal: i=1; a=rsa-sha256; t=1527155644; cv=none;
+X-Google-Smtp-Source: AB8JxZp6GBItbR/m8uRfMU2OAU8x+7nUERHIiigEy4AbA9CKyVX1mDuy/MavjufBYTdk+gDw9k4a
+ARC-Seal: i=1; a=rsa-sha256; t=1527155641; cv=none;
         d=google.com; s=arc-20160816;
-        b=BGajx73U40pp71j1YLpLoNj35aAptNNGoqUlQrDAorlLUPMY4uqE+E4Telk/mkiOXO
-         1LB5UZUefdO/eBRwTTLDTOHEf46UE72w2KHtV3LVLJnBcGEcCmcfmLmBYxFL38UlU/t2
-         0PcYx+a4GZgPLlOAeSA+/wtKJCHBBRz3/OMEQHdqi4Tbx5F9TaQB3Qb7yaTGg7xwejn3
-         V5d1RkvzhQ9IbNgD2IYfzfUk0EAPLR2LiHdEeTOBD1U5JHzrOiZASJbGCzC9QpixNlFU
-         ytCD5IelF6qZ9OyPxb0vLnpi3cL0L2aDCzBi0CvVzHnRvo8Ohooqj/JV5gUVco88r3u7
-         3EcA==
+        b=efzqjEFovfQ5TnaqlqxZKdEdwSvCUHMTHBuneh4oiaPB7XEJrm66iEJoL+63dOZ8ID
+         hhu8uey9NILwL6xniaFT2MUuByep9FvO4XNF3VB+Y/bdyv2O3RVHyD3v/NevivbfThT+
+         poOkmqyMkdEQmjMccrgUdxgi6pITrY13eb5Z8lcWIikbZsTWY3XVHBu8cdMu9myYyF/G
+         qMuYgjLC23L0zkwprFl3A6e9WaNqGTZHX2CrIg/+cryZf95BsGTPogHzON8xrgOcAUSF
+         IKlUjYZZpQq1sTIMTU1XZQCQxYewb4eDtN5VG3j0QtXaKDxMvdDfyquXBd0emL/HmZ7n
+         +mVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=5lXFr2sKYGFTV3YL0JOv0gHAXUGicH9l+BDfwR0F0AM=;
-        b=Sa4zLocr/I4lMEKvCA/knXSv6cl3FkpU/q6QgA2Jl0XH88Ai1i0R62hP1NbcCZBz90
-         2IbiaEtEAf2Y+COIE2DbDNqRMQPCVIQz7xAQ9EgH/atV8ZdkpKllrmZRRJTOV0r5UMnk
-         MTCBMbltOJHL5zB3Cy5R9I7NaPHeGXEEThYYbE3tdZaBRmpwju3xSJZUvZC/nu/meosG
-         HY6m0YO3AC9tMSLAtwlrX5KJygQGr0o6VMIN6c3Muj31sB7O6ydw3rsFmgR5XghoIiKi
-         6pxEuDME5QT3yj7chHO/1VdS+m76bj/EzX11S+wSPaItBA1eDX+3KKHTDo9iOxah6vx+
-         bb7g==
+        bh=Tef+F/H4NCyt37GWwaWF9qhUffXb3ke6tyaoxLjdQD4=;
+        b=A03V+ExLVa4DE23AFSe1o//eq0CbtWQuAb8OxPfEZe6chMpn4Bt9+e8F4agl00MhB0
+         y4TyBWX/0m+LfvLJjaKms3jcFtmJ+68ywv05xUu9qL252b5rrXrKU07R8F4xnvaOnJ5I
+         v+h/7WMq8hUoj76Ow9MPRnlMeHl8Vu5NPHpHUH163NvwJERWs7Gk5tm8wY4BfEpNNmnI
+         sNmcTZ8TzfXypozBXZntd1oOwTw9/Z503wS+qmlvmk1XtyLGOlYiDNqNz6uUuiMfStgv
+         3kmRZQnhImENZvfUFs8XXPRD0nLOFnjILcp/2U6tTRQYvmQl3cKXqc1jLaI4bxIzHZQd
+         fUyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=RsJNhhwC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=bumJdb/2;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=RsJNhhwC;
+       dkim=pass header.i=@kernel.org header.s=default header.b=bumJdb/2;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fredrik Noring <noring@nocrew.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 064/165] USB: OHCI: Fix NULL dereference in HCDs using HCD_LOCAL_MEM
-Date: Thu, 24 May 2018 11:37:50 +0200
-Message-Id: <20180524093624.613341312@linuxfoundation.org>
+Subject: [PATCH 4.14 063/165] usb: host: xhci-plat: revert "usb: host: xhci-plat: enable clk in resume timing"
+Date: Thu, 24 May 2018 11:37:49 +0200
+Message-Id: <20180524093624.571694301@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338479068807617?=
-X-GMAIL-MSGID: =?utf-8?q?1601338757403147367?=
+X-GMAIL-THRID: =?utf-8?q?1601338754533557820?=
+X-GMAIL-MSGID: =?utf-8?q?1601338754533557820?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,61 +52,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fredrik Noring <noring@nocrew.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit d6c931ea32dc08ac2665bb5f009f9c40ad1bbdb3 ]
+[ Upstream commit d56e57ca030c8b4296944a2ae61ac167bf979c07 ]
 
-Scatter-gather needs to be disabled when using dma_declare_coherent_memory
-and HCD_LOCAL_MEM. Andrea Righi made the equivalent fix for EHCI drivers
-in commit 4307a28eb01284 "USB: EHCI: fix NULL pointer dererence in HCDs
-that use HCD_LOCAL_MEM".
+This patch reverts the commit 835e4241e714 ("usb: host: xhci-plat:
+enable clk in resume timing") because this driver also has runtime PM
+and the commit 560869100b99 ("clk: renesas: cpg-mssr: Restore module
+clocks during resume") will restore the clock on R-Car H3 environment.
 
-The following NULL pointer WARN_ON_ONCE triggered with OHCI drivers:
+If the xhci_plat_suspend() disables the clk, the system cannot enable
+the clk in resume like the following behavior:
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 49 at drivers/usb/core/hcd.c:1379 hcd_alloc_coherent+0x4c/0xc8
-Modules linked in:
-CPU: 0 PID: 49 Comm: usb-storage Not tainted 4.15.0+ #1014
-Stack : 00000000 00000000 805a78d2 0000003a 81f5c2cc 8053d367 804d77fc 00000031
-        805a3a08 00000563 81ee9400 805a0000 00000000 10058c00 81f61b10 805c0000
-        00000000 00000000 805a0000 00d9038e 00000004 803ee818 00000006 312e3420
-        805c0000 00000000 00000073 81f61958 00000000 00000000 802eb380 804fd538
-        00000009 00000563 81ee9400 805a0000 00000002 80056148 00000000 805a0000
-        ...
-Call Trace:
-[<578af360>] show_stack+0x74/0x104
-[<2f3702c6>] __warn+0x118/0x120
-[<ae93fc9e>] warn_slowpath_null+0x44/0x58
-[<a891a517>] hcd_alloc_coherent+0x4c/0xc8
-[<3578fa36>] usb_hcd_map_urb_for_dma+0x4d8/0x534
-[<110bc94c>] usb_hcd_submit_urb+0x82c/0x834
-[<02eb5baf>] usb_sg_wait+0x14c/0x1a0
-[<ccd09e85>] usb_stor_bulk_transfer_sglist.part.1+0xac/0x124
-[<87a5c34c>] usb_stor_bulk_srb+0x40/0x60
-[<ff1792ac>] usb_stor_Bulk_transport+0x160/0x37c
-[<b9e2709c>] usb_stor_invoke_transport+0x3c/0x500
-[<004754f4>] usb_stor_control_thread+0x258/0x28c
-[<22edf42e>] kthread+0x134/0x13c
-[<a419ffd0>] ret_from_kernel_thread+0x14/0x1c
----[ end trace bcdb825805eefdcc ]---
+< In resume >
+ - genpd_resume_noirq() runs and enable the clk (enable_count = 1)
+ - cpg_mssr_resume_noirq() restores the clk register.
+  -- Since the clk was disabled in suspend, cpg_mssr_resume_noirq()
+     will disable the clk and keep the enable_count.
+ - Even if xhci_plat_resume() calls clk_prepare_enable(), since
+   the enable_count is 1, the clk will be not enabled.
 
-Signed-off-by: Fredrik Noring <noring@nocrew.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+After this patch is applied, the cpg-mssr driver will save the clk
+as enable, so the clk will be enabled in resume.
+
+Fixes: 835e4241e714 ("usb: host: xhci-plat: enable clk in resume timing")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/ohci-hcd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci-plat.c |   11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -446,7 +446,8 @@ static int ohci_init (struct ohci_hcd *o
- 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -355,7 +355,6 @@ static int __maybe_unused xhci_plat_susp
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+-	int ret;
  
- 	/* Accept arbitrarily long scatter-gather lists */
--	hcd->self.sg_tablesize = ~0;
-+	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+		hcd->self.sg_tablesize = ~0;
+ 	/*
+ 	 * xhci_suspend() needs `do_wakeup` to know whether host is allowed
+@@ -365,12 +364,7 @@ static int __maybe_unused xhci_plat_susp
+ 	 * reconsider this when xhci_plat_suspend enlarges its scope, e.g.,
+ 	 * also applies to runtime suspend.
+ 	 */
+-	ret = xhci_suspend(xhci, device_may_wakeup(dev));
+-
+-	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+-		clk_disable_unprepare(xhci->clk);
+-
+-	return ret;
++	return xhci_suspend(xhci, device_may_wakeup(dev));
+ }
  
- 	if (distrust_firmware)
- 		ohci->flags |= OHCI_QUIRK_HUB_POWER;
+ static int __maybe_unused xhci_plat_resume(struct device *dev)
+@@ -379,9 +373,6 @@ static int __maybe_unused xhci_plat_resu
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+ 	int ret;
+ 
+-	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+-		clk_prepare_enable(xhci->clk);
+-
+ 	ret = xhci_priv_resume_quirk(hcd);
+ 	if (ret)
+ 		return ret;
