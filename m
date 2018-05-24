@@ -1,58 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966014AbeEXJkQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:40:16 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:44207 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965759AbeEXJkL (ORCPT
+        id S967041AbeEXJrS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:47:18 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39753 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967013AbeEXJrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:40:11 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-Subject: Re: [RFD] Add debugfs for cpuidle ?
-Date: Thu, 24 May 2018 11:39:30 +0200
-Message-ID: <11155078.TUGiezxXmY@aspire.rjw.lan>
-In-Reply-To: <bcdbf067-4213-18ed-6d30-dc0dd2376c02@linaro.org>
-References: <516d8599-8038-7b47-a3f5-640bf13856c2@linaro.org> <2682482.uFPN0cxrGI@aspire.rjw.lan> <bcdbf067-4213-18ed-6d30-dc0dd2376c02@linaro.org>
+        Thu, 24 May 2018 05:47:08 -0400
+Date: Thu, 24 May 2018 11:47:05 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, khilman@kernel.org,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: v4.17-rc1: regressions on N900, N950
+Message-ID: <20180524094705.GA16705@amd>
+References: <20180422074213.GA12428@amd>
+ <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
+ <20180521213952.GA11596@amd>
+ <20180522080250.4fzyvqrgw5oigexn@pali>
+ <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
+ <20180522205824.GA24927@amd>
+ <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
+ <20180523140615.GA27180@amd>
+ <20180523201208.GA31731@amd>
+ <20180523220456.GY98604@atomide.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
+Content-Disposition: inline
+In-Reply-To: <20180523220456.GY98604@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, May 24, 2018 10:47:54 AM CEST Daniel Lezcano wrote:
-> On 24/05/2018 10:28, Rafael J. Wysocki wrote:
-> > On Thursday, May 24, 2018 10:14:31 AM CEST Daniel Lezcano wrote:
-> >> 
-> >> Hi all,
-> > 
-> > Hi,
-> > 
-> >> would it be interesting to add debugfs metrics for cpuidle in order
-> >> to read some statistics from there and investigate the behavior ?
-> > 
-> > What exactly would you like to see in there?
-> 
-> It could be interesting to have statistics on a per cpu and global basis
-> for:
-> 
-> - prediction accuracy:
-> 
-> /sys/kernel/debug/cpuidle/prediction/[good|over|under]
-> /sys/kernel/debug/cpuidle/cpu*/state*/prediction/[good|over|under]
-> 
->  - exit latency
-> 
-> In addition, it is often the case the idle states values are dropped
-> randomly, it is interesting to see the average exit latency for the
-> states. That could give also an indication the cluster idle state success.
-> 
-> /sys/kernel/debug/cpuidle/state*/latency/[min|max|avg|stddev]
-> /sys/kernel/debug/cpuidle/cpu*/state*/prediction/[min|max|avg|stddev]
-> 
-> And perhaps more information like the tick stopped stat ?
 
-Fair enough, but that must be minimum overhead.
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > > So... I did some experiments on v4.16.
+> > >=20
+> > > Swapping tsc2005@0 and lcd: acx565akm@2 entries in the dts does break
+> > > stuff.
+> > >=20
+> > > I thought it might be due to vio regulator, but it does not appear
+> > > so... screen still works with tsc2005 driver disabled in .config. (so
+> > > there's noone to enable vio regulator).
+> >=20
+> > Deleting tsc2005@0 entry also breaks screen.
+> >=20
+> > Replacing tsc2005@0 entry with=20
+> >=20
+> >         foobar@0 {
+> > 	               compatible =3D "not really with anything";
+> >  		       spi-max-frequency =3D <6000000>;
+> >  		       reg =3D <0>;
+> >  };
+> >=20
+> > still results in working touchscreen, removing any of the three fields
+> > breaks it again.
+>=20
+> I bisected one regression down, see "omapdrm regression in v4.17-rc serie=
+s"
+> not sure if it covers all the issues being discussed here though.
+
+Reverting 24aac6011f70 fixes screen on n900 in v4.17-rc for me. (But
+strange dependency on tsc2005@0 is still there).
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsGihkACgkQMOfwapXb+vJ0rgCglJW7XtpGu4tG1Z6c0yqPXNAm
+Y0MAnj2+L76ZZfueUH00t5AKakHguU8Q
+=wIst
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
