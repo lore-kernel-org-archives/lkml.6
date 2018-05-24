@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159268-2-13213362181989018229
+X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159241-2-6089429754471454455
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159268; b=SHi21bufgs4Ikbn2AzxqD6Wj27GrybMaSQN9v38AhYQb5niRVA
-    aVTtaAYoqCHVeAUCa7B98sycQCb2vcq5iHmTxozNRrL283xUmCdatvFOn0bmi64L
-    mTn0cBq6YbFUKmKzJp4yj7b3NVWRYkxnLF5pnfiQwnnb5O3pbeYBJykLYN/sRJvE
-    fxBxizMOrieWcN69V/urViYMFwS9MfcZ3TV3bRY6jILvqfAPflLNZYwzRzmAwwi/
-    q8Ux8Lhtm2GvMrXNtVSVpMRAOmFEqS+4ZZrs1Tc/SDTy0mfQPkmRdCDXPn9tMp+f
-    xRPQRKGZDqtUjabwDV/mg2qdHcYMiRpUqspw==
+    1527159240; b=IBj+cRjVYHvDZUIO56QdjOXrj89Do0uIbGe3n9bidnUiJCHwa8
+    yUHqTUQK6DBJbK9M7/xQu/QI74LBZzfm5O2WJUtXn1Zoqo6coBCYLCkUzAKcUqZC
+    UYxt5akBxaPcArRaGk/py0a5cs8Rku/ELFQkUcqDy5lnQ3xsjDiFhsmP3oEjnvZF
+    Ws1WrcfgWLoVjwv0fIh4guIZDWfdKZNIRGiNMf8IsjFDvzbh/ZFt9DUvx1oMY1Lu
+    LHQfgRpH3Op4qkymV7S/tS6gTf2YOOLxqZOQpDGOukRcuJ2DQYJSxmuC7VNiqyMb
+    Vb0MV1W3H3QTibkOanqpsdldS0acZg0AWGHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159268; bh=f06vKPuDXBkuBOOQ7BoKDyzSzEhAs9
-    n2kSmPZAcHb70=; b=XuFSuOatGG5993i7h4xrTGRr0lrQ77Ss8qfxWiCs3hcswk
-    EMoFLRe0odl1zSTqYp+RSqVUwEErZoN0/F/EqjA7+QIGKAmMjuYTaa+CZOsrGQHj
-    qu0nb8xaTjdt3vRmGaLUige92HoW4apqvoOs+PtLodg2iiSrkKLMI08YHjdnmDf8
-    uR4V2EDbT1LVbwy2qcmiSDyZwna7xqa3hUdTbf15toj9TYm2zv7/7yhAxJFCJW6u
-    4acmoQPFd0j5rwoA1iiRI7pzGeNgGgfCESook82uHJYX5FGvnA+iEIM8uiSeDzMw
-    KLQaypaty4/Oktq+iHl104FFVi3iXmIGKarNkCmw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159240; bh=cszFybg0gMg5ft7T9nFMqOOlzOdeLv
+    nYUndm2WVhSbA=; b=K2Ok9kso0nLc/dBNuA51VArY+HkfsX5NHY/i7YisobixHZ
+    3CbRn2CusykCER4/lmTv2Twv/yn2APbYQe7CJKycpOWsdt6qwm7RiaNoZXSv/Tx2
+    jMxT9Ltx2ROJ0eqckkKf+b6J7vvfmE5m0xQUOTnmtPXD9zL5OC4qW453ofG0lmDV
+    xMzaoba2jVt45aD6OXH1uNHXm9iTxbML7/6CV26W3TiV5fWHLdBUISket7eQaWj9
+    s7dYLJ9UARMelD6cfJld/aXjrE8n/iw4AAEzT9RvB6PHSdWXS7LmpdNHp14fXBxY
+    GnlmRGADgP/ojQbz7GqoqzeOPaBKYy5Tou64PnsA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=o4dPt5wG x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=0pyV51pk x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=o4dPt5wG x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=0pyV51pk x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,30 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNDqOtoiypvkOHlD2uScz6e89w+qE4TEPn5GsuDZ2yjlqcbncyxnmiHRilAys2x1KfPM2yD8DosRmrnuWsAKdI4URg30xEFzpZgFR8Iijj4kMjiqLsZo
-    uY3pmK//Y1TnfxOTyFRr3TjbC1n9LFN8A75u5g/1LHq7Ftx7h5Omf56CxzWjFytsXyIvR22fDZO9O3lv9nEmfKoGanc21SWyq4lHgzRnvEIlYtByFchLdxGh
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCrtroIbfvEc6KLd+KgTehGvvK84mBRWprWOPXI7dxwHvAT1lxHx9S4aYlH81NheLzWo4bVBx2eNkYa81IAvop0KwaczGldqeMvjfZAKY6nqu6Ywpo5b
+    PmogzjLI14oqoBVcKkCC99mqqFMU2qfisUfGP9EXKTHLwzZKLo/zzu7AGxBIywRLi7PMCU2cSg++GL5U8wEw2yvRhd3vj6CpAef1KvnaqM3jKlPaooglw58M
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=s8YR1HE3AAAA:8 a=IpJZQVW2AAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=yARby3lnm6p1CmaUAsUA:9 a=QEXdDO2ut3YA:10
-    a=jGH_LyMDp9YhSvY-UuyI:22 a=IawgGOuG5U0WyFbmm1f5:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=s8YR1HE3AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=gV9ZC5vI7Yc8r_rdcxcA:9
+    a=QEXdDO2ut3YA:10 a=jGH_LyMDp9YhSvY-UuyI:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030382AbeEXKy0 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:54:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
+        id S1030366AbeEXKx5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:53:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030352AbeEXJ4y (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:56:54 -0400
+        id S1030383AbeEXJ5C (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 127/165] clk: Dont show the incorrect clock phase
-Date: Thu, 24 May 2018 11:38:53 +0200
-Message-Id: <20180524093627.142660000@linuxfoundation.org>
+Subject: [PATCH 4.14 130/165] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
+Date: Thu, 24 May 2018 11:38:56 +0200
+Message-Id: <20180524093627.260856482@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -110,50 +107,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit 1f9c63e8de3d7b377c9d74e4a17524cfb60e6384 ]
+[ Upstream commit 4bf59902b50012b1dddeeaa23b217d9c4956cdda ]
 
-It's found that the clock phase output from clk_summary is
-wrong compared to the actual phase reading from the register.
-
-cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-sdio_sample     0        1        0 50000000          0 -22
-
-It exposes an issue that clk core, clk_core_get_phase, always
-returns the cached core->phase which should be either updated
-by calling clk_set_phase or directly from the first place the
-clk was registered.
-
-When registering the clk, the core->phase geting from ->get_phase()
-may return negative value indicating error. This is quite common
-since the clk's phase may be highly related to its parent chain,
-but it was temporarily orphan when registered, since its parent
-chains hadn't be ready at that time, so the clk drivers decide to
-return error in this case. However, if no clk_set_phase is called or
-maybe the ->set_phase() isn't even implemented, the core->phase would
-never be updated. This is wrong, and we should try to update it when
-all its parent chains are settled down, like the way of updating clock
-rate for that. But it's not deserved to complicate the code now and
-just update it anyway when calling clk_core_get_phase, which would be
-much simple and enough.
+The MMC sample and drv clock for rockchip platforms are derived from
+the bus clock output to the MMC/SDIO card. So it should never happens
+that the clk rate is zero given it should inherits the clock rate from
+its parent. If something goes wrong and makes the clock rate to be zero,
+the calculation would be wrong but may still make the mmc tuning process
+work luckily. However it makes people harder to debug when the following
+data transfer is unstable.
 
 Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/rockchip/clk-mmc-phase.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1931,6 +1931,9 @@ static int clk_core_get_phase(struct clk
- 	int ret;
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct
+ 	u16 degrees;
+ 	u32 delay_num = 0;
  
- 	clk_prepare_lock();
-+	/* Always try to update cached phase if possible */
-+	if (core->ops->get_phase)
-+		core->phase = core->ops->get_phase(core->hw);
- 	ret = core->phase;
- 	clk_prepare_unlock();
++	/* See the comment for rockchip_mmc_set_phase below */
++	if (!rate) {
++		pr_err("%s: invalid clk rate\n", __func__);
++		return -EINVAL;
++	}
++
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
+ 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
+@@ -84,6 +90,23 @@ static int rockchip_mmc_set_phase(struct
+ 	u32 raw_value;
+ 	u32 delay;
+ 
++	/*
++	 * The below calculation is based on the output clock from
++	 * MMC host to the card, which expects the phase clock inherits
++	 * the clock rate from its parent, namely the output clock
++	 * provider of MMC host. However, things may go wrong if
++	 * (1) It is orphan.
++	 * (2) It is assigned to the wrong parent.
++	 *
++	 * This check help debug the case (1), which seems to be the
++	 * most likely problem we often face and which makes it difficult
++	 * for people to debug unstable mmc tuning results.
++	 */
++	if (!rate) {
++		pr_err("%s: invalid clk rate\n", __func__);
++		return -EINVAL;
++	}
++
+ 	nineties = degrees / 90;
+ 	remainder = (degrees % 90);
  
