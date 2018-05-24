@@ -1,55 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965232AbeEXI1d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:27:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:38006 "EHLO foss.arm.com"
+        id S965309AbeEXI1l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:27:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52702 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964864AbeEXI1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:27:30 -0400
-Date: Thu, 24 May 2018 09:27:24 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
-Subject: Re: [PATCH 00/13] atomics: API cleanups
-Message-ID: <20180524082723.2xoceagwflrh5gf4@salmiak>
-References: <20180523133533.1076-1-mark.rutland@arm.com>
- <20180523171817.GV12198@hirez.programming.kicks-ass.net>
+        id S965164AbeEXI1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:27:33 -0400
+Date: Thu, 24 May 2018 10:27:29 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, David Rientjes <rientjes@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
+ charge to memcg
+Message-ID: <20180524082729.GX20441@dhcp22.suse.cz>
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+ <20180522135148.GA20441@dhcp22.suse.cz>
+ <af1a3050-7365-428a-dfb1-2f3da37dc9ff@ascade.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523171817.GV12198@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <af1a3050-7365-428a-dfb1-2f3da37dc9ff@ascade.co.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 07:18:17PM +0200, Peter Zijlstra wrote:
-> On Wed, May 23, 2018 at 02:35:20PM +0100, Mark Rutland wrote:
-> > This series contains a few cleanups of the atomic API, fixing an
-> > inconsistency between atomic_* and atomic64_*, and minimizing repetition
-> > in arch code. This is nicer for arch code, and the improved regularity
-> > will help when generating the atomic headers in future.
-
-> Thanks for this Mark,
+On Thu 24-05-18 13:26:12, TSUKADA Koutaro wrote:
+[...]
+> I do not know if it is really a strong use case, but I will explain my
+> motive in detail. English is not my native language, so please pardon
+> my poor English.
 > 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> I am one of the developers for software that managing the resource used
+> from user job at HPC-Cluster with Linux. The resource is memory mainly.
+> The HPC-Cluster may be shared by multiple people and used. Therefore, the
+> memory used by each user must be strictly controlled, otherwise the
+> user's job will runaway, not only will it hamper the other users, it will
+> crash the entire system in OOM.
+> 
+> Some users of HPC are very nervous about performance. Jobs are executed
+> while synchronizing with MPI communication using multiple compute nodes.
+> Since CPU wait time will occur when synchronizing, they want to minimize
+> the variation in execution time at each node to reduce waiting times as
+> much as possible. We call this variation a noise.
+> 
+> THP does not guarantee to use the Huge Page, but may use the normal page.
+> This mechanism is one cause of variation(noise).
+> 
+> The users who know this mechanism will be hesitant to use THP. However,
+> the users also know the benefits of the Huge Page's TLB hit rate
+> performance, and the Huge Page seems to be attractive. It seems natural
+> that these users are interested in HugeTLBfs, I do not know at all
+> whether it is the right approach or not.
 
-Cheers!
+Sure, asking for guarantee makes hugetlb pages attractive. But nothing
+is really for free, especially any resource _guarantee_, and you have to
+pay an additional configuration price usually.
+ 
+> At the very least, our HPC system is pursuing high versatility and we
+> have to consider whether we can provide it if users want to use HugeTLBfs.
+> 
+> In order to use HugeTLBfs we need to create a persistent pool, but in
+> our use case sharing nodes, it would be impossible to create, delete or
+> resize the pool.
 
-> Ingo, can you magic this into tip somewhere?
+Why? I can see this would be quite a PITA but not really impossible.
 
-FWIW, I've accumulated acks (and fixed the typo in patch two) in my branch at:
+> One of the answers I have reached is to use HugeTLBfs by overcommitting
+> without creating a pool(this is the surplus hugepage).
+> 
+> Surplus hugepages is hugetlb page, but I think at least that consuming
+> buddy pool is a decisive difference from hugetlb page of persistent pool.
+> If nr_overcommit_hugepages is assumed to be infinite, allocating pages for
+> surplus hugepages from buddy pool is all unlimited even if being limited
+> by memcg.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/api-cleanup
+Not really, you can specify how much you can overcommit hugetlb pages.
 
-Thanks,
-Mark.
+> In extreme cases, overcommitment will allow users to exhaust
+> the entire memory of the system. Of course, this can be prevented by the
+> hugetlb cgroup, but even if we set the limit for memcg and hugetlb cgroup
+> respectively, as I asked in the first mail(set limit to 10GB), the
+> control will not work.
+-- 
+Michal Hocko
+SUSE Labs
