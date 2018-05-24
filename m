@@ -1,11 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162977-2-18433271098194165475
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527162922-2-328398225937045392
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enca, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527162976; b=IFQk3TdHmgSk64Za9kh9yQGiOnfK6lstwVaMLO/t5Wse/zlbiM
-    J1B6pbZksUy794HalKcYjYzjA6E36DDW32HiYY3yr7xCqjkeH6mqLeLrAnDe7qBO
-    ZuqktcLj74d1TR4AdTGI1njXRQNK7w6cgIFSDIY/u9ZAlFw2m+4JkJvsiEQHdWp1
-    QFXhF1qh9aYhkVgvxDtC909XsAWyD94/J0EG6hUHrw9gsd7l8JMVESQXHU/CcMaI
-    p2dCX8Gv3ze7jjyqVXIwvNWR+KA4e9v8AV9x9ANahxZqovOAzokxaO+7dvZSHvI+
-    9wiNLuHpJlLnnsfxD/RcjcpnXBepUenHyu1g==
+    1527162921; b=Ntt7aLC0yR/pIgNS5UVvKNy5bjFbvQZC8ldYl5ot0bMFSlI6aa
+    Tefs130RucS55w8Hncm0wqeNUSoAsiNkZ/XTKGZJzyyoQGSsSGsGPbhOi7W9q3n+
+    MNmUWPpZSwoFA035DAO+8VDaT7zVbHQ31SkgjWavv9w2IK+uNZ/Wfei2gjAzdchp
+    8ybvaTiu1u3ywHoONSkr0nRX8oF6cO5Un+/ziy+5myYDCbKVdE9pYl36V3HPfRpA
+    hgg3E1dNdpv9AMewILEzUEOFJ8elUYKY5CTe/80W1Bm+t7miRRkCHXE0aGvoeJWE
+    gIXq0Ybc498xJu8fEX0kzOBNuR/fCLgz/zXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527162976; bh=HHE8xK4G/N+e+/vMghEer8rN4WFrG3
-    oSUvX8JRLtciI=; b=LC6toggYWnzYlAtA9yNhgYCEP99AhdkKG59Me9dd6ylGEk
-    QpJAX64CMLyczcFOQmi5m33h6mXfj6lg1B8jJ7aJnLqWUB8zCwFLVQEyqnQbSFR/
-    ihNCT0PL8vk8+Il1w2DY+t23bGYDq2mrVhysXGDN9EfVhy+bja3mgO3QZwaxHRdV
-    xmg5uEMOmjXVH/Ak+BOsty2xnJn3wnfECkmUi0bZ2tt0a3TsLJT/ybTrk4kLze98
-    yYBZC9jlW59/jusTowdzdvkA7lG671bVU1mH9jHwnvdKkuLC79MGajrtHfxHBJMa
-    xu7BMujEI2It7vu2gy8MrYF9NX0MA8fiAf8Camww==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527162921; bh=zm6ue2deoqg1Rd3K0BYcLReJaJm+XH
+    Gm1oqfMCi0ATk=; b=JiPTXiXy24caNk/G4nJnz8+yFZpIDskJPFsnPu7c+b5TZQ
+    htIVW/oX+E1h9QOXsszWq0jE0hJ09n0ualiRF6fzrGFp5032Y1VXWLEdrjHSIfNu
+    mVyb7ofEt5x333Q6MqpPd/DZCiV40yflZop1iAdVomRc8EkYiesE1f4d34mDZV7L
+    TQxdfMWtDTTJdVkDKeQ60KN3pua0jH2tw1dXCd2AGd4mhQ5jZfBLrLFfuk6CFW+y
+    hp1xSw9zZgq9omYSH+uPjCnYBcDA7sOeqKdp5rSSSkqA/DyANWX26HE2myhW4vFp
+    xhiX9dy+qVNQmSoqu5ndbI6pYe1MmZcvDLY1+hxw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=nOLRQUsN x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=cfP/K2NF x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -46,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=nOLRQUsN x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=cfP/K2NF x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -65,33 +64,29 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEwh/6Zd0EmskUd1K9DWDIRon+UrriEBL+AtloJch9QbkAk8dvXG8WH30pamnewtwdElfA3hNCWzLKL4OMS5+cahtzQ7NQi7rn434k/ueI2aj2qKcgaa
-    jlSrkKUDTiyjW8fPaPMlKg+7NJu5Nx7WEJGPHVMDuRGVGn5VCTUa5aIe3aV6L+aWNEcTWRV0g8IZVMa7uvUHvMGYSgP2jZOG64YDy08mW0gWTWB4H8dCjLQg
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFYD3YfU61nj56xyHjE5rEWHPm/G+wSIHJ/kQ6DSWr8Wpa4QL7MgdSbTrdnQnKa9mDTK/xhFz9Q7p9a4rvyNdVeQpLNwrPQgEv6gRLOT312T/1BPrJCP
+    ullzNuosWccigCxctAMeX6SDi47KAWMlWYuOnTLmCBPAjPmHu5FjuUUIaQUPL1YF5jVa1mKkSsGqANmoJ3pEl7/Qi215+sbA7v4vbmhrgJ75HWp45eVtobfg
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=QqqX_mwiMbC-zsVjBVcA:9 a=QiZlzNXupzJW6JBh:21 a=kHhCiEMo-YytB8L6:21
-    a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=tccZ-iFfY1LpJLNyyLIA:9
+    a=UpibYsMeZQRFpsap:21 a=xaEH3FTrtNo7AcMh:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966850AbeEXLzo (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:55:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57058 "EHLO mail.kernel.org"
+        id S966637AbeEXLzU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:55:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966847AbeEXJpy (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:54 -0400
+        id S966438AbeEXJqF (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:46:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Craig Gallek <kraig@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 73/92] sock_diag: fix use-after-free read in __sk_free
-Date: Thu, 24 May 2018 11:38:50 +0200
-Message-Id: <20180524093206.323365754@linuxfoundation.org>
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 77/92] s390: move expoline assembler macros to a header
+Date: Thu, 24 May 2018 11:38:54 +0200
+Message-Id: <20180524093206.654319837@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -109,126 +104,404 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 9709020c86f6bf8439ca3effc58cfca49a5de192 ]
+[ Upstream commit 6dd85fbb87d1d6b87a3b1f02ca28d7b2abd2e7ba ]
 
-We must not call sock_diag_has_destroy_listeners(sk) on a socket
-that has no reference on net structure.
+To be able to use the expoline branches in different assembler
+files move the associated macros from entry.S to a new header
+nospec-insn.h.
 
-BUG: KASAN: use-after-free in sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
-BUG: KASAN: use-after-free in __sk_free+0x329/0x340 net/core/sock.c:1609
-Read of size 8 at addr ffff88018a02e3a0 by task swapper/1/0
+While we are at it make the macros a bit nicer to use.
 
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.17.0-rc5+ #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1b9/0x294 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
- sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
- __sk_free+0x329/0x340 net/core/sock.c:1609
- sk_free+0x42/0x50 net/core/sock.c:1623
- sock_put include/net/sock.h:1664 [inline]
- reqsk_free include/net/request_sock.h:116 [inline]
- reqsk_put include/net/request_sock.h:124 [inline]
- inet_csk_reqsk_queue_drop_and_put net/ipv4/inet_connection_sock.c:672 [inline]
- reqsk_timer_handler+0xe27/0x10e0 net/ipv4/inet_connection_sock.c:739
- call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1d1/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:525 [inline]
- smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
- </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
-RSP: 0018:ffff8801d9ae7c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1003b35cf8a RCX: 0000000000000000
-RDX: 1ffffffff11a30d0 RSI: 0000000000000001 RDI: ffffffff88d18680
-RBP: ffff8801d9ae7c38 R08: ffffed003b5e46c3 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8801d9ae7cf0 R14: ffffffff897bef20 R15: 0000000000000000
- arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
- default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
- arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
- default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
- cpuidle_idle_call kernel/sched/idle.c:153 [inline]
- do_idle+0x395/0x560 kernel/sched/idle.c:262
- cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
- start_secondary+0x426/0x5b0 arch/x86/kernel/smpboot.c:269
- secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
-Allocated by task 4557:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
- kmem_cache_zalloc include/linux/slab.h:691 [inline]
- net_alloc net/core/net_namespace.c:383 [inline]
- copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
- create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
- unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
- ksys_unshare+0x708/0xf90 kernel/fork.c:2408
- __do_sys_unshare kernel/fork.c:2476 [inline]
- __se_sys_unshare kernel/fork.c:2474 [inline]
- __x64_sys_unshare+0x31/0x40 kernel/fork.c:2474
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 69:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
- net_free net/core/net_namespace.c:399 [inline]
- net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
- net_drop_ns net/core/net_namespace.c:405 [inline]
- cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
- process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
- worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
- kthread+0x345/0x410 kernel/kthread.c:240
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-The buggy address belongs to the object at ffff88018a02c140
- which belongs to the cache net_namespace of size 8832
-The buggy address is located 8800 bytes inside of
- 8832-byte region [ffff88018a02c140, ffff88018a02e3c0)
-The buggy address belongs to the page:
-page:ffffea0006280b00 count:1 mapcount:0 mapping:ffff88018a02c140 index:0x0 compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff88018a02c140 0000000000000000 0000000100000001
-raw: ffffea00062a1320 ffffea0006268020 ffff8801d9bdde40 0000000000000000
-page dumped because: kasan: bad access detected
-
-Fixes: b922622ec6ef ("sock_diag: don't broadcast kernel sockets")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Craig Gallek <kraig@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org # 4.16
+Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/sock.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/include/asm/nospec-insn.h |  125 ++++++++++++++++++++++++++++++++++++
+ arch/s390/kernel/entry.S            |  105 ++++++------------------------
+ 2 files changed, 149 insertions(+), 81 deletions(-)
+ create mode 100644 arch/s390/include/asm/nospec-insn.h
 
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1474,7 +1474,7 @@ void sk_destruct(struct sock *sk)
+--- /dev/null
++++ b/arch/s390/include/asm/nospec-insn.h
+@@ -0,0 +1,125 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_S390_NOSPEC_ASM_H
++#define _ASM_S390_NOSPEC_ASM_H
++
++#ifdef __ASSEMBLY__
++
++#ifdef CONFIG_EXPOLINE
++
++/*
++ * The expoline macros are used to create thunks in the same format
++ * as gcc generates them. The 'comdat' section flag makes sure that
++ * the various thunks are merged into a single copy.
++ */
++	.macro __THUNK_PROLOG_NAME name
++	.pushsection .text.\name,"axG",@progbits,\name,comdat
++	.globl \name
++	.hidden \name
++	.type \name,@function
++\name:
++	.cfi_startproc
++	.endm
++
++	.macro __THUNK_EPILOG
++	.cfi_endproc
++	.popsection
++	.endm
++
++	.macro __THUNK_PROLOG_BR r1,r2
++	__THUNK_PROLOG_NAME __s390x_indirect_jump_r\r2\()use_r\r1
++	.endm
++
++	.macro __THUNK_BR r1,r2
++	jg	__s390x_indirect_jump_r\r2\()use_r\r1
++	.endm
++
++	.macro __THUNK_BRASL r1,r2,r3
++	brasl	\r1,__s390x_indirect_jump_r\r3\()use_r\r2
++	.endm
++
++	.macro	__DECODE_RR expand,reg,ruse
++	.set __decode_fail,1
++	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \reg,%r\r1
++	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \ruse,%r\r2
++	\expand \r1,\r2
++	.set __decode_fail,0
++	.endif
++	.endr
++	.endif
++	.endr
++	.if __decode_fail == 1
++	.error "__DECODE_RR failed"
++	.endif
++	.endm
++
++	.macro	__DECODE_RRR expand,rsave,rtarget,ruse
++	.set __decode_fail,1
++	.irp r1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \rsave,%r\r1
++	.irp r2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \rtarget,%r\r2
++	.irp r3,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
++	.ifc \ruse,%r\r3
++	\expand \r1,\r2,\r3
++	.set __decode_fail,0
++	.endif
++	.endr
++	.endif
++	.endr
++	.endif
++	.endr
++	.if __decode_fail == 1
++	.error "__DECODE_RRR failed"
++	.endif
++	.endm
++
++	.macro __THUNK_EX_BR reg,ruse
++#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
++	exrl	0,555f
++	j	.
++#else
++	larl	\ruse,555f
++	ex	0,0(\ruse)
++	j	.
++#endif
++555:	br	\reg
++	.endm
++
++	.macro GEN_BR_THUNK reg,ruse=%r1
++	__DECODE_RR __THUNK_PROLOG_BR,\reg,\ruse
++	__THUNK_EX_BR \reg,\ruse
++	__THUNK_EPILOG
++	.endm
++
++	.macro BR_EX reg,ruse=%r1
++557:	__DECODE_RR __THUNK_BR,\reg,\ruse
++	.pushsection .s390_indirect_branches,"a",@progbits
++	.long	557b-.
++	.popsection
++	.endm
++
++	.macro BASR_EX rsave,rtarget,ruse=%r1
++559:	__DECODE_RRR __THUNK_BRASL,\rsave,\rtarget,\ruse
++	.pushsection .s390_indirect_branches,"a",@progbits
++	.long	559b-.
++	.popsection
++	.endm
++
++#else
++	.macro GEN_BR_THUNK reg,ruse=%r1
++	.endm
++
++	 .macro BR_EX reg,ruse=%r1
++	br	\reg
++	.endm
++
++	.macro BASR_EX rsave,rtarget,ruse=%r1
++	basr	\rsave,\rtarget
++	.endm
++#endif
++
++#endif /* __ASSEMBLY__ */
++
++#endif /* _ASM_S390_NOSPEC_ASM_H */
+--- a/arch/s390/kernel/entry.S
++++ b/arch/s390/kernel/entry.S
+@@ -23,6 +23,7 @@
+ #include <asm/vx-insn.h>
+ #include <asm/setup.h>
+ #include <asm/nmi.h>
++#include <asm/nospec-insn.h>
  
- static void __sk_free(struct sock *sk)
- {
--	if (unlikely(sock_diag_has_destroy_listeners(sk) && sk->sk_net_refcnt))
-+	if (unlikely(sk->sk_net_refcnt && sock_diag_has_destroy_listeners(sk)))
- 		sock_diag_broadcast_destroy(sk);
- 	else
- 		sk_destruct(sk);
+ __PT_R0      =	__PT_GPRS
+ __PT_R1      =	__PT_GPRS + 8
+@@ -225,74 +226,16 @@ _PIF_WORK	= (_PIF_PER_TRAP)
+ 	.popsection
+ 	.endm
+ 
+-#ifdef CONFIG_EXPOLINE
+-
+-	.macro GEN_BR_THUNK name,reg,tmp
+-	.section .text.\name,"axG",@progbits,\name,comdat
+-	.globl \name
+-	.hidden \name
+-	.type \name,@function
+-\name:
+-	.cfi_startproc
+-#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
+-	exrl	0,0f
+-#else
+-	larl	\tmp,0f
+-	ex	0,0(\tmp)
+-#endif
+-	j	.
+-0:	br	\reg
+-	.cfi_endproc
+-	.endm
+-
+-	GEN_BR_THUNK __s390x_indirect_jump_r1use_r9,%r9,%r1
+-	GEN_BR_THUNK __s390x_indirect_jump_r1use_r14,%r14,%r1
+-	GEN_BR_THUNK __s390x_indirect_jump_r11use_r14,%r14,%r11
+-
+-	.macro BASR_R14_R9
+-0:	brasl	%r14,__s390x_indirect_jump_r1use_r9
+-	.pushsection .s390_indirect_branches,"a",@progbits
+-	.long	0b-.
+-	.popsection
+-	.endm
+-
+-	.macro BR_R1USE_R14
+-0:	jg	__s390x_indirect_jump_r1use_r14
+-	.pushsection .s390_indirect_branches,"a",@progbits
+-	.long	0b-.
+-	.popsection
+-	.endm
+-
+-	.macro BR_R11USE_R14
+-0:	jg	__s390x_indirect_jump_r11use_r14
+-	.pushsection .s390_indirect_branches,"a",@progbits
+-	.long	0b-.
+-	.popsection
+-	.endm
+-
+-#else	/* CONFIG_EXPOLINE */
+-
+-	.macro BASR_R14_R9
+-	basr	%r14,%r9
+-	.endm
+-
+-	.macro BR_R1USE_R14
+-	br	%r14
+-	.endm
+-
+-	.macro BR_R11USE_R14
+-	br	%r14
+-	.endm
+-
+-#endif /* CONFIG_EXPOLINE */
+-
++	GEN_BR_THUNK %r9
++	GEN_BR_THUNK %r14
++	GEN_BR_THUNK %r14,%r11
+ 
+ 	.section .kprobes.text, "ax"
+ 
+ ENTRY(__bpon)
+ 	.globl __bpon
+ 	BPON
+-	BR_R1USE_R14
++	BR_EX	%r14
+ 
+ /*
+  * Scheduler resume function, called by switch_to
+@@ -322,7 +265,7 @@ ENTRY(__switch_to)
+ 	TSTMSK	__LC_MACHINE_FLAGS,MACHINE_FLAG_LPP
+ 	jz	0f
+ 	.insn	s,0xb2800000,__LC_LPP		# set program parameter
+-0:	BR_R1USE_R14
++0:	BR_EX	%r14
+ 
+ .L__critical_start:
+ 
+@@ -388,7 +331,7 @@ sie_exit:
+ 	xgr	%r5,%r5
+ 	lmg	%r6,%r14,__SF_GPRS(%r15)	# restore kernel registers
+ 	lg	%r2,__SF_EMPTY+16(%r15)		# return exit reason code
+-	BR_R1USE_R14
++	BR_EX	%r14
+ .Lsie_fault:
+ 	lghi	%r14,-EFAULT
+ 	stg	%r14,__SF_EMPTY+16(%r15)	# set exit reason code
+@@ -445,7 +388,7 @@ ENTRY(system_call)
+ 	lgf	%r9,0(%r8,%r10)			# get system call add.
+ 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
+ 	jnz	.Lsysc_tracesys
+-	BASR_R14_R9				# call sys_xxxx
++	BASR_EX	%r14,%r9			# call sys_xxxx
+ 	stg	%r2,__PT_R2(%r11)		# store return value
+ 
+ .Lsysc_return:
+@@ -585,7 +528,7 @@ ENTRY(system_call)
+ 	lmg	%r3,%r7,__PT_R3(%r11)
+ 	stg	%r7,STACK_FRAME_OVERHEAD(%r15)
+ 	lg	%r2,__PT_ORIG_GPR2(%r11)
+-	BASR_R14_R9			# call sys_xxx
++	BASR_EX	%r14,%r9		# call sys_xxx
+ 	stg	%r2,__PT_R2(%r11)	# store return value
+ .Lsysc_tracenogo:
+ 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
+@@ -609,7 +552,7 @@ ENTRY(ret_from_fork)
+ 	lmg	%r9,%r10,__PT_R9(%r11)	# load gprs
+ ENTRY(kernel_thread_starter)
+ 	la	%r2,0(%r10)
+-	BASR_R14_R9
++	BASR_EX	%r14,%r9
+ 	j	.Lsysc_tracenogo
+ 
+ /*
+@@ -685,7 +628,7 @@ ENTRY(pgm_check_handler)
+ 	je	.Lpgm_return
+ 	lgf	%r9,0(%r10,%r1)		# load address of handler routine
+ 	lgr	%r2,%r11		# pass pointer to pt_regs
+-	BASR_R14_R9			# branch to interrupt-handler
++	BASR_EX	%r14,%r9		# branch to interrupt-handler
+ .Lpgm_return:
+ 	LOCKDEP_SYS_EXIT
+ 	tm	__PT_PSW+1(%r11),0x01	# returning to user ?
+@@ -962,7 +905,7 @@ ENTRY(psw_idle)
+ 	stpt	__TIMER_IDLE_ENTER(%r2)
+ .Lpsw_idle_lpsw:
+ 	lpswe	__SF_EMPTY(%r15)
+-	BR_R1USE_R14
++	BR_EX	%r14
+ .Lpsw_idle_end:
+ 
+ /*
+@@ -1007,7 +950,7 @@ ENTRY(save_fpu_regs)
+ .Lsave_fpu_regs_done:
+ 	oi	__LC_CPU_FLAGS+7,_CIF_FPU
+ .Lsave_fpu_regs_exit:
+-	BR_R1USE_R14
++	BR_EX	%r14
+ .Lsave_fpu_regs_end:
+ 
+ /*
+@@ -1054,7 +997,7 @@ load_fpu_regs:
+ .Lload_fpu_regs_done:
+ 	ni	__LC_CPU_FLAGS+7,255-_CIF_FPU
+ .Lload_fpu_regs_exit:
+-	BR_R1USE_R14
++	BR_EX	%r14
+ .Lload_fpu_regs_end:
+ 
+ .L__critical_end:
+@@ -1227,7 +1170,7 @@ cleanup_critical:
+ 	jl	0f
+ 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
+ 	jl	.Lcleanup_load_fpu_regs
+-0:	BR_R11USE_R14
++0:	BR_EX	%r14
+ 
+ 	.align	8
+ .Lcleanup_table:
+@@ -1257,7 +1200,7 @@ cleanup_critical:
+ 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
+ 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
+ 	larl	%r9,sie_exit			# skip forward to sie_exit
+-	BR_R11USE_R14
++	BR_EX	%r14
+ #endif
+ 
+ .Lcleanup_system_call:
+@@ -1315,7 +1258,7 @@ cleanup_critical:
+ 	stg	%r15,56(%r11)		# r15 stack pointer
+ 	# set new psw address and exit
+ 	larl	%r9,.Lsysc_do_svc
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ .Lcleanup_system_call_insn:
+ 	.quad	system_call
+ 	.quad	.Lsysc_stmg
+@@ -1325,7 +1268,7 @@ cleanup_critical:
+ 
+ .Lcleanup_sysc_tif:
+ 	larl	%r9,.Lsysc_tif
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ 
+ .Lcleanup_sysc_restore:
+ 	# check if stpt has been executed
+@@ -1342,14 +1285,14 @@ cleanup_critical:
+ 	mvc	0(64,%r11),__PT_R8(%r9)
+ 	lmg	%r0,%r7,__PT_R0(%r9)
+ 1:	lmg	%r8,%r9,__LC_RETURN_PSW
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ .Lcleanup_sysc_restore_insn:
+ 	.quad	.Lsysc_exit_timer
+ 	.quad	.Lsysc_done - 4
+ 
+ .Lcleanup_io_tif:
+ 	larl	%r9,.Lio_tif
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ 
+ .Lcleanup_io_restore:
+ 	# check if stpt has been executed
+@@ -1363,7 +1306,7 @@ cleanup_critical:
+ 	mvc	0(64,%r11),__PT_R8(%r9)
+ 	lmg	%r0,%r7,__PT_R0(%r9)
+ 1:	lmg	%r8,%r9,__LC_RETURN_PSW
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ .Lcleanup_io_restore_insn:
+ 	.quad	.Lio_exit_timer
+ 	.quad	.Lio_done - 4
+@@ -1415,17 +1358,17 @@ cleanup_critical:
+ 	# prepare return psw
+ 	nihh	%r8,0xfcfd		# clear irq & wait state bits
+ 	lg	%r9,48(%r11)		# return from psw_idle
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ .Lcleanup_idle_insn:
+ 	.quad	.Lpsw_idle_lpsw
+ 
+ .Lcleanup_save_fpu_regs:
+ 	larl	%r9,save_fpu_regs
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ 
+ .Lcleanup_load_fpu_regs:
+ 	larl	%r9,load_fpu_regs
+-	BR_R11USE_R14
++	BR_EX	%r14,%r11
+ 
+ /*
+  * Integer constants
