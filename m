@@ -1,84 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965753AbeEXJCy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:02:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55145 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965742AbeEXJCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:02:46 -0400
-Date: Thu, 24 May 2018 11:02:41 +0200
-From: Petr Tesarik <ptesarik@suse.cz>
-To: Dave Young <dyoung@redhat.com>
-Cc: dzickus@redhat.com, Neil Horman <nhorman@redhat.com>,
-        Tony Luck <tony.luck@intel.com>, bhe@redhat.com,
-        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180524110241.3f60997c@ezekiel.suse.cz>
-In-Reply-To: <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
-        <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
-        <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
-        <877enucqr0.fsf@xmission.com>
-        <20180523222236.5a96732e@ezekiel.suse.cz>
-        <20180524014905.GB2031@dhcp-128-65.nay.redhat.com>
-        <20180524085708.31aa311d@ezekiel.suse.cz>
-        <20180524072627.GA1940@dhcp-128-65.nay.redhat.com>
-Organization: SUSE Linux, s.r.o.
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S965771AbeEXJDH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:03:07 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37524 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965679AbeEXJDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 05:03:01 -0400
+X-Google-Smtp-Source: ADUXVKLdaAogmhKb6Y1vuhiRIE9WCOlfDOizQ+k1lVJGD4w9m/xijzHHCWu6CvZ/iTHYi7VttGbhehrSArs1/2k1D70=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180523231340.GN5488@localhost.localdomain>
+References: <00000000000007eb20056cbb245f@google.com> <20180521.140924.2255125685012645769.davem@davemloft.net>
+ <f8d0d282-1e75-d86a-8872-e32b57a6ec14@gmail.com> <20180523231340.GN5488@localhost.localdomain>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Thu, 24 May 2018 17:02:59 +0800
+Message-ID: <CADvbK_dMq0c9wBHoNbLgXj3ee-Ua1EQiqPgvYxX6pumCpO=ygw@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in corrupted
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com,
+        kuznet <kuznet@ms2.inr.ac.ru>, LKML <linux-kernel@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        yoshfuji <yoshfuji@linux-ipv6.org>, dsahern@kernel.org,
+        Roopa Prabhu <roopa@cumulusnetworks.com>, linux-sctp@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018 15:26:27 +0800
-Dave Young <dyoung@redhat.com> wrote:
-
-> On 05/24/18 at 08:57am, Petr Tesarik wrote:
->[...]
-> > What is "a very minimal initrd"? Last time I had to make a significant
-> > adjustment to the estimation for openSUSE, this was caused by growing
-> > user-space requirements (systemd in this case, but I don't want to
-> > start flamewars on that topic, please).  
-> 
-> Still I think we have agreement and same feeling about the userspace
-> memory requirement.   I think although it is hard, we have been still
-> trying to shrink the initramfs memory use.
-> 
-> Besides of distribution use,  why people can not use some minimal
-> initrd?  For example only a basic shell and some necessary tools and
-> basic storage eg. raw disks supported, and he/she can just collect the
-> panic infomation by himself in a shell.
-
-Again, I'm having trouble with the definition of a "minimal initrd" and
-also with the definition of a "workstation". I have already seen a sad
-case where kdump started going OOM after connecting a 4K monitor,
-because, well, it needed a bigger framebuffer...
-
-OTOH you wrote in another mail that RH has tested some values on a
-variety of hardware, so you seem to have a clue. Good for you. I still
-believe it is moving policy into the kernel.
-
-Based on past experience, I expect that certain users will argue that
-"crashkernel=auto" should work out of the box on their HPE Superdome
-with 600+ LUNs attached...
-
-As you wrote elsewhere in the thread:
-
-> I means this patch is not trying to force add a fixed value for crashkernel
-> in kernel code. It provides another way one can use on kernel build time
-> the value just works.
-
-I don't mind if it is added, although I don't find it very useful.
-
-Petr T
+On Thu, May 24, 2018 at 7:13 AM, Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+> On Mon, May 21, 2018 at 11:13:46AM -0700, Eric Dumazet wrote:
+>>
+>>
+>> On 05/21/2018 11:09 AM, David Miller wrote:
+>> > From: syzbot <syzbot+f116bc1994efe725d51b@syzkaller.appspotmail.com>
+>> > Date: Mon, 21 May 2018 11:05:02 -0700
+>> >
+>> >>  find_match+0x244/0x13a0 net/ipv6/route.c:691
+>> >>  find_rr_leaf net/ipv6/route.c:729 [inline]
+>> >>  rt6_select net/ipv6/route.c:779 [inline]
+>> >
+>> > Hmmm, endless loop in find_rr_leaf or similar?
+>> >
+>>
+>>
+>> I do not think so, this really looks like SCTP specific
+>> , we now have dozens of traces all sharing :
+>>
+>>  sctp_transport_route+0xad/0x450 net/sctp/transport.c:293
+>>  sctp_packet_config+0xb89/0xfd0 net/sctp/output.c:123
+>>  sctp_outq_flush+0x79c/0x4370 net/sctp/outqueue.c:894
+>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+>>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+>>
+>>
+>> Some kind of infinite loop.
+>>
+>> When the hrtimer fires, it can point to any code that sits below but does not necessarily have a bug.
+>
+> Agreed. Xin Long identified the root cause. syzkaller is setting too
+> aggressive parameters to SCTP RTO, leading to issues with the
+> heartbeat timer.
+Right, I will prepare a fix soon with your suggestion rto_min value "HZ/5"
+Thanks.
