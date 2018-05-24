@@ -1,46 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034579AbeEXTey (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 15:34:54 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:33633 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034514AbeEXTex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 15:34:53 -0400
-Date: Thu, 24 May 2018 22:34:49 +0300
-From: Baruch Siach <baruch@tkos.co.il>
-To: Ramon Fried <ramon.fried@gmail.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: uImage target support on arm64
-Message-ID: <20180524193449.jql27apudwaevwpf@tarshish>
-References: <CA+Kvs9=mgW4Z=UcBZZLL82fJ=c--OXF3=B2Zbho+CfMTr8Wk-Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+Kvs9=mgW4Z=UcBZZLL82fJ=c--OXF3=B2Zbho+CfMTr8Wk-Q@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+        id S1034601AbeEXTf1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 15:35:27 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:50230 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034514AbeEXTfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 15:35:23 -0400
+Date: Thu, 24 May 2018 15:35:19 -0400 (EDT)
+Message-Id: <20180524.153519.452683890193996505.davem@davemloft.net>
+To: jasowang@redhat.com
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] vhost: synchronize IOTLB message with dev cleanup
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1526990337-24892-1-git-send-email-jasowang@redhat.com>
+References: <1526990337-24892-1-git-send-email-jasowang@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ramon,
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 22 May 2018 19:58:57 +0800
 
-On Thu, May 24, 2018 at 10:05:15PM +0300, Ramon Fried wrote:
-> I've noticed that it's not supported.
-> Is it on purpose ?
+> DaeRyong Jeong reports a race between vhost_dev_cleanup() and
+> vhost_process_iotlb_msg():
+> 
+> Thread interleaving:
+> CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
+> (In the case of both VHOST_IOTLB_UPDATE and
+> VHOST_IOTLB_INVALIDATE)
+> =====						=====
+> 						vhost_umem_clean(dev->iotlb);
+> if (!dev->iotlb) {
+> 	        ret = -EFAULT;
+> 		        break;
+> }
+> 						dev->iotlb = NULL;
+> 
+> The reason is we don't synchronize between them, fixing by protecting
+> vhost_process_iotlb_msg() with dev mutex.
+> 
+> Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+> Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Yes. The 32bit load address in the uImage header in pretty limited when 
-applied to 64bit ARM64. Even for ARM zImage is the preferred kernel format for 
-quite some time now, since it allows flexible load address, as well as 
-multi-platform kernels.
-
-> If not I'll be happy to add support for: make uImage
-> for arm64 targets.
-
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+Michael, please review.
