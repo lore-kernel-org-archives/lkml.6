@@ -1,94 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969971AbeEXMS4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 08:18:56 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50605 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969905AbeEXMSq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 08:18:46 -0400
-X-Google-Smtp-Source: AB8JxZp9ZI1u8fWU4TCBCUgh301vWyFYmaVH1bACY8p5Gs2dAee70b4lz+LjxN4sRwHanKfRqwrBnw==
-Subject: Re: [PATCH v1] cpufreq: tegra20: Fix imbalanced clock enable count
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180522211420.2006-1-digetx@gmail.com>
- <20180523055817.subrv6oeckfecpcp@vireshk-i7>
- <db300fa3-ae83-059f-eae0-0808c3cb33fb@gmail.com>
- <2304436.qRMBXhMGsN@aspire.rjw.lan>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <3276b3e4-08c1-51d0-0aef-e349c3a77f07@gmail.com>
-Date: Thu, 24 May 2018 15:18:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S969983AbeEXMTC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 08:19:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43515 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S969964AbeEXMS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 08:18:57 -0400
+Date: Thu, 24 May 2018 14:18:53 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Huaisheng HS1 Ye <yehs1@lenovo.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        Ocean HY1 He <hehy1@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [External]  Re: [RFC PATCH v2 00/12] get rid of
+ GFP_ZONE_TABLE/BAD
+Message-ID: <20180524121853.GG20441@dhcp22.suse.cz>
+References: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
+ <20180522183728.GB20441@dhcp22.suse.cz>
+ <HK2PR03MB16847646E90A10E2D48CEA8E926B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <2304436.qRMBXhMGsN@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR03MB16847646E90A10E2D48CEA8E926B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.05.2018 12:36, Rafael J. Wysocki wrote:
-> On Wednesday, May 23, 2018 11:30:39 AM CEST Dmitry Osipenko wrote:
->> On 23.05.2018 08:58, Viresh Kumar wrote:
->>> On 23-05-18, 00:14, Dmitry Osipenko wrote:
->>>> Tegra20-cpufreq driver missed enabling the CPU clocks. This results in a
->>>> clock-enable refcount disbalance on PLL_P <-> PLL_X reparent, causing
->>>> PLL_X to get disabled while it shouldn't. Fix this by enabling the clocks
->>>> on the driver probe.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>
->>>> CPUFreq maintainers,
->>>>
->>>> Please take into account that this patch is made on top of my recent
->>>> series of patches [0] "Clean up Tegra20 cpufreq driver" that was fully
->>>> reviewed, but seems not applied yet. Let me know if you prefer to re-spin
->>>> the [0], including this patch into the series.
->>>>
->>>> [0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=45321
->>>
->>> This is already picked by Rafael and is sitting in pm/bleeding-edge
->>> branch. Should get merged into linux-next in a day or two.
->>
->> Neat, thank you for letting me know.
+On Wed 23-05-18 16:07:16, Huaisheng HS1 Ye wrote:
+> From: Michal Hocko [mailto:mhocko@kernel.org]
+> Sent: Wednesday, May 23, 2018 2:37 AM
+> > 
+> > On Mon 21-05-18 23:20:21, Huaisheng Ye wrote:
+> > > From: Huaisheng Ye <yehs1@lenovo.com>
+> > >
+> > > Replace GFP_ZONE_TABLE and GFP_ZONE_BAD with encoded zone number.
+> > >
+> > > Delete ___GFP_DMA, ___GFP_HIGHMEM and ___GFP_DMA32 from GFP bitmasks,
+> > > the bottom three bits of GFP mask is reserved for storing encoded
+> > > zone number.
+> > >
+> > > The encoding method is XOR. Get zone number from enum zone_type,
+> > > then encode the number with ZONE_NORMAL by XOR operation.
+> > > The goal is to make sure ZONE_NORMAL can be encoded to zero. So,
+> > > the compatibility can be guaranteed, such as GFP_KERNEL and GFP_ATOMIC
+> > > can be used as before.
+> > >
+> > > Reserve __GFP_MOVABLE in bit 3, so that it can continue to be used as
+> > > a flag. Same as before, __GFP_MOVABLE respresents movable migrate type
+> > > for ZONE_DMA, ZONE_DMA32, and ZONE_NORMAL. But when it is enabled with
+> > > __GFP_HIGHMEM, ZONE_MOVABLE shall be returned instead of ZONE_HIGHMEM.
+> > > __GFP_ZONE_MOVABLE is created to realize it.
+> > >
+> > > With this patch, just enabling __GFP_MOVABLE and __GFP_HIGHMEM is not
+> > > enough to get ZONE_MOVABLE from gfp_zone. All callers should use
+> > > GFP_HIGHUSER_MOVABLE or __GFP_ZONE_MOVABLE directly to achieve that.
+> > >
+> > > Decode zone number directly from bottom three bits of flags in gfp_zone.
+> > > The theory of encoding and decoding is,
+> > >         A ^ B ^ B = A
+> > 
+> > So why is this any better than the current code. Sure I am not a great
+> > fan of GFP_ZONE_TABLE because of how it is incomprehensible but this
+> > doesn't look too much better, yet we are losing a check for incompatible
+> > gfp flags. The diffstat looks really sound but then you just look and
+> > see that the large part is the comment that at least explained the gfp
+> > zone modifiers somehow and the debugging code. So what is the selling
+> > point?
 > 
-> It actually is there in my linux-next branch, but linux-next proper is not
-> taking new material this week AFAICS.
-
-I've found it in yours git repo, thank you.
-
-> You'll see this in linux-next on Monday, most probably.
+> Dear Michal,
 > 
+> Let me try to reply your questions.
+> Exactly, GFP_ZONE_TABLE is too complicated. I think there are two advantages
+> from the series of patches.
+> 
+> 1. XOR operation is simple and efficient, GFP_ZONE_TABLE/BAD need to do twice
+> shift operations, the first is for getting a zone_type and the second is for
+> checking the to be returned type is a correct or not. But with these patch XOR
+> operation just needs to use once. Because the bottom 3 bits of GFP bitmask have
+> been used to represent the encoded zone number, we can say there is no bad zone
+> number if all callers could use it without buggy way. Of course, the returned
+> zone type in gfp_zone needs to be no more than ZONE_MOVABLE.
 
-Yes, I noticed that linux-next stopped updating for awhile.
+But you are losing the ability to check for wrong usage. And it seems
+that the sad reality is that the existing code do screw up.
+
+> 2. GFP_ZONE_TABLE has limit with the amount of zone types. Current GFP_ZONE_TABLE
+> is 32 bits, in general, there are 4 zone types for most ofX86_64 platform, they
+> are ZONE_DMA, ZONE_DMA32, ZONE_NORMAL and ZONE_MOVABLE. If we want to expand the
+> amount of zone types to larger than 4, the zone shift should be 3.
+
+But we do not want to expand the number of zones IMHO. The existing zoo
+is quite a maint. pain.
+ 
+That being said. I am not saying that I am in love with GFP_ZONE_TABLE.
+It always makes my head explode when I look there but it seems to work
+with the current code and it is optimized for it. If you want to change
+this then you should make sure you describe reasons _why_ this is an
+improvement. And I would argue that "we can have more zones" is a
+relevant one.
+-- 
+Michal Hocko
+SUSE Labs
