@@ -1,72 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032397AbeEXSSo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 14:18:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47614 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030439AbeEXSSm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 14:18:42 -0400
-Date: Thu, 24 May 2018 19:18:34 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, boot-architecture@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init
- optional
-Message-ID: <20180524181834.GF4828@sirena.org.uk>
-References: <20180524175024.19874-1-robh@kernel.org>
- <20180524175024.19874-2-robh@kernel.org>
+        id S1032554AbeEXSUK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 14:20:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60321 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030261AbeEXSUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 14:20:08 -0400
+Date: Thu, 24 May 2018 11:19:55 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="27KoNqt0fmcl1zj/"
-Content-Disposition: inline
-In-Reply-To: <20180524175024.19874-2-robh@kernel.org>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: Nick Desaulniers <ndesaulniers@google.com>
+CC: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>
+From: hpa@zytor.com
+Message-ID: <57C635C3-716C-4FC3-90C7-E394AA7242BA@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On May 23, 2018 3:08:19 PM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote:
+>H. Peter,
+>
+>It was reported [0] that compiling the Linux kernel with Clang +
+>CC_STACKPROTECTOR_STRONG was causing a crash in native_save_fl(), due
+>to
+>how GCC does not emit a stack guard for static inline functions (see
+>Alistair's excellent report in [1]) but Clang does.
+>
+>When working with the LLVM release maintainers, Tom had suggested [2]
+>changing the inline assembly constraint in native_save_fl() from '=rm'
+>to
+>'=r', and Alistair had verified the disassembly:
+>
+>(good) code generated w/o -fstack-protector-strong:
+>
+>native_save_fl:
+>          pushfq
+>          popq    -8(%rsp)
+>          movq    -8(%rsp), %rax
+>          retq
+>
+>(good) code generated w/ =r input constraint:
+>
+>native_save_fl:
+>          pushfq
+>          popq    %rax
+>          retq
+>
+>(bad) code generated with -fstack-protector-strong:
+>
+>native_save_fl:
+>          subq    $24, %rsp
+>          movq    %fs:40, %rax
+>          movq    %rax, 16(%rsp)
+>          pushfq
+>          popq    8(%rsp)
+>          movq    8(%rsp), %rax
+>          movq    %fs:40, %rcx
+>          cmpq    16(%rsp), %rcx
+>          jne     .LBB0_2
+>          addq    $24, %rsp
+>          retq
+>.LBB0_2:
+>          callq   __stack_chk_fail
+>
+>It looks like the sugguestion is actually a revert of your commit:
+>ab94fcf528d127fcb490175512a8910f37e5b346:
+>x86: allow "=rm" in native_save_fl()
+>
+>It seemed like there was a question internally about why worry about
+>pop
+>adjusting the stack if the stack could be avoided altogether.
+>
+>I think Sedat can retest this, but I was curious as well about the
+>commit
+>message in ab94fcf528d: "[ Impact: performance ]", but Alistair's
+>analysis
+>of the disassembly seems to indicate there is no performance impact (in
+>fact, looks better as there's one less mov).
+>
+>Is there a reason we should not revert ab94fcf528d12, or maybe a better
+>approach?
+>
+>[0] https://lkml.org/lkml/2018/5/7/534
+>[1] https://bugs.llvm.org/show_bug.cgi?id=37512#c15
+>[2] https://bugs.llvm.org/show_bug.cgi?id=37512#c22
 
---27KoNqt0fmcl1zj/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+A stack canary on an *inlined* function? That's bound to break things elsewhere too sooner or later.
 
-On Thu, May 24, 2018 at 12:50:17PM -0500, Rob Herring wrote:
-
-> Subsystems or drivers may opt-in to this behavior by calling
-> driver_deferred_probe_check_init_done() instead of just returning
-> -EPROBE_DEFER. They may use additional information from DT or kernel's
-> config to decide whether to continue to defer probe or not.
-
-Should userspace have some involvement in this decision?  It knows if
-it's got any intention of loading modules for example.  Kernel config
-checks might be good enough, though it's going to be a pain to work out
-if the relevant driver is built as a module for example.
-
---27KoNqt0fmcl1zj/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsHAfkACgkQJNaLcl1U
-h9DOLgf9HKYqvzG7WS+j0s6svb/ahcIJabCWBi7iW7mF8DoFBL23J9ZAz2s4f6oq
-3HLOOmJUX7Wb4FXg88m/wScvuwHaLlOceSF32LCzajnDOrGDIXD+fXQVd+u4WlF5
-/tUYOwdzrEBF0YXZ+6uZx/5mUnDxOTanTMrxC0dvMVhfR1JZC17DUmUStv/WrCN6
-/gNyHoiqLQZCaxcPOyE6KcKSsbOKSu9KdUj/ZrITgwGZ/4fYO5lRY3NurNLqwmis
-Yrxvh6DKIyvLtd7m4ws5YV1RtrgvB9M6OJlXaUqhBEB/EBlQT3t8mGFR+Ho2OZU2
-ChA7CiU8Y6j/ZfC2tBt97Bp6j+qhPg==
-=IvVb
------END PGP SIGNATURE-----
-
---27KoNqt0fmcl1zj/--
+It feels like *once again* clang is asking for the Linux kernel to change to paper over technical or compatibility problems in clang/LLVM. This is not exactly helping the feeling that we should just rip out any and all clang hacks and call it a loss.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
