@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970393AbeEXOKh (ORCPT <rfc822;w@1wt.eu>);
+        id S1030267AbeEXOKo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:10:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:45460 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S970385AbeEXOKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 May 2018 10:10:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45430 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967947AbeEXOKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:10:34 -0400
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
@@ -16,44 +16,98 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Morten Rasmussen <morten.rasmussen@arm.com>,
         Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>
-Subject: [PATCH v3 0/2] Improve schedutil integration for FAIR tasks
-Date: Thu, 24 May 2018 15:10:21 +0100
-Message-Id: <20180524141023.13765-1-patrick.bellasi@arm.com>
+Subject: [PATCH v3 1/2] sched/cpufreq: always consider blocked FAIR utilization
+Date: Thu, 24 May 2018 15:10:22 +0100
+Message-Id: <20180524141023.13765-2-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180524141023.13765-1-patrick.bellasi@arm.com>
+References: <20180524141023.13765-1-patrick.bellasi@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is the (hopefully) final update of:
+Since the refactoring introduced by:
 
-   https://lkml.org/lkml/2018/5/11/319
-   20180511131509.16275-1-patrick.bellasi@arm.com
+   commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
 
-including only the first two patches of the original series, which have been
-already reviewed and acked by Viresh and Vincent.
+we aggregate FAIR utilization only if this class has runnable tasks.
+This was mainly due to avoid the risk to stay on an high frequency just
+because of the blocked utilization of a CPU not being properly decayed
+while the CPU was idle.
 
-The last patch has been removed from this series since, during the discussion,
-we agree that it's not completely fixing the problem it was addressing and we
-would like to explore a better and more complete solution. Thus, I'll follow up
-on a separated and dedicated series.
+However, since:
 
-Cheers Patrick
+   commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
 
+the FAIR blocked utilization is properly decayed also for IDLE CPUs.
+
+This allows us to use the FAIR blocked utilization as a safe mechanism
+to gracefully reduce the frequency only if no FAIR tasks show up on a
+CPU for a reasonable period of time.
+
+Moreover, we also reduce the frequency drops of CPUs running periodic
+tasks which, depending on the task periodicity and the time required
+for a frequency switch, was increasing the chances to introduce some
+undesirable performance variations.
+
+Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+
+---
 Changes in v3:
  - add "Tested-by" and "Acked-by" Vincent tags
 
 Changes in v2:
- - improve comment in enqueue_task_fair() (Peter)
- - add "Fixes" tag
  - add "Acked-by" Viresh tag
-
-Patrick Bellasi (2):
-  sched/cpufreq: always consider blocked FAIR utilization
-  sched/fair: util_est: update before schedutil
-
+---
  kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
- kernel/sched/fair.c              |  9 ++++++++-
- 2 files changed, 16 insertions(+), 10 deletions(-)
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index e13df951aca7..28592b62b1d5 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+ {
+ 	struct rq *rq = cpu_rq(sg_cpu->cpu);
+-	unsigned long util;
+ 
+-	if (rq->rt.rt_nr_running) {
+-		util = sg_cpu->max;
+-	} else {
+-		util = sg_cpu->util_dl;
+-		if (rq->cfs.h_nr_running)
+-			util += sg_cpu->util_cfs;
+-	}
++	if (rq->rt.rt_nr_running)
++		return sg_cpu->max;
+ 
+ 	/*
++	 * Utilization required by DEADLINE must always be granted while, for
++	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
++	 * gracefully reduce the frequency when no tasks show up for longer
++	 * periods of time.
++	 *
+ 	 * Ideally we would like to set util_dl as min/guaranteed freq and
+ 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+ 	 * ready for such an interface. So, we only do the latter for now.
+ 	 */
+-	return min(util, sg_cpu->max);
++	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+ }
+ 
+ static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
 -- 
 2.15.1
