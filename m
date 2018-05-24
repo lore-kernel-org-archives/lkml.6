@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1797295-1527158959-2-1243518943308794081
+X-Cyrus-Session-Id: sloti22d1t05-1797295-1527158757-2-12617101557537556577
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527158959; b=Se2r73gFIB6cIqepLODz1MjScHtNRgSTCDmUFO+qeSrV+KSOFU
-    BdVJXnzLYv0JNqij08TnUZ4Ct3EnoP6BQZJ5ak9ACDmv7DdjlOdNF953rXOPugc6
-    buccP2ZavDQ46U7qiiGK0wBbMn0J+T2C00nLrBvLBvGbki9t4uPNjBRK0zJfLvbR
-    rdqzipoXaKPiN7SrxyhQnJanfguKwlzCJwnx/pAfvq6lXOHTsEgVkY+gkN8397yV
-    EBln4gvC5TAf+2eq/Sl5TkCrqrxCxdVMEvUcjXLcKMMcAoPDOCxykXDIjgxuojcl
-    A4EuVGIJHka6IRMUmxnwlQZCQyIxAFQilo7w==
+    1527158756; b=koTzwqn4kxQr+Wi6KP/kzYlni0MArrIyrpilPN58wmw6tW2XnG
+    ugsyTQrLFGk04EzXqJHqr0gSd+/MdFUyVoGXoum928iLwdMpcS05sSZSPR5UbLzH
+    9VUxKbXY/j6szch420K1raHvVUNTgyRuruP2+n+kMy3CqEDU/RT4X3fBsYx54poR
+    ABK5x1sVX/BCIRl8tSj3gFwYPnWrGYyJxqYMpO9m6oGMdaQ6YDLK1ExWqVEzO/0F
+    0b7aHRa9bzhS2xWHjucnWDtF3XsUeK+IhqyXX3Z9x/CSCB94G5tncYhG3N+I7v6B
+    /WEDDQtl0bC4O8QMkyoYNTD8jkKUaK9LaJAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527158959; bh=6zMc5lU4cU131ij1jcfM4RpfDWWp7B
-    i5PCbVDgpQF2g=; b=FGxbuYf6GVG7kq5A16iyTavKeE4A4QZwUiz4CR7vac0ceJ
-    1yBNFKsB+juNgqb6z7vCpXiHGhlKXeHXrsRd3ltF3t3mhXQvOpE0Wmbndjz59KoT
-    BIjEnkoNSEZNJIvtbDxiXn8TFzzodBuEaIiYWzJu3GkSYsmnNg5LE5fkHcBX039h
-    G4tEWtyQo7qi5Fh4GI+UPSjj512OEMu7jE9X35afovec/yQ9ETCRo1lXsbr0VWkt
-    2KKgUbkfG/xzHYe5jwho5yzb+UepHrbPrP83O7Yxm/D4SAPtdqooX2TY6NhG3yn7
-    bA66oDD+5v6XKZ7YIwqN3Ny21HKY1lpGMdnz69rQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527158756; bh=Gyw4DoEoSOzto7u0WfbpHHsNDdgtXz
+    27gLd95fg1d0Q=; b=lGr8XJeY7blGiH5jmk3M0sdp7CrztyVPeJYuD+fGsiFUp9
+    gkd+aer5UMIULDADsCA/N9TGKttzabD6r30olgP9qM1A+d4D7oHdWelMSZx0kwfi
+    TPiYyoumKHJusRrQE2AMIoR5Di4SJKlfGeJHeRhbQK4V5wGzuLSa7x+HbKRPaWaR
+    kt7BkO+6tquNU3UbfL1QoUfr+PZNyB7UwH7yKcYnAac4FmtRjUf+xpKc8CB6dRUg
+    DuUkRxCkv3sVrDG2NhXSHhxPcrnt2yvZHmpfxFSMNgMugqg7XWQn1Laxe4jFSq+F
+    gcgu3kiwMfiYB2OeyGiqSnz7RCOyeQYr7KLotAOg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=EJF7aK7y x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=hp4jusLE x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=EJF7aK7y x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=hp4jusLE x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,37 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfANxYzHwD8wvaG5S4/OwvR86VTA5T/cEGCi7Qdk7PBJnwCxOeeDh4N18Ig0Hs2lrd6gds+6V/dgkS4SyNNxTjTQVXzGlnv2i649J3wj7noV784110Oh2
-    hj4I0xABNvxfM/gn5RRkMtTQs42q/pdgydKXUlTVYaWSOqq2pgQodkp+NrKAWvhZgoWpaiPPWgLkbRrjBf9JZtuAjZgsU7G861zayoLM0U2NFSgEpWK5I2qB
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAYycu5VpFBb1k9hooe4i7kmaV5fU3AYYtY+8QdbuapQZOy+UdrGrcY3CHvfsGsIcb72f55bKIS9LS1hwm4aae3nhJ3pbI+lHyadtlvKJFlBFKhWbwFO
+    wKc0fh2Raj95fhIxQs//zB9psHvCmz/e6f2xK2AbBT+yh/fpEl7Qo2ocsR0GTnLW6TmEcZBcI7m4nhY+8AmvQ/LO8LuZpe4/QajBXw35oB1yoJSw0CI8CWGZ
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=NCkSHYsgAAAA:8 a=JF9118EUAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=eB84WoSJkZp_eLTphZ8A:9 a=1g6M3btWGvSlz_2M:21
-    a=PRe3NNIFlJ3LI6ge:21 a=QEXdDO2ut3YA:10 a=AnMw66Xr5OuzjdxB04dI:22
-    a=xVlTc564ipvMDusKsbsT:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=c-n4J4-pAAAA:8 a=hD80L64hAAAA:8 a=AUd_NHdVAAAA:8
+    a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=JHlJ25WvbeUrrig5_RoA:9
+    a=AvCF-4WZKEV9qokC:21 a=v1TNNCpcVkbh9PmG:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=L0NDqeB7ZLmQzAogN4cw:22 a=NGXS0kB0m_rannUenejW:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032375AbeEXKqT (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:46:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37460 "EHLO mail.kernel.org"
+        id S1030559AbeEXKpm (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:45:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030500AbeEXJ5k (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:40 -0400
+        id S1030266AbeEXJ5y (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:57:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Gilbert <dgilbert@interlog.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Takao Orito <orito.takao@socionext.com>,
+        Fumihiro ATSUMI <atsumi@infinitegra.co.jp>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 116/165] scsi: core: Make SCSI Status CONDITION MET equivalent to GOOD
-Date: Thu, 24 May 2018 11:38:42 +0200
-Message-Id: <20180524093626.712206816@linuxfoundation.org>
+Subject: [PATCH 4.14 147/165] media: vb2: Fix videobuf2 to map correct area
+Date: Thu, 24 May 2018 11:39:13 +0200
+Message-Id: <20180524093628.023410816@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,60 +112,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Douglas Gilbert <dgilbert@interlog.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 1875ede02ed5e176a18dccbca84abc28d5b3e141 ]
+[ Upstream commit d13a0139d7874a0577b5955d6eed895517d23b72 ]
 
-The SCSI PRE-FETCH (10 or 16) command is present both on hard disks
-and some SSDs. It is useful when the address of the next block(s) to
-be read is known but it is not following the LBA of the current READ
-(so read-ahead won't help). It returns two "good" SCSI Status values.
-If the requested blocks have fitted (or will most likely fit (when
-the IMMED bit is set)) into the disk's cache, it returns CONDITION
-MET. If it didn't (or will not) fit then it returns GOOD status.
+Fixes vb2_vmalloc_get_userptr() to ioremap correct area.
+Since the current code does ioremap the page address, if the offset > 0,
+it does not do ioremap the last page and results in kernel panic.
 
-The goal of this patch is to stop the SCSI subsystem treating the
-CONDITION MET SCSI status as an error. The current state makes the
-PRE-FETCH command effectively unusable via pass-throughs.
+This fixes to pass the size + offset to ioremap so that ioremap
+can map correct area. Also, this uses __pfn_to_phys() to get the physical
+address of given PFN.
 
-Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Takao Orito <orito.takao@socionext.com>
+Reported-by: Fumihiro ATSUMI <atsumi@infinitegra.co.jp>
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_lib.c |   11 +++++++++++
- include/scsi/scsi.h     |    2 ++
- 2 files changed, 13 insertions(+)
+ drivers/media/v4l2-core/videobuf2-vmalloc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -857,6 +857,17 @@ void scsi_io_completion(struct scsi_cmnd
- 		/* for passthrough error may be set */
- 		error = BLK_STS_OK;
- 	}
-+	/*
-+	 * Another corner case: the SCSI status byte is non-zero but 'good'.
-+	 * Example: PRE-FETCH command returns SAM_STAT_CONDITION_MET when
-+	 * it is able to fit nominated LBs in its cache (and SAM_STAT_GOOD
-+	 * if it can't fit). Treat SAM_STAT_CONDITION_MET and the related
-+	 * intermediate statuses (both obsolete in SAM-4) as good.
-+	 */
-+	if (status_byte(result) && scsi_status_is_good(result)) {
-+		result = 0;
-+		error = BLK_STS_OK;
-+	}
- 
- 	/*
- 	 * special case: failed zero length commands always need to
---- a/include/scsi/scsi.h
-+++ b/include/scsi/scsi.h
-@@ -47,6 +47,8 @@ static inline int scsi_status_is_good(in
- 	 */
- 	status &= 0xfe;
- 	return ((status == SAM_STAT_GOOD) ||
-+		(status == SAM_STAT_CONDITION_MET) ||
-+		/* Next two "intermediate" statuses are obsolete in SAM-4 */
- 		(status == SAM_STAT_INTERMEDIATE) ||
- 		(status == SAM_STAT_INTERMEDIATE_CONDITION_MET) ||
- 		/* FIXME: this is obsolete in SAM-3 */
+--- a/drivers/media/v4l2-core/videobuf2-vmalloc.c
++++ b/drivers/media/v4l2-core/videobuf2-vmalloc.c
+@@ -106,7 +106,7 @@ static void *vb2_vmalloc_get_userptr(str
+ 			if (nums[i-1] + 1 != nums[i])
+ 				goto fail_map;
+ 		buf->vaddr = (__force void *)
+-				ioremap_nocache(nums[0] << PAGE_SHIFT, size);
++			ioremap_nocache(__pfn_to_phys(nums[0]), size + offset);
+ 	} else {
+ 		buf->vaddr = vm_map_ram(frame_vector_pages(vec), n_pages, -1,
+ 					PAGE_KERNEL);
