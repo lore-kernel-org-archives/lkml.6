@@ -1,121 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033535AbeEXQTH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:19:07 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:47408 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030620AbeEXQTD (ORCPT
+        id S1033563AbeEXQT0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:19:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44610 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033523AbeEXQTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:19:03 -0400
-Date: Thu, 24 May 2018 09:19:01 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v3 4/6] watchdog: sp805: set WDOG_HW_RUNNING when
- appropriate
-Message-ID: <20180524161901.GB28425@roeck-us.net>
-References: <1527120924-12131-1-git-send-email-ray.jui@broadcom.com>
- <1527120924-12131-5-git-send-email-ray.jui@broadcom.com>
+        Thu, 24 May 2018 12:19:06 -0400
+Date: Thu, 24 May 2018 17:19:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the netfilter-next tree with the
+ netfilter tree
+Message-ID: <20180524161902.GZ4828@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RGnAp+RkZMffi58C"
 Content-Disposition: inline
-In-Reply-To: <1527120924-12131-5-git-send-email-ray.jui@broadcom.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 05:15:22PM -0700, Ray Jui wrote:
-> If the watchdog hardware is already enabled during the boot process,
-> when the Linux watchdog driver loads, it should reset the watchdog and
-> tell the watchdog framework. As a result, ping can be generated from
-> the watchdog framework, until the userspace watchdog daemon takes over
-> control
-> 
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+--RGnAp+RkZMffi58C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have one question, though: Is it really correct that both
-INT_ENABLE _and_ RESET_ENABLE have to be set to enable the watdog ?
-What if only RESET_ENABLE is set ?
+Hi all,
 
-Thanks,
-Guenter
+Today's linux-next merge of the netfilter-next tree got a conflict in:
 
-> ---
->  drivers/watchdog/sp805_wdt.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-> index 1484609..d662a6f 100644
-> --- a/drivers/watchdog/sp805_wdt.c
-> +++ b/drivers/watchdog/sp805_wdt.c
-> @@ -42,6 +42,7 @@
->  	/* control register masks */
->  	#define	INT_ENABLE	(1 << 0)
->  	#define	RESET_ENABLE	(1 << 1)
-> +	#define	ENABLE_MASK	(INT_ENABLE | RESET_ENABLE)
->  #define WDTINTCLR		0x00C
->  #define WDTRIS			0x010
->  #define WDTMIS			0x014
-> @@ -74,6 +75,15 @@ module_param(nowayout, bool, 0);
->  MODULE_PARM_DESC(nowayout,
->  		"Set to 1 to keep watchdog running after device release");
->  
-> +/* returns true if wdt is running; otherwise returns false */
-> +static bool wdt_is_running(struct watchdog_device *wdd)
-> +{
-> +	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
-> +	u32 wdtcontrol = readl_relaxed(wdt->base + WDTCONTROL);
-> +
-> +	return (wdtcontrol & ENABLE_MASK) == ENABLE_MASK;
-> +}
-> +
->  /* This routine finds load value that will reset system in required timout */
->  static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
->  {
-> @@ -239,6 +249,15 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
->  	watchdog_init_timeout(&wdt->wdd, 0, &adev->dev);
->  	wdt_setload(&wdt->wdd, wdt->wdd.timeout);
->  
-> +	/*
-> +	 * If HW is already running, enable/reset the wdt and set the running
-> +	 * bit to tell the wdt subsystem
-> +	 */
-> +	if (wdt_is_running(&wdt->wdd)) {
-> +		wdt_enable(&wdt->wdd);
-> +		set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
-> +	}
-> +
->  	ret = watchdog_register_device(&wdt->wdd);
->  	if (ret) {
->  		dev_err(&adev->dev, "watchdog_register_device() failed: %d\n",
-> -- 
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+  net/netfilter/core.c
+
+between commit:
+
+  25fd386e0bc065849 ("netfilter: core: add missing __rcu annotation")
+
+=66rom the netfilter tree and commit:
+
+  2c205dd3981f79cef ("netfilter: add struct nf_nat_hook and use it")
+
+=66rom the netfilter-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc net/netfilter/core.c
+index 206fb2c4c319,e0ae4aae96f5..000000000000
+--- a/net/netfilter/core.c
++++ b/net/netfilter/core.c
+@@@ -580,13 -611,7 +611,8 @@@ const struct nf_conntrack_zone nf_ct_zo
+  EXPORT_SYMBOL_GPL(nf_ct_zone_dflt);
+  #endif /* CONFIG_NF_CONNTRACK */
+ =20
+- #ifdef CONFIG_NF_NAT_NEEDED
+- void (*nf_nat_decode_session_hook)(struct sk_buff *, struct flowi *);
+- EXPORT_SYMBOL(nf_nat_decode_session_hook);
+- #endif
+-=20
+ -static void __net_init __netfilter_net_init(struct nf_hook_entries **e, i=
+nt max)
+ +static void __net_init
+ +__netfilter_net_init(struct nf_hook_entries __rcu **e, int max)
+  {
+  	int h;
+ =20
+
+--RGnAp+RkZMffi58C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG5fUACgkQJNaLcl1U
+h9BN8wf+IVcMrcMA4ND9qi4tLCsDQTmXVIPSQuIpuM+UlT2LhYmrpiWdRn2Tw5Kj
+h4gD8YTMxERppNLkJbSl2yg/qcJ0Zo3vlnd1TM174g7ny4VD4w6PxYEqw49ovqLu
+y5w0i1YkHpbHhy4QvWWgsJwGIzeVHe4Ikv4DLxwHALMm1Nr/UnK0v3CM1UzQN8z4
+Rv3vYxWjWOdyv75tTZrqqMxk/QF2qU2Hlg5P5dFLXnNPQUUT30zcOguvUC4jTR1n
+Jg3Jsl+qzPcbf38kcQ+iMdR5x6p4NSW46iPRlFCUYq6Tx2U7W/iSm11UxDCCz8ab
+YMTCRdplwxsoqFspnFSuap9SFBD4MQ==
+=+lEi
+-----END PGP SIGNATURE-----
+
+--RGnAp+RkZMffi58C--
