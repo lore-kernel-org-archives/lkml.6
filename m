@@ -1,77 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968221AbeEXRng (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:43:36 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37757 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966744AbeEXRnf (ORCPT
+        id S968375AbeEXRoT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:44:19 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53552 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966744AbeEXRoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:43:35 -0400
-Date: Thu, 24 May 2018 19:43:25 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: imx: disable UCR4_OREN on shutdown
-Message-ID: <20180524174325.ym5k7uhco3ylslaa@pengutronix.de>
-References: <20180524173024.20936-1-sebastian.reichel@collabora.co.uk>
- <20180524173024.20936-3-sebastian.reichel@collabora.co.uk>
+        Thu, 24 May 2018 13:44:15 -0400
+Subject: Re: [PATCH v2] PCI: Expand documentation for pci_add_dma_alias()
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Doug Meyer <dmeyer@gigaio.com>
+References: <20180524173913.4506-1-logang@deltatee.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b2481367-3acc-4d54-bae7-cc27fb38232e@infradead.org>
+Date: Thu, 24 May 2018 10:44:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180524173024.20936-3-sebastian.reichel@collabora.co.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20180524173913.4506-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 07:30:24PM +0200, Sebastian Reichel wrote:
-> UCR4_OREN is (depending on the configuration) enabled in startup,
-> but is never disabled. Fix this by disabling it in shutdown.
+On 05/24/2018 10:39 AM, Logan Gunthorpe wrote:
+> Seeing there's been some confusion about the use of pci_add_dma_alias(),
+> expand the comment to describe why it must be called early and how
+> early it must be called.
 > 
-> Reported-by: Nandor Han <nandor.han@ge.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> Also, expand on the purpose of this function and common reasons it would
+> be used.
+> 
+> [The comment was reworded to some extent by Alex Williamson]
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: Doug Meyer <dmeyer@gigaio.com>
 > ---
->  drivers/tty/serial/imx.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index a0fc0327c8a5..31e1df8a8d29 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -1422,7 +1422,7 @@ static void imx_uart_shutdown(struct uart_port *port)
+> v2: Reworked the patch with Alex's suggested wording.
+> 
+>   drivers/pci/pci.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index dbfe7c4f3776..1c0c1ea23b90 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+>   * @dev: the PCI device for which alias is added
+>   * @devfn: alias slot and function
+>   *
+> - * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
+> - * It should be called early, preferably as PCI fixup header quirk.
+> + * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
+> + * which is used to program permissible BDF source addresses for DMA
+
+It took me a few seconds to decode BDF.  FWIW, I would prefer to see
+bus-devfn or bus-dev-fn or bus-dev-func or bus-dev-function.
+
+> + * requests in an IOMMU. These aliases factor into IOMMU group creation
+> + * and are useful for devices generating DMA requests beyond or different
+> + * from their logical bus devfn. Examples include device quirks where the
+
+                         ^ Here it's "bus devfn."
+
+> + * device simply uses the wronge devfn, as well as non-transparent bridges
+
+                             wrong
+
+> + * where the alias may be a proxy for devices in another domain.
+> + *
+> + * IOMMU group creation is performed during device discovery or addition,
+> + * prior to any potential DMA mapping and therefore prior to driver probing
+> + * (especially for userspace assigned devices where IOMMU group definition
+> + * cannot be left as a userspace activity). DMA aliases should therefore
+> + * be configured via quirks, such as the PCI fixup header quirk.
+>   */
+>  void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
 >  {
->  	struct imx_port *sport = (struct imx_port *)port;
->  	unsigned long flags;
-> -	u32 ucr1, ucr2;
-> +	u32 ucr1, ucr2, ucr4;
->  
->  	if (sport->dma_is_enabled) {
->  		dmaengine_terminate_sync(sport->dma_chan_tx);
-> @@ -1452,6 +1452,10 @@ static void imx_uart_shutdown(struct uart_port *port)
->  	ucr2 = imx_uart_readl(sport, UCR2);
->  	ucr2 &= ~(UCR2_TXEN | UCR2_ATEN);
->  	imx_uart_writel(sport, ucr2, UCR2);
-> +
-> +	ucr4 = imx_uart_readl(sport, UCR4);
-> +	ucr4 &= ~UCR4_OREN;
-> +	imx_uart_writel(sport, ucr4, UCR4);
+> --
+> 2.11.0
+> 
 
-Not sure this is necessary, but I assume it cannot hurt either, so
-
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-Best regards
-Uwe
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+~Randy
