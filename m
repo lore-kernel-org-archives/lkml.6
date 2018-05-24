@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160925-2-12656880294959275071
+X-Cyrus-Session-Id: sloti22d1t05-1817771-1527160905-2-16352282769479123350
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160925; b=WZRyQcebW2Fvzy38hVRyGpTGMaiKB7bpfA5LRP5CW/MpOiQr9M
-    JX4xZbuGXJF9f+ADdsNeUbR0GG2OqJPArEM3Gy1F0FXU3cXMqHEiiMXWcNgFM66y
-    PfYVu3X1ViZ8X5dWP+iRa4rM9Oewd1piqDtzPmGtwsAbOFYSqseDG5CthK8A33z/
-    4+nFTb8+aoBGv8Zct786AdgjQZfTsY+lw304WEtu5MDaslYKS9nPDKArbh7i3vdc
-    OMe3+ppkc5l+eLVMpaZ9C4wWQSOeaeic/JpZVE6RqMEEx4vfcVmEquYc5xGS51Jv
-    hjxPV5HxvwJe/Z6iZd7bXXB9XTbqBnvPZMPg==
+    1527160902; b=KmRFjoLYg2Ts4HJ8kiM2zUyl2xJrbxWoD3EQE8OgNN7qoerak8
+    5XPEkmaC0MUwmdO9fxRPnFTYcH4pGJLB5YnVS3ZkWkVBpUdpEYDZvonmJdT32Gju
+    mNhz/ms/b8ixpw0QFC5e20EqtMWcMkI9JV/FVnKB8GvY8BI/x/bKJhV/UW4Kt7KL
+    bxp17UkOqrmkqrE7HRI5DSsIlinrF37G2R2rHzw23kW1oZeWeSEETcQj67ke1U4E
+    V9/g8nRKHQ/3HUgpt55JlVr0icA3y/GLHsOBnZ8yFfP1Qjz1gQNO2nbHzHoPj/Be
+    ytk55zUCj83yvD+WEWb2yiJBg96XWH1bLHMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160925; bh=mzt1xezCEISljU65SWrBJBTZbIVeVh
-    Tu24L+Ywo9iHc=; b=W3RAcd+UgZHUf6oZbSNgA/9fFPa4hm6S17uo2eskxl4Pky
-    NW3zCQcTdeeZEty/4jDDHjGvZRkzbOESCeIY/jcBYc4+h8KkMX8i9Oxz3ZflhQhr
-    I16J9T4+cid0lOv180nbWB34VhYKbWJq3D3ADeVZ6TUvXJ1REnr3bza8Psqfh/X2
-    QC/ot8xZGhyLd0EgwsBAkSKGq7QP3ptKO2MTatAcSNUhZNMNQsAzeEZr6HpEVP6T
-    +oz4QgV33juMs/LFs9NY28N/J5vBoswYyawRts+z2Ipsw9vgt1NIJ96rEwADCvkE
-    Pv3lp52sj4k3Xajh4vZ+URJjCDatonQAu6pChWYA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527160902; bh=4AzFbzShjWxXIr+xz1CzXQuS32FY2p
+    tSVg0d4ncYSeQ=; b=g/AvGgGn5uQyLOng2aIOgvAZQH4iUOh6anon6Ob2iXdsOJ
+    T6POnXe9vqWHwlMwsB86DugS4V5fd81ZnEnQ/VZRKTsQbr8p1AWEBK8Fy7qREVWe
+    oWWpIJDjCAsb+nMkcfpR/Mkm8TAAyOBhrEQVD0dmTvL1Lsrczal4b3Q4arExABYl
+    rskzwPrbeiJD19ICPv154LEawsZA6dQcCCheuSkJh19RKU5MJFXZxcdnwYRpw30a
+    CVWVOzU595VRNU5D35favqvEc8TrLcQv+dXFa3AEsuxLeI98PNZrozwlaaKI0FJm
+    xiV9zh5V07AGJUN715iunm01mPnDAeF+uvHFWS5A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=13jKpPnJ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=oyF0OOw5 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=13jKpPnJ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=oyF0OOw5 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,31 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGAGUcVC4Nur5MfnKlMXwiGYtMAMCQji1FUyi+Nr6MPMe1zC9lk9UwtRD+laxG3I92yV/37lNZuDJjq5BxDMIMdJMRZPooysv/IRX6RT1Jr0lGc915aN
-    gSN7ie/8DS2FknVmkDlJ8vkpZxYkyK3XeHk4cbljzNbBCmQYK4WCOpEv7jolC0tIeyokLviPYP82LQoe4AhNtuETMYIjWSfjXdVtDpYyIw0NYm6LzTvFD+zn
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCtrK9GRP1Y8LVwUwRPUnKhRA0PRt/YIH5R2h8X676QN2vPNUDkN//RtbG/C203+EuV7zzzg3ExC6N/v4Jrq8Mw2mS5P8Nr/jjjofpue8MqbjFA1Vd+z
+    FocbLDPYV6Y6+BKKgJj89gzl1rKonB4L87pofXIFJf7gh6p0hPWmpE1OfhcDdktf1RJKWkzobgNXprfEwfRaRDCTBDwJij8549wIO2ZjR8QKemc9+9BK8DiL
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
     a=jZVsG21pAAAA:8 a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=qZl5N7MTnlUFlRfjbUMA:9 a=i0FrSAJdI9wZdYGY:21 a=FJIQxi0y3wYaM5T0:21
+    a=YSHZD6xh8tmSFnXFdYoA:9 a=gZeOysnXQ2YlLyDJ:21 a=0AaE3wAFbN0YhjJx:21
     a=QEXdDO2ut3YA:10 a=3Sh2lD0sZASs_lUdrUhf:22 a=y1Q9-5lHfBjTkpIzbSAN:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967877AbeEXLVs (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:21:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51752 "EHLO mail.kernel.org"
+        id S967932AbeEXLVZ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:21:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967854AbeEXJwY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:52:24 -0400
+        id S967877AbeEXJwd (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:52:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 027/165] hv_netvsc: disable NAPI before channel close
-Date: Thu, 24 May 2018 11:37:13 +0200
-Message-Id: <20180524093623.079465971@linuxfoundation.org>
+Subject: [PATCH 4.14 030/165] hv_netvsc: common detach logic
+Date: Thu, 24 May 2018 11:37:16 +0200
+Message-Id: <20180524093623.195821145@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -108,40 +108,555 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Commit 8348e0460ab1473f06c8b824699dd2eed3c1979d upstream. ]
+[ Commit 7b2ee50c0cd513a176a26a71f2989facdd75bfea upstream. ]
 
-This makes sure that no CPU is still process packets when
-the channel is closed.
+Make common function for detaching internals of device
+during changes to MTU and RSS. Make sure no more packets
+are transmitted and all packets have been received before
+doing device teardown.
 
-Fixes: 76bb5db5c749 ("netvsc: fix use after free on module removal")
+Change the wait logic to be common and use usleep_range().
+
+Changes transmit enabling logic so that transmit queues are disabled
+during the period when lower device is being changed. And enabled
+only after sub channels are setup. This avoids issue where it could
+be that a packet was being sent while subchannel was not initialized.
+
+Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
 Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/hyperv/hyperv_net.h   |    1 
+ drivers/net/hyperv/netvsc.c       |   21 +-
+ drivers/net/hyperv/netvsc_drv.c   |  280 +++++++++++++++++++++-----------------
+ drivers/net/hyperv/rndis_filter.c |   15 --
+ 4 files changed, 175 insertions(+), 142 deletions(-)
 
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -208,7 +208,6 @@ void netvsc_channel_cb(void *context);
+ int netvsc_poll(struct napi_struct *napi, int budget);
+ 
+ void rndis_set_subchannel(struct work_struct *w);
+-bool rndis_filter_opened(const struct netvsc_device *nvdev);
+ int rndis_filter_open(struct netvsc_device *nvdev);
+ int rndis_filter_close(struct netvsc_device *nvdev);
+ struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
 --- a/drivers/net/hyperv/netvsc.c
 +++ b/drivers/net/hyperv/netvsc.c
-@@ -567,6 +567,10 @@ void netvsc_device_remove(struct hv_devi
+@@ -554,8 +554,6 @@ void netvsc_device_remove(struct hv_devi
+ 		= rtnl_dereference(net_device_ctx->nvdev);
+ 	int i;
+ 
+-	cancel_work_sync(&net_device->subchan_work);
+-
+ 	netvsc_revoke_buf(device, net_device);
  
  	RCU_INIT_POINTER(net_device_ctx->nvdev, NULL);
+@@ -644,13 +642,18 @@ static void netvsc_send_tx_complete(stru
+ 	queue_sends =
+ 		atomic_dec_return(&net_device->chan_table[q_idx].queue_sends);
  
-+	/* And disassociate NAPI context from device */
-+	for (i = 0; i < net_device->num_chn; i++)
-+		netif_napi_del(&net_device->chan_table[i].napi);
+-	if (net_device->destroy && queue_sends == 0)
+-		wake_up(&net_device->wait_drain);
+-
+-	if (netif_tx_queue_stopped(netdev_get_tx_queue(ndev, q_idx)) &&
+-	    (hv_ringbuf_avail_percent(&channel->outbound) > RING_AVAIL_PERCENT_HIWATER ||
+-	     queue_sends < 1))
+-		netif_tx_wake_queue(netdev_get_tx_queue(ndev, q_idx));
++	if (unlikely(net_device->destroy)) {
++		if (queue_sends == 0)
++			wake_up(&net_device->wait_drain);
++	} else {
++		struct netdev_queue *txq = netdev_get_tx_queue(ndev, q_idx);
++
++		if (netif_tx_queue_stopped(txq) &&
++		    (hv_ringbuf_avail_percent(&channel->outbound) > RING_AVAIL_PERCENT_HIWATER ||
++		     queue_sends < 1)) {
++			netif_tx_wake_queue(txq);
++		}
++	}
+ }
+ 
+ static void netvsc_send_completion(struct netvsc_device *net_device,
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -45,7 +45,10 @@
+ 
+ #include "hyperv_net.h"
+ 
+-#define RING_SIZE_MIN		64
++#define RING_SIZE_MIN	64
++#define RETRY_US_LO	5000
++#define RETRY_US_HI	10000
++#define RETRY_MAX	2000	/* >10 sec */
+ 
+ #define LINKCHANGE_INT (2 * HZ)
+ #define VF_TAKEOVER_INT (HZ / 10)
+@@ -89,10 +92,8 @@ static int netvsc_open(struct net_device
+ 	}
+ 
+ 	rdev = nvdev->extension;
+-	if (!rdev->link_state) {
++	if (!rdev->link_state)
+ 		netif_carrier_on(net);
+-		netif_tx_wake_all_queues(net);
+-	}
+ 
+ 	if (vf_netdev) {
+ 		/* Setting synthetic device up transparently sets
+@@ -108,36 +109,25 @@ static int netvsc_open(struct net_device
+ 	return 0;
+ }
+ 
+-static int netvsc_close(struct net_device *net)
++static int netvsc_wait_until_empty(struct netvsc_device *nvdev)
+ {
+-	struct net_device_context *net_device_ctx = netdev_priv(net);
+-	struct net_device *vf_netdev
+-		= rtnl_dereference(net_device_ctx->vf_netdev);
+-	struct netvsc_device *nvdev = rtnl_dereference(net_device_ctx->nvdev);
+-	int ret = 0;
+-	u32 aread, i, msec = 10, retry = 0, retry_max = 20;
+-	struct vmbus_channel *chn;
+-
+-	netif_tx_disable(net);
+-
+-	/* No need to close rndis filter if it is removed already */
+-	if (!nvdev)
+-		goto out;
+-
+-	ret = rndis_filter_close(nvdev);
+-	if (ret != 0) {
+-		netdev_err(net, "unable to close device (ret %d).\n", ret);
+-		return ret;
+-	}
++	unsigned int retry = 0;
++	int i;
+ 
+ 	/* Ensure pending bytes in ring are read */
+-	while (true) {
+-		aread = 0;
++	for (;;) {
++		u32 aread = 0;
++
+ 		for (i = 0; i < nvdev->num_chn; i++) {
+-			chn = nvdev->chan_table[i].channel;
++			struct vmbus_channel *chn
++				= nvdev->chan_table[i].channel;
++
+ 			if (!chn)
+ 				continue;
+ 
++			/* make sure receive not running now */
++			napi_synchronize(&nvdev->chan_table[i].napi);
++
+ 			aread = hv_get_bytes_to_read(&chn->inbound);
+ 			if (aread)
+ 				break;
+@@ -147,22 +137,40 @@ static int netvsc_close(struct net_devic
+ 				break;
+ 		}
+ 
+-		retry++;
+-		if (retry > retry_max || aread == 0)
+-			break;
++		if (aread == 0)
++			return 0;
+ 
+-		msleep(msec);
++		if (++retry > RETRY_MAX)
++			return -ETIMEDOUT;
+ 
+-		if (msec < 1000)
+-			msec *= 2;
++		usleep_range(RETRY_US_LO, RETRY_US_HI);
+ 	}
++}
+ 
+-	if (aread) {
+-		netdev_err(net, "Ring buffer not empty after closing rndis\n");
+-		ret = -ETIMEDOUT;
++static int netvsc_close(struct net_device *net)
++{
++	struct net_device_context *net_device_ctx = netdev_priv(net);
++	struct net_device *vf_netdev
++		= rtnl_dereference(net_device_ctx->vf_netdev);
++	struct netvsc_device *nvdev = rtnl_dereference(net_device_ctx->nvdev);
++	int ret;
++
++	netif_tx_disable(net);
++
++	/* No need to close rndis filter if it is removed already */
++	if (!nvdev)
++		return 0;
++
++	ret = rndis_filter_close(nvdev);
++	if (ret != 0) {
++		netdev_err(net, "unable to close device (ret %d).\n", ret);
++		return ret;
+ 	}
+ 
+-out:
++	ret = netvsc_wait_until_empty(nvdev);
++	if (ret)
++		netdev_err(net, "Ring buffer not empty after closing rndis\n");
++
+ 	if (vf_netdev)
+ 		dev_close(vf_netdev);
+ 
+@@ -820,16 +828,81 @@ static void netvsc_get_channels(struct n
+ 	}
+ }
+ 
++static int netvsc_detach(struct net_device *ndev,
++			 struct netvsc_device *nvdev)
++{
++	struct net_device_context *ndev_ctx = netdev_priv(ndev);
++	struct hv_device *hdev = ndev_ctx->device_ctx;
++	int ret;
++
++	/* Don't try continuing to try and setup sub channels */
++	if (cancel_work_sync(&nvdev->subchan_work))
++		nvdev->num_chn = 1;
++
++	/* If device was up (receiving) then shutdown */
++	if (netif_running(ndev)) {
++		netif_tx_disable(ndev);
++
++		ret = rndis_filter_close(nvdev);
++		if (ret) {
++			netdev_err(ndev,
++				   "unable to close device (ret %d).\n", ret);
++			return ret;
++		}
++
++		ret = netvsc_wait_until_empty(nvdev);
++		if (ret) {
++			netdev_err(ndev,
++				   "Ring buffer not empty after closing rndis\n");
++			return ret;
++		}
++	}
++
++	netif_device_detach(ndev);
++
++	rndis_filter_device_remove(hdev, nvdev);
++
++	return 0;
++}
++
++static int netvsc_attach(struct net_device *ndev,
++			 struct netvsc_device_info *dev_info)
++{
++	struct net_device_context *ndev_ctx = netdev_priv(ndev);
++	struct hv_device *hdev = ndev_ctx->device_ctx;
++	struct netvsc_device *nvdev;
++	struct rndis_device *rdev;
++	int ret;
++
++	nvdev = rndis_filter_device_add(hdev, dev_info);
++	if (IS_ERR(nvdev))
++		return PTR_ERR(nvdev);
++
++	/* Note: enable and attach happen when sub-channels setup */
++
++	netif_carrier_off(ndev);
++
++	if (netif_running(ndev)) {
++		ret = rndis_filter_open(nvdev);
++		if (ret)
++			return ret;
++
++		rdev = nvdev->extension;
++		if (!rdev->link_state)
++			netif_carrier_on(ndev);
++	}
++
++	return 0;
++}
++
+ static int netvsc_set_channels(struct net_device *net,
+ 			       struct ethtool_channels *channels)
+ {
+ 	struct net_device_context *net_device_ctx = netdev_priv(net);
+-	struct hv_device *dev = net_device_ctx->device_ctx;
+ 	struct netvsc_device *nvdev = rtnl_dereference(net_device_ctx->nvdev);
+ 	unsigned int orig, count = channels->combined_count;
+ 	struct netvsc_device_info device_info;
+-	bool was_opened;
+-	int ret = 0;
++	int ret;
+ 
+ 	/* We do not support separate count for rx, tx, or other */
+ 	if (count == 0 ||
+@@ -846,9 +919,6 @@ static int netvsc_set_channels(struct ne
+ 		return -EINVAL;
+ 
+ 	orig = nvdev->num_chn;
+-	was_opened = rndis_filter_opened(nvdev);
+-	if (was_opened)
+-		rndis_filter_close(nvdev);
+ 
+ 	memset(&device_info, 0, sizeof(device_info));
+ 	device_info.num_chn = count;
+@@ -858,28 +928,17 @@ static int netvsc_set_channels(struct ne
+ 	device_info.recv_sections = nvdev->recv_section_cnt;
+ 	device_info.recv_section_size = nvdev->recv_section_size;
+ 
+-	rndis_filter_device_remove(dev, nvdev);
++	ret = netvsc_detach(net, nvdev);
++	if (ret)
++		return ret;
+ 
+-	nvdev = rndis_filter_device_add(dev, &device_info);
+-	if (IS_ERR(nvdev)) {
+-		ret = PTR_ERR(nvdev);
++	ret = netvsc_attach(net, &device_info);
++	if (ret) {
+ 		device_info.num_chn = orig;
+-		nvdev = rndis_filter_device_add(dev, &device_info);
+-
+-		if (IS_ERR(nvdev)) {
+-			netdev_err(net, "restoring channel setting failed: %ld\n",
+-				   PTR_ERR(nvdev));
+-			return ret;
+-		}
++		if (netvsc_attach(net, &device_info))
++			netdev_err(net, "restoring channel setting failed\n");
+ 	}
+ 
+-	if (was_opened)
+-		rndis_filter_open(nvdev);
+-
+-	/* We may have missed link change notifications */
+-	net_device_ctx->last_reconfig = 0;
+-	schedule_delayed_work(&net_device_ctx->dwork, 0);
+-
+ 	return ret;
+ }
+ 
+@@ -946,10 +1005,8 @@ static int netvsc_change_mtu(struct net_
+ 	struct net_device_context *ndevctx = netdev_priv(ndev);
+ 	struct net_device *vf_netdev = rtnl_dereference(ndevctx->vf_netdev);
+ 	struct netvsc_device *nvdev = rtnl_dereference(ndevctx->nvdev);
+-	struct hv_device *hdev = ndevctx->device_ctx;
+ 	int orig_mtu = ndev->mtu;
+ 	struct netvsc_device_info device_info;
+-	bool was_opened;
+ 	int ret = 0;
+ 
+ 	if (!nvdev || nvdev->destroy)
+@@ -962,11 +1019,6 @@ static int netvsc_change_mtu(struct net_
+ 			return ret;
+ 	}
+ 
+-	netif_device_detach(ndev);
+-	was_opened = rndis_filter_opened(nvdev);
+-	if (was_opened)
+-		rndis_filter_close(nvdev);
+-
+ 	memset(&device_info, 0, sizeof(device_info));
+ 	device_info.ring_size = ring_size;
+ 	device_info.num_chn = nvdev->num_chn;
+@@ -975,35 +1027,27 @@ static int netvsc_change_mtu(struct net_
+ 	device_info.recv_sections = nvdev->recv_section_cnt;
+ 	device_info.recv_section_size = nvdev->recv_section_size;
+ 
+-	rndis_filter_device_remove(hdev, nvdev);
++	ret = netvsc_detach(ndev, nvdev);
++	if (ret)
++		goto rollback_vf;
+ 
+ 	ndev->mtu = mtu;
+ 
+-	nvdev = rndis_filter_device_add(hdev, &device_info);
+-	if (IS_ERR(nvdev)) {
+-		ret = PTR_ERR(nvdev);
+-
+-		/* Attempt rollback to original MTU */
+-		ndev->mtu = orig_mtu;
+-		nvdev = rndis_filter_device_add(hdev, &device_info);
+-
+-		if (vf_netdev)
+-			dev_set_mtu(vf_netdev, orig_mtu);
+-
+-		if (IS_ERR(nvdev)) {
+-			netdev_err(ndev, "restoring mtu failed: %ld\n",
+-				   PTR_ERR(nvdev));
+-			return ret;
+-		}
+-	}
+-
+-	if (was_opened)
+-		rndis_filter_open(nvdev);
++	ret = netvsc_attach(ndev, &device_info);
++	if (ret)
++		goto rollback;
+ 
+-	netif_device_attach(ndev);
++	return 0;
+ 
+-	/* We may have missed link change notifications */
+-	schedule_delayed_work(&ndevctx->dwork, 0);
++rollback:
++	/* Attempt rollback to original MTU */
++	ndev->mtu = orig_mtu;
++
++	if (netvsc_attach(ndev, &device_info))
++		netdev_err(ndev, "restoring mtu failed\n");
++rollback_vf:
++	if (vf_netdev)
++		dev_set_mtu(vf_netdev, orig_mtu);
+ 
+ 	return ret;
+ }
+@@ -1469,11 +1513,9 @@ static int netvsc_set_ringparam(struct n
+ {
+ 	struct net_device_context *ndevctx = netdev_priv(ndev);
+ 	struct netvsc_device *nvdev = rtnl_dereference(ndevctx->nvdev);
+-	struct hv_device *hdev = ndevctx->device_ctx;
+ 	struct netvsc_device_info device_info;
+ 	struct ethtool_ringparam orig;
+ 	u32 new_tx, new_rx;
+-	bool was_opened;
+ 	int ret = 0;
+ 
+ 	if (!nvdev || nvdev->destroy)
+@@ -1499,34 +1541,18 @@ static int netvsc_set_ringparam(struct n
+ 	device_info.recv_sections = new_rx;
+ 	device_info.recv_section_size = nvdev->recv_section_size;
+ 
+-	netif_device_detach(ndev);
+-	was_opened = rndis_filter_opened(nvdev);
+-	if (was_opened)
+-		rndis_filter_close(nvdev);
+-
+-	rndis_filter_device_remove(hdev, nvdev);
+-
+-	nvdev = rndis_filter_device_add(hdev, &device_info);
+-	if (IS_ERR(nvdev)) {
+-		ret = PTR_ERR(nvdev);
++	ret = netvsc_detach(ndev, nvdev);
++	if (ret)
++		return ret;
+ 
++	ret = netvsc_attach(ndev, &device_info);
++	if (ret) {
+ 		device_info.send_sections = orig.tx_pending;
+ 		device_info.recv_sections = orig.rx_pending;
+-		nvdev = rndis_filter_device_add(hdev, &device_info);
+-		if (IS_ERR(nvdev)) {
+-			netdev_err(ndev, "restoring ringparam failed: %ld\n",
+-				   PTR_ERR(nvdev));
+-			return ret;
+-		}
+-	}
+ 
+-	if (was_opened)
+-		rndis_filter_open(nvdev);
+-	netif_device_attach(ndev);
+-
+-	/* We may have missed link change notifications */
+-	ndevctx->last_reconfig = 0;
+-	schedule_delayed_work(&ndevctx->dwork, 0);
++		if (netvsc_attach(ndev, &device_info))
++			netdev_err(ndev, "restoring ringparam failed");
++	}
+ 
+ 	return ret;
+ }
+@@ -2003,8 +2029,8 @@ no_net:
+ static int netvsc_remove(struct hv_device *dev)
+ {
+ 	struct net_device_context *ndev_ctx;
+-	struct net_device *vf_netdev;
+-	struct net_device *net;
++	struct net_device *vf_netdev, *net;
++	struct netvsc_device *nvdev;
+ 
+ 	net = hv_get_drvdata(dev);
+ 	if (net == NULL) {
+@@ -2014,10 +2040,14 @@ static int netvsc_remove(struct hv_devic
+ 
+ 	ndev_ctx = netdev_priv(net);
+ 
+-	netif_device_detach(net);
+-
+ 	cancel_delayed_work_sync(&ndev_ctx->dwork);
+ 
++	rcu_read_lock();
++	nvdev = rcu_dereference(ndev_ctx->nvdev);
++
++	if  (nvdev)
++		cancel_work_sync(&nvdev->subchan_work);
 +
  	/*
- 	 * At this point, no one should be accessing net_device
- 	 * except in here
-@@ -578,10 +582,6 @@ void netvsc_device_remove(struct hv_devi
+ 	 * Call to the vsc driver to let it know that the device is being
+ 	 * removed. Also blocks mtu and channel changes.
+@@ -2027,11 +2057,13 @@ static int netvsc_remove(struct hv_devic
+ 	if (vf_netdev)
+ 		netvsc_unregister_vf(vf_netdev);
  
- 	netvsc_teardown_gpadl(device, net_device);
++	if (nvdev)
++		rndis_filter_device_remove(dev, nvdev);
++
+ 	unregister_netdevice(net);
  
--	/* And dissassociate NAPI context from device */
--	for (i = 0; i < net_device->num_chn; i++)
--		netif_napi_del(&net_device->chan_table[i].napi);
--
- 	/* Release all resources */
- 	free_netvsc_device_rcu(net_device);
+-	rndis_filter_device_remove(dev,
+-				   rtnl_dereference(ndev_ctx->nvdev));
+ 	rtnl_unlock();
++	rcu_read_unlock();
+ 
+ 	hv_set_drvdata(dev, NULL);
+ 
+--- a/drivers/net/hyperv/rndis_filter.c
++++ b/drivers/net/hyperv/rndis_filter.c
+@@ -1112,6 +1112,7 @@ void rndis_set_subchannel(struct work_st
+ 	for (i = 0; i < VRSS_SEND_TAB_SIZE; i++)
+ 		ndev_ctx->tx_table[i] = i % nvdev->num_chn;
+ 
++	netif_device_attach(ndev);
+ 	rtnl_unlock();
+ 	return;
+ 
+@@ -1122,6 +1123,8 @@ failed:
+ 
+ 	nvdev->max_chn = 1;
+ 	nvdev->num_chn = 1;
++
++	netif_device_attach(ndev);
+ unlock:
+ 	rtnl_unlock();
  }
+@@ -1324,6 +1327,10 @@ out:
+ 		net_device->num_chn = 1;
+ 	}
+ 
++	/* No sub channels, device is ready */
++	if (net_device->num_chn == 1)
++		netif_device_attach(net);
++
+ 	return net_device;
+ 
+ err_dev_remv:
+@@ -1336,9 +1343,6 @@ void rndis_filter_device_remove(struct h
+ {
+ 	struct rndis_device *rndis_dev = net_dev->extension;
+ 
+-	/* Don't try and setup sub channels if about to halt */
+-	cancel_work_sync(&net_dev->subchan_work);
+-
+ 	/* Halt and release the rndis device */
+ 	rndis_filter_halt_device(rndis_dev);
+ 
+@@ -1368,8 +1372,3 @@ int rndis_filter_close(struct netvsc_dev
+ 
+ 	return rndis_filter_close_device(nvdev->extension);
+ }
+-
+-bool rndis_filter_opened(const struct netvsc_device *nvdev)
+-{
+-	return atomic_read(&nvdev->open_cnt) > 0;
+-}
