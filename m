@@ -1,70 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033639AbeEXQ0V (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 12:26:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42426 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1033618AbeEXQ0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 12:26:14 -0400
-Date: Thu, 24 May 2018 18:26:08 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: Re: [PATCH v3 6/9] trace_uprobe: Support SDT markers having
- reference count (semaphore)
-Message-ID: <20180524162608.GA27082@redhat.com>
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180417043244.7501-7-ravi.bangoria@linux.vnet.ibm.com>
+        id S1033668AbeEXQ3W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 12:29:22 -0400
+Received: from mga06.intel.com ([134.134.136.31]:7296 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031437AbeEXQ3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 12:29:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
+   d="scan'208";a="51893064"
+From: richard.gong@linux.intel.com
+To: catalin.marinas@arm.com, will.deacon@arm.com, dinguyen@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, atull@kernel.org,
+        mdf@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        corbet@lwn.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
+        richard.gong@linux.intel.com, richard.gong@intel.com
+Subject: [PATCHv5 0/8] Add Intel Stratix10 FPGA manager and service layer 
+Date: Thu, 24 May 2018 11:33:12 -0500
+Message-Id: <1527179600-26441-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417043244.7501-7-ravi.bangoria@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ravi,
+From: Richard Gong <richard.gong@intel.com>
 
-sorry for delay!
+This is the 5th submission of Intel stratix10 service layer patches. Intel
+Stratix10 FPGA manager, which is 1st Stratix10 service layer client, is
+included in this submission.
 
-I am trying to recall what this code should do ;) At first glance, I do
-not see any serious problem in this version... except it doesn't apply
-to Linus's tree. just one question for now.
+Stratix10 service layer patches have been reviewed internally by Alan Tull
+and other colleagues at Intel.
 
-On 04/17, Ravi Bangoria wrote:
->
-> @@ -941,6 +1091,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
->  	if (ret)
->  		goto err_buffer;
->  
-> +	if (tu->ref_ctr_offset)
-> +		sdt_increment_ref_ctr(tu);
-> +
+Some features of the Intel Stratix10 SoC require a level of privilege
+higher than the kernel is granted. Such secure features include
+FPGA programming. In terms of the ARMv8 architecture, the kernel runs
+at Exception Level 1 (EL1), access to the features requires
+Exception Level 3 (EL3).
 
-iiuc, this is probe_event_enable()...
+The Intel Stratix10 service layer provides an in kernel API for drivers to
+request access to the secure features. The requests are queued and
+processed one by one. ARM’s SMCCC is used to pass the execution of the
+requests on to a secure monitor (EL3).
 
-Looks racy, but afaics the race with uprobe_mmap() will be closed by the next
-change. However, it seems that probe_event_disable() can race with trace_uprobe_mmap()
-too and the next 7/9 patch won't help,
+Later the Intel Stratix10 service layer driver will be extended to provide
+services for QSPI, Crypto and warm reset.
 
-> +	if (tu->ref_ctr_offset)
-> +		sdt_decrement_ref_ctr(tu);
-> +
->  	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
->  	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+v2: add patches for FPGA manager, FPGA manager binding, dts and defconfig
+    remove intel-service subdirectory and intel-service.h, move intel-smc.h
+    and intel-service.c to driver/misc subdirectory
+    remove global variables
+    change service layer driver be 'default n'
+    correct SPDX markers
+    add timeout for do..while() loop
+    add kernel-doc for the functions and structs, correct multiline comments
+    replace kfifo_in/kfifo_out with kfifo_in_spinlocked/kfifo_out_spinlocked
+    rename struct intel_svc_data (at client header) to intel_svc_client_msg
+    rename struct intel_svc_private_mem to intel_svc_data
+    other corrections/changes from Intel internal code reviews
+v3: change all exported functions with "intel_svc_" as the prefix
+    increase timeout values for claiming back submitted buffer(s)
+    rename struct intel_command_reconfig_payload to
+    struct intel_svc_command_reconfig_payload
+    add pr_err() to provide the error return value
+    change to put fpga_mgr node under firmware/svc node
+    change to FPGA manager to align the update of service client APIs, and the
+    update of fpga_mgr device node
+    Other corrections/changes
+v4: s/intel/stratix10/ on some variables, structs, functions, and file names
+    intel-service.c -> stratix10-svc.c
+    intel-smc.h -> stratix10-smc.h
+    intel-service-client.h -> stratix10-svc-client.h
+    remove non-kernel-doc formatting
+    s/fpga-mgr@0/fpga-mgr/ to remove unit_address at fpga_mgr node
+    add Rob's Reviewed-by
+    add Richard's signed-off-by
+v5: add a new API statix10_svc_done() which is called by service client
+    when client request is completed or error occurs during request
+    process. Which allows service layer to free its resources.
+    remove dummy client from service layer client header and service layer
+    source file.
+    add Rob's Reviewed-by
+    add a new file stratix10-svc.rst and add that to driver-api/index.rst
+    kernel-doc fixes
 
-so what if trace_uprobe_mmap() comes right after uprobe_unregister() ?
-Note that trace_probe_is_enabled() is T until we update tp.flags.
+Alan Tull (3):
+  dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
+  arm64: dts: stratix10: add fpga manager and region
+  fpga: add intel stratix10 soc fpga manager driver
 
-Oleg.
+Richard Gong (5):
+  dt-bindings, firmware: add Intel Stratix10 service layer binding
+  arm64: dts: stratix10: add stratix10 service driver binding to base
+    dtsi
+  driver, misc: add Intel Stratix10 service layer driver
+  defconfig: enable fpga and service layer
+  Documentation: driver-api: add stratix10 service layer
+
+ .../bindings/firmware/intel,stratix10-svc.txt      |  57 ++
+ .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt |  17 +
+ Documentation/driver-api/index.rst                 |   1 +
+ Documentation/driver-api/stratix10-svc.rst         |  32 +
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |  33 +
+ arch/arm64/configs/defconfig                       |   6 +
+ drivers/fpga/Kconfig                               |   6 +
+ drivers/fpga/Makefile                              |   1 +
+ drivers/fpga/stratix10-soc.c                       | 545 ++++++++++++
+ drivers/misc/Kconfig                               |  12 +
+ drivers/misc/Makefile                              |   1 +
+ drivers/misc/stratix10-smc.h                       | 205 +++++
+ drivers/misc/stratix10-svc.c                       | 984 +++++++++++++++++++++
+ include/linux/stratix10-svc-client.h               | 199 +++++
+ 14 files changed, 2099 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+ create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+ create mode 100644 Documentation/driver-api/stratix10-svc.rst
+ create mode 100644 drivers/fpga/stratix10-soc.c
+ create mode 100644 drivers/misc/stratix10-smc.h
+ create mode 100644 drivers/misc/stratix10-svc.c
+ create mode 100644 include/linux/stratix10-svc-client.h
+
+-- 
+2.7.4
