@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1886372-1527163110-2-7366912625724554211
+X-Cyrus-Session-Id: sloti22d1t05-1874556-1527163096-2-9492969032473453682
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527163109; b=aRS4wfSfZiQlPYzUxRUQ1UGQk5t9aJUHw3QQ4a6Itw6xwYjG67
-    1WBcbJuajE6UJZnZojfkYvcwhPj8t4t4SVFMeDlMBeKopo/05hF41KXZj/A0Vmb1
-    7gjxBHRMcff+qOe+CtbMwPeY14SUuLAEMugMWpG5dCEEIjKuIDo8ZkzpeWLNNiaf
-    2MzqGgyedZX2QxiC1cOmsV0nORUjNwxZJRSowPM/8M/O7I8trIGsR/cI3moPt51F
-    +R3p/p8dtEKYjRawgb0yOZ/jxES1E3cZBDJS/tjjUvQ+RPcPrpiQjKMZUUYOHnsi
-    UvXgpchpjOc5OVAJrc95lMHRjVsjjWmXnF6A==
+    1527163095; b=bXTRYrvQzPILf9+D6wh8IEmh44kDRzwwDicDekq9n65o9joAoE
+    nu5S8U5DL7Qw+kDPLs1wViot1dP5396LprWVXry4slKE57+g+KA7KbWG5tFzOPG6
+    rAUj2YjUsx+9yyUAisDGm2WFEiygrVtSNirP5ejzz4RZrvIgsOn6zU1CACeDkeiK
+    l+I/FzJiaPZ3vSjSRcoMiuFlALEb7dTCQEr4EvX5W/1ykEZqso8GoPWYAOtoq6y4
+    eks1aP4eKyx1z2ruthYjjX6+zSFT4WnKfyGRZmw7m4Jfs5ik1BSg/OWdKvozVdmb
+    o3W0muEQ5ZAbkrZ/0aHu6kQiUsmjRpnOaenw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527163109; bh=YlLipN0Yi+DJFH1+JRKIZKaxVPFh+M
-    ATdheMJjI7FNo=; b=cj5vJvmx8gqxoAOpIFXGtkBgoQbbUpi272dv1DAQ0TFNyF
-    o6BV2vifJsSbrbWhfOw7mVWDBmBt5APBBDmaSMNen1ViH6GVlQM4RRSNU3FmG7qm
-    ze0RjYpORpGLJlBaXY2zFhyG8yCLBVhrzURa6XqM5rNeFGaMGhZqpD/z6kjAWlyY
-    JBU+7wmBTyKK+EFfZ/Al/Da/tE3vC9J8HsMNbnQdxmj4S3lv3OdNMEtGNEa98jfA
-    YKuhvsKE+j9M5cdP2YWw30z0BvjEFp61nER1xxXE6MT6C4ZvO0BkfLWMN/yF2jlk
-    zxVS/M+1/OyDtUTgp0wLG6VZc+vztya2G74CUYQA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527163095; bh=ebp+fBdd9hA4rSax4+rb1j1Dgj8I8U
+    DIWwKebeAlAoo=; b=PrJULqlvdTysqHRymDSzHy14QbcGR92e5frPGcVR9GMplv
+    Sw9eHhPaNEQUSMXtTqLhUjZBpcDXGM+tKK2rzBFme9b9wQCVUH/AyU9I3/iXXKL+
+    +JG2EOBy52BWpzdct8XywZtXntufWU7JSBlfPlyQC+UNizH5cv5timw4G/wNtyey
+    mw6fzrFXZYX7iUTDZgUvAKrAzfq+dhe8fTM4IRY5WS8GEMl5QOQwKdDBaERUSYab
+    Rf0vM+/v1RY0misn0C3lJi+Y0NHsvfdsSyh+JhmCDTZLn8xbQCsIiduz/ddtxRJG
+    uu/DFclBlqAdi6aNkoKSK1Gc/8OcryEJEjB5CPuw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=QuUsiulJ x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=biXDH3OP x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=QuUsiulJ x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=biXDH3OP x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,42 @@ Authentication-Results: mx1.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOMXszSmhgw4hCG0TRctfs/4UhyWeN3U4oLiw0j4FRIr61ZqZxMXMHX8C/n/P83cw2v0BSY0uZLExO4Gr+2Tom9BWYlBOBod+/ghTmv50vBDNjt3lHRX
-    9gbxVJEPbElqtZUTu1FXbDkf/VnzvJMjeAZTG14YwBZt7fGep/tI2W6P/BcKaxKblEBjk7BjuQYdDqTR70D5yJpqQQMNEt5RbbmgbXth6P4udPRPCPPZ67BN
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCABKd33EYcLIWwzHKJ8r7iUsi9wQKeWc8t8qWuJXoC1CNd2ws4D6irlXeHCimTX4icWSbaClrZt6KFhY9/E2Za8Zii1W8FoSzMjXQvEUKaP3xM+xtVW
+    eGImVoZiBdnmkt/GfRzhgZOFAJPPxiKD1v1VjBJbacC6x7xxXsTWr2rr5RQZvjCz3aPtts4WIoyDHP2zhnauorI8Zqg+T689xW191qjPVFTH/vUaQLNbUgl/
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=PHq6YzTAAAAA:8 a=ag1SF4gXAAAA:8 a=1xjQt4pIUNXleNVYppwA:9
-    a=IZTnPKTQGXmHhBqz:21 a=mxM1O23oZlYCg8nu:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=ZKzU8r6zoKMcqsNulkmm:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yMhMjlubAAAA:8 a=JfrnYn6hAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+    a=ag1SF4gXAAAA:8 a=Z4Rwk6OoAAAA:8 a=1XWaLZrsAAAA:8 a=UqCG9HQmAAAA:8
+    a=iyhmCyC8aMnclnDsskkA:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=HkZW87K1Qel5hWWM3VKY:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966507AbeEXJpZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:45:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56576 "EHLO mail.kernel.org"
+        id S969479AbeEXL6M (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:58:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966782AbeEXJpY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:45:24 -0400
+        id S966786AbeEXJp0 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:45:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.4 63/92] ARM: 8771/1: kprobes: Prohibit kprobes on do_undefinstr
-Date: Thu, 24 May 2018 11:38:40 +0200
-Message-Id: <20180524093205.395164167@linuxfoundation.org>
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poulson <jopoulso@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Rakib Mullick <rakib.mullick@gmail.com>,
+        Jork Loeser <Jork.Loeser@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH 4.4 64/92] tick/broadcast: Use for_each_cpu() specially on UP kernels
+Date: Thu, 24 May 2018 11:38:41 +0200
+Message-Id: <20180524093205.462096885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093159.286472249@linuxfoundation.org>
 References: <20180524093159.286472249@linuxfoundation.org>
@@ -105,50 +117,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit eb0146daefdde65665b7f076fbff7b49dade95b9 upstream.
+commit 5596fe34495cf0f645f417eb928ef224df3e3cb4 upstream.
 
-Prohibit kprobes on do_undefinstr because kprobes on
-arm is implemented by undefined instruction. This means
-if we probe do_undefinstr(), it can cause infinit
-recursive exception.
+for_each_cpu() unintuitively reports CPU0 as set independent of the actual
+cpumask content on UP kernels. This causes an unexpected PIT interrupt
+storm on a UP kernel running in an SMP virtual machine on Hyper-V, and as
+a result, the virtual machine can suffer from a strange random delay of 1~20
+minutes during boot-up, and sometimes it can hang forever.
 
-Fixes: 24ba613c9d6c ("ARM kprobes: core code")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Protect if by checking whether the cpumask is empty before entering the
+for_each_cpu() loop.
+
+[ tglx: Use !IS_ENABLED(CONFIG_SMP) instead of #ifdeffery ]
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Josh Poulson <jopoulso@microsoft.com>
+Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Rakib Mullick <rakib.mullick@gmail.com>
+Cc: Jork Loeser <Jork.Loeser@microsoft.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: KY Srinivasan <kys@microsoft.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Link: https://lkml.kernel.org/r/KL1P15301MB000678289FE55BA365B3279ABF990@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
+Link: https://lkml.kernel.org/r/KL1P15301MB0006FA63BC22BEB64902EAA0BF930@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/kernel/traps.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/time/tick-broadcast.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/arm/kernel/traps.c
-+++ b/arch/arm/kernel/traps.c
-@@ -19,6 +19,7 @@
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
- #include <linux/kdebug.h>
-+#include <linux/kprobes.h>
- #include <linux/module.h>
- #include <linux/kexec.h>
- #include <linux/bug.h>
-@@ -395,7 +396,8 @@ void unregister_undef_hook(struct undef_
- 	raw_spin_unlock_irqrestore(&undef_lock, flags);
- }
- 
--static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
-+static nokprobe_inline
-+int call_undef_hook(struct pt_regs *regs, unsigned int instr)
- {
- 	struct undef_hook *hook;
- 	unsigned long flags;
-@@ -468,6 +470,7 @@ die_sig:
- 
- 	arm_notify_die("Oops - undefined instruction", regs, &info, 0, 6);
- }
-+NOKPROBE_SYMBOL(do_undefinstr)
- 
- /*
-  * Handle FIQ similarly to NMI on x86 systems.
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -610,6 +610,14 @@ static void tick_handle_oneshot_broadcas
+ 	now = ktime_get();
+ 	/* Find all expired events */
+ 	for_each_cpu(cpu, tick_broadcast_oneshot_mask) {
++		/*
++		 * Required for !SMP because for_each_cpu() reports
++		 * unconditionally CPU0 as set on UP kernels.
++		 */
++		if (!IS_ENABLED(CONFIG_SMP) &&
++		    cpumask_empty(tick_broadcast_oneshot_mask))
++			break;
++
+ 		td = &per_cpu(tick_cpu_device, cpu);
+ 		if (td->evtdev->next_event.tv64 <= now.tv64) {
+ 			cpumask_set_cpu(cpu, tmpmask);
