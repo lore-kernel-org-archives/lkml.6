@@ -1,76 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030317AbeEXRjW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:39:22 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:37970 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968103AbeEXRjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:39:17 -0400
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-ntb@googlegroups.com
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Doug Meyer <dmeyer@gigaio.com>
-Date: Thu, 24 May 2018 11:39:13 -0600
-Message-Id: <20180524173913.4506-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, logang@deltatee.com, bhelgaas@google.com, alex.williamson@redhat.com, dmeyer@gigaio.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2] PCI: Expand documentation for pci_add_dma_alias()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1030517AbeEXRjj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:39:39 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34815 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030394AbeEXRja (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 13:39:30 -0400
+X-Google-Smtp-Source: AB8JxZozTKFYijzbvtamWVWgxrrUWVT03TZyFBWnoBvI+5xz+8C8EzW2ywB9ZlAjZdOyY39rCCoadw==
+Date: Thu, 24 May 2018 10:39:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
+Message-ID: <20180524173926.GC14924@minitux>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seeing there's been some confusion about the use of pci_add_dma_alias(),
-expand the comment to describe why it must be called early and how
-early it must be called.
+On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
 
-Also, expand on the purpose of this function and common reasons it would
-be used.
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Krait CPUs have a handful of L2 cache controller registers that
+> live behind a cp15 based indirection register. First you program
+> the indirection register (l2cpselr) to point the L2 'window'
+> register (l2cpdr) at what you want to read/write.  Then you
+> read/write the 'window' register to do what you want. The
+> l2cpselr register is not banked per-cpu so we must lock around
+> accesses to it to prevent other CPUs from re-pointing l2cpdr
+> underneath us.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-[The comment was reworded to some extent by Alex Williamson]
+This should have your signed-off-by here as well.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Doug Meyer <dmeyer@gigaio.com>
----
+Apart from that:
 
-v2: Reworked the patch with Alex's suggested wording.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-  drivers/pci/pci.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Regards,
+Bjorn
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index dbfe7c4f3776..1c0c1ea23b90 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
-  * @dev: the PCI device for which alias is added
-  * @devfn: alias slot and function
-  *
-- * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
-- * It should be called early, preferably as PCI fixup header quirk.
-+ * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
-+ * which is used to program permissible BDF source addresses for DMA
-+ * requests in an IOMMU. These aliases factor into IOMMU group creation
-+ * and are useful for devices generating DMA requests beyond or different
-+ * from their logical bus devfn. Examples include device quirks where the
-+ * device simply uses the wronge devfn, as well as non-transparent bridges
-+ * where the alias may be a proxy for devices in another domain.
-+ *
-+ * IOMMU group creation is performed during device discovery or addition,
-+ * prior to any potential DMA mapping and therefore prior to driver probing
-+ * (especially for userspace assigned devices where IOMMU group definition
-+ * cannot be left as a userspace activity). DMA aliases should therefore
-+ * be configured via quirks, such as the PCI fixup header quirk.
-  */
- void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
- {
---
-2.11.0
+> ---
+>  arch/arm/common/Kconfig                   |  3 ++
+>  arch/arm/common/Makefile                  |  1 +
+>  arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+>  arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
+>  4 files changed, 62 insertions(+)
+>  create mode 100644 arch/arm/common/krait-l2-accessors.c
+>  create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+> 
+> diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+> index e5ad070..c8e1986 100644
+> --- a/arch/arm/common/Kconfig
+> +++ b/arch/arm/common/Kconfig
+> @@ -7,6 +7,9 @@ config DMABOUNCE
+>  	bool
+>  	select ZONE_DMA
+>  
+> +config KRAIT_L2_ACCESSORS
+> +	bool
+> +
+>  config SHARP_LOCOMO
+>  	bool
+>  
+> diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+> index 70b4a14..eec6cd1 100644
+> --- a/arch/arm/common/Makefile
+> +++ b/arch/arm/common/Makefile
+> @@ -7,6 +7,7 @@ obj-y				+= firmware.o
+>  
+>  obj-$(CONFIG_SA1111)		+= sa1111.o
+>  obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
+> +obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+>  obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+>  obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+>  obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+> diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+> new file mode 100644
+> index 0000000..9a97dda
+> --- /dev/null
+> +++ b/arch/arm/common/krait-l2-accessors.c
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#include <linux/spinlock.h>
+> +#include <linux/export.h>
+> +
+> +#include <asm/barrier.h>
+> +#include <asm/krait-l2-accessors.h>
+> +
+> +static DEFINE_RAW_SPINLOCK(krait_l2_lock);
+> +
+> +void krait_set_l2_indirect_reg(u32 addr, u32 val)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&krait_l2_lock, flags);
+> +	/*
+> +	 * Select the L2 window by poking l2cpselr, then write to the window
+> +	 * via l2cpdr.
+> +	 */
+> +	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
+> +	isb();
+> +	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
+> +	isb();
+> +
+> +	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
+> +}
+> +EXPORT_SYMBOL(krait_set_l2_indirect_reg);
+> +
+> +u32 krait_get_l2_indirect_reg(u32 addr)
+> +{
+> +	u32 val;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&krait_l2_lock, flags);
+> +	/*
+> +	 * Select the L2 window by poking l2cpselr, then read from the window
+> +	 * via l2cpdr.
+> +	 */
+> +	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
+> +	isb();
+> +	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
+> +
+> +	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
+> +
+> +	return val;
+> +}
+> +EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+> diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+> new file mode 100644
+> index 0000000..dd7c474
+> --- /dev/null
+> +++ b/arch/arm/include/asm/krait-l2-accessors.h
+> @@ -0,0 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
+> +#define __ASMARM_KRAIT_L2_ACCESSORS_H
+> +
+> +extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
+> +extern u32 krait_get_l2_indirect_reg(u32 addr);
+> +
+> +#endif
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
