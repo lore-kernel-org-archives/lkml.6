@@ -1,160 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032657AbeEXKu3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 06:50:29 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:46769 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030469AbeEXJ53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:57:29 -0400
-X-Google-Smtp-Source: AB8JxZrFgEP98/ZrjzDPMQKJUOkGNeWmRf344KgSkx81G9boW5P6E3h+nFKpFXPA9XHwQNMlwayhvg==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        marcheu@chromium.org, fparent@baylibre.com,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/6] drm/i915: hdmi: add CEC notifier to intel_hdmi
-Date: Thu, 24 May 2018 11:57:17 +0200
-Message-Id: <1527155841-28494-3-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
-References: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
+        id S1032581AbeEXKwU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 06:52:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:40780 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032502AbeEXKwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 06:52:13 -0400
+Date: Thu, 24 May 2018 11:52:06 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Julien Grall <julien.grall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 02/14] arm64: Call ARCH_WORKAROUND_2 on transitions
+ between EL0 and EL1
+Message-ID: <20180524105205.rq25srimaceo3ov4@lakrids.cambridge.arm.com>
+References: <20180522150648.28297-1-marc.zyngier@arm.com>
+ <20180522150648.28297-3-marc.zyngier@arm.com>
+ <0b03ce12-510e-464b-63de-cd481d7cb1c5@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b03ce12-510e-464b-63de-cd481d7cb1c5@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchs adds the cec_notifier feature to the intel_hdmi part
-of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-between each HDMI ports.
-The changes will allow the i915 HDMI code to notify EDID and HPD changes
-to an eventual CEC adapter.
+On Wed, May 23, 2018 at 10:23:20AM +0100, Julien Grall wrote:
+> Hi Marc,
+> 
+> On 05/22/2018 04:06 PM, Marc Zyngier wrote:
+> > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> > index ec2ee720e33e..f33e6aed3037 100644
+> > --- a/arch/arm64/kernel/entry.S
+> > +++ b/arch/arm64/kernel/entry.S
+> > @@ -18,6 +18,7 @@
+> >    * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> >    */
+> > +#include <linux/arm-smccc.h>
+> >   #include <linux/init.h>
+> >   #include <linux/linkage.h>
+> > @@ -137,6 +138,18 @@ alternative_else_nop_endif
+> >   	add	\dst, \dst, #(\sym - .entry.tramp.text)
+> >   	.endm
+> > +	// This macro corrupts x0-x3. It is the caller's duty
+> > +	// to save/restore them if required.
+> 
+> NIT: Shouldn't you use /* ... */ for multi-line comments?
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/gpu/drm/i915/Kconfig         |  1 +
- drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
- drivers/gpu/drm/i915/intel_drv.h     |  2 ++
- drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
- 4 files changed, 36 insertions(+)
+There's no requirement to do so, and IIRC even Torvalds prefers '//'
+comments for multi-line things these days.
 
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index dfd9588..2d65d56 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -23,6 +23,7 @@ config DRM_I915
- 	select SYNC_FILE
- 	select IOSF_MBI
- 	select CRC32
-+	select CEC_CORE if CEC_NOTIFIER
- 	help
- 	  Choose this option if you have a system that has "Intel Graphics
- 	  Media Accelerator" or "HD Graphics" integrated graphics,
-diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
-index 4e7418b..c68d1c8 100644
---- a/drivers/gpu/drm/i915/intel_display.h
-+++ b/drivers/gpu/drm/i915/intel_display.h
-@@ -126,6 +126,26 @@ enum port {
- 
- #define port_name(p) ((p) + 'A')
- 
-+static inline const char *port_identifier(enum port port)
-+{
-+	switch (port) {
-+	case PORT_A:
-+		return "Port A";
-+	case PORT_B:
-+		return "Port B";
-+	case PORT_C:
-+		return "Port C";
-+	case PORT_D:
-+		return "Port D";
-+	case PORT_E:
-+		return "Port E";
-+	case PORT_F:
-+		return "Port F";
-+	default:
-+		return "<invalid>";
-+	}
-+}
-+
- enum dpio_channel {
- 	DPIO_CH0,
- 	DPIO_CH1
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index d436858..b50e51b 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -39,6 +39,7 @@
- #include <drm/drm_dp_mst_helper.h>
- #include <drm/drm_rect.h>
- #include <drm/drm_atomic.h>
-+#include <media/cec-notifier.h>
- 
- /**
-  * __wait_for - magic wait macro
-@@ -1001,6 +1002,7 @@ struct intel_hdmi {
- 	bool has_audio;
- 	bool rgb_quant_range_selectable;
- 	struct intel_connector *attached_connector;
-+	struct cec_notifier *notifier;
- };
- 
- struct intel_dp_mst_encoder;
-diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-index 1baef4a..d522b5b 100644
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
- 		connected = true;
- 	}
- 
-+	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
-+
- 	return connected;
- }
- 
-@@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
- {
- 	enum drm_connector_status status;
- 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-+	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
- 
- 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
- 		      connector->base.id, connector->name);
-@@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
- 
- 	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
- 
-+	if (status != connector_status_connected)
-+		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
-+
- 	return status;
- }
- 
-@@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
- 
- static void intel_hdmi_destroy(struct drm_connector *connector)
- {
-+	if (intel_attached_hdmi(connector)->notifier)
-+		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
- 	kfree(to_intel_connector(connector)->detect_edid);
- 	drm_connector_cleanup(connector);
- 	kfree(connector);
-@@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
- 		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
- 		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
- 	}
-+
-+	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
-+						     port_identifier(port));
-+	if (!intel_hdmi->notifier)
-+		DRM_DEBUG_KMS("CEC notifier get failed\n");
- }
- 
- void intel_hdmi_init(struct drm_i915_private *dev_priv,
--- 
-2.7.4
+Mark.
