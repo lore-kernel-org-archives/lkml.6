@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrdk2Y7RL0kZiAihEjTZH9jo6xr7B7ciGS8rg4R/+8OmR6z7jjSlNtTwEu4psRKFQkQcANn
-ARC-Seal: i=1; a=rsa-sha256; t=1527156348; cv=none;
+X-Google-Smtp-Source: AB8JxZrwnUTjpDnyF6av1CJCk7vBuiT2OiA7ouvEN+QpI87LMtKklHDuZLkdDgeDabtWx82fZJZq
+ARC-Seal: i=1; a=rsa-sha256; t=1527156345; cv=none;
         d=google.com; s=arc-20160816;
-        b=f+nBJA2sNZ0i61wZ0cChJvvtA9TGIOClLpMHo3bDi+TjG9Wd6kaCWIoT3fLD+PzdsV
-         0ApHLxdG97kYqT6iPWrLLYsePyKNcECYx9Mfbq4tkxj7dw03ZkgWDsGXnI0UiqHgotcu
-         nKMNIJqqLcmepEqshDuEyAWUZEkHdeNc026qiDSgsalTXmlcyQm+F39cmLfbaUkWBCRb
-         LNp/aH0C6uYsXSrYLPJLuKtfcGy089bQxAXmwBSIOXgQzpFQQdIa69xWVAssGfwvKnOD
-         yvf0qAdYW5AeDvutRvDxriRiYGuGUA/ZLg5C1KK5vn8WokwSUM5MoSStQ1FF8uexfIif
-         wTow==
+        b=eCWt4u3m1Ou9DqvprhWdYJE+kEoxaP5hClkVC75yxE1qWN22e+0f6FInTOboj9OTS/
+         qkRwbYGV9hXgzKU3c6GnaOhWzH5FT62wijExjOF+zmst8W8L4IybCudKrWX1+0TZiqIZ
+         HGLRkLZEzPS4CVFpWcHWomWQB4e44XF19p6nVtM1k6LBtODtlCBRAfifIFa498WY2Voa
+         Cur4X/kBU034BCrfDsiTL4SgByTs/37n9atWLZ5+rwZjJOj8D+xpDKaHj/pdzg2iWoYV
+         8DiK+f5SS3oW7xSfohUiWOtqaSmrcwvWSblZuCoxfrJOfI+qX6Q1jbpoYoqg33s6oXzY
+         1DCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=QIo7dnH352tHRgZXdLZfyiLKdAoowaYazHeE3fEhUdE=;
-        b=QY7qEOYbU3Jlntd/dTqfFgsfbVjKHRpJre4hQyxXyaxPxBekXcSW638/UzjOuoe9t6
-         9n+RzZAUDmIsCypQv15Bs05tMefx/iQ5201nspbb+Brn2fGHsrAWCCkiDoipZuQ1deyG
-         Uf0XY018zcoueKx5tpzAx3zionifBMAnDktfMAgpZqxoIr6ITYgVDKcB2YkPjQdcFVLV
-         a8LE4Jit/T8UqMEffU0UqNhq1fGzYu8V56LSKNK4nOITG6ZDwf8cgfQZGtssoZFm8ngy
-         s1e9GVA/fXAqBprj8mOcITZy2UtncdlbnEHabblJPVY1GKCRCVZ0HLKNZDfRv4ZEclGA
-         fgNw==
+        bh=0BV3oyOIl1N8+4XsGuzcDWeOkJ5GAKtzxS46InID/sM=;
+        b=j3F0Cg+AOMsH+CEHlH86kxWlRAjlCY51/I4SCDFJwo30EdNQzCV8fEzceFyHEjJk0W
+         riTh0dXj2CAON5mBY+rwcnkAweYbxx5Ptd1+dqQR8qHBu1HZWh/aS6Jvjn4ztNLxhrH1
+         Gi1UU2drGg/2+LdStzklRc22BIeYqmDwVSOrrzsiXfFPMP8kLSly3h9961c29UJPFSkg
+         rEQoRMlBjcRRJxvgO0jWil9f5TCk3SKTwbRYPM6L+Av0n10BKeEFJ1j4+KTYQYjL22Tk
+         A34EDNLL+znHCwVIGXqydSVF0pMxTFqjLLnIth8dpO3c6vhi/4iNgb/Q1y7OPvGhDZta
+         gSJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Z/svxqEk;
+       dkim=pass header.i=@kernel.org header.s=default header.b=nuF/NuJR;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Z/svxqEk;
+       dkim=pass header.i=@kernel.org header.s=default header.b=nuF/NuJR;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Tobias Klauser <tklauser@distanz.ch>,
+	Brad Love <brad@nextdimension.cc>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 154/161] serial: altera: ensure port->regshift is honored consistently
-Date: Thu, 24 May 2018 11:39:39 +0200
-Message-Id: <20180524093036.688598872@linuxfoundation.org>
+Subject: [PATCH 4.16 136/161] media: cx23885: Set subdev host data to clk_freq pointer
+Date: Thu, 24 May 2018 11:39:21 +0200
+Message-Id: <20180524093034.662367601@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339065589910831?=
-X-GMAIL-MSGID: =?utf-8?q?1601339495622729845?=
+X-GMAIL-THRID: =?utf-8?q?1601338503075069796?=
+X-GMAIL-MSGID: =?utf-8?q?1601339492613666352?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,68 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit 0e254963b6ba4d63ac911e79537fea38dd03dc50 ]
+[ Upstream commit 5ceade1d97fc6687e050c44c257382c192f56276 ]
 
-Most register accesses in the altera driver honor port->regshift by
-using altera_uart_writel(). There are a few accesses however that were
-missed when the driver was converted to use port->regshift and some
-others were added later in commit 4d9d7d896d77 ("serial: altera_uart:
-add earlycon support").
+Currently clk_freq is ignored entirely, because the cx235840 driver
+configures the xtal at the chip defaults. This is an issue if a
+board is produced with a non-default frequency crystal. If clk_freq
+is not zero the cx25840 will attempt to use the setting provided,
+or fall back to defaults otherwise.
 
-Fixes: 2780ad42f5fe ("tty: serial: altera_uart: Use port->regshift to store bus shift")
-Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
-Acked-by: Tobias Klauser <tklauser@distanz.ch>
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/altera_uart.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/media/pci/cx23885/cx23885-cards.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/tty/serial/altera_uart.c
-+++ b/drivers/tty/serial/altera_uart.c
-@@ -327,7 +327,7 @@ static int altera_uart_startup(struct ua
- 
- 	/* Enable RX interrupts now */
- 	pp->imr = ALTERA_UART_CONTROL_RRDY_MSK;
--	writel(pp->imr, port->membase + ALTERA_UART_CONTROL_REG);
-+	altera_uart_writel(port, pp->imr, ALTERA_UART_CONTROL_REG);
- 
- 	spin_unlock_irqrestore(&port->lock, flags);
- 
-@@ -343,7 +343,7 @@ static void altera_uart_shutdown(struct
- 
- 	/* Disable all interrupts now */
- 	pp->imr = 0;
--	writel(pp->imr, port->membase + ALTERA_UART_CONTROL_REG);
-+	altera_uart_writel(port, pp->imr, ALTERA_UART_CONTROL_REG);
- 
- 	spin_unlock_irqrestore(&port->lock, flags);
- 
-@@ -432,7 +432,7 @@ static void altera_uart_console_putc(str
- 		 ALTERA_UART_STATUS_TRDY_MSK))
- 		cpu_relax();
- 
--	writel(c, port->membase + ALTERA_UART_TXDATA_REG);
-+	altera_uart_writel(port, c, ALTERA_UART_TXDATA_REG);
- }
- 
- static void altera_uart_console_write(struct console *co, const char *s,
-@@ -502,13 +502,13 @@ static int __init altera_uart_earlycon_s
- 		return -ENODEV;
- 
- 	/* Enable RX interrupts now */
--	writel(ALTERA_UART_CONTROL_RRDY_MSK,
--	       port->membase + ALTERA_UART_CONTROL_REG);
-+	altera_uart_writel(port, ALTERA_UART_CONTROL_RRDY_MSK,
-+			   ALTERA_UART_CONTROL_REG);
- 
- 	if (dev->baud) {
- 		unsigned int baudclk = port->uartclk / dev->baud;
- 
--		writel(baudclk, port->membase + ALTERA_UART_DIVISOR_REG);
-+		altera_uart_writel(port, baudclk, ALTERA_UART_DIVISOR_REG);
- 	}
- 
- 	dev->con->write = altera_uart_earlycon_write;
+--- a/drivers/media/pci/cx23885/cx23885-cards.c
++++ b/drivers/media/pci/cx23885/cx23885-cards.c
+@@ -2286,6 +2286,10 @@ void cx23885_card_setup(struct cx23885_d
+ 				&dev->i2c_bus[2].i2c_adap,
+ 				"cx25840", 0x88 >> 1, NULL);
+ 		if (dev->sd_cx25840) {
++			/* set host data for clk_freq configuration */
++			v4l2_set_subdev_hostdata(dev->sd_cx25840,
++						&dev->clk_freq);
++
+ 			dev->sd_cx25840->grp_id = CX23885_HW_AV_CORE;
+ 			v4l2_subdev_call(dev->sd_cx25840, core, load_fw);
+ 		}
