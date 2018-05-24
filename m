@@ -1,227 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971526AbeEXU41 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:56:27 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:49546 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969064AbeEXU4Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:56:24 -0400
-Subject: Re: [PATCH -V2 -mm 1/4] mm, clear_huge_page: Move order algorithm
- into a separate function
-To: "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>
-References: <20180524005851.4079-1-ying.huang@intel.com>
- <20180524005851.4079-2-ying.huang@intel.com>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <4569310c-ae07-2353-8276-f9cba3011ea5@oracle.com>
-Date: Thu, 24 May 2018 13:55:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S971540AbeEXU6S (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:58:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S969064AbeEXU6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 16:58:16 -0400
+X-Google-Smtp-Source: ADUXVKIOG3boIetdcCUOqHv3mlFb+u768XyhipCBBXdRUiZlnqvWz+OARDjive7dfbrCyjVweXIsFZQt1ARE229LNj0=
 MIME-Version: 1.0
-In-Reply-To: <20180524005851.4079-2-ying.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8903 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805240236
+In-Reply-To: <20180524190031.GB31019@kroah.com>
+References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
+ <20180524190031.GB31019@kroah.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 May 2018 15:57:54 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJK69A3W=YrSfvPetM95CROOJhU1bW1rMEOGtji=t0ORQ@mail.gmail.com>
+Message-ID: <CAL_JsqJK69A3W=YrSfvPetM95CROOJhU1bW1rMEOGtji=t0ORQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 05:58 PM, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
-> 
-> In commit c79b57e462b5d ("mm: hugetlb: clear target sub-page last when
-> clearing huge page"), to keep the cache lines of the target subpage
-> hot, the order to clear the subpages in the huge page in
-> clear_huge_page() is changed to clearing the subpage which is furthest
-> from the target subpage firstly, and the target subpage last.  This
-> optimization could be applied to copying huge page too with the same
-> order algorithm.  To avoid code duplication and reduce maintenance
-> overhead, in this patch, the order algorithm is moved out of
-> clear_huge_page() into a separate function: process_huge_page().  So
-> that we can use it for copying huge page too.
-> 
-> This will change the direct calls to clear_user_highpage() into the
-> indirect calls.  But with the proper inline support of the compilers,
-> the indirect call will be optimized to be the direct call.  Our tests
-> show no performance change with the patch.
-> 
-> This patch is a code cleanup without functionality change.
-> 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Suggested-by: Mike Kravetz <mike.kravetz@oracle.com>
+On Thu, May 24, 2018 at 2:00 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, May 24, 2018 at 12:50:17PM -0500, Rob Herring wrote:
+>> Deferred probe will currently wait forever on dependent devices to probe,
+>> but sometimes a driver will never exist. It's also not always critical for
+>> a driver to exist. Platforms can rely on default configuration from the
+>> bootloader or reset defaults for things such as pinctrl and power domains.
+>> This is often the case with initial platform support until various drivers
+>> get enabled. There's at least 2 scenarios where deferred probe can render
+>> a platform broken. Both involve using a DT which has more devices and
+>> dependencies than the kernel supports. The 1st case is a driver may be
+>> disabled in the kernel config. The 2nd case is the kernel version may
+>> simply not have the dependent driver. This can happen if using a newer DT
+>> (provided by firmware perhaps) with a stable kernel version.
+>>
+>> Subsystems or drivers may opt-in to this behavior by calling
+>> driver_deferred_probe_check_init_done() instead of just returning
+>> -EPROBE_DEFER. They may use additional information from DT or kernel's
+>> config to decide whether to continue to defer probe or not.
+>>
+>> Cc: Alexander Graf <agraf@suse.de>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  drivers/base/dd.c      | 17 +++++++++++++++++
+>>  include/linux/device.h |  2 ++
+>>  2 files changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>> index c9f54089429b..d6034718da6f 100644
+>> --- a/drivers/base/dd.c
+>> +++ b/drivers/base/dd.c
+>> @@ -226,6 +226,16 @@ void device_unblock_probing(void)
+>>       driver_deferred_probe_trigger();
+>>  }
+>>
+>> +int driver_deferred_probe_check_init_done(struct device *dev, bool optional)
+>> +{
+>> +     if (optional && initcalls_done) {
+>
+> Wait, what's the "optional" mess here?
 
-Thanks for doing this.
+My intent was that subsystems just always call this function and never
+return EPROBE_DEFER themselves. Then the driver core can make
+decisions as to what to do (such as the timeout added in the next
+patch). Or it can print common error/debug messages. So optional is a
+hint to allow subsystems per device control.
 
-The extra level of indirection does make this a bit more difficult to
-read.  However, I believe this is offset by the reuse of the algorithm
-in subsequent copy_huge_page support.
+>
+> The caller knows this value, so why do you need to even pass it in here?
 
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Shaohua Li <shli@fb.com>
-> Cc: Christopher Lameter <cl@linux.com>
-> ---
->  mm/memory.c | 90 ++++++++++++++++++++++++++++++++++++++-----------------------
->  1 file changed, 56 insertions(+), 34 deletions(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 14578158ed20..b9f573a81bbd 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4569,71 +4569,93 @@ EXPORT_SYMBOL(__might_fault);
->  #endif
->  
->  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
-> -static void clear_gigantic_page(struct page *page,
-> -				unsigned long addr,
-> -				unsigned int pages_per_huge_page)
-> -{
-> -	int i;
-> -	struct page *p = page;
-> -
-> -	might_sleep();
-> -	for (i = 0; i < pages_per_huge_page;
-> -	     i++, p = mem_map_next(p, page, i)) {
-> -		cond_resched();
-> -		clear_user_highpage(p, addr + i * PAGE_SIZE);
-> -	}
-> -}
-> -void clear_huge_page(struct page *page,
-> -		     unsigned long addr_hint, unsigned int pages_per_huge_page)
-> +/*
-> + * Process all subpages of the specified huge page with the specified
-> + * operation.  The target subpage will be processed last to keep its
-> + * cache lines hot.
-> + */
-> +static inline void process_huge_page(
-> +	unsigned long addr_hint, unsigned int pages_per_huge_page,
-> +	void (*process_subpage)(unsigned long addr, int idx, void *arg),
-> +	void *arg)
+Because regardless of the value, we always stop deferring when/if we
+hit the timeout and the caller doesn't know about the timeout. If we
+get rid of it, we'd need functions for both init done and for deferred
+timeout.
 
-There could be a bit more information in the comment about the function.
-But it is not a requirement, unless patch needs to be redone for some
-other reason.
+> And bool values that are not obvious are horrid.  I had to go look this
+> up when reading the later patches that just passed "true" in this
+> variable as I had no idea what that meant.
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
--- 
-Mike Kravetz
+Perhaps inverting it and calling it "keep_deferring" would be better.
+However, the flag is ignored if we have timed out.
 
->  {
->  	int i, n, base, l;
->  	unsigned long addr = addr_hint &
->  		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
->  
-> -	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
-> -		clear_gigantic_page(page, addr, pages_per_huge_page);
-> -		return;
-> -	}
-> -
-> -	/* Clear sub-page to access last to keep its cache lines hot */
-> +	/* Process target subpage last to keep its cache lines hot */
->  	might_sleep();
->  	n = (addr_hint - addr) / PAGE_SIZE;
->  	if (2 * n <= pages_per_huge_page) {
-> -		/* If sub-page to access in first half of huge page */
-> +		/* If target subpage in first half of huge page */
->  		base = 0;
->  		l = n;
-> -		/* Clear sub-pages at the end of huge page */
-> +		/* Process subpages at the end of huge page */
->  		for (i = pages_per_huge_page - 1; i >= 2 * n; i--) {
->  			cond_resched();
-> -			clear_user_highpage(page + i, addr + i * PAGE_SIZE);
-> +			process_subpage(addr + i * PAGE_SIZE, i, arg);
->  		}
->  	} else {
-> -		/* If sub-page to access in second half of huge page */
-> +		/* If target subpage in second half of huge page */
->  		base = pages_per_huge_page - 2 * (pages_per_huge_page - n);
->  		l = pages_per_huge_page - n;
-> -		/* Clear sub-pages at the begin of huge page */
-> +		/* Process subpages at the begin of huge page */
->  		for (i = 0; i < base; i++) {
->  			cond_resched();
-> -			clear_user_highpage(page + i, addr + i * PAGE_SIZE);
-> +			process_subpage(addr + i * PAGE_SIZE, i, arg);
->  		}
->  	}
->  	/*
-> -	 * Clear remaining sub-pages in left-right-left-right pattern
-> -	 * towards the sub-page to access
-> +	 * Process remaining subpages in left-right-left-right pattern
-> +	 * towards the target subpage
->  	 */
->  	for (i = 0; i < l; i++) {
->  		int left_idx = base + i;
->  		int right_idx = base + 2 * l - 1 - i;
->  
->  		cond_resched();
-> -		clear_user_highpage(page + left_idx,
-> -				    addr + left_idx * PAGE_SIZE);
-> +		process_subpage(addr + left_idx * PAGE_SIZE, left_idx, arg);
->  		cond_resched();
-> -		clear_user_highpage(page + right_idx,
-> -				    addr + right_idx * PAGE_SIZE);
-> +		process_subpage(addr + right_idx * PAGE_SIZE, right_idx, arg);
->  	}
->  }
->  
-> +static void clear_gigantic_page(struct page *page,
-> +				unsigned long addr,
-> +				unsigned int pages_per_huge_page)
-> +{
-> +	int i;
-> +	struct page *p = page;
-> +
-> +	might_sleep();
-> +	for (i = 0; i < pages_per_huge_page;
-> +	     i++, p = mem_map_next(p, page, i)) {
-> +		cond_resched();
-> +		clear_user_highpage(p, addr + i * PAGE_SIZE);
-> +	}
-> +}
-> +
-> +static void clear_subpage(unsigned long addr, int idx, void *arg)
-> +{
-> +	struct page *page = arg;
-> +
-> +	clear_user_highpage(page + idx, addr);
-> +}
-> +
-> +void clear_huge_page(struct page *page,
-> +		     unsigned long addr_hint, unsigned int pages_per_huge_page)
-> +{
-> +	unsigned long addr = addr_hint &
-> +		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
-> +
-> +	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
-> +		clear_gigantic_page(page, addr, pages_per_huge_page);
-> +		return;
-> +	}
-> +
-> +	process_huge_page(addr_hint, pages_per_huge_page, clear_subpage, page);
-> +}
-> +
->  static void copy_user_gigantic_page(struct page *dst, struct page *src,
->  				    unsigned long addr,
->  				    struct vm_area_struct *vma,
-> 
+>
+> So as-is, no, this isn't ok, sorry.
+>
+> And at the least, this needs some kerneldoc to explain it :)
+
+That part is easy enough to fix.
+
+Rob
