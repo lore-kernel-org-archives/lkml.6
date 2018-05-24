@@ -1,77 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969580AbeEXOAO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 10:00:14 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:36564 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965515AbeEXOAN (ORCPT
+        id S970252AbeEXOAa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 10:00:30 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42814 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965515AbeEXOA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 10:00:13 -0400
-X-Google-Smtp-Source: AB8JxZpEho1l9EQle7La5SsE6iMAHoBmvgEnhtTpgWgF0SuzlFdKC33pQGWEp7BCU+kN0XZZitaNDA==
-Date: Thu, 24 May 2018 07:00:09 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Jan Kara <jack@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
-        kernel-team@fb.com
-Subject: Re: [PATCH] bdi: Move cgroup bdi_writeback to a dedicated low
- concurrency workqueue
-Message-ID: <20180524140009.GB1351649@devbig577.frc2.facebook.com>
-References: <20180523175632.GO1718769@devbig577.frc2.facebook.com>
- <20180524101900.m5vqd74rwaqw2pap@quack2.suse.cz>
+        Thu, 24 May 2018 10:00:27 -0400
+X-Google-Smtp-Source: AB8JxZrNIrGKM8FLtVljJD+zKBZel/6Ei2fIeWGaiHbnqOeOunbkk0FfDbtPc2Zrz1BK4tsoPbAuIg==
+Date: Thu, 24 May 2018 22:00:21 +0800
+From: Martin Liu <liumartin@google.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jenhaochen@google.com,
+        liumartin@google.com
+Subject: Re: [RFC] driver core: don't hold dev's parent lock when using async
+ probe
+Message-ID: <20180524140021.GA214888@google.com>
+References: <20180522141227.GA118442@google.com>
+ <Pine.LNX.4.44L0.1805221250480.1466-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180524101900.m5vqd74rwaqw2pap@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <Pine.LNX.4.44L0.1805221250480.1466-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Jan.
-
-On Thu, May 24, 2018 at 12:19:00PM +0200, Jan Kara wrote:
-> > We're periodically seeing close to 256 kworkers getting stuck with the
-> > following stack trace and overtime the entire system gets stuck.
+On Tue, May 22, 2018 at 01:09:44PM -0400, Alan Stern wrote:
+> On Tue, 22 May 2018, martin_liu wrote:
 > 
-> OK, but that means that you have to have 256 block devices, don't you? As
-
-It'd be a product of the number of cgroups being deleted at the same
-time and the number of block devices they were accessing.  With
-multiple loop devices and multiple cgroup removals, it doesn't seem
-too difficult to hit.  It's rare but we do see it happening repeatedly
-in one of the setups.
-
-> we have a bdi per device and we call synchronize_rcu_expedited() only when
-> unregistering bdi (and the corresponding request queue must be gone at that
-> point as well as that's otherwise holding a reference). Am I understanding
-> the situation correctly?
-
-Yeah, I think so.
-
-> > We shouldn't be scheduling hundreds of cgwb_release_workfn() at the
-> > same time.  There's nothing to be gained from that.  This patch
-> > updates cgwb release path to use a dedicated percpu workqueue with
-> > @max_active of 1.
+> > not sure if we still need 'bf74ad5bc417 ("[PATCH] Hold the
+> > device's parent's lock during probe and remove")' since it has
+> > been there over 10 years. If we still need it and hard to fix it
+> > , the simple way is to find a place not to allow USB subsystem
+> > drivers to have async probe capability. Any suggestion is welcome.
 > 
-> As Rik wrote, some paralelism is good to reduce number of forced grace
-> periods so raising this to 16 is good. I was thinking whether we could not
-> batch rcu grace periods in some explicit way but that would be difficult to
-> do.
-
-Agreed, already sent a patch to increase @max_active to 16.
-
-> But thinking a bit more about this, if we made bdi RCU freed, we could just
-> avoid the synchronize_rcu_expedited() in bdi_remove_from_list() altogether.
-> The uses of bdi list are pretty limited and everybody ends up testing
-> WB_registered bit before doing anything anyway... What do you think?
->  
-> Other than that you can add:
+> I don't think the "allows_async_probing" attribute is the best way to 
+> attack this.  Some other approach, like a special-purpose flag, might 
+> be better.
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> Yes, USB still needs to have parent's locks held during probing.  
+> Here's the reason.  A USB device can have multiple interfaces, each
+> bound to its own driver.  A driver may sometimes need to issue a reset,
+> but in USB there's no way to reset a single interface.  Only the entire
+> device can be reset, and of course this affects all the interfaces.  
+> Therefore a driver needs to acquire the device lock before it can issue
+> a reset.
+> 
+> The problem is that the driver's thread may already hold the device
+> lock.  During a normal probe sequence, for example, the interfaces get
+> probed by the hub driver while it owns the device lock.  But for probes
+> under other circumstances (for example, if the user writes to the
+> driver's "bind" attribute in sysfs), the device lock might not be held.
+> 
+> A driver cannot tell these two cases apart.  The only way to make it
+> work all the time is to have the caller _always_ hold the device lock
+> while the driver is probed (or the removed, for that matter).
+> 
+> Alan Stern
 
-Thanks.
+Thanks for the reply and more detail about the backgroud. I'd like to
+have a conclusion about it. Please kindly correct me if my understanding
+is wrong. Regarding to the "special-purpose flag", do you mean we could
+find a place in USB subsystem to have the flag set (not sure if it's
+easy to find it). Driver core would be base on the flag to decide if we
+need to hold the device's parent's lock.
 
--- 
-tejun
+Martin
