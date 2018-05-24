@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1757396-1527157675-2-11046022764258927677
+X-Cyrus-Session-Id: sloti22d1t05-1758260-1527157672-2-8614390604105778005
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527157675; b=kqfvjPnhNYjEGUdVns68rbaEpOgNysjGMSJo8H5t6wnHY9QE2H
-    LFugSkz3+kxBVUBAL8AJh8FmQUIwlLFw3l2fH2PkYicRuTHKiqbUtqWzlSRSgEUE
-    kG+4nu+SmrNvFLozW99KTlhJ55W1uQXetETYshZ+B4eOJFHbNqGwN9ah8LZQvzzw
-    xZH6sWPf7ieEWV7Vd1FaDiCvh0jiRETJ7/YH9TQWVy60s3XHkINqVYF6LwJlJHVJ
-    I7RSCvlT3gjTnYff7Cpz5AHsoSA8iKeVRqEwLGQdxEy5thB6wTwTUrdRCjl5L+gn
-    lYyv+v8Xo0MI+Un0XPJfnO545k2Um01ghOQA==
+    1527157671; b=jhw/nea5m0JZdUYoZjU8+IDhcB8L7k0s3YtfPnmZwGAwO2SacD
+    nVKA2bJtF9rHfplvGCI1Yz6HxJwJH/vAbu6NOCHJevXUNiBcY3mXtBoMaWLKWzqZ
+    hUZJ+AN5tEqrrdbVImS7wUYVFYxTWJOcuD9UqngrUiJo9SuS6+pKiEOTeXzC5laN
+    wWh53pfCsrwkQKZ6CsgfzNuVnP8uifID3JUbVET1NMCntGG27dSCKinlKCVI4FrT
+    g+hyspmJuLDpBsV2uGC06UTGBN5OShSJJJmyF776x55PNZ3Z1y9wvO03CZxvSupH
+    ALMGhFuQD7esKzIHISNOQ/a3gByurJvab3wA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527157675; bh=8YpkYYLIHkX8K1ul0ahdpSRyE5Ilq/
-    vRQHbjlSw+9Tk=; b=W7BSrA1epcSfqqxvKNfu2u84fsi41hyztB43zfkVc5USRt
-    YTVhG1HTGIzOgTUJPMD781S+zosoHL8/1CUT8qxzx/GwbvHAMLzLBNTyZpiM5u2Z
-    acr8H/Tla+zW7RfUa4UO1tx3Opc6EVvrKlMNbRkp6NgMDy6K+nPNbMP6M+YEAHm/
-    07jlz9rzFfzDfZtX2Q2SubARweUHuQb/S8XqASEy3WS9hklcRx6dua9VcduepJzg
-    GbGfvQNiK5ohY/LDvwh2zWxtHvTfXnymDr6sBuskPEHcgqDbkZJG1IhtvEfUm9vO
-    NipBOKsVYNVDkHeESzEf3yReMW+tazEIbfCkO49w==
+    :list-id; s=fm2; t=1527157671; bh=rmhwVvYWFfZVX9C7XdKkjuoZMJon6d
+    Gh5BQorYm8Ovc=; b=ESwe7PkvujiDJ1A4NTOb/TVxZaJ9f8uVFjKgiPCWCiS5cQ
+    G2wT6Jfi8Nrw4/5E3ipWZZUSNRMcu4swzHM0BNClGXt8ojr/lYpP+sUpZdUfdLKA
+    DOb8JfgRZ9bumIZ2t88s4Wu9cQ4aJk2QgPgmV0KjR2HRk85a7mLlf8Q/qbT5qipJ
+    30JfxUjI/fdc/pw0P7yRByJbc/yAWHUQtBfxaS/MehYGn9m3NSU2T5E0q3PIdSdE
+    M8tccc+ceaQlj8hAVxYMMQGvnUtZxUDA2l8fY8lHDsciXv7CYBbAOZcxbF1ZOeTT
+    tKG1X/LgaRpRikTsq9Bf2JGz0HYLTzxfLylrIp1Q==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=gp0JsMCk x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=JsUNUHs1 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +49,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=gp0JsMCk x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=JsUNUHs1 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,28 +65,31 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBtCFd1T2l2VTswZNE6IygaE2SEbJbszbwyAIH3x3i6X2Gqh54zefJyuvZgj2POFobay0+z0IVWq7I83z4nDZmzsNbovpGeL9Xo4Yly+cQUmoN+eCHN9
-    2U5QsrP46YZBRdw3IaQp3NfAavYepXSUzcl2ULU8bR7lkxy1/uyP2anHh72+SQq79f2vCpm2bCtB7UPViqykAk10CI0ULkoaorDn6PJWNyxEQlgNpt6qY8vV
+X-CM-Envelope: MS4wfNJNtNz3i9rj7cHvqkVqdZmNOscnNOKOXAwkxmkuRvhi8kB4IZddEYRlf0B7naRSKqYuawYebc3BtYUFGNx3NKOyqsx7laNfGxArOiHP+5ZFLzRElXNM
+    XluvTUKHXaq5eLPXACdj4/8ea6NYmfKG+VtZupFPaWG+guV4EutHXRPKYY24aYZRG6iIo6jcggadi9LxvF3ikVuoCXQPJhw1uCuPx95qe9F15WB0bWpIh8i8
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=1jzKh_6GKXueggxyDnkA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CbDCq_QkAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=NM5VfiKHdIAMy8CaKHMA:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030808AbeEXKBg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 06:01:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47236 "EHLO mail.kernel.org"
+        id S1030970AbeEXKBi (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030959AbeEXKBb (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 06:01:31 -0400
+        id S1030712AbeEXKBe (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:01:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 059/161] s390/ftrace: use expoline for indirect branches
-Date: Thu, 24 May 2018 11:38:04 +0200
-Message-Id: <20180524093025.565807040@linuxfoundation.org>
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        William Tu <u9012063@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 026/161] net: ip6_gre: Split up ip6gre_newlink()
+Date: Thu, 24 May 2018 11:37:31 +0200
+Message-Id: <20180524093021.461588013@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -103,142 +107,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit 23a4d7fd34856da8218c4cfc23dba7a6ec0a423a ]
+[ Upstream commit 7fa38a7c852ec99e3a7fc375eb2c21c50c2e46b8 ]
 
-The return from the ftrace_stub, _mcount, ftrace_caller and
-return_to_handler functions is done with "br %r14" and "br %r1".
-These are indirect branches as well and need to use execute
-trampolines for CONFIG_EXPOLINE=y.
+Extract from ip6gre_newlink() a reusable function
+ip6gre_newlink_common(). The ip6gre_tnl_link_config() call needs to be
+made customizable for ERSPAN, thus reorder it with calls to
+ip6_tnl_change_mtu() and dev_hold(), and extract the whole tail to the
+caller, ip6gre_newlink(). Thus enable an ERSPAN-specific _newlink()
+function without a lot of duplicity.
 
-The ftrace_caller function is a special case as it returns to the
-start of a function and may only use %r0 and %r1. For a pre z10
-machine the standard execute trampoline uses a LARL + EX to do
-this, but this requires *two* registers in the range %r1..%r15.
-To get around this the 'br %r1' located in the lowcore is used,
-then the EX instruction does not need an address register.
-But the lowcore trick may only be used for pre z14 machines,
-with noexec=on the mapping for the first page may not contain
-instructions. The solution for that is an ALTERNATIVE in the
-expoline THUNK generated by 'GEN_BR_THUNK %r1' to switch to
-EXRL, this relies on the fact that a machine that supports
-noexec=on has EXRL as well.
-
-Cc: stable@vger.kernel.org # 4.16
-Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Acked-by: William Tu <u9012063@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-insn.h |   12 ++++++++++++
- arch/s390/kernel/asm-offsets.c      |    1 +
- arch/s390/kernel/mcount.S           |   14 +++++++++-----
- 3 files changed, 22 insertions(+), 5 deletions(-)
+ net/ipv6/ip6_gre.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
---- a/arch/s390/include/asm/nospec-insn.h
-+++ b/arch/s390/include/asm/nospec-insn.h
-@@ -2,12 +2,16 @@
- #ifndef _ASM_S390_NOSPEC_ASM_H
- #define _ASM_S390_NOSPEC_ASM_H
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -1848,9 +1848,9 @@ static bool ip6gre_netlink_encap_parms(s
+ 	return ret;
+ }
  
-+#include <asm/alternative-asm.h>
-+#include <asm/asm-offsets.h>
- #include <asm/dwarf.h>
+-static int ip6gre_newlink(struct net *src_net, struct net_device *dev,
+-			  struct nlattr *tb[], struct nlattr *data[],
+-			  struct netlink_ext_ack *extack)
++static int ip6gre_newlink_common(struct net *src_net, struct net_device *dev,
++				 struct nlattr *tb[], struct nlattr *data[],
++				 struct netlink_ext_ack *extack)
+ {
+ 	struct ip6_tnl *nt;
+ 	struct net *net = dev_net(dev);
+@@ -1887,18 +1887,30 @@ static int ip6gre_newlink(struct net *sr
+ 	if (err)
+ 		goto out;
  
- #ifdef __ASSEMBLY__
+-	ip6gre_tnl_link_config(nt, !tb[IFLA_MTU]);
+-
+ 	if (tb[IFLA_MTU])
+ 		ip6_tnl_change_mtu(dev, nla_get_u32(tb[IFLA_MTU]));
  
- #ifdef CONFIG_EXPOLINE
+ 	dev_hold(dev);
+-	ip6gre_tunnel_link(ign, nt);
  
-+_LC_BR_R1 = __LC_BR_R1
+ out:
+ 	return err;
+ }
+ 
++static int ip6gre_newlink(struct net *src_net, struct net_device *dev,
++			  struct nlattr *tb[], struct nlattr *data[],
++			  struct netlink_ext_ack *extack)
++{
++	int err = ip6gre_newlink_common(src_net, dev, tb, data, extack);
++	struct ip6_tnl *nt = netdev_priv(dev);
++	struct net *net = dev_net(dev);
 +
- /*
-  * The expoline macros are used to create thunks in the same format
-  * as gcc generates them. The 'comdat' section flag makes sure that
-@@ -78,13 +82,21 @@
- 	.endm
- 
- 	.macro __THUNK_EX_BR reg,ruse
-+	# Be very careful when adding instructions to this macro!
-+	# The ALTERNATIVE replacement code has a .+10 which targets
-+	# the "br \reg" after the code has been patched.
- #ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
- 	exrl	0,555f
- 	j	.
- #else
-+	.ifc \reg,%r1
-+	ALTERNATIVE "ex %r0,_LC_BR_R1", ".insn ril,0xc60000000000,0,.+10", 35
-+	j	.
-+	.else
- 	larl	\ruse,555f
- 	ex	0,0(\ruse)
- 	j	.
-+	.endif
- #endif
- 555:	br	\reg
- 	.endm
---- a/arch/s390/kernel/asm-offsets.c
-+++ b/arch/s390/kernel/asm-offsets.c
-@@ -179,6 +179,7 @@ int main(void)
- 	OFFSET(__LC_MACHINE_FLAGS, lowcore, machine_flags);
- 	OFFSET(__LC_PREEMPT_COUNT, lowcore, preempt_count);
- 	OFFSET(__LC_GMAP, lowcore, gmap);
-+	OFFSET(__LC_BR_R1, lowcore, br_r1_trampoline);
- 	/* software defined ABI-relevant lowcore locations 0xe00 - 0xe20 */
- 	OFFSET(__LC_DUMP_REIPL, lowcore, ipib);
- 	/* hardware defined lowcore locations 0x1000 - 0x18ff */
---- a/arch/s390/kernel/mcount.S
-+++ b/arch/s390/kernel/mcount.S
-@@ -9,13 +9,17 @@
- #include <linux/linkage.h>
- #include <asm/asm-offsets.h>
- #include <asm/ftrace.h>
-+#include <asm/nospec-insn.h>
- #include <asm/ptrace.h>
- #include <asm/export.h>
- 
-+	GEN_BR_THUNK %r1
-+	GEN_BR_THUNK %r14
++	if (!err) {
++		ip6gre_tnl_link_config(nt, !tb[IFLA_MTU]);
++		ip6gre_tunnel_link(net_generic(net, ip6gre_net_id), nt);
++	}
++	return err;
++}
 +
- 	.section .kprobes.text, "ax"
- 
- ENTRY(ftrace_stub)
--	br	%r14
-+	BR_EX	%r14
- 
- #define STACK_FRAME_SIZE  (STACK_FRAME_OVERHEAD + __PT_SIZE)
- #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
-@@ -23,7 +27,7 @@ ENTRY(ftrace_stub)
- #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
- 
- ENTRY(_mcount)
--	br	%r14
-+	BR_EX	%r14
- 
- EXPORT_SYMBOL(_mcount)
- 
-@@ -53,7 +57,7 @@ ENTRY(ftrace_caller)
- #endif
- 	lgr	%r3,%r14
- 	la	%r5,STACK_PTREGS(%r15)
--	basr	%r14,%r1
-+	BASR_EX	%r14,%r1
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- # The j instruction gets runtime patched to a nop instruction.
- # See ftrace_enable_ftrace_graph_caller.
-@@ -68,7 +72,7 @@ ftrace_graph_caller_end:
- #endif
- 	lg	%r1,(STACK_PTREGS_PSW+8)(%r15)
- 	lmg	%r2,%r15,(STACK_PTREGS_GPRS+2*8)(%r15)
--	br	%r1
-+	BR_EX	%r1
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 
-@@ -81,6 +85,6 @@ ENTRY(return_to_handler)
- 	aghi	%r15,STACK_FRAME_OVERHEAD
- 	lgr	%r14,%r2
- 	lmg	%r2,%r5,32(%r15)
--	br	%r14
-+	BR_EX	%r14
- 
- #endif
+ static int ip6gre_changelink(struct net_device *dev, struct nlattr *tb[],
+ 			     struct nlattr *data[],
+ 			     struct netlink_ext_ack *extack)
