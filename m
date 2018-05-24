@@ -1,93 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969107AbeEXUet convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 16:34:49 -0400
-Received: from mailoutvs25.siol.net ([185.57.226.216]:38267 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S969085AbeEXUer (ORCPT
+        id S971449AbeEXUfG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 16:35:06 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46405 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S969116AbeEXUe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 16:34:47 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 05/15] drm/sun4i: Add TCON TOP driver
-Date: Thu, 24 May 2018 22:33:58 +0200
-Message-ID: <2523764.1gMShBa1ZC@jernej-laptop>
-In-Reply-To: <20180524084351.x4ugbbsz3mqv6fh7@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <5965231.6ucpJrPIQ5@jernej-laptop> <20180524084351.x4ugbbsz3mqv6fh7@flea>
+        Thu, 24 May 2018 16:34:58 -0400
+X-Google-Smtp-Source: AB8JxZpSZggmQ4YD6fbAUpJHBU2aIpRYcnj041S4Zmi+/r7LCRGzwrlestRHbGxolK4N9mG7r34uCg==
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 3/6] ASoC: ams_delta: use GPIO lookup table
+Date: Thu, 24 May 2018 22:35:04 +0200
+Message-ID: <1875447.uBIO10iqcO@z50>
+In-Reply-To: <20180523185244.GT98604@atomide.com>
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <20180521100503.GA24638@sirena.org.uk> <20180523185244.GT98604@atomide.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Dne četrtek, 24. maj 2018 ob 10:43:51 CEST je Maxime Ripard napisal(a):
-> Hi,
-> 
-> On Mon, May 21, 2018 at 05:15:15PM +0200, Jernej Škrabec wrote:
-> > > > +	/*
-> > > > +	 * Default register values might have some reserved bits set, 
-which
-> > > > +	 * prevents TCON TOP from working properly. Set them to 0 here.
-> > > > +	 */
-> > > > +	writel(0, tcon_top->regs + TCON_TOP_PORT_SEL_REG);
-> > > > +	writel(0, tcon_top->regs + TCON_TOP_GATE_SRC_REG);
-> > > > +
-> > > > +	for (i = 0; i < CLK_NUM; i++) {
-> > > > +		const char *parent_name = "bus-tcon-top";
-> > > 
-> > > I guess retrieving the parent's clock name at runtime would be more
-> > > flexible.
+On Wednesday, May 23, 2018 8:52:44 PM CEST Tony Lindgren wrote:
+> * Mark Brown <broonie@kernel.org> [180521 10:07]:
+> > On Fri, May 18, 2018 at 11:09:51PM +0200, Janusz Krzysztofik wrote:
+> > > Now as the Amstrad Delta board provides GPIO lookup tables, switch from
+> > > GPIO numbers to GPIO descriptors and use the table to locate required
+> > > GPIO pins.
 > > 
-> > It is, but will it ever be anything else?
+> > Acked-by: Mark Brown <broonie@kernel.org>
 > 
-> Probably not, but when the complexity is exactly the same (using
-> __clk_get_name), we'd better use the more appropriate solution. If we
-> ever need to change that clock name, or to use the driver with an SoC
-> that wouldn't have the same clock name for whatever reason, it will
-> just work.
-> 
-> > > > +		struct clk_init_data init;
-> > > > +		struct clk_gate *gate;
-> > > > +
-> > > > +		gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-> > > > +		if (!gate) {
-> > > > +			ret = -ENOMEM;
-> > > > +			goto err_disable_clock;
-> > > > +		}
-> > > > +
-> > > > +		init.name = gates[i].name;
-> > > > +		init.ops = &clk_gate_ops;
-> > > > +		init.flags = CLK_IS_BASIC;
-> > > > +		init.parent_names = &parent_name;
-> > > > +		init.num_parents = 1;
-> > > > +
-> > > > +		gate->reg = tcon_top->regs + TCON_TOP_GATE_SRC_REG;
-> > > > +		gate->bit_idx = gates[i].bit;
-> > > > +		gate->lock = &tcon_top->reg_lock;
-> > > > +		gate->hw.init = &init;
-> > > > +
-> > > > +		ret = devm_clk_hw_register(dev, &gate->hw);
-> > > > +		if (ret)
-> > > > +			goto err_disable_clock;
-> > > 
-> > > Isn't it what clk_hw_register_gate is doing?
-> > 
-> > Almost, but not exactly. My goal was to use devm_* functions, so there is
-> > no need to do any special cleanup.
-> 
-> Is it the only difference? If so, you can just create a
-> devm_clk_hw_register gate.
 
-I checked around and it seems that in clk core there are only non devm_* 
-helpers like clk_hw_register_gate() for some reason. I guess I'll just use 
-that and manually unregister all the clocks in cleanup function.
+Hi Tony,
 
-Best regards,
-Jernej
+> Thanks applying patches 1 and 3 of this series into omap-for-v4.18/soc.
+> It's kind of getting late for v4.18, but let's see if we can still make
+> it.
+
+Thank you.
+
+> Seems the others can be applied to the driver trees after no more
+> comments, then once all that is done we can apply the last patch
+> in this series.
+
+I'll be submitting v2 of 5/6 (nand) very soon. 4/6 (lcd) is still waiting for 
+Tomi to respond. I hope there will be no issues with it. Howevver, regarding 
+2/6 - serio - I have to work more on that to satisfy Dmitry's comments. So 
+let's forget about 6/6 for now and I'll resubmit it again when we are ready 
+for that. Meanwhile, I'm going to submit a few more patches against the board 
+init file to complete migration to GPIO descriptors so dynamic allocation of 
+GPIO numbers to ams-delta latches will be possible.
+
+Thanks,
+Janusz
