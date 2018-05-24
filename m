@@ -1,67 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935370AbeEXBgQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:36:16 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:45399 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935109AbeEXBgM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:36:12 -0400
-X-Google-Smtp-Source: AB8JxZppwrZFgmA6kfs7pswdgaK9q4LnvAGr2trDjb3Ryp8lYl3usslHu8+XaQqP2uFJMEqGdixKNw==
-Subject: Re: [PATCHv3 2/2] x86/vdso: Add build salt to the vDSO
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc: Andrew Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nickc@redhat.com, ccoutant@gmail.com,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-References: <20180523001939.9431-1-labbott@redhat.com>
- <20180523001939.9431-3-labbott@redhat.com>
- <CALCETrX9P2Lwrx7wGc22poVWX2AHAqXbUdhcijyoJ3tGhaxijg@mail.gmail.com>
- <15dcff14-ea1b-18c8-4cd1-06586cf6f05b@redhat.com>
- <CA+55aFxxUadENxUWU8jZqLnG=hvNA-fKCPQUMCKs2r0yWHc=rA@mail.gmail.com>
- <195C83C0-067C-4B55-89BD-9CF3155C6E69@amacapital.net>
- <CA+55aFxXCWc5qCAsuRmrCGqL7ws4f6B_zy1WR98kHgr_XZs3fw@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <6b4c2c4f-00db-22b7-db3a-a1e76899c6d0@redhat.com>
-Date: Wed, 23 May 2018 18:36:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935417AbeEXBmw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:42:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935386AbeEXBmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:42:50 -0400
+Date: Thu, 24 May 2018 09:42:34 +0800
+From: Dave Young <dyoung@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        Cong Wang <xiyou.wangcong@gmail.com>, Neil Horman <nhorman@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <avorontsov@ru.mvista.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>, dzickus@redhat.com,
+        bhe@redhat.com
+Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
+ options
+Message-ID: <20180524014234.GA2031@dhcp-128-65.nay.redhat.com>
+References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
+ <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
+ <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
+ <877enucqr0.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxXCWc5qCAsuRmrCGqL7ws4f6B_zy1WR98kHgr_XZs3fw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877enucqr0.fsf@xmission.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2018 05:06 PM, Linus Torvalds wrote:
+Hi Eric,
+On 05/23/18 at 10:53am, Eric W. Biederman wrote:
+> Dave Young <dyoung@redhat.com> writes:
 > 
+> > [snip]
+> >
+> >> >  
+> >> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
+> >> > +	int "System memory size threshold for kdump memory default reserving"
+> >> > +	depends on CRASH_CORE
+> >> > +	default 0
+> >> > +	help
+> >> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
+> >> > +	  the system memory size is equal or bigger than the threshold.
+> >> 
+> >> "the threshold" is rather vague.  Can it be clarified?
+> >> 
+> >> In fact I'm really struggling to understand the logic here....
+> >> 
+> >> 
+> >> > +config CRASHKERNEL_DEFAULT_MB
+> >> > +	int "Default crashkernel memory size reserved for kdump"
+> >> > +	depends on CRASH_CORE
+> >> > +	default 0
+> >> > +	help
+> >> > +	  This is used as the default kdump reserved memory size in MB.
+> >> > +	  crashkernel=X kernel cmdline can overwrite this value.
+> >> > +
+> >> >  config HAVE_IMA_KEXEC
+> >> >  	bool
+> >> >  
+> >> > @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
+> >> >  	return 0;
+> >> >  }
+> >> >  
+> >> > +static int __init get_crashkernel_default(unsigned long long system_ram,
+> >> > +					  unsigned long long *size)
+> >> > +{
+> >> > +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
+> >> > +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
+> >> > +
+> >> > +	thres *= SZ_1M;
+> >> > +	sz *= SZ_1M;
+> >> > +
+> >> > +	if (sz >= system_ram || system_ram < thres) {
+> >> > +		pr_debug("crashkernel default size can not be used.\n");
+> >> > +		return -EINVAL;
+> >> 
+> >> In other words,
+> >> 
+> >> 	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
+> >> 	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
+> >> 		fail;
+> >> 
+> >> yes?
+> >> 
+> >> How come?  What's happening here?  Perhaps a (good) explanatory comment
+> >> is needed.  And clearer Kconfig text.
+> >> 
+> >> All confused :(
+> >
+> > Andrew, I tuned it a bit, removed the check of sz >= system_ram, so if
+> > the size is too large and kernel can not find enough memory it will
+> > still fail in latter code.
+> >
+> > Is below version looks clearer?
 > 
-> On Wed, May 23, 2018, 17:01 Andy Lutomirski <luto@amacapital.net <mailto:luto@amacapital.net>> wrote:
-> 
-> 
->     I don’t know whether I’m missing something obvious, but can’t this be in C?
-> 
-> 
-> Yes, but I thought Laura wanted to limit it to linker file tricks (this thread has gone on for so long that I've forgotten the details of why).
-> 
->         Linus
-> 
-> 
+> What is the advantage of providing this in a kconfig option rather
+> than on the kernel command line as we can now?
 
-So we have to update the kernel and every module and the easiest way
-to do that was the linker script. I was assuming I'd just use the
-same approach for the vDSO but you're right that there's no reason
-we can't apply a different technique. I notice there's already a
-vdso-note.S which adds LINUX_VERSION_CODE as a note. This doesn't
-include the extra version so it doesn't quite meet our needs.
-There's no reason why we can't throw something else in there for
-good measure.
+It is not a replacement of the cmdline, this can be a supplement to
+the crashkernel command line.  For a lot of common use cases if we have
+the auto reservation user just do not need to manually set the cmdline
+for example on a virtual machine and usual setup (except of the
+comlicate storage and very large machines).  The crashkernel=auto
+has been used for long time, Red Hat QE tested it on a lot of different
+lab machines and proved it works well.  Kdump usually just works so admin
+do little work to enable kdump.
 
-Thanks,
-Laura
+But the crashkernel=auto implementation has some drawbacks that is it
+is more like embed policy in the code and it is not flexible like a
+config option.
+
+Thanks
+Dave
