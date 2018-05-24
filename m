@@ -1,72 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969670AbeEXVhx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 17:37:53 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37262 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969582AbeEXVhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 17:37:48 -0400
-X-Google-Smtp-Source: AB8JxZp1JXn/TdSaDWuKEMCDVcm8FRAivUPDBCVXBfcjEuJ36f5tK6QFNytsVIfxQtzDkWo3VvK0oRV1lbu/CMM05Qo=
+        id S969749AbeEXVih convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 17:38:37 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47165 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161426AbeEXVie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 17:38:34 -0400
+Date: Thu, 24 May 2018 14:38:21 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com> <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com> <CAKwvOdmQER7XtO_uygYDBxGgUr-EruGyjUq9DMbNwQFh11=9gg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180524211135.27760-1-dave@stgolabs.net> <20180524211135.27760-4-dave@stgolabs.net>
-In-Reply-To: <20180524211135.27760-4-dave@stgolabs.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 24 May 2018 14:37:36 -0700
-Message-ID: <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
-Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        guillaume.knispel@supersonicimagine.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: Nick Desaulniers <ndesaulniers@google.com>
+CC: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>
+From: hpa@zytor.com
+Message-ID: <EB0D8B9E-0646-4D27-8F3D-750AF09BFAE4@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 2:28 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
+On May 24, 2018 1:52:16 PM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote:
+>On Thu, May 24, 2018 at 1:26 PM Nick Desaulniers
+><ndesaulniers@google.com>
+>wrote:
+>> On Thu, May 24, 2018 at 11:59 AM <hpa@zytor.com> wrote:
+>> > Issue 3: Let's face it, reading and writing the flags should be
+>builtins,
+>> exactly because it has to do stack operations, which really means the
+>> compiler should be involved.
+>
+>> I'm happy to propose that as a feature request to llvm+gcc.
+>
+>Oh, looks like both clang and gcc have:
+>__builtin_ia32_readeflags_u64()
+>
+>https://godbolt.org/g/SwPjhq
+>
+>Maybe native_save_fl() and native_restore_fl() should be replaced in
+>the
+>kernel with
+>__builtin_ia32_readeflags_u64() and __builtin_ia32_writeeflags_u64()?
 
->                  if (gfpflags_allow_blocking(gfp))
-> -                       tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
-> +                       tlocks = kvmalloc_array(size, sizeof(spinlock_t),
-gfp);
->                  else
->                          tlocks = kmalloc_array(size, sizeof(spinlock_t),
-gfp);
+It should, at least when the compiler supports them (we keep support in for old compilers back to about gcc 3.4 or 4.1 or so for x86, but they are intently special cases.)
 
-Side note: how about we just move that "gfpflags_allow_blocking()" into
-kvmalloc() instead, and make kvmalloc() generally usable?
+For the PV case, I think we should create it as an explicit assembly function, meaning it should be an extern inline in C code. That way we're fixing the kernel right.
 
-Now we have that really odd situation where kvmalloc() takes gfp flags, but
-to quote the comment:
-
-  * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm
-people.
-
-and the code:
-
-         /*
-          * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
-tables)
-          * so the given set of flags has to be compatible.
-          */
-         WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-
-which isn't really all that helpful. Do mm people really want to be
-consulted about random uses?
-
-Maybe we could just make the rule for kvmalloc() be to only fall back on
-vmalloc for allocations that are
-
-  - larger than page size
-
-  - blocking and allow GFP_KERNEL (so basically that WARN_ON_ONCE() logic in
-kvmalloc_node).
-
-Hmm? Isn't that what everybody really *wants* kvmalloc() and friends to do?
-
-              Linus
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
