@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160939-2-11937942696611336939
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527160925-2-12656880294959275071
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160937; b=NYYUZch9Yr6HYkrqiWdbXQMN9A0HKkWSmp9Pra3DRl4ZxjPdGJ
-    dvLSYr1ab3vR5TAfb0xBm9ZfTZXDluuHUY8hcx02vCO8FP7mFBRGXo37Kzo+cBb3
-    GvQGXl5JuKuMcA7m1RkFTKhzPKaVxTTT/MMfmV+tMUQkpzxTc8btvv1wT4w8HIgA
-    kB/Jx56leT7I2ivijY5JYzqE987bVZSyZDInATlVx+5gseFmB1T+O8nt6iN3aefM
-    G+xLGwWaAwDvV2m+2W3jEDiJ2LvstQucZCaRWgnrx5ooLU9YzSbVMzFioIxdFXZD
-    YMHYUmioymO/s0ocmI6cSg90Yp4Ot/LH6vQQ==
+    1527160925; b=WZRyQcebW2Fvzy38hVRyGpTGMaiKB7bpfA5LRP5CW/MpOiQr9M
+    JX4xZbuGXJF9f+ADdsNeUbR0GG2OqJPArEM3Gy1F0FXU3cXMqHEiiMXWcNgFM66y
+    PfYVu3X1ViZ8X5dWP+iRa4rM9Oewd1piqDtzPmGtwsAbOFYSqseDG5CthK8A33z/
+    4+nFTb8+aoBGv8Zct786AdgjQZfTsY+lw304WEtu5MDaslYKS9nPDKArbh7i3vdc
+    OMe3+ppkc5l+eLVMpaZ9C4wWQSOeaeic/JpZVE6RqMEEx4vfcVmEquYc5xGS51Jv
+    hjxPV5HxvwJe/Z6iZd7bXXB9XTbqBnvPZMPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527160937; bh=7C4dklgNdCAxz6t6yOHkz3tFzb9lmA
-    deuXS0kODjLug=; b=dJj+DUgE/XuiN4v2CX5UZeOvGvYNPBfIVNKf0qNXHT3nwR
-    LJpL3ARWLU68+D6ChnlV4zZ6vbLRmbAmnSYQdSg7krr/8DchfKHXAXyAmVyipVAp
-    FdawlRE5Zct8iCrId8MYpAu9Gpf2m9UWBnFv592jBZCT8Ahdh1kNwoyANdzhouv0
-    mGKwY5B+kfYkCihyICToJfAawE6GPgN+rlRdd/x0b6J3/SeftABydN3wFS01UelX
-    TNf6G5mFioRDjyd++HPD+RG1tcTUVfFWoFlYVTd0WGmFf58scbYO9JXeiyzmNDlB
-    U01Qj+QRZ3sTVl0YtVUQd+Q8UtLU/oI/3jd7IKkg==
+    :list-id; s=fm2; t=1527160925; bh=mzt1xezCEISljU65SWrBJBTZbIVeVh
+    Tu24L+Ywo9iHc=; b=W3RAcd+UgZHUf6oZbSNgA/9fFPa4hm6S17uo2eskxl4Pky
+    NW3zCQcTdeeZEty/4jDDHjGvZRkzbOESCeIY/jcBYc4+h8KkMX8i9Oxz3ZflhQhr
+    I16J9T4+cid0lOv180nbWB34VhYKbWJq3D3ADeVZ6TUvXJ1REnr3bza8Psqfh/X2
+    QC/ot8xZGhyLd0EgwsBAkSKGq7QP3ptKO2MTatAcSNUhZNMNQsAzeEZr6HpEVP6T
+    +oz4QgV33juMs/LFs9NY28N/J5vBoswYyawRts+z2Ipsw9vgt1NIJ96rEwADCvkE
+    Pv3lp52sj4k3Xajh4vZ+URJjCDatonQAu6pChWYA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=pBV1hEIA x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=13jKpPnJ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=pBV1hEIA x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=13jKpPnJ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,31 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPZB8E8jDRZwOKDuw63vR3FOFVD9jaAkluJZ5W9uH1NyHaAzmpP8i9dkq35HUrGq59jHVC5HZ3vQZdngb7L8DIy9E931on+ACiKQn7/OfHZmPg3NtmCG
-    b7KGrTGuOuw46CUPrfWFiwAXaVxCxgb5TldJWem8hA3+y6Fr1VRhpgnDQCpT795vvoEjgHaTitNuCbIeha18M/6e53igeNopmxKrLt1FcMlnpFTxOUuaz9uP
+X-CM-Envelope: MS4wfGAGUcVC4Nur5MfnKlMXwiGYtMAMCQji1FUyi+Nr6MPMe1zC9lk9UwtRD+laxG3I92yV/37lNZuDJjq5BxDMIMdJMRZPooysv/IRX6RT1Jr0lGc915aN
+    gSN7ie/8DS2FknVmkDlJ8vkpZxYkyK3XeHk4cbljzNbBCmQYK4WCOpEv7jolC0tIeyokLviPYP82LQoe4AhNtuETMYIjWSfjXdVtDpYyIw0NYm6LzTvFD+zn
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
     a=jZVsG21pAAAA:8 a=yMhMjlubAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=IoLR7627HhPfafYgmrEA:9 a=QEXdDO2ut3YA:10 a=3Sh2lD0sZASs_lUdrUhf:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=qZl5N7MTnlUFlRfjbUMA:9 a=i0FrSAJdI9wZdYGY:21 a=FJIQxi0y3wYaM5T0:21
+    a=QEXdDO2ut3YA:10 a=3Sh2lD0sZASs_lUdrUhf:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968798AbeEXLWI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 07:22:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51534 "EHLO mail.kernel.org"
+        id S967877AbeEXLVs (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 07:21:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967845AbeEXJwV (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:52:21 -0400
+        id S967854AbeEXJwY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:52:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 026/165] hv_netvsc: defer queue selection to VF
-Date: Thu, 24 May 2018 11:37:12 +0200
-Message-Id: <20180524093623.038208030@linuxfoundation.org>
+Subject: [PATCH 4.14 027/165] hv_netvsc: disable NAPI before channel close
+Date: Thu, 24 May 2018 11:37:13 +0200
+Message-Id: <20180524093623.079465971@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,41 +108,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Commit b3bf5666a51068ad5ddd89a76ed877101ef3bc16 upstream. ]
+[ Commit 8348e0460ab1473f06c8b824699dd2eed3c1979d upstream. ]
 
-When VF is used for accelerated networking it will likely have
-more queues (and different policy) than the synthetic NIC.
-This patch defers the queue policy to the VF so that all the
-queues can be used. This impacts workloads like local generate UDP.
+This makes sure that no CPU is still process packets when
+the channel is closed.
 
+Fixes: 76bb5db5c749 ("netvsc: fix use after free on module removal")
 Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/hyperv/netvsc.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -283,8 +283,19 @@ static u16 netvsc_select_queue(struct ne
- 	rcu_read_lock();
- 	vf_netdev = rcu_dereference(ndc->vf_netdev);
- 	if (vf_netdev) {
--		txq = skb_rx_queue_recorded(skb) ? skb_get_rx_queue(skb) : 0;
--		qdisc_skb_cb(skb)->slave_dev_queue_mapping = skb->queue_mapping;
-+		const struct net_device_ops *vf_ops = vf_netdev->netdev_ops;
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -567,6 +567,10 @@ void netvsc_device_remove(struct hv_devi
+ 
+ 	RCU_INIT_POINTER(net_device_ctx->nvdev, NULL);
+ 
++	/* And disassociate NAPI context from device */
++	for (i = 0; i < net_device->num_chn; i++)
++		netif_napi_del(&net_device->chan_table[i].napi);
 +
-+		if (vf_ops->ndo_select_queue)
-+			txq = vf_ops->ndo_select_queue(vf_netdev, skb,
-+						       accel_priv, fallback);
-+		else
-+			txq = fallback(vf_netdev, skb);
-+
-+		/* Record the queue selected by VF so that it can be
-+		 * used for common case where VF has more queues than
-+		 * the synthetic device.
-+		 */
-+		qdisc_skb_cb(skb)->slave_dev_queue_mapping = txq;
- 	} else {
- 		txq = netvsc_pick_tx(ndev, skb);
- 	}
+ 	/*
+ 	 * At this point, no one should be accessing net_device
+ 	 * except in here
+@@ -578,10 +582,6 @@ void netvsc_device_remove(struct hv_devi
+ 
+ 	netvsc_teardown_gpadl(device, net_device);
+ 
+-	/* And dissassociate NAPI context from device */
+-	for (i = 0; i < net_device->num_chn; i++)
+-		netif_napi_del(&net_device->chan_table[i].napi);
+-
+ 	/* Release all resources */
+ 	free_netvsc_device_rcu(net_device);
+ }
