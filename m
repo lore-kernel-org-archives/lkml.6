@@ -1,88 +1,344 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965446AbeEXIfX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:35:23 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:60102 "EHLO gloria.sntech.de"
+        id S965451AbeEXIg1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:36:27 -0400
+Received: from mga03.intel.com ([134.134.136.65]:13192 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965007AbeEXIfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:35:20 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Levin Du <djw@t-chip.com.cn>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Wayne Chou <zxf@t-chip.com.cn>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        id S965134AbeEXIgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:36:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,436,1520924400";
+   d="scan'208";a="58076610"
+Subject: Re: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
+To: Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
-Date: Thu, 24 May 2018 10:35:12 +0200
-Message-ID: <2044895.BqI5yRtle6@diego>
-In-Reply-To: <CACRpkdYCdNZ=ASw1uz4zKXC4AMd1EGbvG_G5K5cwSpH5eGPgKA@mail.gmail.com>
-References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <1685755.J6GI985WX3@diego> <CACRpkdYCdNZ=ASw1uz4zKXC4AMd1EGbvG_G5K5cwSpH5eGPgKA@mail.gmail.com>
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Cc: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
+References: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <abe62da4-3ef9-5660-94e1-a3f919df06cd@intel.com>
+Date: Thu, 24 May 2018 11:35:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi
 
-Am Donnerstag, 24. Mai 2018, 10:28:44 CEST schrieb Linus Walleij:
-> On Wed, May 23, 2018 at 5:12 PM, Heiko Stübner <heiko@sntech.de> wrote:
-> > So the gpio controller should definitly also be a subnode.
-> > 
-> > The gpio in question is called "mute", so I'd think the gpio-syscon driver
-> > should just define a "rockchip,rk3328-gpio-mute" compatible and contain
-> > all the register voodoo in the driver itself and not define it in the dt.
-> > 
-> > So it should probably look like
-> > 
-> > grf: syscon at ff100000 {
-> > 
-> >         compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
-> >         
-> >         [all the other syscon sub-devices]
-> >         
-> >         gpio_mute: gpio-mute {
-> >         
-> >                 compatible = "rockchip,rk3328-gpio-mute";
-> >                 gpio-controller;
-> >                 #gpio-cells = <2>;
-> >         
-> >         };
+This patch is mangled.
+
+On 22/05/18 09:42, Prabu Thangamuthu wrote:
+> To enable Synopsys DWC MSHC controller on HPAS-DX platform connected using
+> PCIe interface. As Clock generation logic is implemented in MMCM module of
+> HAPS-DX platform, we have separate functions to control the MMCM to
+> generate required clocks with respect to speed mode. Also we have platform
+> specific set_power function to support different VDD of eMMC devices.
 > 
-> I'm sceptic.
+> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
+> ---
+>  MAINTAINERS                           |   7 ++
+>  drivers/mmc/host/Makefile             |   3 +-
+>  drivers/mmc/host/sdhci-pci-core.c     |   1 +
+>  drivers/mmc/host/sdhci-pci-dwc-mshc.c | 146
+> ++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci-pci-dwc-mshc.h |  37 +++++++++
+>  drivers/mmc/host/sdhci-pci.h          |   3 +
+>  6 files changed, 196 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
+>  create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.h
 > 
-> That doesn't sound like "general purpose input output" at all.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9051a9c..f1749c4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12643,6 +12643,13 @@ S:    Maintained
+>  F:    drivers/mmc/host/sdhci*
+>  F:    include/linux/mmc/sdhci*
+>  
+> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
+> +M:    Prabu Thangamuthu <prabu.t@synopsys.com>
+> +M:    Manjunath M B <manjumb@synopsys.com>
+> +L:    linux-mmc@vger.kernel.org
+> +S:    Maintained
+> +F:    drivers/mmc/host/sdhci-pci-dwc-mshc*
+> +
+>  SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
+>  M:    Ben Dooks <ben-linux@fluff.org>
+>  M:    Jaehoon Chung <jh80.chung@samsung.com>
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 6aead24..6c0d3fb 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC)        += mxcmmc.o
+>  obj-$(CONFIG_MMC_MXS)        += mxs-mmc.o
+>  obj-$(CONFIG_MMC_SDHCI)        += sdhci.o
+>  obj-$(CONFIG_MMC_SDHCI_PCI)    += sdhci-pci.o
+> -sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
+> sdhci-pci-arasan.o
+> +sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
+> sdhci-pci-arasan.o \
+> +                   sdhci-pci-dwc-mshc.o
+>  obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))    += sdhci-pci-data.o
+>  obj-$(CONFIG_MMC_SDHCI_ACPI)    += sdhci-acpi.o
+>  obj-$(CONFIG_MMC_SDHCI_PXAV3)    += sdhci-pxav3.o
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c
+> b/drivers/mmc/host/sdhci-pci-core.c
+> index 77dd352..96b6963 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+>      SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
+>      SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
+>      SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
+> +    SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC,  snps),
+>      SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
+>      /* Generic SD host controller */
+>      {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
+> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> new file mode 100644
+> index 0000000..bca3db4
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> @@ -0,0 +1,146 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * SDHCI driver for Synopsys DWC_MSHC controller
+> + *
+> + * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
+> + *
+> + * Authors:
+> + *    Prabu Thangamuthu <prabu.t@synopsys.com>
+> + *    Manjunath M B <manjumb@synopsys.com>
+> + *
+> + */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/delay.h>
+> +#include <linux/module.h>
+> +#include <linux/moduleparam.h>
+> +
+> +#include "sdhci.h"
+> +#include "sdhci-pci.h"
+> +#include "sdhci-pci-dwc-mshc.h"
+> +
+> +/* Default emmc vdd is set to 3.3V */
+> +static unsigned int emmc_vdd = SDHC_EMMC_VDD_330V;
+> +module_param(emmc_vdd, int, 0444);
+
+Why a module parameter?
+
+> +
+> +static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int
+> clock)
+> +{
+> +    u16 clk = 0;
+> +    u32 reg = 0;
+> +    u32 vendor_ptr = 0;
+> +
+> +    vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
+> +
+> +    /* Disable Software managed rx tuning */
+> +    reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
+> +    reg &= ~SDHC_SW_TUNE_EN;
+> +    sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
+> +
+> +    if (clock <= 52000000) {
+> +        sdhci_set_clock(host, clock);
+> +    } else {
+> +        /* Assert reset to MMCM */
+> +        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
+> +        reg |= SDHC_CCLK_MMCM_RST;
+> +        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
+> +
+> +        /* Configure MMCM*/
+
+Space between MMCM and *
+
+> +        sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
+> +        sdhci_writel(host, CLKFBOUT_100_MHZ,
+> +                SDHC_MMCM_CLKFBOUT);
+> +
+> +        /* De-assert reset to MMCM*/
+
+Space between MMCM and *
+
+
+> +        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
+> +        reg &= ~SDHC_CCLK_MMCM_RST;
+> +        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
+> +
+> +        /* Enable clock */
+> +        clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
+> +            SDHCI_CLOCK_CARD_EN;
+> +        sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> +    }
+> +}
+> +
+> +static void sdhci_snps_set_power(struct sdhci_host *host, unsigned char
+> mode,
+> +             unsigned short vdd)
+> +{
+> +    u8 pwr = 0;
+> +    u16 ctrl;
+> +
+> +    if (mode != MMC_POWER_OFF) {
+> +        switch (1 << vdd) {
+> +        case MMC_VDD_165_195:
+> +            pwr = SDHCI_POWER_180;
+> +            break;
+> +        case MMC_VDD_29_30:
+> +        case MMC_VDD_30_31:
+> +            pwr = SDHCI_POWER_300;
+> +            break;
+> +        case MMC_VDD_32_33:
+> +        case MMC_VDD_33_34:
+> +            pwr = SDHCI_POWER_330;
+> +            break;
+> +        default:
+> +            WARN(1, "%s: Invalid vdd %#x\n",
+> +                 mmc_hostname(host->mmc), vdd);
+> +            break;
+> +        }
+> +    }
+> +
+> +    if (host->pwr == pwr)
+> +        return;
+> +
+> +    host->pwr = pwr;
+> +
+> +    if (pwr == 0) {
+> +        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
+> +    } else {
+> +        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
+> +
+> +        /*
+> +         * Enable it for eMMC phy cfg1 test with 1.8V mode
+> +         */
+> +        if (emmc_vdd == SDHC_EMMC_VDD_180V) {
+> +            pwr = SDHCI_POWER_180;
+> +            sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
+> +
+> +            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +            /*
+> +             * Enable 1.8V Signal Enable in the Host Control2
+> +             * register
+> +             */
+> +            ctrl |= SDHCI_CTRL_VDD_180;
+> +            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+> +        }
+> +        pwr |= SDHCI_POWER_ON;
+> +
+> +        sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
+> +    }
+> +}
+> +
+> +static int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
+> +{
+> +    struct sdhci_host *host = slot->host;
+> +
+> +    host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
+> +    host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
+
+Why read caps here?
+
+> +
+> +    return 0;
+> +}
+> +
+> +/* Synopsys DWC MSHC Controller based on SDHCI-PCI */
+> +static const struct sdhci_ops sdhci_snps_ops = {
+> +    .set_clock    = sdhci_snps_set_clock,
+> +    .set_power    = sdhci_snps_set_power,
+> +    .enable_dma    = sdhci_pci_enable_dma,
+> +    .set_bus_width    = sdhci_set_bus_width,
+> +    .reset        = sdhci_reset,
+> +    .set_uhs_signaling = sdhci_set_uhs_signaling,
+> +};
+> +
+> +const struct sdhci_pci_fixes sdhci_snps = {
+> +    .probe_slot    = sdhci_snps_pci_probe_slot,
+> +    .ops        = &sdhci_snps_ops,
+> +};
+> +
+> +MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
+> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.h
+> b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
+> new file mode 100644
+> index 0000000..352bbfd
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.h
+
+Please put the definitions into sdhci-pci-dwc-mshc.c and then this file is
+not needed.
+
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * SDHCI driver for Synopsys DWC_MSHC controller
+> + *
+> + * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
+> + *
+> + * Authors:
+> + *    Prabu Thangamuthu <prabu.t@synopsys.com>
+> + *    Manjunath M B <manjumb@synopsys.com>
+> + *
+> + */
+> +
+> +#ifndef __SDHCI_PCI_DWC_MSHC_H__
+> +#define __SDHCI_PCI_DWC_MSHC_H__
+> +
+> +#define SDHCI_VENDOR_PTR_R               0xE8
+> +
+> +/* Module Parameters */
+> +#define SDHC_EMMC_VDD_330V               33
+> +#define SDHC_EMMC_VDD_180V               18
+> +
+> +/* Synopsys Vendor Specific Registers */
+> +#define SDHC_GPIO_OUT                          0x34
+> +#define SDHC_AT_CTRL_R                   0x40
+> +
+> +#define SDHC_SW_TUNE_EN                   0x00000010
+> +
+> +/* MMCM DRP */
+> +#define SDHC_MMCM_DIV_REG               0x1020
+> +#define DIV_REG_100_MHZ                   0x1145
+> +
+> +#define SDHC_MMCM_CLKFBOUT               0x1024
+> +#define CLKFBOUT_100_MHZ               0x0000
+> +
+> +#define SDHC_CCLK_MMCM_RST               0x00000001
+> +
+> +#endif
+> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+> index db9cb54..c91dcec 100644
+> --- a/drivers/mmc/host/sdhci-pci.h
+> +++ b/drivers/mmc/host/sdhci-pci.h
+> @@ -59,6 +59,7 @@
+>  #define PCI_VENDOR_ID_ARASAN        0x16e6
+>  #define PCI_DEVICE_ID_ARASAN_PHY_EMMC    0x0670
+>  
+> +#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xC202
+>  /*
+>   * PCI device class and mask
+>   */
+> @@ -183,4 +184,6 @@ static inline void *sdhci_pci_priv(struct
+> sdhci_pci_slot *slot)
+>  
+>  extern const struct sdhci_pci_fixes sdhci_arasan;
+>  
+> +extern const struct sdhci_pci_fixes sdhci_snps;
+> +
+>  #endif /* __SDHCI_PCI_H */
 > 
-> It sounds like special purpose, for a mute button.
-> 
-> Does it use IRQ? I would recommend implementing
-> drivers/input/keyboard/syscon-keys.c in the same vein
-> as drivers/leds/leds-syscon.c so you can avoid indirection
-> through GPIO for no good reason at all.
-
-To quote Levin from the other mail:
---------
-The "mute" pin is a output only GPIO, which is already supported by 
-setting flags in the gpio-syscon
-  driver. And yes, this pin has a defined function, but can also be used 
-for general purpose operation.
---------
-
-So to summarize, the documentation calls it "mute", but it is usable as
-a general pin, which is the reason Levin is working on it - because on his
-board this pin is used to switch between two voltages (aka a gpio-regulator)
-for the sdmmc controller [3.3V + 1.8V].
-
-Available pin settings are output-enable + of course the high/low setting
-and I think I remember there is even a pull setting for it in the GRF 
-somewhere - but my memory might be fuzzy here.
-
-
-Heiko
