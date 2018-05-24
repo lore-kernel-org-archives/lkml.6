@@ -1,135 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030356AbeEXLCl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:02:41 -0400
-Received: from foss.arm.com ([217.140.101.70]:40986 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032596AbeEXK7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 06:59:21 -0400
-From: Will Deacon <will.deacon@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 7/9] asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*
-Date: Thu, 24 May 2018 11:59:44 +0100
-Message-Id: <1527159586-8578-8-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
-References: <1527159586-8578-1-git-send-email-will.deacon@arm.com>
+        id S1032833AbeEXLFm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:05:42 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41618 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032755AbeEXLFf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:05:35 -0400
+Date: Thu, 24 May 2018 13:05:33 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Suman Anna <s-anna@ti.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, ivo.g.dimitrov.75@gmail.com,
+        khilman@kernel.org, Tony Lindgren <tony@atomide.com>,
+        aaro.koskinen@iki.fi, kernel list <linux-kernel@vger.kernel.org>,
+        sre@kernel.org, martijn@brixit.nl,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        abcloriens@gmail.com, sakari.ailus@linux.intel.com,
+        pali.rohar@gmail.com, clayton@craftyguy.net,
+        linux-omap@vger.kernel.org, patrikbachan@gmail.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        serge@hallyn.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: Nokia N900: refcount_t underflow, use after free
+Message-ID: <20180524110533.GA20599@amd>
+References: <20180308143053.GA17267@amd>
+ <20180308165903.GM5799@atomide.com>
+ <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com>
+ <20180308185046.GA22796@amd>
+ <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
+ <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com>
+ <20180309221834.GA15476@amd>
+ <c8ee5692-bf71-a9d7-8607-50adc9f0e9f1@ti.com>
+ <20180310112634.GA31614@amd>
+ <5aa1e2de-96d1-0e88-01ca-49df9ae25457@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+In-Reply-To: <5aa1e2de-96d1-0e88-01ca-49df9ae25457@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lock bitops can be implemented more efficiently using the atomic_fetch_*
-ops, which provide finer-grained control over the memory ordering semantics
-than the bitops.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- include/asm-generic/bitops/lock.h | 68 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 56 insertions(+), 12 deletions(-)
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
-index 67ab280ad134..3ae021368f48 100644
---- a/include/asm-generic/bitops/lock.h
-+++ b/include/asm-generic/bitops/lock.h
-@@ -2,6 +2,10 @@
- #ifndef _ASM_GENERIC_BITOPS_LOCK_H_
- #define _ASM_GENERIC_BITOPS_LOCK_H_
- 
-+#include <linux/atomic.h>
-+#include <linux/compiler.h>
-+#include <asm/barrier.h>
-+
- /**
-  * test_and_set_bit_lock - Set a bit and return its old value, for lock
-  * @nr: Bit to set
-@@ -11,7 +15,20 @@
-  * the returned value is 0.
-  * It can be used to implement bit locks.
-  */
--#define test_and_set_bit_lock(nr, addr)	test_and_set_bit(nr, addr)
-+static inline int test_and_set_bit_lock(unsigned int nr,
-+					volatile unsigned long *p)
-+{
-+	long old;
-+	unsigned long mask = BIT_MASK(nr);
-+
-+	p += BIT_WORD(nr);
-+	if (READ_ONCE(*p) & mask)
-+		return 1;
-+
-+	old = atomic_long_fetch_or_acquire(mask, (atomic_long_t *)p);
-+	return !!(old & mask);
-+}
-+
- 
- /**
-  * clear_bit_unlock - Clear a bit in memory, for unlock
-@@ -20,11 +37,11 @@
-  *
-  * This operation is atomic and provides release barrier semantics.
-  */
--#define clear_bit_unlock(nr, addr)	\
--do {					\
--	smp_mb__before_atomic();	\
--	clear_bit(nr, addr);		\
--} while (0)
-+static inline void clear_bit_unlock(unsigned int nr, volatile unsigned long *p)
-+{
-+	p += BIT_WORD(nr);
-+	atomic_long_fetch_andnot_release(BIT_MASK(nr), (atomic_long_t *)p);
-+}
- 
- /**
-  * __clear_bit_unlock - Clear a bit in memory, for unlock
-@@ -37,11 +54,38 @@ do {					\
-  *
-  * See for example x86's implementation.
-  */
--#define __clear_bit_unlock(nr, addr)	\
--do {					\
--	smp_mb__before_atomic();	\
--	clear_bit(nr, addr);		\
--} while (0)
-+static inline void __clear_bit_unlock(unsigned int nr,
-+				      volatile unsigned long *p)
-+{
-+	unsigned long old;
- 
--#endif /* _ASM_GENERIC_BITOPS_LOCK_H_ */
-+	p += BIT_WORD(nr);
-+	old = READ_ONCE(*p);
-+	old &= ~BIT_MASK(nr);
-+	atomic_long_set_release((atomic_long_t *)p, old);
-+}
-+
-+/**
-+ * clear_bit_unlock_is_negative_byte - Clear a bit in memory and test if bottom
-+ *                                     byte is negative, for unlock.
-+ * @nr: the bit to clear
-+ * @addr: the address to start counting from
-+ *
-+ * This is a bit of a one-trick-pony for the filemap code, which clears
-+ * PG_locked and tests PG_waiters,
-+ */
-+#ifndef clear_bit_unlock_is_negative_byte
-+static inline bool clear_bit_unlock_is_negative_byte(unsigned int nr,
-+						     volatile unsigned long *p)
-+{
-+	long old;
-+	unsigned long mask = BIT_MASK(nr);
-+
-+	p += BIT_WORD(nr);
-+	old = atomic_long_fetch_andnot_release(mask, (atomic_long_t *)p);
-+	return !!(old & BIT(7));
-+}
-+#define clear_bit_unlock_is_negative_byte clear_bit_unlock_is_negative_byte
-+#endif
- 
-+#endif /* _ASM_GENERIC_BITOPS_LOCK_H_ */
--- 
-2.1.4
+Hi!
+
+> >>
+> >> OK, see if the following fixes the issue for you, only build tested.
+> >=20
+> > Word-wrapped, so I applied by hand. And yes, the oops at boot is
+> > gone. Thanks!
+>=20
+> Sorry about that, have to check my mail settings. Anyway will post the
+> patch again, glad that it fixed your issue.
+
+Any news here? AFAICT the bug creeped into v4.17-rcX in the
+meantime...
+
+								Pavel
+
+> regards
+> Suman
+>=20
+> >=20
+> > (Camera still does not work in -next... kills system. Oh well. Lets
+> > debug that some other day.)
+> >=20
+> >> 8< ---------------------
+> >> >From bac9a48fb646dc51f2030d676a0dbe3298c3b134 Mon Sep 17 00:00:00 2001
+> >> From: Suman Anna <s-anna@ti.com>
+> >> Date: Fri, 9 Mar 2018 16:39:59 -0600
+> >> Subject: [PATCH] media: omap3isp: fix unbalanced dma_iommu_mapping
+> >>
+> >> The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+> >> ARM DMA backend. The current code creates a dma_iommu_mapping and
+> >> attaches this to the ISP device, but never detaches the mapping in
+> >> either the probe failure paths or the driver remove path resulting
+> >> in an unbalanced mapping refcount and a memory leak. Fix this properly.
+> >>
+> >> Reported-by: Pavel Machek <pavel@ucw.cz>
+> >> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >=20
+> > Tested-by: Pavel Machek <pavel@ucw.cz>
+> > 									Pavel
+> >=20
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsGnH0ACgkQMOfwapXb+vIwbQCdGg5uGMSXrxhBwvnaAyXHTC+s
+W3kAoIzcKA0rsafMWangTaCy5zHqr63O
+=XddU
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
