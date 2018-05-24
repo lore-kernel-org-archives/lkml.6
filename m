@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970188AbeEXN6E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 09:58:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38152 "EHLO
+        id S970159AbeEXN5t (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 09:57:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37870 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970161AbeEXN55 (ORCPT
+        with ESMTP id S970146AbeEXN5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 09:57:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 510A360117
+        Thu, 24 May 2018 09:57:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F090602BC
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
 From: Chintan Pandya <cpandya@codeaurora.org>
@@ -15,42 +15,91 @@ To: will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
         labbott@redhat.com, akpm@linux-foundation.org
 Cc: toshi.kani@hpe.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v10 2/4] arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
-Date: Thu, 24 May 2018 19:27:28 +0530
-Message-Id: <1527170250-5291-3-git-send-email-cpandya@codeaurora.org>
+Subject: [PATCH v10 0/4] Fix issues with huge mapping in ioremap for ARM64
+Date: Thu, 24 May 2018 19:27:26 +0530
+Message-Id: <1527170250-5291-1-git-send-email-cpandya@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527170250-5291-1-git-send-email-cpandya@codeaurora.org>
-References: <1527170250-5291-1-git-send-email-cpandya@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an interface to invalidate intermediate page tables
-from TLB for kernel.
+This series of patches re-bring huge vmap back for arm64.
 
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
----
- arch/arm64/include/asm/tlbflush.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+Patch 1/4 has been taken by Toshi in his series of patches
+by name "[PATCH v3 0/3] fix free pmd/pte page handlings on x86"
+to avoid merge conflict with this series.
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index dfc61d7..a4a1901 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -218,6 +218,13 @@ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
- 	dsb(ish);
- }
- 
-+static inline void __flush_tlb_kernel_pgtable(unsigned long kaddr)
-+{
-+	unsigned long addr = __TLBI_VADDR(kaddr, 0);
-+
-+	__tlbi(vaae1is, addr);
-+	dsb(ish);
-+}
- #endif
- 
- #endif
+Patch 4/4 may conflict with Laura's patch "[PATCHv2] arm64: Make
+sure permission updates happen for pmd/pud". It looks to me that,
+problem addressed by this patch will also get resolved by below
+series of patches. There could be multiple ways to resolve this.
+I would let maintainer suggest the best approach, and I will do
+the needful.
+
+This patches are tested on 4.16 kernel with Cortex-A75 based SoC.
+
+The test used for verifying these patches is a stress test on
+ioremap/unmap which tries to re-use same io-address but changes
+size of mapping randomly i.e. 4K to 2M to 16K etc. The same test
+used to reproduce 3rd level translation fault without these fixes
+(and also of course with Revert "arm64: Enforce BBM for huge IO/VMAP
+mappings" being part of the tree).
+
+These patches can also go into '-stable' branch (if accepted)
+for 4.6 onwards.
+
+>From V9->V10:
+ - Updated commit log for patch 1/4 by Toshi
+ - Addressed review comments by Will on patch 3/4
+
+>From V8->V9:
+ - Used __TLBI_VADDR macros in new TLB flush API
+
+>From V7->V8:
+ - Properly fixed compilation issue in x86 file
+
+>From V6->V7:
+ - Fixed compilation issue in x86 case
+ - V6 patches were not properly enumarated
+
+>From V5->V6:
+ - Use __flush_tlb_kernel_pgtable() for both PUD and PMD. Remove
+   "bool tlb_inv" based variance as it is not need now
+ - Re-naming for consistency
+
+>From V4->V5:
+ - Add new API __flush_tlb_kernel_pgtable(unsigned long addr)
+   for kernel addresses
+
+>From V3->V4:
+ - Add header for 'addr' in x86 implementation
+ - Re-order pmd/pud clear and table free
+ - Avoid redundant TLB invalidatation in one perticular case
+
+>From V2->V3:
+ - Use the exisiting page table free interface to do arm64
+   specific things
+
+>From V1->V2:
+ - Rebased my patches on top of "[PATCH v2 1/2] mm/vmalloc:
+   Add interfaces to free unmapped page table"
+ - Honored BBM for ARM64
+
+
+
+Chintan Pandya (4):
+  ioremap: Update pgtable free interfaces with addr
+  arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
+  arm64: Implement page table free interfaces
+  Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
+
+ arch/arm64/include/asm/tlbflush.h |  7 +++++++
+ arch/arm64/mm/mmu.c               | 42 ++++++++++++++++++++++++++++-----------
+ arch/x86/mm/pgtable.c             |  8 +++++---
+ include/asm-generic/pgtable.h     |  8 ++++----
+ lib/ioremap.c                     |  4 ++--
+ 5 files changed, 48 insertions(+), 21 deletions(-)
+
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation
 Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
