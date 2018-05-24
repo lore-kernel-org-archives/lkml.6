@@ -1,39 +1,95 @@
-Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpcnvFABXeiU+MhAdkZIsIiIhNjgfFGr6glFZL+o4nTLSQmUS2/FmyDqcfIgr+XeFzBD0FH
-ARC-Seal: i=1; a=rsa-sha256; t=1527156163; cv=none;
-        d=google.com; s=arc-20160816;
-        b=tjBM8EkylR5CLznSryKCoxvq+HyViOTA54ubjp0nNpezpl99DLSEgDvbJ1+t2Cxgbd
-         mha/B0qDSBcn3NTssv4GGy3FRDuZ/XhGXiWe7Mtr9xvuj8GKzXmu1M9Vkd657WAEid7j
-         8CirSuHGTozUEyXJc/JoVq9KvIUPMk0lbJlGzqdvY3JrJJPmk+Lnpk9Hbz23t39TWk03
-         KhZuCrgvX4b2IkST28IeZyOEcMbHBvmGPpEX2RNksqRns8cCdaRP1kAFqCd1vWTL0CtI
-         cm2HiyPs3Ax74a9s9bacGEPEQxHhsOwZzojZsC7HTIfCh4j9oHC8wGNjkYGoI8uLwO/9
-         gApw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=GyVdLmelDnqA6X6a6TBOTWzv/Heim4FHNf1/JVvu9lk=;
-        b=rqZX2cCWoKs2rcRS8I4llzrtmCmI8l47InL2khHYT0IFZj4umMELmcVmtMiXAiMkoW
-         f6MMTNqvTn1D460MHum5KZC8dsVa3b45s2nIH0CpTQhr3hPIFQsXbFwKDF+Y0Le7/3VV
-         HEhpzxlbXS4gvXljg4fKL4riNAAofsBUn6FqICPS/wjnGmO4TmYa4jGNjht3KEDUn4hD
-         W5BPdqRlE99sbwT4VcHbdP0EdYtc8Cz3buUTiYHoLyYNPzmA/j502TWXGUZK6Q3NCwIn
-         OQYY5AC89kj8wQXGgk/53gL41nQkap5vP4+KSdlkAr+LMMAmYpf4h2M4lmbWvlU++4Sm
-         VmsQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=F6Pagy/K;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=F6Pagy/K;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156161-2-11097090033017626578
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527156160; b=iO5Rgyu6ObeJ2aGGevOnQCZQEK5JmFBnzSnDwLhqCoQ9K0M+ru
+    fC6hVsBWtDxa5uP7/NXaheGlRbToI3fX/rf0/LO5JpcBbSbIPS3+8CbsrfWF7xA+
+    x1UzZwZEyMEUcEZzj68lyGza+LwvnA8spqHnnhnYMpyzrtXvfb1wEvkxykdhK9L2
+    Wh1nlcwSgPyO4VhB8vLiRMV/zUeHUyan8wjdYWb/CTgdGi/hU1p0HvTzyASNJRAx
+    WcHpuUo6Py+HCdhwjfUWQUASlf+tlUK2l9TSU6BZV/1C5ATc69ULJZkruSFj4Jga
+    4NffK2wIhzi7yRCZuyEMSb3ibacj65kkV8pA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527156160; bh=St43UW+/GQZ2k3KJv6RKygRSx17zmG
+    v1HNs47tQFk3w=; b=nPLAmDchYL5AO4ti9q96DV+xQ08Gpk1vraAuQ4dQ1Lm9ZA
+    wVQbDC4QzMhIVayHpENXL+77n/peqToZSjyFyrMJjDVWnBqmVf73PdHa823QfrgJ
+    eWN/B186saysUrpBnprK0pbsvE0/CR7TqwmhPSWnWfbm3je/6qX01STZGx31Fkuv
+    efo3IDmV5jO0GQ2Q7CTyGA9KaXDZGjowB+j2i+Tx/y8X2v/+ScoGiMtWHyXs0V9E
+    DJrIy8tjRfs4q1z75Hs37zTYnPYBqCk2DohFAsZb99Mi/ARYLtVjKBYyucDKoqmg
+    wVqGQLba7RKjxPVCA58fJPCYnOB7pJVTiiS04TBg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=jMt1oEsR x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=jMt1oEsR x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNQbfWzwniwhBv8Rj3Ajs5KyCNwy2Dh2ZM+v0qqv8yIqgL3YtcRoL7eRvXQ+L8xQq1NkGOQwRJfC5TvQS0xV86ssxtYWwyJAFkq0dP++kW6/IWZaF3hU
+    Q7rOiYtpKYruyYE9HtRC3wE+Z9+sl+jwGxQLcSZ2cnq9HESEQ6kBJ/FQeoWum7GCRHpcrBI48jmljksoGVVj1krEo+MPvWESEOeXrodJ8NsyAWRjvbRi8CV/
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=CJJnq0S5wsgA:10
+    a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8 a=Dei6p5SHAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=WhNYccqOemL3skWd1gkA:9 a=QEXdDO2ut3YA:10
+    a=M-Yerj1wOn-OpK7r_3ei:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030765AbeEXKCi (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:02:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49918 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031112AbeEXKCf (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:02:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com,
-	Omar Sandoval <osandov@fb.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 086/161] loop: fix LOOP_GET_STATUS lock imbalance
-Date: Thu, 24 May 2018 11:38:31 +0200
-Message-Id: <20180524093028.748525266@linuxfoundation.org>
+        stable@vger.kernel.org, Tedd Ho-Jeong An <tedd.an@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 083/161] Bluetooth: btusb: Add support for Intel Bluetooth device 22560 [8087:0026]
+Date: Thu, 24 May 2018 11:38:28 +0200
+Message-Id: <20180524093028.446779968@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -41,10 +97,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338714974386803?=
-X-GMAIL-MSGID: =?utf-8?q?1601339301690307433?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,82 +107,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Tedd Ho-Jeong An <tedd.an@intel.com>
 
-commit bdac616db9bbadb90b7d6a406144571015e138f7 upstream.
+[ Upstream commit 1ce0cec1c14cda7e514fa21b36c0f035203b447d ]
 
-Commit 2d1d4c1e591f made loop_get_status() drop lo_ctx_mutex before
-returning, but the loop_get_status_old(), loop_get_status64(), and
-loop_get_status_compat() wrappers don't call loop_get_status() if the
-passed argument is NULL. The callers expect that the lock is dropped, so
-make sure we drop it in that case, too.
+The Intel Bluetooth device 22560 family (HarrisonPeak, QnJ, and IcyPeak)
+use the same firmware loading mechanism as previous generation,
+so include new USB product ID and whitelist the hardware variant.
 
-Reported-by: syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com
-Fixes: 2d1d4c1e591f ("loop: don't call into filesystem while holding lo_ctl_mutex")
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 16 Spd=12   MxCh= 0
+D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=8087 ProdID=0026 Rev= 0.01
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+
+Signed-off-by: Tedd Ho-Jeong An <tedd.an@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/loop.c |   33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ drivers/bluetooth/btusb.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1287,12 +1287,13 @@ static int
- loop_get_status_old(struct loop_device *lo, struct loop_info __user *arg) {
- 	struct loop_info info;
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -340,6 +340,7 @@ static const struct usb_device_id blackl
  
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_old(&info64, &info);
- 	if (!err && copy_to_user(arg, &info, sizeof(info)))
-@@ -1304,12 +1305,13 @@ loop_get_status_old(struct loop_device *
- static int
- loop_get_status64(struct loop_device *lo, struct loop_info64 __user *arg) {
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
- 
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err && copy_to_user(arg, &info64, sizeof(info64)))
- 		err = -EFAULT;
- 
-@@ -1530,12 +1532,13 @@ loop_get_status_compat(struct loop_devic
- 		       struct compat_loop_info __user *arg)
- {
- 	struct loop_info64 info64;
--	int err = 0;
-+	int err;
- 
--	if (!arg)
--		err = -EINVAL;
--	if (!err)
--		err = loop_get_status(lo, &info64);
-+	if (!arg) {
-+		mutex_unlock(&lo->lo_ctl_mutex);
-+		return -EINVAL;
-+	}
-+	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_compat(&info64, arg);
- 	return err;
+ 	/* Intel Bluetooth devices */
+ 	{ USB_DEVICE(0x8087, 0x0025), .driver_info = BTUSB_INTEL_NEW },
++	{ USB_DEVICE(0x8087, 0x0026), .driver_info = BTUSB_INTEL_NEW },
+ 	{ USB_DEVICE(0x8087, 0x07da), .driver_info = BTUSB_CSR },
+ 	{ USB_DEVICE(0x8087, 0x07dc), .driver_info = BTUSB_INTEL },
+ 	{ USB_DEVICE(0x8087, 0x0a2a), .driver_info = BTUSB_INTEL },
+@@ -2086,6 +2087,8 @@ static int btusb_setup_intel_new(struct
+ 	case 0x0c:	/* WsP */
+ 	case 0x11:	/* JfP */
+ 	case 0x12:	/* ThP */
++	case 0x13:	/* HrP */
++	case 0x14:	/* QnJ, IcP */
+ 		break;
+ 	default:
+ 		BT_ERR("%s: Unsupported Intel hardware variant (%u)",
+@@ -2178,6 +2181,8 @@ static int btusb_setup_intel_new(struct
+ 		break;
+ 	case 0x11:	/* JfP */
+ 	case 0x12:	/* ThP */
++	case 0x13:	/* HrP */
++	case 0x14:	/* QnJ, IcP */
+ 		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u-%u.sfi",
+ 			 le16_to_cpu(ver.hw_variant),
+ 			 le16_to_cpu(ver.hw_revision),
+@@ -2209,6 +2214,8 @@ static int btusb_setup_intel_new(struct
+ 		break;
+ 	case 0x11:	/* JfP */
+ 	case 0x12:	/* ThP */
++	case 0x13:	/* HrP */
++	case 0x14:	/* QnJ, IcP */
+ 		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u-%u.ddc",
+ 			 le16_to_cpu(ver.hw_variant),
+ 			 le16_to_cpu(ver.hw_revision),
