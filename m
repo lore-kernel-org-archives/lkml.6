@@ -1,125 +1,484 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965493AbeEXIo0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 04:44:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38312 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965042AbeEXIoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 04:44:20 -0400
-Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
- rmap_walk_ksm
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Jia He <hejianet@gmail.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
-        Hugh Dickins <hughd@google.com>
-References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
- <1525403506-6750-1-git-send-email-hejianet@gmail.com>
- <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
- <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
-Message-ID: <6c417ab1-a808-72ea-9618-3d76ec203684@arm.com>
-Date: Thu, 24 May 2018 09:44:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965488AbeEXIqg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 04:46:36 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:34518 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965114AbeEXIq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 04:46:29 -0400
 MIME-Version: 1.0
-In-Reply-To: <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Thu, 24 May 2018 10:46:27 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <20180523161810.0ed9fe80@bbrezillon>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <20180523161810.0ed9fe80@bbrezillon>
+Message-ID: <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[25];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/05/18 10:45, Suzuki K Poulose wrote:
-> On 10/05/18 00:31, Andrew Morton wrote:
->> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
->>
->>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
->>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
->>> and run memhog in the host).
->>>
->>> ...
->>>
->>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
->>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
->>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
->>>
->>> This patch fixes it by ignoring(not removing) the low bits of address when
->>> doing rmap_walk_ksm.
->>>
->>> Signed-off-by: jia.he@hxt-semitech.com
->>
->> I assumed you wanted this patch to be committed as
->> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
->> made that change.  Please let me know if this was inappropriate.
->>
->> You can do this yourself by adding an explicit From: line to the very
->> start of the patch's email text.
->>
->> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
->> misbehaviour which this bug causes?  Do you think the fix should be
->> backported into earlier kernels?
->>
+Hi Boris,
 
+Thanks for the initial review! One small question below:
 
-Jia, Andrew,
+On 23.05.2018 16:18, Boris Brezillon wrote:
+> Hi Stefan,
+> 
+> On Tue, 22 May 2018 14:07:06 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+>> +
+>> +struct tegra_nand {
+>> +	void __iomem *regs;
+>> +	struct clk *clk;
+>> +	struct gpio_desc *wp_gpio;
+>> +
+>> +	struct nand_chip chip;
+>> +	struct device *dev;
+>> +
+>> +	struct completion command_complete;
+>> +	struct completion dma_complete;
+>> +	bool last_read_error;
+>> +
+>> +	dma_addr_t data_dma;
+>> +	void *data_buf;
+>> +	dma_addr_t oob_dma;
+>> +	void *oob_buf;
+>> +
+>> +	int cur_chip;
+>> +};
+> 
+> This struct should be split in 2 structures: one representing the NAND
+> controller and one representing the NAND chip:
+> 
+> struct tegra_nand_controller {
+> 	struct nand_hw_control base;
+> 	void __iomem *regs;
+> 	struct clk *clk;
+> 	struct device *dev;
+> 	struct completion command_complete;
+> 	struct completion dma_complete;
+> 	bool last_read_error;
+> 	int cur_chip;
+> };
+> 
+> struct tegra_nand {
+> 	struct nand_chip base;
+> 	dma_addr_t data_dma;
+> 	void *data_buf;
+> 	dma_addr_t oob_dma;
+> 	void *oob_buf;
+> };
 
-What is the status of this patch ?
+Is there a particular reason why you would leave DMA buffers in the chip
+structure? It seems that is more a controller thing...
 
-Suzuki
+If I move them, then struct tegra_nand would be basically empty. Can I
+just use struct nand_chip and have no driver specific chip abstraction?
+
+--
+Stefan
 
 > 
-> I think its just not the WARN_ON(). We do more than what is probably
-> intended with an unaligned address. i.e, We could be modifying the
-> flags for other pages that were not affected.
+>> +
+>> +static inline struct tegra_nand *to_tegra_nand(struct mtd_info *mtd)
+>> +{
+>> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>> +
+>> +	return nand_get_controller_data(chip);
 > 
-> e.g :
+> then you can just do:
 > 
-> In the original report [0], the trace looked like :
+> 	return container_of(chip, struct tegra_nand, base);
 > 
+>> +}
+>> +
+>> +static int tegra_nand_ooblayout_16_ecc(struct mtd_info *mtd, int section,
+>> +				       struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 4;
+>> +	oobregion->length = 4;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_nand_ooblayout_16_free(struct mtd_info *mtd, int section,
+>> +					struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 8;
+>> +	oobregion->length = 8;
+>> +
+>> +	return 0;
+>> +}
 > 
-> [  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
-> [  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
-> [  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
-> [  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
-> [  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
-> [  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
-> [  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
-> [  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
-> [  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
-> [  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
-> [  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
-> [  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
-> [  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
-> [  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
-> [  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
-> [  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
-> [  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
-> [  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
-> [  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
-> [  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
-> [  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
-> [  800.633066] ---[ end trace 944c130b5252fb01 ]---
+> ...
 > 
-> Now, the ksm wants to mark *a page* as referenced via page_referenced_one(),
-> passing it an unaligned address. This could eventually turn out to be
-> one of :
+>> +
+>> +static int tegra_nand_ooblayout_224_ecc(struct mtd_info *mtd, int section,
+>> +				       struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 4;
+>> +	oobregion->length = 144;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_nand_ooblayout_224_free(struct mtd_info *mtd, int section,
+>> +					struct mtd_oob_region *oobregion)
+>> +{
+>> +	if (section > 0)
+>> +		return -ERANGE;
+>> +
+>> +	oobregion->offset = 148;
+>> +	oobregion->length = 76;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct mtd_ooblayout_ops tegra_nand_oob_224_ops = {
+>> +	.ecc = tegra_nand_ooblayout_224_ecc,
+>> +	.free = tegra_nand_ooblayout_224_free,
+>> +};
+>> +
 > 
-> ptep_clear_flush_young_notify(address, address + PAGE_SIZE)
+> I'm pretty sure we can find a pattern here to avoid defining a new
+> mtd_ooblayout_ops for each OOB size.
 > 
-> or
+>> +static irqreturn_t tegra_nand_irq(int irq, void *data)
+>> +{
+>> +	struct tegra_nand *nand = data;
+>> +	u32 isr, dma;
+>> +
+>> +	isr = readl(nand->regs + ISR);
+>> +	dma = readl(nand->regs + DMA_CTRL);
+>> +	dev_dbg(nand->dev, "isr %08x\n", isr);
+>> +
+>> +	if (!isr && !(dma & DMA_CTRL_IS_DONE))
+>> +		return IRQ_NONE;
+>> +
+>> +	if (isr & ISR_CORRFAIL_ERR)
+>> +		nand->last_read_error = true;
+>> +
+>> +	if (isr & ISR_CMD_DONE)
+>> +		complete(&nand->command_complete);
+>> +
+>> +	if (isr & ISR_UND)
+>> +		dev_dbg(nand->dev, "FIFO underrun\n");
+>> +
+>> +	if (isr & ISR_OVR)
+>> +		dev_dbg(nand->dev, "FIFO overrun\n");
+>> +
+>> +	/* handle DMA interrupts */
+>> +	if (dma & DMA_CTRL_IS_DONE) {
+>> +		writel(dma, nand->regs + DMA_CTRL);
+>> +		complete(&nand->dma_complete);
+>> +	}
+>> +
+>> +	/* clear interrupts */
+>> +	writel(isr, nand->regs + ISR);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int tegra_nand_cmd(struct nand_chip *chip,
+>> +			 const struct nand_subop *subop)
+>> +{
+>> +	const struct nand_op_instr *instr;
+>> +	const struct nand_op_instr *instr_data_in = NULL;
+>> +	struct mtd_info *mtd = nand_to_mtd(chip);
+>> +	struct tegra_nand *nand = to_tegra_nand(mtd);
+>> +	unsigned int op_id = -1, trfr_in_sz = 0, trfr_out_sz = 0, offset = 0;
+>> +	bool first_cmd = true;
+>> +	bool force8bit;
+>> +	u32 cmd = 0;
+>> +	u32 value;
+>> +
+>> +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+>> +		unsigned int naddrs, i;
+>> +		const u8 *addrs;
+>> +		u32 addr1 = 0, addr2 = 0;
+>> +
+>> +		instr = &subop->instrs[op_id];
+>> +
+>> +		switch (instr->type) {
+>> +		case NAND_OP_CMD_INSTR:
+>> +			if (first_cmd) {
+>> +				cmd |= CMD_CLE;
+>> +				writel(instr->ctx.cmd.opcode, nand->regs + CMD_1);
+>> +			} else {
+>> +				cmd |= CMD_SEC_CMD;
+>> +				writel(instr->ctx.cmd.opcode, nand->regs + CMD_2);
+>> +			}
+>> +			first_cmd = false;
+>> +			break;
+>> +		case NAND_OP_ADDR_INSTR:
+>> +			offset = nand_subop_get_addr_start_off(subop, op_id);
+>> +			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
+>> +			addrs = &instr->ctx.addr.addrs[offset];
+>> +
+>> +			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
+>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>> +				addr1 |= *addrs++ << (8 * i);
+>> +			naddrs -= i;
+>> +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+>> +				addr2 |= *addrs++ << (8 * i);
+>> +			writel(addr1, nand->regs + ADDR_1);
+>> +			writel(addr2, nand->regs + ADDR_2);
+>> +			break;
+>> +
+>> +		case NAND_OP_DATA_IN_INSTR:
+>> +			trfr_in_sz = nand_subop_get_data_len(subop, op_id);
+>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>> +
+>> +			cmd |= CMD_TRANS_SIZE(trfr_in_sz) | CMD_PIO | CMD_RX | CMD_A_VALID;
+>> +
+>> +			instr_data_in = instr;
+>> +			break;
+>> +
+>> +		case NAND_OP_DATA_OUT_INSTR:
+>> +			trfr_out_sz = nand_subop_get_data_len(subop, op_id);
+>> +			offset = nand_subop_get_data_start_off(subop, op_id);
+>> +			trfr_out_sz = min_t(size_t, trfr_out_sz, 4);
+>> +
+>> +			cmd |= CMD_TRANS_SIZE(trfr_out_sz) | CMD_PIO | CMD_TX | CMD_A_VALID;
+>> +
+>> +			memcpy(&value, instr->ctx.data.buf.out + offset, trfr_out_sz);
+>> +			writel(value, nand->regs + RESP);
+>> +
+>> +			break;
+>> +		case NAND_OP_WAITRDY_INSTR:
+>> +			cmd |= CMD_RBSY_CHK;
+>> +			break;
+>> +
+>> +		}
+>> +	}
+>> +
+>> +
+>> +	cmd |= CMD_GO | CMD_CE(nand->cur_chip);
+>> +	writel(cmd, nand->regs + CMD);
+>> +	wait_for_completion(&nand->command_complete);
+>> +
+>> +	if (instr_data_in) {
+>> +		u32 value;
+>> +		size_t n = min_t(size_t, trfr_in_sz, 4);
+>> +
+>> +		value = readl(nand->regs + RESP);
+>> +		memcpy(instr_data_in->ctx.data.buf.in + offset, &value, n);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct nand_op_parser tegra_nand_op_parser = NAND_OP_PARSER(
+>> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true)),
+>> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
+>> +		NAND_OP_PARSER_PAT_DATA_OUT_ELEM(false, 4)),
+>> +	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
+>> +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
+>> +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, 4)),
+>> +	);
+>> +
+>> +static int tegra_nand_exec_op(struct nand_chip *chip,
+>> +			     const struct nand_operation *op,
+>> +			     bool check_only)
+>> +{
+>> +	return nand_op_parser_exec_op(chip, &tegra_nand_op_parser, op,
+>> +				      check_only);
+>> +}
 > 
-> pmdp_clear_flush_young_notify(address, address + PMD_SIZE)
+> Missing empty line here.
 > 
-> which now spans two pages/pmds and the notifier consumer might
-> take an action on the second page as well, which is not something
-> intended. So, I do think that old behavior is wrong and has other
-> side effects as mentioned above.
+>> +static void tegra_nand_select_chip(struct mtd_info *mtd, int chip)
+>> +{
+>> +	struct tegra_nand *nand = to_tegra_nand(mtd);
+>> +
+>> +	nand->cur_chip = chip;
+>> +}
 > 
-> [0] https://lkml.kernel.org/r/1525244911-5519-1-git-send-email-hejianet@gmail.com
+> ...
 > 
-> Suzuki
+>> +
+>> +static void tegra_nand_setup_chiptiming(struct tegra_nand *nand)
+>> +{
+>> +	struct nand_chip *chip = &nand->chip;
+>> +	int mode;
+>> +
+>> +	mode = onfi_get_async_timing_mode(chip);
+>> +	if (mode == ONFI_TIMING_MODE_UNKNOWN)
+>> +		mode = chip->onfi_timing_mode_default;
+>> +	else
+>> +		mode = fls(mode);
+>> +
+>> +	tegra_nand_setup_timing(nand, mode);
+> 
+> Hm, you shouldn't do that. Let the core select the timing mode for you,
+> and just implement the ->setup_data_interface() hook.
+> 
+>> +}
+>> +
+>> +static int tegra_nand_probe(struct platform_device *pdev)
+>> +{
+>> +	struct reset_control *rst;
+>> +	struct tegra_nand *nand;
+>> +	struct nand_chip *chip;
+>> +	struct mtd_info *mtd;
+>> +	struct resource *res;
+>> +	unsigned long value;
+>> +	int irq, err = 0;
+>> +
+>> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
+>> +	if (!nand)
+>> +		return -ENOMEM;
+>> +
+>> +	nand->dev = &pdev->dev;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(nand->regs))
+>> +		return PTR_ERR(nand->regs);
+>> +
+>> +	irq = platform_get_irq(pdev, 0);
+>> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
+>> +			       dev_name(&pdev->dev), nand);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	rst = devm_reset_control_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(rst))
+>> +		return PTR_ERR(rst);
+>> +
+>> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(nand->clk))
+>> +		return PTR_ERR(nand->clk);
+>> +
+>> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "wp-gpios",
+>> +					   GPIOD_OUT_HIGH);
+>> +	if (IS_ERR(nand->wp_gpio))
+>> +		return PTR_ERR(nand->wp_gpio);
+>> +
+>> +	err = clk_prepare_enable(nand->clk);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	reset_control_assert(rst);
+>> +	udelay(2);
+>> +	reset_control_deassert(rst);
+>> +
+>> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
+>> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
+>> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
+>> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
+>> +	writel(value, nand->regs + HWSTATUS_MASK);
+>> +
+>> +	init_completion(&nand->command_complete);
+>> +	init_completion(&nand->dma_complete);
+>> +
+>> +	/* clear interrupts */
+>> +	value = readl(nand->regs + ISR);
+>> +	writel(value, nand->regs + ISR);
+>> +
+>> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
+>> +
+>> +	/* enable interrupts */
+>> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
+>> +	writel(value, nand->regs + IER);
+>> +
+>> +	/* reset config */
+>> +	writel(0, nand->regs + CFG);
+>> +
+>> +	chip = &nand->chip;
+>> +	mtd = nand_to_mtd(chip);
+>> +
+>> +	mtd->dev.parent = &pdev->dev;
+>> +	mtd->name = "tegra_nand";
+>> +	mtd->owner = THIS_MODULE;
+>> +
+>> +	nand_set_flash_node(chip, pdev->dev.of_node);
+>> +	nand_set_controller_data(chip, nand);
+>> +
+>> +	chip->options = NAND_NO_SUBPAGE_WRITE;
+>> +	chip->exec_op = tegra_nand_exec_op;
+>> +	chip->select_chip = tegra_nand_select_chip;
+>> +	tegra_nand_setup_timing(nand, 0);
+>> +
+>> +	err = nand_scan_ident(mtd, 1, NULL);
+>> +	if (err)
+>> +		goto err_disable_clk;
+>> +
+>> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+>> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+>> +
+>> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
+>> +					    &nand->data_dma, GFP_KERNEL);
+>> +	if (!nand->data_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
+>> +					    &nand->oob_dma, GFP_KERNEL);
+>> +	if (!nand->oob_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	chip->ecc.mode = NAND_ECC_HW;
+>> +	chip->ecc.size = 512;
+>> +	chip->ecc.read_page = tegra_nand_read_page;
+>> +	chip->ecc.write_page = tegra_nand_write_page;
+> 
+> I'd like to have raw accessors implemented here.
+> 
+> That was just a quick review focusing mainly on architectural issues so
+> that you can start working on a v2.
+> 
+> Regards,
+> 
+> Boris
