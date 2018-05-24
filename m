@@ -1,166 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935410AbeEXBBE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 23 May 2018 21:01:04 -0400
-Received: from mga07.intel.com ([134.134.136.100]:34349 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935371AbeEXBAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 May 2018 21:00:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,435,1520924400";
-   d="scan'208";a="42362557"
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andi Kleen <andi.kleen@intel.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Christopher Lameter <cl@linux.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>, Michal Hocko <mhocko@suse.com>
-Subject: [PATCH -V2 -mm 3/4] mm, hugetlbfs: Rename address to haddr in hugetlb_cow()
-Date: Thu, 24 May 2018 08:58:50 +0800
-Message-Id: <20180524005851.4079-4-ying.huang@intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180524005851.4079-1-ying.huang@intel.com>
-References: <20180524005851.4079-1-ying.huang@intel.com>
+        id S935380AbeEXBW3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 23 May 2018 21:22:29 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33753 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935324AbeEXBW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 May 2018 21:22:27 -0400
+X-Google-Smtp-Source: AB8JxZoCDKQy3Gz0iwgLiM3hldB+66wZBJ6p2mDAF/LLGGT0UOWOYiAFEW/gTpQIT5A3jc7b2LIk0g==
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>, linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [PATCH v7 0/8] Centralize and unify usage of preempt/irq tracepoints
+Date: Wed, 23 May 2018 18:21:49 -0700
+Message-Id: <20180524012157.181277-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Ying <ying.huang@intel.com>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-To take better advantage of general huge page copying optimization,
-the target subpage address will be passed to hugetlb_cow(), then
-copy_user_huge_page().  So we will use both target subpage address and
-huge page size aligned address in hugetlb_cow().  To distinguish
-between them, "haddr" is used for huge page size aligned address to be
-consistent with Transparent Huge Page naming convention.
+This is the next revision of preempt/irq tracepoint centralization and
+unified usage across the kernel.
+The preempt/irq tracepoints exist but not everything in the kernel is
+using it. This makes things not work simultaneously (for ex, only either
+lockdep or irqsoff events can be used at a time). This series is an attempt to
+solve that, and also results in a nice clean up of kernel in general.
+Several ifdefs are simpler, and the design is more unified and better.
+Also as a result of this, we also speeded performance all rcuidle
+tracepoints since their handling is simpler.
 
-Now, only huge page size aligned address is used in hugetlb_cow(), so
-the "address" is renamed to "haddr" in hugetlb_cow() in this patch.
-Next patch will use target subpage address in hugetlb_cow() too.
+Few changes since v6:
+- Added a module to simulate an atomic section, a kselftest to load and
+  and trigger it which verifies the preempt-tracer and this series.
 
-The patch is just code cleanup without any functionality changes.
+- there is a new warning after I rebased in early boot, this is because
+early_boot_irqs_disabled was set too early, I moved it after the lockdep
+initialization.
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Suggested-by: Mike Kravetz <mike.kravetz@oracle.com>
-Suggested-by: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Shaohua Li <shli@fb.com>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
----
- mm/hugetlb.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+- added back the softirq fix since it appears it wasn't picked up.
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 696befffe6f7..ad3bec2ed269 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3500,7 +3500,7 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
-  * Keep the pte_same checks anyway to make transition from the mutex easier.
-  */
- static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
--		       unsigned long address, pte_t *ptep,
-+		       unsigned long haddr, pte_t *ptep,
- 		       struct page *pagecache_page, spinlock_t *ptl)
- {
- 	pte_t pte;
-@@ -3518,7 +3518,7 @@ static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * and just make the page writable */
- 	if (page_mapcount(old_page) == 1 && PageAnon(old_page)) {
- 		page_move_anon_rmap(old_page, vma);
--		set_huge_ptep_writable(vma, address, ptep);
-+		set_huge_ptep_writable(vma, haddr, ptep);
- 		return 0;
- 	}
- 
-@@ -3542,7 +3542,7 @@ static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * be acquired again before returning to the caller, as expected.
- 	 */
- 	spin_unlock(ptl);
--	new_page = alloc_huge_page(vma, address, outside_reserve);
-+	new_page = alloc_huge_page(vma, haddr, outside_reserve);
- 
- 	if (IS_ERR(new_page)) {
- 		/*
-@@ -3555,11 +3555,10 @@ static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 		if (outside_reserve) {
- 			put_page(old_page);
- 			BUG_ON(huge_pte_none(pte));
--			unmap_ref_private(mm, vma, old_page, address);
-+			unmap_ref_private(mm, vma, old_page, haddr);
- 			BUG_ON(huge_pte_none(pte));
- 			spin_lock(ptl);
--			ptep = huge_pte_offset(mm, address & huge_page_mask(h),
--					       huge_page_size(h));
-+			ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
- 			if (likely(ptep &&
- 				   pte_same(huge_ptep_get(ptep), pte)))
- 				goto retry_avoidcopy;
-@@ -3584,12 +3583,12 @@ static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 		goto out_release_all;
- 	}
- 
--	copy_user_huge_page(new_page, old_page, address, vma,
-+	copy_user_huge_page(new_page, old_page, haddr, vma,
- 			    pages_per_huge_page(h));
- 	__SetPageUptodate(new_page);
- 	set_page_huge_active(new_page);
- 
--	mmun_start = address & huge_page_mask(h);
-+	mmun_start = haddr;
- 	mmun_end = mmun_start + huge_page_size(h);
- 	mmu_notifier_invalidate_range_start(mm, mmun_start, mmun_end);
- 
-@@ -3598,25 +3597,24 @@ static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * before the page tables are altered
- 	 */
- 	spin_lock(ptl);
--	ptep = huge_pte_offset(mm, address & huge_page_mask(h),
--			       huge_page_size(h));
-+	ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
- 	if (likely(ptep && pte_same(huge_ptep_get(ptep), pte))) {
- 		ClearPagePrivate(new_page);
- 
- 		/* Break COW */
--		huge_ptep_clear_flush(vma, address, ptep);
-+		huge_ptep_clear_flush(vma, haddr, ptep);
- 		mmu_notifier_invalidate_range(mm, mmun_start, mmun_end);
--		set_huge_pte_at(mm, address, ptep,
-+		set_huge_pte_at(mm, haddr, ptep,
- 				make_huge_pte(vma, new_page, 1));
- 		page_remove_rmap(old_page, true);
--		hugepage_add_new_anon_rmap(new_page, vma, address);
-+		hugepage_add_new_anon_rmap(new_page, vma, haddr);
- 		/* Make the old page be freed below */
- 		new_page = old_page;
- 	}
- 	spin_unlock(ptl);
- 	mmu_notifier_invalidate_range_end(mm, mmun_start, mmun_end);
- out_release_all:
--	restore_reserve_on_error(h, vma, address, new_page);
-+	restore_reserve_on_error(h, vma, haddr, new_page);
- 	put_page(new_page);
- out_release_old:
- 	put_page(old_page);
+- Ran Ingo's locking API selftest suite which are passing with this
+  series.
+
+- Mathieu suggested ifdef'ing the tracepoint_synchronize_unregister
+  function incase tracepoints aren't enabled, did that.
+
+
+Joel Fernandes (Google) (7):
+  softirq: reorder trace_softirqs_on to prevent lockdep splat
+  srcu: Add notrace variant of srcu_dereference
+  trace/irqsoff: Split reset into separate functions
+  tracepoint: Make rcuidle tracepoint callers use SRCU
+  tracing: Centralize preemptirq tracepoints and unify their usage
+  lib: Add module to simulate atomic sections for testing preemptoff
+    tracers
+  kselftests: Add tests for the preemptoff and irqsoff tracers
+
+Paul McKenney (1):
+  srcu: Add notrace variants of srcu_read_{lock,unlock}
+
+ include/linux/ftrace.h                        |  11 +-
+ include/linux/irqflags.h                      |  11 +-
+ include/linux/lockdep.h                       |   8 +-
+ include/linux/preempt.h                       |   2 +-
+ include/linux/srcu.h                          |  22 ++
+ include/linux/tracepoint.h                    |  48 +++-
+ include/trace/events/preemptirq.h             |  23 +-
+ init/main.c                                   |   5 +-
+ kernel/locking/lockdep.c                      |  35 ++-
+ kernel/sched/core.c                           |   2 +-
+ kernel/softirq.c                              |   6 +-
+ kernel/trace/Kconfig                          |  22 +-
+ kernel/trace/Makefile                         |   2 +-
+ kernel/trace/trace_irqsoff.c                  | 235 ++++++------------
+ kernel/trace/trace_preemptirq.c               |  71 ++++++
+ kernel/tracepoint.c                           |  15 +-
+ lib/Kconfig.debug                             |   8 +
+ lib/Makefile                                  |   1 +
+ lib/test_atomic_sections.c                    |  79 ++++++
+ tools/testing/selftests/ftrace/config         |   3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       |  74 ++++++
+ 21 files changed, 454 insertions(+), 229 deletions(-)
+ create mode 100644 kernel/trace/trace_preemptirq.c
+ create mode 100644 lib/test_atomic_sections.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+
 -- 
-2.16.1
+2.17.0.441.gb46fe60e1d-goog
