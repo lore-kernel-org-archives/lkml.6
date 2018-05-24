@@ -1,119 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968431AbeEXLOO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 07:14:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:41436 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968359AbeEXLOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 07:14:10 -0400
-Date: Thu, 24 May 2018 12:14:05 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 03/14] arm64: Add per-cpu infrastructure to call
- ARCH_WORKAROUND_2
-Message-ID: <20180524111405.won7dozpt7gq5xda@lakrids.cambridge.arm.com>
-References: <20180522150648.28297-1-marc.zyngier@arm.com>
- <20180522150648.28297-4-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522150648.28297-4-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S968696AbeEXLRA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 07:17:00 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39323 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968688AbeEXLQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 07:16:50 -0400
+X-Google-Smtp-Source: AB8JxZry/kix0zAYGCW8gPuKs9Ie4JYD80esIN9nk84dccW8FRPCVHXmin0hOLPnMG55dGuzMW5mRw==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v4] arm64: allwinner: a64: Add Amarula A64-Relic initial support
+Date: Thu, 24 May 2018 16:46:31 +0530
+Message-Id: <20180524111631.11864-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 04:06:37PM +0100, Marc Zyngier wrote:
-> In a heterogeneous system, we can end up with both affected and
-> unaffected CPUs. Let's check their status before calling into the
-> firmware.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Amarula A64-Relic is Allwinner A64 based IoT device, which support
+- Allwinner A64 Cortex-A53
+- Mali-400MP2 GPU
+- AXP803 PMIC
+- 1GB DDR3 RAM
+- 8GB eMMC
+- AP6330 Wifi/BLE
+- MIPI-DSI
+- CSI: OV5640 sensor
+- USB OTG
+- 12V DC power supply
 
-Ah, I guess this may fix the issue I noted with the prior patch,
-assuming we only set arm64_ssbd_callback_required for a CPU when the FW
-supports the mitigation.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v4:
+- update dr_mode as 'otg'
+Changes for v3:
+- Use sun50i-a64-amarula-relic.dts name
+- add eldo3 for dvdd-csi
+- update dldo4 min voltage as 3.3v as per schematics
+- use dldo3 name as dovdd-csi
+- update aldo1, aldo2 voltages as per schematics
+Changes for v2:
+- Rename dts name to sun50i-a64-relic.dts which is simple to use
+- Update dldo4 min voltage as 1.8
+- Use licence year as 2018
 
-If so, if you fold this together with the prior patch:
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../dts/allwinner/sun50i-a64-amarula-relic.dts     | 188 +++++++++++++++++++++
+ 2 files changed, 189 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
-
-> ---
->  arch/arm64/kernel/cpu_errata.c |  2 ++
->  arch/arm64/kernel/entry.S      | 11 +++++++----
->  2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index 46b3aafb631a..0288d6cf560e 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -233,6 +233,8 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
->  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
->  
->  #ifdef CONFIG_ARM64_SSBD
-> +DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
-> +
->  void __init arm64_update_smccc_conduit(struct alt_instr *alt,
->  				       __le32 *origptr, __le32 *updptr,
->  				       int nr_inst)
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index f33e6aed3037..29ad672a6abd 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -140,8 +140,10 @@ alternative_else_nop_endif
->  
->  	// This macro corrupts x0-x3. It is the caller's duty
->  	// to save/restore them if required.
-> -	.macro	apply_ssbd, state
-> +	.macro	apply_ssbd, state, targ, tmp1, tmp2
->  #ifdef CONFIG_ARM64_SSBD
-> +	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
-> +	cbz	\tmp2, \targ
->  	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
->  	mov	w1, #\state
->  alternative_cb	arm64_update_smccc_conduit
-> @@ -176,12 +178,13 @@ alternative_cb_end
->  	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
->  	disable_step_tsk x19, x20		// exceptions when scheduling.
->  
-> -	apply_ssbd 1
-> +	apply_ssbd 1, 1f, x22, x23
->  
->  #ifdef CONFIG_ARM64_SSBD
->  	ldp	x0, x1, [sp, #16 * 0]
->  	ldp	x2, x3, [sp, #16 * 1]
->  #endif
-> +1:
->  
->  	mov	x29, xzr			// fp pointed to user-space
->  	.else
-> @@ -323,8 +326,8 @@ alternative_if ARM64_WORKAROUND_845719
->  alternative_else_nop_endif
->  #endif
->  3:
-> -	apply_ssbd 0
-> -
-> +	apply_ssbd 0, 5f, x0, x1
-> +5:
->  	.endif
->  
->  	msr	elr_el1, x21			// set up the return data
-> -- 
-> 2.14.2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index c31f90a49481..67ce8c500b2e 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-amarula-relic.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-bananapi-m64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-nanopi-a64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-olinuxino.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+new file mode 100644
+index 000000000000..ce4a256ff086
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+@@ -0,0 +1,188 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2018 Amarula Solutions B.V.
++ * Author: Jagan Teki <jagan@amarulasolutions.com>
++ */
++
++/dts-v1/;
++
++#include "sun50i-a64.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	model = "Amarula A64-Relic";
++	compatible = "amarula,a64-relic", "allwinner,sun50i-a64";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&ohci0 {
++	status = "okay";
++};
++
++&r_rsb {
++	status = "okay";
++
++	axp803: pmic@3a3 {
++		compatible = "x-powers,axp803";
++		reg = <0x3a3>;
++		interrupt-parent = <&r_intc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
++	};
++};
++
++#include "axp803.dtsi"
++
++&reg_aldo1 {
++	regulator-always-on;
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "avdd-csi";
++};
++
++&reg_aldo2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-pl";
++};
++
++&reg_aldo3 {
++	regulator-always-on;
++	regulator-min-microvolt = <3000000>;
++	regulator-max-microvolt = <3000000>;
++	regulator-name = "vcc-pll-avcc";
++};
++
++&reg_dcdc1 {
++	regulator-always-on;
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-3v3";
++};
++
++&reg_dcdc2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1040000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-cpux";
++};
++
++/* DCDC3 is polyphased with DCDC2 */
++
++&reg_dcdc5 {
++	regulator-always-on;
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "vcc-dram";
++};
++
++&reg_dcdc6 {
++	regulator-always-on;
++	regulator-min-microvolt = <1100000>;
++	regulator-max-microvolt = <1100000>;
++	regulator-name = "vdd-sys";
++};
++
++&reg_dldo1 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-hdmi-dsi-sensor";
++};
++
++&reg_dldo2 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-mipi";
++};
++
++&reg_dldo3 {
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "dovdd-csi";
++};
++
++&reg_dldo4 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi-io";
++};
++
++&reg_drivevbus {
++	regulator-name = "usb0-vbus";
++	status = "okay";
++};
++
++&reg_eldo1 {
++	regulator-always-on;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "cpvdd";
++};
++
++&reg_eldo3 {
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "dvdd-csi";
++};
++
++&reg_fldo1 {
++	regulator-min-microvolt = <1200000>;
++	regulator-max-microvolt = <1200000>;
++	regulator-name = "vcc-1v2-hsic";
++};
++
++/*
++ * The A64 chip cannot work without this regulator off, although
++ * it seems to be only driving the AR100 core.
++ * Maybe we don't still know well about CPUs domain.
++ */
++&reg_fldo2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1100000>;
++	regulator-max-microvolt = <1100000>;
++	regulator-name = "vdd-cpus";
++};
++
++&reg_rtc_ldo {
++	regulator-name = "vcc-rtc";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usbphy {
++	usb0_id_det-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
++	usb0_vbus-supply = <&reg_drivevbus>;
++	status = "okay";
++};
+-- 
+2.14.3
