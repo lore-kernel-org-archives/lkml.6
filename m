@@ -1,73 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034099AbeEXRGV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 13:06:21 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:59626 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033609AbeEXRGS (ORCPT
+        id S1034114AbeEXRHE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 13:07:04 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:44406 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033609AbeEXRHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 13:06:18 -0400
-Date: Thu, 24 May 2018 18:06:05 +0100
-From: "Maciej W. Rozycki" <macro@mips.com>
-To: Paul Burton <paul.burton@mips.com>
-CC: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE
- requests
-In-Reply-To: <20180524163617.dts46enhigc2yjfo@pburton-laptop>
-Message-ID: <alpine.DEB.2.00.1805241757321.10896@tp.orcam.me.uk>
-References: <alpine.DEB.2.00.1805141439290.10896@tp.orcam.me.uk> <20180524163617.dts46enhigc2yjfo@pburton-laptop>
-User-Agent: Alpine 2.00 (DEB 1167 2008-08-23)
+        Thu, 24 May 2018 13:07:01 -0400
+X-Google-Smtp-Source: AB8JxZolcchuUbcN+kqVbFzeVCg0RGtb5triQ0XCEScLEyTL6a/b+Az+V6fim0hKSc7g+svqx2aie6IMOPwGNsC/QMY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [10.20.78.188]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1527181573-321457-30576-10480-1
-X-BESS-VER: 2018.6-r1805181819
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.01
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193318
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-        0.01 BSF_SC0_SA_TO_FROM_DOMAIN_MATCH META: Sender Domain Matches Recipient Domain
-X-BESS-Outbound-Spam-Status: SCORE=0.01 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, BSF_SC0_SA_TO_FROM_DOMAIN_MATCH
-X-BESS-BRTS-Status: 1
+In-Reply-To: <20180524080015.GA2866@infradead.org>
+References: <20180522191309.GA23615@infradead.org> <8d4af5c4-96fa-54ee-d5c1-b887b1de5a3c@kernel.dk>
+ <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk> <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+ <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk> <20180523142545.GA16248@infradead.org>
+ <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk> <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
+ <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk> <20180524080015.GA2866@infradead.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 24 May 2018 10:06:59 -0700
+X-Google-Sender-Auth: VmWqvy8w8DwTh_izJajC8PWytXU
+Message-ID: <CAGXu5j+pRUWgny+h5ToVQXBP8nANjreVhnXjk5TVgy84ufNsRg@mail.gmail.com>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Thu, May 24, 2018 at 1:00 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Wed, May 23, 2018 at 03:14:19PM -0600, Jens Axboe wrote:
+>> Ugh, so that would necessitate a change there too. As I said before,
+>> I don't really care where it lives. I know the SCSI folks seem bothered
+>> by moving it, but in reality, it's not like this stuff will likely ever
+>> really change. Of the two choices (select entire SCSI stack, or just move
+>> this little bit), I know what I would consider the saner option...
+>
+> Oh well.  How about something like this respin of Kees' series?
+>
+> http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/sense-cleanup
 
-> > Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e. 
-> > Status.FR) is not supported as the lone purpose of Config5.FRE is to 
-> > emulate Status.FR=0 handling on FPU hardware that has Status.FR=1 
-> > hardwired[1][2].  Also we do not handle this case elsewhere, and assume 
-> > throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot 
-> > be set both at once for a task, leading to inconsistent behaviour if 
-> > this does happen.
-> 
-> Reviewing the code I think we should actually end up with FR=1 in this
-> case, because neither __own_fpu() nor the FPU emulator depend on the
-> value of TIF_32BIT_FPREGS if TIF_HYBRID_FPREGS is set. So it's not too
-> awful & I don't see the kernel doing anything too crazy, but it
-> definitely isn't what the user asked for.
+Does the CONFIG_PCMCIA in drivers/scsi/Makefile now get exposed in
+weird config cases?
 
- However `arch_ptrace' does check TIF_32BIT_FPREGS and gets things wrong 
-if TIF_HYBRID_FPREGS is also set.  Which is actually how I discovered 
-this issue.
+Otherwise, yeah, looks good to me. Thanks!
 
-> > Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting 
-> > PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to 
-> > modes allowed by `mips_set_personality_fp'.
-> 
-> Looks good to me:
-> 
->   Reviewed-by: Paul Burton <paul.burton@mips.com>
+-Kees
 
- Thanks for your review.
-
-  Maciej
+-- 
+Kees Cook
+Pixel Security
