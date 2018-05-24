@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161484-2-7727151026526831266
+X-Cyrus-Session-Id: sloti22d1t05-1835623-1527161483-2-11404348388755125820
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527161483; b=V9AWU6ItHkW1v71kLTH3ao5Ds5tIP5XpJzGcEDAvoyj9MBskWW
-    4f2P8Pi+vy319wlqCCQMX8+ZHbIyTpeP5oW9irqGn2VTSf+8ve+M7JyRw8C9Qjwg
-    KbbUCibF1KHnQOCVmiNlT6EfXaz6EqPgnjyag29INNLNEh1P7sKZP2nisS8kWJPR
-    yY1pLns85OzdF39mjRjvF0j95+qFfftnHqOaM4u9rht4TyirY06dNXKXSWZ4BNoi
-    2zDZF18g0o0icrdEcJ8EFXVIOvuU80HBA2Cvxjufv5E6oA6uScNHpX0MU+pNTC1S
-    wodHzWO54yfSy1wIUy7UZNcmrSMhnQ53c5/A==
+    1527161482; b=aPnPmZcytviGCqflDjq34I35WLwymIpPrWZPW+Y9+IEjCReMDI
+    awzXtoOXSb7aaakf6iURUsYleOzZGSmcxNaGzVK+CajiItFOCVg++grChOLXdORI
+    JnmbambmPuIun101KHlySbRVnPf4xFSor0RRhgqafEg6+A4+lv2OYquqOxgddfWt
+    86H8y7aPyvIJNkkJi/tEWcbNkfAWwuFD6czvO67Hfe4jZ6ZekgmQZhBz1HtRHCJg
+    zhNJmfbElQkUPB0rDpexHyyq/hFUaEKKW/58zVsP1tJXLNA8GRqZpkomAvj++BWz
+    KZrjjA2qGG1kZueL3PTuE4D99MpayIe9bkqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527161483; bh=xhdrN90oeXdS2rRUTX7n5xqZZghxTl
-    YxgwemphBSX+0=; b=h21sU+7CU/jd9VjM3yh1+hBQEnlwzaW+sqcuuMfnwSrLV+
-    HsAulNwYaIYzbc6KnfgH5qwzJ+Hov4Ie1ZTohItUFoT31EEr5V13iKI3YFqkmpij
-    wsmcEoGP7GLNIfBVrjPCcg5mW+DFhMRHzvtzl2M0dvulAGgYd2o26axW2YbCJb4o
-    gyt/Lr/vcaEGMx/GCV0nKaFdRoVPh6XIrsIls77geL7TtT7iGCZ6wYZ2xruvcEyo
-    Xmx1eeQpbLb9CFnhxIsC702gVqYTbIIKFtE3Iv+hg2K36nOpcv1Qf4BFfLjQ8fpf
-    PGw/a0BXperTn+KS0VnrVGctk5rnyhR175GgWTQA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527161482; bh=K3JeTACyoB7pqpxxwJywL3FMuXnB8b
+    x1N4hY129McnU=; b=XAtX8/HRHzq8No/bUqpUGlIWWcfo6NQMXjMALWJpmKSgHE
+    QgpN4iEgxXvOgLcsfaYgkvuUEN5L91EnpudWoqdJeK8oGYHbqBqCqlL5rdrK65O9
+    xgM67SWeeU09fTvSdcv5XhDbJe9ju+GSbSpidb+M2XMGdurwTJwJnLkVaUwZpv/j
+    2wUl5PZru+ZjOKd7hWeSle/oSnmJ393cIh1tirfWHhs5yckrd6VWLFGZ1hbq31xF
+    OWrJuuVtcA8zGEHahtk2u1BSWvxC497RApHts4QvAI1Qx/TnkMVgDyQpNaziIulx
+    xIz7nT8hLsYm32/o3Z/y8gdKTDKDK1jUuqGCWAjw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=yM20M6sA x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=FsATF58U x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=yM20M6sA x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=FsATF58U x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMQi4KoequKeEPLiGJvOM6s+NqIzWNPq+mpQITHZHwAZMJvEzxeGTMvxMmtE86M8EZ92+xES5jWJMeWkaKsc5iBpZ6tjaBOr96jTD1IYHgNHH2r76BIQ
-    rfZtMpXSlDhjN7dmiOUz85dL2dg+e2zK1wFia6QqbDSccMan0AKCYiMi1MJJXX75AKRsiU1BrR/v7BXaHgyoM39tP8dq73hPbZEClqjNGDAtTWvmOA65pyKC
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEGxhubvsbW7TXLd2gcGAYlh9kbhfhZzHF54sDpKdAKiODsSOSSr10Lx8u1z/AOsZsVyLUxKLLL8ONQQkpe31qvSicrV84iy4Tp5PfG3qwavgxBJlevG
+    gAeac5dEM8m97yhKg/vy5IsusEiBmlmktP2cQLuHO48JTHzeAxPB6rkmuBch+FeHQNVccdIoaDZytwbBF+D5pgNRsgq09hUA1klx0PMHpxSMDFBuzxIGVkLg
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=sozttTNsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=detmJ2bfGwl12fOR2OwA:9
-    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=H14h7lNoW1mxTpCc5fkA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967471AbeEXJvF (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:51:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44442 "EHLO mail.kernel.org"
+        id S967329AbeEXJvE (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:51:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967312AbeEXJvD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:51:03 -0400
+        id S967220AbeEXJvA (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:51:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 93/96] serial: 8250: Dont service RX FIFO if interrupts are disabled
-Date: Thu, 24 May 2018 11:39:16 +0200
-Message-Id: <20180524093611.223538320@linuxfoundation.org>
+Subject: [PATCH 4.9 92/96] serial: arc_uart: Fix out-of-bounds access through DT alias
+Date: Thu, 24 May 2018 11:39:15 +0200
+Message-Id: <20180524093611.111714981@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093605.602125311@linuxfoundation.org>
 References: <20180524093605.602125311@linuxfoundation.org>
@@ -104,37 +105,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 2e9fe539108320820016f78ca7704a7342788380 ]
+[ Upstream commit f9f5786987e81d166c60833edcb7d1836aa16944 ]
 
-Currently, data in RX FIFO is read based on UART_LSR register state even
-if RDI and RLSI interrupts are disabled in UART_IER register.
-This is because when IRQ handler is called due to TX FIFO empty event,
-RX FIFO is serviced based on UART_LSR register status instead of
-UART_IIR status. This defeats the purpose of disabling UART RX
-FIFO interrupts during throttling(see, omap_8250_throttle()) as IRQ
-handler continues to drain UART RX FIFO resulting in overflow of buffer
-at tty layer.
-Fix this by making sure that driver drains UART RX FIFO only when
-UART_IIR_RDI is set along with UART_LSR_BI or UART_LSR_DR bits.
+The arc_uart_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+Fix this by adding a range check.
+
+Note that the array size is defined by a Kconfig symbol
+(CONFIG_SERIAL_ARC_NR_PORTS), so this can even be triggered using a
+legitimate DTB.
+
+Fixes: ea28fd56fcde69af ("serial/arc-uart: switch to devicetree based probing")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/8250_port.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/arc_uart.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1815,7 +1815,8 @@ int serial8250_handle_irq(struct uart_po
+--- a/drivers/tty/serial/arc_uart.c
++++ b/drivers/tty/serial/arc_uart.c
+@@ -596,6 +596,11 @@ static int arc_serial_probe(struct platf
+ 	if (dev_id < 0)
+ 		dev_id = 0;
  
- 	status = serial_port_in(port, UART_LSR);
++	if (dev_id >= ARRAY_SIZE(arc_uart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", dev_id);
++		return -EINVAL;
++	}
++
+ 	uart = &arc_uart_ports[dev_id];
+ 	port = &uart->port;
  
--	if (status & (UART_LSR_DR | UART_LSR_BI)) {
-+	if (status & (UART_LSR_DR | UART_LSR_BI) &&
-+	    iir & UART_IIR_RDI) {
- 		if (!up->dma || handle_rx_dma(up, iir))
- 			status = serial8250_rx_chars(up, status);
- 	}
