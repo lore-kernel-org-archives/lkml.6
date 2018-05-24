@@ -1,156 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965844AbeEXJK4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 05:10:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37708 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965610AbeEXJKy (ORCPT
+        id S965856AbeEXJLV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 05:11:21 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:35093 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965456AbeEXJLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 05:10:54 -0400
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 10/13] s390: vfio-ap: sysfs interface to view matrix
- mdev matrix
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-11-git-send-email-akrowiak@linux.vnet.ibm.com>
- <a6bba129-8a3c-a848-65aa-b67816bf2d25@linux.ibm.com>
- <53275110-45fb-d50f-c97e-93141378f094@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.ibm.com>
-Date: Thu, 24 May 2018 11:10:44 +0200
+        Thu, 24 May 2018 05:11:18 -0400
+Subject: Re: [PATCH v5 4/6] mfd: cros-ec: Introduce CEC commands and events
+ definitions.
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+References: <1527152101-17278-1-git-send-email-narmstrong@baylibre.com>
+ <1527152101-17278-5-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <bb0b5060-5ccc-814c-5256-53151a831178@xs4all.nl>
+Date: Thu, 24 May 2018 11:11:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <53275110-45fb-d50f-c97e-93141378f094@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527152101-17278-5-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18052409-0040-0000-0000-0000043D5713
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052409-0041-0000-0000-00002642934B
-Message-Id: <89bda651-d465-af50-a737-1900a54b01c8@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805240111
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfOj6VP5LgqdOusYaJyWEMNesuV+HstqSaQakyIgQjo1m8v7UsLKVE8C0sV1Nghz6t15ZWyFK+Lsjc+aLbaYEWCHA34G2zR9i1DUomkfVhpZaZc1lwTWN
+ xPQbVSd71V8XHXNgpq88FBNudciCSC8+2808+0bh1t3iy8kgK0ZPxCouxJMKxbm2bYRhRccNaNwo2BGHyhizeQIDbxg8WAjryIpuNBLsMwvSyNZDmDHGBvXR
+ Lx6ZswJVUqSpM6Jtd2hvbFej1cMn+bJH20te0NA/hZc7hYxWn1aZzzaL1xYRFBPNZ5PQP1iW78z3H/Xdfx6qSJnmixqI9q/55QICqOmzcQc3Pp/h9RUjyHp5
+ ePR0Yv4eL+e6Zpx+qIjOhzz9+OrGVUxII80dUT8KH2yRy/1dJYC7yeUjn0Jda5pMxL7841cfCW97ykIz3vlJFngcyBMsO9gtnEyqQ+JMNVXzlC3OL/M6Rtix
+ UL/RcbN5PynO7Us7Y6mRp/qZDpHA+7MeY4Mw0aqA78mIh2MeRQYXPgT+oGOLTAdM4AIx0hzexOIN9njVtIBi4wtvuZMUZglK50cnlr1OEpvuFjpGZIGl8s63
+ 0r4+xb93L6pj73RN6Y9oX3SGcMMUozN8r+1eZs45O4MioLgiwV95Croqa1OiuogtA7IEW110Eg79sUC24kqz3W7ARWee822I6jPAy7G7ZLF0HPsOXr6C5x6I
+ Znpcjb732HfDfo9/6ikkHs3EGiWQ8yDy8SUel3rTsRr+jGKyDNDTTB6bl2+Npixnw+9LRSgvuP+4eAO/4j+VudvoDoRUgK6QjVJc9SM1QeoPAIOvnP5ot+yx
+ LJePHQoJvg6d4IrMlBk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/05/2018 16:38, Tony Krowiak wrote:
-> On 05/16/2018 03:55 AM, Pierre Morel wrote:
->> On 07/05/2018 17:11, Tony Krowiak wrote:
->>> Provides a sysfs interface to view the AP matrix configured for the
->>> mediated matrix device.
->>>
->>> The relevant sysfs structures are:
->>>
->>> /sys/devices/vfio_ap
->>> ... [matrix]
->>> ...... [mdev_supported_types]
->>> ......... [vfio_ap-passthrough]
->>> ............ [devices]
->>> ...............[$uuid]
->>> .................. matrix
->>>
->>> To view the matrix configured for the mediated matrix device,
->>> print the matrix file:
->>
->> This is the configured matrix, not the one used by the guest.
->> Nothing in the patches protect against binding a queue and assigning
->> a new AP when the guest runs.
->> The card and queue will be showed by this entry.
->
-> Of course, as stated above, this is the matrix configured for the
-> mediated matrix device. Are you suggesting here that the driver
-> should prevent assigning a new adapter or domain while a guest is
-> running? Couldn't this be a step in the process for hot (un)plugging
-> AP queues?
+On 24/05/18 10:54, Neil Armstrong wrote:
+> The EC can expose a CEC bus, this patch adds the CEC related definitions
+> needed by the cros-ec-cec driver.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>  include/linux/mfd/cros_ec_commands.h | 85 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+> 
+> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+> index cc0768e..ea9646f 100644
+> --- a/include/linux/mfd/cros_ec_commands.h
+> +++ b/include/linux/mfd/cros_ec_commands.h
+> @@ -804,6 +804,8 @@ enum ec_feature_code {
+>  	EC_FEATURE_MOTION_SENSE_FIFO = 24,
+>  	/* EC has RTC feature that can be controlled by host commands */
+>  	EC_FEATURE_RTC = 27,
+> +	/* EC supports CEC commands */
+> +	EC_FEATURE_CEC = 35,
+>  };
+>  
+>  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
+> @@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
+>  	/* EC sent a sysrq command */
+>  	EC_MKBP_EVENT_SYSRQ = 6,
+>  
+> +	/* Notify the AP that something happened on CEC */
+> +	EC_MKBP_CEC_EVENT = 8,
+> +
+> +	/* Send an incoming CEC message to the AP */
+> +	EC_MKBP_EVENT_CEC_MESSAGE = 9,
+> +
+>  	/* Number of MKBP events */
+>  	EC_MKBP_EVENT_COUNT,
+>  };
+> @@ -2850,6 +2858,83 @@ struct ec_params_reboot_ec {
+>  
+>  /*****************************************************************************/
+>  /*
+> + * HDMI CEC commands
+> + *
+> + * These commands are for sending and receiving message via HDMI CEC
+> + */
+> +#define MAX_CEC_MSG_LEN 16
 
-No, I mean what is the point to show this?
-It is not what the guest sees.
-Has it any use case?
+Can you rename this to EC_MAX_CEC_MSG_LEN? It is way too similar to the
+CEC_MAX_MSG_LEN defined in cec.h. Since this is a property of the EC hw/fw
+it makes sense to prefix it accordingly.
 
->
->>
->>
->>
->>>
->>>     cat matrix
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> ---
->>>   drivers/s390/crypto/vfio_ap_ops.c |   31 
->>> +++++++++++++++++++++++++++++++
->>>   1 files changed, 31 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->>> b/drivers/s390/crypto/vfio_ap_ops.c
->>> index 755be1d..81e03b8 100644
->>> --- a/drivers/s390/crypto/vfio_ap_ops.c
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->>> @@ -716,6 +716,36 @@ static ssize_t control_domains_show(struct 
->>> device *dev,
->>>   }
->>>   DEVICE_ATTR_RO(control_domains);
->>>
->>> +static ssize_t matrix_show(struct device *dev, struct 
->>> device_attribute *attr,
->>> +               char *buf)
->>> +{
->>> +    struct mdev_device *mdev = mdev_from_dev(dev);
->>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->>> +    char *bufpos = buf;
->>> +    unsigned long apid;
->>> +    unsigned long apqi;
->>> +    unsigned long napm = matrix_mdev->matrix.apm_max + 1;
->>> +    unsigned long naqm = matrix_mdev->matrix.aqm_max + 1;
->>> +    int nchars = 0;
->>> +    int n;
->>> +
->>> +    for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm) {
->>> +        n = sprintf(bufpos, "%02lx\n", apid);
->>> +        bufpos += n;
->>> +        nchars += n;
->>> +
->>> +        for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, naqm) {
->>> +            n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
->>> +            bufpos += n;
->>> +            nchars += n;
->>> +        }
->>> +    }
->>> +
->>> +    return nchars;
->>> +}
->>> +DEVICE_ATTR_RO(matrix);
->>> +
->>> +
->>>   static struct attribute *vfio_ap_mdev_attrs[] = {
->>>       &dev_attr_assign_adapter.attr,
->>>       &dev_attr_unassign_adapter.attr,
->>> @@ -724,6 +754,7 @@ static ssize_t control_domains_show(struct 
->>> device *dev,
->>>       &dev_attr_assign_control_domain.attr,
->>>       &dev_attr_unassign_control_domain.attr,
->>>       &dev_attr_control_domains.attr,
->>> +    &dev_attr_matrix.attr,
->>>       NULL,
->>>   };
->>>
->>
->
+> +
+> +/* CEC message from the AP to be written on the CEC bus */
+> +#define EC_CMD_CEC_WRITE_MSG 0x00B8
+> +
+> +/**
+> + * struct ec_params_cec_write - Message to write to the CEC bus
+> + * @msg: message content to write to the CEC bus
+> + */
+> +struct ec_params_cec_write {
+> +	uint8_t msg[MAX_CEC_MSG_LEN];
+> +} __packed;
+> +
+> +/* Set various CEC parameters */
+> +#define EC_CMD_CEC_SET 0x00BA
+> +
+> +/**
+> + * struct ec_params_cec_set - CEC parameters set
+> + * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
+> + * @enable: in case cmd is CEC_CMD_ENABLE, this field can be 0 to disable CEC
+> + * 	or 1 to enable CEC functionnality
+> + * @address: in case cmd is CEC_CMD_LOGICAL_ADDRESS, this field encodes the
+> + *	requested logical address between 0 and 15 or 0xff to unregister
+> + */
+> +struct ec_params_cec_set {
+> +	uint8_t cmd; /* enum cec_command */
+> +	union {
+> +		uint8_t enable;
+> +		uint8_t address;
+> +	};
+> +} __packed;
+> +
+> +/* Read various CEC parameters */
+> +#define EC_CMD_CEC_GET 0x00BB
+> +
+> +/**
+> + * struct ec_params_cec_get - CEC parameters get
+> + * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
+> + */
+> +struct ec_params_cec_get {
+> +	uint8_t cmd; /* enum cec_command */
+> +} __packed;
+> +
+> +/**
+> + * struct ec_response_cec_get - CEC parameters get response
+> + * @enable: in case cmd was CEC_CMD_ENABLE, this field will 0 if CEC is
+> + * 	disabled or 1 if CEC functionnality is enabled
+> + * @address: in case cmd was CEC_CMD_LOGICAL_ADDRESS, this will encode the
+> + *	configured logical address between 0 and 15 or 0xff if unregistered
+> + */
+> +struct ec_response_cec_get {
+> +	union {
+> +		uint8_t enable;
+> +		uint8_t address;
+> +	};
+> +} __packed;
+> +
+> +/* CEC parameters command */
+> +enum cec_command {
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Same here: shouldn't all of this be prefixed with ec_ or EC_?
+
+Regards,
+
+	Hans
+
+> +	/* CEC reading, writing and events enable */
+> +	CEC_CMD_ENABLE,
+> +	/* CEC logical address  */
+> +	CEC_CMD_LOGICAL_ADDRESS,
+> +};
+> +
+> +/* Events from CEC to AP */
+> +enum mkbp_cec_event {
+> +	EC_MKBP_CEC_SEND_OK			= BIT(0),
+> +	EC_MKBP_CEC_SEND_FAILED			= BIT(1),
+> +};
+> +
+> +/*****************************************************************************/
+> +/*
+>   * Special commands
+>   *
+>   * These do not follow the normal rules for commands.  See each command for
+> 
