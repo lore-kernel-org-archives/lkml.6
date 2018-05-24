@@ -1,39 +1,39 @@
 Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqYOVQ4XEhGByGfAJ0oCEnTt1P2QCWpsC0rMxcPyeRzaiyDdyHmi+29ids3H4T9RkRU1cBa
-ARC-Seal: i=1; a=rsa-sha256; t=1527156264; cv=none;
+X-Google-Smtp-Source: AB8JxZpSMWuMdxExXZWUrc3zfaZxysxEfcI513tQHPYZDI/Ec0sB7dNoAiPy2qP1lFPGWODd4QZ5
+ARC-Seal: i=1; a=rsa-sha256; t=1527156258; cv=none;
         d=google.com; s=arc-20160816;
-        b=TUzkjVRc279lp7lSIxNHrFzxMOdSra8KeT5Hxgltmawe52r6tac6Zv5yhIxnFScykn
-         W2+ySOncBgPXLeAa1wBiWldwqNOe3Lja8Ju+qdwwU+UR+5ZvAbJ1UQmTjGi4OVxsk9GW
-         7TZEDx0Pwt1mffiM1tlHepVZHzwkb1zUPItcMiuqaUmqCk37CKLE0lsrs9xV4uFoHPK8
-         321zdro56FbmOIOMnxI7X7TvbnpEZcrXvTIi5126FDimfWgPyZoxVZhHfMc5EvPUtYPS
-         +XZmv/HWKGVJufaY+u6rDzUZayBD9HF4HhvEtEuSZwARwog+xBfM7hD+JWfsXbd94UaG
-         r0mQ==
+        b=ZWnIaA8gsf9YBZo9aCoizqv2OkKIeUvFq9avLH2fUQWBKyKsbegi5yqp/EH7BQgEpz
+         BGA/s1tvvAmVnBvw1LLB5BeZSybwUFPR5laDKhHBlfYCgwIc2OtxTa6GPlQ3NDY7QxEL
+         hkueaBPebXQMyvrnqTKpgFlPfrQBISkTxahN1LGImFp0YJyLIMxFNNxIebPc1eydP8/c
+         Gjvf7Pc5qV80E9Qx1K/fDjhWKyfTSxv6t2/sT1RxpovG2/OLDmw1H9X1wXmSHkWzGyjL
+         pUPG+/7t30CUDlh+69OftAj98TK8Th3CsWkC9gMGJ4UBnH84hd3G3WDy/z1SFFh+x5IT
+         e2xA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=tCDCpTjLyf62Bc7++RAlcwfoKzwh525oGyLfPL1b774=;
-        b=JZSU8pPD45Gnxa3vAi7yTwOhBSMbLw7yGYbLoAcivEtnfGAoZOKG1K4h8awZQ2tTFh
-         8MK/Fu+S9SYtwnfFgOdayjG5Hz82AP/vro7wZVYiPGvi1XMXm4npgVxohtfIbM2X0XIk
-         wKyy58tK2kCUrQ4wgGm79t0x+SvcaFyRB4l+3szpWcLQOK24INfQu7SdUQf1T2cw2iq7
-         jM5yNS//5n/J7QraB1iu0dgOrJK88hymylqs8SPheUEGInB6EAsV+mmabm/rPyxxCwLk
-         Ppw1yoHbJiIYpcejxYc+xt3Hu2jqQBMK4ZT/W9xS11np2g0h456Uc9DVEINJ15cNOV76
-         l8jQ==
+        bh=/4Qr7hCm55zCPCEf04s/gV8xN4mp1eIemNUixYyRUlw=;
+        b=T20qbuyOLTqScDD/JMHRpiuzQwBiVWHTFo2hL8eF19gzYhwlpUYUR/4FsfH/aHBMJL
+         Mhzfh5866pnhX89MyEwdsv0do23nVAgq45dWhrJ4Ryy/ypaaP7EOoELS19aEYu38qRtF
+         7wvjpZBWbsSh57BVN+5KaSgHw263BEIjR9lSOgDTUKnbgd7eyUZBbEq81XNp6gexXALK
+         EmDwlU7cMv1jpCe4c44qGylFV/uTBBuMcQKj8D7CnhtoGTdv7iPqaZvDNOWke50DzHnE
+         WoSJw6bhhDezJF+wVae/4GMhrTESR6FuAq58QxgfAcz285RaymB0YjYWOzw4KPZpFQ7I
+         CLyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vYuHWdfw;
+       dkim=pass header.i=@kernel.org header.s=default header.b=jhZNEdWP;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vYuHWdfw;
+       dkim=pass header.i=@kernel.org header.s=default header.b=jhZNEdWP;
        spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Stephen Boyd <sboyd@kernel.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 123/161] clk: hisilicon: mark wdt_mux_p[] as const
-Date: Thu, 24 May 2018 11:39:08 +0200
-Message-Id: <20180524093033.021891453@linuxfoundation.org>
+Subject: [PATCH 4.16 121/161] clk: rockchip: Fix wrong parent for SDMMC phase clock for rk3228
+Date: Thu, 24 May 2018 11:39:06 +0200
+Message-Id: <20180524093032.789110882@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601338938407671650?=
-X-GMAIL-MSGID: =?utf-8?q?1601339407321637747?=
+X-GMAIL-THRID: =?utf-8?q?1601338495289551147?=
+X-GMAIL-MSGID: =?utf-8?q?1601339401702599393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,32 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit df934cbcbff7afbc024bf05f02615917c61f6470 ]
+[ Upstream commit 4b0556a441dd37e598887215bc89b49a6ef525b3 ]
 
-The symbol is in the __initconst section but not marked init, which
-caused a warning when building with LTO.
+commit c420c1e4db22 ("clk: rockchip: Prevent calculating mmc phase
+if clock rate is zero") catches one gremlin again for clk-rk3228.c
+that the parent of SDMMC phase clock should be sclk_sdmmc0, but not
+sclk_sdmmc. However, the naming of the sdmmc clocks varies in the
+manual with the card clock having the 0 while the hclk is named
+without appended 0. So standardize one one format to prevent
+confusion, as there also is only one (non-sdio) mmc controller on
+the soc.
 
-This makes it 'const' as was obviously intended.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: c80dfd9bf54e ("clk: hisilicon: add CRG driver for Hi3516CV300 SoC")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/hisilicon/crg-hi3516cv300.c |    2 +-
+ drivers/clk/rockchip/clk-rk3228.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/hisilicon/crg-hi3516cv300.c
-+++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
-@@ -204,7 +204,7 @@ static const struct hisi_crg_funcs hi351
- /* hi3516CV300 sysctrl CRG */
- #define HI3516CV300_SYSCTRL_NR_CLKS 16
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -387,7 +387,7 @@ static struct rockchip_clk_branch rk3228
+ 			RK2928_CLKSEL_CON(23), 5, 2, MFLAGS, 0, 6, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
  
--static const char *wdt_mux_p[] __initconst = { "3m", "apb" };
-+static const char *const wdt_mux_p[] __initconst = { "3m", "apb" };
- static u32 wdt_mux_table[] = {0, 1};
+-	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
++	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+ 			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
  
- static const struct hisi_mux_clock hi3516cv300_sysctrl_mux_clks[] = {
