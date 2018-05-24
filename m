@@ -1,39 +1,97 @@
-Return-Path: <SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpGR7do/cxMn0OPtFVtVMBOUVxki8vSL/2I4/IU7X4mi3H7Gl5+wN98/VfxBqaKc6xO2YiW
-ARC-Seal: i=1; a=rsa-sha256; t=1527156011; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Ovb4AmZfW7fRYgJLK0pk+/X45n/Ig8k1sutcJrTAoxsSECOiV0HMwpz32leORh5TuC
-         tBoIA1sqgyrNtN5/eMthkyz2QoFJtwq0EjtIqJWQ0fbZYG1MIWEnjynsEP7o8MJ1Zyjq
-         9u2EUMkIuSKAcBm59FakifzEJrN49pa8ylodF5at20/rcYM4vpKDQ00TOb6WPwK4907L
-         Yj3vwj9R7iNv4c/L2R/TVwoJ2nfKFJ33pD52V5bDSCPGIFtP3JpRog/2ptZ2IHSIAlBm
-         DrVFhDr5yNa6DJtGY1ITuxSF+gLAbEngUS+MSrqywTFOkvZL6qyOUE7bE8XrYE5g76b/
-         T02g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Nz9+RdAtPamUIrXRwwYbvR1sqOlV94E98VR+HW0vWV8=;
-        b=luyte65EyrUXc5P3FQoD5+4rxVzd8P0+LR/Z6OHBNyi2ovEp2nAUqgJ+bJnw5PYjv8
-         6QZH4WJIV+shpT5tY3OxBAv8lWx1GjUX/ahUGYD9edY9wtsF/Da2nL9E5Pr14pZgF68a
-         3tBs+SMywjo5QpifLH0EVaxLi65NEnPcFg865uH2/BQMr6NfIr7U20AAwZPNUnecykoW
-         tK1RHB6xM4oIUnIqwUc2hNtKs7diYzzBzyP2aqpUohQru7Anozh1BNUNwPq9Ly3B/BHd
-         swkzbJZIUtWhArQD/NpbPr+THjIKC3UAVBti7hcOISpCyaFxJj4XQANxkM1Sj8B+zumK
-         uUIw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DczaX/34;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DczaX/34;
-       spf=pass (google.com: domain of srs0=we5z=il=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=We5Z=IL=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1733193-1527156009-2-763786173583688981
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1527156008; b=I/T/r6Nk0Z8E+uzeGHkLjz62US6s27gJglFMBx+Sf7Mnszseow
+    gvAh7i8rpNjAn3g3fpHXFqN3qTIsEpCM1EC75UyJi9zBk5kt+3kCP+yFmfgFBWxB
+    zlq9/GG1kq3mClKX/o2+WrWuZd4YKDYu8CuBhzEEZLPUwbr0ei2JayQUnq8XWKqh
+    zmsSKIdUXZx5RHv8f8S4hplzQvEMb702tVvQ2QW/PPEKhUOIAJ8l0wEGQrHkE2LS
+    fbOjJHnekSwUzX+RZxc18Rn+ZtTPyVThxRGFrea05UaCXK3Rmuuh3FuJNQkoFlj6
+    vmrJWYTHkenqA8hryTeGeMmJkv7mDj1WdX5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1527156008; bh=3RNmG1C2zUCxn2dwchoMnmYgBzJcv1
+    SK8IWpjZ+jAk4=; b=IvzNXWDeE3F029CuxoTwrR385Biuq7J07AWmOOwjuNe81k
+    fPmggiausdMXnV0C/qaku0Hi0LJaPuR60sVyR1NrlzO/bBCE6RFY/wMiJ2UlHlyr
+    kOFm7VFXL1f9FxbtVShjNXxovkJcBNlt1UzBRoSORAGGU4Op3CDdZXDzr7tqIzZD
+    q51zVaWYKuPwYrm4GBY5xq2+W2PfQr9gYqVBFLsTr3NHniOO3qF26vZB56McG8N8
+    L4QI2UWNdh8VttUeG9ujyzox3JptWdje1H6MOWb9HCVZDIfPzTwo8r2kRuCNFlgv
+    632d3OJNF0yxL/rPsZvDk93HRuUdk2WVtcwK1scQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=i0Dd5q6a x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=i0Dd5q6a x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfI2rZ9M8RLjBHh+4hUJ9kQuQMJuagiMBRal6v+Rol67b+Yi8TudPyMM7HpZgf6fykKv3b2/odFit6jTZ3XKvhV6ZIsdVGHrVt31LrZn5Nz/3CqhkS8Zz
+    RdxnDAq3M4q9UW5cfmWlNjaNOEZpDGmQ4wqfnE3PWM9xacEtHFf/07MfA9qHyqdAXKf7CeOCgeHSV5T69aYfzHi85DuMcZ9h4WiX5gTvUlcQ60QasOlzAUDV
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=QqqX_mwiMbC-zsVjBVcA:9 a=mi2QHR2-GNvvMRTD:21 a=5kMDCHIITYUaIh1e:21
+    a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030825AbeEXKAE (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 06:00:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030905AbeEXKAC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 06:00:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ariel Elior <Ariel.Elior@cavium.com>,
-	Michal Kalderon <Michal.Kalderon@cavium.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 032/161] qed: Fix LL2 race during connection terminate
-Date: Thu, 24 May 2018 11:37:37 +0200
-Message-Id: <20180524093022.201857268@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Craig Gallek <kraig@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 009/161] sock_diag: fix use-after-free read in __sk_free
+Date: Thu, 24 May 2018 11:37:14 +0200
+Message-Id: <20180524093019.510198141@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093018.331893860@linuxfoundation.org>
 References: <20180524093018.331893860@linuxfoundation.org>
@@ -41,10 +99,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1601339142348149029?=
-X-GMAIL-MSGID: =?utf-8?q?1601339142348149029?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,88 +109,126 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Kalderon <Michal.Kalderon@cavium.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 490068deaef0c76e47bf89c457de899b7d3995c7 ]
+[ Upstream commit 9709020c86f6bf8439ca3effc58cfca49a5de192 ]
 
-Stress on qedi/qedr load unload lead to list_del corruption.
-This is due to ll2 connection terminate freeing resources without
-verifying that no more ll2 processing will occur.
+We must not call sock_diag_has_destroy_listeners(sk) on a socket
+that has no reference on net structure.
 
-This patch unregisters the ll2 status block before terminating
-the connection to assure this race does not occur.
+BUG: KASAN: use-after-free in sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
+BUG: KASAN: use-after-free in __sk_free+0x329/0x340 net/core/sock.c:1609
+Read of size 8 at addr ffff88018a02e3a0 by task swapper/1/0
 
-Fixes: 1d6cff4fca4366 ("qed: Add iSCSI out of order packet handling")
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.17.0-rc5+ #54
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+ sock_diag_has_destroy_listeners include/linux/sock_diag.h:75 [inline]
+ __sk_free+0x329/0x340 net/core/sock.c:1609
+ sk_free+0x42/0x50 net/core/sock.c:1623
+ sock_put include/net/sock.h:1664 [inline]
+ reqsk_free include/net/request_sock.h:116 [inline]
+ reqsk_put include/net/request_sock.h:124 [inline]
+ inet_csk_reqsk_queue_drop_and_put net/ipv4/inet_connection_sock.c:672 [inline]
+ reqsk_timer_handler+0xe27/0x10e0 net/ipv4/inet_connection_sock.c:739
+ call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+ expire_timers kernel/time/timer.c:1363 [inline]
+ __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+ run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+ __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+ invoke_softirq kernel/softirq.c:365 [inline]
+ irq_exit+0x1d1/0x200 kernel/softirq.c:405
+ exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+ smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+ </IRQ>
+RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
+RSP: 0018:ffff8801d9ae7c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: 1ffff1003b35cf8a RCX: 0000000000000000
+RDX: 1ffffffff11a30d0 RSI: 0000000000000001 RDI: ffffffff88d18680
+RBP: ffff8801d9ae7c38 R08: ffffed003b5e46c3 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff8801d9ae7cf0 R14: ffffffff897bef20 R15: 0000000000000000
+ arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+ default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
+ arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
+ default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+ cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+ do_idle+0x395/0x560 kernel/sched/idle.c:262
+ cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
+ start_secondary+0x426/0x5b0 arch/x86/kernel/smpboot.c:269
+ secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+
+Allocated by task 4557:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+ kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+ kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+ kmem_cache_zalloc include/linux/slab.h:691 [inline]
+ net_alloc net/core/net_namespace.c:383 [inline]
+ copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
+ create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
+ unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+ ksys_unshare+0x708/0xf90 kernel/fork.c:2408
+ __do_sys_unshare kernel/fork.c:2476 [inline]
+ __se_sys_unshare kernel/fork.c:2474 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:2474
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 69:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+ __cache_free mm/slab.c:3498 [inline]
+ kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+ net_free net/core/net_namespace.c:399 [inline]
+ net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
+ net_drop_ns net/core/net_namespace.c:405 [inline]
+ cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
+ process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+ worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+ kthread+0x345/0x410 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the object at ffff88018a02c140
+ which belongs to the cache net_namespace of size 8832
+The buggy address is located 8800 bytes inside of
+ 8832-byte region [ffff88018a02c140, ffff88018a02e3c0)
+The buggy address belongs to the page:
+page:ffffea0006280b00 count:1 mapcount:0 mapping:ffff88018a02c140 index:0x0 compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff88018a02c140 0000000000000000 0000000100000001
+raw: ffffea00062a1320 ffffea0006268020 ffff8801d9bdde40 0000000000000000
+page dumped because: kasan: bad access detected
+
+Fixes: b922622ec6ef ("sock_diag: don't broadcast kernel sockets")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Craig Gallek <kraig@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ net/core/sock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -842,6 +842,9 @@ static int qed_ll2_lb_rxq_completion(str
- 	struct qed_ll2_info *p_ll2_conn = (struct qed_ll2_info *)p_cookie;
- 	int rc;
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1603,7 +1603,7 @@ static void __sk_free(struct sock *sk)
+ 	if (likely(sk->sk_net_refcnt))
+ 		sock_inuse_add(sock_net(sk), -1);
  
-+	if (!QED_LL2_RX_REGISTERED(p_ll2_conn))
-+		return 0;
-+
- 	rc = qed_ll2_lb_rxq_handler(p_hwfn, p_ll2_conn);
- 	if (rc)
- 		return rc;
-@@ -862,6 +865,9 @@ static int qed_ll2_lb_txq_completion(str
- 	u16 new_idx = 0, num_bds = 0;
- 	int rc;
- 
-+	if (!QED_LL2_TX_REGISTERED(p_ll2_conn))
-+		return 0;
-+
- 	new_idx = le16_to_cpu(*p_tx->p_fw_cons);
- 	num_bds = ((s16)new_idx - (s16)p_tx->bds_idx);
- 
-@@ -1915,17 +1921,25 @@ int qed_ll2_terminate_connection(void *c
- 
- 	/* Stop Tx & Rx of connection, if needed */
- 	if (QED_LL2_TX_REGISTERED(p_ll2_conn)) {
-+		p_ll2_conn->tx_queue.b_cb_registred = false;
-+		smp_wmb(); /* Make sure this is seen by ll2_lb_rxq_completion */
- 		rc = qed_sp_ll2_tx_queue_stop(p_hwfn, p_ll2_conn);
- 		if (rc)
- 			goto out;
-+
- 		qed_ll2_txq_flush(p_hwfn, connection_handle);
-+		qed_int_unregister_cb(p_hwfn, p_ll2_conn->tx_queue.tx_sb_index);
- 	}
- 
- 	if (QED_LL2_RX_REGISTERED(p_ll2_conn)) {
-+		p_ll2_conn->rx_queue.b_cb_registred = false;
-+		smp_wmb(); /* Make sure this is seen by ll2_lb_rxq_completion */
- 		rc = qed_sp_ll2_rx_queue_stop(p_hwfn, p_ll2_conn);
- 		if (rc)
- 			goto out;
-+
- 		qed_ll2_rxq_flush(p_hwfn, connection_handle);
-+		qed_int_unregister_cb(p_hwfn, p_ll2_conn->rx_queue.rx_sb_index);
- 	}
- 
- 	if (p_ll2_conn->input.conn_type == QED_LL2_TYPE_OOO)
-@@ -1973,16 +1987,6 @@ void qed_ll2_release_connection(void *cx
- 	if (!p_ll2_conn)
- 		return;
- 
--	if (QED_LL2_RX_REGISTERED(p_ll2_conn)) {
--		p_ll2_conn->rx_queue.b_cb_registred = false;
--		qed_int_unregister_cb(p_hwfn, p_ll2_conn->rx_queue.rx_sb_index);
--	}
--
--	if (QED_LL2_TX_REGISTERED(p_ll2_conn)) {
--		p_ll2_conn->tx_queue.b_cb_registred = false;
--		qed_int_unregister_cb(p_hwfn, p_ll2_conn->tx_queue.tx_sb_index);
--	}
--
- 	kfree(p_ll2_conn->tx_queue.descq_mem);
- 	qed_chain_free(p_hwfn->cdev, &p_ll2_conn->tx_queue.txq_chain);
- 
+-	if (unlikely(sock_diag_has_destroy_listeners(sk) && sk->sk_net_refcnt))
++	if (unlikely(sk->sk_net_refcnt && sock_diag_has_destroy_listeners(sk)))
+ 		sock_diag_broadcast_destroy(sk);
+ 	else
+ 		sk_destruct(sk);
