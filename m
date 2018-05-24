@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527159479-2-15937150743639104784
+X-Cyrus-Session-Id: sloti22d1t05-1797295-1527159476-2-16430482849656971242
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527159478; b=WPovMnqFDO+VStG+n5KtWbGNSgtUKF6uNZxS8P9XJFd4dFINQ9
-    Pw5WfYp+pfyAKkkbB333LKxVy+xr5YNvOqZU219jKVQYI1732bzlsxVJfzDr0egb
-    5g7ridT9MLw66Ko/EP70pqd8wCxW4LJckHUSjzChULLvPMcg8ZJSsFKARcjSq9AM
-    +GuMTB3S3iqr2yi/TvYtP1Aj/iFr3dVES88+IZyecagDNdijqGg4Kvy4URnC9no0
-    W3eCurrjd/2/GJbciVexioQ0Gvu3OL8ylI/2iWIaPaEJL0s3NTJGPRp65MFZ01AO
-    NIDayPU3RDk6Z53ZjCkjTs7aHfpSRhzF6PEw==
+    1527159475; b=XOtHWQQlOirSltAhPOFnpvPSuLZLTCZtT4d/AbEiPkn8dv9DS7
+    pm7tVgxo+H61ewxvGH8XryjOwKSAbgEMiHCtmF4EOFVaf4rIClBY/RH9/rWv9On0
+    ghWxch3fVFSqs7p01Wo4Csj8UQ7iuwJXOVrv6YZ9DMAQwbHNhdmcxjFihaO5veSY
+    +xZveaQADJ88n0lUC6UNaSINxUrOIUpm8N2BqtGxlwWgfhGgCwRmb+w/b71qvIbs
+    f8+Sn+KFGTk0JbpUsq1R7mspo83yClT+jyjS1dJ5X7ASIJ9EdI/6dTCFrmZhydAb
+    CCyerKrNv2H439Z8KGvuOgVKISOR3iqFJ4vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1527159478; bh=Rj71z00e5sEZgHYb2B/G+/DVNjeJsu
-    Yp2uyaVVdNKvk=; b=m5SRapU/rv4sfkFlF1R8Vi2BgyvCjwjsFquVCywgw3nH+x
-    dwjBWI0X0wtRkNzxHZrUy8c1EeHEsXuHVgFyEogYntg7Xtw1TCo//DuKdJqBq5VX
-    G8202Ye+Q2WK+/TVLH5F1/+XWEsFCAHIZKVtoafJDpHPVX99s229cmAHnokAOVk3
-    gFGeStnorgKl2wqPg7DwHicc/9SmxMDXPlrBQQ9Nu0fzjQYybj4/FS6RU/vB6MsJ
-    WY2jD0/seoSy97x5T6TTkD7jnNiYGcP+uZRTxD4gxDrO//jJsUR3L75iTRWzEHyL
-    BNtS+iClJ3ncZoLxYpr4UJz2EEk0v7XOFgnTR5Ow==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527159475; bh=rywDRCODFFApSV8uXH1rlozXPNeEDO
+    LLbxTgLzvKY/g=; b=O2sdQUrvOMz3Pk8x63z8FuIozLnwVTrlpNmy0De9srfCN1
+    Lpj7Qfrvlr4rDXIZMKkMqMxloPVckWUa4hRRT9yPIh4d32zIjgngFFZal3j932nT
+    MzWuOB+YxPB6Nxc1eL6OdRklRDigtWja2xwi0JAc2sVJjRtKFtJpGOgfL/E7sMgi
+    FaFm/i94a8NRCkNJBAdgyGUL2J5yiAo0gU/soF96F/HFt6w+vbvLmA4to6kJgoed
+    FqgOxVxT0a9T1tZ8/NQWKwpD1VCLH3kTI0llIItMOCcoE2LJIUDF1G9IM4bwacKF
+    asKN0zVAuaJeU9g6nVLDr4GeqDt+YYoxj4zGkYSA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=lex2a0jy x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=y+lEyeLJ x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=lex2a0jy x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=y+lEyeLJ x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,32 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDXAHsZ8yCvHPNh7AOfR39mmUwfmZ191ceE4wxg6wmh5JYHOIneokmzj/MzFFvdXfUDRh8F6MQeSldvDRAbZ73vwRzZZOHNgawkV8aB5j4naEXte9BZ5
-    st4lxKbb7GnMXSbjdKNCtM70t58Nr+uAjl9bLpbttj1IFNTri+DYPJ+q2YYS6D8C+MuUEFbWvd6WkDAhDyI2Hl1wvquMJ+DXC2pjA1Ba529wNqFhdhVk2r3d
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfERiGkM4fWoqv2pc2MsxLXel4nEqx0IL3nTy18myHS2TiehPnEebhbp+Lv7SI8PjyaDefN7TlwS0qRq/ss1fdWjrqSvJ5/wsyFnWTUsESpSqbowPX9e0
+    dRZes4aO2gSeTGTSJaVmsOnC1QTaOKpt4qYjllFqB+EOZj+imXKYOsHgxIOI8+YExVP5/p2fcRJi4En53LE2wEUh9yS9ICPTfhZ+AVHex83MmSptC22b5MI1
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=KtuSVvygwG24pxXr48oA:9 a=NsFYcnmvi5UWX7ow:21 a=h_NTAUzmfRHWsXK-:21
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=uBuKx8GwAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=XjZB3Db1R4rdm5aNK6sA:9 a=QEXdDO2ut3YA:10 a=wZgZ3yaTFkxMEWn-yT5t:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030248AbeEXJ4H (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 24 May 2018 05:56:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36012 "EHLO mail.kernel.org"
+        id S1030257AbeEXJ4K (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 24 May 2018 05:56:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030210AbeEXJ4D (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 24 May 2018 05:56:03 -0400
+        id S1030252AbeEXJ4I (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 24 May 2018 05:56:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Dickens <christopher.a.dickens@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Dave Carroll <david.carroll@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 080/165] usb: gadget: composite: fix incorrect handling of OS desc requests
-Date: Thu, 24 May 2018 11:38:06 +0200
-Message-Id: <20180524093625.256494987@linuxfoundation.org>
+Subject: [PATCH 4.14 108/165] scsi: aacraid: fix shutdown crash when init fails
+Date: Thu, 24 May 2018 11:38:34 +0200
+Message-Id: <20180524093626.387383219@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180524093621.979359379@linuxfoundation.org>
 References: <20180524093621.979359379@linuxfoundation.org>
@@ -107,156 +107,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Dickens <christopher.a.dickens@gmail.com>
+From: Meelis Roos <mroos@linux.ee>
 
-[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
+[ Upstream commit 00c20cdc79259c6c5bf978b21af96c2d3edb646d ]
 
-When handling an OS descriptor request, one of the first operations is
-to zero out the request buffer using the wLength from the setup packet.
-There is no bounds checking, so a wLength > 4096 would clobber memory
-adjacent to the request buffer. Fix this by taking the min of wLength
-and the request buffer length prior to the memset. While at it, define
-the buffer length in a header file so that magic numbers don't appear
-throughout the code.
+When aacraid init fails with "AAC0: adapter self-test failed.", shutdown
+leads to UBSAN warning and then oops:
 
-When returning data to the host, the data length should be the min of
-the wLength and the valid data we have to return. Currently we are
-returning wLength, thus requests for a wLength greater than the amount
-of data in the OS descriptor buffer would return invalid (albeit zero'd)
-data following the valid descriptor data. Fix this by counting the
-number of bytes when constructing the data and using this when
-determining the length of the request.
+[154316.118423] ================================================================================
+[154316.118508] UBSAN: Undefined behaviour in drivers/scsi/scsi_lib.c:2328:27
+[154316.118566] member access within null pointer of type 'struct Scsi_Host'
+[154316.118631] CPU: 2 PID: 14530 Comm: reboot Tainted: G        W        4.15.0-dirty #89
+[154316.118701] Hardware name: Hewlett Packard HP NetServer/HP System Board, BIOS 4.06.46 PW 06/25/2003
+[154316.118774] Call Trace:
+[154316.118848]  dump_stack+0x48/0x65
+[154316.118916]  ubsan_epilogue+0xe/0x40
+[154316.118976]  __ubsan_handle_type_mismatch+0xfb/0x180
+[154316.119043]  scsi_block_requests+0x20/0x30
+[154316.119135]  aac_shutdown+0x18/0x40 [aacraid]
+[154316.119196]  pci_device_shutdown+0x33/0x50
+[154316.119269]  device_shutdown+0x18a/0x390
+[...]
+[154316.123435] BUG: unable to handle kernel NULL pointer dereference at 000000f4
+[154316.123515] IP: scsi_block_requests+0xa/0x30
 
-Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+This is because aac_shutdown() does
+
+        struct Scsi_Host *shost = pci_get_drvdata(dev);
+        scsi_block_requests(shost);
+
+and that assumes shost has been assigned with pci_set_drvdata().
+
+However, pci_set_drvdata(pdev, shost) is done in aac_probe_one() far
+after bailing out with error from calling the init function
+((*aac_drivers[index].init)(aac)), and when the init function fails, no
+error is returned from aac_probe_one() so PCI layer assumes there is
+driver attached, and tries to shut it down later.
+
+Fix it by returning error from aac_probe_one() when card-specific init
+function fails.
+
+This fixes reboot on my HP NetRAID-4M with dead battery.
+
+Signed-off-by: Meelis Roos <mroos@linux.ee>
+Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
- include/linux/usb/composite.h  |    3 +++
- 2 files changed, 22 insertions(+), 21 deletions(-)
+ drivers/scsi/aacraid/linit.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -1425,7 +1425,7 @@ static int count_ext_compat(struct usb_c
- 	return res;
- }
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -1690,8 +1690,10 @@ static int aac_probe_one(struct pci_dev
+ 	 *	Map in the registers from the adapter.
+ 	 */
+ 	aac->base_size = AAC_MIN_FOOTPRINT_SIZE;
+-	if ((*aac_drivers[index].init)(aac))
++	if ((*aac_drivers[index].init)(aac)) {
++		error = -ENODEV;
+ 		goto out_unmap;
++	}
  
--static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
-+static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
- {
- 	int i, count;
- 
-@@ -1452,10 +1452,12 @@ static void fill_ext_compat(struct usb_c
- 				buf += 23;
- 			}
- 			count += 24;
--			if (count >= 4096)
--				return;
-+			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+				return count;
- 		}
- 	}
-+
-+	return count;
- }
- 
- static int count_ext_prop(struct usb_configuration *c, int interface)
-@@ -1500,25 +1502,20 @@ static int fill_ext_prop(struct usb_conf
- 	struct usb_os_desc *d;
- 	struct usb_os_desc_ext_prop *ext_prop;
- 	int j, count, n, ret;
--	u8 *start = buf;
- 
- 	f = c->interface[interface];
-+	count = 10; /* header length */
- 	for (j = 0; j < f->os_desc_n; ++j) {
- 		if (interface != f->os_desc_table[j].if_id)
- 			continue;
- 		d = f->os_desc_table[j].os_desc;
- 		if (d)
- 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
--				/* 4kB minus header length */
--				n = buf - start;
--				if (n >= 4086)
--					return 0;
--
--				count = ext_prop->data_len +
-+				n = ext_prop->data_len +
- 					ext_prop->name_len + 14;
--				if (count > 4086 - n)
--					return -EINVAL;
--				usb_ext_prop_put_size(buf, count);
-+				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+					return count;
-+				usb_ext_prop_put_size(buf, n);
- 				usb_ext_prop_put_type(buf, ext_prop->type);
- 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
- 							    ext_prop->name_len);
-@@ -1544,11 +1541,12 @@ static int fill_ext_prop(struct usb_conf
- 				default:
- 					return -EINVAL;
- 				}
--				buf += count;
-+				buf += n;
-+				count += n;
- 			}
- 	}
- 
--	return 0;
-+	return count;
- }
- 
- /*
-@@ -1830,6 +1828,7 @@ unknown:
- 			req->complete = composite_setup_complete;
- 			buf = req->buf;
- 			os_desc_cfg = cdev->os_desc_config;
-+			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
- 			memset(buf, 0, w_length);
- 			buf[5] = 0x01;
- 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
-@@ -1853,8 +1852,8 @@ unknown:
- 					count += 16; /* header */
- 					put_unaligned_le32(count, buf);
- 					buf += 16;
--					fill_ext_compat(os_desc_cfg, buf);
--					value = w_length;
-+					value = fill_ext_compat(os_desc_cfg, buf);
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			case USB_RECIP_INTERFACE:
-@@ -1883,8 +1882,7 @@ unknown:
- 							      interface, buf);
- 					if (value < 0)
- 						return value;
--
--					value = w_length;
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			}
-@@ -2159,8 +2157,8 @@ int composite_os_desc_req_prepare(struct
- 		goto end;
- 	}
- 
--	/* OS feature descriptor length <= 4kB */
--	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
-+	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
-+					 GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
- 		ret = -ENOMEM;
- 		usb_ep_free_request(ep0, cdev->os_desc_req);
---- a/include/linux/usb/composite.h
-+++ b/include/linux/usb/composite.h
-@@ -53,6 +53,9 @@
- /* big enough to hold our biggest descriptor */
- #define USB_COMP_EP0_BUFSIZ	1024
- 
-+/* OS feature descriptor length <= 4kB */
-+#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
-+
- #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
- struct usb_configuration;
- 
+ 	if (aac->sync_mode) {
+ 		if (aac_sync_mode)
