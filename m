@@ -1,165 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935967AbeEYH4W (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 03:56:22 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:52730 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935919AbeEYH4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 03:56:19 -0400
-Subject: Re: [PATCH v2 13/13] ARM: pxa: change SSP DMA channels allocation
-To: Robert Jarzmik <robert.jarzmik@free.fr>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20180524070703.11901-1-robert.jarzmik@free.fr>
- <20180524070703.11901-14-robert.jarzmik@free.fr>
-From: Daniel Mack <daniel@zonque.org>
-Message-ID: <7e50d21c-c563-156f-d5d3-cd977af0e9d0@zonque.org>
-Date: Fri, 25 May 2018 09:56:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935954AbeEYH6s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 03:58:48 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:45086 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935866AbeEYH6q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 03:58:46 -0400
+X-Google-Smtp-Source: ADUXVKKoTJOdJXupNlQq3L8eLSOZ4qn31OMwYSZ1LOTJM90v41HuBa0bHgmewNLB4O8NAGsQ9ArP18AQoaeok5gPY7g=
 MIME-Version: 1.0
-In-Reply-To: <20180524070703.11901-14-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
+References: <20180524093159.286472249@linuxfoundation.org> <20180524180652.7bqyquqfe2nqdxfg@xps>
+ <20180524190806.GE31019@kroah.com> <CADtBP2B=Yb22dUjW-X-1OEGUvMX81gfpQ2FqFAaQUnExduwq7Q@mail.gmail.com>
+ <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 25 May 2018 13:28:43 +0530
+Message-ID: <CA+G9fYtof6XB1+zcNZBy+jhejHJQkVrG8jdLBusUG=a07F8ShQ@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Cc: Rafael Tinoco <rafael.tinoco@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, May 24, 2018 09:07 AM, Robert Jarzmik wrote:
-> Now the dma_slave_map is available for PXA architecture, switch the SSP
-> device to it.
-> 
-> This specifically means that :
-> - for platform data based machines, the DMA requestor channels are
->    extracted from the slave map, where pxa-ssp-dai.<N> is a 1-1 match to
->    ssp.<N>, and the channels are either "rx" or "tx".
-> 
-> - for device tree platforms, the dma node should be hooked into the
->    pxa2xx-ac97 or pxa-ssp-dai node.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Hi Daniel,
 
-Acked-by: Daniel Mack <daniel@zonque.org>
+On 25 May 2018 at 07:04, Daniel Sangorrin
+<daniel.sangorrin@toshiba.co.jp> wrote:
+> Hello Rafael,
+>
+> The tests fcntl35 and fcntl35_64 should have go from FAIL to PASS.
+> https://www.spinics.net/lists/stable/msg239475.html
 
+Thanks for the patch.
 
-We should, however, merge what's left of this management glue code into 
-the users of it, so the dma related properties can be put in the right 
-devicetree node.
+Now i have manually tested LTP syscalls and confirms,
+fcntl35 and fcntl35_64 pass on qemu_x86_64, (arm64) Hikey, Juno and (arm32) x15.
 
-I'll prepare a patch for that for 4.18. This is a good preparation for 
-this round though.
+Linux version 4.4.133-rc1 (buildslave@x86-64-07) (gcc version 6.2.1 20161016
+(Linaro GCC 6.2-2016.11) ) #1 SMP Thu May 24 10:24:11 UTC 2018
 
+[  131.873912] LTP: starting fcntl35
+tst_test.c:980: INFO: Timeout per run is 0h 05m 00s
+fcntl35.c:101: PASS: an unprivileged user init the capacity of a pipe
+to 4096 successfully
+fcntl35.c:101: PASS: a privileged user init the capacity of a pipe to
+65536 successfully
+Summary:
+passed   2
+failed   0
+skipped  0
 
-Thanks,
-Daniel
+[  132.090096] LTP: starting fcntl35_64
+incrementing stop
+tst_test.c:980: INFO: Timeout per run is 0h 05m 00s
+fcntl35.c:101: PASS: an unprivileged user init the capacity of a pipe
+to 4096 successfully
+fcntl35.c:101: PASS: a privileged user init the capacity of a pipe to
+65536 successfully
+Summary:
+passed   2
+failed   0
+skipped  0
+warnings 0
 
+>
+> Looking at
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a3d7cdea9/testrun/228569/suite/ltp-syscalls-tests/tests/
+> I see that these two tests (and other important tests as well) are being SKIPPED.
 
-> ---
-> Since v1: Removed channel names from platform_data
-> ---
->   arch/arm/plat-pxa/ssp.c    | 47 ----------------------------------------------
->   include/linux/pxa2xx_ssp.h |  2 --
->   sound/soc/pxa/pxa-ssp.c    |  5 ++---
->   3 files changed, 2 insertions(+), 52 deletions(-)
-> 
-> diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-> index ba13f793fbce..ed36dcab80f1 100644
-> --- a/arch/arm/plat-pxa/ssp.c
-> +++ b/arch/arm/plat-pxa/ssp.c
-> @@ -127,53 +127,6 @@ static int pxa_ssp_probe(struct platform_device *pdev)
->   	if (IS_ERR(ssp->clk))
->   		return PTR_ERR(ssp->clk);
->   
-> -	if (dev->of_node) {
-> -		struct of_phandle_args dma_spec;
-> -		struct device_node *np = dev->of_node;
-> -		int ret;
-> -
-> -		/*
-> -		 * FIXME: we should allocate the DMA channel from this
-> -		 * context and pass the channel down to the ssp users.
-> -		 * For now, we lookup the rx and tx indices manually
-> -		 */
-> -
-> -		/* rx */
-> -		ret = of_parse_phandle_with_args(np, "dmas", "#dma-cells",
-> -						 0, &dma_spec);
-> -
-> -		if (ret) {
-> -			dev_err(dev, "Can't parse dmas property\n");
-> -			return -ENODEV;
-> -		}
-> -		ssp->drcmr_rx = dma_spec.args[0];
-> -		of_node_put(dma_spec.np);
-> -
-> -		/* tx */
-> -		ret = of_parse_phandle_with_args(np, "dmas", "#dma-cells",
-> -						 1, &dma_spec);
-> -		if (ret) {
-> -			dev_err(dev, "Can't parse dmas property\n");
-> -			return -ENODEV;
-> -		}
-> -		ssp->drcmr_tx = dma_spec.args[0];
-> -		of_node_put(dma_spec.np);
-> -	} else {
-> -		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-> -		if (res == NULL) {
-> -			dev_err(dev, "no SSP RX DRCMR defined\n");
-> -			return -ENODEV;
-> -		}
-> -		ssp->drcmr_rx = res->start;
-> -
-> -		res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
-> -		if (res == NULL) {
-> -			dev_err(dev, "no SSP TX DRCMR defined\n");
-> -			return -ENODEV;
-> -		}
-> -		ssp->drcmr_tx = res->start;
-> -	}
-> -
->   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->   	if (res == NULL) {
->   		dev_err(dev, "no memory resource defined\n");
-> diff --git a/include/linux/pxa2xx_ssp.h b/include/linux/pxa2xx_ssp.h
-> index 8461b18e4608..03a7ca46735b 100644
-> --- a/include/linux/pxa2xx_ssp.h
-> +++ b/include/linux/pxa2xx_ssp.h
-> @@ -212,8 +212,6 @@ struct ssp_device {
->   	int		type;
->   	int		use_count;
->   	int		irq;
-> -	int		drcmr_rx;
-> -	int		drcmr_tx;
->   
->   	struct device_node	*of_node;
->   };
-> diff --git a/sound/soc/pxa/pxa-ssp.c b/sound/soc/pxa/pxa-ssp.c
-> index 0291c7cb64eb..e09368d89bbc 100644
-> --- a/sound/soc/pxa/pxa-ssp.c
-> +++ b/sound/soc/pxa/pxa-ssp.c
-> @@ -104,9 +104,8 @@ static int pxa_ssp_startup(struct snd_pcm_substream *substream,
->   	dma = kzalloc(sizeof(struct snd_dmaengine_dai_dma_data), GFP_KERNEL);
->   	if (!dma)
->   		return -ENOMEM;
-> -
-> -	dma->filter_data = substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
-> -				&ssp->drcmr_tx : &ssp->drcmr_rx;
-> +	dma->chan_name = substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
-> +		"tx" : "rx";
->   
->   	snd_soc_dai_set_dma_data(cpu_dai, substream, dma);
->   
-> 
+fcntl35 and fcntl35_64 will be unskipped from now on.
+
+>
+> By the way, I see that select04 FAILS in your case. But in my setup, select04 was working fine (x86_64) in 4.4.132. I will confirm that it still works in 4.4.133
+
+select04 failed on (slow) qemu_arm only and PASS on real hardware of
+arm32 x15, arm64 Juno and x86_64.
+Test case verdict comparison across all boards and qemu,
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/tests/ltp-syscalls-tests/select04
+
+LTP select04 failed log on slow qemu_arm32,
+tst_test.c:980: INFO: Timeout per run is 0h 15m 00s
+tst_timer_test.c:356: INFO: CLOCK_MONOTONIC resolution 1ns
+tst_timer_test.c:368: INFO: prctl(PR_GET_TIMERSLACK) = 50us
+tst_timer_test.c:275: INFO: select() sleeping for 1000us 500
+iterations, threshold 450.01us
+tst_timer_test.c:318: INFO: min 1336us, max 2282us, median 1522us,
+trunc mean 1542.82us (discarded 25)
+tst_timer_test.c:321: FAIL: select() slept for too long
+
+Full log: https://lkft.validation.linaro.org/scheduler/job/228569#L8792
+
+Best regards
+Naresh Kamboju
