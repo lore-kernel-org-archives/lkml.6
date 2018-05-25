@@ -1,85 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966805AbeEYPvE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:51:04 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:57579 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965666AbeEYPvC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:51:02 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Oded Gabbay <oded.gabbay@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Arnd Bergmann <arnd@arndb.de>, Felix Kuehling <Felix.Kuehling@amd.com>,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Kent Russell <kent.russell@amd.com>,
-        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        id S966876AbeEYPv1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:51:27 -0400
+Received: from mout.gmx.net ([212.227.15.15]:33007 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965666AbeEYPvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 11:51:25 -0400
+MIME-Version: 1.0
+Message-ID: <trinity-b1da805c-c37c-4bf8-9384-b923a3919016-1527263483541@3c-app-gmx-bs69>
+From: "Frank Wunderlich" <FrankWu@gmx.de>
+To: linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] drm/amdgpu: fix 32-bit build warning
-Date: Fri, 25 May 2018 17:50:09 +0200
-Message-Id: <20180525155030.3667352-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180525155030.3667352-1-arnd@arndb.de>
-References: <20180525155030.3667352-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:tLTWrYXK1XmFzZLwisy/MzqQOimKFZ/gBKSKdg92DpoZEKoM3d6
- taKR1iy1GFRGryEPMWpUBJeb65etS2e2S5yQ7BkZTsOj8GUYkNfPVlaoMmngou1h3FM9e3X
- Vug1UAWFHUD8h//gmV9DvaI5zH6u4Mc4TNcSVbicSNsntGJKNzWStqD9Q5pqfJzWF4cB4u2
- jPcLUOMUphxjvEKM0ACjw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:uC9nKQETneQ=:yV19KX2xB6NE4AtlRCzm8g
- B4vAN/r11tARlk2OlpuPKLyQgIsLQb2AasLCDmVmAM84vZ7GIy8uliv+tB2npf/YSOF3LFirf
- 3J/g6VXdIQyBaF4TLnzJxhIJJp7ekGVqheOKeCyTFa6d1KTogNAsCxxZSUyL/u7psjOkjm6yI
- qfAXZYzNAExlyTxbG5YG6nR/wTqKbSgAabtDM3mZcsmRzia9UlCcy+PEwq6AWKYEX6l+KgXNT
- YJcXvK6/Lk7OBPWcQ3RiTpgEnIhpuvS8f2JpAoNGSbuPFmGa9UMYfd8Nu0B5xS2u9lMcncRxT
- VogqBMjU05BTdVS2tqyxvb/W/+GPbcS5vZ44p+g7I4nO6ns6lBEZbYVX5fo9Naj94cVcRR/QL
- Bf3ob/z32LeNfR4DkexaEgP40yf7ECNMgHyvQnStkX199h6BjV+04L9aU+JubwSIZQ6Ru+rIl
- EKJx21LW0DXwqEdPbVj3vzDaVV9LPWHaA/pFN9TS4Mf1VjK/hN9mJp99MVKQCVovf8air9DNw
- 1ivB8qG2wca+UpAEsqAVxABCWM4OaxirS0y174kLDC/h485ZY2Rd4DTFa6aV2KIHEFDFMbZfQ
- YvySz8pcmyxRIKLr/sA+O7Ne/7I5RG8f4CbC65v8w2MHS0w5UFS0eitZJTP6nMdIZObps0QT0
- PFWM57j/3n3SEUXyM6kv/eES4Le+uTBy1YzkWWBqI29Gg11v34CXXiltwADRnbuiK+V8=
+Subject: Fw: fix green/blue pio-led on bpi-r2
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 May 2018 17:51:23 +0200
+Importance: normal
+Sensitivity: Normal
+References: <trinity-63c216a4-492c-4250-934a-37dc10d0cb56-1527263229587@3c-app-gmx-bs69>
+Content-Transfer-Encoding: 8BIT
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:ujMcxgrbcYS8v3JkO7UbYwkqT20JWAJov4Q+k4Q9AHN
+ AIVoDlABgAcXnGAXZOIbL4f6ExEd8JX6hLCBmKUbEnvf0lduxX
+ 7rAd0xV+uzI1bhAcHOjznGhn9SUa0lcuNZrdrNRFFdbuFWJA/U
+ m+1C14pX7sfi1iWwRVtxQ5p1TOo5FY8M7NdXa5BOtkMQr2aT5y
+ BcajfXQ3qnY15B/ToZe6KFkkybymQT5kzN9TD0iYg1bJGNfHwZ
+ bqrBuDa1zAyd2twZqxKjFz4pNkG3iZmhO8POAaTTO30HlRDsY1 +vdNxs=
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qUQ+y0dipAM=:B2BscbwnCjYx2FPQ7xj0Vj
+ /RNrmv90BGANDWybcSWrCblPBlw8nIWWfb8C5BsWvGLX+geTLH6RD5c50v65B0ChUZ/8n4n2P
+ YxkD9D3Lgc0fLCbIHPfxySmT9gJzear9zjIyC6IPz74whzZBXAMxWv30CtiIEDa4YJE8eau47
+ E/L9+IvrByQFgCFJtU8ypK8F6NEBb4TDMVdCra0xU585RS7Am3d0rWbcaOvmeelnj7mqV/xF3
+ jpdWtHVRruK4HX/wOuVjEt0CehdOLd0CUNtrplEukP6KFfJqfboFtiFBJvxSd5YnIKf3lBFNp
+ Zsbjo4+s/7iv1FkTxatlZaZA9oYfHG20Uz4gDAKBtfFrYtWRQFisSUhAkFztmLA+WPbS9DFXq
+ Fl+d+//grfae7JDHN932puG9qpAQUoArEoY0SvBEHnG+nDCdRDgWpgKSxP6qSUPLt17mGyg4M
+ KjHB7Jz3PoNyc+2RXQzJUzVU0HW0Sc4wasYNdiHgUcrtts/dxliq
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Casting a pointer to a 64-bit type causes a warning on 32-bit targets:
+Resend to Mailinglist because of previous blocked  cause of html-format
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c:473:24: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-          lower_32_bits((uint64_t)wptr));
-                        ^
-drivers/gpu/drm/amd/amdgpu/amdgpu.h:1701:53: note: in definition of macro 'WREG32'
- #define WREG32(reg, v) amdgpu_mm_wreg(adev, (reg), (v), 0)
-                                                     ^
-drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c:473:10: note: in expansion of macro 'lower_32_bits'
-          lower_32_bits((uint64_t)wptr));
-          ^~~~~~~~~~~~~
+Gesendet: Freitag, 25. Mai 2018 um 17:47 Uhr
+Von: "Frank Wunderlich" <FrankWu@gmx.de>
+An: "Matthias Brugger" <matthias.bgg@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>, "Russell King" <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Betreff: fix green/blue pio-led on bpi-r2
 
-The correct method is to cast to 'uintptr_t'.
-
-Fixes: d5a114a6c5f7 ("drm/amdgpu: Add GFXv9 kfd2kgd interface functions")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi,
+ 
+i've tested LEDs on bananapi-r2 and see that they stay on at boot-time and can be switched off by "echo 0", as this behaviour is not logical i changed that. Also green and blue are swapped by access their names in sysfs.
+ 
+http://forum.banana-pi.org/t/control-on-board-leds/4287/33
+ 
+hoping everything is alright with the patch (it's my first on here)
+ 
+to test it:
+ 
+[16:08] root@bpi-r2:~# L=/sys/class/leds/bpi-r2\:isink
+[17:41] root@bpi-r2:~# L2=/sys/class/leds/bpi-r2\:pio
+[17:42] root@bpi-r2:~# echo 1 > $L2:green/brightness
+[17:42] root@bpi-r2:~# echo 1 > $L2:blue/brightness
+[17:42] root@bpi-r2:~# echo 0 > $L2:green/brightness
+[17:42] root@bpi-r2:~# echo 0 > $L2:blue/brightness
+ 
+at least options needed:
+CONFIG_SYSFS=y
+CONFIG_GPIO_SYSFS=y
+CONFIG_LEDS_CLASS=y
+CONFIG_LEDS_MT6323=y
+CONFIG_LEDS_GPIO=y
+ 
+regards Frank
+ 
+>From 850977bdb8cf05b1212c69232f03fd55293fe21a Mon Sep 17 00:00:00 2001
+From: Frank Wunderlich <frank-w@public-files.de>
+Date: Mon, 21 May 2018 21:38:53 +0200
+Subject: [PATCH] [DTS] fix green/blue pio-led on bpi-r2
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c
-index 8f37991df61b..f0c0d3953f69 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c
-@@ -470,9 +470,9 @@ static int kgd_hqd_load(struct kgd_dev *kgd, void *mqd, uint32_t pipe_id,
- 		WREG32(SOC15_REG_OFFSET(GC, 0, mmCP_HQD_PQ_WPTR_HI),
- 		       upper_32_bits(guessed_wptr));
- 		WREG32(SOC15_REG_OFFSET(GC, 0, mmCP_HQD_PQ_WPTR_POLL_ADDR),
--		       lower_32_bits((uint64_t)wptr));
-+		       lower_32_bits((uintptr_t)wptr));
- 		WREG32(SOC15_REG_OFFSET(GC, 0, mmCP_HQD_PQ_WPTR_POLL_ADDR_HI),
--		       upper_32_bits((uint64_t)wptr));
-+		       upper_32_bits((uintptr_t)wptr));
- 		WREG32(SOC15_REG_OFFSET(GC, 0, mmCP_PQ_WPTR_POLL_CNTL1),
- 		       get_queue_mask(adev, pipe_id, queue_id));
- 	}
--- 
-2.9.0
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+index 024bdb7d6cca5..6fa37a2764110 100644
+--- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
++++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+@@ -80,21 +80,21 @@
+         pinctrl-names = "default";
+         pinctrl-0 = <&led_pins_a>;
+ 
+-        blue {
+-            label = "bpi-r2:pio:blue";
+-            gpios = <&pio 241 GPIO_ACTIVE_HIGH>;
++        green {
++            label = "bpi-r2:pio:green";
++            gpios = <&pio 241 GPIO_ACTIVE_LOW>;
+             default-state = "off";
+         };
+ 
+-        green {
+-            label = "bpi-r2:pio:green";
+-            gpios = <&pio 240 GPIO_ACTIVE_HIGH>;
++        blue {
++            label = "bpi-r2:pio:blue";
++            gpios = <&pio 240 GPIO_ACTIVE_LOW>;
+             default-state = "off";
+         };
+ 
+         red {
+             label = "bpi-r2:pio:red";
+-            gpios = <&pio 239 GPIO_ACTIVE_HIGH>;
++            gpios = <&pio 239 GPIO_ACTIVE_LOW>;
+             default-state = "off";
+         };
+     };
