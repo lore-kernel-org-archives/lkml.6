@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967230AbeEYQdL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:33:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59657 "EHLO
+        id S967307AbeEYQeW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:34:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39141 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967031AbeEYQdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:33:10 -0400
-Date: Fri, 25 May 2018 09:32:59 -0700
+        id S967126AbeEYQeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 12:34:21 -0400
+Date: Fri, 25 May 2018 09:34:12 -0700
 User-Agent: K-9 Mail for Android
 In-Reply-To: <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
 References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com> <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com> <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com> <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com> <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
@@ -23,7 +23,7 @@ CC: Alistair Strachan <astrachan@google.com>,
         tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
         Kees Cook <keescook@google.com>
 From: hpa@zytor.com
-Message-ID: <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com>
+Message-ID: <E6A629A5-CBDF-4301-B10C-A60E1556027A@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -143,8 +143,6 @@ On May 25, 2018 9:27:40 AM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote
 >the
 >function.
 
-Sorry, I meant irqflags.S.
-
-It still should be available as as inline, however, but now "extern inline".
+You keep compiling with paravirtualization enabled... that code will not do any inlining.
 -- 
 Sent from my Android device with K-9 Mail. Please excuse my brevity.
