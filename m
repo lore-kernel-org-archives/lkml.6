@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934610AbeEYDs7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:48:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41366 "EHLO mx1.redhat.com"
+        id S935108AbeEYDtM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:49:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934426AbeEYDs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:48:57 -0400
+        id S934623AbeEYDtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:49:10 -0400
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -16,43 +16,67 @@ Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
         Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 11/33] block: implement bio_pages_all() via bio_for_each_page_all()
-Date: Fri, 25 May 2018 11:45:59 +0800
-Message-Id: <20180525034621.31147-12-ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 12/33] block: introduce bio_segments()
+Date: Fri, 25 May 2018 11:46:00 +0800
+Message-Id: <20180525034621.31147-13-ming.lei@redhat.com>
 In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
 References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As multipage bvec will be enabled soon, bio->bi_vcnt isn't same with
-page count in the bio any more, so use bio_for_each_page_all() to
-compute the number.
+There are still cases in which we need to use bio_segments() for get the
+number of segment, so introduce it.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- include/linux/bio.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/bio.h | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 3d3795b9a353..08af9272687f 100644
+index 08af9272687f..b24c00f99c9c 100644
 --- a/include/linux/bio.h
 +++ b/include/linux/bio.h
-@@ -334,8 +334,14 @@ static inline void bio_get_last_bvec(struct bio *bio, struct bio_vec *bv)
+@@ -227,9 +227,9 @@ static inline bool bio_rewind_iter(struct bio *bio, struct bvec_iter *iter,
  
- static inline unsigned bio_pages_all(struct bio *bio)
+ #define bio_iter_last(bvec, iter) ((iter).bi_size == (bvec).bv_len)
+ 
+-static inline unsigned bio_pages(struct bio *bio)
++static inline unsigned __bio_elements(struct bio *bio, bool seg)
  {
-+	unsigned i;
-+	struct bio_vec *bv;
+-	unsigned segs = 0;
++	unsigned elems = 0;
+ 	struct bio_vec bv;
+ 	struct bvec_iter iter;
+ 
+@@ -249,10 +249,25 @@ static inline unsigned bio_pages(struct bio *bio)
+ 		break;
+ 	}
+ 
+-	bio_for_each_page(bv, bio, iter)
+-		segs++;
++	if (!seg) {
++		bio_for_each_page(bv, bio, iter)
++			elems++;
++	} else {
++		bio_for_each_segment(bv, bio, iter)
++			elems++;
++	}
 +
- 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
--	return bio->bi_vcnt;
++	return elems;
++}
 +
-+	bio_for_each_page_all(bv, bio, i)
-+		;
-+	return i;
++static inline unsigned bio_pages(struct bio *bio)
++{
++	return __bio_elements(bio, false);
++}
+ 
+-	return segs;
++static inline unsigned bio_segments(struct bio *bio)
++{
++	return __bio_elements(bio, true);
  }
  
- static inline struct bio_vec *bio_first_bvec_all(struct bio *bio)
+ /*
 -- 
 2.9.5
