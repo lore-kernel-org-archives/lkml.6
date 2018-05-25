@@ -1,53 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967650AbeEYSHg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967452AbeEYSHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:07:35 -0400
-Date: Fri, 25 May 2018 14:07:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v3 13/14] tracing/selftest: Add selftests to test
- trace_marker histogram triggers
-Message-ID: <20180525140731.07d7543a@gandalf.local.home>
-In-Reply-To: <20180523231331.bf69453f05478e11b00451ab@kernel.org>
-References: <20180516150012.135869655@goodmis.org>
-        <20180516150201.246539183@goodmis.org>
-        <20180523231331.bf69453f05478e11b00451ab@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S967685AbeEYSKb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:10:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58840 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967452AbeEYSK3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:10:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2A4D60117
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ath6kl: mark expected switch fall-throughs
+References: <20180524231322.GA22704@embeddedor.com>
+        <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com>
+        <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
+        <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com>
+Date: Fri, 25 May 2018 21:10:22 +0300
+In-Reply-To: <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com> (Gustavo A.
+        R. Silva's message of "Fri, 25 May 2018 12:50:10 -0500")
+Message-ID: <87k1rr8v3l.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 May 2018 23:13:31 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
 
-> This looks good to me.
-> 
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> On 05/25/2018 08:30 AM, Kalle Valo wrote:
+>> Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> writes:
+>>
+>>> On 5/25/2018 2:13 AM, Gustavo A. R. Silva wrote:
+>>>
+>>>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>>>> where we are expecting to fall through.
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>> ---
+>>>>    drivers/net/wireless/ath/ath6kl/cfg80211.c | 6 +++---
+>>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>>>> index 2ba8cf3..29e32cd 100644
+>>>> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>>>> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>>>> @@ -3898,17 +3898,17 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
+>>>>    	wiphy->max_scan_ie_len = 1000; /* FIX: what is correct limit? */
+>>>>    	switch (ar->hw.cap) {
+>>>>    	case WMI_11AN_CAP:
+>>>> -		ht = true;
+>>>> +		ht = true; /* fall through */
+>>>>    	case WMI_11A_CAP:
+>>>>    		band_5gig = true;
+>>>>    		break;
+>>>>    	case WMI_11GN_CAP:
+>>>> -		ht = true;
+>>>> +		ht = true; /* fall through */
+>>>>    	case WMI_11G_CAP:
+>>>>    		band_2gig = true;
+>>>>    		break;
+>>>>    	case WMI_11AGN_CAP:
+>>>> -		ht = true;
+>>>> +		ht = true; /* fall through */
+>>>>    	case WMI_11AG_CAP:
+>>>>    		band_2gig = true;
+>>>>    		band_5gig = true;
+>>>
+>>>     Hm, typically such comments are done on a line of their own, have
+>>> never seen this style...
+>>
+>> Yeah, I was wondering the same. Was there a particular reason for this?
+>>
+>
+> Sometimes people use this style for a one-line code block.
+>
+> I can change it to the traditional style. No problem.
 
-Thanks!
+I would prefer that. So if you can send v2 that would be great.
 
-> 
-> BTW, would you plan to add simplar test case for the marker?
-> (like just write a marker and read trace log, and run a simple
->  trigger, like taking a snapshot by marker)
-
-I wasn't planning to, but I could.
-
--- Steve
+-- 
+Kalle Valo
