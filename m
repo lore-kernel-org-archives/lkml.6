@@ -1,65 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967232AbeEYQIY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:08:24 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:59761 "EHLO
+        id S967249AbeEYQIo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:08:44 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:57587 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966599AbeEYQIV (ORCPT
+        with ESMTP id S966719AbeEYQIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:08:21 -0400
+        Fri, 25 May 2018 12:08:42 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb/gadget: aspeed-vhub: add USB_LIBCOMPOSITE dependency
-Date: Fri, 25 May 2018 18:07:15 +0200
-Message-Id: <20180525160729.92026-1-arnd@arndb.de>
+To: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] qcom: cmd-db: enforce CONFIG_OF_RESERVED_MEM dependency
+Date: Fri, 25 May 2018 18:08:24 +0200
+Message-Id: <20180525160836.125531-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:XpsWrogyUgHklP59h2FvF7KkS5VBgqe4ixUNg/lDlRCt3hQYpzv
- W4Ls25q+itWePewSR5Ay1dcOwKUJq4JzkmKkq5nJclKetii1LGBufWlC0oamkgSnhdypQfu
- 7aJWXzX0Z+e2drM//3TNjrOaNl6TqPUj15XP5o6+FJJ4x5YB4s8BssddFsqvQaheScM6aLw
- OQDLn8nwQyQui+UpuwRfw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:VDn1PnYvVKA=:nQQonX5ioVYBYDWz6WzxwA
- ANSIdoi3/2aXXRxYILfNG0DZMhef4Zic2wobosZxaUzad6buqGz4vCHBus76DFGOwAaPwH/Qr
- noqLyUjrkdqc/uVCQxFKIW47sbXOf0mJDiZ1WAYE2UE+yVDX1vj4/e371jif2snXXgWIwWopg
- YWWzfxc2s1eU+3zt8ADf8fm6diHE326rnuJrtP6oKiRHNourPmTbF4KsxbqyYwH4J1w/9ck46
- A1HB7GgOK4tSxNpiWQD5iu2ky/kR+LIbJNiuHS1wZoXLSaZhb7C+1AJlxB+WKqnWVhvtMPJFZ
- vxOcu0bNqV3omyq2eM97u/PGD3grlWQ1Zq11TEBerPTlEVkgC0o9sSiuzs6ybfbU6Y6j0r9Xz
- 2sE6RIKJ9ZsOQGfrBAjRVigdlo8iyyIUSHHHGbQE61TcKeT64xKHBP0NUoQqMIxR/Oo91YJK7
- 9Pz033aJWnOOMUfdd8Znu3BIZFe5Fena6l2B2JCuvmEPq/CqqJR6uEDEU38MCSXwfZqHGpWRO
- FFx4qrFOtCFmWdFi6V95c+uFqiYNpVARkQKulkwX7VDOE0YxQEpuLhBXXXOCEFjzbB+c7I06Z
- vvLeMNRp6CDR8NQDdCqMOkld1smDk+jzP5AIS1vd2jocgm/0BGenlZqKQx51SDsVAjHTIkMbc
- BvrNoZLe/+b8LoV9/+UpG/Y50Gz+zWJ6/lHULD4WuHsEO2cS5uYNphrKWUzBXY5ZGRfQ=
+X-Provags-ID: V03:K1:sPRHk80euo/+cajDazVMNbQyWWrZC/+Jf8GUaSacJfOEGr2OwxX
+ aOKH5Og0D8j8YxFlBql8HGzW1jReZ6IPMQOXLnMRTaZPdcuqFTJDDWLWuhnrt9pfKZvyLRY
+ E89sXpNidmMqRU21Ko//hrcKQN/366WI+osMOTn2oN1nn8fwPxJDMRmqevzJ5K3WOS0nsaX
+ /a2G9AUkPMyzlOV5gPksg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:bhIAYpb2B3w=:Rrv85xzNhfUE957bQzYPzQ
+ WWUFx1NszY7uR0kE1KBPRfyw4S0noKh+9J6NQwq3fqYBhWABvJpPIw2mg4JmLztfGbiwNv3Fn
+ 1G5ddB8sMOwPgeZOxltX6/kjg9j8u6HQg4nUBq5sstvd1s+8Ei1XjdVOenPRdQRJonAd59PkI
+ rYWO81f6Pi0Iv8TVl54HRCwWMcf5xDwJYve8Fa39qRzV+ZfY6ww7Y9h0EoI6nZwISeWI6Inb1
+ Ek+VA8iQw/1TZeTSC3OTMsq8/EW/LmDJ7HGbzk+li+X0Rs0pDuqpNO8PfjdoTB2EwEd3JDE9B
+ FlJ7DbyOW6JP5rHcJSlHeR1VT2dDeG6M0hfXxJ6Wy7lcv+YikUkKy67StFvu5a2NBfV7iejQT
+ OJnEdnZ4ifq7xVItbq9GJWeI0MhTRVgsO0nTU+0xCvQqTpU9bMSJr/ZGHPwhgcNdnEegkHeL6
+ iCaiVxTK1eWtSuSEQ5EFSl/jPA0mShpCXAU1SOba212djO1aDpAVetPC4EZmiyVJS/w6Boigh
+ wAif+kDx06BY2MIDQ0RmGp1aKV5q74okq/L53u9FO2RcjiVLySZH9Vd5+PQ/eCnGOhbpQsxKO
+ TiccSDoHMwChKZiaUNV/0ZZJByvbS4T++GKptuxS22lOUE5ZCKYvnQF1NG/9Xy0J9yxEHYHlC
+ jKXQqwMHJIKNuOJWeG2aDwiy3bVREb+c3WA5su3e+WPHSma4TeH1re3cUEZhe/MhccPs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without that option, we run into a link failure:
+Without CONFIG_OF_RESERVED_MEM, gcc sees that the global cmd_db_header
+variable is never initialized, and through code optimization concludes
+that a lot of other code cannot possibly work after that:
 
-drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
-hub.c:(.text+0x5b0): undefined reference to `usb_gadget_get_string'
+drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_addr':
+drivers/soc/qcom/cmd-db.c:197:21: error: 'ent.addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  return ret < 0 ? 0 : le32_to_cpu(ent.addr);
+drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_aux_data':
+drivers/soc/qcom/cmd-db.c:224:10: error: 'ent.len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  ent_len = le16_to_cpu(ent.len);
+drivers/soc/qcom/cmd-db.c:115:6: error: 'rsc_hdr.data_offset' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  u16 offset = le16_to_cpu(hdr->data_offset);
+      ^~~~~~
+drivers/soc/qcom/cmd-db.c:116:6: error: 'ent.offset' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  u16 loffset = le16_to_cpu(ent->offset);
+      ^~~~~~~
+drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_aux_data_len':
+drivers/soc/qcom/cmd-db.c:250:38: error: 'ent.len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  return ret < 0 ? 0 : le16_to_cpu(ent.len);
+                                      ^
+drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_slave_id':
+drivers/soc/qcom/cmd-db.c:272:7: error: 'ent.addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Fixes: 7ecca2a4080c ("usb/gadget: Add driver for Aspeed SoC virtual hub")
+Using a hard CONFIG_OF_RESERVED_MEM dependency avoids this warning,
+and we can remove the CONFIG_OF dependency.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/usb/gadget/udc/aspeed-vhub/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/qcom/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/aspeed-vhub/Kconfig b/drivers/usb/gadget/udc/aspeed-vhub/Kconfig
-index f0cdf89b8503..83ba8a2eb6af 100644
---- a/drivers/usb/gadget/udc/aspeed-vhub/Kconfig
-+++ b/drivers/usb/gadget/udc/aspeed-vhub/Kconfig
-@@ -2,6 +2,7 @@
- config USB_ASPEED_VHUB
- 	tristate "Aspeed vHub UDC driver"
- 	depends on ARCH_ASPEED || COMPILE_TEST
-+	depends on USB_LIBCOMPOSITE
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 9dc02f390ba3..5856e792d09c 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -5,7 +5,8 @@ menu "Qualcomm SoC drivers"
+ 
+ config QCOM_COMMAND_DB
+ 	bool "Qualcomm Command DB"
+-	depends on (ARCH_QCOM && OF) || COMPILE_TEST
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on OF_RESERVED_MEM
  	help
- 	  USB peripheral controller for the Aspeed AST2500 family
- 	  SoCs supporting the "vHub" functionality and USB2.0
+ 	  Command DB queries shared memory by key string for shared system
+ 	  resources. Platform drivers that require to set state of a shared
 -- 
 2.9.0
