@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936345AbeEYOfu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:35:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56782 "EHLO
+        id S936260AbeEYOfg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:35:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56612 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936319AbeEYOfp (ORCPT
+        with ESMTP id S935826AbeEYOfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:35:45 -0400
+        Fri, 25 May 2018 10:35:33 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
@@ -14,9 +14,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 Cc: x86@kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: [PATCH 7/7] x86: switch the VIA 32-bit DMA quirk to use the struct device flag
-Date: Fri, 25 May 2018 16:35:12 +0200
-Message-Id: <20180525143512.1466-8-hch@lst.de>
+Subject: [PATCH 3/7] ia64: remove iommu_dma_supported
+Date: Fri, 25 May 2018 16:35:08 +0200
+Message-Id: <20180525143512.1466-4-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180525143512.1466-1-hch@lst.de>
 References: <20180525143512.1466-1-hch@lst.de>
@@ -25,122 +25,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of globally disabling > 32bit DMA using the arch_dma_supported
-hook walk the PCI bus under the actually affected bridge and mark every
-device with the dma_32bit_limit flag.  This also gets rid of the
-arch_dma_supported hook entirely.
+The generic dma_direct_supported helper already used by intel-iommu on
+x86 does a better job than the ia64 reimplementation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/x86/include/asm/dma-mapping.h |  3 ---
- arch/x86/kernel/pci-dma.c          | 27 ++++++++++-----------------
- include/linux/dma-mapping.h        | 11 -----------
- 3 files changed, 10 insertions(+), 31 deletions(-)
+ arch/ia64/kernel/pci-dma.c  | 13 -------------
+ drivers/iommu/intel-iommu.c |  2 --
+ 2 files changed, 15 deletions(-)
 
-diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
-index 89ce4bfd241f..eb4e1352e403 100644
---- a/arch/x86/include/asm/dma-mapping.h
-+++ b/arch/x86/include/asm/dma-mapping.h
-@@ -30,9 +30,6 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
- 	return dma_ops;
+diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
+index 50b6ad282a90..3c2884bef3d4 100644
+--- a/arch/ia64/kernel/pci-dma.c
++++ b/arch/ia64/kernel/pci-dma.c
+@@ -51,18 +51,6 @@ iommu_dma_init(void)
+ 	return;
  }
  
--int arch_dma_supported(struct device *dev, u64 mask);
--#define arch_dma_supported arch_dma_supported
--
- bool arch_dma_alloc_attrs(struct device **dev, gfp_t *gfp);
- #define arch_dma_alloc_attrs arch_dma_alloc_attrs
- 
-diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-index b5cbef974bd1..0d6fd0d1c14f 100644
---- a/arch/x86/kernel/pci-dma.c
-+++ b/arch/x86/kernel/pci-dma.c
-@@ -15,7 +15,7 @@
- #include <asm/x86_init.h>
- #include <asm/iommu_table.h>
- 
--static int forbid_dac __read_mostly;
-+static bool disable_dac_quirk __read_mostly;
- 
- const struct dma_map_ops *dma_ops = &dma_direct_ops;
- EXPORT_SYMBOL(dma_ops);
-@@ -129,7 +129,7 @@ static __init int iommu_setup(char *p)
- 		if (!strncmp(p, "nodac", 5))
- 			pr_warn("nodac option ignored.\n");
- 		if (!strncmp(p, "usedac", 6)) {
--			forbid_dac = -1;
-+			disable_dac_quirk = true;
- 			return 1;
- 		}
- #ifdef CONFIG_SWIOTLB
-@@ -154,19 +154,6 @@ static __init int iommu_setup(char *p)
- }
- early_param("iommu", iommu_setup);
- 
--int arch_dma_supported(struct device *dev, u64 mask)
+-int iommu_dma_supported(struct device *dev, u64 mask)
 -{
--#ifdef CONFIG_PCI
--	if (mask > 0xffffffff && forbid_dac > 0) {
--		dev_info(dev, "PCI: Disallowing DAC for device\n");
+-	/* Copied from i386. Doesn't make much sense, because it will
+-	   only work for pci_alloc_coherent.
+-	   The caller just has to use GFP_DMA in this case. */
+-	if (mask < DMA_BIT_MASK(24))
 -		return 0;
--	}
--#endif
 -
 -	return 1;
 -}
--EXPORT_SYMBOL(arch_dma_supported);
+-EXPORT_SYMBOL(iommu_dma_supported);
 -
- static int __init pci_iommu_init(void)
+ void __init pci_iommu_alloc(void)
  {
- 	struct iommu_table_entry *p;
-@@ -190,11 +177,17 @@ rootfs_initcall(pci_iommu_init);
- #ifdef CONFIG_PCI
- /* Many VIA bridges seem to corrupt data for DAC. Disable it here */
+ 	dma_ops = &intel_dma_ops;
+@@ -71,7 +59,6 @@ void __init pci_iommu_alloc(void)
+ 	intel_dma_ops.sync_sg_for_cpu = machvec_dma_sync_sg;
+ 	intel_dma_ops.sync_single_for_device = machvec_dma_sync_single;
+ 	intel_dma_ops.sync_sg_for_device = machvec_dma_sync_sg;
+-	intel_dma_ops.dma_supported = iommu_dma_supported;
  
-+static int via_no_dac_cb(struct pci_dev *pdev, void *data)
-+{
-+	pdev->dev.dma_32bit_limit = true;
-+	return 0;
-+}
-+
- static void via_no_dac(struct pci_dev *dev)
- {
--	if (forbid_dac == 0) {
-+	if (!disable_dac_quirk) {
- 		dev_info(&dev->dev, "disabling DAC on VIA PCI bridge\n");
--		forbid_dac = 1;
-+		pci_walk_bus(dev->subordinate, via_no_dac_cb, NULL);
- 	}
- }
- DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_VIA, PCI_ANY_ID,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index f8ab1c0f589e..0249bce7c5e7 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -572,14 +572,6 @@ static inline int dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
- 	return 0;
- }
- 
--/*
-- * This is a hack for the legacy x86 forbid_dac and iommu_sac_force. Please
-- * don't use this in new code.
-- */
--#ifndef arch_dma_supported
--#define arch_dma_supported(dev, mask)	(1)
+ 	/*
+ 	 * The order of these functions is important for
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 749d8f235346..5e0bef3754d1 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -3841,9 +3841,7 @@ const struct dma_map_ops intel_dma_ops = {
+ 	.map_page = intel_map_page,
+ 	.unmap_page = intel_unmap_page,
+ 	.mapping_error = intel_mapping_error,
+-#ifdef CONFIG_X86
+ 	.dma_supported = dma_direct_supported,
 -#endif
--
- static inline void dma_check_mask(struct device *dev, u64 mask)
- {
- 	if (sme_active() && (mask < (((u64)sme_get_me_mask() << 1) - 1)))
-@@ -592,9 +584,6 @@ static inline int dma_supported(struct device *dev, u64 mask)
+ };
  
- 	if (!ops)
- 		return 0;
--	if (!arch_dma_supported(dev, mask))
--		return 0;
--
- 	if (!ops->dma_supported)
- 		return 1;
- 	return ops->dma_supported(dev, mask);
+ static inline int iommu_domain_cache_init(void)
 -- 
 2.17.0
