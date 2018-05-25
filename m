@@ -1,45 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935267AbeEYN0B (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:26:01 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36837 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933208AbeEYN0A (ORCPT
+        id S935684AbeEYNav (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:30:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52526 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933214AbeEYNat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:26:00 -0400
-X-Google-Smtp-Source: ADUXVKJ4e51lyZeDJj8IR8PFGJI5F4n9GxZCfGiUM68ccbi7u+wXznr186zyk2UnlGj1Fx7BsZT5GHDxJejkv5xEBdc=
+        Fri, 25 May 2018 09:30:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 533C560290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ath6kl: mark expected switch fall-throughs
+References: <20180524231322.GA22704@embeddedor.com>
+        <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com>
+Date: Fri, 25 May 2018 16:30:42 +0300
+In-Reply-To: <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com> (Sergei
+        Shtylyov's message of "Fri, 25 May 2018 14:27:40 +0300")
+Message-ID: <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180525095452.5203-1-jian-hong@endlessm.com>
-References: <20180525095452.5203-1-jian-hong@endlessm.com>
-From: Daniel Drake <drake@endlessm.com>
-Date: Fri, 25 May 2018 07:25:58 -0600
-Message-ID: <CAD8Lp456sVtCrC0cMHXQV-PCXq12GfOjtmCpwuguF_=c-1YyaA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: Add a new Realtek 8723DE ID 0bda:b009
-To: Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Bluetooth mailing list
-        <linux-bluetooth@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jian-Hong,
+Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> writes:
 
-On Fri, May 25, 2018 at 3:54 AM, Jian-Hong Pan <jian-hong@endlessm.com> wrote:
+> On 5/25/2018 2:13 AM, Gustavo A. R. Silva wrote:
 >
-> Without this patch we cannot turn on the Bluethooth adapter on HP
-> 14-bs007la.
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/net/wireless/ath/ath6kl/cfg80211.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>> index 2ba8cf3..29e32cd 100644
+>> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>> @@ -3898,17 +3898,17 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
+>>   	wiphy->max_scan_ie_len = 1000; /* FIX: what is correct limit? */
+>>   	switch (ar->hw.cap) {
+>>   	case WMI_11AN_CAP:
+>> -		ht = true;
+>> +		ht = true; /* fall through */
+>>   	case WMI_11A_CAP:
+>>   		band_5gig = true;
+>>   		break;
+>>   	case WMI_11GN_CAP:
+>> -		ht = true;
+>> +		ht = true; /* fall through */
+>>   	case WMI_11G_CAP:
+>>   		band_2gig = true;
+>>   		break;
+>>   	case WMI_11AGN_CAP:
+>> -		ht = true;
+>> +		ht = true; /* fall through */
+>>   	case WMI_11AG_CAP:
+>>   		band_2gig = true;
+>>   		band_5gig = true;
+>
+>    Hm, typically such comments are done on a line of their own, have
+> never seen this style...
 
-Please correct me if I'm wrong, but it looks like we are still waiting
-for the testing of this patch from our colleagues in Guatemala.
+Yeah, I was wondering the same. Was there a particular reason for this?
 
-There are unlikely to be any issues with such a trivial change, but we
-should probably wait for confirmation that it works before having it
-included upstream.
-
-Thanks
-Daniel
+-- 
+Kalle Valo
