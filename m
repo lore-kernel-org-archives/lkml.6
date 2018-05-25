@@ -1,108 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030811AbeEYXTC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 19:19:02 -0400
-Received: from mail-he1eur01on0080.outbound.protection.outlook.com ([104.47.0.80]:7932
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030538AbeEYXS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 19:18:59 -0400
-From: Saeed Mahameed <saeedm@mellanox.com>
-To: "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>, "leon@kernel.org" <leon@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Boris Pismenny <borisp@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, Feras Daoud <ferasda@mellanox.com>,
-        Ilan Tayari <ilant@mellanox.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Ilya Lesokhin <ilyal@mellanox.com>
-Subject: Re: [PATCH, net-next] net/mlx5e: fix TLS dependency
-Thread-Topic: [PATCH, net-next] net/mlx5e: fix TLS dependency
-Thread-Index: AQHT9HB3Y3dLx/oBpUeDTcZ+VOKuF6RBFJsA
-Date: Fri, 25 May 2018 23:18:54 +0000
-Message-ID: <ffcbcc97b72bd9957a7eafb2553edd1cd7e68dab.camel@mellanox.com>
-References: <20180525213630.2119214-1-arnd@arndb.de>
-In-Reply-To: <20180525213630.2119214-1-arnd@arndb.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=saeedm@mellanox.com;
-x-originating-ip: [209.116.155.178]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0502MB2887;7:X9ibkDRCfLtLNfuEcN4sGapNz7hvBswP2MhrNBHaD/LR9iH5fHCb/f66awRUeZqTUwtImlveRcdkdYRt2biPwBPJr4c39ClwsYZtvcSY0KsQKbNivv5JpmT64C6C/aXEhqWjOzGaldMTAZZOVgntK46RwpAM5c+2O5/4EbJJhIDp0R/EcMMynpCYKAFQKDyZ1NcLPwJ+TgGjrx98lF0XuTQhs4Zrb4XoY11caFh/0nflzGNPidbRybxyfkyp+Umz
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0502MB2887;
-x-ms-traffictypediagnostic: DB6PR0502MB2887:
-x-microsoft-antispam-prvs: <DB6PR0502MB288737770D409B3EFA949874BE690@DB6PR0502MB2887.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:DB6PR0502MB2887;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0502MB2887;
-x-forefront-prvs: 06833C6A67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39860400002)(396003)(39380400002)(199004)(377424004)(189003)(8936002)(86362001)(4326008)(36756003)(99286004)(6512007)(118296001)(305945005)(2201001)(76176011)(105586002)(14454004)(50226002)(575784001)(316002)(3660700001)(59450400001)(106356001)(7736002)(478600001)(54906003)(6506007)(3280700002)(102836004)(53936002)(26005)(5660300001)(476003)(68736007)(2906002)(81156014)(486006)(25786009)(11346002)(3846002)(107886003)(2616005)(6436002)(81166006)(5250100002)(229853002)(97736004)(2501003)(6116002)(8676002)(6486002)(110136005)(6246003)(186003)(66066001)(446003)(2900100001)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0502MB2887;H:DB6PR0502MB2901.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: iXiLwBm1Rk67l61XRMkksOF2jsLAQPIG3M2B3GwkeLYcLMbFHMwgBtyuh0KGM+9bAuE9PqtS42oX9DFIBN3c5m3+OA7qAx+dE3UENhUHRMkEApDpHcJylVjwmLrQnyuPQT+up5m5WV3/rCmJO96/mh/mh5XhcUi5GFR0TzDOmXWs9Hy9DmN2M0uDRv6fcU60
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7350980B6DDDF8428FF20BD2F975A396@eurprd05.prod.outlook.com>
+        id S1030819AbeEYXUk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 19:20:40 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42686 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030651AbeEYXUi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 19:20:38 -0400
+X-Google-Smtp-Source: ADUXVKIbgPxh8nHhsi9F4lHl/3xVirDnsrWNDkF+WDJQD8are7xxwssL70v2DQpJosL08JJAMpg/cA==
+Date: Fri, 25 May 2018 16:20:36 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>, linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>, kernel-team@lge.com
+Subject: Re: [PATCH v7 6/8] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180525232036.GA252027@joelaf.mtv.corp.google.com>
+References: <20180524012157.181277-1-joel@joelfernandes.org>
+ <20180524012157.181277-7-joel@joelfernandes.org>
+ <20180525114339.GA30990@sejong>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: bc843479-79ca-4799-2d01-08d5c295e29b
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc843479-79ca-4799-2d01-08d5c295e29b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2018 23:18:54.8810
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0502MB2887
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525114339.GA30990@sejong>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4PNJ8xS028508
 
-On Fri, 2018-05-25 at 23:36 +0200, Arnd Bergmann wrote:
-> With CONFIG_TLS=m and MLX5_CORE_EN=y, we get a link failure:
+On Fri, May 25, 2018 at 08:43:39PM +0900, Namhyung Kim wrote:
+> Hi Joel,
 > 
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/tls_rxtx.o: In
-> function `mlx5e_tls_handle_ooo':
-> tls_rxtx.c:(.text+0x24c): undefined reference to `tls_get_record'
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/tls_rxtx.o: In
-> function `mlx5e_tls_handle_tx_skb':
-> tls_rxtx.c:(.text+0x9a8): undefined reference to
-> `tls_device_sk_destruct'
+> On Wed, May 23, 2018 at 06:21:55PM -0700, Joel Fernandes wrote:
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > 
+> > This patch detaches the preemptirq tracepoints from the tracers and
+> > keeps it separate.
+> > 
+> > Advantages:
+> > * Lockdep and irqsoff event can now run in parallel since they no longer
+> > have their own calls.
+> > 
+> > * This unifies the usecase of adding hooks to an irqsoff and irqson
+> > event, and a preemptoff and preempton event.
+> >   3 users of the events exist:
+> >   - Lockdep
+> >   - irqsoff and preemptoff tracers
+> >   - irqs and preempt trace events
+> > 
+> > The unification cleans up several ifdefs and makes the code in preempt
+> > tracer and irqsoff tracers simpler. It gets rid of all the horrific
+> > ifdeferry around PROVE_LOCKING and makes configuration of the different
+> > users of the tracepoints more easy and understandable. It also gets rid
+> > of the time_* function calls from the lockdep hooks used to call into
+> > the preemptirq tracer which is not needed anymore. The negative delta in
+> > lines of code in this patch is quite large too.
+> > 
+> [SNIP]
+> >  
+> >  #ifdef CONFIG_IRQSOFF_TRACER
+> > +/*
+> > + * We are only interested in hardirq on/off events:
+> > + */
+> > +static void tracer_hardirqs_on(void *none, unsigned long a0, unsigned long a1)
+> > +{
+> > +	if (!preempt_trace() && irq_trace())
+> > +		stop_critical_timing(a0, a1);
+> > +}
+> > +
+> > +static void tracer_hardirqs_off(void *none, unsigned long a0, unsigned long a1)
+> > +{
+> > +	if (!preempt_trace() && irq_trace())
+> > +		start_critical_timing(a0, a1);
+> > +}
+> > +
+> >  static int irqsoff_tracer_init(struct trace_array *tr)
+> >  {
+> >  	trace_type = TRACER_IRQS_OFF;
+> >  
+> > +	register_trace_irq_disable(tracer_hardirqs_off, NULL);
+> > +	register_trace_irq_enable(tracer_hardirqs_on, NULL);
+> >  	return __irqsoff_tracer_init(tr);
+> >  }
+> >  
+> >  static void irqsoff_tracer_reset(struct trace_array *tr)
+> >  {
+> > +	unregister_trace_irq_disable(tracer_hardirqs_off, NULL);
+> > +	unregister_trace_irq_enable(tracer_hardirqs_on, NULL);
+> >  	__irqsoff_tracer_reset(tr);
+> >  }
+> >  
+> > @@ -692,19 +650,37 @@ static struct tracer irqsoff_tracer __read_mostly =
+> >  };
+> >  # define register_irqsoff(trace) register_tracer(&trace)
+> >  #else
+> > +static inline void tracer_hardirqs_on(unsigned long a0, unsigned long a1) { }
+> > +static inline void tracer_hardirqs_off(unsigned long a0, unsigned long a1) { }
 > 
-> This narrows down the dependency to only allow the configurations
-> that will actually work. The existing dependency on TLS_DEVICE is
-> not sufficient here since MLX5_EN_TLS is a 'bool' symbol.
+> Just a nitpick.  These lines seem unnecessary since they're used
+> only when CONFIG_IRQSOFF_TRACER is enabled AFAICS.
 > 
-> Fixes: c83294b9efa5 ("net/mlx5e: TLS, Add Innova TLS TX support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-
-LGTM
-
-Acked-by: Saeed Mahameed <saeedm@mellanox.com>
-
-Thank you Arnd!
-
-
->  drivers/net/ethernet/mellanox/mlx5/core/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-> b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-> index ee6684779d11..2545296a0c08 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-> @@ -91,6 +91,7 @@ config MLX5_EN_TLS
->  	bool "TLS cryptography-offload accelaration"
->  	depends on MLX5_CORE_EN
->  	depends on TLS_DEVICE
-> +	depends on TLS=y || MLX5_CORE=m
->  	depends on MLX5_ACCEL
->  	default n
->  	---help---
+> >  # define register_irqsoff(trace) do { } while (0)
+> > -#endif
+> > +#endif /*  CONFIG_IRQSOFF_TRACER */
+> >  
+> >  #ifdef CONFIG_PREEMPT_TRACER
+> > +static void tracer_preempt_on(void *none, unsigned long a0, unsigned long a1)
+> > +{
+> > +	if (preempt_trace() && !irq_trace())
+> > +		stop_critical_timing(a0, a1);
+> > +}
+> > +
+> > +static void tracer_preempt_off(void *none, unsigned long a0, unsigned long a1)
+> > +{
+> > +	if (preempt_trace() && !irq_trace())
+> > +		start_critical_timing(a0, a1);
+> > +}
+> > +
+> >  static int preemptoff_tracer_init(struct trace_array *tr)
+> >  {
+> >  	trace_type = TRACER_PREEMPT_OFF;
+> >  
+> > +	register_trace_preempt_disable(tracer_preempt_off, NULL);
+> > +	register_trace_preempt_enable(tracer_preempt_on, NULL);
+> >  	return __irqsoff_tracer_init(tr);
+> >  }
+> >  
+> >  static void preemptoff_tracer_reset(struct trace_array *tr)
+> >  {
+> > +	unregister_trace_preempt_disable(tracer_preempt_off, NULL);
+> > +	unregister_trace_preempt_enable(tracer_preempt_on, NULL);
+> >  	__irqsoff_tracer_reset(tr);
+> >  }
+> >  
+> > @@ -729,21 +705,32 @@ static struct tracer preemptoff_tracer __read_mostly =
+> >  };
+> >  # define register_preemptoff(trace) register_tracer(&trace)
+> >  #else
+> > +static inline void tracer_preempt_on(unsigned long a0, unsigned long a1) { }
+> > +static inline void tracer_preempt_off(unsigned long a0, unsigned long a1) { }
+> 
+> Ditto (for CONFIG_PREEMPT_TRACER).
+> 
+> Thanks,
+> Namhyung
+
+Yes you're right, saves quite a few lines actually! I also inlined the
+register_tracer macros, It seems much cleaner. I will fold the below diff but
+let me know if there's anything else.
+
+Thanks Namhyung!
+
+ - Joel
+
+
+---8<-----------------------
+
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index d2d8284088f0..d0bcb51d1a2a 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -648,11 +648,6 @@ static struct tracer irqsoff_tracer __read_mostly =
+ 	.allow_instances = true,
+ 	.use_max_tr	= true,
+ };
+-# define register_irqsoff(trace) register_tracer(&trace)
+-#else
+-static inline void tracer_hardirqs_on(unsigned long a0, unsigned long a1) { }
+-static inline void tracer_hardirqs_off(unsigned long a0, unsigned long a1) { }
+-# define register_irqsoff(trace) do { } while (0)
+ #endif /*  CONFIG_IRQSOFF_TRACER */
+ 
+ #ifdef CONFIG_PREEMPT_TRACER
+@@ -703,11 +698,6 @@ static struct tracer preemptoff_tracer __read_mostly =
+ 	.allow_instances = true,
+ 	.use_max_tr	= true,
+ };
+-# define register_preemptoff(trace) register_tracer(&trace)
+-#else
+-static inline void tracer_preempt_on(unsigned long a0, unsigned long a1) { }
+-static inline void tracer_preempt_off(unsigned long a0, unsigned long a1) { }
+-# define register_preemptoff(trace) do { } while (0)
+ #endif /* CONFIG_PREEMPT_TRACER */
+ 
+ #if defined(CONFIG_IRQSOFF_TRACER) && defined(CONFIG_PREEMPT_TRACER)
+@@ -753,18 +743,19 @@ static struct tracer preemptirqsoff_tracer __read_mostly =
+ 	.allow_instances = true,
+ 	.use_max_tr	= true,
+ };
+-
+-# define register_preemptirqsoff(trace) register_tracer(&trace)
+-#else
+-# define register_preemptirqsoff(trace) do { } while (0)
+ #endif
+ 
+ __init static int init_irqsoff_tracer(void)
+ {
+-	register_irqsoff(irqsoff_tracer);
+-	register_preemptoff(preemptoff_tracer);
+-	register_preemptirqsoff(preemptirqsoff_tracer);
+-
++#ifdef CONFIG_IRQSOFF_TRACER
++	register_tracer(&irqsoff_tracer);
++#endif
++#ifdef CONFIG_PREEMPT_TRACER
++	register_tracer(&preemptoff_tracer);
++#endif
++#if defined(CONFIG_IRQSOFF_TRACER) && defined(CONFIG_PREEMPT_TRACER)
++	register_tracer(&preemptirqsoff_tracer);
++#endif
+ 	return 0;
+ }
+ core_initcall(init_irqsoff_tracer);
