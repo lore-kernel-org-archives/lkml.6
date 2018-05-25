@@ -1,94 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967544AbeEYRtm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:49:42 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41544 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967349AbeEYRtl (ORCPT
+        id S967591AbeEYRuW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:50:22 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.105]:39405 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967413AbeEYRuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:49:41 -0400
-X-Google-Smtp-Source: AB8JxZpreYVzFJD1W+gAYA5EmBBBiqGkZBte9nqKFKxQ3K0TfItTj9fBJUCW038sEjOtjCzqxutR81f4UisCWCEQJX4=
+        Fri, 25 May 2018 13:50:21 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] ath6kl: mark expected switch fall-throughs
+To: Kalle Valo <kvalo@codeaurora.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180524231322.GA22704@embeddedor.com>
+ <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com>
+ <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com>
+Date: Fri, 25 May 2018 12:50:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
- <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com> <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
- <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com> <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
- <31A5469A-176F-451F-886A-ECD649DDC78C@zytor.com> <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
- <12a870df-5f9d-94d1-8318-42cfff1bedab@redhat.com>
-In-Reply-To: <12a870df-5f9d-94d1-8318-42cfff1bedab@redhat.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Fri, 25 May 2018 10:49:28 -0700
-Message-ID: <CAKwvOdnq-H2M=psJMxo7k7HiEvZVY+z+4+geONwNZdBC9VmhvQ@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: tstellar@redhat.com
-Cc: hpa@zytor.com, Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fMGr5-003Mxc-N7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:54406
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4PHnl70009555
 
-On Fri, May 25, 2018 at 10:35 AM Tom Stellard <tstellar@redhat.com> wrote:
-> On 05/25/2018 10:31 AM, Nick Desaulniers wrote:
-> > On Fri, May 25, 2018 at 9:53 AM <hpa@zytor.com> wrote:
-> >> On May 25, 2018 9:46:42 AM PDT, Nick Desaulniers <
-ndesaulniers@google.com>
-> > wrote:
-> >>> On Fri, May 25, 2018 at 9:33 AM <hpa@zytor.com> wrote:
-> >>>> On May 25, 2018 9:27:40 AM PDT, Nick Desaulniers
-> >>> <ndesaulniers@google.com> wrote:
-> >>> When you say
-> >>>
-> >>>> It still should be available as as inline, however, but now "extern
-> >>> inline".
-> >>>
-> >>> Am I understanding correctly that native_save_fl should be inlined
-into
-> >>> all
-> >>> call sites (modulo the problematic pv_irq_ops.save_fl case)?  Because
-> >>> for
-> >>> these two assembly implementations, it's not, but maybe there's
-> >>> something
-> >>> missing in my implementation?
-> >
-> >> Yes, that's what "extern inline" means. Maybe it needs a must inline
-> > annotation, but that's really messed up.
-> >
 
-> What about doing something like suggested here:
-> https://bugs.llvm.org/show_bug.cgi?id=37512#c17
 
-> This would keep the definition in C and make it easier for compilers
-> to inline.
+On 05/25/2018 08:30 AM, Kalle Valo wrote:
+> Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> writes:
+> 
+>> On 5/25/2018 2:13 AM, Gustavo A. R. Silva wrote:
+>>
+>>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>>> where we are expecting to fall through.
+>>>
+>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>> ---
+>>>    drivers/net/wireless/ath/ath6kl/cfg80211.c | 6 +++---
+>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>>> index 2ba8cf3..29e32cd 100644
+>>> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>>> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+>>> @@ -3898,17 +3898,17 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
+>>>    	wiphy->max_scan_ie_len = 1000; /* FIX: what is correct limit? */
+>>>    	switch (ar->hw.cap) {
+>>>    	case WMI_11AN_CAP:
+>>> -		ht = true;
+>>> +		ht = true; /* fall through */
+>>>    	case WMI_11A_CAP:
+>>>    		band_5gig = true;
+>>>    		break;
+>>>    	case WMI_11GN_CAP:
+>>> -		ht = true;
+>>> +		ht = true; /* fall through */
+>>>    	case WMI_11G_CAP:
+>>>    		band_2gig = true;
+>>>    		break;
+>>>    	case WMI_11AGN_CAP:
+>>> -		ht = true;
+>>> +		ht = true; /* fall through */
+>>>    	case WMI_11AG_CAP:
+>>>    		band_2gig = true;
+>>>    		band_5gig = true;
+>>
+>>     Hm, typically such comments are done on a line of their own, have
+>> never seen this style...
+> 
+> Yeah, I was wondering the same. Was there a particular reason for this?
+> 
 
-The GCC docs for __attribute__((naked)) seem to imply this is a machine
-specific constraint (of which x86 is not listed):
-https://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Function-Attributes.html
+Sometimes people use this style for a one-line code block.
 
-But let's try with source:
-https://godbolt.org/g/aJ4gZB
+I can change it to the traditional style. No problem.
 
-Clang errors:
-<source>:3:3: error: non-ASM statement in naked function is not supported
-   unsigned long flags;
-   ^
-
-Is it valid to use assembly to place the results in %rax and mark the c
-function somehow?
-
-gcc doesn't support this attribute until 4.9 (but we can add a feature test
-for attributes with gcc (unlike builtins)), but warns that:
-
-warning: ‘naked’ attribute directive ignored [-Wattributes]
-
-gcc 8.1 and trunk inserts a `ud2` instruction (what?!) (let me see if I can
-repro outside of godbolt, and will file a bug report).
--- 
-Thanks,
-~Nick Desaulniers
+Thanks
+--
+Gustavo
