@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1965625-1527166755-2-4382986783461762971
+X-Cyrus-Session-Id: sloti22d1t05-2888030-1527213137-2-8580777706830769237
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,23 +7,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527166754; b=ToLh2JUBmuIHsG13CuPANCs5UBhp1aqqu1kVLKQtXtK81O5xUE
-    b9EBcyxYm+iveyjLMGM2VTTRo/1qjaPjhhnE9vYlXoZtq958GoK/URB2fprAJ3ry
-    AquOsFvR4jq1KbthLaOo2w/hGFnToY8bGcY44XxS9fcXsxMmJUAKgmEpKErJaipR
-    oMwLgZX66zyzsnq/SprcDNUZjAxdu62RmFYlLCEG+7mPX5gIVy1Al3ArR+gGklVu
-    h2+Tu4cXSH0F+h8WnjVeQw/xv28xYlf5wsWIbTFtq0CVneUImvgK1rOLUR0zwpkF
-    qu2TSRsA6bcJPPMxFPjMDlWMLUn7jDCfbkwA==
+    1527213136; b=ew6l4dOU2eATaUUCyMt78ID91rM1QIFwYjap0UIcTJ/mbFvUhR
+    e4bU2KKHAOaRqoA/U6v4Ijv9hSqosDiEevPXkXjzcydrn081m+BMR0Jy51VVSgR1
+    zQi0YQgk3FMuxod63aM1WwA7UV2OjD9SEF3ECbPxdz6qs+4l5X9sEoWopOv9g/eN
+    m8JawFhEUOb6jYpn12qUsE89zCzvAI5ytZFQvHm3N3lt32YwlcFMNdj6+gFWbQ5N
+    5bC0gqFOJU03GZnJG+0mzndpklhuIEJ0ZIVdxr1KABaMS8iAgUZ2447xqKgPzKQs
+    N8s7iXQbQA7/vmOVkTEqAJVYhh12ReNOsA/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:cc:references:from:message-id
     :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527166754;
-    bh=4g/rz4kCutrLTuHjhr3oepzVww284571fmf2IcADQd8=; b=VFpfj2fQlkyA
-    reNDI92MNAsJoTNPErL3bdYdmdhiF0u0qi1BI02Gqh2v1vrrXK5p7PQcKiDLBUbX
-    KMqR+uF3zDtH4C//dTogjbS0glMRNdKPyuRMLfFsG9HTzkhPXi9NO0LpN2GuuHYa
-    suxkFKoMsYTdSojsT1rGEkt6R9ji/q7BEhRMlaOTer5uzJOygKDoyVl8GFQHftU5
-    HksCsM6pDsHlwNfsgJ4aVPAkEZ298p35rwSdKfSiwEbx5eaPAlb5VMwfIVU3pat0
-    3sW55StMwqpWoQFOmP/d+/Lf9OW47We4ZsOvu/UF0SLX1SL0fHUTn6poLYQKIpF/
-    luCuNB2d+A==
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527213136;
+    bh=Fht/v7wbgA/gExmDD4+9IESnwjI39FJEXGYjaDi0OpE=; b=i2F08QMgUVEA
+    Vj3URAlU7j6DWMY/beEV59AQNcxFT9QdaD1C5JYLuy3ko87km4VGPA6AFu7UKx0Z
+    GFXvCbrHjkuydiTZ4gmFzYeEZNdmZqSeaINue/BxW8xPzEjWw7W9q2HSW7sou6II
+    6M6WmvRU6oP13e2iwQkOvzWopnUKlO5DRF5kvSr+SRvWDjUZaxM0bCCoRe4HH7jn
+    0siknHtu7ez4fb9WALjpwBHhE0fw7JModWsoich7gqX9209OzrF8QDdf5yUV3uxn
+    N8rt//33LhtKvppZ4Dtw278kwifJ4ZuSSy52wP7i/VOC6DWVyRXUjneOEip6nLbQ
+    1anq0bhayA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=ascade.co.jp;
@@ -54,22 +54,21 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJiNMBACxGzx3efWsES/XvtyEHIlkZzCazMMl+FGhqkETgBDJpJm68q7yaPCgJ6m4+Lf/lJyXfuDRb7697RBU38SjFsy8a14i3HL/BUAw5DrGETS2I/o
-    mkBwDO8l8Da013nb/u1OJTHtV/7UXZ2/wz83ZFzIpNZE2NIB8/zFTuSp4JqdXCfJvYjxmW9z8a1mwQaPMOtfBWaa8NSR+anUaXDCKmHECr8/xoOy3porJWvw
+X-CM-Envelope: MS4wfFk1eUYGptpJAG02Jn0AS4Mjev2RYBRyBEIdnp6kC92pY95XghvtwD7AzriV/Pz8H/ikFoF/sxAJoi4Sx6pgwYUIeCrbquccADsarJPPoQHar5AEaqEC
+    4OIsGapWoAFKzQPBvbT/ETjIwy/0ByOZz/4Tc/8BcQ5msHxISVmuzzQI04cIAz5kF0fnpOv9kLd4DEfDkDd38bjijU7shLNoWPL0fPtvghJKHc30yVRxDs9D
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=3YSco1D3qQSef1lE_40A:9 a=AlXV-We4tjNcMto4:21
-    a=6UNi7Ykcv7EBDJBM:21 a=QEXdDO2ut3YA:10
+    a=VUJBJC2UJ8kA:10 a=PcMsZRGSVe7Y605zVlgA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967814AbeEXM7M (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 24 May 2018 08:59:12 -0400
-Received: from ext-host0001.ascade.co.jp ([218.224.228.194]:63384 "EHLO
+        id S965348AbeEYBwO (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 24 May 2018 21:52:14 -0400
+Received: from ext-host0001.ascade.co.jp ([218.224.228.194]:63519 "EHLO
         ns.ascade.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964789AbeEXM7K (ORCPT
+        with ESMTP id S935594AbeEYBwL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 May 2018 08:59:10 -0400
+        Thu, 24 May 2018 21:52:11 -0400
 Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
  charge to memcg
 To: Michal Hocko <mhocko@kernel.org>
@@ -97,13 +96,15 @@ References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
  <20180522185407.GC20441@dhcp22.suse.cz>
  <455b1a07-d7e3-102b-65e7-3892947b7675@ascade.co.jp>
  <20180524082044.GW20441@dhcp22.suse.cz>
+ <b2afbff6-b59f-7105-3808-64d41bd4a3a8@ascade.co.jp>
+ <20180524132414.GI20441@dhcp22.suse.cz>
 From: TSUKADA Koutaro <tsukada@ascade.co.jp>
-Message-ID: <b2afbff6-b59f-7105-3808-64d41bd4a3a8@ascade.co.jp>
-Date: Thu, 24 May 2018 21:58:49 +0900
+Message-ID: <504b1ca0-9030-29be-4657-9cc18575eacb@ascade.co.jp>
+Date: Fri, 25 May 2018 10:51:50 +0900
 User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180524082044.GW20441@dhcp22.suse.cz>
+In-Reply-To: <20180524132414.GI20441@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -113,76 +114,35 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018/05/24 17:20, Michal Hocko wrote:
-> On Thu 24-05-18 13:39:59, TSUKADA Koutaro wrote:
->> On 2018/05/23 3:54, Michal Hocko wrote:
-> [...]
->>> I am also quite confused why you keep distinguishing surplus hugetlb
->>> pages from regular preallocated ones. Being a surplus page is an
->>> implementation detail that we use for an internal accounting rather than
->>> something to exhibit to the userspace even more than we do currently.
->>
->> I apologize for having confused.
->>
->> The hugetlb pages obtained from the pool do not waste the buddy pool.
-> 
-> Because they have already allocated from the buddy allocator so the end
-> result is very same.
-> 
->> On
->> the other hand, surplus hugetlb pages waste the buddy pool. Due to this
->> difference in property, I thought it could be distinguished.
-> 
-> But this is simply not correct. Surplus pages are fluid. If you increase
-> the hugetlb size they will become regular persistent hugetlb pages.
+On 2018/05/24 22:24, Michal Hocko wrote
+[...]> I do not see anything like that. adjust_pool_surplus is simply and
+> accounting thing. At least the last time I've checked. Maybe your
+> patchset handles that?
 
-I really can not understand what's wrong with this. That page is obviously
-released before being added to the persistent pool, and at that time it is
-uncharged from memcg to which the task belongs(This assumes my patch-set).
-After that, the same page obtained from the pool is not surplus hugepage
-so it will not be charged to memcg again.
-
->> Although my memcg knowledge is extremely limited, memcg is accounting for
->> various kinds of pages obtained from the buddy pool by the task belonging
->> to it. I would like to argue that surplus hugepage has specificity in
->> terms of obtaining from the buddy pool, and that it is specially permitted
->> charge requirements for memcg.
-> 
-> Not really. Memcg accounts primarily for reclaimable memory. We do
-> account for some non-reclaimable slabs but the life time should be at
-> least bound to a process life time. Otherwise the memcg oom killer
-> behavior is not guaranteed to unclutter the situation. Hugetlb pages are
-> simply persistent. Well, to be completely honest tmpfs pages have a
-> similar problem but lacking the swap space for them is kinda
-> configuration bug.
-
-Absolutely you are saying the right thing, but, for example, can mlock(2)ed
-pages be swapped out by reclaim?(What is the difference between mlock(2)ed
-pages and hugetlb page?)
-
->> It seems very strange that charge hugetlb page to memcg, but essentially
->> it only charges the usage of the compound page obtained from the buddy pool,
->> and even if that page is used as hugetlb page after that, memcg is not
->> interested in that.
-> 
-> Ohh, it is very much interested. The primary goal of memcg is to enforce
-> the limit. How are you going to do that in an absence of the reclaimable
-> memory? And quite a lot of it because hugetlb pages usually consume a
-> lot of memory.
-
-Simply kill any of the tasks belonging to that memcg. Maybe, no one wants
-reclaim at the time of account of with surplus hugepages.
+As you said, my patch did not consider handling when manipulating the
+pool. And even if that handling is done well, it will not be a valid
+reason to charge surplus hugepage to memcg.
 
 [...]
->> I could not understand the intention of this question, sorry. When resize
->> the pool, I think that the number of surplus hugepages in use does not
->> change. Could you explain what you were concerned about?
+>> Absolutely you are saying the right thing, but, for example, can mlock(2)ed
+>> pages be swapped out by reclaim?(What is the difference between mlock(2)ed
+>> pages and hugetlb page?)
 > 
-> It does change when you change the hugetlb pool size, migrate pages
-> between per-numa pools (have a look at adjust_pool_surplus).
+> No mlocked pages cannot be reclaimed and that is why we restrict them to
+> a relatively small amount.
 
-As I looked at, what kind of fatal problem is caused by charging surplus
-hugepages to memcg by just manipulating counter of statistical information?
+I understood the concept of memcg.
+
+[...]
+> Fatal? Not sure. It simply tries to add an alien memory to the memcg
+> concept so I would pressume an unexpected behavior (e.g. not being able
+> to reclaim memcg or, over reclaim, trashing etc.).
+
+As you said, it must be an alien. Thanks to the interaction up to here,
+I understood that my solution is inappropriate. I will look for another
+way.
+
+Thank you for your kind explanation.
 
 -- 
 Thanks,
