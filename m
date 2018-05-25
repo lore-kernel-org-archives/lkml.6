@@ -1,215 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936094AbeEYI2j (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 04:28:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42834 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935978AbeEYI2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 04:28:36 -0400
-Subject: Re: [PATCH v3 6/9] trace_uprobe: Support SDT markers having reference
- count (semaphore)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180417043244.7501-7-ravi.bangoria@linux.vnet.ibm.com>
- <20180524162608.GA27082@redhat.com>
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date: Fri, 25 May 2018 13:58:18 +0530
+        id S936108AbeEYI2w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 04:28:52 -0400
+Received: from mail-co1nam03on0065.outbound.protection.outlook.com ([104.47.40.65]:6688
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935989AbeEYI2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 04:28:48 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com;
+Subject: Re: [PATCH 0/3] Add parameter for disabling ACS redirection for P2P
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Christoffer Dall <cdall@linaro.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180524214816.14485-1-logang@deltatee.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <2aec7435-e59b-9ef8-825f-029188f6e549@amd.com>
+Date: Fri, 25 May 2018 10:28:31 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180524162608.GA27082@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180524214816.14485-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052508-0020-0000-0000-000004211FEA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052508-0021-0000-0000-000042B66706
-Message-Id: <db01028c-3bbf-00da-47a4-6f6c1f5229b3@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805250102
+X-Originating-IP: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
+X-ClientProxiedBy: AM6PR0202CA0016.eurprd02.prod.outlook.com
+ (2603:10a6:209:15::29) To BN6PR12MB1713.namprd12.prod.outlook.com
+ (2603:10b6:404:106::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1713;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1713;3:u56UWomb2rLMqEgxfjrpbbvTumHeD1j5m15OGzaLTLk36YEK4tBuecXMIaLtcTkYNdObk2vMaFDE299YVSRrCxk6AKLsYdXyDV1tp3Pazt1GjISr9X1QisiGXkc5e47+nOk6JXgDNdVlqCZ5YgXnDNXi1jYzB6MYLsg4vA+4fq1h5WoVt4is2u9aR68fcX+WgY4tcyW+MmKtTRALCPXDEZbdOMJ9D+71zEO1OXCuHY4BvYjSDPW8ZXG6N5hhiGA9;25:Ao4IZ1R4hEKyvHwy4e7UWKS4Gfhd1FNYgBVGa28Ybs1c0vriOJy1Z7D6+EqwHg41rlMQ5suXJvad2F+4K473t4pRLTBBwUd0bc1zJvanhkVxH3nSO6hEWyVovoPwwR23PRnlZNmNw+yPUtjWrVVi59CmlH3l5+wE4z+/3QYCEKrX/lwArwMGEKu38js4e0DdOEchgwK8zKt9i7f7MbKQ4I3RebbcNWtFg1vvzLftC9Oxses1fGcE+xN9PMtxBJrXZRRLHPJzayfWQRHTHYBiK3kXO5tSXHBZ/nmOi51fSmib4OLH1AXT3k9Ei+DCGI2vGGidcu2GBOP2sapPjUGp8Q==;31:bDvajHPjdOyUDPSRlIcd5tZ/6Wfh+N4AJQ5w1EWYhiYlQAqXiF5jvfOfMuwunKwC0JnkrosO0IjTXcf1FN8GldiZvBLIqJb0MRvAMKL/e9JfcTWCHGqGWBjLUk1moW1pTmvkAg456Ph0pWRDkwd9V979DY5DBWJorcrjdcCCGx3VMjB9HXaVbZeNNeBPiR63OKnKJewyjCZ4D/CN9sNlLiErK2Qfx+JS+B9oOHoikCc=
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1713:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1713;20:QIw99iG2ut1P/orNavkCv1jpm6NLl6IedKfEXluvmP3lLlEcQkr3t3j5rW+S1ZccGrnrrL1Dr1IUEJMUVC0jEQgYOF7LnlJ8M0wp/l1k3EcKX69ZfQCX7NGv2sKd1oiGaC9c80u5Wmdi8WglpuXoYThTAP/E2jakp01lGzo2PZ9h/Ta9FyKC31LMicbU8B8kMYDjHZNiE9AVwoUTWFJ+pTAZbOGUDIBzL3AL5MB4kKimdr4BQ9UjP1lb6TiiNfKhxO6sgtlQv22ECT36vly4Jzktqwh08ngKLoQlHTX70qiSUdQH1C9FiypP7VUm5zEIPXrTbZfjtJzgpdtaVqUuVZMeactfcOlMOMZXdIdeV4LAsIjwLmBEmBY9CCjopfVrcEVGfzk2Nv5zSKLghsNTCRR86iYMot7Zn4DWAKjC5jFmKyjq5lzBu4g4LMyZGc94uOmUBkWrCpsu1247npYFcbMW8QBTDKCjv0+luVbt7pnU572aisqqEximDt8lR4oW;4:VbqhmB6Jr6HJmupNokH7LgLvOSW9WMsODWMyHR9tzOSJI8So1MIWn4Qsp6tyQ/6yytuLrBNkzHf0z1Cx0GgSggd2VyuLLRvJ7X92bXzbibRqvEwf149SNdSBsWKNcxj+pQ/xSoQTKT2thHcvuChyNF/P602xMpBNr5NMjtPqsR8oGGGx+R/j+/MnGCcw2pj+xnxoNtwiCZkyFqAhMJ9IHzUzcwQa7424Xd3DJL/EsvMzWeinYj1hXED9lF4BavWOtDT2wksHpd5M9aQkdCqntwRPtsqn5z4rY7tUaxEyC1YzxRxBCA/gFSEyOb6GUtfW
+X-Microsoft-Antispam-PRVS: <BN6PR12MB171345106DE44F6E5223778983690@BN6PR12MB1713.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:BN6PR12MB1713;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1713;
+X-Forefront-PRVS: 06833C6A67
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(396003)(366004)(346002)(376002)(39860400002)(39380400002)(189003)(199004)(65806001)(6246003)(65956001)(47776003)(54906003)(2870700001)(36756003)(58126008)(316002)(53936002)(446003)(476003)(11346002)(2906002)(229853002)(6116002)(6666003)(186003)(16526019)(6486002)(7416002)(64126003)(486006)(86362001)(386003)(76176011)(50466002)(67846002)(52116002)(8676002)(305945005)(7736002)(5660300001)(31696002)(46003)(25786009)(68736007)(65826007)(2616005)(478600001)(1706002)(97736004)(72206003)(2486003)(52146003)(105586002)(52396003)(4326008)(23676004)(106356001)(8936002)(31686004)(81156014)(81166006)(59450400001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1713;H:[IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjZQUjEyTUIxNzEzOzIzOndhbEJEWDJSOHVua1BWWUs2STdESUo2NnFt?=
+ =?utf-8?B?Ni8vZEFtR1Q0NkhxKzAzdEhra2krRlpEMkhTQzZnazVlUHZWRVhaQmV1Zy9q?=
+ =?utf-8?B?OTBSdFdWUWpjcWU4N21yTTYxWDJIeEhYNTk2SmYxVzB0cDZIREFKd1k4eVhO?=
+ =?utf-8?B?T2VETi9QMTFvN25VZzA3LzNpMW5QUW1mSmM3eFhtbnJqTFBSTzlWY2JpNUV3?=
+ =?utf-8?B?N3B1ZVA5QnpmcnJsblQ3Tlh4TVM1a1JtU3QyeWtGV090eGRtekN2SkZrNUZs?=
+ =?utf-8?B?ZkJUcnlZNUg5alRVdVRvOUU5KzgwZXRRM04wa0pkUzA1eHE0bVp1NFNVc2w2?=
+ =?utf-8?B?MVMzVVZseW55U1ZHYklHMEM3QndxZkwvOEdGTFFPM29ERjBkN3g5cXFNVDhS?=
+ =?utf-8?B?YlhTSzVWc0NLY1N3WTBXb0Z2T3k4RSttb0VUN1A1S0lXaUN1V1J1Sk1oN0JI?=
+ =?utf-8?B?VGhNME9rK0pvY3plRGk1MG5DRnVNSncvNnkycys5cm53Q1RycDRMWnQ0ZENh?=
+ =?utf-8?B?RzB3Yzg4a21kSEZlL01CaHV2N3ZlbS9CZVlqUUw1a3V6TU0xSGEydm1tZEVF?=
+ =?utf-8?B?Y0Y2RDVPVEJhUXVWelg3bWJqVDVLK2VFOFhaRUpPTWlEYXgyRm4vVkFjU0U5?=
+ =?utf-8?B?RFFpanBPN0VRUmpYdGVtOEhMR2h0bll3ZzVYS2ZPeDh1a1dhM3NYK2lmK1hz?=
+ =?utf-8?B?NmpZOXhEUVNiWHc4Ti9zZkt6amNwVUNXbEdPUFhpQktTaUhjN2xsaVo3UXAw?=
+ =?utf-8?B?WEE2aXhMSWVxYzNaWStpeEFDYmdxKzdtMGE2RkVKWXF6dXEwcHV0MmpJcTU1?=
+ =?utf-8?B?MkNISm5vak1RbFBsbk1jWXpQOHd1ZU1TUEJ1UkJnRzhBcU1RTWJLS3dnQ1ZZ?=
+ =?utf-8?B?OFV6VkwvSDVxMGVBNGpBbFJqT3V6VC9GTmRId2RqZG9DMmljYTNQU29uNFJ2?=
+ =?utf-8?B?Z1dCQ1F5VjZCNElwUFhhNUdkNTdDQlZVVFg2YzlTWjk3SWFyK2lCQVlKT2x0?=
+ =?utf-8?B?WlI1bWZTUEdaUGZHZjhJR0ZlcWJZM3ZqWHIwellPbWd3ZUFhdFlYWml6UHlT?=
+ =?utf-8?B?d3J4b0hVNG53RmlaUW5zNjVqZWdVYjVxQnprQVJBWEI0U29GZnhZTkpFWC95?=
+ =?utf-8?B?cFZ3SzMrZ0ZCS1gwQWh3L3EwclBaMzB6ZmFHYk56Q1kveGM0SVh1ejN5Y0R5?=
+ =?utf-8?B?T1FiZE51aHVIalhWRHAvTHlWRURtdmRzMkVHeCtjVGhlLzJIMDhxQkliSmxV?=
+ =?utf-8?B?N0NsS0NJOFdkdjdFNTB6VjA4c2NmY1RJZE5BeHp2akt0QXd0YTlBOW1seXFY?=
+ =?utf-8?B?UGhENFZ2WU1CQkdqUVROc2l1THMvSHhNbkkzWVFpekUxSDA5WDBwSmwzc2Fu?=
+ =?utf-8?B?YzZRWC9IVnJlTW1JS0Z6OEx0aTQwbjRlVU5sbUpWVHN2WnJzTUNnZVhFdlRO?=
+ =?utf-8?B?cTlIUTZjSGdFTGUwZzNOU3hnSlBYQlNIbkJhcVZMMGVHMUpHOTJ2eEEvZEEz?=
+ =?utf-8?B?V2Y2MWJBbCthRGQyY2RzbjJwQ2Q1LzhGYTJsVGd1blBneHVkaHNLNnZjNCti?=
+ =?utf-8?B?OHVCUzdRbFlLdC94bmxBaWdGeitMUHE4NUtHTFFPc2FHSFpzOGRwQjJBdldt?=
+ =?utf-8?B?YXFFUTRLVTZUNC9Ddld0cy9JYTMwUU5NZ1JidWl2eHVTSEkvSHRSZGpyOVk1?=
+ =?utf-8?B?YUxmVlplM2M1cUNwZU5PcXAxZjBFa2pwdEUyTkVtckNKQzZ4a25sbUZZYkU2?=
+ =?utf-8?B?M010TEtSOHQydWU3bEd0cGZKR1lRMVBVVnkzakxZUW5YdUVKS1Q5SlkwMGxa?=
+ =?utf-8?B?ZEZzdmpZVEdhb2xBVmVpdjJBZTNLNFRLZkQ0TzA4dTBFdWZTbHFSYXNZdjY1?=
+ =?utf-8?B?ZDRCS2d1bEN3ZTBIT2ZYMXFpK1FSdHowN2pGcDFnREtKTUo5bUxyOU9SM2hI?=
+ =?utf-8?B?OVBlY3Zjd2pQeDRPcVllZWk2UW13N3dra0tMTVB5RUVFL2FsSElvSmRWRElV?=
+ =?utf-8?B?YVRtb3F1NkI1cERpZlNQd0FsRyttNUZUSnVpbXdMbGczRnQvS3ZZdG1LTFdF?=
+ =?utf-8?Q?XDXw=3D?=
+X-Microsoft-Antispam-Message-Info: BE8waLh+ywn14T+CUdL09pLWzD0krMr9+7p470DCFxyYYoadffR9CQLB8qIHZ7SeSOT1DktvWHto+w7+fYM84LsgI94LpNqIm/AjZ17asfpJKE1SziJzuUVj39FNh8TvyzHdCjmqt4BP252I131a9RbRB9TTcFD9FgjnraH1K6SS0UJQfuF+1jvFEfogUTyI
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1713;6:oThTO83NELYPmE13+oIXAdfkUuOsBP+HqguybHqOK9NI2qIkCQnQYQvTifnZZycOkjvr1romWkxwMGx6mvZCiNVphVgGOI/yggnrT4hNdG6fF2bJe9cT+cbF2V5OxXzVizBRl5bYXIhMwTBFUYHMf4/Ip/n+5QICAqPwZKKwsWJo6oF+6MRQW5EtEib88zk6Nyjo+5AxNhMW5+eEZ13X7y1zPm+SGk/bovxVm2jwF9UMsPrm+VNOJOG7FMNvtDKjdqccSVPkmqHLsNaedS1J9ePLnRcG7p8QVb6KBOhK1crOSg0eu+BXnMHG+ocw+NsVXnXa9LTjEGXOPJzIGrJA4yU+2ynz8Yd4ih6fV9dZmT96J5C/I30o6rFEQ1JNtQMZTGHS+g9+B57SbyZ53IywtHbpPeDdn6/0wCQHANkquisZ4uqMJ739C6rZTuIySo6SK/TIZsHp9pS3oCt+rNynbw==;5:txsGkgiUsBX1UWjp0IawIPP9UGenjxQiXhB7h9Jjvf3AoHl/jOWoNs9mAvV8Ivk6gEc1jufXsrZVOZDPVU6dodqd3rZwJDxva1Y5l+Zs5Ma28d4+uq1wjxvV1bSNd6w5tva4jui0+QuyXe7ZwHIiC5nbu3Q9yTEri0Iu9fb0rdE=;24:bASPVb4V2Z/oNTI9HCvmcJRpRgE5ur+NG+abd4G4AHfXSCWT36QNJvaTVnZpIX+gRQDmZnTq13k1UqqtqPZ2lA//lYKlsZfvfLTyyyQTQ48=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1713;7:GuPlXOdCivgtIdpSS/6IsOUIB/B0E+2Y+niyBTEzbK1fcGb9AWMYRaz6E0eflAIGGVUWn05clQ7FJGk+g1OhYXs6UrSYBZ3wo71JiGEjjqG2MguGPqmi8Auhfg+4UW0kaUnlm0dEAeh7MFGRSgyXcFXG2uWqd58K6vJFw2364CAvKx5NaCf7g6TBJhKaVlqFa5EIGzIJMzcD+w4oB2s9mvOY13Wx76e1XVoMpFaAvnLXCBv8W5+yusecXTyVI5XZ;20:wcYCeUvq19QH2kVVKHhXj9lgGVSp5e17mMBMTbtOkowUkyvJ6Bf9iaBNrGIJNcMSCDekEvC/GJGdipzxCtab6Z1u/ySFyqwOqyEVpPgP1MbDLFrLSwyXx0WgjJVOKUKsNOiabHZVyglDkQLOC5xowFli7DQtUdT0rJXUtTahc6r/FdHg1UB4PfyirgfN13zdelzzLCFBDwABuPM+9IIOih43WIsSvTUtZPt6cjGyuYTED47jidai8z4l8HVoCdAX
+X-MS-Office365-Filtering-Correlation-Id: e413ec8f-7160-4415-5ccf-08d5c2198768
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 08:28:42.0537 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e413ec8f-7160-4415-5ccf-08d5c2198768
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1713
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Oleg for the review,
+Am 24.05.2018 um 23:48 schrieb Logan Gunthorpe:
+> Hi,
+>
+> As discussed in our PCI P2PDMA series, we'd like to add a kernel
+> parameter for selectively disabling ACS redirection for select
+> bridges. Seeing this turned out to be a small series in itself, we've
+> decided to send this separately from the P2P work.
+>
+> This series generalizes the code already done for the resource_alignment
+> option that already exists. The first patch creates a helper function
+> to match PCI devices against strings based on the code that already
+> existed in pci_specified_resource_alignment().
+>
+> The second patch expands the new helper to optionally take a path of
+> PCI devfns. This is to address Alex's renumbering concern when using
+> simple bus-devfns. The implementation is essentially how he described it and
+> similar to the Intel VT-d spec (Section 8.3.1).
+>
+> The final patch adds the disable_acs_redir kernel parameter which takes
+> a list of PCI devices and will disable the ACS P2P Request Redirect,
+> ACS P2P Completion Redirect and ACS P2P Egress Control bits for the
+> selected devices. This allows P2P traffic between selected bridges and
+> seeing it's done at boot, before IOMMU group creating the IOMMU groups
+> will be created correctly based on the bits.
+>
+> Thanks,
+>
+> Logan
+>
+>
+> Logan Gunthorpe (3):
+>    PCI: Make specifying PCI devices in kernel parameters reusable
+>    PCI: Allow specifying devices using a base bus and path of devfns
+>    PCI: Introduce the disable_acs_redir parameter
 
-On 05/24/2018 09:56 PM, Oleg Nesterov wrote:
-> On 04/17, Ravi Bangoria wrote:
->>
->> @@ -941,6 +1091,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
->>  	if (ret)
->>  		goto err_buffer;
->>  
->> +	if (tu->ref_ctr_offset)
->> +		sdt_increment_ref_ctr(tu);
->> +
-> 
-> iiuc, this is probe_event_enable()...
-> 
-> Looks racy, but afaics the race with uprobe_mmap() will be closed by the next
-> change. However, it seems that probe_event_disable() can race with trace_uprobe_mmap()
-> too and the next 7/9 patch won't help,
-> 
->> +	if (tu->ref_ctr_offset)
->> +		sdt_decrement_ref_ctr(tu);
->> +
->>  	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
->>  	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
-> 
-> so what if trace_uprobe_mmap() comes right after uprobe_unregister() ?
-> Note that trace_probe_is_enabled() is T until we update tp.flags.
+Thanks a lot of taking care of it like that. It looks much cleaner to me 
+than just trying to disable ACS without a parameter.
 
-Sure, I'll look at your comments.
+Series is Acked-by: Christian König <christian.koenig@amd.com>.
 
-Apart from these, I've also found a deadlock between uprobe_lock and
-mm->mmap_sem. trace_uprobe_mmap() takes these locks in
-
-   mm->mmap_sem
-      uprobe_lock
-
-order but some other code path is taking these locks in reverse order. I've
-mentioned sample lockdep warning at the end. The issue is, mm->mmap_sem is
-not in control of trace_uprobe_mmap() and we have to take uprobe_lock to
-loop over all trace_uprobes.
-
-Any idea how this can be resolved?
+Thanks,
+Christian.
 
 
-Sample lockdep warning:
-
-[  499.258006] ======================================================
-[  499.258205] WARNING: possible circular locking dependency detected
-[  499.258409] 4.17.0-rc3+ #76 Not tainted
-[  499.258528] ------------------------------------------------------
-[  499.258731] perf/6744 is trying to acquire lock:
-[  499.258895] 00000000e4895f49 (uprobe_lock){+.+.}, at: trace_uprobe_mmap+0x78/0x130
-[  499.259147]
-[  499.259147] but task is already holding lock:
-[  499.259349] 000000009ec93a76 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0xe0/0x160
-[  499.259597]
-[  499.259597] which lock already depends on the new lock.
-[  499.259597]
-[  499.259848]
-[  499.259848] the existing dependency chain (in reverse order) is:
-[  499.260086]
-[  499.260086] -> #4 (&mm->mmap_sem){++++}:
-[  499.260277]        __lock_acquire+0x53c/0x910
-[  499.260442]        lock_acquire+0xf4/0x2f0
-[  499.260595]        down_write_killable+0x6c/0x150
-[  499.260764]        copy_process.isra.34.part.35+0x1594/0x1be0
-[  499.260967]        _do_fork+0xf8/0x910
-[  499.261090]        ppc_clone+0x8/0xc
-[  499.261209]
-[  499.261209] -> #3 (&dup_mmap_sem){++++}:
-[  499.261378]        __lock_acquire+0x53c/0x910
-[  499.261540]        lock_acquire+0xf4/0x2f0
-[  499.261669]        down_write+0x6c/0x110
-[  499.261793]        percpu_down_write+0x48/0x140
-[  499.261954]        register_for_each_vma+0x6c/0x2a0
-[  499.262116]        uprobe_register+0x230/0x320
-[  499.262277]        probe_event_enable+0x1cc/0x540
-[  499.262435]        perf_trace_event_init+0x1e0/0x350
-[  499.262587]        perf_trace_init+0xb0/0x110
-[  499.262750]        perf_tp_event_init+0x38/0x90
-[  499.262910]        perf_try_init_event+0x10c/0x150
-[  499.263075]        perf_event_alloc+0xbb0/0xf10
-[  499.263235]        sys_perf_event_open+0x2a8/0xdd0
-[  499.263396]        system_call+0x58/0x6c
-[  499.263516]
-[  499.263516] -> #2 (&uprobe->register_rwsem){++++}:
-[  499.263723]        __lock_acquire+0x53c/0x910
-[  499.263884]        lock_acquire+0xf4/0x2f0
-[  499.264002]        down_write+0x6c/0x110
-[  499.264118]        uprobe_register+0x1ec/0x320
-[  499.264283]        probe_event_enable+0x1cc/0x540
-[  499.264442]        perf_trace_event_init+0x1e0/0x350
-[  499.264603]        perf_trace_init+0xb0/0x110
-[  499.264766]        perf_tp_event_init+0x38/0x90
-[  499.264930]        perf_try_init_event+0x10c/0x150
-[  499.265092]        perf_event_alloc+0xbb0/0xf10
-[  499.265261]        sys_perf_event_open+0x2a8/0xdd0
-[  499.265424]        system_call+0x58/0x6c
-[  499.265542]
-[  499.265542] -> #1 (event_mutex){+.+.}:
-[  499.265738]        __lock_acquire+0x53c/0x910
-[  499.265896]        lock_acquire+0xf4/0x2f0
-[  499.266019]        __mutex_lock+0xa0/0xab0
-[  499.266142]        trace_add_event_call+0x44/0x100
-[  499.266310]        create_trace_uprobe+0x4a0/0x8b0
-[  499.266474]        trace_run_command+0xa4/0xc0
-[  499.266631]        trace_parse_run_command+0xe4/0x200
-[  499.266799]        probes_write+0x20/0x40
-[  499.266922]        __vfs_write+0x6c/0x240
-[  499.267041]        vfs_write+0xd0/0x240
-[  499.267166]        ksys_write+0x6c/0x110
-[  499.267295]        system_call+0x58/0x6c
-[  499.267413]
-[  499.267413] -> #0 (uprobe_lock){+.+.}:
-[  499.267591]        validate_chain.isra.34+0xbd0/0x1000
-[  499.267747]        __lock_acquire+0x53c/0x910
-[  499.267917]        lock_acquire+0xf4/0x2f0
-[  499.268048]        __mutex_lock+0xa0/0xab0
-[  499.268170]        trace_uprobe_mmap+0x78/0x130
-[  499.268335]        uprobe_mmap+0x80/0x3b0
-[  499.268464]        mmap_region+0x290/0x660
-[  499.268590]        do_mmap+0x40c/0x500
-[  499.268718]        vm_mmap_pgoff+0x114/0x160
-[  499.268870]        ksys_mmap_pgoff+0xe8/0x2e0
-[  499.269034]        sys_mmap+0x84/0xf0
-[  499.269161]        system_call+0x58/0x6c
-[  499.269279]
-[  499.269279] other info that might help us debug this:
-[  499.269279]
-[  499.269524] Chain exists of:
-[  499.269524]   uprobe_lock --> &dup_mmap_sem --> &mm->mmap_sem
-[  499.269524]
-[  499.269856]  Possible unsafe locking scenario:
-[  499.269856]
-[  499.270058]        CPU0                    CPU1
-[  499.270223]        ----                    ----
-[  499.270384]   lock(&mm->mmap_sem);
-[  499.270514]                                lock(&dup_mmap_sem);
-[  499.270711]                                lock(&mm->mmap_sem);
-[  499.270923]   lock(uprobe_lock);
-[  499.271046]
-[  499.271046]  *** DEADLOCK ***
-[  499.271046]
-[  499.271256] 1 lock held by perf/6744:
-[  499.271377]  #0: 000000009ec93a76 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0xe0/0x160
-[  499.271628]
-[  499.271628] stack backtrace:
-[  499.271797] CPU: 25 PID: 6744 Comm: perf Not tainted 4.17.0-rc3+ #76
-[  499.272003] Call Trace:
-[  499.272094] [c0000000e32d74a0] [c000000000b00174] dump_stack+0xe8/0x164 (unreliable)
-[  499.272349] [c0000000e32d74f0] [c0000000001a905c] print_circular_bug.isra.30+0x354/0x388
-[  499.272590] [c0000000e32d7590] [c0000000001a3050] check_prev_add.constprop.38+0x8f0/0x910
-[  499.272828] [c0000000e32d7690] [c0000000001a3c40] validate_chain.isra.34+0xbd0/0x1000
-[  499.273070] [c0000000e32d7780] [c0000000001a57cc] __lock_acquire+0x53c/0x910
-[  499.273311] [c0000000e32d7860] [c0000000001a65b4] lock_acquire+0xf4/0x2f0
-[  499.273510] [c0000000e32d7930] [c000000000b1d1f0] __mutex_lock+0xa0/0xab0
-[  499.273717] [c0000000e32d7a40] [c0000000002b01b8] trace_uprobe_mmap+0x78/0x130
-[  499.273952] [c0000000e32d7a90] [c0000000002d7070] uprobe_mmap+0x80/0x3b0
-[  499.274153] [c0000000e32d7b20] [c0000000003550a0] mmap_region+0x290/0x660
-[  499.274353] [c0000000e32d7c00] [c00000000035587c] do_mmap+0x40c/0x500
-[  499.274560] [c0000000e32d7c80] [c00000000031ebc4] vm_mmap_pgoff+0x114/0x160
-[  499.274763] [c0000000e32d7d60] [c000000000352818] ksys_mmap_pgoff+0xe8/0x2e0
-[  499.275013] [c0000000e32d7de0] [c000000000016864] sys_mmap+0x84/0xf0
-[  499.275207] [c0000000e32d7e30] [c00000000000b404] system_call+0x58/0x6c
+>
+>   Documentation/admin-guide/kernel-parameters.txt |  39 ++-
+>   drivers/pci/pci.c                               | 358 ++++++++++++++++++++----
+>   2 files changed, 336 insertions(+), 61 deletions(-)
+>
+> --
+> 2.11.0
