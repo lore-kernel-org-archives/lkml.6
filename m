@@ -1,98 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935768AbeEYFzy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 01:55:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:29287 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935134AbeEYFzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 01:55:52 -0400
-Subject: Re: [PATCH v4 3/3] powerpc/lib: optimise PPC32 memcmp
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1527004752.git.christophe.leroy@c-s.fr>
- <05bd657afedaf4a0de5abab0c5db2e88fa73bdfe.1527004752.git.christophe.leroy@c-s.fr>
- <bb7ef10a-4777-7635-3e54-830dd3eeb8bb@c-s.fr>
- <20180524172458.GA17342@gate.crashing.org>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <7a77175e-c0c4-4a38-d972-d98ac76cf70a@c-s.fr>
-Date: Fri, 25 May 2018 07:55:51 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935837AbeEYF4P (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 01:56:15 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48027 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935776AbeEYF4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 01:56:14 -0400
+Subject: Re: [PATCH V2 rdma-next 4/4] RDMA/hns: Fix the illegal memory
+ operation when cross page
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
+ <1527070590-94399-5-git-send-email-xavier.huwei@huawei.com>
+ <20180524214047.GF3948@ziepe.ca>
+CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5B07A572.3000900@huawei.com>
+Date: Fri, 25 May 2018 13:56:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <20180524172458.GA17342@gate.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180524214047.GF3948@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Le 24/05/2018 à 19:24, Segher Boessenkool a écrit :
-> On Wed, May 23, 2018 at 09:47:32AM +0200, Christophe Leroy wrote:
->> At the time being, memcmp() compares two chunks of memory
->> byte per byte.
+On 2018/5/25 5:40, Jason Gunthorpe wrote:
+> On Wed, May 23, 2018 at 06:16:30PM +0800, Wei Hu (Xavier) wrote:
+>> This patch fixed the potential illegal operation when using the
+>> extend sge buffer cross page in post send operation. The bug
+>> will cause the calltrace.
+> Should include the oops for reference here..
+OK, we will fix it in v3.
+Thanks
+>> Reported-by: Jie Chen <chenjie103@huawei.com>
+>> Reported-by: Xiping Zhang (Francis) <zhangxiping3@huawei.com>
+>> Fixes: b1c158350968("RDMA/hns: Get rid of virt_to_page and vmap calls after dma_alloc_coherent")
+>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
 >>
->> This patch optimises the comparison by comparing word by word.
+>> v1->v2: Modify the Fixes statement according to Leon's comment.
+>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 70 +++++++++++++++++++++---------
+>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.h |  1 +
+>>  2 files changed, 51 insertions(+), 20 deletions(-)
 >>
->> A small benchmark performed on an 8xx comparing two chuncks
->> of 512 bytes performed 100000 times gives:
->>
->> Before : 5852274 TB ticks
->> After:   1488638 TB ticks
-> 
->> diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
->> index 40a576d56ac7..542e6cecbcaf 100644
->> --- a/arch/powerpc/lib/string_32.S
->> +++ b/arch/powerpc/lib/string_32.S
->> @@ -16,17 +16,45 @@
->>   	.text
->>
->>   _GLOBAL(memcmp)
->> -	cmpwi	cr0, r5, 0
->> -	beq-	2f
->> -	mtctr	r5
->> -	addi	r6,r3,-1
->> -	addi	r4,r4,-1
->> -1:	lbzu	r3,1(r6)
->> -	lbzu	r0,1(r4)
->> -	subf.	r3,r0,r3
->> -	bdnzt	2,1b
->> +	srawi.	r7, r5, 2		/* Divide len by 4 */
->> +	mr	r6, r3
->> +	beq-	3f
->> +	mtctr	r7
->> +	li	r7, 0
->> +1:
->> +#ifdef __LITTLE_ENDIAN__
->> +	lwbrx	r3, r6, r7
->> +	lwbrx	r0, r4, r7
->> +#else
->> +	lwzx	r3, r6, r7
->> +	lwzx	r0, r4, r7
->> +#endif
-> 
-> You don't test whether the pointers are word-aligned.  Does that work?
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> index a70d07b..62c1eb5 100644
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> @@ -52,6 +52,52 @@ static void set_data_seg_v2(struct hns_roce_v2_wqe_data_seg *dseg,
+>>  	dseg->len  = cpu_to_le32(sg->length);
+>>  }
+>>  
+>> +static void set_extend_sge(struct hns_roce_qp *qp, struct ib_send_wr *wr,
+>> +			   unsigned int *sge_ind)
+>> +{
+>> +	struct hns_roce_v2_wqe_data_seg *dseg;
+>> +	struct ib_sge *sg;
+>> +	int num_in_wqe = 0;
+>> +	int extend_sge_num;
+>> +	int fi_sge_num;
+>> +	int se_sge_num;
+>> +	int shift;
+>> +	int i;
+>> +
+>> +	if (qp->ibqp.qp_type == IB_QPT_RC || qp->ibqp.qp_type == IB_QPT_UC)
+>> +		num_in_wqe = HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE;
+>> +	extend_sge_num = wr->num_sge - num_in_wqe;
+>> +	sg = wr->sg_list + num_in_wqe;
+>> +	shift = qp->hr_buf.page_shift;
+>> +
+>> +	/*
+>> +	 * Check whether wr->num_sge sges are in the same page. If not, we
+>> +	 * should calculate how many sges in the first page and the second
+>> +	 * page.
+>> +	 */
+>> +	dseg = get_send_extend_sge(qp, (*sge_ind) & (qp->sge.sge_cnt - 1));
+>> +	fi_sge_num = (((((u64)dseg >> shift) + 1) << shift) - (u64)dseg) /
+>> +		      sizeof(struct hns_roce_v2_wqe_data_seg);
+> desg is a pointer.. that u64 should be a uinptr_t
+>
+> And it is better written as
+>
+>   (round_up((uintptr_t)dseg, 1 << shift) - (uintptr)desg)/sizeof(struct hns_roce_v2_wqe_data_seg)
+>
+> if I got it right..
+Ok, we will fix it v3.
+Thanks
 
-copy_tofrom_user() word-aligns the store address and doesn't take care 
-of the load address, so I believe it works.
-
-Now, I just read in the MPC885 Ref Manual that unaligned access 
-generates alignment exception when the processor is running in LE mode.
-
-Ref. made to the discussion on patch "powerpc/32be: use stmw/lmw for 
-registers save/restore in asm" 
-(https://patchwork.ozlabs.org/patch/899465/), I will drop the handling 
-for LE mode.
-
-Christophe
-
-> Say, when a load is crossing a page boundary, or segment boundary.
-> 
-> 
-> Segher
-> 
+Wei Hu
+> Jason
+>
+> .
+>
