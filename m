@@ -1,60 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936075AbeEYKSn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:18:43 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35564 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935965AbeEYKSm (ORCPT
+        id S936116AbeEYKSv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:18:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53156 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935965AbeEYKSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:18:42 -0400
-X-Google-Smtp-Source: AB8JxZpPxmadmD7fVSelJQNS7WHk3MNz59doaRqvT9Cr2CL7yF3wqZP8sx7qYkbErXTIqjTUw5wpDg==
-Date: Fri, 25 May 2018 15:48:39 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>, Ben Dooks <ben-linux@fluff.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mmc: sdhci-*: Don't emit error msg if sdhci_add_host()
- fails
-Message-ID: <20180525101839.vfzyhyt5uwduhdcc@vireshk-i7>
-References: <20180525151509.0270dbe1@xhacker.debian>
+        Fri, 25 May 2018 06:18:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D6E760262
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525151509.0270dbe1@xhacker.debian>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Transfer-Encoding: 7bit
+Subject: Re: [v3] wcn36xx: Add support for Factory Test Mode (FTM)
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180522190256.32136-1-ramon.fried@gmail.com>
+References: <20180522190256.32136-1-ramon.fried@gmail.com>
+To: Ramon Fried <ramon.fried@gmail.com>
+Cc: linux-kernel@vger.kernel.org, wcn36xx@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Eyal Ilsar <eilsar@codeaurora.org>,
+        Ramon Fried <ramon.fried@linaro.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180525101847.498DC6076C@smtp.codeaurora.org>
+Date: Fri, 25 May 2018 10:18:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-05-18, 15:15, Jisheng Zhang wrote:
-> I noticed below error msg with sdhci-pxav3 on some berlin platforms:
-> 
-> [.....] sdhci-pxav3 f7ab0000.sdhci failed to add host
-> 
-> It is due to getting related vmmc or vqmmc regulator returns
-> -EPROBE_DEFER. It doesn't matter at all but it's confusing.
-> 
-> From another side, if driver probing fails and the error number isn't
-> -EPROBE_DEFER, the core will tell us something as below:
-> 
-> [.....] sdhci-pxav3: probe of f7ab0000.sdhci failed with error -EXX
-> 
-> So it's not necessary to emit error msg if sdhci_add_host() fails. And
-> some other sdhci host drivers also have this issue, let's fix them
-> together.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  drivers/mmc/host/sdhci-spear.c    | 4 +---
+Ramon Fried <ramon.fried@gmail.com> wrote:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Introduce infrastructure for supporting Factory Test Mode (FTM) of the
+> wireless LAN subsystem. In order for the user space to access the
+> firmware in test mode the relevant netlink channel needs to be exposed
+> from the kernel driver.
+> 
+> The above is achieved as follows:
+> 1) Register wcn36xx driver to testmode callback from netlink
+> 2) Add testmode callback implementation to handle incoming FTM commands
+> 3) Add FTM command packet structure
+> 4) Add handling for GET_BUILD_RELEASE_NUMBER (msgid=0x32A2)
+> 5) Add generic handling for all PTT_MSG packets
+> 
+> Signed-off-by: Eyal Ilsar <eilsar@codeaurora.org>
+> Signed-off-by: Ramon Fried <ramon.fried@linaro.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+87f825e6e246 wcn36xx: Add support for Factory Test Mode (FTM)
 
 -- 
-viresh
+https://patchwork.kernel.org/patch/10419423/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
