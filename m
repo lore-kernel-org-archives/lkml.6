@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965427AbeEYJRi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:17:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8136 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965348AbeEYJRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:17:35 -0400
+        id S965338AbeEYJRe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:17:34 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34316 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964947AbeEYJRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:17:31 -0400
 From: Li Wei <liwei213@huawei.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <catalin.marinas@arm.com>, <will.deacon@arm.com>,
@@ -20,10 +20,12 @@ CC: <zangleigang@hisilicon.com>, <gengjianfeng@hisilicon.com>,
         <guodong.xu@linaro.org>, <puck.chen@hisilicon.com>,
         <john.stultz@linaro.org>, <liwei213@huawei.com>,
         <fengbaopeng@hisilicon.com>
-Subject: [PATCH v10 0/5] scsi: ufs: add ufs driver code for Hisilicon Hi3660 SoC
-Date: Fri, 25 May 2018 17:17:07 +0800
-Message-ID: <20180525091712.37227-1-liwei213@huawei.com>
+Subject: [PATCH v10 5/5] arm64: defconfig: enable f2fs and squashfs
+Date: Fri, 25 May 2018 17:17:12 +0800
+Message-ID: <20180525091712.37227-6-liwei213@huawei.com>
 X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20180525091712.37227-1-liwei213@huawei.com>
+References: <20180525091712.37227-1-liwei213@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [100.107.89.192]
@@ -32,49 +34,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds driver support for UFS for Hi3660 SoC. It is verified on HiKey960 board.
+Partitions in HiKey960 are formatted as f2fs and squashfs.
+f2fs is for userdata; squashfs is for system. Both partitions are required
+by Android.
 
-Li Wei (5):
-  scsi: ufs: add Hisilicon ufs driver code
-  dt-bindings: scsi: ufs: add document for hisi-ufs
-  arm64: dts: add ufs dts node
-  arm64: defconfig: enable configs for Hisilicon ufs
-  arm64: defconfig: enable f2fs and squashfs
+Signed-off-by: Li Wei <liwei213@huawei.com>
+Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+---
+ arch/arm64/configs/defconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- Documentation/devicetree/bindings/ufs/ufs-hisi.txt |  41 ++
- .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  10 +-
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |  18 +
- arch/arm64/configs/defconfig                       |  11 +
- drivers/scsi/ufs/Kconfig                           |   9 +
- drivers/scsi/ufs/Makefile                          |   1 +
- drivers/scsi/ufs/ufs-hisi.c                        | 619 +++++++++++++++++++++
- drivers/scsi/ufs/ufs-hisi.h                        | 115 ++++
- 8 files changed, 821 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
- create mode 100644 drivers/scsi/ufs/ufs-hisi.c
- create mode 100644 drivers/scsi/ufs/ufs-hisi.h
-
-Major changes in v10:
- - solve review comments from Rob Herring.
-   *Modify the "reset-names" describe in ufs-hisi.txt binding file.
-   *List clocks in ufs-hisi.txt binding file.
-   *remove the "arst" and keep only "rst" in the binging files.
-   *remove the "arst" member from both dts and c code. 
-Major changes in v9:
- - solve review comments from Rob Herring.
-   *remove freq-table-hz in ufs-hisi.txt binding file.
-   *Move the rst to the ufshcd_pltfm.txt common binding file.
-   *Modify the member "assert" of UFS host structure to "arst".
-Major changes in v8:
- - solve review comments from zhangfei.
-   *Add Version history.
- - solve review comments from Rob Herring.
-   *remove freq-table-hz.
- -  solve review comments from Riku Voipio.
-   *Add MODULE_DEVICE_TABLE for ufs driver.
--- 
-Major changes in v7:
- - solve review comments from Philippe Ombredanne.
-   *use the new SPDX license ids instead of the GNU General Public License.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index d42b1ecaf490..e8036cddb272 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -613,6 +613,7 @@ CONFIG_ACPI_APEI_MEMORY_FAILURE=y
+ CONFIG_ACPI_APEI_EINJ=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
++CONFIG_F2FS_FS=y
+ CONFIG_EXT4_FS_POSIX_ACL=y
+ CONFIG_BTRFS_FS=m
+ CONFIG_BTRFS_FS_POSIX_ACL=y
+@@ -628,6 +629,13 @@ CONFIG_HUGETLBFS=y
+ CONFIG_CONFIGFS_FS=y
+ CONFIG_EFIVAR_FS=y
+ CONFIG_SQUASHFS=y
++CONFIG_SQUASHFS_FILE_DIRECT=y
++CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU=y
++CONFIG_SQUASHFS_XATTR=y
++CONFIG_SQUASHFS_LZ4=y
++CONFIG_SQUASHFS_LZO=y
++CONFIG_SQUASHFS_XZ=y
++CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
+ CONFIG_NFS_FS=y
+ CONFIG_NFS_V4=y
+ CONFIG_NFS_V4_1=y
 -- 
 2.15.0
