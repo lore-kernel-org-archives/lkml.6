@@ -1,109 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935709AbeEYHEx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 03:04:53 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60734 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934393AbeEYHEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 03:04:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,439,1520924400";
-   d="scan'208";a="58391694"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Joe Perches <joe@perches.com>, Russell King <linux@armlinux.org.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Rob Clark <robdclark@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David \(ChunMing\) Zhou" <David1.Zhou@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Roger He <Hongbo.He@amd.com>, Dave Airlie <airlied@redhat.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] gpu: Consistently use octal not symbolic permissions
-In-Reply-To: <2108eb98b35ab682d44ca7bf40276e93d9566bbf.camel@perches.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com> <87a7so44q5.fsf@intel.com> <2108eb98b35ab682d44ca7bf40276e93d9566bbf.camel@perches.com>
-Date: Fri, 25 May 2018 10:04:40 +0300
-Message-ID: <8736yg43nb.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S935656AbeEYHLG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 03:11:06 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:60938 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934393AbeEYHLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 03:11:05 -0400
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+X-Original-SENDERIP: 10.177.226.38
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+From: Hoeun Ryu <hoeun.ryu@lge.com.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Liu, Changcheng" <changcheng.liu@intel.com>
+Cc: Hoeun Ryu <hoeun.ryu@lge.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nmi_backtrace: use printk_safe_flush_on_panic when triggering backtraces
+Date: Fri, 25 May 2018 16:09:19 +0900
+Message-Id: <1527232247-31693-1-git-send-email-hoeun.ryu@lge.com.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Joe Perches <joe@perches.com> wrote:
-> On Fri, 2018-05-25 at 09:41 +0300, Jani Nikula wrote:
->> On Thu, 24 May 2018, Joe Perches <joe@perches.com> wrote:
->> > There is currently a mixture of octal and symbolic permissions uses
->> > in files in drivers/gpu/drm and one file in drivers/gpu.
->> > 
->> > There are ~270 existing octal uses and ~115 S_<FOO> uses.
->> > 
->> > Convert all the S_<FOO> symbolic permissions to their octal equivalents
->> > as using octal and not symbolic permissions is preferred by many as more
->> > readable.
->> > 
->> > see: https://lkml.org/lkml/2016/8/2/1945
->> > 
->> > Done with automated conversion via:
->> > $ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
->> > 
->> > Miscellanea:
->> > 
->> > o Wrapped modified multi-line calls to a single line where appropriate
->> > o Realign modified multi-line calls to open parenthesis
->> > o drivers/gpu/drm/msm/adreno/a5xx_debugfs.c has a world-writeable
->> >   debug permission for "reset" - perhaps that should be modified
->> > Signed-off-by: Joe Perches <joe@perches.com>
->> > ---
->> >  drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c        |  2 +-
->> >  drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c             | 98 +++++++++++-----------
->> >  drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |  3 +-
->> >  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c            |  9 +-
->> >  drivers/gpu/drm/armada/armada_debugfs.c            |  4 +-
->> >  drivers/gpu/drm/drm_debugfs.c                      |  6 +-
->> >  drivers/gpu/drm/drm_debugfs_crc.c                  |  4 +-
->> >  drivers/gpu/drm/drm_sysfs.c                        |  2 +-
->> >  drivers/gpu/drm/i915/gvt/firmware.c                |  2 +-
->> >  drivers/gpu/drm/i915/i915_debugfs.c                |  8 +-
->> >  drivers/gpu/drm/i915/i915_perf.c                   |  2 +-
->> >  drivers/gpu/drm/i915/i915_sysfs.c                  | 22 ++---
->> >  drivers/gpu/drm/i915/intel_pipe_crc.c              |  2 +-
->> 
->> Please send at least i915 changes separately. There's zero reason to
->> make our lives harder for this change.
->
-> The idea is to avoid unnecessary multiple patches for
-> individual trees.
+From: Hoeun Ryu <hoeun.ryu@lge.com>
 
-You're changing like a dozen trees. And apparently maintainers of
-different trees also have different opinions on whether this is a good
-idea or not. Mass changes like this go nowhere, and if they do, will
-cause unnecessary conflicts that could have been trivially avoided.
+ Use printk_safe_flush_on_panic() in nmi_trigger_cpumask_backtrace().
+nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
+function is called in watchdog_overflow_callback() if the flag of hardlockup
+backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
+watchdog_overflow_callback() function is called in NMI context on some
+architectures.
+ printk_safe_flush() eventually tries to lock logbuf_lock in vprintk_emit() but the
+logbuf_lock can be already locked in preempted contexts (task or irq in this case)
+or by other CPUs and it may cause deadlocks.
+ By using printk_safe_flush_on_panic() instead of printk_safe_flush() in
+in nmi_trigger_cpumask_backtrace(), the backtrace triggering CPU can access the lock
+safely as the lock is reinitialized before calling printk_safe_flush().
+ The messages in logbuf can be corrupted if the NMI context preempts other contexts
+or ignores the lock held by other CPUs writing the buffer.
 
-BR,
-Jani.
+Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
+---
+ lib/nmi_backtrace.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> But you could do that via something like:
->
-> $ git am --include='drivers/gpu/drm/i915/*' <patch>
->
-> cheers, Joe
->
-
+diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
+index 61a6b5a..0ace3c9 100644
+--- a/lib/nmi_backtrace.c
++++ b/lib/nmi_backtrace.c
+@@ -78,8 +78,11 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
+ 	/*
+ 	 * Force flush any remote buffers that might be stuck in IRQ context
+ 	 * and therefore could not run their irq_work.
++	 * Call nmi-safe version of printk_safe_flush() because this function can be
++	 * called in NMI context like watchdog_overflow_callback() if
++	 * sysctl_hardlockup_all_cpu_backtrace is true.
+ 	 */
+-	printk_safe_flush();
++	printk_safe_flush_on_panic();
+ 
+ 	clear_bit_unlock(0, &backtrace_flag);
+ 	put_cpu();
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.1.4
