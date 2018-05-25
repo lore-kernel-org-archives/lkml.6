@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966802AbeEYPeB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:34:01 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51102 "EHLO
+        id S966851AbeEYPeW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:34:22 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40707 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966743AbeEYPd6 (ORCPT
+        with ESMTP id S966698AbeEYPd4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:33:58 -0400
-X-Google-Smtp-Source: ADUXVKLY/ggzuISq/y9my4jm0AC7o41+oS2Kgju+mlq2zJBvqMq9HLGf8PlcLBQ5aadR1ml6joZroQ==
+        Fri, 25 May 2018 11:33:56 -0400
+X-Google-Smtp-Source: ADUXVKIZ+n2MhJAwO45li45+TPR7FEGy4j9NECVTmd+XREjzOIqlCqeyYZMnoMKdykO/Tf8CtnFthA==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
 Cc: daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH 8/8] xen/gntdev: Expose gntdev's dma-buf API for in-kernel use
-Date: Fri, 25 May 2018 18:33:31 +0300
-Message-Id: <20180525153331.31188-9-andr2000@gmail.com>
+Subject: [PATCH 7/8] xen/gntdev: Implement dma-buf import functionality
+Date: Fri, 25 May 2018 18:33:30 +0300
+Message-Id: <20180525153331.31188-8-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180525153331.31188-1-andr2000@gmail.com>
 References: <20180525153331.31188-1-andr2000@gmail.com>
@@ -27,310 +27,300 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Allow creating grant device context for use by kernel modules which
-require functionality, provided by gntdev. Export symbols for dma-buf
-API provided by the module.
+1. Import a dma-buf with the file descriptor provided and export
+   granted references to the pages of that dma-buf into the array
+   of grant references.
+
+2. Add API to close all references to an imported buffer, so it can be
+   released by the owner. This is only valid for buffers created with
+   IOCTL_GNTDEV_DMABUF_IMP_TO_REFS.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/xen/gntdev.c    | 116 ++++++++++++++++++++++++++--------------
- include/xen/grant_dev.h |  37 +++++++++++++
- 2 files changed, 113 insertions(+), 40 deletions(-)
- create mode 100644 include/xen/grant_dev.h
+ drivers/xen/gntdev.c | 237 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 234 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index d8b6168f2cd9..912056f3e909 100644
+index 52abc6cd5846..d8b6168f2cd9 100644
 --- a/drivers/xen/gntdev.c
 +++ b/drivers/xen/gntdev.c
-@@ -684,14 +684,33 @@ static const struct mmu_notifier_ops gntdev_mmu_ops = {
+@@ -71,6 +71,17 @@ static atomic_t pages_mapped = ATOMIC_INIT(0);
+ static int use_ptemod;
+ #define populate_freeable_maps use_ptemod
  
- /* ------------------------------------------------------------------ */
++#ifdef CONFIG_XEN_GNTDEV_DMABUF
++#ifndef GRANT_INVALID_REF
++/*
++ * Note on usage of grant reference 0 as invalid grant reference:
++ * grant reference 0 is valid, but never exposed to a driver,
++ * because of the fact it is already in use/reserved by the PV console.
++ */
++#define GRANT_INVALID_REF	0
++#endif
++#endif
++
+ struct gntdev_priv {
+ 	/* maps with visible offsets in the file descriptor */
+ 	struct list_head maps;
+@@ -94,6 +105,8 @@ struct gntdev_priv {
+ 	struct list_head dmabuf_exp_list;
+ 	/* List of wait objects. */
+ 	struct list_head dmabuf_exp_wait_list;
++	/* List of imported DMA buffers. */
++	struct list_head dmabuf_imp_list;
+ 	/* This is the lock which protects dma_buf_xxx lists. */
+ 	struct mutex dmabuf_lock;
+ #endif
+@@ -155,6 +168,10 @@ struct xen_dmabuf {
+ 		struct {
+ 			/* Granted references of the imported buffer. */
+ 			grant_ref_t *refs;
++			/* Scatter-gather table of the imported buffer. */
++			struct sg_table *sgt;
++			/* dma-buf attachment of the imported buffer. */
++			struct dma_buf_attachment *attach;
+ 		} imp;
+ 	} u;
  
--static int gntdev_open(struct inode *inode, struct file *flip)
-+void gntdev_free_context(struct gntdev_priv *priv)
-+{
-+	struct grant_map *map;
-+
-+	pr_debug("priv %p\n", priv);
-+
-+	mutex_lock(&priv->lock);
-+	while (!list_empty(&priv->maps)) {
-+		map = list_entry(priv->maps.next, struct grant_map, next);
-+		list_del(&map->next);
-+		gntdev_put_map(NULL /* already removed */, map);
-+	}
-+	WARN_ON(!list_empty(&priv->freeable_maps));
-+
-+	mutex_unlock(&priv->lock);
-+
-+	kfree(priv);
-+}
-+EXPORT_SYMBOL(gntdev_free_context);
-+
-+struct gntdev_priv *gntdev_alloc_context(struct device *dev)
- {
- 	struct gntdev_priv *priv;
--	int ret = 0;
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	INIT_LIST_HEAD(&priv->maps);
- 	INIT_LIST_HEAD(&priv->freeable_maps);
-@@ -704,6 +723,32 @@ static int gntdev_open(struct inode *inode, struct file *flip)
- 	INIT_LIST_HEAD(&priv->dmabuf_imp_list);
+@@ -684,6 +701,7 @@ static int gntdev_open(struct inode *inode, struct file *flip)
+ 	mutex_init(&priv->dmabuf_lock);
+ 	INIT_LIST_HEAD(&priv->dmabuf_exp_list);
+ 	INIT_LIST_HEAD(&priv->dmabuf_exp_wait_list);
++	INIT_LIST_HEAD(&priv->dmabuf_imp_list);
  #endif
  
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+	priv->dma_dev = dev;
-+
-+	/*
-+	 * The device is not spawn from a device tree, so arch_setup_dma_ops
-+	 * is not called, thus leaving the device with dummy DMA ops.
-+	 * Fix this call of_dma_configure() with a NULL node to set
-+	 * default DMA ops.
-+	 */
-+	of_dma_configure(priv->dma_dev, NULL);
-+#endif
-+	pr_debug("priv %p\n", priv);
-+
-+	return priv;
-+}
-+EXPORT_SYMBOL(gntdev_alloc_context);
-+
-+static int gntdev_open(struct inode *inode, struct file *flip)
-+{
-+	struct gntdev_priv *priv;
-+	int ret = 0;
-+
-+	priv = gntdev_alloc_context(gntdev_miscdev.this_device);
-+	if (IS_ERR(priv))
-+		return PTR_ERR(priv);
-+
  	if (use_ptemod) {
- 		priv->mm = get_task_mm(current);
- 		if (!priv->mm) {
-@@ -716,23 +761,11 @@ static int gntdev_open(struct inode *inode, struct file *flip)
- 	}
- 
- 	if (ret) {
--		kfree(priv);
-+		gntdev_free_context(priv);
- 		return ret;
- 	}
- 
- 	flip->private_data = priv;
--#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
--	priv->dma_dev = gntdev_miscdev.this_device;
--
--	/*
--	 * The device is not spawn from a device tree, so arch_setup_dma_ops
--	 * is not called, thus leaving the device with dummy DMA ops.
--	 * Fix this call of_dma_configure() with a NULL node to set
--	 * default DMA ops.
--	 */
--	of_dma_configure(priv->dma_dev, NULL);
--#endif
--	pr_debug("priv %p\n", priv);
- 
- 	return 0;
- }
-@@ -740,22 +773,11 @@ static int gntdev_open(struct inode *inode, struct file *flip)
- static int gntdev_release(struct inode *inode, struct file *flip)
- {
- 	struct gntdev_priv *priv = flip->private_data;
--	struct grant_map *map;
--
--	pr_debug("priv %p\n", priv);
--
--	mutex_lock(&priv->lock);
--	while (!list_empty(&priv->maps)) {
--		map = list_entry(priv->maps.next, struct grant_map, next);
--		list_del(&map->next);
--		gntdev_put_map(NULL /* already removed */, map);
--	}
--	WARN_ON(!list_empty(&priv->freeable_maps));
--	mutex_unlock(&priv->lock);
- 
- 	if (use_ptemod)
- 		mmu_notifier_unregister(&priv->mn, priv->mm);
--	kfree(priv);
-+
-+	gntdev_free_context(priv);
- 	return 0;
- }
- 
-@@ -1210,7 +1232,7 @@ dmabuf_exp_wait_obj_get_by_fd(struct gntdev_priv *priv, int fd)
- 	return ret;
- }
- 
--static int dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
-+int gntdev_dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
- 				    int wait_to_ms)
- {
- 	struct xen_dmabuf *xen_dmabuf;
-@@ -1242,6 +1264,7 @@ static int dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
- 	dmabuf_exp_wait_obj_free(priv, obj);
- 	return ret;
- }
-+EXPORT_SYMBOL(gntdev_dmabuf_exp_wait_released);
- 
- /* ------------------------------------------------------------------ */
- /* DMA buffer export support.                                         */
-@@ -1511,7 +1534,7 @@ dmabuf_exp_alloc_backing_storage(struct gntdev_priv *priv, int dmabuf_flags,
- 	return map;
- }
- 
--static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
-+int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
- 				int count, u32 domid, u32 *refs, u32 *fd)
- {
- 	struct grant_map *map;
-@@ -1557,6 +1580,7 @@ static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
- 	gntdev_remove_map(priv, map);
- 	return ret;
- }
-+EXPORT_SYMBOL(gntdev_dmabuf_exp_from_refs);
- 
- /* ------------------------------------------------------------------ */
+@@ -1544,15 +1562,228 @@ static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
  /* DMA buffer import support.                                         */
-@@ -1646,8 +1670,9 @@ static struct xen_dmabuf *dmabuf_imp_alloc_storage(int count)
- 	return ERR_PTR(-ENOMEM);
- }
- 
--static struct xen_dmabuf *
--dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd, int count, int domid)
-+struct xen_dmabuf *
-+gntdev_dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd,
-+			  int count, int domid)
- {
- 	struct xen_dmabuf *xen_dmabuf, *ret;
- 	struct dma_buf *dma_buf;
-@@ -1736,6 +1761,16 @@ dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd, int count, int domid)
- 	dma_buf_put(dma_buf);
- 	return ret;
- }
-+EXPORT_SYMBOL(gntdev_dmabuf_imp_to_refs);
-+
-+u32 *gntdev_dmabuf_imp_get_refs(struct xen_dmabuf *xen_dmabuf)
-+{
-+	if (xen_dmabuf)
-+		return xen_dmabuf->u.imp.refs;
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL(gntdev_dmabuf_imp_get_refs);
- 
- /*
-  * Find the hyper dma-buf by its file descriptor and remove
-@@ -1759,7 +1794,7 @@ dmabuf_imp_find_unlink(struct gntdev_priv *priv, int fd)
- 	return ret;
- }
+ /* ------------------------------------------------------------------ */
  
 -static int dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
-+int gntdev_dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
++static int
++dmabuf_imp_grant_foreign_access(struct page **pages, u32 *refs,
++				int count, int domid)
  {
- 	struct xen_dmabuf *xen_dmabuf;
- 	struct dma_buf_attachment *attach;
-@@ -1785,6 +1820,7 @@ static int dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
- 	dmabuf_imp_free_storage(xen_dmabuf);
- 	return 0;
+-	return 0;
++	grant_ref_t priv_gref_head;
++	int i, ret;
++
++	ret = gnttab_alloc_grant_references(count, &priv_gref_head);
++	if (ret < 0) {
++		pr_err("Cannot allocate grant references, ret %d\n", ret);
++		return ret;
++	}
++
++	for (i = 0; i < count; i++) {
++		int cur_ref;
++
++		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
++		if (cur_ref < 0) {
++			ret = cur_ref;
++			pr_err("Cannot claim grant reference, ret %d\n", ret);
++			goto out;
++		}
++
++		gnttab_grant_foreign_access_ref(cur_ref, domid,
++						xen_page_to_gfn(pages[i]), 0);
++		refs[i] = cur_ref;
++	}
++
++	ret = 0;
++
++out:
++	gnttab_free_grant_references(priv_gref_head);
++	return ret;
++}
++
++static void dmabuf_imp_end_foreign_access(u32 *refs, int count)
++{
++	int i;
++
++	for (i = 0; i < count; i++)
++		if (refs[i] != GRANT_INVALID_REF)
++			gnttab_end_foreign_access(refs[i], 0, 0UL);
++}
++
++static void dmabuf_imp_free_storage(struct xen_dmabuf *xen_dmabuf)
++{
++	kfree(xen_dmabuf->pages);
++	kfree(xen_dmabuf->u.imp.refs);
++	kfree(xen_dmabuf);
++}
++
++static struct xen_dmabuf *dmabuf_imp_alloc_storage(int count)
++{
++	struct xen_dmabuf *xen_dmabuf;
++	int i;
++
++	xen_dmabuf = kzalloc(sizeof(*xen_dmabuf), GFP_KERNEL);
++	if (!xen_dmabuf)
++		goto fail;
++
++	xen_dmabuf->u.imp.refs = kcalloc(count,
++					 sizeof(xen_dmabuf->u.imp.refs[0]),
++					 GFP_KERNEL);
++	if (!xen_dmabuf->u.imp.refs)
++		goto fail;
++
++	xen_dmabuf->pages = kcalloc(count,
++				    sizeof(xen_dmabuf->pages[0]),
++				    GFP_KERNEL);
++	if (!xen_dmabuf->pages)
++		goto fail;
++
++	xen_dmabuf->nr_pages = count;
++
++	for (i = 0; i < count; i++)
++		xen_dmabuf->u.imp.refs[i] = GRANT_INVALID_REF;
++
++	return xen_dmabuf;
++
++fail:
++	dmabuf_imp_free_storage(xen_dmabuf);
++	return ERR_PTR(-ENOMEM);
  }
-+EXPORT_SYMBOL(gntdev_dmabuf_imp_release);
  
- /* ------------------------------------------------------------------ */
- /* DMA buffer IOCTL support.                                          */
-@@ -1810,8 +1846,8 @@ gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv,
- 		goto out;
- 	}
- 
--	ret = dmabuf_exp_from_refs(priv, op.flags, op.count,
--				   op.domid, refs, &op.fd);
-+	ret = gntdev_dmabuf_exp_from_refs(priv, op.flags, op.count,
-+					  op.domid, refs, &op.fd);
- 	if (ret)
- 		goto out;
- 
-@@ -1832,7 +1868,7 @@ gntdev_ioctl_dmabuf_exp_wait_released(struct gntdev_priv *priv,
- 	if (copy_from_user(&op, u, sizeof(op)) != 0)
- 		return -EFAULT;
- 
--	return dmabuf_exp_wait_released(priv, op.fd, op.wait_to_ms);
-+	return gntdev_dmabuf_exp_wait_released(priv, op.fd, op.wait_to_ms);
- }
- 
- static long
-@@ -1846,7 +1882,7 @@ gntdev_ioctl_dmabuf_imp_to_refs(struct gntdev_priv *priv,
- 	if (copy_from_user(&op, u, sizeof(op)) != 0)
- 		return -EFAULT;
- 
--	xen_dmabuf = dmabuf_imp_to_refs(priv, op.fd, op.count, op.domid);
-+	xen_dmabuf = gntdev_dmabuf_imp_to_refs(priv, op.fd, op.count, op.domid);
- 	if (IS_ERR(xen_dmabuf))
- 		return PTR_ERR(xen_dmabuf);
- 
-@@ -1858,7 +1894,7 @@ gntdev_ioctl_dmabuf_imp_to_refs(struct gntdev_priv *priv,
- 	return 0;
- 
- out_release:
--	dmabuf_imp_release(priv, op.fd);
-+	gntdev_dmabuf_imp_release(priv, op.fd);
- 	return ret;
- }
- 
-@@ -1871,7 +1907,7 @@ gntdev_ioctl_dmabuf_imp_release(struct gntdev_priv *priv,
- 	if (copy_from_user(&op, u, sizeof(op)) != 0)
- 		return -EFAULT;
- 
--	return dmabuf_imp_release(priv, op.fd);
-+	return gntdev_dmabuf_imp_release(priv, op.fd);
- }
- #endif
- 
-diff --git a/include/xen/grant_dev.h b/include/xen/grant_dev.h
-new file mode 100644
-index 000000000000..faccc9170174
---- /dev/null
-+++ b/include/xen/grant_dev.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+ static struct xen_dmabuf *
+ dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd, int count, int domid)
+ {
+-	return ERR_PTR(-ENOMEM);
++	struct xen_dmabuf *xen_dmabuf, *ret;
++	struct dma_buf *dma_buf;
++	struct dma_buf_attachment *attach;
++	struct sg_table *sgt;
++	struct sg_page_iter sg_iter;
++	int i;
++
++	dma_buf = dma_buf_get(fd);
++	if (IS_ERR(dma_buf))
++		return ERR_CAST(dma_buf);
++
++	xen_dmabuf = dmabuf_imp_alloc_storage(count);
++	if (IS_ERR(xen_dmabuf)) {
++		ret = xen_dmabuf;
++		goto fail_put;
++	}
++
++	xen_dmabuf->priv = priv;
++	xen_dmabuf->fd = fd;
++
++	attach = dma_buf_attach(dma_buf, priv->dma_dev);
++	if (IS_ERR(attach)) {
++		ret = ERR_CAST(attach);
++		goto fail_free_obj;
++	}
++
++	xen_dmabuf->u.imp.attach = attach;
++
++	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
++	if (IS_ERR(sgt)) {
++		ret = ERR_CAST(sgt);
++		goto fail_detach;
++	}
++
++	/* Check number of pages that imported buffer has. */
++	if (attach->dmabuf->size != xen_dmabuf->nr_pages << PAGE_SHIFT) {
++		ret = ERR_PTR(-EINVAL);
++		pr_err("DMA buffer has %zu pages, user-space expects %d\n",
++		       attach->dmabuf->size, xen_dmabuf->nr_pages);
++		goto fail_unmap;
++	}
++
++	xen_dmabuf->u.imp.sgt = sgt;
++
++	/* Now convert sgt to array of pages and check for page validity. */
++	i = 0;
++	for_each_sg_page(sgt->sgl, &sg_iter, sgt->nents, 0) {
++		struct page *page = sg_page_iter_page(&sg_iter);
++		/*
++		 * Check if page is valid: this can happen if we are given
++		 * a page from VRAM or other resources which are not backed
++		 * by a struct page.
++		 */
++		if (!pfn_valid(page_to_pfn(page))) {
++			ret = ERR_PTR(-EINVAL);
++			goto fail_unmap;
++		}
++
++		xen_dmabuf->pages[i++] = page;
++	}
++
++	ret = ERR_PTR(dmabuf_imp_grant_foreign_access(xen_dmabuf->pages,
++						      xen_dmabuf->u.imp.refs,
++						      count, domid));
++	if (IS_ERR(ret))
++		goto fail_end_access;
++
++	pr_debug("Imported DMA buffer with fd %d\n", fd);
++
++	mutex_lock(&priv->dmabuf_lock);
++	list_add(&xen_dmabuf->next, &priv->dmabuf_imp_list);
++	mutex_unlock(&priv->dmabuf_lock);
++
++	return xen_dmabuf;
++
++fail_end_access:
++	dmabuf_imp_end_foreign_access(xen_dmabuf->u.imp.refs, count);
++fail_unmap:
++	dma_buf_unmap_attachment(attach, sgt, DMA_BIDIRECTIONAL);
++fail_detach:
++	dma_buf_detach(dma_buf, attach);
++fail_free_obj:
++	dmabuf_imp_free_storage(xen_dmabuf);
++fail_put:
++	dma_buf_put(dma_buf);
++	return ret;
++}
 +
 +/*
-+ * Grant device kernel API
-+ *
-+ * Copyright (C) 2018 EPAM Systems Inc.
-+ *
-+ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ * Find the hyper dma-buf by its file descriptor and remove
++ * it from the buffer's list.
 + */
++static struct xen_dmabuf *
++dmabuf_imp_find_unlink(struct gntdev_priv *priv, int fd)
++{
++	struct xen_dmabuf *q, *xen_dmabuf, *ret = ERR_PTR(-ENOENT);
 +
-+#ifndef _GRANT_DEV_H
-+#define _GRANT_DEV_H
++	mutex_lock(&priv->dmabuf_lock);
++	list_for_each_entry_safe(xen_dmabuf, q, &priv->dmabuf_imp_list, next) {
++		if (xen_dmabuf->fd == fd) {
++			pr_debug("Found xen_dmabuf in the import list\n");
++			ret = xen_dmabuf;
++			list_del(&xen_dmabuf->next);
++			break;
++		}
++	}
++	mutex_unlock(&priv->dmabuf_lock);
++	return ret;
++}
 +
-+#include <linux/types.h>
++static int dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
++{
++	struct xen_dmabuf *xen_dmabuf;
++	struct dma_buf_attachment *attach;
++	struct dma_buf *dma_buf;
 +
-+struct device;
-+struct gntdev_priv;
-+#ifdef CONFIG_XEN_GNTDEV_DMABUF
-+struct xen_dmabuf;
-+#endif
++	xen_dmabuf = dmabuf_imp_find_unlink(priv, fd);
++	if (IS_ERR(xen_dmabuf))
++		return PTR_ERR(xen_dmabuf);
 +
-+struct gntdev_priv *gntdev_alloc_context(struct device *dev);
-+void gntdev_free_context(struct gntdev_priv *priv);
++	pr_debug("Releasing DMA buffer with fd %d\n", fd);
 +
-+#ifdef CONFIG_XEN_GNTDEV_DMABUF
-+int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
-+				int count, u32 domid, u32 *refs, u32 *fd);
-+int gntdev_dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
-+				    int wait_to_ms);
++	attach = xen_dmabuf->u.imp.attach;
 +
-+struct xen_dmabuf *gntdev_dmabuf_imp_to_refs(struct gntdev_priv *priv,
-+					     int fd, int count, int domid);
-+u32 *gntdev_dmabuf_imp_get_refs(struct xen_dmabuf *xen_dmabuf);
-+int gntdev_dmabuf_imp_release(struct gntdev_priv *priv, u32 fd);
-+#endif
++	if (xen_dmabuf->u.imp.sgt)
++		dma_buf_unmap_attachment(attach, xen_dmabuf->u.imp.sgt,
++					 DMA_BIDIRECTIONAL);
++	dma_buf = attach->dmabuf;
++	dma_buf_detach(attach->dmabuf, attach);
++	dma_buf_put(dma_buf);
 +
-+#endif
++	dmabuf_imp_end_foreign_access(xen_dmabuf->u.imp.refs,
++				      xen_dmabuf->nr_pages);
++	dmabuf_imp_free_storage(xen_dmabuf);
++	return 0;
+ }
+ 
+ /* ------------------------------------------------------------------ */
 -- 
 2.17.0
