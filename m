@@ -1,78 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755231AbeEYJYm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:24:42 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43295 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754925AbeEYJYi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:24:38 -0400
-X-Google-Smtp-Source: ADUXVKJFI+PHU1Lf4Zy/huatpqeGx7s3W6m6GynpsRtXuamnQ4TKQ+Vulu/w3BDHR/F1lwSsyac/yo95dgKsnRhflwo=
+        id S1755271AbeEYJY5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:24:57 -0400
+Received: from verein.lst.de ([213.95.11.211]:35805 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755045AbeEYJYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:24:55 -0400
+Date: Fri, 25 May 2018 11:30:33 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Huaisheng Ye <yehs2007@zoho.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, chengnt@lenovo.com, Huaisheng Ye <yehs1@lenovo.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v1] arch/x86/kernel/pci-dma: Remove useless parameter
+        of arch_dma_alloc_attrs
+Message-ID: <20180525093033.GA20094@lst.de>
+References: <20180525050000.6076-1-yehs2007@zoho.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0j_mLPw2VT6GbAxSDizu4Rr94muweiBs6ZhLuUJe2O7vQ@mail.gmail.com>
-References: <3221007.8CUDle5b3u@aspire.rjw.lan> <201805181421.jU5hI6Bo%fengguang.wu@intel.com>
- <CAPDyKFpnrPeG23Q+i6ASCeohGR3vfGQRwQzjwGsKE=c4TyAiQA@mail.gmail.com>
- <CAJZ5v0jFmVd_SkvgoXmi2Psqg5ALJRDsKzV8PiFysHQt9f0uog@mail.gmail.com> <CAJZ5v0j_mLPw2VT6GbAxSDizu4Rr94muweiBs6ZhLuUJe2O7vQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 25 May 2018 11:24:37 +0200
-Message-ID: <CAPDyKFrs9kXOuE5ft2fX83mjUtf_5FyANeWFxeRNyg3yGRk-pA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI: EC: Dispatch the EC GPE directly on s2idle wake
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, kbuild-all@01.org,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Bob Moore <robert.moore@intel.com>,
-        "Wang, Wendy" <wendy.wang@intel.com>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525050000.6076-1-yehs2007@zoho.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 May 2018 at 10:48, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Fri, May 25, 2018 at 10:08 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Fri, May 25, 2018 at 8:49 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> Rafael,
->>>
->>> On 18 May 2018 at 08:10, kbuild test robot <lkp@intel.com> wrote:
->>>> Hi Rafael,
->>>>
->>>> I love your patch! Yet something to improve:
->>>>
->>>> [auto build test ERROR on pm/linux-next]
->>>> [also build test ERROR on v4.17-rc5]
->>>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>>>
->>>> url:    https://github.com/0day-ci/linux/commits/Rafael-J-Wysocki/ACPI-PM-Dispatch-EC-GPE-early-on-s2idle-resume-if-LPS0-_DSM-is-used/20180518-070817
->>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
->>>> config: arm64-defconfig (attached as .config)
->>>> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->>>> reproduce:
->>>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>>>         chmod +x ~/bin/make.cross
->>>>         # save the attached .config to linux build tree
->>>>         make.cross ARCH=arm64
->>>>
->>>> All errors (new ones prefixed by >>):
->>>>
->>>>    drivers/acpi/ec.o: In function `acpi_ec_dispatch_gpe':
->>>>>> ec.c:(.text+0x239c): undefined reference to `acpi_dispatch_gpe'
->>>>    ec.c:(.text+0x239c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `acpi_dispatch_gpe'
->>>>
->>>> ---
->>>> 0-DAY kernel test infrastructure                Open Source Technology Center
->>>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->>>
->>> This breaks arm64 builds, would you mind to drop the offending patch
->>> from your linux-next branch?
->>
->> Not really, but I can fix it.
->
-> Should be fixed now, sorry for the breakage.
+Thanks,
 
-Thanks, yes it builds fine now!
-
-Kind regards
-Uffe
+applied to the dma-mapping tree.
