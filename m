@@ -1,102 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030487AbeEYVi7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:38:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030216AbeEYVi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:38:56 -0400
-Date: Sat, 26 May 2018 00:38:53 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Oleg Drokin <oleg.drokin@intel.com>,
-        Andreas Dilger <andreas.dilger@intel.com>,
-        James Simmons <jsimmons@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steve French <sfrench@samba.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>, Greg Thelen <gthelen@google.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] IB: Revert "remove redundant INFINIBAND kconfig
- dependencies"
-Message-ID: <20180525213853.GF22686@mtr-leonro.mtl.com>
-References: <20180525213123.2113748-1-arnd@arndb.de>
+        id S1030260AbeEYVjE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:39:04 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.1]:28773 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1030483AbeEYVjC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 17:39:02 -0400
+X-Authority-Reason: nr=8
+Date: Fri, 25 May 2018 16:38:54 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] mwifiex: mark expected switch fall-throughs
+Message-ID: <20180525213854.GA13392@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180525213123.2113748-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fMKQO-001YpC-M4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.46.223]:40544
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
---bAmEntskrkuBymla
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 4 ++++
+ drivers/net/wireless/marvell/mwifiex/scan.c     | 1 +
+ 2 files changed, 5 insertions(+)
 
-On Fri, May 25, 2018 at 11:29:59PM +0200, Arnd Bergmann wrote:
-> Several subsystems depend on INFINIBAND_ADDR_TRANS, which in turn depends
-> on INFINIBAND. However, when with CONFIG_INIFIBAND=m, this leads to a
-> link error when another driver using it is built-in. The
-> INFINIBAND_ADDR_TRANS dependency is insufficient here as this is
-> a 'bool' symbol that does not force anything to be a module in turn.
->
-> fs/cifs/smbdirect.o: In function `smbd_disconnect_rdma_work':
-> smbdirect.c:(.text+0x1e4): undefined reference to `rdma_disconnect'
-> net/9p/trans_rdma.o: In function `rdma_request':
-> trans_rdma.c:(.text+0x7bc): undefined reference to `rdma_disconnect'
-> net/9p/trans_rdma.o: In function `rdma_destroy_trans':
-> trans_rdma.c:(.text+0x830): undefined reference to `ib_destroy_qp'
-> trans_rdma.c:(.text+0x858): undefined reference to `ib_dealloc_pd'
->
-> Fixes: 9533b292a7ac ("IB: remove redundant INFINIBAND kconfig dependencies")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> The patch that introduced the problem has been queued in the
-> rdma-fixes/for-rc tree. Please revert the patch before sending
-> the branch to Linus.
-> ---
-
-It was already sent to Linus.
-
-https://marc.info/?l=linux-rdma&m=152719509803047&w=2
-
-Thanks
-
---bAmEntskrkuBymla
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbCIJtAAoJEORje4g2clinFugQAIYNk8j6aOAN2MHradS5y6Ef
-GeQY7/H9j2PkMeK+KL4gf6bCHzvcgS/wqdrVMdl/TIc60iyNBL/UJwn5mjsNmRx5
-BG2B3VuXP0ZQNPouvyC9oCMq+fNJjeuvzWlHTz3Q8pjwwMuwDdbAaNCMbbEViZS8
-AhLcZtDxeTcrFaiSrjkzUfxcb7/rBxOInMlq90Xb4VGDKq6vK1rK18MszFOYI+1C
-l6KCeRbnDxAHvZFoIMzQOXM35AQoucGqRa8L14/go3eVKrIJPHowEC6/C4k5srsW
-pzMU1yktzdZKs1E7w8iHLxFQqHp6uiZKOEgBnTNRaSZbTfq5MNTb55uCsjJ3mlrd
-/YVa2sadrr+Ym4f058AKvt8y3kO71Yu7hTCg6UTPv9EJg94qUQ9apJMNVD9EUVzM
-7ZO7tez/WGsyai6PFv+gx1iZiJHpl9TXI5uYxPLsdz0EU5+dsB9pQCsNk8y0tTFZ
-aQeCLKxC5sqiDllBdECv2KQ2jOvnUy8PTx8VoV8e7kXaUI3YBSjHW+0x7wJgJJrZ
-5CEjW3cVCLvW3Iwp0dDnHyqX1Tp7cdEnJx4bzXBArVy+BlpDa0yrMKxNWaZnvRXf
-OBmwZxMlpRzpDpuA0lzwcTtO8fraJF8GyqrB9bCrVyHqcqziuduHroF6D4pU4s2X
-mWd8FMSweTSM6kPt2ytV
-=rjKg
------END PGP SIGNATURE-----
-
---bAmEntskrkuBymla--
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 54a2297..16a705d 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -1158,6 +1158,7 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
+ 		case NL80211_IFTYPE_UNSPECIFIED:
+ 			mwifiex_dbg(priv->adapter, INFO,
+ 				    "%s: kept type as IBSS\n", dev->name);
++			/* fall through */
+ 		case NL80211_IFTYPE_ADHOC:	/* This shouldn't happen */
+ 			return 0;
+ 		default:
+@@ -1188,6 +1189,7 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
+ 		case NL80211_IFTYPE_UNSPECIFIED:
+ 			mwifiex_dbg(priv->adapter, INFO,
+ 				    "%s: kept type as STA\n", dev->name);
++			/* fall through */
+ 		case NL80211_IFTYPE_STATION:	/* This shouldn't happen */
+ 			return 0;
+ 		default:
+@@ -1210,6 +1212,7 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
+ 		case NL80211_IFTYPE_UNSPECIFIED:
+ 			mwifiex_dbg(priv->adapter, INFO,
+ 				    "%s: kept type as AP\n", dev->name);
++			/* fall through */
+ 		case NL80211_IFTYPE_AP:		/* This shouldn't happen */
+ 			return 0;
+ 		default:
+@@ -1249,6 +1252,7 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
+ 		case NL80211_IFTYPE_UNSPECIFIED:
+ 			mwifiex_dbg(priv->adapter, INFO,
+ 				    "%s: kept type as P2P\n", dev->name);
++			/* fall through */
+ 		case NL80211_IFTYPE_P2P_CLIENT:
+ 		case NL80211_IFTYPE_P2P_GO:
+ 			return 0;
+diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+index d7ce7f7..19df92b 100644
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -1308,6 +1308,7 @@ int mwifiex_update_bss_desc_with_ie(struct mwifiex_adapter *adapter,
+ 
+ 		case WLAN_EID_CHANNEL_SWITCH:
+ 			bss_entry->chan_sw_ie_present = true;
++			/* fall through */
+ 		case WLAN_EID_PWR_CAPABILITY:
+ 		case WLAN_EID_TPC_REPORT:
+ 		case WLAN_EID_QUIET:
+-- 
+2.7.4
