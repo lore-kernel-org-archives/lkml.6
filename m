@@ -1,85 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968412AbeEYUd6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 16:33:58 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45934 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968359AbeEYUbQ (ORCPT
+        id S968360AbeEYUgl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 16:36:41 -0400
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:35030 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968220AbeEYUgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 16:31:16 -0400
-X-Google-Smtp-Source: AB8JxZp9HL81qdWheihJXSuwjYc7t/Onjds61OpepFTavoUPHrbd0MPlWvwSFRCFQYum9LfDt3b1gA==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 01/11] PM / devfreq: Init user limits from OPP limits, not viceversa
-Date: Fri, 25 May 2018 13:30:33 -0700
-Message-Id: <20180525203043.249193-2-mka@chromium.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <20180525203043.249193-1-mka@chromium.org>
-References: <20180525203043.249193-1-mka@chromium.org>
+        Fri, 25 May 2018 16:36:39 -0400
+X-Google-Smtp-Source: AB8JxZo7YCMbuDqcqYJj58NLIvIsEYI61DFUONfJzMCbYTj9/GCTEQzSCJqzB6Ur5NXCbisSnABZy+jgeGkima/q/0E=
+MIME-Version: 1.0
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+ <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
+ <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com> <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
+ <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com> <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
+ <31A5469A-176F-451F-886A-ECD649DDC78C@zytor.com> <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
+ <A042BB2E-FACF-4AE0-8B1E-716061666C5F@zytor.com>
+In-Reply-To: <A042BB2E-FACF-4AE0-8B1E-716061666C5F@zytor.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 25 May 2018 13:36:26 -0700
+Message-ID: <CAKwvOdkWsxoyXCnQz+Xwh0RQ0yPPVD3iCqVaWAimW_Z4QU0XiA@mail.gmail.com>
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
-the devfreq device") introduced the initialization of the user
-limits min/max_freq from the lowest/highest available OPPs. Later
-commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
-frequency") added scaling_min/max_freq, which actually represent
-the frequencies of the lowest/highest available OPP. scaling_min/
-max_freq are initialized with the values from min/max_freq, which
-is totally correct in the context, but a bit awkward to read.
+On Fri, May 25, 2018 at 10:56 AM <hpa@zytor.com> wrote:
+> You need the extern inline in the .h file and the out-of-line .S file
+both.
 
-Swap the initialization and assign scaling_min/max_freq with the
-OPP freqs and then the user limts min/max_freq with scaling_min/
-max_freq.
+But the out-of-line .S file looks like:
 
-Needless to say that this change is a NOP, intended to improve
-readability.
+...
+    10 ENTRY(native_save_fl)
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/devfreq/devfreq.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+    11   pushf
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index fe2af6aa88fc..0057ef5b0a98 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		mutex_lock(&devfreq->lock);
- 	}
- 
--	devfreq->min_freq = find_available_min_freq(devfreq);
--	if (!devfreq->min_freq) {
-+	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
-+	if (!devfreq->scaling_min_freq) {
- 		mutex_unlock(&devfreq->lock);
- 		err = -EINVAL;
- 		goto err_dev;
- 	}
--	devfreq->scaling_min_freq = devfreq->min_freq;
-+	devfreq->min_freq = devfreq->scaling_min_freq;
- 
--	devfreq->max_freq = find_available_max_freq(devfreq);
--	if (!devfreq->max_freq) {
-+	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
-+	if (!devfreq->scaling_max_freq) {
- 		mutex_unlock(&devfreq->lock);
- 		err = -EINVAL;
- 		goto err_dev;
- 	}
--	devfreq->scaling_max_freq = devfreq->max_freq;
-+	devfreq->max_freq = devfreq->scaling_max_freq;
- 
- 	dev_set_name(&devfreq->dev, "devfreq%d",
- 				atomic_inc_return(&devfreq_no));
--- 
-2.17.0.921.gf22659ad46-goog
+    12   pop %_ASM_AX
+
+    13   ret
+
+    14 ENDPROC(native_save_fl)
+
+    15 EXPORT_SYMBOL(native_save_fl)
+...
+
+I don't see how you can specify to the linker from assembly source that
+this function should be treated as `extern inline`?
+
+I assume you don't literally mean the C keywords `extern inline` but
+whatever the equivalent incantation is needed in terms of assembler
+directives (which I also don't know).
+
+I'm beginning to think that what you'd like to see cannot be expressed (at
+least via `extern inline`).
+--
+Thanks,
+~Nick Desaulniers
