@@ -1,55 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964845AbeEYNbI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:31:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52764 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933214AbeEYNbD (ORCPT
+        id S935840AbeEYNdN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:33:13 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:36528 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933214AbeEYNdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:31:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B44C660290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V2] PCI/portdrv: do not disable device on reboot/shutdown
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Don Brace <don.brace@microsemi.com>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-References: <1527043490-17268-1-git-send-email-okaya@codeaurora.org>
- <20180523213249.GD150632@bhelgaas-glaptop.roam.corp.google.com>
- <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
- <20180524183502.GB85822@bhelgaas-glaptop.roam.corp.google.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <984b9734-244d-04e9-946f-7524f148ff7c@codeaurora.org>
-Date: Fri, 25 May 2018 09:30:59 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 25 May 2018 09:33:12 -0400
+Date: Fri, 25 May 2018 06:33:08 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Michael Neuling <mikey@neuling.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/64s: Clear PCR on boot
+Message-ID: <20180525133308.GA17443@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20180524183502.GB85822@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/24/2018 2:35 PM, Bjorn Helgaas wrote:
-> That sounds like a reasonable idea, and it is definitely another can
-> of worms.  I looked briefly at some of the .shutdown() cases:
+On Fri, May 18, 2018 at 11:37:42AM +1000, Michael Neuling wrote:
+> Clear the PCR (Processor Compatibility Register) on boot to ensure we
+> are not running in a compatibility mode.
+> 
+> We've seen this cause problems when a crash (and kdump) occurs while
+> running compat mode guests. The kdump kernel then runs with the PCR
+> set and causes problems. The symptom in the kdump kernel (also seen in
+> petitboot after fast-reboot) is early userspace programs taking
+> sigills on newer instructions (seen in libc).
+> 
 
-should we throw it into 4.18 and see what happens?
+Hi folks,
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+this patch causes qemu to bail out with
+
+Trying to write privileged spr 338 (0x152) at c000000000033454
+
+when running it with "-M powernv -cpu POWER8" and powernv_defconfig.
+
+Can you confirm that this is a bug in qemu ?
+
+Thanks,
+Guenter
+
+> Signed-off-by: Michael Neuling <mikey@neuling.org>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  arch/powerpc/kernel/cpu_setup_power.S | 6 ++++++
+>  arch/powerpc/kernel/dt_cpu_ftrs.c     | 1 +
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/arch/powerpc/kernel/cpu_setup_power.S b/arch/powerpc/kernel/cpu_setup_power.S
+> index 3f30c994e931..458b928dbd84 100644
+> --- a/arch/powerpc/kernel/cpu_setup_power.S
+> +++ b/arch/powerpc/kernel/cpu_setup_power.S
+> @@ -28,6 +28,7 @@ _GLOBAL(__setup_cpu_power7)
+>  	beqlr
+>  	li	r0,0
+>  	mtspr	SPRN_LPID,r0
+> +	mtspr	SPRN_PCR,r0
+>  	mfspr	r3,SPRN_LPCR
+>  	li	r4,(LPCR_LPES1 >> LPCR_LPES_SH)
+>  	bl	__init_LPCR_ISA206
+> @@ -41,6 +42,7 @@ _GLOBAL(__restore_cpu_power7)
+>  	beqlr
+>  	li	r0,0
+>  	mtspr	SPRN_LPID,r0
+> +	mtspr	SPRN_PCR,r0
+>  	mfspr	r3,SPRN_LPCR
+>  	li	r4,(LPCR_LPES1 >> LPCR_LPES_SH)
+>  	bl	__init_LPCR_ISA206
+> @@ -57,6 +59,7 @@ _GLOBAL(__setup_cpu_power8)
+>  	beqlr
+>  	li	r0,0
+>  	mtspr	SPRN_LPID,r0
+> +	mtspr	SPRN_PCR,r0
+>  	mfspr	r3,SPRN_LPCR
+>  	ori	r3, r3, LPCR_PECEDH
+>  	li	r4,0 /* LPES = 0 */
+> @@ -78,6 +81,7 @@ _GLOBAL(__restore_cpu_power8)
+>  	beqlr
+>  	li	r0,0
+>  	mtspr	SPRN_LPID,r0
+> +	mtspr	SPRN_PCR,r0
+>  	mfspr   r3,SPRN_LPCR
+>  	ori	r3, r3, LPCR_PECEDH
+>  	li	r4,0 /* LPES = 0 */
+> @@ -99,6 +103,7 @@ _GLOBAL(__setup_cpu_power9)
+>  	mtspr	SPRN_PSSCR,r0
+>  	mtspr	SPRN_LPID,r0
+>  	mtspr	SPRN_PID,r0
+> +	mtspr	SPRN_PCR,r0
+>  	mfspr	r3,SPRN_LPCR
+>  	LOAD_REG_IMMEDIATE(r4, LPCR_PECEDH | LPCR_PECE_HVEE | LPCR_HVICE  | LPCR_HEIC)
+>  	or	r3, r3, r4
+> @@ -123,6 +128,7 @@ _GLOBAL(__restore_cpu_power9)
+>  	mtspr	SPRN_PSSCR,r0
+>  	mtspr	SPRN_LPID,r0
+>  	mtspr	SPRN_PID,r0
+> +	mtspr	SPRN_PCR,r0
+>  	mfspr   r3,SPRN_LPCR
+>  	LOAD_REG_IMMEDIATE(r4, LPCR_PECEDH | LPCR_PECE_HVEE | LPCR_HVICE | LPCR_HEIC)
+>  	or	r3, r3, r4
+> diff --git a/arch/powerpc/kernel/dt_cpu_ftrs.c b/arch/powerpc/kernel/dt_cpu_ftrs.c
+> index 8ab51f6ca03a..c904477abaf3 100644
+> --- a/arch/powerpc/kernel/dt_cpu_ftrs.c
+> +++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
+> @@ -101,6 +101,7 @@ static void __restore_cpu_cpufeatures(void)
+>  	if (hv_mode) {
+>  		mtspr(SPRN_LPID, 0);
+>  		mtspr(SPRN_HFSCR, system_registers.hfscr);
+> +		mtspr(SPRN_PCR, 0);
+>  	}
+>  	mtspr(SPRN_FSCR, system_registers.fscr);
+>  
+> -- 
+> 2.7.4
