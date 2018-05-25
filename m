@@ -1,67 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030788AbeEYXK6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 19:10:58 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43532 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030538AbeEYXK5 (ORCPT
+        id S1030793AbeEYXO3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 19:14:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50550 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030538AbeEYXO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 19:10:57 -0400
-X-Google-Smtp-Source: AB8JxZreU1dHJsF+J40ApBlgthQdcLJk00nbMpTI15AyiX4O89MXs2cuFYjF+cCaYljNzZZiJ8Pspg==
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: acme@kernel.org
-Cc: robert.walker@arm.com, leo.yan@linaro.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf tools: Fix indexing for decoder packet queue
-Date: Fri, 25 May 2018 17:10:54 -0600
-Message-Id: <1527289854-10755-1-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 25 May 2018 19:14:27 -0400
+Subject: Re: mmotm 2018-05-25-14-52 uploaded
+ (drivers/net/ethernet/ti/davinci_mdio.c)
+To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+References: <20180525215254.VTc61%akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Cc: Anant Gole <anantgole@ti.com>, Chaithrika U S <chaithrika@ti.com>
+Message-ID: <26483e60-ab26-494c-b923-86c267cfdac0@infradead.org>
+Date: Fri, 25 May 2018 16:14:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180525215254.VTc61%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tail of a queue is supposed to be pointing to the next available slot
-in a queue.  In this implementation the tail is incremented before it is
-used and as such points to the last used element, something that has the
-immense advantage of centralizing tail management at a single location
-and eliminating a lot of redundant code.
+On 05/25/2018 02:52 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-05-25-14-52 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-But this needs to be taken into consideration on the dequeueing side where
-the head also needs to be incremented before it is used, or the first
-available element of the queue will be skipped.
+on x86_64:
+# CONFIG_OF is not set
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+  CC      drivers/net/ethernet/ti/davinci_cpdma.o
+../drivers/net/ethernet/ti/davinci_mdio.c: In function 'davinci_mdio_probe':
+../drivers/net/ethernet/ti/davinci_mdio.c:380:3: error: implicit declaration of function 'davinci_mdio_probe_dt' [-Werror=implicit-function-declaration]
+   ret = davinci_mdio_probe_dt(&data->pdata, pdev);
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index c8b98fa22997..4d5fc374e730 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -96,11 +96,19 @@ int cs_etm_decoder__get_packet(struct cs_etm_decoder *decoder,
- 	/* Nothing to do, might as well just return */
- 	if (decoder->packet_count == 0)
- 		return 0;
-+	/*
-+	 * The queueing process in function cs_etm_decoder__buffer_packet()
-+	 * increments the tail *before* using it.  This is somewhat counter
-+	 * intuitive but it has the advantage of centralizing tail management
-+	 * at a single location.  Because of that we need to follow the same
-+	 * heuristic with the head, i.e we increment it before using its
-+	 * value.  Otherwise the first element of the packet queue is not
-+	 * used.
-+	 */
-+	decoder->head = (decoder->head + 1) & (MAX_BUFFER - 1);
- 
- 	*packet = decoder->packet_buffer[decoder->head];
- 
--	decoder->head = (decoder->head + 1) & (MAX_BUFFER - 1);
--
- 	decoder->packet_count--;
- 
- 	return 1;
+
+
+> 
+> You will need quilt to apply these patches to the latest Linus release (4.x
+> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
+> 
+> A git tree which contains the memory management portion of this tree is
+> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> by Michal Hocko.  It contains the patches which are between the
+> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+> file, http://www.ozlabs.org/~akpm/mmotm/series.
+> 
+> 
+> A full copy of the full kernel tree with the linux-next and mmotm patches
+> already applied is available through git within an hour of the mmotm
+> release.  Individual mmotm releases are tagged.  The master branch always
+> points to the latest release, so it's constantly rebasing.
+> 
+> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+> 
+> To develop on top of mmotm git:
+> 
+>   $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+>   $ git remote update mmotm
+>   $ git checkout -b topic mmotm/master
+>   <make changes, commit>
+>   $ git send-email mmotm/master.. [...]
+> 
+> To rebase a branch with older patches to a new mmotm release:
+> 
+>   $ git remote update mmotm
+>   $ git rebase --onto mmotm/master <topic base> topic
+> 
+> 
+> 
+> 
+> The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+> contains daily snapshots of the -mm tree.  It is updated more frequently
+> than mmotm, and is untested.
+> 
+> A git copy of this tree is available at
+> 
+> 	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+> 
+> and use of this tree is similar to
+> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+> 
+> 
+> This mmotm tree contains the following patches against 4.17-rc6:
+> (patches marked "*" will be included in linux-next)
+> 
+
+
 -- 
-2.7.4
+~Randy
