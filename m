@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965625AbeEYJrT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:47:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49971 "EHLO
+        id S965589AbeEYJrR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:47:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45731 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965197AbeEYJrO (ORCPT
+        with ESMTP id S965562AbeEYJrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 25 May 2018 05:47:14 -0400
-Date: Fri, 25 May 2018 02:46:12 -0700
-From: tip-bot for Juri Lelli <tipbot@zytor.com>
-Message-ID: <tip-bf5015a50f1fdb248b48405b67cae24dc02605d6@git.kernel.org>
-Cc: torvalds@linux-foundation.org, juri.lelli@redhat.com, mingo@kernel.org,
-        patrick.bellasi@arm.com, hpa@zytor.com, dietmar.eggemann@arm.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, peterz@infradead.org, dietmar.eggemann@arm.com,
-        hpa@zytor.com, patrick.bellasi@arm.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, juri.lelli@redhat.com, mingo@kernel.org
-In-Reply-To: <20180524152936.17611-1-juri.lelli@redhat.com>
-References: <20180524152936.17611-1-juri.lelli@redhat.com>
+Date: Fri, 25 May 2018 02:46:45 -0700
+From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-b1f5b378e126133521df668379249fb8265121f1@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, mingo@kernel.org, mroos@linux.ee, lkp@01.org,
+        lkp@intel.com, torvalds@linux-foundation.org
+Reply-To: peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, lkp@intel.com, mroos@linux.ee,
+        lkp@01.org
+In-Reply-To: <20180504091142.GI12235@hirez.programming.kicks-ass.net>
+References: <20180504091142.GI12235@hirez.programming.kicks-ass.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Clarify root domain(s) debug
- string
-Git-Commit-ID: bf5015a50f1fdb248b48405b67cae24dc02605d6
+Subject: [tip:sched/core] kthread: Allow kthread_park() on a parked kthread
+Git-Commit-ID: b1f5b378e126133521df668379249fb8265121f1
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,70 +34,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bf5015a50f1fdb248b48405b67cae24dc02605d6
-Gitweb:     https://git.kernel.org/tip/bf5015a50f1fdb248b48405b67cae24dc02605d6
-Author:     Juri Lelli <juri.lelli@redhat.com>
-AuthorDate: Thu, 24 May 2018 17:29:36 +0200
+Commit-ID:  b1f5b378e126133521df668379249fb8265121f1
+Gitweb:     https://git.kernel.org/tip/b1f5b378e126133521df668379249fb8265121f1
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Fri, 4 May 2018 11:11:42 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 25 May 2018 08:03:38 +0200
+CommitDate: Fri, 25 May 2018 08:03:51 +0200
 
-sched/topology: Clarify root domain(s) debug string
+kthread: Allow kthread_park() on a parked kthread
 
-When scheduler debug is enabled, building scheduling domains outputs
-information about how the domains are laid out and to which root domain
-each CPU (or sets of CPUs) belongs, e.g.:
+The following commit:
 
- CPU0 attaching sched-domain(s):
-  domain-0: span=0-5 level=MC
-   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
- CPU1 attaching sched-domain(s):
-  domain-0: span=0-5 level=MC
-   groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
+  85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
 
- [...]
+added a WARN() in the case where we call kthread_park() on an already
+parked thread, because the old code wasn't doing the right thing there
+and it wasn't at all clear that would happen.
 
- span: 0-5 (max cpu_capacity = 1024)
+It turns out, this does in fact happen, so we have to deal with it.
 
-The fact that latest line refers to CPUs 0-5 root domain doesn't however look
-immediately obvious to me: one might wonder why span 0-5 is reported "again".
+Instead of potentially returning early, also wait for the completion.
+This does however mean we have to use complete_all() and re-initialize
+the completion on re-use.
 
-Make it more clear by adding "root domain" to it, as to end with the
-following:
-
- CPU0 attaching sched-domain(s):
-  domain-0: span=0-5 level=MC
-   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
- CPU1 attaching sched-domain(s):
-  domain-0: span=0-5 level=MC
-   groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
-
- [...]
-
- root domain span: 0-5 (max cpu_capacity = 1024)
-
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Reported-by: LKP <lkp@01.org>
+Tested-by: Meelis Roos <mroos@linux.ee>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel test robot <lkp@intel.com>
+Cc: wfg@linux.intel.com
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180524152936.17611-1-juri.lelli@redhat.com
+Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
+Link: http://lkml.kernel.org/r/20180504091142.GI12235@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/kthread.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 64cc564f5255..61a1125c1ae4 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1708,7 +1708,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	rcu_read_unlock();
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 2017a39ab490..481951bf091d 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -193,7 +193,7 @@ EXPORT_SYMBOL_GPL(kthread_parkme);
  
- 	if (rq && sched_debug_enabled) {
--		pr_info("span: %*pbl (max cpu_capacity = %lu)\n",
-+		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
- 			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
- 	}
+ void kthread_park_complete(struct task_struct *k)
+ {
+-	complete(&to_kthread(k)->parked);
++	complete_all(&to_kthread(k)->parked);
+ }
  
+ static int kthread(void *_create)
+@@ -459,6 +459,7 @@ void kthread_unpark(struct task_struct *k)
+ 	if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
+ 		__kthread_bind(k, kthread->cpu, TASK_PARKED);
+ 
++	reinit_completion(&kthread->parked);
+ 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	wake_up_state(k, TASK_PARKED);
+ }
+@@ -483,9 +484,6 @@ int kthread_park(struct task_struct *k)
+ 	if (WARN_ON(k->flags & PF_EXITING))
+ 		return -ENOSYS;
+ 
+-	if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
+-		return -EBUSY;
+-
+ 	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	if (k != current) {
+ 		wake_up_process(k);
