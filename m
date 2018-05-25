@@ -1,87 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030354AbeEYVJn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:09:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47020 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968411AbeEYVJm (ORCPT
+        id S1030382AbeEYVK3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:10:29 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:45943 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030215AbeEYVK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:09:42 -0400
-Date: Fri, 25 May 2018 14:09:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, hugetlb_cgroup: suppress SIGBUS when hugetlb_cgroup
- charge fails
-Message-Id: <20180525140940.976ca667f3c6ff83238c3620@linux-foundation.org>
-In-Reply-To: <alpine.DEB.2.21.1805251356570.7798@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1805251316090.167008@chino.kir.corp.google.com>
-        <20180525134459.5c6f8e06f55307f72b95a901@linux-foundation.org>
-        <alpine.DEB.2.21.1805251356570.7798@chino.kir.corp.google.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 25 May 2018 17:10:28 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Jean Delvare <jdelvare@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: i801: mark PM functions as __maybe_unused
+Date: Fri, 25 May 2018 23:09:46 +0200
+Message-Id: <20180525210952.1861881-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:CjoKwSHAKJNuasF0wc15cV580fDH7K240GtXv1lS6Ba4Lcf5U4V
+ yVI1837OdxJC/qW4OdkcKCYHKsoOF9B+KKXJ91wB8B+daib3BONCWdS8CUvUftmU97dmz35
+ PT8TE8iLpDl8Em7nvHEWgrgcRS0jGWdWwUuKaO/8Uus+OUcFM+HfMqlb0WDnG/FqVRGoXGG
+ i0RsZ91SpjcruNQRYXWhg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lDsks6AogT0=:wiqyVgsAZ1cwTMKrXDeXH+
+ 9lncBvlXjjGL1t4EqY4NSIndYUwVKPytLCxzR8KoZ7NpYIvGRFoWBvhOC+9YpkWW5n4Peb9ib
+ PyKc++Nfb7/jTxsd21wvWq8f95gKLf8aEggyI00653vRirzVewOqy9637JvfJTzzenKtSPVZB
+ 8/i9X73SysBXqbQoGjK5umlvMlB6TrSyMklV/+0h6Gm5ktDh/iIj/P83er04tNgrm8veWT9Uz
+ oUqUi65mJOkBluaYWPy+O0ZlVtaeJs0R8KRzV3kpiX35gooRradRjublpuYsBA6oNxDlu1+8B
+ mMclUYBubs0pJAb6sUITnF6nQgspPZ+SuoyPG5JZuYhTle28/55eNTyJb1f872nfC5qXgpiER
+ ahIgeTs1uBsFp1oystOl9Nva9rqQS3qnEuP05njdROOrbFEI0AvqCkow9iqSxijRXEauDqYEy
+ /sPdBkwXHL3vqAcG8VU7n/eX3cGNF0QYYE666zU2s6+wkzAnc+qVoAq5iJsRtkhbOY/W1iab+
+ 4HGuCLJY0SmOYDFT4q1paYPDCGCtuQ0Wb1FOqmNZhwFBxhPnaTekaO4SOhRs3BN18cO3AHdea
+ /dM3FX9h40Yn4aHvQjzgezN1r4SMl1cPLsneVhOT9/CoTWEpC2mFj//TxUwVe55/OAN9wTgFE
+ qi/PDEnBNLw02keV6Jbu+9JeGg7JHLIY7BHtJECCvKFOJHo59ZmwcY0HVraYyHXjA7xM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018 13:59:40 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+Changing from UNIVERSAL_DEV_PM_OPS to SIMPLE_DEV_PM_OPS caused a harmless
+warning in configurations without CONFIG_PM_SLEEP:
 
-> > > --- a/mm/hugetlb.c
-> > > +++ b/mm/hugetlb.c
-> > > @@ -2006,8 +2006,10 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
-> > >  	 * code of zero indicates a reservation exists (no change).
-> > >  	 */
-> > >  	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
-> > > -	if (map_chg < 0)
-> > > -		return ERR_PTR(-ENOMEM);
-> > > +	if (map_chg < 0) {
-> > > +		ret = -ENOMEM;
-> > > +		goto out;
-> > > +	}
-> > 
-> > This doesn't change the return value.
-> > 
-> 
-> This, and the subsequent comments, are referring to the third paragraph of 
-> the changelog.
-> 
-> The functional part of the change is for the 
-> hugetlb_cgroup_charge_cgroup() return value that is now actually used.
+drivers/i2c/busses/i2c-i801.c:1723:12: error: 'i801_resume' defined but not used [-Werror=unused-function]
+ static int i801_resume(struct device *dev)
+            ^~~~~~~~~~~
+drivers/i2c/busses/i2c-i801.c:1714:12: error: 'i801_suspend' defined but not used [-Werror=unused-function]
+ static int i801_suspend(struct device *dev)
 
+This removes the incorrect #ifdef and instead marks both functions as
+__maybe_unused, which is a more robust way to express the same thing.
 
-Ah.  Missed that bit.
+Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/i2c/busses/i2c-i801.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Altered changelog:
-
-: When charging to a hugetlb_cgroup fails, alloc_huge_page() returns
-: ERR_PTR(-ENOSPC) which will cause VM_FAULT_SIGBUS to be returned to the
-: page fault handler.
-: 
-: This is because the return value from hugetlb_cgroup_charge_cgroup() is
-: overwritten with ERR_PTR(-ENOSPC).
-: 
-: Instead, propagate the error code from hugetlb_cgroup_charge_cgroup()
-: (ERR_PTR(-ENOMEM)), so VM_FAULT_OOM is handled correctly.  This is
-: consistent with failing mem cgroup charges in the non-hugetlb fault path.
-: 
-: At the same time, restructure the return paths of alloc_huge_page() so it
-: is consistent.
-
->
-> > It would be nice if you could add a comment over alloc_huge_page()
-> > explaining the return values (at least).  Why sometimes ENOMEM, other
-> > times ENOSPC?
-> > 
-> 
-> The ENOSPC is used to specifically induce a VM_FAULT_SIGBUS, which 
-> Documentation/vm/hugetlbfs_reserv.txt specifies is how faults are handled 
-> if no hugetlb pages are available.
-
-That wasn't a code comment ;) Nobody will know to go looking in
-hugetlbfs_reserv.txt - it isn't even referred to from mm/*.c.
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index ed07f9002710..d6d46e7a5376 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1710,8 +1710,7 @@ static void i801_shutdown(struct pci_dev *dev)
+ 	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
+ }
+ 
+-#ifdef CONFIG_PM
+-static int i801_suspend(struct device *dev)
++static int __maybe_unused i801_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	struct i801_priv *priv = pci_get_drvdata(pci_dev);
+@@ -1720,7 +1719,7 @@ static int i801_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int i801_resume(struct device *dev)
++static int __maybe_unused i801_resume(struct device *dev)
+ {
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	struct i801_priv *priv = pci_get_drvdata(pci_dev);
+@@ -1729,7 +1728,6 @@ static int i801_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static SIMPLE_DEV_PM_OPS(i801_pm_ops, i801_suspend, i801_resume);
+ 
+-- 
+2.9.0
