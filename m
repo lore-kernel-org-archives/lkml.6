@@ -1,57 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935996AbeEYCgz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:36:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43559 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935809AbeEYCei (ORCPT
+        id S965009AbeEYCiu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:38:50 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:20362 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935592AbeEYCim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:34:38 -0400
-X-UUID: 71c5b4436178421ca195cfbe1cc4f503-20180525
-From: <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>,
-        Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v3 3/8] drm/mediatek: add connection from OD1 to RDMA1
-Date: Fri, 25 May 2018 10:34:20 +0800
-Message-ID: <1527215665-11937-4-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
+        Thu, 24 May 2018 22:38:42 -0400
+Subject: Re: Nokia N900: refcount_t underflow, use after free
+To: Pavel Machek <pavel@ucw.cz>
+CC: Robin Murphy <robin.murphy@arm.com>, <ivo.g.dimitrov.75@gmail.com>,
+        <khilman@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        <aaro.koskinen@iki.fi>, kernel list <linux-kernel@vger.kernel.org>,
+        <sre@kernel.org>, <martijn@brixit.nl>,
+        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
+        <abcloriens@gmail.com>, <sakari.ailus@linux.intel.com>,
+        <pali.rohar@gmail.com>, <clayton@craftyguy.net>,
+        <linux-omap@vger.kernel.org>, <patrikbachan@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <serge@hallyn.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180308143053.GA17267@amd> <20180308165903.GM5799@atomide.com>
+ <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com> <20180308185046.GA22796@amd>
+ <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
+ <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com> <20180309221834.GA15476@amd>
+ <c8ee5692-bf71-a9d7-8607-50adc9f0e9f1@ti.com> <20180310112634.GA31614@amd>
+ <5aa1e2de-96d1-0e88-01ca-49df9ae25457@ti.com> <20180524110533.GA20599@amd>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <09e30e44-4904-3bb3-c977-19ccd8d76a08@ti.com>
+Date: Thu, 24 May 2018 21:37:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <20180524110533.GA20599@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stu Hsieh <stu.hsieh@mediatek.com>
+On 05/24/2018 06:05 AM, Pavel Machek wrote:
+> Hi!
+> 
+>>>>
+>>>> OK, see if the following fixes the issue for you, only build tested.
+>>>
+>>> Word-wrapped, so I applied by hand. And yes, the oops at boot is
+>>> gone. Thanks!
+>>
+>> Sorry about that, have to check my mail settings. Anyway will post the
+>> patch again, glad that it fixed your issue.
+> 
+> Any news here? AFAICT the bug creeped into v4.17-rcX in the
+> meantime...
+>
 
-This patch add the connection from OD1 to RDMA1 for ext path.
+The patch has been on linux-next for sometime now.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +++
- 1 file changed, 3 insertions(+)
+regards
+Suman
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 47ffa240bd25..0f568dd853d8 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -151,6 +151,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_GAMMA && next == DDP_COMPONENT_RDMA1) {
- 		*addr = DISP_REG_CONFIG_DISP_GAMMA_MOUT_EN;
- 		value = GAMMA_MOUT_EN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
-+		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
-+		value = OD1_MOUT_EN_RDMA1;
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
- 		value = RDMA1_MOUT_DPI0;
--- 
-2.12.5
+> 								Pavel
+> 
+>> regards
+>> Suman
+>>
+>>>
+>>> (Camera still does not work in -next... kills system. Oh well. Lets
+>>> debug that some other day.)
+>>>
+>>>> 8< ---------------------
+>>>> >From bac9a48fb646dc51f2030d676a0dbe3298c3b134 Mon Sep 17 00:00:00 2001
+>>>> From: Suman Anna <s-anna@ti.com>
+>>>> Date: Fri, 9 Mar 2018 16:39:59 -0600
+>>>> Subject: [PATCH] media: omap3isp: fix unbalanced dma_iommu_mapping
+>>>>
+>>>> The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+>>>> ARM DMA backend. The current code creates a dma_iommu_mapping and
+>>>> attaches this to the ISP device, but never detaches the mapping in
+>>>> either the probe failure paths or the driver remove path resulting
+>>>> in an unbalanced mapping refcount and a memory leak. Fix this properly.
+>>>>
+>>>> Reported-by: Pavel Machek <pavel@ucw.cz>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>
+>>> Tested-by: Pavel Machek <pavel@ucw.cz>
+>>> 									Pavel
+>>>
+> 
