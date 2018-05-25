@@ -1,136 +1,167 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-285521-1527285668-2-16877424574357742340
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4125545-1527268886-2-14476123795995386695
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527285667; b=cdJJvotKT8HireLgzd6di8TelvD/CRwcv1Gt8cc9SjmM9g1yVf
-    2tKwnFC4dRnr1q2sBda7Mb1aH4EydE+MwATHqQhMrbCRN5KzFrPJicKt0drfPY0U
-    3MMvfJHmbZa9wCsj6XrC5TyI8ci15Yc/qC/xg6OR6JECWNRDcZbLoINumD1mJ2xn
-    gDxOeYMUYYfDP/r2I6SRHceuyKE9qXfAJjmSeg0nQweY4ySSMqiAbqAqGVKVWlgG
-    et5iI6mjN1M/9oxYSSYM7Rhfm8PiRoEFjCRx8G5WDWLdEN4n8gM54YnCIovPl6UD
-    cRwL3lDXDAeq+fLqCNo45xzItRCbOFiSoBeg==
+    1527268886; b=NDTQv5zM33ZGNnxloQa1UmLMYtKvxdEENXn33QTP2izCmhUzqb
+    xABOKl6WxkgTItLoTrDbpsqqwwQ2c/VbjHQAekGI83PH0WDYhMJO4aZUiPBufYbf
+    ZfYTvsUIleo1KWgJpYFLqhqJuHLPOoaoY1TFOOXtHT7nAcUL1Vq2DR3pEX3dL4v8
+    PniqhKvwQqWxFX3KPt18aopyb+8m6SDSXyd37NzNs04T7SX29Xd6j3VNn8Fpyvh6
+    mUxmARhTU5jtilbWc4tQ+SAbbEG9m822uRgk2KpM2JLBY/meEJYrsB1lm6C0ZdrS
+    8mlna9ZSYdNavJRBE3CUjsV98l9vDBEg2VkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527285667; bh=
-    qanCpA1+QGOhGOLfejPz5Yt/nZHp0tyw8ZpeO66SuW8=; b=JxozLMEj1cDhtuW6
-    X4AknxMbfijvJkVn5/HCq02FEA2WD6fnm7sci64yZLW9YAyA1pyXIbJ4x2mfAzIe
-    RUSlEV9HNR+yPk4GoQgiUkaePCeXmRHYw7Y6iK/Q30S7k1a6MYn/E0pU+GbjWVVN
-    mqqYHlX4cm397QpRX1VppOPRXgz9oUbHfXcqmo/oHSROUtMu84IoW+Sdl/fQZKq4
-    6sRRP7tXrSKZl6nMLioc7VsMbKWRABjZF1U0XUk3E/ZmZnY6T2cvgTHdjojSJcKD
-    cdtunk7mHxtqMl/1Bsu7VHvEJdtf/M6BL+YGN5TG1/UAtGiu1+vib1oc8cnpso8L
-    oO17mg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1527268886; bh=nRENlgdd35aR24/TqobF9omMTjQ0xg
+    2cNh/mf9EGTR8=; b=LvvcKOc9xqZb1iO5UsT9+uhrEkyET36lqAWcxxk7fqw7m9
+    nAl7RJND2X9idd8PdLZqlsGxMZxFSFLe0bGDs1ajCHy9o9tRC93MYqh1ohPEb6+/
+    ZI3R8mlwEODV+5v4aq5DRGhxuHWjVq3wspULoI7heX8QSek4MJnVTE0Jd7ycmH3K
+    loTqPy95fYNkm7fS3InAEi8+is+6KRj0zNSaXHutHkRZL+2rjILy4dh6ErO6PPBX
+    jtfUhhj5xiwpfY0/C+qY/8zicS9bqEHO8OCF/ZZ8m22xefCd6/1xv/okM5WydZer
+    sNoRVZWYGyV7DYQrSnUsBAxaGVxRRHUfUDS0COOQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+    header.i=@google.com header.b=T/dxjLfg x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=Zl5feraK;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+      header.i=@google.com header.b=T/dxjLfg x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=Zl5feraK;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFFny2hwykhFrAB6FpikQl0OUj/yJgrYxogyyncdQKwZJeM7tbscGyjeczjsEYXcdA2tdWM2FGbhTdc3UDeh1tSBi3pHQ9hRvT4+YUe34HoXOAGaFwiI
-    nupS2kfgHDQTRZG9ODzaBSWGzCA8sVGsqtDssoHpSF0dlg8ESQkNw5fQDlZTu8U+QGsJ+qsprt1vJEPO0NVkHN9M8avOGvnzM9wcKONU1Ie+QUyQly93EwsD
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=1b4FeyyPZkk651F0QM0A:9
+X-CM-Envelope: MS4wfG2r0De6e3fDWb9FudcZLgJ+5ZfDls7X+j/ablfeABfB/1RKwN9oZgc78inPDRQutjcY8OOlcD6VvEBdebrdE1G6PhFLFMQAab1VqCQMcvjjMvRTORcC
+    n9if4JwmuK5XONBg+CJ6okWQZJziGAIXdiZUGB3gfVrJKH3vhLsbyV8qTU1tv5KGoUWCZUXv32h2RLefD4sHj6+xJZkrk1sTXVGbCxOWRdD8mSw6VsmeS1uB
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=Twlkf-z8AAAA:8 a=z3pt_mKctB9oo2ENzVAA:9 a=QEXdDO2ut3YA:10
+    a=DW7FVhy0Zc8A:10 a=-74SuR6ZdpOK_LpdRCUo:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030609AbeEYWBD (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 25 May 2018 18:01:03 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17942 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030550AbeEYWBC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 May 2018 18:01:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="231900882"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH resend 3/7] dm: fix test for DAX device support
-Date: Fri, 25 May 2018 16:00:51 -0600
-Message-Id: <20180525220055.18920-4-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
-References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+        id S967340AbeEYRVW (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 25 May 2018 13:21:22 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43942 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754692AbeEYRVV (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Fri, 25 May 2018 13:21:21 -0400
+X-Google-Smtp-Source: AB8JxZpwN+s2Oiiqi3MSIdcLuHpgsx4Cah9rxAJqCwPnXXzaTvYyCcGwaOc2T3iikQslFbBPEWfs3Q==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v3 0/6] arm64: untag user pointers passed to the kernel
+Date: Fri, 25 May 2018 19:21:10 +0200
+Message-Id: <cover.1527268727.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
-flag is set on the device's request queue to decide whether or not the
-device supports filesystem DAX.  This is insufficient because there are
-devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
-which don't actually support DAX.
+arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+tags into the top byte of each pointer. Userspace programs (such as
+HWASan, a memory debugging tool [1]) might use this feature and pass
+tagged user pointers to the kernel through syscalls or other interfaces.
 
-This means that you could create a dm-linear device, for example, where the
-first part of the dm-linear device was a PMEM namespace in fsdax mode and
-the second part was a PMEM namespace in raw mode.  Both DM and the
-filesystem you put on that dm-linear device would think the whole device
-supports DAX, which would lead to bad behavior once your raw PMEM namespace
-part using DAX needed struct page for something.
+This patch makes a few of the kernel interfaces accept tagged user
+pointers. The kernel is already able to handle user faults with tagged
+pointers and has the untagged_addr macro, which this patchset reuses.
 
-Fix this by using bdev_dax_supported() like filesystems do at mount time.
-This checks for raw mode and also performs other tests like checking to
-make sure the dax_direct_access() path works.
+We're not trying to cover all possible ways the kernel accepts user
+pointers in one patchset, so this one should be considered as a start.
 
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
----
- drivers/md/dm-table.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thanks!
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 0589a4da12bb..5bb994b012ca 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -885,9 +885,7 @@ EXPORT_SYMBOL_GPL(dm_table_set_type);
- static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
- 			       sector_t start, sector_t len, void *data)
- {
--	struct request_queue *q = bdev_get_queue(dev->bdev);
--
--	return q && blk_queue_dax(q);
-+	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
- }
- 
- static bool dm_table_supports_dax(struct dm_table *t)
+[1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+
+Changes in v3:
+- Rebased onto e5c51f30 (4.17-rc6+).
+- Added linux-arch@ to the list of recipients.
+
+Changes in v2:
+- Rebased onto 2d618bdf (4.17-rc3+).
+- Removed excessive untagging in gup.c.
+- Removed untagging pointers returned from __uaccess_mask_ptr.
+
+Changes in v1:
+- Rebased onto 4.17-rc1.
+
+Changes in RFC v2:
+- Added "#ifndef untagged_addr..." fallback in linux/uaccess.h instead of
+  defining it for each arch individually.
+- Updated Documentation/arm64/tagged-pointers.txt.
+- Dropped “mm, arm64: untag user addresses in memory syscalls”.
+- Rebased onto 3eb2ce82 (4.16-rc7).
+
+Andrey Konovalov (6):
+  arm64: add type casts to untagged_addr macro
+  uaccess: add untagged_addr definition for other arches
+  arm64: untag user addresses in access_ok and __uaccess_mask_ptr
+  mm, arm64: untag user addresses in mm/gup.c
+  lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
+  arm64: update Documentation/arm64/tagged-pointers.txt
+
+ Documentation/arm64/tagged-pointers.txt |  5 +++--
+ arch/arm64/include/asm/uaccess.h        | 14 +++++++++-----
+ include/linux/uaccess.h                 |  4 ++++
+ lib/strncpy_from_user.c                 |  2 ++
+ lib/strnlen_user.c                      |  2 ++
+ mm/gup.c                                |  4 ++++
+ 6 files changed, 24 insertions(+), 7 deletions(-)
+
 -- 
-2.14.3
+2.17.0.921.gf22659ad46-goog
