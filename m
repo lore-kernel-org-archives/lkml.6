@@ -1,55 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030613AbeEYWbd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:31:33 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32785 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030633AbeEYWba (ORCPT
+        id S1030727AbeEYWbp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:31:45 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55820 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030698AbeEYWbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:31:30 -0400
-X-Google-Smtp-Source: AB8JxZqz0TvxOb1lZgzidFpGVQAPzyAFUEJiYFUduoZPsmJn3it1oPJqCezxRnfEkkaNVF5so8noPg==
-Date: Fri, 25 May 2018 14:58:20 -0700
+        Fri, 25 May 2018 18:31:41 -0400
+X-Google-Smtp-Source: ADUXVKIHNeE9SOuyIOSe7CUjNqX3/vAmmkHusdlZM4XhwJrEBD248Ot9E+0qZltWxgARfGTvzA+1bg==
+Date: Fri, 25 May 2018 15:26:49 -0700
 From: Olof Johansson <olof@lixom.net>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 2/2] arm64: dts: exynos: Second round for v4.18
-Message-ID: <20180525215820.36sqlz65oz6u4ud2@localhost>
-References: <20180524182016.5866-1-krzk@kernel.org>
- <20180524182016.5866-2-krzk@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: stm32: Don't select DMA unconditionally on
+ STM32MP157C
+Message-ID: <20180525222649.adxut6t7w53ugykx@localhost>
+References: <20180525160926.150713-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180524182016.5866-2-krzk@kernel.org>
+In-Reply-To: <20180525160926.150713-1-arnd@arndb.de>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 08:20:16PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
+On Fri, May 25, 2018 at 06:09:13PM +0200, Arnd Bergmann wrote:
+> The patch that enabled these had no useful changelog that explains
+> why it is done, and it causes a build warning:
 > 
-> On top of previous pull request.
+> WARNING: unmet direct dependencies detected for STM32_DMA
+>   Depends on [n]: DMADEVICES [=n] && (ARCH_STM32 [=y] || COMPILE_TEST [=y])
+>   Selected by [y]:
+>   - MACH_STM32MP157 [=y] && ARCH_STM32 [=y] && ARCH_MULTI_V7 [=y]
 > 
-> Best regards,
-> Krzysztof
+> Generally, platforms should not select arbitrary drivers, so let's
+> just revert that change.
 > 
-> 
-> The following changes since commit 8dd6203f32f20cb83469eb859efded9e403b3e9f:
-> 
->   arm64: dts: exynos: Add mem-2-mem Scaler devices (2018-05-13 11:26:13 +0200)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.18-2
-> 
-> for you to fetch changes up to f0b5e8a21e6604980c35eeeba1ee3a124f45ad1f:
-> 
->   arm64: dts: exynos: Add more clocks to Exynos5433 Decon/DeconTV (2018-05-23 20:23:24 +0200)
+> Fixes: de6037fa207f ("ARM: stm32: Select DMA, DMAMUX and MDMA support on STM32MP157C")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-
-Merged, thanks!
+Applied to next/soc now.
 
 
 -Olof
