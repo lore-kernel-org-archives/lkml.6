@@ -1,157 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965560AbeEYJrJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:47:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55153 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965197AbeEYJrH (ORCPT
+        id S965625AbeEYJrT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:47:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49971 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965197AbeEYJrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:47:07 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-pm@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] PM / suspend: Prevent might sleep splats
-Date: Fri, 25 May 2018 11:46:45 +0200
-Message-Id: <20180525094648.15464-2-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525094648.15464-1-bigeasy@linutronix.de>
-References: <20180525094648.15464-1-bigeasy@linutronix.de>
+        Fri, 25 May 2018 05:47:14 -0400
+Date: Fri, 25 May 2018 02:46:12 -0700
+From: tip-bot for Juri Lelli <tipbot@zytor.com>
+Message-ID: <tip-bf5015a50f1fdb248b48405b67cae24dc02605d6@git.kernel.org>
+Cc: torvalds@linux-foundation.org, juri.lelli@redhat.com, mingo@kernel.org,
+        patrick.bellasi@arm.com, hpa@zytor.com, dietmar.eggemann@arm.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, peterz@infradead.org, dietmar.eggemann@arm.com,
+        hpa@zytor.com, patrick.bellasi@arm.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, juri.lelli@redhat.com, mingo@kernel.org
+In-Reply-To: <20180524152936.17611-1-juri.lelli@redhat.com>
+References: <20180524152936.17611-1-juri.lelli@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/topology: Clarify root domain(s) debug
+ string
+Git-Commit-ID: bf5015a50f1fdb248b48405b67cae24dc02605d6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Commit-ID:  bf5015a50f1fdb248b48405b67cae24dc02605d6
+Gitweb:     https://git.kernel.org/tip/bf5015a50f1fdb248b48405b67cae24dc02605d6
+Author:     Juri Lelli <juri.lelli@redhat.com>
+AuthorDate: Thu, 24 May 2018 17:29:36 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 25 May 2018 08:03:38 +0200
 
-timekeeping suspend/resume calls read_persistent_clock() which takes
-rtc_lock. That results in might sleep warnings because at that point
-we run with interrupts disabled.
+sched/topology: Clarify root domain(s) debug string
 
-We cannot convert rtc_lock to a raw spinlock as that would trigger
-other might sleep warnings.
+When scheduler debug is enabled, building scheduling domains outputs
+information about how the domains are laid out and to which root domain
+each CPU (or sets of CPUs) belongs, e.g.:
 
-As a workaround we disable the might sleep warnings by setting
-system_state to SYSTEM_SUSPEND before calling sysdev_suspend() and
-restoring it to SYSTEM_RUNNING afer sysdev_resume().
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0-5 level=MC
+   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=0-5 level=MC
+   groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bigeasy: cover s2idle]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+ [...]
+
+ span: 0-5 (max cpu_capacity = 1024)
+
+The fact that latest line refers to CPUs 0-5 root domain doesn't however look
+immediately obvious to me: one might wonder why span 0-5 is reported "again".
+
+Make it more clear by adding "root domain" to it, as to end with the
+following:
+
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0-5 level=MC
+   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=0-5 level=MC
+   groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
+
+ [...]
+
+ root domain span: 0-5 (max cpu_capacity = 1024)
+
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180524152936.17611-1-juri.lelli@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/kernel.h   | 1 +
- kernel/power/hibernate.c | 7 +++++++
- kernel/power/suspend.c   | 6 ++++++
- 3 files changed, 14 insertions(+)
+ kernel/sched/topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 6a1eb0b0aad9..7aed92624531 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -542,6 +542,7 @@ extern enum system_states {
- 	SYSTEM_HALT,
- 	SYSTEM_POWER_OFF,
- 	SYSTEM_RESTART,
-+	SYSTEM_SUSPEND,
- } system_state;
-=20
- /* This cannot be an enum because some may be used in assembly source. */
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index 5454cc639a8d..9c85c7822383 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -287,6 +287,8 @@ static int create_image(int platform_mode)
-=20
- 	local_irq_disable();
-=20
-+	system_state =3D SYSTEM_SUSPEND;
-+
- 	error =3D syscore_suspend();
- 	if (error) {
- 		pr_err("Some system devices failed to power down, aborting hibernation\n=
-");
-@@ -317,6 +319,7 @@ static int create_image(int platform_mode)
- 	syscore_resume();
-=20
-  Enable_irqs:
-+	system_state =3D SYSTEM_RUNNING;
- 	local_irq_enable();
-=20
-  Enable_cpus:
-@@ -445,6 +448,7 @@ static int resume_target_kernel(bool platform_mode)
- 		goto Enable_cpus;
-=20
- 	local_irq_disable();
-+	system_state =3D SYSTEM_SUSPEND;
-=20
- 	error =3D syscore_suspend();
- 	if (error)
-@@ -478,6 +482,7 @@ static int resume_target_kernel(bool platform_mode)
- 	syscore_resume();
-=20
-  Enable_irqs:
-+	system_state =3D SYSTEM_RUNNING;
- 	local_irq_enable();
-=20
-  Enable_cpus:
-@@ -563,6 +568,7 @@ int hibernation_platform_enter(void)
- 		goto Enable_cpus;
-=20
- 	local_irq_disable();
-+	system_state =3D SYSTEM_SUSPEND;
- 	syscore_suspend();
- 	if (pm_wakeup_pending()) {
- 		error =3D -EAGAIN;
-@@ -575,6 +581,7 @@ int hibernation_platform_enter(void)
-=20
-  Power_up:
- 	syscore_resume();
-+	system_state =3D SYSTEM_RUNNING;
- 	local_irq_enable();
-=20
-  Enable_cpus:
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 4c10be0f4843..9108a99878bf 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -110,6 +110,7 @@ static void s2idle_loop(void)
- {
- 	pm_pr_dbg("suspend-to-idle\n");
-=20
-+	system_state =3D SYSTEM_SUSPEND;
- 	for (;;) {
- 		int error;
-=20
-@@ -148,6 +149,7 @@ static void s2idle_loop(void)
-=20
- 		pm_wakeup_clear(false);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 64cc564f5255..61a1125c1ae4 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1708,7 +1708,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 	rcu_read_unlock();
+ 
+ 	if (rq && sched_debug_enabled) {
+-		pr_info("span: %*pbl (max cpu_capacity = %lu)\n",
++		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
+ 			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
  	}
-+	system_state =3D SYSTEM_RUNNING;
-=20
- 	pm_pr_dbg("resume from suspend-to-idle\n");
- }
-@@ -428,6 +430,8 @@ static int suspend_enter(suspend_state_t state, bool *w=
-akeup)
- 	arch_suspend_disable_irqs();
- 	BUG_ON(!irqs_disabled());
-=20
-+	system_state =3D SYSTEM_SUSPEND;
-+
- 	error =3D syscore_suspend();
- 	if (!error) {
- 		*wakeup =3D pm_wakeup_pending();
-@@ -443,6 +447,8 @@ static int suspend_enter(suspend_state_t state, bool *w=
-akeup)
- 		syscore_resume();
- 	}
-=20
-+	system_state =3D SYSTEM_RUNNING;
-+
- 	arch_suspend_enable_irqs();
- 	BUG_ON(irqs_disabled());
-=20
---=20
-2.17.0
+ 
