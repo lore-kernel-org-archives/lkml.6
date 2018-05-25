@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936145AbeEYNN7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:13:59 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54296 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935442AbeEYNMs (ORCPT
+        id S935358AbeEYNMr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:12:47 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37103 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbeEYNMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:12:48 -0400
-X-Google-Smtp-Source: ADUXVKLhY8CcDruEXe891TqNyXH1dZVVfaWP2WYZxWVC0FsU49M3AeejceQQw4pJ9Adz72GynBmfJA==
+        Fri, 25 May 2018 09:12:42 -0400
+X-Google-Smtp-Source: ADUXVKLVgt5UNxJrdVAoHMfpTGlMmronX2rK0nIbCUupetNeJWvoNSvlRC3ncm99nVAuDelLSAzVfA==
 From: Vincent Guittot <vincent.guittot@linaro.org>
 To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
         rjw@rjwysocki.net
@@ -15,9 +15,9 @@ Cc: juri.lelli@redhat.com, dietmar.eggemann@arm.com,
         Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
         valentin.schneider@arm.com, quentin.perret@arm.com,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v5 07/10] sched/irq: add irq utilization tracking
-Date: Fri, 25 May 2018 15:12:28 +0200
-Message-Id: <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v5 01/10] sched/pelt: Move pelt related code in a dedicated file
+Date: Fri, 25 May 2018 15:12:22 +0200
+Message-Id: <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
 References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
@@ -25,205 +25,812 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-interrupt and steal time are the only remaining activities tracked by
-rt_avg. Like for sched classes, we can use PELT to track their average
-utilization of the CPU. But unlike sched class, we don't track when
-entering/leaving interrupt; Instead, we take into account the time spent
-under interrupt context when we update rqs' clock (rq_clock_task).
-This also means that we have to decay the normal context time and account
-for interrupt time during the update.
-
-That's also important to note that because
-  rq_clock == rq_clock_task + interrupt time
-and rq_clock_task is used by a sched class to compute its utilization, the
-util_avg of a sched class only reflects the utilization of the time spent
-in normal context and not of the whole time of the CPU. The utilization of
-interrupt gives an more accurate level of utilization of CPU.
-The CPU utilization is :
-  avg_irq + (1 - avg_irq / max capacity) * /Sum avg_rq
-
-Most of the time, avg_irq is small and neglictible so the use of the
-approximation CPU utilization = /Sum avg_rq was enough
+We want to track rt_rq's utilization as a part of the estimation of the
+whole rq's utilization. This is necessary because rt tasks can steal
+utilization to cfs tasks and make them lighter than they are.
+As we want to use the same load tracking mecanism for both and prevent
+useless dependency between cfs and rt code, pelt code is moved in a
+dedicated file.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/core.c  |  4 +++-
- kernel/sched/fair.c  | 26 +++++++-------------------
- kernel/sched/pelt.c  | 38 ++++++++++++++++++++++++++++++++++++++
- kernel/sched/pelt.h  |  7 +++++++
- kernel/sched/sched.h |  1 +
- 5 files changed, 56 insertions(+), 20 deletions(-)
+ kernel/sched/Makefile |   2 +-
+ kernel/sched/fair.c   | 333 +-------------------------------------------------
+ kernel/sched/pelt.c   | 311 ++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/pelt.h   |  43 +++++++
+ kernel/sched/sched.h  |  19 +++
+ 5 files changed, 375 insertions(+), 333 deletions(-)
+ create mode 100644 kernel/sched/pelt.c
+ create mode 100644 kernel/sched/pelt.h
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d155518..ab58288 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -16,6 +16,8 @@
- #include "../workqueue_internal.h"
- #include "../smpboot.h"
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index d9a02b3..7fe1834 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -20,7 +20,7 @@ obj-y += core.o loadavg.o clock.o cputime.o
+ obj-y += idle.o fair.o rt.o deadline.o
+ obj-y += wait.o wait_bit.o swait.o completion.o
  
-+#include "pelt.h"
-+
- #define CREATE_TRACE_POINTS
- #include <trace/events/sched.h>
- 
-@@ -184,7 +186,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 
- #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
- 	if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
--		sched_rt_avg_update(rq, irq_delta + steal);
-+		update_irq_load_avg(rq, irq_delta + steal);
- #endif
- }
- 
+-obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o
++obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o
+ obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
+ obj-$(CONFIG_SCHEDSTATS) += stats.o
+ obj-$(CONFIG_SCHED_DEBUG) += debug.o
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index da75eda..1bb3379 100644
+index e497c05..6390c66 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5323,8 +5323,6 @@ static void cpu_load_update(struct rq *this_rq, unsigned long this_load,
+@@ -255,9 +255,6 @@ static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+ 	return cfs_rq->rq;
+ }
  
- 		this_rq->cpu_load[i] = (old_load * (scale - 1) + new_load) >> i;
- 	}
+-/* An entity is a task if it doesn't "own" a runqueue */
+-#define entity_is_task(se)	(!se->my_q)
 -
--	sched_avg_update(this_rq);
- }
- 
- /* Used instead of source_load when we know the type == 0 */
-@@ -7298,6 +7296,9 @@ static inline bool others_rqs_have_blocked(struct rq *rq)
- 	if (rq->avg_dl.util_avg)
- 		return true;
- 
-+	if (rq->avg_irq.util_avg)
-+		return true;
-+
- 	return false;
- }
- 
-@@ -7362,6 +7363,7 @@ static void update_blocked_averages(int cpu)
- 	}
- 	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
- 	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-+	update_irq_load_avg(rq, 0);
- 	/* Don't need periodic decay once load/util_avg are null */
- 	if (others_rqs_have_blocked(rq))
- 		done = false;
-@@ -7432,6 +7434,7 @@ static inline void update_blocked_averages(int cpu)
- 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
- 	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
- 	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-+	update_irq_load_avg(rq, 0);
- #ifdef CONFIG_NO_HZ_COMMON
- 	rq->last_blocked_load_update_tick = jiffies;
- 	if (!cfs_rq_has_blocked(cfs_rq) && !others_rqs_have_blocked(rq))
-@@ -7544,24 +7547,9 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
- static unsigned long scale_rt_capacity(int cpu)
+ static inline struct task_struct *task_of(struct sched_entity *se)
  {
- 	struct rq *rq = cpu_rq(cpu);
--	u64 total, used, age_stamp, avg;
--	s64 delta;
+ 	SCHED_WARN_ON(!entity_is_task(se));
+@@ -419,7 +416,6 @@ static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+ 	return container_of(cfs_rq, struct rq, cfs);
+ }
+ 
+-#define entity_is_task(se)	1
+ 
+ #define for_each_sched_entity(se) \
+ 		for (; se; se = NULL)
+@@ -692,7 +688,7 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ }
+ 
+ #ifdef CONFIG_SMP
+-
++#include "pelt.h"
+ #include "sched-pelt.h"
+ 
+ static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
+@@ -2749,19 +2745,6 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ } while (0)
+ 
+ #ifdef CONFIG_SMP
+-/*
+- * XXX we want to get rid of these helpers and use the full load resolution.
+- */
+-static inline long se_weight(struct sched_entity *se)
+-{
+-	return scale_load_down(se->load.weight);
+-}
+-
+-static inline long se_runnable(struct sched_entity *se)
+-{
+-	return scale_load_down(se->runnable_weight);
+-}
+-
+ static inline void
+ enqueue_runnable_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+@@ -3062,314 +3045,6 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+ }
+ 
+ #ifdef CONFIG_SMP
+-/*
+- * Approximate:
+- *   val * y^n,    where y^32 ~= 0.5 (~1 scheduling period)
+- */
+-static u64 decay_load(u64 val, u64 n)
+-{
+-	unsigned int local_n;
+-
+-	if (unlikely(n > LOAD_AVG_PERIOD * 63))
+-		return 0;
+-
+-	/* after bounds checking we can collapse to 32-bit */
+-	local_n = n;
 -
 -	/*
--	 * Since we're reading these variables without serialization make sure
--	 * we read them once before doing sanity checks on them.
+-	 * As y^PERIOD = 1/2, we can combine
+-	 *    y^n = 1/2^(n/PERIOD) * y^(n%PERIOD)
+-	 * With a look-up table which covers y^n (n<PERIOD)
+-	 *
+-	 * To achieve constant time decay_load.
 -	 */
--	age_stamp = READ_ONCE(rq->age_stamp);
--	avg = READ_ONCE(rq->rt_avg);
--	delta = __rq_clock_broken(rq) - age_stamp;
+-	if (unlikely(local_n >= LOAD_AVG_PERIOD)) {
+-		val >>= local_n / LOAD_AVG_PERIOD;
+-		local_n %= LOAD_AVG_PERIOD;
+-	}
 -
--	if (unlikely(delta < 0))
--		delta = 0;
+-	val = mul_u64_u32_shr(val, runnable_avg_yN_inv[local_n], 32);
+-	return val;
+-}
 -
--	total = sched_avg_period() + delta;
+-static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
+-{
+-	u32 c1, c2, c3 = d3; /* y^0 == 1 */
 -
--	used = div_u64(avg, total);
-+	unsigned long used;
+-	/*
+-	 * c1 = d1 y^p
+-	 */
+-	c1 = decay_load((u64)d1, periods);
+-
+-	/*
+-	 *            p-1
+-	 * c2 = 1024 \Sum y^n
+-	 *            n=1
+-	 *
+-	 *              inf        inf
+-	 *    = 1024 ( \Sum y^n - \Sum y^n - y^0 )
+-	 *              n=0        n=p
+-	 */
+-	c2 = LOAD_AVG_MAX - decay_load(LOAD_AVG_MAX, periods) - 1024;
+-
+-	return c1 + c2 + c3;
+-}
+-
+-/*
+- * Accumulate the three separate parts of the sum; d1 the remainder
+- * of the last (incomplete) period, d2 the span of full periods and d3
+- * the remainder of the (incomplete) current period.
+- *
+- *           d1          d2           d3
+- *           ^           ^            ^
+- *           |           |            |
+- *         |<->|<----------------->|<--->|
+- * ... |---x---|------| ... |------|-----x (now)
+- *
+- *                           p-1
+- * u' = (u + d1) y^p + 1024 \Sum y^n + d3 y^0
+- *                           n=1
+- *
+- *    = u y^p +					(Step 1)
+- *
+- *                     p-1
+- *      d1 y^p + 1024 \Sum y^n + d3 y^0		(Step 2)
+- *                     n=1
+- */
+-static __always_inline u32
+-accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
+-	       unsigned long load, unsigned long runnable, int running)
+-{
+-	unsigned long scale_freq, scale_cpu;
+-	u32 contrib = (u32)delta; /* p == 0 -> delta < 1024 */
+-	u64 periods;
+-
+-	scale_freq = arch_scale_freq_capacity(cpu);
+-	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
+-
+-	delta += sa->period_contrib;
+-	periods = delta / 1024; /* A period is 1024us (~1ms) */
+-
+-	/*
+-	 * Step 1: decay old *_sum if we crossed period boundaries.
+-	 */
+-	if (periods) {
+-		sa->load_sum = decay_load(sa->load_sum, periods);
+-		sa->runnable_load_sum =
+-			decay_load(sa->runnable_load_sum, periods);
+-		sa->util_sum = decay_load((u64)(sa->util_sum), periods);
+-
+-		/*
+-		 * Step 2
+-		 */
+-		delta %= 1024;
+-		contrib = __accumulate_pelt_segments(periods,
+-				1024 - sa->period_contrib, delta);
+-	}
+-	sa->period_contrib = delta;
+-
+-	contrib = cap_scale(contrib, scale_freq);
+-	if (load)
+-		sa->load_sum += load * contrib;
+-	if (runnable)
+-		sa->runnable_load_sum += runnable * contrib;
+-	if (running)
+-		sa->util_sum += contrib * scale_cpu;
+-
+-	return periods;
+-}
+-
+-/*
+- * We can represent the historical contribution to runnable average as the
+- * coefficients of a geometric series.  To do this we sub-divide our runnable
+- * history into segments of approximately 1ms (1024us); label the segment that
+- * occurred N-ms ago p_N, with p_0 corresponding to the current period, e.g.
+- *
+- * [<- 1024us ->|<- 1024us ->|<- 1024us ->| ...
+- *      p0            p1           p2
+- *     (now)       (~1ms ago)  (~2ms ago)
+- *
+- * Let u_i denote the fraction of p_i that the entity was runnable.
+- *
+- * We then designate the fractions u_i as our co-efficients, yielding the
+- * following representation of historical load:
+- *   u_0 + u_1*y + u_2*y^2 + u_3*y^3 + ...
+- *
+- * We choose y based on the with of a reasonably scheduling period, fixing:
+- *   y^32 = 0.5
+- *
+- * This means that the contribution to load ~32ms ago (u_32) will be weighted
+- * approximately half as much as the contribution to load within the last ms
+- * (u_0).
+- *
+- * When a period "rolls over" and we have new u_0`, multiplying the previous
+- * sum again by y is sufficient to update:
+- *   load_avg = u_0` + y*(u_0 + u_1*y + u_2*y^2 + ... )
+- *            = u_0 + u_1*y + u_2*y^2 + ... [re-labeling u_i --> u_{i+1}]
+- */
+-static __always_inline int
+-___update_load_sum(u64 now, int cpu, struct sched_avg *sa,
+-		  unsigned long load, unsigned long runnable, int running)
+-{
+-	u64 delta;
+-
+-	delta = now - sa->last_update_time;
+-	/*
+-	 * This should only happen when time goes backwards, which it
+-	 * unfortunately does during sched clock init when we swap over to TSC.
+-	 */
+-	if ((s64)delta < 0) {
+-		sa->last_update_time = now;
+-		return 0;
+-	}
+-
+-	/*
+-	 * Use 1024ns as the unit of measurement since it's a reasonable
+-	 * approximation of 1us and fast to compute.
+-	 */
+-	delta >>= 10;
+-	if (!delta)
+-		return 0;
+-
+-	sa->last_update_time += delta << 10;
+-
+-	/*
+-	 * running is a subset of runnable (weight) so running can't be set if
+-	 * runnable is clear. But there are some corner cases where the current
+-	 * se has been already dequeued but cfs_rq->curr still points to it.
+-	 * This means that weight will be 0 but not running for a sched_entity
+-	 * but also for a cfs_rq if the latter becomes idle. As an example,
+-	 * this happens during idle_balance() which calls
+-	 * update_blocked_averages()
+-	 */
+-	if (!load)
+-		runnable = running = 0;
+-
+-	/*
+-	 * Now we know we crossed measurement unit boundaries. The *_avg
+-	 * accrues by two steps:
+-	 *
+-	 * Step 1: accumulate *_sum since last_update_time. If we haven't
+-	 * crossed period boundaries, finish.
+-	 */
+-	if (!accumulate_sum(delta, cpu, sa, load, runnable, running))
+-		return 0;
+-
+-	return 1;
+-}
+-
+-static __always_inline void
+-___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runnable)
+-{
+-	u32 divider = LOAD_AVG_MAX - 1024 + sa->period_contrib;
+-
+-	/*
+-	 * Step 2: update *_avg.
+-	 */
+-	sa->load_avg = div_u64(load * sa->load_sum, divider);
+-	sa->runnable_load_avg =	div_u64(runnable * sa->runnable_load_sum, divider);
+-	sa->util_avg = sa->util_sum / divider;
+-}
+-
+-/*
+- * When a task is dequeued, its estimated utilization should not be update if
+- * its util_avg has not been updated at least once.
+- * This flag is used to synchronize util_avg updates with util_est updates.
+- * We map this information into the LSB bit of the utilization saved at
+- * dequeue time (i.e. util_est.dequeued).
+- */
+-#define UTIL_AVG_UNCHANGED 0x1
+-
+-static inline void cfs_se_util_change(struct sched_avg *avg)
+-{
+-	unsigned int enqueued;
+-
+-	if (!sched_feat(UTIL_EST))
+-		return;
+-
+-	/* Avoid store if the flag has been already set */
+-	enqueued = avg->util_est.enqueued;
+-	if (!(enqueued & UTIL_AVG_UNCHANGED))
+-		return;
+-
+-	/* Reset flag to report util_avg has been updated */
+-	enqueued &= ~UTIL_AVG_UNCHANGED;
+-	WRITE_ONCE(avg->util_est.enqueued, enqueued);
+-}
+-
+-/*
+- * sched_entity:
+- *
+- *   task:
+- *     se_runnable() == se_weight()
+- *
+- *   group: [ see update_cfs_group() ]
+- *     se_weight()   = tg->weight * grq->load_avg / tg->load_avg
+- *     se_runnable() = se_weight(se) * grq->runnable_load_avg / grq->load_avg
+- *
+- *   load_sum := runnable_sum
+- *   load_avg = se_weight(se) * runnable_avg
+- *
+- *   runnable_load_sum := runnable_sum
+- *   runnable_load_avg = se_runnable(se) * runnable_avg
+- *
+- * XXX collapse load_sum and runnable_load_sum
+- *
+- * cfq_rs:
+- *
+- *   load_sum = \Sum se_weight(se) * se->avg.load_sum
+- *   load_avg = \Sum se->avg.load_avg
+- *
+- *   runnable_load_sum = \Sum se_runnable(se) * se->avg.runnable_load_sum
+- *   runnable_load_avg = \Sum se->avg.runable_load_avg
+- */
+-
+-static int
+-__update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se)
+-{
+-	if (entity_is_task(se))
+-		se->runnable_weight = se->load.weight;
+-
+-	if (___update_load_sum(now, cpu, &se->avg, 0, 0, 0)) {
+-		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
+-		return 1;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-__update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se)
+-{
+-	if (entity_is_task(se))
+-		se->runnable_weight = se->load.weight;
+-
+-	if (___update_load_sum(now, cpu, &se->avg, !!se->on_rq, !!se->on_rq,
+-				cfs_rq->curr == se)) {
+-
+-		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
+-		cfs_se_util_change(&se->avg);
+-		return 1;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-__update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
+-{
+-	if (___update_load_sum(now, cpu, &cfs_rq->avg,
+-				scale_load_down(cfs_rq->load.weight),
+-				scale_load_down(cfs_rq->runnable_weight),
+-				cfs_rq->curr != NULL)) {
+-
+-		___update_load_avg(&cfs_rq->avg, 1, 1);
+-		return 1;
+-	}
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ /**
+  * update_tg_load_avg - update the tg's load avg
+@@ -4045,12 +3720,6 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
  
-+	used = READ_ONCE(rq->avg_irq.util_avg);
- 	used += READ_ONCE(rq->avg_rt.util_avg);
- 	used += READ_ONCE(rq->avg_dl.util_avg);
- 	if (likely(used < SCHED_CAPACITY_SCALE))
+ #else /* CONFIG_SMP */
+ 
+-static inline int
+-update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+-{
+-	return 0;
+-}
+-
+ #define UPDATE_TG	0x0
+ #define SKIP_AGE_LOAD	0x0
+ #define DO_ATTACH	0x0
 diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index 3d5bd3a..d2e4f21 100644
---- a/kernel/sched/pelt.c
+new file mode 100644
+index 0000000..e6ecbb2
+--- /dev/null
 +++ b/kernel/sched/pelt.c
-@@ -355,3 +355,41 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- 
- 	return 0;
- }
-+
+@@ -0,0 +1,311 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * irq:
++ * Per Entity Load Tracking
 + *
-+ *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
-+ *   util_sum = cpu_scale * load_sum
-+ *   runnable_load_sum = load_sum
++ *  Copyright (C) 2007 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
 + *
++ *  Interactivity improvements by Mike Galbraith
++ *  (C) 2007 Mike Galbraith <efault@gmx.de>
++ *
++ *  Various enhancements by Dmitry Adamushko.
++ *  (C) 2007 Dmitry Adamushko <dmitry.adamushko@gmail.com>
++ *
++ *  Group scheduling enhancements by Srivatsa Vaddagiri
++ *  Copyright IBM Corporation, 2007
++ *  Author: Srivatsa Vaddagiri <vatsa@linux.vnet.ibm.com>
++ *
++ *  Scaled math optimizations by Thomas Gleixner
++ *  Copyright (C) 2007, Thomas Gleixner <tglx@linutronix.de>
++ *
++ *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
++ *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
++ *
++ *  Move PELT related code from fair.c into this pelt.c file
++ *  Author: Vincent Guittot <vincent.guittot@linaro.org>
 + */
 +
-+int update_irq_load_avg(struct rq *rq, u64 running)
++#include <linux/sched.h>
++#include "sched.h"
++#include "sched-pelt.h"
++#include "pelt.h"
++
++/*
++ * Approximate:
++ *   val * y^n,    where y^32 ~= 0.5 (~1 scheduling period)
++ */
++static u64 decay_load(u64 val, u64 n)
 +{
-+	int ret = 0;
++	unsigned int local_n;
++
++	if (unlikely(n > LOAD_AVG_PERIOD * 63))
++		return 0;
++
++	/* after bounds checking we can collapse to 32-bit */
++	local_n = n;
++
 +	/*
-+	 * We know the time that has been used by interrupt since last update
-+	 * but we don't when. Let be pessimistic and assume that interrupt has
-+	 * happened just before the update. This is not so far from reality
-+	 * because interrupt will most probably wake up task and trig an update
-+	 * of rq clock during which the metric si updated.
-+	 * We start to decay with normal context time and then we add the
-+	 * interrupt context time.
-+	 * We can safely remove running from rq->clock because
-+	 * rq->clock += delta with delta >= running
++	 * As y^PERIOD = 1/2, we can combine
++	 *    y^n = 1/2^(n/PERIOD) * y^(n%PERIOD)
++	 * With a look-up table which covers y^n (n<PERIOD)
++	 *
++	 * To achieve constant time decay_load.
 +	 */
-+	ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
-+				0,
-+				0,
-+				0);
-+	ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
-+				1,
-+				1,
-+				1);
++	if (unlikely(local_n >= LOAD_AVG_PERIOD)) {
++		val >>= local_n / LOAD_AVG_PERIOD;
++		local_n %= LOAD_AVG_PERIOD;
++	}
 +
-+	if (ret)
-+		___update_load_avg(&rq->avg_irq, 1, 1);
++	val = mul_u64_u32_shr(val, runnable_avg_yN_inv[local_n], 32);
++	return val;
++}
 +
-+	return ret;
++static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
++{
++	u32 c1, c2, c3 = d3; /* y^0 == 1 */
++
++	/*
++	 * c1 = d1 y^p
++	 */
++	c1 = decay_load((u64)d1, periods);
++
++	/*
++	 *            p-1
++	 * c2 = 1024 \Sum y^n
++	 *            n=1
++	 *
++	 *              inf        inf
++	 *    = 1024 ( \Sum y^n - \Sum y^n - y^0 )
++	 *              n=0        n=p
++	 */
++	c2 = LOAD_AVG_MAX - decay_load(LOAD_AVG_MAX, periods) - 1024;
++
++	return c1 + c2 + c3;
++}
++
++#define cap_scale(v, s) ((v)*(s) >> SCHED_CAPACITY_SHIFT)
++
++/*
++ * Accumulate the three separate parts of the sum; d1 the remainder
++ * of the last (incomplete) period, d2 the span of full periods and d3
++ * the remainder of the (incomplete) current period.
++ *
++ *           d1          d2           d3
++ *           ^           ^            ^
++ *           |           |            |
++ *         |<->|<----------------->|<--->|
++ * ... |---x---|------| ... |------|-----x (now)
++ *
++ *                           p-1
++ * u' = (u + d1) y^p + 1024 \Sum y^n + d3 y^0
++ *                           n=1
++ *
++ *    = u y^p +					(Step 1)
++ *
++ *                     p-1
++ *      d1 y^p + 1024 \Sum y^n + d3 y^0		(Step 2)
++ *                     n=1
++ */
++static __always_inline u32
++accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
++	       unsigned long load, unsigned long runnable, int running)
++{
++	unsigned long scale_freq, scale_cpu;
++	u32 contrib = (u32)delta; /* p == 0 -> delta < 1024 */
++	u64 periods;
++
++	scale_freq = arch_scale_freq_capacity(cpu);
++	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
++
++	delta += sa->period_contrib;
++	periods = delta / 1024; /* A period is 1024us (~1ms) */
++
++	/*
++	 * Step 1: decay old *_sum if we crossed period boundaries.
++	 */
++	if (periods) {
++		sa->load_sum = decay_load(sa->load_sum, periods);
++		sa->runnable_load_sum =
++			decay_load(sa->runnable_load_sum, periods);
++		sa->util_sum = decay_load((u64)(sa->util_sum), periods);
++
++		/*
++		 * Step 2
++		 */
++		delta %= 1024;
++		contrib = __accumulate_pelt_segments(periods,
++				1024 - sa->period_contrib, delta);
++	}
++	sa->period_contrib = delta;
++
++	contrib = cap_scale(contrib, scale_freq);
++	if (load)
++		sa->load_sum += load * contrib;
++	if (runnable)
++		sa->runnable_load_sum += runnable * contrib;
++	if (running)
++		sa->util_sum += contrib * scale_cpu;
++
++	return periods;
++}
++
++/*
++ * We can represent the historical contribution to runnable average as the
++ * coefficients of a geometric series.  To do this we sub-divide our runnable
++ * history into segments of approximately 1ms (1024us); label the segment that
++ * occurred N-ms ago p_N, with p_0 corresponding to the current period, e.g.
++ *
++ * [<- 1024us ->|<- 1024us ->|<- 1024us ->| ...
++ *      p0            p1           p2
++ *     (now)       (~1ms ago)  (~2ms ago)
++ *
++ * Let u_i denote the fraction of p_i that the entity was runnable.
++ *
++ * We then designate the fractions u_i as our co-efficients, yielding the
++ * following representation of historical load:
++ *   u_0 + u_1*y + u_2*y^2 + u_3*y^3 + ...
++ *
++ * We choose y based on the with of a reasonably scheduling period, fixing:
++ *   y^32 = 0.5
++ *
++ * This means that the contribution to load ~32ms ago (u_32) will be weighted
++ * approximately half as much as the contribution to load within the last ms
++ * (u_0).
++ *
++ * When a period "rolls over" and we have new u_0`, multiplying the previous
++ * sum again by y is sufficient to update:
++ *   load_avg = u_0` + y*(u_0 + u_1*y + u_2*y^2 + ... )
++ *            = u_0 + u_1*y + u_2*y^2 + ... [re-labeling u_i --> u_{i+1}]
++ */
++static __always_inline int
++___update_load_sum(u64 now, int cpu, struct sched_avg *sa,
++		  unsigned long load, unsigned long runnable, int running)
++{
++	u64 delta;
++
++	delta = now - sa->last_update_time;
++	/*
++	 * This should only happen when time goes backwards, which it
++	 * unfortunately does during sched clock init when we swap over to TSC.
++	 */
++	if ((s64)delta < 0) {
++		sa->last_update_time = now;
++		return 0;
++	}
++
++	/*
++	 * Use 1024ns as the unit of measurement since it's a reasonable
++	 * approximation of 1us and fast to compute.
++	 */
++	delta >>= 10;
++	if (!delta)
++		return 0;
++
++	sa->last_update_time += delta << 10;
++
++	/*
++	 * running is a subset of runnable (weight) so running can't be set if
++	 * runnable is clear. But there are some corner cases where the current
++	 * se has been already dequeued but cfs_rq->curr still points to it.
++	 * This means that weight will be 0 but not running for a sched_entity
++	 * but also for a cfs_rq if the latter becomes idle. As an example,
++	 * this happens during idle_balance() which calls
++	 * update_blocked_averages()
++	 */
++	if (!load)
++		runnable = running = 0;
++
++	/*
++	 * Now we know we crossed measurement unit boundaries. The *_avg
++	 * accrues by two steps:
++	 *
++	 * Step 1: accumulate *_sum since last_update_time. If we haven't
++	 * crossed period boundaries, finish.
++	 */
++	if (!accumulate_sum(delta, cpu, sa, load, runnable, running))
++		return 0;
++
++	return 1;
++}
++
++static __always_inline void
++___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runnable)
++{
++	u32 divider = LOAD_AVG_MAX - 1024 + sa->period_contrib;
++
++	/*
++	 * Step 2: update *_avg.
++	 */
++	sa->load_avg = div_u64(load * sa->load_sum, divider);
++	sa->runnable_load_avg =	div_u64(runnable * sa->runnable_load_sum, divider);
++	sa->util_avg = sa->util_sum / divider;
++}
++
++/*
++ * sched_entity:
++ *
++ *   task:
++ *     se_runnable() == se_weight()
++ *
++ *   group: [ see update_cfs_group() ]
++ *     se_weight()   = tg->weight * grq->load_avg / tg->load_avg
++ *     se_runnable() = se_weight(se) * grq->runnable_load_avg / grq->load_avg
++ *
++ *   load_sum := runnable_sum
++ *   load_avg = se_weight(se) * runnable_avg
++ *
++ *   runnable_load_sum := runnable_sum
++ *   runnable_load_avg = se_runnable(se) * runnable_avg
++ *
++ * XXX collapse load_sum and runnable_load_sum
++ *
++ * cfq_rq:
++ *
++ *   load_sum = \Sum se_weight(se) * se->avg.load_sum
++ *   load_avg = \Sum se->avg.load_avg
++ *
++ *   runnable_load_sum = \Sum se_runnable(se) * se->avg.runnable_load_sum
++ *   runnable_load_avg = \Sum se->avg.runable_load_avg
++ */
++
++int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se)
++{
++	if (entity_is_task(se))
++		se->runnable_weight = se->load.weight;
++
++	if (___update_load_sum(now, cpu, &se->avg, 0, 0, 0)) {
++		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
++		return 1;
++	}
++
++	return 0;
++}
++
++int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se)
++{
++	if (entity_is_task(se))
++		se->runnable_weight = se->load.weight;
++
++	if (___update_load_sum(now, cpu, &se->avg, !!se->on_rq, !!se->on_rq,
++				cfs_rq->curr == se)) {
++
++		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
++		cfs_se_util_change(&se->avg);
++		return 1;
++	}
++
++	return 0;
++}
++
++int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
++{
++	if (___update_load_sum(now, cpu, &cfs_rq->avg,
++				scale_load_down(cfs_rq->load.weight),
++				scale_load_down(cfs_rq->runnable_weight),
++				cfs_rq->curr != NULL)) {
++
++		___update_load_avg(&cfs_rq->avg, 1, 1);
++		return 1;
++	}
++
++	return 0;
 +}
 diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index 0e4f912..0ce9a5a 100644
---- a/kernel/sched/pelt.h
+new file mode 100644
+index 0000000..9cac73e
+--- /dev/null
 +++ b/kernel/sched/pelt.h
-@@ -5,6 +5,7 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
- int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-+int update_irq_load_avg(struct rq *rq, u64 running);
- 
- /*
-  * When a task is dequeued, its estimated utilization should not be update if
-@@ -51,6 +52,12 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- {
- 	return 0;
- }
+@@ -0,0 +1,43 @@
++#ifdef CONFIG_SMP
++
++int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se);
++int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se);
++int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
++
++/*
++ * When a task is dequeued, its estimated utilization should not be update if
++ * its util_avg has not been updated at least once.
++ * This flag is used to synchronize util_avg updates with util_est updates.
++ * We map this information into the LSB bit of the utilization saved at
++ * dequeue time (i.e. util_est.dequeued).
++ */
++#define UTIL_AVG_UNCHANGED 0x1
++
++static inline void cfs_se_util_change(struct sched_avg *avg)
++{
++	unsigned int enqueued;
++
++	if (!sched_feat(UTIL_EST))
++		return;
++
++	/* Avoid store if the flag has been already set */
++	enqueued = avg->util_est.enqueued;
++	if (!(enqueued & UTIL_AVG_UNCHANGED))
++		return;
++
++	/* Reset flag to report util_avg has been updated */
++	enqueued &= ~UTIL_AVG_UNCHANGED;
++	WRITE_ONCE(avg->util_est.enqueued, enqueued);
++}
++
++#else
 +
 +static inline int
-+update_irq_load_avg(struct rq *rq, u64 running)
++update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
 +{
 +	return 0;
 +}
- #endif
- 
- 
++
++#endif
++
++
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0eb07a8..f7e8d5b 100644
+index 67702b4..757a3ee 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -850,6 +850,7 @@ struct rq {
- 	u64			age_stamp;
- 	struct sched_avg	avg_rt;
- 	struct sched_avg	avg_dl;
-+	struct sched_avg	avg_irq;
- 	u64			idle_stamp;
- 	u64			avg_idle;
+@@ -666,7 +666,26 @@ struct dl_rq {
+ 	u64			bw_ratio;
+ };
  
++#ifdef CONFIG_FAIR_GROUP_SCHED
++/* An entity is a task if it doesn't "own" a runqueue */
++#define entity_is_task(se)	(!se->my_q)
++#else
++#define entity_is_task(se)	1
++#endif
++
+ #ifdef CONFIG_SMP
++/*
++ * XXX we want to get rid of these helpers and use the full load resolution.
++ */
++static inline long se_weight(struct sched_entity *se)
++{
++	return scale_load_down(se->load.weight);
++}
++
++static inline long se_runnable(struct sched_entity *se)
++{
++	return scale_load_down(se->runnable_weight);
++}
+ 
+ static inline bool sched_asym_prefer(int a, int b)
+ {
 -- 
 2.7.4
