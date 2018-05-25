@@ -1,107 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936310AbeEYPPD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:15:03 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:52581 "EHLO
+        id S936336AbeEYPQW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:16:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:42163 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936240AbeEYPO6 (ORCPT
+        with ESMTP id S936219AbeEYPQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:14:58 -0400
+        Fri, 25 May 2018 11:16:21 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Eric Sandeen <sandeen@redhat.com>,
-        Martin Sebor <msebor@gmail.com>, Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>, Eric Sandeen <sandeen@sandeen.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] xfs: mark sb_fname as nonstring
-Date: Fri, 25 May 2018 17:14:09 +0200
-Message-Id: <20180525151421.2317292-1-arnd@arndb.de>
+Subject: [PATCH] xfs, proc: hide unused xfs procfs helpers
+Date: Fri, 25 May 2018 17:16:04 +0200
+Message-Id: <20180525151612.2408651-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:lGmfJXCqxIb8Cn75/TvWJg7ZLDnEMwqMV8Gc8T4Rf0uEWJ1/vnM
- FmJ33CHgJcYUDAzP5LCmrToA3rDEqe9O6hTQ8d8k7eXQJ7OS+UgejIo+3nm9bj+BO3zvjxk
- 5ua3ZX3N1i0P0SOLgN4G2/cA0Y4UpG6Wcf56uYJ4OgnMbpxObZHRThPGCn3+Dj2FCqi3sS7
- PDJKCX3O29CoryGSGT6cg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:O4XavvwYowE=:yMOLKXG5mT5vgrW09iC7iR
- X/4HkD2oB4CRkoideHg08sCBLKZiokRMIM2iQk169srGhbY4rhqvgzjauGZZIz0mRscXP1dfb
- EC1WHjqP/dWe2gzD9IvCmOwcCf3rS2RLGZm6swwzoEAN4FnIPBPsoQi375fDaJP1IzAdzicD1
- qn2G01yTB8cb8nuduHFaR93Xq3aqwG20RKKv+zbKl7MNORrRqIFhOO1pBBc8Xzeqju837TCBm
- QVHc8Gr6aJXtVW8p1kurymgZgyVlRl/LtWggSkRFAwFXVEOxtYKbLE1YZs7GVpmc0TnSSYawG
- U/lIKSUIQ+Bv06RtlooWE7u5y6mzoQWGxmbLOo159EXubrwaRif01qNJ0a3wsgA5F/R1Ao4HQ
- 2dLwSFcDLBXBQOfgeDEDCaGZ6j2j2gTNf/YhWQMYoDJLnBjekcUJ1pZ3+SFK5qF5lbM5Qkw+1
- SoZMKNjbefHRd92ea33pdaJxtoaYgWXy1cZUjFeXfVXgJs1FkebP417mokNfLfR4W/JJnsmS7
- 7G+E6u1IqV0Xu4L2yZvvJfLx3yNeNtxWREP3u5ILaiu8IvPzf9q91PSN+lTP7reKAIjte8Dv/
- fls6K8z8wVA8ghbC6VcR6PKvUz78WTuNNEg6kFdlJmiWXtH4JfR+KQd5CTROBy05+NoRUMJO5
- 7P/Va1Fd6H6xvWTvfapGxD1QtVtieHgrhzgTZkHTWaIiEx2L+DmSxPpxFZVB10HhSvkA=
+X-Provags-ID: V03:K1:KtKvff3PowapyjyoDc7YePxu+538PDk/vmtiZvTlzkZ9jp3jNqQ
+ gFIIPiaP5OVaSnYTjVpL6Afp0UZgJh8hy3I4ITJbMJ58R8PGU/pL/THI63R1am6/WFPG/Ma
+ e5QT8bmPMPBa7Upqg+o+9+2GefQCQO7AYaAnYdnuZFZJLmz3rV4/1rduXO7Tpg9tcPL93cD
+ TIevAQjTXU50apx9tAu8Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KYjekaY/82g=:aC0OrA92Kqr3ibM1KDrG0a
+ obzMphQ4lU6V6m1+Dc7dguLWIBZOk6+gMsHzxBryJR685rnXlFkEhHsoAffQbUdKm+Tt0TnKB
+ FEISNvp1EM5/VFcn0hw5zO4OvERXZNt6S7TbMPYrU5eraL4bcdmd/Vg4bzuut5Z9Y9ZxVOXz6
+ gdeVmHZ0tOJfHP93//T64RKrArdB5fFjPqHD7/9dQmiMEwXWCMOiWTJqOvV2szG3vcWOZHp8I
+ 5+a0QcM5jZ3ODqKqkDnzyI8RhMlkS/19bthrm3mIZ08hcgU6HXNy68jeJGuByy7WCdOAi4VUg
+ 1xbjdDM7WPgWOFnPS4eYb+ocZhCJRye2zgfViJ8YyYIq6WxnVCoQPq3zHmIYhINc7vbcRWZRA
+ 2SzfN5btq9m4S4+TgjubgAHbsEpbl1JQUealdkABRY//kRICBPzo6dJnBsAEIlU8cwf2IuyJJ
+ 4r6RUKW9Rll9LdbTyHaiVq6kp763pbe5Wx949PLyHJhLEztrgiAsSpbN2WDWfnYGv2TboqYcH
+ xX8VfuSFk+5E7AzR2hVkKSVi0TRMK7WjaHwJWIOOTEzUq194E3wyvC8/27Xq/vJDrKkYtknAa
+ zheEPAuEDFVmUtr6+vz2NsSMIvVgV400exqA5Jygwezq4YmUvhovAJM3UWCSbzF9sY0vcaFXp
+ Khpxyyw//zOBWebEj5zjKz0eTbN2gkiKm6sc+VC/A3TFVOqS5BoafrC/ECDiEn1KDASQ=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc-8 reports two warnings for the newly added getlabel/setlabel code:
+These two functions now trigger a warning when CONFIG_PROC_FS is disabled:
 
-fs/xfs/xfs_ioctl.c: In function 'xfs_ioc_getlabel':
-fs/xfs/xfs_ioctl.c:1822:38: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
-  strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
-                                      ^
-In function 'strncpy',
-    inlined from 'xfs_ioc_setlabel' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1863:2,
-    inlined from 'xfs_file_ioctl' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1918:10:
-include/linux/string.h:254:9: error: '__builtin_strncpy' output may be truncated copying 12 bytes from a string of length 12 [-Werror=stringop-truncation]
-  return __builtin_strncpy(p, q, size);
+fs/xfs/xfs_stats.c:128:12: error: 'xqmstat_proc_show' defined but not used [-Werror=unused-function]
+ static int xqmstat_proc_show(struct seq_file *m, void *v)
+            ^~~~~~~~~~~~~~~~~
+fs/xfs/xfs_stats.c:118:12: error: 'xqm_proc_show' defined but not used [-Werror=unused-function]
+ static int xqm_proc_show(struct seq_file *m, void *v)
+            ^~~~~~~~~~~~~
 
-In both cases, part of the problem is that one of the strncpy()
-arguments is a fixed-length character array with zero-padding rather
-than a zero-terminated string. In the first one case, we also get an
-odd warning about sizeof-pointer-memaccess, which doesn't seem right
-(the sizeof is for an array that happens to be the same as the second
-strncpy argument).
+Previously, they were referenced from an unused 'static const' structure,
+which is silently dropped by gcc.
 
-To work around the bogus warning, I use a plain 'XFSLABEL_MAX' for
-the strncpy() length when copying the label in getlabel. For setlabel(),
-using memcpy() with the correct length that is already known avoids
-the second warning and is slightly simpler.
+We can address the warning by adding the same #ifdef around them that
+hides the reference.
 
-In a related issue, it appears that we accidentally skip the trailing
-\0 when copying a 12-character label back to user space in getlabel().
-Using the correct sizeof() argument here copies the extra character.
-
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85602
-Fixes: f7664b31975b ("xfs: implement online get/set fs label")
-Cc: Eric Sandeen <sandeen@redhat.com>
-Cc: Martin Sebor <msebor@gmail.com>
+Fixes: 3f3942aca6da ("proc: introduce proc_create_single{,_data}")
+Cc: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/xfs/xfs_ioctl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The warning was caused by a patch in Al's VFS tree, so the fix
+needs to go through the same one.
+---
+ fs/xfs/xfs_stats.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 84fbf164cbc3..eb79f2bc4dcc 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -1819,12 +1819,12 @@ xfs_ioc_getlabel(
- 	BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
- 
- 	spin_lock(&mp->m_sb_lock);
--	strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
-+	strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
- 	spin_unlock(&mp->m_sb_lock);
- 
- 	/* xfs on-disk label is 12 chars, be sure we send a null to user */
- 	label[XFSLABEL_MAX] = '\0';
--	if (copy_to_user(user_label, label, sizeof(sbp->sb_fname)))
-+	if (copy_to_user(user_label, label, sizeof(label)))
- 		return -EFAULT;
- 	return 0;
+diff --git a/fs/xfs/xfs_stats.c b/fs/xfs/xfs_stats.c
+index 04762a72e344..1cc79907b377 100644
+--- a/fs/xfs/xfs_stats.c
++++ b/fs/xfs/xfs_stats.c
+@@ -113,6 +113,7 @@ void xfs_stats_clearall(struct xfsstats __percpu *stats)
+ 	}
  }
-@@ -1860,7 +1860,7 @@ xfs_ioc_setlabel(
  
- 	spin_lock(&mp->m_sb_lock);
- 	memset(sbp->sb_fname, 0, sizeof(sbp->sb_fname));
--	strncpy(sbp->sb_fname, label, sizeof(sbp->sb_fname));
-+	memcpy(sbp->sb_fname, label, len);
- 	spin_unlock(&mp->m_sb_lock);
++#ifdef CONFIG_PROC_FS
+ /* legacy quota interfaces */
+ #ifdef CONFIG_XFS_QUOTA
+ static int xqm_proc_show(struct seq_file *m, void *v)
+@@ -137,7 +138,6 @@ static int xqmstat_proc_show(struct seq_file *m, void *v)
+ }
+ #endif /* CONFIG_XFS_QUOTA */
  
- 	/*
+-#ifdef CONFIG_PROC_FS
+ int
+ xfs_init_procfs(void)
+ {
 -- 
 2.9.0
