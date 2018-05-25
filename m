@@ -1,111 +1,268 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030575AbeEYWSO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:18:14 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44767 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030394AbeEYWSN (ORCPT
+        id S1030684AbeEYWUr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:20:47 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54610 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030514AbeEYWUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:18:13 -0400
-X-Google-Smtp-Source: AB8JxZpBg0qRw8DLF5jbDMFoMJelZKAkuC5izQc33jkGRg1kjHWWSPzdmrdp9UFiDejoiOHfiU785Q==
-Date: Fri, 25 May 2018 15:18:11 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Mike Kravetz <mike.kravetz@oracle.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, hugetlb_cgroup: suppress SIGBUS when hugetlb_cgroup
- charge fails
-In-Reply-To: <20180525140940.976ca667f3c6ff83238c3620@linux-foundation.org>
-Message-ID: <alpine.DEB.2.21.1805251505110.50062@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1805251316090.167008@chino.kir.corp.google.com> <20180525134459.5c6f8e06f55307f72b95a901@linux-foundation.org> <alpine.DEB.2.21.1805251356570.7798@chino.kir.corp.google.com>
- <20180525140940.976ca667f3c6ff83238c3620@linux-foundation.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 25 May 2018 18:20:45 -0400
+X-Google-Smtp-Source: ADUXVKIIX09gnx/YroCqkb+n8pTP9IZy7Y3uqpwTJqwqduZIlEfG39Gue8CcgXgMwxqUHMPQikEDKQ==
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Krzysztof Halasa <khalasa@piap.pl>, Tony Lindgren <tony@atomide.com>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH 5/6 v2] mtd: rawnand: ams-delta: use GPIO lookup table
+Date: Sat, 26 May 2018 00:20:45 +0200
+Message-Id: <20180525222046.11200-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
+References: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018, Andrew Morton wrote:
+Now as the Amstrad Delta board provides GPIO lookup tables, switch from
+GPIO numbers to GPIO descriptors and use the table to locate required
+GPIO pins.
 
-> > > > --- a/mm/hugetlb.c
-> > > > +++ b/mm/hugetlb.c
-> > > > @@ -2006,8 +2006,10 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
-> > > >  	 * code of zero indicates a reservation exists (no change).
-> > > >  	 */
-> > > >  	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
-> > > > -	if (map_chg < 0)
-> > > > -		return ERR_PTR(-ENOMEM);
-> > > > +	if (map_chg < 0) {
-> > > > +		ret = -ENOMEM;
-> > > > +		goto out;
-> > > > +	}
-> > > 
-> > > This doesn't change the return value.
-> > > 
-> > 
-> > This, and the subsequent comments, are referring to the third paragraph of 
-> > the changelog.
-> > 
-> > The functional part of the change is for the 
-> > hugetlb_cgroup_charge_cgroup() return value that is now actually used.
-> 
-> 
-> Ah.  Missed that bit.
-> 
+Declare static variables for storing GPIO descriptors and replace
+gpio_ functions with their gpiod_ equivalents. Return -EPROBE_DEFER
+if the GPIO pins are not yet available so device initialization is
+postponed instead of aborted.
 
-If you'd like this separated into two separate patches, one that fixes the 
-actual issue with the hugetlb_cgroup_charge_cgroup() return value and the 
-other to use a single exit path with ERR_PTR(ret), that might make it 
-easier.  I think the latter is why the bug was introduced: it's too easy 
-to force -ENOSPC unintentionally.
+Pin naming used by the driver should be followed while respective GPIO
+lookup table is initialized by a board init code.
 
-> Altered changelog:
-> 
-> : When charging to a hugetlb_cgroup fails, alloc_huge_page() returns
-> : ERR_PTR(-ENOSPC) which will cause VM_FAULT_SIGBUS to be returned to the
-> : page fault handler.
-> : 
-> : This is because the return value from hugetlb_cgroup_charge_cgroup() is
-> : overwritten with ERR_PTR(-ENOSPC).
-> : 
-> : Instead, propagate the error code from hugetlb_cgroup_charge_cgroup()
-> : (ERR_PTR(-ENOMEM)), so VM_FAULT_OOM is handled correctly.  This is
-> : consistent with failing mem cgroup charges in the non-hugetlb fault path.
-> : 
-> : At the same time, restructure the return paths of alloc_huge_page() so it
-> : is consistent.
-> 
+Created and tested against linux-4.17-rc3, on top of patch 1/6 "ARM:
+OMAP1: ams-delta: add GPIO lookup tables" (already applied to
+omap-for-v4.18/soc tree).
 
-LGTM, thanks.
+Changes since v1:
+- fix handling of devm_gpiod_get_optional() return values - thanks to
+  Andy Shevchenko.
 
-> >
-> > > It would be nice if you could add a comment over alloc_huge_page()
-> > > explaining the return values (at least).  Why sometimes ENOMEM, other
-> > > times ENOSPC?
-> > > 
-> > 
-> > The ENOSPC is used to specifically induce a VM_FAULT_SIGBUS, which 
-> > Documentation/vm/hugetlbfs_reserv.txt specifies is how faults are handled 
-> > if no hugetlb pages are available.
-> 
-> That wasn't a code comment ;) Nobody will know to go looking in
-> hugetlbfs_reserv.txt - it isn't even referred to from mm/*.c.
-> 
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+ drivers/mtd/nand/raw/ams-delta.c | 120 +++++++++++++++++++++------------------
+ 1 file changed, 64 insertions(+), 56 deletions(-)
 
-Let's see what Mike and Aneesh say, because they may object to using 
-VM_FAULT_OOM because there's no way to guarantee that we'll come under the 
-limit of hugetlb_cgroup as a result of the oom.  My assumption is that we 
-use VM_FAULT_SIGBUS since oom killing will not guarantee that the 
-allocation can succeed.  But now a process can get a SIGBUS if its hugetlb 
-pages are not allocatable or its under a limit imposed by hugetlb_cgroup 
-that it's not aware of.  Faulting hugetlb pages is certainly risky 
-business these days...
-
-Perhaps the optimal solution for reaching hugetlb_cgroup limits is to 
-induce an oom kill from within the hugetlb_cgroup itself?  Otherwise the 
-unlucky process to fault their hugetlb pages last gets SIGBUS.
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 37a3cc21c7bc..524ceaf12de0 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -20,23 +20,28 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+-#include <linux/gpio.h>
+ #include <linux/platform_data/gpio-omap.h>
+ 
+ #include <asm/io.h>
+ #include <asm/sizes.h>
+ 
+-#include <mach/board-ams-delta.h>
+-
+ #include <mach/hardware.h>
+ 
+ /*
+  * MTD structure for E3 (Delta)
+  */
+ static struct mtd_info *ams_delta_mtd = NULL;
++static struct gpio_desc *gpiod_rdy;
++static struct gpio_desc *gpiod_nce;
++static struct gpio_desc *gpiod_nre;
++static struct gpio_desc *gpiod_nwp;
++static struct gpio_desc *gpiod_nwe;
++static struct gpio_desc *gpiod_ale;
++static struct gpio_desc *gpiod_cle;
+ 
+ /*
+  * Define partitions for flash devices
+@@ -70,9 +75,9 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+ 
+ 	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+ 	writew(byte, this->IO_ADDR_W);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 0);
++	gpiod_set_value(gpiod_nwe, 0);
+ 	ndelay(40);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 1);
++	gpiod_set_value(gpiod_nwe, 1);
+ }
+ 
+ static u_char ams_delta_read_byte(struct mtd_info *mtd)
+@@ -81,11 +86,11 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
+ 	struct nand_chip *this = mtd_to_nand(mtd);
+ 	void __iomem *io_base = (void __iomem *)nand_get_controller_data(this);
+ 
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 0);
++	gpiod_set_value(gpiod_nre, 0);
+ 	ndelay(40);
+ 	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
+ 	res = readw(this->IO_ADDR_R);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 1);
++	gpiod_set_value(gpiod_nre, 1);
+ 
+ 	return res;
+ }
+@@ -120,12 +125,9 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+ {
+ 
+ 	if (ctrl & NAND_CTRL_CHANGE) {
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NCE,
+-				(ctrl & NAND_NCE) == 0);
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_CLE,
+-				(ctrl & NAND_CLE) != 0);
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_ALE,
+-				(ctrl & NAND_ALE) != 0);
++		gpiod_set_value(gpiod_nce, !(ctrl & NAND_NCE));
++		gpiod_set_value(gpiod_cle, !!(ctrl & NAND_CLE));
++		gpiod_set_value(gpiod_ale, !!(ctrl & NAND_ALE));
+ 	}
+ 
+ 	if (cmd != NAND_CMD_NONE)
+@@ -134,41 +136,9 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+ 
+ static int ams_delta_nand_ready(struct mtd_info *mtd)
+ {
+-	return gpio_get_value(AMS_DELTA_GPIO_PIN_NAND_RB);
++	return gpiod_get_value(gpiod_rdy);
+ }
+ 
+-static const struct gpio _mandatory_gpio[] = {
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NCE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nce",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NRE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nre",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWP,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nwp",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nwe",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_ALE,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "nand_ale",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_CLE,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "nand_cle",
+-	},
+-};
+ 
+ /*
+  * Main initialization routine
+@@ -216,12 +186,17 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	this->write_buf = ams_delta_write_buf;
+ 	this->read_buf = ams_delta_read_buf;
+ 	this->cmd_ctrl = ams_delta_hwcontrol;
+-	if (gpio_request(AMS_DELTA_GPIO_PIN_NAND_RB, "nand_rdy") == 0) {
+-		this->dev_ready = ams_delta_nand_ready;
+-	} else {
+-		this->dev_ready = NULL;
+-		pr_notice("Couldn't request gpio for Delta NAND ready.\n");
++
++	gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
++	if (IS_ERR(gpiod_rdy)) {
++		err = PTR_ERR(gpiod_rdy);
++		dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
++		goto err_gpiod;
+ 	}
++
++	if (gpiod_rdy)
++		this->dev_ready = ams_delta_nand_ready;
++
+ 	/* 25 us command delay time */
+ 	this->chip_delay = 30;
+ 	this->ecc.mode = NAND_ECC_SOFT;
+@@ -230,7 +205,44 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, io_base);
+ 
+ 	/* Set chip enabled, but  */
+-	err = gpio_request_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
++	gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nwp)) {
++		err = PTR_ERR(gpiod_nwp);
++		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nce)) {
++		err = PTR_ERR(gpiod_nce);
++		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nre)) {
++		err = PTR_ERR(gpiod_nre);
++		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nwe)) {
++		err = PTR_ERR(gpiod_nwe);
++		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_ale)) {
++		err = PTR_ERR(gpiod_ale);
++		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
++		goto err_gpiod;
++	}
++	gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_cle)) {
++		err = PTR_ERR(gpiod_cle);
++		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
++	}
++err_gpiod:
++	if (err == -ENODEV || err == -ENOENT)
++		err = -EPROBE_DEFER;
+ 	if (err)
+ 		goto out_gpio;
+ 
+@@ -246,9 +258,7 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	goto out;
+ 
+  out_mtd:
+-	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+ out_gpio:
+-	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
+ 	iounmap(io_base);
+ out_free:
+ 	kfree(this);
+@@ -266,8 +276,6 @@ static int ams_delta_cleanup(struct platform_device *pdev)
+ 	/* Release resources, unregister device */
+ 	nand_release(ams_delta_mtd);
+ 
+-	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+-	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
+ 	iounmap(io_base);
+ 
+ 	/* Free the MTD device structure */
+-- 
+2.16.1
