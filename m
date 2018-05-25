@@ -1,69 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967572AbeEYRrp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:47:45 -0400
-Received: from mga12.intel.com ([192.55.52.136]:8486 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967349AbeEYRro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:47:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
-   d="scan'208";a="50237280"
-Subject: [PATCH] uio, lib: Fix CONFIG_ARCH_HAS_UACCESS_MCSAFE compilation
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-nvdimm@lists.01.org, mingo@kernel.org, tglx@linutronix.de,
-        x86@kernel.org
-Date: Fri, 25 May 2018 10:37:47 -0700
-Message-ID: <152726957962.11148.3528187388080177021.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S967544AbeEYRtm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:49:42 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41544 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967349AbeEYRtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 13:49:41 -0400
+X-Google-Smtp-Source: AB8JxZpreYVzFJD1W+gAYA5EmBBBiqGkZBte9nqKFKxQ3K0TfItTj9fBJUCW038sEjOtjCzqxutR81f4UisCWCEQJX4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+ <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
+ <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com> <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
+ <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com> <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
+ <31A5469A-176F-451F-886A-ECD649DDC78C@zytor.com> <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
+ <12a870df-5f9d-94d1-8318-42cfff1bedab@redhat.com>
+In-Reply-To: <12a870df-5f9d-94d1-8318-42cfff1bedab@redhat.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 25 May 2018 10:49:28 -0700
+Message-ID: <CAKwvOdnq-H2M=psJMxo7k7HiEvZVY+z+4+geONwNZdBC9VmhvQ@mail.gmail.com>
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: tstellar@redhat.com
+Cc: hpa@zytor.com, Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4PHnl70009555
 
-Add a common Kconfig CONFIG_ARCH_HAS_UACCESS_MCSAFE that archs can
-optionally select, and fixup the declaration of _copy_to_iter_mcsafe().
+On Fri, May 25, 2018 at 10:35 AM Tom Stellard <tstellar@redhat.com> wrote:
+> On 05/25/2018 10:31 AM, Nick Desaulniers wrote:
+> > On Fri, May 25, 2018 at 9:53 AM <hpa@zytor.com> wrote:
+> >> On May 25, 2018 9:46:42 AM PDT, Nick Desaulniers <
+ndesaulniers@google.com>
+> > wrote:
+> >>> On Fri, May 25, 2018 at 9:33 AM <hpa@zytor.com> wrote:
+> >>>> On May 25, 2018 9:27:40 AM PDT, Nick Desaulniers
+> >>> <ndesaulniers@google.com> wrote:
+> >>> When you say
+> >>>
+> >>>> It still should be available as as inline, however, but now "extern
+> >>> inline".
+> >>>
+> >>> Am I understanding correctly that native_save_fl should be inlined
+into
+> >>> all
+> >>> call sites (modulo the problematic pv_irq_ops.save_fl case)?  Because
+> >>> for
+> >>> these two assembly implementations, it's not, but maybe there's
+> >>> something
+> >>> missing in my implementation?
+> >
+> >> Yes, that's what "extern inline" means. Maybe it needs a must inline
+> > annotation, but that's really messed up.
+> >
 
-Fixes: 8780356ef630 ("x86/asm/memcpy_mcsafe: Define copy_to_iter_mcsafe()")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Ingo, Thomas, fyi, here is a trivial compilation fixup I will carry in
-my tree based on tip/x86/dax. I missed defining the Kconfig symbol, and
-my unit test was only dependent on the low level implementation.
+> What about doing something like suggested here:
+> https://bugs.llvm.org/show_bug.cgi?id=37512#c17
 
- include/linux/uio.h |    2 +-
- lib/Kconfig         |    3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+> This would keep the definition in C and make it easier for compilers
+> to inline.
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index f5766e853a77..409c845d4cd3 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -155,7 +155,7 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i);
- #endif
- 
- #ifdef CONFIG_ARCH_HAS_UACCESS_MCSAFE
--size_t _copy_to_iter_mcsafe(void *addr, size_t bytes, struct iov_iter *i);
-+size_t _copy_to_iter_mcsafe(const void *addr, size_t bytes, struct iov_iter *i);
- #else
- #define _copy_to_iter_mcsafe _copy_to_iter
- #endif
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 5fe577673b98..907f6e4f1cf2 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -586,6 +586,9 @@ config ARCH_HAS_PMEM_API
- config ARCH_HAS_UACCESS_FLUSHCACHE
- 	bool
- 
-+config ARCH_HAS_UACCESS_MCSAFE
-+	bool
-+
- config STACKDEPOT
- 	bool
- 	select STACKTRACE
+The GCC docs for __attribute__((naked)) seem to imply this is a machine
+specific constraint (of which x86 is not listed):
+https://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Function-Attributes.html
+
+But let's try with source:
+https://godbolt.org/g/aJ4gZB
+
+Clang errors:
+<source>:3:3: error: non-ASM statement in naked function is not supported
+   unsigned long flags;
+   ^
+
+Is it valid to use assembly to place the results in %rax and mark the c
+function somehow?
+
+gcc doesn't support this attribute until 4.9 (but we can add a feature test
+for attributes with gcc (unlike builtins)), but warns that:
+
+warning: ‘naked’ attribute directive ignored [-Wattributes]
+
+gcc 8.1 and trunk inserts a `ud2` instruction (what?!) (let me see if I can
+repro outside of godbolt, and will file a bug report).
+-- 
+Thanks,
+~Nick Desaulniers
