@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755389AbeEYDsQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:48:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41336 "EHLO mx1.redhat.com"
+        id S1755401AbeEYDs2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:48:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37922 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755141AbeEYDsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:48:14 -0400
+        id S1755015AbeEYDs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:48:26 -0400
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -16,119 +16,53 @@ Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
         Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 07/33] block: use bio_for_each_segment() to map sg
-Date: Fri, 25 May 2018 11:45:55 +0800
-Message-Id: <20180525034621.31147-8-ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 08/33] block: introduce segment_last_page()
+Date: Fri, 25 May 2018 11:45:56 +0800
+Message-Id: <20180525034621.31147-9-ming.lei@redhat.com>
 In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
 References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is more efficient to use bio_for_each_segment() to map sg, meantime
-we have to consider splitting multipage bvec as done in blk_bio_segment_split().
+BTRFS and guard_bio_eod() need to get the last page from one segment, so
+introduce this helper to make them happy.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- block/blk-merge.c | 72 +++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 52 insertions(+), 20 deletions(-)
+ include/linux/bvec.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index d157b752d965..9fc96c9f6061 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -414,6 +414,56 @@ static int blk_phys_contig_segment(struct request_queue *q, struct bio *bio,
- 	return 0;
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index 84c395feed49..217afcd83a15 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -219,4 +219,26 @@ static inline bool bvec_iter_seg_advance(const struct bio_vec *bv,
+ 	.bi_bvec_done	= 0,						\
  }
  
-+static struct scatterlist *blk_next_sg(struct scatterlist **sg,
-+		struct scatterlist *sglist)
++/* get the last page from the multipage bvec and store it in @pg */
++static inline void segment_last_page(const struct bio_vec *seg,
++		struct bio_vec *pg)
 +{
-+	if (!*sg)
-+		return sglist;
-+	else {
-+		/*
-+		 * If the driver previously mapped a shorter
-+		 * list, we could see a termination bit
-+		 * prematurely unless it fully inits the sg
-+		 * table on each mapping. We KNOW that there
-+		 * must be more entries here or the driver
-+		 * would be buggy, so force clear the
-+		 * termination bit to avoid doing a full
-+		 * sg_init_table() in drivers for each command.
-+		 */
-+		sg_unmark_end(*sg);
-+		return sg_next(*sg);
++	unsigned total = seg->bv_offset + seg->bv_len;
++	unsigned last_page = total / PAGE_SIZE;
++
++	if (last_page * PAGE_SIZE == total)
++		last_page--;
++
++	pg->bv_page = nth_page(seg->bv_page, last_page);
++
++	/* the whole segment is inside the last page */
++	if (seg->bv_offset >= last_page * PAGE_SIZE) {
++		pg->bv_offset = seg->bv_offset % PAGE_SIZE;
++		pg->bv_len = seg->bv_len;
++	} else {
++		pg->bv_offset = 0;
++		pg->bv_len = total - last_page * PAGE_SIZE;
 +	}
 +}
 +
-+static unsigned blk_bvec_map_sg(struct request_queue *q,
-+		struct bio_vec *bvec, struct scatterlist *sglist,
-+		struct scatterlist **sg)
-+{
-+	unsigned nbytes = bvec->bv_len;
-+	unsigned nsegs = 0, total = 0;
-+
-+	while (nbytes > 0) {
-+		unsigned seg_size;
-+		struct page *pg;
-+		unsigned offset, idx;
-+
-+		*sg = blk_next_sg(sg, sglist);
-+
-+		seg_size = min(nbytes, queue_max_segment_size(q));
-+		offset = (total + bvec->bv_offset) % PAGE_SIZE;
-+		idx = (total + bvec->bv_offset) / PAGE_SIZE;
-+		pg = nth_page(bvec->bv_page, idx);
-+
-+		sg_set_page(*sg, pg, seg_size, offset);
-+
-+		total += seg_size;
-+		nbytes -= seg_size;
-+		nsegs++;
-+	}
-+
-+	return nsegs;
-+}
-+
- static inline void
- __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
- 		     struct scatterlist *sglist, struct bio_vec *bvprv,
-@@ -434,25 +484,7 @@ __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
- 		(*sg)->length += nbytes;
- 	} else {
- new_segment:
--		if (!*sg)
--			*sg = sglist;
--		else {
--			/*
--			 * If the driver previously mapped a shorter
--			 * list, we could see a termination bit
--			 * prematurely unless it fully inits the sg
--			 * table on each mapping. We KNOW that there
--			 * must be more entries here or the driver
--			 * would be buggy, so force clear the
--			 * termination bit to avoid doing a full
--			 * sg_init_table() in drivers for each command.
--			 */
--			sg_unmark_end(*sg);
--			*sg = sg_next(*sg);
--		}
--
--		sg_set_page(*sg, bvec->bv_page, nbytes, bvec->bv_offset);
--		(*nsegs)++;
-+		(*nsegs) += blk_bvec_map_sg(q, bvec, sglist, sg);
- 	}
- 	*bvprv = *bvec;
- }
-@@ -474,7 +506,7 @@ static int __blk_bios_map_sg(struct request_queue *q, struct bio *bio,
- 	int cluster = blk_queue_cluster(q), nsegs = 0;
- 
- 	for_each_bio(bio)
--		bio_for_each_page(bvec, bio, iter)
-+		bio_for_each_segment(bvec, bio, iter)
- 			__blk_segment_map_sg(q, &bvec, sglist, &bvprv, sg,
- 					     &nsegs, &cluster);
- 
+ #endif /* __LINUX_BVEC_ITER_H */
 -- 
 2.9.5
