@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966662AbeEYPdw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:33:52 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40090 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964823AbeEYPdr (ORCPT
+        id S966736AbeEYPd5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:33:57 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32922 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966646AbeEYPdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:33:47 -0400
-X-Google-Smtp-Source: ADUXVKIvISQGo6VG3E/0b5xPnLHk3b+vj+WFS7EG9M7kX0LO41XWloa4lyMHAWNGYPqR65GdtaYF4A==
+        Fri, 25 May 2018 11:33:52 -0400
+X-Google-Smtp-Source: ADUXVKIJG9xxQhg/CcVLrK48OSqXCG8SqIpb3PomhRj+L9goTlUFZBnF+gLnjLNJRd33Ml7ULrlgwg==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
 Cc: daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH 2/8] xen/balloon: Move common memory reservation routines to a module
-Date: Fri, 25 May 2018 18:33:25 +0300
-Message-Id: <20180525153331.31188-3-andr2000@gmail.com>
+Subject: [PATCH 5/8] xen/gntdev: Add initial support for dma-buf UAPI
+Date: Fri, 25 May 2018 18:33:28 +0300
+Message-Id: <20180525153331.31188-6-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180525153331.31188-1-andr2000@gmail.com>
 References: <20180525153331.31188-1-andr2000@gmail.com>
@@ -27,347 +27,329 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Memory {increase|decrease}_reservation and VA mappings update/reset
-code used in balloon driver can be made common, so other drivers can
-also re-use the same functionality without open-coding.
-Create a dedicated module for the shared code and export corresponding
-symbols for other kernel modules.
+Add UAPI and IOCTLs for dma-buf grant device driver extension:
+the extension allows userspace processes and kernel modules to
+use Xen backed dma-buf implementation. With this extension grant
+references to the pages of an imported dma-buf can be exported
+for other domain use and grant references coming from a foreign
+domain can be converted into a local dma-buf for local export.
+Implement basic initialization and stubs for Xen DMA buffers'
+support.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/xen/Makefile          |   1 +
- drivers/xen/balloon.c         |  71 ++----------------
- drivers/xen/mem-reservation.c | 134 ++++++++++++++++++++++++++++++++++
- include/xen/mem_reservation.h |  29 ++++++++
- 4 files changed, 170 insertions(+), 65 deletions(-)
- create mode 100644 drivers/xen/mem-reservation.c
- create mode 100644 include/xen/mem_reservation.h
+ drivers/xen/Kconfig       |  10 +++
+ drivers/xen/gntdev.c      | 148 ++++++++++++++++++++++++++++++++++++++
+ include/uapi/xen/gntdev.h |  91 +++++++++++++++++++++++
+ 3 files changed, 249 insertions(+)
 
-diff --git a/drivers/xen/Makefile b/drivers/xen/Makefile
-index 451e833f5931..3c87b0c3aca6 100644
---- a/drivers/xen/Makefile
-+++ b/drivers/xen/Makefile
-@@ -2,6 +2,7 @@
- obj-$(CONFIG_HOTPLUG_CPU)		+= cpu_hotplug.o
- obj-$(CONFIG_X86)			+= fallback.o
- obj-y	+= grant-table.o features.o balloon.o manage.o preempt.o time.o
-+obj-y	+= mem-reservation.o
- obj-y	+= events/
- obj-y	+= xenbus/
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index 3431fe210624..eaf63a2c7ae6 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -152,6 +152,16 @@ config XEN_GNTDEV
+ 	help
+ 	  Allows userspace processes to use grants.
  
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index 065f0b607373..57b482d67a3a 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -71,6 +71,7 @@
- #include <xen/balloon.h>
- #include <xen/features.h>
- #include <xen/page.h>
-+#include <xen/mem_reservation.h>
++config XEN_GNTDEV_DMABUF
++	bool "Add support for dma-buf grant access device driver extension"
++	depends on XEN_GNTDEV && XEN_GRANT_DMA_ALLOC
++	help
++	  Allows userspace processes and kernel modules to use Xen backed
++	  dma-buf implementation. With this extension grant references to
++	  the pages of an imported dma-buf can be exported for other domain
++	  use and grant references coming from a foreign domain can be
++	  converted into a local dma-buf for local export.
++
+ config XEN_GRANT_DEV_ALLOC
+ 	tristate "User-space grant reference allocator driver"
+ 	depends on XEN
+diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+index 640a579f42ea..9e450622af1a 100644
+--- a/drivers/xen/gntdev.c
++++ b/drivers/xen/gntdev.c
+@@ -6,6 +6,7 @@
+  *
+  * Copyright (c) 2006-2007, D G Murray.
+  *           (c) 2009 Gerd Hoffmann <kraxel@redhat.com>
++ *           (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+  *
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+@@ -122,6 +123,17 @@ struct grant_map {
+ #endif
+ };
  
- static int xen_hotplug_unpopulated;
++#ifdef CONFIG_XEN_GNTDEV_DMABUF
++struct xen_dmabuf {
++	union {
++		struct {
++			/* Granted references of the imported buffer. */
++			grant_ref_t *refs;
++		} imp;
++	} u;
++};
++#endif
++
+ static int unmap_grant_pages(struct grant_map *map, int offset, int pages);
  
-@@ -157,13 +158,6 @@ static DECLARE_DELAYED_WORK(balloon_worker, balloon_process);
- #define GFP_BALLOON \
- 	(GFP_HIGHUSER | __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC)
+ static struct miscdevice gntdev_miscdev;
+@@ -1036,6 +1048,128 @@ static long gntdev_ioctl_grant_copy(struct gntdev_priv *priv, void __user *u)
+ 	return ret;
+ }
  
--static void scrub_page(struct page *page)
--{
--#ifdef CONFIG_XEN_SCRUB_PAGES
--	clear_highpage(page);
--#endif
--}
--
- /* balloon_append: add the given page to the balloon. */
- static void __balloon_append(struct page *page)
++#ifdef CONFIG_XEN_GNTDEV_DMABUF
++/* ------------------------------------------------------------------ */
++/* DMA buffer export support.                                         */
++/* ------------------------------------------------------------------ */
++
++static int dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
++				    int wait_to_ms)
++{
++	return -ETIMEDOUT;
++}
++
++static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
++				int count, u32 domid, u32 *refs, u32 *fd)
++{
++	*fd = -1;
++	return -EINVAL;
++}
++
++/* ------------------------------------------------------------------ */
++/* DMA buffer import support.                                         */
++/* ------------------------------------------------------------------ */
++
++static int dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
++{
++	return 0;
++}
++
++static struct xen_dmabuf *
++dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd, int count, int domid)
++{
++	return ERR_PTR(-ENOMEM);
++}
++
++/* ------------------------------------------------------------------ */
++/* DMA buffer IOCTL support.                                          */
++/* ------------------------------------------------------------------ */
++
++static long
++gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv,
++				  struct ioctl_gntdev_dmabuf_exp_from_refs __user *u)
++{
++	struct ioctl_gntdev_dmabuf_exp_from_refs op;
++	u32 *refs;
++	long ret;
++
++	if (copy_from_user(&op, u, sizeof(op)) != 0)
++		return -EFAULT;
++
++	refs = kcalloc(op.count, sizeof(*refs), GFP_KERNEL);
++	if (!refs)
++		return -ENOMEM;
++
++	if (copy_from_user(refs, u->refs, sizeof(*refs) * op.count) != 0) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	ret = dmabuf_exp_from_refs(priv, op.flags, op.count,
++				   op.domid, refs, &op.fd);
++	if (ret)
++		goto out;
++
++	if (copy_to_user(u, &op, sizeof(op)) != 0)
++		ret = -EFAULT;
++
++out:
++	kfree(refs);
++	return ret;
++}
++
++static long
++gntdev_ioctl_dmabuf_exp_wait_released(struct gntdev_priv *priv,
++				      struct ioctl_gntdev_dmabuf_exp_wait_released __user *u)
++{
++	struct ioctl_gntdev_dmabuf_exp_wait_released op;
++
++	if (copy_from_user(&op, u, sizeof(op)) != 0)
++		return -EFAULT;
++
++	return dmabuf_exp_wait_released(priv, op.fd, op.wait_to_ms);
++}
++
++static long
++gntdev_ioctl_dmabuf_imp_to_refs(struct gntdev_priv *priv,
++				struct ioctl_gntdev_dmabuf_imp_to_refs __user *u)
++{
++	struct ioctl_gntdev_dmabuf_imp_to_refs op;
++	struct xen_dmabuf *xen_dmabuf;
++	long ret;
++
++	if (copy_from_user(&op, u, sizeof(op)) != 0)
++		return -EFAULT;
++
++	xen_dmabuf = dmabuf_imp_to_refs(priv, op.fd, op.count, op.domid);
++	if (IS_ERR(xen_dmabuf))
++		return PTR_ERR(xen_dmabuf);
++
++	if (copy_to_user(u->refs, xen_dmabuf->u.imp.refs,
++			 sizeof(*u->refs) * op.count) != 0) {
++		ret = -EFAULT;
++		goto out_release;
++	}
++	return 0;
++
++out_release:
++	dmabuf_imp_release(priv, op.fd);
++	return ret;
++}
++
++static long
++gntdev_ioctl_dmabuf_imp_release(struct gntdev_priv *priv,
++				struct ioctl_gntdev_dmabuf_imp_release __user *u)
++{
++	struct ioctl_gntdev_dmabuf_imp_release op;
++
++	if (copy_from_user(&op, u, sizeof(op)) != 0)
++		return -EFAULT;
++
++	return dmabuf_imp_release(priv, op.fd);
++}
++#endif
++
+ static long gntdev_ioctl(struct file *flip,
+ 			 unsigned int cmd, unsigned long arg)
  {
-@@ -463,11 +457,6 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
- 	int rc;
- 	unsigned long i;
- 	struct page   *page;
--	struct xen_memory_reservation reservation = {
--		.address_bits = 0,
--		.extent_order = EXTENT_ORDER,
--		.domid        = DOMID_SELF
--	};
+@@ -1058,6 +1192,20 @@ static long gntdev_ioctl(struct file *flip,
+ 	case IOCTL_GNTDEV_GRANT_COPY:
+ 		return gntdev_ioctl_grant_copy(priv, ptr);
  
- 	if (nr_pages > ARRAY_SIZE(frame_list))
- 		nr_pages = ARRAY_SIZE(frame_list);
-@@ -486,9 +475,7 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
- 		page = balloon_next_page(page);
- 	}
- 
--	set_xen_guest_handle(reservation.extent_start, frame_list);
--	reservation.nr_extents = nr_pages;
--	rc = HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
-+	rc = xenmem_reservation_increase(nr_pages, frame_list);
- 	if (rc <= 0)
- 		return BP_EAGAIN;
- 
-@@ -496,29 +483,7 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
- 		page = balloon_retrieve(false);
- 		BUG_ON(page == NULL);
- 
--#ifdef CONFIG_XEN_HAVE_PVMMU
--		/*
--		 * We don't support PV MMU when Linux and Xen is using
--		 * different page granularity.
--		 */
--		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
--
--		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
--			unsigned long pfn = page_to_pfn(page);
--
--			set_phys_to_machine(pfn, frame_list[i]);
--
--			/* Link back into the page tables if not highmem. */
--			if (!PageHighMem(page)) {
--				int ret;
--				ret = HYPERVISOR_update_va_mapping(
--						(unsigned long)__va(pfn << PAGE_SHIFT),
--						mfn_pte(frame_list[i], PAGE_KERNEL),
--						0);
--				BUG_ON(ret);
--			}
--		}
--#endif
-+		xenmem_reservation_va_mapping_update(1, &page, &frame_list[i]);
- 
- 		/* Relinquish the page back to the allocator. */
- 		free_reserved_page(page);
-@@ -535,11 +500,6 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
- 	unsigned long i;
- 	struct page *page, *tmp;
- 	int ret;
--	struct xen_memory_reservation reservation = {
--		.address_bits = 0,
--		.extent_order = EXTENT_ORDER,
--		.domid        = DOMID_SELF
--	};
- 	LIST_HEAD(pages);
- 
- 	if (nr_pages > ARRAY_SIZE(frame_list))
-@@ -553,7 +513,7 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
- 			break;
- 		}
- 		adjust_managed_page_count(page, -1);
--		scrub_page(page);
-+		xenmem_reservation_scrub_page(page);
- 		list_add(&page->lru, &pages);
- 	}
- 
-@@ -575,25 +535,8 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
- 		/* XENMEM_decrease_reservation requires a GFN */
- 		frame_list[i++] = xen_page_to_gfn(page);
- 
--#ifdef CONFIG_XEN_HAVE_PVMMU
--		/*
--		 * We don't support PV MMU when Linux and Xen is using
--		 * different page granularity.
--		 */
--		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
--
--		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
--			unsigned long pfn = page_to_pfn(page);
-+		xenmem_reservation_va_mapping_reset(1, &page);
- 
--			if (!PageHighMem(page)) {
--				ret = HYPERVISOR_update_va_mapping(
--						(unsigned long)__va(pfn << PAGE_SHIFT),
--						__pte_ma(0), 0);
--				BUG_ON(ret);
--			}
--			__set_phys_to_machine(pfn, INVALID_P2M_ENTRY);
--		}
--#endif
- 		list_del(&page->lru);
- 
- 		balloon_append(page);
-@@ -601,9 +544,7 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
- 
- 	flush_tlb_all();
- 
--	set_xen_guest_handle(reservation.extent_start, frame_list);
--	reservation.nr_extents   = nr_pages;
--	ret = HYPERVISOR_memory_op(XENMEM_decrease_reservation, &reservation);
-+	ret = xenmem_reservation_decrease(nr_pages, frame_list);
- 	BUG_ON(ret != nr_pages);
- 
- 	balloon_stats.current_pages -= nr_pages;
-diff --git a/drivers/xen/mem-reservation.c b/drivers/xen/mem-reservation.c
-new file mode 100644
-index 000000000000..29882e4324f5
---- /dev/null
-+++ b/drivers/xen/mem-reservation.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
++#ifdef CONFIG_XEN_GNTDEV_DMABUF
++	case IOCTL_GNTDEV_DMABUF_EXP_FROM_REFS:
++		return gntdev_ioctl_dmabuf_exp_from_refs(priv, ptr);
 +
-+/******************************************************************************
-+ * Xen memory reservation utilities.
-+ *
-+ * Copyright (c) 2003, B Dragovic
-+ * Copyright (c) 2003-2004, M Williamson, K Fraser
-+ * Copyright (c) 2005 Dan M. Smith, IBM Corporation
-+ * Copyright (c) 2010 Daniel Kiper
++	case IOCTL_GNTDEV_DMABUF_EXP_WAIT_RELEASED:
++		return gntdev_ioctl_dmabuf_exp_wait_released(priv, ptr);
++
++	case IOCTL_GNTDEV_DMABUF_IMP_TO_REFS:
++		return gntdev_ioctl_dmabuf_imp_to_refs(priv, ptr);
++
++	case IOCTL_GNTDEV_DMABUF_IMP_RELEASE:
++		return gntdev_ioctl_dmabuf_imp_release(priv, ptr);
++#endif
++
+ 	default:
+ 		pr_debug("priv %p, unknown cmd %x\n", priv, cmd);
+ 		return -ENOIOCTLCMD;
+diff --git a/include/uapi/xen/gntdev.h b/include/uapi/xen/gntdev.h
+index 2d5a4672f07c..568d5cb522e9 100644
+--- a/include/uapi/xen/gntdev.h
++++ b/include/uapi/xen/gntdev.h
+@@ -5,6 +5,7 @@
+  * Interface to /dev/xen/gntdev.
+  * 
+  * Copyright (c) 2007, D G Murray
 + * Copyright (c) 2018, Oleksandr Andrushchenko, EPAM Systems Inc.
+  * 
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License version 2
+@@ -215,4 +216,94 @@ struct ioctl_gntdev_grant_copy {
+  */
+ #define GNTDEV_DMA_FLAG_COHERENT	(1 << 2)
+ 
++/*
++ * Create a dma-buf [1] from grant references @refs of count @count provided
++ * by the foreign domain @domid with flags @flags.
++ *
++ * By default dma-buf is backed by system memory pages, but by providing
++ * one of the GNTDEV_DMA_FLAG_XXX flags it can also be created as
++ * a DMA write-combine or coherent buffer, e.g. allocated with dma_alloc_wc/
++ * dma_alloc_coherent.
++ *
++ * Returns 0 if dma-buf was successfully created and the corresponding
++ * dma-buf's file descriptor is returned in @fd.
++ *
++ * [1] https://elixir.bootlin.com/linux/latest/source/Documentation/driver-api/dma-buf.rst
 + */
 +
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+
-+#include <asm/tlb.h>
-+#include <asm/xen/hypercall.h>
-+
-+#include <xen/interface/memory.h>
-+#include <xen/page.h>
++#define IOCTL_GNTDEV_DMABUF_EXP_FROM_REFS \
++	_IOC(_IOC_NONE, 'G', 9, \
++	     sizeof(struct ioctl_gntdev_dmabuf_exp_from_refs))
++struct ioctl_gntdev_dmabuf_exp_from_refs {
++	/* IN parameters. */
++	/* Specific options for this dma-buf: see GNTDEV_DMA_FLAG_XXX. */
++	__u32 flags;
++	/* Number of grant references in @refs array. */
++	__u32 count;
++	/* OUT parameters. */
++	/* File descriptor of the dma-buf. */
++	__u32 fd;
++	/* The domain ID of the grant references to be mapped. */
++	__u32 domid;
++	/* Variable IN parameter. */
++	/* Array of grant references of size @count. */
++	__u32 refs[1];
++};
 +
 +/*
-+ * Use one extent per PAGE_SIZE to avoid to break down the page into
-+ * multiple frame.
++ * This will block until the dma-buf with the file descriptor @fd is
++ * released. This is only valid for buffers created with
++ * IOCTL_GNTDEV_DMABUF_EXP_FROM_REFS.
++ *
++ * If within @wait_to_ms milliseconds the buffer is not released
++ * then -ETIMEDOUT error is returned.
++ * If the buffer with the file descriptor @fd does not exist or has already
++ * been released, then -ENOENT is returned. For valid file descriptors
++ * this must not be treated as error.
 + */
-+#define EXTENT_ORDER (fls(XEN_PFN_PER_PAGE) - 1)
-+
-+void xenmem_reservation_scrub_page(struct page *page)
-+{
-+#ifdef CONFIG_XEN_SCRUB_PAGES
-+	clear_highpage(page);
-+#endif
-+}
-+EXPORT_SYMBOL(xenmem_reservation_scrub_page);
-+
-+void xenmem_reservation_va_mapping_update(unsigned long count,
-+					  struct page **pages,
-+					  xen_pfn_t *frames)
-+{
-+#ifdef CONFIG_XEN_HAVE_PVMMU
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		struct page *page;
-+
-+		page = pages[i];
-+		BUG_ON(page == NULL);
-+
-+		/*
-+		 * We don't support PV MMU when Linux and Xen is using
-+		 * different page granularity.
-+		 */
-+		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
-+
-+		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
-+			unsigned long pfn = page_to_pfn(page);
-+
-+			set_phys_to_machine(pfn, frames[i]);
-+
-+			/* Link back into the page tables if not highmem. */
-+			if (!PageHighMem(page)) {
-+				int ret;
-+
-+				ret = HYPERVISOR_update_va_mapping(
-+						(unsigned long)__va(pfn << PAGE_SHIFT),
-+						mfn_pte(frames[i], PAGE_KERNEL),
-+						0);
-+				BUG_ON(ret);
-+			}
-+		}
-+	}
-+#endif
-+}
-+EXPORT_SYMBOL(xenmem_reservation_va_mapping_update);
-+
-+void xenmem_reservation_va_mapping_reset(unsigned long count,
-+					 struct page **pages)
-+{
-+#ifdef CONFIG_XEN_HAVE_PVMMU
-+	int i;
-+
-+	for (i = 0; i < count; i++) {
-+		/*
-+		 * We don't support PV MMU when Linux and Xen is using
-+		 * different page granularity.
-+		 */
-+		BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
-+
-+		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
-+			struct page *page = pages[i];
-+			unsigned long pfn = page_to_pfn(page);
-+
-+			if (!PageHighMem(page)) {
-+				int ret;
-+
-+				ret = HYPERVISOR_update_va_mapping(
-+						(unsigned long)__va(pfn << PAGE_SHIFT),
-+						__pte_ma(0), 0);
-+				BUG_ON(ret);
-+			}
-+			__set_phys_to_machine(pfn, INVALID_P2M_ENTRY);
-+		}
-+	}
-+#endif
-+}
-+EXPORT_SYMBOL(xenmem_reservation_va_mapping_reset);
-+
-+int xenmem_reservation_increase(int count, xen_pfn_t *frames)
-+{
-+	struct xen_memory_reservation reservation = {
-+		.address_bits = 0,
-+		.extent_order = EXTENT_ORDER,
-+		.domid        = DOMID_SELF
-+	};
-+
-+	set_xen_guest_handle(reservation.extent_start, frames);
-+	reservation.nr_extents = count;
-+	return HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
-+}
-+EXPORT_SYMBOL(xenmem_reservation_increase);
-+
-+int xenmem_reservation_decrease(int count, xen_pfn_t *frames)
-+{
-+	struct xen_memory_reservation reservation = {
-+		.address_bits = 0,
-+		.extent_order = EXTENT_ORDER,
-+		.domid        = DOMID_SELF
-+	};
-+
-+	set_xen_guest_handle(reservation.extent_start, frames);
-+	reservation.nr_extents = count;
-+	return HYPERVISOR_memory_op(XENMEM_decrease_reservation, &reservation);
-+}
-+EXPORT_SYMBOL(xenmem_reservation_decrease);
-diff --git a/include/xen/mem_reservation.h b/include/xen/mem_reservation.h
-new file mode 100644
-index 000000000000..9306d9b8743c
---- /dev/null
-+++ b/include/xen/mem_reservation.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++#define IOCTL_GNTDEV_DMABUF_EXP_WAIT_RELEASED \
++	_IOC(_IOC_NONE, 'G', 10, \
++	     sizeof(struct ioctl_gntdev_dmabuf_exp_wait_released))
++struct ioctl_gntdev_dmabuf_exp_wait_released {
++	/* IN parameters */
++	__u32 fd;
++	__u32 wait_to_ms;
++};
 +
 +/*
-+ * Xen memory reservation utilities.
-+ *
-+ * Copyright (c) 2003, B Dragovic
-+ * Copyright (c) 2003-2004, M Williamson, K Fraser
-+ * Copyright (c) 2005 Dan M. Smith, IBM Corporation
-+ * Copyright (c) 2010 Daniel Kiper
-+ * Copyright (c) 2018, Oleksandr Andrushchenko, EPAM Systems Inc.
++ * Import a dma-buf with file descriptor @fd and export granted references
++ * to the pages of that dma-buf into array @refs of size @count.
 + */
++#define IOCTL_GNTDEV_DMABUF_IMP_TO_REFS \
++	_IOC(_IOC_NONE, 'G', 11, \
++	     sizeof(struct ioctl_gntdev_dmabuf_imp_to_refs))
++struct ioctl_gntdev_dmabuf_imp_to_refs {
++	/* IN parameters. */
++	/* File descriptor of the dma-buf. */
++	__u32 fd;
++	/* Number of grant references in @refs array. */
++	__u32 count;
++	/* The domain ID for which references to be granted. */
++	__u32 domid;
++	/* Reserved - must be zero. */
++	__u32 reserved;
++	/* OUT parameters. */
++	/* Array of grant references of size @count. */
++	__u32 refs[1];
++};
 +
-+#ifndef _XENMEM_RESERVATION_H
-+#define _XENMEM_RESERVATION_H
++/*
++ * This will close all references to the imported buffer with file descriptor
++ * @fd, so it can be released by the owner. This is only valid for buffers
++ * created with IOCTL_GNTDEV_DMABUF_IMP_TO_REFS.
++ */
++#define IOCTL_GNTDEV_DMABUF_IMP_RELEASE \
++	_IOC(_IOC_NONE, 'G', 12, \
++	     sizeof(struct ioctl_gntdev_dmabuf_imp_release))
++struct ioctl_gntdev_dmabuf_imp_release {
++	/* IN parameters */
++	__u32 fd;
++	__u32 reserved;
++};
 +
-+void xenmem_reservation_scrub_page(struct page *page);
-+
-+void xenmem_reservation_va_mapping_update(unsigned long count,
-+					  struct page **pages,
-+					  xen_pfn_t *frames);
-+
-+void xenmem_reservation_va_mapping_reset(unsigned long count,
-+					 struct page **pages);
-+
-+int xenmem_reservation_increase(int count, xen_pfn_t *frames);
-+
-+int xenmem_reservation_decrease(int count, xen_pfn_t *frames);
-+
-+#endif
+ #endif /* __LINUX_PUBLIC_GNTDEV_H__ */
 -- 
 2.17.0
