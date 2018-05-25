@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965826AbeEYKBs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:01:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45702 "EHLO
+        id S965867AbeEYKBx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:01:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46214 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965657AbeEYKBk (ORCPT
+        with ESMTP id S965712AbeEYKBs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:01:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4ADFA60FEA
+        Fri, 25 May 2018 06:01:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CDC2460C65
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From: Rajendra Nayak <rnayak@codeaurora.org>
@@ -16,9 +16,9 @@ To: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
 Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, collinsd@codeaurora.org,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 2/6] dt-bindings: opp: Introduce qcom-opp bindings
-Date: Fri, 25 May 2018 15:31:17 +0530
-Message-Id: <20180525100121.28214-3-rnayak@codeaurora.org>
+Subject: [PATCH v2 4/6] arm64: dts: msm8996: Add rpmpd device node
+Date: Fri, 25 May 2018 15:31:19 +0530
+Message-Id: <20180525100121.28214-5-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180525100121.28214-1-rnayak@codeaurora.org>
 References: <20180525100121.28214-1-rnayak@codeaurora.org>
@@ -26,53 +26,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Qualcomm platforms, an OPP node needs to describe an
-additional level/corner value that is then communicated to
-a remote microprocessor by the CPU, which then takes some
-actions (like adjusting voltage values across various rails)
-based on the value passed.
-
-Describe these bindings in the qcom-opp bindings document.
+Add rpmpd device node and its OPP table
 
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- .../devicetree/bindings/opp/qcom-opp.txt      | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 40 +++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/opp/qcom-opp.txt b/Documentation/devicetree/bindings/opp/qcom-opp.txt
-new file mode 100644
-index 000000000000..db4d970c7ec7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/opp/qcom-opp.txt
-@@ -0,0 +1,25 @@
-+Qualcomm OPP bindings to descibe OPP nodes with corner/level values
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 37b7152cb064..e1bc86b2a230 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -308,6 +308,46 @@
+ 				#clock-cells = <1>;
+ 			};
+ 
++			rpmpd: power-controller {
++				compatible = "qcom,msm8996-rpmpd";
++				#power-domain-cells = <1>;
++				operating-points-v2 = <&rpmpd_opp_table>, /* cx */
++						      <&rpmpd_opp_table>, /* cx_ao */
++						      <&rpmpd_opp_table>, /* cx_vfc */
++						      <&rpmpd_opp_table>, /* mx */
++						      <&rpmpd_opp_table>, /* mx_ao */
++						      <&rpmpd_opp_table>, /* sscx */
++						      <&rpmpd_opp_table>; /* sscx_vfc */
++			};
 +
-+OPP tables for devices on Qualcomm platforms require an additional
-+platform specific corner/level value to be specified.
-+This value is passed on to the RPM (Resource Power Manager) by
-+the CPU, which then takes the necessary actions to set a voltage
-+rail to an appropriate voltage based on the value passed.
++			rpmpd_opp_table: opp-table {
++				compatible = "operating-points-v2-qcom-level", "operating-points-v2";
 +
-+The bindings are based on top of the operating-points-v2 bindings
-+described in Documentation/devicetree/bindings/opp/opp.txt
-+Additional properties are described below.
++				rpmpd_opp1: opp@1 {
++					qcom,level = <1>;
++				};
 +
-+* OPP Table Node
++				rpmpd_opp2: opp@2 {
++					qcom,level = <2>;
++				};
 +
-+Required properties:
-+- compatible: Allow OPPs to express their compatibility. It should be:
-+  "operating-points-v2-qcom-level"
++				rpmpd_opp3: opp@3 {
++					qcom,level = <3>;
++				};
 +
-+* OPP Node
++				rpmpd_opp4: opp@4 {
++					qcom,level = <4>;
++				};
 +
-+Required properties:
-+- qcom,level: On Qualcomm platforms an OPP node can describe a positive value
-+representing a corner/level that's communicated with a remote microprocessor
-+(usually called the RPM) which then translates it into a certain voltage on
-+a voltage rail.
++				rpmpd_opp5: opp@5 {
++					qcom,level = <5>;
++				};
++
++				rpmpd_opp6: opp@6 {
++					qcom,level = <6>;
++				};
++			};
++
+ 			pm8994-regulators {
+ 				compatible = "qcom,rpm-pm8994-regulators";
+ 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
