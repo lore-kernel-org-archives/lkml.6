@@ -1,73 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936204AbeEYOWU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:22:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47867 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935949AbeEYOWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:22:19 -0400
-Date: Fri, 25 May 2018 16:22:17 +0200
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Hannes Reinecke <hare@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180525142217.zedv7hz6ov6s45qk@linux-x5ow.site>
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180525130535.GA24239@lst.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S936222AbeEYOX3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:23:29 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:32824 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935949AbeEYOX2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 10:23:28 -0400
+Date: Fri, 25 May 2018 10:23:21 -0400 (EDT)
+Message-Id: <20180525.102321.858995452200286788.davem@davemloft.net>
+To: qing.huang@oracle.com
+Cc: tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180523232246.20445-1-qing.huang@oracle.com>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 03:05:35PM +0200, Christoph Hellwig wrote:
-> On Fri, May 25, 2018 at 02:53:19PM +0200, Johannes Thumshirn wrote:
-> > Hi,
-> > 
-> > This patch series aims to provide a more fine grained control over
-> > nvme's native multipathing, by allowing it to be switched on and off
-> > on a per-subsystem basis instead of a big global switch.
+From: Qing Huang <qing.huang@oracle.com>
+Date: Wed, 23 May 2018 16:22:46 -0700
+
+> When a system is under memory presure (high usage with fragments),
+> the original 256KB ICM chunk allocations will likely trigger kernel
+> memory management to enter slow path doing memory compact/migration
+> ops in order to complete high order memory allocations.
 > 
-> No.  The only reason we even allowed to turn multipathing off is
-> because you complained about installer issues.  The path forward
-> clearly is native multipathing and there will be no additional support
-> for the use cases of not using it.
+> When that happens, user processes calling uverb APIs may get stuck
+> for more than 120s easily even though there are a lot of free pages
+> in smaller chunks available in the system.
+> 
+> Syslog:
+> ...
+> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
+> oracle_205573_e:205573 blocked for more than 120 seconds.
+> ...
+> 
+> With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
+> 
+> However in order to support smaller ICM chunk size, we need to fix
+> another issue in large size kcalloc allocations.
+> 
+> E.g.
+> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
+> size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
+> entry). So we need a 16MB allocation for a table->icm pointer array to
+> hold 2M pointers which can easily cause kcalloc to fail.
+> 
+> The solution is to use kvzalloc to replace kcalloc which will fall back
+> to vmalloc automatically if kmalloc fails.
+> 
+> Signed-off-by: Qing Huang <qing.huang@oracle.com>
+> Acked-by: Daniel Jurgens <danielj@mellanox.com>
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
 
-First of all, it wasn't my idea and I'm just doing my job here, as I
-got this task assigned at LSF and tried to do my best here.
-
-Personally I _do_ agree with you and do not want to use dm-mpath in
-nvme either (mainly because I don't really know the code and don't
-want to learn yet another subsystem).
-
-But Mike's and Hannes' arguments where reasonable as well, we do not
-know if there are any existing setups we might break leading to
-support calls, which we have to deal with. Personally I don't believe
-there are lot's of existing nvme multipath setups out there, but who
-am I to judge.
-
-So can we find a middle ground to this? Or we'll have the
-all-or-nothing situation we have in scsi-mq now again. How about
-tieing the switch to a config option which is off per default?
-
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Applied, thanks.
