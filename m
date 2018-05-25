@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967782AbeEYSVS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:21:18 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46563 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967518AbeEYSVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:21:16 -0400
-Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180518164829.27052-1-david@lechnology.com>
- <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
-Date: Fri, 25 May 2018 13:21:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S967795AbeEYSXU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:23:20 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.161]:13628 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967692AbeEYSXR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:23:17 -0400
+X-Authority-Reason: nr=8
+Date: Fri, 25 May 2018 13:23:11 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Kalle Valo <kvalo@qca.qualcomm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] ath6kl: mark expected switch fall-throughs
+Message-ID: <20180525182311.GA3000@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
 X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fMHMt-003k5x-Rc
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.46.223]:38496
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 19
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 04:38 AM, Sekhar Nori wrote:
-> Hi David,
-> 
-> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
->> This series converts mach-davinci to use the common clock framework.
->>
->> The series works like this, the first 3 patches fix some issues with the clock
->> drivers that have already been accepted into the mainline kernel.
->>
->> Then, starting with "ARM: davinci: pass clock as parameter to
->> davinci_timer_init()", we get the mach code ready for the switch by adding the
->> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
->> around the legacy clocks so that we can switch easily between the old and the
->> new.
->>
->> "ARM: davinci: switch to common clock framework" actually flips the switch
->> to start using the new clock drivers. Then the next 8 patches remove all
->> of the old clock code.
->>
->> The final four patches add device tree clock support to the one SoC that
->> supports it.
->>
->> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
->> board file).
-> 
-> If you do end up sending a v12, you can leave out the mach-davinci
-> portions unless there are any changes you need to make. I will pick them
-> up from this series once the driver dependencies are merged.
-> 
-> I do hope the drivers/clk/* changes can be merged from v4.18.
-> 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-I have resent all of the clk patches (including all of the ones I listed as
-dependencies in addition to the three remaining in this series) under the
-cover "clk: davinci: outstanding fixes​".
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Place code comments on a line of their own.
 
-I also found that we need to add power-domains properties to the PWM nodes
-in "ARM: dts: da850: Add clocks". I probably should just take your advice
-and just globally added them even if they are not documented for some types
-ofnodes.
+ drivers/net/wireless/ath/ath6kl/cfg80211.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+index 2ba8cf3..a16ee5d 100644
+--- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
++++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+@@ -3899,16 +3899,19 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
+ 	switch (ar->hw.cap) {
+ 	case WMI_11AN_CAP:
+ 		ht = true;
++		/* fall through */
+ 	case WMI_11A_CAP:
+ 		band_5gig = true;
+ 		break;
+ 	case WMI_11GN_CAP:
+ 		ht = true;
++		/* fall through */
+ 	case WMI_11G_CAP:
+ 		band_2gig = true;
+ 		break;
+ 	case WMI_11AGN_CAP:
+ 		ht = true;
++		/* fall through */
+ 	case WMI_11AG_CAP:
+ 		band_2gig = true;
+ 		band_5gig = true;
+-- 
+2.7.4
