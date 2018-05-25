@@ -1,79 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934422AbeEYNJU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:09:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41336 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752581AbeEYNJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:09:19 -0400
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>,
-        stable@vger.kernel.org
-Subject: [PATCH] mm, page_alloc: do not break __GFP_THISNODE by zonelist reset
-Date: Fri, 25 May 2018 15:08:53 +0200
-Message-Id: <20180525130853.13915-1-vbabka@suse.cz>
-X-Mailer: git-send-email 2.17.0
+        id S934405AbeEYNMl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:12:41 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51731 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbeEYNMj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 09:12:39 -0400
+X-Google-Smtp-Source: ADUXVKLCXbETt5/IydYW4kxZdh9ekejyRQ3dpOcejEPPqI6lmEVGHD9xC2lF0xJXa+YwtBr3F6KgaA==
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net
+Cc: juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, quentin.perret@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v5 00/10] track CPU utilization
+Date: Fri, 25 May 2018 15:12:21 +0200
+Message-Id: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In __alloc_pages_slowpath() we reset zonelist and preferred_zoneref for
-allocations that can ignore memory policies. The zonelist is obtained from
-current CPU's node. This is a problem for __GFP_THISNODE allocations that want
-to allocate on a different node, e.g. because the allocating thread has been
-migrated to a different CPU.
+This patchset initially tracked only the utilization of RT rq. During
+OSPM summit, it has been discussed the opportunity to extend it in order
+to get an estimate of the utilization of the CPU.
 
-This has been observed to break SLAB in our 4.4-based kernel, because there it
-relies on __GFP_THISNODE working as intended. If a slab page is put on wrong
-node's list, then further list manipulations may corrupt the list because
-page_to_nid() is used to determine which node's list_lock should be locked and
-thus we may take a wrong lock and race.
+- Patches 1-3 correspond to the content of patchset v4 and add utilization
+  tracking for rt_rq.
 
-Current SLAB implementation seems to be immune by luck thanks to commit
-511e3a058812 ("mm/slab: make cache_grow() handle the page allocated on
-arbitrary node") but there may be others assuming that __GFP_THISNODE works as
-promised.
+When both cfs and rt tasks compete to run on a CPU, we can see some frequency
+drops with schedutil governor. In such case, the cfs_rq's utilization doesn't
+reflect anymore the utilization of cfs tasks but only the remaining part that
+is not used by rt tasks. We should monitor the stolen utilization and take
+it into account when selecting OPP. This patchset doesn't change the OPP
+selection policy for RT tasks but only for CFS tasks
 
-We can fix it by simply removing the zonelist reset completely. There is
-actually no reason to reset it, because memory policies and cpusets don't
-affect the zonelist choice in the first place. This was different when commit
-183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
-introduced the code, as mempolicies provided their own restricted zonelists.
+A rt-app use case which creates an always running cfs thread and a rt threads
+that wakes up periodically with both threads pinned on same CPU, show lot of 
+frequency switches of the CPU whereas the CPU never goes idles during the 
+test. I can share the json file that I used for the test if someone is
+interested in.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Fixes: 183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
-Cc: <stable@vger.kernel.org>
----
-Hi,
+For a 15 seconds long test on a hikey 6220 (octo core cortex A53 platfrom),
+the cpufreq statistics outputs (stats are reset just before the test) : 
+$ cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
+without patchset : 1230
+with patchset : 14
 
-we might consider this for 4.17 although I don't know if there's anything
-currently broken. Stable backports should be more important, but will have to
-be reviewed carefully, as the code went through many changes.
-BTW I think that also the ac->preferred_zoneref reset is currently useless if
-we don't also reset ac->nodemask from a mempolicy to NULL first (which we
-probably should for the OOM victims etc?), but I would leave that for a
-separate patch.
+If we replace the cfs thread of rt-app by a sysbench cpu test, we can see
+performance improvements:
 
-Vlastimil
+- Without patchset :
+Test execution summary:
+    total time:                          15.0009s
+    total number of events:              4903
+    total time taken by event execution: 14.9972
+    per-request statistics:
+         min:                                  1.23ms
+         avg:                                  3.06ms
+         max:                                 13.16ms
+         approx.  95 percentile:              12.73ms
 
- mm/page_alloc.c | 1 -
- 1 file changed, 1 deletion(-)
+Threads fairness:
+    events (avg/stddev):           4903.0000/0.00
+    execution time (avg/stddev):   14.9972/0.00
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 905db9d7962f..be0f0b5d3935 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4165,7 +4165,6 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	 * orientated.
- 	 */
- 	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
--		ac->zonelist = node_zonelist(numa_node_id(), gfp_mask);
- 		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
- 					ac->high_zoneidx, ac->nodemask);
- 	}
+- With patchset:
+Test execution summary:
+    total time:                          15.0014s
+    total number of events:              7694
+    total time taken by event execution: 14.9979
+    per-request statistics:
+         min:                                  1.23ms
+         avg:                                  1.95ms
+         max:                                 10.49ms
+         approx.  95 percentile:              10.39ms
+
+Threads fairness:
+    events (avg/stddev):           7694.0000/0.00
+    execution time (avg/stddev):   14.9979/0.00
+
+The performance improvement is 56% for this use case.
+
+- Patches 4-5 add utilization tracking for dl_rq in order to solve similar
+  problem as with rt_rq
+
+- Patches 6 uses dl and rt utilization in the scale_rt_capacity() and remove
+  dl and rt from sched_rt_avg_update
+
+- Patches 7-8 add utilization tracking for interrupt and use it select OPP
+  A test with iperf on hikey 6220 gives: 
+    w/o patchset	    w/ patchset
+    Tx 276 Mbits/sec        304 Mbits/sec +10%
+    Rx 299 Mbits/sec        328 Mbits/sec +09%
+    
+    8 iterations of iperf -c server_address -r -t 5
+    stdev is lower than 1%
+    Only WFI idle state is enable (shallowest arm idle state)
+
+- Patches 9 removes the unused sched_avg_update code
+
+- Patch 10 removes the unused sched_time_avg_ms
+
+Change since v3:
+- add support of periodic update of blocked utilization
+- rebase on lastest tip/sched/core
+
+Change since v2:
+- move pelt code into a dedicated pelt.c file
+- rebase on load tracking changes
+
+Change since v1:
+- Only a rebase. I have addressed the comments on previous version in
+  patch 1/2
+
+Vincent Guittot (10):
+  sched/pelt: Move pelt related code in a dedicated file
+  sched/rt: add rt_rq utilization tracking
+  cpufreq/schedutil: add rt utilization tracking
+  sched/dl: add dl_rq utilization tracking
+  cpufreq/schedutil: get max utilization
+  sched: remove rt and dl from sched_avg
+  sched/irq: add irq utilization tracking
+  cpufreq/schedutil: take into account interrupt
+  sched: remove rt_avg code
+  proc/sched: remove unused sched_time_avg_ms
+
+ include/linux/sched/sysctl.h     |   1 -
+ kernel/sched/Makefile            |   2 +-
+ kernel/sched/core.c              |  38 +---
+ kernel/sched/cpufreq_schedutil.c |  24 ++-
+ kernel/sched/deadline.c          |   7 +-
+ kernel/sched/fair.c              | 381 +++----------------------------------
+ kernel/sched/pelt.c              | 395 +++++++++++++++++++++++++++++++++++++++
+ kernel/sched/pelt.h              |  63 +++++++
+ kernel/sched/rt.c                |  10 +-
+ kernel/sched/sched.h             |  57 ++++--
+ kernel/sysctl.c                  |   8 -
+ 11 files changed, 563 insertions(+), 423 deletions(-)
+ create mode 100644 kernel/sched/pelt.c
+ create mode 100644 kernel/sched/pelt.h
+
 -- 
-2.17.0
+2.7.4
