@@ -1,66 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965686AbeEYK1x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:27:53 -0400
-Received: from ozlabs.org ([203.11.71.1]:50455 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965102AbeEYK1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:27:52 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: opal: don't check number of messages in the driver
-In-Reply-To: <20180520065035.7920-3-wsa@the-dreams.de>
-References: <20180520065035.7920-1-wsa@the-dreams.de> <20180520065035.7920-3-wsa@the-dreams.de>
-Date: Fri, 25 May 2018 20:27:47 +1000
-Message-ID: <87muwoqbbw.fsf@concordia.ellerman.id.au>
+        id S965709AbeEYK3s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:29:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58888 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965137AbeEYK3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:29:46 -0400
+Date: Fri, 25 May 2018 11:29:40 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: "'Bjorn Helgaas'" <bhelgaas@google.com>,
+        "'linux-pci@vger.kernel.org'" <linux-pci@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "'olaf@aepfle.de'" <olaf@aepfle.de>,
+        "'apw@canonical.com'" <apw@canonical.com>,
+        "'jasowang@redhat.com'" <jasowang@redhat.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'driverdev-devel@linuxdriverproject.org'"
+        <driverdev-devel@linuxdriverproject.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "'vkuznets@redhat.com'" <vkuznets@redhat.com>,
+        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>
+Subject: Re: [PATCH] PCI: hv: Do not wait forever on a device that has
+ disappeared
+Message-ID: <20180525102940.GD6507@e107981-ln.cambridge.arm.com>
+References: <KL1P15301MB0006DF4209AEE3809ABD303FBF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+ <20180524124101.GB20732@e107981-ln.cambridge.arm.com>
+ <KL1P15301MB00064024E9BB60BF9FD48128BF6A0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <KL1P15301MB00064024E9BB60BF9FD48128BF6A0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfram Sang <wsa@the-dreams.de> writes:
+On Thu, May 24, 2018 at 11:55:35PM +0000, Dexuan Cui wrote:
+> > From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Sent: Thursday, May 24, 2018 05:41
+> > On Wed, May 23, 2018 at 09:12:01PM +0000, Dexuan Cui wrote:
+> > >
+> > > Before the guest finishes the device initialization, the device can be
+> > > removed anytime by the host, and after that the host won't respond to
+> > > the guest's request, so the guest should be prepared to handle this
+> > > case.
+> > >
+> > > --- a/drivers/pci/host/pci-hyperv.c
+> > > +++ b/drivers/pci/host/pci-hyperv.c
+> > > @@ -556,6 +556,26 @@ static void put_pcichild(struct hv_pci_dev
+> > *hv_pcidev,
+> > >  static void get_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+> > >  static void put_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+> > >
+> > > +/*
+> > > + * There is no good way to get notified from vmbus_onoffer_rescind(),
+> > > + * so let's use polling here, since this is not a hot path.
+> > > + */
+> > > +static int wait_for_response(struct hv_device *hdev,
+> > > +			     struct completion *comp)
+> > > +{
+> > > +	while (true) {
+> > > +		if (hdev->channel->rescind) {
+> > > +			dev_warn_once(&hdev->device, "The device is gone.\n");
+> > > +			return -ENODEV;
+> > > +		}
+> > > +
+> > > +		if (wait_for_completion_timeout(comp, HZ / 10))
+> > > +			break;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > 
+> > This is pretty racy, isn't it ? Also, I reckon you should consider the
+> > timeout return value as an error condition unless I am completely
+> > missing the point of what you are doing.
+> > 
+> > Lorenzo
+> 
+> Actually, this is not racy: we only exit the loop when 
+> 1) the channel is rescinded 
+> or
+> 2) the channel is not rescinded, and the event is completed.
+> 
+> wait_for_completion_timeout() returns 0 if timed out: in this case,
+> we keep spinning in the loop every 0.1 second, testing the 2 conditions.
 
-> Since commit 1eace8344c02 ("i2c: add param sanity check to
-> i2c_transfer()") and b7f625840267 ("i2c: add quirk checks to core"), the
-> I2C core does this check now. We can remove it here.
->
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
->
-> Only build tested.
+Yes sorry, you are right, the exit condition is correct, I am waiting for
+maintainers ACK to merge it, I need it as soon as possible if you want
+this to make it for v4.18.
 
-It will get boot tested by me once it's in linux-next, which hopefully
-is sufficient for a patch like this.
+Thanks,
+Lorenzo
 
-cheers
-
-> diff --git a/drivers/i2c/busses/i2c-opal.c b/drivers/i2c/busses/i2c-opal.c
-> index 0aabb7eca0c5..dc2a23f4fb52 100644
-> --- a/drivers/i2c/busses/i2c-opal.c
-> +++ b/drivers/i2c/busses/i2c-opal.c
-> @@ -94,8 +94,6 @@ static int i2c_opal_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->  	 */
->  	memset(&req, 0, sizeof(req));
->  	switch(num) {
-> -	case 0:
-> -		return 0;
->  	case 1:
->  		req.type = (msgs[0].flags & I2C_M_RD) ?
->  			OPAL_I2C_RAW_READ : OPAL_I2C_RAW_WRITE;
-> @@ -114,8 +112,6 @@ static int i2c_opal_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->  		req.size = cpu_to_be32(msgs[1].len);
->  		req.buffer_ra = cpu_to_be64(__pa(msgs[1].buf));
->  		break;
-> -	default:
-> -		return -EOPNOTSUPP;
->  	}
->  
->  	rc = i2c_opal_send_request(opal_id, &req);
-> -- 
-> 2.11.0
+> If the chanel is not rescinded, here we should wait for the event 
+> forever, as the host is supposed to respond to us quickly, and the
+> event will be completed accordingly. This is what the current code
+> does. But, in case the channel is rescinded, we need to exit the loop 
+> immediately with an error return value: this is the only change
+> made by the patch.
+> 
+> Ideally, we should not use this ugly "polling" method, and the
+> rescind-handler, i.e. vmbus_onoffer_rescind(), should notify 
+> wait_for_response(), but as I mentioned, there is no good way
+> to get notified from vmbus_onoffer_rescind(), so I'm proposing
+> this "polling" method: it's simple and it can work correctly,
+> and this is not a hot path.
+> 
+> Thanks,
+> -- Dexuan
