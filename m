@@ -1,59 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967614AbeEYSEs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:04:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:31609 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967473AbeEYSEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:04:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
-   d="scan'208";a="57626306"
-Message-ID: <1527271485.14836.49.camel@linux.intel.com>
-Subject: Re: [PATCH] tools/power/x86/intel_pstate_tracer: Add optional
- setting of trace buffer memory allocation
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Doug Smythies <doug.smythies@gmail.com>
-Cc: dsmythies@telus.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Date: Fri, 25 May 2018 11:04:45 -0700
-In-Reply-To: <9152600.1bIX9UMnel@aspire.rjw.lan>
-References: <1525441582-23855-1-git-send-email-dsmythies@telus.net>
-         <23851272.hyr4RImLsD@aspire.rjw.lan> <9152600.1bIX9UMnel@aspire.rjw.lan>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S967670AbeEYSFC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:05:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37670 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967452AbeEYSFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:05:01 -0400
+Date: Fri, 25 May 2018 19:04:55 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com
+Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
+ dedicated file
+Message-ID: <20180525180455.GF30654@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
+ <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-24 at 11:34 +0200, Rafael J. Wysocki wrote:
-> On Sunday, May 13, 2018 10:43:02 AM CEST Rafael J. Wysocki wrote:
-> > On Friday, May 4, 2018 3:46:22 PM CEST Doug Smythies wrote:
-> > > Allow the user to override the default trace buffer memory
-> > > allocation
-> > > by adding a command line option to override the default.
-> > > 
-> > > The patch also:
-> > > 
-> > > Adds a SIGINT (i.e. CTRL C exit) handler,
-> > > so that things can be cleaned up before exit.
-> > > 
-> > > Moves the postion of some other cleanup from after to
-> > > before the potential "No valid data to plot" exit.
-> > > 
-> > > Replaces all quit() calls with sys.exit, because
-> > > quit() is not supposed to be used in scripts.
-> > > 
-> > > Signed-off-by: Doug Smythies <dsmythies@telus.net>
-> > 
-> > Srinivas, any comments here?
-Somehow I missed this email. But looks fine.
+On 25-May 15:26, Quentin Perret wrote:
+> And also, I understand these functions are large, but if we _really_
+> want to inline them even though they're big, why not putting them in
+> sched-pelt.h ?
 
-> 
-> No concerns, so applied.  Thanks!
-> 
+Had the same tought at first... but then I recalled that header is
+generated from a script. Thus, eventually, it should be a different one.
+
+> We probably wouldn't accept that for everything, but
+> those PELT functions are used all over the place, including latency
+> sensitive code paths (e.g. task wake-up).
+
+We should better measure the overheads, if any, and check what
+(a modern) compiler does. Maybe some hackbench run could help on the
+first point.
+
+> Thanks,
+> Quentin
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
