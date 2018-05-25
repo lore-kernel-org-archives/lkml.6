@@ -1,73 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935215AbeEYFAe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 01:00:34 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59909 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932557AbeEYFAc (ORCPT
+        id S935493AbeEYFAr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 01:00:47 -0400
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25429 "EHLO
+        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935256AbeEYFAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 01:00:32 -0400
-X-UUID: 77063c14932e40afb83697d16baaa5b4-20180525
-Message-ID: <1527224425.27165.27.camel@mtksdaap41>
-Subject: Re: [PATCH v3 8/8] drm/mediatek: add third ddp path
-From: CK Hu <ck.hu@mediatek.com>
-To: <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Fri, 25 May 2018 13:00:25 +0800
-In-Reply-To: <1527215665-11937-9-git-send-email-stu.hsieh@mediatek.com>
-References: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527215665-11937-9-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+        Fri, 25 May 2018 01:00:45 -0400
+From: Huaisheng Ye <yehs2007@zoho.com>
+To: iommu@lists.linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, chengnt@lenovo.com,
+        Huaisheng Ye <yehs1@lenovo.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH v1] arch/x86/kernel/pci-dma: Remove useless parameter of arch_dma_alloc_attrs
+Date: Fri, 25 May 2018 13:00:00 +0800
+Message-Id: <20180525050000.6076-1-yehs2007@zoho.com>
+X-Mailer: git-send-email 2.17.0.windows.1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-On Fri, 2018-05-25 at 10:34 +0800, stu.hsieh@mediatek.com wrote:
-> From: Stu Hsieh <stu.hsieh@mediatek.com>
-> 
-> This patch create third crtc by third ddp path
-> 
+arch_dma_alloc_attrs has parameter gfp which is not used at all.
+Remove it.
 
-Apply this patch before the patch 'Add support for mediatek SOC MT2712'
-because this patch is necessary for mt2712.
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Michal Hocko <mhocko@suse.com>
+---
+ arch/x86/include/asm/dma-mapping.h | 2 +-
+ arch/x86/kernel/pci-dma.c          | 2 +-
+ include/linux/dma-mapping.h        | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index b32c4cc8d051..3a866e1d6af4 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -267,6 +267,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
->  	if (ret < 0)
->  		goto err_component_unbind;
->  
-> +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
-> +				  private->data->third_len);
-
-I think you should prevent doing this for mt8173 and mt2701 because that
-two SoC has only two ddp path.
-
-Regards,
-CK
-
-> +	if (ret < 0)
-> +		goto err_component_unbind;
-> +
->  	/* Use OVL device for all DMA memory allocations */
->  	np = private->comp_node[private->data->main_path[0]] ?:
->  	     private->comp_node[private->data->ext_path[0]];
+diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
+index 89ce4bf..ef59747 100644
+--- a/arch/x86/include/asm/dma-mapping.h
++++ b/arch/x86/include/asm/dma-mapping.h
+@@ -33,7 +33,7 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+ int arch_dma_supported(struct device *dev, u64 mask);
+ #define arch_dma_supported arch_dma_supported
+ 
+-bool arch_dma_alloc_attrs(struct device **dev, gfp_t *gfp);
++bool arch_dma_alloc_attrs(struct device **dev);
+ #define arch_dma_alloc_attrs arch_dma_alloc_attrs
+ 
+ #endif
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index 77625b6..94d1a49 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -76,7 +76,7 @@ void __init pci_iommu_alloc(void)
+ 	}
+ }
+ 
+-bool arch_dma_alloc_attrs(struct device **dev, gfp_t *gfp)
++bool arch_dma_alloc_attrs(struct device **dev)
+ {
+ 	if (!*dev)
+ 		*dev = &x86_dma_fallback_dev;
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index f8ab1c0..c80bb09 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -502,7 +502,7 @@ void *dma_common_pages_remap(struct page **pages, size_t size,
+ #define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, 0)
+ 
+ #ifndef arch_dma_alloc_attrs
+-#define arch_dma_alloc_attrs(dev, flag)	(true)
++#define arch_dma_alloc_attrs(dev)	(true)
+ #endif
+ 
+ static inline void *dma_alloc_attrs(struct device *dev, size_t size,
+@@ -521,7 +521,7 @@ static inline void *dma_alloc_attrs(struct device *dev, size_t size,
+ 	/* let the implementation decide on the zone to allocate from: */
+ 	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
+ 
+-	if (!arch_dma_alloc_attrs(&dev, &flag))
++	if (!arch_dma_alloc_attrs(&dev))
+ 		return NULL;
+ 	if (!ops->alloc)
+ 		return NULL;
+-- 
+1.8.3.1
