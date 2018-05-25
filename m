@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971777AbeEYAGH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 20:06:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58524 "EHLO mx1.redhat.com"
+        id S971794AbeEYAGR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 20:06:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60438 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S970097AbeEYAFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 20:05:45 -0400
+        id S971779AbeEYAGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 20:06:11 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/32] VFS: Introduce the basic header for the new mount
- API's filesystem context [ver #8]
+Subject: [PATCH 07/32] apparmor: Implement security hooks for the new mount
+ API [ver #8]
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 25 May 2018 01:05:43 +0100
-Message-ID: <152720674345.9073.7664682296580266598.stgit@warthog.procyon.org.uk>
+Date: Fri, 25 May 2018 01:06:09 +0100
+Message-ID: <152720676944.9073.12871258511399328644.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,107 +28,218 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a filesystem context concept to be used during superblock
-creation for mount and superblock reconfiguration for remount.  This is
-allocated at the beginning of the mount procedure and into it is placed:
+Implement hooks to check the creation of new mountpoints for AppArmor.
 
- (1) Filesystem type.
-
- (2) Namespaces.
-
- (3) Source/Device names (there may be multiple).
-
- (4) Superblock flags (SB_*).
-
- (5) Security details.
-
- (6) Filesystem-specific data, as set by the mount options.
+Unfortunately, the DFA evaluation puts the option data in last, after the
+details of the mountpoint, so we have to cache the mount options in the
+fs_context using those hooks till we get to the new mountpoint hook.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
+cc: apparmor@lists.ubuntu.com
+cc: linux-security-module@vger.kernel.org
 ---
 
- include/linux/fs_context.h |   75 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 include/linux/fs_context.h
+ security/apparmor/include/mount.h |   11 +++++
+ security/apparmor/lsm.c           |   80 +++++++++++++++++++++++++++++++++++++
+ security/apparmor/mount.c         |   46 +++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-new file mode 100644
-index 000000000000..04783814632c
---- /dev/null
-+++ b/include/linux/fs_context.h
-@@ -0,0 +1,75 @@
-+/* Filesystem superblock creation and reconfiguration context.
-+ *
-+ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
+diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
+index 25d6067fa6ef..0441bfae30fa 100644
+--- a/security/apparmor/include/mount.h
++++ b/security/apparmor/include/mount.h
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/path.h>
++#include <linux/fs_context.h>
+ 
+ #include "domain.h"
+ #include "policy.h"
+@@ -27,7 +28,13 @@
+ #define AA_AUDIT_DATA		0x40
+ #define AA_MNT_CONT_MATCH	0x40
+ 
+-#define AA_MS_IGNORE_MASK (MS_KERNMOUNT | MS_NOSEC | MS_ACTIVE | MS_BORN)
++#define AA_SB_IGNORE_MASK (SB_KERNMOUNT | SB_NOSEC | SB_ACTIVE | SB_BORN)
 +
-+#ifndef _LINUX_FS_CONTEXT_H
-+#define _LINUX_FS_CONTEXT_H
-+
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+
-+struct cred;
-+struct dentry;
-+struct file_operations;
-+struct file_system_type;
-+struct mnt_namespace;
-+struct net;
-+struct pid_namespace;
-+struct super_block;
-+struct user_namespace;
-+struct vfsmount;
-+
-+enum fs_context_purpose {
-+	FS_CONTEXT_FOR_USER_MOUNT,	/* New superblock for user-specified mount */
-+	FS_CONTEXT_FOR_KERNEL_MOUNT,	/* New superblock for kernel-internal mount */
-+	FS_CONTEXT_FOR_SUBMOUNT,	/* New superblock for automatic submount */
-+	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
++struct apparmor_fs_context {
++	struct fs_context	fc;
++	char			*saved_options;
++	size_t			saved_size;
 +};
+ 
+ int aa_remount(struct aa_label *label, const struct path *path,
+ 	       unsigned long flags, void *data);
+@@ -45,6 +52,8 @@ int aa_move_mount(struct aa_label *label, const struct path *path,
+ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 		 const struct path *path, const char *type, unsigned long flags,
+ 		 void *data);
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint);
+ 
+ int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags);
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 9ebc9e9c3854..bf2401ade80e 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -518,6 +518,78 @@ static int apparmor_file_mprotect(struct vm_area_struct *vma,
+ 			   !(vma->vm_flags & VM_SHARED) ? MAP_PRIVATE : 0);
+ }
+ 
++static int apparmor_fs_context_alloc(struct fs_context *fc, struct dentry *reference)
++{
++	struct apparmor_fs_context *afc;
++
++	afc = kzalloc(sizeof(*afc), GFP_KERNEL);
++	if (!afc)
++		return -ENOMEM;
++
++	fc->security = afc;
++	return 0;
++}
++
++static int apparmor_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
++{
++	fc->security = NULL;
++	return 0;
++}
++
++static void apparmor_fs_context_free(struct fs_context *fc)
++{
++	struct apparmor_fs_context *afc = fc->security;
++
++	if (afc) {
++		kfree(afc->saved_options);
++		kfree(afc);
++	}
++}
 +
 +/*
-+ * Filesystem context for holding the parameters used in the creation or
-+ * reconfiguration of a superblock.
-+ *
-+ * Superblock creation fills in ->root whereas reconfiguration begins with this
-+ * already set.
-+ *
-+ * See Documentation/filesystems/mounting.txt
++ * As a temporary hack, we buffer all the options.  The problem is that we need
++ * to pass them to the DFA evaluator *after* mount point parameters, which
++ * means deferring the entire check to the sb_mountpoint hook.
 + */
-+struct fs_context {
-+	const struct fs_context_operations *ops;
-+	struct file_system_type	*fs_type;
-+	void			*fs_private;	/* The filesystem's context */
-+	struct dentry		*root;		/* The root and superblock */
-+	struct user_namespace	*user_ns;	/* The user namespace for this mount */
-+	struct net		*net_ns;	/* The network namespace for this mount */
-+	const struct cred	*cred;		/* The mounter's credentials */
-+	char			*source;	/* The source name (eg. dev path) */
-+	char			*subtype;	/* The subtype to set on the superblock */
-+	void			*security;	/* The LSM context */
-+	void			*s_fs_info;	/* Proposed s_fs_info */
-+	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
-+	bool			sloppy:1;	/* T if unrecognised options are okay */
-+	bool			silent:1;	/* T if "o silent" specified */
-+	bool			drop_sb:1;	/* T if need to drop an SB reference */
-+	bool			source_is_dev:1; /* T if source is local device/file */
-+	enum fs_context_purpose	purpose : 8;
-+};
++static int apparmor_fs_context_parse_option(struct fs_context *fc, char *opt, size_t len)
++{
++	struct apparmor_fs_context *afc = fc->security;
++	size_t space = 0;
++	char *p, *q;
 +
-+struct fs_context_operations {
-+	void (*free)(struct fs_context *fc);
-+	int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
-+	int (*parse_source)(struct fs_context *fc, char *source);
-+	int (*parse_option)(struct fs_context *fc, char *opt, size_t len);
-+	int (*parse_monolithic)(struct fs_context *fc, void *data);
-+	int (*validate)(struct fs_context *fc);
-+	int (*get_tree)(struct fs_context *fc);
-+};
++	if (afc->saved_size > 0)
++		space = 1;
 +
-+#endif /* _LINUX_FS_CONTEXT_H */
++	p = krealloc(afc->saved_options, afc->saved_size + space + len + 1, GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	q = p + afc->saved_size;
++	if (q != p)
++		*q++ = ' ';
++	memcpy(q, opt, len);
++	q += len;
++	*q = 0;
++
++	afc->saved_options = p;
++	afc->saved_size += 1 + len;
++	return 0;
++}
++
++static int apparmor_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
++				  unsigned int mnt_flags)
++{
++	struct aa_label *label;
++	int error = 0;
++
++	label = __begin_current_label_crit_section();
++	if (!unconfined(label))
++		error = aa_new_mount_fc(label, fc, mountpoint);
++	__end_current_label_crit_section(label);
++
++	return error;
++}
++
+ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 			     const char *type, unsigned long flags, void *data)
+ {
+@@ -528,7 +600,7 @@ static int apparmor_sb_mount(const char *dev_name, const struct path *path,
+ 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
+ 		flags &= ~MS_MGC_MSK;
+ 
+-	flags &= ~AA_MS_IGNORE_MASK;
++	flags &= ~AA_SB_IGNORE_MASK;
+ 
+ 	label = __begin_current_label_crit_section();
+ 	if (!unconfined(label)) {
+@@ -1124,6 +1196,12 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(capget, apparmor_capget),
+ 	LSM_HOOK_INIT(capable, apparmor_capable),
+ 
++	LSM_HOOK_INIT(fs_context_alloc, apparmor_fs_context_alloc),
++	LSM_HOOK_INIT(fs_context_dup, apparmor_fs_context_dup),
++	LSM_HOOK_INIT(fs_context_free, apparmor_fs_context_free),
++	LSM_HOOK_INIT(fs_context_parse_option, apparmor_fs_context_parse_option),
++	LSM_HOOK_INIT(sb_mountpoint, apparmor_sb_mountpoint),
++
+ 	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
+ 	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
+ 	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index 45bb769d6cd7..de791134e352 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -554,6 +554,52 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 	return error;
+ }
+ 
++int aa_new_mount_fc(struct aa_label *label, struct fs_context *fc,
++		    const struct path *mountpoint)
++{
++	struct apparmor_fs_context *afc = fc->security;
++	struct aa_profile *profile;
++	char *buffer = NULL, *dev_buffer = NULL;
++	bool binary;
++	int error;
++	struct path tmp_path, *dev_path = NULL;
++
++	AA_BUG(!label);
++	AA_BUG(!mountpoint);
++
++	binary = fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA;
++
++	if (fc->fs_type->fs_flags & FS_REQUIRES_DEV) {
++		if (!fc->source)
++			return -ENOENT;
++
++		error = kern_path(fc->source, LOOKUP_FOLLOW, &tmp_path);
++		if (error)
++			return error;
++		dev_path = &tmp_path;
++	}
++
++	get_buffers(buffer, dev_buffer);
++	if (dev_path) {
++		error = fn_for_each_confined(label, profile,
++			match_mnt(profile, mountpoint, buffer, dev_path, dev_buffer,
++				  fc->fs_type->name,
++				  fc->sb_flags & ~AA_SB_IGNORE_MASK,
++				  afc->saved_options, binary));
++	} else {
++		error = fn_for_each_confined(label, profile,
++			match_mnt_path_str(profile, mountpoint, buffer,
++					   fc->source, fc->fs_type->name,
++					   fc->sb_flags & ~AA_SB_IGNORE_MASK,
++					   afc->saved_options, binary, NULL));
++	}
++	put_buffers(buffer, dev_buffer);
++	if (dev_path)
++		path_put(dev_path);
++
++	return error;
++}
++
+ static int profile_umount(struct aa_profile *profile, struct path *path,
+ 			  char *buffer)
+ {
