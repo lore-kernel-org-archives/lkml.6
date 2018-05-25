@@ -1,63 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755132AbeEYDbZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:31:25 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3582 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753116AbeEYDbV (ORCPT
+        id S1755061AbeEYDbX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:31:23 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36613 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754593AbeEYDbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 May 2018 23:31:21 -0400
-X-UUID: c94c190596e845d49a17fa387f5602e1-20180525
-Message-ID: <1527218776.27165.5.camel@mtksdaap41>
-Subject: Re: [PATCH v3 3/8] drm/mediatek: add connection from OD1 to RDMA1
-From: CK Hu <ck.hu@mediatek.com>
-To: <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Fri, 25 May 2018 11:26:16 +0800
-In-Reply-To: <1527215665-11937-4-git-send-email-stu.hsieh@mediatek.com>
-References: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527215665-11937-4-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+X-Google-Smtp-Source: ADUXVKL5fyVApqR1hAqLR2GnP0uirf0OQLzBE+2VVHNehfdFUT44HF+nyK1W2h7ifuRQGh6wYXjvhQ==
+Date: Thu, 24 May 2018 22:31:14 -0500
+From: Andy Gross <andy.gross@linaro.org>
+To: arm@kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [GIT PULL] Qualcomm Driver updates for 4.18
+Message-ID: <20180525033114.GA6662@hector.attlocal.net>
+References: <1527050261-19887-1-git-send-email-andy.gross@linaro.org>
+ <1527050261-19887-2-git-send-email-andy.gross@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527050261-19887-2-git-send-email-andy.gross@linaro.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Please refrain from applying this pull request.  The following patch
+is going to be removed from the pull request and put into a fixes-for-4.17:
 
-On Fri, 2018-05-25 at 10:34 +0800, stu.hsieh@mediatek.com wrote:
-> From: Stu Hsieh <stu.hsieh@mediatek.com>
-> 
-> This patch add the connection from OD1 to RDMA1 for ext path.
-> 
+firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+I'll send an amended pull request minus this patch.
 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +++
->  1 file changed, 3 insertions(+)
+Regards,
+
+Andy
+
+On Tue, May 22, 2018 at 11:37:40PM -0500, Andy Gross wrote:
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 47ffa240bd25..0f568dd853d8 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -151,6 +151,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
->  	} else if (cur == DDP_COMPONENT_GAMMA && next == DDP_COMPONENT_RDMA1) {
->  		*addr = DISP_REG_CONFIG_DISP_GAMMA_MOUT_EN;
->  		value = GAMMA_MOUT_EN_RDMA1;
-> +	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
-> +		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
-> +		value = OD1_MOUT_EN_RDMA1;
->  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
->  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
->  		value = RDMA1_MOUT_DPI0;
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-drivers-for-4.18
+> 
+> for you to fetch changes up to f378dab2c576ab1ef30ff26d2a96687a5a855271:
+> 
+>   soc: qcom: smem: introduce qcom_smem_virt_to_phys() (2018-05-14 14:06:49 -0500)
+> 
