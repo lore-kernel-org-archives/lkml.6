@@ -1,211 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030796AbeEYWC0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:02:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17944 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030521AbeEYWBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:01:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="231900880"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-xfs@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>
-Subject: [PATCH resend 2/7] dax: change bdev_dax_supported() to support boolean returns
-Date: Fri, 25 May 2018 16:00:50 -0600
-Message-Id: <20180525220055.18920-3-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
-References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
+        id S1030775AbeEYWCY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:02:24 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:44374 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1030465AbeEYWCT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:02:19 -0400
+From: Song Liu <songliubraving@fb.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next] tcp: use data length instead of skb->len in
+ tcp_probe
+Thread-Topic: [PATCH v2 net-next] tcp: use data length instead of skb->len in
+ tcp_probe
+Thread-Index: AQHT9BEzdsZVRYb1gUyc62SrUQVIhqRA/wqA
+Date: Fri, 25 May 2018 21:59:02 +0000
+Message-ID: <CBE161A9-5116-4866-BC89-CFF6B2509E0C@fb.com>
+References: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.6.18)
+x-originating-ip: [2620:10d:c090:200::7:1409]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1214;7:zzHoOnQcGZei2A20x1+pIArs8DBsYRX3sVfdx6NJsMtu80Zojmmgw3muqLR1qkcN6vzuRZrtsEpR04XOR0KWYX+mWFXKxbHi9uN0xAbALR5YlPo5NVEHRnAgbI4cBr0ScEs2cecJSZg/D2E/UQ6NJ7iqcEU/Rva0QmmND6C4OZaIQZ3n/jNiuGwzaeeMAoc47fwdlfVHx95StV1+5N2R6XD/yayEFIrihgXpsNYI80FpdcVWKI/HyjHA1EDQIAlq;20:9xxFKcTcBg3LsuaqIdND5pc/T0KxbOI9fde3dvXpc8Pv4ZGVwPFR2GjL/0Xwllz49Pi1AtDqaqaioNwbpTjw62t+O6nLTp+4ZgfNPoTM20+cpPDtPCoalVIAtiAkTCcads7XUXJo6SH6yNY3LzUyYEOfLpCxyS75zaTWNxXaX4A=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1214;
+x-ms-traffictypediagnostic: MWHPR15MB1214:
+x-microsoft-antispam-prvs: <MWHPR15MB121450D4F7364F685FA8E322B3690@MWHPR15MB1214.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158)(67672495146484);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(11241501184)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:MWHPR15MB1214;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1214;
+x-forefront-prvs: 06833C6A67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(39380400002)(396003)(376002)(346002)(189003)(199004)(316002)(99286004)(54906003)(68736007)(7736002)(305945005)(102836004)(83716003)(6246003)(53936002)(5250100002)(39060400002)(4326008)(6916009)(36756003)(8936002)(81166006)(5660300001)(81156014)(86362001)(25786009)(50226002)(14454004)(8676002)(186003)(3280700002)(478600001)(3660700001)(53546011)(6506007)(2906002)(57306001)(76176011)(486006)(476003)(2616005)(11346002)(446003)(6116002)(229853002)(2900100001)(6486002)(46003)(6436002)(33656002)(105586002)(106356001)(6512007)(82746002)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1214;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: qd3l/+KdwVTw5UgDTwhNf11K2kvUlTMI7JAXIazF2Z0zlHsEEbsNIKQmuDGfhBwOXbYQ+JmcX1tghm9s8NC+qRWhBJm/Gio47YDWfadLV6UIhyUPQcy5sXbuXw/nAYezZ8xw5HJWVqXRDuDDI4FRrfPxHHNSMm+5upSBRUZECFZNTfqCGDPLXX+TYQg6vsGI
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C3D8E0BD2A29FD46A8A6F3F5377544FC@namprd15.prod.outlook.com>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 79eaa413-15ce-4c38-84ba-08d5c28aba20
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79eaa413-15ce-4c38-84ba-08d5c28aba20
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2018 21:59:02.4886
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1214
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4PM2qrU024723
 
-From: Dave Jiang <dave.jiang@intel.com>
 
-The function return values are confusing with the way the function is
-named. We expect a true or false return value but it actually returns
-0/-errno.  This makes the code very confusing. Changing the return values
-to return a bool where if DAX is supported then return true and no DAX
-support returns false.
 
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- drivers/dax/super.c | 16 ++++++++--------
- fs/ext2/super.c     |  3 +--
- fs/ext4/super.c     |  3 +--
- fs/xfs/xfs_ioctl.c  |  4 ++--
- fs/xfs/xfs_super.c  | 12 ++++++------
- include/linux/dax.h |  6 +++---
- 6 files changed, 21 insertions(+), 23 deletions(-)
+> On May 25, 2018, at 3:14 AM, Yafang Shao <laoar.shao@gmail.com> wrote:
+> 
+> skb->len is meaningless to user.
+> data length could be more helpful, with which we can easily filter out
+> the packet without payload.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 9206539c8330..e5447eddecf8 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -80,9 +80,9 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
-  * This is a library function for filesystems to check if the block device
-  * can be mounted with dax option.
-  *
-- * Return: negative errno if unsupported, 0 if supported.
-+ * Return: true if supported, false if unsupported
-  */
--int bdev_dax_supported(struct block_device *bdev, int blocksize)
-+bool bdev_dax_supported(struct block_device *bdev, int blocksize)
- {
- 	struct dax_device *dax_dev;
- 	pgoff_t pgoff;
-@@ -95,21 +95,21 @@ int bdev_dax_supported(struct block_device *bdev, int blocksize)
- 	if (blocksize != PAGE_SIZE) {
- 		pr_debug("%s: error: unsupported blocksize for dax\n",
- 				bdevname(bdev, buf));
--		return -EINVAL;
-+		return false;
- 	}
- 
- 	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
- 	if (err) {
- 		pr_debug("%s: error: unaligned partition for dax\n",
- 				bdevname(bdev, buf));
--		return err;
-+		return false;
- 	}
- 
- 	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
- 	if (!dax_dev) {
- 		pr_debug("%s: error: device does not support dax\n",
- 				bdevname(bdev, buf));
--		return -EOPNOTSUPP;
-+		return false;
- 	}
- 
- 	id = dax_read_lock();
-@@ -121,7 +121,7 @@ int bdev_dax_supported(struct block_device *bdev, int blocksize)
- 	if (len < 1) {
- 		pr_debug("%s: error: dax access failed (%ld)\n",
- 				bdevname(bdev, buf), len);
--		return len < 0 ? len : -EIO;
-+		return false;
- 	}
- 
- 	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
-@@ -139,10 +139,10 @@ int bdev_dax_supported(struct block_device *bdev, int blocksize)
- 	} else {
- 		pr_debug("%s: error: dax support not enabled\n",
- 				bdevname(bdev, buf));
--		return -EOPNOTSUPP;
-+		return false;
- 	}
- 
--	return 0;
-+	return true;
- }
- EXPORT_SYMBOL_GPL(bdev_dax_supported);
- #endif
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 9627c3054b5c..c09289a42dc5 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -961,8 +961,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
- 	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
- 
- 	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
--		err = bdev_dax_supported(sb->s_bdev, blocksize);
--		if (err) {
-+		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
- 			ext2_msg(sb, KERN_ERR,
- 				"DAX unsupported by block device. Turning off DAX.");
- 			sbi->s_mount_opt &= ~EXT2_MOUNT_DAX;
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 089170e99895..2e1622907f4a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3732,8 +3732,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 					" that may contain inline data");
- 			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
- 		}
--		err = bdev_dax_supported(sb->s_bdev, blocksize);
--		if (err) {
-+		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
- 			ext4_msg(sb, KERN_ERR,
- 				"DAX unsupported by block device. Turning off DAX.");
- 			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 0effd46b965f..2c70a0a4f59f 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -1103,8 +1103,8 @@ xfs_ioctl_setattr_dax_invalidate(
- 	if (fa->fsx_xflags & FS_XFLAG_DAX) {
- 		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
- 			return -EINVAL;
--		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
--				sb->s_blocksize) < 0)
-+		if (!bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
-+				sb->s_blocksize))
- 			return -EINVAL;
- 	}
- 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 62188c2a4c36..86915dc40eed 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1690,17 +1690,17 @@ xfs_fs_fill_super(
- 		sb->s_flags |= SB_I_VERSION;
- 
- 	if (mp->m_flags & XFS_MOUNT_DAX) {
--		int	error2 = 0;
-+		bool rtdev_is_dax = false, datadev_is_dax;
- 
- 		xfs_warn(mp,
- 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
- 
--		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
--				sb->s_blocksize);
-+		datadev_is_dax = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
-+			sb->s_blocksize);
- 		if (mp->m_rtdev_targp)
--			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
--					sb->s_blocksize);
--		if (error && error2) {
-+			rtdev_is_dax = bdev_dax_supported(
-+				mp->m_rtdev_targp->bt_bdev, sb->s_blocksize);
-+		if (!rtdev_is_dax && !datadev_is_dax) {
- 			xfs_alert(mp,
- 			"DAX unsupported by block device. Turning off DAX.");
- 			mp->m_flags &= ~XFS_MOUNT_DAX;
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 509a85ac8470..547eb33dbc9e 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -64,7 +64,7 @@ static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
- struct writeback_control;
- int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
- #if IS_ENABLED(CONFIG_FS_DAX)
--int bdev_dax_supported(struct block_device *bdev, int blocksize);
-+bool bdev_dax_supported(struct block_device *bdev, int blocksize);
- static inline struct dax_device *fs_dax_get_by_host(const char *host)
- {
- 	return dax_get_by_host(host);
-@@ -79,10 +79,10 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
- int dax_writeback_mapping_range(struct address_space *mapping,
- 		struct block_device *bdev, struct writeback_control *wbc);
- #else
--static inline int bdev_dax_supported(struct block_device *bdev,
-+static inline bool bdev_dax_supported(struct block_device *bdev,
- 		int blocksize)
- {
--	return -EOPNOTSUPP;
-+	return false;
- }
- 
- static inline struct dax_device *fs_dax_get_by_host(const char *host)
--- 
-2.14.3
+Acked-by: Song Liu <songliubraving@fb.com>
+
+
+> ---
+> include/trace/events/tcp.h | 8 ++++----
+> 1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+> index c1a5284..703abb6 100644
+> --- a/include/trace/events/tcp.h
+> +++ b/include/trace/events/tcp.h
+> @@ -236,7 +236,7 @@
+> 		__field(__u16, sport)
+> 		__field(__u16, dport)
+> 		__field(__u32, mark)
+> -		__field(__u16, length)
+> +		__field(__u16, data_len)
+> 		__field(__u32, snd_nxt)
+> 		__field(__u32, snd_una)
+> 		__field(__u32, snd_cwnd)
+> @@ -261,7 +261,7 @@
+> 		__entry->dport = ntohs(inet->inet_dport);
+> 		__entry->mark = skb->mark;
+> 
+> -		__entry->length = skb->len;
+> +		__entry->data_len = skb->len - tcp_hdrlen(skb);
+> 		__entry->snd_nxt = tp->snd_nxt;
+> 		__entry->snd_una = tp->snd_una;
+> 		__entry->snd_cwnd = tp->snd_cwnd;
+> @@ -272,9 +272,9 @@
+> 		__entry->sock_cookie = sock_gen_cookie(sk);
+> 	),
+> 
+> -	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
+> +	TP_printk("src=%pISpc dest=%pISpc mark=%#x data_len=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
+> 		  __entry->saddr, __entry->daddr, __entry->mark,
+> -		  __entry->length, __entry->snd_nxt, __entry->snd_una,
+> +		  __entry->data_len, __entry->snd_nxt, __entry->snd_una,
+> 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
+> 		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
+> );
+> -- 
+> 1.8.3.1
+> 
