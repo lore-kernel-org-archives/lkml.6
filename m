@@ -1,99 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754630AbeEYGuo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:50:44 -0400
-Received: from smtprelay0209.hostedemail.com ([216.40.44.209]:40634 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751791AbeEYGum (ORCPT
+        id S935442AbeEYGxr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:53:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52860 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751960AbeEYGxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:50:42 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 
-X-HE-Tag: fight46_532e0d2cc445
-X-Filterd-Recvd-Size: 4183
-Message-ID: <2108eb98b35ab682d44ca7bf40276e93d9566bbf.camel@perches.com>
-Subject: Re: [PATCH] gpu: Consistently use octal not symbolic permissions
-From: Joe Perches <joe@perches.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Rob Clark <robdclark@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Noralf =?ISO-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        Roger He <Hongbo.He@amd.com>, Dave Airlie <airlied@redhat.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Date: Thu, 24 May 2018 23:50:34 -0700
-In-Reply-To: <87a7so44q5.fsf@intel.com>
-References: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com>
-         <87a7so44q5.fsf@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Fri, 25 May 2018 02:53:46 -0400
+Subject: Re: [PATCH] powerpc/modules: remove unused mod_arch_specific.toc
+ field
+To: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <2892e4f57d03caf1b3d6c14bc456b2f9a116b32a.1527220066.git.jpoimboe@redhat.com>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Date: Fri, 25 May 2018 12:23:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <2892e4f57d03caf1b3d6c14bc456b2f9a116b32a.1527220066.git.jpoimboe@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18052506-0044-0000-0000-0000055686F0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052506-0045-0000-0000-000028988DA2
+Message-Id: <872c9b94-62ea-c9cc-78aa-09ae74e44d0c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805250084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-25 at 09:41 +0300, Jani Nikula wrote:
-> On Thu, 24 May 2018, Joe Perches <joe@perches.com> wrote:
-> > There is currently a mixture of octal and symbolic permissions uses
-> > in files in drivers/gpu/drm and one file in drivers/gpu.
-> > 
-> > There are ~270 existing octal uses and ~115 S_<FOO> uses.
-> > 
-> > Convert all the S_<FOO> symbolic permissions to their octal equivalents
-> > as using octal and not symbolic permissions is preferred by many as more
-> > readable.
-> > 
-> > see: https://lkml.org/lkml/2016/8/2/1945
-> > 
-> > Done with automated conversion via:
-> > $ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
-> > 
-> > Miscellanea:
-> > 
-> > o Wrapped modified multi-line calls to a single line where appropriate
-> > o Realign modified multi-line calls to open parenthesis
-> > o drivers/gpu/drm/msm/adreno/a5xx_debugfs.c has a world-writeable
-> >   debug permission for "reset" - perhaps that should be modified
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c        |  2 +-
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c             | 98 +++++++++++-----------
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |  3 +-
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c            |  9 +-
-> >  drivers/gpu/drm/armada/armada_debugfs.c            |  4 +-
-> >  drivers/gpu/drm/drm_debugfs.c                      |  6 +-
-> >  drivers/gpu/drm/drm_debugfs_crc.c                  |  4 +-
-> >  drivers/gpu/drm/drm_sysfs.c                        |  2 +-
-> >  drivers/gpu/drm/i915/gvt/firmware.c                |  2 +-
-> >  drivers/gpu/drm/i915/i915_debugfs.c                |  8 +-
-> >  drivers/gpu/drm/i915/i915_perf.c                   |  2 +-
-> >  drivers/gpu/drm/i915/i915_sysfs.c                  | 22 ++---
-> >  drivers/gpu/drm/i915/intel_pipe_crc.c              |  2 +-
+On Friday 25 May 2018 09:18 AM, Josh Poimboeuf wrote:
+> The toc field in the mod_arch_specific struct isn't actually used
+> anywhere, so remove it.
 > 
-> Please send at least i915 changes separately. There's zero reason to
-> make our lives harder for this change.
+> Also the ftrace-specific fields are now common between 32-bit and
+> 64-bit, so simplify the struct definition a bit by moving them out of
+> the __powerpc64__ #ifdef.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-The idea is to avoid unnecessary multiple patches for
-individual trees.
-
-But you could do that via something like:
-
-$ git am --include='drivers/gpu/drm/i915/*' <patch>
-
-cheers, Joe
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
