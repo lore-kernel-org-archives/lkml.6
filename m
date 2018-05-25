@@ -1,90 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967249AbeEYQIo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:08:44 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:57587 "EHLO
+        id S966986AbeEYQLJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:11:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:44657 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966719AbeEYQIm (ORCPT
+        with ESMTP id S965666AbeEYQLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:08:42 -0400
+        Fri, 25 May 2018 12:11:08 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] qcom: cmd-db: enforce CONFIG_OF_RESERVED_MEM dependency
-Date: Fri, 25 May 2018 18:08:24 +0200
-Message-Id: <20180525160836.125531-1-arnd@arndb.de>
+To: arm@kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Barre <ludovic.barre@st.com>,
+        Olof Johansson <olof@lixom.net>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: stm32: Don't select DMA unconditionally on STM32MP157C
+Date: Fri, 25 May 2018 18:09:13 +0200
+Message-Id: <20180525160926.150713-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:sPRHk80euo/+cajDazVMNbQyWWrZC/+Jf8GUaSacJfOEGr2OwxX
- aOKH5Og0D8j8YxFlBql8HGzW1jReZ6IPMQOXLnMRTaZPdcuqFTJDDWLWuhnrt9pfKZvyLRY
- E89sXpNidmMqRU21Ko//hrcKQN/366WI+osMOTn2oN1nn8fwPxJDMRmqevzJ5K3WOS0nsaX
- /a2G9AUkPMyzlOV5gPksg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bhIAYpb2B3w=:Rrv85xzNhfUE957bQzYPzQ
- WWUFx1NszY7uR0kE1KBPRfyw4S0noKh+9J6NQwq3fqYBhWABvJpPIw2mg4JmLztfGbiwNv3Fn
- 1G5ddB8sMOwPgeZOxltX6/kjg9j8u6HQg4nUBq5sstvd1s+8Ei1XjdVOenPRdQRJonAd59PkI
- rYWO81f6Pi0Iv8TVl54HRCwWMcf5xDwJYve8Fa39qRzV+ZfY6ww7Y9h0EoI6nZwISeWI6Inb1
- Ek+VA8iQw/1TZeTSC3OTMsq8/EW/LmDJ7HGbzk+li+X0Rs0pDuqpNO8PfjdoTB2EwEd3JDE9B
- FlJ7DbyOW6JP5rHcJSlHeR1VT2dDeG6M0hfXxJ6Wy7lcv+YikUkKy67StFvu5a2NBfV7iejQT
- OJnEdnZ4ifq7xVItbq9GJWeI0MhTRVgsO0nTU+0xCvQqTpU9bMSJr/ZGHPwhgcNdnEegkHeL6
- iCaiVxTK1eWtSuSEQ5EFSl/jPA0mShpCXAU1SOba212djO1aDpAVetPC4EZmiyVJS/w6Boigh
- wAif+kDx06BY2MIDQ0RmGp1aKV5q74okq/L53u9FO2RcjiVLySZH9Vd5+PQ/eCnGOhbpQsxKO
- TiccSDoHMwChKZiaUNV/0ZZJByvbS4T++GKptuxS22lOUE5ZCKYvnQF1NG/9Xy0J9yxEHYHlC
- jKXQqwMHJIKNuOJWeG2aDwiy3bVREb+c3WA5su3e+WPHSma4TeH1re3cUEZhe/MhccPs=
+X-Provags-ID: V03:K1:3PpjhnR6c7pIyzSdQKhlNEahgRkZsVVVvoeaM5kx2MzUzkcpTKw
+ KhxM9xRjZsWytlwboKLxhJtLrtReWm6UKiOazMS10sk6yxFzz2j5RXtLRYMleJxmuj5I8Ot
+ 3NEd33jD234zaq3Jz1tV8TM/WqxvR5WvdKw6W+fxTu0ntn5UwrZVJu+XLk3Or1S7HJOxqzZ
+ NWcgtpwFuKUbgnD+Wznzg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d8Raya714HI=:+AeVTq84ZBIYO+ZpsyQMHf
+ pRHbC0R5AFECjSxfzfgnJ96svSdFaw9TMH3fQTguYqNN6ZZwx1nE1dP1trkt8C54T5VreEYB4
+ TNtTr9zH5DL1c+mz63pOp8tEtVetwfJKo95Ts6erfKb9QG3iNnRRqj058sEIuWt2My1u61FUZ
+ eJfVnmvPjslkAWWqGDVCPUJrOXHG7lwMabENujfxhi94fNEFf4S6/32tWI5QvANomZSgggTOI
+ EM5MCzYznAjNZDqiV8vA9fwZwde6/IxmEdKeutfgCRG/eHXUjv/FW3g/my/BlaI2aHEkfDajM
+ xWc7rZkC9cOKIu/lY6vfi8Qtj7wLyqqHJ0WW0+XwCZZYSyk//mpyrk60L/eoAL33PxMS2L9N4
+ NzFTF3s+WfhCudE5i3nfhQ4DCE/v1CwyRb+v9GytGxHmhBY1JaSM9bVF2BL+2MMLK32ZAblEo
+ cepsd8pqBZGBKgueapF2FPzlzSY2REmRu8no8GehayPqccq+udPuVcco3MDrB33IbLsHZfJv+
+ 1ZQhp9h+mTt4snBXPtrkW+2uD80cqc89jyCkYqhqgVj/AhXV5ZwzWm7Tgqo4vT+5VkCYF65aV
+ 7DvEQwV2+BBRBdYO4IG9qoy7MbBW0dzI5/VVKhoY9lSb0+fTwTn0UTmAWPUCH1A9ytjXRd+8W
+ zFSvVzUT2i9qfGho0fPjTGtGB46x/9bzIKHGUNdCa/IbY5D59YNAF9gENVTb066BnZZc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without CONFIG_OF_RESERVED_MEM, gcc sees that the global cmd_db_header
-variable is never initialized, and through code optimization concludes
-that a lot of other code cannot possibly work after that:
+The patch that enabled these had no useful changelog that explains
+why it is done, and it causes a build warning:
 
-drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_addr':
-drivers/soc/qcom/cmd-db.c:197:21: error: 'ent.addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  return ret < 0 ? 0 : le32_to_cpu(ent.addr);
-drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_aux_data':
-drivers/soc/qcom/cmd-db.c:224:10: error: 'ent.len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  ent_len = le16_to_cpu(ent.len);
-drivers/soc/qcom/cmd-db.c:115:6: error: 'rsc_hdr.data_offset' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  u16 offset = le16_to_cpu(hdr->data_offset);
-      ^~~~~~
-drivers/soc/qcom/cmd-db.c:116:6: error: 'ent.offset' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  u16 loffset = le16_to_cpu(ent->offset);
-      ^~~~~~~
-drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_aux_data_len':
-drivers/soc/qcom/cmd-db.c:250:38: error: 'ent.len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  return ret < 0 ? 0 : le16_to_cpu(ent.len);
-                                      ^
-drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_slave_id':
-drivers/soc/qcom/cmd-db.c:272:7: error: 'ent.addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+WARNING: unmet direct dependencies detected for STM32_DMA
+  Depends on [n]: DMADEVICES [=n] && (ARCH_STM32 [=y] || COMPILE_TEST [=y])
+  Selected by [y]:
+  - MACH_STM32MP157 [=y] && ARCH_STM32 [=y] && ARCH_MULTI_V7 [=y]
 
-Using a hard CONFIG_OF_RESERVED_MEM dependency avoids this warning,
-and we can remove the CONFIG_OF dependency.
+Generally, platforms should not select arbitrary drivers, so let's
+just revert that change.
 
+Fixes: de6037fa207f ("ARM: stm32: Select DMA, DMAMUX and MDMA support on STM32MP157C")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/soc/qcom/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/mach-stm32/Kconfig | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 9dc02f390ba3..5856e792d09c 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -5,7 +5,8 @@ menu "Qualcomm SoC drivers"
+diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
+index 82a93b8d9ae6..713c068b953f 100644
+--- a/arch/arm/mach-stm32/Kconfig
++++ b/arch/arm/mach-stm32/Kconfig
+@@ -46,9 +46,6 @@ if ARCH_MULTI_V7
  
- config QCOM_COMMAND_DB
- 	bool "Qualcomm Command DB"
--	depends on (ARCH_QCOM && OF) || COMPILE_TEST
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on OF_RESERVED_MEM
- 	help
- 	  Command DB queries shared memory by key string for shared system
- 	  resources. Platform drivers that require to set state of a shared
+ config MACH_STM32MP157
+ 	bool "STMicroelectronics STM32MP157"
+-	select STM32_DMA
+-	select STM32_DMAMUX
+-	select STM32_MDMA
+ 	default y
+ 
+ endif # ARMv7-A
 -- 
 2.9.0
