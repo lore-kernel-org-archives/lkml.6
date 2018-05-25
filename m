@@ -1,72 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936193AbeEYOVH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:21:07 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46270 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935949AbeEYOVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:21:05 -0400
-X-Google-Smtp-Source: ADUXVKLk8tGqONIgAAEPVAfTUrQWE00MLfRu2VhQxZPDrzu1PmqnD4nl9ilRHDga/4CmfFu3e9J89w==
-Date: Fri, 25 May 2018 16:21:01 +0200
-From: Niklas Cassel <niklas.cassel@linaro.org>
-To: Bob Copeland <me@bobcopeland.com>
-Cc: Adrian Chadd <adrian.chadd@gmail.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        David Miller <davem@davemloft.net>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ath10k: transmit queued frames after waking queues
-Message-ID: <20180525142101.GA14422@localhost.localdomain>
-References: <20180517231512.13085-1-niklas.cassel@linaro.org>
- <CAJ-Vmon1ybhWs_8Nv=w62pmhSizDdDeYCgK8_HTTwPZ=EEC46g@mail.gmail.com>
- <20180521203701.GA7619@localhost.localdomain>
- <20180524155034.xse7cfm5figfktuj@localhost>
- <20180525123656.GB8780@localhost.localdomain>
- <20180525125023.alc42lkgehc6iodg@localhost>
+        id S936204AbeEYOWU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:22:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47867 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935949AbeEYOWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 10:22:19 -0400
+Date: Fri, 25 May 2018 16:22:17 +0200
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Hannes Reinecke <hare@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180525142217.zedv7hz6ov6s45qk@linux-x5ow.site>
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+ <20180525130535.GA24239@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180525125023.alc42lkgehc6iodg@localhost>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180525130535.GA24239@lst.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 08:50:23AM -0400, Bob Copeland wrote:
-> On Fri, May 25, 2018 at 02:36:56PM +0200, Niklas Cassel wrote:
-> > A spin lock does have the advantage of ordering: memory operations issued
-> > before the spin_unlock_bh() will be completed before the spin_unlock_bh()
-> > operation has completed.
+On Fri, May 25, 2018 at 03:05:35PM +0200, Christoph Hellwig wrote:
+> On Fri, May 25, 2018 at 02:53:19PM +0200, Johannes Thumshirn wrote:
+> > Hi,
 > > 
-> > However, ath10k_htt_tx_dec_pending() was called earlier in the same function,
-> > which decreases htt->num_pending_tx, so that write will be completed before
-> > our read. That is the only ordering we care about here (if we should call
-> > ath10k_mac_tx_push_pending() or not).
+> > This patch series aims to provide a more fine grained control over
+> > nvme's native multipathing, by allowing it to be switched on and off
+> > on a per-subsystem basis instead of a big global switch.
 > 
-> Sure.  I also understand that reading inside a lock and operating on the
-> value outside the lock isn't really the definition of synchronization
-> (doesn't really matter in this case though).
-> 
-> I was just suggesting that the implicit memory barrier in the spin unlock
-> that we are already paying for would be sufficient here too, and it matches
-> the semantic of "tx fields under tx_lock."  On the other hand, maybe it's
-> just me, but I tend to look askance at just-in-case READ_ONCEs sprinkled
-> about.
+> No.  The only reason we even allowed to turn multipathing off is
+> because you complained about installer issues.  The path forward
+> clearly is native multipathing and there will be no additional support
+> for the use cases of not using it.
 
-I agree, because of the implicit memory barrier from spin_unlock_bh(),
-READ_ONCE shouldn't really be needed in this case.
+First of all, it wasn't my idea and I'm just doing my job here, as I
+got this task assigned at LSF and tried to do my best here.
 
-I think that it's a good thing to be critical of all "just-in-case" things,
-however, it's not always that obvious if you actually need READ_ONCE or not.
+Personally I _do_ agree with you and do not want to use dm-mpath in
+nvme either (mainly because I don't really know the code and don't
+want to learn yet another subsystem).
 
-E.g. you might need to use it even when you are holding a spin_lock.
+But Mike's and Hannes' arguments where reasonable as well, we do not
+know if there are any existing setups we might break leading to
+support calls, which we have to deal with. Personally I don't believe
+there are lot's of existing nvme multipath setups out there, but who
+am I to judge.
 
-Some people recommend to use it for all concurrent non-read-only shared memory
-accesses: https://github.com/google/ktsan/wiki/READ_ONCE-and-WRITE_ONCE
+So can we find a middle ground to this? Or we'll have the
+all-or-nothing situation we have in scsi-mq now again. How about
+tieing the switch to a config option which is off per default?
 
-Is there a better guideline somewhere..?
-
-
-Kind regards,
-Niklas
+Byte,
+	Johannes
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
