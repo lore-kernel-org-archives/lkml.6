@@ -1,106 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935656AbeEYNmH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:42:07 -0400
-Received: from mga18.intel.com ([134.134.136.126]:60048 "EHLO mga18.intel.com"
+        id S935875AbeEYNme (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:42:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:33892 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934397AbeEYNmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:42:06 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
-   d="scan'208";a="227212395"
-Date: Fri, 25 May 2018 19:10:23 +0530
-From: Shreyas NC <shreyas.nc@intel.com>
-To: Guenter Roeck <groeck@google.com>
-Cc: pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Patel, Chintan M" <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-Message-ID: <20180525134023.GJ3116@snc-desk>
-References: <20180522165842.233949-1-groeck@google.com>
- <649b1c14-e440-0c89-a59c-dc663344faa3@linux.intel.com>
- <CABXOdTdyWVtbWXR6O3VenwTezVLGvEfKuvH=Xz6e5D3np-ZQNw@mail.gmail.com>
+        id S933210AbeEYNmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 09:42:33 -0400
+Subject: Re: [PATCH v4 00/26] arm64: provide pseudo NMI with GICv3
+From: Julien Thierry <julien.thierry@arm.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
+ <20180525101632.cfcfnmnt2u7rz3lt@holly.lan>
+ <02afa8bb-5d27-f229-6085-8f61a626bc63@arm.com>
+Message-ID: <8703b3e0-b5f8-e607-2d8f-3d0b71a5ec3c@arm.com>
+Date: Fri, 25 May 2018 14:42:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABXOdTdyWVtbWXR6O3VenwTezVLGvEfKuvH=Xz6e5D3np-ZQNw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <02afa8bb-5d27-f229-6085-8f61a626bc63@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > +struct skl_dfw_v4_pipe {
-> > > +     u8 pipe_id;
-> > > +     u8 pipe_priority;
-> > > +     u16 conn_type:4;
-> > > +     u16 rsvd:4;
-> > > +     u16 memory_pages:8;
-> > > +} __packed;
-> > > +
-> > > +struct skl_dfw_v4_module {
-> > > +     char uuid[SKL_UUID_STR_SZ];
-> > > +
 
-Any reason to not have this as u8?
-commit 09305da97c7808b900985526aa9198233f32fb37 had changed this to u8..
 
-<snip>
-
-> > > +
-> > > +     mconfig->params_fixup = dfw->params_fixup;
-> > > +     mconfig->converter = dfw->converter;
-> > > +     mconfig->m_type = dfw->module_type;
-> > > +     mconfig->vbus_id = dfw->vbus_id;
-> > > +     mconfig->module->resources[0].is_pages = dfw->mem_pages;
-> > > +
-> > > +     ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     mconfig->dev_type = dfw->dev_type;
-> > > +     mconfig->hw_conn_type = dfw->hw_conn_type;
-> > > +     mconfig->time_slot = dfw->time_slot;
-> > > +     mconfig->formats_config.caps_size = dfw->caps.caps_size;
-> 
-> > chromeos-3.18 has this:
-> >       if (dfw_config->is_loadable)
-> >           memcpy(mconfig->guid, dfw_config->uuid,
-> >                       ARRAY_SIZE(dfw_config->uuid));
-> 
-> > Is this needed here?
+On 25/05/18 11:40, Julien Thierry wrote:
 > 
 > 
-> Direct memcpy doesn't work anymore since the uuid format is different. The
-> above is replaced
-> with (unconditional)
+> On 25/05/18 11:16, Daniel Thompson wrote:
+>> On Fri, May 25, 2018 at 10:49:06AM +0100, Julien Thierry wrote:
+>>> This series is a continuation of the work started by Daniel [1]. The 
+>>> goal
+>>> is to use GICv3 interrupt priorities to simulate an NMI.
+>>>
+>>> To achieve this, set two priorities, one for standard interrupts and
+>>> another, higher priority, for NMIs. Whenever we want to disable 
+>>> interrupts,
+>>> we mask the standard priority instead so NMIs can still be raised. Some
+>>> corner cases though still require to actually mask all interrupts
+>>> effectively disabling the NMI.
+>>>
+>>> Currently, only PPIs and SPIs can be set as NMIs. IPIs being currently
+>>> hardcoded IRQ numbers, there isn't a generic interface to set SGIs as 
+>>> NMI
+>>> for now. I don't think there is any reason LPIs should be allowed to 
+>>> be set
+>>> as NMI as they do not have an active state.
+>>> When an NMI is active on a CPU, no other NMI can be triggered on the 
+>>> CPU.
+>>>
+>>> After the big refactoring I get performances similar to the ones I had
+>>> in v3[2], reposting old results here:
+>>>
+>>> - "hackbench 200 process 1000" (average over 20 runs)
+>>> +-----------+----------+------------+------------------+
+>>> |           | native   | PMR guest  | v4.17-rc6 guest  |
+>>> +-----------+----------+------------+------------------+
+>>> | PMR host  | 40.0336s |   39.3039s |         39.2044s |
+>>> | v4.17-rc6 | 40.4040s |   39.6011s |         39.1147s |
+>>> +-----------+----------+------------+------------------+
+>>>
+>>> - Kernel build from defconfig:
+>>> PMR host:  13m45.743s
+>>> v4.17-rc6: 13m40.400s
+>>>
+>>> I'll try to post more detailed benchmarks later if I find notable
+>>> differences with the previous version.
+>>
+>> Do you have a public git tree anywhere... I *can* apply 26 patches from
+>> e-mail but I'd rather pull them!
+>>
 > 
->          ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
->          if (ret)
->                  return ret;
+> Yes that makes sense, I'll try to get one set up.
 > 
-> at the beginning of skl_tplg_get_pvt_data_v4(). The new code, as far as I
-> can see, loads
-> the uuid unconditionally if it finds SND_SOC_TPLG_TUPLE_TYPE_UUID. I wanted
-> to
-> be on the safe side and decided to do the same.
-> 
+> I'll let you know once I have done so.
 
-In the new code, still does a memcpy(). So, I am not sure if I understand
-why memcpy() does not work.
+My public git is up. You can pull the patches from:
 
-        if (uuid_tkn->token == SKL_TKN_UUID) {
-                memcpy(guid, &uuid_tkn->uuid, 16);
-                return 0;
-        }
+git://linux-arm.org/linux-jt.git v4.17-pseudo-nmi
 
-Replied on the older mail since Pierre had a similar question as well.
-
---Shreyas
+Cheers,
 
 -- 
+Julien Thierry
