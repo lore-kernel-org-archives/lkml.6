@@ -1,92 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965393AbeEYJ0i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:26:38 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56855 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S964909AbeEYJ0g (ORCPT
+        id S965306AbeEYJ1v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:27:51 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:46177 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964909AbeEYJ1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:26:36 -0400
-Subject: Re: [PATCH v6 3/9] docs: Add Generic Counter interface documentation
-To: Jonathan Cameron <jic23@kernel.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-CC: <benjamin.gaignard@st.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <cover.1526487615.git.vilhelm.gray@gmail.com>
- <aa4d62315bb11ddc66d0e1a685c81b1721ffe624.1526487615.git.vilhelm.gray@gmail.com>
- <20180520163109.22b11af8@archlinux> <20180521134729.GB5723@sophia>
- <20180522180805.2b61f0ed@archlinux>
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <cd045792-8ed2-8d83-231a-661975ffc7c5@st.com>
-Date: Fri, 25 May 2018 11:26:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 25 May 2018 05:27:48 -0400
+X-Google-Smtp-Source: ADUXVKLBZr0imtisRstQ0v753Ob2hdjtyytOdIzI1gzd0YLf8dW4kWtEz2qwAE2IwZt4G1dhDD+oBPmD6eRznO5ByiM=
 MIME-Version: 1.0
-In-Reply-To: <20180522180805.2b61f0ed@archlinux>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_03:,,
- signatures=0
+In-Reply-To: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 11:27:46 +0200
+X-Google-Sender-Auth: XojxsvYAxrBq5VaT-Mxo7zX2HME
+Message-ID: <CAMuHMdW5VvZ-wbO7TuZC2z+KFPLq_PhBGe3WbAeES-nezb7tmQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 07:08 PM, Jonathan Cameron wrote:
->>>> +* Quadrature x2 Rising:
->>>> +  Rising edges on either quadrature pair signals updates the respective
->>>> +  count. Quadrature encoding determines the direction.  
->>> This one I've never met.  Really? There are devices who do this form
->>> of crazy? It gives really uneven counting and I'm failing to see when
->>> it would ever make sense...  References for these odd corner cases
->>> would be good.
->>>
->>>
->>> __|---|____|-----|____
->>> ____|----|____|-----|____
->>>
->>> 001122222223334444444  
->> That's the same reaction I had when I discovered this -- in fact the
->> STM32 LP Timer is the first time I've come across such a quadrature
->> mode. I'm not sure of the use case for this mode, because positioning
->> wouldn't be precise as you've pointed out. Perhaps Fabrice or Benjamin
->> can probe the ST guys responsible for this design choice to figure out
->> the rationale.
-> Hmm.  My inclination would be to not support it unless someone can up
-> with a meaningful use.  We are adding ABI (be it not much) for a case
-> that to us makes no sense.
+Hi Michel,
 
-Hi Jonathan, William,
+On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the Renesas R9A06G032 bare bone support.
+>
+> This currently only handles generic parts (gic, architected timer)
+> and a UART.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Sorry for the late reply. To follow your advise, we can probably drop
-this for now. I think simple counter, or quadrature x4 will be mostly
-used for now. As you pointed out, there's not much ABI for x2
-rising/falling cases. It will not be a big deal to add it later if needed.
+Thanks for your patch!
 
-I can help to update (remove & test) this in LP-Timer counter driver if
-you wish.
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
 
-Please let me know,
+> +       soc {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               interrupt-parent = <&gic>;
+> +               ranges;
+> +
+> +               sysctrl: sysctrl@4000c000 {
 
-Thanks,
-Fabrice
+system-controller@
 
-> 
-> Looks rather like the sort of thing that is a side effect of the
-> implementation rather than deliberate.
-> 
->> I'm leaving in these modes for now, as they do exist in the STM32 LP
->> Timer, but it does make me curious what the intentions for them were
->> (perhaps use cases outside of traditional quadrature encoder
->> positioning).
->>
-> Sure if there is a usecase then fair enough.
-> 
-> Jonathan
-> 
-> 
+> +                       compatible = "renesas,r9a06g032-sysctrl";
+> +                       reg = <0x4000c000 0x1000>;
+> +                       status = "okay";
+> +                       #clock-cells = <1>;
+> +               };
+
+With the minor nit above resolved, and pending acceptance of the
+sysctrl bindings:
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
