@@ -1,280 +1,248 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030685AbeEYWDJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:03:09 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17942 "EHLO mga18.intel.com"
+        id S1030710AbeEYWFS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:05:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:50944 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030441AbeEYWBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:01:00 -0400
+        id S1030394AbeEYWFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:05:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="231900853"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-xfs@vger.kernel.org, "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH resend 1/7] fs: allow per-device dax status checking for filesystems
-Date: Fri, 25 May 2018 16:00:49 -0600
-Message-Id: <20180525220055.18920-2-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
-References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
+   d="scan'208";a="231749062"
+From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Naresh Bhat <naresh.bhat@linaro.org>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH V4 2/3] efi: Create efi_rts_wq and efi_queue_work() to invoke all efi_runtime_services()
+Date: Fri, 25 May 2018 15:05:02 -0700
+Message-Id: <1527285903-31799-3-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527285903-31799-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1527285903-31799-1-git-send-email-sai.praneeth.prakhya@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Remove __bdev_dax_supported and change to bdev_dax_supported that takes a
-bdev parameter.  This enables multi-device filesystems like xfs to check
-that a dax device can work for the particular filesystem.  Once that's
-in place, actually fix all the parts of XFS where we need to be able to
-distinguish between datadev and rtdev.
+When a process requests the kernel to execute any efi_runtime_service(),
+the requested efi_runtime_service (represented as an identifier) and its
+arguments are packed into a struct named efi_runtime_work and queued
+onto work queue named efi_rts_wq. The caller then waits until the work
+is completed.
 
-This patch fixes the problem where we screw up the dax support checking
-in xfs if the datadev and rtdev have different dax capabilities.
+Introduce some infrastructure:
+1. Creating workqueue named efi_rts_wq
+2. A macro (efi_queue_work()) that
+	a. Populates efi_runtime_work
+	b. Queues work onto efi_rts_wq and
+	c. Waits until worker thread completes
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+The caller thread has to wait until the worker thread completes, because
+it depends on the return status of efi_runtime_service() and, in
+specific cases, the arguments populated by efi_runtime_service(). Some
+efi_runtime_services() takes a pointer to buffer as an argument and
+fills up the buffer with requested data. For instance,
+efi_get_variable() and efi_get_next_variable(). Hence, caller process
+cannot just post the work and get going.
+
+Some facts about efi_runtime_services():
+1. A quick look at all the efi_runtime_services() shows that any
+efi_runtime_service() has five or less arguments.
+2. An argument of efi_runtime_service() can be a value (of any type)
+or a pointer (of any type).
+Hence, efi_runtime_work has five void pointers to store these arguments.
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Naresh Bhat <naresh.bhat@linaro.org>
+Cc: Ricardo Neri <ricardo.neri@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- drivers/dax/super.c | 30 +++++++++++++++---------------
- fs/ext2/super.c     |  2 +-
- fs/ext4/super.c     |  2 +-
- fs/xfs/xfs_ioctl.c  |  3 ++-
- fs/xfs/xfs_iops.c   | 30 +++++++++++++++++++++++++-----
- fs/xfs/xfs_super.c  | 10 ++++++++--
- include/linux/dax.h | 10 +++-------
- 7 files changed, 55 insertions(+), 32 deletions(-)
+ drivers/firmware/efi/efi.c              | 14 ++++++
+ drivers/firmware/efi/runtime-wrappers.c | 85 +++++++++++++++++++++++++++++++++
+ include/linux/efi.h                     |  3 ++
+ 3 files changed, 102 insertions(+)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 2b2332b605e4..9206539c8330 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -73,8 +73,8 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
- #endif
- 
- /**
-- * __bdev_dax_supported() - Check if the device supports dax for filesystem
-- * @sb: The superblock of the device
-+ * bdev_dax_supported() - Check if the device supports dax for filesystem
-+ * @bdev: block device to check
-  * @blocksize: The block size of the device
-  *
-  * This is a library function for filesystems to check if the block device
-@@ -82,33 +82,33 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
-  *
-  * Return: negative errno if unsupported, 0 if supported.
-  */
--int __bdev_dax_supported(struct super_block *sb, int blocksize)
-+int bdev_dax_supported(struct block_device *bdev, int blocksize)
- {
--	struct block_device *bdev = sb->s_bdev;
- 	struct dax_device *dax_dev;
- 	pgoff_t pgoff;
- 	int err, id;
- 	void *kaddr;
- 	pfn_t pfn;
- 	long len;
-+	char buf[BDEVNAME_SIZE];
- 
- 	if (blocksize != PAGE_SIZE) {
--		pr_debug("VFS (%s): error: unsupported blocksize for dax\n",
--				sb->s_id);
-+		pr_debug("%s: error: unsupported blocksize for dax\n",
-+				bdevname(bdev, buf));
- 		return -EINVAL;
- 	}
- 
- 	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
- 	if (err) {
--		pr_debug("VFS (%s): error: unaligned partition for dax\n",
--				sb->s_id);
-+		pr_debug("%s: error: unaligned partition for dax\n",
-+				bdevname(bdev, buf));
- 		return err;
- 	}
- 
- 	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
- 	if (!dax_dev) {
--		pr_debug("VFS (%s): error: device does not support dax\n",
--				sb->s_id);
-+		pr_debug("%s: error: device does not support dax\n",
-+				bdevname(bdev, buf));
- 		return -EOPNOTSUPP;
- 	}
- 
-@@ -119,8 +119,8 @@ int __bdev_dax_supported(struct super_block *sb, int blocksize)
- 	put_dax(dax_dev);
- 
- 	if (len < 1) {
--		pr_debug("VFS (%s): error: dax access failed (%ld)\n",
--				sb->s_id, len);
-+		pr_debug("%s: error: dax access failed (%ld)\n",
-+				bdevname(bdev, buf), len);
- 		return len < 0 ? len : -EIO;
- 	}
- 
-@@ -137,14 +137,14 @@ int __bdev_dax_supported(struct super_block *sb, int blocksize)
- 	} else if (pfn_t_devmap(pfn)) {
- 		/* pass */;
- 	} else {
--		pr_debug("VFS (%s): error: dax support not enabled\n",
--				sb->s_id);
-+		pr_debug("%s: error: dax support not enabled\n",
-+				bdevname(bdev, buf));
- 		return -EOPNOTSUPP;
- 	}
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(__bdev_dax_supported);
-+EXPORT_SYMBOL_GPL(bdev_dax_supported);
- #endif
- 
- enum dax_device_flags {
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index de1694512f1f..9627c3054b5c 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -961,7 +961,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
- 	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
- 
- 	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
--		err = bdev_dax_supported(sb, blocksize);
-+		err = bdev_dax_supported(sb->s_bdev, blocksize);
- 		if (err) {
- 			ext2_msg(sb, KERN_ERR,
- 				"DAX unsupported by block device. Turning off DAX.");
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index eb104e8476f0..089170e99895 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3732,7 +3732,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 					" that may contain inline data");
- 			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
- 		}
--		err = bdev_dax_supported(sb, blocksize);
-+		err = bdev_dax_supported(sb->s_bdev, blocksize);
- 		if (err) {
- 			ext4_msg(sb, KERN_ERR,
- 				"DAX unsupported by block device. Turning off DAX.");
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 89fb1eb80aae..0effd46b965f 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -1103,7 +1103,8 @@ xfs_ioctl_setattr_dax_invalidate(
- 	if (fa->fsx_xflags & FS_XFLAG_DAX) {
- 		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
- 			return -EINVAL;
--		if (bdev_dax_supported(sb, sb->s_blocksize) < 0)
-+		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
-+				sb->s_blocksize) < 0)
- 			return -EINVAL;
- 	}
- 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index a3ed3c811dfa..6e83acf74a95 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1195,6 +1195,30 @@ static const struct inode_operations xfs_inline_symlink_inode_operations = {
- 	.update_time		= xfs_vn_update_time,
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 1176af664013..2632294eb33f 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -84,6 +84,8 @@ struct mm_struct efi_mm = {
+ 	.mmlist			= LIST_HEAD_INIT(efi_mm.mmlist),
  };
  
-+/* Figure out if this file actually supports DAX. */
-+static bool
-+xfs_inode_supports_dax(
-+	struct xfs_inode	*ip)
-+{
-+	struct xfs_mount	*mp = ip->i_mount;
++struct workqueue_struct *efi_rts_wq;
 +
-+	/* Only supported on non-reflinked files. */
-+	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
-+		return false;
-+
-+	/* DAX mount option or DAX iflag must be set. */
-+	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
-+	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-+		return false;
-+
-+	/* Block size must match page size */
-+	if (mp->m_sb.sb_blocksize != PAGE_SIZE)
-+		return false;
-+
-+	/* Device has to support DAX too. */
-+	return xfs_find_daxdev_for_inode(VFS_I(ip)) != NULL;
-+}
-+
- STATIC void
- xfs_diflags_to_iflags(
- 	struct inode		*inode,
-@@ -1213,11 +1237,7 @@ xfs_diflags_to_iflags(
- 		inode->i_flags |= S_SYNC;
- 	if (flags & XFS_DIFLAG_NOATIME)
- 		inode->i_flags |= S_NOATIME;
--	if (S_ISREG(inode->i_mode) &&
--	    ip->i_mount->m_sb.sb_blocksize == PAGE_SIZE &&
--	    !xfs_is_reflink_inode(ip) &&
--	    (ip->i_mount->m_flags & XFS_MOUNT_DAX ||
--	     ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-+	if (xfs_inode_supports_dax(ip))
- 		inode->i_flags |= S_DAX;
- }
- 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index d71424052917..62188c2a4c36 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1690,11 +1690,17 @@ xfs_fs_fill_super(
- 		sb->s_flags |= SB_I_VERSION;
- 
- 	if (mp->m_flags & XFS_MOUNT_DAX) {
-+		int	error2 = 0;
-+
- 		xfs_warn(mp,
- 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
- 
--		error = bdev_dax_supported(sb, sb->s_blocksize);
--		if (error) {
-+		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
-+				sb->s_blocksize);
-+		if (mp->m_rtdev_targp)
-+			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
-+					sb->s_blocksize);
-+		if (error && error2) {
- 			xfs_alert(mp,
- 			"DAX unsupported by block device. Turning off DAX.");
- 			mp->m_flags &= ~XFS_MOUNT_DAX;
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index f9eb22ad341e..509a85ac8470 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -64,12 +64,7 @@ static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
- struct writeback_control;
- int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
- #if IS_ENABLED(CONFIG_FS_DAX)
--int __bdev_dax_supported(struct super_block *sb, int blocksize);
--static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
--{
--	return __bdev_dax_supported(sb, blocksize);
--}
--
-+int bdev_dax_supported(struct block_device *bdev, int blocksize);
- static inline struct dax_device *fs_dax_get_by_host(const char *host)
+ static bool disable_runtime;
+ static int __init setup_noefi(char *arg)
  {
- 	return dax_get_by_host(host);
-@@ -84,7 +79,8 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
- int dax_writeback_mapping_range(struct address_space *mapping,
- 		struct block_device *bdev, struct writeback_control *wbc);
- #else
--static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
-+static inline int bdev_dax_supported(struct block_device *bdev,
-+		int blocksize)
+@@ -338,6 +340,18 @@ static int __init efisubsys_init(void)
+ 		return 0;
+ 
+ 	/*
++	 * Since we process only one efi_runtime_service() at a time, an
++	 * ordered workqueue (which creates only one execution context)
++	 * should suffice all our needs.
++	 */
++	efi_rts_wq = alloc_ordered_workqueue("efi_rts_wq", 0);
++	if (!efi_rts_wq) {
++		pr_err("Creating efi_rts_wq failed, EFI runtime services disabled.\n");
++		clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
++		return 0;
++	}
++
++	/*
+ 	 * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
+ 	 * it should be invoked only after efi_rts_wq is ready.
+ 	 */
+diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+index ae54870b2788..534bd348feca 100644
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -1,6 +1,15 @@
+ /*
+  * runtime-wrappers.c - Runtime Services function call wrappers
+  *
++ * Implementation summary:
++ * -----------------------
++ * 1. When user/kernel thread requests to execute efi_runtime_service(),
++ * enqueue work to efi_rts_wq.
++ * 2. Caller thread waits for completion until the work is finished
++ * because it's dependent on the return status and execution of
++ * efi_runtime_service().
++ * For instance, get_variable() and get_next_variable().
++ *
+  * Copyright (C) 2014 Linaro Ltd. <ard.biesheuvel@linaro.org>
+  *
+  * Split off from arch/x86/platform/efi/efi.c
+@@ -22,6 +31,9 @@
+ #include <linux/mutex.h>
+ #include <linux/semaphore.h>
+ #include <linux/stringify.h>
++#include <linux/workqueue.h>
++#include <linux/completion.h>
++
+ #include <asm/efi.h>
+ 
+ /*
+@@ -33,6 +45,79 @@
+ #define __efi_call_virt(f, args...) \
+ 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
+ 
++/* efi_runtime_service() function identifiers */
++enum efi_rts_ids {
++	GET_TIME,
++	SET_TIME,
++	GET_WAKEUP_TIME,
++	SET_WAKEUP_TIME,
++	GET_VARIABLE,
++	GET_NEXT_VARIABLE,
++	SET_VARIABLE,
++	SET_VARIABLE_NONBLOCKING,
++	QUERY_VARIABLE_INFO,
++	QUERY_VARIABLE_INFO_NONBLOCKING,
++	GET_NEXT_HIGH_MONO_COUNT,
++	RESET_SYSTEM,
++	UPDATE_CAPSULE,
++	QUERY_CAPSULE_CAPS,
++};
++
++/*
++ * efi_runtime_work:	Details of EFI Runtime Service work
++ * @arg<1-5>:		EFI Runtime Service function arguments
++ * @status:		Status of executing EFI Runtime Service
++ * @efi_rts_id:		EFI Runtime Service function identifier
++ * @efi_rts_comp:	Struct used for handling completions
++ */
++struct efi_runtime_work {
++	void *arg1;
++	void *arg2;
++	void *arg3;
++	void *arg4;
++	void *arg5;
++	efi_status_t status;
++	struct work_struct work;
++	enum efi_rts_ids efi_rts_id;
++	struct completion efi_rts_comp;
++};
++
++/*
++ * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
++ * @rts:		efi_runtime_service() function identifier
++ * @rts_arg<1-5>:	efi_runtime_service() function arguments
++ *
++ * Accesses to efi_runtime_services() are serialized by a binary
++ * semaphore (efi_runtime_lock) and caller waits until the work is
++ * finished, hence _only_ one work is queued at a time and the caller
++ * thread waits for completion.
++ */
++#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
++({									\
++	struct efi_runtime_work efi_rts_work;				\
++	efi_rts_work.status = EFI_ABORTED;				\
++									\
++	init_completion(&efi_rts_work.efi_rts_comp);			\
++	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
++	efi_rts_work.arg1 = _arg1;					\
++	efi_rts_work.arg2 = _arg2;					\
++	efi_rts_work.arg3 = _arg3;					\
++	efi_rts_work.arg4 = _arg4;					\
++	efi_rts_work.arg5 = _arg5;					\
++	efi_rts_work.efi_rts_id = _rts;					\
++									\
++	/*								\
++	 * queue_work() returns 0 if work was already on queue,         \
++	 * _ideally_ this should never happen.                          \
++	 */								\
++	if (queue_work(efi_rts_wq, &efi_rts_work.work))			\
++		wait_for_completion(&efi_rts_work.efi_rts_comp);	\
++	else								\
++		pr_err("Failed to queue work to efi_rts_wq.\n");	\
++									\
++	efi_rts_work.status;						\
++})
++
+ void efi_call_virt_check_flags(unsigned long flags, const char *call)
  {
- 	return -EOPNOTSUPP;
- }
+ 	unsigned long cur_flags, mismatch;
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 1b79939d0b1e..8fb1af15be67 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1654,4 +1654,7 @@ struct linux_efi_tpm_eventlog {
+ 
+ extern int efi_tpm_eventlog_init(void);
+ 
++/* Workqueue to queue EFI Runtime Services */
++extern struct workqueue_struct *efi_rts_wq;
++
+ #endif /* _LINUX_EFI_H */
 -- 
-2.14.3
+2.7.4
