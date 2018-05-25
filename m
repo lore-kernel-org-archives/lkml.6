@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934226AbeEYMfE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:35:04 -0400
+        id S934135AbeEYMe7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:34:59 -0400
 Received: from esa1.microchip.iphmx.com ([68.232.147.91]:14730 "EHLO
         esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932994AbeEYMfB (ORCPT
+        with ESMTP id S932994AbeEYMe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:35:01 -0400
+        Fri, 25 May 2018 08:34:58 -0400
 X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
-   d="scan'208";a="15314122"
+   d="scan'208";a="15314120"
 From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
@@ -16,74 +16,77 @@ To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <boris.brezillon@bootlin.com>, <alexandre.belloni@bootlin.com>,
         <robh+dt@kernel.org>, <broonie@kernel.org>
 CC: <Cristian.Birsan@microchip.com>
-Subject: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-Date: Fri, 25 May 2018 15:34:22 +0300
-Message-ID: <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+Subject: [PATCH v4 0/7] ASoC: add driver for Atmel I2S controller
+Date: Fri, 25 May 2018 15:34:21 +0300
+Message-ID: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The I2S mux clock can be used to select the I2S input clock. The
-available parents are the peripheral and the generated clocks.
+This is a rework of Cyrille's patches named:
+[PATCH v3 0/2] ASoC: add driver for Atmel I2S controller
+https://lkml.org/lkml/2015/9/29/454
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- .../devicetree/bindings/clock/at91-clock.txt       | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+This is the version 4 of the series, and addresses the received feedback
+on the mailing lists.
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-index 51c259a..1c46b3c 100644
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-@@ -90,6 +90,8 @@ Required properties:
- 	"atmel,sama5d2-clk-audio-pll-pmc"
- 		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
- 		and can be used by peripheral clock or generic clock
-+	"atmel,sama5d2-clk-i2s-mux":
-+		at91 I2S clock source selection
- 
- Required properties for SCKC node:
- - reg : defines the IO memory reserved for the SCKC.
-@@ -507,3 +509,35 @@ For example:
- 			atmel,clk-output-range = <0 83000000>;
- 		};
- 	};
-+
-+Required properties for I2S mux clocks:
-+- #size-cells : shall be 0 (reg is used to encode I2S bus id).
-+- #address-cells : shall be 1 (reg is used to encode I2S bus id).
-+- name: device tree node describing a specific mux clock.
-+	* #clock-cells : from common clock binding; shall be set to 0.
-+	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
-+	  peripheral and generated clock; the first phandle shall belong to the
-+	  peripheral clock and the second one shall belong to the generated
-+	  clock; "clock-indices" property can be user to specify
-+	  the correct order.
-+	* reg: I2S bus id of the corresponding mux clock.
-+	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
-+
-+For example:
-+	i2s_clkmux {
-+		compatible = "atmel,sama5d2-clk-i2s-mux";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2s0muxck: i2s0_muxclk {
-+			clocks = <&i2s0_clk>, <&i2s0_gclk>;
-+			#clock-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		i2s1muxck: i2s1_muxclk {
-+			clocks = <&i2s1_clk>, <&i2s1_gclk>;
-+			#clock-cells = <0>;
-+			reg = <1>;
-+		};
-+	};
+This series applies on top of asoc-next branch of broonie/sound.git.
+
+Based on received feedback, I created a mux clock driver to select the I2S
+clock source, that also includes proper devicetree bindings and nodes.
+Also, I added the I2S nodes in sama5d2's devicetree, with the missing
+pin muxing for the second I2S controller.
+
+This series of patches adds support to the new Atmel I2S controller
+embedded on sama5d2 SoCs.
+
+ChangeLog
+
+v3 -> v4
+ - as suggested by Rob Herring:
+   - added a clock mux driver for I2S's clock control bit;
+   - more precise description of I2S's devicetree bindings;
+   - removed SoC and internal detalls from bindings;
+ - addressed comments from Mark Brown;
+ - added devicetree nodes and pin muxing for I2S;
+
+v2 -> v3
+- fix the coding style, add some more comments and add a section dedicated
+  to sama5d2 SoCs in the DT binding documentation as suggested by Mark
+  Brown.
+
+v1 -> v2
+- initialize dev->dev before calling dev->caps->mck_init()
+
+
+Codrin Ciubotariu (3):
+  dt-bindings: clk: at91: add an I2S mux clock
+  clk: at91: add I2S clock mux driver
+  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
+
+Cyrille Pitchen (4):
+  ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+  ASoC: atmel-i2s: add driver for the new Atmel I2S controller
+  ARM: dts: at91: sama5d2: add nodes for I2S controllers
+  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+
+ .../devicetree/bindings/clock/at91-clock.txt       |  34 +
+ .../devicetree/bindings/sound/atmel-i2s.txt        |  47 ++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  28 +
+ arch/arm/boot/dts/sama5d2.dtsi                     |  52 ++
+ arch/arm/mach-at91/Kconfig                         |   4 +
+ drivers/clk/at91/Makefile                          |   1 +
+ drivers/clk/at91/clk-i2s-mux.c                     | 117 ++++
+ sound/soc/atmel/Kconfig                            |   9 +
+ sound/soc/atmel/Makefile                           |   2 +
+ sound/soc/atmel/atmel-i2s.c                        | 765 +++++++++++++++++++++
+ 10 files changed, 1059 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/atmel-i2s.txt
+ create mode 100644 drivers/clk/at91/clk-i2s-mux.c
+ create mode 100644 sound/soc/atmel/atmel-i2s.c
+
 -- 
 2.7.4
