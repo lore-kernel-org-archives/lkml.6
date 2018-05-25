@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965306AbeEYJ1v (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:27:51 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:46177 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964909AbeEYJ1s (ORCPT
+        id S965407AbeEYJ2i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:28:38 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:35840 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965130AbeEYJ2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:27:48 -0400
-X-Google-Smtp-Source: ADUXVKLBZr0imtisRstQ0v753Ob2hdjtyytOdIzI1gzd0YLf8dW4kWtEz2qwAE2IwZt4G1dhDD+oBPmD6eRznO5ByiM=
+        Fri, 25 May 2018 05:28:35 -0400
+X-Google-Smtp-Source: ADUXVKIgJwKWjtjjjBdeqW23KQYH8Vfq0DDWToo86m+mZKyAxs7O6ygzOSS3JuA+i0h+ZkNLeUe4p88HBegWfUPLZjU=
 MIME-Version: 1.0
-In-Reply-To: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1527154169-32380-5-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-5-git-send-email-michel.pollet@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 May 2018 11:27:46 +0200
-X-Google-Sender-Auth: XojxsvYAxrBq5VaT-Mxo7zX2HME
-Message-ID: <CAMuHMdW5VvZ-wbO7TuZC2z+KFPLq_PhBGe3WbAeES-nezb7tmQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Date: Fri, 25 May 2018 11:28:33 +0200
+X-Google-Sender-Auth: 81IUBXF6k2E56snH-8bn-Q_yAPs
+Message-ID: <CAMuHMdUy_5Q54mE9qiAhwW2OiYxoUgb7JFAn=JCr2r_spO+kcw@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] ARM: dts: Renesas RZN1D-DB Board base file
 To: Michel Pollet <michel.pollet@bp.renesas.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
@@ -34,43 +34,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
-
 On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
 <michel.pollet@bp.renesas.com> wrote:
-> This adds the Renesas R9A06G032 bare bone support.
->
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
+> This adds a base device tree file for the RZN1-DB board, with only the
+> basic support allowing the system to boot to a prompt. Only one UART is
+> used, with only a single CPU running.
 >
 > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Thanks for your patch!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 > --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-
-> +       soc {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               interrupt-parent = <&gic>;
-> +               ranges;
+> +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+> @@ -0,0 +1,29 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the RZN1D-DB Board
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + */
 > +
-> +               sysctrl: sysctrl@4000c000 {
+> +/dts-v1/;
+> +
+> +#include "r9a06g032.dtsi"
+> +
+> +/ {
+> +       model = "RZN1D-DB Board";
+> +       compatible = "renesas,rzn1d400-db",
+> +                       "renesas,r9a06g032";
 
-system-controller@
+Nit: This could fit on a single line.
 
-> +                       compatible = "renesas,r9a06g032-sysctrl";
-> +                       reg = <0x4000c000 0x1000>;
-> +                       status = "okay";
-> +                       #clock-cells = <1>;
-> +               };
-
-With the minor nit above resolved, and pending acceptance of the
-sysctrl bindings:
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +
+> +       aliases {
+> +               serial0 = &uart0;
+> +       };
+> +};
 
 Gr{oetje,eeting}s,
 
