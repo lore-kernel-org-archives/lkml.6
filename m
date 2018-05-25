@@ -1,309 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935900AbeEYGMJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:12:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54528 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935671AbeEYGMD (ORCPT
+        id S935791AbeEYGLy convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:11:54 -0400
+Received: from mo-csw1516.securemx.jp ([210.130.202.155]:34966 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935619AbeEYGLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:12:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 884CA60C54
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH v8 02/12] ARM: dts: ipq4019: Add a few peripheral nodes
-Date: Fri, 25 May 2018 11:41:12 +0530
-Message-Id: <1527228682-12285-3-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527228682-12285-1-git-send-email-sricharan@codeaurora.org>
-References: <1527228682-12285-1-git-send-email-sricharan@codeaurora.org>
+        Fri, 25 May 2018 02:11:51 -0400
+X-Iguazu-Qid: 34tKJF2XmDARxaNvgA
+X-Iguazu-QSIG: v=1; s=0; t=1527228675; q=34tKJF2XmDARxaNvgA; m=certYRU3T+t3Du3cguCet/uBY/IcasCqiX1y5eQ5C6c=
+From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
+To: "'Rafael Tinoco'" <rafael.tinoco@linaro.org>
+Cc: "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <shuah@kernel.org>,
+        <patches@kernelci.org>, <lkft-triage@lists.linaro.org>,
+        <ben.hutchings@codethink.co.uk>, <stable@vger.kernel.org>,
+        <akpm@linux-foundation.org>, <torvalds@linux-foundation.org>,
+        <linux@roeck-us.net>
+References: <20180524093159.286472249@linuxfoundation.org> <20180524180652.7bqyquqfe2nqdxfg@xps> <20180524190806.GE31019@kroah.com> <CADtBP2B=Yb22dUjW-X-1OEGUvMX81gfpQ2FqFAaQUnExduwq7Q@mail.gmail.com> <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp> <CADtBP2CDjgB_xizZdoKVQjxTcs7uKQccR3Phkd-0aEcogv912Q@mail.gmail.com>
+In-Reply-To: <CADtBP2CDjgB_xizZdoKVQjxTcs7uKQccR3Phkd-0aEcogv912Q@mail.gmail.com>
+Subject: RE: [PATCH 4.4 00/92] 4.4.133-stable review
+Date: Fri, 25 May 2018 15:11:12 +0900
+X-TSB-HOP: ON
+Message-ID: <008501d3f3ef$2e39ce70$8aad6b50$@toshiba.co.jp>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHyOjw/2UIYPy6ZRGrtHaW6etfoGQJRUQMkAZFkJwoB+cXzNAHu0+UkAaAyxSOjt/AMUA==
+Content-Language: ja
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now with the driver updates for some peripherals being there,
-add i2c, spi, pcie, bam, qpic-nand, scm nodes to enhance the available
-peripheral support.
+> -----Original Message-----
+> From: Rafael Tinoco [mailto:rafael.tinoco@linaro.org]
+> 
+> Thank you Daniel! Will investigate those.
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi |   2 +-
- arch/arm/boot/dts/qcom-ipq4019.dtsi           | 156 ++++++++++++++++++++++++--
- 2 files changed, 146 insertions(+), 12 deletions(-)
+OK, thank you :).
+Notice that I did those tests on x86_64. It seems you are testing on arm, so there may be some differences.
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-index ef8d8c8..418f9a0 100644
---- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-@@ -69,7 +69,7 @@
- 			status = "ok";
- 		};
- 
--		spi_0: spi@78b5000 {
-+		spi@78b5000 {
- 			pinctrl-0 = <&spi_0_pins>;
- 			pinctrl-names = "default";
- 			status = "ok";
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index 2efc8a2..737097e 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -40,8 +40,10 @@
- 	};
- 
- 	aliases {
--		spi0 = &spi_0;
--		i2c0 = &i2c_0;
-+		spi0 = &blsp1_spi1;
-+		spi1 = &blsp1_spi2;
-+		i2c0 = &blsp1_i2c3;
-+		i2c1 = &blsp1_i2c4;
- 	};
- 
- 	cpus {
-@@ -120,6 +122,12 @@
- 		};
- 	};
- 
-+	firmware {
-+		scm {
-+			compatible = "qcom,scm-ipq4019";
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <1 2 0xf08>,
-@@ -165,13 +173,13 @@
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
--			interrupts = <0 208 0>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		blsp_dma: dma@7884000 {
- 			compatible = "qcom,bam-v1.7.0";
- 			reg = <0x07884000 0x23000>;
--			interrupts = <GIC_SPI 238 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_BLSP1_AHB_CLK>;
- 			clock-names = "bam_clk";
- 			#dma-cells = <1>;
-@@ -179,7 +187,7 @@
- 			status = "disabled";
- 		};
- 
--		spi_0: spi@78b5000 {
-+		blsp1_spi1: spi@78b5000 { /* BLSP1 QUP1 */
- 			compatible = "qcom,spi-qup-v2.2.1";
- 			reg = <0x78b5000 0x600>;
- 			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
-@@ -188,10 +196,26 @@
- 			clock-names = "core", "iface";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			dmas = <&blsp_dma 5>, <&blsp_dma 4>;
-+			dma-names = "rx", "tx";
-+			status = "disabled";
-+		};
-+
-+		blsp1_spi2: spi@78b6000 { /* BLSP1 QUP2 */
-+			compatible = "qcom,spi-qup-v2.2.1";
-+			reg = <0x78b6000 0x600>;
-+			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_QUP2_SPI_APPS_CLK>,
-+				<&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			dmas = <&blsp_dma 7>, <&blsp_dma 6>;
-+			dma-names = "rx", "tx";
- 			status = "disabled";
- 		};
- 
--		i2c_0: i2c@78b7000 {
-+		blsp1_i2c3: i2c@78b7000 { /* BLSP1 QUP3 */
- 			compatible = "qcom,i2c-qup-v2.2.1";
- 			reg = <0x78b7000 0x600>;
- 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-@@ -200,14 +224,29 @@
- 			clock-names = "iface", "core";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			dmas = <&blsp_dma 9>, <&blsp_dma 8>;
-+			dma-names = "rx", "tx";
- 			status = "disabled";
- 		};
- 
-+		blsp1_i2c4: i2c@78b8000 { /* BLSP1 QUP4 */
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0x78b8000 0x600>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
-+				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
-+			clock-names = "iface", "core";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			dmas = <&blsp_dma 11>, <&blsp_dma 10>;
-+			dma-names = "rx", "tx";
-+			status = "disabled";
-+		};
- 
- 		cryptobam: dma@8e04000 {
- 			compatible = "qcom,bam-v1.7.0";
- 			reg = <0x08e04000 0x20000>;
--			interrupts = <GIC_SPI 207 0>;
-+			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_CRYPTO_AHB_CLK>;
- 			clock-names = "bam_clk";
- 			#dma-cells = <1>;
-@@ -275,7 +314,7 @@
- 		blsp1_uart1: serial@78af000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0x78af000 0x200>;
--			interrupts = <0 107 0>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
- 			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
- 				<&gcc GCC_BLSP1_AHB_CLK>;
-@@ -287,7 +326,7 @@
- 		serial@78b0000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0x78b0000 0x200>;
--			interrupts = <0 108 0>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
- 			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
- 				<&gcc GCC_BLSP1_AHB_CLK>;
-@@ -309,6 +348,101 @@
- 			reg = <0x4ab000 0x4>;
- 		};
- 
-+		pcie0: pci@40000000 {
-+			compatible = "qcom,pcie-ipq4019", "snps,dw-pcie";
-+			reg =  <0x40000000 0xf1d
-+				0x40000f20 0xa8
-+				0x80000 0x2000
-+				0x40100000 0x1000>;
-+			reg-names = "dbi", "elbi", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <0>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
-+				  0x82000000 0 0x48000000 0x48000000 0 0x10000000>;
-+
-+			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+			clocks = <&gcc GCC_PCIE_AHB_CLK>,
-+				 <&gcc GCC_PCIE_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE_AXI_S_CLK>;
-+			clock-names = "aux",
-+				      "master_bus",
-+				      "slave_bus";
-+
-+			resets = <&gcc PCIE_AXI_M_ARES>,
-+				 <&gcc PCIE_AXI_S_ARES>,
-+				 <&gcc PCIE_PIPE_ARES>,
-+				 <&gcc PCIE_AXI_M_VMIDMT_ARES>,
-+				 <&gcc PCIE_AXI_S_XPU_ARES>,
-+				 <&gcc PCIE_PARF_XPU_ARES>,
-+				 <&gcc PCIE_PHY_ARES>,
-+				 <&gcc PCIE_AXI_M_STICKY_ARES>,
-+				 <&gcc PCIE_PIPE_STICKY_ARES>,
-+				 <&gcc PCIE_PWR_ARES>,
-+				 <&gcc PCIE_AHB_ARES>,
-+				 <&gcc PCIE_PHY_AHB_ARES>;
-+			reset-names = "axi_m",
-+				      "axi_s",
-+				      "pipe",
-+				      "axi_m_vmid",
-+				      "axi_s_xpu",
-+				      "parf",
-+				      "phy",
-+				      "axi_m_sticky",
-+				      "pipe_sticky",
-+				      "pwr",
-+				      "ahb",
-+				      "phy_ahb";
-+
-+			status = "disabled";
-+		};
-+
-+		qpic_bam: dma@7984000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x7984000 0x1a000>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_QPIC_CLK>;
-+			clock-names = "bam_clk";
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
-+			status = "disabled";
-+		};
-+
-+		nand: qpic-nand@79b0000 {
-+			compatible = "qcom,ipq4019-nand";
-+			reg = <0x79b0000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&gcc GCC_QPIC_CLK>,
-+				 <&gcc GCC_QPIC_AHB_CLK>;
-+			clock-names = "core", "aon";
-+
-+			dmas = <&qpic_bam 0>,
-+			       <&qpic_bam 1>,
-+			       <&qpic_bam 2>;
-+			dma-names = "tx", "rx", "cmd";
-+			status = "disabled";
-+
-+			nand@0 {
-+				reg = <0>;
-+
-+				nand-ecc-strength = <4>;
-+				nand-ecc-step-size = <512>;
-+				nand-bus-width = <8>;
-+			};
-+		};
-+
- 		wifi0: wifi@a000000 {
- 			compatible = "qcom,ipq4019-wifi";
- 			reg = <0xa000000 0x200000>;
-@@ -342,7 +476,7 @@
- 				     <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 47 IRQ_TYPE_EDGE_RISING>,
--				     <GIC_SPI 168 IRQ_TYPE_NONE>;
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names =  "msi0",  "msi1",  "msi2",  "msi3",
- 					   "msi4",  "msi5",  "msi6",  "msi7",
- 					   "msi8",  "msi9", "msi10", "msi11",
-@@ -384,7 +518,7 @@
- 				     <GIC_SPI 61 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 62 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 63 IRQ_TYPE_EDGE_RISING>,
--				     <GIC_SPI 169 IRQ_TYPE_NONE>;
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names =  "msi0",  "msi1",  "msi2",  "msi3",
- 					   "msi4",  "msi5",  "msi6",  "msi7",
- 					   "msi8",  "msi9", "msi10", "msi11",
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+I just checked these tests on 4.4.133 (on x86_64):
+fcntl35: PASS
+fcntl35_64: PASS
+select04: PASS
+
+I am currently investigating other tests that are failing as well. They are not regressions, just some patches have not been backported yet.
+
+Thanks,
+Daniel
+
+
+> 
+> Meanwhile, Greg, I referred to:
+> 
+> time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+> 
+> Since we're not using this type of clock on arm64's 4.4 kernel vdso
+> functions. This commit's description calls attention for it to be
+> responsible for fixing kselftest flacking tests, we wouldn't get that
+> on 4.4 according to bellow:
+> 
+> stable-rc-linux-4.14.y
+> dbb236c1ceb6 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
+> 49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in
+> clock_gettime() vDSO
+> 82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
+> 9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
+> 
+> stable-rc-linux-4.16.y
+> dbb236c1ceb6 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
+> 49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in
+> clock_gettime() vDSO
+> 82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
+> 9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
+> 
+> stable-rc-linux-4.4.y
+> <none>
+> 
+> stable-rc-linux-4.9.y
+> 99f66b5182a4 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
+> 49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in
+> clock_gettime() vDSO
+> 82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
+> 9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
+> 
+> Yet, the second fix was backported to all (including 4.4.y):
+> 
+> stable-rc-linux-4.14.y
+> 3d88d56c5873 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+> stable-rc-linux-4.16.y
+> 3d88d56c5873 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+> stable-rc-linux-4.4.y
+> 7c8bd6e07430 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+> stable-rc-linux-4.9.y
+> a53bfdda06ac time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+> 
+> Not sure you want to keep it in 4.4, thought it was worth mentioning it.
+> 
+> Cheers.
+> 
+> On 24 May 2018 at 22:34, Daniel Sangorrin
+> <daniel.sangorrin@toshiba.co.jp> wrote:
+> > Hello Rafael,
+> >
+> > The tests fcntl35 and fcntl35_64 should have go from FAIL to PASS.
+> > https://www.spinics.net/lists/stable/msg239475.html
+> >
+> > Looking at
+> >
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a
+> 3d7cdea9/testrun/228569/suite/ltp-syscalls-tests/tests/
+> > I see that these two tests (and other important tests as well) are being SKIPPED.
+> >
+> > By the way, I see that select04 FAILS in your case. But in my setup, select04 was
+> working fine (x86_64) in 4.4.132. I will confirm that it still works in 4.4.133
+> >
+> > Thanks,
+> > Daniel Sangorrin
+> >
+> >> -----Original Message-----
+> >> From: stable-owner@vger.kernel.org [mailto:stable-owner@vger.kernel.org]
+> On
+> >> Behalf Of Rafael Tinoco
+> >> Sent: Friday, May 25, 2018 5:32 AM
+> >> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: linux-kernel@vger.kernel.org; shuah@kernel.org; patches@kernelci.org;
+> >> lkft-triage@lists.linaro.org; ben.hutchings@codethink.co.uk;
+> >> stable@vger.kernel.org; akpm@linux-foundation.org;
+> >> torvalds@linux-foundation.org; linux@roeck-us.net
+> >> Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+> >>
+> >> > > kernel: 4.4.133-rc1
+> >> > > git repo:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> >> > > git branch: linux-4.4.y
+> >> > > git commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
+> >> > > git describe: v4.4.132-93-g915a3d7cdea9
+> >> > > Test details:
+> >>
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a
+> >> 3d7cdea9
+> >> > >
+> >> > >
+> >> > > No regressions (compared to build v4.4.132-71-g180635995c36)
+> >> >
+> >> > It should have gotten better, as there was a fix in here for at least 2
+> >> > LTP tests that we previously were not passing.  I don't know why you all
+> >> > were not reporting that in the past, it took someone else randomly
+> >> > deciding to run LTP to report it to me...
+> >> >
+> >> > Why did an improvement in results not show up?
+> >>
+> >> Are you referring to the CLOCK_MONOTONIC_RAW fix for the arm64 vDSO ?
+> >> I think that CLOCK_MONOTONIC_RAW in VDSO wasn't backported to 4.4.y
+> >> (commit 49eea433b326 in mainline) so this "fix" is changing the
+> >> timekeeping sauce (that would fix MONOTONIC RAW) but not for 4.4.y in
+> >> ARM64. Needs review though :\
+> >
+> >
+> >
