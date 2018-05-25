@@ -1,159 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030703AbeEYWte (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:49:34 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33138 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030538AbeEYWtc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:49:32 -0400
-X-Google-Smtp-Source: ADUXVKKUY3Bt2I/aL2NMSgZQUEhfhmL8pj1Jtf5hb/Xo6jYGOV9Zh6Qqf1L9BtceUC5+guzoT/wq3g==
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [Resend] [PATCH 4/6] fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
-Date: Sat, 26 May 2018 00:49:44 +0200
-Message-ID: <6289024.FygGQHSFcZ@z50>
-In-Reply-To: <20180518210954.29044-4-jmkrzyszt@gmail.com>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com> <20180518210954.29044-4-jmkrzyszt@gmail.com>
+        id S1030743AbeEYWvO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:51:14 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60286 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030538AbeEYWvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:51:13 -0400
+Date: Sat, 26 May 2018 00:50:33 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: DT for 4.18
+Message-ID: <20180525225033.GA26989@piout.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, May 18, 2018 11:09:52 PM CEST Janusz Krzysztofik wrote:
-> Now as the Amstrad Delta board provides GPIO lookup tables, switch from
-> GPIO numbers to GPIO descriptors and use the table to locate required
-> GPIO pins.
-> 
-> Declare static variables for storing GPIO descriptors and replace
-> gpio_ functions with their gpiod_ equivalents. Move GPIO lookup
-> to the driver probe function so device initialization can be postponed
-> instead of aborted if the GPIO pin is not yet available.
-> 
-> Pin naming used by the driver should be followed while respective GPIO
-> lookup table is initialized by a board init code.
-> 
-> Created and tested against linux-4.17-rc3, on top of patch 1/6 "ARM:
-> OMAP1: ams-delta: add GPIO lookup tables"
-> 
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
->  drivers/video/fbdev/omap/lcd_ams_delta.c | 59
-> ++++++++++++++------------------ 1 file changed, 26 insertions(+), 33
-> deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c
-> b/drivers/video/fbdev/omap/lcd_ams_delta.c index a4ee947006c7..19b6425b54be
-> 100644
-> --- a/drivers/video/fbdev/omap/lcd_ams_delta.c
-> +++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
-> @@ -24,11 +24,10 @@
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
->  #include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/lcd.h>
-> -#include <linux/gpio.h>
-> 
->  #include <mach/hardware.h>
-> -#include <mach/board-ams-delta.h>
-> 
->  #include "omapfb.h"
-> 
-> @@ -41,6 +40,8 @@
->  /* LCD class device section */
-> 
->  static int ams_delta_lcd;
-> +static struct gpio_desc *gpiod_vblen;
-> +static struct gpio_desc *gpiod_ndisp;
-> 
->  static int ams_delta_lcd_set_power(struct lcd_device *dev, int power)
->  {
-> @@ -99,41 +100,17 @@ static struct lcd_ops ams_delta_lcd_ops = {
-> 
->  /* omapfb panel section */
-> 
-> -static const struct gpio _gpios[] = {
-> -	{
-> -		.gpio	= AMS_DELTA_GPIO_PIN_LCD_VBLEN,
-> -		.flags	= GPIOF_OUT_INIT_LOW,
-> -		.label	= "lcd_vblen",
-> -	},
-> -	{
-> -		.gpio	= AMS_DELTA_GPIO_PIN_LCD_NDISP,
-> -		.flags	= GPIOF_OUT_INIT_LOW,
-> -		.label	= "lcd_ndisp",
-> -	},
-> -};
-> -
-> -static int ams_delta_panel_init(struct lcd_panel *panel,
-> -		struct omapfb_device *fbdev)
-> -{
-> -	return gpio_request_array(_gpios, ARRAY_SIZE(_gpios));
-> -}
-> -
-> -static void ams_delta_panel_cleanup(struct lcd_panel *panel)
-> -{
-> -	gpio_free_array(_gpios, ARRAY_SIZE(_gpios));
-> -}
-> -
->  static int ams_delta_panel_enable(struct lcd_panel *panel)
->  {
-> -	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 1);
-> -	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 1);
-> +	gpiod_set_value(gpiod_ndisp, 1);
-> +	gpiod_set_value(gpiod_vblen, 1);
->  	return 0;
->  }
-> 
->  static void ams_delta_panel_disable(struct lcd_panel *panel)
->  {
-> -	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 0);
-> -	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 0);
-> +	gpiod_set_value(gpiod_vblen, 0);
-> +	gpiod_set_value(gpiod_ndisp, 0);
->  }
-> 
->  static struct lcd_panel ams_delta_panel = {
-> @@ -154,8 +131,6 @@ static struct lcd_panel ams_delta_panel = {
->  	.pcd		= 0,
->  	.acb		= 37,
-> 
-> -	.init		= ams_delta_panel_init,
-> -	.cleanup	= ams_delta_panel_cleanup,
->  	.enable		= ams_delta_panel_enable,
->  	.disable	= ams_delta_panel_disable,
->  };
-> @@ -166,9 +141,27 @@ static struct lcd_panel ams_delta_panel = {
->  static int ams_delta_panel_probe(struct platform_device *pdev)
->  {
->  	struct lcd_device *lcd_device = NULL;
-> -#ifdef CONFIG_LCD_CLASS_DEVICE
->  	int ret;
-> 
-> +	gpiod_vblen = devm_gpiod_get(&pdev->dev, "vblen", GPIOD_OUT_LOW);
-> +	if (IS_ERR(gpiod_vblen)) {
-> +		ret = PTR_ERR(gpiod_vblen);
-> +		dev_err(&pdev->dev, "VBLEN GPIO request failed (%d)\n", ret);
-> +		if (ret == -ENODEV || ret == -ENOENT)
-> +			ret = -EPROBE_DEFER;
-> +		return ret;
-> +	}
-> +
-> +	gpiod_ndisp = devm_gpiod_get(&pdev->dev, "ndisp", GPIOD_OUT_LOW);
-> +	if (IS_ERR(gpiod_ndisp)) {
-> +		ret = PTR_ERR(gpiod_ndisp);
-> +		dev_err(&pdev->dev, "NDISP GPIO request failed (%d)\n", ret);
-> +		if (ret == -ENODEV || ret == -ENOENT)
-> +			ret = -EPROBE_DEFER;
-> +		return ret;
-> +	}
-> +
-> +#ifdef CONFIG_LCD_CLASS_DEVICE
->  	lcd_device = lcd_device_register("omapfb", &pdev->dev, NULL,
->  						&ams_delta_lcd_ops);
+Arnd, Olof,
+
+I'm a bit late for this very small PR, as I had to extend the expiration
+date for my GPG signature key.
+
+Two small DT changes that have no functional impact.
+
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/at91-ab-4.18-dt
+
+for you to fetch changes up to a642693882ce417683012a211ca9d6e65bae1dc4:
+
+  ARM: dts: at91-sama5d2_xplained: Use IRQ_TYPE specifier (2018-05-14 15:29:52 +0200)
+
+----------------------------------------------------------------
+AT91 DT for 4.18:
+
+ - small DT improvements without functional changes
+
+----------------------------------------------------------------
+Dmitry Torokhov (1):
+      ARM: dts: at91: sama5d4ek: use canonical compatible for touchscreen
+
+Hernán Gonzalez (1):
+      ARM: dts: at91-sama5d2_xplained: Use IRQ_TYPE specifier
+
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 2 +-
+ arch/arm/boot/dts/at91-sama5d4ek.dts        | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
