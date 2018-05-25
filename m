@@ -1,89 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967685AbeEYSKb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:10:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58840 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967452AbeEYSK3 (ORCPT
+        id S967706AbeEYSL7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:11:59 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.184]:19467 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967452AbeEYSL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:10:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2A4D60117
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ath6kl: mark expected switch fall-throughs
-References: <20180524231322.GA22704@embeddedor.com>
-        <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com>
-        <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
-        <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com>
-Date: Fri, 25 May 2018 21:10:22 +0300
-In-Reply-To: <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com> (Gustavo A.
-        R. Silva's message of "Fri, 25 May 2018 12:50:10 -0500")
-Message-ID: <87k1rr8v3l.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 25 May 2018 14:11:58 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] kernel: sys: fix potential Spectre v1
+To: Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>
+References: <50481b83-4c03-f354-bd11-cef7aecdd85f@embeddedor.com>
+ <b5e5e160-6ac7-87c8-af1a-4eb88f1f020d@embeddedor.com>
+ <CAPcyv4iO67AG5ytc7gRBTnu6V8bdTOMb9eBwjGJtkGpMLKkpwg@mail.gmail.com>
+ <3d2e5771-c2c9-6e45-3e85-21c0bc86876e@embeddedor.com>
+ <58df7ae3-8ef0-4f42-9ab2-b551d2ffff00@embeddedor.com>
+ <161a0513-1029-a76c-f967-1e606081599d@embeddedor.com>
+ <CAPcyv4i6zOJZakNVW=y8NyUFB1EzOxBtoOGVhWCwysuTi6grvg@mail.gmail.com>
+ <112349fb-837c-7b91-e256-a1c443710150@embeddedor.com>
+ <20180523090840.GU12217@hirez.programming.kicks-ass.net>
+ <20180523150737.ycuulapggtu3hpc3@lakrids.cambridge.arm.com>
+ <20180523163118.x2n7odcu34tf6wax@lakrids.cambridge.arm.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <5684a277-464d-dbad-8e3a-d766e66626ec@embeddedor.com>
+Date: Fri, 25 May 2018 13:11:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180523163118.x2n7odcu34tf6wax@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fMHC1-003cFe-27
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:55422
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
 
-> On 05/25/2018 08:30 AM, Kalle Valo wrote:
->> Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> writes:
->>
->>> On 5/25/2018 2:13 AM, Gustavo A. R. Silva wrote:
->>>
->>>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>>> where we are expecting to fall through.
->>>>
->>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>> ---
->>>>    drivers/net/wireless/ath/ath6kl/cfg80211.c | 6 +++---
->>>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
->>>> index 2ba8cf3..29e32cd 100644
->>>> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
->>>> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
->>>> @@ -3898,17 +3898,17 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
->>>>    	wiphy->max_scan_ie_len = 1000; /* FIX: what is correct limit? */
->>>>    	switch (ar->hw.cap) {
->>>>    	case WMI_11AN_CAP:
->>>> -		ht = true;
->>>> +		ht = true; /* fall through */
->>>>    	case WMI_11A_CAP:
->>>>    		band_5gig = true;
->>>>    		break;
->>>>    	case WMI_11GN_CAP:
->>>> -		ht = true;
->>>> +		ht = true; /* fall through */
->>>>    	case WMI_11G_CAP:
->>>>    		band_2gig = true;
->>>>    		break;
->>>>    	case WMI_11AGN_CAP:
->>>> -		ht = true;
->>>> +		ht = true; /* fall through */
->>>>    	case WMI_11AG_CAP:
->>>>    		band_2gig = true;
->>>>    		band_5gig = true;
->>>
->>>     Hm, typically such comments are done on a line of their own, have
->>> never seen this style...
->>
->> Yeah, I was wondering the same. Was there a particular reason for this?
->>
->
-> Sometimes people use this style for a one-line code block.
->
-> I can change it to the traditional style. No problem.
 
-I would prefer that. So if you can send v2 that would be great.
+On 05/23/2018 11:31 AM, Mark Rutland wrote:
+> On Wed, May 23, 2018 at 04:07:37PM +0100, Mark Rutland wrote:
+>> I think that either way, we have a potential problem if the compiler
+>> generates a branch dependent on the result of validate_index_nospec().
+>>
+>> In that case, we could end up with codegen approximating:
+>>
+>> 	bool safe = false;
+>>
+>> 	if (idx < bound) {
+>> 		idx = array_index_nospec(idx, bound);
+>> 		safe = true;
+>> 	}
+>>
+>> 	// this branch can be mispredicted
+>> 	if (safe) {
+>> 		foo = array[idx];
+>> 	}
+>>
+>> ... and thus we lose the nospec protection.
+> 
+> I see GCC do this at -O0, but so far I haven't tricked it into doing
+> this at -O1 or above.
+> 
+> Regardless, I worry this is fragile -- GCC *can* generate code as per
+> the above, even if it's unlikely to.
+> 
+>> I also suspect that compiler transformations mean that this might
+>> already be the case for patterns like:
+>>
+>> 	if (idx < bound)  {
+>> 		safe_idx = array_index_nospec(idx, bound)];
+>> 		...
+>> 		foo = array[safe_idx];
+>> 	}
+>>
+>> ... if the compiler can transform that to something like:
+>>
+>> 	if (idx < bound) {
+>> 		idx = array_index_nospec(idx, bound);
+>> 	}
+>>
+>> 	// can be mispredicted
+>> 	if (idx < bound) {
+>> 		foo = array[idx];
+>> 	}
+>>
+>> ... which I think a compiler might be capable of, depending on the rest
+>> of the function body (e.g. if there's a common portion shared with the
+>> else case).
+>>
+>> I'll see if I can trigger that in a test case. :/
+> 
+> No luck so far, but I'll keeep fighting...
+> 
+> GCC will happily pull a common suffix after the branch, e.g.
+> 
+> 	if (cond) {
+> 		foo();
+> 		bar();
+> 	} else {
+> 		bar();
+> 	}
+> 
+> .. goes to:
+> 
+> 	if (cond)
+> 		foo()
+> 
+> 	bar();
+> 
+> ... but I can't convince it to pull a common prefix before the branch.
+> 
+> Mark.
+> 
+I will send the following patch once Dan's [1] has been applied upstream.
 
--- 
-Kalle Valo
+diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+index e791ebc..2a1ab2e 100644
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -55,4 +55,21 @@ static inline unsigned long 
+array_index_mask_nospec(unsigned long index,
+                                                                        \
+         (typeof(_i)) (_i & _mask);                                     \
+  })
++
++#define validate_index_nospec(index, size)                            \
++({                                                                    \
++       bool ret = false;                                              \
++       typeof(index) *ptr = &(index);                                 \
++       typeof(size) _s = (size);                                      \
++                                                                      \
++       BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));                     \
++       BUILD_BUG_ON(sizeof(_s) > sizeof(long));                       \
++                                                                      \
++       if (*ptr < _s) {                                               \
++               *ptr = array_index_nospec(*ptr, _s);                   \
++               ret = true;                                            \
++       }                                                              \
++                                                                      \
++       ret;                                                           \
++})
+
+[1] https://marc.info/?l=linux-kernel&m=152726947109104&w=2
+
+Thank you, Dan, Peter and Mark for your feedback.
+--
+Gustavo
