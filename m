@@ -1,64 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755322AbeEYC4o (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:56:44 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:54612 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754269AbeEYCza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:55:30 -0400
-Date: Thu, 24 May 2018 22:55:25 -0400 (EDT)
-Message-Id: <20180524.225525.2081887066395831022.davem@davemloft.net>
-To: ebiggers3@gmail.com
-Cc: linux-ppp@vger.kernel.org, paulus@samba.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        g.nault@alphalink.fr, syzkaller-bugs@googlegroups.com,
-        ebiggers@google.com
-Subject: Re: [PATCH v2] ppp: remove the PPPIOCDETACH ioctl
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180523213738.146911-1-ebiggers3@gmail.com>
-References: <20180523035952.25768-1-ebiggers3@gmail.com>
-        <20180523213738.146911-1-ebiggers3@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751840AbeEYC4v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:56:51 -0400
+Received: from mga05.intel.com ([192.55.52.43]:22225 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754385AbeEYCzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:55:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
+   d="scan'208";a="42054621"
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>
+Subject: [PATCH 4/7] dm: prevent DAX mounts if not supported
+Date: Thu, 24 May 2018 20:55:15 -0600
+Message-Id: <20180525025518.11405-5-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
+References: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers3@gmail.com>
-Date: Wed, 23 May 2018 14:37:38 -0700
+Currently the code in dm_dax_direct_access() only checks whether the target
+type has a direct_access() operation defined, not whether the underlying
+block devices all support DAX.  This latter property can be seen by looking
+at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
+DM device.
 
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
-> before f_count has reached 0, which is fundamentally a bad idea.  It
-> does check 'f_count < 2', which excludes concurrent operations on the
-> file since they would only be possible with a shared fd table, in which
-> case each fdget() would take a file reference.  However, it fails to
-> account for the fact that even with 'f_count == 1' the file can still be
-> linked into epoll instances.  As reported by syzbot, this can trivially
-> be used to cause a use-after-free.
-> 
-> Yet, the only known user of PPPIOCDETACH is pppd versions older than
-> ppp-2.4.2, which was released almost 15 years ago (November 2003).
-> Also, PPPIOCDETACH apparently stopped working reliably at around the
-> same time, when the f_count check was added to the kernel, e.g. see
-> https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
-> check makes PPPIOCDETACH only work in single-threaded applications; it
-> always fails if called from a multithreaded application.
-> 
-> All pppd versions released in the last 15 years just close() the file
-> descriptor instead.
-> 
-> Therefore, instead of hacking around this bug by exporting epoll
-> internals to modules, and probably missing other related bugs, just
-> remove the PPPIOCDETACH ioctl and see if anyone actually notices.  Leave
-> a stub in place that prints a one-time warning and returns EINVAL.
-> 
-> Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+This is problematic if we have, for example, a dm-linear device made up of
+a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
+QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
+we have a working direct_access() entry point and the first member of the
+dm-linear set *does* support DAX.
 
-Applied and queued up for -stable.
+This allows the user to create a filesystem on the dm-linear device, and
+then mount it with DAX.  The filesystem's bdev_dax_supported() test will
+pass because it'll operate on the first member of the dm-linear device,
+which happens to be a fsdax PMEM namespace.
+
+All DAX I/O will then fail to that dm-linear device because the lack of
+QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
+the struct dax_device isn't ever set in the filesystem, so
+dax_direct_access() will always return -EOPNOTSUPP.
+
+By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
+the filesystem know we don't support DAX at mount time.  The filesystem
+will then silently fall back and remove the dax mount option, causing it to
+work properly.
+
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
+---
+ drivers/md/dm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 0a7b0107ca78..9728433362d1 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1050,14 +1050,13 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 
+ 	if (!ti)
+ 		goto out;
+-	if (!ti->type->direct_access)
++	if (!blk_queue_dax(md->queue))
+ 		goto out;
+ 	len = max_io_len(sector, ti) / PAGE_SECTORS;
+ 	if (len < 1)
+ 		goto out;
+ 	nr_pages = min(len, nr_pages);
+-	if (ti->type->direct_access)
+-		ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
++	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
+ 
+  out:
+ 	dm_put_live_table(md, srcu_idx);
+-- 
+2.14.3
