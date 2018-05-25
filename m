@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971966AbeEYAJj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 20:09:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58592 "EHLO mx1.redhat.com"
+        id S971968AbeEYAKg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 20:10:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36020 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S968746AbeEYAIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 20:08:40 -0400
+        id S971845AbeEYAHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 20:07:55 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 30/32] vfs: Allow cloning of a mount tree with
- open(O_PATH|O_CLONE_MOUNT) [ver #8]
+Subject: [PATCH 23/32] VFS: Implement logging through fs_context [ver #8]
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 25 May 2018 01:08:38 +0100
-Message-ID: <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
+Date: Fri, 25 May 2018 01:07:53 +0100
+Message-ID: <152720687323.9073.8203139324888988263.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,215 +27,377 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make it possible to clone a mount tree with a new pair of open flags that
-are used in conjunction with O_PATH:
+Implement the ability for filesystems to log error, warning and
+informational messages through the fs_context.  These can be extracted by
+userspace by reading from an fd created by fsopen().
 
- (1) O_CLONE_MOUNT - Clone the mount or mount tree at the path.
+Error messages are prefixed with "e ", warnings with "w " and informational
+messages with "i ".
 
- (2) O_NON_RECURSIVE - Don't clone recursively.
+Inside the kernel, formatted messages are malloc'd but unformatted messages
+are not copied if they're either in the core .rodata section or in the
+.rodata section of the filesystem module pinned by fs_context::fs_type.
+The messages are only good till the fs_type is released.
 
-Note that it's not a good idea to reuse other flags (such as O_CREAT)
-because the open routine for O_PATH does not give an error if any other
-flags are used in conjunction with O_PATH, but rather just masks off any it
-doesn't use.
+Note that the logging object is shared between duplicated fs_context
+structures.  This is so that such as NFS which do a mount within a mount
+can get at least some of the errors from the inner mount.
 
-The resultant file struct is marked FMODE_NEED_UNMOUNT to as it pins an
-extra reference for the mount.  This will be cleared by the upcoming
-move_mount() syscall when it successfully moves a cloned mount into the
-filesystem tree.
+Five logging functions are provided for this:
 
-Note that care needs to be taken with the error handling in do_o_path() in
-the case that vfs_open() fails as the path may or may not have been
-attached to the file struct and FMODE_NEED_UNMOUNT may or may not be set.
-Note that O_DIRECT | O_PATH could be a problem with error handling too.
+ (1) void logfc(struct fs_context *fc, const char *fmt, ...);
+
+     This logs a message into the context.  If the buffer is full, the
+     earliest message is discarded.
+
+ (2) void errorf(fc, fmt, ...);
+
+     This wraps logfc() to log an error.
+
+ (3) void invalf(fc, fmt, ...);
+
+     This wraps errorf() and returns -EINVAL for convenience.
+
+ (4) void warnf(fc, fmt, ...);
+
+     This wraps logfc() to log a warning.
+
+ (5) void infof(fc, fmt, ...);
+
+     This wraps logfc() to log an informational message.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/fcntl.c                       |    2 +-
- fs/internal.h                    |    1 +
- fs/namei.c                       |   26 ++++++++++++++++++----
- fs/namespace.c                   |   44 ++++++++++++++++++++++++++++++++++++++
- fs/open.c                        |    7 +++++-
- include/linux/fcntl.h            |    3 ++-
- include/uapi/asm-generic/fcntl.h |    8 +++++++
- 7 files changed, 83 insertions(+), 8 deletions(-)
+ fs/fs_context.c            |   92 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/fsopen.c                |   71 ++++++++++++++++++++++++++++++++++
+ include/linux/fs_context.h |   58 ++++++++++++++++++++++++++++
+ 3 files changed, 220 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 60bc5bf2f4cf..42a53cf03737 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1028,7 +1028,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(19 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=
- 		     HWEIGHT32(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)));
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index bef68a12ddb5..326a334b8860 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -11,6 +11,7 @@
+  */
  
- 	fasync_cache = kmem_cache_create("fasync_cache",
-diff --git a/fs/internal.h b/fs/internal.h
-index c29552e0522f..e3460a2e6b59 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -75,6 +75,7 @@ extern struct vfsmount *lookup_mnt(const struct path *);
- extern int finish_automount(struct vfsmount *, struct path *);
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#include <linux/module.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs.h>
+ #include <linux/mount.h>
+@@ -23,6 +24,7 @@
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
+ #include <net/net_namespace.h>
++#include <asm/sections.h>
+ #include "mount.h"
  
- extern int sb_prepare_remount_readonly(struct super_block *);
-+extern int copy_mount_for_o_path(struct path *, struct path *, bool);
+ enum legacy_fs_param {
+@@ -327,7 +329,7 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ 	int ret;
  
- extern void __init mnt_init(void);
+ 	if (!src_fc->ops->dup)
+-		return ERR_PTR(-ENOTSUPP);
++		return ERR_PTR(-EOPNOTSUPP);
  
-diff --git a/fs/namei.c b/fs/namei.c
-index 5cbd980b4031..acb8e27d4288 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3458,13 +3458,29 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 	fc = kmemdup(src_fc, sizeof(struct legacy_fs_context), GFP_KERNEL);
+ 	if (!fc)
+@@ -340,6 +342,8 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ 	get_net(fc->net_ns);
+ 	get_user_ns(fc->user_ns);
+ 	get_cred(fc->cred);
++	if (fc->log)
++		refcount_inc(&fc->log->usage);
  
- static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
- {
--	struct path path;
--	int error = path_lookupat(nd, flags, &path);
--	if (!error) {
--		audit_inode(nd->name, path.dentry, 0);
--		error = vfs_open(&path, file, current_cred());
-+	struct path path, tmp;
-+	int error;
-+
-+	error = path_lookupat(nd, flags, &path);
-+	if (error)
-+		return error;
-+
-+	if (file->f_flags & O_CLONE_MOUNT) {
-+		error = copy_mount_for_o_path(
-+			&path, &tmp, !(file->f_flags & O_NON_RECURSIVE));
- 		path_put(&path);
-+		if (error < 0)
-+			return error;
-+		path = tmp;
- 	}
-+
-+	audit_inode(nd->name, path.dentry, 0);
-+	error = vfs_open(&path, file, current_cred());
-+	if (error < 0 &&
-+	    (flags & O_CLONE_MOUNT) &&
-+	    !(file->f_mode & FMODE_NEED_UNMOUNT))
-+		__detach_mounts(path.dentry);
-+	path_put(&path);
- 	return error;
+ 	/* Can't call put until we've called ->dup */
+ 	ret = fc->ops->dup(fc, src_fc);
+@@ -357,6 +361,91 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
  }
+ EXPORT_SYMBOL(vfs_dup_fs_context);
  
-diff --git a/fs/namespace.c b/fs/namespace.c
-index dba680aa1ea4..e73cfcdfb3d1 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2218,6 +2218,50 @@ static int do_loopback(struct path *path, const char *old_name,
- 	return err;
++/**
++ * logfc - Log a message to a filesystem context
++ * @fc: The filesystem context to log to.
++ * @fmt: The format of the buffer.
++ */
++void logfc(struct fs_context *fc, const char *fmt, ...)
++{
++	static const char store_failure[] = "OOM: Can't store error string";
++	struct fc_log *log = fc->log;
++	unsigned int logsize = ARRAY_SIZE(log->buffer);
++	const char *p;
++	va_list va;
++	char *q;
++	u8 freeable, index;
++
++	if (!log)
++		return;
++
++	va_start(va, fmt);
++	if (!strchr(fmt, '%')) {
++		p = fmt;
++		goto unformatted_string;
++	}
++	if (strcmp(fmt, "%s") == 0) {
++		p = va_arg(va, const char *);
++		goto unformatted_string;
++	}
++
++	q = kvasprintf(GFP_KERNEL, fmt, va);
++copied_string:
++	if (!q)
++		goto store_failure;
++	freeable = 1;
++	goto store_string;
++
++unformatted_string:
++	if ((unsigned long)p >= (unsigned long)__start_rodata &&
++	    (unsigned long)p <  (unsigned long)__end_rodata)
++		goto const_string;
++	if (within_module_core((unsigned long)p, log->owner))
++		goto const_string;
++	q = kstrdup(p, GFP_KERNEL);
++	goto copied_string;
++
++store_failure:
++	p = store_failure;
++const_string:
++	q = (char *)p;
++	freeable = 0;
++store_string:
++	index = log->head & (logsize - 1);
++	if ((int)log->head - (int)log->tail == 8) {
++		/* The buffer is full, discard the oldest message */
++		if (log->need_free & (1 << index))
++			kfree(log->buffer[index]);
++		log->tail++;
++	}
++
++	log->buffer[index] = q;
++	log->need_free &= ~(1 << index);
++	log->need_free |= freeable << index;
++	log->head++;
++	va_end(va);
++}
++EXPORT_SYMBOL(logfc);
++
++/*
++ * Free a logging structure.
++ */
++static void put_fc_log(struct fs_context *fc)
++{
++	struct fc_log *log = fc->log;
++	int i;
++
++	if (log) {
++		if (refcount_dec_and_test(&log->usage)) {
++			fc->log = NULL;
++			for (i = 0; i <= 7; i++)
++				if (log->need_free & (1 << i))
++					kfree(log->buffer[i]);
++			kfree(log);
++		}
++	}
++}
++
+ /**
+  * put_fs_context - Dispose of a superblock configuration context.
+  * @fc: The context to dispose of.
+@@ -385,6 +474,7 @@ void put_fs_context(struct fs_context *fc)
+ 	if (fc->cred)
+ 		put_cred(fc->cred);
+ 	kfree(fc->subtype);
++	put_fc_log(fc);
+ 	put_filesystem(fc->fs_type);
+ 	kfree(fc->source);
+ 	kfree(fc);
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index d69155b9303e..df3f603001a3 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -159,7 +159,57 @@ static ssize_t fscontext_fs_write(struct file *file,
+ 	goto err_unlock;
  }
  
 +/*
-+ * Copy the mount or mount subtree at the specified path for
-+ * open(O_PATH|O_CLONE_MOUNT).
++ * Allow the user to read back any error, warning or informational messages.
 + */
-+int copy_mount_for_o_path(struct path *from, struct path *to, bool recurse)
++static ssize_t fscontext_fs_read(struct file *file,
++				 char __user *_buf, size_t len, loff_t *pos)
 +{
-+	struct mountpoint *mp;
-+	struct mount *mnt = NULL, *f = real_mount(from->mnt);
-+	int ret;
++	struct fs_context *fc = file->private_data;
++	struct fc_log *log = fc->log;
++	struct inode *inode = file_inode(file);
++	unsigned int logsize = ARRAY_SIZE(log->buffer);
++	ssize_t ret;
++	char *p;
++	bool need_free;
++	int index, n;
 +
-+	mp = lock_mount(from);
-+	if (IS_ERR(mp))
-+		return PTR_ERR(mp);
++	ret = inode_lock_killable(inode);
++	if (ret < 0)
++		return ret;
 +
-+	ret = -EINVAL;
-+	if (IS_MNT_UNBINDABLE(f))
-+		goto out_unlock;
-+
-+	if (!check_mnt(f) && from->dentry->d_op != &ns_dentry_operations)
-+		goto out_unlock;
-+
-+	if (!recurse && has_locked_children(f, from->dentry))
-+		goto out_unlock;
-+
-+	if (recurse)
-+		mnt = copy_tree(f, from->dentry, CL_COPY_MNT_NS_FILE);
-+	else
-+		mnt = clone_mnt(f, from->dentry, 0);
-+	if (IS_ERR(mnt)) {
-+		ret = PTR_ERR(mnt);
-+		goto out_unlock;
++	ret = -ENODATA;
++	if (log->head != log->tail) {
++		index = log->tail & (logsize - 1);
++		p = log->buffer[index];
++		need_free = log->need_free & (1 << index);
++		log->buffer[index] = NULL;
++		log->need_free &= ~(1 << index);
++		log->tail++;
++		ret = 0;
 +	}
 +
-+	mnt->mnt.mnt_flags &= ~MNT_LOCKED;
++	inode_unlock(inode);
++	if (ret < 0)
++		return ret;
 +
-+	to->mnt = &mnt->mnt;
-+	to->dentry = dget(from->dentry);
-+	ret = 0;
++	ret = -EMSGSIZE;
++	n = strlen(p);
++	if (n > len)
++		goto err_free;
++	ret = -EFAULT;
++	if (copy_to_user(_buf, p, n) != 0)
++		goto err_free;
++	ret = n;
 +
-+out_unlock:
-+	unlock_mount(mp);
++err_free:
++	if (need_free)
++		kfree(p);
 +	return ret;
 +}
 +
- static int change_mount_flags(struct vfsmount *mnt, int ms_flags)
- {
- 	int error = 0;
-diff --git a/fs/open.c b/fs/open.c
-index 79a8a1bd740d..27ce9c60345a 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -748,6 +748,8 @@ static int do_dentry_open(struct file *f,
+ const struct file_operations fscontext_fs_fops = {
++	.read		= fscontext_fs_read,
+ 	.write		= fscontext_fs_write,
+ 	.release	= fscontext_fs_release,
+ 	.llseek		= no_llseek,
+@@ -330,6 +380,7 @@ SYSCALL_DEFINE5(fsopen, const char __user *, _fs_name, unsigned int, flags,
+ 	struct file_system_type *fs_type;
+ 	struct fs_context *fc;
+ 	const char *fs_name;
++	int ret;
  
- 	if (unlikely(f->f_flags & O_PATH)) {
- 		f->f_mode |= FMODE_PATH;
-+		if (f->f_flags & O_CLONE_MOUNT)
-+			f->f_mode |= FMODE_NEED_UNMOUNT;
- 		f->f_op = &empty_fops;
- 		goto done;
- 	}
-@@ -977,8 +979,11 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 		 * If we have O_PATH in the open flag. Then we
- 		 * cannot have anything other than the below set of flags
- 		 */
--		flags &= O_DIRECTORY | O_NOFOLLOW | O_PATH;
-+		flags &= (O_DIRECTORY | O_NOFOLLOW | O_PATH |
-+			  O_CLONE_MOUNT | O_NON_RECURSIVE);
- 		acc_mode = 0;
-+	} else if (flags & (O_CLONE_MOUNT | O_NON_RECURSIVE)) {
-+		return -EINVAL;
- 	}
+ 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+@@ -353,7 +404,18 @@ SYSCALL_DEFINE5(fsopen, const char __user *, _fs_name, unsigned int, flags,
  
- 	op->open_flag = flags;
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 27dc7a60693e..8f60e2244740 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,8 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | \
-+	 O_CLONE_MOUNT | O_NON_RECURSIVE)
+ 	fc->phase = FS_CONTEXT_CREATE_PARAMS;
  
- #ifndef force_o_largefile
- #define force_o_largefile() (BITS_PER_LONG != 32)
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 0b1c7e35090c..f533e35ea19b 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -88,6 +88,14 @@
- #define __O_TMPFILE	020000000
- #endif
- 
-+#ifndef O_CLONE_MOUNT
-+#define O_CLONE_MOUNT	040000000	/* Used with O_PATH to clone the mount subtree at path */
-+#endif
++	ret = -ENOMEM;
++	fc->log = kzalloc(sizeof(*fc->log), GFP_KERNEL);
++	if (!fc->log)
++		goto err_fc;
++	refcount_set(&fc->log->usage, 1);
++	fc->log->owner = fs_type->owner;
 +
-+#ifndef O_NON_RECURSIVE
-+#define O_NON_RECURSIVE	0100000000	/* Used with O_CLONE_MOUNT to only clone one mount */
-+#endif
+ 	return fsopen_create_fd(fc, flags & FSOPEN_CLOEXEC);
 +
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
++err_fc:
++	put_fs_context(fc);
++	return ret;
+ }
+ 
+ /*
+@@ -396,9 +458,18 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char *, path, unsigned int, flags)
+ 
+ 	fc->phase = FS_CONTEXT_RECONF_PARAMS;
+ 
++	ret = -ENOMEM;
++	fc->log = kzalloc(sizeof(*fc->log), GFP_KERNEL);
++	if (!fc->log)
++		goto err_fc;
++	refcount_set(&fc->log->usage, 1);
++	fc->log->owner = fc->fs_type->owner;
++
+ 	path_put(&target);
+ 	return fsopen_create_fd(fc, flags & FSPICK_CLOEXEC);
+ 
++err_fc:
++	put_fs_context(fc);
+ err_path:
+ 	path_put(&target);
+ err:
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index bec4022e3f4b..c6c4c403b3f9 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -13,6 +13,7 @@
+ #define _LINUX_FS_CONTEXT_H
+ 
+ #include <linux/kernel.h>
++#include <linux/refcount.h>
+ #include <linux/errno.h>
+ 
+ struct cred;
+@@ -64,6 +65,7 @@ struct fs_context {
+ 	struct user_namespace	*user_ns;	/* The user namespace for this mount */
+ 	struct net		*net_ns;	/* The network namespace for this mount */
+ 	const struct cred	*cred;		/* The mounter's credentials */
++	struct fc_log		*log;		/* Logging buffer */
+ 	char			*source;	/* The source name (eg. dev path) */
+ 	char			*subtype;	/* The subtype to set on the superblock */
+ 	void			*security;	/* The LSM context */
+@@ -117,4 +119,60 @@ extern int vfs_get_super(struct fs_context *fc,
+ 
+ extern const struct file_operations fscontext_fs_fops;
+ 
++/*
++ * Mount error, warning and informational message logging.  This structure is
++ * shareable between a mount and a subordinate mount.
++ */
++struct fc_log {
++	refcount_t	usage;
++	u8		head;		/* Insertion index in buffer[] */
++	u8		tail;		/* Removal index in buffer[] */
++	u8		need_free;	/* Mask of kfree'able items in buffer[] */
++	struct module	*owner;		/* Owner module for strings that don't then need freeing */
++	char		*buffer[8];
++};
++
++extern __attribute__((format(printf, 2, 3)))
++void logfc(struct fs_context *fc, const char *fmt, ...);
++
++/**
++ * infof - Store supplementary informational message
++ * @fc: The context in which to log the informational message
++ * @fmt: The format string
++ *
++ * Store the supplementary informational message for the process if the process
++ * has enabled the facility.
++ */
++#define infof(fc, fmt, ...) ({ logfc(fc, "i "fmt, ## __VA_ARGS__); })
++
++/**
++ * warnf - Store supplementary warning message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary warning message for the process if the process has
++ * enabled the facility.
++ */
++#define warnf(fc, fmt, ...) ({ logfc(fc, "w "fmt, ## __VA_ARGS__); })
++
++/**
++ * errorf - Store supplementary error message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary error message for the process if the process has
++ * enabled the facility.
++ */
++#define errorf(fc, fmt, ...) ({ logfc(fc, "e "fmt, ## __VA_ARGS__); })
++
++/**
++ * invalf - Store supplementary invalid argument error message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary error message for the process if the process has
++ * enabled the facility and return -EINVAL.
++ */
++#define invalf(fc, fmt, ...) ({	errorf(fc, fmt, ## __VA_ARGS__); -EINVAL; })
++
+ #endif /* _LINUX_FS_CONTEXT_H */
