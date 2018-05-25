@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030468AbeEYVmB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:42:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:28277 "EHLO mga17.intel.com"
+        id S1030589AbeEYVmL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:42:11 -0400
+Received: from mga04.intel.com ([192.55.52.120]:16715 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030291AbeEYVl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:41:59 -0400
+        id S1030386AbeEYVmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 17:42:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="202546752"
+   d="scan'208";a="202546806"
 From: Tony Luck <tony.luck@intel.com>
 To: Borislav Petkov <bp@suse.de>
 Cc: Tony Luck <tony.luck@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Ashok Raj <ashok.raj@intel.com>,
         x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] x86/mce: Fix incorrect "Machine check from unknown source" message
-Date: Fri, 25 May 2018 14:41:55 -0700
-Message-Id: <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
+Subject: [PATCH 3/3] x86/mce: Check for alternate indication of machine check recovery on Skylake
+Date: Fri, 25 May 2018 14:42:09 -0700
+Message-Id: <03cbed6e99ddafb51c2eadf9a3b7c8d7a0cc204e.1527283897.git.tony.luck@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1527283897.git.tony.luck@intel.com>
 References: <cover.1527283897.git.tony.luck@intel.com>
@@ -27,87 +27,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some injection testing resulted in the following console log:
+Currently we just check the "CAPID0" register to see whether the CPU
+can recover from machine checks.
 
- mce: [Hardware Error]: CPU 22: Machine Check Exception: f Bank 1: bd80000000100134
- mce: [Hardware Error]: RIP 10:<ffffffffc05292dd> {pmem_do_bvec+0x11d/0x330 [nd_pmem]}
- mce: [Hardware Error]: TSC c51a63035d52 ADDR 3234bc4000 MISC 88
- mce: [Hardware Error]: PROCESSOR 0:50654 TIME 1526502199 SOCKET 0 APIC 38 microcode 2000043
- mce: [Hardware Error]: Run the above through 'mcelog --ascii'
- Kernel panic - not syncing: Machine check from unknown source
+But there are also some special SKUs which do not have all advanced
+RAS features, but do enable machine check recovery for use with NVDIMMs.
 
-This confused everybody because the first line quite clearly shows
-that we found a logged error in "Bank 1", while the last line says
-"unknown source".
+Add a check for any of bits {8:5} in the "CAPID5" register (each
+reports some NVDIMM mode available, if any of them are set, then
+the system supports memory machine check recovery).
 
-The problem is that the Linux code doesn't do the right thing
-for a local machine check that results in a fatal error.
-
-It turns out that we know very early in the handler whether the
-machine check is fatal. The call to mce_no_way_out() has checked
-all the banks for the CPU that took the local machine check. If
-it says we must crash, we can do so right away with the right
-messages.
-
-We do scan all the banks again. This means that we might initially
-not see a problem, but during the second scan find something fatal.
-If this happens we print a slightly different message (so I can
-see if it actually every happens).
-
-Cc: stable@vger.kernel.org # 4.2
+Cc: stable@vger.kernel.org # 4.9
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/mcheck/mce.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ arch/x86/kernel/quirks.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 42cf2880d0ed..f013d97abd5f 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1205,13 +1205,18 @@ void do_machine_check(struct pt_regs *regs, long error_code)
- 		lmce = m.mcgstatus & MCG_STATUS_LMCES;
+diff --git a/arch/x86/kernel/quirks.c b/arch/x86/kernel/quirks.c
+index 697a4ce04308..736348ead421 100644
+--- a/arch/x86/kernel/quirks.c
++++ b/arch/x86/kernel/quirks.c
+@@ -645,12 +645,19 @@ static void quirk_intel_brickland_xeon_ras_cap(struct pci_dev *pdev)
+ /* Skylake */
+ static void quirk_intel_purley_xeon_ras_cap(struct pci_dev *pdev)
+ {
+-	u32 capid0;
++	u32 capid0, capid5;
  
- 	/*
-+	 * Local machine check may already know that we have to panic.
-+	 * Broadcast machine check begins rendezvous in mce_start()
- 	 * Go through all banks in exclusion of the other CPUs. This way we
- 	 * don't report duplicated events on shared banks because the first one
--	 * to see it will clear it. If this is a Local MCE, then no need to
--	 * perform rendezvous.
-+	 * to see it will clear it.
- 	 */
--	if (!lmce)
-+	if (lmce) {
-+		if (no_way_out)
-+			mce_panic("Fatal local machine check", &m, msg);
-+	} else {
- 		order = mce_start(&no_way_out);
-+	}
+ 	pci_read_config_dword(pdev, 0x84, &capid0);
++	pci_read_config_dword(pdev, 0x98, &capid5);
  
- 	for (i = 0; i < cfg->banks; i++) {
- 		__clear_bit(i, toclear);
-@@ -1287,12 +1292,17 @@ void do_machine_check(struct pt_regs *regs, long error_code)
- 			no_way_out = worst >= MCE_PANIC_SEVERITY;
- 	} else {
- 		/*
--		 * Local MCE skipped calling mce_reign()
--		 * If we found a fatal error, we need to panic here.
-+		 * If there was a fatal machine check we should have
-+		 * already called mce_panic earlier in this function.
-+		 * Since we re-read the banks, we might have found
-+		 * something new. Check again to see if we found a
-+		 * fatal error. We call "mce_severity()" again to
-+		 * make sure we have the right "msg".
- 		 */
--		 if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3)
--			mce_panic("Machine check from unknown source",
--				NULL, NULL);
-+		if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3) {
-+			severity = mce_severity(&m, cfg->tolerant, &msg, true);
-+			mce_panic("Local fatal machine check!", &m, msg);
-+		}
- 	}
- 
- 	/*
+-	if ((capid0 & 0xc0) == 0xc0)
++	/*
++	 * CAPID0{7:6} indicate whether this is an advanced RAS SKU
++	 * CAPID5{8:5} indicate that various NVDIMM usage modes are
++	 * enabled, so memory machine check recovery is also enabled.
++	 */
++	if ((capid0 & 0xc0) == 0xc0 || (capid5 & 0x1e0))
+ 		static_branch_inc(&mcsafe_key);
++
+ }
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0ec3, quirk_intel_brickland_xeon_ras_cap);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2fc0, quirk_intel_brickland_xeon_ras_cap);
 -- 
 2.17.0
