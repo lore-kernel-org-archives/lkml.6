@@ -1,111 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965750AbeEYJtM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:49:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51985 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965457AbeEYJs5 (ORCPT
+        id S965775AbeEYJtS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:49:18 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:34216 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965457AbeEYJtO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:48:57 -0400
-Date: Fri, 25 May 2018 02:48:26 -0700
-From: tip-bot for Patrick Bellasi <tipbot@zytor.com>
-Message-ID: <tip-2539fc82aa9b07d968cf9ba1ffeec3e0416ac721@git.kernel.org>
-Cc: smuckle@google.com, viresh.kumar@linaro.org,
-        linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com,
-        joelaf@google.com, torvalds@linux-foundation.org,
-        morten.rasmussen@arm.com, dietmar.eggemann@arm.com, mingo@kernel.org,
-        tglx@linutronix.de, peterz@infradead.org, vincent.guittot@linaro.org,
-        juri.lelli@redhat.com, patrick.bellasi@arm.com, hpa@zytor.com
-Reply-To: dietmar.eggemann@arm.com, mingo@kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, morten.rasmussen@arm.com,
-        patrick.bellasi@arm.com, vincent.guittot@linaro.org,
-        juri.lelli@redhat.com, hpa@zytor.com, viresh.kumar@linaro.org,
-        smuckle@google.com, torvalds@linux-foundation.org, joelaf@google.com,
-        linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com
-In-Reply-To: <20180524141023.13765-3-patrick.bellasi@arm.com>
-References: <20180524141023.13765-3-patrick.bellasi@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Update util_est before updating
- schedutil
-Git-Commit-ID: 2539fc82aa9b07d968cf9ba1ffeec3e0416ac721
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 25 May 2018 05:49:14 -0400
+X-Google-Smtp-Source: AB8JxZoo8wskHnyCNKEpcf9K2q7zJTpVMGx6iave6rGj9ftC0fxAlneApEMvU0jZqxTcxMIaBus2DQhznujQYVwqeKE=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com> <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 11:49:13 +0200
+X-Google-Sender-Auth: ybVlBR7ijuq0OGuEvBgiKVavXlE
+Message-ID: <CAMuHMdWv2ZRbX=k5+H_WfAeoQ4QsyQLU9iQ9TJ9OQ0fmwg0GOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Carlo Caione <carlo@endlessm.com>, Kevin Hilman <khilman@baylibre.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2539fc82aa9b07d968cf9ba1ffeec3e0416ac721
-Gitweb:     https://git.kernel.org/tip/2539fc82aa9b07d968cf9ba1ffeec3e0416ac721
-Author:     Patrick Bellasi <patrick.bellasi@arm.com>
-AuthorDate: Thu, 24 May 2018 15:10:23 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 25 May 2018 08:04:56 +0200
+Hi Michel,
 
-sched/fair: Update util_est before updating schedutil
+On Thu, May 24, 2018 at 12:30 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
+> requires a special enable method to get it started.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-When a task is enqueued the estimated utilization of a CPU is updated
-to better support the selection of the required frequency.
+Thanks for your patch!
 
-However, schedutil is (implicitly) updated by update_load_avg() which
-always happens before util_est_{en,de}queue(), thus potentially
-introducing a latency between estimated utilization updates and
-frequency selections.
+>  arch/arm/mach-shmobile/smp-r9a06g032.c | 85 ++++++++++++++++++++++++++++++++++
 
-Let's update util_est at the beginning of enqueue_task_fair(),
-which will ensure that all schedutil updates will see the most
-updated estimated utilization value for a CPU.
+I think you can safely call this driver smp-rzn1d.c, or smp-rzn1.c.
+Source files are not covered by the stable DT ABI, and can be reordered
+later at will.
 
-Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
-Cc: Steve Muckle <smuckle@google.com>
-Fixes: 7f65ea42eb00 ("sched/fair: Add util_est on top of PELT")
-Link: http://lkml.kernel.org/r/20180524141023.13765-3-patrick.bellasi@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+I expect you will just add more CPU_METHOD_OF_DECLARE() lines later
+(perhaps with a little bit of extra code to handle deviations).
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 748cb054fefd..e497c05aab7f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5385,6 +5385,14 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	struct cfs_rq *cfs_rq;
- 	struct sched_entity *se = &p->se;
- 
-+	/*
-+	 * The code below (indirectly) updates schedutil which looks at
-+	 * the cfs_rq utilization to select a frequency.
-+	 * Let's add the task's estimated utilization to the cfs_rq's
-+	 * estimated utilization, before we update schedutil.
-+	 */
-+	util_est_enqueue(&rq->cfs, p);
-+
- 	/*
- 	 * If in_iowait is set, the code below may not trigger any cpufreq
- 	 * utilization updates, so do it here explicitly with the IOWAIT flag
-@@ -5426,7 +5434,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	if (!se)
- 		add_nr_running(rq, 1);
- 
--	util_est_enqueue(&rq->cfs, p);
- 	hrtick_update(rq);
- }
- 
+> --- /dev/null
+> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
+> @@ -0,0 +1,85 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/N1D Second CA7 enabler.
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> + * Derived from action,s500-smp
+> + */
+> +
+> +#include <linux/delay.h>
+
+Do you need this?
+
+> +#include <asm/cacheflush.h>
+> +#include <asm/smp_plat.h>
+> +#include <asm/smp_scu.h>
+
+Do you need these?
+
+> +static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
+> +{
+> +       struct device_node *dn;
+> +       int ret;
+> +       u32 bootaddr;
+
+> +       pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
+
+The cast is not needed.
+
+> +
+> +       cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
+> +       if (!cpu_bootaddr)
+> +               pr_err("CPU#1: cpu-release-addr map failed\n");
+
+If this fails, that is basically an OOM condition, which will scream anyway.
+So I think you should drop the error message.
+
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
