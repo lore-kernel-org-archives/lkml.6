@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161373AbeEYAGx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 20:06:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59592 "EHLO mx1.redhat.com"
+        id S935737AbeEYAHB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 20:07:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59602 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S971779AbeEYAGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 20:06:44 -0400
+        id S935560AbeEYAG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 20:06:57 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 12/32] procfs: Move proc_fill_super() to fs/proc/root.c [ver
- #8]
+Subject: [PATCH 14/32] ipc: Convert mqueue fs to fs_context [ver #8]
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 25 May 2018 01:06:42 +0100
-Message-ID: <152720680239.9073.7908690414300658328.stgit@warthog.procyon.org.uk>
+Date: Fri, 25 May 2018 01:06:55 +0100
+Message-ID: <152720681520.9073.14527617880851355415.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,185 +27,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move proc_fill_super() to fs/proc/root.c as that's where the other
-superblock stuff is.
+Convert the mqueue filesystem to use the filesystem context stuff.
+
+Notes:
+
+ (1) The relevant ipc namespace is selected in when the context is
+     initialised (and it defaults to the current task's ipc namespace).
+     The caller can override this before calling vfs_get_tree().
+
+ (2) Rather than simply calling kern_mount_data(), mq_init_ns() and
+     mq_internal_mount() create a context, adjust it and then do the rest
+     of the mount procedure.
+
+ (3) The lazy mqueue mounting on creation of a new namespace is retained
+     from a previous patch, but the avoidance of sget() if no superblock
+     yet exists is reverted and the superblock is again keyed on the
+     namespace pointer.
+
+     Yes, there was a performance gain in not searching the superblock
+     hash, but it's only paid once per ipc namespace - and only if someone
+     uses mqueue within that namespace, so I'm not sure it's worth it,
+     especially as calling sget() allows avoidance of recursion.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/proc/inode.c    |   49 +------------------------------------------------
- fs/proc/internal.h |    4 +---
- fs/proc/root.c     |   48 +++++++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 49 insertions(+), 52 deletions(-)
+ ipc/mqueue.c |  121 +++++++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 99 insertions(+), 22 deletions(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index df65431c00be..0b13cf6eb6d7 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -24,7 +24,6 @@
- #include <linux/seq_file.h>
- #include <linux/slab.h>
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 910c3c7532e6..934ccdc48a1d 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -18,6 +18,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/file.h>
  #include <linux/mount.h>
--#include <linux/magic.h>
++#include <linux/fs_context.h>
+ #include <linux/namei.h>
+ #include <linux/sysctl.h>
+ #include <linux/poll.h>
+@@ -42,6 +43,10 @@
+ #include <net/sock.h>
+ #include "util.h"
  
- #include <linux/uaccess.h>
++struct mqueue_fs_context {
++	struct ipc_namespace	*ipc_ns;
++};
++
+ #define MQUEUE_MAGIC	0x19800202
+ #define DIRENT_SIZE	20
+ #define FILENT_SIZE	80
+@@ -87,9 +92,11 @@ struct mqueue_inode_info {
+ 	unsigned long qsize; /* size of queue in memory (sum of all msgs) */
+ };
  
-@@ -123,7 +122,7 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
++static struct file_system_type mqueue_fs_type;
+ static const struct inode_operations mqueue_dir_inode_operations;
+ static const struct file_operations mqueue_file_operations;
+ static const struct super_operations mqueue_super_ops;
++static const struct fs_context_operations mqueue_fs_context_ops;
+ static void remove_notification(struct mqueue_inode_info *info);
+ 
+ static struct kmem_cache *mqueue_inode_cachep;
+@@ -322,7 +329,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb,
+ 	return ERR_PTR(ret);
+ }
+ 
+-static int mqueue_fill_super(struct super_block *sb, void *data, size_t data_size, int silent)
++static int mqueue_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	struct inode *inode;
+ 	struct ipc_namespace *ns = sb->s_fs_info;
+@@ -343,19 +350,84 @@ static int mqueue_fill_super(struct super_block *sb, void *data, size_t data_siz
  	return 0;
  }
  
--static const struct super_operations proc_sops = {
-+const struct super_operations proc_sops = {
- 	.alloc_inode	= proc_alloc_inode,
- 	.destroy_inode	= proc_destroy_inode,
- 	.drop_inode	= generic_delete_inode,
-@@ -489,49 +488,3 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
- 	       pde_put(de);
- 	return inode;
- }
--
--int proc_fill_super(struct super_block *s, void *data, size_t data_size,
--		    int silent)
--{
--	struct pid_namespace *ns = get_pid_ns(s->s_fs_info);
--	struct inode *root_inode;
--	int ret;
--
--	if (!proc_parse_options(data, ns))
--		return -EINVAL;
--
--	/* User space would break if executables or devices appear on proc */
--	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
--	s->s_flags |= SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
--	s->s_blocksize = 1024;
--	s->s_blocksize_bits = 10;
--	s->s_magic = PROC_SUPER_MAGIC;
--	s->s_op = &proc_sops;
--	s->s_time_gran = 1;
--
--	/*
--	 * procfs isn't actually a stacking filesystem; however, there is
--	 * too much magic going on inside it to permit stacking things on
--	 * top of it
--	 */
--	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
--	
--	pde_get(&proc_root);
--	root_inode = proc_get_inode(s, &proc_root);
--	if (!root_inode) {
--		pr_err("proc_fill_super: get root inode failed\n");
--		return -ENOMEM;
--	}
--
--	s->s_root = d_make_root(root_inode);
--	if (!s->s_root) {
--		pr_err("proc_fill_super: allocate dentry failed\n");
--		return -ENOMEM;
--	}
--
--	ret = proc_setup_self(s);
--	if (ret) {
--		return ret;
--	}
--	return proc_setup_thread_self(s);
--}
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index c0af86a18abe..c918ec4cc0d9 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -200,13 +200,12 @@ struct pde_opener {
- 	struct completion *c;
- } __randomize_layout;
- extern const struct inode_operations proc_link_inode_operations;
--
- extern const struct inode_operations proc_pid_link_inode_operations;
-+extern const struct super_operations proc_sops;
- 
- void proc_init_kmemcache(void);
- void set_proc_pid_nlink(void);
- extern struct inode *proc_get_inode(struct super_block *, struct proc_dir_entry *);
--extern int proc_fill_super(struct super_block *, void *, size_t, int);
- extern void proc_entry_rundown(struct proc_dir_entry *);
- 
- /*
-@@ -264,7 +263,6 @@ static inline void proc_tty_init(void) {}
-  * root.c
-  */
- extern struct proc_dir_entry proc_root;
--extern int proc_parse_options(char *options, struct pid_namespace *pid);
- 
- extern void proc_self_init(void);
- extern int proc_remount(struct super_block *, int *, char *, size_t);
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 99ce06c4e1a2..2fbc177f37a8 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -23,6 +23,7 @@
- #include <linux/pid_namespace.h>
- #include <linux/parser.h>
- #include <linux/cred.h>
-+#include <linux/magic.h>
- 
- #include "internal.h"
- 
-@@ -36,7 +37,7 @@ static const match_table_t tokens = {
- 	{Opt_err, NULL},
- };
- 
--int proc_parse_options(char *options, struct pid_namespace *pid)
-+static int proc_parse_options(char *options, struct pid_namespace *pid)
+-static struct dentry *mqueue_mount(struct file_system_type *fs_type,
+-			 int flags, const char *dev_name,
+-			 void *data, size_t data_size)
++static int mqueue_get_tree(struct fs_context *fc)
  {
- 	char *p;
- 	substring_t args[MAX_OPT_ARGS];
-@@ -78,6 +79,51 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
- 	return 1;
- }
- 
-+static int proc_fill_super(struct super_block *s, void *data, size_t data_size, int silent)
-+{
-+	struct pid_namespace *ns = get_pid_ns(s->s_fs_info);
-+	struct inode *root_inode;
-+	int ret;
+-	struct ipc_namespace *ns;
+-	if (flags & SB_KERNMOUNT) {
+-		ns = data;
+-		data = NULL;
+-	} else {
+-		ns = current->nsproxy->ipc_ns;
++	struct mqueue_fs_context *ctx = fc->fs_private;
 +
-+	if (!proc_parse_options(data, ns))
-+		return -EINVAL;
-+
-+	/* User space would break if executables or devices appear on proc */
-+	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
-+	s->s_flags |= SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
-+	s->s_blocksize = 1024;
-+	s->s_blocksize_bits = 10;
-+	s->s_magic = PROC_SUPER_MAGIC;
-+	s->s_op = &proc_sops;
-+	s->s_time_gran = 1;
-+
-+	/*
-+	 * procfs isn't actually a stacking filesystem; however, there is
-+	 * too much magic going on inside it to permit stacking things on
-+	 * top of it
++	/* As a shortcut, if the namespace already has a superblock created,
++	 * use the root from that directly rather than invoking sget() again.
 +	 */
-+	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
-+	
-+	pde_get(&proc_root);
-+	root_inode = proc_get_inode(s, &proc_root);
-+	if (!root_inode) {
-+		pr_err("proc_fill_super: get root inode failed\n");
-+		return -ENOMEM;
++	spin_lock(&mq_lock);
++	if (ctx->ipc_ns->mq_mnt) {
++		fc->root = dget(ctx->ipc_ns->mq_mnt->mnt_sb->s_root);
++		atomic_inc(&fc->root->d_sb->s_active);
+ 	}
+-	return mount_ns(fs_type, flags, data, data_size, ns, ns->user_ns,
+-			mqueue_fill_super);
++	spin_unlock(&mq_lock);
++	if (fc->root) {
++		down_write(&fc->root->d_sb->s_umount);
++		return 0;
 +	}
 +
-+	s->s_root = d_make_root(root_inode);
-+	if (!s->s_root) {
-+		pr_err("proc_fill_super: allocate dentry failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	ret = proc_setup_self(s);
-+	if (ret) {
-+		return ret;
-+	}
-+	return proc_setup_thread_self(s);
++	fc->s_fs_info = ctx->ipc_ns;
++	return vfs_get_super(fc, vfs_get_keyed_super, mqueue_fill_super);
 +}
 +
- int proc_remount(struct super_block *sb, int *flags,
- 		 char *data, size_t data_size)
++static void mqueue_fs_context_free(struct fs_context *fc)
++{
++	struct mqueue_fs_context *ctx = fc->fs_private;
++
++	if (ctx->ipc_ns)
++		put_ipc_ns(ctx->ipc_ns);
++	kfree(ctx);
++}
++
++static int mqueue_init_fs_context(struct fs_context *fc,
++				  struct dentry *reference)
++{
++	struct mqueue_fs_context *ctx;
++
++	ctx = kzalloc(sizeof(struct mqueue_fs_context), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	ctx->ipc_ns = get_ipc_ns(current->nsproxy->ipc_ns);
++	fc->fs_private = ctx;
++	fc->ops = &mqueue_fs_context_ops;
++	return 0;
++}
++
++static struct vfsmount *mq_create_mount(struct ipc_namespace *ns)
++{
++	struct mqueue_fs_context *ctx;
++	struct fs_context *fc;
++	struct vfsmount *mnt;
++	int ret;
++
++	fc = vfs_new_fs_context(&mqueue_fs_type, NULL, 0,
++				FS_CONTEXT_FOR_KERNEL_MOUNT);
++	if (IS_ERR(fc))
++		return ERR_CAST(fc);
++
++	ctx = fc->fs_private;
++	put_ipc_ns(ctx->ipc_ns);
++	ctx->ipc_ns = get_ipc_ns(ns);
++
++	ret = vfs_get_tree(fc);
++	if (ret < 0)
++		goto err_fc;
++
++	mnt = vfs_create_mount(fc, 0);
++	if (IS_ERR(mnt)) {
++		ret = PTR_ERR(mnt);
++		goto err_fc;
++	}
++
++	put_fs_context(fc);
++	return mnt;
++
++err_fc:
++	put_fs_context(fc);
++	return ERR_PTR(ret);
+ }
+ 
+ static void init_once(void *foo)
+@@ -1521,15 +1593,22 @@ static const struct super_operations mqueue_super_ops = {
+ 	.statfs = simple_statfs,
+ };
+ 
++static const struct fs_context_operations mqueue_fs_context_ops = {
++	.free		= mqueue_fs_context_free,
++	.get_tree	= mqueue_get_tree,
++};
++
+ static struct file_system_type mqueue_fs_type = {
+-	.name = "mqueue",
+-	.mount = mqueue_mount,
+-	.kill_sb = kill_litter_super,
+-	.fs_flags = FS_USERNS_MOUNT,
++	.name			= "mqueue",
++	.init_fs_context	= mqueue_init_fs_context,
++	.kill_sb		= kill_litter_super,
++	.fs_flags		= FS_USERNS_MOUNT,
+ };
+ 
+ int mq_init_ns(struct ipc_namespace *ns)
  {
++	struct vfsmount *m;
++
+ 	ns->mq_queues_count  = 0;
+ 	ns->mq_queues_max    = DFLT_QUEUESMAX;
+ 	ns->mq_msg_max       = DFLT_MSGMAX;
+@@ -1537,12 +1616,10 @@ int mq_init_ns(struct ipc_namespace *ns)
+ 	ns->mq_msg_default   = DFLT_MSG;
+ 	ns->mq_msgsize_default  = DFLT_MSGSIZE;
+ 
+-	ns->mq_mnt = kern_mount_data(&mqueue_fs_type, ns, 0);
+-	if (IS_ERR(ns->mq_mnt)) {
+-		int err = PTR_ERR(ns->mq_mnt);
+-		ns->mq_mnt = NULL;
+-		return err;
+-	}
++	m = mq_create_mount(&init_ipc_ns);
++	if (IS_ERR(m))
++		return PTR_ERR(ns->mq_mnt);
++	ns->mq_mnt = m;
+ 	return 0;
+ }
+ 
