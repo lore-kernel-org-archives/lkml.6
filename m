@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967646AbeEYRVb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:21:31 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41813 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967403AbeEYRVX (ORCPT
+        id S967653AbeEYRVq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:21:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39095 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967627AbeEYRV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:21:23 -0400
-X-Google-Smtp-Source: AB8JxZqdncVPgboUx+muPIF6UZylHBYvo3cLcj9D5apljZ+baBrO3bD8dYoz6bx4+7Zz/q2kAv0kFg==
+        Fri, 25 May 2018 13:21:29 -0400
+X-Google-Smtp-Source: ADUXVKIm/vYg/sw9XUuIzvcDV9itQGOEJwWKLZCdqZ3j8/6iqc1AzAIteFMZ2ogZuXnxueZDrFqurQ==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
@@ -28,9 +28,9 @@ Cc: Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v3 2/6] uaccess: add untagged_addr definition for other arches
-Date: Fri, 25 May 2018 19:21:12 +0200
-Message-Id: <8213858e15e7ad5f27cccb442a62db141269c973.1527268727.git.andreyknvl@google.com>
+Subject: [PATCH v3 6/6] arm64: update Documentation/arm64/tagged-pointers.txt
+Date: Fri, 25 May 2018 19:21:16 +0200
+Message-Id: <e5c51f30f639adeacd4168d925048329b4d6fd32.1527268727.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <cover.1527268727.git.andreyknvl@google.com>
 References: <cover.1527268727.git.andreyknvl@google.com>
@@ -38,32 +38,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To allow arm64 syscalls accept tagged pointers from userspace, we must
-untag them when they are passed to the kernel. Since untagging is done in
-generic parts of the kernel (like the mm subsystem), the untagged_addr
-macro should be defined for all architectures.
-
-Define it as a noop for other architectures besides arm64.
+Add a note that work on passing tagged user pointers to the kernel via
+syscalls has started, but might not be complete yet.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- include/linux/uaccess.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/arm64/tagged-pointers.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index efe79c1cdd47..c045b4eff95e 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -13,6 +13,10 @@
+diff --git a/Documentation/arm64/tagged-pointers.txt b/Documentation/arm64/tagged-pointers.txt
+index a25a99e82bb1..361481283f00 100644
+--- a/Documentation/arm64/tagged-pointers.txt
++++ b/Documentation/arm64/tagged-pointers.txt
+@@ -35,8 +35,9 @@ Using non-zero address tags in any of these locations may result in an
+ error code being returned, a (fatal) signal being raised, or other modes
+ of failure.
  
- #include <asm/uaccess.h>
+-For these reasons, passing non-zero address tags to the kernel via
+-system calls is forbidden, and using a non-zero address tag for sp is
++Some initial work for supporting non-zero address tags passed to the
++kernel via system calls has been done, but the kernel doesn't provide
++any guarantees at this point. Using a non-zero address tag for sp is
+ strongly discouraged.
  
-+#ifndef untagged_addr
-+#define untagged_addr(addr) addr
-+#endif
-+
- /*
-  * Architectures should provide two primitives (raw_copy_{to,from}_user())
-  * and get rid of their private instances of copy_{to,from}_user() and
+ Programs maintaining a frame pointer and frame records that use non-zero
 -- 
 2.17.0.921.gf22659ad46-goog
