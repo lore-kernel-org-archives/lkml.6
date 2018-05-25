@@ -1,65 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936135AbeEYKTD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:19:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58670 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935965AbeEYKTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:19:00 -0400
-Date: Fri, 25 May 2018 11:18:55 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, catalin.marinas@arm.com,
-        christoffer.dall@arm.com, drjones@redhat.com, marc.zyngier@arm.com,
-        ramana.radhakrishnan@arm.com, will.deacon@arm.com,
-        awallis@codeaurora.org
-Subject: Re: [PATCHv4 06/10] arm64: add basic pointer authentication support
-Message-ID: <20180525101855.szjk4zfavi4omm55@lakrids.cambridge.arm.com>
-References: <20180503132031.25705-1-mark.rutland@arm.com>
- <20180503132031.25705-7-mark.rutland@arm.com>
- <114d65a8-ffa5-7061-864a-a32aa3baa5c5@arm.com>
+        id S936151AbeEYKT6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:19:58 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55706 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S936009AbeEYKT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:19:56 -0400
+From: YueHaibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <ast@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] bpfilter: fix a build err
+Date: Fri, 25 May 2018 18:17:57 +0800
+Message-ID: <20180525101757.13756-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <114d65a8-ffa5-7061-864a-a32aa3baa5c5@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:42:56AM +0100, Suzuki K Poulose wrote:
-> On 03/05/18 14:20, Mark Rutland wrote:
-> > +#define __ptrauth_key_install(k, v)			\
-> > +do {							\
-> > +	write_sysreg_s(v.lo, SYS_ ## k ## KEYLO_EL1);	\
-> > +	write_sysreg_s(v.hi, SYS_ ## k ## KEYHI_EL1);	\
-> > +} while (0)
-> 
-> I think it might be safer to have parentheses around v, to prevent
-> something like __ptrauth_key_install(APIA, *key_val) work fine.
+gcc-7.3.0 report following err:
 
-In case v is ever an expression with side-effects, I've made this:
+  HOSTCC  net/bpfilter/main.o
+In file included from net/bpfilter/main.c:9:0:
+./include/uapi/linux/bpf.h:12:10: fatal error: linux/bpf_common.h: No such file or directory
+ #include <linux/bpf_common.h>
 
-#define __ptrauth_key_install(k, v)				\
-do {								\
-	struct ptrauth_key __pki_v = (v);			\
-	write_sysreg_s(__pki_v.lo, SYS_ ## k ## KEYLO_EL1);	\
-	write_sysreg_s(__pki_v.hi, SYS_ ## k ## KEYHI_EL1);	\
-} while (0)
+remove it by adding a include path.
+Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
 
-... though I could just move the raw sysreg accesses into
-ptrauth_keys_switch() for now.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/bpfilter/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[...]
-
-> > +#ifdef CONFIG_ARM64_PNTR_AUTH
-> > +	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_APA_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_APIA),
-> > +#endif
-> 
-> Did you mean CONFIG_ARM64_PTR_AUTH here ?
-
-Yes; fixed now.
-
-Thanks,
-Mark.
+diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+index 2af752c..3f3cb87 100644
+--- a/net/bpfilter/Makefile
++++ b/net/bpfilter/Makefile
+@@ -5,7 +5,7 @@
+ 
+ hostprogs-y := bpfilter_umh
+ bpfilter_umh-objs := main.o
+-HOSTCFLAGS += -I. -Itools/include/
++HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
+ ifeq ($(CONFIG_BPFILTER_UMH), y)
+ # builtin bpfilter_umh should be compiled with -static
+ # since rootfs isn't mounted at the time of __init
+-- 
+2.7.0
