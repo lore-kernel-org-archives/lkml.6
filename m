@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966659AbeEYMSX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:18:23 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60906 "EHLO
+        id S966713AbeEYMSq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:18:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60946 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966510AbeEYMSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:18:22 -0400
-Date: Fri, 25 May 2018 13:18:15 +0100
+        id S966674AbeEYMSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:18:44 -0400
+Date: Fri, 25 May 2018 13:18:38 +0100
 From: Mark Rutland <mark.rutland@arm.com>
 To: Frederic Weisbecker <frederic@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
@@ -26,20 +26,20 @@ Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 05/12] arm: Implement hw_breakpoint_arch_parse()
-Message-ID: <20180525121815.y7bnwjw5nk5s6bwh@lakrids.cambridge.arm.com>
+Subject: Re: [PATCH 06/12] arm64: Implement hw_breakpoint_arch_parse()
+Message-ID: <20180525121838.zd6nf4qj4luzdhno@lakrids.cambridge.arm.com>
 References: <1526697950-7091-1-git-send-email-frederic@kernel.org>
- <1526697950-7091-6-git-send-email-frederic@kernel.org>
+ <1526697950-7091-7-git-send-email-frederic@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526697950-7091-6-git-send-email-frederic@kernel.org>
+In-Reply-To: <1526697950-7091-7-git-send-email-frederic@kernel.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 04:45:42AM +0200, Frederic Weisbecker wrote:
+On Sat, May 19, 2018 at 04:45:43AM +0200, Frederic Weisbecker wrote:
 > Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
 > that clumsily mixes up architecture validation and commit.
 > 
@@ -65,9 +65,9 @@ On Sat, May 19, 2018 at 04:45:42AM +0200, Frederic Weisbecker wrote:
 > Cc: Namhyung Kim <namhyung@kernel.org>
 > Cc: Joel Fernandes <joel.opensrc@gmail.com>
 > ---
->  arch/arm/include/asm/hw_breakpoint.h |  6 ++-
->  arch/arm/kernel/hw_breakpoint.c      | 71 ++++++++++++++++++------------------
->  2 files changed, 41 insertions(+), 36 deletions(-)
+>  arch/arm64/include/asm/hw_breakpoint.h |  6 ++-
+>  arch/arm64/kernel/hw_breakpoint.c      | 79 +++++++++++++++++-----------------
+>  2 files changed, 45 insertions(+), 40 deletions(-)
 
 Looks fine to me.
 
