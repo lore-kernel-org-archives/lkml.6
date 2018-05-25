@@ -1,172 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964981AbeEYDu7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:50:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43510 "EHLO mx1.redhat.com"
+        id S965074AbeEYDvL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:51:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39804 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964889AbeEYDu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:50:56 -0400
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 22/33] btrfs: conver to bio_for_each_page_all2
-Date: Fri, 25 May 2018 11:46:10 +0800
-Message-Id: <20180525034621.31147-23-ming.lei@redhat.com>
-In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
+        id S934498AbeEYDvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:51:08 -0400
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/modules: remove unused mod_arch_specific.toc field
+Date: Thu, 24 May 2018 22:48:34 -0500
+Message-Id: <2892e4f57d03caf1b3d6c14bc456b2f9a116b32a.1527220066.git.jpoimboe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bio_for_each_page_all() can't be used any more after multipage bvec is
-enabled, so we have to convert to bio_for_each_page_all2().
+The toc field in the mod_arch_specific struct isn't actually used
+anywhere, so remove it.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Also the ftrace-specific fields are now common between 32-bit and
+64-bit, so simplify the struct definition a bit by moving them out of
+the __powerpc64__ #ifdef.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- fs/btrfs/compression.c | 3 ++-
- fs/btrfs/disk-io.c     | 3 ++-
- fs/btrfs/extent_io.c   | 9 ++++++---
- fs/btrfs/inode.c       | 6 ++++--
- fs/btrfs/raid56.c      | 3 ++-
- 5 files changed, 16 insertions(+), 8 deletions(-)
+ arch/powerpc/include/asm/module.h | 13 +++++--------
+ arch/powerpc/kernel/module_64.c   |  1 -
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index be6b09dfd6a7..4cfe38feae3b 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -166,13 +166,14 @@ static void end_compressed_bio_read(struct bio *bio)
- 	} else {
- 		int i;
- 		struct bio_vec *bvec;
-+		struct bvec_iter_all bia;
+diff --git a/arch/powerpc/include/asm/module.h b/arch/powerpc/include/asm/module.h
+index 18f7214d68b7..d8374f984f39 100644
+--- a/arch/powerpc/include/asm/module.h
++++ b/arch/powerpc/include/asm/module.h
+@@ -50,13 +50,6 @@ struct mod_arch_specific {
+ 	unsigned int stubs_section;	/* Index of stubs section in module */
+ 	unsigned int toc_section;	/* What section is the TOC? */
+ 	bool toc_fixed;			/* Have we fixed up .TOC.? */
+-#ifdef CONFIG_DYNAMIC_FTRACE
+-	unsigned long toc;
+-	unsigned long tramp;
+-#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+-	unsigned long tramp_regs;
+-#endif
+-#endif
  
- 		/*
- 		 * we have verified the checksum already, set page
- 		 * checked so the end_io handlers know about it
- 		 */
- 		ASSERT(!bio_flagged(bio, BIO_CLONED));
--		bio_for_each_page_all(bvec, cb->orig_bio, i)
-+		bio_for_each_page_all2(bvec, cb->orig_bio, i, bia)
- 			SetPageChecked(bvec->bv_page);
+ 	/* For module function descriptor dereference */
+ 	unsigned long start_opd;
+@@ -65,10 +58,14 @@ struct mod_arch_specific {
+ 	/* Indices of PLT sections within module. */
+ 	unsigned int core_plt_section;
+ 	unsigned int init_plt_section;
++#endif /* powerpc64 */
++
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 	unsigned long tramp;
++#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
++	unsigned long tramp_regs;
++#endif
+ #endif
+-#endif /* powerpc64 */
  
- 		bio_endio(cb->orig_bio);
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index c6dc8a636413..ef78fd71c2f7 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -829,9 +829,10 @@ static blk_status_t btree_csum_one_bio(struct bio *bio)
- 	struct bio_vec *bvec;
- 	struct btrfs_root *root;
- 	int i, ret = 0;
-+	struct bvec_iter_all bia;
+ 	/* List of BUG addresses, source line numbers and filenames */
+ 	struct list_head bug_list;
+diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
+index f7667e2ebfcb..1b7419579820 100644
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -823,7 +823,6 @@ static unsigned long create_ftrace_stub(const Elf64_Shdr *sechdrs,
  
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		root = BTRFS_I(bvec->bv_page->mapping->host)->root;
- 		ret = csum_dirty_buffer(root->fs_info, bvec->bv_page);
- 		if (ret)
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 3c9c91a1e3e9..383db7a7e5a4 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2456,9 +2456,10 @@ static void end_bio_extent_writepage(struct bio *bio)
- 	u64 start;
- 	u64 end;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		struct page *page = bvec->bv_page;
- 		struct inode *inode = page->mapping->host;
- 		struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-@@ -2527,9 +2528,10 @@ static void end_bio_extent_readpage(struct bio *bio)
- 	int mirror;
- 	int ret;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		struct page *page = bvec->bv_page;
- 		struct inode *inode = page->mapping->host;
- 		struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-@@ -3681,9 +3683,10 @@ static void end_bio_extent_buffer_writepage(struct bio *bio)
- 	struct bio_vec *bvec;
- 	struct extent_buffer *eb;
- 	int i, done;
-+	struct bvec_iter_all bia;
- 
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		struct page *page = bvec->bv_page;
- 
- 		eb = (struct extent_buffer *)page->private;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 9d816dc725c4..8a73b26915bc 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7883,6 +7883,7 @@ static void btrfs_retry_endio_nocsum(struct bio *bio)
- 	struct bio_vec *bvec;
- 	struct extent_io_tree *io_tree, *failure_tree;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	if (bio->bi_status)
- 		goto end;
-@@ -7894,7 +7895,7 @@ static void btrfs_retry_endio_nocsum(struct bio *bio)
- 
- 	done->uptodate = 1;
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_page_all(bvec, bio, i)
-+	bio_for_each_page_all2(bvec, bio, i, bia)
- 		clean_io_failure(BTRFS_I(inode)->root->fs_info, failure_tree,
- 				 io_tree, done->start, bvec->bv_page,
- 				 btrfs_ino(BTRFS_I(inode)), 0);
-@@ -7973,6 +7974,7 @@ static void btrfs_retry_endio(struct bio *bio)
- 	int uptodate;
- 	int ret;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	if (bio->bi_status)
- 		goto end;
-@@ -7986,7 +7988,7 @@ static void btrfs_retry_endio(struct bio *bio)
- 	failure_tree = &BTRFS_I(inode)->io_failure_tree;
- 
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		ret = __readpage_endio_check(inode, io_bio, i, bvec->bv_page,
- 					     bvec->bv_offset, done->start,
- 					     bvec->bv_len);
-diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index ab9d80f79ffe..955fa4dbecee 100644
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -1445,10 +1445,11 @@ static void set_bio_pages_uptodate(struct bio *bio)
+ int module_finalize_ftrace(struct module *mod, const Elf_Shdr *sechdrs)
  {
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	ASSERT(!bio_flagged(bio, BIO_CLONED));
- 
--	bio_for_each_page_all(bvec, bio, i)
-+	bio_for_each_page_all2(bvec, bio, i, bia)
- 		SetPageUptodate(bvec->bv_page);
- }
- 
+-	mod->arch.toc = my_r2(sechdrs, mod);
+ 	mod->arch.tramp = create_ftrace_stub(sechdrs, mod,
+ 					(unsigned long)ftrace_caller);
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
 -- 
-2.9.5
+2.17.0
