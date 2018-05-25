@@ -1,109 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936169AbeEYOQq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:16:46 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46219 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934614AbeEYOQp (ORCPT
+        id S936182AbeEYOSL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:18:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58378 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935791AbeEYOSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:16:45 -0400
-Message-ID: <1527257797.3472.8.camel@pengutronix.de>
-Subject: Re: [PATCH] ARM: dts: imx51-zii-rdu1: Make sure SD1_WP is low
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Chris Healy <cphealy@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 25 May 2018 16:16:37 +0200
-In-Reply-To: <20180525030153.15986-1-andrew.smirnov@gmail.com>
-References: <20180525030153.15986-1-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 25 May 2018 10:18:09 -0400
+Date: Fri, 25 May 2018 07:19:42 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bigeasy@linutronix.de, ebiederm@xmission.com
+Subject: Re: [PATCH v2 1/2] rcu: Update documentation of rcu_read_unlock()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180525090507.22248-1-anna-maria@linutronix.de>
+ <20180525090507.22248-2-anna-maria@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525090507.22248-2-anna-maria@linutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052514-0044-0000-0000-0000041B80CB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009065; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01036001; UDB=6.00529949; IPR=6.00815130;
+ MB=3.00021234; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-25 14:18:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052514-0045-0000-0000-0000084D9F18
+Message-Id: <20180525141942.GB3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805250154
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 24.05.2018, 20:01 -0700 schrieb Andrey Smirnov:
-> Make sure that MX51_PAD_GPIO1_1 does not remain configure as
-> ALT0/SD1_WP (it is out of reset). This is needed because of external
-> pull-up resistor attached to that pad that, when left unchanged, will
-> drive SD1_WP high preventing eSDHC1/eMMC from working correctly.
+On Fri, May 25, 2018 at 11:05:06AM +0200, Anna-Maria Gleixner wrote:
+> Since commit b4abf91047cf ("rtmutex: Make wait_lock irq safe") the
+> explanation in rcu_read_unlock() documentation about irq unsafe rtmutex
+> wait_lock is no longer valid.
 > 
-> To fix that add a pinmux configuration line configureing the pad to
-> function as a GPIO. While we are at it, add a corresponding input GPIO
-> hog in an effort to minimize current consumption.
-
-Enabling the input part of the pad also consumes (a small amount of)
-power, if you are after minimizing power consumption, better configure
-the pin as output and drive it in the pull direction.
-
+> Remove it to prevent kernel developers reading the documentation to rely on
+> it.
 > 
-> > Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > Cc: Chris Healy <cphealy@gmail.com>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+> Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+Or let me know if you would like me to carry this patch.  Either way,
+just let me know!
+
+							Thanx, Paul
+
 > ---
->  arch/arm/boot/dts/imx51-zii-rdu1.dts | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  include/linux/rcupdate.h | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-> index df9eca94d812..d484e7e46b27 100644
-> --- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-> +++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-> @@ -476,6 +476,17 @@
-> >  	status = "okay";
->  };
->  
-> +&gpio1 {
-> > +	unused-sd3-wp-gpio {
-> > +		/*
-> > +		 * See pinctrl_esdhc1 below for more details on this
-> > +		 */
-> > +		gpio-hog;
-> > +		gpios = <1 GPIO_ACTIVE_HIGH>;
-> > +		input;
-> > +	};
-> +};
-> +
->  &i2c2 {
-> >  	pinctrl-names = "default";
-> >  	pinctrl-0 = <&pinctrl_i2c2>;
-> @@ -660,6 +671,23 @@
-> > >  			MX51_PAD_SD1_DATA1__SD1_DATA1		0x20d5
-> > >  			MX51_PAD_SD1_DATA2__SD1_DATA2		0x20d5
-> > >  			MX51_PAD_SD1_DATA3__SD1_DATA3		0x20d5
-> > +			/*
-> > +			 * GPIO1_1 is not directly used by eSDHC1 in
-> > +			 * any capacity, but earlier versions of RDU1
-> > +			 * used that pin as WP GPIO for eSDHC3 and
-> > +			 * because of that that pad has an external
-> > +			 * pull-up resistor. This is problematic
-> > +			 * because out of reset the pad is configured
-> > +			 * as ALT0 which serves as SD1_WP, which, when
-> > +			 * pulled high by and external pull-up, will
-> > +			 * inhibit execution of any write request to
-> > +			 * attached eMMC device.
-> > +			 *
-> > +			 * To avoid this problem we configure the pad
-> > +                	 * to ALT1/GPIO and avoid driving SD1_WP
-> +                	 * signal high.
-
-Applying the patch complains about whitespace damage in the above 2
-lines.
-
-Regards,
-Lucas
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 36360d07f25b..64644fda3b22 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -653,9 +653,7 @@ static inline void rcu_read_lock(void)
+>   * Unfortunately, this function acquires the scheduler's runqueue and
+>   * priority-inheritance spinlocks.  This means that deadlock could result
+>   * if the caller of rcu_read_unlock() already holds one of these locks or
+> - * any lock that is ever acquired while holding them; or any lock which
+> - * can be taken from interrupt context because rcu_boost()->rt_mutex_lock()
+> - * does not disable irqs while taking ->wait_lock.
+> + * any lock that is ever acquired while holding them.
+>   *
+>   * That said, RCU readers are never priority boosted unless they were
+>   * preempted.  Therefore, one way to avoid deadlock is to make sure
+> -- 
+> 2.15.1
+> 
