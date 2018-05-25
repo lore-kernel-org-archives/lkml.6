@@ -1,83 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936260AbeEYOfg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:35:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56612 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935826AbeEYOfd (ORCPT
+        id S936357AbeEYOg6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:36:58 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11614 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936092AbeEYOgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:35:33 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 3/7] ia64: remove iommu_dma_supported
-Date: Fri, 25 May 2018 16:35:08 +0200
-Message-Id: <20180525143512.1466-4-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525143512.1466-1-hch@lst.de>
-References: <20180525143512.1466-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Fri, 25 May 2018 10:36:54 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 25 May 2018 07:36:56 -0700
+Subject: Re: [PATCH] net: stmmac: Use mutex instead of spinlock
+To: Thierry Reding <thierry.reding@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jon Hunter <jonathanh@nvidia.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180524140907.24197-1-thierry.reding@gmail.com>
+From: Bhadram Varka <vbhadram@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <e8eb5681-4030-ed4d-e63c-90801e878140@nvidia.com>
+Date: Fri, 25 May 2018 20:06:47 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180524140907.24197-1-thierry.reding@gmail.com>
+X-Originating-IP: [10.25.73.249]
+X-ClientProxiedBy: BGMAIL102.nvidia.com (10.25.59.11) To bgmail102.nvidia.com
+ (10.25.59.11)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic dma_direct_supported helper already used by intel-iommu on
-x86 does a better job than the ia64 reimplementation.
+Hi,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/ia64/kernel/pci-dma.c  | 13 -------------
- drivers/iommu/intel-iommu.c |  2 --
- 2 files changed, 15 deletions(-)
+On 5/24/2018 7:39 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Some drivers, such as DWC EQOS on Tegra, need to perform operations that
+> can sleep under this lock (clk_set_rate() in tegra_eqos_fix_speed()) for
+> proper operation. Since there is no need for this lock to be a spinlock,
+> convert it to a mutex instead.
+> 
+> Fixes: e6ea2d16fc61 ("net: stmmac: dwc-qos: Add Tegra186 support")
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
 
-diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
-index 50b6ad282a90..3c2884bef3d4 100644
---- a/arch/ia64/kernel/pci-dma.c
-+++ b/arch/ia64/kernel/pci-dma.c
-@@ -51,18 +51,6 @@ iommu_dma_init(void)
- 	return;
- }
- 
--int iommu_dma_supported(struct device *dev, u64 mask)
--{
--	/* Copied from i386. Doesn't make much sense, because it will
--	   only work for pci_alloc_coherent.
--	   The caller just has to use GFP_DMA in this case. */
--	if (mask < DMA_BIT_MASK(24))
--		return 0;
--
--	return 1;
--}
--EXPORT_SYMBOL(iommu_dma_supported);
--
- void __init pci_iommu_alloc(void)
- {
- 	dma_ops = &intel_dma_ops;
-@@ -71,7 +59,6 @@ void __init pci_iommu_alloc(void)
- 	intel_dma_ops.sync_sg_for_cpu = machvec_dma_sync_sg;
- 	intel_dma_ops.sync_single_for_device = machvec_dma_sync_single;
- 	intel_dma_ops.sync_sg_for_device = machvec_dma_sync_sg;
--	intel_dma_ops.dma_supported = iommu_dma_supported;
- 
- 	/*
- 	 * The order of these functions is important for
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 749d8f235346..5e0bef3754d1 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3841,9 +3841,7 @@ const struct dma_map_ops intel_dma_ops = {
- 	.map_page = intel_map_page,
- 	.unmap_page = intel_unmap_page,
- 	.mapping_error = intel_mapping_error,
--#ifdef CONFIG_X86
- 	.dma_supported = dma_direct_supported,
--#endif
- };
- 
- static inline int iommu_domain_cache_init(void)
+Tested on P3310 Tegra186 platform.
+
+Tested-by: Bhadram Varka <vbhadram@nvidia.com>
+
 -- 
-2.17.0
+Bhadram
