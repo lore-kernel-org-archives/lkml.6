@@ -1,126 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967475AbeEYRmA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:42:00 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:43894 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967349AbeEYRl7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:41:59 -0400
-X-Google-Smtp-Source: AB8JxZr62p1NiYPQU95VyN1hrmOvuX9DNGnHSL9q7bbtsxE4FclAhDzfLTbsYzAFWJJVipc0EAzK7pZftU0GDk86tZk=
+        id S967466AbeEYRpq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:45:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967349AbeEYRpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 13:45:45 -0400
+Date: Fri, 25 May 2018 20:45:42 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180525202300-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
 MIME-Version: 1.0
-References: <20180522165842.233949-1-groeck@google.com> <649b1c14-e440-0c89-a59c-dc663344faa3@linux.intel.com>
- <CABXOdTdyWVtbWXR6O3VenwTezVLGvEfKuvH=Xz6e5D3np-ZQNw@mail.gmail.com>
- <20180525134023.GJ3116@snc-desk> <CABXOdTcrAoh_uhA=6AggUPFiGdFqwuFAHej50vK9gRMU9waUAQ@mail.gmail.com>
-In-Reply-To: <CABXOdTcrAoh_uhA=6AggUPFiGdFqwuFAHej50vK9gRMU9waUAQ@mail.gmail.com>
-From: Guenter Roeck <groeck@google.com>
-Date: Fri, 25 May 2018 10:41:46 -0700
-Message-ID: <CABXOdTem0f5zgZ+DvOVtWZ4Zw0JRak+oSOJyxHgMXCEEJ292Cg@mail.gmail.com>
-Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-To: shreyas.nc@intel.com
-Cc: pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Patel, Chintan M" <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 7:09 AM Guenter Roeck <groeck@google.com> wrote:
+On Thu, May 24, 2018 at 08:27:04AM +1000, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-05-23 at 21:50 +0300, Michael S. Tsirkin wrote:
+> 
+> > I re-read that discussion and I'm still unclear on the
+> > original question, since I got several apparently
+> > conflicting answers.
+> > 
+> > I asked:
+> > 
+> > 	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
+> > 	hypervisor side sufficient?
+> 
+> I thought I had replied to this...
+> 
+> There are a couple of reasons:
+> 
+> - First qemu doesn't know that the guest will switch to "secure mode"
+> in advance. There is no difference between a normal and a secure
+> partition until the partition does the magic UV call to "enter secure
+> mode" and qemu doesn't see any of it. So who can set the flag here ?
 
-> On Fri, May 25, 2018 at 6:42 AM Shreyas NC <shreyas.nc@intel.com> wrote:
+Not sure I understand. Just set the flag e.g. on qemu command line.
+I might be wrong, but these secure mode things usually
+a. require hypervisor side tricks anyway
 
-> > > > > +struct skl_dfw_v4_pipe {
-> > > > > +     u8 pipe_id;
-> > > > > +     u8 pipe_priority;
-> > > > > +     u16 conn_type:4;
-> > > > > +     u16 rsvd:4;
-> > > > > +     u16 memory_pages:8;
-> > > > > +} __packed;
-> > > > > +
-> > > > > +struct skl_dfw_v4_module {
-> > > > > +     char uuid[SKL_UUID_STR_SZ];
-> > > > > +
+> - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
+> vhost) go through the emulated MMIO for every access to the guest,
+> which adds additional overhead.
+> 
+> Cheers,
+> Ben.
 
-> > Any reason to not have this as u8?
-> > commit 09305da97c7808b900985526aa9198233f32fb37 had changed this to u8..
+Well it's not supposed to be much slower for the static case.
 
-> No reason. I'll fix it.
+vhost has a cache so should be fine.
+
+A while ago Paolo implemented a translation cache which should be
+perfect for this case - most of the code got merged but
+never enabled because of stability issues.
+
+If all else fails, we could teach QEMU to handle the no-iommu case
+as if VIRTIO_F_IOMMU_PLATFORM was off.
 
 
-You confused me. Commit 09305da97c7808b900985526aa9198233f32fb37 changed
-the uuid format in the configuration file from 40-byte string to 16-byte
-binary. This is
-an ABI change. As such, yes, there is a reason for 'char'. It is because v4
-of the
-configuration file, at least v4 as defined up to and including upstream
-kernel v4.6,
-provide the uuid as string, not as 16-byte hex value.
 
-That this ABI change was made without ABI version number change is another
-issue.
-
-Guenter
-
-> > <snip>
-
-> > > > > +
-> > > > > +     mconfig->params_fixup = dfw->params_fixup;
-> > > > > +     mconfig->converter = dfw->converter;
-> > > > > +     mconfig->m_type = dfw->module_type;
-> > > > > +     mconfig->vbus_id = dfw->vbus_id;
-> > > > > +     mconfig->module->resources[0].is_pages = dfw->mem_pages;
-> > > > > +
-> > > > > +     ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > > > +
-> > > > > +     mconfig->dev_type = dfw->dev_type;
-> > > > > +     mconfig->hw_conn_type = dfw->hw_conn_type;
-> > > > > +     mconfig->time_slot = dfw->time_slot;
-> > > > > +     mconfig->formats_config.caps_size = dfw->caps.caps_size;
-> > >
-> > > > chromeos-3.18 has this:
-> > > >       if (dfw_config->is_loadable)
-> > > >           memcpy(mconfig->guid, dfw_config->uuid,
-> > > >                       ARRAY_SIZE(dfw_config->uuid));
-> > >
-> > > > Is this needed here?
-> > >
-> > >
-> > > Direct memcpy doesn't work anymore since the uuid format is different.
-> The
-> > > above is replaced
-> > > with (unconditional)
-> > >
-> > >          ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
-> > >          if (ret)
-> > >                  return ret;
-> > >
-> > > at the beginning of skl_tplg_get_pvt_data_v4(). The new code, as far
-as
-> I
-> > > can see, loads
-> > > the uuid unconditionally if it finds SND_SOC_TPLG_TUPLE_TYPE_UUID. I
-> wanted
-> > > to
-> > > be on the safe side and decided to do the same.
-> > >
-
-> > In the new code, still does a memcpy(). So, I am not sure if I
-understand
-> > why memcpy() does not work.
-
-> >          if (uuid_tkn->token == SKL_TKN_UUID) {
-> >                  memcpy(guid, &uuid_tkn->uuid, 16);
-> >                  return 0;
-> >          }
-
-> The new (v5) configuration files provide the uuid as binary and no longer
-> as text.
-
-> Guenter
+> > 
+> > 
+> > >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
+> > >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
+> > >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
+> > >  3 files changed, 27 insertions(+)
+> > > 
+> > > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+> > > index 8fa3945..056e578 100644
+> > > --- a/arch/powerpc/include/asm/dma-mapping.h
+> > > +++ b/arch/powerpc/include/asm/dma-mapping.h
+> > > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
+> > >  #define ARCH_HAS_DMA_MMAP_COHERENT
+> > >  
+> > >  #endif /* __KERNEL__ */
+> > > +
+> > > +#define platform_forces_virtio_dma platform_forces_virtio_dma
+> > > +
+> > > +struct virtio_device;
+> > > +
+> > > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
+> > >  #endif	/* _ASM_DMA_MAPPING_H */
+> > > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+> > > index 06f0296..a2ec15a 100644
+> > > --- a/arch/powerpc/platforms/pseries/iommu.c
+> > > +++ b/arch/powerpc/platforms/pseries/iommu.c
+> > > @@ -38,6 +38,7 @@
+> > >  #include <linux/of.h>
+> > >  #include <linux/iommu.h>
+> > >  #include <linux/rculist.h>
+> > > +#include <linux/virtio.h>
+> > >  #include <asm/io.h>
+> > >  #include <asm/prom.h>
+> > >  #include <asm/rtas.h>
+> > > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
+> > >  __setup("multitce=", disable_multitce);
+> > >  
+> > >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
+> > > +
+> > > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > +{
+> > > +	/*
+> > > +	 * On protected guest platforms, force virtio core to use DMA
+> > > +	 * MAP API for all virtio devices. But there can also be some
+> > > +	 * exceptions for individual devices like virtio balloon.
+> > > +	 */
+> > > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
+> > > +}
+> > 
+> > Isn't this kind of slow?  vring_use_dma_api is on
+> > data path and supposed to be very fast.
+> > 
+> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > index 21d464a..47ea6c3 100644
+> > > --- a/drivers/virtio/virtio_ring.c
+> > > +++ b/drivers/virtio/virtio_ring.c
+> > > @@ -141,8 +141,18 @@ struct vring_virtqueue {
+> > >   * unconditionally on data path.
+> > >   */
+> > >  
+> > > +#ifndef platform_forces_virtio_dma
+> > > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > +{
+> > > +	return false;
+> > > +}
+> > > +#endif
+> > > +
+> > >  static bool vring_use_dma_api(struct virtio_device *vdev)
+> > >  {
+> > > +	if (platform_forces_virtio_dma(vdev))
+> > > +		return true;
+> > > +
+> > >  	if (!virtio_has_iommu_quirk(vdev))
+> > >  		return true;
+> > >  
+> > > -- 
+> > > 2.9.3
