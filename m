@@ -1,115 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966407AbeEYLaj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 07:30:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60302 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965907AbeEYLah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 07:30:37 -0400
-Date: Fri, 25 May 2018 12:31:05 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, boot-architecture@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-        iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 7/8] iommu: Remove IOMMU_OF_DECLARE
-Message-ID: <20180525113104.GA3255@arm.com>
-References: <20180524175024.19874-1-robh@kernel.org>
- <20180524175024.19874-8-robh@kernel.org>
+        id S966443AbeEYLbi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 07:31:38 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33890 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965907AbeEYLbf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 07:31:35 -0400
+X-Google-Smtp-Source: ADUXVKLXvUWHOCBO9qu6teRnnWbQ/NlKMuWjPxQCDNNVEPl2upAuhvI+pat9yqVd6iznnsXfkz7hIg==
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
+Date: Fri, 25 May 2018 14:31:30 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+        "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Message-ID: <20180525113130.GD16888@localhost.localdomain>
+References: <20180524055752.GE4249@localhost.localdomain>
+ <20180524140118.GS4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+ <20180524175721.GB4828@sirena.org.uk>
+ <20180525055430.GB16888@localhost.localdomain>
+ <20180525102458.GJ4828@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180524175024.19874-8-robh@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180525102458.GJ4828@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 12:50:23PM -0500, Rob Herring wrote:
-> Now that we use the driver core to stop deferred probe for missing
-> drivers, IOMMU_OF_DECLARE can be removed.
+On Fri, May 25, 2018 at 11:24:58AM +0100, Mark Brown wrote:
+> On Fri, May 25, 2018 at 08:54:30AM +0300, Matti Vaittinen wrote:
+> > On Thu, May 24, 2018 at 06:57:21PM +0100, Mark Brown wrote:
 > 
-> This is slightly less optimal than having a list of built-in drivers in
-> that we'll now defer probe twice before giving up. This shouldn't have a
-> significant impact on boot times as past discussions about deferred
-> probe have given no evidence of deferred probe having a substantial
-> impact.
+> > > You can look at the regulators node within the parent device, you know
+> > > that in Linux the parent device will be the MFD.
 > 
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: iommu@lists.linux-foundation.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/iommu/arm-smmu-v3.c    |  2 --
->  drivers/iommu/arm-smmu.c       |  7 -------
->  drivers/iommu/exynos-iommu.c   |  2 --
->  drivers/iommu/ipmmu-vmsa.c     |  3 ---
->  drivers/iommu/msm_iommu.c      |  2 --
->  drivers/iommu/of_iommu.c       | 19 +------------------
->  drivers/iommu/qcom_iommu.c     |  2 --
->  drivers/iommu/rockchip-iommu.c |  2 --
->  include/linux/of_iommu.h       |  4 ----
->  9 files changed, 1 insertion(+), 42 deletions(-)
+> > So I should parse the device-tree in MFD my driver in order to locate
+> > the regulators node? Isn't that somewhat like code dublication? If we
+> > rely on compatibles we can avoid device-tree parsing in MFD driver,
 > 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 1d647104bccc..22bdabd3d8e0 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -2915,8 +2915,6 @@ static struct platform_driver arm_smmu_driver = {
->  };
->  module_platform_driver(arm_smmu_driver);
->  
-> -IOMMU_OF_DECLARE(arm_smmuv3, "arm,smmu-v3");
-> -
->  MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
->  MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 69e7c60792a8..9dd7cbaa3b0c 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -2211,13 +2211,6 @@ static struct platform_driver arm_smmu_driver = {
->  };
->  module_platform_driver(arm_smmu_driver);
->  
-> -IOMMU_OF_DECLARE(arm_smmuv1, "arm,smmu-v1");
-> -IOMMU_OF_DECLARE(arm_smmuv2, "arm,smmu-v2");
-> -IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400");
-> -IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
-> -IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
-> -IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
-> -
->  MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
->  MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
->  MODULE_LICENSE("GPL v2");
+> No, there's no need to do this - the child can just look at the of_node
+> of the parent since it can never be instantiated otherwise.
+> 
+> > right? An in-tree example of this is:
+> 
+> There are some bad examples (and some where the same regulators can get
+> used with multiple different parents) but that's no reason not to follow
+> good practice.
+Fair enough. I guess you may still know regulator subsystem better than I
+do with my one month of experience ;) I'll follow your suggestion and
+cook-up new patches.
 
-For the SMMU drivers:
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-
-Will
+Br,
+    Matti Vaittinen
