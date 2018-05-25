@@ -1,128 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752581AbeEYEee (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 00:34:34 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36968 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750964AbeEYEed (ORCPT
+        id S1752784AbeEYEgD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 00:36:03 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:37719 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeEYEgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 00:34:33 -0400
-X-Google-Smtp-Source: ADUXVKI5jPaa4lG4x16pSGmeybaVNWADIstZSEfJPT5CQE04Qcs/Ulr3AHGpzpUvNu4oRT6LGswxJOMCV69ZcivDqqU=
+        Fri, 25 May 2018 00:36:00 -0400
+X-Google-Smtp-Source: ADUXVKJYeluNFP9tlwdbnvhBcu4r9DhopZVCEc7waRSWfYmL5QcJjDiHowTAeX91z9w+KR3/QEKoiA==
 MIME-Version: 1.0
-In-Reply-To: <9231baaf-e77c-c517-bca2-083070a53342@linux.intel.com>
-References: <1520399090-2455-1-git-send-email-haiyue.wang@linux.intel.com> <9231baaf-e77c-c517-bca2-083070a53342@linux.intel.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Fri, 25 May 2018 14:04:11 +0930
-X-Google-Sender-Auth: bq7LhkVQvbOW32tVHyS_1sjxhuk
-Message-ID: <CACPK8Xdhmrwfj6tGZ_o_JeoxdOii_5OD5oz80FJFRasvGd1L9w@mail.gmail.com>
-Subject: Re: [PATCH dts/arm/aspeed-g5 v1] ARM: dts: aspeed-g5: Add IPMI KCS node
-To: "Wang, Haiyue" <haiyue.wang@linux.intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com> <20180308094807.9443-6-jacob-chen@iotwrt.com>
+ <20180503090909.o3dyhukzs2y7em5z@tarshish> <CAAFQd5CvBv4hkE=PSHBJTYa9Lj0SyggxpMBEAYD=if0=T0uzHw@mail.gmail.com>
+ <20180507063814.vweb4p3nfgnoc3td@tarshish> <CAAFQd5A7gAK4fXH9YVrobR5_QX_5f8xa272R_56v5YUghV6Sxw@mail.gmail.com>
+ <20180524113012.mt5b2f2vrhfrn3d7@tarshish>
+In-Reply-To: <20180524113012.mt5b2f2vrhfrn3d7@tarshish>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 25 May 2018 13:35:45 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5B8DbnmmkKRb-2M7PFHDAKRFOA1Bnk-si_AZLjfzXOgPg@mail.gmail.com>
+Message-ID: <CAAFQd5B8DbnmmkKRb-2M7PFHDAKRFOA1Bnk-si_AZLjfzXOgPg@mail.gmail.com>
+Subject: Re: [PATCH v6 05/17] media: rkisp1: add Rockchip ISP1 subdev driver
+To: baruch@tkos.co.il
+Cc: Jacob Chen <jacob-chen@iotwrt.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
+        Eddie Cai <eddie.cai.linux@gmail.com>,
+        Jeffy <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        =?UTF-8?B?6ZmI5Z+O?= <cc@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andrew,
+On Thu, May 24, 2018 at 8:30 PM Baruch Siach <baruch@tkos.co.il> wrote:
 
-On 16 March 2018 at 11:17, Wang, Haiyue <haiyue.wang@linux.intel.com> wrote:
-> Hi Joel and Andrew,
->
-> Have time to review this patch ? Hope for your comments. :-)
->
-> BR,
-> Haiyue
->
->
-> On 2018-03-07 13:04, Haiyue Wang wrote:
->>
->> The IPMI KCS device part of the LPC interface and is used for
->> communication with the host processor.
->>
->> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+> Hi Tomasz,
 
-Do you have time to take a look at these? The device tree doesn't make
-sense to me.
+> On Mon, May 07, 2018 at 06:41:50AM +0000, Tomasz Figa wrote:
+> > On Mon, May 7, 2018 at 3:38 PM Baruch Siach <baruch@tkos.co.il> wrote:
+> > > On Mon, May 07, 2018 at 06:13:27AM +0000, Tomasz Figa wrote:
+> > > > On Thu, May 3, 2018 at 6:09 PM Baruch Siach <baruch@tkos.co.il>
+wrote:
+> > > > > On Thu, Mar 08, 2018 at 05:47:55PM +0800, Jacob Chen wrote:
+> > > > > > +static int rkisp1_isp_sd_s_power(struct v4l2_subdev *sd, int
+on)
+> > > > > > +{
+> > > > > > +     struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
+> > > > > > +     int ret;
+> > > > > > +
+> > > > > > +     v4l2_dbg(1, rkisp1_debug, &isp_dev->v4l2_dev, "s_power:
+%d\n",
+> > > > on);
+> > > > > > +
+> > > > > > +     if (on) {
+> > > > > > +             ret = pm_runtime_get_sync(isp_dev->dev);
+> > > > > > +             if (ret < 0)
+> > > > > > +                     return ret;
+> > > > > > +
+> > > > > > +             rkisp1_config_clk(isp_dev);
+> > > > > > +     } else {
+> > > > > > +             ret = pm_runtime_put(isp_dev->dev);
+> > > >
+> > > > > I commented this line out to make more than one STREAMON work.
+> > Otherwise,
+> > > > > the second STREAMON hangs. I guess the bug is not this driver.
+> > Probably
+> > > > > something in drivers/soc/rockchip/pm_domains.c. Just noting that
+in
+> > case
+> > > > > you or someone on Cc would like to investigate it further.
+> > > > >
+> > > > > I tested v4.16-rc4 on the Tinkerboard.
+> > > >
+> > > > Looks like that version doesn't include the IOMMU PM and clock
+handling
+> > > > rework [1], which should fix a lot of runtime PM issues. FWIW,
+> > linux-next
+> > > > seems to already include it.
+> > > >
+> > > > [1] https://lkml.org/lkml/2018/3/23/44
+> >
+> > > Thanks for the reference.
+> >
+> > > It looks like the iommu driver part is in Linus' tree already. The DT
+> > part is
+> > > in the v4.18-armsoc/dts32 branch of Heiko's tree. Am I missing
+anything?
+> >
+> > You're right, most of the series made it in time for 4.17. However, the
+DT
+> > part (precisely, the clocks properties added to IOMMU nodes) is crucial
+for
+> > the fixes to be effective.
+> >
+> > > Anyway, I'll take a look.
+> >
+> > Thanks for testing. :) (Forgot to mention in my previous email...)
 
-Cheers,
+> I finally got around to testing. Unfortunately, kernel v4.17-rc6 with
+> cherry-pick of commit c78751f91c0b (ARM: dts: rockchip: add clocks in
+iommu
+> nodes) from Heiko's tree still exhibit the same problem. STREAMON hangs on
+> second try. The same workaround "fixes" it.
 
-Joel
+Thanks for testing. I'm out of ideas, since the same code seems to work
+fine for us in Chrome OS 4.4 kernel. Maybe we could have someone from RK
+take a look.
 
->> ---
->>   arch/arm/boot/dts/aspeed-g5.dtsi | 43
->> +++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 42 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi
->> b/arch/arm/boot/dts/aspeed-g5.dtsi
->> index 8eac57c..f443169 100644
->> --- a/arch/arm/boot/dts/aspeed-g5.dtsi
->> +++ b/arch/arm/boot/dts/aspeed-g5.dtsi
->> @@ -267,8 +267,40 @@
->>                                 ranges = <0x0 0x1e789000 0x1000>;
->>                                 lpc_bmc: lpc-bmc@0 {
->> -                                       compatible =
->> "aspeed,ast2500-lpc-bmc";
->> +                                       compatible =
->> "aspeed,ast2500-lpc-bmc", "simple-mfd", "syscon";
->>                                         reg = <0x0 0x80>;
->> +                                       reg-io-width = <4>;
->> +
->> +                                       #address-cells = <1>;
->> +                                       #size-cells = <1>;
->> +                                       ranges = <0x0 0x0 0x80>;
->> +
->> +                                       kcs1: kcs1@0 {
->> +                                               compatible =
->> "aspeed,ast2500-kcs-bmc";
->> +                                               reg = <0x0 0x80>;
->> +                                               interrupts = <8>;
->> +                                               kcs_chan = <1>;
->> +                                               kcs_addr = <0x0>;
->> +                                               status = "disabled";
->> +                                       };
->> +
->> +                                       kcs2: kcs2@0 {
->> +                                               compatible =
->> "aspeed,ast2500-kcs-bmc";
->> +                                               reg = <0x0 0x80>;
->> +                                               interrupts = <8>;
->> +                                               kcs_chan = <2>;
->> +                                               kcs_addr = <0x0>;
->> +                                               status = "disabled";
->> +                                       };
->> +
->> +                                       kcs3: kcs3@0 {
->> +                                               compatible =
->> "aspeed,ast2500-kcs-bmc";
->> +                                               reg = <0x0 0x80>;
->> +                                               interrupts = <8>;
->> +                                               kcs_chan = <3>;
->> +                                               kcs_addr = <0x0>;
->> +                                               status = "disabled";
->> +                                       };
->>                                 };
->>                                 lpc_host: lpc-host@80 {
->> @@ -294,6 +326,15 @@
->>                                                 status = "disabled";
->>                                         };
->>   +                                     kcs4: kcs4@0 {
->> +                                               compatible =
->> "aspeed,ast2500-kcs-bmc";
->> +                                               reg = <0x0 0xa0>;
->> +                                               interrupts = <8>;
->> +                                               kcs_chan = <4>;
->> +                                               kcs_addr = <0x0>;
->> +                                               status = "disabled";
->> +                                       };
->> +
->>                                         lhc: lhc@20 {
->>                                                 compatible =
->> "aspeed,ast2500-lhc";
->>                                                 reg = <0x20 0x24 0x48
->> 0x8>;
->
->
+Best regards,
+Tomasz
