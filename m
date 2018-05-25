@@ -1,221 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935644AbeEYFyz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 01:54:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8133 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752444AbeEYFyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 01:54:53 -0400
-Subject: Re: [PATCH V2 rdma-next 3/4] RDMA/hns: Add reset process for RoCE in
- hip08
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
- <1527070590-94399-4-git-send-email-xavier.huwei@huawei.com>
- <20180524213143.GE3948@ziepe.ca>
-CC: <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5B07A517.7030507@huawei.com>
-Date: Fri, 25 May 2018 13:54:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S935768AbeEYFzy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 01:55:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:29287 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935134AbeEYFzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 01:55:52 -0400
+Subject: Re: [PATCH v4 3/3] powerpc/lib: optimise PPC32 memcmp
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1527004752.git.christophe.leroy@c-s.fr>
+ <05bd657afedaf4a0de5abab0c5db2e88fa73bdfe.1527004752.git.christophe.leroy@c-s.fr>
+ <bb7ef10a-4777-7635-3e54-830dd3eeb8bb@c-s.fr>
+ <20180524172458.GA17342@gate.crashing.org>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <7a77175e-c0c4-4a38-d972-d98ac76cf70a@c-s.fr>
+Date: Fri, 25 May 2018 07:55:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180524213143.GE3948@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180524172458.GA17342@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/5/25 5:31, Jason Gunthorpe wrote:
-> On Wed, May 23, 2018 at 06:16:29PM +0800, Wei Hu (Xavier) wrote:
->> This patch added reset process for RoCE in hip08.
+Le 24/05/2018 à 19:24, Segher Boessenkool a écrit :
+> On Wed, May 23, 2018 at 09:47:32AM +0200, Christophe Leroy wrote:
+>> At the time being, memcmp() compares two chunks of memory
+>> byte per byte.
 >>
->> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>> This patch optimises the comparison by comparing word by word.
 >>
->> v1->v2: 1.Delete handle->priv = NULL in hns_roce_hw_v2_uninit_instance.
->> 	2.Add hns_roce_hw_v2_reset_notify_init callback function,
->> 	  When RoCE reinit failed in this function, inform NIC driver.
->> 	The related link of Jason's commets:
->> 	https://www.spinics.net/lists/linux-rdma/msg65009.html
->>  drivers/infiniband/hw/hns/hns_roce_cmd.c    |  3 ++
->>  drivers/infiniband/hw/hns/hns_roce_device.h |  2 +
->>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 76 +++++++++++++++++++++++++++++
->>  drivers/infiniband/hw/hns/hns_roce_main.c   |  7 +++
->>  4 files changed, 88 insertions(+)
+>> A small benchmark performed on an 8xx comparing two chuncks
+>> of 512 bytes performed 100000 times gives:
 >>
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
->> index 9ebe839..a0ba19d 100644
->> +++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
->> @@ -176,6 +176,9 @@ int hns_roce_cmd_mbox(struct hns_roce_dev *hr_dev, u64 in_param, u64 out_param,
->>  		      unsigned long in_modifier, u8 op_modifier, u16 op,
->>  		      unsigned long timeout)
->>  {
->> +	if (hr_dev->is_reset)
->> +		return 0;
->> +
->>  	if (hr_dev->cmd.use_events)
->>  		return hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
->>  					      in_modifier, op_modifier, op,
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
->> index 412297d4..da8512b 100644
->> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
->> @@ -774,6 +774,8 @@ struct hns_roce_dev {
->>  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
->>  	spinlock_t		sm_lock;
->>  	spinlock_t		bt_cmd_lock;
->> +	bool			active;
->> +	bool			is_reset;
->>  	struct hns_roce_ib_iboe iboe;
->>  
->>  	struct list_head        pgdir_list;
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> index e0ab672..a70d07b 100644
->> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> @@ -768,6 +768,9 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
->>  	int ret = 0;
->>  	int ntc;
->>  
->> +	if (hr_dev->is_reset)
->> +		return 0;
->> +
->>  	spin_lock_bh(&csq->lock);
->>  
->>  	if (num > hns_roce_cmq_space(csq)) {
->> @@ -4790,14 +4793,87 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>  {
->>  	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
->>  
->> +	if (!hr_dev)
->> +		return;
->> +
->>  	hns_roce_exit(hr_dev);
->>  	kfree(hr_dev->priv);
->>  	ib_dealloc_device(&hr_dev->ib_dev);
->>  }
->>  
->> +static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->> +{
->> +	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
->> +	struct ib_event event;
->> +
->> +	if (!hr_dev) {
->> +		dev_err(&handle->pdev->dev,
->> +			"Input parameter handle->priv is NULL!\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	hr_dev->active = false;
->> +	hr_dev->is_reset = true;
->> +
->> +	event.event = IB_EVENT_DEVICE_FATAL;
->> +	event.device = &hr_dev->ib_dev;
->> +	event.element.port_num = 1;
->> +	ib_dispatch_event(&event);
->> +
->> +	return 0;
->> +}
->> +
->> +static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
->> +{
->> +	int ret;
->> +
->> +	ret = hns_roce_hw_v2_init_instance(handle);
->> +	if (ret) {
->> +		/* when reset notify type is HNAE3_INIT_CLIENT In reset notify
->> +		 * callback function, RoCE Engine reinitialize. If RoCE reinit
->> +		 * failed, we should inform NIC driver.
->> +		 */
->> +		handle->priv = NULL;
->> +		dev_err(&handle->pdev->dev,
->> +			"In reset process RoCE reinit failed %d.\n", ret);
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
->> +{
->> +	msleep(100);
->> +	hns_roce_hw_v2_uninit_instance(handle, false);
->> +	return 0;
->> +}
->> +
->> +static int hns_roce_hw_v2_reset_notify(struct hnae3_handle *handle,
->> +				       enum hnae3_reset_notify_type type)
->> +{
->> +	int ret = 0;
->> +
->> +	switch (type) {
->> +	case HNAE3_DOWN_CLIENT:
->> +		ret = hns_roce_hw_v2_reset_notify_down(handle);
->> +		break;
->> +	case HNAE3_INIT_CLIENT:
->> +		ret = hns_roce_hw_v2_reset_notify_init(handle);
->> +		break;
->> +	case HNAE3_UNINIT_CLIENT:
->> +		ret = hns_roce_hw_v2_reset_notify_uninit(handle);
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->>  static const struct hnae3_client_ops hns_roce_hw_v2_ops = {
->>  	.init_instance = hns_roce_hw_v2_init_instance,
->>  	.uninit_instance = hns_roce_hw_v2_uninit_instance,
->> +	.reset_notify = hns_roce_hw_v2_reset_notify,
->>  };
->>  
->>  static struct hnae3_client hns_roce_hw_v2_client = {
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
->> index 1b79a38..ac51372 100644
->> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
->> @@ -332,6 +332,9 @@ static struct ib_ucontext *hns_roce_alloc_ucontext(struct ib_device *ib_dev,
->>  	struct hns_roce_ib_alloc_ucontext_resp resp = {};
->>  	struct hns_roce_dev *hr_dev = to_hr_dev(ib_dev);
->>  
->> +	if (!hr_dev->active)
->> +		return ERR_PTR(-EAGAIN);
-> This still doesn't make sense, ib_unregister_device already makes sure
-> that hns_roce_alloc_ucontext isn't running and won't be called before
-> returning, don't need another flag to do that.
->
-> Since this is the only place the active flag is tested it can just be deleted
-> entirely.
-Hi, Jason
-   
-    roce reset process:
-    1. hr_dev->active = false;  //make sure no any process call
-ibv_open_device.   
-    2. call ib_dispatch_event() function to report IB_EVENT_DEVICE_FATAL
-event.
-    3. msleep(100);   // for some app to free resources
-    4. call ib_unregister_device().   
-    5. ...
-    6. ...
+>> Before : 5852274 TB ticks
+>> After:   1488638 TB ticks
+> 
+>> diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+>> index 40a576d56ac7..542e6cecbcaf 100644
+>> --- a/arch/powerpc/lib/string_32.S
+>> +++ b/arch/powerpc/lib/string_32.S
+>> @@ -16,17 +16,45 @@
+>>   	.text
+>>
+>>   _GLOBAL(memcmp)
+>> -	cmpwi	cr0, r5, 0
+>> -	beq-	2f
+>> -	mtctr	r5
+>> -	addi	r6,r3,-1
+>> -	addi	r4,r4,-1
+>> -1:	lbzu	r3,1(r6)
+>> -	lbzu	r0,1(r4)
+>> -	subf.	r3,r0,r3
+>> -	bdnzt	2,1b
+>> +	srawi.	r7, r5, 2		/* Divide len by 4 */
+>> +	mr	r6, r3
+>> +	beq-	3f
+>> +	mtctr	r7
+>> +	li	r7, 0
+>> +1:
+>> +#ifdef __LITTLE_ENDIAN__
+>> +	lwbrx	r3, r6, r7
+>> +	lwbrx	r0, r4, r7
+>> +#else
+>> +	lwzx	r3, r6, r7
+>> +	lwzx	r0, r4, r7
+>> +#endif
+> 
+> You don't test whether the pointers are word-aligned.  Does that work?
 
-    There are 2 steps as above before calling ib_unregister_device(), we
-evaluate
-hr_dev->active with false to avoid no any process call ibv_open_device.
-    Thanks     
+copy_tofrom_user() word-aligns the store address and doesn't take care 
+of the load address, so I believe it works.
 
-    Regards
-Wei Hu
->> @@ -425,6 +428,7 @@ static void hns_roce_unregister_device(struct hns_roce_dev *hr_dev)
->>  {
->>  	struct hns_roce_ib_iboe *iboe = &hr_dev->iboe;
->>  
->> +	hr_dev->active = false;
->>  	unregister_netdevice_notifier(&iboe->nb);
->>  	ib_unregister_device(&hr_dev->ib_dev);
-> Jason
->
-> .
->
+Now, I just read in the MPC885 Ref Manual that unaligned access 
+generates alignment exception when the processor is running in LE mode.
+
+Ref. made to the discussion on patch "powerpc/32be: use stmw/lmw for 
+registers save/restore in asm" 
+(https://patchwork.ozlabs.org/patch/899465/), I will drop the handling 
+for LE mode.
+
+Christophe
+
+> Say, when a load is crossing a page boundary, or segment boundary.
+> 
+> 
+> Segher
+> 
