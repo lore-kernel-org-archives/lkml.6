@@ -1,128 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966380AbeEYJvZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:51:25 -0400
-Received: from mail-eopbgr10071.outbound.protection.outlook.com ([40.107.1.71]:5656
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966346AbeEYJvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:51:19 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: kbuild test robot <lkp@intel.com>
-CC: "kbuild-all@01.org" <kbuild-all@01.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: RE: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
-Thread-Topic: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
-Thread-Index: AQHTwMOXEAXyRBca3U6WNlUuStUBU6PdZKEAgGM1SWA=
-Date: Fri, 25 May 2018 09:51:16 +0000
-Message-ID: <AM0PR04MB4211BF66D1C5E025C264687080690@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1521602391-30356-4-git-send-email-aisheng.dong@nxp.com>
- <201803231452.YBWTInPr%fengguang.wu@intel.com>
-In-Reply-To: <201803231452.YBWTInPr%fengguang.wu@intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4836;7:4t4yNyLO8EyDE9NmoIzh7dliY/b1JZ/ZOtONazf0XUopYSs2L/eOoO50ytlAXNabuXANS3o7Mounp7lUrDzWe6c2WfKHbJZuWzaih6SNmibX110ttJtOdreRuyY27YQ19vnfBBtrflzcpYSm7yj9+sM2iGjJVgNxAQAoMH789eJz5nxNWmgxfTkv3umScIxyh7irh2hXEWVCWZGbChG5F8L003ZlwmkAB0VdhpSZcTFANaZRE0jK19Uo7LxUNp43
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4836;
-x-ms-traffictypediagnostic: AM0PR04MB4836:
-x-microsoft-antispam-prvs: <AM0PR04MB48368E2361B3A535CF96418D80690@AM0PR04MB4836.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(189930954265078)(185117386973197)(258649278758335)(45079756050767)(7411616537696)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4836;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4836;
-x-forefront-prvs: 06833C6A67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(396003)(39380400002)(39860400002)(199004)(189003)(13464003)(51914003)(86362001)(6116002)(102836004)(7696005)(3846002)(55016002)(54906003)(6506007)(2900100001)(14454004)(53546011)(8936002)(8676002)(6436002)(186003)(26005)(81156014)(81166006)(25786009)(478600001)(105586002)(45080400002)(106356001)(316002)(5660300001)(6916009)(53936002)(5250100002)(97736004)(9686003)(99286004)(476003)(3660700001)(33656002)(486006)(3280700002)(66066001)(229853002)(305945005)(2906002)(11346002)(6306002)(7416002)(68736007)(74316002)(6246003)(446003)(4326008)(76176011)(966005)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4836;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: n21FoNdyS0KkeeOiIoJQ3cf+gRvohGrNkkmY34RhGaQcmzwkddFEVEKaBbVvW2XoI3I8+Oe/iD7IXGEltBmPIOCtCfYgiaq7DoWlJUnKvnJtuXttFSeSGISPdr2UKDBaZuq4LmP2C+vcNW85Sur/ZyFWe0GQLEUeMQQbZAvbqZFsqKeZa0nNkqTG2IWxyi/d
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S966391AbeEYJvs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:51:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33399 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965442AbeEYJvq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:51:46 -0400
+Date: Fri, 25 May 2018 02:51:16 -0700
+From: tip-bot for Oleg Nesterov <tipbot@zytor.com>
+Message-ID: <tip-1b22fc609cecd1b16c4a015e1a6b3c9717484e3a@git.kernel.org>
+Cc: peterz@infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, amir73il@gmail.com, tytso@mit.edu, willy@infradead.org,
+        torvalds@linux-foundation.org, longman@redhat.com, dave@stgolabs.net,
+        jack@suse.cz, oleg@redhat.com, mingo@kernel.org
+Reply-To: tytso@mit.edu, amir73il@gmail.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        mingo@kernel.org, dave@stgolabs.net, oleg@redhat.com, jack@suse.cz,
+        longman@redhat.com, torvalds@linux-foundation.org, willy@infradead.org
+In-Reply-To: <20180518165534.GA22348@redhat.com>
+References: <20180518165534.GA22348@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/rwsem: Simplify the is-owner-spinnable
+ checks
+Git-Commit-ID: 1b22fc609cecd1b16c4a015e1a6b3c9717484e3a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 1a4191d3-9919-4380-8888-08d5c2250ede
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a4191d3-9919-4380-8888-08d5c2250ede
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2018 09:51:16.0742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4836
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4P9pbeO010583
 
-> -----Original Message-----
-> From: kbuild test robot [mailto:lkp@intel.com]
-> Sent: Friday, March 23, 2018 2:49 PM
-> To: A.s. Dong <aisheng.dong@nxp.com>
-> Cc: kbuild-all@01.org; linux-clk@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; hdegoede@redhat.com;
-> b.zolnierkie@samsung.com; linux@armlinux.org.uk; linux-
-> fbdev@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
-> sboyd@kernel.org; A.s. Dong <aisheng.dong@nxp.com>; Stephen Boyd
-> <sboyd@codeaurora.org>
-> Subject: Re: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
-> 
+Commit-ID:  1b22fc609cecd1b16c4a015e1a6b3c9717484e3a
+Gitweb:     https://git.kernel.org/tip/1b22fc609cecd1b16c4a015e1a6b3c9717484e3a
+Author:     Oleg Nesterov <oleg@redhat.com>
+AuthorDate: Fri, 18 May 2018 18:55:35 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 25 May 2018 08:11:47 +0200
 
-[...]
+locking/rwsem: Simplify the is-owner-spinnable checks
 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from include/linux/cpufreq.h:14:0,
->                     from arch/powerpc/platforms/cell/cpufreq_spudemand.c:23:
->    include/linux/clk.h:679:1: error: expected identifier or '(' before '{' token
->     {
->     ^
-> >> include/linux/clk.h:677:32: error: 'devm_clk_bulk_get_all' declared
-> >> 'static' but never defined [-Werror=unused-function]
->     static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
->                                    ^~~~~~~~~~~~~~~~~~~~~
->    cc1: all warnings being treated as errors
-> 
-> vim +677 include/linux/clk.h
-> 
->    676
->  > 677	static inline int __must_check devm_clk_bulk_get_all(struct device
-> *dev,
->    678							     struct
-> clk_bulk_data **clks);
+Add the trivial owner_on_cpu() helper for rwsem_can_spin_on_owner() and
+rwsem_spin_on_owner(), it also allows to make rwsem_can_spin_on_owner()
+a bit more clear.
 
-Thanks for the reporting.
-Caused by the extra unneeded ';' at the end of the line.
-Will fix.
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Waiman Long <longman@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Theodore Y. Ts'o <tytso@mit.edu>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180518165534.GA22348@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/rwsem-xadd.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-Regards
-Dong Aisheng
-
->  > 679	{
->    680
->    681		return 0;
->    682	}
->    683
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flist
-> s.01.org%2Fpipermail%2Fkbuild-
-> all&data=02%7C01%7Caisheng.dong%40nxp.com%7Ce9e35f96c61a4c46d1790
-> 8d5908a4d46%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6365738
-> 46071200287&sdata=yIWEjcpE2tyJP%2BmsMPqn%2F83TCsxw64J%2Ba5ue73
-> qGnN0%3D&reserved=0                   Intel Corporation
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index a90336779375..3064c50e181e 100644
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -347,6 +347,15 @@ static inline bool rwsem_try_write_lock_unqueued(struct rw_semaphore *sem)
+ 	}
+ }
+ 
++static inline bool owner_on_cpu(struct task_struct *owner)
++{
++	/*
++	 * As lock holder preemption issue, we both skip spinning if
++	 * task is not on cpu or its cpu is preempted
++	 */
++	return owner->on_cpu && !vcpu_is_preempted(task_cpu(owner));
++}
++
+ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+ {
+ 	struct task_struct *owner;
+@@ -359,17 +368,10 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+ 
+ 	rcu_read_lock();
+ 	owner = READ_ONCE(sem->owner);
+-	if (!owner || !is_rwsem_owner_spinnable(owner)) {
+-		ret = !owner;	/* !owner is spinnable */
+-		goto done;
++	if (owner) {
++		ret = is_rwsem_owner_spinnable(owner) &&
++		      owner_on_cpu(owner);
+ 	}
+-
+-	/*
+-	 * As lock holder preemption issue, we both skip spinning if task is not
+-	 * on cpu or its cpu is preempted
+-	 */
+-	ret = owner->on_cpu && !vcpu_is_preempted(task_cpu(owner));
+-done:
+ 	rcu_read_unlock();
+ 	return ret;
+ }
+@@ -398,8 +400,7 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
+ 		 * abort spinning when need_resched or owner is not running or
+ 		 * owner's cpu is preempted.
+ 		 */
+-		if (!owner->on_cpu || need_resched() ||
+-				vcpu_is_preempted(task_cpu(owner))) {
++		if (need_resched() || !owner_on_cpu(owner)) {
+ 			rcu_read_unlock();
+ 			return false;
+ 		}
