@@ -1,40 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965729AbeEYKE4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:04:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:58324 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965291AbeEYKEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:04:55 -0400
-Subject: Re: [PATCH v4 02/26] arm64: cpufeature: Add cpufeature for IRQ
- priority masking
-To: Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com
-References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
- <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <e44df12f-9868-ae94-4623-ec221d72d783@arm.com>
-Date: Fri, 25 May 2018 11:04:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965805AbeEYKFe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:05:34 -0400
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:45330 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965576AbeEYKFc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:05:32 -0400
+X-Google-Smtp-Source: ADUXVKJOLMv0Ge5CoJ3SRHYnvLDDRugazU0cgiVDjEa0kaMlBJFPLnAcPcJcrS/nU5flf/Bb6KEkY+ibaT4OZN5odcg=
 MIME-Version: 1.0
-In-Reply-To: <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180525094648.15464-1-bigeasy@linutronix.de>
+References: <20180525094648.15464-1-bigeasy@linutronix.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 25 May 2018 12:05:31 +0200
+X-Google-Sender-Auth: UTlJW9pg6NbsNWO7vQuix851yVU
+Message-ID: <CAJZ5v0j9hjASBOyrkCQ1CxF812THJZOHahJwpcmyC3XC4Fr6xA@mail.gmail.com>
+Subject: Re: PM / suspend / s2idle: avoiding splats on RT
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/18 10:49, Julien Thierry wrote:
-> Add a cpufeature indicating whether a cpu supports masking interrupts
-> by priority.
+On Fri, May 25, 2018 at 11:46 AM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> Patch #1 is a repost with the s2idle bits included. I tested via
+>         echo s2idle > mem_sleep && echo mem > state
+>
+> and I woke up the machine via the power on button. Patches #2+ were
+> additionally required with s2idle.
 
-How is this different from the SYSREG_GIC_CPUIF cap ? Is it just
-the description ?
+I quite don't like the first one for reasons explained in the reply to it.
 
-Suzuki
+The others are fine by me and I can queue them up if you want me to do that.
+
+Thanks,
+Rafael
