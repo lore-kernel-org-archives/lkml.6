@@ -1,75 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966629AbeEYP0u (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:26:50 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:59881 "EHLO
+        id S966711AbeEYP0y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:26:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:40127 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936185AbeEYP0s (ORCPT
+        with ESMTP id S966018AbeEYP0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:26:48 -0400
+        Fri, 25 May 2018 11:26:50 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] media: omap2: fix compile-testing with FB_OMAP2=m
-Date: Fri, 25 May 2018 17:25:12 +0200
-Message-Id: <20180525152523.2821369-5-arnd@arndb.de>
+To: Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/5] media: marvel-ccic: allow ccic and mmp drivers to coexist
+Date: Fri, 25 May 2018 17:25:11 +0200
+Message-Id: <20180525152523.2821369-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180525152523.2821369-1-arnd@arndb.de>
 References: <20180525152523.2821369-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:cPjdStHgmjgkNsJHRdrFQFXyQAQpAlg3ebgj8XuUdU2b+hJiATX
- HGCQqXfsis7F3xBPERVFOn414rqiEjyFeWMn2ih+SP60bivZOB83Guzn7pYAhquVWb2/W4u
- ZI6lpnNDz9QdcgHsnF2F6NLf+XAGSpurOp4+FqFRDnZRRQtMwZsGRIPRItJ3FHPO3HBbI7P
- NZFnqP0a4H/V7BM8qzT5g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:5dh5rdLg1hw=:uXK/sAyipUsDC06bIsMNv/
- zs2FVpKdRruQPXBzX+UKpz7sd+FhqFFU3tUtuo/x07X1W9NdZS8UWq5HcW4cE7Na1Yf1p6iRW
- r80wmA8KMp5sc0xVIXTAcB8DLkdZeF/CY5mAgObVIUFslE3RuKCvTlSccq+0/bIgc1kwDsJNY
- 1z+fOd5LTqbXluszsj/0EoahJ/6EXOUWNDnM7Ft6/nSt0vleV3HoodGH275F3qxOwnFDpKS41
- xlitr7wn5CLjgktJew5Q705FkAIoLeJL0zgq9KU6bMZwlTzt43mDDKuDk+AnWUolFqylAN3mW
- 1f/vP+LrW82NKk6qt6Gb8Whu1hcymRs+sIZN99UayxoRbErsPnqes0DKg1H3HtHudLBUWiCyP
- ZEtGuxAyhOpuMTuL2IpRrRWbFXS9j/MMvqJ2ocb4p6jQz/aU/JD6XROZXuIFmd3IaelJpA6tU
- l4qT0iO5RbNm7ez5exTEpphpZRl3O9TPJkZS0w/KNclPPLbNMgt9mvlpvTm6Q7Qro5qKc9X6/
- bQWrdUhOJDgCI9DriRJxwWcZ2XlzYG5zpoQhzwdYMI41DB6joeiu0SoS7r9jWb5a1dT37XYhX
- 0tZv8jQgt46Yb657+crMOm0VHmLLdKY7Qa3a130H4bdeh9vSqru8cWhvitekmfdqBk1MkD9i9
- txNo1gWgde4JRP1N0McH3+N3h53BuE2LXpV/qhB3bsKVNWrB9ToDlbIrre2z5FQYREnk=
+X-Provags-ID: V03:K1:HOVlfreSyqqznhiA4hm8zrijy4s0I5qMaH8mQOSLFPB2k2t2TbI
+ 59nb/JyhDJI5gVS4UKGduMUUITLFfPm20bLDrOWPN0lZPl40wXWyXUUPHOWNej9Hcml8Vi2
+ 6d5rJZxDexHRqnUfTSyZZSIbqvv9VKB9MGpvWRmC/isYmT9/V/Au5fyYXseBTEqJPpYoCf1
+ qfAUuWQxtHBifNnsK/esg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jljPvD3mKN0=:jspWfsIRf1Lqk9UdctfvG4
+ AQF8fOhYrulbLyuTYYxSGksMH4iao6+a3V5xfBQX8sdjZrItN47x2ZarS7RwYsY3lMj26dIsD
+ 5yhIdQqIshjQ7pKtF0c07GLKgnmDhyUTa1V7sOLT80l/V+44nLk+BWIFIJ0BKTKZWa5iF5Sm+
+ 0zJM8Y34t2hyWTC2eaxl84zREj4M7owWNIVVeveebENWfa7Z/3+QShk1ZLYJz0fKGJ4JCWUnp
+ qQz6rhxqca9gU1AfWMANxC5pt64uIKJF7n4m5QrtjpeISUGyFtw4P2Uw9Gq1Fy3fo7WPqw7sK
+ D2nr4mskneFfBiu2L/YHKB9jI0jOGhKKCXf4rbcN9TV+ZGBjsahVQPHhdLhwOCpVUcaoyth/j
+ 0xGhKQhveypcse+s+PpKIYLzn6gVw5eIv74hF2D6oM7N5ZTE2jU0XdSJrjfLUNS9b8BLf0bbt
+ BfCpfF2WgeRGVquqTeq65KOvdOvsrRRcw41Mga4HGfOy9omidD4E5m/GBVrSUN6N/Ri1M4af4
+ WkCa8iiS2UKwMWApl2nUOtw6iZ9KjMx1XeVoa1K85LA+TYP9D0y/cWN52La/xrppI+CJXrS5I
+ gEJYjr28kc+YQaK156CVrFuoIPjty5ousW5ecqfONQO2kFXMIfURUgyz/EUcpjunqZa26yHFx
+ tCv7HCmU8OBS459qZA6gO18z2HXLO5hFjRaaCZHDT1xu882FUI1Qvhnvtsp+mh/sQ+gc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compile-testing with FB_OMAP2=m results in a link error:
+Randconfig builds fail when one of the two is a built-in driver and
+the other one is a loadable module:
 
-drivers/media/platform/omap/omap_vout.o: In function `vidioc_streamoff':
-omap_vout.c:(.text+0x1028): undefined reference to `omap_dispc_unregister_isr'
-drivers/media/platform/omap/omap_vout.o: In function `omap_vout_release':
-omap_vout.c:(.text+0x1330): undefined reference to `omap_dispc_unregister_isr'
-drivers/media/platform/omap/omap_vout.o: In function `vidioc_streamon':
-omap_vout.c:(.text+0x2dd4): undefined reference to `omap_dispc_register_isr'
-drivers/media/platform/omap/omap_vout.o: In function `omap_vout_remove':
+drivers/media/platform/marvell-ccic/mcam-core.o: In function `mccic_register':
+mcam-core.c:(.text+0x2594): undefined reference to `__this_module'
+drivers/media/platform/marvell-ccic/mcam-core.o:(.rodata+0x50): undefined reference to `__this_module'
 
-In order to enable compile-testing but still keep the correct dependency,
-this changes the Kconfig logic so we only allow CONFIG_COMPILE_TEST
-building when FB_OMAP is completely disabled, or have use the old
-dependency on FB_OMAP to ensure VIDEO_OMAP2_VOUT is also a loadable
-module when FB_OMAP2 is.
+The problem is that mcam-core.c can not be built both ways at the smae
+time. However, we can make kbuild take care of that by making the core
+driver a separate module, which can be either built-in or loadable
+as needed.
+Making it a separate module requires exporting a few symbols and
+adding the module license from the header.
 
-Fixes: d8555fd2f452 ("media: omap2: allow building it with COMPILE_TEST && DRM_OMAP")
+Fixes: 0a9c643c8faa ("media: marvel-ccic: re-enable mmp-driver build")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/media/platform/omap/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/marvell-ccic/Makefile    | 9 ++++-----
+ drivers/media/platform/marvell-ccic/mcam-core.c | 9 ++++++++-
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform/omap/Kconfig
-index a414bcbb9b08..d827b6c285a6 100644
---- a/drivers/media/platform/omap/Kconfig
-+++ b/drivers/media/platform/omap/Kconfig
-@@ -6,7 +6,7 @@ config VIDEO_OMAP2_VOUT_VRFB
- config VIDEO_OMAP2_VOUT
- 	tristate "OMAP2/OMAP3 V4L2-Display driver"
- 	depends on MMU
--	depends on FB_OMAP2 || COMPILE_TEST
-+	depends on FB_OMAP2 || (COMPILE_TEST && FB_OMAP2=n)
- 	depends on ARCH_OMAP2 || ARCH_OMAP3 || COMPILE_TEST
- 	select VIDEOBUF_GEN
- 	select VIDEOBUF_DMA_CONTIG
+diff --git a/drivers/media/platform/marvell-ccic/Makefile b/drivers/media/platform/marvell-ccic/Makefile
+index 05a792c579a2..b3a4d0cdccb8 100644
+--- a/drivers/media/platform/marvell-ccic/Makefile
++++ b/drivers/media/platform/marvell-ccic/Makefile
+@@ -1,6 +1,5 @@
+-obj-$(CONFIG_VIDEO_CAFE_CCIC) += cafe_ccic.o
+-cafe_ccic-y := cafe-driver.o mcam-core.o
+-
+-obj-$(CONFIG_VIDEO_MMP_CAMERA) += mmp_camera.o
+-mmp_camera-y := mmp-driver.o mcam-core.o
++obj-$(CONFIG_VIDEO_CAFE_CCIC) += cafe_ccic.o mcam-core.o
++cafe_ccic-y := cafe-driver.o
+ 
++obj-$(CONFIG_VIDEO_MMP_CAMERA) += mmp_camera.o mcam-core.o
++mmp_camera-y := mmp-driver.o
+diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/media/platform/marvell-ccic/mcam-core.c
+index 80670eeee142..dfdbd4354b74 100644
+--- a/drivers/media/platform/marvell-ccic/mcam-core.c
++++ b/drivers/media/platform/marvell-ccic/mcam-core.c
+@@ -1720,6 +1720,7 @@ int mccic_irq(struct mcam_camera *cam, unsigned int irqs)
+ 	}
+ 	return handled;
+ }
++EXPORT_SYMBOL_GPL(mccic_irq);
+ 
+ /* ---------------------------------------------------------------------- */
+ /*
+@@ -1830,7 +1831,7 @@ int mccic_register(struct mcam_camera *cam)
+ 	v4l2_device_unregister(&cam->v4l2_dev);
+ 	return ret;
+ }
+-
++EXPORT_SYMBOL_GPL(mccic_register);
+ 
+ void mccic_shutdown(struct mcam_camera *cam)
+ {
+@@ -1850,6 +1851,7 @@ void mccic_shutdown(struct mcam_camera *cam)
+ 	v4l2_ctrl_handler_free(&cam->ctrl_handler);
+ 	v4l2_device_unregister(&cam->v4l2_dev);
+ }
++EXPORT_SYMBOL_GPL(mccic_shutdown);
+ 
+ /*
+  * Power management
+@@ -1868,6 +1870,7 @@ void mccic_suspend(struct mcam_camera *cam)
+ 	}
+ 	mutex_unlock(&cam->s_mutex);
+ }
++EXPORT_SYMBOL_GPL(mccic_suspend);
+ 
+ int mccic_resume(struct mcam_camera *cam)
+ {
+@@ -1898,4 +1901,8 @@ int mccic_resume(struct mcam_camera *cam)
+ 	}
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(mccic_resume);
+ #endif /* CONFIG_PM */
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Jonathan Corbet <corbet@lwn.net>");
 -- 
 2.9.0
