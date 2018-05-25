@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935471AbeEYMfk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:35:40 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:2687 "EHLO
+        id S935215AbeEYMf2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:35:28 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:23091 "EHLO
         esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933238AbeEYMf1 (ORCPT
+        with ESMTP id S934249AbeEYMfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:35:27 -0400
+        Fri, 25 May 2018 08:35:23 -0400
 X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
-   d="scan'208";a="15314135"
+   d="scan'208";a="15314127"
 From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
@@ -17,9 +17,9 @@ To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <robh+dt@kernel.org>, <broonie@kernel.org>
 CC: <Cristian.Birsan@microchip.com>,
         Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v4 7/7] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-Date: Fri, 25 May 2018 15:34:28 +0300
-Message-ID: <1527251668-31396-8-git-send-email-codrin.ciubotariu@microchip.com>
+Subject: [PATCH v4 4/7] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+Date: Fri, 25 May 2018 15:34:25 +0300
+Message-ID: <1527251668-31396-5-git-send-email-codrin.ciubotariu@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
 References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
@@ -31,68 +31,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-This patch sets the pin muxing for the I2S controllers
+This patch adds DT bindings for the new Atmel I2S controller embedded
+inside sama5d2x SoCs.
 
 Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added pin muxing for the second
-controller]
 Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 ---
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index e4bbb7e..0391731 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -281,6 +281,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s0_default>;
-+			};
+Changes in v4:
+	- more specific description for dmas, dma-names, clocks, clock-names
+	  properties;
+	- removed SoC and internal details of the block IP;
+	- added description for the new clock mux phandle;
+
+ .../devicetree/bindings/sound/atmel-i2s.txt        | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/atmel-i2s.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/atmel-i2s.txt b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
+new file mode 100644
+index 0000000..735368b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
+@@ -0,0 +1,47 @@
++* Atmel I2S controller
 +
- 			can0: can@f8054000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can0_default>;
-@@ -424,6 +429,24 @@
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2s0_default: i2s0_default {
-+					pinmux = <PIN_PC1__I2SC0_CK>,
-+						 <PIN_PC2__I2SC0_MCK>,
-+						 <PIN_PC3__I2SC0_WS>,
-+						 <PIN_PC4__I2SC0_DI0>,
-+						 <PIN_PC5__I2SC0_DO0>;
-+					bias-disable;
-+				};
++Required properties:
++- compatible:     Should be "atmel,sama5d2-i2s".
++- reg:            Should be the physical base address of the controller and the
++                  length of memory mapped region.
++- interrupts:     Should contain the interrupt for the controller.
++- dmas:           Should be one per channel name listed in the dma-names property,
++                  as described in atmel-dma.txt and dma.txt files.
++- dma-names:      Two dmas have to be defined, "tx" and "rx".
++                  This IP also supports one shared channel for both rx and tx;
++                  if this mode is used, one "rx-tx" name must be used.
++- clocks:         Must contain an entry for each entry in clock-names.
++                  Please refer to clock-bindings.txt.
++- clock-names:    Should be one of each entry matching the clocks phandles list:
++                  - "pclk" (peripheral clock) Required.
++                  - "gclk" (generated clock) Optional (1).
++                  - "aclk" (Audio PLL clock) Optional (1).
++                  - "muxclk" (I2S mux clock) Optional (1).
 +
-+				pinctrl_i2s1_default: i2s1_default {
-+					pinmux = <PIN_PA15__I2SC1_CK>,
-+						 <PIN_PA14__I2SC1_MCK>,
-+						 <PIN_PA16__I2SC1_WS>,
-+						 <PIN_PA17__I2SC1_DI0>,
-+						 <PIN_PA18__I2SC1_DO0>;
-+					bias-disable;
-+				};
++Optional properties:
++- pinctrl-0:      Should specify pin control groups used for this controller.
++- princtrl-names: Should contain only one value - "default".
 +
- 				pinctrl_key_gpio_default: key_gpio_default {
- 					pinmux = <PIN_PB9__GPIO>;
- 					bias-pull-up;
-@@ -546,6 +569,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s1_default>;
-+			};
 +
- 			can1: can@fc050000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_default>;
++(1) : Only the peripheral clock is required. The generated clock, the Audio
++      PLL clock adn the I2S mux clock are optional and should only be set
++      together, when Master Mode is required.
++
++Example:
++
++	i2s@f8050000 {
++		compatible = "atmel,sama5d2-i2s";
++		reg = <0xf8050000 0x300>;
++		interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
++		dmas = <&dma0
++			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++			 AT91_XDMAC_DT_PERID(31))>,
++		       <&dma0
++			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++			 AT91_XDMAC_DT_PERID(32))>;
++		dma-names = "tx", "rx";
++		clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
++		clock-names = "pclk", "gclk", "aclk", "muxclk";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_i2s0_default>;
++	};
 -- 
 2.7.4
