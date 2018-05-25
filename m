@@ -1,25 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968259AbeEYToa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:44:30 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38046 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967803AbeEYTo3 (ORCPT
+        id S968080AbeEYTs5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:48:57 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33855 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967784AbeEYTs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:44:29 -0400
-X-Google-Smtp-Source: AB8JxZpUZCY6SqEQzY6Kkd60ItktuSiHX0xc4VkmFDDd8d9Z1d7dxOzcVkUZX9XV/8t9Q3YmorglVw==
-Date: Fri, 25 May 2018 12:44:27 -0700 (PDT)
+        Fri, 25 May 2018 15:48:56 -0400
+X-Google-Smtp-Source: AB8JxZq2GUMKpPfSyLNKQq2XT2uDEL+ziWovjGYMaeZZs5/s9wWEqFmLZbga65nI7oEa861MvB3ClA==
+Date: Fri, 25 May 2018 12:48:54 -0700 (PDT)
 From: David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc: Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
- processes
-In-Reply-To: <201805250019.w4P0J3Dl018566@www262.sakura.ne.jp>
-Message-ID: <alpine.DEB.2.21.1805251237110.158701@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com> <201805250019.w4P0J3Dl018566@www262.sakura.ne.jp>
+To: ufo19890607 <ufo19890607@gmail.com>
+cc: akpm@linux-foundation.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, yuzhoujian <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH v5] Refactor part of the oom report in dump_header
+In-Reply-To: <1527213613-7922-1-git-send-email-ufo19890607@gmail.com>
+Message-ID: <alpine.DEB.2.21.1805251245210.158701@chino.kir.corp.google.com>
+References: <1527213613-7922-1-git-send-email-ufo19890607@gmail.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -27,68 +28,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018, Tetsuo Handa wrote:
+On Fri, 25 May 2018, ufo19890607 wrote:
 
-> > The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
-> > it cannot reap an mm.  This can happen for a variety of reasons,
-> > including:
-> > 
-> >  - the inability to grab mm->mmap_sem in a sufficient amount of time,
-> > 
-> >  - when the mm has blockable mmu notifiers that could cause the oom reaper
-> >    to stall indefinitely,
-> > 
-> > but we can also add a third when the oom reaper can "reap" an mm but doing
-> > so is unlikely to free any amount of memory:
-> > 
-> >  - when the mm's memory is fully mlocked.
+> From: yuzhoujian <yuzhoujian@didichuxing.com>
 > 
->    - when the mm's memory is fully mlocked (needs privilege) or
->      fully shared (does not need privilege)
+> The dump_header does not print the memcg's name when the system
+> oom happened, so users cannot locate the certain container which
+> contains the task that has been killed by the oom killer.
+> 
+> I follow the advices of David Rientjes and Michal Hocko, and refactor
+> part of the oom report in a backwards compatible way. After this patch,
+> users can get the memcg's path from the oom report and check the certain
+> container more quickly.
 > 
 
-Good point, that is another way that unnecessary oom killing can occur 
-because the oom reaper sets MMF_OOM_SKIP far too early.  I can make the 
-change to the commit message.
+I like the direction you are taking.  A couple notes:
 
-Also, I noticed in my patch that oom_reap_task() should be doing 
-list_add_tail() rather than list_add() to enqueue the mm for reaping 
-again.
+ - you may find it easier to declare an array of const char * for each
+   constraint:
 
-> > This is the same issue where the exit path sets MMF_OOM_SKIP before
-> > unmapping memory and additional processes can be chosen unnecessarily
-> > because the oom killer is racing with exit_mmap().
-> > 
-> > We can't simply defer setting MMF_OOM_SKIP, however, because if there is
-> > a true oom livelock in progress, it never gets set and no additional
-> > killing is possible.
-> > 
-> > To fix this, this patch introduces a per-mm reaping timeout, initially set
-> > at 10s.  It requires that the oom reaper's list becomes a properly linked
-> > list so that other mm's may be reaped while waiting for an mm's timeout to
-> > expire.
-> 
-> I already proposed more simpler one at https://patchwork.kernel.org/patch/9877991/ .
-> 
+	static const char * const oom_constraint_text[] = {
+		[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
+		[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
+		[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
+		[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
+	};
 
-It's a similar idea, and I'm glad that we agree that some kind of per-mm 
-delay is required to avoid this problem.  I think yours is simpler, but 
-consider the other two changes in my patch:
+ - we need to eliminate all the usage of pr_cont() because otherwise we
+   can still get interleaving in the kernel log (the single line output
+   should always be a complete single line that can be parsed by
+   userspace).
 
- - in the normal exit path, absent any timeout for the mm, we only set
-   MMF_OOM_SKIP after free_pgtables() when it is known we will not free
-   any additional memory, which can also cause unnecessary oom killing
-   because the oom killer races with free_pgtables(), and
-
- - the oom reaper now operates over all concurrent victims instead of
-   repeatedly trying to take mm->mmap_sem of the first victim, sleeping
-   many times, retrying, giving up, and moving on the next victim.
-   Allowing the oom reaper to iterate through all victims can allow
-   memory freeing such that an allocator may be able to drop mm->mmap_sem.
-
-In fact, with my patch, I don't know of any condition where we kill 
-additional processes unnecessarily *unless* the victim cannot be oom 
-reaped or complete memory freeing in the exit path within 10 seconds.  
-Given how rare oom livelock appears in practice, I think the 10 seconds is 
-justified because right now it is _trivial_ to oom kill many victims 
-completely unnecessarily.
+ - to generate a single line output, I think you need a call to a
+   function in mm/memcontrol.c when is_memcg_oom(oc) is true and
+   otherwise a function in mm/oom_kill.c when false.   
