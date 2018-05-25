@@ -1,111 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964919AbeEYGNr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:13:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58826 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964826AbeEYGNo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:13:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFA0D60C54
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com,
-        sricharan@codeaurora.org
-Subject: [PATCH v8 12/12] ARM: dts: ipq8074: Enable few peripherals for hk01 board
-Date: Fri, 25 May 2018 11:41:22 +0530
-Message-Id: <1527228682-12285-13-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527228682-12285-1-git-send-email-sricharan@codeaurora.org>
-References: <1527228682-12285-1-git-send-email-sricharan@codeaurora.org>
+        id S935735AbeEYGSy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:18:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932304AbeEYGSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 02:18:52 -0400
+Date: Thu, 24 May 2018 23:18:51 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] f2fs: let fstrim issue discard commands in lower priority
+Message-ID: <20180525061851.GA38511@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180525051031.36443-1-jaegeuk@kernel.org>
+ <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts | 54 +++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+On 05/25, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/5/25 13:10, Jaegeuk Kim wrote:
+> > The fstrim gathers huge number of large discard commands, and tries to issue
+> > without IO awareness, which results in long user-perceive IO latencies on
+> > READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
+> > seconds due to long discard latency.
+> > 
+> > This patch limits the maximum size to 2MB per candidate, and check IO congestion
+> > when issuing them to disk.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/f2fs.h    |   4 +-
+> >  fs/f2fs/segment.c | 123 +++++++++++++++++++++++-----------------------
+> >  2 files changed, 64 insertions(+), 63 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 3bddf13794d9..75ae7fc86ae8 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -178,6 +178,7 @@ enum {
+> >  
+> >  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+> >  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+> > +#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+> >  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+> >  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+> >  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+> > @@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+> >  static inline bool __is_discard_mergeable(struct discard_info *back,
+> >  						struct discard_info *front)
+> >  {
+> > -	return back->lstart + back->len == front->lstart;
+> > +	return (back->lstart + back->len == front->lstart) &&
+> > +		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+> >  }
+> >  
+> >  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 843fc2e6d41c..ba996d4091bc 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  	return 0;
+> >  }
+> >  
+> > -static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+> > -					struct discard_policy *dpolicy,
+> > -					unsigned int start, unsigned int end)
+> > -{
+> > -	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> > -	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+> > -	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> > -	struct discard_cmd *dc;
+> > -	struct blk_plug plug;
+> > -	int issued;
+> > -
+> > -next:
+> > -	issued = 0;
+> > -
+> > -	mutex_lock(&dcc->cmd_lock);
+> > -	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+> > -
+> > -	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
+> > -					NULL, start,
+> > -					(struct rb_entry **)&prev_dc,
+> > -					(struct rb_entry **)&next_dc,
+> > -					&insert_p, &insert_parent, true);
+> > -	if (!dc)
+> > -		dc = next_dc;
+> > -
+> > -	blk_start_plug(&plug);
+> > -
+> > -	while (dc && dc->lstart <= end) {
+> > -		struct rb_node *node;
+> > -
+> > -		if (dc->len < dpolicy->granularity)
+> > -			goto skip;
+> > -
+> > -		if (dc->state != D_PREP) {
+> > -			list_move_tail(&dc->list, &dcc->fstrim_list);
+> > -			goto skip;
+> > -		}
+> > -
+> > -		__submit_discard_cmd(sbi, dpolicy, dc);
+> > -
+> > -		if (++issued >= dpolicy->max_requests) {
+> > -			start = dc->lstart + dc->len;
+> > -
+> > -			blk_finish_plug(&plug);
+> > -			mutex_unlock(&dcc->cmd_lock);
+> > -
+> > -			schedule();
+> > -
+> > -			goto next;
+> > -		}
+> > -skip:
+> > -		node = rb_next(&dc->rb_node);
+> > -		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> > -
+> > -		if (fatal_signal_pending(current))
+> > -			break;
+> > -	}
+> > -
+> > -	blk_finish_plug(&plug);
+> > -	mutex_unlock(&dcc->cmd_lock);
+> > -}
+> > -
+> >  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  					struct discard_policy *dpolicy)
+> >  {
+> > @@ -2397,6 +2335,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	return has_candidate;
+> >  }
+> >  
+> > +static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+> > +					struct discard_policy *dpolicy,
+> > +					unsigned int start, unsigned int end)
+> > +{
+> > +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> > +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+> > +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> > +	struct discard_cmd *dc;
+> > +	struct blk_plug plug;
+> > +	int issued;
+> 
+> unsigned int cur = start;
+> 
+> > +
+> > +next:
+> > +	issued = 0;
+> > +
+> > +	mutex_lock(&dcc->cmd_lock);
+> > +	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+> > +
+> > +	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
+> > +					NULL, start,
+> 
+> NULL, cur,
+> 
+> > +					(struct rb_entry **)&prev_dc,
+> > +					(struct rb_entry **)&next_dc,
+> > +					&insert_p, &insert_parent, true);
+> > +	if (!dc)
+> > +		dc = next_dc;
+> > +
+> > +	blk_start_plug(&plug);
+> > +
+> > +	while (dc && dc->lstart <= end) {
+> > +		struct rb_node *node;
+> > +
+> > +		if (dc->len < dpolicy->granularity)
+> > +			goto skip;
+> > +
+> > +		if (dc->state != D_PREP) {
+> > +			list_move_tail(&dc->list, &dcc->fstrim_list);
+> > +			goto skip;
+> > +		}
+> > +
+> > +		__submit_discard_cmd(sbi, dpolicy, dc);
+> > +
+> > +		if (++issued >= dpolicy->max_requests) {
+> > +			start = dc->lstart + dc->len;
+> 
+> cur = dc->lstart + dc->len;
+> 
+> > +
+> > +			blk_finish_plug(&plug);
+> > +			mutex_unlock(&dcc->cmd_lock);
+> > +			__wait_all_discard_cmd(sbi, dpolicy);
+> 
+> How about moving __wait_discard_cmd_range(sbi, &dpolicy, start, end) from
+> f2fs_trim_fs here, this can avoid wait non-fstrim discard commands.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-index 72c5b4a3..c13ddee 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-@@ -21,6 +21,7 @@
- 
- 	aliases {
- 		serial0 = &blsp1_uart5;
-+		serial1 = &blsp1_uart3;
- 	};
- 
- 	chosen {
-@@ -36,5 +37,58 @@
- 		serial@78b3000 {
- 			status = "ok";
- 		};
-+
-+		spi@78b5000 {
-+			status = "ok";
-+
-+			m25p80@0 {
-+				  #address-cells = <1>;
-+				  #size-cells = <1>;
-+				  compatible = "jedec,spi-nor";
-+				  reg = <0>;
-+				  spi-max-frequency = <50000000>;
-+			};
-+		};
-+
-+		serial@78b1000 {
-+			 status = "ok";
-+		};
-+
-+		i2c@78b6000 {
-+			 status = "ok";
-+		};
-+
-+		dma@7984000 {
-+			 status = "ok";
-+		};
-+
-+		nand@79b0000 {
-+			status = "ok";
-+
-+			nand@0 {
-+				reg = <0>;
-+				nand-ecc-strength = <4>;
-+				nand-ecc-step-size = <512>;
-+				nand-bus-width = <8>;
-+			};
-+		};
-+
-+		phy@86000 {
-+			status = "ok";
-+		};
-+
-+		phy@8e000 {
-+			status = "ok";
-+		};
-+
-+		pci@20000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 58 0x1>;
-+		};
-+
-+		pci@10000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 61 0x1>;
-+		};
- 	};
- };
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+The key here is to avoid any outstanding discard commands.
+
+> 
+> > +			congestion_wait(BLK_RW_ASYNC, HZ/50);
+> 
+> What about using msleep(dpolicy->min_interval) instead?
+
+We need to detect congestion in block layer.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> > +			goto next;
+> > +		}
+> > +skip:
+> > +		node = rb_next(&dc->rb_node);
+> > +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> > +
+> > +		if (fatal_signal_pending(current))
+> > +			break;
+> > +	}
+> > +
+> > +	blk_finish_plug(&plug);
+> > +	mutex_unlock(&dcc->cmd_lock);
+> > +}
+> > +
+> >  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+> >  {
+> >  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
+> > 
