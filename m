@@ -1,106 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967395AbeEYQyo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:54:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36680 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967268AbeEYQyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:54:43 -0400
-Subject: Re: [PATCH 08/11] coresight: Add generic TMC sg table framework
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org, sudeep.holla@arm.com, frowand.list@gmail.com,
-        coresight@lists.linaro.org, mark.rutland@arm.com
-References: <1526661567-4578-1-git-send-email-suzuki.poulose@arm.com>
- <1526661567-4578-9-git-send-email-suzuki.poulose@arm.com>
- <20180523202552.GA4609@xps15> <21fef51b-2afe-1a2c-6006-5cf3de4e74e8@arm.com>
- <20180525164306.GA13430@xps15>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <9c0e172e-b7e5-573f-b410-eed474aa57ce@arm.com>
-Date: Fri, 25 May 2018 17:54:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S967318AbeEYQ7U (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:59:20 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42723 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934667AbeEYQ7S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 12:59:18 -0400
+X-Google-Smtp-Source: ADUXVKJ5ZmEoPcMBmuUnLSRE4s0lwYWE0rwJ+AV02Jc6ZqC7ez0NVAeCYJu5Yp+dALoKyN/R5a4agAOcPXJ3KONP9pk=
 MIME-Version: 1.0
-In-Reply-To: <20180525164306.GA13430@xps15>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1527257797.3472.8.camel@pengutronix.de>
+References: <20180525030153.15986-1-andrew.smirnov@gmail.com> <1527257797.3472.8.camel@pengutronix.de>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Fri, 25 May 2018 09:59:16 -0700
+Message-ID: <CAHQ1cqFWm-A2rkLr+LPqvp_eipG9VV01TY4innXqABaYuKbXDA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx51-zii-rdu1: Make sure SD1_WP is low
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Chris Healy <cphealy@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/18 17:43, Mathieu Poirier wrote:
-> On Fri, May 25, 2018 at 05:07:07PM +0100, Suzuki K Poulose wrote:
->> On 23/05/18 21:25, Mathieu Poirier wrote:
->>> On Fri, May 18, 2018 at 05:39:24PM +0100, Suzuki K Poulose wrote:
->>>> This patch introduces a generic sg table data structure and
->>>> associated operations. An SG table can be used to map a set
->>>> of Data pages where the trace data could be stored by the TMC
->>>> ETR. The information about the data pages could be stored in
->>>> different formats, depending on the type of the underlying
->>>> SG mechanism (e.g, TMC ETR SG vs Coresight CATU). The generic
->>>> structure provides book keeping of the pages used for the data
->>>> as well as the table contents. The table should be filled by
->>>> the user of the infrastructure.
->>>>
->>>> A table can be created by specifying the number of data pages
->>>> as well as the number of table pages required to hold the
->>>> pointers, where the latter could be different for different
->>>> types of tables. The pages are mapped in the appropriate dma
->>>> data direction mode (i.e, DMA_TO_DEVICE for table pages
->>>> and DMA_FROM_DEVICE for data pages).  The framework can optionally
->>>> accept a set of allocated data pages (e.g, perf ring buffer) and
->>>> map them accordingly. The table and data pages are vmap'ed to allow
->>>> easier access by the drivers. The framework also provides helpers to
->>>> sync the data written to the pages with appropriate directions.
->>>>
->>>> This will be later used by the TMC ETR SG unit and CATU.
->>>>
->>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>> ---
->>>> Changes since v1:
->>>>   - Address code style issues, more comments
->>>> ---
->>>>   drivers/hwtracing/coresight/coresight-tmc-etr.c | 290 ++++++++++++++++++++++++
->>>>   drivers/hwtracing/coresight/coresight-tmc.h     |  50 ++++
->>>>   2 files changed, 340 insertions(+)
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
->>>> index 9780798..1e844f8 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
->>>> @@ -17,9 +17,299 @@
+On Fri, May 25, 2018 at 7:16 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> Am Donnerstag, den 24.05.2018, 20:01 -0700 schrieb Andrey Smirnov:
+>> Make sure that MX51_PAD_GPIO1_1 does not remain configure as
+>> ALT0/SD1_WP (it is out of reset). This is needed because of external
+>> pull-up resistor attached to that pad that, when left unchanged, will
+>> drive SD1_WP high preventing eSDHC1/eMMC from working correctly.
 >>
->>
->>>> +static inline dma_addr_t tmc_sg_table_base_paddr(struct tmc_sg_table *sg_table)
->>>> +{
->>>> +	if (WARN_ON(!sg_table->data_pages.pages[0]))
->>>> +		return 0;
->>>> +	return sg_table->table_daddr;
->>>> +}
->>>> +
->>>> +static inline void *tmc_sg_table_base_vaddr(struct tmc_sg_table *sg_table)
->>>> +{
->>>> +	if (WARN_ON(!sg_table->data_pages.pages[0]))
->>>> +		return NULL;
->>>> +	return sg_table->table_vaddr;
->>>> +}
->>>
->>> The above two functions deal with DMA'able and virtual addresses for the table
->>> page buffer.  Yet the test in the WARN_ON is done on the data page array.
->>> Shouldn't this be sg_table->table_pages.pages[0] instead?
->>
->> The table is as good as empty if there are no data pages associated with
->> the table. Hence the data_pages check.
-> 
-> That is correct.  On the flip side you can't have data_pages without table_pages
-> and vice versa, hence my comment.
+>> To fix that add a pinmux configuration line configureing the pad to
+>> function as a GPIO. While we are at it, add a corresponding input GPIO
+>> hog in an effort to minimize current consumption.
+>
+> Enabling the input part of the pad also consumes (a small amount of)
+> power, if you are after minimizing power consumption, better configure
+> the pin as output and drive it in the pull direction.
+>
 
-Agree. On a second thought, those helpers are not used anywhere now. Also,
-we only use the base addresses just after creation of the table and
-we have necessary guards to make sure the table is actually created.
-I suspect this was a left over from my original code. I am tempted to
-rather remove them.
+Sure, sounds good, will do in v2.
 
-Suzuki
+>>
+>> > Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+>> > Cc: Shawn Guo <shawnguo@kernel.org>
+>> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+>> > Cc: Lucas Stach <l.stach@pengutronix.de>
+>> > Cc: Chris Healy <cphealy@gmail.com>
+>> > Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: devicetree@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/imx51-zii-rdu1.dts | 28 ++++++++++++++++++++++++++++
+>>  1 file changed, 28 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+>> index df9eca94d812..d484e7e46b27 100644
+>> --- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
+>> +++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+>> @@ -476,6 +476,17 @@
+>> >     status = "okay";
+>>  };
+>>
+>> +&gpio1 {
+>> > +   unused-sd3-wp-gpio {
+>> > +           /*
+>> > +            * See pinctrl_esdhc1 below for more details on this
+>> > +            */
+>> > +           gpio-hog;
+>> > +           gpios = <1 GPIO_ACTIVE_HIGH>;
+>> > +           input;
+>> > +   };
+>> +};
+>> +
+>>  &i2c2 {
+>> >     pinctrl-names = "default";
+>> >     pinctrl-0 = <&pinctrl_i2c2>;
+>> @@ -660,6 +671,23 @@
+>> > >                   MX51_PAD_SD1_DATA1__SD1_DATA1           0x20d5
+>> > >                   MX51_PAD_SD1_DATA2__SD1_DATA2           0x20d5
+>> > >                   MX51_PAD_SD1_DATA3__SD1_DATA3           0x20d5
+>> > +                   /*
+>> > +                    * GPIO1_1 is not directly used by eSDHC1 in
+>> > +                    * any capacity, but earlier versions of RDU1
+>> > +                    * used that pin as WP GPIO for eSDHC3 and
+>> > +                    * because of that that pad has an external
+>> > +                    * pull-up resistor. This is problematic
+>> > +                    * because out of reset the pad is configured
+>> > +                    * as ALT0 which serves as SD1_WP, which, when
+>> > +                    * pulled high by and external pull-up, will
+>> > +                    * inhibit execution of any write request to
+>> > +                    * attached eMMC device.
+>> > +                    *
+>> > +                    * To avoid this problem we configure the pad
+>> > +                    * to ALT1/GPIO and avoid driving SD1_WP
+>> +                      * signal high.
+>
+> Applying the patch complains about whitespace damage in the above 2
+> lines.
+>
+
+My bad, sorry about that, will fix in v2.
+
+Thanks,
+Andrey Smirnov
