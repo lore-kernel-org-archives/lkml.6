@@ -1,264 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966994AbeEYPf2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:35:28 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40093 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966571AbeEYPdt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:33:49 -0400
-X-Google-Smtp-Source: ADUXVKJnBKXy9tEdmfHA/eGFcXFfbRWW/l5kVBCDxRUOSJIdZgsCgx2JShMqdhpYrMUb8dM28k1bBQ==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH 3/8] xen/grant-table: Allow allocating buffers suitable for DMA
-Date: Fri, 25 May 2018 18:33:26 +0300
-Message-Id: <20180525153331.31188-4-andr2000@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525153331.31188-1-andr2000@gmail.com>
-References: <20180525153331.31188-1-andr2000@gmail.com>
+        id S967075AbeEYPgD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:36:03 -0400
+Received: from mail-db5eur01on0057.outbound.protection.outlook.com ([104.47.2.57]:58944
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966725AbeEYPf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 11:35:59 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com;
+From: Ayan Kumar Halder <ayan.halder@arm.com>
+To: liviu.dudau@arm.com, brian.starkey@arm.com,
+        alexandru-cosmin.gheorghe@arm.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc: nd@arm.com, Ayan Kumar Halder <ayan.halder@arm.com>
+Subject: [PATCH] drm: check_pixel_format() should return true if no modifiers are passed for a supported pixel format
+Date: Fri, 25 May 2018 16:35:41 +0100
+Message-Id: <1527262541-13964-1-git-send-email-ayan.halder@arm.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [217.140.96.140]
+X-ClientProxiedBy: CWXP265CA0063.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:400:2c::27) To VI1PR08MB3040.eurprd08.prod.outlook.com
+ (2603:10a6:803:45::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3040;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3040;3:kgg4fIjA7WVEE8IIId4RmcrrhP7iqJnaNz7p9if3u/4BTc5gT0deAI4VCkz2nVFgxY5YUB+ajOfozlhVAFeoVaX5/byLBAE5mNLc0QloUSEBblTWwod0hFgHPTkKHp2HmiLKv6noBwAszYfcP+PFEk+3XReyyLK0b+Lrs19plr1t5lN9eof7wDVGp+TIPbkE9/4YqC0AkWxceSFI3ltMPdXCTPauy67xvCmB6OEpMeRa1mDVtMAQcDObTqoNAByt;25:CGLYvi4qw5NSIQrVD3LdVCeTt8z9PygvBWj+REyeEtkQPNGVVwNmToO296GyNOI7tmRTX3FxxHn3lwVSUzDZaScPtRTBERupVoZDi49bFVwt6atnXmgiEwhC+1Am7Xn70eldAnNOc5t5m9GRzrkGlpkYv2UUs8vyD28XqM2GNa33ZaTgFwYO1DBcgGmbk/wpvRkTQl6fG+icz51jPz9MnapK44+i176b1yynAMxXSJ6ePyFRpv9vcXVXqw/3uJ+5w9O0WPMFUa300vuqU9xIRf4zJ6ELeGUhyphgwJWlcYD9R6CzhuDP+A+YeDEg7DX0Tr4TnsqtDZMJ2WAJK1Z03A==;31:pPknXViKp9Fo6VpDw77piONClFbOnb4K1VNAmfd3KsIXmrEyipb5h5kz5Er0WJD25WFYK3GAAnw7o3THvokjYb/idMD+2cqYwdEFgXbQ4Zn7fzlspJ6Fcai5KV3+Wo7qd9d7Y4bamShqcG8/YoiNCS6A55QQxH8Td78RMM5x+yPNrESpEEEMi8S3p4uRIP68roXWuf7RUOCn1ei4617i4JD0Z8EHEeYaAwkj1sgGXzA=
+X-MS-TrafficTypeDiagnostic: VI1PR08MB3040:
+NoDisclaimer: True
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3040;20:um/CJfv4PpQ40dz9g86hxRjYjUp/d/aXbQird9SwQ+xGMaTwtcal+ShX38/LSahXFjANCZyIaMBB5sEBWYZ+bLnLRjbeaPCIrkxtI5CYM8Wu2gPCkJJ5x8synJALZdvS4vO/jMrdgz86zGxxt43YFu9smaJfSfZydim0AqZI9BfmBrUS5YS8vWmPRfPqJykRbltM1iorrl0jb4j9mnbepVAz+W2YQP9YL/bqgRWDxu/JN9592PhgI8jW/LnKw84z;4:SrKp0HHqdBNaySEB1WQqu5mPDhU9Xxo9tlYE1LdyvT2IlAW2dxWLyyDeG7nh39uVe6weOUxmA2s7AFKe/EuPRu96E7AJzDcI43ZJoMNvdPF2vhMcBBVYDXrw7PSH0CqHrUPl4O3sSjTdlL42t7bUYnyySb5v1bpL/j43iSMTCxSyjJV2t/2zv0DJyexfz4Kh7jC5b+Iv3SJjdSag61mmFuYOc2EqfOn4whM5SZvGLu3IaRya39kcpSJmFyDTIHJdE+5o20LBqccdsJXPBeUeJ2XEV8CE4FFFDgSiYBLg9VUQl/BSJzI6iU4P1Jr1IjK9
+X-Microsoft-Antispam-PRVS: <VI1PR08MB3040A7FCA17ABD825134B7E8E4690@VI1PR08MB3040.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:VI1PR08MB3040;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3040;
+X-Forefront-PRVS: 06833C6A67
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(199004)(189003)(86362001)(2906002)(52116002)(6486002)(25786009)(81156014)(48376002)(81166006)(105586002)(316002)(26005)(6116002)(16526019)(106356001)(3846002)(16586007)(6666003)(50466002)(8936002)(53936002)(478600001)(36756003)(5660300001)(2616005)(8676002)(7736002)(386003)(1857600001)(68736007)(7696005)(305945005)(47776003)(97736004)(956004)(4326008)(66066001)(486006)(51416003)(50226002)(476003)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3040;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3040;23:nkZQbeo8GqT1pQJWiXFcYF8d26UNhXn5TEqSCYgMy?=
+ =?us-ascii?Q?BF8/e1Rvbv5JYNq6eNbXLGam7BhjryMdROvJC1CQvWnrAeRC/2ChaQ4zulzJ?=
+ =?us-ascii?Q?4FgjECgm0xk5qW5+/XW59M8/0QgB7FqMkWecQF7d+CNnGvLZ/g5XSzQmCOZE?=
+ =?us-ascii?Q?+xv8L2iP9RccYnMP7Y5Ywy91hWEJh65MLycCae6toxJoSuK3CNuJlgE5MvKe?=
+ =?us-ascii?Q?PvfWDmeeLYXOqY7rscU57kuE5r6OGCijjl73gJKnvHTDQfaD/oGbIuElgo8v?=
+ =?us-ascii?Q?K5Lu3Ulxv+wtFLwN7v2FEkxiBxo1XGlAdusAP077BNLG8JeDHYnAFU71XU70?=
+ =?us-ascii?Q?VIb7PZfjPrviRILUKVpj5DoyXLxAmb9omWAIz7Q6//HgiQ9ny5HG3nwXc0k/?=
+ =?us-ascii?Q?QIrLw15EBKhAn/RTrZ5VsSCLv38M6vwPZRuLMs2obLlpIcx8tS1DNyoisd13?=
+ =?us-ascii?Q?FL7gLDxeLfU1+txhiu69wkP7Dv4JumGm5b3um4v3sRO7E+ghF1mFTodBRGcj?=
+ =?us-ascii?Q?Z0Gcdr0ZPateoODaOwi6/A93JLtqQuOAdkTwLQvukj3PIlB8opYEX5KYOAtf?=
+ =?us-ascii?Q?axfjMK4qoBtoLAzcy4F3Jev+L8Gd1spGn3Ckb6cC6VRNvTWCkksaUayh+ihN?=
+ =?us-ascii?Q?eU6D7D+gb/hNWRya6rigWgaNmIVvh95IL63jlAAVIN5xg1VDHi9z8REmYVS+?=
+ =?us-ascii?Q?mLtSmeiLgo51ED4/q8a6gZPHW3L47A4rC3quZDhOvkFqXK/aZbgpwj6ouX1/?=
+ =?us-ascii?Q?9skB8BKKjdzANrIeO4f4WkWmJ3Xl8bv6nxH6MLxrDTY8S2L2IIOkSZVQpQby?=
+ =?us-ascii?Q?Gw457LZJopykkhxk8WTTE+TWUx0gaj9I8OGJkjdGeYC4MY1ovYVILJhl/okx?=
+ =?us-ascii?Q?gsCi7ja85Jrnv/uxkI4eopK6U74cC7upKPU5VKyldH7WkdvFsn1fcJ0m8LVW?=
+ =?us-ascii?Q?gnlg3VhJ4pduF4lZZwg3DMwRye6hZNKbVMqOeD5+wwaGj/8eUYNFcn/bnqMG?=
+ =?us-ascii?Q?SoLZudCYi0YL3QvCwGcIjy8tw9PTGnsEfEJOIZTa4+rNdnaZCoff4cr2Gs/b?=
+ =?us-ascii?Q?7xLN8LDKBYK4WlLPSPj5mhwxH90yjUc4cq8WPf8vMJoOy2PyUi07rWkJB+To?=
+ =?us-ascii?Q?cKkWZDq0+A=3D?=
+X-Microsoft-Antispam-Message-Info: ZA6OQvXcxqweB61cjLH8tfBfTcN61Apbq+YbObh510YcmOAvcl/MiMkwkvfngHsxmuVjmVomaySdyCHM7PoP4IfAdu+VT8ymJ7oC87SsTC3L8WHnWwL7KwtBCTcFX9rtpGs78zfvr1CLIL5SKnCSAiquPrXrswO9VukZ3ukeK+R2MKtBBYJe+kbbzHAs/mIi
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3040;6:A87nyQaij8WwdrQvXnyAyFnr2Fl1+6n7RA2IoeVpwyqd9+o25rhnasy1xIeRs80MR1DSKy0ItgPSDsMmyX3YMWeZgPIH2e6wEunABDSiDJo8t2NH0/gZXMqWhZaPKpCSsevKIDBbPFXNCjQVlGtuLpnSkDaXuR7gpq+GmJmUjL0e1yH1gRL4wmFimMdQqsP1XOi+aOOnMt8xSFC+PVQQjjv3RhjojSNoSLAJvwzoTxTjCD3wq4m4NzEkwCQGxXNbgg3ylOtgHD606aNQadhr8ml5wlxgnjpzClqJfnkz0nGEvvs6VmBnTFz5NNLtAgU/hQCmDfql7tAKuPkQaHPpdQI9r2ckhLtZP0fDCvnV14ieFN8RTMmEjuC9HaxpMJoyyoU/o7cD2JdM2GhbwRYyecojTXsV/FRNGbHQPECWF8lbSIfzkJIDgtiTmL+MsoB3zwf4SJlRpX+yYA2UtQHpzQ==;5:s1sgAUB2MhIP4z024pTHnmOOJVKQ7oM6OJ4ydljhnbndEp4BAJBoiqytbcw77eUbMStuH4AAXRJfxgxY3RWSaw+qmp45wPtUHh3zehmMBDzf3DiB9kOvZDOQATiF23Via0sWhBDkCgJ9GM2H9HkhCAnv/M1gHioE6XiKjkaOzaM=;24:+zk4Oq94zhQ2NCD6fmH6/IZwSGdrkp0k7zWf5RAI/q8FVS0iBmjF7o7prs8PCJgDZiLX4Y4h+O5O9/+p9oWbbw3wIUkzL5JcfFa3N9m5zew=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3040;7:S5WZ5cGl0hXPwk28cZkO+OX2Q/e3SyUHj4WFM74B+9iJYytD39NjhRKcToGjy8jxH7dX5UqXaej4hvf4MwZ/bFSbBJtfe47z5pZdLa1gumovphraVDpyFEfiFP2amUO9WNmpyckHb4jFnIN/Jp6x3kI7ZdJLUIoo308o8jZRADiz61wqft3zrKwDvbcBfq37rHOaKCIenPOTczlJedqGGnPxMOwARyeskcrwDhPCdNm0No/RLh7lnr4+ScSNsEMo
+X-MS-Office365-Filtering-Correlation-Id: 9e681517-d2de-4c84-9941-08d5c2553523
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 15:35:55.7014
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e681517-d2de-4c84-9941-08d5c2553523
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3040
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+If a plane supports a pixel format and the framebuffer does not pass any
+modifiers, then drm_plane_check_pixel_format() should always return true
+for the given format regardless of whether the plane supports any
+modifiers or not.
 
-Extend grant table module API to allow allocating buffers that can
-be used for DMA operations and mapping foreign grant references
-on top of those.
-The resulting buffer is similar to the one allocated by the balloon
-driver in terms that proper memory reservation is made
-({increase|decrease}_reservation and VA mappings updated if needed).
-This is useful for sharing foreign buffers with HW drivers which
-cannot work with scattered buffers provided by the balloon driver,
-but require DMAable memory instead.
-
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
 ---
- drivers/xen/Kconfig       |  13 ++++
- drivers/xen/grant-table.c | 124 ++++++++++++++++++++++++++++++++++++++
- include/xen/grant_table.h |  25 ++++++++
- 3 files changed, 162 insertions(+)
+ drivers/gpu/drm/drm_plane.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
-index e5d0c28372ea..3431fe210624 100644
---- a/drivers/xen/Kconfig
-+++ b/drivers/xen/Kconfig
-@@ -161,6 +161,19 @@ config XEN_GRANT_DEV_ALLOC
- 	  to other domains. This can be used to implement frontend drivers
- 	  or as part of an inter-domain shared memory channel.
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index 6d2a6e4..873c084 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -564,6 +564,9 @@ int drm_plane_check_pixel_format(struct drm_plane *plane,
+ 	if (!plane->modifier_count)
+ 		return 0;
  
-+config XEN_GRANT_DMA_ALLOC
-+	bool "Allow allocating DMA capable buffers with grant reference module"
-+	depends on XEN
-+	help
-+	  Extends grant table module API to allow allocating DMA capable
-+	  buffers and mapping foreign grant references on top of it.
-+	  The resulting buffer is similar to one allocated by the balloon
-+	  driver in terms that proper memory reservation is made
-+	  ({increase|decrease}_reservation and VA mappings updated if needed).
-+	  This is useful for sharing foreign buffers with HW drivers which
-+	  cannot work with scattered buffers provided by the balloon driver,
-+	  but require DMAable memory instead.
++	if (modifier == DRM_FORMAT_MOD_NONE)
++		return 0;
 +
- config SWIOTLB_XEN
- 	def_bool y
- 	select SWIOTLB
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index d7488226e1f2..06fe6e7f639c 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -45,6 +45,9 @@
- #include <linux/workqueue.h>
- #include <linux/ratelimit.h>
- #include <linux/moduleparam.h>
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+#include <linux/dma-mapping.h>
-+#endif
- 
- #include <xen/xen.h>
- #include <xen/interface/xen.h>
-@@ -57,6 +60,7 @@
- #ifdef CONFIG_X86
- #include <asm/xen/cpuid.h>
- #endif
-+#include <xen/mem_reservation.h>
- #include <asm/xen/hypercall.h>
- #include <asm/xen/interface.h>
- 
-@@ -811,6 +815,82 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
- }
- EXPORT_SYMBOL(gnttab_alloc_pages);
- 
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+/**
-+ * gnttab_dma_alloc_pages - alloc DMAable pages suitable for grant mapping into
-+ * @args: arguments to the function
-+ */
-+int gnttab_dma_alloc_pages(struct gnttab_dma_alloc_args *args)
-+{
-+	unsigned long pfn, start_pfn;
-+	xen_pfn_t *frames;
-+	size_t size;
-+	int i, ret;
-+
-+	frames = kcalloc(args->nr_pages, sizeof(*frames), GFP_KERNEL);
-+	if (!frames)
-+		return -ENOMEM;
-+
-+	size = args->nr_pages << PAGE_SHIFT;
-+	if (args->coherent)
-+		args->vaddr = dma_alloc_coherent(args->dev, size,
-+						 &args->dev_bus_addr,
-+						 GFP_KERNEL | __GFP_NOWARN);
-+	else
-+		args->vaddr = dma_alloc_wc(args->dev, size,
-+					   &args->dev_bus_addr,
-+					   GFP_KERNEL | __GFP_NOWARN);
-+	if (!args->vaddr) {
-+		pr_err("Failed to allocate DMA buffer of size %zu\n", size);
-+		ret = -ENOMEM;
-+		goto fail_free_frames;
-+	}
-+
-+	start_pfn = __phys_to_pfn(args->dev_bus_addr);
-+	for (pfn = start_pfn, i = 0; pfn < start_pfn + args->nr_pages;
-+			pfn++, i++) {
-+		struct page *page = pfn_to_page(pfn);
-+
-+		args->pages[i] = page;
-+		frames[i] = xen_page_to_gfn(page);
-+		xenmem_reservation_scrub_page(page);
-+	}
-+
-+	xenmem_reservation_va_mapping_reset(args->nr_pages, args->pages);
-+
-+	ret = xenmem_reservation_decrease(args->nr_pages, frames);
-+	if (ret != args->nr_pages) {
-+		pr_err("Failed to decrease reservation for DMA buffer\n");
-+		xenmem_reservation_increase(ret, frames);
-+		ret = -EFAULT;
-+		goto fail_free_dma;
-+	}
-+
-+	ret = gnttab_pages_set_private(args->nr_pages, args->pages);
-+	if (ret < 0)
-+		goto fail_clear_private;
-+
-+	kfree(frames);
-+	return 0;
-+
-+fail_clear_private:
-+	gnttab_pages_clear_private(args->nr_pages, args->pages);
-+fail_free_dma:
-+	xenmem_reservation_va_mapping_update(args->nr_pages, args->pages,
-+					     frames);
-+	if (args->coherent)
-+		dma_free_coherent(args->dev, size,
-+				  args->vaddr, args->dev_bus_addr);
-+	else
-+		dma_free_wc(args->dev, size,
-+			    args->vaddr, args->dev_bus_addr);
-+fail_free_frames:
-+	kfree(frames);
-+	return ret;
-+}
-+EXPORT_SYMBOL(gnttab_dma_alloc_pages);
-+#endif
-+
- void gnttab_pages_clear_private(int nr_pages, struct page **pages)
- {
- 	int i;
-@@ -838,6 +918,50 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
- }
- EXPORT_SYMBOL(gnttab_free_pages);
- 
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+/**
-+ * gnttab_dma_free_pages - free DMAable pages
-+ * @args: arguments to the function
-+ */
-+int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
-+{
-+	xen_pfn_t *frames;
-+	size_t size;
-+	int i, ret;
-+
-+	gnttab_pages_clear_private(args->nr_pages, args->pages);
-+
-+	frames = kcalloc(args->nr_pages, sizeof(*frames), GFP_KERNEL);
-+	if (!frames)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < args->nr_pages; i++)
-+		frames[i] = page_to_xen_pfn(args->pages[i]);
-+
-+	ret = xenmem_reservation_increase(args->nr_pages, frames);
-+	if (ret != args->nr_pages) {
-+		pr_err("Failed to decrease reservation for DMA buffer\n");
-+		ret = -EFAULT;
-+	} else {
-+		ret = 0;
-+	}
-+
-+	xenmem_reservation_va_mapping_update(args->nr_pages, args->pages,
-+					     frames);
-+
-+	size = args->nr_pages << PAGE_SHIFT;
-+	if (args->coherent)
-+		dma_free_coherent(args->dev, size,
-+				  args->vaddr, args->dev_bus_addr);
-+	else
-+		dma_free_wc(args->dev, size,
-+			    args->vaddr, args->dev_bus_addr);
-+	kfree(frames);
-+	return ret;
-+}
-+EXPORT_SYMBOL(gnttab_dma_free_pages);
-+#endif
-+
- /* Handling of paged out grant targets (GNTST_eagain) */
- #define MAX_DELAY 256
- static inline void
-diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
-index de03f2542bb7..982e34242b9c 100644
---- a/include/xen/grant_table.h
-+++ b/include/xen/grant_table.h
-@@ -198,6 +198,31 @@ void gnttab_free_auto_xlat_frames(void);
- int gnttab_alloc_pages(int nr_pages, struct page **pages);
- void gnttab_free_pages(int nr_pages, struct page **pages);
- 
-+#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-+struct gnttab_dma_alloc_args {
-+	/* Device for which DMA memory will be/was allocated. */
-+	struct device *dev;
-+	/*
-+	 * If set then DMA buffer is coherent and write-combine otherwise.
-+	 */
-+	bool coherent;
-+	/*
-+	 * Number of entries in the @pages array, defines the size
-+	 * of the DMA buffer.
-+	 */
-+	int nr_pages;
-+	/* Array of pages @pages filled with pages of the DMA buffer. */
-+	struct page **pages;
-+	/* Virtual/CPU address of the DMA buffer. */
-+	void *vaddr;
-+	/* Bus address of the DMA buffer. */
-+	dma_addr_t dev_bus_addr;
-+};
-+
-+int gnttab_dma_alloc_pages(struct gnttab_dma_alloc_args *args);
-+int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args);
-+#endif
-+
- int gnttab_pages_set_private(int nr_pages, struct page **pages);
- void gnttab_pages_clear_private(int nr_pages, struct page **pages);
- 
+ 	for (i = 0; i < plane->modifier_count; i++) {
+ 		if (modifier == plane->modifiers[i])
+ 			break;
 -- 
-2.17.0
+2.7.4
