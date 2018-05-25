@@ -1,132 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeEYCvr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:51:47 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34251 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751235AbeEYCvo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:51:44 -0400
-X-Google-Smtp-Source: AB8JxZq6dJOXMSHBlhx5WF9B5DgqnegtTNF7STmA4bDavdF6rDnfJ+5AJjSPvnAQ3yrnhRWthv3vGhJ9UDOxTzhbS0U=
+        id S1752329AbeEYCyX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:54:23 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46677 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750824AbeEYCyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:54:17 -0400
+Subject: Re: [PATCH] cpufreq: reinitialize new policy min/max when writing
+ scaling_(max|min)_freq
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <gengyanping@hisilicon.com>, <sunzhaosheng@hisilicon.com>
+References: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com>
+ <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
+From: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
+Message-ID: <7700fad7-211d-d8b2-e4ee-975c1cf1f9dc@hisilicon.com>
+Date: Fri, 25 May 2018 10:54:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
-References: <20180524093159.286472249@linuxfoundation.org> <20180524180652.7bqyquqfe2nqdxfg@xps>
- <20180524190806.GE31019@kroah.com> <CADtBP2B=Yb22dUjW-X-1OEGUvMX81gfpQ2FqFAaQUnExduwq7Q@mail.gmail.com>
- <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
-From: Rafael Tinoco <rafael.tinoco@linaro.org>
-Date: Thu, 24 May 2018 23:51:02 -0300
-Message-ID: <CADtBP2CDjgB_xizZdoKVQjxTcs7uKQccR3Phkd-0aEcogv912Q@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
-To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
-        stable@vger.kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, linux@roeck-us.net
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.121.90.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you Daniel! Will investigate those.
 
-Meanwhile, Greg, I referred to:
 
-time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
-
-Since we're not using this type of clock on arm64's 4.4 kernel vdso
-functions. This commit's description calls attention for it to be
-responsible for fixing kselftest flacking tests, we wouldn't get that
-on 4.4 according to bellow:
-
-stable-rc-linux-4.14.y
-dbb236c1ceb6 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
-49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in clock_gettime() vDSO
-82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
-9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
-
-stable-rc-linux-4.16.y
-dbb236c1ceb6 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
-49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in clock_gettime() vDSO
-82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
-9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
-
-stable-rc-linux-4.4.y
-<none>
-
-stable-rc-linux-4.9.y
-99f66b5182a4 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
-49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in clock_gettime() vDSO
-82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
-9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
-
-Yet, the second fix was backported to all (including 4.4.y):
-
-stable-rc-linux-4.14.y
-3d88d56c5873 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
-stable-rc-linux-4.16.y
-3d88d56c5873 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
-stable-rc-linux-4.4.y
-7c8bd6e07430 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
-stable-rc-linux-4.9.y
-a53bfdda06ac time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
-
-Not sure you want to keep it in 4.4, thought it was worth mentioning it.
-
-Cheers.
-
-On 24 May 2018 at 22:34, Daniel Sangorrin
-<daniel.sangorrin@toshiba.co.jp> wrote:
-> Hello Rafael,
->
-> The tests fcntl35 and fcntl35_64 should have go from FAIL to PASS.
-> https://www.spinics.net/lists/stable/msg239475.html
->
-> Looking at
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a3d7cdea9/testrun/228569/suite/ltp-syscalls-tests/tests/
-> I see that these two tests (and other important tests as well) are being SKIPPED.
->
-> By the way, I see that select04 FAILS in your case. But in my setup, select04 was working fine (x86_64) in 4.4.132. I will confirm that it still works in 4.4.133
->
-> Thanks,
-> Daniel Sangorrin
->
->> -----Original Message-----
->> From: stable-owner@vger.kernel.org [mailto:stable-owner@vger.kernel.org] On
->> Behalf Of Rafael Tinoco
->> Sent: Friday, May 25, 2018 5:32 AM
->> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: linux-kernel@vger.kernel.org; shuah@kernel.org; patches@kernelci.org;
->> lkft-triage@lists.linaro.org; ben.hutchings@codethink.co.uk;
->> stable@vger.kernel.org; akpm@linux-foundation.org;
->> torvalds@linux-foundation.org; linux@roeck-us.net
->> Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+在 2018/5/24 15:45, Rafael J. Wysocki 写道:
+> On Thu, May 24, 2018 at 8:43 AM, Kevin Wangtao
+> <kevin.wangtao@hisilicon.com> wrote:
+>> consider such situation, current user_policy.min is 1000000,
+>> current user_policy.max is 1200000, in cpufreq_set_policy,
+>> other driver may update policy.min to 1200000, policy.max to
+>> 1300000. After that, If we input "echo 1300000 > scaling_min_freq",
+>> then user_policy.min will be 1300000, and user_policy.max is
+>> still 1200000, because the input value is checked with policy.max
+>> not user_policy.max. if we get all related cpus offline and
+>> online again, it will cause cpufreq_init_policy fail because
+>> user_policy.min is higher than user_policy.max.
+> 
+> How do you reproduce this, exactly?
+I write a driver register CPUFREQ_POLICY_NOTIFIER, and when event is CPUFREQ_ADJUST,
+it will modify policy's min/max according to some conditions, I test it with writing
+scaling_(max|min)_freq to traverse all frequencies repeatly, and also repeat hotplug
+as background.
+> 
+>> The solution is when user space tries to write scaling_(max|min)_freq,
+>> the min/max of new_policy should be reinitialized with min/max
+>> of user_policy, like what cpufreq_update_policy does.
 >>
->> > > kernel: 4.4.133-rc1
->> > > git repo:
->> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
->> > > git branch: linux-4.4.y
->> > > git commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
->> > > git describe: v4.4.132-93-g915a3d7cdea9
->> > > Test details:
->> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a
->> 3d7cdea9
->> > >
->> > >
->> > > No regressions (compared to build v4.4.132-71-g180635995c36)
->> >
->> > It should have gotten better, as there was a fix in here for at least 2
->> > LTP tests that we previously were not passing.  I don't know why you all
->> > were not reporting that in the past, it took someone else randomly
->> > deciding to run LTP to report it to me...
->> >
->> > Why did an improvement in results not show up?
+>> Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+>> ---
+>>   drivers/cpufreq/cpufreq.c | 2 ++
+>>   1 file changed, 2 insertions(+)
 >>
->> Are you referring to the CLOCK_MONOTONIC_RAW fix for the arm64 vDSO ?
->> I think that CLOCK_MONOTONIC_RAW in VDSO wasn't backported to 4.4.y
->> (commit 49eea433b326 in mainline) so this "fix" is changing the
->> timekeeping sauce (that would fix MONOTONIC RAW) but not for 4.4.y in
->> ARM64. Needs review though :\
->
->
->
+>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>> index b79c532..8b33e08 100644
+>> --- a/drivers/cpufreq/cpufreq.c
+>> +++ b/drivers/cpufreq/cpufreq.c
+>> @@ -697,6 +697,8 @@ static ssize_t store_##file_name                                    \
+>>          struct cpufreq_policy new_policy;                               \
+>>                                                                          \
+>>          memcpy(&new_policy, policy, sizeof(*policy));                   \
+>> +       new_policy->min = policy->user_policy.min;                      \
+new_policy.min = policy->user_policy.min;
+>> +       new_policy->max = policy->user_policy.max;                      \
+new_policy.max = policy->user_policy.max
+> 
+> It looks like you haven't even tried to build this, have you?
+sorry for that, I test it on another branch and write this patch manually without build
+> 
+>>                                                                          \
+>>          ret = sscanf(buf, "%u", &new_policy.object);                    \
+>>          if (ret != 1)                                                   \
+>> --
+>> 2.8.1
+>>
+> 
+> .
+> 
