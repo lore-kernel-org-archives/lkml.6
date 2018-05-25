@@ -1,57 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966991AbeEYP7p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:59:45 -0400
-Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:34406 "EHLO
-        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966464AbeEYP7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:59:43 -0400
-Date: Fri, 25 May 2018 15:59:42 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: linux-mm@kvack.org, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vijayanand Jitta <vjitta@codeaurora.org>
-Subject: Re: [RFC PATCH 4/5] mm: rename and change semantics of
- nr_indirectly_reclaimable_bytes
-In-Reply-To: <20180524110011.1940-5-vbabka@suse.cz>
-Message-ID: <010001639806f32c-c18e739a-feac-4c6d-bce0-61c410579310-000000@email.amazonses.com>
-References: <20180524110011.1940-1-vbabka@suse.cz> <20180524110011.1940-5-vbabka@suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S967043AbeEYQBK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:01:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965666AbeEYQBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 12:01:04 -0400
+X-Google-Smtp-Source: ADUXVKIeF+Gko5+g+AWRBU2RYc+y0/5S4wjUtCNv4ahQt973vxHbB2fuJO3fXP2Rn1xIXrrwJh/hU/UjbR39wpdoYrg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.05.25-54.240.9.114
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+In-Reply-To: <767dc01f-abed-8192-0274-ff5fc092f60b@codeaurora.org>
+References: <1526194908-19027-1-git-send-email-rohitkr@codeaurora.org>
+ <20180523062645.GY14924@minitux> <767dc01f-abed-8192-0274-ff5fc092f60b@codeaurora.org>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 25 May 2018 11:00:42 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+kHSBfUoAUFp1=BbzFJOdc6Ffv=us8REZbJdYzRnj_Og@mail.gmail.com>
+Message-ID: <CAL_Jsq+kHSBfUoAUFp1=BbzFJOdc6Ffv=us8REZbJdYzRnj_Og@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Add APSS based Qualcomm ADSP PIL driver for SDM845
+To: Rohit Kumar <rohitkr@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM"
+        <linux-remoteproc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>, sbpata@codeaurora.org,
+        asishb@codeaurora.org, rkarra@codeaurora.org,
+        RajendraBabu Medisetti <rajendrabm@codeaurora.org>,
+        Krishnamurthy Renu <krishnamurthy.renu@codeaurora.org>,
+        asishb@qti.qualcomm.com, Ramlal Karra <rkarra@qti.qualcomm.com>,
+        Rohit Kumar <rohkumar@qti.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Vlastimil Babka wrote:
+On Thu, May 24, 2018 at 12:18 AM, Rohit Kumar <rohitkr@codeaurora.org> wrote:
+> Thanks Bjorn for reviewing.
+>
+>
+> On 5/23/2018 11:56 AM, Bjorn Andersson wrote:
+>>
+>> On Sun 13 May 00:01 PDT 2018, Rohit kumar wrote:
+>>
 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 32699b2dc52a..4343948f33e5 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -180,7 +180,7 @@ enum node_stat_item {
->  	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
->  	NR_DIRTIED,		/* page dirtyings since bootup */
->  	NR_WRITTEN,		/* page writings since bootup */
-> -	NR_INDIRECTLY_RECLAIMABLE_BYTES, /* measured in bytes */
-> +	NR_RECLAIMABLE,         /* all reclaimable pages, including slab */
->  	NR_VM_NODE_STAT_ITEMS
+>> [..]
+>>>
+>>> +static inline void update_bits(void *reg, u32 mask_val, u32 set_val, u32
+>>> shift)
+>>> +{
+>>> +       u32 reg_val = 0;
+>>> +
+>>> +       reg_val = ((readl(reg)) & ~mask_val) | ((set_val << shift) &
+>>> mask_val);
+>>> +       writel(reg_val, reg);
+>>> +}
+>>> +
+>>> +static inline unsigned int read_bit(void *reg, u32 mask, int shift)
+>>> +{
+>>> +       return ((readl(reg) & mask) >> shift);
+>>> +}
+>>
+>> I don't like these helper functions, their prototype is nonstandard and
+>> makes it really hard to read all the calling code.
+>>
+>> I would prefer if you just inline the operations directly, to make it
+>> clearer what's going on in each case - if not then at least follow the
+>> prototype of e.g. regmap_udpate_bits(), which people might be used to.
+>
+> Sure. Will update these APIs to follow standard format used in regmap and
+> other drivers.
 
-We already have NR_SLAB_RECLAIMABLE and NR_RECLAIMABLE now counts what
-NR_SLAB_RECLAIMABLE counts plus something else. THis means updating
-two counters in parallel.
+Just use readl/writel directly. If we wanted bit access functions,
+then we'd have common ones implemented already. They exist for regmap
+because with regmap you also need locking. Here you either don't need
+locking for RMW or you forgot it. Either way, wrapping a RMW operation
+into a function gives the illusion of being atomic when it is not.
 
-Could keep the existing counter and just account
-for those non slab things you mentioned? Avoid counting twice and may
-provide unique insides into those non slab reclaimable objects. I'd like
-to see this.
+Rob
