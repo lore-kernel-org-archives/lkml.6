@@ -1,77 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935789AbeEYGcc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:32:32 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9185 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751791AbeEYGc3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:32:29 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 24 May 2018 23:32:29 -0700
-Date: Fri, 25 May 2018 09:32:25 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
- source
-Message-ID: <20180525063225.GN6835@tbergstrom-lnx.Nvidia.com>
-References: <20180523160020.15291-1-digetx@gmail.com>
- <20180523160020.15291-2-digetx@gmail.com>
- <20180524100413.GL6835@tbergstrom-lnx.Nvidia.com>
- <e6ee8116-7f73-fa7a-3df4-b17ccd8dcb0e@gmail.com>
+        id S935268AbeEYGlg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:41:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:59838 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751791AbeEYGle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 02:41:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,439,1520924400";
+   d="scan'208";a="58387185"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Joe Perches <joe@perches.com>, Russell King <linux@armlinux.org.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Rob Clark <robdclark@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David \(ChunMing\) Zhou" <David1.Zhou@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Roger He <Hongbo.He@amd.com>, Dave Airlie <airlied@redhat.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] gpu: Consistently use octal not symbolic permissions
+In-Reply-To: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com>
+Date: Fri, 25 May 2018 09:41:22 +0300
+Message-ID: <87a7so44q5.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <e6ee8116-7f73-fa7a-3df4-b17ccd8dcb0e@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 03:49:22PM +0300, Dmitry Osipenko wrote:
-> On 24.05.2018 13:04, Peter De Schrijver wrote:
-> > On Wed, May 23, 2018 at 07:00:20PM +0300, Dmitry Osipenko wrote:
-> >> PLL_C is running at 600MHz which is significantly higher than the 216MHz
-> >> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
-> >> running on that PLL. Let's use PLL_C as intermediate clock source, making
-> >> CPU snappier a tad during of the frequency transition.
-> >>
-> > 
-> > pll_c isn't necessarily 600Mhz when used as a source for the second display
-> > head.
-> 
-> Hmm, indeed.
-> 
-> Even if PLL_C rate will be adjusted, it will be higher than the PLL_P.. won't
-> it? That's likely to be good enough.
-> 
+On Thu, 24 May 2018, Joe Perches <joe@perches.com> wrote:
+> There is currently a mixture of octal and symbolic permissions uses
+> in files in drivers/gpu/drm and one file in drivers/gpu.
+>
+> There are ~270 existing octal uses and ~115 S_<FOO> uses.
+>
+> Convert all the S_<FOO> symbolic permissions to their octal equivalents
+> as using octal and not symbolic permissions is preferred by many as more
+> readable.
+>
+> see: https://lkml.org/lkml/2016/8/2/1945
+>
+> Done with automated conversion via:
+> $ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
+>
+> Miscellanea:
+>
+> o Wrapped modified multi-line calls to a single line where appropriate
+> o Realign modified multi-line calls to open parenthesis
+> o drivers/gpu/drm/msm/adreno/a5xx_debugfs.c has a world-writeable
+>   debug permission for "reset" - perhaps that should be modified
+>
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c        |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c             | 98 +++++++++++-----------
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |  3 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c            |  9 +-
+>  drivers/gpu/drm/armada/armada_debugfs.c            |  4 +-
+>  drivers/gpu/drm/drm_debugfs.c                      |  6 +-
+>  drivers/gpu/drm/drm_debugfs_crc.c                  |  4 +-
+>  drivers/gpu/drm/drm_sysfs.c                        |  2 +-
+>  drivers/gpu/drm/i915/gvt/firmware.c                |  2 +-
+>  drivers/gpu/drm/i915/i915_debugfs.c                |  8 +-
+>  drivers/gpu/drm/i915/i915_perf.c                   |  2 +-
+>  drivers/gpu/drm/i915/i915_sysfs.c                  | 22 ++---
+>  drivers/gpu/drm/i915/intel_pipe_crc.c              |  2 +-
 
-Yes. I think it can be always higher than pll_p, but that assumes the display
-driver will always program the highest possible rate for pll_c for a given mode
-and then program the display divider to divide it down to the required rate.
+Please send at least i915 changes separately. There's zero reason to
+make our lives harder for this change.
 
-> Do you know if any of the available CCLK parents has a glitch-less rate
-> switching? I.e. CPU won't hang on the rate switch.
-> 
+BR,
+Jani.
 
-Tegra20 doesn't have dynamic ramp PLLs no. So you always have to switch to a
-backup clock source before changing the rate of pll_x.
-
-> There is other possible 600MHz source, the PLL_M. Can we use it? This one also
-> may become dynamic if we'll consider implementing the memory scaling, but the
-> memory frequency probably will fit the transition role pretty well.
-
-I think this should work, but as you mention it may very well be lower than
-pll_p if Tegra20 EMC scaling is re-introduced. I think that's why historically
-this was never done. 
-
-Peter.
+-- 
+Jani Nikula, Intel Open Source Graphics Center
