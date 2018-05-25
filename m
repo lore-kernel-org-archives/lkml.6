@@ -1,67 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935853AbeEYH0k (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 03:26:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39001 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935134AbeEYH0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 03:26:38 -0400
-Date: Fri, 25 May 2018 09:26:36 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
- processes
-Message-ID: <20180525072636.GE11881@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S935886AbeEYHej (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 03:34:39 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37316 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935429AbeEYHei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 03:34:38 -0400
+Date: Fri, 25 May 2018 17:34:36 +1000
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <53ce6de3ce0c030aaf5293fe40c4b3a7ae2b1664.1527232847.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH] m68k/mac: Enable PDMA for PowerBook 500 series
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24-05-18 14:22:53, David Rientjes wrote:
-> The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
-> it cannot reap an mm.  This can happen for a variety of reasons,
-> including:
-> 
->  - the inability to grab mm->mmap_sem in a sufficient amount of time,
-> 
->  - when the mm has blockable mmu notifiers that could cause the oom reaper
->    to stall indefinitely,
-> 
-> but we can also add a third when the oom reaper can "reap" an mm but doing
-> so is unlikely to free any amount of memory:
-> 
->  - when the mm's memory is fully mlocked.
-> 
-> When all memory is mlocked, the oom reaper will not be able to free any
-> substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
-> unmap and free its memory in exit_mmap() and subsequent oom victims are
-> chosen unnecessarily.  This is trivial to reproduce if all eligible
-> processes on the system have mlocked their memory: the oom killer calls
-> panic() even though forward progress can be made.
-> 
-> This is the same issue where the exit path sets MMF_OOM_SKIP before
-> unmapping memory and additional processes can be chosen unnecessarily
-> because the oom killer is racing with exit_mmap().
-> 
-> We can't simply defer setting MMF_OOM_SKIP, however, because if there is
-> a true oom livelock in progress, it never gets set and no additional
-> killing is possible.
-> 
-> To fix this, this patch introduces a per-mm reaping timeout, initially set
-> at 10s.  It requires that the oom reaper's list becomes a properly linked
-> list so that other mm's may be reaped while waiting for an mm's timeout to
-> expire.
+I can confirm that mac_scsi PDMA now works on these machines.
+This increases sequential read throughput by a factor of 4.5.
 
-No timeouts please! The proper way to handle this problem is to simply
-teach the oom reaper to handle mlocked areas.
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ arch/m68k/include/asm/macintosh.h |  1 -
+ arch/m68k/mac/config.c            | 19 +------------------
+ 2 files changed, 1 insertion(+), 19 deletions(-)
+
+diff --git a/arch/m68k/include/asm/macintosh.h b/arch/m68k/include/asm/macintosh.h
+index 9b840c03ebb7..08cee11180e6 100644
+--- a/arch/m68k/include/asm/macintosh.h
++++ b/arch/m68k/include/asm/macintosh.h
+@@ -57,7 +57,6 @@ struct mac_model
+ #define MAC_SCSI_IIFX		5
+ #define MAC_SCSI_DUO		6
+ #define MAC_SCSI_LC		7
+-#define MAC_SCSI_LATE		8
+ 
+ #define MAC_IDE_NONE		0
+ #define MAC_IDE_QUADRA		1
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index 0c3275aa0197..834e79bc6043 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -709,7 +709,7 @@ static struct mac_model mac_data_table[] = {
+ 		.name		= "PowerBook 520",
+ 		.adb_type	= MAC_ADB_PB2,
+ 		.via_type	= MAC_VIA_QUADRA,
+-		.scsi_type	= MAC_SCSI_LATE,
++		.scsi_type	= MAC_SCSI_OLD,
+ 		.scc_type	= MAC_SCC_QUADRA,
+ 		.ether_type	= MAC_ETHER_SONIC,
+ 		.floppy_type	= MAC_FLOPPY_SWIM_ADDR2,
+@@ -943,18 +943,6 @@ static const struct resource mac_scsi_old_rsrc[] __initconst = {
+ 	},
+ };
+ 
+-static const struct resource mac_scsi_late_rsrc[] __initconst = {
+-	{
+-		.flags = IORESOURCE_IRQ,
+-		.start = IRQ_MAC_SCSI,
+-		.end   = IRQ_MAC_SCSI,
+-	}, {
+-		.flags = IORESOURCE_MEM,
+-		.start = 0x50010000,
+-		.end   = 0x50011FFF,
+-	},
+-};
+-
+ static const struct resource mac_scsi_ccl_rsrc[] __initconst = {
+ 	{
+ 		.flags = IORESOURCE_IRQ,
+@@ -1064,11 +1052,6 @@ int __init mac_platform_init(void)
+ 		platform_device_register_simple("mac_scsi", 0,
+ 			mac_scsi_old_rsrc, ARRAY_SIZE(mac_scsi_old_rsrc));
+ 		break;
+-	case MAC_SCSI_LATE:
+-		/* XXX PDMA support for PowerBook 500 series needs testing */
+-		platform_device_register_simple("mac_scsi", 0,
+-			mac_scsi_late_rsrc, ARRAY_SIZE(mac_scsi_late_rsrc));
+-		break;
+ 	case MAC_SCSI_LC:
+ 		/* Addresses from Mac LC data in Designing Cards & Drivers 3ed.
+ 		 * Also from the Developer Notes for Classic II, LC III,
 -- 
-Michal Hocko
-SUSE Labs
+2.16.1
