@@ -1,108 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935886AbeEYMyB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:54:01 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54772 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934422AbeEYMxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:53:41 -0400
-X-Google-Smtp-Source: AB8JxZrckOoyyNrkn0FxkQo1KlElAiUj1W/yxInkz9Ca6K3136rpig4rUHZkmnFfIGrkVdE1WkD8vQ==
-From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [RFC PATCH 3/3] dbg: ARM: dts: boneblack: add USB topology and serdev nodes
-Date: Fri, 25 May 2018 14:52:57 +0200
-Message-Id: <20180525125257.29124-4-johan@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525125257.29124-1-johan@kernel.org>
-References: <20180525125257.29124-1-johan@kernel.org>
+        id S936135AbeEYMyf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:54:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40261 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753044AbeEYMxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:53:38 -0400
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>
+Cc: Hannes Reinecke <hare@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH 0/3] Provide more fine grained control over multipathing
+Date: Fri, 25 May 2018 14:53:19 +0200
+Message-Id: <20180525125322.15398-1-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a hub device and two USB devices, of which one has a combined node.
+Hi,
 
-Note that we need to represent the serial ports as well -- consider
-devices with multiple ports per interface; which one should serdev
-use? Sibling devices can also be described this way (e.g. gpio@0), and
-would need to use the same address size.
+This patch series aims to provide a more fine grained control over
+nvme's native multipathing, by allowing it to be switched on and off
+on a per-subsystem basis instead of a big global switch.
 
-Also note that serial ports have a standardised node name in ePAPR.
+The prime use-case is for mixed scenarios where user might want to use
+nvme's native multipathing on one subset of subsystems and
+dm-multipath on another subset.
 
-Not-signed-off-by: Johan Hovold <johan@kernel.org>
----
- arch/arm/boot/dts/am335x-boneblack.dts | 57 ++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+For example using native for internal the PCIe NVMe and dm-mpath for
+the connection to an NVMe over Fabrics Array.
 
-diff --git a/arch/arm/boot/dts/am335x-boneblack.dts b/arch/arm/boot/dts/am335x-boneblack.dts
-index d154d3133c16..d5f4c78efa53 100644
---- a/arch/arm/boot/dts/am335x-boneblack.dts
-+++ b/arch/arm/boot/dts/am335x-boneblack.dts
-@@ -26,3 +26,60 @@
- 		opp-supported-hw = <0x06 0x0100>;
- 	};
- };
-+
-+&usb1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	dlink_hub: hub@1 {
-+		compatible = "usb2101,8501";
-+		reg = <1>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ft232r: device@3 {
-+			compatible = "usb403,6001";
-+			reg = <3>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			serial@0 {
-+				reg = <0>;
-+
-+				serdev {
-+					compatible = "none,serdev-mockup";
-+				};
-+			};
-+		};
-+
-+		mos7820: device@5 {
-+			compatible = "usb9710,7840";
-+			reg = <5>;
-+
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+
-+			interface@0 {
-+				compatible = "usbif9710,7840.config1.0";
-+				reg = <0 1>;
-+
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				serial@0 {
-+					reg = <0>;
-+
-+					gnss {
-+						compatible = "u-blox,neo-8";
-+					};
-+				};
-+
-+				serial@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+	};
-+};
+The initial discussion for this was held at this year's LSF/MM and the
+architecture hasn't changed to what we've discussed there.
+
+The first patch does the said switch and Mike added two follow up
+patches to access the personality attribute from the block device's
+sysfs directory as well.
+
+I do have a blktests test for it as well but due to the fcloop but I
+reported I'm reluctant to include it in the series (or I would need to
+uncomment the rmmods).
+
+Johannes Thumshirn (1):
+  nvme: provide a way to disable nvme mpath per subsystem
+
+Mike Snitzer (2):
+  nvme multipath: added SUBSYS_ATTR_RW
+  nvme multipath: add dev_attr_mpath_personality
+
+ drivers/nvme/host/core.c      | 112 ++++++++++++++++++++++++++++++++++++++++--
+ drivers/nvme/host/multipath.c |  34 +++++++++++--
+ drivers/nvme/host/nvme.h      |   8 +++
+ 3 files changed, 144 insertions(+), 10 deletions(-)
+
 -- 
-2.17.0
+2.16.3
