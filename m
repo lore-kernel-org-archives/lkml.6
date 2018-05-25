@@ -1,201 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934410AbeEYMne (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:43:34 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43021 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751949AbeEYMnc (ORCPT
+        id S933541AbeEYMto (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:49:44 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36962 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751949AbeEYMtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:43:32 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Florian Fainelli" <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>, Ben Dooks <ben-linux@fluff.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>
-CC: "bcm-kernel-feedback-list@broadcom.com"
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] mmc: sdhci-*: Don't emit error msg if sdhci_add_host()
- fails
-Thread-Topic: [PATCH] mmc: sdhci-*: Don't emit error msg if sdhci_add_host()
- fails
-Thread-Index: AQHT8/hKC0d13t2990WpCwBn5xDKe6RAQk0A
-Date: Fri, 25 May 2018 12:42:49 +0000
-Message-ID: <340a9aca-e4d1-84ef-6149-9e83141ce6a1@st.com>
-References: <20180525151509.0270dbe1@xhacker.debian>
-In-Reply-To: <20180525151509.0270dbe1@xhacker.debian>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BFBF17450813A140A88E9A48BAA546F5@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_04:,,
- signatures=0
+        Fri, 25 May 2018 08:49:42 -0400
+X-Google-Smtp-Source: ADUXVKJpYFuNGA3yeFQFIUXwNfKa1zewHRx08wjnVsHrtMmsnUno+4YQ6ghWTJhjvnZzVYSEqL0rog==
+From: Christian Brauner <christian@brauner.io>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, tglx@linutronix.de,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        pombredanne@nexb.com, linux-api@vger.kernel.org, ebiederm@xmission.com,
+        seth.forshee@canonical.com, viro@zeniv.linux.org.uk,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 0/6 v1 resend] statfs: handle mount propagation
+Date: Fri, 25 May 2018 14:48:19 +0200
+Message-Id: <20180525124825.23875-1-christian@brauner.io>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4PChhX1019203
 
-Hi Jisheng
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-On 05/25/2018 09:15 AM, Jisheng Zhang wrote:
-> I noticed below error msg with sdhci-pxav3 on some berlin platforms:
-> 
-> [.....] sdhci-pxav3 f7ab0000.sdhci failed to add host
-> 
-> It is due to getting related vmmc or vqmmc regulator returns
-> -EPROBE_DEFER. It doesn't matter at all but it's confusing.
-> 
->  From another side, if driver probing fails and the error number isn't
-> -EPROBE_DEFER, the core will tell us something as below:
-> 
-> [.....] sdhci-pxav3: probe of f7ab0000.sdhci failed with error -EXX
-> 
-> So it's not necessary to emit error msg if sdhci_add_host() fails. And
-> some other sdhci host drivers also have this issue, let's fix them
-> together.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->   drivers/mmc/host/sdhci-bcm-kona.c | 4 +---
->   drivers/mmc/host/sdhci-pic32.c    | 4 +---
->   drivers/mmc/host/sdhci-pxav2.c    | 4 +---
->   drivers/mmc/host/sdhci-pxav3.c    | 4 +---
->   drivers/mmc/host/sdhci-s3c.c      | 4 +---
->   drivers/mmc/host/sdhci-spear.c    | 4 +---
->   drivers/mmc/host/sdhci-st.c       | 4 +---
->   7 files changed, 7 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
-> index 11ca95c60bcf..bdbd4897c0f7 100644
-> --- a/drivers/mmc/host/sdhci-bcm-kona.c
-> +++ b/drivers/mmc/host/sdhci-bcm-kona.c
-> @@ -284,10 +284,8 @@ static int sdhci_bcm_kona_probe(struct platform_device *pdev)
->   	sdhci_bcm_kona_sd_init(host);
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_err(dev, "Failed sdhci_add_host\n");
-> +	if (ret)
->   		goto err_reset;
-> -	}
->   
->   	/* if device is eMMC, emulate card insert right here */
->   	if (!mmc_card_is_removable(host->mmc)) {
-> diff --git a/drivers/mmc/host/sdhci-pic32.c b/drivers/mmc/host/sdhci-pic32.c
-> index a6caa49ca25a..a11e6397d4ff 100644
-> --- a/drivers/mmc/host/sdhci-pic32.c
-> +++ b/drivers/mmc/host/sdhci-pic32.c
-> @@ -200,10 +200,8 @@ static int pic32_sdhci_probe(struct platform_device *pdev)
->   	}
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "error adding host\n");
-> +	if (ret)
->   		goto err_base_clk;
-> -	}
->   
->   	dev_info(&pdev->dev, "Successfully added sdhci host\n");
->   	return 0;
-> diff --git a/drivers/mmc/host/sdhci-pxav2.c b/drivers/mmc/host/sdhci-pxav2.c
-> index 8986f9d9cf98..2c3827f54927 100644
-> --- a/drivers/mmc/host/sdhci-pxav2.c
-> +++ b/drivers/mmc/host/sdhci-pxav2.c
-> @@ -221,10 +221,8 @@ static int sdhci_pxav2_probe(struct platform_device *pdev)
->   	host->ops = &pxav2_sdhci_ops;
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to add host\n");
-> +	if (ret)
->   		goto disable_clk;
-> -	}
->   
->   	return 0;
->   
-> diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-> index a34434166ca7..b8e96f392428 100644
-> --- a/drivers/mmc/host/sdhci-pxav3.c
-> +++ b/drivers/mmc/host/sdhci-pxav3.c
-> @@ -472,10 +472,8 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
->   	pm_suspend_ignore_children(&pdev->dev, 1);
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to add host\n");
-> +	if (ret)
->   		goto err_add_host;
-> -	}
->   
->   	if (host->mmc->pm_caps & MMC_PM_WAKE_SDIO_IRQ)
->   		device_init_wakeup(&pdev->dev, 1);
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index cda83ccb2702..9ef89d00970e 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -655,10 +655,8 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
->   		goto err_req_regs;
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_err(dev, "sdhci_add_host() failed\n");
-> +	if (ret)
->   		goto err_req_regs;
-> -	}
->   
->   #ifdef CONFIG_PM
->   	if (pdata->cd_type != S3C_SDHCI_CD_INTERNAL)
-> diff --git a/drivers/mmc/host/sdhci-spear.c b/drivers/mmc/host/sdhci-spear.c
-> index 14511526a3a8..9247d51f2eed 100644
-> --- a/drivers/mmc/host/sdhci-spear.c
-> +++ b/drivers/mmc/host/sdhci-spear.c
-> @@ -126,10 +126,8 @@ static int sdhci_probe(struct platform_device *pdev)
->   	}
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_dbg(&pdev->dev, "error adding host\n");
-> +	if (ret)
->   		goto disable_clk;
-> -	}
->   
->   	platform_set_drvdata(pdev, host);
->   
-> diff --git a/drivers/mmc/host/sdhci-st.c b/drivers/mmc/host/sdhci-st.c
-> index c32daed0d418..8f95647195d9 100644
-> --- a/drivers/mmc/host/sdhci-st.c
-> +++ b/drivers/mmc/host/sdhci-st.c
-> @@ -422,10 +422,8 @@ static int sdhci_st_probe(struct platform_device *pdev)
->   	st_mmcss_cconfig(np, host);
->   
->   	ret = sdhci_add_host(host);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Failed sdhci_add_host\n");
-> +	if (ret)
->   		goto err_out;
-> -	}
->   
->   	host_version = readw_relaxed((host->ioaddr + SDHCI_HOST_VERSION));
->   
-> 
+Hey,
 
-For drivers/mmc/host/sdhci-st.c:
+This is v1 of this patchset. All changes from v0 to v1 are non-functional.
+Specifically, the commit messages and justification have been extended as
+requested by Linus and Al.
 
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
+This little series does the following:
 
-Thanks
+- unify the definition of constants in statfs.h and fs.h:
+  The definitions for MS_* flags are currently a mixture between hex values
+  and bit-shifts. All higher values are already initialized with bit-shifts
+  for MS_* constants starting with (1<<16). This patch switches the
+  definitions for MS_* constants over to uniformly use bit-shifts and
+  alignes the definitions of ST_* flags too.
+  Initializing them identically let's userspace easily detect when flags
+  indicate the same property but use a different value in doing so.
+
+- extend statfs to handle mount propagation:
+  For all cases the only way to do this right now is by parsing
+  /proc/<pid>/mountinfo. Yes, it is doable but still it is somewhat costly
+  and annoying as e.g. those mount propagation fields are optional.
+  1. prevent propagation from happening:
+     From a userspace perspective we often run into the case where we
+     simply want to know whether a given mountpoint is MS_SHARED or is
+     MS_SLAVE. If it is we remount it as MS_PRIVATE to prevent any
+     propagation from happening. We don't care about the peer
+     relationship or how the propagation is exactly setup. We only want
+     to prevent any propagation from happening.
+     These mountpoints might be known in advance so parsing
+     /proc/<pid>/mountinfo should not be needed.
+  2. differentiate between MS_SLAVE and MS_SHARED mountpoints:
+     Mountpoints that are MS_SLAVE are kept intact and mountpoints that
+     are MS_SHARED are made MS_PRIVATE. These mountpoint might be known in
+     advance so parsing /proc/<pid>/mountinfo should not be needed.
+  3. retrieve propagation properties when procfs is not mounted:
+     When the set of interesting mountpoints is known and /proc is not
+     mounted calling statfs() is the only good way to reliably determine
+     the propagation property of a mountpoint.
+  4. inspecting file descriptors to mountpoints for propagation
+     properties:
+     When file descriptors to mountpoints are passed around between
+     processes it is useful to have fstatvfs() handle mount propagation
+     properties too.
+  To this end the flags:
+  - ST_UNBINDABLE
+  - ST_SHARED
+  - ST_PRIVATE
+  - ST_SLAVE
+  are added. They have the same value as their MS_* counterparts.
+
+- Testing:
+  I verified that now userspace can do e.g.
+
+  int ret;
+  char *s = "/some/path";
+  struct statvfs sb;
+
+  ret = statvfs(s, &sb);
+  if (ret < 0)
+          return false;
+
+  if (sb.f_flag & ST_SHARED) {
+          ret = mount("", s, NULL, MS_SLAVE | MS_REC, NULL);
+          if (ret < 0)
+                  return -1;
+  }
+
+Thanks!
+Christian
+
+Christian Brauner (6):
+  fs: use << for MS_* flags
+  statfs: use << to align with fs header
+  statfs: add ST_UNBINDABLE
+  statfs: add ST_SHARED
+  statfs: add ST_SLAVE
+  statfs: add ST_PRIVATE
+
+ fs/statfs.c             | 16 +++++++++++++++-
+ include/linux/statfs.h  | 30 +++++++++++++++++-------------
+ include/uapi/linux/fs.h | 33 +++++++++++++++++----------------
+ 3 files changed, 49 insertions(+), 30 deletions(-)
+
+-- 
+2.17.0
