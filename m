@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936110AbeEYNNY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:13:24 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54313 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935768AbeEYNMu (ORCPT
+        id S935755AbeEYNMt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:12:49 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34978 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752819AbeEYNMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:12:50 -0400
-X-Google-Smtp-Source: ADUXVKIi5qh8zD7Z228L1gprJ5MfbEO10tfc2OAM6nooVRGRc74BZdYwiF10PdEbrHWOaIm7iP+Wrw==
+        Fri, 25 May 2018 09:12:43 -0400
+X-Google-Smtp-Source: ADUXVKJCyW9TuTLzo/Y9jIQJbmsY12BJdQV3I2aOkEuVxmk5JRZrzsnrN85LnZ1Xy+ow0uKF6dUHkQ==
 From: Vincent Guittot <vincent.guittot@linaro.org>
 To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
         rjw@rjwysocki.net
@@ -15,9 +15,9 @@ Cc: juri.lelli@redhat.com, dietmar.eggemann@arm.com,
         Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
         valentin.schneider@arm.com, quentin.perret@arm.com,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v5 09/10] sched: remove rt_avg code
-Date: Fri, 25 May 2018 15:12:30 +0200
-Message-Id: <1527253951-22709-10-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v5 02/10] sched/rt: add rt_rq utilization tracking
+Date: Fri, 25 May 2018 15:12:23 +0200
+Message-Id: <1527253951-22709-3-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
 References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
@@ -25,127 +25,194 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rt_avg is no more used anywhere so we can remove all related code
+schedutil governor relies on cfs_rq's util_avg to choose the OPP when cfs
+tasks are running. When the CPU is overloaded by cfs and rt tasks, cfs tasks
+are preempted by rt tasks and in this case util_avg reflects the remaining
+capacity but not what cfs want to use. In such case, schedutil can select a
+lower OPP whereas the CPU is overloaded. In order to have a more accurate
+view of the utilization of the CPU, we track the utilization that is
+"stolen" by rt tasks.
+
+rt_rq uses rq_clock_task and cfs_rq uses cfs_rq_clock_task but they are
+the same at the root group level, so the PELT windows of the util_sum are
+aligned.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/core.c  | 26 --------------------------
- kernel/sched/sched.h | 17 -----------------
- 2 files changed, 43 deletions(-)
+ kernel/sched/fair.c  | 15 ++++++++++++++-
+ kernel/sched/pelt.c  | 23 +++++++++++++++++++++++
+ kernel/sched/pelt.h  |  7 +++++++
+ kernel/sched/rt.c    |  8 ++++++++
+ kernel/sched/sched.h |  7 +++++++
+ 5 files changed, 59 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ab58288..213d277 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -650,23 +650,6 @@ bool sched_can_stop_tick(struct rq *rq)
- 	return true;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 6390c66..fb18bcc 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7290,6 +7290,14 @@ static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
+ 	return false;
  }
- #endif /* CONFIG_NO_HZ_FULL */
--
--void sched_avg_update(struct rq *rq)
--{
--	s64 period = sched_avg_period();
--
--	while ((s64)(rq_clock(rq) - rq->age_stamp) > period) {
--		/*
--		 * Inline assembly required to prevent the compiler
--		 * optimising this loop into a divmod call.
--		 * See __iter_div_u64_rem() for another example of this.
--		 */
--		asm("" : "+rm" (rq->age_stamp));
--		rq->age_stamp += period;
--		rq->rt_avg /= 2;
--	}
--}
--
- #endif /* CONFIG_SMP */
  
- #if defined(CONFIG_RT_GROUP_SCHED) || (defined(CONFIG_FAIR_GROUP_SCHED) && \
-@@ -5710,13 +5693,6 @@ void set_rq_offline(struct rq *rq)
++static inline bool rt_rq_has_blocked(struct rq *rq)
++{
++	if (rq->avg_rt.util_avg)
++		return true;
++
++	return false;
++}
++
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 
+ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+@@ -7349,6 +7357,10 @@ static void update_blocked_averages(int cpu)
+ 		if (cfs_rq_has_blocked(cfs_rq))
+ 			done = false;
  	}
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
++	/* Don't need periodic decay once load/util_avg are null */
++	if (rt_rq_has_blocked(rq))
++		done = false;
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	rq->last_blocked_load_update_tick = jiffies;
+@@ -7414,9 +7426,10 @@ static inline void update_blocked_averages(int cpu)
+ 	rq_lock_irqsave(rq, &rf);
+ 	update_rq_clock(rq);
+ 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	rq->last_blocked_load_update_tick = jiffies;
+-	if (!cfs_rq_has_blocked(cfs_rq))
++	if (!cfs_rq_has_blocked(cfs_rq) && !rt_rq_has_blocked(rq))
+ 		rq->has_blocked_load = 0;
+ #endif
+ 	rq_unlock_irqrestore(rq, &rf);
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index e6ecbb2..213b922 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -309,3 +309,26 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
+ 
+ 	return 0;
+ }
++
++/*
++ * rt_rq:
++ *
++ *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
++ *   util_sum = cpu_scale * load_sum
++ *   runnable_load_sum = load_sum
++ *
++ */
++
++int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
++{
++	if (___update_load_sum(now, rq->cpu, &rq->avg_rt,
++				running,
++				running,
++				running)) {
++
++		___update_load_avg(&rq->avg_rt, 1, 1);
++		return 1;
++	}
++
++	return 0;
++}
+diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+index 9cac73e..b2983b7 100644
+--- a/kernel/sched/pelt.h
++++ b/kernel/sched/pelt.h
+@@ -3,6 +3,7 @@
+ int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se);
+ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se);
+ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
++int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+ 
+ /*
+  * When a task is dequeued, its estimated utilization should not be update if
+@@ -38,6 +39,12 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+ 	return 0;
  }
  
--static void set_cpu_rq_start_time(unsigned int cpu)
--{
--	struct rq *rq = cpu_rq(cpu);
--
--	rq->age_stamp = sched_clock_cpu(cpu);
--}
--
- /*
-  * used to mark begin/end of suspend/resume:
-  */
-@@ -5834,7 +5810,6 @@ static void sched_rq_cpu_starting(unsigned int cpu)
- 
- int sched_cpu_starting(unsigned int cpu)
- {
--	set_cpu_rq_start_time(cpu);
- 	sched_rq_cpu_starting(cpu);
- 	sched_tick_start(cpu);
- 	return 0;
-@@ -6102,7 +6077,6 @@ void __init sched_init(void)
- 
- #ifdef CONFIG_SMP
- 	idle_thread_set_boot_cpu();
--	set_cpu_rq_start_time(smp_processor_id());
++static inline int
++update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
++{
++	return 0;
++}
++
  #endif
- 	init_sched_fair_class();
+ 
+ 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index ef3c4e6..b4148a9 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -5,6 +5,8 @@
+  */
+ #include "sched.h"
+ 
++#include "pelt.h"
++
+ int sched_rr_timeslice = RR_TIMESLICE;
+ int sysctl_sched_rr_timeslice = (MSEC_PER_SEC / HZ) * RR_TIMESLICE;
+ 
+@@ -1572,6 +1574,9 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 
+ 	rt_queue_push_tasks(rq);
+ 
++	update_rt_rq_load_avg(rq_clock_task(rq), rq,
++		rq->curr->sched_class == &rt_sched_class);
++
+ 	return p;
+ }
+ 
+@@ -1579,6 +1584,8 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
+ {
+ 	update_curr_rt(rq);
+ 
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
++
+ 	/*
+ 	 * The previous task needs to be made eligible for pushing
+ 	 * if it is still active
+@@ -2308,6 +2315,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
+ 	struct sched_rt_entity *rt_se = &p->rt;
+ 
+ 	update_curr_rt(rq);
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
+ 
+ 	watchdog(rq, p);
  
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 718c55d..1929db7 100644
+index 757a3ee..7a16de9 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -846,8 +846,6 @@ struct rq {
+@@ -592,6 +592,7 @@ struct rt_rq {
+ 	unsigned long		rt_nr_total;
+ 	int			overloaded;
+ 	struct plist_head	pushable_tasks;
++
+ #endif /* CONFIG_SMP */
+ 	int			rt_queued;
  
- 	struct list_head cfs_tasks;
+@@ -847,6 +848,7 @@ struct rq {
  
--	u64			rt_avg;
--	u64			age_stamp;
- 	struct sched_avg	avg_rt;
- 	struct sched_avg	avg_dl;
- 	struct sched_avg	avg_irq;
-@@ -1710,11 +1708,6 @@ extern const_debug unsigned int sysctl_sched_time_avg;
- extern const_debug unsigned int sysctl_sched_nr_migrate;
- extern const_debug unsigned int sysctl_sched_migration_cost;
+ 	u64			rt_avg;
+ 	u64			age_stamp;
++	struct sched_avg	avg_rt;
+ 	u64			idle_stamp;
+ 	u64			avg_idle;
  
--static inline u64 sched_avg_period(void)
--{
--	return (u64)sysctl_sched_time_avg * NSEC_PER_MSEC / 2;
--}
--
- #ifdef CONFIG_SCHED_HRTICK
+@@ -2205,4 +2207,9 @@ static inline unsigned long cpu_util_cfs(struct rq *rq)
  
- /*
-@@ -1751,8 +1744,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
- #endif
- 
- #ifdef CONFIG_SMP
--extern void sched_avg_update(struct rq *rq);
--
- #ifndef arch_scale_cpu_capacity
- static __always_inline
- unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
-@@ -1763,12 +1754,6 @@ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
- 	return SCHED_CAPACITY_SCALE;
+ 	return util;
  }
++
++static inline unsigned long cpu_util_rt(struct rq *rq)
++{
++	return rq->avg_rt.util_avg;
++}
  #endif
--
--static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta)
--{
--	rq->rt_avg += rt_delta * arch_scale_freq_capacity(cpu_of(rq));
--	sched_avg_update(rq);
--}
- #else
- #ifndef arch_scale_cpu_capacity
- static __always_inline
-@@ -1777,8 +1762,6 @@ unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
- 	return SCHED_CAPACITY_SCALE;
- }
- #endif
--static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta) { }
--static inline void sched_avg_update(struct rq *rq) { }
- #endif
- 
- struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 -- 
 2.7.4
