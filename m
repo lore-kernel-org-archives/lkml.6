@@ -1,68 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936028AbeEYMya (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:54:30 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36173 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752360AbeEYMxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:53:38 -0400
-X-Google-Smtp-Source: ADUXVKLvufesBaoF7iqJUpNeZs6lygA8AO8+7VklsmrwtIafuZGqbQDoqP3QCJBkjSH4Gvc7q5cstw==
-From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [RFC PATCH 2/3] USB: serial: enable serdev support
-Date: Fri, 25 May 2018 14:52:56 +0200
-Message-Id: <20180525125257.29124-3-johan@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525125257.29124-1-johan@kernel.org>
-References: <20180525125257.29124-1-johan@kernel.org>
+        id S1754630AbeEYM75 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:59:57 -0400
+Received: from verein.lst.de ([213.95.11.211]:36827 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751949AbeEYM74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:59:56 -0400
+Date: Fri, 25 May 2018 15:05:35 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180525130535.GA24239@lst.de>
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525125322.15398-1-jthumshirn@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable serdev support by using the serdev opt-in tty-port registration
-helpers.
+On Fri, May 25, 2018 at 02:53:19PM +0200, Johannes Thumshirn wrote:
+> Hi,
+> 
+> This patch series aims to provide a more fine grained control over
+> nvme's native multipathing, by allowing it to be switched on and off
+> on a per-subsystem basis instead of a big global switch.
 
-FIXME: serdev core always allocates and registers a serdev controller
-during port registration only to immediately roll back in the common
-case when there is no serdev slave defined in firmware
-
-FIXME: serdev does not support hotplugging (e.g. tty port hangups)
-
-Not-signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/serial/bus.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/serial/bus.c b/drivers/usb/serial/bus.c
-index eb0195cf37dd..5f574a418c52 100644
---- a/drivers/usb/serial/bus.c
-+++ b/drivers/usb/serial/bus.c
-@@ -60,8 +60,9 @@ static int usb_serial_device_probe(struct device *dev)
- 	}
- 
- 	minor = port->minor;
--	tty_dev = tty_port_register_device(&port->port, usb_serial_tty_driver,
--					   minor, dev);
-+	tty_dev = tty_port_register_device_serdev(&port->port,
-+							usb_serial_tty_driver,
-+							minor, dev);
- 	if (IS_ERR(tty_dev)) {
- 		retval = PTR_ERR(tty_dev);
- 		goto err_port_remove;
-@@ -105,7 +106,7 @@ static int usb_serial_device_remove(struct device *dev)
- 	autopm_err = usb_autopm_get_interface(port->serial->interface);
- 
- 	minor = port->minor;
--	tty_unregister_device(usb_serial_tty_driver, minor);
-+	tty_port_unregister_device(&port->port, usb_serial_tty_driver, minor);
- 
- 	driver = port->serial->type;
- 	if (driver->port_remove)
--- 
-2.17.0
+No.  The only reason we even allowed to turn multipathing off is
+because you complained about installer issues.  The path forward
+clearly is native multipathing and there will be no additional support
+for the use cases of not using it.
