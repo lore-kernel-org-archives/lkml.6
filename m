@@ -1,70 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967958AbeEYSOK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:14:10 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.234]:21491 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967649AbeEYSOI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:14:08 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH] ath6kl: mark expected switch fall-throughs
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180524231322.GA22704@embeddedor.com>
- <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com>
- <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
- <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com>
- <87k1rr8v3l.fsf@kamboji.qca.qualcomm.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <b43bfff8-889d-c167-a902-bc44518bf1f3@embeddedor.com>
-Date: Fri, 25 May 2018 13:14:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <87k1rr8v3l.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S967837AbeEYSO2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:14:28 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46219 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967708AbeEYSMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:12:06 -0400
+From: David Lechner <david@lechnology.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/9] clk: davinci: pll-dm355: drop pll2_sysclk2
+Date: Fri, 25 May 2018 13:11:42 -0500
+Message-Id: <20180525181150.17873-2-david@lechnology.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Primary Hostname - vern.gendns.com
 X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fMHE6-003dnX-V2
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:55514
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This removes pll2_sysclk2 from the TI DM355 clock driver. This SoC
+doesn't have such a clock. Also, SYSCLK_ALWAYS_ENABLED is transferred
+to pll2_sysclk1 since it drives the DDR and doesn't have another
+mechanism to keep it on.
 
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+---
+ drivers/clk/davinci/pll-dm355.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-On 05/25/2018 01:10 PM, Kalle Valo wrote:
->>> Yeah, I was wondering the same. Was there a particular reason for this?
->>>
->>
->> Sometimes people use this style for a one-line code block.
->>
->> I can change it to the traditional style. No problem.
-> 
-> I would prefer that. So if you can send v2 that would be great.
-> 
-
-Yep. No problem. I'll send it shortly.
-
-Thanks
---
-Gustavo
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index 5345f8286c50..718d9bbbf30d 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -62,8 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+ };
+ 
+-SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+-SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll2_init(struct device *dev, void __iomem *base)
+ {
+@@ -71,8 +70,6 @@ int dm355_pll2_init(struct device *dev, void __iomem *base)
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+-	davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
+-
+ 	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
+ 
+ 	return 0;
+-- 
+2.17.0
