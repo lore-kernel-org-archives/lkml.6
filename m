@@ -1,133 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968140AbeEYUKI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 16:10:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55354 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S967879AbeEYUKH (ORCPT
+        id S968199AbeEYUKx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 16:10:53 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:44950 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967879AbeEYUKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 16:10:07 -0400
-Date: Fri, 25 May 2018 13:11:41 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v4] rcu: Speed up calling of RCU tasks callbacks
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180524184946.5fa82d19@gandalf.local.home>
+        Fri, 25 May 2018 16:10:52 -0400
+X-Google-Smtp-Source: ADUXVKLExWNe8y/Z2DTRxh9lZiaX2TTn7sS6hJk1VHU6qJ3Y2j2rU8LtOVTx5gpxFefU+9EO8JigaiQ2QdeSeXrR7ks=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524184946.5fa82d19@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052520-0040-0000-0000-00000432CE98
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009083; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000262; SDB=6.01037591; UDB=6.00530820; IPR=6.00816719;
- MB=3.00021297; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-25 20:10:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052520-0041-0000-0000-00000838EDC0
-Message-Id: <20180525201141.GG3803@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805250208
+In-Reply-To: <alpine.DEB.2.21.1805231049021.1598@nanos.tec.linutronix.de>
+References: <e2ec1a14-326a-57c2-56a6-7c2235e5b8b3@mellanox.com>
+ <alpine.DEB.2.21.1802201829180.24268@nanos.tec.linutronix.de>
+ <CAJwJo6aeb2q-C1R2MBnQQ8yR+7Xy4FWqSmBCE=7CkK_OHNCqSQ@mail.gmail.com>
+ <alpine.DEB.2.21.1805191319190.1599@nanos.tec.linutronix.de>
+ <16f47fa4-1555-cddb-3dfb-7d56fb992ea1@mellanox.com> <alpine.DEB.2.21.1805231049021.1598@nanos.tec.linutronix.de>
+From: Song Liu <liu.song.a23@gmail.com>
+Date: Fri, 25 May 2018 13:10:50 -0700
+Message-ID: <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com>
+Subject: Re: WARNING and PANIC in irq_matrix_free
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tariq Toukan <tariqt@mellanox.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 06:49:46PM -0400, Steven Rostedt wrote:
-> 
-> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> 
-> Joel Fernandes found that the synchronize_rcu_tasks() was taking a
-> significant amount of time. He demonstrated it with the following test:
-> 
->  # cd /sys/kernel/tracing
->  # while [ 1 ]; do x=1; done &
->  # echo '__schedule_bug:traceon' > set_ftrace_filter
->  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
-> 
-> real	0m1.064s
-> user	0m0.000s
-> sys	0m0.004s
-> 
-> Where it takes a little over a second to perform the synchronize,
-> because there's a loop that waits 1 second at a time for tasks to get
-> through their quiescent points when there's a task that must be waited
-> for.
-> 
-> After discussion we came up with a simple way to wait for holdouts but
-> increase the time for each iteration of the loop but no more than a
-> full second.
-> 
-> With the new patch we have:
-> 
->  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
-> 
-> real	0m0.131s
-> user	0m0.000s
-> sys	0m0.004s
-> 
-> Which drops it down to 13% of what the original wait time was.
-> 
-> Link: http://lkml.kernel.org/r/20180523063815.198302-2-joel@joelfernandes.org
-> Reported-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> Suggested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Hi,
 
-I queued both commits, thank you all!
+We are seeing something probably related.
 
-							Thanx, Paul
+We run ethtool on a system with Broadcom NIC to increase number of
+combined queues.
 
-> ---
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index 68fa19a5e7bd..452e47841a86 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -715,6 +715,7 @@ static int __noreturn rcu_tasks_kthread(void *arg)
->  	struct rcu_head *list;
->  	struct rcu_head *next;
->  	LIST_HEAD(rcu_tasks_holdouts);
-> +	int fract;
-> 
->  	/* Run on housekeeping CPUs by default.  Sysadm can move if desired. */
->  	housekeeping_affine(current, HK_FLAG_RCU);
-> @@ -796,13 +797,25 @@ static int __noreturn rcu_tasks_kthread(void *arg)
->  		 * holdouts.  When the list is empty, we are done.
->  		 */
->  		lastreport = jiffies;
-> -		while (!list_empty(&rcu_tasks_holdouts)) {
-> +
-> +		/* Start off with HZ/10 wait and slowly back off to 1 HZ wait*/
-> +		fract = 10;
-> +
-> +		for (;;) {
->  			bool firstreport;
->  			bool needreport;
->  			int rtst;
->  			struct task_struct *t1;
-> 
-> -			schedule_timeout_interruptible(HZ);
-> +			if (list_empty(&rcu_tasks_holdouts))
-> +				break;
-> +
-> +			/* Slowly back off waiting for holdouts */
-> +			schedule_timeout_interruptible(HZ/fract);
-> +
-> +			if (fract > 1)
-> +				fract--;
-> +
->  			rtst = READ_ONCE(rcu_task_stall_timeout);
->  			needreport = rtst > 0 &&
->  				     time_after(jiffies, lastreport + rtst);
-> 
+
+    [root@ ~]# ethtool -l eth0
+    Channel parameters for eth0:
+    Pre-set maximums:
+    RX:             9
+    TX:             8
+    Other:          0
+    Combined:       17
+    Current hardware settings:
+    RX:             0
+    TX:             0
+    Other:          0
+    Combined:       8
+
+    [root@ ~]# ethtool -L eth0 combined 16
+
+The last command PANIC the kernel easily (5 out of 5 in my tests).
+
+I haven't got luck to catch much console output, the only line I got is:
+
+    [ 504.727865] WARNING: CPU: 10 PID: 0 at kernel/irq/matrix.c:371
+irq_matrix_free+0x32/0xd0
+
+The NIC we have is
+
+    Broadcom Limited BCM57302 NetXtreme-C 10Gb/25Gb Ethernet Controller
+
+Thanks,
+Song
+
+On Wed, May 23, 2018 at 1:49 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Wed, 23 May 2018, Tariq Toukan wrote:
+>> On 19/05/2018 2:20 PM, Thomas Gleixner wrote:
+>> > On Fri, 18 May 2018, Dmitry Safonov wrote:
+>> > > I'm not entirely sure that it's the same fault, but at least backtrace
+>> > > looks resembling.
+>> >
+>> > Yes, it's similar, but not the same issue. I'll stare are the code ...
+>> >
+>> > Thanks,
+>> >
+>> >     tglx
+>> >
+>>
+>> We still see the issue in our daily regression runs.
+>> I have your patch merged into my internal branch, it prints the following:
+>>
+>> [ 4898.226258] Trying to clear prev_vector: 0
+>> [ 4898.226439] Trying to clear prev_vector: 0
+>>
+>> i.e. vector(0) is lower than FIRST_EXTERNAL_VECTOR.
+>
+> Could you please enable the vector and irq matrix trace points and capture
+> the trace when this happens?
+>
+> Thanks,
+>
+>         tglx
+>
