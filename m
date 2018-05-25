@@ -1,53 +1,618 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752880AbeEYCKW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:10:22 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:54278 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeEYCKT (ORCPT
+        id S935120AbeEYCMW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:12:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752875AbeEYCMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:10:19 -0400
-Date: Thu, 24 May 2018 22:10:18 -0400 (EDT)
-Message-Id: <20180524.221018.776118684279850747.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] vhost: synchronize IOTLB message with dev cleanup
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1526990337-24892-1-git-send-email-jasowang@redhat.com>
-References: <1526990337-24892-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 24 May 2018 22:12:17 -0400
+From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v2 1/2] selftests/powerpc: Add ptrace tests for Protection Key registers
+Date: Thu, 24 May 2018 23:11:44 -0300
+X-Mailer: git-send-email 2.16.2
+X-TM-AS-GCONF: 00
+x-cbid: 18052502-0016-0000-0000-000008CC60D7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009079; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000261; SDB=6.01037236; UDB=6.00530687; IPR=6.00816362;
+ MB=3.00021286; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-25 02:12:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052502-0017-0000-0000-00003EE86FE7
+Message-Id: <20180525021145.4520-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805250024
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 22 May 2018 19:58:57 +0800
+This test exercises read and write access to the AMR, IAMR and UAMOR.
 
-> DaeRyong Jeong reports a race between vhost_dev_cleanup() and
-> vhost_process_iotlb_msg():
-> 
-> Thread interleaving:
-> CPU0 (vhost_process_iotlb_msg)			CPU1 (vhost_dev_cleanup)
-> (In the case of both VHOST_IOTLB_UPDATE and
-> VHOST_IOTLB_INVALIDATE)
-> =====						=====
-> 						vhost_umem_clean(dev->iotlb);
-> if (!dev->iotlb) {
-> 	        ret = -EFAULT;
-> 		        break;
-> }
-> 						dev->iotlb = NULL;
-> 
-> The reason is we don't synchronize between them, fixing by protecting
-> vhost_process_iotlb_msg() with dev mutex.
-> 
-> Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-> Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ tools/testing/selftests/powerpc/include/reg.h      |   1 +
+ tools/testing/selftests/powerpc/ptrace/Makefile    |   5 +-
+ tools/testing/selftests/powerpc/ptrace/child.h     | 139 +++++++++
+ .../testing/selftests/powerpc/ptrace/ptrace-pkey.c | 327 +++++++++++++++++++++
+ tools/testing/selftests/powerpc/ptrace/ptrace.h    |  38 +++
+ 5 files changed, 509 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/powerpc/ptrace/child.h
+ create mode 100644 tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c
 
-Applied and queued up for -stable.
+Changes in v2:
+- Added PARENT_SKIP_IF_UNSUPPORTED macro in child.h and use it in first
+  call to ptrace_read_regs(NT_PPC_PKEY). (Suggested by Michael Ellerman)
+- Changed ptrace_read_regs() to simply return the ptrace error value in
+  case of error and avoid calling fprintf() so that errno is preserved.
+
+diff --git a/tools/testing/selftests/powerpc/include/reg.h b/tools/testing/selftests/powerpc/include/reg.h
+index 4afdebcce4cd..7f348c059bc2 100644
+--- a/tools/testing/selftests/powerpc/include/reg.h
++++ b/tools/testing/selftests/powerpc/include/reg.h
+@@ -54,6 +54,7 @@
+ #define SPRN_DSCR_PRIV 0x11	/* Privilege State DSCR */
+ #define SPRN_DSCR      0x03	/* Data Stream Control Register */
+ #define SPRN_PPR       896	/* Program Priority Register */
++#define SPRN_AMR       13	/* Authority Mask Register - problem state */
+ 
+ /* TEXASR register bits */
+ #define TEXASR_FC	0xFE00000000000000
+diff --git a/tools/testing/selftests/powerpc/ptrace/Makefile b/tools/testing/selftests/powerpc/ptrace/Makefile
+index 480305266504..707ba734faf2 100644
+--- a/tools/testing/selftests/powerpc/ptrace/Makefile
++++ b/tools/testing/selftests/powerpc/ptrace/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ TEST_PROGS := ptrace-gpr ptrace-tm-gpr ptrace-tm-spd-gpr \
+               ptrace-tar ptrace-tm-tar ptrace-tm-spd-tar ptrace-vsx ptrace-tm-vsx \
+-              ptrace-tm-spd-vsx ptrace-tm-spr
++              ptrace-tm-spd-vsx ptrace-tm-spr ptrace-pkey
+ 
+ include ../../lib.mk
+ 
+@@ -9,6 +9,9 @@ all: $(TEST_PROGS)
+ 
+ CFLAGS += -m64 -I../../../../../usr/include -I../tm -mhtm -fno-pie
+ 
++ptrace-pkey: ../harness.c ../utils.c ../lib/reg.S ptrace.h child.h ptrace-pkey.c
++	$(LINK.c) $^ $(LDLIBS) -pthread -o $@
++
+ $(TEST_PROGS): ../harness.c ../utils.c ../lib/reg.S ptrace.h
+ 
+ clean:
+diff --git a/tools/testing/selftests/powerpc/ptrace/child.h b/tools/testing/selftests/powerpc/ptrace/child.h
+new file mode 100644
+index 000000000000..d7275b7b33dc
+--- /dev/null
++++ b/tools/testing/selftests/powerpc/ptrace/child.h
+@@ -0,0 +1,139 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Helper functions to sync execution between parent and child processes.
++ *
++ * Copyright 2018, Thiago Jung Bauermann, IBM Corporation.
++ */
++#include <stdio.h>
++#include <stdbool.h>
++#include <semaphore.h>
++
++/*
++ * Information in a shared memory location for synchronization between child and
++ * parent.
++ */
++struct child_sync {
++	/* The parent waits on this semaphore. */
++	sem_t sem_parent;
++
++	/* If true, the child should give up as well. */
++	bool parent_gave_up;
++
++	/* The child waits on this semaphore. */
++	sem_t sem_child;
++
++	/* If true, the parent should give up as well. */
++	bool child_gave_up;
++};
++
++#define CHILD_FAIL_IF(x, sync)						\
++	do {								\
++		if (x) {						\
++			fprintf(stderr,					\
++				"[FAIL] Test FAILED on line %d\n", __LINE__); \
++			(sync)->child_gave_up = true;			\
++			prod_parent(sync);				\
++			return 1;					\
++		}							\
++	} while (0)
++
++#define PARENT_FAIL_IF(x, sync)						\
++	do {								\
++		if (x) {						\
++			fprintf(stderr,					\
++				"[FAIL] Test FAILED on line %d\n", __LINE__); \
++			(sync)->parent_gave_up = true;			\
++			prod_child(sync);				\
++			return 1;					\
++		}							\
++	} while (0)
++
++#define PARENT_SKIP_IF_UNSUPPORTED(x, sync)				\
++	do {								\
++		if ((x) == -1 && (errno == ENODEV || errno == EINVAL)) { \
++			(sync)->parent_gave_up = true;			\
++			prod_child(sync);				\
++			SKIP_IF(1);					\
++		}							\
++	} while (0)
++
++int init_child_sync(struct child_sync *sync)
++{
++	int ret;
++
++	ret = sem_init(&sync->sem_parent, 1, 0);
++	if (ret) {
++		perror("Semaphore initialization failed");
++		return 1;
++	}
++
++	ret = sem_init(&sync->sem_child, 1, 0);
++	if (ret) {
++		perror("Semaphore initialization failed");
++		return 1;
++	}
++
++	return 0;
++}
++
++void destroy_child_sync(struct child_sync *sync)
++{
++	sem_destroy(&sync->sem_parent);
++	sem_destroy(&sync->sem_child);
++}
++
++int wait_child(struct child_sync *sync)
++{
++	int ret;
++
++	/* Wait until the child prods us. */
++	ret = sem_wait(&sync->sem_parent);
++	if (ret) {
++		perror("Error waiting for child");
++		return 1;
++	}
++
++	return sync->child_gave_up;
++}
++
++int prod_child(struct child_sync *sync)
++{
++	int ret;
++
++	/* Unblock the child now. */
++	ret = sem_post(&sync->sem_child);
++	if (ret) {
++		perror("Error prodding child");
++		return 1;
++	}
++
++	return 0;
++}
++
++int wait_parent(struct child_sync *sync)
++{
++	int ret;
++
++	/* Wait until the parent prods us. */
++	ret = sem_wait(&sync->sem_child);
++	if (ret) {
++		perror("Error waiting for parent");
++		return 1;
++	}
++
++	return sync->parent_gave_up;
++}
++
++int prod_parent(struct child_sync *sync)
++{
++	int ret;
++
++	/* Unblock the parent now. */
++	ret = sem_post(&sync->sem_parent);
++	if (ret) {
++		perror("Error prodding parent");
++		return 1;
++	}
++
++	return 0;
++}
+diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c b/tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c
+new file mode 100644
+index 000000000000..5cf631f792cc
+--- /dev/null
++++ b/tools/testing/selftests/powerpc/ptrace/ptrace-pkey.c
+@@ -0,0 +1,327 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Ptrace test for Memory Protection Key registers
++ *
++ * Copyright (C) 2015 Anshuman Khandual, IBM Corporation.
++ * Copyright (C) 2018 IBM Corporation.
++ */
++#include "ptrace.h"
++#include "child.h"
++
++#ifndef __NR_pkey_alloc
++#define __NR_pkey_alloc		384
++#endif
++
++#ifndef __NR_pkey_free
++#define __NR_pkey_free		385
++#endif
++
++#ifndef NT_PPC_PKEY
++#define NT_PPC_PKEY		0x110
++#endif
++
++#ifndef PKEY_DISABLE_EXECUTE
++#define PKEY_DISABLE_EXECUTE	0x4
++#endif
++
++#define AMR_BITS_PER_PKEY 2
++#define PKEY_REG_BITS (sizeof(u64) * 8)
++#define pkeyshift(pkey) (PKEY_REG_BITS - ((pkey + 1) * AMR_BITS_PER_PKEY))
++
++static const char user_read[] = "[User Read (Running)]";
++static const char user_write[] = "[User Write (Running)]";
++static const char ptrace_read_running[] = "[Ptrace Read (Running)]";
++static const char ptrace_write_running[] = "[Ptrace Write (Running)]";
++
++/* Information shared between the parent and the child. */
++struct shared_info {
++	struct child_sync child_sync;
++
++	/* AMR value the parent expects to read from the child. */
++	unsigned long amr1;
++
++	/* AMR value the parent is expected to write to the child. */
++	unsigned long amr2;
++
++	/* AMR value that ptrace should refuse to write to the child. */
++	unsigned long amr3;
++
++	/* IAMR value the parent expects to read from the child. */
++	unsigned long expected_iamr;
++
++	/* UAMOR value the parent expects to read from the child. */
++	unsigned long expected_uamor;
++
++	/*
++	 * IAMR and UAMOR values that ptrace should refuse to write to the child
++	 * (even though they're valid ones) because userspace doesn't have
++	 * access to those registers.
++	 */
++	unsigned long new_iamr;
++	unsigned long new_uamor;
++};
++
++static int sys_pkey_alloc(unsigned long flags, unsigned long init_access_rights)
++{
++	return syscall(__NR_pkey_alloc, flags, init_access_rights);
++}
++
++static int sys_pkey_free(int pkey)
++{
++	return syscall(__NR_pkey_free, pkey);
++}
++
++static int child(struct shared_info *info)
++{
++	unsigned long reg;
++	bool disable_execute = true;
++	int pkey1, pkey2, pkey3;
++	int ret;
++
++	/* Wait until parent fills out the initial register values. */
++	ret = wait_parent(&info->child_sync);
++	if (ret)
++		return ret;
++
++	/* Get some pkeys so that we can change their bits in the AMR. */
++	pkey1 = sys_pkey_alloc(0, PKEY_DISABLE_EXECUTE);
++	if (pkey1 < 0) {
++		pkey1 = sys_pkey_alloc(0, 0);
++		CHILD_FAIL_IF(pkey1 < 0, &info->child_sync);
++
++		disable_execute = false;
++	}
++
++	pkey2 = sys_pkey_alloc(0, 0);
++	CHILD_FAIL_IF(pkey2 < 0, &info->child_sync);
++
++	pkey3 = sys_pkey_alloc(0, 0);
++	CHILD_FAIL_IF(pkey3 < 0, &info->child_sync);
++
++	info->amr1 |= 3ul << pkeyshift(pkey1);
++	info->amr2 |= 3ul << pkeyshift(pkey2);
++	info->amr3 |= info->amr2 | 3ul << pkeyshift(pkey3);
++
++	if (disable_execute)
++		info->expected_iamr |= 1ul << pkeyshift(pkey1);
++
++	info->expected_uamor |= 3ul << pkeyshift(pkey1) |
++				3ul << pkeyshift(pkey2);
++	info->new_iamr |= 1ul << pkeyshift(pkey1) | 1ul << pkeyshift(pkey2);
++	info->new_uamor |= 3ul << pkeyshift(pkey1);
++
++	/*
++	 * We won't use pkey3. We just want a plausible but invalid key to test
++	 * whether ptrace will let us write to AMR bits we are not supposed to.
++	 *
++	 * This also tests whether the kernel restores the UAMOR permissions
++	 * after a key is freed.
++	 */
++	sys_pkey_free(pkey3);
++
++	printf("%-30s AMR: %016lx pkey1: %d pkey2: %d pkey3: %d\n",
++	       user_write, info->amr1, pkey1, pkey2, pkey3);
++
++	mtspr(SPRN_AMR, info->amr1);
++
++	/* Wait for parent to read our AMR value and write a new one. */
++	ret = prod_parent(&info->child_sync);
++	CHILD_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait_parent(&info->child_sync);
++	if (ret)
++		return ret;
++
++	reg = mfspr(SPRN_AMR);
++
++	printf("%-30s AMR: %016lx\n", user_read, reg);
++
++	CHILD_FAIL_IF(reg != info->amr2, &info->child_sync);
++
++	/*
++	 * Wait for parent to try to write an invalid AMR value.
++	 */
++	ret = prod_parent(&info->child_sync);
++	CHILD_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait_parent(&info->child_sync);
++	if (ret)
++		return ret;
++
++	reg = mfspr(SPRN_AMR);
++
++	printf("%-30s AMR: %016lx\n", user_read, reg);
++
++	CHILD_FAIL_IF(reg != info->amr2, &info->child_sync);
++
++	/*
++	 * Wait for parent to try to write an IAMR and a UAMOR value. We can't
++	 * verify them, but we can verify that the AMR didn't change.
++	 */
++	ret = prod_parent(&info->child_sync);
++	CHILD_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait_parent(&info->child_sync);
++	if (ret)
++		return ret;
++
++	reg = mfspr(SPRN_AMR);
++
++	printf("%-30s AMR: %016lx\n", user_read, reg);
++
++	CHILD_FAIL_IF(reg != info->amr2, &info->child_sync);
++
++	/* Now let parent now that we are finished. */
++
++	ret = prod_parent(&info->child_sync);
++	CHILD_FAIL_IF(ret, &info->child_sync);
++
++	return TEST_PASS;
++}
++
++static int parent(struct shared_info *info, pid_t pid)
++{
++	unsigned long regs[3];
++	int ret, status;
++
++	/*
++	 * Get the initial values for AMR, IAMR and UAMOR and communicate them
++	 * to the child.
++	 */
++	ret = ptrace_read_regs(pid, NT_PPC_PKEY, regs, 3);
++	PARENT_SKIP_IF_UNSUPPORTED(ret, &info->child_sync);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	info->amr1 = info->amr2 = info->amr3 = regs[0];
++	info->expected_iamr = info->new_iamr = regs[1];
++	info->expected_uamor = info->new_uamor = regs[2];
++
++	/* Wake up child so that it can set itself up. */
++	ret = prod_child(&info->child_sync);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait_child(&info->child_sync);
++	if (ret)
++		return ret;
++
++	/* Verify that we can read the pkey registers from the child. */
++	ret = ptrace_read_regs(pid, NT_PPC_PKEY, regs, 3);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	printf("%-30s AMR: %016lx IAMR: %016lx UAMOR: %016lx\n",
++	       ptrace_read_running, regs[0], regs[1], regs[2]);
++
++	PARENT_FAIL_IF(regs[0] != info->amr1, &info->child_sync);
++	PARENT_FAIL_IF(regs[1] != info->expected_iamr, &info->child_sync);
++	PARENT_FAIL_IF(regs[2] != info->expected_uamor, &info->child_sync);
++
++	/* Write valid AMR value in child. */
++	ret = ptrace_write_regs(pid, NT_PPC_PKEY, &info->amr2, 1);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	printf("%-30s AMR: %016lx\n", ptrace_write_running, info->amr2);
++
++	/* Wake up child so that it can verify it changed. */
++	ret = prod_child(&info->child_sync);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait_child(&info->child_sync);
++	if (ret)
++		return ret;
++
++	/* Write invalid AMR value in child. */
++	ret = ptrace_write_regs(pid, NT_PPC_PKEY, &info->amr3, 1);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	printf("%-30s AMR: %016lx\n", ptrace_write_running, info->amr3);
++
++	/* Wake up child so that it can verify it didn't change. */
++	ret = prod_child(&info->child_sync);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait_child(&info->child_sync);
++	if (ret)
++		return ret;
++
++	/* Try to write to IAMR. */
++	regs[0] = info->amr1;
++	regs[1] = info->new_iamr;
++	ret = ptrace_write_regs(pid, NT_PPC_PKEY, regs, 2);
++	PARENT_FAIL_IF(!ret, &info->child_sync);
++
++	printf("%-30s AMR: %016lx IAMR: %016lx\n",
++	       ptrace_write_running, regs[0], regs[1]);
++
++	/* Try to write to IAMR and UAMOR. */
++	regs[2] = info->new_uamor;
++	ret = ptrace_write_regs(pid, NT_PPC_PKEY, regs, 3);
++	PARENT_FAIL_IF(!ret, &info->child_sync);
++
++	printf("%-30s AMR: %016lx IAMR: %016lx UAMOR: %016lx\n",
++	       ptrace_write_running, regs[0], regs[1], regs[2]);
++
++	/* Verify that all registers still have their expected values. */
++	ret = ptrace_read_regs(pid, NT_PPC_PKEY, regs, 3);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	printf("%-30s AMR: %016lx IAMR: %016lx UAMOR: %016lx\n",
++	       ptrace_read_running, regs[0], regs[1], regs[2]);
++
++	PARENT_FAIL_IF(regs[0] != info->amr2, &info->child_sync);
++	PARENT_FAIL_IF(regs[1] != info->expected_iamr, &info->child_sync);
++	PARENT_FAIL_IF(regs[2] != info->expected_uamor, &info->child_sync);
++
++	/* Wake up child so that it can verify AMR didn't change and wrap up. */
++	ret = prod_child(&info->child_sync);
++	PARENT_FAIL_IF(ret, &info->child_sync);
++
++	ret = wait(&status);
++	if (ret != pid) {
++		printf("Child's exit status not captured\n");
++		ret = TEST_PASS;
++	} else if (!WIFEXITED(status)) {
++		printf("Child exited abnormally\n");
++		ret = TEST_FAIL;
++	} else
++		ret = WEXITSTATUS(status) ? TEST_FAIL : TEST_PASS;
++
++	return ret;
++}
++
++static int ptrace_pkey(void)
++{
++	struct shared_info *info;
++	int shm_id;
++	int ret;
++	pid_t pid;
++
++	shm_id = shmget(IPC_PRIVATE, sizeof(*info), 0777 | IPC_CREAT);
++	info = shmat(shm_id, NULL, 0);
++
++	ret = init_child_sync(&info->child_sync);
++	if (ret)
++		return ret;
++
++	pid = fork();
++	if (pid < 0) {
++		perror("fork() failed");
++		ret = TEST_FAIL;
++	} else if (pid == 0)
++		ret = child(info);
++	else
++		ret = parent(info, pid);
++
++	shmdt(info);
++
++	if (pid) {
++		destroy_child_sync(&info->child_sync);
++		shmctl(shm_id, IPC_RMID, NULL);
++	}
++
++	return ret;
++}
++
++int main(int argc, char *argv[])
++{
++	return test_harness(ptrace_pkey, "ptrace_pkey");
++}
+diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace.h b/tools/testing/selftests/powerpc/ptrace/ptrace.h
+index 19fb825270a1..34201cfa8335 100644
+--- a/tools/testing/selftests/powerpc/ptrace/ptrace.h
++++ b/tools/testing/selftests/powerpc/ptrace/ptrace.h
+@@ -102,6 +102,44 @@ int cont_trace(pid_t child)
+ 	return TEST_PASS;
+ }
+ 
++int ptrace_read_regs(pid_t child, unsigned long type, unsigned long regs[],
++		     int n)
++{
++	struct iovec iov;
++	long ret;
++
++	FAIL_IF(start_trace(child));
++
++	iov.iov_base = regs;
++	iov.iov_len = n * sizeof(unsigned long);
++
++	ret = ptrace(PTRACE_GETREGSET, child, type, &iov);
++	if (ret)
++		return ret;
++
++	FAIL_IF(stop_trace(child));
++
++	return TEST_PASS;
++}
++
++long ptrace_write_regs(pid_t child, unsigned long type, unsigned long regs[],
++		       int n)
++{
++	struct iovec iov;
++	long ret;
++
++	FAIL_IF(start_trace(child));
++
++	iov.iov_base = regs;
++	iov.iov_len = n * sizeof(unsigned long);
++
++	ret = ptrace(PTRACE_SETREGSET, child, type, &iov);
++
++	FAIL_IF(stop_trace(child));
++
++	return ret;
++}
++
+ /* TAR, PPR, DSCR */
+ int show_tar_registers(pid_t child, unsigned long *out)
+ {
