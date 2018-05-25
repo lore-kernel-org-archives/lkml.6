@@ -1,78 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936376AbeEYOhu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:37:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56576 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936185AbeEYOfa (ORCPT
+        id S936323AbeEYOiY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:38:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50854 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936185AbeEYOiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:35:30 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 1/7] core, dma-direct: add a flag 32-bit dma limits
-Date: Fri, 25 May 2018 16:35:06 +0200
-Message-Id: <20180525143512.1466-2-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525143512.1466-1-hch@lst.de>
-References: <20180525143512.1466-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Fri, 25 May 2018 10:38:22 -0400
+X-Google-Smtp-Source: ADUXVKIlUm5wcLJKRCondHL8FxLhN28L3+xtLWNgHP8hMl8GJO1YbZQ/ef46vyZCtaSV76eVL9KYvg==
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 0/8] slimbus: fixes and some helpers
+Date: Fri, 25 May 2018 15:36:10 +0100
+Message-Id: <20180525143618.820-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various PCI bridges (VIA PCI, Xilinx PCIe) limit DMA to only 32-bits
-even if the device itself supports more.  Add a single bit flag to
-struct device (to be moved into the dma extension once we around it)
-to flag such devices and reject larger DMA to them.
+Hi Greg,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/device.h | 3 +++
- lib/dma-direct.c       | 6 ++++++
- 2 files changed, 9 insertions(+)
+Here is set of patches for slimbus, there are 6 fixes and
+two helper functions.
+Most of these issues were found while testing QCOM NGD SLIMBus
+controller with WCD9335 codec.
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 477956990f5e..fa317e45f5e6 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -904,6 +904,8 @@ struct dev_links_info {
-  * @offline:	Set after successful invocation of bus type's .offline().
-  * @of_node_reused: Set if the device-tree node is shared with an ancestor
-  *              device.
-+ * @dma_32bit_limit: bridge limited to 32bit DMA even if the device itself
-+ *		indicates support for a higher limit in the dma_mask field.
-  *
-  * At the lowest level, every device in a Linux system is represented by an
-  * instance of struct device. The device structure contains the information
-@@ -992,6 +994,7 @@ struct device {
- 	bool			offline_disabled:1;
- 	bool			offline:1;
- 	bool			of_node_reused:1;
-+	bool			dma_32bit_limit:1;
- };
- 
- static inline struct device *kobj_to_dev(struct kobject *kobj)
-diff --git a/lib/dma-direct.c b/lib/dma-direct.c
-index bbfb229aa067..0151a7b2bc87 100644
---- a/lib/dma-direct.c
-+++ b/lib/dma-direct.c
-@@ -165,6 +165,12 @@ int dma_direct_supported(struct device *dev, u64 mask)
- 	if (mask < DMA_BIT_MASK(32))
- 		return 0;
- #endif
-+	/*
-+	 * Various PCI/PCIe bridges have broken support for > 32bit DMA even
-+	 * if the device itself might support it.
-+	 */
-+	if (dev->dma_32bit_limit && mask > DMA_BIT_MASK(32))
-+		return 0;
- 	return 1;
- }
- 
+Changes since v2 (https://lkml.org/lkml/2018/5/17/251)
+- removed unnecessary changes in slim_prepare_txn patch
+
+thanks,
+Srini
+
+Srinivas Kandagatla (8):
+  slimbus: core: rearrange slim_eaddr structure
+  slimbus: core: add need_tid flag to slim_msg_txn
+  slimbus: messaging: pass correct wbuf
+  slimbus: messaging: remove multiple calls to pm_runtime_mark_last_busy
+  slimbus: messaging: initialize completion correctly
+  slimbus: qcom: remove redundant depends in Kconfig
+  slimbus: messaging: add slim_prepare_txn() helper function
+  slimbus: core: add of_slim_device_get() helper
+
+ drivers/slimbus/Kconfig     |  1 -
+ drivers/slimbus/core.c      | 39 ++++++++++++++++++++
+ drivers/slimbus/messaging.c | 89 ++++++++++++++++++++++++++++++---------------
+ drivers/slimbus/slimbus.h   |  4 ++
+ include/linux/slimbus.h     | 14 ++++---
+ 5 files changed, 110 insertions(+), 37 deletions(-)
+
 -- 
-2.17.0
+2.16.2
