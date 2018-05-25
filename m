@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S971911AbeEYAIY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 20:08:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59702 "EHLO mx1.redhat.com"
+        id S971925AbeEYAIb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 20:08:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36048 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965178AbeEYAIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 20:08:20 -0400
+        id S965178AbeEYAI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 20:08:27 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 27/32] vfs: Use a 'struct fd_cookie *' type for light fd
- handling [ver #8]
+Subject: [PATCH 28/32] vfs: Store the fd_cookie in nameidata,
+ not the dfd int [ver #8]
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 25 May 2018 01:08:18 +0100
-Message-ID: <152720689885.9073.2472504465486115237.stgit@warthog.procyon.org.uk>
+Date: Fri, 25 May 2018 01:08:25 +0100
+Message-ID: <152720690524.9073.15509053519638438137.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,132 +28,134 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a 'struct fd_cookie *' type for light fd handling rather than an
-unsigned long so that confusion doesn't arise with integer fd numbers.
+Look up dfd in set_nameidata() if not AT_FDCWD and store the resultant
+fd_cookie in struct nameidata.  LOOKUP_AT_FDCWD is set if AT_FDCWD was
+supplied.  The fd_cookie is released in restore_nameidata().
 
-I have a use case where I want to store this in struct nameidata, but don't
-want to expand it to a struct fd to save space.
+This means that where the fd points in a construct like the following:
+
+	set_nameidata(&nd, dfd, name);
+	retval = path_lookupat(&nd, flags | LOOKUP_RCU, path);
+	if (unlikely(retval == -ECHILD))
+		retval = path_lookupat(&nd, flags, path);
+	if (unlikely(retval == -ESTALE))
+		retval = path_lookupat(&nd, flags | LOOKUP_REVAL, path);
+
+doesn't change between the three calls to path_lookupat() or similar.
+
+It also allows us to fish the fd_cookie out for the upcoming move_mount()
+syscall which needs to clear a file flag if successful.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/file.c            |   20 +++++++++++---------
- include/linux/file.h |   31 ++++++++++++++++++++++++-------
- 2 files changed, 35 insertions(+), 16 deletions(-)
+ fs/namei.c |   38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 7ffd6e9d103d..8b0012ddadad 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -727,7 +727,7 @@ EXPORT_SYMBOL(fget_raw);
-  * The fput_needed flag returned by fget_light should be passed to the
-  * corresponding fput_light.
-  */
--static unsigned long __fget_light(unsigned int fd, fmode_t mask)
-+static struct fd_cookie *__fget_light(unsigned int fd, fmode_t mask)
+diff --git a/fs/namei.c b/fs/namei.c
+index 6f0dc40f88c5..819d6ee71b46 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -53,8 +53,8 @@
+  * The new code replaces the old recursive symlink resolution with
+  * an iterative one (in case of non-nested symlink chains).  It does
+  * this with calls to <fs>_follow_link().
+- * As a side effect, dir_namei(), _namei() and follow_link() are now 
+- * replaced with a single function lookup_dentry() that can handle all 
++ * As a side effect, dir_namei(), _namei() and follow_link() are now
++ * replaced with a single function lookup_dentry() that can handle all
+  * the special cases of the former code.
+  *
+  * With the new dcache, the pathname is stored at each inode, at least as
+@@ -506,25 +506,34 @@ struct nameidata {
+ 	struct filename	*name;
+ 	struct nameidata *saved;
+ 	struct inode	*link_inode;
++	struct fd_cookie *dfd;
++	bool		have_dfd;
+ 	unsigned	root_seq;
+-	int		dfd;
+ } __randomize_layout;
+ 
+ static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
  {
- 	struct files_struct *files = current->files;
- 	struct file *file;
-@@ -736,33 +736,35 @@ static unsigned long __fget_light(unsigned int fd, fmode_t mask)
- 		file = __fcheck_files(files, fd);
- 		if (!file || unlikely(file->f_mode & mask))
- 			return 0;
--		return (unsigned long)file;
-+		return (struct fd_cookie *)file;
+ 	struct nameidata *old = current->nameidata;
+ 	p->stack = p->internal;
+-	p->dfd = dfd;
+ 	p->name = name;
+ 	p->total_link_count = old ? old->total_link_count : 0;
+ 	p->saved = old;
+ 	current->nameidata = p;
++
++	if (likely(dfd == AT_FDCWD)) {
++		p->dfd = NULL;
++		p->have_dfd = false;
++	} else {
++		p->dfd = __fdget_raw(dfd); /* Error are dealt with later */
++		p->have_dfd = true;
++	}
+ }
+ 
+ static void restore_nameidata(void)
+ {
+ 	struct nameidata *now = current->nameidata, *old = now->saved;
+ 
++	__fdput(now->dfd);
+ 	current->nameidata = old;
+ 	if (old)
+ 		old->total_link_count = now->total_link_count;
+@@ -2165,7 +2174,7 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 		nd->root.mnt = NULL;
+ 		rcu_read_unlock();
+ 		return ERR_PTR(-ECHILD);
+-	} else if (nd->dfd == AT_FDCWD) {
++	} else if (!nd->have_dfd) {
+ 		if (flags & LOOKUP_RCU) {
+ 			struct fs_struct *fs = current->fs;
+ 			unsigned seq;
+@@ -2185,22 +2194,18 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 		return s;
  	} else {
- 		file = __fget(fd, mask);
- 		if (!file)
- 			return 0;
--		return FDPUT_FPUT | (unsigned long)file;
-+		return (struct fd_cookie *)(FDPUT_FPUT | (unsigned long)file);
- 	}
- }
--unsigned long __fdget(unsigned int fd)
-+
-+struct fd_cookie *__fdget(unsigned int fd)
- {
- 	return __fget_light(fd, FMODE_PATH);
- }
- EXPORT_SYMBOL(__fdget);
+ 		/* Caller must check execute permissions on the starting path component */
+-		struct fd f = fdget_raw(nd->dfd);
+ 		struct dentry *dentry;
++		struct file *file = __fdfile(nd->dfd);
  
--unsigned long __fdget_raw(unsigned int fd)
-+struct fd_cookie *__fdget_raw(unsigned int fd)
- {
- 	return __fget_light(fd, 0);
- }
+-		if (!f.file)
++		if (!nd->dfd)
+ 			return ERR_PTR(-EBADF);
  
--unsigned long __fdget_pos(unsigned int fd)
-+struct fd_cookie *__fdget_pos(unsigned int fd)
- {
--	unsigned long v = __fdget(fd);
--	struct file *file = (struct file *)(v & ~3);
-+	struct fd_cookie *v = __fdget(fd);
-+	struct file *file = __fdfile(v);
+-		dentry = f.file->f_path.dentry;
++		dentry = file->f_path.dentry;
  
- 	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
- 		if (file_count(file) > 1) {
--			v |= FDPUT_POS_UNLOCK;
-+			v = (struct fd_cookie *)
-+				((unsigned long)v | FDPUT_POS_UNLOCK);
- 			mutex_lock(&file->f_pos_lock);
+-		if (*s) {
+-			if (!d_can_lookup(dentry)) {
+-				fdput(f);
+-				return ERR_PTR(-ENOTDIR);
+-			}
+-		}
++		if (*s && !d_can_lookup(dentry))
++			return ERR_PTR(-ENOTDIR);
+ 
+-		nd->path = f.file->f_path;
++		nd->path = file->f_path;
+ 		if (flags & LOOKUP_RCU) {
+ 			rcu_read_lock();
+ 			nd->inode = nd->path.dentry->d_inode;
+@@ -2209,7 +2214,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 			path_get(&nd->path);
+ 			nd->inode = nd->path.dentry->d_inode;
  		}
+-		fdput(f);
+ 		return s;
  	}
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 279720db984a..3fce1c92b576 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -11,6 +11,7 @@
- #include <linux/posix_types.h>
- 
- struct file;
-+struct fd_cookie; /* Deliberately undefined structure */
- 
- extern void fput(struct file *);
- 
-@@ -31,8 +32,24 @@ struct fd {
- 	struct file *file;
- 	unsigned int flags;
- };
--#define FDPUT_FPUT       1
--#define FDPUT_POS_UNLOCK 2
-+#define FDPUT_FPUT		1
-+#define FDPUT_POS_UNLOCK	2
-+#define FDPUT__MASK		3
-+
-+static inline unsigned long __fdflags(struct fd_cookie *f)
-+{
-+	return (unsigned long)f & FDPUT__MASK;
-+}
-+
-+static inline struct file *__fdfile(struct fd_cookie *f)
-+{
-+	return (struct file *)((unsigned long)f & ~FDPUT__MASK);
-+}
-+
-+static inline void __fdput(struct fd_cookie *f)
-+{
-+	fput_light(__fdfile(f), __fdflags(f) & FDPUT_FPUT);
-+}
- 
- static inline void fdput(struct fd fd)
- {
-@@ -42,14 +59,14 @@ static inline void fdput(struct fd fd)
- 
- extern struct file *fget(unsigned int fd);
- extern struct file *fget_raw(unsigned int fd);
--extern unsigned long __fdget(unsigned int fd);
--extern unsigned long __fdget_raw(unsigned int fd);
--extern unsigned long __fdget_pos(unsigned int fd);
-+extern struct fd_cookie * __fdget(unsigned int fd);
-+extern struct fd_cookie *__fdget_raw(unsigned int fd);
-+extern struct fd_cookie *__fdget_pos(unsigned int fd);
- extern void __f_unlock_pos(struct file *);
- 
--static inline struct fd __to_fd(unsigned long v)
-+static inline struct fd __to_fd(struct fd_cookie *v)
- {
--	return (struct fd){(struct file *)(v & ~3),v & 3};
-+	return (struct fd){__fdfile(v), __fdflags(v)};
  }
+@@ -3557,7 +3561,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ 	if (IS_ERR(filename))
+ 		return ERR_CAST(filename);
  
- static inline struct fd fdget(unsigned int fd)
+-	set_nameidata(&nd, -1, filename);
++	set_nameidata(&nd, AT_FDCWD, filename);
+ 	file = path_openat(&nd, op, flags | LOOKUP_RCU);
+ 	if (unlikely(file == ERR_PTR(-ECHILD)))
+ 		file = path_openat(&nd, op, flags);
