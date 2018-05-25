@@ -1,81 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967743AbeEYSfo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:35:44 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39479 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967679AbeEYSfl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:35:41 -0400
-X-Google-Smtp-Source: AB8JxZo4Lk04o4aDYazoozFUCwfJnPBhEPXMwxbx/vEF7esbmrtaGsQaftfLnECbVMNvD01muyzdBg==
-Date: Fri, 25 May 2018 11:35:38 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: msm8996: Use UFS_GDSC for UFS
-Message-ID: <20180525183538.GH14924@minitux>
-References: <20180524223122.12601-1-bjorn.andersson@linaro.org>
- <CAFp+6iH5bS5rmqZ1oy09COb2Rzuz6zbN7pFwxz0WTJNOYTTbkg@mail.gmail.com>
+        id S967815AbeEYSom (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:44:42 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34814 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967598AbeEYSok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:44:40 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 03/12] net: hns3: Add STRP_TAGP field support for hardware revision 0x21
+Date: Fri, 25 May 2018 19:42:58 +0100
+Message-ID: <20180525184307.36288-4-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180525184307.36288-1-salil.mehta@huawei.com>
+References: <20180525184307.36288-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iH5bS5rmqZ1oy09COb2Rzuz6zbN7pFwxz0WTJNOYTTbkg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25 May 05:51 PDT 2018, Vivek Gautam wrote:
+From: Peng Li <lipeng321@huawei.com>
 
-> Hi Bjorn,
-> 
-> On Fri, May 25, 2018 at 4:01 AM, Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> > The UFS host controller occationally (20%) fails to enable
-> > gcc_ufs_axi_clk because the UFS GDSC is not enabled. In most cases it's
-> > enabled through the UFS phy driver, but to make sure it's enabled let's
-> > enable it directly from the UFS host controller directly as well.
-> >
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> > index 380e14591686..03c7904bda14 100644
-> > --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> > @@ -674,6 +674,8 @@
-> >                         vccq-max-microamp = <450000>;
-> >                         vccq2-max-microamp = <450000>;
-> >
-> > +                       power-domains = <&gcc UFS_GDSC>;
-> > +
-> 
-> We shouldn't need power-domain with the phy. UFS_GDSC should
-> be attached to the controller, as the phy is powered up only after
-> the controller is power-up, and during collapse too, we turn off
-> the phy first.
+Hardware Revision(0x21) Buffer Descriptor adds a field STRP_TAGP
+for vlan stripped processed indication. STRP_TAGP field has 2 bits,
+bit 0 is stripped indication of the vlan tag in outer vlan tag
+field, bit 1 is stripped indication of the vlan tag in inner vlan
+tag field. For each bit, 0 indicates the tag is not stripped and
+1 indicates the tag is stripped.
 
-Afaict you're right, it should only be needed by the resources for the
-HCD.
+This patch adds STRP_TAGP support for revision(0x21), and does not
+change the revision(0x20) action.
 
-> Can you try testing keeping UFS_GDSC only with ufs controller and
-> remove it from the ufs-phy node? We are doing same on the 4.14 release
-> branch too for db820.
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 42 ++++++++++++++++++++++---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  3 ++
+ 2 files changed, 40 insertions(+), 5 deletions(-)
 
-I test booted this 10 times, with 100% success :)
-
-> I apologize to have missed this in your patch for ufs-related dt nodes.
-> Can we please fix this now?
-
-I'll send a v2, that moves the power-domain to the HCD, rather than just
-adding it there too. Thanks for the quick review!
-
-Regards,
-Bjorn
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index ae8d749..1bcb676 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2066,6 +2066,39 @@ static void hns3_rx_skb(struct hns3_enet_ring *ring, struct sk_buff *skb)
+ 	napi_gro_receive(&ring->tqp_vector->napi, skb);
+ }
+ 
++static u16 hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
++			       struct hns3_desc *desc, u32 l234info)
++{
++	struct pci_dev *pdev = ring->tqp->handle->pdev;
++	u16 vlan_tag;
++
++	if (pdev->revision == 0x20) {
++		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
++		if (!(vlan_tag & VLAN_VID_MASK))
++			vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
++
++		return vlan_tag;
++	}
++
++#define HNS3_STRP_OUTER_VLAN	0x1
++#define HNS3_STRP_INNER_VLAN	0x2
++
++	switch (hnae_get_field(l234info, HNS3_RXD_STRP_TAGP_M,
++			       HNS3_RXD_STRP_TAGP_S)) {
++	case HNS3_STRP_OUTER_VLAN:
++		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
++		break;
++	case HNS3_STRP_INNER_VLAN:
++		vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
++		break;
++	default:
++		vlan_tag = 0;
++		break;
++	}
++
++	return vlan_tag;
++}
++
+ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 			     struct sk_buff **out_skb, int *out_bnum)
+ {
+@@ -2155,6 +2188,9 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	}
+ 
+ 	*out_bnum = bnum;
++
++	l234info = le32_to_cpu(desc->rx.l234_info);
++
+ 	/* Based on hw strategy, the tag offloaded will be stored at
+ 	 * ot_vlan_tag in two layer tag case, and stored at vlan_tag
+ 	 * in one layer tag case.
+@@ -2162,17 +2198,13 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	if (netdev->features & NETIF_F_HW_VLAN_CTAG_RX) {
+ 		u16 vlan_tag;
+ 
+-		vlan_tag = le16_to_cpu(desc->rx.ot_vlan_tag);
+-		if (!(vlan_tag & VLAN_VID_MASK))
+-			vlan_tag = le16_to_cpu(desc->rx.vlan_tag);
++		vlan_tag = hns3_parse_vlan_tag(ring, desc, l234info);
+ 		if (vlan_tag & VLAN_VID_MASK)
+ 			__vlan_hwaccel_put_tag(skb,
+ 					       htons(ETH_P_8021Q),
+ 					       vlan_tag);
+ 	}
+ 
+-	l234info = le32_to_cpu(desc->rx.l234_info);
+-
+ 	if (unlikely(!hnae_get_bit(bd_base_info, HNS3_RXD_VLD_B))) {
+ 		netdev_err(netdev, "no valid bd,%016llx,%016llx\n",
+ 			   ((u64 *)desc)[0], ((u64 *)desc)[1]);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index 5b40f5a..38e91ca 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -104,6 +104,9 @@ enum hns3_nic_state {
+ #define HNS3_RXD_L4ID_S				8
+ #define HNS3_RXD_L4ID_M				(0xf << HNS3_RXD_L4ID_S)
+ #define HNS3_RXD_FRAG_B				12
++#define HNS3_RXD_STRP_TAGP_S			13
++#define HNS3_RXD_STRP_TAGP_M			(0x3 << HNS3_RXD_STRP_TAGP_S)
++
+ #define HNS3_RXD_L2E_B				16
+ #define HNS3_RXD_L3E_B				17
+ #define HNS3_RXD_L4E_B				18
+-- 
+2.7.4
