@@ -1,128 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966711AbeEYP0y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:26:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:40127 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966018AbeEYP0u (ORCPT
+        id S966730AbeEYP1N (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:27:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38083 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965570AbeEYP1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:26:50 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] media: marvel-ccic: allow ccic and mmp drivers to coexist
-Date: Fri, 25 May 2018 17:25:11 +0200
-Message-Id: <20180525152523.2821369-4-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180525152523.2821369-1-arnd@arndb.de>
-References: <20180525152523.2821369-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:HOVlfreSyqqznhiA4hm8zrijy4s0I5qMaH8mQOSLFPB2k2t2TbI
- 59nb/JyhDJI5gVS4UKGduMUUITLFfPm20bLDrOWPN0lZPl40wXWyXUUPHOWNej9Hcml8Vi2
- 6d5rJZxDexHRqnUfTSyZZSIbqvv9VKB9MGpvWRmC/isYmT9/V/Au5fyYXseBTEqJPpYoCf1
- qfAUuWQxtHBifNnsK/esg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:jljPvD3mKN0=:jspWfsIRf1Lqk9UdctfvG4
- AQF8fOhYrulbLyuTYYxSGksMH4iao6+a3V5xfBQX8sdjZrItN47x2ZarS7RwYsY3lMj26dIsD
- 5yhIdQqIshjQ7pKtF0c07GLKgnmDhyUTa1V7sOLT80l/V+44nLk+BWIFIJ0BKTKZWa5iF5Sm+
- 0zJM8Y34t2hyWTC2eaxl84zREj4M7owWNIVVeveebENWfa7Z/3+QShk1ZLYJz0fKGJ4JCWUnp
- qQz6rhxqca9gU1AfWMANxC5pt64uIKJF7n4m5QrtjpeISUGyFtw4P2Uw9Gq1Fy3fo7WPqw7sK
- D2nr4mskneFfBiu2L/YHKB9jI0jOGhKKCXf4rbcN9TV+ZGBjsahVQPHhdLhwOCpVUcaoyth/j
- 0xGhKQhveypcse+s+PpKIYLzn6gVw5eIv74hF2D6oM7N5ZTE2jU0XdSJrjfLUNS9b8BLf0bbt
- BfCpfF2WgeRGVquqTeq65KOvdOvsrRRcw41Mga4HGfOy9omidD4E5m/GBVrSUN6N/Ri1M4af4
- WkCa8iiS2UKwMWApl2nUOtw6iZ9KjMx1XeVoa1K85LA+TYP9D0y/cWN52La/xrppI+CJXrS5I
- gEJYjr28kc+YQaK156CVrFuoIPjty5ousW5ecqfONQO2kFXMIfURUgyz/EUcpjunqZa26yHFx
- tCv7HCmU8OBS459qZA6gO18z2HXLO5hFjRaaCZHDT1xu882FUI1Qvhnvtsp+mh/sQ+gc=
+        Fri, 25 May 2018 11:27:11 -0400
+X-Google-Smtp-Source: AB8JxZoe+qcPPcVfePArKTOAyfl6koY3TRzDTj1FgTQeKi/5tMrr5QZp+OyJtT864CwRF0xWPsbURZKJMN7AFC9AMp0=
+MIME-Version: 1.0
+In-Reply-To: <20180524183027.dc498058344604e2d6027eff@arm.com>
+References: <20180517070643.GC13919@kroah.com> <20180518012024.22645-1-kim.phillips@arm.com>
+ <20180522173140.GA25658@xps15> <20180523145155.5929dd09c78a056ef19329be@arm.com>
+ <CANLsYkw-KcEM43pqWgGU1XYOfSTD4cmspNcPM-u+n9x6Xtazbg@mail.gmail.com> <20180524183027.dc498058344604e2d6027eff@arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 25 May 2018 09:27:09 -0600
+Message-ID: <CANLsYkwZtAptXtLK0HaDwmXbdAx24X+PEFVggakxe31nkH111g@mail.gmail.com>
+Subject: Re: [PATCH 1/6] coresight: remove CORESIGHT_LINKS_AND_SINKS
+ dependencies and selections
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Gargi Sharma <gs051095@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Rik van Riel <riel@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randconfig builds fail when one of the two is a built-in driver and
-the other one is a loadable module:
+On 24 May 2018 at 17:30, Kim Phillips <kim.phillips@arm.com> wrote:
+> On Thu, 24 May 2018 09:32:48 -0600
+> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+>> On 23 May 2018 at 13:51, Kim Phillips <kim.phillips@arm.com> wrote:
+>> > On Tue, 22 May 2018 11:31:40 -0600
+>> > Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>> >
+>> >> On Thu, May 17, 2018 at 08:20:19PM -0500, Kim Phillips wrote:
+>> >> > A coresight topology doesn't need to include links, i.e., a source can
+>> >> > be directly connected to a sink.  As such, selecting and/or depending on
+>> >> > LINKS_AND_SINKS is no longer needed.
+>> >>
+>> >> I'm good with this patch but now the help text for CORESIGHT_LINKS_AND_SINKS no
+>> >> longer match what the config does.  I see two ways to fix this:
+>> >
+>> > This patch doesn't change what the config does, it just changes what
+>> > other config options depend on it.
+>> >
+>> >> 1) Rework the help text.
+>> >
+>> > I don't see how, given the above.  Here's the text:
+>> >
+>> > config CORESIGHT_LINKS_AND_SINKS
+>> >         bool "CoreSight Link and Sink drivers"
+>> >         help
+>> >           This enables support for CoreSight link and sink drivers that are
+>> >           responsible for transporting and collecting the trace data
+>> >           respectively.  Link and sinks are dynamically aggregated with a trace
+>> >           entity at run time to form a complete trace path.
+>> >
+>> > What part of that becomes invalid with this patch?
+>>
+>> Looking at the new Kconfig, what sink component depend on
+>> CORESIGHT_LINKS_AND_SINKS?
+>
+> How does that affect the description text?  The description text
+> doesn't insinuate any implicit dependencies or non-.
 
-drivers/media/platform/marvell-ccic/mcam-core.o: In function `mccic_register':
-mcam-core.c:(.text+0x2594): undefined reference to `__this_module'
-drivers/media/platform/marvell-ccic/mcam-core.o:(.rodata+0x50): undefined reference to `__this_module'
+Now that the depends are gone there is no correlation between this
+config and sinks.
 
-The problem is that mcam-core.c can not be built both ways at the smae
-time. However, we can make kbuild take care of that by making the core
-driver a separate module, which can be either built-in or loadable
-as needed.
-Making it a separate module requires exporting a few symbols and
-adding the module license from the header.
+>
+>> config CORESIGHT_LINKS
+>
+> Please, not another gratuitous config name change, I've already
+> experienced usage regressions from the CORESIGHT_QCOM_REPLICATOR =>
+> CORESIGHT_DYNAMIC_REPLICATOR change:
 
-Fixes: 0a9c643c8faa ("media: marvel-ccic: re-enable mmp-driver build")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/marvell-ccic/Makefile    | 9 ++++-----
- drivers/media/platform/marvell-ccic/mcam-core.c | 9 ++++++++-
- 2 files changed, 12 insertions(+), 6 deletions(-)
+Defines within subsystems are bound to change as they evolves.  Most
+of the CoreSight subsystem was developed on the OMAP3 based
+beagleboard.  Since then new topologies have emerged and new IP blocks
+came along.  It is only normal that we adjust configuration options to
+reflect the reality of the HW the subsystem is managing.  I can guide
+you through the history of the replicator config name change if you
+want - it is quite logical.  Other than that and until this patchset,
+we haven't modified a single configuration in the 5 years the
+subsystem has existed.  Not bad for all the churn and new IP blocks
+that came in.
 
-diff --git a/drivers/media/platform/marvell-ccic/Makefile b/drivers/media/platform/marvell-ccic/Makefile
-index 05a792c579a2..b3a4d0cdccb8 100644
---- a/drivers/media/platform/marvell-ccic/Makefile
-+++ b/drivers/media/platform/marvell-ccic/Makefile
-@@ -1,6 +1,5 @@
--obj-$(CONFIG_VIDEO_CAFE_CCIC) += cafe_ccic.o
--cafe_ccic-y := cafe-driver.o mcam-core.o
--
--obj-$(CONFIG_VIDEO_MMP_CAMERA) += mmp_camera.o
--mmp_camera-y := mmp-driver.o mcam-core.o
-+obj-$(CONFIG_VIDEO_CAFE_CCIC) += cafe_ccic.o mcam-core.o
-+cafe_ccic-y := cafe-driver.o
- 
-+obj-$(CONFIG_VIDEO_MMP_CAMERA) += mmp_camera.o mcam-core.o
-+mmp_camera-y := mmp-driver.o
-diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/media/platform/marvell-ccic/mcam-core.c
-index 80670eeee142..dfdbd4354b74 100644
---- a/drivers/media/platform/marvell-ccic/mcam-core.c
-+++ b/drivers/media/platform/marvell-ccic/mcam-core.c
-@@ -1720,6 +1720,7 @@ int mccic_irq(struct mcam_camera *cam, unsigned int irqs)
- 	}
- 	return handled;
- }
-+EXPORT_SYMBOL_GPL(mccic_irq);
- 
- /* ---------------------------------------------------------------------- */
- /*
-@@ -1830,7 +1831,7 @@ int mccic_register(struct mcam_camera *cam)
- 	v4l2_device_unregister(&cam->v4l2_dev);
- 	return ret;
- }
--
-+EXPORT_SYMBOL_GPL(mccic_register);
- 
- void mccic_shutdown(struct mcam_camera *cam)
- {
-@@ -1850,6 +1851,7 @@ void mccic_shutdown(struct mcam_camera *cam)
- 	v4l2_ctrl_handler_free(&cam->ctrl_handler);
- 	v4l2_device_unregister(&cam->v4l2_dev);
- }
-+EXPORT_SYMBOL_GPL(mccic_shutdown);
- 
- /*
-  * Power management
-@@ -1868,6 +1870,7 @@ void mccic_suspend(struct mcam_camera *cam)
- 	}
- 	mutex_unlock(&cam->s_mutex);
- }
-+EXPORT_SYMBOL_GPL(mccic_suspend);
- 
- int mccic_resume(struct mcam_camera *cam)
- {
-@@ -1898,4 +1901,8 @@ int mccic_resume(struct mcam_camera *cam)
- 	}
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(mccic_resume);
- #endif /* CONFIG_PM */
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Jonathan Corbet <corbet@lwn.net>");
--- 
-2.9.0
+>
+> https://patchwork.kernel.org/patch/10206023/
+>
+>>          bool "CoreSight Link drivers"
+>>          help
+>>            This enables support for CoreSight link drivers that are responsible
+>>            for transporting trace data from source to sink.  Links are
+>> dynamically
+>>            aggregated with other traces entities at run time to form a
+>> complete trace
+>>            path.
+>
+> Oh, I see, so your point is that LINKS_AND_SINKS doesn't technically
+> build any sink drivers?  That's completely orthogonal to removing a
+> dependency chain:  that just tells me the name was a poor choice in the
+> first place maybe?  I don't see where the Makefile may have built a
+> sink, but it may be before the move to drivers/hwtracing/coresight, or
+> some other reorganization.
+
+Because of the depends property carried by the sink drivers (which we
+are now removing), defining CORESIGHT_LINKS_AND_SINKS was mandatory to
+build sink drivers.  That was accurate 5 years ago with the topologies
+that were available at that time.  Now there is no point in having the
+define, which is why I'm asking you to make this modification.
+
+>
+>> >> 2) Rework CORESIGHT_LINKS_AND_SINKS to be CORESIGHT_FUNNEL and move
+>> >> coresight-replicator.o under CORESIGHT_DYNAMIC_REPLICATOR in the Makefile. I
+>> >> really liked your idea of making the replicator driver intelligent enough to
+>> >> deal with both DT and platform declaration, which merges two driver into one.
+>> >>
+>> >> I'm obviously favouring the second option but recognise it doesn't have to be
+>> >> part of this patchet.  So for this set please rework the help text for
+>> >> CORESIGHT_LINKS_AND_SINKS.  Once we've dealt with this topic we can refactor the
+>> >> replicator driver.
+>> >
+>> > I'd really like to just focus on getting CoreSight to load as modules,
+>> > something for which this patch isn't technically required...
+>>
+>> The only thing I'm asking is that the config description and help text
+>> reflect what the Makefile does.
+>
+> argh, wellll, it's a completely different change, and we're now
+> completely off the modularization topic, and I'm uncomfortable doing
+
+I don't agree with you.  This is a very simple change and I even wrote
+down what needed to be modified.
+
+> reorgs on things I don't understand, renaming CONFIG_s, esp. when
+> others such as the REPLICATOR, since as far as I know, that's also a
+> link??
+
+Correct, a replicator is a link and completely removed from this conversation.
+
+If this is so hard for you then simply don't make the modification - I
+will do it myself, something that will take me about 10 minutes
+(including writing the changelog).
+
+>
+> Kim
