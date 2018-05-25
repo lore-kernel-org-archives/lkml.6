@@ -1,73 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967085AbeEYQLm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:11:42 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:36739 "EHLO
+        id S967171AbeEYQMT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:12:19 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37605 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965666AbeEYQLl (ORCPT
+        with ESMTP id S967068AbeEYQMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:11:41 -0400
+        Fri, 25 May 2018 12:12:17 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: arm@kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Barre <ludovic.barre@st.com>,
-        Olof Johansson <olof@lixom.net>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ARM: stm32: Don't select DMA unconditionally on STM32MP157C
-Date: Fri, 25 May 2018 18:10:20 +0200
-Message-Id: <20180525161051.187324-1-arnd@arndb.de>
+To: arm@kernel.org, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] ARM: shmobile: only call secure_cntvoff_init on SMP builds
+Date: Fri, 25 May 2018 18:10:21 +0200
+Message-Id: <20180525161051.187324-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:YfML3ONVGXTaTj9iaAN/b7P8JTcQbN6CWxIC1H4HYBLmMOaonoW
- hTtSOwpuOkZxs6FnckPL4XIfMU31w0B6zWeEUYcfTftPBI0c2W76WiHseVIiWG3gRYEf0uB
- fKuOAPSadcDPaffPq80B2T7d8QTkHOczpBAOVXKa9tYQ9yjgql3Po4X9yfmbzqqAAqoaQq+
- s/Z1yq79zRAoctBMuJJzw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:qYz2Pecb7ag=:WSScp1Ge/Pt0vfwhklrtEa
- TQvFuAStB/YO7veCdw9soHgsLTxrBNf7YjXjL21etxDCQV+3X2Jzn4Db+oXrdfRcOEU43rWlB
- lm+Bpn4UTCthOYg6b2+QU01GjzY2rEY3LVKFqQt6rTYgclKrxuc6DMe8RUDdXlHVaF5LQQaFt
- kkpDyncLuu7cVab3LNIvuZ53k8FbAySDRX8Q1qDHDv0OvfqXLG6LMppLEE54YfTkZxaKG+Do6
- vBBBmMFN7J0N6X3EtS9SrvQn0RU+EgQaqiRZk45G2JkCIARV5WUQ6Dg2bwTsDUBO7Z4v+aB/R
- iHCF7D77s5jWNV5JYq0n01t0agAQMpvcejp69GRh4ZQJAUrDI6GvE5Mvrg5aF7h2rFXkFeU6I
- BweDQFkALOTQliHvHFcYiqwUnzzpsNkeBEokbGtcS5qrAL2yFvUjXG2o/Vr/ePEdax9HjOaUL
- 7HwFPuCuV8Ltlwa7Wa8m03Dh4JncMyQz3XF44JWNPexfN6ZutYnumxkCaJW5EfPQSFFvgTVPt
- erTDnTkQOBdpJPrWQO8DVwpvq94PPKhQB6K7qGI2bi01nL41hvTM+Fm1FbiDnyutL5Kda5wwd
- lOkhk87m0IfR5YrWFnsT/SaVvqMdeMWAKoPY8jOw2VLEu1/Iy4VUEUs44RGDcN5y5mxIBSkRL
- 7wGndEBLNcjr4VR7bmUzGMt68DyGrMuSXcK7WVB/3h+5pfNJo+Ha3cgZQyeQs/YVJYgE=
+In-Reply-To: <20180525161051.187324-1-arnd@arndb.de>
+References: <20180525161051.187324-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:tFqMGYmqpd1pR9JmWrYP2e90QFG4mMIYNQpNkumNPMw5XvlhsWP
+ EGuElLzacMKhddXe7PxXRHrvKyVLPdALORgcU1dKhAaWAWFlsmYEQ5SUJa7dWpEddc60DHf
+ eb32kp9J3YxBbeIJfs+HCFiAs3IFqU4EHEiGQBbKgLyu4TiGcaysXf41YrRGWlXP3NEfLfE
+ is1wHzSpk2+dVyfHCyaUA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AQGS+dQrUAM=:N4MTO+YHVWs5hI9IKEorJ2
+ yHqh2BI2MwOOTfpAXBvAoe99dl0OOKlbeYBrYEOswvpvLhF/nPG2twsGkI9nxf14kHk+1jvSR
+ TnYo7fUzhTHNpr+AyXTN3Ms5LyPoLu2Z/rF2yq4b2hOc6dK+bhTidlEcHFHkckBnmUo21F3vr
+ dc5+jCh3IoHYnw8KD0XG3f5aZ4i/nP7pPZdsst8cXTRQJUJoDNFSlB6vsFzi4P0UPqjcBp1IW
+ xJpzD5oQfxhTvslaqMPUD0juzPv4pPiBA6Z/o/Cfx1CstPvnUbEHuNw1ML9t5GwrOudu+Q2lx
+ uPEXIdx1ce2NCNmlx2jEHSCE3i8XCMMppjjGPrnUJ70VDtMKrcxr3Ybb80SWdo5QPAqB4Havv
+ qMzz1/zVqLgC9LRFkiTtLexQ99EIVuahdmrD9ntE/kjF9bbk5IacmHorn3XNlBiNHYFNnE8gt
+ 41HtE7NOsaJ/wm4aPBFl8MHZhGGyYGsGqQ+wVgrgdQP1kUxT6/85TOJKK6K6t2U6gatWYPt1w
+ E+GwK+0GtYXqonuCFS8g+J/xvfigJ5Zos+R4/tBOwXUWtmvPDmMLgmkxCtZ3Me0BgQLjFm9ju
+ kIyoLPaeaTyic/HqOz0EMMj1gVofzYlGraS8+Ld3N0xR+tH/r4L7UL/Ct0O5q+tr3EE69dTo8
+ 6wq6XOBsICFuNEowWaKr1VjIY1scdaPwDgs+qChNbt0mwDMoIctNySLwgL4BOnVFS84Q=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch that enabled these had no useful changelog that explains
-why it is done, and it causes a build warning:
+The secure_cntvoff_init() function is not available without CONFIG_SMP,
+leading to a link error on shmobile:
 
-WARNING: unmet direct dependencies detected for STM32_DMA
-  Depends on [n]: DMADEVICES [=n] && (ARCH_STM32 [=y] || COMPILE_TEST [=y])
-  Selected by [y]:
-  - MACH_STM32MP157 [=y] && ARCH_STM32 [=y] && ARCH_MULTI_V7 [=y]
+arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
+setup-rcar-gen2.c:(.init.text+0x18): undefined reference to `secure_cntvoff_init'
 
-Generally, platforms should not select arbitrary drivers, so let's
-just revert that change.
+>From the description in commit 3fd45a136ff6 ("ARM: shmobile: rcar-gen2:
+Make sure CNTVOFF is initialized on CA7/15"), I understand that we
+don't need to call it on non-SMP builds because the boot CPU is always
+initialized by common code, so we can simply avoid the reference by
+checking for CONFIG_SMP.
 
-Fixes: de6037fa207f ("ARM: stm32: Select DMA, DMAMUX and MDMA support on STM32MP157C")
+Fixes: cad160ed0a94 ("ARM: shmobile: Convert file to use cntvoff")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-stm32/Kconfig | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 82a93b8d9ae6..713c068b953f 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -46,9 +46,6 @@ if ARCH_MULTI_V7
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 88fdc1801d90..39085d7a8f37 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -71,7 +71,8 @@ void __init rcar_gen2_timer_init(void)
+ 	void __iomem *base;
+ 	u32 freq;
  
- config MACH_STM32MP157
- 	bool "STMicroelectronics STM32MP157"
--	select STM32_DMA
--	select STM32_DMAMUX
--	select STM32_MDMA
- 	default y
+-	secure_cntvoff_init();
++	if (IS_ENABLED(CONFIG_SMP))
++		secure_cntvoff_init();
  
- endif # ARMv7-A
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
+ 	    of_machine_is_compatible("renesas,r8a77470") ||
 -- 
 2.9.0
