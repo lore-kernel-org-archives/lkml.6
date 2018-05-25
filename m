@@ -1,311 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967396AbeEYQp7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:45:59 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:32773 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967327AbeEYQph (ORCPT
+        id S967418AbeEYQq4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:46:56 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46099 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967398AbeEYQqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:45:37 -0400
-X-Google-Smtp-Source: ADUXVKLnnwMroyQ3KV8g9iWzp4or6mRVoloX/uvkVImlwV3mb4/N7TkNV9L3YyI/V2ZKJqEjbqpRoQ==
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
-Date: Fri, 25 May 2018 09:45:16 -0700
-Message-Id: <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+        Fri, 25 May 2018 12:46:54 -0400
+X-Google-Smtp-Source: AB8JxZrQW+9ACQiZdK7nFmEg5a5gzOISmKoSi5qRabZ9tXZNXLXreJjV+a5GBF6hDacvIEtP2h5D5cl1qqb0vdLKDhw=
+MIME-Version: 1.0
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+ <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
+ <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com> <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
+ <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com>
+In-Reply-To: <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 25 May 2018 09:46:42 -0700
+Message-ID: <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update and add Stingray clock definitions and tables so they match the
-binding document and the latest ASIC datasheet
+On Fri, May 25, 2018 at 9:33 AM <hpa@zytor.com> wrote:
+> On May 25, 2018 9:27:40 AM PDT, Nick Desaulniers <ndesaulniers@google.com>
+wrote:
+> >On Thu, May 24, 2018 at 3:43 PM <hpa@zytor.com> wrote:
+> >> On May 24, 2018 3:31:05 PM PDT, Nick Desaulniers
+> ><ndesaulniers@google.com>
+> >wrote:
+> >> >On Thu, May 24, 2018 at 3:05 PM H. Peter Anvin <hpa@zytor.com>
+> >wrote:
+> >> >> COMPILER AR: "=rm" should NEVER generate worse code than "=r".
+> >That
+> >> >is
+> >> >> unequivocally a compiler bug.
+> >> >
+> >> >Filed: https://bugs.llvm.org/show_bug.cgi?id=37583
+> >> >
+> >> >> >> You are claiming it doesn't buy us anything, but you are only
+> >> >looking
+> >> >at
+> >> >> > the paravirt case which is kind of "special" (in the short bus
+> >kind
+> >> >of
+> >> >way),
+> >> >> >
+> >> >> > That's fair.  Is another possible solution to have paravirt
+> >maybe
+> >> >not
+> >> >use
+> >> >> > native_save_fl() then, but its own
+> >> >non-static-inline-without-m-constraint
+> >> >> > implementation?
+> >> >
+> >> >> KERNEL AR: change native_save_fl() to an extern inline with an
+> >> >assembly
+> >> >> out-of-line implementation, to satisfy the paravirt requirement
+> >that
+> >> >no
+> >> >> GPRs other than %rax are clobbered.
+> >> >
+> >> >i'm happy to add that, do you have a recommendation if it should go
+> >in
+> >> >an
+> >> >existing .S file or a new one (and if so where/what shall I call
+> >it?).
+> >
+> >> How about irqflags.c since that is what the .h file is called.
+> >
+> >> It should simply be:
+> >
+> >> push %rdi
+> >> popf
+> >> ret
+> >
+> >> pushf
+> >> pop %rax
+> >> ret
+> >
+> >> ... but with all the regular assembly decorations, of course.
+> >
+> >Something like the following?
+> >
+> >
+> >diff --git a/arch/x86/kernel/irqflags.c b/arch/x86/kernel/irqflags.c
+> >new file mode 100644
+> >index 000000000000..59dc21bd3327
+> >--- /dev/null
+> >+++ b/arch/x86/kernel/irqflags.c
+> >@@ -0,0 +1,24 @@
+> >+#include <asm/asm.h>
+> >+
+> >+extern unsigned long native_save_fl(void);
+> >+extern void native_restore_fl(unsigned long flags);
+> >+
+> >+asm(
+> >+".pushsection .text;"
+> >+".global native_save_fl;"
+> >+".type native_save_fl, @function;"
+> >+"native_save_fl:"
+> >+"pushf;"
+> >+"pop %" _ASM_AX ";"
+> >+"ret;"
+> >+".popsection");
+> >+
+> >+asm(
+> >+".pushsection .text;"
+> >+".global native_restore_fl;"
+> >+".type native_restore_fl, @function;"
+> >+"native_restore_fl:"
+> >+"push %" _ASM_DI ";"
+> >+"popf;"
+> >+"ret;"
+> >+".popsection");
+> >
+> >And change the declaration in arch/x86/include/asm/irqflags.h to:
+> >+extern inline unsigned long native_save_fl(void);
+> >+extern inline void native_restore_fl(unsigned long flags);
+> >
+> >This seems to work, but
+> >1. arch/x86/boot/compressed/misc.o warns that native_save_fl() is never
+> >defined (arch_local_save_flags() uses it).  Does that mean
+> >arch_local_save_flags(), and friends would also have to move to the
+> >newly
+> >created .c file as well?
+> >2. `extern inline` doesn't inline any instances (from what I can tell
+> >from
+> >disassembling vmlinux).  I think this is strictly worse. Don't we only
+> >want
+> >pv_irq_ops.save_fl to be non-inlined in a way that no stack protector
+> >can
+> >be added? If that's the case, should my assembly based implementation
+> >have
+> >a different identifier (`native_save_fl_paravirt` or something). That
+> >would
+> >also fix point #1 above. But now the paravirt code has its own copy of
+> >the
+> >function.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
- include/dt-bindings/clock/bcm-sr.h |  24 +++++--
- 2 files changed, 137 insertions(+), 22 deletions(-)
+> Sorry, I meant irqflags.S.
 
-diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
-index adc74f4..7b9efc0 100644
---- a/drivers/clk/bcm/clk-sr.c
-+++ b/drivers/clk/bcm/clk-sr.c
-@@ -56,8 +56,8 @@ static const struct iproc_pll_ctrl sr_genpll0 = {
- };
- 
- static const struct iproc_clk_ctrl sr_genpll0_clk[] = {
--	[BCM_SR_GENPLL0_SATA_CLK] = {
--		.channel = BCM_SR_GENPLL0_SATA_CLK,
-+	[BCM_SR_GENPLL0_125M_CLK] = {
-+		.channel = BCM_SR_GENPLL0_125M_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
-@@ -102,6 +102,65 @@ static int sr_genpll0_clk_init(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct iproc_pll_ctrl sr_genpll2 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 1, 13, 12),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl sr_genpll2_clk[] = {
-+	[BCM_SR_GENPLL2_NIC_CLK] = {
-+		.channel = BCM_SR_GENPLL2_NIC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+	[BCM_SR_GENPLL2_TS_500_CLK] = {
-+		.channel = BCM_SR_GENPLL2_TS_500_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL2_125_NITRO_CLK] = {
-+		.channel = BCM_SR_GENPLL2_125_NITRO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL2_CHIMP_CLK] = {
-+		.channel = BCM_SR_GENPLL2_CHIMP_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL2_NIC_FLASH_CLK] = {
-+		.channel = BCM_SR_GENPLL2_NIC_FLASH_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
-+	[BCM_SR_GENPLL2_FS4_CLK] = {
-+		.channel = BCM_SR_GENPLL2_FS4_CLK,
-+		.enable = ENABLE_VAL(0x4, 11, 5, 17),
-+		.mdiv = REG_VAL(0x1c, 20, 9),
-+	},
-+};
-+
-+static int sr_genpll2_clk_init(struct platform_device *pdev)
-+{
-+	iproc_pll_clk_setup(pdev->dev.of_node,
-+			    &sr_genpll2, NULL, 0, sr_genpll2_clk,
-+			    ARRAY_SIZE(sr_genpll2_clk));
-+	return 0;
-+}
-+
- static const struct iproc_pll_ctrl sr_genpll3 = {
- 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
- 		IPROC_CLK_PLL_NEEDS_SW_CFG,
-@@ -157,6 +216,30 @@ static const struct iproc_clk_ctrl sr_genpll4_clk[] = {
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
- 	},
-+	[BCM_SR_GENPLL4_TPIU_PLL_CLK] = {
-+		.channel = BCM_SR_GENPLL4_TPIU_PLL_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL4_NOC_CLK] = {
-+		.channel = BCM_SR_GENPLL4_NOC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL4_CHCLK_FS4_CLK] = {
-+		.channel = BCM_SR_GENPLL4_CHCLK_FS4_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK] = {
-+		.channel = BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
- };
- 
- static int sr_genpll4_clk_init(struct platform_device *pdev)
-@@ -181,18 +264,21 @@ static const struct iproc_pll_ctrl sr_genpll5 = {
- };
- 
- static const struct iproc_clk_ctrl sr_genpll5_clk[] = {
--	[BCM_SR_GENPLL5_FS_CLK] = {
--		.channel = BCM_SR_GENPLL5_FS_CLK,
--		.flags = IPROC_CLK_AON,
-+	[BCM_SR_GENPLL5_FS4_HF_CLK] = {
-+		.channel = BCM_SR_GENPLL5_FS4_HF_CLK,
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
- 	},
--	[BCM_SR_GENPLL5_SPU_CLK] = {
--		.channel = BCM_SR_GENPLL5_SPU_CLK,
--		.flags = IPROC_CLK_AON,
--		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+	[BCM_SR_GENPLL5_CRYPTO_AE_CLK] = {
-+		.channel = BCM_SR_GENPLL5_CRYPTO_AE_CLK,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 12),
- 		.mdiv = REG_VAL(0x18, 10, 9),
- 	},
-+	[BCM_SR_GENPLL5_RAID_AE_CLK] = {
-+		.channel = BCM_SR_GENPLL5_RAID_AE_CLK,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
- };
- 
- static int sr_genpll5_clk_init(struct platform_device *pdev)
-@@ -214,24 +300,30 @@ static const struct iproc_pll_ctrl sr_lcpll0 = {
- };
- 
- static const struct iproc_clk_ctrl sr_lcpll0_clk[] = {
--	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
--		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
-+	[BCM_SR_LCPLL0_SATA_REFP_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFP_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
- 		.mdiv = REG_VAL(0x14, 0, 9),
- 	},
--	[BCM_SR_LCPLL0_USB_REF_CLK] = {
--		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
-+	[BCM_SR_LCPLL0_SATA_REFN_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFN_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 8, 2, 14),
- 		.mdiv = REG_VAL(0x14, 10, 9),
- 	},
--	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
--		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
-+	[BCM_SR_LCPLL0_SATA_350_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_350_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 9, 3, 15),
- 		.mdiv = REG_VAL(0x14, 20, 9),
- 	},
-+	[BCM_SR_LCPLL0_SATA_500_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_500_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 10, 4, 16),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
- };
- 
- static int sr_lcpll0_clk_init(struct platform_device *pdev)
-@@ -259,6 +351,18 @@ static const struct iproc_clk_ctrl sr_lcpll1_clk[] = {
- 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
- 		.mdiv = REG_VAL(0x14, 0, 9),
- 	},
-+	[BCM_SR_LCPLL1_USB_REF_CLK] = {
-+		.channel = BCM_SR_LCPLL1_USB_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 8, 2, 14),
-+		.mdiv = REG_VAL(0x14, 10, 9),
-+	},
-+	[BCM_SR_LCPLL1_CRMU_TS_CLK] = {
-+		.channel = BCM_SR_LCPLL1_CRMU_TS_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 9, 3, 15),
-+		.mdiv = REG_VAL(0x14, 20, 9),
-+	},
- };
- 
- static int sr_lcpll1_clk_init(struct platform_device *pdev)
-@@ -298,6 +402,7 @@ static int sr_lcpll_pcie_clk_init(struct platform_device *pdev)
- 
- static const struct of_device_id sr_clk_dt_ids[] = {
- 	{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init },
-+	{ .compatible = "brcm,sr-genpll2", .data = sr_genpll2_clk_init },
- 	{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init },
- 	{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init },
- 	{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init },
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-index cff6c6f..419011b 100644
---- a/include/dt-bindings/clock/bcm-sr.h
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -35,7 +35,7 @@
- 
- /* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
- #define BCM_SR_GENPLL0			0
--#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_125M_CLK		1
- #define BCM_SR_GENPLL0_SCR_CLK		2
- #define BCM_SR_GENPLL0_250M_CLK		3
- #define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-@@ -50,9 +50,11 @@
- /* GENPLL 2 clock channel ID NITRO MHB*/
- #define BCM_SR_GENPLL2			0
- #define BCM_SR_GENPLL2_NIC_CLK		1
--#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_TS_500_CLK	2
- #define BCM_SR_GENPLL2_125_NITRO_CLK	3
- #define BCM_SR_GENPLL2_CHIMP_CLK	4
-+#define BCM_SR_GENPLL2_NIC_FLASH_CLK	5
-+#define BCM_SR_GENPLL2_FS4_CLK		6
- 
- /* GENPLL 3 HSLS clock channel ID */
- #define BCM_SR_GENPLL3			0
-@@ -62,11 +64,16 @@
- /* GENPLL 4 SCR clock channel ID */
- #define BCM_SR_GENPLL4			0
- #define BCM_SR_GENPLL4_CCN_CLK		1
-+#define BCM_SR_GENPLL4_TPIU_PLL_CLK	2
-+#define BCM_SR_GENPLL4_NOC_CLK		3
-+#define BCM_SR_GENPLL4_CHCLK_FS4_CLK	4
-+#define BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK	5
- 
- /* GENPLL 5 FS4 clock channel ID */
- #define BCM_SR_GENPLL5			0
--#define BCM_SR_GENPLL5_FS_CLK		1
--#define BCM_SR_GENPLL5_SPU_CLK		2
-+#define BCM_SR_GENPLL5_FS4_HF_CLK	1
-+#define BCM_SR_GENPLL5_CRYPTO_AE_CLK	2
-+#define BCM_SR_GENPLL5_RAID_AE_CLK	3
- 
- /* GENPLL 6 NITRO clock channel ID */
- #define BCM_SR_GENPLL6			0
-@@ -74,13 +81,16 @@
- 
- /* LCPLL0  clock channel ID */
- #define BCM_SR_LCPLL0			0
--#define BCM_SR_LCPLL0_SATA_REF_CLK	1
--#define BCM_SR_LCPLL0_USB_REF_CLK	2
--#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+#define BCM_SR_LCPLL0_SATA_REFP_CLK	1
-+#define BCM_SR_LCPLL0_SATA_REFN_CLK	2
-+#define BCM_SR_LCPLL0_SATA_350_CLK	3
-+#define BCM_SR_LCPLL0_SATA_500_CLK	4
- 
- /* LCPLL1  clock channel ID */
- #define BCM_SR_LCPLL1			0
- #define BCM_SR_LCPLL1_WAN_CLK		1
-+#define BCM_SR_LCPLL1_USB_REF_CLK	2
-+#define BCM_SR_LCPLL1_CRMU_TS_CLK	3
- 
- /* LCPLL PCIE  clock channel ID */
- #define BCM_SR_LCPLL_PCIE		0
+> It still should be available as as inline, however, but now "extern
+inline".
+
+Heh, ok I was confused.  But in testing, I had also created:
+
+arch/x86/lib/irqflags.S
+/* SPDX-License-Identifier: GPL-2.0 */
+
+#include <asm/asm.h>
+#include <asm/export.h>
+#include <linux/linkage.h>
+
+/*
+  * unsigned long native_save_fl(void)
+  */
+ENTRY(native_save_fl)
+pushf
+pop %_ASM_AX
+ret
+ENDPROC(native_save_fl)
+EXPORT_SYMBOL(native_save_fl)
+
+/*
+  * void native_restore_fl(unsigned long flags)
+  * %rdi: flags
+  */
+ENTRY(native_restore_fl)
+push %_ASM_DI
+popf
+ret
+ENDPROC(native_restore_fl)
+EXPORT_SYMBOL(native_restore_fl)
+
+The issue is that this still has issues 1 & 2 listed earlier (and the
+disassembly has a lot more trailing nops added).
+
+When you say
+
+> It still should be available as as inline, however, but now "extern
+inline".
+
+Am I understanding correctly that native_save_fl should be inlined into all
+call sites (modulo the problematic pv_irq_ops.save_fl case)?  Because for
+these two assembly implementations, it's not, but maybe there's something
+missing in my implementation?
 -- 
-2.1.4
+Thanks,
+~Nick Desaulniers
