@@ -1,92 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S972114AbeEYBci (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 21:32:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54334 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965152AbeEYBcg (ORCPT
+        id S972135AbeEYBiZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 21:38:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51690 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965214AbeEYBiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 21:32:36 -0400
+        Thu, 24 May 2018 21:38:22 -0400
+Date: Fri, 25 May 2018 02:38:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Chad Dupuis <chad.dupuis@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the scsi tree with the net-next tree
+Message-ID: <20180525013810.GG4828@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 25 May 2018 09:32:34 +0800
-From: cang@codeaurora.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        mgautam@codeaurora.org, kishon@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] phy: Power on PHY before start Serdes
- configuration
-In-Reply-To: <dd6b1e3d-e894-e40f-452a-2dec2421b1c7@codeaurora.org>
-References: <20180523034712.3420-1-cang@codeaurora.org>
- <20180523034712.3420-2-cang@codeaurora.org>
- <dd6b1e3d-e894-e40f-452a-2dec2421b1c7@codeaurora.org>
-Message-ID: <7d45dbec17a9bbf48159c6857f89a65a@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SKW69dzTt3T8RCN0"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-24 16:17, Vivek Gautam wrote:
-> Hi Can,
-> 
-> 
-> On 5/23/2018 9:17 AM, Can Guo wrote:
->> PHYs should be powered on before register configuration starts.
->> 
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
-> 
-> Thanks for fixing this.
-> 
->>   drivers/phy/qualcomm/phy-qcom-qmp.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->> 
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c 
->> b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> index 97ef942..9bfdba1 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> @@ -1000,6 +1000,12 @@ static int qcom_qmp_phy_com_init(struct 
->> qcom_qmp *qmp)
->>   			     SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
->>   	}
->>   +	/*
->> +	 * Pull out PHY from POWER DOWN state.
->> +	 * This is active low enable signal to power-down PHY.
->> +	 */
->> +	qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
->> +
-> 
-> Thanks. This is in sync with the requirements of USB and UFS phys
-> across platforms
-> using this qmp phy driver, viz. 8996 and 845.
-> However, as discussed with you offline the PCIe phy has different 
-> requirement.
-> PCIe phy on 8996 doesn't need the QPHY_POWER_DOWN_CONTROL (pcs level 
-> power down)
-> before configuring the phys. Rather COM_POWER_DOWN_CONTROL is enough.
-> It needs the QPHY_POWER_DOWN_CONTROL after programming the
-> serdes, tx, rx, and pcs blocks, and right before doing SW_RESET, and
-> START_CONTROL.
-> 
-> So we should just do the above QPHY_POWER_DOWN_CONTROL in
-> qcom_qmp_phy_com_init() only for non-PCIe phys at the moment, and
-> skip the QPHY_POWER_DOWN_CONTROL in qcom_qmp_phy_init()
-> for these non-PCIe phys.
-> 
-> Thanks
-> Vivek
-> 
 
-Sure Vivek, I shall make the change per we talked.
+--SKW69dzTt3T8RCN0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-Can
+Hi James,
 
->>   	/* Serdes configuration */
->>   	qcom_qmp_phy_configure(serdes, cfg->regs, cfg->serdes_tbl,
->>   			       cfg->serdes_tbl_num);
+Today's linux-next merge of the scsi tree got a conflict in:
+
+  drivers/scsi/qedf/qedf.h
+
+between commit:
+
+  8673daf4f55bf3b91 ("qedf: Add get_generic_tlv_data handler.")
+
+=66rom the net-next tree and commit:
+
+  4b9b7fabb39b3e9d7 ("scsi: qedf: Improve firmware debug dump handling")
+
+=66rom the scsi tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/scsi/qedf/qedf.h
+index cabb6af60fb8,2372a40326f8..000000000000
+--- a/drivers/scsi/qedf/qedf.h
++++ b/drivers/scsi/qedf/qedf.h
+@@@ -501,9 -499,8 +504,10 @@@ extern int qedf_post_io_req(struct qedf
+  extern void qedf_process_seq_cleanup_compl(struct qedf_ctx *qedf,
+  	struct fcoe_cqe *cqe, struct qedf_ioreq *io_req);
+  extern int qedf_send_flogi(struct qedf_ctx *qedf);
+ +extern void qedf_get_protocol_tlv_data(void *dev, void *data);
+  extern void qedf_fp_io_handler(struct work_struct *work);
+ +extern void qedf_get_generic_tlv_data(void *dev, struct qed_generic_tlvs =
+*data);
++ extern void qedf_wq_grcdump(struct work_struct *work);
+ =20
+  #define FCOE_WORD_TO_BYTE  4
+  #define QEDF_MAX_TASK_NUM	0xFFFF
+
+--SKW69dzTt3T8RCN0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsHaQEACgkQJNaLcl1U
+h9BCBQf9HYovTcLyzEevPpMrSMw/PDiJEa4qIOuKgyLZpYpYp2B0pyj1f0ZdBaQU
+92hg5u8EfxBAS61uL0PErXluj/YZZCRqe0Nzej/tE++FnqNI/4PQNLnMFVjXOsll
+rR4fmLZ6cxtcwYJPn0pu8Ld4tosMhQnYKyoiS8Atty0G6CIPnPyAwrrzcQEV14gN
+jJddhR3bZEwdc8n6U8eCgj35KFHFItxSU1QXW6zhOTJD+tBvoeZjErG+VgB3U2BK
+9m1nl4W5iukWOK9GH9D1sLFk994hMRAPTI0KfPdDD817REKAzznVDgokDZvjC9qT
+8JPi0x+Q/m0+CdvP66QPIqWgkWptrQ==
+=a1U6
+-----END PGP SIGNATURE-----
+
+--SKW69dzTt3T8RCN0--
