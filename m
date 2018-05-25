@@ -1,64 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968080AbeEYTs5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:48:57 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33855 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967784AbeEYTs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:48:56 -0400
-X-Google-Smtp-Source: AB8JxZq2GUMKpPfSyLNKQq2XT2uDEL+ziWovjGYMaeZZs5/s9wWEqFmLZbga65nI7oEa861MvB3ClA==
-Date: Fri, 25 May 2018 12:48:54 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: ufo19890607 <ufo19890607@gmail.com>
-cc: akpm@linux-foundation.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v5] Refactor part of the oom report in dump_header
-In-Reply-To: <1527213613-7922-1-git-send-email-ufo19890607@gmail.com>
-Message-ID: <alpine.DEB.2.21.1805251245210.158701@chino.kir.corp.google.com>
-References: <1527213613-7922-1-git-send-email-ufo19890607@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S968233AbeEYTtV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:49:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967858AbeEYTtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 15:49:18 -0400
+Date: Fri, 25 May 2018 12:49:16 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2] f2fs: let fstrim issue discard commands in lower
+ priority
+Message-ID: <20180525194916.GA52740@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180525051031.36443-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525051031.36443-1-jaegeuk@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018, ufo19890607 wrote:
+The fstrim gathers huge number of large discard commands, and tries to issue
+without IO awareness, which results in long user-perceive IO latencies on
+READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
+seconds due to long discard latency.
 
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
-> 
-> The dump_header does not print the memcg's name when the system
-> oom happened, so users cannot locate the certain container which
-> contains the task that has been killed by the oom killer.
-> 
-> I follow the advices of David Rientjes and Michal Hocko, and refactor
-> part of the oom report in a backwards compatible way. After this patch,
-> users can get the memcg's path from the oom report and check the certain
-> container more quickly.
-> 
+This patch limits the maximum size to 2MB per candidate, and check IO congestion
+when issuing them to disk.
 
-I like the direction you are taking.  A couple notes:
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
 
- - you may find it easier to declare an array of const char * for each
-   constraint:
+Change log from v1:
+ - wait all discard bios in put_super & congested case in trimfs
 
-	static const char * const oom_constraint_text[] = {
-		[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
-		[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
-		[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
-		[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
-	};
+ fs/f2fs/f2fs.h    |   4 +-
+ fs/f2fs/segment.c | 139 +++++++++++++++++++++++++---------------------
+ 2 files changed, 78 insertions(+), 65 deletions(-)
 
- - we need to eliminate all the usage of pr_cont() because otherwise we
-   can still get interleaving in the kernel log (the single line output
-   should always be a complete single line that can be parsed by
-   userspace).
-
- - to generate a single line output, I think you need a call to a
-   function in mm/memcontrol.c when is_memcg_oom(oc) is true and
-   otherwise a function in mm/oom_kill.c when false.   
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3cc56b4df03f..6e0677aff8ca 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -178,6 +178,7 @@ enum {
+ 
+ #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+ #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
++#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+ #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+ #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+ #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+@@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+ static inline bool __is_discard_mergeable(struct discard_info *back,
+ 						struct discard_info *front)
+ {
+-	return back->lstart + back->len == front->lstart;
++	return (back->lstart + back->len == front->lstart) &&
++		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+ }
+ 
+ static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c67d92bf2968..0150719e580d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	return 0;
+ }
+ 
+-static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+-					struct discard_policy *dpolicy,
+-					unsigned int start, unsigned int end)
+-{
+-	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+-	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+-	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+-	struct discard_cmd *dc;
+-	struct blk_plug plug;
+-	int issued;
+-
+-next:
+-	issued = 0;
+-
+-	mutex_lock(&dcc->cmd_lock);
+-	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+-
+-	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
+-					NULL, start,
+-					(struct rb_entry **)&prev_dc,
+-					(struct rb_entry **)&next_dc,
+-					&insert_p, &insert_parent, true);
+-	if (!dc)
+-		dc = next_dc;
+-
+-	blk_start_plug(&plug);
+-
+-	while (dc && dc->lstart <= end) {
+-		struct rb_node *node;
+-
+-		if (dc->len < dpolicy->granularity)
+-			goto skip;
+-
+-		if (dc->state != D_PREP) {
+-			list_move_tail(&dc->list, &dcc->fstrim_list);
+-			goto skip;
+-		}
+-
+-		__submit_discard_cmd(sbi, dpolicy, dc);
+-
+-		if (++issued >= dpolicy->max_requests) {
+-			start = dc->lstart + dc->len;
+-
+-			blk_finish_plug(&plug);
+-			mutex_unlock(&dcc->cmd_lock);
+-
+-			schedule();
+-
+-			goto next;
+-		}
+-skip:
+-		node = rb_next(&dc->rb_node);
+-		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+-
+-		if (fatal_signal_pending(current))
+-			break;
+-	}
+-
+-	blk_finish_plug(&plug);
+-	mutex_unlock(&dcc->cmd_lock);
+-}
+-
+ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 					struct discard_policy *dpolicy)
+ {
+@@ -1341,7 +1279,18 @@ static unsigned int __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
+ static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
+ 						struct discard_policy *dpolicy)
+ {
+-	__wait_discard_cmd_range(sbi, dpolicy, 0, UINT_MAX);
++	struct discard_policy dp;
++
++	if (dpolicy) {
++		__wait_discard_cmd_range(sbi, dpolicy, 0, UINT_MAX);
++		return;
++	}
++
++	/* wait all */
++	init_discard_policy(&dp, DPOLICY_FSTRIM, 1);
++	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
++	init_discard_policy(&dp, DPOLICY_UMOUNT, 1);
++	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+ }
+ 
+ /* This should be covered by global mutex, &sit_i->sentry_lock */
+@@ -1389,8 +1338,9 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+ 	init_discard_policy(&dpolicy, DPOLICY_UMOUNT, dcc->discard_granularity);
+ 	__issue_discard_cmd(sbi, &dpolicy);
+ 	dropped = __drop_discard_cmd(sbi);
+-	__wait_all_discard_cmd(sbi, &dpolicy);
+ 
++	/* just to make sure there is no pending discard commands */
++	__wait_all_discard_cmd(sbi, NULL);
+ 	return dropped;
+ }
+ 
+@@ -2397,6 +2347,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	return has_candidate;
+ }
+ 
++static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
++					struct discard_policy *dpolicy,
++					unsigned int start, unsigned int end)
++{
++	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
++	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
++	struct rb_node **insert_p = NULL, *insert_parent = NULL;
++	struct discard_cmd *dc;
++	struct blk_plug plug;
++	int issued;
++
++next:
++	issued = 0;
++
++	mutex_lock(&dcc->cmd_lock);
++	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
++
++	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
++					NULL, start,
++					(struct rb_entry **)&prev_dc,
++					(struct rb_entry **)&next_dc,
++					&insert_p, &insert_parent, true);
++	if (!dc)
++		dc = next_dc;
++
++	blk_start_plug(&plug);
++
++	while (dc && dc->lstart <= end) {
++		struct rb_node *node;
++
++		if (dc->len < dpolicy->granularity)
++			goto skip;
++
++		if (dc->state != D_PREP) {
++			list_move_tail(&dc->list, &dcc->fstrim_list);
++			goto skip;
++		}
++
++		__submit_discard_cmd(sbi, dpolicy, dc);
++
++		if (++issued >= dpolicy->max_requests) {
++			start = dc->lstart + dc->len;
++
++			blk_finish_plug(&plug);
++			mutex_unlock(&dcc->cmd_lock);
++			__wait_all_discard_cmd(sbi, NULL);
++			congestion_wait(BLK_RW_ASYNC, HZ/50);
++			goto next;
++		}
++skip:
++		node = rb_next(&dc->rb_node);
++		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
++
++		if (fatal_signal_pending(current))
++			break;
++	}
++
++	blk_finish_plug(&plug);
++	mutex_unlock(&dcc->cmd_lock);
++}
++
+ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ {
+ 	__u64 start = F2FS_BYTES_TO_BLK(range->start);
+-- 
+2.17.0.441.gb46fe60e1d-goog
