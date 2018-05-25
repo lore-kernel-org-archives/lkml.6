@@ -1,66 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967328AbeEYQk3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:40:29 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41612 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967260AbeEYQk1 (ORCPT
+        id S967287AbeEYQnL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:43:11 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45185 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967189AbeEYQnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:40:27 -0400
-X-Google-Smtp-Source: ADUXVKIVEFEAeqw2hUeXyYDh3/czEViN9d0V+388WaWTcgixHfsXrWdIrJlVVjqO3Urxq2o1rr6Mfng5/wqJT3utVHE=
+        Fri, 25 May 2018 12:43:10 -0400
+X-Google-Smtp-Source: AB8JxZoOfjokrf+tMpWl0j/MBXNkzGDqxx9sGHYSrSVs3rWtAOY/WgixZ8tZAKezK0MBUX1OElpH3A==
+Date: Fri, 25 May 2018 10:43:06 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, sudeep.holla@arm.com, frowand.list@gmail.com,
+        coresight@lists.linaro.org, mark.rutland@arm.com
+Subject: Re: [PATCH 08/11] coresight: Add generic TMC sg table framework
+Message-ID: <20180525164306.GA13430@xps15>
+References: <1526661567-4578-1-git-send-email-suzuki.poulose@arm.com>
+ <1526661567-4578-9-git-send-email-suzuki.poulose@arm.com>
+ <20180523202552.GA4609@xps15>
+ <21fef51b-2afe-1a2c-6006-5cf3de4e74e8@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180525153118.3015806-1-arnd@arndb.de>
-References: <20180525153118.3015806-1-arnd@arndb.de>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Fri, 25 May 2018 18:40:26 +0200
-Message-ID: <CAO-hwJL6BnUY6TONLSCpsPvt00FnawMa0xDZcLD_fTcdnp5Q6Q@mail.gmail.com>
-Subject: Re: [PATCH] HID: steam: select CONFIG_POWER_SUPPLY
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21fef51b-2afe-1a2c-6006-5cf3de4e74e8@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 5:30 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> Using the power supply APIs requires selecting the appropriate
-> Kconfig symbol, otherwise we get this build failure:
->
-> drivers/hid/hid-steam.o: In function `steam_unregister':
-> hid-steam.c:(.text+0x1cc): undefined reference to `power_supply_unregister'
-> drivers/hid/hid-steam.o: In function `steam_battery_get_property':
-> hid-steam.c:(.text+0x2d2): undefined reference to `power_supply_get_drvdata'
-> drivers/hid/hid-steam.o: In function `steam_raw_event':
-> hid-steam.c:(.text+0xcba): undefined reference to `power_supply_changed'
-> drivers/hid/hid-steam.o: In function `steam_register':
-> hid-steam.c:(.text+0x13e3): undefined reference to `power_supply_register'
-> hid-steam.c:(.text+0x13fe): undefined reference to `power_supply_powers'
->
-> Fixes: f82719790751 ("HID: steam: add battery device.")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Fri, May 25, 2018 at 05:07:07PM +0100, Suzuki K Poulose wrote:
+> On 23/05/18 21:25, Mathieu Poirier wrote:
+> >On Fri, May 18, 2018 at 05:39:24PM +0100, Suzuki K Poulose wrote:
+> >>This patch introduces a generic sg table data structure and
+> >>associated operations. An SG table can be used to map a set
+> >>of Data pages where the trace data could be stored by the TMC
+> >>ETR. The information about the data pages could be stored in
+> >>different formats, depending on the type of the underlying
+> >>SG mechanism (e.g, TMC ETR SG vs Coresight CATU). The generic
+> >>structure provides book keeping of the pages used for the data
+> >>as well as the table contents. The table should be filled by
+> >>the user of the infrastructure.
+> >>
+> >>A table can be created by specifying the number of data pages
+> >>as well as the number of table pages required to hold the
+> >>pointers, where the latter could be different for different
+> >>types of tables. The pages are mapped in the appropriate dma
+> >>data direction mode (i.e, DMA_TO_DEVICE for table pages
+> >>and DMA_FROM_DEVICE for data pages).  The framework can optionally
+> >>accept a set of allocated data pages (e.g, perf ring buffer) and
+> >>map them accordingly. The table and data pages are vmap'ed to allow
+> >>easier access by the drivers. The framework also provides helpers to
+> >>sync the data written to the pages with appropriate directions.
+> >>
+> >>This will be later used by the TMC ETR SG unit and CATU.
+> >>
+> >>Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> >>Changes since v1:
+> >>  - Address code style issues, more comments
+> >>---
+> >>  drivers/hwtracing/coresight/coresight-tmc-etr.c | 290 ++++++++++++++++++++++++
+> >>  drivers/hwtracing/coresight/coresight-tmc.h     |  50 ++++
+> >>  2 files changed, 340 insertions(+)
+> >>
+> >>diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> >>index 9780798..1e844f8 100644
+> >>--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> >>+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> >>@@ -17,9 +17,299 @@
+> 
+> 
+> >>+static inline dma_addr_t tmc_sg_table_base_paddr(struct tmc_sg_table *sg_table)
+> >>+{
+> >>+	if (WARN_ON(!sg_table->data_pages.pages[0]))
+> >>+		return 0;
+> >>+	return sg_table->table_daddr;
+> >>+}
+> >>+
+> >>+static inline void *tmc_sg_table_base_vaddr(struct tmc_sg_table *sg_table)
+> >>+{
+> >>+	if (WARN_ON(!sg_table->data_pages.pages[0]))
+> >>+		return NULL;
+> >>+	return sg_table->table_vaddr;
+> >>+}
+> >
+> >The above two functions deal with DMA'able and virtual addresses for the table
+> >page buffer.  Yet the test in the WARN_ON is done on the data page array.
+> >Shouldn't this be sg_table->table_pages.pages[0] instead?
+> 
+> The table is as good as empty if there are no data pages associated with
+> the table. Hence the data_pages check.
 
-Looks good:
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+That is correct.  On the flip side you can't have data_pages without table_pages
+and vice versa, hence my comment.
 
-> ---
->  drivers/hid/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 8a865e3ccea6..a49a10437c40 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -848,6 +848,7 @@ config HID_SPEEDLINK
->  config HID_STEAM
->         tristate "Steam Controller support"
->         depends on HID
-> +       select POWER_SUPPLY
->         ---help---
->         Say Y here if you have a Steam Controller if you want to use it
->         without running the Steam Client. It supports both the wired and
-> --
-> 2.9.0
->
+> 
+> >
+> >If not please add a comment justifying your position so that someone else
+> >looking at the code does't end up thinking the same in a year from now.
+> 
+> I will add a comment to reflect the above.
+> 
+> >
+> >>+
+> >>+static inline void *
+> >>+tmc_sg_table_data_vaddr(struct tmc_sg_table *sg_table)
+> >>+{
+> >>+	if (WARN_ON(!sg_table->data_pages.nr_pages))
+> >>+		return 0;
+> >>+	return sg_table->data_vaddr;
+> >>+}
+> >
+> >I see that tmc_sg_table_base_vaddr() and tmc_sg_table_data_vaddr() are both
+> >returning the virtual address of the contiguous buffer for table and data
+> >respectively.  Yet there is a discrepency in the naming convention.  I would
+> >have expected tmc_sg_table_base_vaddr() and tmc_sg_data_base_vaddr() so that
+> >there is a little symmetry between them.
+> 
+> Agree. I will fix it.
+> 
+> Suzuki
