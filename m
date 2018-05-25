@@ -1,49 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965604AbeEYKNI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:13:08 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55268 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936026AbeEYKNG (ORCPT
+        id S936099AbeEYKOS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:14:18 -0400
+Received: from mail-pg0-f48.google.com ([74.125.83.48]:46696 "EHLO
+        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935638AbeEYKOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:13:06 -0400
-Date: Fri, 25 May 2018 12:12:55 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: PM / suspend / s2idle: avoiding splats on RT
-Message-ID: <20180525101255.htxgtjd3efunlfcq@linutronix.de>
-References: <20180525094648.15464-1-bigeasy@linutronix.de>
- <CAJZ5v0j9hjASBOyrkCQ1CxF812THJZOHahJwpcmyC3XC4Fr6xA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0j9hjASBOyrkCQ1CxF812THJZOHahJwpcmyC3XC4Fr6xA@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+        Fri, 25 May 2018 06:14:16 -0400
+X-Google-Smtp-Source: AB8JxZpGBk+zCKX19xf+/0+9ah41JovDkLygARqVLKBYadO/JyTeKOX1AQiy60rmzNZfqgY9qrTvoA==
+From: Yafang Shao <laoar.shao@gmail.com>
+To: songliubraving@fb.com
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v2 net-next] tcp: use data length instead of skb->len in tcp_probe
+Date: Fri, 25 May 2018 18:14:05 +0800
+Message-Id: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-25 12:05:31 [+0200], Rafael J. Wysocki wrote:
-> On Fri, May 25, 2018 at 11:46 AM, Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> > Patch #1 is a repost with the s2idle bits included. I tested via
-> >         echo s2idle > mem_sleep && echo mem > state
-> >
-> > and I woke up the machine via the power on button. Patches #2+ were
-> > additionally required with s2idle.
-> 
-> I quite don't like the first one for reasons explained in the reply to it.
-> 
-> The others are fine by me and I can queue them up if you want me to do that.
+skb->len is meaningless to user.
+data length could be more helpful, with which we can easily filter out
+the packet without payload.
 
-Yes, please. I will talk to tglx regarding #1 and get back to you.
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ include/trace/events/tcp.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> Thanks,
-> Rafael
-
-Sebastian
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index c1a5284..703abb6 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -236,7 +236,7 @@
+ 		__field(__u16, sport)
+ 		__field(__u16, dport)
+ 		__field(__u32, mark)
+-		__field(__u16, length)
++		__field(__u16, data_len)
+ 		__field(__u32, snd_nxt)
+ 		__field(__u32, snd_una)
+ 		__field(__u32, snd_cwnd)
+@@ -261,7 +261,7 @@
+ 		__entry->dport = ntohs(inet->inet_dport);
+ 		__entry->mark = skb->mark;
+ 
+-		__entry->length = skb->len;
++		__entry->data_len = skb->len - tcp_hdrlen(skb);
+ 		__entry->snd_nxt = tp->snd_nxt;
+ 		__entry->snd_una = tp->snd_una;
+ 		__entry->snd_cwnd = tp->snd_cwnd;
+@@ -272,9 +272,9 @@
+ 		__entry->sock_cookie = sock_gen_cookie(sk);
+ 	),
+ 
+-	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
++	TP_printk("src=%pISpc dest=%pISpc mark=%#x data_len=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
+ 		  __entry->saddr, __entry->daddr, __entry->mark,
+-		  __entry->length, __entry->snd_nxt, __entry->snd_una,
++		  __entry->data_len, __entry->snd_nxt, __entry->snd_una,
+ 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
+ 		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
+ );
+-- 
+1.8.3.1
