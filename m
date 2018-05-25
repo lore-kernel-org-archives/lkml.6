@@ -1,84 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968293AbeEYUCx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 16:02:53 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:55895 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967698AbeEYUCw (ORCPT
+        id S968140AbeEYUKI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 16:10:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S967879AbeEYUKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 16:02:52 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bigeasy@linutronix.de, paulmck@linux.vnet.ibm.com
-References: <20180525090507.22248-1-anna-maria@linutronix.de>
-Date: Fri, 25 May 2018 15:02:41 -0500
-In-Reply-To: <20180525090507.22248-1-anna-maria@linutronix.de> (Anna-Maria
-        Gleixner's message of "Fri, 25 May 2018 11:05:05 +0200")
-Message-ID: <877enrwljy.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 25 May 2018 16:10:07 -0400
+Date: Fri, 25 May 2018 13:11:41 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v4] rcu: Speed up calling of RCU tasks callbacks
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180524184946.5fa82d19@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fMIvK-0007J5-P1;;;mid=<877enrwljy.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19n9PEhn79gKNrwAKXlc7L3RYqVwufFEJc=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4995]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Anna-Maria Gleixner <anna-maria@linutronix.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 139 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 4.3 (3.1%), b_tie_ro: 1.73 (1.2%), parse: 0.79 (0.6%),
-        extract_message_metadata: 12 (8.7%), get_uri_detail_list: 0.91 (0.7%),
-        tests_pri_-1000: 7 (5.2%), tests_pri_-950: 1.16 (0.8%), tests_pri_-900: 0.92
-        (0.7%), tests_pri_-400: 15 (11.1%), check_bayes: 14 (10.4%), b_tokenize: 4.6
-        (3.3%), b_tok_get_all: 4.5 (3.2%), b_comp_prob: 1.54 (1.1%), b_tok_touch_all:
-        2.1 (1.5%), b_finish: 0.51 (0.4%), tests_pri_0: 91 (65.7%),
-        check_dkim_signature: 0.48 (0.3%), check_dkim_adsp: 2.6 (1.9%),
-        tests_pri_500: 3.2 (2.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 0/2] rtmutex wait_lock is irq safe
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524184946.5fa82d19@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052520-0040-0000-0000-00000432CE98
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009083; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000262; SDB=6.01037591; UDB=6.00530820; IPR=6.00816719;
+ MB=3.00021297; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-25 20:10:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052520-0041-0000-0000-00000838EDC0
+Message-Id: <20180525201141.GG3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805250208
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anna-Maria Gleixner <anna-maria@linutronix.de> writes:
+On Thu, May 24, 2018 at 06:49:46PM -0400, Steven Rostedt wrote:
+> 
+> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> 
+> Joel Fernandes found that the synchronize_rcu_tasks() was taking a
+> significant amount of time. He demonstrated it with the following test:
+> 
+>  # cd /sys/kernel/tracing
+>  # while [ 1 ]; do x=1; done &
+>  # echo '__schedule_bug:traceon' > set_ftrace_filter
+>  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+> 
+> real	0m1.064s
+> user	0m0.000s
+> sys	0m0.004s
+> 
+> Where it takes a little over a second to perform the synchronize,
+> because there's a loop that waits 1 second at a time for tasks to get
+> through their quiescent points when there's a task that must be waited
+> for.
+> 
+> After discussion we came up with a simple way to wait for holdouts but
+> increase the time for each iteration of the loop but no more than a
+> full second.
+> 
+> With the new patch we have:
+> 
+>  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
+> 
+> real	0m0.131s
+> user	0m0.000s
+> sys	0m0.004s
+> 
+> Which drops it down to 13% of what the original wait time was.
+> 
+> Link: http://lkml.kernel.org/r/20180523063815.198302-2-joel@joelfernandes.org
+> Reported-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Suggested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-> Since commit b4abf91047cf ("rtmutex: Make wait_lock irq safe") the rtmutex
-> wait_lock is irq safe. Therefore the irqsave/restore in kernel/signal is no
-> longer required (see Patch 2/2). During discussions about v1 of this patch,
-> Eric Biederman noticed, that there is a no longer valid rcu_read_unlock()
-> documentation.
->
-> Therefore sending a short queue: fixing first the documentation of
-> rcu_read_unlock() and afterwards removing irqsave/restore in
-> kernel/signal.
+I queued both commits, thank you all!
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+							Thanx, Paul
 
->
-> v1..v2:
->
->  - Add new patch updating rcu documentation as suggested by Eric Biederman
->  - Udpate commit message of kernel/signal patch
->
-> Thanks,
->
-> 	Anna-Maria
->
->
-> Anna-Maria Gleixner (2):
->   rcu: Update documentation of rcu_read_unlock()
->   signal: Remove no longer required irqsave/restore
->
->  include/linux/rcupdate.h |  4 +---
->  kernel/signal.c          | 24 +++++++-----------------
->  2 files changed, 8 insertions(+), 20 deletions(-)
+> ---
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index 68fa19a5e7bd..452e47841a86 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -715,6 +715,7 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+>  	struct rcu_head *list;
+>  	struct rcu_head *next;
+>  	LIST_HEAD(rcu_tasks_holdouts);
+> +	int fract;
+> 
+>  	/* Run on housekeeping CPUs by default.  Sysadm can move if desired. */
+>  	housekeeping_affine(current, HK_FLAG_RCU);
+> @@ -796,13 +797,25 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+>  		 * holdouts.  When the list is empty, we are done.
+>  		 */
+>  		lastreport = jiffies;
+> -		while (!list_empty(&rcu_tasks_holdouts)) {
+> +
+> +		/* Start off with HZ/10 wait and slowly back off to 1 HZ wait*/
+> +		fract = 10;
+> +
+> +		for (;;) {
+>  			bool firstreport;
+>  			bool needreport;
+>  			int rtst;
+>  			struct task_struct *t1;
+> 
+> -			schedule_timeout_interruptible(HZ);
+> +			if (list_empty(&rcu_tasks_holdouts))
+> +				break;
+> +
+> +			/* Slowly back off waiting for holdouts */
+> +			schedule_timeout_interruptible(HZ/fract);
+> +
+> +			if (fract > 1)
+> +				fract--;
+> +
+>  			rtst = READ_ONCE(rcu_task_stall_timeout);
+>  			needreport = rtst > 0 &&
+>  				     time_after(jiffies, lastreport + rtst);
+> 
