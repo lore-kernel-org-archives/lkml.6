@@ -1,86 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935886AbeEYHej (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 03:34:39 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37316 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935429AbeEYHei (ORCPT
+        id S935972AbeEYHre (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 03:47:34 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16058 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935619AbeEYHrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 03:34:38 -0400
-Date: Fri, 25 May 2018 17:34:36 +1000
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <53ce6de3ce0c030aaf5293fe40c4b3a7ae2b1664.1527232847.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH] m68k/mac: Enable PDMA for PowerBook 500 series
+        Fri, 25 May 2018 03:47:31 -0400
+From: Christophe Roullier <christophe.roullier@st.com>
+To: <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <peppe.cavallaro@st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>, <robh@kernel.org>,
+        <christophe.roullier@st.com>
+Subject: [PATCH V0:net-next 3/4] net: stmmac: add dwmac-4.20a compatible
+Date: Fri, 25 May 2018 09:46:40 +0200
+Message-ID: <1527234401-15812-4-git-send-email-christophe.roullier@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527234401-15812-1-git-send-email-christophe.roullier@st.com>
+References: <1527234401-15812-1-git-send-email-christophe.roullier@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.166]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I can confirm that mac_scsi PDMA now works on these machines.
-This increases sequential read throughput by a factor of 4.5.
+Manage dwmac-4.20a version from synopsys
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
 ---
- arch/m68k/include/asm/macintosh.h |  1 -
- arch/m68k/mac/config.c            | 19 +------------------
- 2 files changed, 1 insertion(+), 19 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/m68k/include/asm/macintosh.h b/arch/m68k/include/asm/macintosh.h
-index 9b840c03ebb7..08cee11180e6 100644
---- a/arch/m68k/include/asm/macintosh.h
-+++ b/arch/m68k/include/asm/macintosh.h
-@@ -57,7 +57,6 @@ struct mac_model
- #define MAC_SCSI_IIFX		5
- #define MAC_SCSI_DUO		6
- #define MAC_SCSI_LC		7
--#define MAC_SCSI_LATE		8
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index ebd3e5f..6d141f3 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -472,7 +472,8 @@ struct plat_stmmacenet_data *
+ 	}
  
- #define MAC_IDE_NONE		0
- #define MAC_IDE_QUADRA		1
-diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-index 0c3275aa0197..834e79bc6043 100644
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -709,7 +709,7 @@ static struct mac_model mac_data_table[] = {
- 		.name		= "PowerBook 520",
- 		.adb_type	= MAC_ADB_PB2,
- 		.via_type	= MAC_VIA_QUADRA,
--		.scsi_type	= MAC_SCSI_LATE,
-+		.scsi_type	= MAC_SCSI_OLD,
- 		.scc_type	= MAC_SCC_QUADRA,
- 		.ether_type	= MAC_ETHER_SONIC,
- 		.floppy_type	= MAC_FLOPPY_SWIM_ADDR2,
-@@ -943,18 +943,6 @@ static const struct resource mac_scsi_old_rsrc[] __initconst = {
- 	},
- };
- 
--static const struct resource mac_scsi_late_rsrc[] __initconst = {
--	{
--		.flags = IORESOURCE_IRQ,
--		.start = IRQ_MAC_SCSI,
--		.end   = IRQ_MAC_SCSI,
--	}, {
--		.flags = IORESOURCE_MEM,
--		.start = 0x50010000,
--		.end   = 0x50011FFF,
--	},
--};
--
- static const struct resource mac_scsi_ccl_rsrc[] __initconst = {
- 	{
- 		.flags = IORESOURCE_IRQ,
-@@ -1064,11 +1052,6 @@ int __init mac_platform_init(void)
- 		platform_device_register_simple("mac_scsi", 0,
- 			mac_scsi_old_rsrc, ARRAY_SIZE(mac_scsi_old_rsrc));
- 		break;
--	case MAC_SCSI_LATE:
--		/* XXX PDMA support for PowerBook 500 series needs testing */
--		platform_device_register_simple("mac_scsi", 0,
--			mac_scsi_late_rsrc, ARRAY_SIZE(mac_scsi_late_rsrc));
--		break;
- 	case MAC_SCSI_LC:
- 		/* Addresses from Mac LC data in Designing Cards & Drivers 3ed.
- 		 * Also from the Developer Notes for Classic II, LC III,
+ 	if (of_device_is_compatible(np, "snps,dwmac-4.00") ||
+-	    of_device_is_compatible(np, "snps,dwmac-4.10a")) {
++	    of_device_is_compatible(np, "snps,dwmac-4.10a") ||
++	    of_device_is_compatible(np, "snps,dwmac-4.20a")) {
+ 		plat->has_gmac4 = 1;
+ 		plat->has_gmac = 0;
+ 		plat->pmt = 1;
 -- 
-2.16.1
+1.9.1
