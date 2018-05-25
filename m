@@ -1,540 +1,332 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934184AbeEYMkF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:40:05 -0400
-Received: from mail-sn1nam02on0065.outbound.protection.outlook.com ([104.47.36.65]:10239
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752099AbeEYMjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:39:45 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=thellstrom@vmware.com;
-From: Thomas Hellstrom <thellstrom@vmware.com>
-To: maarten.lankhosrt@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc: Thomas Hellstrom <thellstrom@vmware.com>
-Subject: [PATCH RFC 1/2] locking: Implement an algorithm choice for Wound-Wait mutexes
-Date: Fri, 25 May 2018 14:38:54 +0200
-Message-Id: <20180525123855.28956-2-thellstrom@vmware.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180525123855.28956-1-thellstrom@vmware.com>
-References: <20180525123855.28956-1-thellstrom@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [155.4.205.56]
-X-ClientProxiedBy: HE1PR0902CA0038.eurprd09.prod.outlook.com
- (2603:10a6:7:15::27) To BN7PR05MB4579.namprd05.prod.outlook.com
- (2603:10b6:406:f2::13)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN7PR05MB4579;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4579;3:xWE6bhF4BgBGmhj75Q8HnsF+3QjfneZTiTteZQeKkVdv8Q+9lUzoGp61JBF219ns9aXXwU0QFZDr1sttwAJ7TeMW+0mL9WoTXDrqTA6x8XzzC9dan3l14u9NWBqc4SFHXI5sZu7KDN8z+igOMwgnFFb1mFnrbmWmsOyv2x4vzJgDTh3yaX0YxqS2IU0P+rcHWDhIkAMguuCHHEZai332f40PDYvjg1Wu12zdBihJjYkMDnW0Cm5knf0ujcCdAszr;25:cl0Eq622IN6KYWzbrIvqm3yA8ie7zDNnagr0wSmoCWYsbKQr7yh6apu+mkA54ecyIyeyKLHeVCKIjIN3/UYXTzAYPQHCo7aJtKZyej7VoTtG2IhhDag7B2+Q6o8bndZrG6WSa93zCQl+sFzHPDgb3X7/biChh+EQh836HrSrR0TCZ79Lat9qF+Ktc4K8ha9cfAp/TmFCmLwYDNaViDoeV52dViwK/Y+EsAJOSUmigzxJDcZbZ8YX61uYbUtzwVLS2r8BKj5gWSAjSOnpCnfK8/NheOv/yK8tEO8H4jDgCf+8UosqMctYxMc2yejJlVJ74iLNX9kkjmWMYsiUbLYq3w==;31:3Jqybuka3MvXj5WbNMbFeOYmPdUzzfi8lNOGBYJj4buyfr7iczmDqiacaozHd4Zn3ofoWD99UEPB6t/Pfd1WKCd6jlfw3Vadxo8CLRPD47rFhe2/T5zlsNP8nNCZKj3GVQ8eW9+ZsUQXNH10TNDBGTdQ4sTXIr5M4QpDx4nUy/7QcLmiDWImnnkxBRSLfscb6a46PCLyRS/E8yChlPQyZVsxCkZO0KF9MdCD5cS4VuM=
-X-MS-TrafficTypeDiagnostic: BN7PR05MB4579:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4579;20:XF72mV89a6DZzPEdJLp0VfMpDEUyAUEBmJSQSxC4J9Yx+J/y7ltK/UvDErIk/GUFlW7iArq7l0VBKDj1DeNT7K+a3TgYJfFXxnj7T5OOfGzGl/FYicD9mDwLG+0KYZGzcjZ1l4CX974DqJaHNHV50+KRs8RU7nOmZxKC70xF875wHCAwmQTVGBowRjfDNW6qmzcb5m7JkJNbgTOxZK5btC2lc3fkOXx8l3zkUaQl+Dk78IWGyxvmT44sfWyK0BQ25pFF8Qnlqz6SYQ3vSMkISYtQ1TgxaWwoVQqY5ZuP/A0IVyrTpBOqE/tC7IUURfM19Me7v2n6XErMY8jGMn6Uaqzo2SjPLLaeHnma2hQa6nLK7j8BViGKW8Gngt+ovFnT8IX/YTwvESR3R8VrsDx+3xprSf+V2UI1/4YH/NKVVFzfGYUXwGPMscUBy1oD/FAWPg97aDPhE89DJDYAeMtsSBEcpUeGIHdEKYYPpInWhEBO9L9SNZP0ai/wcfte6F89;4:dLo1guh6sDa4DcQ1onr/wTlRiZrd4tP41rkNMFvH33NCSDX39RC6LtWCFdzbqcb4lFudHOWYAzB6Pwlp28avyAszoaKGLb/rjml+mX/GsKAhM0BZB5JM3oUJLiCfzhqS+SaRa7xEKzj4F3VvkzPhat/VeWh2Vk2hkCEfPIXCHe8OhscuwkB+fRIX+npd3CKxkSD0AmH95yNo7n/2OHK0+evNGLA5FEponytDrxueg//Jtcx/6b/Ba0R86J/4KubzAq5co1gdQ571k1jssX9IRqX4cJvoL7IBrSmy/OUtaDM0KMY2s6iQetotZf57VIT6
-X-Microsoft-Antispam-PRVS: <BN7PR05MB4579CB419BFF7F9370187E40A1690@BN7PR05MB4579.namprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(61668805478150);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BN7PR05MB4579;BCL:0;PCL:0;RULEID:;SRVR:BN7PR05MB4579;
-X-Forefront-PRVS: 06833C6A67
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(376002)(346002)(366004)(39860400002)(396003)(39380400002)(199004)(189003)(36756003)(446003)(48376002)(50466002)(6506007)(386003)(25786009)(6486002)(5660300001)(476003)(11346002)(26005)(68736007)(76176011)(956004)(2616005)(59450400001)(7736002)(51416003)(52116002)(478600001)(4326008)(305945005)(186003)(16526019)(486006)(6666003)(97736004)(6116002)(8676002)(81156014)(551934003)(106356001)(50226002)(107886003)(1076002)(86362001)(575784001)(3846002)(81166006)(105586002)(8936002)(6512007)(2906002)(53936002)(316002)(16586007)(47776003)(66066001)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR05MB4579;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR05MB4579;23:kpeMsCufShStjqJ4g9/boTZpxuCxm31NjrM32vloe?=
- =?us-ascii?Q?5p6wRcpQkr6HfFMKxnWNhHx4rzwEwZSJNOVnFZW6YcsG8VwSFRM+Nx784S96?=
- =?us-ascii?Q?4C6DE3JlhCyxdyf4DGlO6Fc5PMdicIUxP30aS6BlUmMXyPZOGtnWMCy1efuM?=
- =?us-ascii?Q?iFPRWQFfMquCJm3WS4r6pEtncXt1e5i+aGJ8dtG9lbI/sLGBW2Ultqb4QP3i?=
- =?us-ascii?Q?GjArIMIbpP9KauiUkAfjuLeV8DBBEcoecCzgum4y01iAAHxr2OpEdEW+p6rZ?=
- =?us-ascii?Q?uXCOpKaY7MWsUEZUTi82M9rWgOhaWCyJDbW85OnrLtChEuAbMWRzB8MJC1xE?=
- =?us-ascii?Q?U90hAnApok57H4vSKhC5euOMy/XRvCI0CA2vmwI0XHSC672dik5O7JGvC8Ud?=
- =?us-ascii?Q?sp+EAUXB/ZPYjdTVq7qFS1ldItTb6xVTJYqBJQaUOxGVb+JNvlLSQf/+ao0i?=
- =?us-ascii?Q?Dilwf4cPerYRajUBKlyApDXxiuRnj6cmTmPVNd+48KTPcwIrBa7vz2X5/GzM?=
- =?us-ascii?Q?lVwCS3kt8O5LyMf0nedVa8DgmtyN9V0pFxjt2c0d/YqGa4DiSLqzZHb+mkFd?=
- =?us-ascii?Q?sSs6LHgqdJ4rsKaTVnoBh+qQP46LSrJa/WHmf3dSaKpZxk8VfXiX85FAIQY7?=
- =?us-ascii?Q?LhSNMHpCiH7Hqdh1yjItMUMfeegddfVqNLRAQzKR2qgwak3MSebnzQ/v0ptO?=
- =?us-ascii?Q?H4sp11uFGNbISrIuT6oUbCCwbkg58MEhV1ZXiF/3VWjwwbXzWFa9zo2axOiD?=
- =?us-ascii?Q?HiHjnEZubeXdyyAMY0mvAsdpp2WL9zz0XVMKvL4XCeBhZ+w9ScsVtjVEUHLP?=
- =?us-ascii?Q?4GnJR7vhs/SI5rL3MhzJnNQTgfT5ZxH6UprqEq87Lg1PS0Dzdc0umxfKh73C?=
- =?us-ascii?Q?Se5Xm8OyFSYaW4m6NODbH/N0SgnqOYkwRKR+C9gRGFMidYVUObx4Ivq13BXC?=
- =?us-ascii?Q?TGTxnCfSXN1pS4dEt6E8TJ03Id7gYLvpaprJjrU7lRpu2OyuqH/yU8DZeQV/?=
- =?us-ascii?Q?KgGasWZNGviyPWSD5vSUHhtyiXS96aO+DyxWW647I+FIvg6R/GRbOFLVY21/?=
- =?us-ascii?Q?xuOgPv4cgEoaPyiH63v6HslO1hpyjnJRdd7p8PdiQLJSHhFBIP4E4Kh0UkBZ?=
- =?us-ascii?Q?lPjAxgmIkjJhBPMY3xI+ZXePYzNiEhStGcsCJucCdrj7+dmMP79MDM9Bjj5h?=
- =?us-ascii?Q?7shTEda3gXam6vlFalMLt8bBgwoodd7jfhFi5eT6QqaJamklxkauat8aAJGE?=
- =?us-ascii?Q?O2LoXfUwziHYwrGmLIkFYcvk3D5Xfj6eCH5mcwKmavHUSKpTy63NFB1ipef8?=
- =?us-ascii?Q?htLw4NdfGIwaVDWa5W3yd8=3D?=
-X-Microsoft-Antispam-Message-Info: Gdl5xPLhm5xRhxtkZxEMua60iGFs8Y7u5wERpoDie+6ZKrgBRl0SqH0qk+UkRiUjOVXKvVOIIuVl3U1C6PYA3vcgWZMsiKNHXSBEyhliSsPpjsyniXj3g3pOtInhH6hrl6pbflEFSdaxOq4ja/Yze8bePWt/T8ekBTc0OavUbJ8IkWodLTDiczA2Nquo23l9
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4579;6:dHC+7Y094VHQyNpXnPkOPRVPe+p9uVbITUO6vFJtM5kivvhpGpFn8BJkJUINajoo6tpEFQyAjvnATR4rYoJRSLyagFymQsAABXuuzhHVi/ak5pD/pM0AYVQe/NW1H+SmWyzIJbsUQ2mNDfV4aQrv5BI67uDAOUONOJ5kQK92yRLEZ5JGQRx94WhPKxntqwPtyoDXIxncqQhp5hc4RJ5YQSWdKNHf6zBffly6lZEZIEubv15hMzKPRjnXLdNG3xu8ERhb85eu04VcAzVBDmuYjXgPLqOcn91ze49GhDbHhSt1EradVm2Kund/2kexVwCFPcXIev0HKiWdUfJ7MFBKzDI2bsgDtTTXK8Mgi5N6uIuflxvOVvYHehjeO46o0DaXYuvG2Aqsx0f5mg18FGzb2uYgumsV+NlyO3I3zow62cKxqF7HkuXCAr+B0azDi0ax3E06H0kRfug7TNAorulDIw==;5:SUDCHbpJ0rR+EXzaNRejcVng9ORL81WnY053JH2r6x6KM34hFsorglqQDJDxyKX9sZlkR1pYTw5f5UTDqZf2cmsh+Uas6Ib9lB91FnWZFtK49EB/0XLr+yd2q+H61Rq8DBvZtakETsW1nDlJyKByVQyjL+dF5pmHdGmPcK0q0gc=;24:qQCq/F3FHSLxQh9uzQ6W4hQGJIHVGpBDVR2M8vSjXdtzBZmFqbH2MEm+3i4CH4SdUxoY1ovgY8A3OuZOh6BXbJZbTbsbjL5/6+mYtgDjBSQ=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4579;7:sbklSVlVEZX5W6YO5sdfyumhNh/aifpcbnH9j/LJud1IPlZrhMDgc9Xr2KV8fTUMAJbutW6P4C1kAGrA5GMrA7JFPIQ0AWK7+9GbnsJYZBTzNd7VxLDX3TxILjOFNtS82sCMx3pFFm7yZyc4IjYIusw3vM0o2JxYD4ZyHN35Cj79XwKGQ11tL/QsHwoQG9n4zqZEl6sVHVI7CnxDcfd7ViEO+Hhu2iFbSblAsNvJNnXayrAjhdX3LBzVTXDiycmr;20:c1Be6EWyYZW5LApbeRby9lEFGIaT9hPmrwc368sBBuDZBfIKXr0ZQInxqvFBvrK+pj4HuU8fcY57HrJykM6RNPOJWIeCSIPyWtZj79CzM+aexzyEe0Q5AZ+D8djHBFLjASO3cuM++avMq9EcVCWS8/NFZfxR84mf5yYwX3/zjMo=
-X-MS-Office365-Filtering-Correlation-Id: 5aea1a29-4394-47cf-13d9-08d5c23c9748
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 12:39:42.6036 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5aea1a29-4394-47cf-13d9-08d5c23c9748
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR05MB4579
+        id S934125AbeEYMmE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:42:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51366 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751949AbeEYMmB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:42:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA0BB60C4F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+From: Ilia Lin <ilialin@codeaurora.org>
+To: ilia.lin@gmail.com, vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
+        robh@kernel.org, mark.rutland@arm.com, rjw@rjwysocki.net
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ilialin@codeaurora.org
+Subject: [PATCH v14 1/2] cpufreq: Add Kryo CPU scaling driver
+Date: Fri, 25 May 2018 15:41:51 +0300
+Message-Id: <1527252112-7015-2-git-send-email-ilialin@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527252112-7015-1-git-send-email-ilialin@codeaurora.org>
+References: <1527252112-7015-1-git-send-email-ilialin@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current Wound-Wait mutex algorithm is actually not Wound-Wait but
-Wait-Die. Implement also Wound-Wait as a per-ww-class choice. Wound-Wait
-is, contrary to Wait-Die a preemptive algorithm and is known to generate
-fewer backoffs in some cases. Testing reveals that this is true if the
-number of simultaneous contending transactions is small.
-As the number of simultaneous contending threads increases, Wait-Wound
-becomes inferior to Wait-Die, probably due to the larger number of held locks
-of sleeping transactions.
+In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+the CPU frequency subset and voltage value of each OPP varies
+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-Update documentation and callers.
-
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- Documentation/locking/ww-mutex-design.txt |  57 +++++++++++++----
- drivers/dma-buf/reservation.c             |   2 +-
- drivers/gpu/drm/drm_modeset_lock.c        |   2 +-
- include/linux/ww_mutex.h                  |  19 ++++--
- kernel/locking/locktorture.c              |   2 +-
- kernel/locking/mutex.c                    | 101 +++++++++++++++++++++++++++---
- kernel/locking/test-ww_mutex.c            |   2 +-
- lib/locking-selftest.c                    |   2 +-
- 8 files changed, 154 insertions(+), 33 deletions(-)
+ MAINTAINERS                          |   7 ++
+ drivers/cpufreq/Kconfig.arm          |  10 ++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c  | 212 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 233 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-diff --git a/Documentation/locking/ww-mutex-design.txt b/Documentation/locking/ww-mutex-design.txt
-index 34c3a1b50b9a..29c85623b551 100644
---- a/Documentation/locking/ww-mutex-design.txt
-+++ b/Documentation/locking/ww-mutex-design.txt
-@@ -1,4 +1,4 @@
--Wait/Wound Deadlock-Proof Mutex Design
-+Wound/Wait Deadlock-Proof Mutex Design
- ======================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ba0adcb..648e0c8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11687,6 +11687,13 @@ F:	Documentation/devicetree/bindings/media/qcom,camss.txt
+ F:	Documentation/media/v4l-drivers/qcom_camss.rst
+ F:	drivers/media/platform/qcom/camss-8x16/
  
- Please read mutex-design.txt first, as it applies to wait/wound mutexes too.
-@@ -32,10 +32,23 @@ the oldest task) wins, and the one with the higher reservation id (i.e. the
- younger task) unlocks all of the buffers that it has already locked, and then
- tries again.
- 
--In the RDBMS literature this deadlock handling approach is called wait/wound:
--The older tasks waits until it can acquire the contended lock. The younger tasks
--needs to back off and drop all the locks it is currently holding, i.e. the
--younger task is wounded.
-+In the RDBMS literature, a reservation ticket is associated with a transaction.
-+and the deadlock handling approach is called Wait-Die. The name is based on
-+the actions of a locking thread when it encounters an already locked mutex.
-+If the transaction holding the lock is younger, the locking transaction waits.
-+If the transaction holding the lock is older, the locking transaction backs off
-+and dies. Hence Wait-Die.
-+There is also another algorithm called Wound-Wait:
-+If the transaction holding the lock is younger, the locking transaction
-+preempts the transaction holding the lock, requiring it to back off. It
-+Wounds the other transaction.
-+If the transaction holding the lock is older, it waits for the other
-+transaction. Hence Wound-Wait.
-+The two algorithms are both fair in that a transaction will eventually succeed.
-+However, the Wound-Wait algorithm is typically stated to generate fewer backoffs
-+compared to Wait-Die, but is, on the other hand, associated with more work than
-+Wait-Die when recovering from a backoff. Wound-Wait is also a preemptive
-+algorithm which requires a reliable way to preempt another transaction.
- 
- Concepts
- --------
-@@ -47,10 +60,12 @@ Acquire context: To ensure eventual forward progress it is important the a task
- trying to acquire locks doesn't grab a new reservation id, but keeps the one it
- acquired when starting the lock acquisition. This ticket is stored in the
- acquire context. Furthermore the acquire context keeps track of debugging state
--to catch w/w mutex interface abuse.
-+to catch w/w mutex interface abuse. An acquire context is representing a
-+transaction.
- 
- W/w class: In contrast to normal mutexes the lock class needs to be explicit for
--w/w mutexes, since it is required to initialize the acquire context.
-+w/w mutexes, since it is required to initialize the acquire context. The lock
-+class also specifies what algorithm to use, Wound-Wait or Wait-Die.
- 
- Furthermore there are three different class of w/w lock acquire functions:
- 
-@@ -90,10 +105,15 @@ provided.
- Usage
- -----
- 
-+The algorithm (Wait-Die vs Wound-Wait) is chosen using the _is_wait_die
-+argument to DEFINE_WW_CLASS(). As a rough rule of thumb, use Wound-Wait iff you
-+typically expect the number of simultaneous competing transactions to be small,
-+and the rollback cost can be substantial.
++QUALCOMM CPUFREQ DRIVER MSM8996/APQ8096
++M:  Ilia Lin <ilia.lin@gmail.com>
++L:  linux-pm@vger.kernel.org
++S:  Maintained
++F:  Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
++F:  drivers/cpufreq/qcom-cpufreq-kryo.c
 +
- Three different ways to acquire locks within the same w/w class. Common
- definitions for methods #1 and #2:
+ QUALCOMM EMAC GIGABIT ETHERNET DRIVER
+ M:	Timur Tabi <timur@codeaurora.org>
+ L:	netdev@vger.kernel.org
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index de55c7d..0bfd40e 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
  
--static DEFINE_WW_CLASS(ww_class);
-+static DEFINE_WW_CLASS(ww_class, false);
- 
- struct obj {
- 	struct ww_mutex lock;
-@@ -243,7 +263,7 @@ struct obj {
- 	struct list_head locked_list;
- };
- 
--static DEFINE_WW_CLASS(ww_class);
-+static DEFINE_WW_CLASS(ww_class, false);
- 
- void __unlock_objs(struct list_head *list)
- {
-@@ -312,12 +332,23 @@ Design:
-   We maintain the following invariants for the wait list:
-   (1) Waiters with an acquire context are sorted by stamp order; waiters
-       without an acquire context are interspersed in FIFO order.
--  (2) Among waiters with contexts, only the first one can have other locks
--      acquired already (ctx->acquired > 0). Note that this waiter may come
--      after other waiters without contexts in the list.
-+  (2) For Wait-Die, among waiters with contexts, only the first one can have
-+      other locks acquired already (ctx->acquired > 0). Note that this waiter
-+      may come after other waiters without contexts in the list.
++config ARM_QCOM_CPUFREQ_KRYO
++	bool "Qualcomm Kryo based CPUFreq"
++	depends on QCOM_QFPROM
++	depends on QCOM_SMEM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
 +
-+  The Wound-Wait preemption is implemented with a lazy-preemption scheme:
-+  The wounded status of the transaction is checked only when there is
-+  contention for a new lock and hence a true chance of deadlock. In that
-+  situation, if the transaction is wounded, it backs off, clears the
-+  wounded status and retries. A great benefit of implementing preemption in
-+  this way is that the wounded transaction can identify a contending lock to
-+  wait for before restarting the transaction. Just blindly restarting the
-+  transaction would likely make the transaction end up in a situation where
-+  it would have to back off again.
++	  If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..77d6ab8 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,6 +118,9 @@
  
-   In general, not much contention is expected. The locks are typically used to
--  serialize access to resources for devices.
-+  serialize access to resources for devices, and optimization focus should
-+  therefore be directed towards the uncontended cases.
+ 	{ .compatible = "nvidia,tegra124", },
  
- Lockdep:
-   Special care has been taken to warn for as many cases of api abuse
-diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
-index 314eb1071cce..039571b9fea1 100644
---- a/drivers/dma-buf/reservation.c
-+++ b/drivers/dma-buf/reservation.c
-@@ -46,7 +46,7 @@
-  * write-side updates.
-  */
++	{ .compatible = "qcom,apq8096", },
++	{ .compatible = "qcom,msm8996", },
++
+ 	{ .compatible = "st,stih407", },
+ 	{ .compatible = "st,stih410", },
  
--DEFINE_WW_CLASS(reservation_ww_class);
-+DEFINE_WW_CLASS(reservation_ww_class, true);
- EXPORT_SYMBOL(reservation_ww_class);
- 
- struct lock_class_key reservation_seqcount_class;
-diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
-index 8a5100685875..f22a7ef41de1 100644
---- a/drivers/gpu/drm/drm_modeset_lock.c
-+++ b/drivers/gpu/drm/drm_modeset_lock.c
-@@ -70,7 +70,7 @@
-  * lists and lookup data structures.
-  */
- 
--static DEFINE_WW_CLASS(crtc_ww_class);
-+static DEFINE_WW_CLASS(crtc_ww_class, true);
- 
- /**
-  * drm_modeset_lock_all - take all modeset locks
-diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-index 39fda195bf78..acc0d93acc8b 100644
---- a/include/linux/ww_mutex.h
-+++ b/include/linux/ww_mutex.h
-@@ -8,6 +8,8 @@
-  *
-  * Wound/wait implementation:
-  *  Copyright (C) 2013 Canonical Ltd.
-+ * Choice of algorithm:
-+ *  Copyright (C) 2018 WMWare Inc.
-  *
-  * This file contains the main data structure and API definitions.
-  */
-@@ -23,15 +25,17 @@ struct ww_class {
- 	struct lock_class_key mutex_key;
- 	const char *acquire_name;
- 	const char *mutex_name;
-+	bool is_wait_die;
- };
- 
- struct ww_acquire_ctx {
- 	struct task_struct *task;
- 	unsigned long stamp;
- 	unsigned acquired;
-+	bool wounded;
-+	struct ww_class *ww_class;
- #ifdef CONFIG_DEBUG_MUTEXES
- 	unsigned done_acquire;
--	struct ww_class *ww_class;
- 	struct ww_mutex *contending_lock;
- #endif
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
-@@ -58,17 +62,19 @@ struct ww_mutex {
- # define __WW_CLASS_MUTEX_INITIALIZER(lockname, class)
- #endif
- 
--#define __WW_CLASS_INITIALIZER(ww_class) \
-+#define __WW_CLASS_INITIALIZER(ww_class, _is_wait_die)      \
- 		{ .stamp = ATOMIC_LONG_INIT(0) \
- 		, .acquire_name = #ww_class "_acquire" \
--		, .mutex_name = #ww_class "_mutex" }
-+		, .mutex_name = #ww_class "_mutex" \
-+                , .is_wait_die = _is_wait_die }
- 
- #define __WW_MUTEX_INITIALIZER(lockname, class) \
- 		{ .base =  __MUTEX_INITIALIZER(lockname.base) \
- 		__WW_CLASS_MUTEX_INITIALIZER(lockname, class) }
- 
--#define DEFINE_WW_CLASS(classname) \
--	struct ww_class classname = __WW_CLASS_INITIALIZER(classname)
-+#define DEFINE_WW_CLASS(classname, _is_wait_die)			\
-+	struct ww_class classname = __WW_CLASS_INITIALIZER(classname, \
-+							   _is_wait_die)
- 
- #define DEFINE_WW_MUTEX(mutexname, ww_class) \
- 	struct ww_mutex mutexname = __WW_MUTEX_INITIALIZER(mutexname, ww_class)
-@@ -123,8 +129,9 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
- 	ctx->task = current;
- 	ctx->stamp = atomic_long_inc_return_relaxed(&ww_class->stamp);
- 	ctx->acquired = 0;
--#ifdef CONFIG_DEBUG_MUTEXES
- 	ctx->ww_class = ww_class;
-+	ctx->wounded = false;
-+#ifdef CONFIG_DEBUG_MUTEXES
- 	ctx->done_acquire = 0;
- 	ctx->contending_lock = NULL;
- #endif
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index 6850ffd69125..778ed026382f 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -365,7 +365,7 @@ static struct lock_torture_ops mutex_lock_ops = {
- };
- 
- #include <linux/ww_mutex.h>
--static DEFINE_WW_CLASS(torture_ww_class);
-+static DEFINE_WW_CLASS(torture_ww_class, true);
- static DEFINE_WW_MUTEX(torture_ww_mutex_0, &torture_ww_class);
- static DEFINE_WW_MUTEX(torture_ww_mutex_1, &torture_ww_class);
- static DEFINE_WW_MUTEX(torture_ww_mutex_2, &torture_ww_class);
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index 2048359f33d2..b6e730c7d42c 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -290,12 +290,46 @@ __ww_ctx_stamp_after(struct ww_acquire_ctx *a, struct ww_acquire_ctx *b)
- 	       (a->stamp != b->stamp || a > b);
- }
- 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+new file mode 100644
+index 0000000..d049fe4
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,212 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Wound the lock holder transaction if it's younger than the contending
-+ * transaction, and there is a possibility of a deadlock.
-+ * Also if the lock holder transaction isn't the current transaction,
-+ * Make sure it's woken up in case it's sleeping on another ww mutex.
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
 + */
-+static bool __ww_mutex_wound(struct mutex *lock,
-+			     struct ww_acquire_ctx *ww_ctx,
-+			     struct ww_acquire_ctx *hold_ctx)
++
++/*
++ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
++ * the CPU frequency subset and voltage value of each OPP varies
++ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
++ * defines the voltage and frequency value based on the msm-id in SMEM
++ * and speedbin blown in the efuse combination.
++ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++ * to provide the OPP framework with required information.
++ * This is used to determine the voltage and frequency value for each OPP of
++ * operating-points-v2 table when it is parsed by the OPP framework.
++ */
++
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++
++#define MSM_ID_SMEM	137
++
++enum _msm_id {
++	MSM8996V3 = 0xF6ul,
++	APQ8096V3 = 0x123ul,
++	MSM8996SG = 0x131ul,
++	APQ8096SG = 0x138ul,
++};
++
++enum _msm8996_version {
++	MSM8996_V3,
++	MSM8996_SG,
++	NUM_OF_MSM8996_VERSIONS,
++};
++
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
 +{
-+	struct task_struct *owner = __owner_task(atomic_long_read(&lock->owner));
++	size_t len;
++	u32 *msm_id;
++	enum _msm8996_version version;
 +
-+	lockdep_assert_held(&lock->wait_lock);
++	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++	if (IS_ERR(msm_id))
++		return NUM_OF_MSM8996_VERSIONS;
 +
-+	if (owner && hold_ctx && __ww_ctx_stamp_after(hold_ctx , ww_ctx) &&
-+	    ww_ctx->acquired > 0) {
-+		hold_ctx->wounded = true;
-+		if (owner != current) {
-+			/*
-+			 * wake_up_process() inserts a write memory barrier to
-+			 * make sure owner sees it is wounded before
-+			 * TASK_RUNNING in case it's sleeping on another
-+			 * ww_mutex. Note that owner points to a valid
-+			 * task_struct as long as we hold the wait_lock.
-+			 */
-+			wake_up_process(owner);
-+		}
-+		return true;
++	/* The first 4 bytes are format, next to them is the actual msm-id */
++	msm_id++;
++
++	switch ((enum _msm_id)*msm_id) {
++	case MSM8996V3:
++	case APQ8096V3:
++		version = MSM8996_V3;
++		break;
++	case MSM8996SG:
++	case APQ8096SG:
++		version = MSM8996_SG;
++		break;
++	default:
++		version = NUM_OF_MSM8996_VERSIONS;
 +	}
 +
-+	return false;
++	return version;
 +}
 +
- /*
-  * Wake up any waiters that may have to back off when the lock is held by the
-  * given context.
-  *
-  * Due to the invariants on the wait list, this can only affect the first
-- * waiter with a context.
-+ * waiter with a context, unless the Wound-Wait algorithm is used where
-+ * also subsequent waiters with a context main wound the lock holder.
-  *
-  * The current task must not be on the wait list.
-  */
-@@ -303,20 +337,22 @@ static void __sched
- __ww_mutex_wakeup_for_backoff(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
- {
- 	struct mutex_waiter *cur;
--
-+	bool is_wait_die = ww_ctx->ww_class->is_wait_die;
-+	
- 	lockdep_assert_held(&lock->wait_lock);
- 
- 	list_for_each_entry(cur, &lock->wait_list, list) {
- 		if (!cur->ww_ctx)
- 			continue;
- 
--		if (cur->ww_ctx->acquired > 0 &&
-+		if (is_wait_die && cur->ww_ctx->acquired > 0 &&
- 		    __ww_ctx_stamp_after(cur->ww_ctx, ww_ctx)) {
- 			debug_mutex_wake_waiter(lock, cur);
- 			wake_up_process(cur->task);
- 		}
- 
--		break;
-+		if (is_wait_die || __ww_mutex_wound(lock, cur->ww_ctx, ww_ctx))
-+			break;
- 	}
- }
- 
-@@ -338,12 +374,17 @@ ww_mutex_set_context_fastpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
- 	 * and keep spinning, or it will acquire wait_lock, add itself
- 	 * to waiter list and sleep.
- 	 */
--	smp_mb(); /* ^^^ */
-+	smp_mb(); /* See comments above and below. */
- 
- 	/*
--	 * Check if lock is contended, if not there is nobody to wake up
-+	 * Check if lock is contended, if not there is nobody to wake up.
-+	 * Checking MUTEX_FLAG_WAITERS is not enough here, since we need to
-+	 * order against the lock->ctx check in __ww_mutex_wound called from
-+	 * __ww_mutex_add_waiter. We can use list_empty without taking the
-+	 * wait_lock, given the memory barrier above and the list_empty
-+	 * documentation.
- 	 */
--	if (likely(!(atomic_long_read(&lock->base.owner) & MUTEX_FLAG_WAITERS)))
-+	if (likely(list_empty(&lock->base.wait_list)))
- 		return;
- 
- 	/*
-@@ -653,6 +694,19 @@ __ww_mutex_lock_check_stamp(struct mutex *lock, struct mutex_waiter *waiter,
- 	struct ww_acquire_ctx *hold_ctx = READ_ONCE(ww->ctx);
- 	struct mutex_waiter *cur;
- 
-+	/*
-+	 * If we miss a wounded == true here, we will have a pending
-+	 * TASK_RUNNING and pick it up on the next schedule fall-through +
-+	 * spinlock.
-+	 */
-+	if (!ctx->ww_class->is_wait_die) {
-+		if (ctx->wounded) {
-+			goto deadlock;
-+		} else {
-+			return 0;
++static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
++{
++	struct opp_table *opp_tables[NR_CPUS] = {0};
++	struct platform_device *cpufreq_dt_pdev;
++	enum _msm8996_version msm8996_version;
++	struct nvmem_cell *speedbin_nvmem;
++	struct device_node *np;
++	struct device *cpu_dev;
++	unsigned cpu;
++	u8 *speedbin;
++	u32 versions;
++	size_t len;
++	int ret;
++
++	cpu_dev = get_cpu_device(0);
++	if (NULL == cpu_dev)
++		ret = -ENODEV;
++
++	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev, "Not Snapdragon 820/821!");
++		return -ENODEV;
++	}
++
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
++	if (IS_ERR(np))
++		return PTR_ERR(np);
++
++	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu");
++	if (!ret) {
++		of_node_put(np);
++		return -ENOENT;
++	}
++
++	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++	of_node_put(np);
++	if (IS_ERR(speedbin_nvmem)) {
++		dev_err(cpu_dev, "Could not get nvmem cell: %ld\n",
++			PTR_ERR(speedbin_nvmem));
++		return PTR_ERR(speedbin_nvmem);
++	}
++
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	nvmem_cell_put(speedbin_nvmem);
++
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	for_each_possible_cpu(cpu) {
++		cpu_dev = get_cpu_device(cpu);
++		if (NULL == cpu_dev) {
++			ret = -ENODEV;
++			goto free_opp;
++		}
++
++		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
++							      &versions, 1);
++		if (IS_ERR(opp_tables[cpu])) {
++			ret = PTR_ERR(opp_tables[cpu]);
++			dev_err(cpu_dev, "Failed to set supported hardware\n");
++			goto free_opp;
 +		}
 +	}
 +
- 	if (hold_ctx && __ww_ctx_stamp_after(ctx, hold_ctx))
- 		goto deadlock;
- 
-@@ -683,12 +737,15 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
- {
- 	struct mutex_waiter *cur;
- 	struct list_head *pos;
-+	bool is_wait_die;
- 
- 	if (!ww_ctx) {
- 		list_add_tail(&waiter->list, &lock->wait_list);
- 		return 0;
- 	}
- 
-+	is_wait_die = ww_ctx->ww_class->is_wait_die;
++	cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1,
++							  NULL, 0);
++	if (!IS_ERR(cpufreq_dt_pdev))
++		return 0;
 +
- 	/*
- 	 * Add the waiter before the first waiter with a higher stamp.
- 	 * Waiters without a context are skipped to avoid starving
-@@ -701,7 +758,7 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
- 
- 		if (__ww_ctx_stamp_after(ww_ctx, cur->ww_ctx)) {
- 			/* Back off immediately if necessary. */
--			if (ww_ctx->acquired > 0) {
-+			if (is_wait_die && ww_ctx->acquired > 0) {
- #ifdef CONFIG_DEBUG_MUTEXES
- 				struct ww_mutex *ww;
- 
-@@ -721,13 +778,26 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
- 		 * Wake up the waiter so that it gets a chance to back
- 		 * off.
- 		 */
--		if (cur->ww_ctx->acquired > 0) {
-+		if (is_wait_die && cur->ww_ctx->acquired > 0) {
- 			debug_mutex_wake_waiter(lock, cur);
- 			wake_up_process(cur->task);
- 		}
- 	}
- 
- 	list_add_tail(&waiter->list, pos);
-+	if (!is_wait_die) {
-+		struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
++	ret = PTR_ERR(cpufreq_dt_pdev);
++	dev_err(cpu_dev, "Failed to register platform device\n");
 +
-+		/*
-+		 * Make sure a racing lock taker sees a non-empty waiting list
-+		 * before we read ww->ctx, so that if we miss ww->ctx, the
-+		 * racing lock taker will call __ww_mutex_wake_up_for_backoff()
-+		 * and wound itself.
-+		 */
-+		smp_mb();
-+		__ww_mutex_wound(lock, ww_ctx, ww->ctx);
++free_opp:
++	for_each_possible_cpu(cpu) {
++		if (IS_ERR_OR_NULL(opp_tables[cpu]))
++			break;
++		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
 +	}
 +
- 	return 0;
- }
- 
-@@ -750,6 +820,14 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 	if (use_ww_ctx && ww_ctx) {
- 		if (unlikely(ww_ctx == READ_ONCE(ww->ctx)))
- 			return -EALREADY;
++	return ret;
++}
 +
-+		/*
-+		 * Reset the wounded flag after a backoff.
-+		 * No other process can race and wound us here since they
-+		 * can't have a valid owner pointer at this time
-+		 */
-+		if (ww_ctx->acquired == 0)
-+			ww_ctx->wounded = false;
- 	}
- 
- 	preempt_disable();
-@@ -858,6 +936,11 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- acquired:
- 	__set_current_state(TASK_RUNNING);
- 
-+	/* We stole the lock. Need to check wounded status. */
-+	if (use_ww_ctx && ww_ctx && !ww_ctx->ww_class->is_wait_die &&
-+	    !__mutex_waiter_is_first(lock, &waiter))
-+		__ww_mutex_wakeup_for_backoff(lock, ww_ctx);
++static struct platform_driver qcom_cpufreq_kryo_driver = {
++	.probe = qcom_cpufreq_kryo_probe,
++	.driver = {
++		.name = "qcom-cpufreq-kryo",
++	},
++};
 +
- 	mutex_remove_waiter(lock, &waiter, current);
- 	if (likely(list_empty(&lock->wait_list)))
- 		__mutex_clear_flag(lock, MUTEX_FLAGS);
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 0e4cd64ad2c0..c7fc112d691d 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -26,7 +26,7 @@
- #include <linux/slab.h>
- #include <linux/ww_mutex.h>
- 
--static DEFINE_WW_CLASS(ww_class);
-+static DEFINE_WW_CLASS(ww_class, true);
- struct workqueue_struct *wq;
- 
- struct test_mutex {
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index b5c1293ce147..e52065f2acbf 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -29,7 +29,7 @@
-  */
- static unsigned int debug_locks_verbose;
- 
--static DEFINE_WW_CLASS(ww_lockdep);
-+static DEFINE_WW_CLASS(ww_lockdep, true);
- 
- static int __init setup_debug_locks_verbose(char *str)
- {
++static const struct of_device_id qcom_cpufreq_kryo_match_list[] __initconst = {
++	{ .compatible = "qcom,apq8096", },
++	{ .compatible = "qcom,msm8996", },
++};
++
++/*
++ * Since the driver depends on smem and nvmem drivers, which may
++ * return EPROBE_DEFER, all the real activity is done in the probe,
++ * which may be defered as well. The init here is only registering
++ * the driver and the platform device.
++ */
++static int __init qcom_cpufreq_kryo_init(void)
++{
++	struct device_node *np = of_find_node_by_path("/");
++	const struct of_device_id *match;
++	int ret;
++
++	if (!np)
++		return -ENODEV;
++
++	match = of_match_node(qcom_cpufreq_kryo_match_list, np);
++	of_node_put(np);
++	if (!match)
++		return -ENODEV;
++
++	ret = platform_driver_register(&qcom_cpufreq_kryo_driver);
++	if (unlikely(ret < 0))
++		return ret;
++
++	ret = PTR_ERR_OR_ZERO(platform_device_register_simple(
++		"qcom-cpufreq-kryo", -1, NULL, 0));
++	if (0 == ret)
++		return 0;
++
++	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
++	return ret;
++}
++module_init(qcom_cpufreq_kryo_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.14.3
+1.9.1
