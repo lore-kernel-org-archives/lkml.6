@@ -1,97 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936017AbeEYMva (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:51:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59472 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933152AbeEYMv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:51:27 -0400
-Date: Fri, 25 May 2018 08:51:20 -0400
-From: Luiz Capitulino <lcapitulino@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [GIT PULL] isolation: 1Hz residual tick offloading v4
-Message-ID: <20180525085120.08493f53@doriath>
-In-Reply-To: <20180525025624.GB22082@lerouge>
-References: <1516320140-13189-1-git-send-email-frederic@kernel.org>
-        <20180124104608.038fb212@redhat.com>
-        <20180129011024.GA2942@lerouge>
-        <xunyvabfjylg.fsf@redhat.com>
-        <20180525025624.GB22082@lerouge>
-Organization: Red Hat
+        id S936037AbeEYMv5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:51:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41536 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933152AbeEYMvx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:51:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EC2B6044E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+X-Google-Smtp-Source: ADUXVKKHFQu1cFI3zpPVhtIQud8VWzl9ATYdszLT3ctzalfMl945J1w0vKx7Dn6CBhsSVhzQ0T8ilLdR5tNUopn05+0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180524223122.12601-1-bjorn.andersson@linaro.org>
+References: <20180524223122.12601-1-bjorn.andersson@linaro.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Date: Fri, 25 May 2018 18:21:50 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iH5bS5rmqZ1oy09COb2Rzuz6zbN7pFwxz0WTJNOYTTbkg@mail.gmail.com>
+Message-ID: <CAFp+6iH5bS5rmqZ1oy09COb2Rzuz6zbN7pFwxz0WTJNOYTTbkg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: msm8996: Use UFS_GDSC for UFS
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018 04:56:25 +0200
-Frederic Weisbecker <frederic@kernel.org> wrote:
+Hi Bjorn,
 
-> On Tue, May 22, 2018 at 10:10:19PM +0300, Yauheni Kaliuta wrote:
-> > Hi, Frederic!
-> >   
-> > >>>>> On Mon, 29 Jan 2018 02:10:26 +0100, Frederic Weisbecker  wrote:  
-> >  > On Wed, Jan 24, 2018 at 10:46:08AM -0500, Luiz Capitulino wrote:  
-> > 
-> > [...]
-> >   
-> >  >> Since the 1Hz tick offload worked for you, I must be missing
-> >  >> a way to disable this timer or the kernel is thinking my CPU
-> >  >> has unstable TSC (which it doesn't AFAIK).  
-> >   
-> >  > It's beyond the scope of this patchset but indeed that's
-> >  > right, I run my kernels with tsc=reliable because my CPUs
-> >  > don't have the TSC_RELIABLE flag.  That's the only way I found
-> >  > to shutdown the tick completely on my test machine, otherwise
-> >  > I keep having that clocksource watchdog.  
-> > 
-> > [...]
-> > 
-> > Thanks, it helps. But I have accounting problem:
-> > 
-> > if I run user busy loop on the nohz cpu, the task accounting works
-> > correctly (top shows the task takes 100% cpu), but cpu accounting is
-> > wrong (cpu is 100% idle, in the per-core view as well).
-> > 
-> > If I understand correctly, the stats are updated by account_user_time()  
-> > -> task_group_account_field() but there is no call for it in case of  
-> > offloading (it is called from irqtime_account_process_tick,
-> > account_process_tick, vtime_user_exit).  
-> 
-> Ah I forgot about kcpustat accounting. I remember I wanted to fix that a
-> few years ago but I forgot about it when I removed the last tick. That
-> thing was lurking behind 1Hz.
-> 
-> > 
-> > Moreover, task_group_account_field() uses __this_cpu_add() which will be
-> > wrong for offloading.
-> > 
-> > For testing I used kcpustat_cpu(task_cpu(p)) in
-> > task_group_account_field() and added call account_user_time(curr, delta)
-> > to the sched_tick_remote() what fixes it for me, but what would be the
-> > proper fix?  
-> 
-> Yeah unfortunately that's unsafe. Task accounting is not designed for remote
-> update. You could race with an update from another CPU, especially the local
-> updater.
-> 
-> I fear we need to take the same approach than task cputime, which is using a seqcount
-> for updates. Then the reader would fetch the kcpustat values + the delta
-> vtime from the task executing.
-> 
-> Things can get complicated once we dive into corner cases: CPUTIME_IRQ,
-> CPUTIME_SOFTIRQ, and CPUTIME_STEAL. At least we don't need to care about CPUTIME_IDLE
-> and CPUTIME_IOWAIT that have their own delta.
-> 
-> I'm trying that.
+On Fri, May 25, 2018 at 4:01 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> The UFS host controller occationally (20%) fails to enable
+> gcc_ufs_axi_clk because the UFS GDSC is not enabled. In most cases it's
+> enabled through the UFS phy driver, but to make sure it's enabled let's
+> enable it directly from the UFS host controller directly as well.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 380e14591686..03c7904bda14 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -674,6 +674,8 @@
+>                         vccq-max-microamp = <450000>;
+>                         vccq2-max-microamp = <450000>;
+>
+> +                       power-domains = <&gcc UFS_GDSC>;
+> +
 
-Cool! Needless to say, but we can help testing once you have patches.
+We shouldn't need power-domain with the phy. UFS_GDSC should
+be attached to the controller, as the phy is powered up only after
+the controller is power-up, and during collapse too, we turn off
+the phy first.
+Can you try testing keeping UFS_GDSC only with ufs controller and
+remove it from the ufs-phy node? We are doing same on the 4.14 release
+branch too for db820.
+I apologize to have missed this in your patch for ufs-related dt nodes.
+Can we please fix this now?
+
+Best regards
+Vivek
+
+>                         clock-names =
+>                                 "core_clk_src",
+>                                 "core_clk",
+> --
+> 2.17.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
