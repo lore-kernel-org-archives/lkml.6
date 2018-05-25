@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964882AbeEYHvh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 03:51:37 -0400
-Received: from mail-db5eur01on0055.outbound.protection.outlook.com ([104.47.2.55]:35200
+        id S964964AbeEYHvp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 03:51:45 -0400
+Received: from mail-db5eur01on0055.outbound.protection.outlook.com ([104.47.2.55]:23744
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935866AbeEYHvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 03:51:35 -0400
+        id S935866AbeEYHvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 03:51:39 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com;
 From: Dong Aisheng <aisheng.dong@nxp.com>
@@ -14,11 +14,14 @@ To: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         sboyd@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
         Anson.Huang@nxp.com, ping.bai@nxp.com, linux-imx@nxp.com,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND V4 0/9] clk: add imx7ulp clk support
-Date: Fri, 25 May 2018 15:51:02 +0800
-Message-Id: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH RESEND V4 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+Date: Fri, 25 May 2018 15:51:03 +0800
+Message-Id: <1527234671-31755-2-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [119.31.174.66]
@@ -28,47 +31,48 @@ X-ClientProxiedBy: HK0P153CA0011.APCP153.PROD.OUTLOOK.COM
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4210;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;3:lhyoXQBLeXCMn9yJ4KRbaKsNnQ4Vaeey6RE9bFdxZI0/35P1/SRSF5lkmAnmQY2ukJA94nYlB7zWajGQZB9x5oADlcXZg9SYTJoXZQbnkfjn3PW8GYpk9hQJ5B4yDSf5NVDGE5fNQfhsulhcQjh03vYXvxEZXTtwtvWqKTXI8SieANuSXsBoQ9CscIWklUqUFsBA54pOlhj30v5eUfrXOVjpE2t58b+rMAqD0q80DoQlCGgtjMbg60g5dV+hQXBP;25:0ZvyLcdlMBxZwk95iJ9cYm7klpjsE7lLRbVrmBVOq9CfgWC9GSk2/YwXzec7b/3eBjM1EXBLNHCmD+/HPdpoiUDwbEC5Uu2NtQ06C50MRhXrWP2mWbXiwMpvqUFsgeT/sZlbVAGqJFxgdrTF0iQPMjY8y5aKgom0AbASVKI6oD6R8C77GmRgRJ6yYkzdvCKVV++i9M0dMJfkeKZcANrMk+8abBx6NAna/CpDvYUXHcLIJ/Cc/QvvUgjsj/mH40Coz3bVAzqB565GpDMg06pSXMI7V+PoX7pXY/KymoZ6yoF4qNki/NI0v0AMPlLuUMnPh+pjPsJNPG2/tANt3lfi1w==;31:cs+CVVlee70j+aq9OcEHjZk+ys+R5ZA7DaRLMkQxDsHIfLLcBoD04McNaGdxOSMvg272MUQDkEM60xF8/vJUx/YF6MTj5dRvitNCYJMj/KBKjcsHBDHah0kA7nkP2zetorElkkS1VnupyyxdsvX6dMQhMcnQzE0+0XXx7Lyf2AFqswyt6mXVKkvE1JElzTupqnkxzytx6+LLARMT+OQKi85WI9ipmBraCofWdg02L54=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;3:6X1l12tfnuS9fQt0ymu0q0LC+PLof/I1aQKPfgNcY737B3dXezlGSq+qmto0EAh/QRl6TLTCnC5why/omY76NK32mhixI9yZUz2VI3H+f1KmAL5pSPPo9r8ZyowzEr01q7mnqYdSVFSjOwsuvSw2ysFyOHfPsNHtmcqQp6PrTy1JJKZV7E1j3QAffLN2UJALlEevlzOpSjFwCRr4Z0Xyi9SDgC0rwajB3HCWnQlTONKuJoXcY4Yh1fSYtHC79hHy;25:3qF8hmTfpY3FaoItj5EdO7Wnt4CDOfG5+QVMg0kPaRwQ/icZ7btEo0+4vgNRfbb0gXEPvGjQMzV7rsuzu/sI6RCxzuRG1HvSQ66B+tuC/KzF9Wb4BtY45yGZXLAcShCG1RmIImI3tcoLFmx+9cayAy182Y2J/klh2s8sabhxAo4Ndd4yHa4fWVgyJMrkd5uMjUNQhHEDWOSECGqnjhDRhyrhAMcYehfx2fkCKFRJLB0hKLoba7IVFjBZa0Y/2H4+TTDS2PUF3v/oAjgd8/CxA9DhwICNE1PsYT0ubHL64PiDaw2UWNT+Rkaq/WNeDezEVzBQQ6AzUicqyEAdhnPEgQ==;31:dI1nIfetqvpnKzCeXl2uT4oRST+t/Ls5frJC17QmLgTAysNlYqMEGAPqmnZd2kBFuAKQuaf9GTU26RPrh3ffgDVIEw4hvJMq5blifkMBpmAMVmpXY3m1+bFMGgGfU436cZJI8IyjgUt4/PU+n8L0JIhSMPBETbBl8HxdxgiO837LWnEKCLaUh2B+/h6gOm4j6McntpSC1GAUP5fqtZIlQBF5cc79/gTIqRWm2QMdV7Y=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4210:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;20:jZL0KQbvt7LcyOq4rAN0H/azoZUy6MGmUVuqI/xdR6JMhQEHF9gKtbdvdUDItLdkHwRdindKX9/aTVKQAEkXDCmcS0XDExk2m7aANVux0JRdrGVxMYpBV8MoKDMdpMozvndQoVUmzbVjYXOLN0h5fMHr5khtU5NXluxY07b+HZmCTIUmQQdSj74NgH9mzSrHrJiQYF2ld20oeDmrg8v16+bMtlSGwrJEYPTD5s+74coYr7+xrXzSOGXlL7x7JcOOLj5pFAQRszO6YlNh2xfRCHmVyZoOn9d49geO8TKWN44v5LVOdJ8B+SpOIidPj1n5qBnc+75VV2HwbQf9mpS+8dR7RFdQQekKnK2F3W9SyRYh2g1wqVlJ1K1BsoVJczscY+Zqiu9pJQ51TlyF6ErjKxtJCCZYnexR6esuPXku1ZRGj55rWbFv5puWsfXrhXzfMbE6qYFT7+DpIaOCEf482tZENLO6geWPkhiUbrAgoiYib6paY1X7jtCn9rnm4gXJ;4:0VDNQhZaNdLcLY7+yGx1fOgyg5VnSJ1PIV+wsiFh9wN1bqNYBqXAZ6xYUYM3LUAQVzXyLT/IHS4aOgYwD5GaWCUnK6QF2fCb9BIjZJOSa88/oMyzSvIEYX0y3DD/IAmO+u+OwKFhZcQY+91fDpHQtMjLR5FRe2zpIFkWK5o7gw6cJHPNdkcNG8MGJveH47emd2tj5lnh/inAxnK68Pr5yQ8ox/Ou2rQHDdrBMCK1BG2C1GR1nbZHJHnuQfUvrZTvjnyMRuq2bOOWWrdJCYYyfQ==
-X-Microsoft-Antispam-PRVS: <AM0PR04MB42105A2B91F805938B43844080690@AM0PR04MB4210.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;20:XTotgEwvNbu5OQJ4tDJX84DJ9ESR1AnsxShoh5ctPKWWJ4lGT4WhyFNsQa+5x7BrTa4KDwuwVL5hpWZZI+os4ZmBNedFlfVXW3170EvjZiV4N6R0UBmf2H29JrfRTx3rfnUt7DCCLaJA2SffgO/Sy02heF84H+sMY8rKSuZ9KzDKMDdw31awhcuY/7mnrFrj04qYzZ+P55Vcgaxnyw40xHT1IoLVR2Mz4cdcWc4m5aLFgG0331EjEYZxkQaqfvj2rTAmEQysG7xlzi1ymXmKn7P2qdAcYR+SgJiNKs10Ld5/L4sVpmg1HLrkFYfwqxstaYBOjMxIZa8pqxQ3rJQ1KvLEuXWzBcsz4phu0NZM2nj7NqlNsQGmL/6qBT+3IWrKHWRHRCzbZ0Nt+RfJjkdZFrCP5Ie/Kjx9RMlEk7ghTll8fsdNWm0SymnEfRiizn9ZAIyEIJj05iMIurbNoOME1S/W/2FJt+nvJlGfdmWjB0Bja54iLUv36upUFt6ear2X;4:+stMiXe8GPW1DR/hdqWKojDKqtbbA9hVG/aV4jI+E9nZcWXgd8d0kmWwKB6ZrXFRLDoo58CNY/EeoiHFMLZIS1LAP27TpFjjFexKH5x2ZhEtVUVF90uYs6oOpi75M1K36Mq02ZIOWH0poHY76md6/P7/Zb9dhyPnJeZXEdCiVnGJ1JtBSoxpLDibPce6CFCUejtFpgV3PLsaBHpXvDQ6fCHXS0sG7GSjEh1CkP/MMxsSkeeRbhlIqglNR0otVfsIyA8fKQtrbwDXHaK/xj/FFpUW6SupUsm+5kEv2bSzk3q2JniJxIJX/iiYOvyhzfZF
+X-Microsoft-Antispam-PRVS: <AM0PR04MB42108E573B51348C9DABC8ED80690@AM0PR04MB4210.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4210;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4210;
 X-Forefront-PRVS: 06833C6A67
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(366004)(39860400002)(376002)(346002)(199004)(189003)(54534003)(8936002)(6486002)(50226002)(478600001)(2361001)(3846002)(6116002)(53936002)(2906002)(66066001)(966005)(6666003)(52116002)(68736007)(51416003)(47776003)(6506007)(386003)(6306002)(6512007)(81166006)(81156014)(8676002)(25786009)(4326008)(6916009)(956004)(16586007)(7736002)(305945005)(50466002)(105586002)(106356001)(48376002)(86362001)(5660300001)(36756003)(2351001)(97736004)(476003)(26005)(486006)(186003)(16526019)(316002)(2616005)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4210;H:b29396-OptiPlex-7040.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4210;23:kySVQxB8kKn0vbOTfJuV5J4YYaDHkal+nz+7fzuHr?=
- =?us-ascii?Q?TVrNQyWUPES4iqrwCBgSvWp2eXPWdX0zmRBVVuewuLausxLN5VD/GoFVch0F?=
- =?us-ascii?Q?C0WUqNW99+Y3CtvEvA5L2haZqMUdpWoK2vOK8YMap8km3wfH3AiX6BjB4B7r?=
- =?us-ascii?Q?njoe1EdcIN2SEecuauiCQM/ZgbOHLvRN7z2PdFpGlsNlYJD1uRi6rhFNp5Bp?=
- =?us-ascii?Q?FE8nqGU27YkgCRPcuaHnhmO5bwSQxT9UlCJG10LSRUymE0yeyz3XUAKuSl3K?=
- =?us-ascii?Q?/g2RUeAGw8UX/K3rcjBN5r0ZTLeXm250ORzs3EMIvCFlH5q6S8EMmN01ks8E?=
- =?us-ascii?Q?xy+U6b4iH0bYgRHdmsWGiq5kc9v2QB/80BXpHbs/FLX1dDXQJe32cFkZm0NX?=
- =?us-ascii?Q?j8SZ6KkNMyrbRhiRQ0PvLr776lUsXUJCFSzDUAwAPkOPgfeLewSn8cY6Ogwe?=
- =?us-ascii?Q?uXSOXOmbftRHIX3OEWyDhLLdLWlP7itnhXodnzdJ5hLAAb5qJ1mJf8pRnjrf?=
- =?us-ascii?Q?ds5iONJLR25ZklHQM/wFCtl0S6fuu7/wMfv92Dnd18/0h9p50tEL/caLKjsL?=
- =?us-ascii?Q?qvfg/U8JIxZe4t2Pwe4CzGpY0nMKQy02vLDk2riZ5DeTtB25KCdXYt5L6tjg?=
- =?us-ascii?Q?dZ52AsYjRcbG583GmJGKLN9XFJVGjrSTqdN6JocJnTRvsSN+TQDu9OKgxBhg?=
- =?us-ascii?Q?xCISeGGgGaGNHrXACUduNlGBkHxU6LeGdg6va2h1NHv5gtOJ0GAc9PvIx/K+?=
- =?us-ascii?Q?IwozWSpr/SSxZM8wcIVygyk+ufAQSAJqITqMkPd5bl4eyy1kJ2UdU4l/8iSC?=
- =?us-ascii?Q?r4chZanwcQ988i7ME/58uT0C9RK1+lv+KnjfJmWSvZxfm1MB1uEWZkZP6I9a?=
- =?us-ascii?Q?vfQk34cQA5RTqk/3x+7Fp/JIl1WDJULjeUvlUHyDtZARXnOCKZ3WsDXNHfZ8?=
- =?us-ascii?Q?qDmD+ags3AwHXi0sIPI7g3iYJnGL7evAOwF24bbKRDq5MS7xayNKen4C8evF?=
- =?us-ascii?Q?6zRh++jOyTsmLYwsGQM+enyg7MZptOo4XJoR9vbxYSMR/JW7Kc0sruuQ26BP?=
- =?us-ascii?Q?2nVC9OZd2et3bOweHCKfc/VXbF4GaUVyhOWY7uxWSjLjAO9WnG2gqzah15B0?=
- =?us-ascii?Q?lhmF1EicpwkkvFrVuiCFhpFxtb88JQdUMFZ7F15/adl/7bsnHVkdbAUrxB11?=
- =?us-ascii?Q?Qb5vNaUFciNkb7eDF4y7kMOcha6GndK4l+SOYT9Di/X2P7Co8IJaDQTqw=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: wuTvOMGQe9X3HFQee6AsF3bHgt0XYmrPukJHIku8RvlHncNNxfech2+nmmuibmHv1Sr6/umIdMUfqVFWu1LiAs5JCRat0FYQjeM11d2wLT+jzNyZHXosykH2CvncbtuiDYVrFevwNcr1RKWcTE9TO2boSuGFPe974T8Z7PwpZ3bJETmfgTy9ihRGqfF95z9v
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;6:DGzgDwKxJ8S+TRCCjeZo7bzSateYsstIH/xiCDw0fSk4HQtMncU8uwA73MQtatioHkEdzyKDqTbPhf9tBTxW60fGC9QaraIKcpEEJ8WVC25UMugvSEnHrfdN69GeR/ftiDY0urxcJTb77PHr3sUPFI7IEseX0+4S48AOyHYeG8wd+zHV2bFRnj+cWq9nPm61lartaMVcvoImtG3zrXosRepR9kO0vrToHk6TEqipnAbwv4AgrGbC6a/OtYSDreCXiqoZZuBSjIANzuWT8vl7fx2R4onz5oYaJy31vpAb1+iNe1tD4leRK8iy3/MgbBvqwF4q6TTJ7rrhW5DSlo5vVU9gDuNDIxvTiMXcYi7Z1Gi+Zf9xaFyA1Pe2Z4pItPClvE9oC4KSy0sgkWejQ5JRCBuYOPZXAMJy+dJmAX7w92bbYM5AY6tczBLq8Al6ZCH/apjUc54W36b9T9omIqxQGQ==;5:Am3wtz+756ArtAXgYFhzEMTjteqLIq3HlbX93gMRgSTsMPpYIUaqHAKgLdQ1CiBr9C05j1iEAUrAG4YMUuEzfNi79OFg/VJbrC8uS5e+P9Rct8NqJnYKYh3rTOY4ioOK3jwrK7mrMuHTXBYJwOh3Kns1rC6icaoepgV3vFOmEC4=;24:8CAdaCi7AmkC2kRdEq38JdzYyN69ptPcllbDBR/IQQ2iVU3jh1bpNa45nbHsHPtAoU0luh35YGR/R3b4qyV+tau3jKoU2xQtFU74USqPMS4=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(366004)(39860400002)(376002)(346002)(199004)(189003)(54534003)(8936002)(6486002)(50226002)(478600001)(2361001)(3846002)(6116002)(53936002)(2906002)(66066001)(6666003)(52116002)(68736007)(51416003)(76176011)(47776003)(6506007)(386003)(59450400001)(6512007)(81166006)(81156014)(8676002)(25786009)(4326008)(6916009)(956004)(16586007)(7736002)(305945005)(50466002)(105586002)(106356001)(48376002)(86362001)(5660300001)(36756003)(2351001)(97736004)(476003)(26005)(486006)(186003)(54906003)(16526019)(316002)(2616005)(446003)(11346002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4210;H:b29396-OptiPlex-7040.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4210;23:G6zqFEMrtcJSl4sx2d/q5u1DmkhHfjBeE6S7vAPa/?=
+ =?us-ascii?Q?B0X9L950dZOCrIs6ejbMzuPbM+116+GgM90ODkMFvNScPUtEpPy4XDwN+GUI?=
+ =?us-ascii?Q?ix7WLRMlhVDcJNK4SrtTfXLsPeNYbMr0aRtKVj2Dj9I/ViumSoxKPtDloX39?=
+ =?us-ascii?Q?Ej0gbQ8nh08H9tWL/4fug/8VfMkJgYhi78i4VDUg79czICYJViksC7UNwgyj?=
+ =?us-ascii?Q?fHbnbuh37NlfSujffGAxB8zEunH2/HKnsFvxzt7Tba09coLLSNJ4Rkt0vx/o?=
+ =?us-ascii?Q?oQetRMNilB5O1VfJHdCl5z/WrvIOcnu153mYySCliy4u1dMGlFO4SecITMyY?=
+ =?us-ascii?Q?fP98Ux7agZgjl8ZER1/TYL5oklSWipTcxECk7bgu1m7OnIQLGtKVnxdeeNPU?=
+ =?us-ascii?Q?BiqgC/Q5ueAiX14ZcPu7i/jKVsxV9nQ8rHAwrKsNqE4Ic53atnhUkYVYHdns?=
+ =?us-ascii?Q?YzUpLp+H3SBvbIgkH00XBJTSqZSkoCOyEEmZa/Txa16LlnXzViCz7cJOIy4m?=
+ =?us-ascii?Q?agx0CYrLFDG0tIJnn9/JEkeyryAGdvHMQZCieEO3NyCSKm15sizj6a2c2Un/?=
+ =?us-ascii?Q?WRCK+N795f7jvCkBO4FKDqc5fZBPqanxhH26r5GdPj3qwGSgSMFmY1b/IVdN?=
+ =?us-ascii?Q?tx78vB6TklsrAh8LrV0uHCDrs06UQ/vvdi2SjDpLPBYSyBAGaix3HiSrGyUs?=
+ =?us-ascii?Q?4UIXgp/cy2+/eGSMCFJQjfdkeINd1WNbXyaXWaw4Tm9D2gZdv4uIiibXL+TZ?=
+ =?us-ascii?Q?eMuKpbCXMr4ZtuFHy/h48fC4CAEHMBlhlJYPYxmjcyXs6vsSvH4EaYIxp4q5?=
+ =?us-ascii?Q?ZwmqUg4XnsiaHx51J5QYOS2iJJnOmknHgVgXBsqKfB+vZNdrBkB2Ckbh4oxq?=
+ =?us-ascii?Q?q7L4CgKlgNG6jIGDMafCl/7xkfoeei0dLLMmE3l7ZjC3e7k5AZllAtx8HjQL?=
+ =?us-ascii?Q?cKBm7jqkdpzE5KXCgf7OdV3nyWGiOFPw8dBBuhWSKhU+myIcwSCqUQTU5LIW?=
+ =?us-ascii?Q?DK1OolsJ+usyuc3iJIX3N4IDlwFHxrmUkFgk6Nyffe61rLtU8Ez5vzo4cc/U?=
+ =?us-ascii?Q?ubzqwE4/nLCiu1t9vaurOcc3ZlUHSOEJIsmSQjlNJpNg6IaJe3aIZMTHeh2j?=
+ =?us-ascii?Q?5pR2ngD8kJWw0swBMXNH8DJM27p31CAnkmzwI+Lc2O+iRdHqRcAiSqlBTOso?=
+ =?us-ascii?Q?/OGJsqLPKQoT+lC78gQI+U/IHmSc14dddrHTvMzd+OFquGj03flii7bnxsZp?=
+ =?us-ascii?Q?UOgtpPeJLarBAtl+AUbLj1o7+7u187Q238vJvx7pSHxBva1j3JZuPfXkD05D?=
+ =?us-ascii?Q?+g7FUpVyFIdygdTaMSpZzs=3D?=
+X-Microsoft-Antispam-Message-Info: q0eqr1T4QZHdzuc1Cd9mTtM22wAj6FEpD699rFlzzfnNn+I1dNwTnB27TBcsvOpot5lmdU5IbpgNzCXVCo8eF2u5/36ZCdp98Zq0ty8bFS2/C6CvdgDZE0pp5IP2mwjp8yAi23gmz0QYhWqkpdtv0p9pfTlaMbkI2i/B/bqj8Zb3pydWf2ZR4EEdJ4yMzT2c
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;6:ntiuZsCIVeeRtxvjLPYM5rRVG3RFWvts4dRMbwapT17IXwbc84NuFpvYK3d2PUBiqiVc5fhxCJP6tg0DIQaNQGgvth8E0CpNKEvmMiFlQJ3L+RD/dSTGmBkysiJYJOU15i4ZXGqhs7vYEJPbnNAHDt4D5HeVuiIv0SRJhWOYEk2tm/td8p0MiPaSlRmZqZZ0n7B1bAtrz90NN73oKvxTRGBFYkpvhpQTepN6d5TYvnelAlr+SyAWJi/O05HqGbpQUdVqayN6NB4Uj4HP7e+GNwd2HCSmhtkQAGSoKLEkKxh/MSoPBkUSdR2N8NjjoP/I79Kiof5Ey98bBliUGJYnmNdbEyI1PR7WVMGpUNGkU5n3E+2CRcyMqArj8RDqydznvNxf5b0xTwMvHfqZmizB70DF28jj/N3MKiZ1ySsjj6NC63o90XhNOlJZdzxTANDje+80QoWSBATANM5KqKeQfQ==;5:ghSXTrpmOdy0GEqqo8I3vUISGEZD9VOdn73NS0vuDpoA6IKo5V5SDcghsa3AyyoOxfNobwaQzv5uWiiF5YKeoYWdpxKkpv8O4XKS/H1vQXcTZXG66/uL5QY0On+iObEt99zj6sUjgBS3YX6LNbYnio5B7kySrIV++KLrk0bua/w=;24:HhfWFulKWUiHyoAE1BrptlKmYLFtKLrYnMFUoPZg6MMdb4PyeIIWaopJYmbALvQ1KpS9kpZI1RA2uaoc8rLPlShMXQPMS+PaQ4K/lZ/qKHA=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;7:1tMUKQqg5gSL8+G6U+fCjbi0boiwK0S3VLsHWVPlzhBt+k9qpn4+kHyMDyajH6qIMI5iA6NwFDKV1NEGl3u2xd1uuzP8aeNWcK6LJ7nl6YepDyBa85U4cut1ibL7axr0iFz+XJf0A6VU0lp+GcScy1tAW83yG8Q3FaIa7CFeKLREp2JjT3OfONwSX4lLNBd9SJFQHK1Y95lRKgcuQWsxq+y3mAE5J/fNrxJu0TAroOuMv2RXUCRNxg/R6xmWFmOO
-X-MS-Office365-Filtering-Correlation-Id: f690aadd-26a7-4a81-ed42-08d5c2145515
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4210;7:BGBoTozXUA2HQx60ADhL63a7m/h5/B2aZ5cdFKnsoVT2jizyLv2xp6OAGQ/z5J9fBpLbA8L7p6vGfEY/eY/m2mscd6zYZtwd+zBI/5AcIJBs3PiphP0cTDNOQAJofB1euBZLObwp11VZJJGaJRatCQE5/Zb2s9r9KLOAWMTDS3PtkI9J7HqD+D9VLGazojeC0rufiZ8Jv5l6/iOuk2bIwDqbQ51Xu8PX0QLt0WrhuVg1d2Pe0rJxPtLpVI6vZXCr
+X-MS-Office365-Filtering-Correlation-Id: eb89cf37-151a-4114-524d-08d5c2145770
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 07:51:29.3464
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 07:51:33.0261
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f690aadd-26a7-4a81-ed42-08d5c2145515
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb89cf37-151a-4114-524d-08d5c2145770
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4210
@@ -76,76 +80,292 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a rebased version of below patch series against latest clk tree.
-[PATCH RESEND V3 0/9] clk: add imx7ulp clk support
-https://lkml.org/lkml/2018/3/16/310
+For dividers with zero indicating clock is disabled, instead of giving a
+warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
+set" in exist code, we'd like to introduce enable/disable function for it.
+e.g.
+000b - Clock disabled
+001b - Divide by 1
+010b - Divide by 2
+...
 
-It only updates the license to SPDX format as well as a minor fix of
-pllv4.
+Set rate when the clk is disabled will cache the rate request and only
+when the clk is enabled will the driver actually program the hardware to
+have the requested divider value. Similarly, when the clk is disabled we'll
+write a 0 there, but when the clk is enabled we'll restore whatever rate
+(divider) was chosen last.
 
-This patch series intends to add imx7ulp clk support.
+It does mean that recalc rate will be sort of odd, because when the clk is
+off it will return 0, and when the clk is on it will return the right rate.
+So to make things work, we'll need to return the cached rate in recalc rate
+when the clk is off and read the hardware when the clk is on.
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
+NOTE for the default off divider, the recalc rate will still return 0 as
+there's still no proper preset rate. Enable such divider will give user
+a reminder error message.
 
-The clocking scheme provides clear separation between M4 domain
-and A7 domain. Except for a few clock sources shared between two
-domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-and and the Fast IRC clock (FIRCLK), clock sources and clock
-management are separated and contained within each domain.
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-
-Note: this series only adds A7 clock domain support as M4 clock
-domain will be handled by M4 seperately.
-
-Change Log:
+---
+ChangeLog:
 v2->v3:
- * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
-   Others no changes.
-
+ * split normal and gate ops
+ * fix the possible racy
 v1->v2:
  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
- * use clk_hw apis to register clocks
- * use of_clk_add_hw_provider
- * split the clocks register process into two parts: early part for possible
-   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
-   the left normal peripheral clocks registered by a platform driver.
+---
+ drivers/clk/clk-divider.c    | 152 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |   9 +++
+ 2 files changed, 161 insertions(+)
 
-Dong Aisheng (9):
-  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-  clk: imx: add pllv4 support
-  clk: imx: add pfdv2 support
-  clk: imx: add composite clk support
-  dt-bindings: clock: add imx7ulp clock binding doc
-  clk: imx: make mux parent strings const
-  clk: imx: implement new clk_hw based APIs
-  clk: imx: add imx7ulp clk driver
-
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
- drivers/clk/clk-divider.c                          | 152 ++++++++++++++
- drivers/clk/clk-fractional-divider.c               |  10 +
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-busy.c                         |   2 +-
- drivers/clk/imx/clk-composite.c                    |  85 ++++++++
- drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 227 +++++++++++++++++++++
- drivers/clk/imx/clk-pfdv2.c                        | 201 ++++++++++++++++++
- drivers/clk/imx/clk-pllv4.c                        | 182 +++++++++++++++++
- drivers/clk/imx/clk.c                              |  22 ++
- drivers/clk/imx/clk.h                              |  92 ++++++++-
- include/dt-bindings/clock/imx7ulp-clock.h          | 105 ++++++++++
- include/linux/clk-provider.h                       |  17 ++
- 14 files changed, 1155 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-imx7ulp.c
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
- create mode 100644 drivers/clk/imx/clk-pllv4.c
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index b6234a5..b3566fd 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -122,6 +122,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+ 
+ 	div = _get_div(table, val, flags, width);
+ 	if (!div) {
++		if (flags & CLK_DIVIDER_ZERO_GATE)
++			return 0;
++
+ 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+ 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+ 			clk_hw_get_name(hw));
+@@ -145,6 +148,34 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+ 				   divider->flags, divider->width);
+ }
+ 
++static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	unsigned int val;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	if (!clk_hw_is_enabled(hw)) {
++		val = divider->cached_val;
++	} else {
++		val = clk_readl(divider->reg) >> divider->shift;
++		val &= clk_div_mask(divider->width);
++	}
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return divider_recalc_rate(hw, parent_rate, val, divider->table,
++				   divider->flags, divider->width);
++}
++
+ static bool _is_valid_table_div(const struct clk_div_table *table,
+ 							 unsigned int div)
+ {
+@@ -437,6 +468,108 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	int value;
++	u32 val;
++
++	value = divider_get_val(rate, parent_rate, divider->table,
++				divider->width, divider->flags);
++	if (value < 0)
++		return value;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	if (clk_hw_is_enabled(hw)) {
++		if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
++			val = clk_div_mask(divider->width) << (divider->shift + 16);
++		} else {
++			val = clk_readl(divider->reg);
++			val &= ~(clk_div_mask(divider->width) << divider->shift);
++		}
++		val |= (u32)value << divider->shift;
++		clk_writel(val, divider->reg);
++	} else {
++		divider->cached_val = value;
++	}
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return 0;
++}
++
++static int clk_divider_enable(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	u32 val;
++
++	if (!divider->cached_val) {
++		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
++		return -EINVAL;
++	}
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	/* restore div val */
++	val = clk_readl(divider->reg);
++	val |= divider->cached_val << divider->shift;
++	clk_writel(val, divider->reg);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return 0;
++}
++
++static void clk_divider_disable(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	u32 val;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	/* store the current div val */
++	val = clk_readl(divider->reg) >> divider->shift;
++	val &= clk_div_mask(divider->width);
++	divider->cached_val = val;
++	clk_writel(0, divider->reg);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++}
++
++static int clk_divider_is_enabled(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	u32 val;
++
++	val = clk_readl(divider->reg) >> divider->shift;
++	val &= clk_div_mask(divider->width);
++
++	return val ? 1 : 0;
++}
++
+ const struct clk_ops clk_divider_ops = {
+ 	.recalc_rate = clk_divider_recalc_rate,
+ 	.round_rate = clk_divider_round_rate,
+@@ -444,6 +577,16 @@ const struct clk_ops clk_divider_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_divider_ops);
+ 
++const struct clk_ops clk_divider_gate_ops = {
++	.recalc_rate = clk_divider_gate_recalc_rate,
++	.round_rate = clk_divider_round_rate,
++	.set_rate = clk_divider_gate_set_rate,
++	.enable = clk_divider_enable,
++	.disable = clk_divider_disable,
++	.is_enabled = clk_divider_is_enabled,
++};
++EXPORT_SYMBOL_GPL(clk_divider_gate_ops);
++
+ const struct clk_ops clk_divider_ro_ops = {
+ 	.recalc_rate = clk_divider_recalc_rate,
+ 	.round_rate = clk_divider_round_rate,
+@@ -459,6 +602,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 	struct clk_divider *div;
+ 	struct clk_hw *hw;
+ 	struct clk_init_data init;
++	u32 val;
+ 	int ret;
+ 
+ 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+@@ -476,6 +620,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 	init.name = name;
+ 	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
+ 		init.ops = &clk_divider_ro_ops;
++	else if (clk_divider_flags & CLK_DIVIDER_ZERO_GATE)
++		init.ops = &clk_divider_gate_ops;
+ 	else
+ 		init.ops = &clk_divider_ops;
+ 	init.flags = flags | CLK_IS_BASIC;
+@@ -491,6 +637,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 	div->hw.init = &init;
+ 	div->table = table;
+ 
++	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
++		val = clk_readl(reg) >> shift;
++		val &= clk_div_mask(width);
++		div->cached_val = val;
++	}
++
+ 	/* register the clock */
+ 	hw = &div->hw;
+ 	ret = clk_hw_register(dev, hw);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1053e2a..3cf522f6 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -361,6 +361,7 @@ struct clk_div_table {
+  * @shift:	shift to the divider bit field
+  * @width:	width of the divider bit field
+  * @table:	array of value/divider pairs, last entry should have div = 0
++ * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
+  * @lock:	register lock
+  *
+  * Clock with an adjustable divider affecting its output frequency.  Implements
+@@ -389,6 +390,12 @@ struct clk_div_table {
+  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+  *	except when the value read from the register is zero, the divisor is
+  *	2^width of the field.
++ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
++ *	when the value read from the register is zero, it means the divisor
++ *	is gated. For this case, the cached_val will be used to store the
++ *	intermediate div for the normal rate operation, like set_rate/get_rate/
++ *	recalc_rate. When the divider is ungated, the driver will actually
++ *	program the hardware to have the requested divider value.
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+@@ -397,6 +404,7 @@ struct clk_divider {
+ 	u8		width;
+ 	u8		flags;
+ 	const struct clk_div_table	*table;
++	u32		cached_val;
+ 	spinlock_t	*lock;
+ };
+ 
+@@ -410,6 +418,7 @@ struct clk_divider {
+ #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
+ #define CLK_DIVIDER_READ_ONLY		BIT(5)
+ #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
++#define CLK_DIVIDER_ZERO_GATE		BIT(7)
+ 
+ extern const struct clk_ops clk_divider_ops;
+ extern const struct clk_ops clk_divider_ro_ops;
 -- 
 2.7.4
