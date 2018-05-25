@@ -1,82 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966795AbeEYPwk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:52:40 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:54613 "EHLO
+        id S967090AbeEYPwr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:52:47 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:34175 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965666AbeEYPwi (ORCPT
+        with ESMTP id S966801AbeEYPwp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:52:38 -0400
+        Fri, 25 May 2018 11:52:45 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] drm/exynos: fix scaler_task_done return type
-Date: Fri, 25 May 2018 17:50:13 +0200
-Message-Id: <20180525155030.3667352-6-arnd@arndb.de>
+To: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Eric Anholt <eric@anholt.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maciej Purski <m.purski@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 7/8] drm/bridge: fix dependency for lvds-encoder
+Date: Fri, 25 May 2018 17:50:14 +0200
+Message-Id: <20180525155030.3667352-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180525155030.3667352-1-arnd@arndb.de>
 References: <20180525155030.3667352-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:IeYDxoepEF3K07loDeAEQjFUqNru020qvDEONZYRpd19ZlaZutS
- rb9//WJwk8g2uox3LQpnEX8BRpy3hHbs9FxGsOVTCiSpTC33PzsggztvP3I4gIqYVUXQli/
- uZHNxYxaoU01Agb5GnZ5vvrmzqGJs4DymfIwRJh9QcdS+fY1y5RPKnepu7Lfl7GkCRrjd5I
- 4TW84NHyhbKUjHOfcatWA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OgOYizXz/tU=:J07lSl1AFFN+LE2Nr8xk8z
- Kl+8woDqZHTSKs4yLZbUruY3E77F2dJZkEKxH4+/XtlhB5KpKsNEow2m6ZrR0saY35e4mnBuO
- rtSQGtLbi9zfopX/y1Sh4NRfSbeNoceN3FD261cJnJLndAu2NBMnJHAFEqj5TZOdqLav7fQ/3
- 5ALAyWJAnU1iHp/df8MZagsOF/Jl3mg6OdNGr1fZkc7863Jnukfneqx6uW9WpG167q/D3RQ1S
- hKX+YCoArVD57wMNKAyjZMnRryw4t8y0hMNQ1bXWju3aJdH2pLNTwgge0+y0jQRP9p9WqkpS/
- pKQNyfJxyBaohXzcE5LhJIvGzDcBzfmcmppb7yknmddJWvF1JhLzmbZsT3womSeQSkAV/xYL/
- oEdPGmnCeDv4jlV5k+GPD/4QFyDBlhytjBHOqxsi0v63NYN0/qmuBkww+VKKr2hKDvM0n504l
- MXgUxoz9b1V002/m38XfFt+d4fxWmNkS9m8s1JMc4ZCzJ/VWAGubJ8GNyHnGXL/M3je1SE73V
- 4YnTr/IcH4C67I7G1BMd4CCO8w9Hr0LwBk2NYdxrkTlZbB4kEKn/r8HfZazWSKx0Zkj1WnDbW
- jgT5lkUT4yu6ojEI5/pC0GavXJ3TCtX3xfLvE2bmRhDn5KpO6dZfmA4WYmiQfjrpryx4P9u1W
- xdE5lYVZe7FWeuiP36QlsiWOrcTy6Xv0/znTl2T+RsLDi0fthNvg/GgiWvDYgVSEZoMk=
+X-Provags-ID: V03:K1:LVIm6kSURKg4YU6GswfLEU9yE7ciQXHXfcl8nw6OGCM7qyrhxIr
+ wkG0QUw7qvQXlv2yL8kJvbCffpfhPVWQhif46Oj6ywv/aw5eNpWBop9pD1RV7e+c0f6+xAK
+ jFbR1xEh5xVOGpFow1G9KsYDNBcJYqZfGDi0KFal4Pn8T5ZUTK6H/HUgTEX01aaOiaLI5so
+ xHxHgN2/tzytokmlXx/AA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9Z5UrJCXXQI=:oCvGf7Iep/lJTdqjFyI2px
+ Gl5cV3v9ylGW3kwtIlwlv62ZSyCJeNHaqt58PaP9h+lcjYf6dJIMXZw0WN/56KtrZvXokUGzx
+ nRp0onJf43joWFwF3/GgfzQ1PZc7DSfkUHFCruvDVfGA3vMbGwhklOTeboHrKGtpYfouvtGCJ
+ 2Pc727v3Ut53aPndJ1xrO0i0EKpTKELo6VcGCaqw0OtBXV4IRsmNN//j4T5+j2DkTbWhVSVY3
+ fbt2OkSAM1Lguj2b+rgg5i3EE9kWlszRwpNH4u5k0jBkMlIe8lGfSV1EHq1JITOnrY322/Gl5
+ uf/XCBvTST/Vm1KH32lXriUjZKNSJEyQbQuMCmF1DJ6ufEsfWMqhMcc1YAlmlRiKEOfgZ9nFY
+ iDuaTfMkLKAR0N9UD0eZf1AvioBZ/juxM+OUdR7SZSvRLN7/ymL1giM8wnXhajf3wwtFeDzpx
+ ognuHGv+bLXgrXeeB8B5lalj/r2gwTwwQOpAE6f6Wh+WeBm2b7qNaqzHjXGUcOVrc9R4P2+rj
+ rwYm9bZwgIjDIWpqQKbktEYP7FJuUbQVt02/huJXVtZK0FBaYhdaqcqCcT3nSf17xbuHan+JP
+ KBtcqBLUi7jkvhffZ7inb7AjKL7c+tnuOIjQPa1PNagRxMU1GuEBnQAtz0TUcV+NoRxn+JG3V
+ t6DSsUlBQ6Jkw3l2Bz4w2h0QQcJ9KElZnpfeBsUhZqa/fJYcKgn6/BTq/JpqM1qLOZqE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modern gcc versions warn about returning a ternary operator with an 'int'
-type in a function returning type 'bool':
+The DRM panel bridge code is built into the kms helpers module, so we
+get a link error when trying to use it from a built-in driver while the
+kms helper is a loadable module:
 
-drivers/gpu/drm/exynos/exynos_drm_scaler.c: In function 'scaler_task_done':
-drivers/gpu/drm/exynos/exynos_drm_scaler.c:402:47: error: ?: using integer constants in boolean context [-Werror=int-in-bool-context]
-  return val & SCALER_INT_STATUS_FRAME_END ? 0 : -EINVAL;
+drivers/gpu/drm/bridge/lvds-encoder.o: In function `lvds_encoder_probe':
+lvds-encoder.c:(.text+0x124): undefined reference to `devm_drm_panel_bridge_add'
 
->From context, it becomes clear that this should have been 'int',
-so I'm fixing it, along with parenthesizing the expression to make
-it clearer what is meant here (I got confused at first, after seeing
-the warning).
+This adds a the same dependency in the lvds-encoder that we use for all
+the other users of the panel bridge. I did not bisect the problem, but
+from inspection it seems to date back to the patch that separated out
+the panel bridge from lvds encoder.
 
-Fixes: 01fb9185dc18 ("drm/exynos: Add driver for Exynos Scaler module")
+Fixes: 13dfc0540a57 ("drm/bridge: Refactor out the panel wrapper from the lvds-encoder bridge.")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/exynos/exynos_drm_scaler.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-index 63b05b7c846a..4ad49d7782cd 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-@@ -397,9 +397,9 @@ static inline u32 scaler_get_int_status(struct scaler_context *scaler)
- 	return scaler_read(SCALER_INT_STATUS);
- }
- 
--static inline bool scaler_task_done(u32 val)
-+static inline int scaler_task_done(u32 val)
- {
--	return val & SCALER_INT_STATUS_FRAME_END ? 0 : -EINVAL;
-+	return (val & SCALER_INT_STATUS_FRAME_END) ? 0 : -EINVAL;
- }
- 
- static irqreturn_t scaler_irq_handler(int irq, void *arg)
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 6caa47834194..cf47bfa7a050 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -46,6 +46,7 @@ config DRM_DUMB_VGA_DAC
+ config DRM_LVDS_ENCODER
+ 	tristate "Transparent parallel to LVDS encoder support"
+ 	depends on OF
++	select DRM_KMS_HELPER
+ 	select DRM_PANEL_BRIDGE
+ 	help
+ 	  Support for transparent parallel to LVDS encoders that don't require
 -- 
 2.9.0
