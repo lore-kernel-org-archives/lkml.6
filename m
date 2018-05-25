@@ -1,109 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967601AbeEYRhB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:37:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50808 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967542AbeEYRg5 (ORCPT
+        id S967475AbeEYRmA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:42:00 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:43894 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967349AbeEYRl7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:36:57 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: add missing prototype for devm_init_slimbus" to the regmap tree
-In-Reply-To: <20180525135037.30638-2-srinivas.kandagatla@linaro.org>
-Message-Id: <E1fMGe7-00085k-KS@debutante>
-Date: Fri, 25 May 2018 18:36:55 +0100
+        Fri, 25 May 2018 13:41:59 -0400
+X-Google-Smtp-Source: AB8JxZr62p1NiYPQU95VyN1hrmOvuX9DNGnHSL9q7bbtsxE4FclAhDzfLTbsYzAFWJJVipc0EAzK7pZftU0GDk86tZk=
+MIME-Version: 1.0
+References: <20180522165842.233949-1-groeck@google.com> <649b1c14-e440-0c89-a59c-dc663344faa3@linux.intel.com>
+ <CABXOdTdyWVtbWXR6O3VenwTezVLGvEfKuvH=Xz6e5D3np-ZQNw@mail.gmail.com>
+ <20180525134023.GJ3116@snc-desk> <CABXOdTcrAoh_uhA=6AggUPFiGdFqwuFAHej50vK9gRMU9waUAQ@mail.gmail.com>
+In-Reply-To: <CABXOdTcrAoh_uhA=6AggUPFiGdFqwuFAHej50vK9gRMU9waUAQ@mail.gmail.com>
+From: Guenter Roeck <groeck@google.com>
+Date: Fri, 25 May 2018 10:41:46 -0700
+Message-ID: <CABXOdTem0f5zgZ+DvOVtWZ4Zw0JRak+oSOJyxHgMXCEEJ292Cg@mail.gmail.com>
+Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
+ compatibility with v4 topology files
+To: shreyas.nc@intel.com
+Cc: pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Patel, Chintan M" <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, May 25, 2018 at 7:09 AM Guenter Roeck <groeck@google.com> wrote:
 
-   regmap: add missing prototype for devm_init_slimbus
+> On Fri, May 25, 2018 at 6:42 AM Shreyas NC <shreyas.nc@intel.com> wrote:
 
-has been applied to the regmap tree at
+> > > > > +struct skl_dfw_v4_pipe {
+> > > > > +     u8 pipe_id;
+> > > > > +     u8 pipe_priority;
+> > > > > +     u16 conn_type:4;
+> > > > > +     u16 rsvd:4;
+> > > > > +     u16 memory_pages:8;
+> > > > > +} __packed;
+> > > > > +
+> > > > > +struct skl_dfw_v4_module {
+> > > > > +     char uuid[SKL_UUID_STR_SZ];
+> > > > > +
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+> > Any reason to not have this as u8?
+> > commit 09305da97c7808b900985526aa9198233f32fb37 had changed this to u8..
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> No reason. I'll fix it.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+You confused me. Commit 09305da97c7808b900985526aa9198233f32fb37 changed
+the uuid format in the configuration file from 40-byte string to 16-byte
+binary. This is
+an ABI change. As such, yes, there is a reason for 'char'. It is because v4
+of the
+configuration file, at least v4 as defined up to and including upstream
+kernel v4.6,
+provide the uuid as string, not as 16-byte hex value.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+That this ABI change was made without ABI version number change is another
+issue.
 
-Thanks,
-Mark
+Guenter
 
->From ed24d568bd9190cee046ae64df5890494dea2ca4 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Fri, 25 May 2018 14:50:36 +0100
-Subject: [PATCH] regmap: add missing prototype for devm_init_slimbus
+> > <snip>
 
-For some reason the devm variant of slimbus init is not added
-into the header eventhough this __devm_regmap_init_slimbus()
-is an exported function.
+> > > > > +
+> > > > > +     mconfig->params_fixup = dfw->params_fixup;
+> > > > > +     mconfig->converter = dfw->converter;
+> > > > > +     mconfig->m_type = dfw->module_type;
+> > > > > +     mconfig->vbus_id = dfw->vbus_id;
+> > > > > +     mconfig->module->resources[0].is_pages = dfw->mem_pages;
+> > > > > +
+> > > > > +     ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
+> > > > > +     if (ret)
+> > > > > +             return ret;
+> > > > > +
+> > > > > +     mconfig->dev_type = dfw->dev_type;
+> > > > > +     mconfig->hw_conn_type = dfw->hw_conn_type;
+> > > > > +     mconfig->time_slot = dfw->time_slot;
+> > > > > +     mconfig->formats_config.caps_size = dfw->caps.caps_size;
+> > >
+> > > > chromeos-3.18 has this:
+> > > >       if (dfw_config->is_loadable)
+> > > >           memcpy(mconfig->guid, dfw_config->uuid,
+> > > >                       ARRAY_SIZE(dfw_config->uuid));
+> > >
+> > > > Is this needed here?
+> > >
+> > >
+> > > Direct memcpy doesn't work anymore since the uuid format is different.
+> The
+> > > above is replaced
+> > > with (unconditional)
+> > >
+> > >          ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
+> > >          if (ret)
+> > >                  return ret;
+> > >
+> > > at the beginning of skl_tplg_get_pvt_data_v4(). The new code, as far
+as
+> I
+> > > can see, loads
+> > > the uuid unconditionally if it finds SND_SOC_TPLG_TUPLE_TYPE_UUID. I
+> wanted
+> > > to
+> > > be on the safe side and decided to do the same.
+> > >
 
-This patch adds this. This also fixes below warning in regmap-slimbus.c
-regmap-slimbus.c:65:15: warning: symbol '__devm_regmap_init_slimbus'
- was not declared. Should it be static?
-regmap-slimbus.c:65:16: warning: no previous prototype for
- '__devm_regmap_init_slimbus' [-Wmissing-prototypes]
+> > In the new code, still does a memcpy(). So, I am not sure if I
+understand
+> > why memcpy() does not work.
 
-Fixes: 7d6f7fb053ad ("regmap: add SLIMbus support")
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/linux/regmap.h | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+> >          if (uuid_tkn->token == SKL_TKN_UUID) {
+> >                  memcpy(guid, &uuid_tkn->uuid, 16);
+> >                  return 0;
+> >          }
 
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index b6865f070464..4f38068ffb71 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -588,7 +588,10 @@ struct regmap *__devm_regmap_init_sdw(struct sdw_slave *sdw,
- 				 const struct regmap_config *config,
- 				 struct lock_class_key *lock_key,
- 				 const char *lock_name);
--
-+struct regmap *__devm_regmap_init_slimbus(struct slim_device *slimbus,
-+				 const struct regmap_config *config,
-+				 struct lock_class_key *lock_key,
-+				 const char *lock_name);
- /*
-  * Wrapper for regmap_init macros to include a unique lockdep key and name
-  * for each call. No-op if CONFIG_LOCKDEP is not set.
-@@ -907,6 +910,19 @@ bool regmap_ac97_default_volatile(struct device *dev, unsigned int reg);
- 	__regmap_lockdep_wrapper(__devm_regmap_init_sdw, #config,	\
- 				sdw, config)
- 
-+/**
-+ * devm_regmap_init_slimbus() - Initialise managed register map
-+ *
-+ * @slimbus: Device that will be interacted with
-+ * @config: Configuration for register map
-+ *
-+ * The return value will be an ERR_PTR() on error or a valid pointer
-+ * to a struct regmap. The regmap will be automatically freed by the
-+ * device management code.
-+ */
-+#define devm_regmap_init_slimbus(slimbus, config)			\
-+	__regmap_lockdep_wrapper(__devm_regmap_init_slimbus, #config,	\
-+				slimbus, config)
- int regmap_mmio_attach_clk(struct regmap *map, struct clk *clk);
- void regmap_mmio_detach_clk(struct regmap *map);
- void regmap_exit(struct regmap *map);
--- 
-2.17.0
+> The new (v5) configuration files provide the uuid as binary and no longer
+> as text.
+
+> Guenter
