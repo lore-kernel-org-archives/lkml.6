@@ -1,191 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030368AbeEYVd0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:33:26 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:47101 "EHLO
+        id S1030433AbeEYVeC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:34:02 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:54717 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030216AbeEYVdX (ORCPT
+        with ESMTP id S1030216AbeEYVeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:33:23 -0400
+        Fri, 25 May 2018 17:34:00 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>, Keith Busch <keith.busch@intel.com>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, Oleg Drokin <oleg.drokin@intel.com>,
-        Andreas Dilger <andreas.dilger@intel.com>,
-        James Simmons <jsimmons@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steve French <sfrench@samba.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>, Greg Thelen <gthelen@google.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
-Subject: [PATCH] IB: Revert "remove redundant INFINIBAND kconfig dependencies"
-Date: Fri, 25 May 2018 23:29:59 +0200
-Message-Id: <20180525213123.2113748-1-arnd@arndb.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH, net-next 1/2] bpf: btf: avoid -Wreturn-type warning
+Date: Fri, 25 May 2018 23:33:19 +0200
+Message-Id: <20180525213331.2115471-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:6dM/aryXmjzl7pwalJqKM2a+q2VxZC/d9ShPqU2qlA6YJqgxUHJ
- khLJoTtrRv3WYqEdB/sD9L4zueJ48TnOyppdGTedfal6DvSCSCsvzj+uqA79l8psC1RsdL5
- 58ZcLdm1udoW8l/VMa02AWiD3p91Db8e5/D5J2sq3DsoPAmqx7A0Sy734agQbraBuQd6CbZ
- lEEttKA9iaoxeScnc5MkQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:R6EwSW09LQ4=:Sn6V7Yx84VWkPuLklX9RAV
- AEQAeAKTdUsliTLQCzaj4YFi2SMDO/cf5LefM9pAYff3jb6MViGFh2A1W6cBLN15OQlCKAiu4
- 3Ei56CQE9LT3HoK70oyR8MEpSFz0kXx+X0jfPji+7/uEgbmTrXBzDbS1509abZQmE68lBGReV
- gecQ3eZh22ymLwsB9D7wP3JYz018cXnBCF7hGIGmUJxN7nCAIuSMqtRpLyoubAEG/RFKBeAvk
- HdPAcxbZ7u+JMmle9pvDX/f38oTiRakE1PgG+WE7KqXNIt8mMmdTD5Dvrfw76hXHpLBNKsrHR
- ftJ5xIHbBfoKrdaTacBA8MlEF8R08GKsOFwKiQob7DAraKDP7ihEogjJa7duuG/3deTZZRcvc
- SAAywTDeMK3rQ4nap5VitXORuQboVdusUOaeUcazSRgZhJIj0ZI4odD2N8E1IA3qlpmbYb1FZ
- JOIWbdtLk+NeZ6LEeIVXCCfVQkrNObCLTYC0oQF6VGO2WJiuCyYzxfKHkn3DPDsgzGAMeMoK7
- 90cCi+a6vob0/IK4j2JinwDfyOIn6tB1UgdjqM4JAZAjELCWcPgMN1Owfy1PhqrfrlSm24axx
- r9oEOtxCVCPauj8uxcIULx+96o857bOcTE3hpRm+ZQj3L4R+G7O+mMzq6w8pajJfCr1lLVnoe
- IcQKrp3Ip/uYDGMvDxFlbeu+LXWwNMWzcOCrjPOwwudkWsbEFAE4PRuvmVYSUbW/OVBM=
+X-Provags-ID: V03:K1:yVV90sA6Eh8UbQLosTBJ/01CrbxUbLoorXerFl+UAztokMLIqJv
+ cxSDnSRPlFWZzReHm2e6was45IZFgep7Katd7/9mrV1ihQgKjcjBuJCIy5arpguvUjPBzr5
+ /d/uVTbed4+wC3/HmkTGf/rQuV/HpvJSPXn90z8C8HH4l0jWNEXIpVYJjKK6wmq4FnbqM+M
+ nK0AFYypmdjCMneg/dp8Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mxSvhcuP3FM=:A7fuER43f4DbT1A1l2CCRd
+ 0JeCOzhe5XybE1vvAItY2x3v+cUO4/0MkS34+OMG2u+9EDwpWILiNKIcJ0oB5rSz7O1yflJIb
+ ob+bwfx+CW9QpN+Wme+TWs6K9tx8dDNpGnR1i0SPfjZbsG857hof9ZC8sLNE9/iC+H9ownaTY
+ yRvfDY9694ErLHgn3NBJrYc4DQ0dBndNxnnoT2/QH5mCtv2xskufnRekQkUkzhjqsZmkGIopl
+ aerZPVqU/6DbAWOUQnIJnvsmIxsEauN+UZjwNbULslwCXhmsvgAI7oC4pN2eHzI7CNykxVrKd
+ YWbekrjz2GV5m7sdm9O+ZPirvEZyw99qvexbYxCo5Pbu0vf7STmmF4YLJa7QMLFzDBb7xkYpf
+ 80HFWXeZQR7Fwjqphetm9rxDdtnkill+eFWl9shq/2+DSVajeYOl+NsNX2t/LWaRzvPgc4xBX
+ FXATYxuCo8vlKhr6i/IRCQBNSSjCTaIyM2ddV3aef2abYk1hIMSguGkUELUze+aB6uyByoDF+
+ vVVEZxxSx900pGNvy8o0ocWNcIjEYLEQ93s4+dbm384rP9DSCJC/11OG2jmLtVzF2EnZSZKs1
+ PkZbACrSRjF85MFDzg/JEdLrAlbjzVYNPTqBDRN+H9DutSi9akT6BthKrPq5YOROpufOBDCAP
+ wepCby6aYm9/7yxtt8OvTKj/JC2z6Jl4N6ZfWXNL+LFIF5ikhF2CERUevkubakfjunrg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several subsystems depend on INFINIBAND_ADDR_TRANS, which in turn depends
-on INFINIBAND. However, when with CONFIG_INIFIBAND=m, this leads to a
-link error when another driver using it is built-in. The
-INFINIBAND_ADDR_TRANS dependency is insufficient here as this is
-a 'bool' symbol that does not force anything to be a module in turn.
+gcc warns about a noreturn function possibly returning in
+some configurations:
 
-fs/cifs/smbdirect.o: In function `smbd_disconnect_rdma_work':
-smbdirect.c:(.text+0x1e4): undefined reference to `rdma_disconnect'
-net/9p/trans_rdma.o: In function `rdma_request':
-trans_rdma.c:(.text+0x7bc): undefined reference to `rdma_disconnect'
-net/9p/trans_rdma.o: In function `rdma_destroy_trans':
-trans_rdma.c:(.text+0x830): undefined reference to `ib_destroy_qp'
-trans_rdma.c:(.text+0x858): undefined reference to `ib_dealloc_pd'
+kernel/bpf/btf.c: In function 'env_type_is_resolve_sink':
+kernel/bpf/btf.c:729:1: error: control reaches end of non-void function [-Werror=return-type]
 
-Fixes: 9533b292a7ac ("IB: remove redundant INFINIBAND kconfig dependencies")
+Using BUG() instead of BUG_ON() avoids that warning and otherwise
+does the exact same thing.
+
+Fixes: eb3f595dab40 ("bpf: btf: Validate type reference")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-The patch that introduced the problem has been queued in the
-rdma-fixes/for-rc tree. Please revert the patch before sending
-the branch to Linus.
----
- drivers/infiniband/ulp/srpt/Kconfig | 2 +-
- drivers/nvme/host/Kconfig           | 2 +-
- drivers/nvme/target/Kconfig         | 2 +-
- drivers/staging/lustre/lnet/Kconfig | 2 +-
- fs/cifs/Kconfig                     | 2 +-
- net/9p/Kconfig                      | 2 +-
- net/rds/Kconfig                     | 2 +-
- net/sunrpc/Kconfig                  | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ kernel/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/srpt/Kconfig b/drivers/infiniband/ulp/srpt/Kconfig
-index 25bf6955b6d0..fb8b7182f05e 100644
---- a/drivers/infiniband/ulp/srpt/Kconfig
-+++ b/drivers/infiniband/ulp/srpt/Kconfig
-@@ -1,6 +1,6 @@
- config INFINIBAND_SRPT
- 	tristate "InfiniBand SCSI RDMA Protocol target support"
--	depends on INFINIBAND_ADDR_TRANS && TARGET_CORE
-+	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && TARGET_CORE
- 	---help---
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 9cbeabb5aca3..2822a0cf4f48 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -749,7 +749,7 @@ static bool env_type_is_resolve_sink(const struct btf_verifier_env *env,
+ 			!btf_type_is_array(next_type) &&
+ 			!btf_type_is_struct(next_type);
+ 	default:
+-		BUG_ON(1);
++		BUG();
+ 	}
+ }
  
- 	  Support for the SCSI RDMA Protocol (SRP) Target driver. The
-diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
-index dbb7464c018c..88a8b5916624 100644
---- a/drivers/nvme/host/Kconfig
-+++ b/drivers/nvme/host/Kconfig
-@@ -27,7 +27,7 @@ config NVME_FABRICS
- 
- config NVME_RDMA
- 	tristate "NVM Express over Fabrics RDMA host driver"
--	depends on INFINIBAND_ADDR_TRANS && BLOCK
-+	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && BLOCK
- 	select NVME_CORE
- 	select NVME_FABRICS
- 	select SG_POOL
-diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
-index 7595664ee753..3c7b61ddb0d1 100644
---- a/drivers/nvme/target/Kconfig
-+++ b/drivers/nvme/target/Kconfig
-@@ -27,7 +27,7 @@ config NVME_TARGET_LOOP
- 
- config NVME_TARGET_RDMA
- 	tristate "NVMe over Fabrics RDMA target support"
--	depends on INFINIBAND_ADDR_TRANS
-+	depends on INFINIBAND && INFINIBAND_ADDR_TRANS
- 	depends on NVME_TARGET
- 	select SGL_ALLOC
- 	help
-diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lustre/lnet/Kconfig
-index f3b1ad4bd3dc..ad049e6f24e4 100644
---- a/drivers/staging/lustre/lnet/Kconfig
-+++ b/drivers/staging/lustre/lnet/Kconfig
-@@ -34,7 +34,7 @@ config LNET_SELFTEST
- 
- config LNET_XPRT_IB
- 	tristate "LNET infiniband support"
--	depends on LNET && PCI && INFINIBAND_ADDR_TRANS
-+	depends on LNET && PCI && INFINIBAND && INFINIBAND_ADDR_TRANS
- 	default LNET && INFINIBAND
- 	help
- 	  This option allows the LNET users to use infiniband as an
-diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
-index d61e2de8d0eb..5f132d59dfc2 100644
---- a/fs/cifs/Kconfig
-+++ b/fs/cifs/Kconfig
-@@ -197,7 +197,7 @@ config CIFS_SMB311
- 
- config CIFS_SMB_DIRECT
- 	bool "SMB Direct support (Experimental)"
--	depends on CIFS=m && INFINIBAND_ADDR_TRANS || CIFS=y && INFINIBAND_ADDR_TRANS=y
-+	depends on CIFS=m && INFINIBAND && INFINIBAND_ADDR_TRANS || CIFS=y && INFINIBAND=y && INFINIBAND_ADDR_TRANS=y
- 	help
- 	  Enables SMB Direct experimental support for SMB 3.0, 3.02 and 3.1.1.
- 	  SMB Direct allows transferring SMB packets over RDMA. If unsure,
-diff --git a/net/9p/Kconfig b/net/9p/Kconfig
-index 46c39f7da444..e6014e0e51f7 100644
---- a/net/9p/Kconfig
-+++ b/net/9p/Kconfig
-@@ -32,7 +32,7 @@ config NET_9P_XEN
- 
- 
- config NET_9P_RDMA
--	depends on INET && INFINIBAND_ADDR_TRANS
-+	depends on INET && INFINIBAND && INFINIBAND_ADDR_TRANS
- 	tristate "9P RDMA Transport (Experimental)"
- 	help
- 	  This builds support for an RDMA transport.
-diff --git a/net/rds/Kconfig b/net/rds/Kconfig
-index 1a31502ee7db..bffde4b46c5d 100644
---- a/net/rds/Kconfig
-+++ b/net/rds/Kconfig
-@@ -8,7 +8,7 @@ config RDS
- 
- config RDS_RDMA
- 	tristate "RDS over Infiniband"
--	depends on RDS && INFINIBAND_ADDR_TRANS
-+	depends on RDS && INFINIBAND && INFINIBAND_ADDR_TRANS
- 	---help---
- 	  Allow RDS to use Infiniband as a transport.
- 	  This transport supports RDMA operations.
-diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
-index 6358e5271070..ac09ca803296 100644
---- a/net/sunrpc/Kconfig
-+++ b/net/sunrpc/Kconfig
-@@ -50,7 +50,7 @@ config SUNRPC_DEBUG
- 
- config SUNRPC_XPRT_RDMA
- 	tristate "RPC-over-RDMA transport"
--	depends on SUNRPC && INFINIBAND_ADDR_TRANS
-+	depends on SUNRPC && INFINIBAND && INFINIBAND_ADDR_TRANS
- 	default SUNRPC && INFINIBAND
- 	select SG_POOL
- 	help
 -- 
 2.9.0
