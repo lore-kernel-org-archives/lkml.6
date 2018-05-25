@@ -1,72 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935854AbeEYMvD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:51:03 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40365 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933573AbeEYMtr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:49:47 -0400
-X-Google-Smtp-Source: AB8JxZoCxv7G881/Mz/YvPC6tJZI0OMLZoLMEQjq+HZZpJHk1RKV5tghhcTQQoKUvG3qwBNNe+l6RQ==
-From: Christian Brauner <christian@brauner.io>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, tglx@linutronix.de,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, linux-api@vger.kernel.org, ebiederm@xmission.com,
-        seth.forshee@canonical.com, viro@zeniv.linux.org.uk,
-        Christian Brauner <christian@brauner.io>
-Subject: [PATCH 4/6 v1 resend] statfs: add ST_SHARED
-Date: Fri, 25 May 2018 14:48:23 +0200
-Message-Id: <20180525124825.23875-5-christian@brauner.io>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525124825.23875-1-christian@brauner.io>
-References: <20180525124825.23875-1-christian@brauner.io>
+        id S936017AbeEYMva (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:51:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59472 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933152AbeEYMv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:51:27 -0400
+Date: Fri, 25 May 2018 08:51:20 -0400
+From: Luiz Capitulino <lcapitulino@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [GIT PULL] isolation: 1Hz residual tick offloading v4
+Message-ID: <20180525085120.08493f53@doriath>
+In-Reply-To: <20180525025624.GB22082@lerouge>
+References: <1516320140-13189-1-git-send-email-frederic@kernel.org>
+        <20180124104608.038fb212@redhat.com>
+        <20180129011024.GA2942@lerouge>
+        <xunyvabfjylg.fsf@redhat.com>
+        <20180525025624.GB22082@lerouge>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently userspace can only determine whether a mountpoint is shared
-by parsing /proc/<pid>/mountinfo. It would be convenient to simply retrieve
-this property with a statvfs() call.
-This let's userspace avoid costly parsing, supports cases where /proc is
-not mounted, and supports usecases where file descriptors to mountpoints
-are passed between processes that are inspected via fstatvfs().
-This is especially helpful in all cases where userspace is not interested
-in specific propagation properties but rather just wants to either turn on
-or turn off propagation for specific mountpoints.
+On Fri, 25 May 2018 04:56:25 +0200
+Frederic Weisbecker <frederic@kernel.org> wrote:
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-v0->v1:
-* non-functional changes: extend commit message
----
- fs/statfs.c            | 2 ++
- include/linux/statfs.h | 1 +
- 2 files changed, 3 insertions(+)
+> On Tue, May 22, 2018 at 10:10:19PM +0300, Yauheni Kaliuta wrote:
+> > Hi, Frederic!
+> >   
+> > >>>>> On Mon, 29 Jan 2018 02:10:26 +0100, Frederic Weisbecker  wrote:  
+> >  > On Wed, Jan 24, 2018 at 10:46:08AM -0500, Luiz Capitulino wrote:  
+> > 
+> > [...]
+> >   
+> >  >> Since the 1Hz tick offload worked for you, I must be missing
+> >  >> a way to disable this timer or the kernel is thinking my CPU
+> >  >> has unstable TSC (which it doesn't AFAIK).  
+> >   
+> >  > It's beyond the scope of this patchset but indeed that's
+> >  > right, I run my kernels with tsc=reliable because my CPUs
+> >  > don't have the TSC_RELIABLE flag.  That's the only way I found
+> >  > to shutdown the tick completely on my test machine, otherwise
+> >  > I keep having that clocksource watchdog.  
+> > 
+> > [...]
+> > 
+> > Thanks, it helps. But I have accounting problem:
+> > 
+> > if I run user busy loop on the nohz cpu, the task accounting works
+> > correctly (top shows the task takes 100% cpu), but cpu accounting is
+> > wrong (cpu is 100% idle, in the per-core view as well).
+> > 
+> > If I understand correctly, the stats are updated by account_user_time()  
+> > -> task_group_account_field() but there is no call for it in case of  
+> > offloading (it is called from irqtime_account_process_tick,
+> > account_process_tick, vtime_user_exit).  
+> 
+> Ah I forgot about kcpustat accounting. I remember I wanted to fix that a
+> few years ago but I forgot about it when I removed the last tick. That
+> thing was lurking behind 1Hz.
+> 
+> > 
+> > Moreover, task_group_account_field() uses __this_cpu_add() which will be
+> > wrong for offloading.
+> > 
+> > For testing I used kcpustat_cpu(task_cpu(p)) in
+> > task_group_account_field() and added call account_user_time(curr, delta)
+> > to the sched_tick_remote() what fixes it for me, but what would be the
+> > proper fix?  
+> 
+> Yeah unfortunately that's unsafe. Task accounting is not designed for remote
+> update. You could race with an update from another CPU, especially the local
+> updater.
+> 
+> I fear we need to take the same approach than task cputime, which is using a seqcount
+> for updates. Then the reader would fetch the kcpustat values + the delta
+> vtime from the task executing.
+> 
+> Things can get complicated once we dive into corner cases: CPUTIME_IRQ,
+> CPUTIME_SOFTIRQ, and CPUTIME_STEAL. At least we don't need to care about CPUTIME_IDLE
+> and CPUTIME_IOWAIT that have their own delta.
+> 
+> I'm trying that.
 
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 61b3063d3921..2fc6f9c3793c 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -31,6 +31,8 @@ static int flags_by_mnt(int mnt_flags)
- 		flags |= ST_RELATIME;
- 	if (mnt_flags & MNT_UNBINDABLE)
- 		flags |= ST_UNBINDABLE;
-+	if (mnt_flags & MNT_SHARED)
-+		flags |= ST_SHARED;
- 	return flags;
- }
- 
-diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index e1b84d0388c1..5416b2936dd9 100644
---- a/include/linux/statfs.h
-+++ b/include/linux/statfs.h
-@@ -41,5 +41,6 @@ struct kstatfs {
- #define ST_NODIRATIME	(1<<11) /* do not update directory access times */
- #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
- #define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
-+#define ST_SHARED	(1<<20)	/* change to shared */
- 
- #endif
--- 
-2.17.0
+Cool! Needless to say, but we can help testing once you have patches.
