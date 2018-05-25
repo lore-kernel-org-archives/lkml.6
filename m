@@ -1,43 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966616AbeEYLlj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 07:41:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:37551 "EHLO ozlabs.org"
+        id S966678AbeEYLlp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 07:41:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:56711 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966591AbeEYLlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 07:41:36 -0400
+        id S966591AbeEYLlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 07:41:40 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: bd13ac95f954570e01fba5a6caf771da754ac0e3
-In-Reply-To: <20180404201028.27621-1-malat@debian.org>
-To: Mathieu Malaterre <malat@debian.org>
+X-powerpc-patch-commit: d8731527acee53b4d46d59ff0b5fc36931ad0451
+In-Reply-To: <20180413184144.25183-1-malat@debian.org>
+To: Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [v3,19/19] powerpc/tau: Synchronize function prototypes and body
-Message-Id: <40skqM1f95z9s3X@ozlabs.org>
-Date: Fri, 25 May 2018 21:41:34 +1000 (AEST)
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2] powerpc/sparse: fix plain integer as NULL pointer warning
+Message-Id: <40skqQ1Nybz9s1w@ozlabs.org>
+Date: Fri, 25 May 2018 21:41:37 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-04 at 20:10:28 UTC, Mathieu Malaterre wrote:
-> Some function prototypes and body for Thermal Assist Units were not in
-> sync. Update the function definition to match the existing function
-> declaration found in `setup-common.c`, changing an `int` return type to a
-> `u32` return type. Move the prototypes to a header file. Fix the following
-> warnings, treated as error with W=1:
+On Fri, 2018-04-13 at 18:41:43 UTC, Mathieu Malaterre wrote:
+> Trivial fix to remove the following sparse warnings:
 > 
->   arch/powerpc/kernel/tau_6xx.c:257:5: error: no previous prototype for ‘cpu_temp_both’ [-Werror=missing-prototypes]
->   arch/powerpc/kernel/tau_6xx.c:262:5: error: no previous prototype for ‘cpu_temp’ [-Werror=missing-prototypes]
->   arch/powerpc/kernel/tau_6xx.c:267:5: error: no previous prototype for ‘tau_interrupts’ [-Werror=missing-prototypes]
+>   arch/powerpc/kernel/module_32.c:112:74: warning: Using plain integer as NULL pointer
+>   arch/powerpc/kernel/module_32.c:117:74: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:1155:28: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:1230:20: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:1385:36: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:1752:23: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:2084:19: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:2110:32: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:2167:19: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:2183:19: warning: Using plain integer as NULL pointer
+>   drivers/macintosh/via-pmu.c:277:20: warning: Using plain integer as NULL pointer
+>   arch/powerpc/platforms/powermac/setup.c:155:67: warning: Using plain integer as NULL pointer
+>   arch/powerpc/platforms/powermac/setup.c:247:27: warning: Using plain integer as NULL pointer
+>   arch/powerpc/platforms/powermac/setup.c:249:27: warning: Using plain integer as NULL pointer
+>   arch/powerpc/platforms/powermac/setup.c:252:37: warning: Using plain integer as NULL pointer
+>   arch/powerpc/mm/tlb_hash32.c:127:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/mm/tlb_hash32.c:148:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/mm/tlb_hash32.c:44:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/mm/tlb_hash32.c:57:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/mm/tlb_hash32.c:87:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/kernel/btext.c:160:31: warning: Using plain integer as NULL pointer
+>   arch/powerpc/kernel/btext.c:167:22: warning: Using plain integer as NULL pointer
+>   arch/powerpc/kernel/btext.c:274:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/kernel/btext.c:285:31: warning: Using plain integer as NULL pointer
+>   arch/powerpc/include/asm/hugetlb.h:204:16: warning: Using plain integer as NULL pointer
+>   arch/powerpc/mm/ppc_mmu_32.c:170:21: warning: Using plain integer as NULL pointer
+>   arch/powerpc/platforms/powermac/pci.c:1227:23: warning: Using plain integer as NULL pointer
+>   arch/powerpc/platforms/powermac/pci.c:65:24: warning: Using plain integer as NULL pointer
 > 
-> Compile tested with CONFIG_TAU_INT.
+> Also use `--fix` command line option from `script/checkpatch --strict` to
+> remove the following:
 > 
-> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>   CHECK: Comparison to NULL could be written "!dispDeviceBase"
+>   #72: FILE: arch/powerpc/kernel/btext.c:160:
+>   +	if (dispDeviceBase == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "!vbase"
+>   #80: FILE: arch/powerpc/kernel/btext.c:167:
+>   +	if (vbase == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "!base"
+>   #89: FILE: arch/powerpc/kernel/btext.c:274:
+>   +	if (base == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "!dispDeviceBase"
+>   #98: FILE: arch/powerpc/kernel/btext.c:285:
+>   +	if (dispDeviceBase == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "strstr"
+>   #117: FILE: arch/powerpc/kernel/module_32.c:117:
+>   +		if (strstr(secstrings + sechdrs[i].sh_name, ".debug") != NULL)
+> 
+>   CHECK: Comparison to NULL could be written "!Hash"
+>   #130: FILE: arch/powerpc/mm/ppc_mmu_32.c:170:
+>   +	if (Hash == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "Hash"
+>   #143: FILE: arch/powerpc/mm/tlb_hash32.c:44:
+>   +	if (Hash != NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "!Hash"
+>   #152: FILE: arch/powerpc/mm/tlb_hash32.c:57:
+>   +	if (Hash == NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "!Hash"
+>   #161: FILE: arch/powerpc/mm/tlb_hash32.c:87:
+>   +	if (Hash == NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "!Hash"
+>   #170: FILE: arch/powerpc/mm/tlb_hash32.c:127:
+>   +	if (Hash == NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "!Hash"
+>   #179: FILE: arch/powerpc/mm/tlb_hash32.c:148:
+>   +	if (Hash == NULL) {
+> 
+>   ERROR: space required after that ';' (ctx:VxV)
+>   #192: FILE: arch/powerpc/platforms/powermac/pci.c:65:
+>   +	for (; node != NULL;node = node->sibling) {
+> 
+>   CHECK: Comparison to NULL could be written "node"
+>   #192: FILE: arch/powerpc/platforms/powermac/pci.c:65:
+>   +	for (; node != NULL;node = node->sibling) {
+> 
+>   CHECK: Comparison to NULL could be written "!region"
+>   #201: FILE: arch/powerpc/platforms/powermac/pci.c:1227:
+>   +	if (region == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "of_get_property"
+>   #214: FILE: arch/powerpc/platforms/powermac/setup.c:155:
+>   +		if (of_get_property(np, "cache-unified", NULL) != NULL && dc) {
+> 
+>   CHECK: Comparison to NULL could be written "!np"
+>   #223: FILE: arch/powerpc/platforms/powermac/setup.c:247:
+>   +		if (np == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "np"
+>   #226: FILE: arch/powerpc/platforms/powermac/setup.c:249:
+>   +		if (np != NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "l2cr"
+>   #230: FILE: arch/powerpc/platforms/powermac/setup.c:252:
+>   +			if (l2cr != NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "via"
+>   #243: FILE: drivers/macintosh/via-pmu.c:277:
+>   +	if (via != NULL)
+> 
+>   CHECK: Comparison to NULL could be written "current_req"
+>   #252: FILE: drivers/macintosh/via-pmu.c:1155:
+>   +	if (current_req != NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "!req"
+>   #261: FILE: drivers/macintosh/via-pmu.c:1230:
+>   +	if (req == NULL || pmu_state != idle
+> 
+>   CHECK: Comparison to NULL could be written "!req"
+>   #270: FILE: drivers/macintosh/via-pmu.c:1385:
+>   +			if (req == NULL) {
+> 
+>   CHECK: Comparison to NULL could be written "!pp"
+>   #288: FILE: drivers/macintosh/via-pmu.c:2084:
+>   +	if (pp == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "!pp"
+>   #297: FILE: drivers/macintosh/via-pmu.c:2110:
+>   +	if (count < 1 || pp == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "!pp"
+>   #306: FILE: drivers/macintosh/via-pmu.c:2167:
+>   +	if (pp == NULL)
+> 
+>   CHECK: Comparison to NULL could be written "pp"
+>   #315: FILE: drivers/macintosh/via-pmu.c:2183:
+>   +	if (pp != NULL) {
+> 
+> Link: https://github.com/linuxppc/linux/issues/37
 > Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/bd13ac95f954570e01fba5a6caf771
+https://git.kernel.org/powerpc/c/d8731527acee53b4d46d59ff0b5fc3
 
 cheers
