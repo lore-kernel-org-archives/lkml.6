@@ -1,114 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965803AbeEYKV1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:21:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965370AbeEYKVZ (ORCPT
+        id S965817AbeEYKZF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:25:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60126 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965102AbeEYKZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:21:25 -0400
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-To: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, cohuck@redhat.com
-Subject: [PATCH v2 01/10] vfio: ccw: Moving state change out of IRQ context
-Date: Fri, 25 May 2018 12:21:09 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
-References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052510-0012-0000-0000-000005DA7F8A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052510-0013-0000-0000-00001957D348
-Message-Id: <1527243678-3140-2-git-send-email-pmorel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805250113
+        Fri, 25 May 2018 06:25:03 -0400
+Date: Fri, 25 May 2018 11:24:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Message-ID: <20180525102458.GJ4828@sirena.org.uk>
+References: <20180524055752.GE4249@localhost.localdomain>
+ <20180524140118.GS4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+ <20180524175721.GB4828@sirena.org.uk>
+ <20180525055430.GB16888@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jmkJtp15SxLq1SbD"
+Content-Disposition: inline
+In-Reply-To: <20180525055430.GB16888@localhost.localdomain>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's move the state change from the IRQ routine to the
-workqueue callback.
 
-Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
----
- drivers/s390/cio/vfio_ccw_drv.c | 20 +++++++-------------
- drivers/s390/cio/vfio_ccw_fsm.c | 14 ++++++++------
- 2 files changed, 15 insertions(+), 19 deletions(-)
+--jmkJtp15SxLq1SbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index ea6a2d0..57ae1ab 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -70,20 +70,9 @@ int vfio_ccw_sch_quiesce(struct subchannel *sch)
- static void vfio_ccw_sch_io_todo(struct work_struct *work)
- {
- 	struct vfio_ccw_private *private;
--	struct irb *irb;
- 
- 	private = container_of(work, struct vfio_ccw_private, io_work);
--	irb = &private->irb;
--
--	if (scsw_is_solicited(&irb->scsw)) {
--		cp_update_scsw(&private->cp, &irb->scsw);
--		cp_free(&private->cp);
--	}
--	memcpy(private->io_region.irb_area, irb, sizeof(*irb));
--
--	if (private->io_trigger)
--		eventfd_signal(private->io_trigger, 1);
--
-+	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
- 	if (private->mdev)
- 		private->state = VFIO_CCW_STATE_IDLE;
- }
-@@ -94,9 +83,14 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
- static void vfio_ccw_sch_irq(struct subchannel *sch)
- {
- 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
-+	struct irb *irb = this_cpu_ptr(&cio_irb);
- 
- 	inc_irq_stat(IRQIO_CIO);
--	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
-+	memcpy(&private->irb, irb, sizeof(*irb));
-+
-+	queue_work(vfio_ccw_work_q, &private->io_work);
-+	if (private->completion)
-+		complete(private->completion);
- }
- 
- static int vfio_ccw_sch_probe(struct subchannel *sch)
-diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
-index 3c80064..24e1e04 100644
---- a/drivers/s390/cio/vfio_ccw_fsm.c
-+++ b/drivers/s390/cio/vfio_ccw_fsm.c
-@@ -172,14 +172,16 @@ static void fsm_io_request(struct vfio_ccw_private *private,
- static void fsm_irq(struct vfio_ccw_private *private,
- 		    enum vfio_ccw_event event)
- {
--	struct irb *irb = this_cpu_ptr(&cio_irb);
-+	struct irb *irb = &private->irb;
- 
--	memcpy(&private->irb, irb, sizeof(*irb));
--
--	queue_work(vfio_ccw_work_q, &private->io_work);
-+	if (scsw_is_solicited(&irb->scsw)) {
-+		cp_update_scsw(&private->cp, &irb->scsw);
-+		cp_free(&private->cp);
-+	}
-+	memcpy(private->io_region.irb_area, irb, sizeof(*irb));
- 
--	if (private->completion)
--		complete(private->completion);
-+	if (private->io_trigger)
-+		eventfd_signal(private->io_trigger, 1);
- }
- 
- /*
--- 
-2.7.4
+On Fri, May 25, 2018 at 08:54:30AM +0300, Matti Vaittinen wrote:
+> On Thu, May 24, 2018 at 06:57:21PM +0100, Mark Brown wrote:
+
+> > You can look at the regulators node within the parent device, you know
+> > that in Linux the parent device will be the MFD.
+
+> So I should parse the device-tree in MFD my driver in order to locate
+> the regulators node? Isn't that somewhat like code dublication? If we
+> rely on compatibles we can avoid device-tree parsing in MFD driver,
+
+No, there's no need to do this - the child can just look at the of_node
+of the parent since it can never be instantiated otherwise.
+
+> right? An in-tree example of this is:
+
+There are some bad examples (and some where the same regulators can get
+used with multiple different parents) but that's no reason not to follow
+good practice.
+
+--jmkJtp15SxLq1SbD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsH5HoACgkQJNaLcl1U
+h9Drrwf9H6otj10qIc8vXKx60U0IrSi0dtXfTKSeJMWeuElp1J7E6COsbouwImXE
+uh+FgmF2eC5HgXWrkELT7Sc+9FfzxOHmievxmnB+cz5oL3Q64FkLO1W3vV6embAk
+VF3Su3R+RPF+0jAFJm1cqOOVXWYKc1q9Dd8VTx3qCNXF93rCA9Q7V1XEBgIGlQqp
+wRWI6/1gWaVatWtwGYqOXD9YWxHwMGSZu9QbyxYGY607df0pohuTQH5kHGXAGaVC
+cNwyAH20E2i0YJuWhV4y7LDB9wi8+2dtQ57WlB+AT1A/jEQ41vrgMEt3YoubcCJf
+KVuH0O+wzznJSPbgEvlcV2+nMIhZOQ==
+=Ma5W
+-----END PGP SIGNATURE-----
+
+--jmkJtp15SxLq1SbD--
