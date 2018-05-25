@@ -1,57 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967159AbeEYQWN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966854AbeEYQWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:22:12 -0400
-Date: Fri, 25 May 2018 18:21:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Florian Schmaus <flo@geekplace.eu>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] driver-core: return EINVAL error instead of
- BUG_ON()
-Message-ID: <20180525162154.GA20197@kroah.com>
-References: <20180516160816.20251-1-flo@geekplace.eu>
- <20180523155913.29679-1-flo@geekplace.eu>
+        id S967139AbeEYQ1z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:27:55 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:43573 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966873AbeEYQ1x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 12:27:53 -0400
+X-Google-Smtp-Source: AB8JxZpZFTXz4qz5n1BpC9bgfUG+P7c4OaGw8KOTz8usCKAiZM7WbpGh1WCRCVsYRbcfaB5KZ4BtFvQWj2euVCZBk6Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523155913.29679-1-flo@geekplace.eu>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
+ <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
+ <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
+ <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com>
+In-Reply-To: <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 25 May 2018 09:27:40 -0700
+Message-ID: <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
+Subject: Re: [clang] stack protector and f1f029c7bf
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 05:59:10PM +0200, Florian Schmaus wrote:
-> This patch series makes driver_register() emit an error message and
-> return a failure code instead of triggering a BUG_ON().
-> 
-> The first patch will cause driver_register() to fail gracefully if the
-> driver's bus was not initialized while printing out the name of the
-> faulty driver *and* the name of the involved bus. The second patch
-> records the error code if bus_register() fails. The third and final
-> patch of the series extends the first patch so that the recorded error
-> code is also print out if non-zero. Otherwise, if drv->bus->p is NULL
-> but the error code is zero, then probably bus_register() was never
-> called before.
-> 
-> Greg questioned [1] whether [2/3] and [3/3] are necessary:
-> 
-> > And really, when has this ever happened?  Why would a bus registration
-> > fail and later allow a driver to be registered?
-> 
-> I initially assumed that this is what cause me hitting the BUG_ON()
-> which [1/3] replaces: The bus registration failed and then the driver
-> attempts to register itself. But I did not had a chance to verify
-> that. I'll try to do so after my vacation. Meanwhile I hope that at
-> least [1/3] is considered an improvement of the kernel. If so, feel
-> free to pick it up.
+On Thu, May 24, 2018 at 3:43 PM <hpa@zytor.com> wrote:
+> On May 24, 2018 3:31:05 PM PDT, Nick Desaulniers <ndesaulniers@google.com>
+wrote:
+> >On Thu, May 24, 2018 at 3:05 PM H. Peter Anvin <hpa@zytor.com> wrote:
+> >> COMPILER AR: "=rm" should NEVER generate worse code than "=r". That
+> >is
+> >> unequivocally a compiler bug.
+> >
+> >Filed: https://bugs.llvm.org/show_bug.cgi?id=37583
+> >
+> >> >> You are claiming it doesn't buy us anything, but you are only
+> >looking
+> >at
+> >> > the paravirt case which is kind of "special" (in the short bus kind
+> >of
+> >way),
+> >> >
+> >> > That's fair.  Is another possible solution to have paravirt maybe
+> >not
+> >use
+> >> > native_save_fl() then, but its own
+> >non-static-inline-without-m-constraint
+> >> > implementation?
+> >
+> >> KERNEL AR: change native_save_fl() to an extern inline with an
+> >assembly
+> >> out-of-line implementation, to satisfy the paravirt requirement that
+> >no
+> >> GPRs other than %rax are clobbered.
+> >
+> >i'm happy to add that, do you have a recommendation if it should go in
+> >an
+> >existing .S file or a new one (and if so where/what shall I call it?).
 
-I've picked up patch 1, I don't think patches 2 or 3 are needed, due to
-the extreme unfrequency that this problem ever happens :)
+> How about irqflags.c since that is what the .h file is called.
 
-thanks,
+> It should simply be:
 
-greg k-h
+> push %rdi
+> popf
+> ret
+
+> pushf
+> pop %rax
+> ret
+
+> ... but with all the regular assembly decorations, of course.
+
+Something like the following?
+
+
+diff --git a/arch/x86/kernel/irqflags.c b/arch/x86/kernel/irqflags.c
+new file mode 100644
+index 000000000000..59dc21bd3327
+--- /dev/null
++++ b/arch/x86/kernel/irqflags.c
+@@ -0,0 +1,24 @@
++#include <asm/asm.h>
++
++extern unsigned long native_save_fl(void);
++extern void native_restore_fl(unsigned long flags);
++
++asm(
++".pushsection .text;"
++".global native_save_fl;"
++".type native_save_fl, @function;"
++"native_save_fl:"
++"pushf;"
++"pop %" _ASM_AX ";"
++"ret;"
++".popsection");
++
++asm(
++".pushsection .text;"
++".global native_restore_fl;"
++".type native_restore_fl, @function;"
++"native_restore_fl:"
++"push %" _ASM_DI ";"
++"popf;"
++"ret;"
++".popsection");
+
+And change the declaration in arch/x86/include/asm/irqflags.h to:
++extern inline unsigned long native_save_fl(void);
++extern inline void native_restore_fl(unsigned long flags);
+
+This seems to work, but
+1. arch/x86/boot/compressed/misc.o warns that native_save_fl() is never
+defined (arch_local_save_flags() uses it).  Does that mean
+arch_local_save_flags(), and friends would also have to move to the newly
+created .c file as well?
+2. `extern inline` doesn't inline any instances (from what I can tell from
+disassembling vmlinux).  I think this is strictly worse. Don't we only want
+pv_irq_ops.save_fl to be non-inlined in a way that no stack protector can
+be added? If that's the case, should my assembly based implementation have
+a different identifier (`native_save_fl_paravirt` or something). That would
+also fix point #1 above. But now the paravirt code has its own copy of the
+function.
+-- 
+Thanks,
+~Nick Desaulniers
