@@ -1,124 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967287AbeEYQnL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:43:11 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45185 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967189AbeEYQnK (ORCPT
+        id S967322AbeEYQpb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:45:31 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39145 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967189AbeEYQp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:43:10 -0400
-X-Google-Smtp-Source: AB8JxZoOfjokrf+tMpWl0j/MBXNkzGDqxx9sGHYSrSVs3rWtAOY/WgixZ8tZAKezK0MBUX1OElpH3A==
-Date: Fri, 25 May 2018 10:43:06 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org, sudeep.holla@arm.com, frowand.list@gmail.com,
-        coresight@lists.linaro.org, mark.rutland@arm.com
-Subject: Re: [PATCH 08/11] coresight: Add generic TMC sg table framework
-Message-ID: <20180525164306.GA13430@xps15>
-References: <1526661567-4578-1-git-send-email-suzuki.poulose@arm.com>
- <1526661567-4578-9-git-send-email-suzuki.poulose@arm.com>
- <20180523202552.GA4609@xps15>
- <21fef51b-2afe-1a2c-6006-5cf3de4e74e8@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21fef51b-2afe-1a2c-6006-5cf3de4e74e8@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 25 May 2018 12:45:29 -0400
+X-Google-Smtp-Source: ADUXVKJtJdSTQJGpTh3GfC1R5dIugeiSxDd5b+YwhnUSkvyFpAXcfA/BBLRuy7g0fOF+OVo3rVDUXg==
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pramod Kumar <pramod.kumar@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH 0/3] Update Broadcom Stingray clock entries
+Date: Fri, 25 May 2018 09:45:14 -0700
+Message-Id: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 05:07:07PM +0100, Suzuki K Poulose wrote:
-> On 23/05/18 21:25, Mathieu Poirier wrote:
-> >On Fri, May 18, 2018 at 05:39:24PM +0100, Suzuki K Poulose wrote:
-> >>This patch introduces a generic sg table data structure and
-> >>associated operations. An SG table can be used to map a set
-> >>of Data pages where the trace data could be stored by the TMC
-> >>ETR. The information about the data pages could be stored in
-> >>different formats, depending on the type of the underlying
-> >>SG mechanism (e.g, TMC ETR SG vs Coresight CATU). The generic
-> >>structure provides book keeping of the pages used for the data
-> >>as well as the table contents. The table should be filled by
-> >>the user of the infrastructure.
-> >>
-> >>A table can be created by specifying the number of data pages
-> >>as well as the number of table pages required to hold the
-> >>pointers, where the latter could be different for different
-> >>types of tables. The pages are mapped in the appropriate dma
-> >>data direction mode (i.e, DMA_TO_DEVICE for table pages
-> >>and DMA_FROM_DEVICE for data pages).  The framework can optionally
-> >>accept a set of allocated data pages (e.g, perf ring buffer) and
-> >>map them accordingly. The table and data pages are vmap'ed to allow
-> >>easier access by the drivers. The framework also provides helpers to
-> >>sync the data written to the pages with appropriate directions.
-> >>
-> >>This will be later used by the TMC ETR SG unit and CATU.
-> >>
-> >>Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>Changes since v1:
-> >>  - Address code style issues, more comments
-> >>---
-> >>  drivers/hwtracing/coresight/coresight-tmc-etr.c | 290 ++++++++++++++++++++++++
-> >>  drivers/hwtracing/coresight/coresight-tmc.h     |  50 ++++
-> >>  2 files changed, 340 insertions(+)
-> >>
-> >>diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> >>index 9780798..1e844f8 100644
-> >>--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> >>+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> >>@@ -17,9 +17,299 @@
-> 
-> 
-> >>+static inline dma_addr_t tmc_sg_table_base_paddr(struct tmc_sg_table *sg_table)
-> >>+{
-> >>+	if (WARN_ON(!sg_table->data_pages.pages[0]))
-> >>+		return 0;
-> >>+	return sg_table->table_daddr;
-> >>+}
-> >>+
-> >>+static inline void *tmc_sg_table_base_vaddr(struct tmc_sg_table *sg_table)
-> >>+{
-> >>+	if (WARN_ON(!sg_table->data_pages.pages[0]))
-> >>+		return NULL;
-> >>+	return sg_table->table_vaddr;
-> >>+}
-> >
-> >The above two functions deal with DMA'able and virtual addresses for the table
-> >page buffer.  Yet the test in the WARN_ON is done on the data page array.
-> >Shouldn't this be sg_table->table_pages.pages[0] instead?
-> 
-> The table is as good as empty if there are no data pages associated with
-> the table. Hence the data_pages check.
+This patch series updates Broadcom Stingray clock entries so they match the
+latest ASIC datasheet
 
-That is correct.  On the flip side you can't have data_pages without table_pages
-and vice versa, hence my comment.
+This patch series is based off v4.17-rc5 and is available on GIHUB:
+repo: https://github.com/Broadcom/arm64-linux.git
+branch: sr-clk-v1
 
-> 
-> >
-> >If not please add a comment justifying your position so that someone else
-> >looking at the code does't end up thinking the same in a year from now.
-> 
-> I will add a comment to reflect the above.
-> 
-> >
-> >>+
-> >>+static inline void *
-> >>+tmc_sg_table_data_vaddr(struct tmc_sg_table *sg_table)
-> >>+{
-> >>+	if (WARN_ON(!sg_table->data_pages.nr_pages))
-> >>+		return 0;
-> >>+	return sg_table->data_vaddr;
-> >>+}
-> >
-> >I see that tmc_sg_table_base_vaddr() and tmc_sg_table_data_vaddr() are both
-> >returning the virtual address of the contiguous buffer for table and data
-> >respectively.  Yet there is a discrepency in the naming convention.  I would
-> >have expected tmc_sg_table_base_vaddr() and tmc_sg_data_base_vaddr() so that
-> >there is a little symmetry between them.
-> 
-> Agree. I will fix it.
-> 
-> Suzuki
+Ray Jui (3):
+  dt-bindings: clk: Update Stingray binding doc
+  clk: bcm: Update and add tingray clock entries
+  arm64: dts: Update Stingray clock DT nodes
+
+ .../bindings/clock/brcm,iproc-clocks.txt           |  26 ++--
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi |  26 ++--
+ drivers/clk/bcm/clk-sr.c                           | 135 ++++++++++++++++++---
+ include/dt-bindings/clock/bcm-sr.h                 |  24 ++--
+ 4 files changed, 170 insertions(+), 41 deletions(-)
+
+-- 
+2.1.4
