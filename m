@@ -1,34 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967537AbeEYRgs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:36:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50506 "EHLO
+        id S967578AbeEYRg5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:36:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50688 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967305AbeEYRgr (ORCPT
+        with ESMTP id S967542AbeEYRgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:36:47 -0400
+        Fri, 25 May 2018 13:36:54 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        linux-omap@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: omap: fix compile-test building" to the asoc tree
-In-Reply-To: <20180525160248.4135506-2-arnd@arndb.de>
-Message-Id: <E1fMGdv-00083T-H7@debutante>
-Date: Fri, 25 May 2018 18:36:43 +0100
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: slimbus: allow register offsets up to 16 bits" to the regmap tree
+In-Reply-To: <20180525135037.30638-3-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fMGe4-00084u-2Q@debutante>
+Date: Fri, 25 May 2018 18:36:52 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: omap: fix compile-test building
+   regmap: slimbus: allow register offsets up to 16 bits
 
-has been applied to the asoc tree at
+has been applied to the regmap tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -49,40 +47,35 @@ to this mail.
 Thanks,
 Mark
 
->From 500413c5097d981b1b6e639bf2183abc1db6c24a Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 25 May 2018 18:02:32 +0200
-Subject: [PATCH] ASoC: omap: fix compile-test building
+>From cbdd39ca498f6b2b221614d9c1d105f2948f1dbb Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 25 May 2018 14:50:37 +0100
+Subject: [PATCH] regmap: slimbus: allow register offsets up to 16 bits
 
-The newly introduced driver causes a harmless Kconfig warning when
-compile-testing random configurations:
+As per SLIMBus specs Value Elements and Information Elements
+address map ranges from 0x000 - 0xFFF.
 
-WARNING: unmet direct dependencies detected for SND_SDMA_SOC
-  Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && DMA_OMAP [=n]
-  Selected by [y]:
-  - SND_OMAP_SOC [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && (ARCH_OMAP [=y] && DMA_OMAP [=n] || ARM [=y] && COMPILE_TEST [=y])
+So allow register addresses up to 16 bits
 
-By simply allow build testing without DMA_OMAP, we can shut up that warning.
-
-Fixes: dde637f2daf1 ("ASoC: omap: Introduce the generic_dmaengine_pcm based sdma-pcm")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 7d6f7fb053ad ("regmap: add SLIMbus support")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/omap/Kconfig | 2 +-
+ drivers/base/regmap/regmap-slimbus.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/omap/Kconfig b/sound/soc/omap/Kconfig
-index f1d6799e08a9..6dccea6fdaeb 100644
---- a/sound/soc/omap/Kconfig
-+++ b/sound/soc/omap/Kconfig
-@@ -5,7 +5,7 @@ config SND_OMAP_SOC
+diff --git a/drivers/base/regmap/regmap-slimbus.c b/drivers/base/regmap/regmap-slimbus.c
+index c90bee81d954..91d501eda8a9 100644
+--- a/drivers/base/regmap/regmap-slimbus.c
++++ b/drivers/base/regmap/regmap-slimbus.c
+@@ -41,7 +41,7 @@ static struct regmap_bus regmap_slimbus_bus = {
+ static const struct regmap_bus *regmap_get_slimbus(struct slim_device *slim,
+ 					const struct regmap_config *config)
+ {
+-	if (config->val_bits == 8 && config->reg_bits == 8)
++	if (config->val_bits == 8 && config->reg_bits == 16)
+ 		return &regmap_slimbus_bus;
  
- config SND_SDMA_SOC
- 	tristate "SoC Audio for Texas Instruments chips using sDMA"
--	depends on DMA_OMAP
-+	depends on DMA_OMAP || COMPILE_TEST
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 
- config SND_OMAP_SOC_DMIC
+ 	return ERR_PTR(-ENOTSUPP);
 -- 
 2.17.0
