@@ -1,109 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968118AbeEYTZ7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:25:59 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44620 "EHLO
+        id S968152AbeEYTan (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:30:43 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38187 "EHLO
         mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968074AbeEYTZ5 (ORCPT
+        with ESMTP id S967879AbeEYTak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:25:57 -0400
-X-Google-Smtp-Source: AB8JxZo6B+lf04ygux7zQqT9fp8hVKGMxkqxxISMebrbhjZVHFF6bDLbIC7It+C7AmuMFoZ2oiq9pQ==
-From: Evan Green <evgreen@chromium.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Evan Green <evgreen@chromium.org>
-Subject: [PATCH v2] mmc: Allow non-sleeping GPIO cd
-Date: Fri, 25 May 2018 12:25:23 -0700
-Message-Id: <20180525192523.204873-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.13.5
+        Fri, 25 May 2018 15:30:40 -0400
+X-Google-Smtp-Source: AB8JxZr9frjeQIZi7qS/kWAGQLGNfcdQUE3kH8QVOCJm5j9rhpmSh5IsylH/tQnF+4eQA5AX1OaMvw==
+Date: Fri, 25 May 2018 12:32:19 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: fix regulator property name for wlan pcie
+ endpoint
+Message-ID: <20180525193219.GY2259@tuxbook-pro>
+References: <20180522195758.24607-1-niklas.cassel@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522195758.24607-1-niklas.cassel@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change uses the appropriate _cansleep or non-sleeping API for
-reading GPIO card detect state. This allows users with GPIOs that
-never sleep to avoid a warning when certain quirks are present.
+On Tue 22 May 12:57 PDT 2018, Niklas Cassel wrote:
 
-The sdhci controller has an SDHCI_QUIRK_NO_CARD_NO_RESET, which
-indicates that a controller will not reset properly if no card is
-inserted. With this quirk enabled, mmc_get_cd_gpio is called in
-several places with a spinlock held and interrupts disabled.
-gpiod_get_raw_value_cansleep is not happy with this situation,
-and throws out a warning.
+> The property name vddpe-supply is not included in
+> Documentation/devicetree/bindings/pci/qcom,pcie.txt
+> nor in the pcie-qcom PCIe Root Complex driver.
+> 
+> This property name was used in an initial patchset for pcie-qcom,
+> but was renamed in a later revision.
+> 
+> Therefore, the regulator is currently never enabled, leaving us with
+> unoperational wlan.
+> 
+> Fix this by using the correct regulator property name, so that wlan
+> comes up correctly.
+> 
+> Fixes: 1c8ca74a2ea1 ("arm64: dts: apq8096-db820c: Enable wlan and bt en pins")
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 
-For boards that a) use controllers that have this quirk, and b) wire
-card detect up to a GPIO that doesn't sleep, this is a spurious warning.
-This change silences that warning, at the cost of pushing this problem
-down to users that have sleeping GPIOs and controllers with this quirk.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
-Changes since v1:
-	- Style fixups as suggested by Andy
+Regards,
+Bjorn
 
-This is my initial solution to the warning I was trying to face down
-in my previous RFC [1]. Upsides of this solution is it manages to
-avoid the warning in places where the warning doesn't apply, and is
-low-risk. Other approaches I considered:
-
-1. Changing sdhci_get_cd to reach through mmc and get the GPIO value
-directly (without sleeping) rather than calling mmc_gpio_get_cd,
-which uses the cansleep functions. I didn't love this because a) it
-seemed ugly to be reaching into mmc_host like that and b) I'd have to
-duplicate the logic in mmc_gpio_get_cd, which seemed brittle.
-
-2. Using mmc_gpio_set_cd_isr to record when the card detect pin
-changes, and then in sdhci_do_reset we wouldn't actually need to
-get CD state, just look at the cached value. This seemed risky to me
-since it would affect all sdhci controllers, and I don't know that
-everybody using gpio-cd can do interrupts on their pins.
-
-3. Adding mmc_gpio_get_cd_nosleep(). That one's still doable if
-preferred, but I'd have to give some thought to when sdhci wires
-up to which one.
-
-I'm up for other suggestions. This one most just seemed like the
-best first stab of minimally addressing the warning without rocking
-the boat otherwise.
-
-[1] https://patchwork.kernel.org/patch/10374633/
----
- drivers/mmc/core/slot-gpio.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
-index 31f7dbb15668..1ca8220690f2 100644
---- a/drivers/mmc/core/slot-gpio.c
-+++ b/drivers/mmc/core/slot-gpio.c
-@@ -76,15 +76,22 @@ EXPORT_SYMBOL(mmc_gpio_get_ro);
- int mmc_gpio_get_cd(struct mmc_host *host)
- {
- 	struct mmc_gpio *ctx = host->slot.handler_priv;
-+	int cansleep;
- 
- 	if (!ctx || !ctx->cd_gpio)
- 		return -ENOSYS;
- 
--	if (ctx->override_cd_active_level)
--		return !gpiod_get_raw_value_cansleep(ctx->cd_gpio) ^
--			!!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
-+	cansleep = gpiod_cansleep(ctx->cd_gpio);
-+	if (ctx->override_cd_active_level) {
-+		int value = cansleep ?
-+				gpiod_get_raw_value_cansleep(ctx->cd_gpio) :
-+				gpiod_get_raw_value(ctx->cd_gpio);
-+		return !value ^ !!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
-+	}
- 
--	return gpiod_get_value_cansleep(ctx->cd_gpio);
-+	return cansleep ?
-+		gpiod_get_value_cansleep(ctx->cd_gpio) :
-+		gpiod_get_value(ctx->cd_gpio);
- }
- EXPORT_SYMBOL(mmc_gpio_get_cd);
- 
--- 
-2.13.5
+> ---
+> Bluetooth needs a similar patch, but since bluetooth needs some more
+> work, submit this right now, so we at least have working wlan.
+> 
+>  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> index 818bf0efd501..804268f54f37 100644
+> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> @@ -203,7 +203,7 @@
+>  			pcie@600000 {
+>  				status = "okay";
+>  				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
+> -				vddpe-supply = <&wlan_en>;
+> +				vddpe-3v3-supply = <&wlan_en>;
+>  				vddpe1-supply = <&bt_en>;
+>  			};
+>  
+> -- 
+> 2.17.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
