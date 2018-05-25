@@ -1,109 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968124AbeEYSsg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:48:36 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.161]:38071 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967741AbeEYSsd (ORCPT
+        id S967911AbeEYSuL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:50:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57520 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967557AbeEYSuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:48:33 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH v2] ath6kl: mark expected switch fall-throughs
-To: Steve deRosier <derosier@gmail.com>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>, davem@davemloft.net,
-        sergei.shtylyov@cogentembedded.com,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180525182311.GA3000@embeddedor.com>
- <CALLGbRLFU5xH7PogXmjNSFkayLyo2Q1w1+8hQWgOSDYxS_GgUQ@mail.gmail.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <43bdc3fc-e922-07c7-df43-bcf05214f283@embeddedor.com>
-Date: Fri, 25 May 2018 13:48:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 25 May 2018 14:50:10 -0400
+Date: Fri, 25 May 2018 20:50:07 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tomas Hlavacek <tomas.hlavacek@nic.cz>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Turris Omnia firmware possibilities [Was: Re: led: hw-trigger,
+ global brightness and multi-colored leds]
+Message-ID: <20180525185007.GA29954@amd>
+References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+ <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
+ <e72ed1b1-1225-2782-e207-1af6af347810@kleine-koenig.org>
+ <CAEB7QLA3hs+Wa_UD4tUXN1JB535dWJxtBLo_jveKkGkyKyGAJQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALLGbRLFU5xH7PogXmjNSFkayLyo2Q1w1+8hQWgOSDYxS_GgUQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fMHlQ-0042SN-EV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:56366
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 26
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+In-Reply-To: <CAEB7QLA3hs+Wa_UD4tUXN1JB535dWJxtBLo_jveKkGkyKyGAJQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 05/25/2018 01:27 PM, Steve deRosier wrote:
-> On Fri, May 25, 2018 at 11:23 AM Gustavo A. R. Silva
-> <gustavo@embeddedor.com>
-> wrote:
-> 
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
-> 
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->> Changes in v2:
->>     - Place code comments on a line of their own.
-> 
->>     drivers/net/wireless/ath/ath6kl/cfg80211.c | 3 +++
->>     1 file changed, 3 insertions(+)
-> 
->> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-> b/drivers/net/wireless/ath/ath6kl/cfg80211.c
->> index 2ba8cf3..a16ee5d 100644
->> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
->> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
->> @@ -3899,16 +3899,19 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
->>            switch (ar->hw.cap) {
->>            case WMI_11AN_CAP:
->>                    ht = true;
->> +               /* fall through */
->>            case WMI_11A_CAP:
->>                    band_5gig = true;
->>                    break;
->>            case WMI_11GN_CAP:
->>                    ht = true;
->> +               /* fall through */
->>            case WMI_11G_CAP:
->>                    band_2gig = true;
->>                    break;
->>            case WMI_11AGN_CAP:
->>                    ht = true;
->> +               /* fall through */
->>            case WMI_11AG_CAP:
->>                    band_2gig = true;
->>                    band_5gig = true;
->> --
->> 2.7.4
-> 
-> 
-> Gustavo,
-> 
-> Thanks for the adjustment.  It now looks good to me.
->
+Hi!
 
-Glad to help. :)
+> > On 05/25/2018 12:08 AM, Tomas Hlavacek wrote:
+> >> But I also have good news: The FW of the MCU is also OSS (see the repo
+> >> in the link (1)). There is a method for flashing the MCU over I2C from
+> >> Linux and there is JTAG connector for the MCU, in case un-bricking is
+> >> needed. Therefore the LED protocol can be changed to be more sensible
+> >> and/or it is even possible to emulate some existing HW LED driver chip
+> >> in Omnia MCU and reuse OSS driver for that chip.
+> >
+> > Yeah, I noticed, but when we start replacing the firmware, we'd need to
+> > detect somehow when a machine has an old (or only different) firmware.
+> > That would imply a versioning scheme and a generic way to read out the
+> > firmware version. (CMD_GET_FW_VERSION_BOOT is already a start, but this
+> > doesn't help me if I find an unknown hash.) So a CMD_GET_FW_SOMETHING
+> > that yields a version string that is similar to the soname of a library
+> > would be great.
+>=20
+> Oh yes, I was actually trying to push rewrite of the FW before the
+> production started, but it looked like a redundant work and I rather
+> implemented the mentioned rule-breaking LED driver. Another good news
+> is that all the produced boards had the same FW image and there were
+> no (official and automated) updates so far. I think that in this
+> situation it is possible to re-write the firmware it if proves to be
+> the best solution for LED driver and fixing other glitches perhaps.
+> The only thing we need regarding versions we need is to either check
+> that we are upgrading the original version and/or consent from the
+> user to rewrite any other version that we might encounter. (If there
+> are some user-customized boards around.)
 
-> Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
-> 
-Thanks
---
-Gustavo
+Actually, I believe you should try to write the driver for existing
+firmware, and only if you find that performance is not good enough,
+change the protocol.
+
+> > Talking about firmware, I wonder if there is firmware supported needed
+> > to solve
+> > https://wiki.debian.org/InstallingDebianOn/TurrisOmnia#Power_Management
+> > . Didn't look into that deeply yet and probably not high prio given that
+> > normally the Turris Omnia will just run 7x24h.
+>=20
+> That's right, there is no power-down signalization from the CPU right
+> now. Btw. is there any mechanism in kernel to signal over arbitrary
+> bus (like I2C) that the host is shutting down and the power can/should
+> be cut to CPU in N seconds?
+
+I'm pretty sure kernel can ask the hardware to cut its power. This
+sounds like it: drivers/power/reset/gpio-poweroff.c
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsIWt8ACgkQMOfwapXb+vILQACgsEoXrsZhPY30YGX9FER836VP
+H5EAnifsIZptnFUW/DpwTmdo6uGknRso
+=TWcC
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
