@@ -1,72 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968058AbeEYTZq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:25:46 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46884 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967587AbeEYTZp (ORCPT
+        id S968118AbeEYTZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:25:59 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44620 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968074AbeEYTZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:25:45 -0400
-X-Google-Smtp-Source: AB8JxZqXwW2Rjkns96TL0xfsu/Ql6I5aSOKIbv9SySTPt748lpVwXCsafS9+QGG3Avbhbw0gxCMDdQ==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: defconfig: Enable PCIe on msm8996 and db820c
-Date: Fri, 25 May 2018 12:25:41 -0700
-Message-Id: <20180525192541.12223-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        Fri, 25 May 2018 15:25:57 -0400
+X-Google-Smtp-Source: AB8JxZo6B+lf04ygux7zQqT9fp8hVKGMxkqxxISMebrbhjZVHFF6bDLbIC7It+C7AmuMFoZ2oiq9pQ==
+From: Evan Green <evgreen@chromium.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Evan Green <evgreen@chromium.org>
+Subject: [PATCH v2] mmc: Allow non-sleeping GPIO cd
+Date: Fri, 25 May 2018 12:25:23 -0700
+Message-Id: <20180525192523.204873-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The msm8996 PCIe sits behind the "agnoc0", which is represented as a
-simple-pm-bus, so enable support for this. Then enable the QMP phy
-driver.
+This change uses the appropriate _cansleep or non-sleeping API for
+reading GPIO card detect state. This allows users with GPIOs that
+never sleep to avoid a warning when certain quirks are present.
 
-Also enable the atl1c ethernet driver and ath10k wlan driver to support
-these components on the DragonBoard820c.
+The sdhci controller has an SDHCI_QUIRK_NO_CARD_NO_RESET, which
+indicates that a controller will not reset properly if no card is
+inserted. With this quirk enabled, mmc_get_cd_gpio is called in
+several places with a spinlock held and interrupts disabled.
+gpiod_get_raw_value_cansleep is not happy with this situation,
+and throws out a warning.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+For boards that a) use controllers that have this quirk, and b) wire
+card detect up to a GPIO that doesn't sleep, this is a spurious warning.
+This change silences that warning, at the cost of pushing this problem
+down to users that have sleeping GPIOs and controllers with this quirk.
+
+Signed-off-by: Evan Green <evgreen@chromium.org>
 ---
- arch/arm64/configs/defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes since v1:
+	- Style fixups as suggested by Andy
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 895b2d92124d..e3687afdd64c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -173,6 +173,7 @@ CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_DMA_CMA=y
- CONFIG_CMA_SIZE_MBYTES=32
-+CONFIG_SIMPLE_PM_BUS=y
- CONFIG_MTD=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_M25P80=y
-@@ -213,6 +214,7 @@ CONFIG_VETH=m
- CONFIG_VIRTIO_NET=y
- CONFIG_AMD_XGBE=y
- CONFIG_NET_XGENE=y
-+CONFIG_ATL1C=m
- CONFIG_MACB=y
- CONFIG_THUNDER_NIC_PF=y
- CONFIG_HNS_DSAF=y
-@@ -254,6 +256,8 @@ CONFIG_USB_NET_SMSC75XX=m
- CONFIG_USB_NET_SMSC95XX=m
- CONFIG_USB_NET_PLUSB=m
- CONFIG_USB_NET_MCS7830=m
-+CONFIG_ATH10K=m
-+CONFIG_ATH10K_PCI=m
- CONFIG_BRCMFMAC=m
- CONFIG_MWIFIEX=m
- CONFIG_MWIFIEX_PCIE=m
-@@ -615,6 +619,7 @@ CONFIG_PHY_HI6220_USB=y
- CONFIG_PHY_QCOM_USB_HS=y
- CONFIG_PHY_SUN4I_USB=y
- CONFIG_PHY_MVEBU_CP110_COMPHY=y
-+CONFIG_PHY_QCOM_QMP=m
- CONFIG_PHY_ROCKCHIP_INNO_USB2=y
- CONFIG_PHY_ROCKCHIP_EMMC=y
- CONFIG_PHY_ROCKCHIP_PCIE=m
+This is my initial solution to the warning I was trying to face down
+in my previous RFC [1]. Upsides of this solution is it manages to
+avoid the warning in places where the warning doesn't apply, and is
+low-risk. Other approaches I considered:
+
+1. Changing sdhci_get_cd to reach through mmc and get the GPIO value
+directly (without sleeping) rather than calling mmc_gpio_get_cd,
+which uses the cansleep functions. I didn't love this because a) it
+seemed ugly to be reaching into mmc_host like that and b) I'd have to
+duplicate the logic in mmc_gpio_get_cd, which seemed brittle.
+
+2. Using mmc_gpio_set_cd_isr to record when the card detect pin
+changes, and then in sdhci_do_reset we wouldn't actually need to
+get CD state, just look at the cached value. This seemed risky to me
+since it would affect all sdhci controllers, and I don't know that
+everybody using gpio-cd can do interrupts on their pins.
+
+3. Adding mmc_gpio_get_cd_nosleep(). That one's still doable if
+preferred, but I'd have to give some thought to when sdhci wires
+up to which one.
+
+I'm up for other suggestions. This one most just seemed like the
+best first stab of minimally addressing the warning without rocking
+the boat otherwise.
+
+[1] https://patchwork.kernel.org/patch/10374633/
+---
+ drivers/mmc/core/slot-gpio.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+index 31f7dbb15668..1ca8220690f2 100644
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -76,15 +76,22 @@ EXPORT_SYMBOL(mmc_gpio_get_ro);
+ int mmc_gpio_get_cd(struct mmc_host *host)
+ {
+ 	struct mmc_gpio *ctx = host->slot.handler_priv;
++	int cansleep;
+ 
+ 	if (!ctx || !ctx->cd_gpio)
+ 		return -ENOSYS;
+ 
+-	if (ctx->override_cd_active_level)
+-		return !gpiod_get_raw_value_cansleep(ctx->cd_gpio) ^
+-			!!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
++	cansleep = gpiod_cansleep(ctx->cd_gpio);
++	if (ctx->override_cd_active_level) {
++		int value = cansleep ?
++				gpiod_get_raw_value_cansleep(ctx->cd_gpio) :
++				gpiod_get_raw_value(ctx->cd_gpio);
++		return !value ^ !!(host->caps2 & MMC_CAP2_CD_ACTIVE_HIGH);
++	}
+ 
+-	return gpiod_get_value_cansleep(ctx->cd_gpio);
++	return cansleep ?
++		gpiod_get_value_cansleep(ctx->cd_gpio) :
++		gpiod_get_value(ctx->cd_gpio);
+ }
+ EXPORT_SYMBOL(mmc_gpio_get_cd);
+ 
 -- 
-2.17.0
+2.13.5
