@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967162AbeEYMXO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:23:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50072 "EHLO
+        id S967116AbeEYMXF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:23:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49716 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967132AbeEYMXL (ORCPT
+        with ESMTP id S967001AbeEYMXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:23:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9663460AF9
+        Fri, 25 May 2018 08:23:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C375860C54
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -22,9 +22,9 @@ Cc: David Woodhouse <dwmw2@infradead.org>,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
         Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v3 16/16] mtd: rawnand: qcom: erased page bitflips detection
-Date: Fri, 25 May 2018 17:51:44 +0530
-Message-Id: <1527250904-21988-17-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v3 14/16] mtd: rawnand: qcom: check for operation errors in case of raw read
+Date: Fri, 25 May 2018 17:51:42 +0530
+Message-Id: <1527250904-21988-15-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
 References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
@@ -35,42 +35,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NAND parts can have bitflips in an erased page due to the
-process technology used. In this case, QCOM NAND controller
-is not able to identify that page as an erased page.
-Currently the driver calls nand_check_erased_ecc_chunk for
-identifying the erased pages but this won’t work always since the
-checking is being with ECC engine returned data. In case of
-bitflips, the ECC engine tries to correct the data and then it
-generates the uncorrectable error. Now, this data is not equal to
-original raw data. For erased CW identification, the raw data
-should be read again from NAND device and this
-nand_check_erased_ecc_chunk function should be called for raw
-data only.
-
-Now following logic is being added to identify the erased
-codeword bitflips.
-
-1. In most of the cases, not all the codewords will have bitflips
-   and only single CW will have bitflips. So, there is no need to
-   read the complete raw page data. The NAND raw read can be
-   scheduled for any CW in page. The NAND controller works on CW
-   basis and it will update the status register after each CW read.
-   Maintain the bitmask for the CW which generated the uncorrectable
-   error.
-2. Schedule the raw flash read from NAND flash device to
-   NAND controller buffer for all these CWs between first and last
-   uncorrectable errors CWs. Copy the content from NAND controller
-   internal HW buffer to actual data buffer only for the uncorrectable
-   errors CWs so that other CW data content won’t be affected, and
-   unnecessary data copy can be avoided.
-3. Both DATA and OOB need to be checked for number of 0. The
-   top-level API can be called with only data buf or OOB buf so use
-   chip->databuf if data buf is null and chip->oob_poi if
-   OOB buf is null for copying the raw bytes temporarily.
-4. For each CW, check the number of 0 in cw_data and usable
-   oob bytes, The bbm and spare (unused) bytes bit flip won’t
-   affect the ECC so don’t check the number of bitflips in this area.
+Currently there is no error checking for raw read. For raw
+reads, there won’t be any ECC failure but the operational
+failures are possible, so schedule the NAND_FLASH_STATUS read
+after each codeword.
 
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
@@ -78,218 +46,153 @@ Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
   NONE
 
 * Changes from v1:
- 1. Minor change in commit message
- 2. invalidate pagebuf if databuf or oob_poi is used
+ 1. Removed the code for copy_last_cw.
 
- drivers/mtd/nand/raw/qcom_nandc.c | 135 +++++++++++++++++++++++++++-----------
- 1 file changed, 98 insertions(+), 37 deletions(-)
+ drivers/mtd/nand/raw/qcom_nandc.c | 58 +++++++++++++++++++++++++++------------
+ 1 file changed, 40 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index 34143a4..1944b4b 100644
+index f72bc8a..87f900e 100644
 --- a/drivers/mtd/nand/raw/qcom_nandc.c
 +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -1709,20 +1709,103 @@ static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
+@@ -1096,7 +1096,8 @@ static void config_nand_page_read(struct qcom_nand_controller *nandc)
+  * Helper to prepare DMA descriptors for configuring registers
+  * before reading each codeword in NAND page.
+  */
+-static void config_nand_cw_read(struct qcom_nand_controller *nandc)
++static void
++config_nand_cw_read(struct qcom_nand_controller *nandc, bool use_ecc)
+ {
+ 	if (nandc->props->is_bam)
+ 		write_reg_dma(nandc, NAND_READ_LOCATION_0, 4,
+@@ -1105,19 +1106,25 @@ static void config_nand_cw_read(struct qcom_nand_controller *nandc)
+ 	write_reg_dma(nandc, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
+ 	write_reg_dma(nandc, NAND_EXEC_CMD, 1, NAND_BAM_NEXT_SGL);
+ 
+-	read_reg_dma(nandc, NAND_FLASH_STATUS, 2, 0);
+-	read_reg_dma(nandc, NAND_ERASED_CW_DETECT_STATUS, 1,
+-		     NAND_BAM_NEXT_SGL);
++	if (use_ecc) {
++		read_reg_dma(nandc, NAND_FLASH_STATUS, 2, 0);
++		read_reg_dma(nandc, NAND_ERASED_CW_DETECT_STATUS, 1,
++			     NAND_BAM_NEXT_SGL);
++	} else {
++		read_reg_dma(nandc, NAND_FLASH_STATUS, 1, NAND_BAM_NEXT_SGL);
++	}
  }
  
  /*
-+ * Bitflips can happen in erased codewords also so this function counts the
-+ * number of 0 in each CW for which ECC engine returns the uncorrectable
-+ * error. The page will be assumed as erased if this count is less than or
-+ * equal to the ecc->strength for each CW.
-+ *
-+ * 1. Both DATA and OOB need to be checked for number of 0. The
-+ *    top-level API can be called with only data buf or OOB buf so use
-+ *    chip->data_buf if data buf is null and chip->oob_poi if oob buf
-+ *    is null for copying the raw bytes.
-+ * 2. Perform raw read for all the CW which has uncorrectable errors.
-+ * 3. For each CW, check the number of 0 in cw_data and usable OOB bytes.
-+ *    The BBM and spare bytes bit flip won’t affect the ECC so don’t check
-+ *    the number of bitflips in this area.
-+ */
-+static int
-+check_for_erased_page(struct qcom_nand_host *host, u8 *data_buf,
-+		      u8 *oob_buf, unsigned long uncorrectable_err_cws,
-+		      int page, unsigned int max_bitflips)
+  * Helper to prepare dma descriptors to configure registers needed for reading a
+  * single codeword in page
+  */
+-static void config_nand_single_cw_page_read(struct qcom_nand_controller *nandc)
++static void
++config_nand_single_cw_page_read(struct qcom_nand_controller *nandc,
++				bool use_ecc)
+ {
+ 	config_nand_page_read(nandc);
+-	config_nand_cw_read(nandc);
++	config_nand_cw_read(nandc, use_ecc);
+ }
+ 
+ /*
+@@ -1198,7 +1205,7 @@ static int nandc_param(struct qcom_nand_host *host)
+ 	nandc->buf_count = 512;
+ 	memset(nandc->data_buffer, 0xff, nandc->buf_count);
+ 
+-	config_nand_single_cw_page_read(nandc);
++	config_nand_single_cw_page_read(nandc, false);
+ 
+ 	read_data_dma(nandc, FLASH_BUF_ACC, nandc->data_buffer,
+ 		      nandc->buf_count, 0);
+@@ -1563,6 +1570,23 @@ struct read_stats {
+ 	__le32 erased_cw;
+ };
+ 
++/* reads back FLASH_STATUS register set by the controller */
++static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
 +{
 +	struct nand_chip *chip = &host->chip;
 +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct nand_ecc_ctrl *ecc = &chip->ecc;
-+	int i, start_step, last_step, ret = 0;
++	int i;
 +
-+	start_step = ffs(uncorrectable_err_cws) - 1;
-+	last_step = fls(uncorrectable_err_cws);
++	for (i = 0; i < cw_cnt; i++) {
++		u32 flash = le32_to_cpu(nandc->reg_read_buf[i]);
 +
-+	if (!data_buf) {
-+		data_buf = chip->data_buf;
-+		chip->pagebuf = -1;
++		if (flash & (FS_OP_ERR | FS_MPU_ERR))
++			return -EIO;
 +	}
 +
-+	if (!oob_buf) {
-+		oob_buf = chip->oob_poi;
-+		chip->pagebuf = -1;
-+	}
-+
-+	data_buf += start_step * host->cw_data;
-+	oob_buf += start_step * ecc->bytes;
-+
-+	clear_read_regs(nandc);
-+	nandc_read_page_raw(mtd, chip, data_buf, oob_buf, page,
-+			    uncorrectable_err_cws);
-+
-+	for (i = start_step; i < last_step; i++) {
-+		int data_size, oob_size;
-+
-+		if (i == (ecc->steps - 1)) {
-+			data_size = ecc->size - ((ecc->steps - 1) << 2);
-+			oob_size = (ecc->steps << 2) + host->ecc_bytes_hw;
-+		} else {
-+			data_size = host->cw_data;
-+			oob_size = host->ecc_bytes_hw;
-+		}
-+
-+		if (uncorrectable_err_cws & BIT(i)) {
-+			/*
-+			 * make sure it isn't an erased page reported
-+			 * as not-erased by HW because of a few bitflips
-+			 */
-+			ret = nand_check_erased_ecc_chunk(data_buf,
-+				data_size, oob_buf + host->bbm_size,
-+				oob_size, NULL,
-+				0, ecc->strength);
-+			if (ret < 0) {
-+				mtd->ecc_stats.failed++;
-+			} else {
-+				mtd->ecc_stats.corrected += ret;
-+				max_bitflips =
-+					max_t(unsigned int, max_bitflips, ret);
-+			}
-+		}
-+
-+		data_buf += data_size;
-+		oob_buf += ecc->bytes;
-+	}
-+
-+	return max_bitflips;
++	return 0;
 +}
 +
-+/*
+ /*
   * reads back status registers set by the controller to notify page read
   * errors. this is equivalent to what 'ecc->correct()' would do.
-  */
- static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
--			     u8 *oob_buf)
-+			     u8 *oob_buf, int page)
- {
- 	struct nand_chip *chip = &host->chip;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct nand_ecc_ctrl *ecc = &chip->ecc;
--	unsigned int max_bitflips = 0;
-+	unsigned int max_bitflips = 0, uncorrectable_err_cws = 0;
- 	struct read_stats *buf;
--	bool flash_op_err = false;
-+	bool flash_op_err = false, erased;
- 	int i;
-+	u8 *data_buf_start = data_buf, *oob_buf_start = oob_buf;
- 
- 	buf = (struct read_stats *)nandc->reg_read_buf;
- 	nandc_read_buffer_sync(nandc, true);
-@@ -1752,10 +1835,6 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
- 		 *    codeword detection check will be done.
- 		 */
- 		if ((flash & FS_OP_ERR) && (buffer & BS_UNCORRECTABLE_BIT)) {
--			bool erased;
--			int ret, ecclen, extraooblen;
--			void *eccbuf;
--
- 			/*
- 			 * For BCH ECC, ignore erased codeword errors, if
- 			 * ERASED_CW bits are set.
-@@ -1776,31 +1855,8 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
- 				erased = false;
+@@ -1729,7 +1753,7 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
  			}
+ 		}
  
--			if (erased) {
--				data_buf += data_len;
--				if (oob_buf)
--					oob_buf += oob_len + ecc->bytes;
--				continue;
--			}
--
--			eccbuf = oob_buf ? oob_buf + oob_len : NULL;
--			ecclen = oob_buf ? host->ecc_bytes_hw : 0;
--			extraooblen = oob_buf ? oob_len : 0;
--
--			/*
--			 * make sure it isn't an erased page reported
--			 * as not-erased by HW because of a few bitflips
--			 */
--			ret = nand_check_erased_ecc_chunk(data_buf,
--				data_len, eccbuf, ecclen, oob_buf,
--				extraooblen, ecc->strength);
--			if (ret < 0) {
--				mtd->ecc_stats.failed++;
--			} else {
--				mtd->ecc_stats.corrected += ret;
--				max_bitflips =
--					max_t(unsigned int, max_bitflips, ret);
--			}
-+			if (!erased)
-+				uncorrectable_err_cws |= BIT(i);
- 		/*
- 		 * Check if MPU or any other operational error (timeout,
- 		 * device failure, etc.) happened for this codeword and
-@@ -1830,7 +1886,12 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
- 	if (flash_op_err)
- 		return -EIO;
+-		config_nand_cw_read(nandc);
++		config_nand_cw_read(nandc, true);
  
--	return max_bitflips;
-+	if (!uncorrectable_err_cws)
-+		return max_bitflips;
-+
-+	return check_for_erased_page(host, data_buf_start, oob_buf_start,
-+				     uncorrectable_err_cws, page,
-+				     max_bitflips);
- }
+ 		if (data_buf)
+ 			read_data_dma(nandc, FLASH_BUF_ACC, data_buf,
+@@ -1839,7 +1863,7 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
+ 			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+ 		}
  
- /*
-@@ -1838,7 +1899,7 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
-  * ecc->read_oob()
-  */
- static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
--			 u8 *oob_buf)
-+			 u8 *oob_buf, int page)
- {
- 	struct nand_chip *chip = &host->chip;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-@@ -1911,7 +1972,7 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
- 		return ret;
+-		config_nand_cw_read(nandc);
++		config_nand_cw_read(nandc, false);
+ 
+ 		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+ 		reg_off += data_size1;
+@@ -1858,12 +1882,13 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
  	}
  
--	return parse_read_errors(host, data_buf_start, oob_buf_start);
-+	return parse_read_errors(host, data_buf_start, oob_buf_start, page);
+ 	ret = submit_descs(nandc);
+-	if (ret)
++	free_descs(nandc);
++	if (ret) {
+ 		dev_err(nandc->dev, "failure to read raw page\n");
++		return ret;
++	}
+ 
+-	free_descs(nandc);
+-
+-	return ret;
++	return check_flash_errors(host, ecc->steps);
  }
  
- /* implements ecc->read_page() */
-@@ -1928,7 +1989,7 @@ static int qcom_nandc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
+ /* implements ecc->read_oob() */
+@@ -2082,7 +2107,6 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
+ 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+ 	struct nand_ecc_ctrl *ecc = &chip->ecc;
+ 	int page, ret, bbpos, bad = 0;
+-	u32 flash_status;
+ 	u8 *bbm_bytes_buf = chip->data_buf;
  
- 	clear_bam_transaction(nandc);
+ 	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+@@ -2109,7 +2133,7 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
+ 	 * bbpos offset.
+ 	 */
+ 	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
+-	config_nand_single_cw_page_read(nandc);
++	config_nand_single_cw_page_read(nandc, host->use_ecc);
+ 	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
+ 		      host->bbm_size, 0);
  
--	return read_page_ecc(host, data_buf, oob_buf);
-+	return read_page_ecc(host, data_buf, oob_buf, page);
- }
+@@ -2120,9 +2144,7 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
+ 		goto err;
+ 	}
  
- /* implements ecc->read_page_raw() */
-@@ -1955,7 +2016,7 @@ static int qcom_nandc_read_oob(struct mtd_info *mtd, struct nand_chip *chip,
- 	set_address(host, 0, page);
- 	update_rw_regs(host, ecc->steps, true);
- 
--	return read_page_ecc(host, NULL, chip->oob_poi);
-+	return read_page_ecc(host, NULL, chip->oob_poi, page);
- }
- 
- /* implements ecc->write_page() */
+-	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
+-
+-	if (flash_status & (FS_OP_ERR | FS_MPU_ERR)) {
++	if (check_flash_errors(host, 1)) {
+ 		dev_warn(nandc->dev, "error when trying to read BBM\n");
+ 		goto err;
+ 	}
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
 is a member of Code Aurora Forum, hosted by The Linux Foundation
