@@ -1,36 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966726AbeEYLlz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 07:41:55 -0400
-Received: from ozlabs.org ([203.11.71.1]:59269 "EHLO ozlabs.org"
+        id S966749AbeEYLmA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 07:42:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:59127 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966653AbeEYLlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 07:41:45 -0400
+        id S966731AbeEYLl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 07:41:57 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 43d2974b66d916a6df16e536da542e3a65aab7b9
-In-Reply-To: <1525688738-9185-4-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>, linux@roeck-us.net
+X-powerpc-patch-commit: 7daf59300999693b85233762b847f1b2313cccbd
+In-Reply-To: <20180523180054.9937-1-msuchanek@suse.de>
+To: Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Breno Leitao <leitao@debian.org>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linux-hwmon@vger.kernel.org, stewart@linux.vnet.ibm.com,
-        jdelvare@suse.com, linux-kernel@vger.kernel.org, paulus@samba.org,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [3/3] hwmon: (ibmpowernv) Add energy sensors
-Message-Id: <40skqW5Xm4z9s2k@ozlabs.org>
-Date: Fri, 25 May 2018 21:41:43 +1000 (AEST)
+Subject: Re: [v2] powerpc/xmon: Also setup debugger hooks when single-stepping
+Message-Id: <40skql47Ddz9s28@ozlabs.org>
+Date: Fri, 25 May 2018 21:41:54 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-07 at 10:25:38 UTC, Shilpasri G Bhat wrote:
-> This patch exports the accumulated power numbers of each power
-> sensor maintained by OCC.
+On Wed, 2018-05-23 at 18:00:54 UTC, Michal Suchanek wrote:
+> When single-stepping kernel code from xmon without a debug hook enabled
+> the kernel crashes. This can happen when kernel starts with xmon on
+> crash disabled but xmon is entered using sysrq.
 > 
-> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> Call force_enable_xmon when single-stepping in xmon to install the xmon
+> debug hooks.
+> 
+> Fixes: e1368d0c9edb ("powerpc/xmon: Setup debugger hooks when first
+> break-point is set")
+> 
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/43d2974b66d916a6df16e536da542e
+https://git.kernel.org/powerpc/c/7daf59300999693b85233762b847f1
 
 cheers
