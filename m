@@ -1,58 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968317AbeEYUST (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 16:18:19 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:36989 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967951AbeEYUSR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 16:18:17 -0400
-X-Google-Smtp-Source: ADUXVKIfAOkfQAoCsdnCkFYNozYtAFSRjXPwf3DucPBsGjwHNg5dO3Tz+UikZyZJwhKA6Yti/2eXWFjYe/Ssk9Ii+S0=
-MIME-Version: 1.0
-In-Reply-To: <20180525165222.GA7567@infradead.org>
-References: <20180525151421.2317292-1-arnd@arndb.de> <20180525165222.GA7567@infradead.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 25 May 2018 22:18:16 +0200
-X-Google-Sender-Auth: wBzdD4-aRNomWNqlceYahhm4_cs
-Message-ID: <CAK8P3a285ALRRECYVW=1_e7Dx0ybzG_1OWzVstXcm9VPQ3vUZA@mail.gmail.com>
+        id S968195AbeEYUVK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 16:21:10 -0400
+Received: from sandeen.net ([63.231.237.45]:54838 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967879AbeEYUVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 16:21:09 -0400
 Subject: Re: [PATCH] xfs: mark sb_fname as nonstring
-To: Christoph Hellwig <hch@infradead.org>
+To: Arnd Bergmann <arnd@arndb.de>, Eric Sandeen <sandeen@redhat.com>
 Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@redhat.com>, Martin Sebor <msebor@gmail.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>, Martin Sebor <msebor@gmail.com>,
         Brian Foster <bfoster@redhat.com>, Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
         Dan Williams <dan.j.williams@intel.com>,
         Ross Zwisler <ross.zwisler@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180525151421.2317292-1-arnd@arndb.de>
+ <d6a4b528-4336-48d4-1e0a-7b135c92f97e@redhat.com>
+ <CAK8P3a1n3ME0f_mVTcph8aQ3x7rFriypd0kzxz9Up+sZJdLb=g@mail.gmail.com>
+From: Eric Sandeen <sandeen@sandeen.net>
+Message-ID: <f9b82ff6-49c6-b3e9-361f-1459d884c273@sandeen.net>
+Date: Fri, 25 May 2018 15:21:08 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a1n3ME0f_mVTcph8aQ3x7rFriypd0kzxz9Up+sZJdLb=g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 6:52 PM, Christoph Hellwig <hch@infradead.org> wrote:
->> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
->> index 84fbf164cbc3..eb79f2bc4dcc 100644
->> --- a/fs/xfs/xfs_ioctl.c
->> +++ b/fs/xfs/xfs_ioctl.c
->> @@ -1819,12 +1819,12 @@ xfs_ioc_getlabel(
->>       BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+On 5/25/18 3:16 PM, Arnd Bergmann wrote:
+
+> On Fri, May 25, 2018 at 6:53 PM, Eric Sandeen <sandeen@redhat.com> wrote:
+>> On 5/25/18 10:14 AM, Arnd Bergmann wrote:
+...
+
+>>> @@ -1860,7 +1860,7 @@ xfs_ioc_setlabel(
+>>>          spin_lock(&mp->m_sb_lock);
+>>>          memset(sbp->sb_fname, 0, sizeof(sbp->sb_fname));
+>>> -       strncpy(sbp->sb_fname, label, sizeof(sbp->sb_fname));
+>>> +       memcpy(sbp->sb_fname, label, len);
 >>
->>       spin_lock(&mp->m_sb_lock);
->> -     strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
->> +     strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
->>       spin_unlock(&mp->m_sb_lock);
->
-> Hmm, shouldn't we just do a memcpy here?
+>>
+>> Hm but len = strnlen(label, XFSLABEL_MAX + 1);
+>> which could be one longer than sbp->sb_fname, no?
+> 
+> We have an explicit check for that, so I think it's ok:
+> 
+>          if (len > sizeof(sbp->sb_fname))
+>                  return -EINVAL;
 
-I thought about that as well, but decided that strncpy()'s zero-padding
-is better here than padding with potentially random contents of the user
-space stack.
+Ah so we do; I wrote this at least 2 weeks ago, you're asking a lot for
+me to remember it.  (or to even read it, apparently).   ;)
 
-> Also given that the kernel never even looks at sb_fname maybe
-> we can turn into an array of unsigned chars to escape those string
-> warnings?
-
-I don't think that makes a difference to gcc.
-
-        Arnd
+Thanks,
+-Eric
