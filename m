@@ -1,204 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964787AbeEYDu1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:50:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932570AbeEYDuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:50:25 -0400
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 19/33] block: convert to bio_for_each_page_all2()
-Date: Fri, 25 May 2018 11:46:07 +0800
-Message-Id: <20180525034621.31147-20-ming.lei@redhat.com>
-In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
+        id S964845AbeEYDug (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:50:36 -0400
+Received: from mga01.intel.com ([192.55.52.88]:6227 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932570AbeEYDuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:50:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
+   d="scan'208";a="58357659"
+Subject: Re: Wrong -dirty suffix set by setlocalversion (was: BUG in git
+ diff-index)
+To: Mike Mason <michael.w.mason@intel.com>
+Cc: andy.work@nglowry.com, git@vger.kernel.org, gitster@pobox.com,
+        josh@joshtriplett.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lists@nerdbynature.de, peff@peff.net,
+        nico-linuxsetlocalversion@schottelius.org
+References: <89d82c84-7a3b-9c4c-679e-a7a723669592@intel.com>
+ <20180524230334.12452-1-michael.w.mason@intel.com>
+From: Marc Herbert <Marc.Herbert@intel.com>
+Message-ID: <0dc31052-4cfd-3b92-0a4a-96c8ecfafff6@intel.com>
+Date: Thu, 24 May 2018 20:50:28 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180524230334.12452-1-michael.w.mason@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have to convert to bio_for_each_page_all2() for iterating page by
-page.
+On 24/05/2018 16:03, Mike Mason wrote:
 
-bio_for_each_page_all() can't be used any more after multipage bvec is
-enabled.
+> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+> index 71f39410691b..9da4c5e83285 100755
+> --- a/scripts/setlocalversion
+> +++ b/scripts/setlocalversion
+> @@ -73,8 +73,10 @@ scm_version()
+>  			printf -- '-svn%s' "`git svn find-rev $head`"
+>  		fi
+>  
+> -		# Check for uncommitted changes
+> -		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+> +		# Check for uncommitted changes. Only check mtime and size.
+> +       # Ignore insequential ctime, uid, gid and inode differences.
+> +		if git -c "core.checkstat=minimal" diff-index --name-only HEAD | \
+> +				grep -qv "^scripts/package"; then
+>  			printf '%s' -dirty
+>  		fi
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/bio.c         | 18 ++++++++++++------
- block/blk-zoned.c   |  5 +++--
- block/bounce.c      |  6 ++++--
- include/linux/bio.h |  3 ++-
- 4 files changed, 21 insertions(+), 11 deletions(-)
+FWIW:
 
-diff --git a/block/bio.c b/block/bio.c
-index a200c42e55dc..a14c854b9111 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1119,8 +1119,9 @@ static int bio_copy_from_iter(struct bio *bio, struct iov_iter *iter)
- {
- 	int i;
- 	struct bio_vec *bvec;
-+	struct bvec_iter_all bia;
- 
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		ssize_t ret;
- 
- 		ret = copy_page_from_iter(bvec->bv_page,
-@@ -1150,8 +1151,9 @@ static int bio_copy_to_iter(struct bio *bio, struct iov_iter iter)
- {
- 	int i;
- 	struct bio_vec *bvec;
-+	struct bvec_iter_all bia;
- 
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		ssize_t ret;
- 
- 		ret = copy_page_to_iter(bvec->bv_page,
-@@ -1173,8 +1175,9 @@ void bio_free_pages(struct bio *bio)
- {
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all bia;
- 
--	bio_for_each_page_all(bvec, bio, i)
-+	bio_for_each_page_all2(bvec, bio, i, bia)
- 		__free_page(bvec->bv_page);
- }
- EXPORT_SYMBOL(bio_free_pages);
-@@ -1340,6 +1343,7 @@ struct bio *bio_map_user_iov(struct request_queue *q,
- 	struct bio *bio;
- 	int ret;
- 	struct bio_vec *bvec;
-+	struct bvec_iter_all bia;
- 
- 	if (!iov_iter_count(iter))
- 		return ERR_PTR(-EINVAL);
-@@ -1413,7 +1417,7 @@ struct bio *bio_map_user_iov(struct request_queue *q,
- 	return bio;
- 
-  out_unmap:
--	bio_for_each_page_all(bvec, bio, j) {
-+	bio_for_each_page_all2(bvec, bio, j, bia) {
- 		put_page(bvec->bv_page);
- 	}
- 	bio_put(bio);
-@@ -1424,11 +1428,12 @@ static void __bio_unmap_user(struct bio *bio)
- {
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	/*
- 	 * make sure we dirty pages we wrote to
- 	 */
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		if (bio_data_dir(bio) == READ)
- 			set_page_dirty_lock(bvec->bv_page);
- 
-@@ -1520,8 +1525,9 @@ static void bio_copy_kern_endio_read(struct bio *bio)
- 	char *p = bio->bi_private;
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all bia;
- 
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		memcpy(p, page_address(bvec->bv_page), bvec->bv_len);
- 		p += bvec->bv_len;
- 	}
-diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index 77f3cecfaa7d..a76053d6fd6c 100644
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -123,6 +123,7 @@ int blkdev_report_zones(struct block_device *bdev,
- 	unsigned int ofst;
- 	void *addr;
- 	int ret;
-+	struct bvec_iter_all bia;
- 
- 	if (!q)
- 		return -ENXIO;
-@@ -190,7 +191,7 @@ int blkdev_report_zones(struct block_device *bdev,
- 	n = 0;
- 	nz = 0;
- 	nr_rep = 0;
--	bio_for_each_page_all(bv, bio, i) {
-+	bio_for_each_page_all2(bv, bio, i, bia) {
- 
- 		if (!bv->bv_page)
- 			break;
-@@ -223,7 +224,7 @@ int blkdev_report_zones(struct block_device *bdev,
- 
- 	*nr_zones = nz;
- out:
--	bio_for_each_page_all(bv, bio, i)
-+	bio_for_each_page_all2(bv, bio, i, bia)
- 		__free_page(bv->bv_page);
- 	bio_put(bio);
- 
-diff --git a/block/bounce.c b/block/bounce.c
-index f4ee4b81f7a2..8b14683f4061 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -143,11 +143,12 @@ static void bounce_end_io(struct bio *bio, mempool_t *pool)
- 	struct bio_vec *bvec, orig_vec;
- 	int i;
- 	struct bvec_iter orig_iter = bio_orig->bi_iter;
-+	struct bvec_iter_all bia;
- 
- 	/*
- 	 * free up bounce indirect pages used
- 	 */
--	bio_for_each_page_all(bvec, bio, i) {
-+	bio_for_each_page_all2(bvec, bio, i, bia) {
- 		orig_vec = bio_iter_iovec(bio_orig, orig_iter);
- 		if (bvec->bv_page != orig_vec.bv_page) {
- 			dec_zone_page_state(bvec->bv_page, NR_BOUNCE);
-@@ -203,6 +204,7 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bool bounce = false;
- 	int sectors = 0;
- 	bool passthrough = bio_is_passthrough(*bio_orig);
-+	struct bvec_iter_all bia;
- 
- 	bio_for_each_page(from, *bio_orig, iter) {
- 		if (i++ < BIO_MAX_PAGES)
-@@ -222,7 +224,7 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bio = bio_clone_bioset(*bio_orig, GFP_NOIO, passthrough ? NULL :
- 			bounce_bio_set);
- 
--	bio_for_each_page_all(to, bio, i) {
-+	bio_for_each_page_all2(to, bio, i, bia) {
- 		struct page *page = to->bv_page;
- 
- 		if (page_to_pfn(page) <= q->limits.bounce_pfn)
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 75baad77d9a8..5ae2bc876295 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -369,10 +369,11 @@ static inline unsigned bio_pages_all(struct bio *bio)
- {
- 	unsigned i;
- 	struct bio_vec *bv;
-+	struct bvec_iter_all bia;
- 
- 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
- 
--	bio_for_each_page_all(bv, bio, i)
-+	bio_for_each_page_all2(bv, bio, i, bia)
- 		;
- 	return i;
- }
--- 
-2.9.5
+Reported-by: Marc.Herbert@intel.com
+Reviewed-by: Marc.Herbert@intel.com  (assuming a future and decent commit message)
+Tested-by: Marc.Herbert@intel.com
+
+
+So the real use case is making a copy of a whole tree before building.
+Typical in automated builds, old example:
+https://groups.google.com/a/chromium.org/d/msg/chromium-os-dev/zxOa0OLWFkw/N_Sb7EZOBwAJ 
+
+Here's a more complex but faster and more transparent way to test Mike's fix
+than copying an entire tree:
+
+# Make sure you start from a clean state
+git describe --dirty      # must not -dirty
+
+make prepare
+
+# Simulate a copy of the tree but with just one file
+rsync --perms --times  README   README.mtime_backup
+rm  README
+rsync --perms --times  README.mtime_backup   README
+stat  README  README.mtime_backup 
+
+# Demo the BUG fixed by Mike
+./scripts/setlocalversion # -dirty BUG! because spurious inode ctime difference
+git diff-index  HEAD
+git describe --dirty      # not -dirty
+./scripts/setlocalversion # not -dirty any more cause describe refreshed index
+
+# Make sure mtime still causes -dirty with AND without Mike's fix
+touch README
+./scripts/setlocalversion # -dirty
