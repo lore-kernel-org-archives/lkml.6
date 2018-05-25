@@ -1,97 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935261AbeEYCOw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:14:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42992 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754164AbeEYCOo (ORCPT
+        id S964782AbeEYCYW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:24:22 -0400
+Received: from mo-csw-fb1116.securemx.jp ([210.130.202.175]:38430 "EHLO
+        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935184AbeEYCYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:14:44 -0400
-References: <20180223183344.21038-1-bauerman@linux.vnet.ibm.com> <87tvr6mlbe.fsf@concordia.ellerman.id.au>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] selftests/powerpc: Add ptrace tests for Protection Key registers
-In-reply-to: <87tvr6mlbe.fsf@concordia.ellerman.id.au>
-Date: Thu, 24 May 2018 23:14:27 -0300
+        Thu, 24 May 2018 22:24:16 -0400
+X-Iguazu-Qid: 2wGqt639vbQqP7Y0BM
+X-Iguazu-QSIG: v=1; s=0; t=1527212078; q=2wGqt639vbQqP7Y0BM; m=4JEGKXbB2FsiupPvK7SdkP/ADHAkuz3l9JYVIb3oFYw=
+From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
+To: "'Rafael Tinoco'" <rafael.tinoco@linaro.org>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <shuah@kernel.org>,
+        <patches@kernelci.org>, <lkft-triage@lists.linaro.org>,
+        <ben.hutchings@codethink.co.uk>, <stable@vger.kernel.org>,
+        <akpm@linux-foundation.org>, <torvalds@linux-foundation.org>,
+        <linux@roeck-us.net>
+References: <20180524093159.286472249@linuxfoundation.org> <20180524180652.7bqyquqfe2nqdxfg@xps> <20180524190806.GE31019@kroah.com> <CADtBP2B=Yb22dUjW-X-1OEGUvMX81gfpQ2FqFAaQUnExduwq7Q@mail.gmail.com>
+In-Reply-To: <CADtBP2B=Yb22dUjW-X-1OEGUvMX81gfpQ2FqFAaQUnExduwq7Q@mail.gmail.com>
+Subject: RE: [PATCH 4.4 00/92] 4.4.133-stable review
+Date: Fri, 25 May 2018 10:34:33 +0900
+X-TSB-HOP: ON
+Message-ID: <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18052502-0056-0000-0000-00000454EF96
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009065; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000261; SDB=6.01036001; UDB=6.00529949; IPR=6.00815130;
- MB=3.00021234; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-25 02:14:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052502-0057-0000-0000-000008990D38
-Message-Id: <874liwqy64.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805250025
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHyOjw/2UIYPy6ZRGrtHaW6etfoGQJRUQMkAZFkJwoB+cXzNKPUNgMQ
+Content-Language: ja
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Rafael,
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
+The tests fcntl35 and fcntl35_64 should have go from FAIL to PASS.
+https://www.spinics.net/lists/stable/msg239475.html
 
-> Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
->
->> This test exercises read and write access to the AMR, IAMR and UAMOR.
->>
->> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
->> ---
->>  tools/testing/selftests/powerpc/include/reg.h      |   1 +
->>  tools/testing/selftests/powerpc/ptrace/Makefile    |   5 +-
->>  tools/testing/selftests/powerpc/ptrace/child.h     | 130 ++++++++
->>  .../testing/selftests/powerpc/ptrace/ptrace-pkey.c | 326 +++++++++++++++++++++
->
-> This is failing on machines without pkeys:
->
->   test: ptrace_pkey
->   tags: git_version:52e7d87
->   [FAIL] Test FAILED on line 117
->   [FAIL] Test FAILED on line 191
->   failure: ptrace_pkey
->
->
-> I think the first fail is in the child here:
->
-> int ptrace_read_regs(pid_t child, unsigned long type, unsigned long regs[],
-> 		     int n)
-> {
-> 	struct iovec iov;
-> 	long ret;
->
-> 	FAIL_IF(start_trace(child));
->
-> 	iov.iov_base = regs;
-> 	iov.iov_len = n * sizeof(unsigned long);
->
-> 	ret = ptrace(PTRACE_GETREGSET, child, type, &iov);
-> 	FAIL_IF(ret != 0);
->
->
-> Which makes sense.
+Looking at
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a3d7cdea9/testrun/228569/suite/ltp-syscalls-tests/tests/
+I see that these two tests (and other important tests as well) are being SKIPPED.
 
-Yes, that is indeed what is going on.
+By the way, I see that select04 FAILS in your case. But in my setup, select04 was working fine (x86_64) in 4.4.132. I will confirm that it still works in 4.4.133
 
-> The test needs to skip if pkeys are not available/enabled. Using the
-> availability of the REGSET might actually be a nice way to detect that,
-> because it's read-only.
+Thanks,
+Daniel Sangorrin
 
- I forgot to consider the case of pkeys not available or not enabled,
- sorry about that.
-
-I just sent a v2 which implements your suggestion above.
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+> -----Original Message-----
+> From: stable-owner@vger.kernel.org [mailto:stable-owner@vger.kernel.org] On
+> Behalf Of Rafael Tinoco
+> Sent: Friday, May 25, 2018 5:32 AM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-kernel@vger.kernel.org; shuah@kernel.org; patches@kernelci.org;
+> lkft-triage@lists.linaro.org; ben.hutchings@codethink.co.uk;
+> stable@vger.kernel.org; akpm@linux-foundation.org;
+> torvalds@linux-foundation.org; linux@roeck-us.net
+> Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+> 
+> > > kernel: 4.4.133-rc1
+> > > git repo:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > > git branch: linux-4.4.y
+> > > git commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
+> > > git describe: v4.4.132-93-g915a3d7cdea9
+> > > Test details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a
+> 3d7cdea9
+> > >
+> > >
+> > > No regressions (compared to build v4.4.132-71-g180635995c36)
+> >
+> > It should have gotten better, as there was a fix in here for at least 2
+> > LTP tests that we previously were not passing.  I don't know why you all
+> > were not reporting that in the past, it took someone else randomly
+> > deciding to run LTP to report it to me...
+> >
+> > Why did an improvement in results not show up?
+> 
+> Are you referring to the CLOCK_MONOTONIC_RAW fix for the arm64 vDSO ?
+> I think that CLOCK_MONOTONIC_RAW in VDSO wasn't backported to 4.4.y
+> (commit 49eea433b326 in mainline) so this "fix" is changing the
+> timekeeping sauce (that would fix MONOTONIC RAW) but not for 4.4.y in
+> ARM64. Needs review though :\
