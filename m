@@ -1,155 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967444AbeEYRfR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:35:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42138 "EHLO mx1.redhat.com"
+        id S967482AbeEYRfZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:35:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967305AbeEYRfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:35:16 -0400
-Reply-To: tstellar@redhat.com
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: Nick Desaulniers <ndesaulniers@google.com>, hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@google.com>
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com>
- <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com>
- <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
- <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com>
- <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
- <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com>
- <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
- <31A5469A-176F-451F-886A-ECD649DDC78C@zytor.com>
- <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
-From: Tom Stellard <tstellar@redhat.com>
-Organization: Red Hat
-Message-ID: <12a870df-5f9d-94d1-8318-42cfff1bedab@redhat.com>
-Date: Fri, 25 May 2018 10:35:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S967305AbeEYRfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 13:35:23 -0400
+X-Google-Smtp-Source: ADUXVKLNHdStzNZVkvCqFnAK2CVLg7iswsjSXDdLhJR+efaUrKan6rQnpR287Ana8XpVAtJ8BFMPj3td4BWpvmrRtFY=
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <92e3be10-e65a-99e9-6ef7-f11ded6a35f9@arm.com>
+References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
+ <20180524190031.GB31019@kroah.com> <CAL_JsqJK69A3W=YrSfvPetM95CROOJhU1bW1rMEOGtji=t0ORQ@mail.gmail.com>
+ <92e3be10-e65a-99e9-6ef7-f11ded6a35f9@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 25 May 2018 12:35:00 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKXyBZjpz3dvR+7Hign7Z3iwnvKWrAUdoPDWWBgjWmQLg@mail.gmail.com>
+Message-ID: <CAL_JsqKXyBZjpz3dvR+7Hign7Z3iwnvKWrAUdoPDWWBgjWmQLg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Mark Brown <broonie@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/25/2018 10:31 AM, Nick Desaulniers wrote:
-> On Fri, May 25, 2018 at 9:53 AM <hpa@zytor.com> wrote:
->> On May 25, 2018 9:46:42 AM PDT, Nick Desaulniers <ndesaulniers@google.com>
-> wrote:
->>> On Fri, May 25, 2018 at 9:33 AM <hpa@zytor.com> wrote:
->>>> On May 25, 2018 9:27:40 AM PDT, Nick Desaulniers
->>> <ndesaulniers@google.com> wrote:
->>> When you say
+On Fri, May 25, 2018 at 7:20 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 24/05/18 21:57, Rob Herring wrote:
+>>
+>> On Thu, May 24, 2018 at 2:00 PM, Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
 >>>
->>>> It still should be available as as inline, however, but now "extern
->>> inline".
+>>> On Thu, May 24, 2018 at 12:50:17PM -0500, Rob Herring wrote:
+>>>>
+>>>> Deferred probe will currently wait forever on dependent devices to
+>>>> probe,
+>>>> but sometimes a driver will never exist. It's also not always critical
+>>>> for
+>>>> a driver to exist. Platforms can rely on default configuration from the
+>>>> bootloader or reset defaults for things such as pinctrl and power
+>>>> domains.
+>>>> This is often the case with initial platform support until various
+>>>> drivers
+>>>> get enabled. There's at least 2 scenarios where deferred probe can
+>>>> render
+>>>> a platform broken. Both involve using a DT which has more devices and
+>>>> dependencies than the kernel supports. The 1st case is a driver may be
+>>>> disabled in the kernel config. The 2nd case is the kernel version may
+>>>> simply not have the dependent driver. This can happen if using a newer
+>>>> DT
+>>>> (provided by firmware perhaps) with a stable kernel version.
+>>>>
+>>>> Subsystems or drivers may opt-in to this behavior by calling
+>>>> driver_deferred_probe_check_init_done() instead of just returning
+>>>> -EPROBE_DEFER. They may use additional information from DT or kernel's
+>>>> config to decide whether to continue to defer probe or not.
+>>>>
+>>>> Cc: Alexander Graf <agraf@suse.de>
+>>>> Signed-off-by: Rob Herring <robh@kernel.org>
+>>>> ---
+>>>>   drivers/base/dd.c      | 17 +++++++++++++++++
+>>>>   include/linux/device.h |  2 ++
+>>>>   2 files changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>>>> index c9f54089429b..d6034718da6f 100644
+>>>> --- a/drivers/base/dd.c
+>>>> +++ b/drivers/base/dd.c
+>>>> @@ -226,6 +226,16 @@ void device_unblock_probing(void)
+>>>>        driver_deferred_probe_trigger();
+>>>>   }
+>>>>
+>>>> +int driver_deferred_probe_check_init_done(struct device *dev, bool
+>>>> optional)
+>>>> +{
+>>>> +     if (optional && initcalls_done) {
 >>>
->>> Am I understanding correctly that native_save_fl should be inlined into
->>> all
->>> call sites (modulo the problematic pv_irq_ops.save_fl case)?  Because
->>> for
->>> these two assembly implementations, it's not, but maybe there's
->>> something
->>> missing in my implementation?
-> 
->> Yes, that's what "extern inline" means. Maybe it needs a must inline
-> annotation, but that's really messed up.
-> 
+>>>
+>>> Wait, what's the "optional" mess here?
+>>
+>>
+>> My intent was that subsystems just always call this function and never
+>> return EPROBE_DEFER themselves. Then the driver core can make
+>> decisions as to what to do (such as the timeout added in the next
+>> patch). Or it can print common error/debug messages. So optional is a
+>> hint to allow subsystems per device control.
+>
+>
+> Maybe just driver_defer_probe() might be a more descriptive name? To me,
+> calling "foo_check_x()" with a parameter that says "I don't actually care
+> about x" is the really unintuitive bit.
 
-What about doing something like suggested here:
-https://bugs.llvm.org/show_bug.cgi?id=37512#c17
+All the other (though static or internal to driver core) functions are
+prefixed driver_deferred_probe_* so I was trying to remain consistent
+there. You're right though, with the timeout it's not just whether
+initcalls are done. It's really "get the return value depending on the
+core's deferred probe state". So perhaps one of these:
 
-This would keep the definition in C and make it easier for compilers
-to inline.
+driver_deferred_probe_get_return_val()
+driver_deferred_probe_handle_return()
 
--Tom
+The other option would be a more straight-forward functions that just
+returns a bool on whether to continue deferring and leave the return
+code handling to the caller:
 
-> I don't think it's possible to inline a function from an external
-> translation unit without something like LTO.
-> 
-> If I move the implementation of native_save_fl() to a separate .c (with out
-> of line assembly) or .S, neither clang nor gcc will inline that assembly to
-> any call sites, whether the declaration of native_save_fl() looks like:
-> 
-> extern inline unsigned long native_save_fl(void);
-> 
-> or
-> 
-> __attribute__((always_inline))
-> 
-> extern inline unsigned long native_save_fl(void);
-> 
-> I think an external copy is the best approach for the paravirt code:
-> 
-> diff --git a/arch/x86/kernel/irqflags.c b/arch/x86/kernel/irqflags.c
-> new file mode 100644
-> index 000000000000..e173ba8bee7b
-> --- /dev/null
-> +++ b/arch/x86/kernel/irqflags.c
-> @@ -0,0 +1,24 @@
-> +#include <asm/asm.h>
-> +
-> +extern unsigned long native_save_fl_no_stack_protector(void);
-> +extern void native_restore_fl_no_stack_protector(unsigned long flags);
-> +
-> +asm(
-> +".pushsection .text;"
-> +".global native_save_fl_no_stack_protector;"
-> +".type native_save_fl_no_stack_protector, @function;"
-> +"native_save_fl_no_stack_protector:"
-> +"pushf;"
-> +"pop %" _ASM_AX ";"
-> +"ret;"
-> +".popsection");
-> +
-> +asm(
-> +".pushsection .text;"
-> +".global native_restore_fl_no_stack_protector;"
-> +".type native_restore_fl_no_stack_protector, @function;"
-> +"native_restore_fl_no_stack_protector:"
-> +"push %" _ASM_DI ";"
-> +"popf;"
-> +"ret;"
-> +".popsection");
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 02d6f5cf4e70..8824d01c0c35 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -61,6 +61,7 @@ obj-y                 += alternative.o i8253.o
-> hw_breakpoint.o
->   obj-y                  += tsc.o tsc_msr.o io_delay.o rtc.o
->   obj-y                  += pci-iommu_table.o
->   obj-y                  += resource.o
-> +obj-y                  += irqflags.o
-> 
->   obj-y                          += process.o
->   obj-y                          += fpu/
-> --- a/arch/x86/kernel/paravirt.c
-> +++ b/arch/x86/kernel/paravirt.c
-> @@ -322,9 +322,12 @@ struct pv_time_ops pv_time_ops = {
->          .steal_clock = native_steal_clock,
->   };
-> 
-> +extern unsigned long native_save_fl_no_stack_protector(void);
-> +extern void native_restore_fl_no_stack_protector(unsigned long flags);
-> +
->   __visible struct pv_irq_ops pv_irq_ops = {
-> -       .save_fl = __PV_IS_CALLEE_SAVE(native_save_fl),
-> -       .restore_fl = __PV_IS_CALLEE_SAVE(native_restore_fl),
-> +       .save_fl = __PV_IS_CALLEE_SAVE(native_save_fl_no_stack_protector),
-> +       .restore_fl =
-> __PV_IS_CALLEE_SAVE(native_restore_fl_no_stack_protector),
->          .irq_disable = __PV_IS_CALLEE_SAVE(native_irq_disable),
->          .irq_enable = __PV_IS_CALLEE_SAVE(native_irq_enable),
->          .safe_halt = native_safe_halt,
-> 
-> Thoughts?
-> 
+if (driver_deferred_probe_enabled_for_builtin(dev))
+  return -EPROBE_DEFER;
+else
+  return -ENODEV;
+
+The pinctrl case would look like this:
+
+builtin_only = of_property_read_bool(np_pctldev, "pinctrl-use-default");
+if (builtin_only && driver_deferred_probe_enabled_for_builtin(dev))
+  return -EPROBE_DEFER;
+else if (!builtin_only && driver_deferred_probe_enabled(dev))
+  return -EPROBE_DEFER;
+else
+  return -ENODEV;
+
+I still prefer the former, picking the bike shed color is easier with
+the latter.
+
+>>>
+>>> The caller knows this value, so why do you need to even pass it in here?
+>>
+>>
+>> Because regardless of the value, we always stop deferring when/if we
+>> hit the timeout and the caller doesn't know about the timeout. If we
+>> get rid of it, we'd need functions for both init done and for deferred
+>> timeout.
+>>
+>>> And bool values that are not obvious are horrid.  I had to go look this
+>>> up when reading the later patches that just passed "true" in this
+>>> variable as I had no idea what that meant.
+>>
+>>
+>> Perhaps inverting it and calling it "keep_deferring" would be better.
+>> However, the flag is ignored if we have timed out.
+>
+>
+> Perhaps an enum (or bitmask of named flags) then? That would allow the most
+> readability at callsites, plus it seems quite likely that we may want
+> intermediate degrees of "deferral strictness" eventually.
+
+A bitmask is just 32 booleans stuffed into one parameter which I can
+guess Greg's opinion on.
+
+I can't really think of other flags we might need here. If we added
+some userspace trigger saying module loading is done, I don't think
+we'd need that to be per caller.
+
+Rob
