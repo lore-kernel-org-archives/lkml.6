@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030434AbeEYUdH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 16:33:07 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37362 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968404AbeEYUbV (ORCPT
+        id S968385AbeEYUbS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 16:31:18 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38753 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968241AbeEYUbP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 16:31:21 -0400
-X-Google-Smtp-Source: AB8JxZpMfx0sLQBcnk6YWE/T8fb+mPoki7zIgqJOp+sqNV8cXAX5CJ0PfFMRbU7fAp5N7C792LtahA==
+        Fri, 25 May 2018 16:31:15 -0400
+X-Google-Smtp-Source: AB8JxZrBy0hX1X2AROogdpSvv004sOqbrDFSscyFBd3Nm9bA/52d+Z94wqUsj0KLwt0WShDe5aY5lg==
 From: Matthias Kaehlcke <mka@chromium.org>
 To: MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc: Kyungmin Park <kyungmin.park@samsung.com>,
@@ -18,71 +18,62 @@ Cc: Kyungmin Park <kyungmin.park@samsung.com>,
         linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
         Douglas Anderson <dianders@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 04/11] PM / devfreq: Remove redundant frequency adjustment from governors
-Date: Fri, 25 May 2018 13:30:36 -0700
-Message-Id: <20180525203043.249193-5-mka@chromium.org>
+Subject: [PATCH 00/11] Add throttler driver for non-thermal throttling
+Date: Fri, 25 May 2018 13:30:32 -0700
+Message-Id: <20180525203043.249193-1-mka@chromium.org>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <20180525203043.249193-1-mka@chromium.org>
-References: <20180525203043.249193-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The userspace and simpleondemand governor determine a target frequency and
-then adjust it according to the df->min/max_freq limits that might have
-been set by user space. This adjustment is redundant, it is done in
-update_devfreq() for any governor, right after returning from
-governor->get_target_freq().
+This series adds the throttler driver, for non-thermal throttling of
+CPUs and devfreq devices. A use case for non-thermal throttling could
+be the detection of a high battery discharge voltage, close to the
+over-current protection (OCP) limit of the battery.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/devfreq/governor_simpleondemand.c |  5 -----
- drivers/devfreq/governor_userspace.c      | 16 ++++------------
- 2 files changed, 4 insertions(+), 17 deletions(-)
+To support throttling of devfreq devices the series introduces the
+concept of a devfreq policy and the DEVFREQ_ADJUST notifier (similar
+to CPUFREQ_ADJUST). Further it includes some related devfreq bugfixes
+and improvements that change some of the code that is also touched
+by the policy changes.
 
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index 278964783fa6..3da7554b4837 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -84,11 +84,6 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	b = div_u64(b, (dfso_upthreshold - dfso_downdifferential / 2));
- 	*freq = (unsigned long) b;
- 
--	if (df->min_freq && *freq < df->min_freq)
--		*freq = df->min_freq;
--	if (df->max_freq && *freq > df->max_freq)
--		*freq = df->max_freq;
--
- 	return 0;
- }
- 
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index 080607c3f34d..378d84c011df 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -26,19 +26,11 @@ static int devfreq_userspace_func(struct devfreq *df, unsigned long *freq)
- {
- 	struct userspace_data *data = df->data;
- 
--	if (data->valid) {
--		unsigned long adjusted_freq = data->user_frequency;
--
--		if (df->max_freq && adjusted_freq > df->max_freq)
--			adjusted_freq = df->max_freq;
--
--		if (df->min_freq && adjusted_freq < df->min_freq)
--			adjusted_freq = df->min_freq;
--
--		*freq = adjusted_freq;
--	} else {
-+	if (data->valid)
-+		*freq = data->user_frequency;
-+	else
- 		*freq = df->previous_freq; /* No user freq specified yet */
--	}
-+
- 	return 0;
- }
- 
+Matthias Kaehlcke (11):
+  PM / devfreq: Init user limits from OPP limits, not viceversa
+  PM / devfreq: Fix handling of min/max_freq == 0
+  PM / devfreq: Remove check for df->max_freq == 0 from governors
+  PM / devfreq: Remove redundant frequency adjustment from governors
+  PM / devfreq: governors: Return device frequency limits instead of
+    user limits
+  PM / devfreq: Add struct devfreq_policy
+  PM / devfreg: Add support policy notifiers
+  PM / devfreq: Make update_devfreq() public
+  misc: throttler: Add core support for non-thermal throttling
+  dt-bindings: misc: add bindings for throttler
+  misc/throttler: Add Chrome OS EC throttler
+
+ .../devicetree/bindings/misc/throttler.txt    |  41 ++
+ drivers/devfreq/devfreq.c                     | 203 ++++++----
+ drivers/devfreq/governor.h                    |   3 -
+ drivers/devfreq/governor_passive.c            |   4 +-
+ drivers/devfreq/governor_performance.c        |   5 +-
+ drivers/devfreq/governor_powersave.c          |   2 +-
+ drivers/devfreq/governor_simpleondemand.c     |  13 +-
+ drivers/devfreq/governor_userspace.c          |  16 +-
+ drivers/misc/Kconfig                          |   1 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/throttler/Kconfig                |  28 ++
+ drivers/misc/throttler/Makefile               |   2 +
+ drivers/misc/throttler/core.c                 | 373 ++++++++++++++++++
+ drivers/misc/throttler/cros_ec_throttler.c    | 122 ++++++
+ include/linux/devfreq.h                       | 112 +++++-
+ include/linux/throttler.h                     |  10 +
+ 16 files changed, 813 insertions(+), 123 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/misc/throttler.txt
+ create mode 100644 drivers/misc/throttler/Kconfig
+ create mode 100644 drivers/misc/throttler/Makefile
+ create mode 100644 drivers/misc/throttler/core.c
+ create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
+ create mode 100644 include/linux/throttler.h
+
 -- 
 2.17.0.921.gf22659ad46-goog
