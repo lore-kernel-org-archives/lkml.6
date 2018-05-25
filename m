@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935184AbeEYDtY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:49:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37994 "EHLO mx1.redhat.com"
+        id S935345AbeEYDte (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:49:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41400 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934623AbeEYDtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:49:22 -0400
+        id S935215AbeEYDtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:49:32 -0400
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -16,37 +16,54 @@ Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
         Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 13/33] block: introduce rq_for_each_segment()
-Date: Fri, 25 May 2018 11:46:01 +0800
-Message-Id: <20180525034621.31147-14-ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 14/33] block: loop: pass segments to iov_iter
+Date: Fri, 25 May 2018 11:46:02 +0800
+Message-Id: <20180525034621.31147-15-ming.lei@redhat.com>
 In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
 References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are still cases in which rq_for_each_segment() is required, for
-example, loop.
+iov_iter is implemented with bvec itererator, so it is safe to pass
+segment to it, and this way is much more efficient than passing one
+page in each bvec.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- include/linux/blkdev.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/block/loop.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 1e8e9b430008..0b15bc625bd7 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -953,6 +953,10 @@ struct req_iterator {
- 	__rq_for_each_bio(_iter.bio, _rq)			\
- 		bio_for_each_page(bvl, _iter.bio, _iter.iter)
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 8d7d5581ca9c..e709c0380566 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -521,7 +521,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 		struct bio_vec tmp;
  
-+#define rq_for_each_segment(bvl, _rq, _iter)			\
-+	__rq_for_each_bio(_iter.bio, _rq)			\
-+		bio_for_each_segment(bvl, _iter.bio, _iter.iter)
-+
- #define rq_iter_last(bvec, _iter)				\
- 		(_iter.bio->bi_next == NULL &&			\
- 		 bio_iter_last(bvec, _iter.iter))
+ 		__rq_for_each_bio(bio, rq)
+-			segments += bio_pages(bio);
++			segments += bio_segments(bio);
+ 		bvec = kmalloc(sizeof(struct bio_vec) * segments, GFP_NOIO);
+ 		if (!bvec)
+ 			return -EIO;
+@@ -533,7 +533,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 		 * copy bio->bi_iov_vec to new bvec. The rq_for_each_page
+ 		 * API will take care of all details for us.
+ 		 */
+-		rq_for_each_page(tmp, rq, iter) {
++		rq_for_each_segment(tmp, rq, iter) {
+ 			*bvec = tmp;
+ 			bvec++;
+ 		}
+@@ -547,7 +547,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 		 */
+ 		offset = bio->bi_iter.bi_bvec_done;
+ 		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
+-		segments = bio_pages(bio);
++		segments = bio_segments(bio);
+ 	}
+ 	atomic_set(&cmd->ref, 2);
+ 
 -- 
 2.9.5
