@@ -1,79 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030296AbeEYVIX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:08:23 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:50037 "EHLO
+        id S1030333AbeEYVJK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:09:10 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:41281 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968376AbeEYVIW (ORCPT
+        with ESMTP id S968376AbeEYVJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:08:22 -0400
+        Fri, 25 May 2018 17:09:08 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org,
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>, linux-pwm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: sunxi: mark PM functions as __maybe_unused
-Date: Fri, 25 May 2018 23:07:42 +0200
-Message-Id: <20180525210752.1794502-1-arnd@arndb.de>
+Subject: [PATCH] pwm: stm32: fix build warning with CONFIG_DMA_ENGINE disabled
+Date: Fri, 25 May 2018 23:08:30 +0200
+Message-Id: <20180525210843.1821071-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:1tau9DkHdvzXdx1rmlnNedUZAtEcCsULpVUWZY9PJKqYXvuKts8
- 8cud7qqENKSP3Cr6rMwZrcGels0in+cT9klDT0nPI5xyyp1ZVs6XfIwGjDIwJlaTOcdBMRL
- WzIY72fjk1P3ZzAalEXIHFu4NOX2kZN1McqQGU3YFR5aGn/TRioCMH1YjJPFjW9tTFojScg
- RjmZmQJdorjWMvZFfIUkg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nBzFG2o06pc=:XFFPVm55PpQERwF0ile6rz
- YaJfws7imjQRcYBMsOtf5rGPWe/EnbRnBlyQLRO0YDhEt01gzLpbaWUKJGs9jGhdbE0moKjJQ
- C6DvRUeyR2sxoVd4AVpJX5deztSfYbKvvZXzTp3M4m/BbgLuaYdTNImgyFITPUf2Z+tIMfrpt
- WSDOqWfBLMzKa+Cc871N/CWZ/Dpmx/vhjTlkc4h4rPtgsDiibjRWVH4fKsDK2H/fs3fnvjrLg
- qQOEsANmu+IkWP2BQXoW2v69/VGhqiLb1iBdyeCbV6DZA7Gl+hX8x0n70lPicNUi/RMcaFVkU
- Rty1GW4uF1mCQws2UyV/ODnGW6NN+Br8TBUTbI8wjBxT9yHlpf5Fvu1MtTvrM+95Jho0w2UnX
- xofHrhpW49pLW7sXpVzwLGnhlh38JnIExBcJ/v18t8zhR1Kc2T3vSUDl7RplFGVj+BLV95ZN5
- iEEOXf7I8xP7g4jfIZoMfnHGkJWML5Yp1bZ7WssQccztIe+jnaohc1r7uQAGBu5W9EXJe/fPT
- mlhyW9Rt2ZbS07h923Cji9UI+Sa0gtNCi9kGcHJb5CGrTPU+xPkGiZrSwN+XTIRqRmyNc15K/
- Nb5hqkamcWBTxAlqGgY10C/bin9wHuSNchD8VcUmm/ePdGQjS8yzUtBLcFCoSCwtT1x5IIouf
- v0YHGtdxfAsA5mvQqfqlZjQKIbeWZ5Gv965OomUDlJmAjMaRVTHIpuP0I9k+tSfjksaU=
+X-Provags-ID: V03:K1:+Fim8R0Ja3k85HCmDb2GmNGWMnqJJ1t1nOxSudEQgTeNt+z27hn
+ fJaDp0W87fPuD7M+I1xV/nxs6hSC4wbPGHROZ6oLX2onGqaAJBGsuu/NPHw+feDhkFlV/MU
+ EQYcouHPYL4O4YiU4FWzMKMEbnTG4ydkpCNxUIhRdJH9A8MCUjXGP8EZ0UrxM21rv131t/A
+ Ssn0OHbol9HNyH2R1QrNg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Opm8/xm9O6A=:+ykAXxA/oiYU2O+3yLc/i3
+ XmhUyfD3lF4MnY8HhqlZYkBHW+XxpsYF0ktV5IVCC6WsZL9letPxWO7SQzuXrlQODgUq6VVJk
+ Pvj/DZ1bKFxMabWdbDEnmEHT4eWUTEfYYD4xscJxQCC4q5cN7JzTizjZJPWS3xLXhMvcylkgy
+ /ABGE/TFQ43wyOxrcMhceNXsViHl8ktv3NDUiNHkQQfprzXftFyb7q4gAAFxapj0HXuWQ2mbs
+ nT1BASnUtu8pqVaKCKQpwWclaYUhuxgmMMVVjBHjGzvgi0+8NXa0VFOs578QtsBNaOT+dHuua
+ bmtSx6gbfKFtF+sItkcmtVoy9KO0asoOplEE0fXVUlqpVaiaBQuqLIGSbpM5xOqJHmybEkOPG
+ TXLvKGPxTD949Se73QnjpPu3dt9U53ka0FbXm4+oXBLe3VelVMogJXifdZaeKcl3Twcdk0LjT
+ dyeWf8+c9jryaG65K7sPaFo6MkjHfAatzAyY/zqBt1CrcYGfEptFoWZYMX8K0bq3SssNy/TMS
+ sLCCuP58Bo1EKcJS7MMC9G94jNktPAAzmvu8prI+VZ8Z5U/SgNoApQmL+9eAKaTeSvKlsu1/S
+ B+7KMC9M+j+YcT7IKATnq/6xO2IShtd0AVJGIJlwAk3ohBh+e6SQLEJsn8sDzKVWIegZSjVRV
+ i9A+/sYTXqa4fQqwdQjoRPnPCWR+hXN08ckzDOy2FTUv64ee1ds+1ybJLKvznJC7C+B4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added runtime-pm functions cause a harmless warning
-when CONFIG_PM is disabled:
+Without dmaengine support, we get a harmless warning about an
+unused function:
 
-drivers/mmc/host/sunxi-mmc.c:1452:12: error: 'sunxi_mmc_runtime_suspend' defined but not used [-Werror=unused-function]
- static int sunxi_mmc_runtime_suspend(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/mmc/host/sunxi-mmc.c:1435:12: error: 'sunxi_mmc_runtime_resume' defined but not used [-Werror=unused-function]
- static int sunxi_mmc_runtime_resume(struct device *dev)
+drivers/pwm/pwm-stm32.c:166:12: error: 'stm32_pwm_capture' defined but not used [-Werror=unused-function]
 
-This marks them as __maybe_unused to shut up the warning.
+Changing the #ifdef to an IS_ENABLED() check shuts up that warning
+and is slightly nicer to read.
 
-Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+Fixes: 53e38fe73f94 ("pwm: stm32: Add capture support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/mmc/host/sunxi-mmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-stm32.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 97c6b79b7d6f..837888b96bd3 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1432,7 +1432,7 @@ static int sunxi_mmc_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+index 60bfc07c4912..97bbc1f18fd6 100644
+--- a/drivers/pwm/pwm-stm32.c
++++ b/drivers/pwm/pwm-stm32.c
+@@ -484,9 +484,7 @@ static int stm32_pwm_apply_locked(struct pwm_chip *chip, struct pwm_device *pwm,
+ static const struct pwm_ops stm32pwm_ops = {
+ 	.owner = THIS_MODULE,
+ 	.apply = stm32_pwm_apply_locked,
+-#if IS_ENABLED(CONFIG_DMA_ENGINE)
+-	.capture = stm32_pwm_capture,
+-#endif
++	.capture = IS_ENABLED(CONFIG_DMA_ENGINE) ? stm32_pwm_capture : NULL,
+ };
  
--static int sunxi_mmc_runtime_resume(struct device *dev)
-+static int __maybe_unused sunxi_mmc_runtime_resume(struct device *dev)
- {
- 	struct mmc_host	*mmc = dev_get_drvdata(dev);
- 	struct sunxi_mmc_host *host = mmc_priv(mmc);
-@@ -1449,7 +1449,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static int sunxi_mmc_runtime_suspend(struct device *dev)
-+static int __maybe_unused sunxi_mmc_runtime_suspend(struct device *dev)
- {
- 	struct mmc_host	*mmc = dev_get_drvdata(dev);
- 	struct sunxi_mmc_host *host = mmc_priv(mmc);
+ static int stm32_pwm_set_breakinput(struct stm32_pwm *priv,
 -- 
 2.9.0
