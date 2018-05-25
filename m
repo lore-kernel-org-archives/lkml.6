@@ -1,82 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753851AbeEYCzZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:55:25 -0400
-Received: from mga05.intel.com ([192.55.52.43]:22224 "EHLO mga05.intel.com"
+        id S1755027AbeEYCzm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:55:42 -0400
+Received: from mga05.intel.com ([192.55.52.43]:22228 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751478AbeEYCzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:55:22 -0400
+        id S1752872AbeEYCzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:55:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
-   d="scan'208";a="42054613"
+   d="scan'208";a="42054620"
 From: Ross Zwisler <ross.zwisler@linux.intel.com>
 To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
         dm-devel@redhat.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: [PATCH 0/7] Fix DM DAX handling
-Date: Thu, 24 May 2018 20:55:11 -0600
-Message-Id: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
+Subject: [PATCH 3/7] dm: fix test for DAX device support
+Date: Thu, 24 May 2018 20:55:14 -0600
+Message-Id: <20180525025518.11405-4-ross.zwisler@linux.intel.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
+References: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series fixes a few issues that I found with DM's handling of DAX
-devices.  Here are some of the issues I found:
+Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
+flag is set on the device's request queue to decide whether or not the
+device supports filesystem DAX.  This is insufficient because there are
+devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
+which don't actually support DAX.
 
- * We can create a dm-stripe or dm-linear device which is made up of an
-   fsdax PMEM namespace and a raw PMEM namespace but which can hold a
-   filesystem mounted with the -o dax mount option.  DAX operations to
-   the raw PMEM namespace part lack struct page and can fail in
-   interesting/unexpected ways when doing things like fork(), examining
-   memory with gdb, etc.
+This means that you could create a dm-linear device, for example, where the
+first part of the dm-linear device was a PMEM namespace in fsdax mode and
+the second part was a PMEM namespace in raw mode.  Both DM and the
+filesystem you put on that dm-linear device would think the whole device
+supports DAX, which would lead to bad behavior once your raw PMEM namespace
+part using DAX needed struct page for something.
 
- * We can create a dm-stripe or dm-linear device which is made up of an
-   fsdax PMEM namespace and a BRD ramdisk which can hold a filesystem
-   mounted with the -o dax mount option.  All I/O to this filesystem
-   will fail.
+Fix this by using bdev_dax_supported() like filesystems do at mount time.
+This checks for raw mode and also performs other tests like checking to
+make sure the dax_direct_access() path works.
 
- * In DM you can't transition a dm target which could possibly support
-   DAX (mode DM_TYPE_DAX_BIO_BASED) to one which can't support DAX
-   (mode DM_TYPE_BIO_BASED), even if you never use DAX.
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
+---
+ drivers/md/dm-table.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-The first 2 patches in this series are prep work from Darrick and Dave
-which improve bdev_dax_supported().  The last 5 problems fix the above
-mentioned problems in DM.  I feel that this series simplifies the
-handling of DAX devices in DM, and the last 5 DM-related patches have a
-net code reduction of 50 lines.
-
-
-Darrick J. Wong (1):
-  fs: allow per-device dax status checking for filesystems
-
-Dave Jiang (1):
-  dax: change bdev_dax_supported() to support boolean returns
-
-Ross Zwisler (5):
-  dm: fix test for DAX device support
-  dm: prevent DAX mounts if not supported
-  dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
-  dm-snap: remove unnecessary direct_access() stub
-  dm-error: remove unnecessary direct_access() stub
-
- drivers/dax/super.c           | 44 +++++++++++++++++++++----------------------
- drivers/md/dm-ioctl.c         | 16 ++++++----------
- drivers/md/dm-snap.c          |  8 --------
- drivers/md/dm-table.c         | 29 +++++++++++-----------------
- drivers/md/dm-target.c        |  7 -------
- drivers/md/dm.c               |  7 ++-----
- fs/ext2/super.c               |  3 +--
- fs/ext4/super.c               |  3 +--
- fs/xfs/xfs_ioctl.c            |  3 ++-
- fs/xfs/xfs_iops.c             | 30 ++++++++++++++++++++++++-----
- fs/xfs/xfs_super.c            | 10 ++++++++--
- include/linux/dax.h           | 12 ++++--------
- include/linux/device-mapper.h |  8 ++++++--
- 13 files changed, 88 insertions(+), 92 deletions(-)
-
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 0589a4da12bb..5bb994b012ca 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -885,9 +885,7 @@ EXPORT_SYMBOL_GPL(dm_table_set_type);
+ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+ 			       sector_t start, sector_t len, void *data)
+ {
+-	struct request_queue *q = bdev_get_queue(dev->bdev);
+-
+-	return q && blk_queue_dax(q);
++	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
+ }
+ 
+ static bool dm_table_supports_dax(struct dm_table *t)
 -- 
 2.14.3
