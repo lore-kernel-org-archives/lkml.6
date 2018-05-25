@@ -1,238 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968233AbeEYTtV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:49:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967858AbeEYTtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:49:18 -0400
-Date: Fri, 25 May 2018 12:49:16 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2] f2fs: let fstrim issue discard commands in lower
- priority
-Message-ID: <20180525194916.GA52740@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180525051031.36443-1-jaegeuk@kernel.org>
+        id S968287AbeEYTuP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:50:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47530 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967858AbeEYTuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 15:50:13 -0400
+Date: Fri, 25 May 2018 21:50:10 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Waiman Long <longman@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/KVM: Fix incorrect SSBD bit in
+ kvm_cpuid_7_0_edx_x86_features
+Message-ID: <20180525195009.GC26007@flask>
+References: <1527268584-752-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180525051031.36443-1-jaegeuk@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <1527268584-752-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fstrim gathers huge number of large discard commands, and tries to issue
-without IO awareness, which results in long user-perceive IO latencies on
-READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
-seconds due to long discard latency.
+2018-05-25 13:16-0400, Waiman Long:
+> As the SSBD bit in kvm_cpuid_7_0_edx_x86_features has been renamed to
+> SPEC_CTRL_SSBD in the commit 52817587e706 ("x86/cpufeatures: Disentangle
+> SSBD enumeration"). The corresponding name change needed to be made in
+> the KVM code as well.
+> 
+> Fixes: 52817587e706 ("x86/cpufeatures: Disentangle SSBD enumeration")
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
 
-This patch limits the maximum size to 2MB per candidate, and check IO congestion
-when issuing them to disk.
+Thomas, are you taking this one?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-
-Change log from v1:
- - wait all discard bios in put_super & congested case in trimfs
-
- fs/f2fs/f2fs.h    |   4 +-
- fs/f2fs/segment.c | 139 +++++++++++++++++++++++++---------------------
- 2 files changed, 78 insertions(+), 65 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3cc56b4df03f..6e0677aff8ca 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -178,6 +178,7 @@ enum {
- 
- #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
- #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-+#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
- #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
- #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
- #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-@@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
- static inline bool __is_discard_mergeable(struct discard_info *back,
- 						struct discard_info *front)
- {
--	return back->lstart + back->len == front->lstart;
-+	return (back->lstart + back->len == front->lstart) &&
-+		(back->len + front->len < DEF_MAX_DISCARD_LEN);
- }
- 
- static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c67d92bf2968..0150719e580d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
- 	return 0;
- }
- 
--static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
--					struct discard_policy *dpolicy,
--					unsigned int start, unsigned int end)
--{
--	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
--	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
--	struct rb_node **insert_p = NULL, *insert_parent = NULL;
--	struct discard_cmd *dc;
--	struct blk_plug plug;
--	int issued;
--
--next:
--	issued = 0;
--
--	mutex_lock(&dcc->cmd_lock);
--	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
--
--	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
--					NULL, start,
--					(struct rb_entry **)&prev_dc,
--					(struct rb_entry **)&next_dc,
--					&insert_p, &insert_parent, true);
--	if (!dc)
--		dc = next_dc;
--
--	blk_start_plug(&plug);
--
--	while (dc && dc->lstart <= end) {
--		struct rb_node *node;
--
--		if (dc->len < dpolicy->granularity)
--			goto skip;
--
--		if (dc->state != D_PREP) {
--			list_move_tail(&dc->list, &dcc->fstrim_list);
--			goto skip;
--		}
--
--		__submit_discard_cmd(sbi, dpolicy, dc);
--
--		if (++issued >= dpolicy->max_requests) {
--			start = dc->lstart + dc->len;
--
--			blk_finish_plug(&plug);
--			mutex_unlock(&dcc->cmd_lock);
--
--			schedule();
--
--			goto next;
--		}
--skip:
--		node = rb_next(&dc->rb_node);
--		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
--
--		if (fatal_signal_pending(current))
--			break;
--	}
--
--	blk_finish_plug(&plug);
--	mutex_unlock(&dcc->cmd_lock);
--}
--
- static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 					struct discard_policy *dpolicy)
- {
-@@ -1341,7 +1279,18 @@ static unsigned int __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
- static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
- 						struct discard_policy *dpolicy)
- {
--	__wait_discard_cmd_range(sbi, dpolicy, 0, UINT_MAX);
-+	struct discard_policy dp;
-+
-+	if (dpolicy) {
-+		__wait_discard_cmd_range(sbi, dpolicy, 0, UINT_MAX);
-+		return;
-+	}
-+
-+	/* wait all */
-+	init_discard_policy(&dp, DPOLICY_FSTRIM, 1);
-+	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
-+	init_discard_policy(&dp, DPOLICY_UMOUNT, 1);
-+	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
- }
- 
- /* This should be covered by global mutex, &sit_i->sentry_lock */
-@@ -1389,8 +1338,9 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
- 	init_discard_policy(&dpolicy, DPOLICY_UMOUNT, dcc->discard_granularity);
- 	__issue_discard_cmd(sbi, &dpolicy);
- 	dropped = __drop_discard_cmd(sbi);
--	__wait_all_discard_cmd(sbi, &dpolicy);
- 
-+	/* just to make sure there is no pending discard commands */
-+	__wait_all_discard_cmd(sbi, NULL);
- 	return dropped;
- }
- 
-@@ -2397,6 +2347,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	return has_candidate;
- }
- 
-+static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-+					struct discard_policy *dpolicy,
-+					unsigned int start, unsigned int end)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-+	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-+	struct discard_cmd *dc;
-+	struct blk_plug plug;
-+	int issued;
-+
-+next:
-+	issued = 0;
-+
-+	mutex_lock(&dcc->cmd_lock);
-+	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-+
-+	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
-+					NULL, start,
-+					(struct rb_entry **)&prev_dc,
-+					(struct rb_entry **)&next_dc,
-+					&insert_p, &insert_parent, true);
-+	if (!dc)
-+		dc = next_dc;
-+
-+	blk_start_plug(&plug);
-+
-+	while (dc && dc->lstart <= end) {
-+		struct rb_node *node;
-+
-+		if (dc->len < dpolicy->granularity)
-+			goto skip;
-+
-+		if (dc->state != D_PREP) {
-+			list_move_tail(&dc->list, &dcc->fstrim_list);
-+			goto skip;
-+		}
-+
-+		__submit_discard_cmd(sbi, dpolicy, dc);
-+
-+		if (++issued >= dpolicy->max_requests) {
-+			start = dc->lstart + dc->len;
-+
-+			blk_finish_plug(&plug);
-+			mutex_unlock(&dcc->cmd_lock);
-+			__wait_all_discard_cmd(sbi, NULL);
-+			congestion_wait(BLK_RW_ASYNC, HZ/50);
-+			goto next;
-+		}
-+skip:
-+		node = rb_next(&dc->rb_node);
-+		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-+
-+		if (fatal_signal_pending(current))
-+			break;
-+	}
-+
-+	blk_finish_plug(&plug);
-+	mutex_unlock(&dcc->cmd_lock);
-+}
-+
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- {
- 	__u64 start = F2FS_BYTES_TO_BLK(range->start);
--- 
-2.17.0.441.gb46fe60e1d-goog
+>  arch/x86/kvm/cpuid.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index ced8511..598461e 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -407,8 +407,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+>  
+>  	/* cpuid 7.0.edx*/
+>  	const u32 kvm_cpuid_7_0_edx_x86_features =
+> -		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) | F(SSBD) |
+> -		F(ARCH_CAPABILITIES);
+> +		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+> +		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
+>  
+>  	/* all calls to cpuid_count() should be made on the same cpu */
+>  	get_cpu();
+> -- 
+> 1.8.3.1
+> 
