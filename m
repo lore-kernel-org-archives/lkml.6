@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755027AbeEYCzm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:55:42 -0400
-Received: from mga05.intel.com ([192.55.52.43]:22228 "EHLO mga05.intel.com"
+        id S1755110AbeEYCzz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:55:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:22225 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752872AbeEYCzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:55:24 -0400
+        id S1754765AbeEYCzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:55:43 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
-   d="scan'208";a="42054620"
+   d="scan'208";a="42054624"
 From: Ross Zwisler <ross.zwisler@linux.intel.com>
 To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
         dm-devel@redhat.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: [PATCH 3/7] dm: fix test for DAX device support
-Date: Thu, 24 May 2018 20:55:14 -0600
-Message-Id: <20180525025518.11405-4-ross.zwisler@linux.intel.com>
+Subject: [PATCH 7/7] dm-error: remove unnecessary direct_access() stub
+Date: Thu, 24 May 2018 20:55:18 -0600
+Message-Id: <20180525025518.11405-8-ross.zwisler@linux.intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
 References: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
@@ -26,43 +26,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
-flag is set on the device's request queue to decide whether or not the
-device supports filesystem DAX.  This is insufficient because there are
-devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
-which don't actually support DAX.
-
-This means that you could create a dm-linear device, for example, where the
-first part of the dm-linear device was a PMEM namespace in fsdax mode and
-the second part was a PMEM namespace in raw mode.  Both DM and the
-filesystem you put on that dm-linear device would think the whole device
-supports DAX, which would lead to bad behavior once your raw PMEM namespace
-part using DAX needed struct page for something.
-
-Fix this by using bdev_dax_supported() like filesystems do at mount time.
-This checks for raw mode and also performs other tests like checking to
-make sure the dax_direct_access() path works.
+This stub was added so that we could use dm-error with
+DM_TYPE_DAX_BIO_BASED mode devices.  That mode and the transition issues
+associated with it no longer exist, so we can remove this dead code.
 
 Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
 ---
- drivers/md/dm-table.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/md/dm-target.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 0589a4da12bb..5bb994b012ca 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -885,9 +885,7 @@ EXPORT_SYMBOL_GPL(dm_table_set_type);
- static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
- 			       sector_t start, sector_t len, void *data)
+diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
+index 314d17ca6466..c4dbc15f7862 100644
+--- a/drivers/md/dm-target.c
++++ b/drivers/md/dm-target.c
+@@ -140,12 +140,6 @@ static void io_err_release_clone_rq(struct request *clone)
  {
--	struct request_queue *q = bdev_get_queue(dev->bdev);
--
--	return q && blk_queue_dax(q);
-+	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
  }
  
- static bool dm_table_supports_dax(struct dm_table *t)
+-static long io_err_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
+-{
+-	return -EIO;
+-}
+-
+ static struct target_type error_target = {
+ 	.name = "error",
+ 	.version = {1, 5, 0},
+@@ -155,7 +149,6 @@ static struct target_type error_target = {
+ 	.map  = io_err_map,
+ 	.clone_and_map_rq = io_err_clone_and_map_rq,
+ 	.release_clone_rq = io_err_release_clone_rq,
+-	.direct_access = io_err_dax_direct_access,
+ };
+ 
+ int __init dm_target_init(void)
 -- 
 2.14.3
