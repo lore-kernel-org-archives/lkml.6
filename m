@@ -1,64 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030755AbeEYWFb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:05:31 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:60893 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030394AbeEYWF1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:05:27 -0400
+        id S1030757AbeEYWGD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:06:03 -0400
+Received: from mga01.intel.com ([192.55.52.88]:50944 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030513AbeEYWFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:05:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="11927773"
-From: Prasanthi Chellakumar <Prasanthi.Chellakumar@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Prasanthi Chellakumar <prasanthi.chellakumar@microchip.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>
-Subject: [PATCH] usb: host: ohci: fix sfr kernel warning in ohci-at91 driver
-Date: Fri, 25 May 2018 15:04:24 -0700
-Message-ID: <1527285896-12811-1-git-send-email-Prasanthi.Chellakumar@microchip.com>
+   d="scan'208";a="231749055"
+From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Naresh Bhat <naresh.bhat@linaro.org>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH V4 1/3] x86/efi: Call efi_delete_dummy_variable() during efi subsystem initialization
+Date: Fri, 25 May 2018 15:05:01 -0700
+Message-Id: <1527285903-31799-2-git-send-email-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1527285903-31799-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1527285903-31799-1-git-send-email-sai.praneeth.prakhya@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The USB Host Controller driver 'ohci-at91.c' reads a Special Function
-Register - OHCI Interrupt Configuration Register (AT91_SFR_OHCIICR)
-for bits SUSPEND_A/B/C. These bits are defined in sama5d2 alone, so
-sfr register mapping is done with compatible string "atmel,sama5d2-sfr".
-This gives a kernel warning 'failed to find sfr node' with non sama5d2
-cpus which is removed here, thus leaving it up to having a proper DTS.
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Signed-off-by: Prasanthi Chellakumar <prasanthi.chellakumar@microchip.com>
+Invoking efi_runtime_services() through efi_rts_wq (efi runtime
+services workqueue) means all accesses to efi_runtime_services() should
+be done after efi_rts_wq has been created. efi_delete_dummy_variable()
+calls set_variable(), hence efi_delete_dummy_variable() should be called
+after efi_rts_wq has been created.
 
+Presently, efi_delete_dummy_variable() is called from
+efi_enter_virtual_mode() which is early in the boot phase (efi_rts_wq
+isn't created yet), so call efi_delete_dummy_variable() later in the
+boot phase. Another and the most important reason for calling
+efi_delete_dummy_variable() late in the boot process is, if called
+before rest_init(), kernel prints stack trace with a warning "bad:
+scheduling from the idle thread!". Hence, call from efisubsys_init()
+which is called during rest_init().
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Naresh Bhat <naresh.bhat@linaro.org>
+Cc: Ricardo Neri <ricardo.neri@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
+ arch/x86/include/asm/efi.h  | 1 -
+ arch/x86/platform/efi/efi.c | 6 ------
+ drivers/firmware/efi/efi.c  | 6 ++++++
+ include/linux/efi.h         | 3 +++
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-The AT91_SFR_OHCIIR register is read for USB suspend and wake
-up control. The OHCI driver has a sfr register mapping for sama5d2
-alone. The USB suspend proceeds only when there is valid sfr regmap.
-So SFR access in boards that it is absent is not required. In such
-boards, USB suspend control requests is processed by usb_hub_control().
-But there is a kernel warning with non sama5d2 cpus. This patch fixes
-the kernel warning, changing to debug message(dev_dbg).
----
- drivers/usb/host/ohci-at91.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-index af0566d..ce11c47 100644
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@ -214,7 +214,7 @@ static int usb_hcd_at91_probe(const struct hc_driver *driver,
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index cec5fae23eb3..0e61b771b93d 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -138,7 +138,6 @@ extern void __init efi_runtime_update_mappings(void);
+ extern void __init efi_dump_pagetable(void);
+ extern void __init efi_apply_memmap_quirks(void);
+ extern int __init efi_reuse_config(u64 tables, int nr_tables);
+-extern void efi_delete_dummy_variable(void);
+ extern void efi_switch_mm(struct mm_struct *mm);
  
- 	ohci_at91->sfr_regmap = at91_dt_syscon_sfr();
- 	if (!ohci_at91->sfr_regmap)
--		dev_warn(dev, "failed to find sfr node\n");
-+		dev_dbg(dev, "failed to find sfr node\n");
+ struct efi_setup_data {
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 9061babfbc83..a3169d14583f 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
  
- 	board = hcd->self.controller->platform_data;
- 	ohci = hcd_to_ohci(hcd);
+ 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
+ 		runtime_code_page_mkexec();
+-
+-	/* clean DUMMY object */
+-	efi_delete_dummy_variable();
+ #endif
+ }
+ 
+@@ -1015,9 +1012,6 @@ static void __init __efi_enter_virtual_mode(void)
+ 	 * necessary relocation fixups for the new virtual addresses.
+ 	 */
+ 	efi_runtime_update_mappings();
+-
+-	/* clean DUMMY object */
+-	efi_delete_dummy_variable();
+ }
+ 
+ void __init efi_enter_virtual_mode(void)
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 232f4915223b..1176af664013 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -337,6 +337,12 @@ static int __init efisubsys_init(void)
+ 	if (!efi_enabled(EFI_BOOT))
+ 		return 0;
+ 
++	/*
++	 * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
++	 * it should be invoked only after efi_rts_wq is ready.
++	 */
++	efi_delete_dummy_variable();
++
+ 	/* We register the efi directory at /sys/firmware/efi */
+ 	efi_kobj = kobject_create_and_add("efi", firmware_kobj);
+ 	if (!efi_kobj) {
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 3016d8c456bc..1b79939d0b1e 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -994,6 +994,7 @@ extern efi_status_t efi_query_variable_store(u32 attributes,
+ 					     unsigned long size,
+ 					     bool nonblocking);
+ extern void efi_find_mirror(void);
++extern void efi_delete_dummy_variable(void);
+ #else
+ static inline void efi_late_init(void) {}
+ static inline void efi_free_boot_services(void) {}
+@@ -1004,6 +1005,8 @@ static inline efi_status_t efi_query_variable_store(u32 attributes,
+ {
+ 	return EFI_SUCCESS;
+ }
++
++static inline void efi_delete_dummy_variable(void) {}
+ #endif
+ extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
+ 
 -- 
 2.7.4
