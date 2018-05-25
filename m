@@ -1,300 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967855AbeEYTCC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:02:02 -0400
-Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:57362 "EHLO
-        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967587AbeEYTCA (ORCPT
+        id S967975AbeEYTJj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:09:39 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34492 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967936AbeEYTJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:02:00 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HCAACmXAhbmMqZ6ERcGwEBAQEDAQEBC?=
- =?us-ascii?q?QEBAYQYgQsoCoNtiASMbYF5gQ+HBYw0FIFkC4F3gnUCF4F5ITQYAQIBAQEBAQE?=
- =?us-ascii?q?CAQECEAEBAQEBBg0LBigvgjUiglMBAQEEIwQNRRACAQgYAgImAgICHyYQAgQTC?=
- =?us-ascii?q?IMagWkDFagbgWkzhwkNgSuBfIEJhy2CE4EPgl8ugk+BaFOCaYJUAoc8hg+KaCw?=
- =?us-ascii?q?HAotdgniNDooyhlGBQYILcIMTgh0DDgmOF28BjXiBGQEB?=
-X-IPAS-Result: =?us-ascii?q?A2HCAACmXAhbmMqZ6ERcGwEBAQEDAQEBCQEBAYQYgQsoCoN?=
- =?us-ascii?q?tiASMbYF5gQ+HBYw0FIFkC4F3gnUCF4F5ITQYAQIBAQEBAQECAQECEAEBAQEBB?=
- =?us-ascii?q?g0LBigvgjUiglMBAQEEIwQNRRACAQgYAgImAgICHyYQAgQTCIMagWkDFagbgWk?=
- =?us-ascii?q?zhwkNgSuBfIEJhy2CE4EPgl8ugk+BaFOCaYJUAoc8hg+KaCwHAotdgniNDooyh?=
- =?us-ascii?q?lGBQYILcIMTgh0DDgmOF28BjXiBGQEB?=
-From: <Douglas.Warzecha@dell.com>
-Cc: <Mario.Limonciello@dell.com>, <Jared.Dominguez@dell.com>,
-        <linux-kernel@vger.kernel.org>
-X-LoopCount0: from 10.166.132.40
-X-IronPort-AV: E=Sophos;i="5.49,440,1520917200";
-   d="scan'208";a="1159942340"
-X-DLP: DLP_GlobalPCIDSS
-To: <stuart.w.hayes@gmail.com>
-Subject: RE: [PATCH v2] dcdbas: Add support for WSMT ACPI table
-Thread-Topic: [PATCH v2] dcdbas: Add support for WSMT ACPI table
-Thread-Index: AQHT7R8Ave1lqkh4K0u+vhqvm51FQaRAx/uw
-Date: Fri, 25 May 2018 19:01:57 +0000
-Message-ID: <7e805edd9e95406687ce338ee486b1f2@ausx13mps334.AMER.DELL.COM>
-References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
-In-Reply-To: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Fri, 25 May 2018 15:09:38 -0400
+X-Google-Smtp-Source: AB8JxZqZja/mDKWxqwFQDHeus8h+6wavt1TOAFCF7oi8WD9yfjsgUMO8uMETkMbgs7XE21RAo6tKMA==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: qcom: Fix error handling in pm_runtime support
+Date: Fri, 25 May 2018 12:09:34 -0700
+Message-Id: <20180525190934.1042-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180523104425.6650-1-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4PJ29hl013461
 
+The driver does not cope with the fact that probe can fail in a number
+of cases after enabling pm_runtime on the device, this results in
+warnings about "Unbalanced pm_runtime_enable". Further more if probe
+fails after invoking host_init the power-domain will be left referenced.
 
-On 05/16/2018 9:06 AM, Stuart Hayes wrote:
-> If the WSMT ACPI table is present and indicates that a fixed communication
-> buffer should be used, use the firmware-specified buffer instead of
-> allocating a buffer in memory for communications between the dcdbas driver
-> and firmare.
-> 
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-> ---
-> v2 Bumped driver version to 5.6.0-3.3
-> 
-> 
->  drivers/firmware/Kconfig  |   2 +-
->  drivers/firmware/dcdbas.c | 102
-> +++++++++++++++++++++++++++++++++++++++++++---
->  drivers/firmware/dcdbas.h |  11 +++++
->  3 files changed, 109 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig index
-> b7c748248e53..a2bd6092bfa1 100644
-> --- a/drivers/firmware/Kconfig
-> +++ b/drivers/firmware/Kconfig
-> @@ -125,7 +125,7 @@ config DELL_RBU
-> 
->  config DCDBAS
->  	tristate "Dell Systems Management Base Driver"
-> -	depends on X86
-> +	depends on X86 && ACPI
->  	help
->  	  The Dell Systems Management Base Driver provides a sysfs
-> interface
->  	  for systems management software to perform System
-> Management diff --git a/drivers/firmware/dcdbas.c
-> b/drivers/firmware/dcdbas.c index 0bdea60c65dd..1699cfdcefe4 100644
-> --- a/drivers/firmware/dcdbas.c
-> +++ b/drivers/firmware/dcdbas.c
-> @@ -36,12 +36,13 @@
->  #include <linux/string.h>
->  #include <linux/types.h>
->  #include <linux/mutex.h>
-> +#include <linux/acpi.h>
->  #include <asm/io.h>
-> 
->  #include "dcdbas.h"
-> 
->  #define DRIVER_NAME		"dcdbas"
-> -#define DRIVER_VERSION		"5.6.0-3.2"
-> +#define DRIVER_VERSION		"5.6.0-3.3"
->  #define DRIVER_DESCRIPTION	"Dell Systems Management Base Driver"
-> 
->  static struct platform_device *dcdbas_pdev; @@ -49,19 +50,23 @@ static
-> struct platform_device *dcdbas_pdev;  static u8 *smi_data_buf;  static
-> dma_addr_t smi_data_buf_handle;  static unsigned long smi_data_buf_size;
-> +static unsigned long max_smi_data_buf_size = MAX_SMI_DATA_BUF_SIZE;
->  static u32 smi_data_buf_phys_addr;
->  static DEFINE_MUTEX(smi_data_lock);
-> +static u8 *eps_buffer;
-> 
->  static unsigned int host_control_action;  static unsigned int
-> host_control_smi_type;  static unsigned int host_control_on_shutdown;
-> 
-> +static bool wsmt_enabled;
-> +
->  /**
->   * smi_data_buf_free: free SMI data buffer
->   */
->  static void smi_data_buf_free(void)
->  {
-> -	if (!smi_data_buf)
-> +	if (!smi_data_buf || wsmt_enabled)
->  		return;
-> 
->  	dev_dbg(&dcdbas_pdev->dev, "%s: phys: %x size: %lu\n", @@ -86,7
-> +91,7 @@ static int smi_data_buf_realloc(unsigned long size)
->  	if (smi_data_buf_size >= size)
->  		return 0;
-> 
-> -	if (size > MAX_SMI_DATA_BUF_SIZE)
-> +	if (size > max_smi_data_buf_size)
->  		return -EINVAL;
-> 
->  	/* new buffer is needed */
-> @@ -169,7 +174,7 @@ static ssize_t smi_data_write(struct file *filp, struct
-> kobject *kobj,  {
->  	ssize_t ret;
-> 
-> -	if ((pos + count) > MAX_SMI_DATA_BUF_SIZE)
-> +	if ((pos + count) > max_smi_data_buf_size)
->  		return -EINVAL;
-> 
->  	mutex_lock(&smi_data_lock);
-> @@ -323,7 +328,8 @@ static ssize_t smi_request_store(struct device *dev,
->  		break;
->  	case 1:
->  		/* Calling Interface SMI */
-> -		smi_cmd->ebx = (u32) virt_to_phys(smi_cmd-
-> >command_buffer);
-> +		smi_cmd->ebx = smi_data_buf_phys_addr
-> +				+ offsetof(struct smi_cmd,
-> command_buffer);
->  		ret = dcdbas_smi_request(smi_cmd);
->  		if (!ret)
->  			ret = count;
-> @@ -482,6 +488,85 @@ static void dcdbas_host_control(void)
->  	}
->  }
-> 
-> +/* WSMT */
-> +
-> +static u8 checksum(u8 *buffer, u8 length) {
-> +	u8 sum = 0;
-> +	u8 *end = buffer + length;
-> +
-> +	while (buffer < end)
-> +		sum = (u8)(sum + *(buffer++));
-> +	return sum;
-> +}
-> +
-> +static inline struct smm_eps_table *check_eps_table(u8 *addr) {
-> +	struct smm_eps_table *eps = (struct smm_eps_table *)addr;
-> +
-> +	if (strncmp(SMM_EPS_SIG, eps->smm_comm_buff_anchor, 4) != 0)
-> +		return NULL;
-> +
-> +	if (checksum(addr, eps->length) != 0)
-> +		return NULL;
-> +
-> +	return eps;
-> +}
-> +
-> +static int dcdbas_check_wsmt(void)
-> +{
-> +	struct acpi_table_wsmt *wsmt = NULL;
-> +	struct smm_eps_table *eps = NULL;
-> +	u8 *addr;
-> +
-> +	acpi_get_table(ACPI_SIG_WSMT, 0, (struct acpi_table_header
-> **)&wsmt);
-> +	if (!wsmt)
-> +		return 0;
-> +
-> +	/* Check if WSMT ACPI table shows that protection is enabled */
-> +	if (!(wsmt->protection_flags &
-> ACPI_WSMT_FIXED_COMM_BUFFERS)
-> +	    || !(wsmt->protection_flags
-> +		 &
-> ACPI_WSMT_COMM_BUFFER_NESTED_PTR_PROTECTION))
-> +		return 0;
-> +
-> +	/* Scan for EPS (entry point structure) */
-> +	for (addr = (u8 *)__va(0xf0000);
-> +	     addr < (u8 *)__va(0x100000 - sizeof(struct smm_eps_table)) &&
-> !eps;
-> +	     addr += 1)
-> +		eps = check_eps_table(addr);
-> +
-> +	if (!eps) {
-> +		dev_dbg(&dcdbas_pdev->dev, "found WSMT, but no EPS
-> found\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	/*
-> +	 * Get physical address of buffer and map to virtual address.
-> +	 * Table gives size in 4K pages, regardless of actual system page size.
-> +	 */
-> +	if (eps->smm_comm_buff_addr + 8 > U32_MAX) {
-> +		dev_warn(&dcdbas_pdev->dev, "found WSMT, but EPS
-> buffer address is above 4GB\n");
-> +		return -EINVAL;
-> +	}
-> +	eps_buffer = (u8 *)memremap(eps->smm_comm_buff_addr,
-> +				     eps->num_of_4k_pages * 4096,
-> MEMREMAP_WB);
-> +	if (!eps_buffer) {
-> +		dev_warn(&dcdbas_pdev->dev, "found WSMT, but failed to
-> map EPS buffer\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* First 8 bytes of buffer is for semaphore */
-> +	smi_data_buf_phys_addr = (u32) eps->smm_comm_buff_addr + 8;
-> +	smi_data_buf = eps_buffer + 8;
-> +	smi_data_buf_size = (unsigned long) min(eps->num_of_4k_pages *
-> 4096 - 8,
-> +			    (u64) ULONG_MAX);
-> +	max_smi_data_buf_size = smi_data_buf_size;
-> +	wsmt_enabled = true;
-> +	dev_info(&dcdbas_pdev->dev,
-> +		 "WSMT found, using firmware-provided SMI buffer.\n");
-> +	return 1;
-> +}
-> +
->  /**
->   * dcdbas_reboot_notify: handle reboot notification for host control
->   */
-> @@ -548,6 +633,11 @@ static int dcdbas_probe(struct platform_device
-> *dev)
-> 
->  	dcdbas_pdev = dev;
-> 
-> +	/* Check if ACPI WSMT table specifies protected SMI buffer address
-> */
-> +	error = dcdbas_check_wsmt();
-> +	if (error < 0)
-> +		return error;
-> +
->  	/*
->  	 * BIOS SMI calls require buffer addresses be in 32-bit address space.
->  	 * This is done by setting the DMA mask below.
-> @@ -635,6 +725,8 @@ static void __exit dcdbas_exit(void)
->  	 */
->  	if (dcdbas_pdev)
->  		smi_data_buf_free();
-> +	if (eps_buffer)
-> +		memunmap(eps_buffer);
->  	platform_device_unregister(dcdbas_pdev_reg);
->  	platform_driver_unregister(&dcdbas_driver);
->  }
-> diff --git a/drivers/firmware/dcdbas.h b/drivers/firmware/dcdbas.h index
-> ca3cb0a54ab6..7ea5b3e070b9 100644
-> --- a/drivers/firmware/dcdbas.h
-> +++ b/drivers/firmware/dcdbas.h
-> @@ -54,6 +54,8 @@
-> 
->  #define SMI_CMD_MAGIC				(0x534D4931)
-> 
-> +#define SMM_EPS_SIG				"$SCB"
-> +
->  #define DCDBAS_DEV_ATTR_RW(_name) \
->  	DEVICE_ATTR(_name,0600,_name##_show,_name##_store);
-> 
-> @@ -103,5 +105,14 @@ struct apm_cmd {
-> 
->  int dcdbas_smi_request(struct smi_cmd *smi_cmd);
-> 
-> +struct smm_eps_table {
-> +	char smm_comm_buff_anchor[4];
-> +	u8 length;
-> +	u8 checksum;
-> +	u8 version;
-> +	u64 smm_comm_buff_addr;
-> +	u64 num_of_4k_pages;
-> +} __packed;
-> +
->  #endif /* _DCDBAS_H_ */
-> 
-> --
-> 2.14.2
+As it's not possible for the error handling in qcom_pcie_host_init() to
+handle errors happening after returning from that function the
+pm_runtime_get_sync() is moved to probe() as well.
 
-Acked-by: Doug Warzecha <douglas_warzecha@dell.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+
+I'm sorry for not spotting this last week when we discussed the previous patch.
+
+ drivers/pci/dwc/pcie-qcom.c | 65 ++++++++++++++++++++++++++-----------
+ 1 file changed, 46 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+index 3f35098b71b1..f2453196278f 100644
+--- a/drivers/pci/dwc/pcie-qcom.c
++++ b/drivers/pci/dwc/pcie-qcom.c
+@@ -1088,8 +1088,6 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+ 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+ 	int ret;
+ 
+-	pm_runtime_get_sync(pci->dev);
+-
+ 	qcom_ep_reset_assert(pcie);
+ 
+ 	ret = pcie->ops->init(pcie);
+@@ -1126,7 +1124,6 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+ 	phy_power_off(pcie->phy);
+ err_deinit:
+ 	pcie->ops->deinit(pcie);
+-	pm_runtime_put_sync(pci->dev);
+ 
+ 	return ret;
+ }
+@@ -1207,7 +1204,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 	struct qcom_pcie *pcie;
+ 	int ret;
+ 
+-
+ 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+ 	if (!pcie)
+ 		return -ENOMEM;
+@@ -1217,6 +1213,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
+ 
+ 	pci->dev = dev;
+ 	pci->ops = &dw_pcie_ops;
+@@ -1227,53 +1224,82 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 	pcie->ops = of_device_get_match_data(dev);
+ 
+ 	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
+-	if (IS_ERR(pcie->reset))
+-		return PTR_ERR(pcie->reset);
++	if (IS_ERR(pcie->reset)) {
++		ret = PTR_ERR(pcie->reset);
++		goto err_pm_runtime_put;
++	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "parf");
+ 	pcie->parf = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(pcie->parf))
+-		return PTR_ERR(pcie->parf);
++	if (IS_ERR(pcie->parf)) {
++		ret = PTR_ERR(pcie->parf);
++		goto err_pm_runtime_put;
++	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+ 	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
+-	if (IS_ERR(pci->dbi_base))
+-		return PTR_ERR(pci->dbi_base);
++	if (IS_ERR(pci->dbi_base)) {
++		ret = PTR_ERR(pci->dbi_base);
++		goto err_pm_runtime_put;
++	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
+ 	pcie->elbi = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(pcie->elbi))
+-		return PTR_ERR(pcie->elbi);
++	if (IS_ERR(pcie->elbi)) {
++		ret = PTR_ERR(pcie->elbi);
++		goto err_pm_runtime_put;
++	}
+ 
+ 	pcie->phy = devm_phy_optional_get(dev, "pciephy");
+-	if (IS_ERR(pcie->phy))
+-		return PTR_ERR(pcie->phy);
++	if (IS_ERR(pcie->phy)) {
++		ret = PTR_ERR(pcie->phy);
++		goto err_pm_runtime_put;
++	}
+ 
+ 	ret = pcie->ops->get_resources(pcie);
+ 	if (ret)
+-		return ret;
++		goto err_pm_runtime_put;
+ 
+ 	pp->root_bus_nr = -1;
+ 	pp->ops = &qcom_pcie_dw_ops;
+ 
+ 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+ 		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
++		if (pp->msi_irq < 0) {
++			ret = pp->msi_irq;
++			goto err_pm_runtime_put;
++		}
+ 	}
+ 
+ 	ret = phy_init(pcie->phy);
+ 	if (ret)
+-		return ret;
++		goto err_pm_runtime_put;
+ 
+ 	platform_set_drvdata(pdev, pcie);
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		dev_err(dev, "cannot initialize host\n");
+-		return ret;
++		goto err_pm_runtime_put;
+ 	}
+ 
++	return 0;
++
++err_pm_runtime_put:
++	pm_runtime_put(dev);
++	pm_runtime_disable(dev);
++
++	return ret;
++}
++
++static int qcom_pcie_remove(struct platform_device *pdev)
++{
++	struct qcom_pcie *pcie = platform_get_drvdata(pdev);
++	struct device *dev = pcie->pci->dev;
++
++	pm_runtime_put(dev);
++	pm_runtime_disable(dev);
++
+ 	return 0;
+ }
+ 
+@@ -1289,6 +1315,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+ 
+ static struct platform_driver qcom_pcie_driver = {
+ 	.probe = qcom_pcie_probe,
++	.remove = qcom_pcie_remove,
+ 	.driver = {
+ 		.name = "qcom-pcie",
+ 		.suppress_bind_attrs = true,
+-- 
+2.17.0
