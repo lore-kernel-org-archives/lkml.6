@@ -1,104 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935580AbeEYMgR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:36:17 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:23091 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934280AbeEYMfX (ORCPT
+        id S934723AbeEYMhC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:37:02 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40204 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933100AbeEYMhA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:35:23 -0400
-X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
-   d="scan'208";a="15314132"
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <nicolas.ferre@microchip.com>,
-        <boris.brezillon@bootlin.com>, <alexandre.belloni@bootlin.com>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>
-CC: <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
-Date: Fri, 25 May 2018 15:34:27 +0300
-Message-ID: <1527251668-31396-7-git-send-email-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+        Fri, 25 May 2018 08:37:00 -0400
+X-Google-Smtp-Source: ADUXVKKUMX1KGGPpCQCqjimATxjEpB5MzsCL1YMB0A+zzHDgrdO64S4CCJyFFmgnEZVnISFO0CEg1A==
+Date: Fri, 25 May 2018 14:36:56 +0200
+From: Niklas Cassel <niklas.cassel@linaro.org>
+To: Bob Copeland <me@bobcopeland.com>
+Cc: Adrian Chadd <adrian.chadd@gmail.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        David Miller <davem@davemloft.net>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ath10k: transmit queued frames after waking queues
+Message-ID: <20180525123656.GB8780@localhost.localdomain>
+References: <20180517231512.13085-1-niklas.cassel@linaro.org>
+ <CAJ-Vmon1ybhWs_8Nv=w62pmhSizDdDeYCgK8_HTTwPZ=EEC46g@mail.gmail.com>
+ <20180521203701.GA7619@localhost.localdomain>
+ <20180524155034.xse7cfm5figfktuj@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524155034.xse7cfm5figfktuj@localhost>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+On Thu, May 24, 2018 at 11:50:34AM -0400, Bob Copeland wrote:
+> On Mon, May 21, 2018 at 10:37:01PM +0200, Niklas Cassel wrote:
+> > On Thu, May 17, 2018 at 03:26:25PM -0700, Adrian Chadd wrote:
+> > > On Thu, 17 May 2018 at 16:16, Niklas Cassel <niklas.cassel@linaro.org>
+> > > wrote:
+> > > 
+> > > > diff --git a/drivers/net/wireless/ath/ath10k/txrx.c
+> > > b/drivers/net/wireless/ath/ath10k/txrx.c
+> > > > index cda164f6e9f6..1d3b2d2c3fee 100644
+> > > > --- a/drivers/net/wireless/ath/ath10k/txrx.c
+> > > > +++ b/drivers/net/wireless/ath/ath10k/txrx.c
+> > > > @@ -95,6 +95,9 @@ int ath10k_txrx_tx_unref(struct ath10k_htt *htt,
+> > > >                  wake_up(&htt->empty_tx_wq);
+> > > >          spin_unlock_bh(&htt->tx_lock);
+> > > 
+> > > > +       if (htt->num_pending_tx <= 3 && !list_empty(&ar->txqs))
+> > > > +               ath10k_mac_tx_push_pending(ar);
+> > > > +
+> > > 
+> > > Just sanity checking - what's protecting htt->num_pending_tx? or is it
+> > > serialised some other way?
+> [...]
+> > I can't see that any of the examples applies, but let's add READ_ONCE(),
+> > to make sure that the compiler doesn't try to optimize this.
+> 
+> Couldn't you just move the num_pending_tx read inside tx_lock which is 2 lines
+> above?  I think all the other manipulations are protected by tx_lock.
 
-This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
-each I2S node.
+Hello Bob,
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added phandle to new mux clock]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+There is both a V2 and V3 of this patchset, V3 moves this to a sdio.c and
+calls ath10k_mac_tx_push_pending() unconditionally.
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index eeb6afa..eca73ce 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -58,6 +58,8 @@
- 		serial1 = &uart3;
- 		tcb0 = &tcb0;
- 		tcb1 = &tcb1;
-+		i2s0 = &i2s0;
-+		i2s1 = &i2s1;
- 	};
- 
- 	cpus {
-@@ -1313,6 +1315,22 @@
- 				clocks = <&clk32k>;
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				compatible = "atmel,sama5d2-i2s";
-+				reg = <0xf8050000 0x100>;
-+				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(31))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(32))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
-+				clock-names = "pclk", "gclk", "aclk", "muxclk";
-+				status = "disabled";
-+			};
-+
- 			can0: can@f8054000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xf8054000 0x4000>, <0x210000 0x4000>;
-@@ -1506,6 +1524,22 @@
- 				status = "disabled";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				compatible = "atmel,sama5d2-i2s";
-+				reg = <0xfc04c000 0x100>;
-+				interrupts = <55 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(33))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(34))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&i2s1_clk>, <&i2s1_gclk>, <&audio_pll_pmc>, <&i2s1muxck>;
-+				clock-names = "pclk", "gclk", "aclk", "muxclk";
-+				status = "disabled";
-+			};
-+
- 			can1: can@fc050000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
--- 
-2.7.4
+
+But to answer your question,
+it shouldn't matter if the read is done while holding the lock or not.
+
+Sure, the compiler could do things so that the code path is always or never
+executed, but that is why I added READ_ONCE() in V2.
+
+A spin lock does have the advantage of ordering: memory operations issued
+before the spin_unlock_bh() will be completed before the spin_unlock_bh()
+operation has completed.
+
+However, ath10k_htt_tx_dec_pending() was called earlier in the same function,
+which decreases htt->num_pending_tx, so that write will be completed before
+our read. That is the only ordering we care about here (if we should call
+ath10k_mac_tx_push_pending() or not).
+
+
+Kind regards,
+Niklas
