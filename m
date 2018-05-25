@@ -1,68 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030433AbeEYVeC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:34:02 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:54717 "EHLO
+        id S1030473AbeEYVeQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:34:16 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:59679 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030216AbeEYVeA (ORCPT
+        with ESMTP id S1030403AbeEYVeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:34:00 -0400
+        Fri, 25 May 2018 17:34:12 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, netdev@vger.kernel.org,
+Cc: Arnd Bergmann <arnd@arndb.de>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Song Liu <songliubraving@fb.com>, Martin KaFai Lau <kafai@fb.com>,
+        Chenbo Feng <fengc@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH, net-next 1/2] bpf: btf: avoid -Wreturn-type warning
-Date: Fri, 25 May 2018 23:33:19 +0200
-Message-Id: <20180525213331.2115471-1-arnd@arndb.de>
+Subject: [PATCH, net-next 2/2] bpf: avoid -Wmaybe-uninitialized warning
+Date: Fri, 25 May 2018 23:33:20 +0200
+Message-Id: <20180525213331.2115471-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:yVV90sA6Eh8UbQLosTBJ/01CrbxUbLoorXerFl+UAztokMLIqJv
- cxSDnSRPlFWZzReHm2e6was45IZFgep7Katd7/9mrV1ihQgKjcjBuJCIy5arpguvUjPBzr5
- /d/uVTbed4+wC3/HmkTGf/rQuV/HpvJSPXn90z8C8HH4l0jWNEXIpVYJjKK6wmq4FnbqM+M
- nK0AFYypmdjCMneg/dp8Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mxSvhcuP3FM=:A7fuER43f4DbT1A1l2CCRd
- 0JeCOzhe5XybE1vvAItY2x3v+cUO4/0MkS34+OMG2u+9EDwpWILiNKIcJ0oB5rSz7O1yflJIb
- ob+bwfx+CW9QpN+Wme+TWs6K9tx8dDNpGnR1i0SPfjZbsG857hof9ZC8sLNE9/iC+H9ownaTY
- yRvfDY9694ErLHgn3NBJrYc4DQ0dBndNxnnoT2/QH5mCtv2xskufnRekQkUkzhjqsZmkGIopl
- aerZPVqU/6DbAWOUQnIJnvsmIxsEauN+UZjwNbULslwCXhmsvgAI7oC4pN2eHzI7CNykxVrKd
- YWbekrjz2GV5m7sdm9O+ZPirvEZyw99qvexbYxCo5Pbu0vf7STmmF4YLJa7QMLFzDBb7xkYpf
- 80HFWXeZQR7Fwjqphetm9rxDdtnkill+eFWl9shq/2+DSVajeYOl+NsNX2t/LWaRzvPgc4xBX
- FXATYxuCo8vlKhr6i/IRCQBNSSjCTaIyM2ddV3aef2abYk1hIMSguGkUELUze+aB6uyByoDF+
- vVVEZxxSx900pGNvy8o0ocWNcIjEYLEQ93s4+dbm384rP9DSCJC/11OG2jmLtVzF2EnZSZKs1
- PkZbACrSRjF85MFDzg/JEdLrAlbjzVYNPTqBDRN+H9DutSi9akT6BthKrPq5YOROpufOBDCAP
- wepCby6aYm9/7yxtt8OvTKj/JC2z6Jl4N6ZfWXNL+LFIF5ikhF2CERUevkubakfjunrg=
+In-Reply-To: <20180525213331.2115471-1-arnd@arndb.de>
+References: <20180525213331.2115471-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:nvXbhged/p74c8JC1ib2clyM8v/J6YsPl6k6IyrPD+Duvhz8WOR
+ 6awQqZmeaSODxy6tlL43jRTO5Eh9y0afNgjY8EbgOsvqXBHqYyzmTo5kVaO1hiohzH+e8x5
+ XwlSIejxV9KmxILz2UGGPPb+YWVO8PlEWVwV2olVLCbNpMJQUBG+VS6nSgIAjQ3obiKMnxl
+ cld+nxmlIiQgWq45LIzIw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:EDWTd9JPXcI=:BI+G/XXennjVWjg8kX6A77
+ IjCNbXqDayborfR+tU/59uEVtZDaGtEQY5n/NNk6vyKrlk5sCQyAOl7RW0OXZ2ubmkq7LfOEn
+ /4fBLZ6yf+KL7r3tvDWdkyay03NKgBcoB1GzENxiWSxG5xo9CoFfwJgS0RLedzXXCqnjuk+m4
+ gMnibZerCaf1s6HkFFo+VtxC7WuC3M/8Nx2girMpNZhI7CWEyeZC6DkiOl5XyiW9SSOvIookA
+ kX1IMClHVLULCgu5vzVNwyjKfSf094SNAgM3gsPy/bjHrk+rWTQBeXiPmW2eCHoy4kJZzRjxy
+ z9cgnN4KC/cZ7jjZEh2WCc37g0awsonFVV5nt8rD1/wjMQ4GXKzDpYssvwb64q0YDlc2d8UJB
+ nNIRYKNwGQWPmLUgy8pTZvKDCe/q9Z/pfyDMAMBLqyyQIjBjvUD6+9iFcfTkBdQCfF2GyHiVo
+ 9kNl5hV+kDV+8SHHtnTw+Pr/CXsNxe0cZNQTdw0HDdP7GX0jWtjT073fjcIgX/2zVuXZY8yJW
+ fTgYzez2DbjEKRe06iVX3jH0QNvoV5vEZItlksIImvhpQmdUuU578wtaIxj6fz2qWgQXYgyNk
+ KZgtTKuyzS7bUrWC2v5epf+pH3aGKr39NsHD7TeWw+ec3TtxLbvl461tg+XGEkYmdNLdGt7NP
+ 3p61rtyp1psOX5BYYOWFscFzn/pMNx0Wqk1apwDGzSGbF4bVLI5nYr+c8A4aXHdoYcY8=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc warns about a noreturn function possibly returning in
-some configurations:
+The stack_map_get_build_id_offset() function is too long for gcc to track
+whether 'work' may or may not be initialized at the end of it, leading
+to a false-positive warning:
 
-kernel/bpf/btf.c: In function 'env_type_is_resolve_sink':
-kernel/bpf/btf.c:729:1: error: control reaches end of non-void function [-Werror=return-type]
+kernel/bpf/stackmap.c: In function 'stack_map_get_build_id_offset':
+kernel/bpf/stackmap.c:334:13: error: 'work' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Using BUG() instead of BUG_ON() avoids that warning and otherwise
-does the exact same thing.
+This removes the 'in_nmi_ctx' flag and uses the state of that variable
+itself to see if it got initialized.
 
-Fixes: eb3f595dab40 ("bpf: btf: Validate type reference")
+Fixes: bae77c5eb5b2 ("bpf: enable stackmap with build_id in nmi context")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/bpf/btf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bpf/stackmap.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 9cbeabb5aca3..2822a0cf4f48 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -749,7 +749,7 @@ static bool env_type_is_resolve_sink(const struct btf_verifier_env *env,
- 			!btf_type_is_array(next_type) &&
- 			!btf_type_is_struct(next_type);
- 	default:
--		BUG_ON(1);
-+		BUG();
- 	}
- }
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index b59ace0f0f09..b675a3f3d141 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -285,11 +285,10 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ {
+ 	int i;
+ 	struct vm_area_struct *vma;
+-	bool in_nmi_ctx = in_nmi();
+ 	bool irq_work_busy = false;
+-	struct stack_map_irq_work *work;
++	struct stack_map_irq_work *work = NULL;
  
+-	if (in_nmi_ctx) {
++	if (in_nmi()) {
+ 		work = this_cpu_ptr(&up_read_work);
+ 		if (work->irq_work.flags & IRQ_WORK_BUSY)
+ 			/* cannot queue more up_read, fallback */
+@@ -328,7 +327,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 		id_offs[i].status = BPF_STACK_BUILD_ID_VALID;
+ 	}
+ 
+-	if (!in_nmi_ctx) {
++	if (!work) {
+ 		up_read(&current->mm->mmap_sem);
+ 	} else {
+ 		work->sem = &current->mm->mmap_sem;
 -- 
 2.9.0
