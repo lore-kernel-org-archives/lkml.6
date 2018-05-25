@@ -1,100 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965451AbeEYOGF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:06:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51648 "EHLO mail.kernel.org"
+        id S936194AbeEYOGd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:06:33 -0400
+Received: from verein.lst.de ([213.95.11.211]:37151 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964922AbeEYOGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:06:00 -0400
-Date: Fri, 25 May 2018 16:05:57 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 04/12] powerpc: Implement hw_breakpoint_arch_parse()
-Message-ID: <20180525140556.GD22082@lerouge>
-References: <1526697950-7091-1-git-send-email-frederic@kernel.org>
- <1526697950-7091-5-git-send-email-frederic@kernel.org>
- <87fu2hstf3.fsf@concordia.ellerman.id.au>
+        id S935737AbeEYOGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 10:06:32 -0400
+Date: Fri, 25 May 2018 16:12:11 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Hannes Reinecke <hare@suse.de>, Laurence Oberman <loberman@redhat.com>,
+        Ewan Milne <emilne@redhat.com>, James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180525141211.GA25971@lst.de>
+References: <20180525125322.15398-1-jthumshirn@suse.de> <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87fu2hstf3.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180525135813.GB9591@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 12:01:52PM +1000, Michael Ellerman wrote:
-> Frederic Weisbecker <frederic@kernel.org> writes:
-> 
-> > diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
-> > index 348cac9..fba6527 100644
-> > --- a/arch/powerpc/kernel/hw_breakpoint.c
-> > +++ b/arch/powerpc/kernel/hw_breakpoint.c
-> > @@ -139,30 +139,31 @@ int arch_bp_generic_fields(int type, int *gen_bp_type)
-> >  /*
-> >   * Validate the arch-specific HW Breakpoint register settings
-> >   */
-> > -int arch_validate_hwbkpt_settings(struct perf_event *bp)
-> > +int hw_breakpoint_arch_parse(struct perf_event *bp,
-> > +			     struct perf_event_attr *attr,
-> > +			     struct arch_hw_breakpoint *hw)
-> 
-> I think the semantics here are that we are reading from bp/attr and
-> writing to hw?
-> 
-> If so would some sprinkling of const on the first two parameters help
-> make that clearer?
+On Fri, May 25, 2018 at 09:58:13AM -0400, Mike Snitzer wrote:
+> We all basically knew this would be your position.  But at this year's
+> LSF we pretty quickly reached consensus that we do in fact need this.
+> Except for yourself, Sagi and afaik Martin George: all on the cc were in
+> attendance and agreed.
 
-I seem to remember there was an issue with that due to the various functions
-we call that need to be converted to take const as well. I thought I would
-do it in a seperate series but actually it should be no big deal to do it
-on this one.
+And I very mich disagree, and you'd bette come up with a good reason
+to overide me as the author and maintainer of this code.
 
-Let me try that and respin.
+> And since then we've exchanged mails to refine and test Johannes'
+> implementation.
 
-> >  	/*
-> >  	 * Since breakpoint length can be a maximum of HW_BREAKPOINT_LEN(8)
-> > @@ -176,12 +177,12 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
-> >  	if (cpu_has_feature(CPU_FTR_DAWR)) {
-> >  		length_max = 512 ; /* 64 doublewords */
-> >  		/* DAWR region can't cross 512 boundary */
-> > -		if ((bp->attr.bp_addr >> 10) != 
-> > -		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 10))
-> > +		if ((attr->bp_addr >> 10) !=
-> > +		    ((attr->bp_addr + attr->bp_len - 1) >> 10))
-> >  			return -EINVAL;
-> 
-> This will conflict with my next branch, but it should be easy enough to
-> resolve.
+Since when was acting behind the scenes a good argument for anything?
 
-Ok.
+> Hopefully this clarifies things, thanks.
 
-> 
-> >  	}
-> > -	if (info->len >
-> > -	    (length_max - (info->address & HW_BREAKPOINT_ALIGN)))
-> > +	if (hw->len >
-> > +	    (length_max - (hw->address & HW_BREAKPOINT_ALIGN)))
-> >  		return -EINVAL;
-> >  	return 0;
-> >  }
-> 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+It doesn't.
 
-Thanks!
+The whole point we have native multipath in nvme is because dm-multipath
+is the wrong architecture (and has been, long predating you, nothing
+personal).  And I don't want to be stuck additional decades with this
+in nvme.  We allowed a global opt-in to ease the three people in the
+world with existing setups to keep using that, but I also said I
+won't go any step further.  And I stand to that.
