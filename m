@@ -1,133 +1,153 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-685316-1527110238-2-1718952826191790390
+X-Cyrus-Session-Id: sloti22d1t05-2888030-1527213385-2-16888474282956015809
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527110238; b=HmysjzaariOtxrlFTwYzShQKUFudN3se8YXVXq7wU9UdtHwZf2
-    5DlFRIQfW1KwnhnGXj68ge7a9yH34SbrqnrvzWcgjXKR39pnbogS2odoQbsBN3d2
-    meoOc+kxx5PapJ5aEElIvQsle9MhZmQnzcULP4LywIzsDqqSfE+AyG5dpnl7dFDq
-    5ZEPVO+KUuw3YRxpSWAQwn30nGYebCP/lea3PI7x5Yx8kzJlQ3LkGY0zNY82Mspr
-    yhRSYgjL5JAfuN+7qnnCu+1RcJhcSfZcNxuOeeF/U0Azdg8V0LWXs4jMkHBFtfdp
-    P/mUOGd2awFzk4cNT3PJLvutNLGc3CPLiqYQ==
+    1527213384; b=WGiqGYsNEJQXXtmyRdNVNmIrRL8xvO9bJVrd7iFlSHtxDbeKdE
+    6E0KhFBbvtWew6R6ECzzxbLvqjOm5BCc5lDcBTgD1+fMmUbVfphnNcneoQ5lHG8w
+    eSNVk7IztDMWgNnwgLSYtm41oTR8Yf50R+MUak9/q/hRQumOmIqwjgH/a9i5wNj/
+    9j/xU27pP5w5SoEuUamYmwGoCDGIm2ZbYl+uIAdur3OWRisYdWMZ+2gAuxNPBH63
+    8V2YlpaiFjtkIraEuHQTj92Tx7WKqNkOKdZCj51JvsunydYddS0ZNEej/hq2uata
+    WhTMyuRTwxH3rrEGF4ozOwXY/XK8axQ66nVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527110238; bh=4pcF4hbif9MsjUC2Pv9tie7cg38Wmr
-    JovneHIDSKfnw=; b=jOLx2nqdnY3ao5C3FmYX5ws0/tCzERIpNGiFkNcweTcSNc
-    XVLZyiOTCCf6yDeudzftHublHEPTY2+D5lPN0mwbZnThT4/WtLb1ytIXMmruL6jM
-    K17n8ma8urFmhHLzzabrM4o9U4/SRRQlvCJ1efCljne/okv85OTLddkJYuELYKTx
-    FMrbc0QRJg+SX17ObVW4wfL6Cshfc4hHbhIPpfRnJXlsfv0/2BkKpIbDAFDjHaQd
-    eo3im3mat+bgxhqSdVgpkSt5T5/B/n38zr4gYJD2Z/20Qydc3tEVtWy+B2IQe83u
-    AbsLreqxFJdaCPyEM9eBj6rt8sL+7ntYxiQRYgqg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=dSXGrBtS x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527213384;
+    bh=ssfbV+K7I94rbyKFvIj+wsfk8D0e3l7jGIl9L9J89C8=; b=ggJrynt+8ONh
+    oYSdiCBmL9oSBxiWBaOZ+vM+Q+1omcdhjOjnINcEgZs0La5fkuOtHutFfR3uyhyD
+    ivQWQg+E1SY0Ib5neHJx70yxgHjyYBVgBJplCj2tw1vLSKt4RrPDRxiiDFUzl7Cp
+    vsCoIB1ya1NqeE0utvMeSfA/URE/W94Zj/jDUjYmle1612P4eYlT+KAF6CTOqCDQ
+    N4pTKAmrlsImXA56C6naE0wJISY4KQ7UFqB/U198KQRFys4wFJYXtU996uMqol8K
+    Xw05kGGAAxoSvUwRtTzn1fO7ggvTHWnOlyvsO11uUMKRho4+cgoODPhQmt4tLOGS
+    kxvi8An2OA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ascade.co.jp;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=jmhkRWnT;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    header.domain=ascade.co.jp header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=dSXGrBtS x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ascade.co.jp;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=jmhkRWnT;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+      header.domain=ascade.co.jp header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG3q4cOzdKi7VsCyHuPHqZD9E297Drl9uvwyekRNK8aMqPHO1FQZC7z8yjWoyRhj5xmK5+EgRyp6C3A/Y63Q0VxMVZ8CKhm5f4s1o77B3XxIDuM5P4g7
-    DHDn7PWSdabG+GOqk3mMjeRR5tcRBvGFOP5V+mRrfxVO7I0oXRLZ7a/JJis5TVArKmEPoxILGQMePQFvi3+7B0IcC9WWXvJzFDUBLU3igSId/3KAn7OZBdMY
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=6HZ6NwbpNn0A:10 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10 a=hjhKt9R0p12O-1U3sJsA:9
-    a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfCmte4QdkWOWPDT+bLyw3c6d7M6Snj8GHBFp/0zRkgD3gCuT2IJB2DLZkgnnyT8NUFcsQzkXBN/dGVH9cuP8/5xnBtyR6PDXCIr7U8jrBByDS61ND+P9
+    bg1V/B69nRS9TaxLcujlSa0NGMrZf4/GsRmYCGo2whA0CNzImzdzmutP2J5vZ2bSiOxIOReczSckpsqvriFHLKRZBgujUxMg7YrCbsEi8rZVmhNGg+CifsW3
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=95ZnEdb1Q-e6vTfvmPUA:9 a=FwUn5x9ZHDrIPT95:21
+    a=m1viVhZOcCoU6r1z:21 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934017AbeEWVRO (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 23 May 2018 17:17:14 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42857 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933886AbeEWVRM (ORCPT
+        id S933236AbeEYB4V (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 24 May 2018 21:56:21 -0400
+Received: from ext-host0001.ascade.co.jp ([218.224.228.194]:63543 "EHLO
+        ns.ascade.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754765AbeEYB4S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 May 2018 17:17:12 -0400
-X-Google-Smtp-Source: AB8JxZqihUsh0MgzyyKboEFm2TMs4evk6RN300pH9GEUR8i7OWWbSzJNYIZ0Ai++g0DaARWNuzePow==
-Date: Wed, 23 May 2018 14:17:09 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: David Miller <davem@davemloft.net>
-Cc: g.nault@alphalink.fr, linux-ppp@vger.kernel.org, paulus@samba.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        ebiggers@google.com
-Subject: Re: [PATCH] ppp: remove the PPPIOCDETACH ioctl
-Message-ID: <20180523211709.GA63112@gmail.com>
-References: <20180523032958.GE658@sol.localdomain>
- <20180523035952.25768-1-ebiggers3@gmail.com>
- <20180523135708.GB1569@alphalink.fr>
- <20180523.115636.2241611659399097483.davem@davemloft.net>
+        Thu, 24 May 2018 21:56:18 -0400
+Subject: Re: [PATCH v2 0/7] mm: pages for hugetlb's overcommit may be able to
+ charge to memcg
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+References: <e863529b-7ce5-4fbe-8cff-581b5789a5f9@ascade.co.jp>
+ <20180522135148.GA20441@dhcp22.suse.cz>
+ <af1a3050-7365-428a-dfb1-2f3da37dc9ff@ascade.co.jp>
+ <4078bc2d-4aaf-cd1b-0145-5915e382852f@oracle.com>
+From: TSUKADA Koutaro <tsukada@ascade.co.jp>
+Message-ID: <5943db59-1c33-7004-7574-fc07e577e1ee@ascade.co.jp>
+Date: Fri, 25 May 2018 10:55:58 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523.115636.2241611659399097483.davem@davemloft.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <4078bc2d-4aaf-cd1b-0145-5915e382852f@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 23, 2018 at 11:56:36AM -0400, David Miller wrote:
-> From: Guillaume Nault <g.nault@alphalink.fr>
-> Date: Wed, 23 May 2018 15:57:08 +0200
+On 2018/05/25 2:45, Mike Kravetz wrote:
+[...]
+>> THP does not guarantee to use the Huge Page, but may use the normal page.
 > 
-> > I'd rather add
-> > +	if (cmd == PPPIOCDETACH) {
-> > +		err = -EINVAL;
-> > +		goto out;
-> > +	}
-> > 
-> > Making PPPIOCDETACH unknown to ppp_generic means that the ioctl would
-> > be handled by the underlying channel when pf->kind == CHANNEL (see the
-> > chan->ops->ioctl() call further down). That shouldn't be a problem per
-> > se, but even though PPPIOCDETACH is unsupported, I feel that it should
-> > remain a ppp_generic thing. I don't really want its value to be reused
-> > for other purposes in the future or have different behaviour depending
-> > on the underlying channel.
-> > 
-> > Also PPPIOCDETACH can already fail with -EINVAL. Therefore, if ever
-> > there really were programs out there using this call, they'd already
-> > have to handle this case. Unconditionally returning -EINVAL would
-> > further minimise possibilities for breakage.
+> Note.  You do not want to use THP because "THP does not guarantee".
+
+[...]
+>> One of the answers I have reached is to use HugeTLBfs by overcommitting
+>> without creating a pool(this is the surplus hugepage).
 > 
-> I agree.
+> Using hugetlbfs overcommit also does not provide a guarantee.  Without
+> doing much research, I would say the failure rate for obtaining a huge
+> page via THP and hugetlbfs overcommit is about the same.  The most
+> difficult issue in both cases will be obtaining a "huge page" number of
+> pages from the buddy allocator.
 
-Okay, I'll do that and leave the ioctl number reserved.
-I will add a pr_warn_once() too.
+Yes. If do not support multiple size hugetlb pages such as x86, because
+number of pages between THP and hugetlb is same, the failure rate of
+obtaining a compound page is same, as you said.
 
+> I really do not think hugetlbfs overcommit will provide any benefit over
+> THP for your use case.
+
+I think that what you say is absolutely right.
+
+>  Also, new user space code is required to "fall back"
+> to normal pages in the case of hugetlbfs page allocation failure.  This
+> is not needed in the THP case.
+
+I understand the superiority of THP, but there are scenes where khugepaged
+occupies cpu due to page fragmentation. Instead of overcommit, setup a
+persistent pool once, I think that hugetlb can be superior, such as memory
+allocation performance exceeding THP. I will try to find a good way to use
+hugetlb page.
+
+I sincerely thank you for your help.
+
+-- 
 Thanks,
-
-- Eric
+Tsukada
