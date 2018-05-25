@@ -1,100 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030344AbeEYVWO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:22:14 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.1]:39853 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1030284AbeEYVWM (ORCPT
+        id S1030335AbeEYV3P (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:29:15 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34166 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030258AbeEYV3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:22:12 -0400
-X-Authority-Reason: nr=8
-Date: Fri, 25 May 2018 16:22:07 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ath9k: mark expected switch fall-throughs
-Message-ID: <20180525212207.GA10681@embeddedor.com>
+        Fri, 25 May 2018 17:29:14 -0400
+X-Google-Smtp-Source: ADUXVKJQFtdF3lSFOEd8xX7FFSr0Jnl9s275SlGrmqoN645D4CMqumpaWwr0jdwOKfwpRmB034GD8bGf+tYkyNz6TvM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fMKA7-001NpG-GG
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.46.223]:40314
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com>
+References: <e2ec1a14-326a-57c2-56a6-7c2235e5b8b3@mellanox.com>
+ <alpine.DEB.2.21.1802201829180.24268@nanos.tec.linutronix.de>
+ <CAJwJo6aeb2q-C1R2MBnQQ8yR+7Xy4FWqSmBCE=7CkK_OHNCqSQ@mail.gmail.com>
+ <alpine.DEB.2.21.1805191319190.1599@nanos.tec.linutronix.de>
+ <16f47fa4-1555-cddb-3dfb-7d56fb992ea1@mellanox.com> <alpine.DEB.2.21.1805231049021.1598@nanos.tec.linutronix.de>
+ <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com>
+From: Song Liu <liu.song.a23@gmail.com>
+Date: Fri, 25 May 2018 14:29:13 -0700
+Message-ID: <CAPhsuW4vp7cWYOWqF8p51LDHZgFaVZ3wdtWDdQvQSt6rWOZRYA@mail.gmail.com>
+Subject: Re: WARNING and PANIC in irq_matrix_free
+To: Thomas Gleixner <tglx@linutronix.de>, michael.chan@broadcom.com,
+        gospo@broadcom.com, vasundhara-v.volam@broadcom.com
+Cc: Tariq Toukan <tariqt@mellanox.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Adding Broadcom developers to the thread.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/ath/ath9k/ar5008_phy.c | 2 ++
- drivers/net/wireless/ath/ath9k/ar9002_phy.c | 1 +
- drivers/net/wireless/ath/ath9k/main.c       | 1 +
- 3 files changed, 4 insertions(+)
+Hi Michael, Vasundhara, and Andy,
 
-diff --git a/drivers/net/wireless/ath/ath9k/ar5008_phy.c b/drivers/net/wireless/ath/ath9k/ar5008_phy.c
-index 7922550..ef2dd68 100644
---- a/drivers/net/wireless/ath/ath9k/ar5008_phy.c
-+++ b/drivers/net/wireless/ath/ath9k/ar5008_phy.c
-@@ -583,12 +583,14 @@ static void ar5008_hw_init_chain_masks(struct ath_hw *ah)
- 	case 0x5:
- 		REG_SET_BIT(ah, AR_PHY_ANALOG_SWAP,
- 			    AR_PHY_SWAP_ALT_CHAIN);
-+		/* fall through */
- 	case 0x3:
- 		if (ah->hw_version.macVersion == AR_SREV_REVISION_5416_10) {
- 			REG_WRITE(ah, AR_PHY_RX_CHAINMASK, 0x7);
- 			REG_WRITE(ah, AR_PHY_CAL_CHAINMASK, 0x7);
- 			break;
- 		}
-+		/* else: fall through */
- 	case 0x1:
- 	case 0x2:
- 	case 0x7:
-diff --git a/drivers/net/wireless/ath/ath9k/ar9002_phy.c b/drivers/net/wireless/ath/ath9k/ar9002_phy.c
-index 61a9b85..7132918 100644
---- a/drivers/net/wireless/ath/ath9k/ar9002_phy.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9002_phy.c
-@@ -119,6 +119,7 @@ static int ar9002_hw_set_channel(struct ath_hw *ah, struct ath9k_channel *chan)
- 				aModeRefSel = 2;
- 			if (aModeRefSel)
- 				break;
-+			/* else: fall through */
- 		case 1:
- 		default:
- 			aModeRefSel = 0;
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index a3be8ad..11d84f4 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -1928,6 +1928,7 @@ static int ath9k_ampdu_action(struct ieee80211_hw *hw,
- 	case IEEE80211_AMPDU_TX_STOP_FLUSH:
- 	case IEEE80211_AMPDU_TX_STOP_FLUSH_CONT:
- 		flush = true;
-+		/* fall through */
- 	case IEEE80211_AMPDU_TX_STOP_CONT:
- 		ath9k_ps_wakeup(sc);
- 		ath_tx_aggr_stop(sc, sta, tid);
--- 
-2.7.4
+Could you please help look into the case I found? ethtool crashes the system
+for both net/master and net-next/master.
+
+Thanks,
+Song
+
+On Fri, May 25, 2018 at 1:10 PM, Song Liu <liu.song.a23@gmail.com> wrote:
+> Hi,
+>
+> We are seeing something probably related.
+>
+> We run ethtool on a system with Broadcom NIC to increase number of
+> combined queues.
+>
+>
+>     [root@ ~]# ethtool -l eth0
+>     Channel parameters for eth0:
+>     Pre-set maximums:
+>     RX:             9
+>     TX:             8
+>     Other:          0
+>     Combined:       17
+>     Current hardware settings:
+>     RX:             0
+>     TX:             0
+>     Other:          0
+>     Combined:       8
+>
+>     [root@ ~]# ethtool -L eth0 combined 16
+>
+> The last command PANIC the kernel easily (5 out of 5 in my tests).
+>
+> I haven't got luck to catch much console output, the only line I got is:
+>
+>     [ 504.727865] WARNING: CPU: 10 PID: 0 at kernel/irq/matrix.c:371
+> irq_matrix_free+0x32/0xd0
+>
+> The NIC we have is
+>
+>     Broadcom Limited BCM57302 NetXtreme-C 10Gb/25Gb Ethernet Controller
+>
+> Thanks,
+> Song
+>
+> On Wed, May 23, 2018 at 1:49 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> On Wed, 23 May 2018, Tariq Toukan wrote:
+>>> On 19/05/2018 2:20 PM, Thomas Gleixner wrote:
+>>> > On Fri, 18 May 2018, Dmitry Safonov wrote:
+>>> > > I'm not entirely sure that it's the same fault, but at least backtrace
+>>> > > looks resembling.
+>>> >
+>>> > Yes, it's similar, but not the same issue. I'll stare are the code ...
+>>> >
+>>> > Thanks,
+>>> >
+>>> >     tglx
+>>> >
+>>>
+>>> We still see the issue in our daily regression runs.
+>>> I have your patch merged into my internal branch, it prints the following:
+>>>
+>>> [ 4898.226258] Trying to clear prev_vector: 0
+>>> [ 4898.226439] Trying to clear prev_vector: 0
+>>>
+>>> i.e. vector(0) is lower than FIRST_EXTERNAL_VECTOR.
+>>
+>> Could you please enable the vector and irq matrix trace points and capture
+>> the trace when this happens?
+>>
+>> Thanks,
+>>
+>>         tglx
+>>
