@@ -1,49 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966835AbeEYPi2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:38:28 -0400
-Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:44036 "EHLO
-        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966023AbeEYPi1 (ORCPT
+        id S966723AbeEYPjO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:39:14 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:60239 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965666AbeEYPjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:38:27 -0400
-Date: Fri, 25 May 2018 15:38:26 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: "Huang, Ying" <ying.huang@intel.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andi Kleen <andi.kleen@intel.com>,
-        Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Shaohua Li <shli@fb.com>, Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH -V2 -mm 0/4] mm, huge page: Copy target sub-page last
- when copy huge page
-In-Reply-To: <20180524005851.4079-1-ying.huang@intel.com>
-Message-ID: <0100016397f379e8-f651e3ed-3646-4423-8cd3-9ea61666a12b-000000@email.amazonses.com>
-References: <20180524005851.4079-1-ying.huang@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.05.25-54.240.9.114
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+        Fri, 25 May 2018 11:39:13 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>,
+        ShuFan Lee <shufan_lee@richtek.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: typec: rt1711h: fix tcpci dependency
+Date: Fri, 25 May 2018 17:38:25 +0200
+Message-Id: <20180525153841.3314617-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:JyBxk+i1NTWhhYTMwJeXtWJaJb+2lC3VUjl6qu207JrB5lK/vYs
+ SU6XpL9gRE8B/Sd1Yt3AWxdBVfGMWCqOGmb6jngyRl5TTV1Ac2180M5/cU3vIC833WNFZKw
+ JHN6ujP465B9JtLPn5CkVAqb2MaiXogfS+WBn8rlMk0AwKGAzJ6H+gJsTGutQxkjDfBYvxg
+ H8EiYQINxeic9OyYsjADQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:0pJQhiWXEtg=:TWkPv5u5J1+xjfJeUnpUtm
+ G8//N09rsIsl43XodNJuLf4pfnDjC4nEMC5yfdhqM7FxBW6/bBSeC5nNscWapxFUjtSJYwBDj
+ 5SCem51NWhuUOb0GTBSB3lhfCGGSp6N7JG/NmyaX+PY+x9uI7IU4Fgjgowu5maI6+aatxMY+U
+ Q2IkRQj6Kbz+x+zNr0pP1uamGLX63MW1CAUQDK4A6Pr56dTTkDO3dYuIubrBs98SXtfENyIOL
+ kvUqzOobDcTt8QQRleABUX1BiIMLWfnaQHo2ex7Fi/BmlKsfOXyllTc5rzSVvpJX/vJd2rsnO
+ O+giYUjMDXWzYlBuXjHYqTivircWa6HL+scGBsF+eNTdVYxm9gLCaMPyslsDa/7qw7/0S77XZ
+ IFiI3EcI7SX286N6UMIht19ZuRjkZF4BFWPKU5iNr1SNvS7exae7ujQHGb3flYNFL9S1zDFV7
+ DpeOY2i3npzcR13Hv5aJ/eXuMpHJsz1i8aHE9zbiJVrWR2ILaPf+tT5OyDLupOy/9be5nwAl8
+ ys32ihEoiMu6TvYRiBbWwm0PUcZjAY4UUkJ6gQxW1WwBz7MJhw0mWVgzjlmml15D0ME3oauAW
+ mwgrpngf291aGI2vqjIpX7UssAtgSUCzY3PzcUq6q4TIKo9AevVz+eaadf3uzHZK6whry/gtv
+ ZaTrzog6RMrbE1TOYhKXXMwPNtjSYmpwn9uXjzriRgVSCu81CqChh39BwZrBgrYg7JeA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Huang, Ying wrote:
+Using 'select' instead of the normal 'depends on' causes
+a build issue with CONFIG_I2C=m:
 
-> If the cache contention is heavy when copying the huge page, and we
-> copy the huge page from the begin to the end, it is possible that the
-> begin of huge page is evicted from the cache after we finishing
-> copying the end of the huge page.  And it is possible for the
-> application to access the begin of the huge page after copying the
-> huge page.
+WARNING: unmet direct dependencies detected for TYPEC_TCPCI
+  Depends on [m]: STAGING [=y] && TYPEC_TCPM [=y] && I2C [=m]
+  Selected by [y]:
+  - TYPEC_RT1711H [=y] && STAGING [=y] && TYPEC_TCPM [=y]
 
-Isnt there a better way to zero the remaining pages? Something that has no
-cache impact like a non temporal store? So the remaining cache will not be
-evicted?
+Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/staging/typec/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://www.felixcloutier.com/x86/MOVNTI.html
+diff --git a/drivers/staging/typec/Kconfig b/drivers/staging/typec/Kconfig
+index 3aa981fbc8f5..51474d798f99 100644
+--- a/drivers/staging/typec/Kconfig
++++ b/drivers/staging/typec/Kconfig
+@@ -11,7 +11,7 @@ config TYPEC_TCPCI
+ 
+ config TYPEC_RT1711H
+ 	tristate "Richtek RT1711H Type-C chip driver"
+-	select TYPEC_TCPCI
++	depends on TYPEC_TCPCI
+ 	help
+ 	  Richtek RT1711H Type-C chip driver that works with
+ 	  Type-C Port Controller Manager to provide USB PD and USB
+-- 
+2.9.0
