@@ -1,133 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967139AbeEYQ1z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:27:55 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43573 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966873AbeEYQ1x (ORCPT
+        id S967246AbeEYQ3G (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:29:06 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:37487 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966873AbeEYQ3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:27:53 -0400
-X-Google-Smtp-Source: AB8JxZpZFTXz4qz5n1BpC9bgfUG+P7c4OaGw8KOTz8usCKAiZM7WbpGh1WCRCVsYRbcfaB5KZ4BtFvQWj2euVCZBk6Y=
+        Fri, 25 May 2018 12:29:03 -0400
+X-Google-Smtp-Source: ADUXVKJSgvNcGtAMjRJB12bjlUgN6rGi+/rE9tU4UY2OUUrYX/YYqOiCuWS86cQBMW/GuAH7pLEFI1xXJPEUbNoVsEM=
 MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
- <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com>
-In-Reply-To: <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Fri, 25 May 2018 09:27:40 -0700
-Message-ID: <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
+In-Reply-To: <CADZs7q4xd1CwGULvYe2-Y2aYpwhiiw3upF=mAK0ve_-jrk1yFg@mail.gmail.com>
+References: <20180513173318.21680-1-alban@kinvolk.io> <20180521162609.lpdrnozowmzdn57m@ast-mbp.dhcp.thefacebook.com>
+ <CAH3MdRWgruVq+3r+2pHTah-c2zTO03vPkepjWDZ0_KrYcroy9A@mail.gmail.com>
+ <CAH3MdRVdfw52atavT3KL8MpPw7zDM_hR6aUcqDP1PogLn_sH+w@mail.gmail.com> <CADZs7q4xd1CwGULvYe2-Y2aYpwhiiw3upF=mAK0ve_-jrk1yFg@mail.gmail.com>
+From: Y Song <ys114321@gmail.com>
+Date: Fri, 25 May 2018 09:28:22 -0700
+Message-ID: <CAH3MdRWcLa7hkohdU74TPj2HinWzA=QTHAHd+T7WM4GDMOQ-Kg@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] bpf: tracing: new helper bpf_get_current_cgroup_ino
+To: Alban Crequy <alban@kinvolk.io>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        cgroups@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 3:43 PM <hpa@zytor.com> wrote:
-> On May 24, 2018 3:31:05 PM PDT, Nick Desaulniers <ndesaulniers@google.com>
-wrote:
-> >On Thu, May 24, 2018 at 3:05 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> >> COMPILER AR: "=rm" should NEVER generate worse code than "=r". That
-> >is
-> >> unequivocally a compiler bug.
-> >
-> >Filed: https://bugs.llvm.org/show_bug.cgi?id=37583
-> >
-> >> >> You are claiming it doesn't buy us anything, but you are only
-> >looking
-> >at
-> >> > the paravirt case which is kind of "special" (in the short bus kind
-> >of
-> >way),
-> >> >
-> >> > That's fair.  Is another possible solution to have paravirt maybe
-> >not
-> >use
-> >> > native_save_fl() then, but its own
-> >non-static-inline-without-m-constraint
-> >> > implementation?
-> >
-> >> KERNEL AR: change native_save_fl() to an extern inline with an
-> >assembly
-> >> out-of-line implementation, to satisfy the paravirt requirement that
-> >no
-> >> GPRs other than %rax are clobbered.
-> >
-> >i'm happy to add that, do you have a recommendation if it should go in
-> >an
-> >existing .S file or a new one (and if so where/what shall I call it?).
+On Fri, May 25, 2018 at 8:21 AM, Alban Crequy <alban@kinvolk.io> wrote:
+> On Wed, May 23, 2018 at 4:34 AM Y Song <ys114321@gmail.com> wrote:
+>
+>> I did a quick prototyping and the above interface seems working fine.
+>
+> Thanks! I gave your kernel patch & userspace program a try and it works for
+> me on cgroup-v2.
+>
+> Also, I found out how to get my containers to use both cgroup-v1 and
+> cgroup-v2 (by enabling systemd's hybrid cgroup mode and docker's
+> '--exec-opt native.cgroupdriver=systemd' option). So I should be able to
+> use the BPF helper function without having to add support for all the
+> cgroup-v1 hierarchies.
 
-> How about irqflags.c since that is what the .h file is called.
+Great. Will submit a formal patch soon.
 
-> It should simply be:
-
-> push %rdi
-> popf
-> ret
-
-> pushf
-> pop %rax
-> ret
-
-> ... but with all the regular assembly decorations, of course.
-
-Something like the following?
-
-
-diff --git a/arch/x86/kernel/irqflags.c b/arch/x86/kernel/irqflags.c
-new file mode 100644
-index 000000000000..59dc21bd3327
---- /dev/null
-+++ b/arch/x86/kernel/irqflags.c
-@@ -0,0 +1,24 @@
-+#include <asm/asm.h>
-+
-+extern unsigned long native_save_fl(void);
-+extern void native_restore_fl(unsigned long flags);
-+
-+asm(
-+".pushsection .text;"
-+".global native_save_fl;"
-+".type native_save_fl, @function;"
-+"native_save_fl:"
-+"pushf;"
-+"pop %" _ASM_AX ";"
-+"ret;"
-+".popsection");
-+
-+asm(
-+".pushsection .text;"
-+".global native_restore_fl;"
-+".type native_restore_fl, @function;"
-+"native_restore_fl:"
-+"push %" _ASM_DI ";"
-+"popf;"
-+"ret;"
-+".popsection");
-
-And change the declaration in arch/x86/include/asm/irqflags.h to:
-+extern inline unsigned long native_save_fl(void);
-+extern inline void native_restore_fl(unsigned long flags);
-
-This seems to work, but
-1. arch/x86/boot/compressed/misc.o warns that native_save_fl() is never
-defined (arch_local_save_flags() uses it).  Does that mean
-arch_local_save_flags(), and friends would also have to move to the newly
-created .c file as well?
-2. `extern inline` doesn't inline any instances (from what I can tell from
-disassembling vmlinux).  I think this is strictly worse. Don't we only want
-pv_irq_ops.save_fl to be non-inlined in a way that no stack protector can
-be added? If that's the case, should my assembly based implementation have
-a different identifier (`native_save_fl_paravirt` or something). That would
-also fix point #1 above. But now the paravirt code has its own copy of the
-function.
--- 
-Thanks,
-~Nick Desaulniers
+>
+>> The kernel change:
+>> ===============
+>
+>> [yhs@localhost bpf-next]$ git diff
+>> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+>> index 97446bbe2ca5..669b7383fddb 100644
+>> --- a/include/uapi/linux/bpf.h
+>> +++ b/include/uapi/linux/bpf.h
+>> @@ -1976,7 +1976,8 @@ union bpf_attr {
+>>          FN(fib_lookup),                 \
+>>          FN(sock_hash_update),           \
+>>          FN(msg_redirect_hash),          \
+>> -       FN(sk_redirect_hash),
+>> +       FN(sk_redirect_hash),           \
+>> +       FN(get_current_cgroup_id),
+>
+>>   /* integer value in 'imm' field of BPF_CALL instruction selects which
+> helper
+>>    * function eBPF program intends to call
+>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>> index ce2cbbff27e4..e11e3298f911 100644
+>> --- a/kernel/trace/bpf_trace.c
+>> +++ b/kernel/trace/bpf_trace.c
+>> @@ -493,6 +493,21 @@ static const struct bpf_func_proto
+>> bpf_current_task_under_cgroup_proto = {
+>>          .arg2_type      = ARG_ANYTHING,
+>>   };
+>
+>> +BPF_CALL_0(bpf_get_current_cgroup_id)
+>> +{
+>> +       struct cgroup *cgrp = task_dfl_cgroup(current);
+>> +       if (!cgrp)
+>> +               return -EINVAL;
+>> +
+>> +       return cgrp->kn->id.id;
+>> +}
+>> +
+>> +static const struct bpf_func_proto bpf_get_current_cgroup_id_proto = {
+>> +       .func           = bpf_get_current_cgroup_id,
+>> +       .gpl_only       = false,
+>> +       .ret_type       = RET_INTEGER,
+>> +};
+>> +
+>>   BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
+>>             const void *, unsafe_ptr)
+>>   {
+>> @@ -563,6 +578,8 @@ tracing_func_proto(enum bpf_func_id func_id, const
+>> struct bpf_prog *prog)
+>>                  return &bpf_get_prandom_u32_proto;
+>>          case BPF_FUNC_probe_read_str:
+>>                  return &bpf_probe_read_str_proto;
+>> +       case BPF_FUNC_get_current_cgroup_id:
+>> +               return &bpf_get_current_cgroup_id_proto;
+>>          default:
+>>                  return NULL;
+>>          }
+>
+>> The following program can be used to print out a cgroup id given a cgroup
+> path.
+>> [yhs@localhost cg]$ cat get_cgroup_id.c
+>> #define _GNU_SOURCE
+>> #include <stdio.h>
+>> #include <stdlib.h>
+>> #include <sys/types.h>
+>> #include <sys/stat.h>
+>> #include <fcntl.h>
+>
+>> int main(int argc, char **argv)
+>> {
+>>      int dirfd, err, flags, mount_id, fhsize;
+>>      struct file_handle *fhp;
+>>      char *pathname;
+>
+>>      if (argc != 2) {
+>>          printf("usage: %s <cgroup_path>\n", argv[0]);
+>>          return 1;
+>>      }
+>
+>>      pathname = argv[1];
+>>      dirfd = AT_FDCWD;
+>>      flags = 0;
+>
+>>      fhsize = sizeof(*fhp);
+>>      fhp = malloc(fhsize);
+>>      if (!fhp)
+>>          return 1;
+>
+>>      err = name_to_handle_at(dirfd, pathname, fhp, &mount_id, flags);
+>>      if (err >= 0) {
+>>          printf("error\n");
+>>          return 1;
+>>      }
+>
+>>      fhsize = sizeof(struct file_handle) + fhp->handle_bytes;
+>>      fhp = realloc(fhp, fhsize);
+>>      if (!fhp)
+>>          return 1;
+>
+>>      err = name_to_handle_at(dirfd, pathname, fhp, &mount_id, flags);
+>>      if (err < 0)
+>>          perror("name_to_handle_at");
+>>      else {
+>>          int i;
+>
+>>          printf("dir = %s, mount_id = %d\n", pathname, mount_id);
+>>          printf("handle_bytes = %d, handle_type = %d\n", fhp->handle_bytes,
+>>              fhp->handle_type);
+>>          if (fhp->handle_bytes != 8)
+>>              return 1;
+>
+>>          printf("cgroup_id = 0x%llx\n", *(unsigned long long
+> *)fhp->f_handle);
+>>      }
+>
+>>      return 0;
+>> }
+>> [yhs@localhost cg]$
+>
+>> Given a cgroup path, the user can get cgroup_id and use it in their bpf
+>> program for filtering purpose.
+>
+>> I run a simple program t.c
+>>     int main() { while(1) sleep(1); return 0; }
+>> in the cgroup v2 directory /home/yhs/tmp/yhs
+>>     none on /home/yhs/tmp type cgroup2 (rw,relatime,seclabel)
+>
+>> $ ./get_cgroup_id /home/yhs/tmp/yhs
+>> dir = /home/yhs/tmp/yhs, mount_id = 124
+>> handle_bytes = 8, handle_type = 1
+>> cgroup_id = 0x1000006b2
+>
+>> // the below command to get cgroup_id from the kernel for the
+>> // process compiled with t.c and ran under /home/yhs/tmp/yhs:
+>> $ sudo ./trace.py -p 4067 '__x64_sys_nanosleep "cgid = %llx", $cgid'
+>> PID     TID     COMM            FUNC             -
+>> 4067    4067    a.out           __x64_sys_nanosleep cgid = 1000006b2
+>> 4067    4067    a.out           __x64_sys_nanosleep cgid = 1000006b2
+>> 4067    4067    a.out           __x64_sys_nanosleep cgid = 1000006b2
+>> ^C[yhs@localhost tools]$
+>
+>> The kernel and user space cgid matches. Will provide a
+>> formal patch later.
+>
+>
+>
+>
+>> On Mon, May 21, 2018 at 5:24 PM, Y Song <ys114321@gmail.com> wrote:
+>> > On Mon, May 21, 2018 at 9:26 AM, Alexei Starovoitov
+>> > <alexei.starovoitov@gmail.com> wrote:
+>> >> On Sun, May 13, 2018 at 07:33:18PM +0200, Alban Crequy wrote:
+>> >>>
+>> >>> +BPF_CALL_2(bpf_get_current_cgroup_ino, u32, hierarchy, u64, flags)
+>> >>> +{
+>> >>> +     // TODO: pick the correct hierarchy instead of the mem
+> controller
+>> >>> +     struct cgroup *cgrp = task_cgroup(current, memory_cgrp_id);
+>> >>> +
+>> >>> +     if (unlikely(!cgrp))
+>> >>> +             return -EINVAL;
+>> >>> +     if (unlikely(hierarchy))
+>> >>> +             return -EINVAL;
+>> >>> +     if (unlikely(flags))
+>> >>> +             return -EINVAL;
+>> >>> +
+>> >>> +     return cgrp->kn->id.ino;
+>> >>
+>> >> ino only is not enough to identify cgroup. It needs generation number
+> too.
+>> >> I don't quite see how hierarchy and flags can be used in the future.
+>> >> Also why limit it to memcg?
+>> >>
+>> >> How about something like this instead:
+>> >>
+>> >> BPF_CALL_2(bpf_get_current_cgroup_id)
+>> >> {
+>> >>         struct cgroup *cgrp = task_dfl_cgroup(current);
+>> >>
+>> >>         return cgrp->kn->id.id;
+>> >> }
+>> >> The user space can use fhandle api to get the same 64-bit id.
+>> >
+>> > I think this should work. This will also be useful to bcc as user
+>> > space can encode desired id
+>> > in the bpf program and compared that id to the current cgroup id, so we
+> can have
+>> > cgroup level tracing (esp. stat collection) support. To cope with
+>> > cgroup hierarchy, user can use
+>> > cgroup-array based approach or explicitly compare against multiple
+> cgroup id's.
