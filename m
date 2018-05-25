@@ -1,147 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967703AbeEYSTs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:19:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46952 "EHLO mail.kernel.org"
+        id S967782AbeEYSVS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:21:18 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46563 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967511AbeEYSTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:19:47 -0400
-Date: Fri, 25 May 2018 14:19:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v3 14/14] tracing/selftest: Add test to test hist
- trigger between kernel event and trace_marker
-Message-ID: <20180525141943.0a05e039@gandalf.local.home>
-In-Reply-To: <20180525141506.65150cee@gandalf.local.home>
-References: <20180516150012.135869655@goodmis.org>
-        <20180516150201.411972764@goodmis.org>
-        <20180523231559.fdc6c528b49ce9764a0ceda5@kernel.org>
-        <20180525141506.65150cee@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S967518AbeEYSVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:21:16 -0400
+Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180518164829.27052-1-david@lechnology.com>
+ <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
+Date: Fri, 25 May 2018 13:21:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018 14:15:06 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On 05/22/2018 04:38 AM, Sekhar Nori wrote:
+> Hi David,
+> 
+> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 3 patches fix some issues with the clock
+>> drivers that have already been accepted into the mainline kernel.
+>>
+>> Then, starting with "ARM: davinci: pass clock as parameter to
+>> davinci_timer_init()", we get the mach code ready for the switch by adding the
+>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+>> around the legacy clocks so that we can switch easily between the old and the
+>> new.
+>>
+>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>> to start using the new clock drivers. Then the next 8 patches remove all
+>> of the old clock code.
+>>
+>> The final four patches add device tree clock support to the one SoC that
+>> supports it.
+>>
+>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+>> board file).
+> 
+> If you do end up sending a v12, you can leave out the mach-davinci
+> portions unless there are any changes you need to make. I will pick them
+> up from this series once the driver dependencies are merged.
+> 
+> I do hope the drivers/clk/* changes can be merged from v4.18.
+> 
 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
-> new file mode 100644
-> index 000000000000..447df015c56f
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
-> @@ -0,0 +1,68 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: trace_marker trigger - test histogram with synthetic event
-> +# flags:
-> +
+I have resent all of the clk patches (including all of the ones I listed as
+dependencies in addition to the three remaining in this series) under the
+cover "clk: davinci: outstanding fixes​".
 
-I forgot to update the description. Here's the new patch:
-
--- Steve
-
->From 9699fdb67ba8ea9981bd0af1802209b0011a86ab Mon Sep 17 00:00:00 2001
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Date: Mon, 14 May 2018 15:47:07 -0400
-Subject: [PATCH] tracing/selftest: Add test to test hist trigger between
- kernel event and trace_marker
-
-Add a test that tests a trigger that is initiated by a kernel event
-(sched_waking) and compared to a write to the trace_marker.
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../trigger-trace-marker-synthetic-kernel.tc       | 68 ++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
-
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
-new file mode 100644
-index 000000000000..0a69c5d1cda8
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
-@@ -0,0 +1,68 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: trace_marker trigger - test histogram with synthetic event against kernel event
-+# flags:
-+
-+do_reset() {
-+    reset_trigger
-+    echo > set_event
-+    echo > synthetic_events
-+    clear_trace
-+}
-+
-+fail() { #msg
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f synthetic_events ]; then
-+    echo "synthetic events not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -d events/ftrace/print ]; then
-+    echo "event trace_marker is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -d events/sched/sched_waking ]; then
-+    echo "event sched_waking is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f events/ftrace/print/trigger ]; then
-+    echo "event trigger is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f events/ftrace/print/hist ]; then
-+    echo "hist trigger is not supported"
-+    exit_unsupported
-+fi
-+
-+do_reset
-+
-+echo "Test histogram kernel event to trace_marker latency histogram trigger"
-+
-+echo 'latency u64 lat' > synthetic_events
-+echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
-+echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).latency($lat)' > events/ftrace/print/trigger
-+echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
-+sleep 1
-+echo "hello" > trace_marker
-+
-+grep 'hitcount: *1$' events/ftrace/print/hist > /dev/null || \
-+    fail "hist trigger did not trigger correct times on trace_marker"
-+
-+grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
-+    fail "hist trigger did not trigger "
-+
-+do_reset
-+
-+exit 0
--- 
-2.13.6
+I also found that we need to add power-domains properties to the PWM nodes
+in "ARM: dts: da850: Add clocks". I probably should just take your advice
+and just globally added them even if they are not documented for some types
+ofnodes.
