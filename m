@@ -1,56 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030431AbeEYVfi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:35:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50371 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030260AbeEYVfg (ORCPT
+        id S1030491AbeEYVfo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:35:44 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:41027 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030318AbeEYVfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:35:36 -0400
-X-Google-Smtp-Source: ADUXVKKQu6mdsy5aJgOk66PmBO6NK6q/+YdNdg6UZjwxv5hms07lRZLJLNCHj0zn1u3ZmaCp9fqFGA==
-Date: Fri, 25 May 2018 14:10:25 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] arm64: dts: amlogic: Add missing cooling device
- properties for CPUs
-Message-ID: <20180525211025.c73zdcdtyuvlewng@localhost>
-References: <cover.1527225682.git.viresh.kumar@linaro.org>
- <2a2eb28da9fecf129f6bc0ab3d3748d9f4d25a29.1527225682.git.viresh.kumar@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a2eb28da9fecf129f6bc0ab3d3748d9f4d25a29.1527225682.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 25 May 2018 17:35:38 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH, net-next] vmcore: hide vmcoredd_mmap_dumps() for nommu builds
+Date: Fri, 25 May 2018 23:34:57 +0200
+Message-Id: <20180525213526.2117790-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:APn3fuVWucgr21fPwJWrtH3rwIFB/lp8HBxeASlJQxDXdojmkhK
+ oFb634yx/esXJOMPvgxFyD1+6CyvUFwD0A7ccvmNXw94jp7d38PBN58iyJq8y+Qy9qO+ipa
+ ECzIIipxt/ldIC+jjDxL05uzRBIb6A+K3A8NE1EAK1E933/wki44F9GljXbebFXu4DAwsEM
+ vDHfDeqdVBujnqvdGm8oQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Icidxji6ck4=:ycuDj06w4HxKnay/EJHTou
+ jBDIQPsb2GBHAm66zaXQ5+u3sonl3IIUrI1Kn9vbf3NLVDW1sdeSWaDZY2KDYl5h3+AzVMZK4
+ KPMeTjK2SSdD4ULA9I15uPHJrfRXwlBsdaOSzoVEwpvzT0xiV94Bf31CuhFKEsoPs3uv9mBSz
+ HKBxP6kSCarXfb14b9Y6pMB8yZykriNrMRnMih1qRYtRAP/QhqjkiDdAPTHq5e+ZFtsQgjtsA
+ urXvvSb4/kEqmzA1EWbs5k2q++kW/AviV5D1MQ5xcT6uUIU2opvVd6A65jI+zrb3XogTHLtma
+ +hI8AIsL0Ngq3DULXYQzWXjPwb0861DcowxUMDJY01dsAgHwlEn6RBKSjUBb7bqJ3HrpNPzbX
+ ViccROmPKhD7FR/rtNQf00g1hkCiFmIYZj8doJjgeXki5Q1d+uHDDF8vCVdYfpafSAVGiCdvX
+ 347nTyWw6i/Q9mFFfdgN+POZkhQkmH8CezEmmmBQ2GFI3oHTL765zQQHPa/6LfbpzA59BQq4f
+ 4K8PnxIi5rAN0gK4LrAulzi8giGOXr4EZxVUkbzI46lyy6PAfi/6Jv3XD+oWLlpq2t/aPcpss
+ BEEuNMQXyuIk7WUl71IYug+5SVb0mpnx1p6GdLBEaSIz/LDxcoYp6zKD6eR9q4OlsL6K8f+RG
+ SxrcNXxXikzHc7wFUUPWw+sS68GG0OSTidrFYC/phga7BS4s1Usn4O6C7IsStcLeGrso=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 11:10:01AM +0530, Viresh Kumar wrote:
-> The cooling device properties, like "#cooling-cells" and
-> "dynamic-power-coefficient", should either be present for all the CPUs
-> of a cluster or none. If these are present only for a subset of CPUs of
-> a cluster then things will start falling apart as soon as the CPUs are
-> brought online in a different order. For example, this will happen
-> because the operating system looks for such properties in the CPU node
-> it is trying to bring up, so that it can register a cooling device.
-> 
-> Add such missing properties.
+Without CONFIG_MMU, we get a build warning:
 
-This seems awkward compared to just having one cooling-cells in the /cpus node
-instead.
+fs/proc/vmcore.c:228:12: error: 'vmcoredd_mmap_dumps' defined but not used [-Werror=unused-function]
+ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
 
-What's it used for? I don't see any properties in the device nodes on meson-gxm
-that have any cooling-foo cells in them? So why should #cooling-cells be
-needed?
+The function is only referenced from an #ifdef'ed caller, so
+this uses the same #ifdef around it.
 
+Fixes: 7efe48df8a3d ("vmcore: append device dumps to vmcore as elf notes")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/proc/vmcore.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
--Olof
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index cfb6674331fd..0651646dd04d 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -225,6 +225,7 @@ static int vmcoredd_copy_dumps(void *dst, u64 start, size_t size, int userbuf)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_MMU
+ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
+ 			       u64 start, size_t size)
+ {
+@@ -259,6 +260,7 @@ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
+ 	mutex_unlock(&vmcoredd_mutex);
+ 	return ret;
+ }
++#endif /* CONFIG_MMU */
+ #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
+ 
+ /* Read from the ELF header and then the crash dump. On error, negative value is
+-- 
+2.9.0
