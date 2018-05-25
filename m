@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968270AbeEYSpy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:45:54 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8143 "EHLO huawei.com"
+        id S968144AbeEYSpM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:45:12 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7746 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S968165AbeEYSpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:45:14 -0400
+        id S968084AbeEYSpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:45:09 -0400
 From: Salil Mehta <salil.mehta@huawei.com>
 To: <davem@davemloft.net>
 CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 11/12] net: hns3: Adds support for led locate command for copper port
-Date: Fri, 25 May 2018 19:43:06 +0100
-Message-ID: <20180525184307.36288-12-salil.mehta@huawei.com>
+Subject: [PATCH net-next 10/12] net: hns3: Remove unused led control code
+Date: Fri, 25 May 2018 19:43:05 +0100
+Message-ID: <20180525184307.36288-11-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180525184307.36288-1-salil.mehta@huawei.com>
 References: <20180525184307.36288-1-salil.mehta@huawei.com>
@@ -28,116 +28,198 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-Firmware now supports control of all leds. Existing HNS3 driver code
-only supported led locate command over SFP Fibre ports. But now it
-is also supported over copper port.
-This patch removes existing not needed code for the led locate
-command and updates the led control command between driver and
-firmware.
+In the previous implementation of led control for fibre port , parses the
+port speed configuration, checks the link status and traffic status per
+second, and updates the blink status of link led, traffic led and speed
+led.
+
+Now, the firmware takes responsibility to handle the led, the dirver just
+needs to deal with locate command.
+
+So the codes for link led, traffic led and speed led are useless now. This
+patch removes these redundant codes.
 
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 12 ++------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 35 +++-------------------
- 2 files changed, 6 insertions(+), 41 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   1 -
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 109 ---------------------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   2 -
+ 3 files changed, 112 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index de2f6f1..d9aaa76 100644
+index e9be6aa..de2f6f1 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -817,21 +817,13 @@ struct hclge_reset_cmd {
- #define HCLGE_NIC_CMQ_DESC_NUM		1024
- #define HCLGE_NIC_CMQ_DESC_NUM_S	3
+@@ -115,7 +115,6 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_QUERY_LINK_STATUS	= 0x0307,
+ 	HCLGE_OPC_CONFIG_MAX_FRM_SIZE	= 0x0308,
+ 	HCLGE_OPC_CONFIG_SPEED_DUP	= 0x0309,
+-	HCLGE_OPC_STATS_MAC_TRAFFIC	= 0x0314,
+ 	/* MACSEC command */
  
--#define HCLGE_LED_PORT_SPEED_STATE_S	0
--#define HCLGE_LED_PORT_SPEED_STATE_M	GENMASK(5, 0)
--#define HCLGE_LED_ACTIVITY_STATE_S	0
--#define HCLGE_LED_ACTIVITY_STATE_M	GENMASK(1, 0)
--#define HCLGE_LED_LINK_STATE_S		0
--#define HCLGE_LED_LINK_STATE_M		GENMASK(1, 0)
- #define HCLGE_LED_LOCATE_STATE_S	0
- #define HCLGE_LED_LOCATE_STATE_M	GENMASK(1, 0)
- 
- struct hclge_set_led_state_cmd {
--	u8 port_speed_led_config;
--	u8 link_led_config;
--	u8 activity_led_config;
-+	u8 rsv1[3];
- 	u8 locate_led_config;
--	u8 rsv[20];
-+	u8 rsv2[20];
- };
- 
- int hclge_cmd_init(struct hclge_dev *hdev);
+ 	/* PFC/Pause CMD*/
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 20988aa..6916685 100644
+index 8ad8f62..20988aa 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5991,9 +5991,7 @@ static void hclge_get_regs(struct hnae3_handle *handle, u32 *version,
- 			"Get 64 bit register failed, ret = %d.\n", ret);
+@@ -39,7 +39,6 @@ static int hclge_set_mta_filter_mode(struct hclge_dev *hdev,
+ static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu);
+ static int hclge_init_vlan_config(struct hclge_dev *hdev);
+ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev);
+-static int hclge_update_led_status(struct hclge_dev *hdev);
+ 
+ static struct hnae3_ae_algo ae_algo;
+ 
+@@ -504,38 +503,6 @@ static int hclge_32_bit_update_stats(struct hclge_dev *hdev)
+ 	return 0;
  }
  
--static int hclge_set_led_status_sfp(struct hclge_dev *hdev, u8 speed_led_status,
--				    u8 act_led_status, u8 link_led_status,
--				    u8 locate_led_status)
-+static int hclge_set_led_status(struct hclge_dev *hdev, u8 locate_led_status)
- {
- 	struct hclge_set_led_state_cmd *req;
- 	struct hclge_desc desc;
-@@ -6002,12 +6000,6 @@ static int hclge_set_led_status_sfp(struct hclge_dev *hdev, u8 speed_led_status,
- 	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_LED_STATUS_CFG, false);
- 
- 	req = (struct hclge_set_led_state_cmd *)desc.data;
--	hnae_set_field(req->port_speed_led_config, HCLGE_LED_PORT_SPEED_STATE_M,
--		       HCLGE_LED_PORT_SPEED_STATE_S, speed_led_status);
--	hnae_set_field(req->link_led_config, HCLGE_LED_ACTIVITY_STATE_M,
--		       HCLGE_LED_ACTIVITY_STATE_S, act_led_status);
--	hnae_set_field(req->activity_led_config, HCLGE_LED_LINK_STATE_M,
--		       HCLGE_LED_LINK_STATE_S, link_led_status);
- 	hnae_set_field(req->locate_led_config, HCLGE_LED_LOCATE_STATE_M,
- 		       HCLGE_LED_LOCATE_STATE_S, locate_led_status);
- 
-@@ -6028,36 +6020,17 @@ enum hclge_led_status {
- static int hclge_set_led_id(struct hnae3_handle *handle,
- 			    enum ethtool_phys_id_state status)
- {
--#define BLINK_FREQUENCY		2
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	struct phy_device *phydev = hdev->hw.mac.phydev;
--	int ret = 0;
+-static int hclge_mac_get_traffic_stats(struct hclge_dev *hdev)
+-{
+-	struct hclge_mac_stats *mac_stats = &hdev->hw_stats.mac_stats;
+-	struct hclge_desc desc;
+-	__le64 *desc_data;
+-	int ret;
 -
--	if (phydev || hdev->hw.mac.media_type != HNAE3_MEDIA_TYPE_FIBER)
--		return -EOPNOTSUPP;
+-	/* for fiber port, need to query the total rx/tx packets statstics,
+-	 * used for data transferring checking.
+-	 */
+-	if (hdev->hw.mac.media_type != HNAE3_MEDIA_TYPE_FIBER)
+-		return 0;
+-
+-	if (test_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state))
+-		return 0;
+-
+-	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_STATS_MAC_TRAFFIC, true);
+-	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
+-	if (ret) {
+-		dev_err(&hdev->pdev->dev,
+-			"Get MAC total pkt stats fail, ret = %d\n", ret);
+-
+-		return ret;
+-	}
+-
+-	desc_data = (__le64 *)(&desc.data[0]);
+-	mac_stats->mac_tx_total_pkt_num += le64_to_cpu(*desc_data++);
+-	mac_stats->mac_rx_total_pkt_num += le64_to_cpu(*desc_data);
+-
+-	return 0;
+-}
+-
+ static int hclge_mac_update_stats(struct hclge_dev *hdev)
+ {
+ #define HCLGE_MAC_CMD_NUM 21
+@@ -2916,20 +2883,13 @@ static void hclge_service_task(struct work_struct *work)
+ 	struct hclge_dev *hdev =
+ 		container_of(work, struct hclge_dev, service_task);
  
- 	switch (status) {
- 	case ETHTOOL_ID_ACTIVE:
--		ret = hclge_set_led_status_sfp(hdev,
--					       HCLGE_LED_NO_CHANGE,
--					       HCLGE_LED_NO_CHANGE,
--					       HCLGE_LED_NO_CHANGE,
--					       HCLGE_LED_ON);
--		break;
-+		return hclge_set_led_status(hdev, HCLGE_LED_ON);
- 	case ETHTOOL_ID_INACTIVE:
--		ret = hclge_set_led_status_sfp(hdev,
--					       HCLGE_LED_NO_CHANGE,
--					       HCLGE_LED_NO_CHANGE,
--					       HCLGE_LED_NO_CHANGE,
--					       HCLGE_LED_OFF);
--		break;
-+		return hclge_set_led_status(hdev, HCLGE_LED_OFF);
- 	default:
--		ret = -EINVAL;
--		break;
-+		return -EINVAL;
+-	/* The total rx/tx packets statstics are wanted to be updated
+-	 * per second. Both hclge_update_stats_for_all() and
+-	 * hclge_mac_get_traffic_stats() can do it.
+-	 */
+ 	if (hdev->hw_stats.stats_timer >= HCLGE_STATS_TIMER_INTERVAL) {
+ 		hclge_update_stats_for_all(hdev);
+ 		hdev->hw_stats.stats_timer = 0;
+-	} else {
+-		hclge_mac_get_traffic_stats(hdev);
  	}
--
--	return ret;
+ 
+ 	hclge_update_speed_duplex(hdev);
+ 	hclge_update_link_status(hdev);
+-	hclge_update_led_status(hdev);
+ 	hclge_service_complete(hdev);
  }
  
+@@ -6100,75 +6060,6 @@ static int hclge_set_led_id(struct hnae3_handle *handle,
+ 	return ret;
+ }
+ 
+-enum hclge_led_port_speed {
+-	HCLGE_SPEED_LED_FOR_1G,
+-	HCLGE_SPEED_LED_FOR_10G,
+-	HCLGE_SPEED_LED_FOR_25G,
+-	HCLGE_SPEED_LED_FOR_40G,
+-	HCLGE_SPEED_LED_FOR_50G,
+-	HCLGE_SPEED_LED_FOR_100G,
+-};
+-
+-static u8 hclge_led_get_speed_status(u32 speed)
+-{
+-	u8 speed_led;
+-
+-	switch (speed) {
+-	case HCLGE_MAC_SPEED_1G:
+-		speed_led = HCLGE_SPEED_LED_FOR_1G;
+-		break;
+-	case HCLGE_MAC_SPEED_10G:
+-		speed_led = HCLGE_SPEED_LED_FOR_10G;
+-		break;
+-	case HCLGE_MAC_SPEED_25G:
+-		speed_led = HCLGE_SPEED_LED_FOR_25G;
+-		break;
+-	case HCLGE_MAC_SPEED_40G:
+-		speed_led = HCLGE_SPEED_LED_FOR_40G;
+-		break;
+-	case HCLGE_MAC_SPEED_50G:
+-		speed_led = HCLGE_SPEED_LED_FOR_50G;
+-		break;
+-	case HCLGE_MAC_SPEED_100G:
+-		speed_led = HCLGE_SPEED_LED_FOR_100G;
+-		break;
+-	default:
+-		speed_led = HCLGE_LED_NO_CHANGE;
+-	}
+-
+-	return speed_led;
+-}
+-
+-static int hclge_update_led_status(struct hclge_dev *hdev)
+-{
+-	u8 port_speed_status, link_status, activity_status;
+-	u64 rx_pkts, tx_pkts;
+-
+-	if (hdev->hw.mac.media_type != HNAE3_MEDIA_TYPE_FIBER)
+-		return 0;
+-
+-	port_speed_status = hclge_led_get_speed_status(hdev->hw.mac.speed);
+-
+-	rx_pkts = hdev->hw_stats.mac_stats.mac_rx_total_pkt_num;
+-	tx_pkts = hdev->hw_stats.mac_stats.mac_tx_total_pkt_num;
+-	if (rx_pkts != hdev->rx_pkts_for_led ||
+-	    tx_pkts != hdev->tx_pkts_for_led)
+-		activity_status = HCLGE_LED_ON;
+-	else
+-		activity_status = HCLGE_LED_OFF;
+-	hdev->rx_pkts_for_led = rx_pkts;
+-	hdev->tx_pkts_for_led = tx_pkts;
+-
+-	if (hdev->hw.mac.link)
+-		link_status = HCLGE_LED_ON;
+-	else
+-		link_status = HCLGE_LED_OFF;
+-
+-	return hclge_set_led_status_sfp(hdev, port_speed_status,
+-					activity_status, link_status,
+-					HCLGE_LED_NO_CHANGE);
+-}
+-
  static void hclge_get_link_mode(struct hnae3_handle *handle,
+ 				unsigned long *supported,
+ 				unsigned long *advertising)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 677f1e4..7fcabde 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -563,8 +563,6 @@ struct hclge_dev {
+ 
+ 	struct hclge_vlan_type_cfg vlan_type_cfg;
+ 
+-	u64 rx_pkts_for_led;
+-	u64 tx_pkts_for_led;
+ 	unsigned long vlan_table[VLAN_N_VID][BITS_TO_LONGS(HCLGE_VPORT_NUM)];
+ };
+ 
 -- 
 2.7.4
