@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967175AbeEYMXo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:23:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49508 "EHLO
+        id S967073AbeEYMW4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:22:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49280 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967079AbeEYMW6 (ORCPT
+        with ESMTP id S966701AbeEYMWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:22:58 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 599AF60F74
+        Fri, 25 May 2018 08:22:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01E3C6090E
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -22,149 +22,44 @@ Cc: David Woodhouse <dwmw2@infradead.org>,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
         Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization for bad block check
-Date: Fri, 25 May 2018 17:51:41 +0530
-Message-Id: <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v3 12/16] mtd: rawnand: qcom: fix return value for raw page read
+Date: Fri, 25 May 2018 17:51:40 +0530
+Message-Id: <1527250904-21988-13-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
 References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The QCOM NAND controller layout is such that, the bad block byte
-offset for last codeword will come to first byte in spare area.
-Currently, the raw read for last codeword is being done with
-copy_last_cw function. It does following 2 things:
-
-1. Read the last codeword bytes from NAND chip to NAND
-   controller internal HW buffer.
-2. Copy all these bytes from HW buffer to actual buffer.
-
-For bad block check, maximum two bytes are required so instead of
-copying the complete bytes in step 2, only those bbm_size bytes
-can be copied.
-
-This patch does minor code reorganization for the same. After
-this, copy_last_cw function won’t be required.
+Fix value returned by ->read_page_raw() to be the
+actual operation status, instead of always 0.
 
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
 * Changes from v2:
-  1. Changed commit message and comments slightly
+
+  1. Changed commit message
 
 * Changes from v1:
-  NEW CHANGE
+ NEW CHANGE
 
- drivers/mtd/nand/raw/qcom_nandc.c | 66 +++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 41 deletions(-)
+ drivers/mtd/nand/raw/qcom_nandc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index d693b5f..f72bc8a 100644
+index e02d752..d693b5f 100644
 --- a/drivers/mtd/nand/raw/qcom_nandc.c
 +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -1769,41 +1769,6 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
- 	return parse_read_errors(host, data_buf_start, oob_buf_start);
+@@ -1898,7 +1898,7 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
+ 
+ 	free_descs(nandc);
+ 
+-	return 0;
++	return ret;
  }
  
--/*
-- * a helper that copies the last step/codeword of a page (containing free oob)
-- * into our local buffer
-- */
--static int copy_last_cw(struct qcom_nand_host *host, int page)
--{
--	struct nand_chip *chip = &host->chip;
--	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
--	struct nand_ecc_ctrl *ecc = &chip->ecc;
--	int size;
--	int ret;
--
--	clear_read_regs(nandc);
--
--	size = host->use_ecc ? host->cw_data : host->cw_size;
--
--	/* prepare a clean read buffer */
--	memset(nandc->data_buffer, 0xff, size);
--
--	set_address(host, host->cw_size * (ecc->steps - 1), page);
--	update_rw_regs(host, 1, true);
--
--	config_nand_single_cw_page_read(nandc);
--
--	read_data_dma(nandc, FLASH_BUF_ACC, nandc->data_buffer, size, 0);
--
--	ret = submit_descs(nandc);
--	if (ret)
--		dev_err(nandc->dev, "failed to copy last codeword\n");
--
--	free_descs(nandc);
--
--	return ret;
--}
--
- /* implements ecc->read_page() */
- static int qcom_nandc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
- 				uint8_t *buf, int oob_required, int page)
-@@ -2118,6 +2083,7 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
- 	struct nand_ecc_ctrl *ecc = &chip->ecc;
- 	int page, ret, bbpos, bad = 0;
- 	u32 flash_status;
-+	u8 *bbm_bytes_buf = chip->data_buf;
- 
- 	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
- 
-@@ -2128,11 +2094,31 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
- 	 * that contains the BBM
- 	 */
- 	host->use_ecc = false;
-+	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
- 
- 	clear_bam_transaction(nandc);
--	ret = copy_last_cw(host, page);
--	if (ret)
-+	clear_read_regs(nandc);
-+
-+	set_address(host, host->cw_size * (ecc->steps - 1), page);
-+	update_rw_regs(host, 1, true);
-+
-+	/*
-+	 * The last codeword data will be copied from NAND device to NAND
-+	 * controller internal HW buffer. Copy only required BBM size bytes
-+	 * from this HW buffer to bbm_bytes_buf which is present at
-+	 * bbpos offset.
-+	 */
-+	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
-+	config_nand_single_cw_page_read(nandc);
-+	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
-+		      host->bbm_size, 0);
-+
-+	ret = submit_descs(nandc);
-+	free_descs(nandc);
-+	if (ret) {
-+		dev_err(nandc->dev, "failed to copy bad block bytes\n");
- 		goto err;
-+	}
- 
- 	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
- 
-@@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
- 		goto err;
- 	}
- 
--	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
--
--	bad = nandc->data_buffer[bbpos] != 0xff;
-+	bad = bbm_bytes_buf[0] != 0xff;
- 
- 	if (chip->options & NAND_BUSWIDTH_16)
--		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
-+		bad = bad || (bbm_bytes_buf[1] != 0xff);
- err:
- 	return bad;
- }
+ /* implements ecc->read_oob() */
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
 is a member of Code Aurora Forum, hosted by The Linux Foundation
