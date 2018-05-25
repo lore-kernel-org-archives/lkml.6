@@ -1,104 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967591AbeEYRuW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:50:22 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.105]:39405 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967413AbeEYRuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:50:21 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH] ath6kl: mark expected switch fall-throughs
-To: Kalle Valo <kvalo@codeaurora.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180524231322.GA22704@embeddedor.com>
- <060f93a0-7210-79b6-37a7-cd8900719d40@cogentembedded.com>
- <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <e777af5c-8d56-aef7-a4b6-f93f12378049@embeddedor.com>
-Date: Fri, 25 May 2018 12:50:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S967548AbeEYRxN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:53:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967385AbeEYRxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 13:53:11 -0400
+Date: Fri, 25 May 2018 20:53:10 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next 00/12] XDP batching for TUN/vhost_net
+Message-ID: <20180525205219-mutt-send-email-mst@kernel.org>
+References: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <871sdzc16l.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fMGr5-003Mxc-N7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.70]) [187.192.46.223]:54406
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526893473-20128-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/25/2018 08:30 AM, Kalle Valo wrote:
-> Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> writes:
+On Mon, May 21, 2018 at 05:04:21PM +0800, Jason Wang wrote:
+> Hi all:
 > 
->> On 5/25/2018 2:13 AM, Gustavo A. R. Silva wrote:
->>
->>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>> where we are expecting to fall through.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>    drivers/net/wireless/ath/ath6kl/cfg80211.c | 6 +++---
->>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
->>> index 2ba8cf3..29e32cd 100644
->>> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
->>> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
->>> @@ -3898,17 +3898,17 @@ int ath6kl_cfg80211_init(struct ath6kl *ar)
->>>    	wiphy->max_scan_ie_len = 1000; /* FIX: what is correct limit? */
->>>    	switch (ar->hw.cap) {
->>>    	case WMI_11AN_CAP:
->>> -		ht = true;
->>> +		ht = true; /* fall through */
->>>    	case WMI_11A_CAP:
->>>    		band_5gig = true;
->>>    		break;
->>>    	case WMI_11GN_CAP:
->>> -		ht = true;
->>> +		ht = true; /* fall through */
->>>    	case WMI_11G_CAP:
->>>    		band_2gig = true;
->>>    		break;
->>>    	case WMI_11AGN_CAP:
->>> -		ht = true;
->>> +		ht = true; /* fall through */
->>>    	case WMI_11AG_CAP:
->>>    		band_2gig = true;
->>>    		band_5gig = true;
->>
->>     Hm, typically such comments are done on a line of their own, have
->> never seen this style...
+> We do not support XDP batching for TUN since it can only receive one
+> packet a time from vhost_net. This series tries to remove this
+> limitation by:
 > 
-> Yeah, I was wondering the same. Was there a particular reason for this?
+> - introduce a TUN specific msg_control that can hold a pointer to an
+>   array of XDP buffs
+> - try copy and build XDP buff in vhost_net
+> - store XDP buffs in an array and submit them once for every N packets
+>   from vhost_net
+> - since TUN can only do native XDP for datacopy packet, to simplify
+>   the logic, split datacopy out logic and only do batching for
+>   datacopy.
+
+I like how this rework looks. Pls go ahead and repost as
+non-RFC.
+
+> With this series, TX PPS can improve about 34% from 2.9Mpps to
+> 3.9Mpps when doing xdp_redirect_map between TAP and ixgbe.
 > 
-
-Sometimes people use this style for a one-line code block.
-
-I can change it to the traditional style. No problem.
-
-Thanks
---
-Gustavo
+> Thanks
+> 
+> Jason Wang (12):
+>   vhost_net: introduce helper to initialize tx iov iter
+>   vhost_net: introduce vhost_exceeds_weight()
+>   vhost_net: introduce vhost_has_more_pkts()
+>   vhost_net: split out datacopy logic
+>   vhost_net: batch update used ring for datacopy TX
+>   tuntap: enable premmption early
+>   tuntap: simplify error handling in tun_build_skb()
+>   tuntap: tweak on the path of non-xdp case in tun_build_skb()
+>   tuntap: split out XDP logic
+>   vhost_net: build xdp buff
+>   vhost_net: passing raw xdp buff to tun
+>   vhost_net: batch submitting XDP buffers to underlayer sockets
+> 
+>  drivers/net/tun.c      | 226 +++++++++++++++++++++++++++----------
+>  drivers/vhost/net.c    | 297 ++++++++++++++++++++++++++++++++++++++++++++-----
+>  include/linux/if_tun.h |   7 ++
+>  3 files changed, 444 insertions(+), 86 deletions(-)
+> 
+> -- 
+> 2.7.4
