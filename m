@@ -1,65 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936100AbeEYOME (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:12:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934614AbeEYOMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:12:03 -0400
-Date: Fri, 25 May 2018 16:11:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
-Message-ID: <20180525141145.GA14120@kroah.com>
-References: <20180524093159.286472249@linuxfoundation.org>
- <20180524173208.GB11172@roeck-us.net>
- <20180524194742.GE4413@kroah.com>
+        id S936132AbeEYOQD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:16:03 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:45581 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934614AbeEYOQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 10:16:02 -0400
+X-Google-Smtp-Source: ADUXVKI9UtFQn8KlpKGuW98R1K/Q3uY7kIpABfWq0w5eHZqcfLRfs1ZNgtpnSp4DXsJnLNi1wRFaq0P/LUZhsUyn2GsrwczOS/cY
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524194742.GE4413@kroah.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Date: Fri, 25 May 2018 07:16:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006056c8056d0868f8@google.com>
+Subject: KASAN: use-after-free Write in tls_push_record
+From: syzbot <syzbot+709f2810a6a05f11d4d3@syzkaller.appspotmail.com>
+To: aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 09:47:42PM +0200, Greg Kroah-Hartman wrote:
-> On Thu, May 24, 2018 at 10:32:08AM -0700, Guenter Roeck wrote:
-> > On Thu, May 24, 2018 at 11:37:37AM +0200, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 4.4.133 release.
-> > > There are 92 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Sat May 26 09:31:28 UTC 2018.
-> > > Anything received after that time might be too late.
-> > > 
-> > Build results:
-> > 	total: 146 pass: 145 fail: 1
-> > Failed builds: 
-> > 	s390:allmodconfig 
-> > Qemu test results:
-> > 	total: 127 pass: 127 fail: 0
-> > 
-> > Build error (s390:allmodconfig):
-> > 
-> > arch/s390/built-in.o: In function `__s390x_indirect_jump_r1use_r1':
-> > (.text.__s390x_indirect_jump_r1use_r1[__s390x_indirect_jump_r1use_r1]+0x2):
-> > 			undefined reference to `_LC_BR_R1'
-> 
-> I'll look into the s390 stuff in the morning, I think I know what I
-> messed up there...
+Hello,
 
-Nope, I don't think this was my fault :)
+syzbot found the following crash on:
 
-Oddly 'defconfig' worked for s390 with the offending patch, but not
-allmodconfig.  I've now dropped the patch I think was causing the
-problem and pushed out a -rc2.
+HEAD commit:    13405468f49d bpfilter: don't pass O_CREAT when opening con..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=109ad82f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8be0182d69f8d422
+dashboard link: https://syzkaller.appspot.com/bug?extid=709f2810a6a05f11d4d3
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=151ec3a7800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154d302f800000
 
-thanks,
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+709f2810a6a05f11d4d3@syzkaller.appspotmail.com
 
-greg k-h
+RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000003
+RBP: 00007ffd6ccdd780 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000004
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+==================================================================
+BUG: KASAN: use-after-free in tls_fill_prepend include/net/tls.h:339  
+[inline]
+BUG: KASAN: use-after-free in tls_push_record+0x1023/0x13e0  
+net/tls/tls_sw.c:240
+Write of size 1 at addr ffff8801d88d5000 by task syz-executor377/4600
+
+CPU: 1 PID: 4600 Comm: syz-executor377 Not tainted 4.17.0-rc6+ #61
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+  tls_fill_prepend include/net/tls.h:339 [inline]
+  tls_push_record+0x1023/0x13e0 net/tls/tls_sw.c:240
+  tls_sw_sendmsg+0x9de/0x12b0 net/tls/tls_sw.c:484
+  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:639
+  __sys_sendto+0x3d7/0x670 net/socket.c:1789
+  __do_sys_sendto net/socket.c:1801 [inline]
+  __se_sys_sendto net/socket.c:1797 [inline]
+  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1797
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4416d9
+RSP: 002b:00007ffd6ccdd758 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004416d9
+RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000003
+RBP: 00007ffd6ccdd780 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000004
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the page:
+page:ffffea0007623540 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffea0007592b60 ffff8801dae2fdd8 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d88d4f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801d88d4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801d88d5000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                    ^
+  ffff8801d88d5080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801d88d5100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
