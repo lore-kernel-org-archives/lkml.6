@@ -1,122 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966312AbeEYJy6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:54:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57530 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966042AbeEYJu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:50:27 -0400
-From: Julien Thierry <julien.thierry@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v4 13/26] arm/arm64: gic-v3: Add helper functions to manage IRQ priorities
-Date: Fri, 25 May 2018 10:49:19 +0100
-Message-Id: <1527241772-48007-14-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
-References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
+        id S966345AbeEYJzG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:55:06 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41360 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965643AbeEYJzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:55:03 -0400
+X-Google-Smtp-Source: AB8JxZql5MT/t3nb6JjpxHmAmOxxzoKghA+Br6Ziash4f63mkAyUzKR9Kbxju8QliHAHQRybRgMhjw==
+From: Jian-Hong Pan <jian-hong@endlessm.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com
+Cc: Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] Bluetooth: Add a new Realtek 8723DE ID 0bda:b009
+Date: Fri, 25 May 2018 17:54:52 +0800
+Message-Id: <20180525095452.5203-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a function to check if priority masking is supported and accessors
-for PMR/RPR.
+Without this patch we cannot turn on the Bluethooth adapter on HP
+14-bs007la.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
+T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  4 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0bda ProdID=b009 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=802.11n WLAN Adapter
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
 ---
- arch/arm/include/asm/arch_gicv3.h   | 21 +++++++++++++++++++++
- arch/arm64/include/asm/arch_gicv3.h | 20 ++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
-index 0bd5307..58d5d3e 100644
---- a/arch/arm/include/asm/arch_gicv3.h
-+++ b/arch/arm/include/asm/arch_gicv3.h
-@@ -34,6 +34,7 @@
- #define ICC_SRE				__ACCESS_CP15(c12, 0, c12, 5)
- #define ICC_IGRPEN1			__ACCESS_CP15(c12, 0, c12, 7)
- #define ICC_BPR1			__ACCESS_CP15(c12, 0, c12, 3)
-+#define ICC_RPR				__ACCESS_CP15(c12, 0, c11, 3)
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 3a477b6b3ce6..d93b25faeed9 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -374,6 +374,7 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
  
- #define __ICC_AP0Rx(x)			__ACCESS_CP15(c12, 0, c8, 4 | x)
- #define ICC_AP0R0			__ICC_AP0Rx(0)
-@@ -245,6 +246,21 @@ static inline void gic_write_bpr1(u32 val)
- 	write_sysreg(val, ICC_BPR1);
- }
+ 	/* Additional Realtek 8723DE Bluetooth devices */
++	{ USB_DEVICE(0x0bda, 0xb009), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
  
-+static inline u32 gic_read_pmr(void)
-+{
-+	return read_sysreg(ICC_PMR);
-+}
-+
-+static inline void gic_write_pmr(u32 val)
-+{
-+	write_sysreg(val, ICC_PMR);
-+}
-+
-+static inline u32 gic_read_rpr(void)
-+{
-+	return read_sysreg(ICC_RPR);
-+}
-+
- /*
-  * Even in 32bit systems that use LPAE, there is no guarantee that the I/O
-  * interface provides true 64bit atomic accesses, so using strd/ldrd doesn't
-@@ -347,5 +363,10 @@ static inline void gits_write_vpendbaser(u64 val, void * __iomem addr)
- 
- #define gits_read_vpendbaser(c)		__gic_readq_nonatomic(c)
- 
-+static inline bool gic_prio_masking_enabled(void)
-+{
-+	return false;
-+}
-+
- #endif /* !__ASSEMBLY__ */
- #endif /* !__ASM_ARCH_GICV3_H */
-diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
-index e278f94..98b09db 100644
---- a/arch/arm64/include/asm/arch_gicv3.h
-+++ b/arch/arm64/include/asm/arch_gicv3.h
-@@ -114,6 +114,21 @@ static inline void gic_write_bpr1(u32 val)
- 	write_sysreg_s(val, SYS_ICC_BPR1_EL1);
- }
- 
-+static inline u32 gic_read_pmr(void)
-+{
-+	return read_sysreg_s(SYS_ICC_PMR_EL1);
-+}
-+
-+static inline void gic_write_pmr(u32 val)
-+{
-+	write_sysreg_s(val, SYS_ICC_PMR_EL1);
-+}
-+
-+static inline u32 gic_read_rpr(void)
-+{
-+	return read_sysreg_s(SYS_ICC_RPR_EL1);
-+}
-+
- #define gic_read_typer(c)		readq_relaxed(c)
- #define gic_write_irouter(v, c)		writeq_relaxed(v, c)
- #define gic_read_lpir(c)		readq_relaxed(c)
-@@ -140,5 +155,10 @@ static inline void gic_write_bpr1(u32 val)
- #define gits_write_vpendbaser(v, c)	writeq_relaxed(v, c)
- #define gits_read_vpendbaser(c)		readq_relaxed(c)
- 
-+static inline bool gic_prio_masking_enabled(void)
-+{
-+	return cpus_have_const_cap(ARM64_HAS_IRQ_PRIO_MASKING);
-+}
-+
- #endif /* __ASSEMBLY__ */
- #endif /* __ASM_ARCH_GICV3_H */
+ 	/* Additional Realtek 8821AE Bluetooth devices */
 -- 
-1.9.1
+2.11.0
