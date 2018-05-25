@@ -1,216 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755274AbeEYC42 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:56:28 -0400
-Received: from mga05.intel.com ([192.55.52.43]:22224 "EHLO mga05.intel.com"
+        id S1755233AbeEYC5g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754656AbeEYCzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:55:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
-   d="scan'208";a="42054622"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: [PATCH 5/7] dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
-Date: Thu, 24 May 2018 20:55:16 -0600
-Message-Id: <20180525025518.11405-6-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
-References: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
+        id S1755262AbeEYC42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:56:28 -0400
+Date: Fri, 25 May 2018 04:56:25 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [GIT PULL] isolation: 1Hz residual tick offloading v4
+Message-ID: <20180525025624.GB22082@lerouge>
+References: <1516320140-13189-1-git-send-email-frederic@kernel.org>
+ <20180124104608.038fb212@redhat.com>
+ <20180129011024.GA2942@lerouge>
+ <xunyvabfjylg.fsf@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xunyvabfjylg.fsf@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DM_TYPE_DAX_BIO_BASED dm_queue_mode was introduced to prevent DM
-devices that could possibly support DAX from transitioning into DM devices
-that cannot support DAX.
+On Tue, May 22, 2018 at 10:10:19PM +0300, Yauheni Kaliuta wrote:
+> Hi, Frederic!
+> 
+> >>>>> On Mon, 29 Jan 2018 02:10:26 +0100, Frederic Weisbecker  wrote:
+>  > On Wed, Jan 24, 2018 at 10:46:08AM -0500, Luiz Capitulino wrote:
+> 
+> [...]
+> 
+>  >> Since the 1Hz tick offload worked for you, I must be missing
+>  >> a way to disable this timer or the kernel is thinking my CPU
+>  >> has unstable TSC (which it doesn't AFAIK).
+> 
+>  > It's beyond the scope of this patchset but indeed that's
+>  > right, I run my kernels with tsc=reliable because my CPUs
+>  > don't have the TSC_RELIABLE flag.  That's the only way I found
+>  > to shutdown the tick completely on my test machine, otherwise
+>  > I keep having that clocksource watchdog.
+> 
+> [...]
+> 
+> Thanks, it helps. But I have accounting problem:
+> 
+> if I run user busy loop on the nohz cpu, the task accounting works
+> correctly (top shows the task takes 100% cpu), but cpu accounting is
+> wrong (cpu is 100% idle, in the per-core view as well).
+> 
+> If I understand correctly, the stats are updated by account_user_time()
+> -> task_group_account_field() but there is no call for it in case of
+> offloading (it is called from irqtime_account_process_tick,
+> account_process_tick, vtime_user_exit).
 
-For example, the following transition will currently fail:
+Ah I forgot about kcpustat accounting. I remember I wanted to fix that a
+few years ago but I forgot about it when I removed the last tick. That
+thing was lurking behind 1Hz.
 
- dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
-	      DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
+> 
+> Moreover, task_group_account_field() uses __this_cpu_add() which will be
+> wrong for offloading.
+> 
+> For testing I used kcpustat_cpu(task_cpu(p)) in
+> task_group_account_field() and added call account_user_time(curr, delta)
+> to the sched_tick_remote() what fixes it for me, but what would be the
+> proper fix?
 
-but these will both succeed:
+Yeah unfortunately that's unsafe. Task accounting is not designed for remote
+update. You could race with an update from another CPU, especially the local
+updater.
 
- dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
- 		DM_TYPE_DAX_BASED        DM_TYPE_BIO_BASED
+I fear we need to take the same approach than task cputime, which is using a seqcount
+for updates. Then the reader would fetch the kcpustat values + the delta
+vtime from the task executing.
 
- dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
- 		DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
+Things can get complicated once we dive into corner cases: CPUTIME_IRQ,
+CPUTIME_SOFTIRQ, and CPUTIME_STEAL. At least we don't need to care about CPUTIME_IDLE
+and CPUTIME_IOWAIT that have their own delta.
 
-This seems arbitrary, as really the choice on whether to use DAX happens at
-filesystem mount time.  There's no guarantee that the in the first case
-(double fsdax pmem) we were using the dax mount option with our file
-system.
+I'm trying that.
 
-Instead, get rid of DM_TYPE_DAX_BIO_BASED and all the special casing around
-it, and instead make the request queue's QUEUE_FLAG_DAX be our one source
-of truth.  If this is set, we can use DAX, and if not, not.  We keep this
-up to date in table_load() as the table changes.  As with regular block
-devices the filesystem will then know at mount time whether DAX is a
-supported mount option or not.
-
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
----
- drivers/md/dm-ioctl.c         | 16 ++++++----------
- drivers/md/dm-table.c         | 25 ++++++++++---------------
- drivers/md/dm.c               |  2 --
- include/linux/device-mapper.h |  8 ++++++--
- 4 files changed, 22 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-index 5acf77de5945..d1f86d0bb2d0 100644
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1292,15 +1292,6 @@ static int populate_table(struct dm_table *table,
- 	return dm_table_complete(table);
- }
- 
--static bool is_valid_type(enum dm_queue_mode cur, enum dm_queue_mode new)
--{
--	if (cur == new ||
--	    (cur == DM_TYPE_BIO_BASED && new == DM_TYPE_DAX_BIO_BASED))
--		return true;
--
--	return false;
--}
--
- static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_size)
- {
- 	int r;
-@@ -1343,12 +1334,17 @@ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_si
- 			DMWARN("unable to set up device queue for new table.");
- 			goto err_unlock_md_type;
- 		}
--	} else if (!is_valid_type(dm_get_md_type(md), dm_table_get_type(t))) {
-+	} else if (dm_get_md_type(md) != dm_table_get_type(t)) {
- 		DMWARN("can't change device type after initial table load.");
- 		r = -EINVAL;
- 		goto err_unlock_md_type;
- 	}
- 
-+	if (dm_table_supports_dax(t))
-+		blk_queue_flag_set(QUEUE_FLAG_DAX, md->queue);
-+	else
-+		blk_queue_flag_clear(QUEUE_FLAG_DAX, md->queue);
-+
- 	dm_unlock_md_type(md);
- 
- 	/* stage inactive table */
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 5bb994b012ca..ea5c4a1e6f5b 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -866,7 +866,6 @@ EXPORT_SYMBOL(dm_consume_args);
- static bool __table_type_bio_based(enum dm_queue_mode table_type)
- {
- 	return (table_type == DM_TYPE_BIO_BASED ||
--		table_type == DM_TYPE_DAX_BIO_BASED ||
- 		table_type == DM_TYPE_NVME_BIO_BASED);
- }
- 
-@@ -888,7 +887,7 @@ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
- 	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
- }
- 
--static bool dm_table_supports_dax(struct dm_table *t)
-+bool dm_table_supports_dax(struct dm_table *t)
- {
- 	struct dm_target *ti;
- 	unsigned i;
-@@ -907,6 +906,7 @@ static bool dm_table_supports_dax(struct dm_table *t)
- 
- 	return true;
- }
-+EXPORT_SYMBOL_GPL(dm_table_supports_dax);
- 
- static bool dm_table_does_not_support_partial_completion(struct dm_table *t);
- 
-@@ -944,7 +944,6 @@ static int dm_table_determine_type(struct dm_table *t)
- 			/* possibly upgrade to a variant of bio-based */
- 			goto verify_bio_based;
- 		}
--		BUG_ON(t->type == DM_TYPE_DAX_BIO_BASED);
- 		BUG_ON(t->type == DM_TYPE_NVME_BIO_BASED);
- 		goto verify_rq_based;
- 	}
-@@ -981,18 +980,14 @@ static int dm_table_determine_type(struct dm_table *t)
- verify_bio_based:
- 		/* We must use this table as bio-based */
- 		t->type = DM_TYPE_BIO_BASED;
--		if (dm_table_supports_dax(t) ||
--		    (list_empty(devices) && live_md_type == DM_TYPE_DAX_BIO_BASED)) {
--			t->type = DM_TYPE_DAX_BIO_BASED;
--		} else {
--			/* Check if upgrading to NVMe bio-based is valid or required */
--			tgt = dm_table_get_immutable_target(t);
--			if (tgt && !tgt->max_io_len && dm_table_does_not_support_partial_completion(t)) {
--				t->type = DM_TYPE_NVME_BIO_BASED;
--				goto verify_rq_based; /* must be stacked directly on NVMe (blk-mq) */
--			} else if (list_empty(devices) && live_md_type == DM_TYPE_NVME_BIO_BASED) {
--				t->type = DM_TYPE_NVME_BIO_BASED;
--			}
-+
-+		/* Check if upgrading to NVMe bio-based is valid or required */
-+		tgt = dm_table_get_immutable_target(t);
-+		if (tgt && !tgt->max_io_len && dm_table_does_not_support_partial_completion(t)) {
-+			t->type = DM_TYPE_NVME_BIO_BASED;
-+			goto verify_rq_based; /* must be stacked directly on NVMe (blk-mq) */
-+		} else if (list_empty(devices) && live_md_type == DM_TYPE_NVME_BIO_BASED) {
-+			t->type = DM_TYPE_NVME_BIO_BASED;
- 		}
- 		return 0;
- 	}
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 9728433362d1..0ce06fa292fd 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -2192,7 +2192,6 @@ int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t)
- 		}
- 		break;
- 	case DM_TYPE_BIO_BASED:
--	case DM_TYPE_DAX_BIO_BASED:
- 		dm_init_normal_md_queue(md);
- 		blk_queue_make_request(md->queue, dm_make_request);
- 		break;
-@@ -2910,7 +2909,6 @@ struct dm_md_mempools *dm_alloc_md_mempools(struct mapped_device *md, enum dm_qu
- 
- 	switch (type) {
- 	case DM_TYPE_BIO_BASED:
--	case DM_TYPE_DAX_BIO_BASED:
- 	case DM_TYPE_NVME_BIO_BASED:
- 		pool_size = max(dm_get_reserved_bio_based_ios(), min_pool_size);
- 		front_pad = roundup(per_io_data_size, __alignof__(struct dm_target_io)) + offsetof(struct dm_target_io, clone);
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index 31fef7c34185..cbf3d7e7ed33 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -27,8 +27,7 @@ enum dm_queue_mode {
- 	DM_TYPE_BIO_BASED	 = 1,
- 	DM_TYPE_REQUEST_BASED	 = 2,
- 	DM_TYPE_MQ_REQUEST_BASED = 3,
--	DM_TYPE_DAX_BIO_BASED	 = 4,
--	DM_TYPE_NVME_BIO_BASED	 = 5,
-+	DM_TYPE_NVME_BIO_BASED	 = 4,
- };
- 
- typedef enum { STATUSTYPE_INFO, STATUSTYPE_TABLE } status_type_t;
-@@ -460,6 +459,11 @@ void dm_table_add_target_callbacks(struct dm_table *t, struct dm_target_callback
-  */
- void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type);
- 
-+/*
-+ * Check to see if this target type and all table devices support DAX.
-+ */
-+bool dm_table_supports_dax(struct dm_table *t);
-+
- /*
-  * Finally call this to make the table ready for use.
-  */
--- 
-2.14.3
+Thanks.
