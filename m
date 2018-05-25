@@ -1,77 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967035AbeEYQEW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:04:22 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35888 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966464AbeEYQEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:04:21 -0400
-Date: Fri, 25 May 2018 17:04:49 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com
-Subject: [GIT PULL] arm64: fixes for -rc7
-Message-ID: <20180525160448.GF3255@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S967095AbeEYQFb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:05:31 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:46701 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966464AbeEYQF3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 12:05:29 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pwm: stm32: enforce dependency on CONFIG_MFD_STM32_TIMERS
+Date: Fri, 25 May 2018 18:04:54 +0200
+Message-Id: <20180525160523.29124-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:M2xrlDLdXt09+g2kyzE9d+6Gzzat/0GLrqimLZYxRc/pDV40wZZ
+ fhXOPPl4UkKKaeEiFR8PQsaHlbqKh0bPO+lthm9bGKhmHTd6swWIZDai+NEZxxbWKUvM4px
+ v0v3evRMVd7xqVAjEYK7LmgMYIdok3Y3Pzyq5hspVnDCgNQHa+NQ6aNJTObJwmqLkw4kCgt
+ k7tKJcwf+xjrCk+HwnPXA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8e5cwQd1bLA=:PUHvJLfHfxElw4sTjv7lT5
+ zFoOiCxz3Z0GD4afwm/ACV9u2r1WHP4Z0Pmg4ALfGnB0ZwJnfxlXDhTK45IgADi/9Gi0NbCBS
+ 4O2CO9kDZvUiYl0gsCC0g2vIlUF9NgfTdnzOo+5xAgUfsZi6qXWsvL1boGennwIQFILuYsbKI
+ 40oXkvpqzKBzQHzr+44E1Zr+IJ5dfj8sIhnbW3dkh7pc1JMYIqdk5kt4GB9SFtirTx+/AMchG
+ 1mxYRqgrYltRFnpJapvZ0N4AlAQW0Iu32eMqouoGwEVw8WriV6/mRJkGdD1esNO7kM/1H8Vza
+ UrxBB3HyZ66vI/Yi2Ami7MM0q76M9pa2jOG7Ccpw1uZTLxbvv/4BR24DS29z1qiuJVhLsyQNg
+ 3b3ODKQZDUfkc0iYofkusUd02H2V3lR3l/eJORPVFA6UQqULEBNfpNklGrkLrdrjC7cz+1Mpd
+ xp873FuWuuDmRtDMynTZc3P0WfeZCTBn6KT6UNGl03lNgT8rAbhOppEIkmVR/ZdwTAByfiFef
+ jQF+4QjoaRFDLTr22nEe7QnMVmKtrMiso7hXP+Gz4JTPE9jXK82jsi6YwSq015qR8eLA/1fMQ
+ 848Rjbp8SkaEvdSwsK1wSTI3mbAR1J0yG7LFFtW+m1jAsb2nZ4J43vsSUgrca0cQbWeiZ6Riz
+ iDaiWwJrbVgikYGF+xDam+ngJ6gAOiUg8fkp0c25Brx07gtJ/6B782M8+J8m1bVd8JuU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+When compile-testing the pwm driver without also enabling the
+stm32_timers MFD, we run into a link error:
 
-Here are a few arm64 fixes for -rc7. The two main fixes are for the asm
-constraints in our LSE atomics and for our pmd/pud setters when changing
-permissions for kernel mappings. Summary in the tag.
+drivers/pwm/pwm-stm32.o: In function `stm32_pwm_raw_capture.isra.6':
+pwm-stm32.c:(.text+0xcb0): undefined reference to `stm32_timers_dma_burst_read'
 
-Please pull,
+We don't need the '|| COMPILE_TEST' here, since stm32_timers itself
+can be built with CONFIG_COMPILE_TEST on all architectures, so we do
+get the coverage through allmodconfig and randconfig builds even
+when we make it a hard dependency.
 
-Will
+Fixes: 7edf7369205b ("pwm: Add driver for STM32 plaftorm")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pwm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---->8
-
-The following changes since commit 771c577c23bac90597c685971d7297ea00f99d11:
-
-  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 82034c23fcbc2389c73d97737f61fa2dd6526413:
-
-  arm64: Make sure permission updates happen for pmd/pud (2018-05-24 11:19:31 +0100)
-
-----------------------------------------------------------------
-More arm64 fixes:
-
-- Fix application of read-only permissions to kernel section mappings
-
-- Sanitise reported ESR values for signals delivered on a kernel address
-
-- Ensure tishift GCC helpers are exported to modules
-
-- Fix inline asm constraints for some LSE atomics
-
-----------------------------------------------------------------
-Jason A. Donenfeld (1):
-      arm64: export tishift functions to modules
-
-Laura Abbott (1):
-      arm64: Make sure permission updates happen for pmd/pud
-
-Peter Maydell (1):
-      arm64: fault: Don't leak data in ESR context for user fault on kernel VA
-
-Will Deacon (1):
-      arm64: lse: Add early clobbers to some input/output asm operands
-
- arch/arm64/include/asm/atomic_lse.h | 24 ++++++++---------
- arch/arm64/kernel/arm64ksyms.c      |  8 ++++++
- arch/arm64/lib/tishift.S            | 15 ++---------
- arch/arm64/mm/fault.c               | 51 +++++++++++++++++++++++++++++++++++++
- arch/arm64/mm/mmu.c                 | 16 +++++++-----
- 5 files changed, 83 insertions(+), 31 deletions(-)
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 4635cb35008c..a4d262db9945 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -401,7 +401,7 @@ config PWM_STI
+ 
+ config PWM_STM32
+ 	tristate "STMicroelectronics STM32 PWM"
+-	depends on MFD_STM32_TIMERS || COMPILE_TEST
++	depends on MFD_STM32_TIMERS
+ 	help
+ 	  Generic PWM framework driver for STM32 SoCs.
+ 
+-- 
+2.9.0
