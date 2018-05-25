@@ -1,81 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968460AbeEYVGh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:06:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40265 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968376AbeEYVGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:06:36 -0400
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com>
- <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com>
- <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
- <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com>
- <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
- <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com>
- <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
- <31A5469A-176F-451F-886A-ECD649DDC78C@zytor.com>
- <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
- <A042BB2E-FACF-4AE0-8B1E-716061666C5F@zytor.com>
- <CAKwvOdkWsxoyXCnQz+Xwh0RQ0yPPVD3iCqVaWAimW_Z4QU0XiA@mail.gmail.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <38f21c66-fa34-3a77-33bc-d15065c15af9@zytor.com>
-Date: Fri, 25 May 2018 14:06:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAKwvOdkWsxoyXCnQz+Xwh0RQ0yPPVD3iCqVaWAimW_Z4QU0XiA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1030296AbeEYVIX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:08:23 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:50037 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968376AbeEYVIW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 17:08:22 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: sunxi: mark PM functions as __maybe_unused
+Date: Fri, 25 May 2018 23:07:42 +0200
+Message-Id: <20180525210752.1794502-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:1tau9DkHdvzXdx1rmlnNedUZAtEcCsULpVUWZY9PJKqYXvuKts8
+ 8cud7qqENKSP3Cr6rMwZrcGels0in+cT9klDT0nPI5xyyp1ZVs6XfIwGjDIwJlaTOcdBMRL
+ WzIY72fjk1P3ZzAalEXIHFu4NOX2kZN1McqQGU3YFR5aGn/TRioCMH1YjJPFjW9tTFojScg
+ RjmZmQJdorjWMvZFfIUkg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nBzFG2o06pc=:XFFPVm55PpQERwF0ile6rz
+ YaJfws7imjQRcYBMsOtf5rGPWe/EnbRnBlyQLRO0YDhEt01gzLpbaWUKJGs9jGhdbE0moKjJQ
+ C6DvRUeyR2sxoVd4AVpJX5deztSfYbKvvZXzTp3M4m/BbgLuaYdTNImgyFITPUf2Z+tIMfrpt
+ WSDOqWfBLMzKa+Cc871N/CWZ/Dpmx/vhjTlkc4h4rPtgsDiibjRWVH4fKsDK2H/fs3fnvjrLg
+ qQOEsANmu+IkWP2BQXoW2v69/VGhqiLb1iBdyeCbV6DZA7Gl+hX8x0n70lPicNUi/RMcaFVkU
+ Rty1GW4uF1mCQws2UyV/ODnGW6NN+Br8TBUTbI8wjBxT9yHlpf5Fvu1MtTvrM+95Jho0w2UnX
+ xofHrhpW49pLW7sXpVzwLGnhlh38JnIExBcJ/v18t8zhR1Kc2T3vSUDl7RplFGVj+BLV95ZN5
+ iEEOXf7I8xP7g4jfIZoMfnHGkJWML5Yp1bZ7WssQccztIe+jnaohc1r7uQAGBu5W9EXJe/fPT
+ mlhyW9Rt2ZbS07h923Cji9UI+Sa0gtNCi9kGcHJb5CGrTPU+xPkGiZrSwN+XTIRqRmyNc15K/
+ Nb5hqkamcWBTxAlqGgY10C/bin9wHuSNchD8VcUmm/ePdGQjS8yzUtBLcFCoSCwtT1x5IIouf
+ v0YHGtdxfAsA5mvQqfqlZjQKIbeWZ5Gv965OomUDlJmAjMaRVTHIpuP0I9k+tSfjksaU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/25/18 13:36, Nick Desaulniers wrote:
-> On Fri, May 25, 2018 at 10:56 AM <hpa@zytor.com> wrote:
->> You need the extern inline in the .h file and the out-of-line .S file
-> both.
-> 
-> But the out-of-line .S file looks like:
-> 
-> ...
->     10 ENTRY(native_save_fl)
-> 
->     11   pushf
-> 
->     12   pop %_ASM_AX
-> 
->     13   ret
-> 
->     14 ENDPROC(native_save_fl)
-> 
->     15 EXPORT_SYMBOL(native_save_fl)
-> ...
-> 
-> I don't see how you can specify to the linker from assembly source that
-> this function should be treated as `extern inline`?
-> 
+The newly added runtime-pm functions cause a harmless warning
+when CONFIG_PM is disabled:
 
-"extern inline" is a C directive. In the header file you should provide
-the inlinable implementation (which is already there.) It means that "if
-you don't want to inline this there is an external implementation
-available."
+drivers/mmc/host/sunxi-mmc.c:1452:12: error: 'sunxi_mmc_runtime_suspend' defined but not used [-Werror=unused-function]
+ static int sunxi_mmc_runtime_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/mmc/host/sunxi-mmc.c:1435:12: error: 'sunxi_mmc_runtime_resume' defined but not used [-Werror=unused-function]
+ static int sunxi_mmc_runtime_resume(struct device *dev)
 
+This marks them as __maybe_unused to shut up the warning.
 
-> I assume you don't literally mean the C keywords `extern inline` but
-> whatever the equivalent incantation is needed in terms of assembler
-> directives (which I also don't know).
-> 
-> I'm beginning to think that what you'd like to see cannot be expressed (at
-> least via `extern inline`).
-> 
+Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mmc/host/sunxi-mmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 97c6b79b7d6f..837888b96bd3 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1432,7 +1432,7 @@ static int sunxi_mmc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int sunxi_mmc_runtime_resume(struct device *dev)
++static int __maybe_unused sunxi_mmc_runtime_resume(struct device *dev)
+ {
+ 	struct mmc_host	*mmc = dev_get_drvdata(dev);
+ 	struct sunxi_mmc_host *host = mmc_priv(mmc);
+@@ -1449,7 +1449,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int sunxi_mmc_runtime_suspend(struct device *dev)
++static int __maybe_unused sunxi_mmc_runtime_suspend(struct device *dev)
+ {
+ 	struct mmc_host	*mmc = dev_get_drvdata(dev);
+ 	struct sunxi_mmc_host *host = mmc_priv(mmc);
+-- 
+2.9.0
