@@ -1,169 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935647AbeEYFBS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 01:01:18 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42890 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935256AbeEYFBO (ORCPT
+        id S935716AbeEYFBl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 01:01:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54056 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934017AbeEYFBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 01:01:14 -0400
-X-Google-Smtp-Source: AB8JxZpaGyLDIHAYkfaHx1ik354MJnhwFYHsRIm8kL/weYBr/rrNZ+owiEcSMMQcG5u+Cx4qLI68+Q==
-Date: Fri, 25 May 2018 10:31:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, liuwei@actions-semi.com,
-        96boards@ucrobotics.com,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-        <devicetree@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
-        Jeff Chen <jeff.chen@actions-semi.com>
-Subject: Re: [PATCH v2 5/5] MAINTAINERS: Add Actions Semi S900 pinctrl entries
-Message-ID: <20180525050103.3hg3u2v5mvftqhht@linaro.org>
-References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
- <20180520051736.4842-6-manivannan.sadhasivam@linaro.org>
- <CACRpkdYF7a-uwye0uwn-pT9Bprj74q1-Pcbq4WLyiE+kYY4j7w@mail.gmail.com>
- <25d1c303-71d7-8c38-880f-7bb0e133a876@suse.de>
+        Fri, 25 May 2018 01:01:39 -0400
+Date: Thu, 24 May 2018 22:01:14 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: Re: [PATCH 2/7] dax: change bdev_dax_supported() to support boolean
+ returns
+Message-ID: <20180525050114.GE4507@magnolia>
+References: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
+ <20180525025518.11405-3-ross.zwisler@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <25d1c303-71d7-8c38-880f-7bb0e133a876@suse.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180525025518.11405-3-ross.zwisler@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8903 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805250060
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
-
-On Fri, May 25, 2018 at 06:12:00AM +0200, Andreas Färber wrote:
-> Am 23.05.2018 um 10:40 schrieb Linus Walleij:
-> > On Sun, May 20, 2018 at 7:17 AM, Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > 
-> >> Add S900 pinctrl entries under ARCH_ACTIONS
-> >>
-> >> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > Patch applied tentatively so we have some maintenance entry for this.
-> > 
-> > Andreas expressed concerns about the driver earlier, so he might want it
-> > split from the platform parts and have a separate entry for the pinctrl+GPIO
-> > so Manivannan can maintain that part, also it makes sense to list
-> > Manivannan as comaintainer of ARCH_ACTIONS with this in.
-> > 
-> > Andreas: how would you like to proceed?
-> > 
-> > I understand that I was a bit pushy or even rude in my last message
-> > about the maintenance of this platform and the code structure of
-> > the pin control driver. I am sorry if it caused any bad feelings on your
-> > side :( social conflicts give me the creeps, I just try my best. Maybe
-> > my best isn't always what it should be.
+On Thu, May 24, 2018 at 08:55:13PM -0600, Ross Zwisler wrote:
+> From: Dave Jiang <dave.jiang@intel.com>
 > 
-> I fail to understand how splitting the MAINTAINERS section is going to
-> help with the pinctrl conflict at hand? The problem is that instead of
-> refactoring my S500 pinctrl driver to his liking, Mani has submitted a
-> competing S900 pinctrl driver that you went on to merge. The human
-> aspect is that merging his driver took the credit away from me having
-> written the earlier pinctrl driver (based on my rtd1295 pinctrl driver).
-> The practical aspect is that I can't drop my pinctrl driver from my work
-> branch until there is equivalent functionality in the merged driver. I
-> am lacking the time to rewrite S500 pin definitions on top of Mani's
-> myself at this time, and I haven't seen S500 patches from him yet.
+> The function return values are confusing with the way the function is
+> named. We expect a true or false return value but it actually returns
+> 0/-errno.  This makes the code very confusing. Changing the return values
+> to return a bool where if DAX is supported then return true and no DAX
+> support returns false.
 > 
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-I think we discussed this few more times before and I clearly mentioned this
-pinctrl driver confilct in my old pinctrl series cover letter. If you had
-submitted your pinctrl driver then Linus would had the option of picking up the
-most robust one. But sadly you didn't had any time to complete and submit
-yours and since there was only one pinctrl driver floating for Actions, Linus
-went and merged mine.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Regarding the S500/S700 support, again I told you that my goal is to set up the
-base driver for Actions OWL series SoC first and then adding support for every
-other SoC's of the same family later. Now, I have succeeded in setting up the
-clock, pinctrl and gpio drivers, so I can now work on extending support for
-other SoC's as well.
+--D
 
-FYI, I have ordered S700 based Cubieboard and will work on adding support for
-that first. I still don't have access to S500 board yet since it is not
-available on my region. Will find a way to get this asap.
-
-> Also I had been investing efforts in explaining the upstreaming process
-> to Actions, last in November. I see Thomas Liau and Jeff Chen missing in
-> CC and I have not seen any Reviewed-by or Acked-by from anyone at
-> Actions on this and the preceding series. There are more chips than the
-> one on Linaro's 96board, so I would prefer to assure that the design
-> works for all. Thus I am very critical of you applying the patches
-> without waiting for review by Actions.
->
-
-I don't think Actions would be interested in any upstreaming efforts. It
-is our (comunity) responsibility to add support for that in order to
-have our boards running mainline kernel and that's what we both have been
-doing. Moreover I only saw once David Liau responded to your patchset and
-there isn't much further. So how can you expect the subsystem maintainer's
-to hold the patch series waiting for a so far silent SoC manufacturer's
-response?
-
-We should get move on and since my drivers are completely tested, we can
-work on adding more SoC support later. And if something breaks on other
-SoC platform, we can always modify the base driver accordingly.
-
-> Other aspects are: The reason I wrote the pinctrl driver is that I
-> experienced a UART TX issue on the Sparky board and was hoping a pinctrl
-> driver might resolve that, but it didn't. So I still have a mix of
-> boards where some are working and some are pretty unusable, without any
-> clues on why.
+> ---
+>  drivers/dax/super.c | 16 ++++++++--------
+>  fs/ext2/super.c     |  3 +--
+>  fs/ext4/super.c     |  3 +--
+>  fs/xfs/xfs_ioctl.c  |  4 ++--
+>  fs/xfs/xfs_super.c  | 12 ++++++------
+>  include/linux/dax.h |  6 +++---
+>  6 files changed, 21 insertions(+), 23 deletions(-)
 > 
-> That said, I don't object to having a separate MAINTAINERS section for
-> the pinctrl driver(s) as long as I still get CC'ed on changes. We have
-> wanted to add Mani as R for Actions overall, so that would probably mean
-> adding me as R to an Actions pinctrl section, to avoid syncing the paths
-> between two sections. I had previously felt that it does not make sense
-> to list Mani as co-maintainer (M) for Actions overall since he can't tag
-> and submit from my repo. And for the record I have offered him to take
-> over which he didn't want to. I still hope to find some more time to
-> review and queue his SPS patches, a driver that I have designed and thus
-> understand and am much happier about the incremental additions there.
-> 
-
-Yes I agree that you offered me to take the Maintainership once through
-IRC conversation, but I kind of refused it because I don't want to completely
-take over the maintainership role from you since you did a great job in
-getting the base SoC support mainlined initially. On the other hand, I
-did ask you to add me as Co-Maintainer but you didn't responded to that.
-I know that I can't send any pull requests to Arnd, but we should sort
-it out IMO. Also, if you are completely swamped, then I take take up the
-maintainership role now inorder to keep the things moving. TBH I don't
-want my patches to be floating for months without any reason.
-
-> A further side note is that I had reached out about setting up an
-> infradead mailing list linux-actions, but there was no response from
-> David or anyone. Having an L on the section(s) would avoid messing with
-> R and hand-maintained CC lists. Any help with that appreciated.
-> 
-
-This is something we have to look out for and I will also see the possibility
-of setting up the mailing list from my side.
-
-Thanks for all of your great efforts!
-
-Regards,
-Mani
-
-> Regards,
-> Andreas
-> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index 9206539c8330..e5447eddecf8 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -80,9 +80,9 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+>   * This is a library function for filesystems to check if the block device
+>   * can be mounted with dax option.
+>   *
+> - * Return: negative errno if unsupported, 0 if supported.
+> + * Return: true if supported, false if unsupported
+>   */
+> -int bdev_dax_supported(struct block_device *bdev, int blocksize)
+> +bool bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  {
+>  	struct dax_device *dax_dev;
+>  	pgoff_t pgoff;
+> @@ -95,21 +95,21 @@ int bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  	if (blocksize != PAGE_SIZE) {
+>  		pr_debug("%s: error: unsupported blocksize for dax\n",
+>  				bdevname(bdev, buf));
+> -		return -EINVAL;
+> +		return false;
+>  	}
+>  
+>  	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
+>  	if (err) {
+>  		pr_debug("%s: error: unaligned partition for dax\n",
+>  				bdevname(bdev, buf));
+> -		return err;
+> +		return false;
+>  	}
+>  
+>  	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+>  	if (!dax_dev) {
+>  		pr_debug("%s: error: device does not support dax\n",
+>  				bdevname(bdev, buf));
+> -		return -EOPNOTSUPP;
+> +		return false;
+>  	}
+>  
+>  	id = dax_read_lock();
+> @@ -121,7 +121,7 @@ int bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  	if (len < 1) {
+>  		pr_debug("%s: error: dax access failed (%ld)\n",
+>  				bdevname(bdev, buf), len);
+> -		return len < 0 ? len : -EIO;
+> +		return false;
+>  	}
+>  
+>  	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
+> @@ -139,10 +139,10 @@ int bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  	} else {
+>  		pr_debug("%s: error: dax support not enabled\n",
+>  				bdevname(bdev, buf));
+> -		return -EOPNOTSUPP;
+> +		return false;
+>  	}
+>  
+> -	return 0;
+> +	return true;
+>  }
+>  EXPORT_SYMBOL_GPL(bdev_dax_supported);
+>  #endif
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 9627c3054b5c..c09289a42dc5 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -961,8 +961,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
+>  
+>  	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
+> -		err = bdev_dax_supported(sb->s_bdev, blocksize);
+> -		if (err) {
+> +		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+>  			ext2_msg(sb, KERN_ERR,
+>  				"DAX unsupported by block device. Turning off DAX.");
+>  			sbi->s_mount_opt &= ~EXT2_MOUNT_DAX;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 089170e99895..2e1622907f4a 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -3732,8 +3732,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+>  					" that may contain inline data");
+>  			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
+>  		}
+> -		err = bdev_dax_supported(sb->s_bdev, blocksize);
+> -		if (err) {
+> +		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+>  			ext4_msg(sb, KERN_ERR,
+>  				"DAX unsupported by block device. Turning off DAX.");
+>  			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 0effd46b965f..2c70a0a4f59f 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -1103,8 +1103,8 @@ xfs_ioctl_setattr_dax_invalidate(
+>  	if (fa->fsx_xflags & FS_XFLAG_DAX) {
+>  		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+>  			return -EINVAL;
+> -		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
+> -				sb->s_blocksize) < 0)
+> +		if (!bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
+> +				sb->s_blocksize))
+>  			return -EINVAL;
+>  	}
+>  
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 62188c2a4c36..86915dc40eed 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1690,17 +1690,17 @@ xfs_fs_fill_super(
+>  		sb->s_flags |= SB_I_VERSION;
+>  
+>  	if (mp->m_flags & XFS_MOUNT_DAX) {
+> -		int	error2 = 0;
+> +		bool rtdev_is_dax = false, datadev_is_dax;
+>  
+>  		xfs_warn(mp,
+>  		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+>  
+> -		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
+> -				sb->s_blocksize);
+> +		datadev_is_dax = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
+> +			sb->s_blocksize);
+>  		if (mp->m_rtdev_targp)
+> -			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
+> -					sb->s_blocksize);
+> -		if (error && error2) {
+> +			rtdev_is_dax = bdev_dax_supported(
+> +				mp->m_rtdev_targp->bt_bdev, sb->s_blocksize);
+> +		if (!rtdev_is_dax && !datadev_is_dax) {
+>  			xfs_alert(mp,
+>  			"DAX unsupported by block device. Turning off DAX.");
+>  			mp->m_flags &= ~XFS_MOUNT_DAX;
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 509a85ac8470..547eb33dbc9e 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -64,7 +64,7 @@ static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
+>  struct writeback_control;
+>  int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+>  #if IS_ENABLED(CONFIG_FS_DAX)
+> -int bdev_dax_supported(struct block_device *bdev, int blocksize);
+> +bool bdev_dax_supported(struct block_device *bdev, int blocksize);
+>  static inline struct dax_device *fs_dax_get_by_host(const char *host)
+>  {
+>  	return dax_get_by_host(host);
+> @@ -79,10 +79,10 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+>  		struct block_device *bdev, struct writeback_control *wbc);
+>  #else
+> -static inline int bdev_dax_supported(struct block_device *bdev,
+> +static inline bool bdev_dax_supported(struct block_device *bdev,
+>  		int blocksize)
+>  {
+> -	return -EOPNOTSUPP;
+> +	return false;
+>  }
+>  
+>  static inline struct dax_device *fs_dax_get_by_host(const char *host)
 > -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+> 2.14.3
+> 
