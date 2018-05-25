@@ -1,28 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965667AbeEYJsQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:48:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53901 "EHLO
+        id S965687AbeEYJs0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:48:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39351 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965252AbeEYJsO (ORCPT
+        with ESMTP id S965671AbeEYJsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:48:14 -0400
-Date: Fri, 25 May 2018 02:47:20 -0700
-From: tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-4ff648decf4712d39f184fc2df3163f43975575a@git.kernel.org>
-Cc: peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        bigeasy@linutronix.de, man@keba.com, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, torvalds@linux-foundation.org, mingo@kernel.org
-Reply-To: tglx@linutronix.de, peterz@infradead.org,
-        torvalds@linux-foundation.org, mingo@kernel.org, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, man@keba.com, bigeasy@linutronix.de,
-        hpa@zytor.com
-In-Reply-To: <20180524132647.gg6ziuogczdmjjzu@linutronix.de>
-References: <20180524132647.gg6ziuogczdmjjzu@linutronix.de>
+        Fri, 25 May 2018 05:48:21 -0400
+Date: Fri, 25 May 2018 02:47:54 -0700
+From: tip-bot for Patrick Bellasi <tipbot@zytor.com>
+Message-ID: <tip-8ecf04e11283a28ca88b8b8049ac93c3a99fcd2c@git.kernel.org>
+Cc: joelaf@google.com, smuckle@google.com, juri.lelli@redhat.com,
+        viresh.kumar@linaro.org, dietmar.eggemann@arm.com,
+        peterz@infradead.org, rafael.j.wysocki@intel.com, tglx@linutronix.de,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        patrick.bellasi@arm.com, torvalds@linux-foundation.org,
+        morten.rasmussen@arm.com, hpa@zytor.com, mingo@kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
+        morten.rasmussen@arm.com, patrick.bellasi@arm.com,
+        linux-kernel@vger.kernel.org, vincent.guittot@linaro.org,
+        tglx@linutronix.de, rafael.j.wysocki@intel.com, peterz@infradead.org,
+        dietmar.eggemann@arm.com, viresh.kumar@linaro.org, smuckle@google.com,
+        juri.lelli@redhat.com, joelaf@google.com
+In-Reply-To: <20180524141023.13765-2-patrick.bellasi@arm.com>
+References: <20180524141023.13765-2-patrick.bellasi@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched, tracing: Fix trace_sched_pi_setprio() for
- deboosting
-Git-Commit-ID: 4ff648decf4712d39f184fc2df3163f43975575a
+Subject: [tip:sched/core] sched/cpufreq: Modify aggregate utilization to
+ always include blocked FAIR utilization
+Git-Commit-ID: 8ecf04e11283a28ca88b8b8049ac93c3a99fcd2c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,59 +40,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4ff648decf4712d39f184fc2df3163f43975575a
-Gitweb:     https://git.kernel.org/tip/4ff648decf4712d39f184fc2df3163f43975575a
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Thu, 24 May 2018 15:26:48 +0200
+Commit-ID:  8ecf04e11283a28ca88b8b8049ac93c3a99fcd2c
+Gitweb:     https://git.kernel.org/tip/8ecf04e11283a28ca88b8b8049ac93c3a99fcd2c
+Author:     Patrick Bellasi <patrick.bellasi@arm.com>
+AuthorDate: Thu, 24 May 2018 15:10:22 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 25 May 2018 08:04:01 +0200
+CommitDate: Fri, 25 May 2018 08:04:52 +0200
 
-sched, tracing: Fix trace_sched_pi_setprio() for deboosting
+sched/cpufreq: Modify aggregate utilization to always include blocked FAIR utilization
 
-Since the following commit:
+Since the refactoring introduced by:
 
-  b91473ff6e97 ("sched,tracing: Update trace_sched_pi_setprio()")
+   commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
 
-the sched_pi_setprio trace point shows the "newprio" during a deboost:
+we aggregate FAIR utilization only if this class has runnable tasks.
 
-  |futex sched_pi_setprio: comm=futex_requeue_p pid"34 oldprio newprio=3D98
-  |futex sched_switch: prev_comm=futex_requeue_p prev_pid"34 prev_prio=120
+This was mainly due to avoid the risk to stay on an high frequency just
+because of the blocked utilization of a CPU not being properly decayed
+while the CPU was idle.
 
-This patch open codes __rt_effective_prio() in the tracepoint as the
-'newprio' to get the old behaviour back / the correct priority:
+However, since:
 
-  |futex sched_pi_setprio: comm=futex_requeue_p pid"20 oldprio newprio=3D120
-  |futex sched_switch: prev_comm=futex_requeue_p prev_pid"20 prev_prio=120
+   commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
 
-Peter suggested to open code the new priority so people using tracehook
-could get the deadline data out.
+the FAIR blocked utilization is properly decayed also for IDLE CPUs.
 
-Reported-by: Mansky Christian <man@keba.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+This allows us to use the FAIR blocked utilization as a safe mechanism
+to gracefully reduce the frequency only if no FAIR tasks show up on a
+CPU for a reasonable period of time.
+
+Moreover, we also reduce the frequency drops of CPUs running periodic
+tasks which, depending on the task periodicity and the time required
+for a frequency switch, was increasing the chances to introduce some
+undesirable performance variations.
+
+Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: b91473ff6e97 ("sched,tracing: Update trace_sched_pi_setprio()")
-Link: http://lkml.kernel.org/r/20180524132647.gg6ziuogczdmjjzu@linutronix.de
+Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
+Cc: Steve Muckle <smuckle@google.com>
+Link: http://lkml.kernel.org/r/20180524141023.13765-2-patrick.bellasi@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/trace/events/sched.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index bc01e06bc716..0be866c91f62 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -435,7 +435,9 @@ TRACE_EVENT(sched_pi_setprio,
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
- 		__entry->pid		= tsk->pid;
- 		__entry->oldprio	= tsk->prio;
--		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
-+		__entry->newprio	= pi_task ?
-+				min(tsk->normal_prio, pi_task->prio) :
-+				tsk->normal_prio;
- 		/* XXX SCHED_DEADLINE bits missing */
- 	),
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index e13df951aca7..28592b62b1d5 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+ {
+ 	struct rq *rq = cpu_rq(sg_cpu->cpu);
+-	unsigned long util;
  
+-	if (rq->rt.rt_nr_running) {
+-		util = sg_cpu->max;
+-	} else {
+-		util = sg_cpu->util_dl;
+-		if (rq->cfs.h_nr_running)
+-			util += sg_cpu->util_cfs;
+-	}
++	if (rq->rt.rt_nr_running)
++		return sg_cpu->max;
+ 
+ 	/*
++	 * Utilization required by DEADLINE must always be granted while, for
++	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
++	 * gracefully reduce the frequency when no tasks show up for longer
++	 * periods of time.
++	 *
+ 	 * Ideally we would like to set util_dl as min/guaranteed freq and
+ 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+ 	 * ready for such an interface. So, we only do the latter for now.
+ 	 */
+-	return min(util, sg_cpu->max);
++	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+ }
+ 
+ static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
