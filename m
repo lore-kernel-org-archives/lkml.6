@@ -1,149 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965798AbeEYJt1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:49:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58369 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965457AbeEYJtY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:49:24 -0400
-Date: Fri, 25 May 2018 02:48:59 -0700
-From: tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-a1150c202207cc8501bebc45b63c264f91959260@git.kernel.org>
-Cc: songliubraving@fb.com, eranian@google.com, peterz@infradead.org,
-        hpa@zytor.com, mingo@kernel.org, kernel-team@fb.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, acme@redhat.com, vincent.weaver@maine.edu
-Reply-To: vincent.weaver@maine.edu, jolsa@redhat.com, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-        kernel-team@fb.com, peterz@infradead.org, eranian@google.com,
-        songliubraving@fb.com, hpa@zytor.com
-In-Reply-To: <20180503194716.162815-1-songliubraving@fb.com>
-References: <20180503194716.162815-1-songliubraving@fb.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core: Fix group scheduling with mixed hw and
- sw events
-Git-Commit-ID: a1150c202207cc8501bebc45b63c264f91959260
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S965822AbeEYJtw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:49:52 -0400
+Received: from mail-he1eur01on0059.outbound.protection.outlook.com ([104.47.0.59]:2128
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965486AbeEYJts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:49:48 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: RE: [PATCH V2 2/4] clk: add new APIs to operate on all available
+ clocks
+Thread-Topic: [PATCH V2 2/4] clk: add new APIs to operate on all available
+ clocks
+Thread-Index: AQHTwMOVeEEr+AzEv0OvX/23PdxhP6PeDmCAgGKLRnA=
+Date: Fri, 25 May 2018 09:49:45 +0000
+Message-ID: <AM0PR04MB42110066C43E037F2E0501CB80690@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+ <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
+ <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
+In-Reply-To: <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4210;7:xY6pTVrX9Nh5RoV0niwlpN8K+Cu7dP5fuiwo3OA3PuRgMoefoAqlR5UpummJ5s7VAIAcQ5EVcCPyCKtKo4yKwZj3xvLKhzhaBgwUK27csGpRQ+SiEzG7bY4PofIG13PaLKhOxjWZZ7DhdSV2xqSxeyi+75u7AeCTM2ZK/jsS7TEOpiFKt5ifp+QHZGxcfbOwgnXEiOrMXGtwnHChwHnnfamtHHU41HsQT9hJ4FOYXANtl/GegKVgQyMefntzkwh5
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4210;
+x-ms-traffictypediagnostic: AM0PR04MB4210:
+x-microsoft-antispam-prvs: <AM0PR04MB4210E6E63DF2B20538C9D2FB80690@AM0PR04MB4210.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(258649278758335)(7411616537696);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4210;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4210;
+x-forefront-prvs: 06833C6A67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(366004)(39860400002)(376002)(346002)(377424004)(199004)(189003)(13464003)(8936002)(6246003)(478600001)(3846002)(6116002)(53936002)(2906002)(14454004)(6436002)(66066001)(53546011)(7696005)(68736007)(3280700002)(76176011)(229853002)(99286004)(102836004)(6506007)(9686003)(81166006)(81156014)(55016002)(8676002)(3660700001)(25786009)(4326008)(2501003)(7416002)(7736002)(305945005)(105586002)(106356001)(86362001)(5660300001)(5250100002)(74316002)(97736004)(476003)(26005)(2900100001)(486006)(110136005)(186003)(54906003)(316002)(33656002)(446003)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4210;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: NLH2HxHKX7Hf+8a9bSMqKyZcrWi1LDHznvh/zBVdSNcJL2Ta/6a3cYjkR5fN732yHAgsvNvLTG5iNOBhwqCgHD6CNc0hbRCqoJwPJjCKs4G5S+hruAUCDXkGpk8L9HfP1AfFdAU0kkmrz+Ate8x1rV+ZENqMT2sqBLALWTyUPlNrQ1nJwc/S5zjsaz41syK8
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-MS-Office365-Filtering-Correlation-Id: 28e811e0-3c51-4998-3e1e-08d5c224d8bb
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28e811e0-3c51-4998-3e1e-08d5c224d8bb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2018 09:49:45.2772
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4210
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4P9nud1010523
 
-Commit-ID:  a1150c202207cc8501bebc45b63c264f91959260
-Gitweb:     https://git.kernel.org/tip/a1150c202207cc8501bebc45b63c264f91959260
-Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Thu, 3 May 2018 12:47:16 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 25 May 2018 08:11:10 +0200
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@kernel.org]
+> Sent: Saturday, March 24, 2018 12:57 AM
+> To: A.s. Dong <aisheng.dong@nxp.com>; linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> mturquette@baylibre.com; hdegoede@redhat.com;
+> b.zolnierkie@samsung.com; linux@armlinux.org.uk; linux-
+> fbdev@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; A.s. Dong
+> <aisheng.dong@nxp.com>; Stephen Boyd <sboyd@codeaurora.org>;
+> Masahiro Yamada <yamada.masahiro@socionext.com>
+> Subject: Re: [PATCH V2 2/4] clk: add new APIs to operate on all available
+> clocks
+> 
+> Quoting Dong Aisheng (2018-03-20 20:19:49)
+> > @@ -50,6 +52,38 @@ static int __must_check of_clk_bulk_get(struct
+> device_node *np, int num_clks,
+> >         return ret;
+> >  }
+> >  EXPORT_SYMBOL(of_clk_bulk_get);
+> > +
+> > +static int __must_check of_clk_bulk_get_all(struct device_node *np,
+> > +                                           struct clk_bulk_data
+> > +**clks) {
+> > +       struct clk_bulk_data *clk_bulk;
+> > +       int num_clks;
+> > +       int ret;
+> > +
+> > +       num_clks = of_clk_get_parent_count(np);
+> > +       if (!num_clks)
+> > +               return 0;
+> > +
+> > +       clk_bulk = kcalloc(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
+> 
+> Can be kmalloc_array? of_clk_bulk_get() already clears things out
+> appropriately.
 
-perf/core: Fix group scheduling with mixed hw and sw events
+Yes, indeed. Will use kmalloc_array instead.
 
-When hw and sw events are mixed in the same group, they are all attached
-to the hw perf_event_context. This sometimes requires moving group of
-perf_event to a different context.
+> 
+> > +       if (!clk_bulk)
+> > +               return -ENOMEM;
+> > +
+> > +       ret = of_clk_bulk_get(np, num_clks, clk_bulk);
+> > +       if (ret) {
+> > +               kfree(clk_bulk);
+> > +               return ret;
+> > +       }
+> > +
+> > +       *clks = clk_bulk;
+> > +
+> > +       return num_clks;
+> > +}
+> > +#else
+> > +static int __must_check of_clk_bulk_get_all(struct device_node *np,
+> > +                                           struct clk_bulk_data
+> > +**clks) {
+> > +       return -ENOENT;
+> > +}
+> >  #endif
+> 
+> This else can probably be dropped too.
+> 
 
-We found a bug in how the kernel handles this, for example if we do:
+Right.
 
-   perf stat -e '{faults,ref-cycles,faults}'  -I 1000
+> >
+> >  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) @@ -90,6
+> > +124,29 @@ int __must_check clk_bulk_get(struct device *dev, int
+> > num_clks,  }  EXPORT_SYMBOL(clk_bulk_get);
+> >
+> > +void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {
+> > +       if (IS_ERR_OR_NULL(clks))
+> > +               return;
+> > +
+> > +       clk_bulk_put(num_clks, clks);
+> > +
+> > +       kfree(clks);
+> > +}
+> > +EXPORT_SYMBOL(clk_bulk_put_all);
+> > +
+> > +int __must_check clk_bulk_get_all(struct device *dev,
+> > +                                 struct clk_bulk_data **clks) {
+> > +       struct device_node *np = dev_of_node(dev);
+> > +
+> > +       if (!np)
+> > +               return 0;
+> > +
+> > +       return of_clk_bulk_get_all(np, clks); }
+> > +EXPORT_SYMBOL(clk_bulk_get_all);
+> 
+> Looks better!
 
-     1.005591180              1,297      faults
-     1.005591180        457,476,576      ref-cycles
-     1.005591180    <not supported>      faults
+Thanks
 
-First, sw event "faults" is attached to the sw context, and becomes the
-group leader. Then, hw event "ref-cycles" is attached, so both events
-are moved to the hw context. Last, another sw "faults" tries to attach,
-but it fails because of mismatch between the new target ctx (from sw
-pmu) and the group_leader's ctx (hw context, same as ref-cycles).
-
-The broken condition is:
-   group_leader is sw event;
-   group_leader is on hw context;
-   add a sw event to the group.
-
-Fix this scenario by checking group_leader's context (instead of just
-event type). If group_leader is on hw context, use the ->pmu of this
-context to look up context for the new event.
-
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <kernel-team@fb.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: b04243ef7006 ("perf: Complete software pmu grouping")
-Link: http://lkml.kernel.org/r/20180503194716.162815-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/perf_event.h |  8 ++++++++
- kernel/events/core.c       | 21 +++++++++++----------
- 2 files changed, 19 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index e71e99eb9a4e..def866f7269b 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1016,6 +1016,14 @@ static inline int is_software_event(struct perf_event *event)
- 	return event->event_caps & PERF_EV_CAP_SOFTWARE;
- }
- 
-+/*
-+ * Return 1 for event in sw context, 0 for event in hw context
-+ */
-+static inline int in_software_context(struct perf_event *event)
-+{
-+	return event->ctx->pmu->task_ctx_nr == perf_sw_context;
-+}
-+
- extern struct static_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
- 
- extern void ___perf_sw_event(u32, u64, struct pt_regs *, u64);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 67612ce359ad..ce6aa5ff3c96 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10521,19 +10521,20 @@ SYSCALL_DEFINE5(perf_event_open,
- 	if (pmu->task_ctx_nr == perf_sw_context)
- 		event->event_caps |= PERF_EV_CAP_SOFTWARE;
- 
--	if (group_leader &&
--	    (is_software_event(event) != is_software_event(group_leader))) {
--		if (is_software_event(event)) {
-+	if (group_leader) {
-+		if (is_software_event(event) &&
-+		    !in_software_context(group_leader)) {
- 			/*
--			 * If event and group_leader are not both a software
--			 * event, and event is, then group leader is not.
-+			 * If the event is a sw event, but the group_leader
-+			 * is on hw context.
- 			 *
--			 * Allow the addition of software events to !software
--			 * groups, this is safe because software events never
--			 * fail to schedule.
-+			 * Allow the addition of software events to hw
-+			 * groups, this is safe because software events
-+			 * never fail to schedule.
- 			 */
--			pmu = group_leader->pmu;
--		} else if (is_software_event(group_leader) &&
-+			pmu = group_leader->ctx->pmu;
-+		} else if (!is_software_event(event) &&
-+			   is_software_event(group_leader) &&
- 			   (group_leader->group_caps & PERF_EV_CAP_SOFTWARE)) {
- 			/*
- 			 * In case the group is a pure software group, and we
+Regards
+Dong Aisheng
