@@ -1,69 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966572AbeEYP0Z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:26:25 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:37871 "EHLO
+        id S966629AbeEYP0u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:26:50 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:59881 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965710AbeEYP0Y (ORCPT
+        with ESMTP id S936185AbeEYP0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:26:24 -0400
+        Fri, 25 May 2018 11:26:48 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Brad Love <brad@nextdimension.cc>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hans.verkuil@cisco.com>,
-        Oleh Kravchenko <oleg@kaa.org.ua>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] media: cx231xx: fix RC_CORE dependency
-Date: Fri, 25 May 2018 17:25:10 +0200
-Message-Id: <20180525152523.2821369-3-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/5] media: omap2: fix compile-testing with FB_OMAP2=m
+Date: Fri, 25 May 2018 17:25:12 +0200
+Message-Id: <20180525152523.2821369-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180525152523.2821369-1-arnd@arndb.de>
 References: <20180525152523.2821369-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:88JGFdRo9RXsChw5Spmkf7mu/yotBmE9TqYOV0LsZehGmehGT+B
- ErpC6dspbuIlo4cxGTUJ0VfjVHl5MuXpVOCvt5m7wmWmI7Wna3me2nL5yDDRKz3irgv0gi5
- JMYsB2M+zLr4eB2/+l4oBenORcKjixJwI4/0GAhSXj3A/VR7yAxAUBOxjvDGC2R9yE/8c/E
- GwYlZSYUb1LCYA28CTEwg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:LSRIubGSrUE=:zrmKC7XpdoR2EE77TNQj0w
- a+DQ2Pris2XPZKhM4QVCqM7Y9cQpckqVDKJJ32BzwFxQ0m5LIx3P5SbA2hS5oOYplx7DzcnEc
- PCvlufVF4pY0XbVtHTG9L8ThoNkrlS6x3ArzEjJhn++Kq8bj68ZggethZnRyH/qijZ+S/Q1Uu
- 8KkRf7BeSL19Tw67AnKIvq72oyEVjqHrPMHtUneBi6DA3px7C6eya5l7FXwrnyGV2qUpXkZMp
- Ds9dv2hA+8iezMuSEV7/1jPwF/IXF8mS/bbNrXLZ35YCbPckvd8794O3H5ECONmvzVcBAEBYf
- HdxGxQ7s3AMBGhi59TEevhEcSXF1l/qk8k5pp7wAnI+GzSIIhv3pdclToZLwLULcHeVaZhKKH
- XWnVXUhhQhMu2RjvYe4DBKtOpHCv2xgIOMAt0Rh9tmclfTU2MKh1IjygvgEb4mLygyaptzozS
- GgGNL9HO0UaS94auTO02kgrkitQlaRHRDhjTiwVMfVjzzFGKsgVn9BNTEbAJW1lBvfC15mYR/
- KVbMk81l47LcIQ+tHbC39C3GMPfBp9VZJsJK1ZTmBjZKR+3ld0NNAO5gXaxbMrKoa6w6g2dki
- IkaIj31953a/aVrUFcF+AC4souvEZ6XuUVs760QwVZW/8+81G8jin06LdJIHnO25YoJHW6/Qj
- 8fEZ/RbtPOgA0elj1BaTZ45ZhMYMLGQAgo4K1OVW7vVoNP4V7W4/WYVhxvnGYvBYum/c=
+X-Provags-ID: V03:K1:cPjdStHgmjgkNsJHRdrFQFXyQAQpAlg3ebgj8XuUdU2b+hJiATX
+ HGCQqXfsis7F3xBPERVFOn414rqiEjyFeWMn2ih+SP60bivZOB83Guzn7pYAhquVWb2/W4u
+ ZI6lpnNDz9QdcgHsnF2F6NLf+XAGSpurOp4+FqFRDnZRRQtMwZsGRIPRItJ3FHPO3HBbI7P
+ NZFnqP0a4H/V7BM8qzT5g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5dh5rdLg1hw=:uXK/sAyipUsDC06bIsMNv/
+ zs2FVpKdRruQPXBzX+UKpz7sd+FhqFFU3tUtuo/x07X1W9NdZS8UWq5HcW4cE7Na1Yf1p6iRW
+ r80wmA8KMp5sc0xVIXTAcB8DLkdZeF/CY5mAgObVIUFslE3RuKCvTlSccq+0/bIgc1kwDsJNY
+ 1z+fOd5LTqbXluszsj/0EoahJ/6EXOUWNDnM7Ft6/nSt0vleV3HoodGH275F3qxOwnFDpKS41
+ xlitr7wn5CLjgktJew5Q705FkAIoLeJL0zgq9KU6bMZwlTzt43mDDKuDk+AnWUolFqylAN3mW
+ 1f/vP+LrW82NKk6qt6Gb8Whu1hcymRs+sIZN99UayxoRbErsPnqes0DKg1H3HtHudLBUWiCyP
+ ZEtGuxAyhOpuMTuL2IpRrRWbFXS9j/MMvqJ2ocb4p6jQz/aU/JD6XROZXuIFmd3IaelJpA6tU
+ l4qT0iO5RbNm7ez5exTEpphpZRl3O9TPJkZS0w/KNclPPLbNMgt9mvlpvTm6Q7Qro5qKc9X6/
+ bQWrdUhOJDgCI9DriRJxwWcZ2XlzYG5zpoQhzwdYMI41DB6joeiu0SoS7r9jWb5a1dT37XYhX
+ 0tZv8jQgt46Yb657+crMOm0VHmLLdKY7Qa3a130H4bdeh9vSqru8cWhvitekmfdqBk1MkD9i9
+ txNo1gWgde4JRP1N0McH3+N3h53BuE2LXpV/qhB3bsKVNWrB9ToDlbIrre2z5FQYREnk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_RC_CORE=m and VIDEO_CX231XX=y, we get a link failure:
+Compile-testing with FB_OMAP2=m results in a link error:
 
-drivers/media/usb/cx231xx/cx231xx-input.o: In function `cx231xx_ir_init':
-cx231xx-input.c:(.text+0xd4): undefined reference to `rc_allocate_device'
+drivers/media/platform/omap/omap_vout.o: In function `vidioc_streamoff':
+omap_vout.c:(.text+0x1028): undefined reference to `omap_dispc_unregister_isr'
+drivers/media/platform/omap/omap_vout.o: In function `omap_vout_release':
+omap_vout.c:(.text+0x1330): undefined reference to `omap_dispc_unregister_isr'
+drivers/media/platform/omap/omap_vout.o: In function `vidioc_streamon':
+omap_vout.c:(.text+0x2dd4): undefined reference to `omap_dispc_register_isr'
+drivers/media/platform/omap/omap_vout.o: In function `omap_vout_remove':
 
-This narrows down the dependency so that only valid configurations
-are allowed.
+In order to enable compile-testing but still keep the correct dependency,
+this changes the Kconfig logic so we only allow CONFIG_COMPILE_TEST
+building when FB_OMAP is completely disabled, or have use the old
+dependency on FB_OMAP to ensure VIDEO_OMAP2_VOUT is also a loadable
+module when FB_OMAP2 is.
 
-Fixes: 84545d2a1436 ("media: cx231xx: Remove RC_CORE dependency")
+Fixes: d8555fd2f452 ("media: omap2: allow building it with COMPILE_TEST && DRM_OMAP")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/media/usb/cx231xx/Kconfig | 2 +-
+ drivers/media/platform/omap/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/cx231xx/Kconfig b/drivers/media/usb/cx231xx/Kconfig
-index 0f13192634c7..9e5b3e7c3ef5 100644
---- a/drivers/media/usb/cx231xx/Kconfig
-+++ b/drivers/media/usb/cx231xx/Kconfig
-@@ -15,7 +15,7 @@ config VIDEO_CX231XX
- 
- config VIDEO_CX231XX_RC
- 	bool "Conexant cx231xx Remote Controller additional support"
--	depends on RC_CORE
-+	depends on RC_CORE=y || RC_CORE=VIDEO_CX231XX
- 	depends on VIDEO_CX231XX
- 	default y
- 	---help---
+diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform/omap/Kconfig
+index a414bcbb9b08..d827b6c285a6 100644
+--- a/drivers/media/platform/omap/Kconfig
++++ b/drivers/media/platform/omap/Kconfig
+@@ -6,7 +6,7 @@ config VIDEO_OMAP2_VOUT_VRFB
+ config VIDEO_OMAP2_VOUT
+ 	tristate "OMAP2/OMAP3 V4L2-Display driver"
+ 	depends on MMU
+-	depends on FB_OMAP2 || COMPILE_TEST
++	depends on FB_OMAP2 || (COMPILE_TEST && FB_OMAP2=n)
+ 	depends on ARCH_OMAP2 || ARCH_OMAP3 || COMPILE_TEST
+ 	select VIDEOBUF_GEN
+ 	select VIDEOBUF_DMA_CONTIG
 -- 
 2.9.0
