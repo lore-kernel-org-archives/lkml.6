@@ -1,90 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966203AbeEYKsl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:48:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59426 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965255AbeEYKsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:48:39 -0400
-Cc: Sudeep Holla <sudeep.holla@arm.com>, vireshk@kernel.org, nm@ti.com,
-        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 1/2] cpufreq: Add Kryo CPU scaling driver
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Ilia Lin <ilialin@codeaurora.org>
-References: <1527174220-13244-1-git-send-email-ilialin@codeaurora.org>
- <1527174220-13244-2-git-send-email-ilialin@codeaurora.org>
- <20180525035412.3jjocp7ccmv5u2il@vireshk-i7>
- <DF878CBB-304A-4116-83D5-DF6BCEB7C131@codeaurora.org>
- <20180525040536.njrdqjn376oehw2b@vireshk-i7>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <3aa2ced3-ad14-e02b-6702-c0fd1c48513b@arm.com>
-Date: Fri, 25 May 2018 11:48:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S966004AbeEYKuq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:50:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:53823 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965554AbeEYKup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:50:45 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, ego@linux.vnet.ibm.com,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Subject: Re: [PATCH] cpuidle/powernv : init all present cpus for deep states
+In-Reply-To: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+References: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+Date: Fri, 25 May 2018 20:50:43 +1000
+Message-ID: <87fu2gqa9o.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180525040536.njrdqjn376oehw2b@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> writes:
 
+> Init all present cpus for deep states instead of "all possible" cpus.
+> Init fails if the possible cpu is gaurded. Resulting in making only
+> non-deep states available for cpuidle/hotplug.
 
-On 25/05/18 05:05, Viresh Kumar wrote:
-> On 25-05-18, 07:00, Ilia Lin wrote:
->>
->>
->> On May 25, 2018 6:54:12 AM GMT+03:00, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>> On 24-05-18, 18:03, Ilia Lin wrote:
->>>> +static int __init qcom_cpufreq_kryo_init(void)
->>>> +{
->>>> +	struct device_node *np;
->>>> +	struct device *cpu_dev;
->>>> +	int ret;
->>>> +
->>>> +	cpu_dev = get_cpu_device(0);
->>>> +	if (NULL == cpu_dev)
->>>> +		ret = -ENODEV;
->>>> +
->>>> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
->>>> +	if (IS_ERR(np))
->>>> +		return PTR_ERR(np);
->>>> +
->>>> +	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu");
->>>> +	of_node_put(np);
->>>> +	if (!ret)
->>>> +		return -ENOENT;
->>>> +
->>>
->>> I hate the fact that it is taking so long to get done with this. But
->>> can't you
->>> just check machine compatibility instead of this complicated setup to
->>> check OPP
->>> node ? Like:
->>>
->>>        if (!of_device_is_compatible("qcom,apq8096") &&
->>>            !of_device_is_compatible("qcom,msm8996"))
->>>                return;
->>
->> I have to check the "operating-points-v2-kryo-cpu" anyway, so I moved it from probe to the init.
-> 
-> Okay, leave it as is then. Don't send anything yet and wait for Sudeep to
-> respond.
-> 
+This is basically the opposite of what we just did for IMC.
 
-I have already mentioned that I can't suggest since I don't have much
-knowledge on QCOM PM. I see lots of patches flying around these days
-with multiple people doing same things in different ways. That's why I
-suggested Ilia to check with Taniya or Saravana or SBoyd to see what's
-the best thing to do in this context. I don't prefer using OPP
-compatible and would go with machine compatibility as you suggested.
-But I am fine with OPP, just wanted to make sure it won't clash with
-anything else.
--- 
-Regards,
-Sudeep
+There we switched from present to possible, to make it work when some
+CPUs are guarded.
+
+Which makes me think we need a better way of dealing with guarded CPUs,
+because working out which code should use present or possible seems to
+be basically trial-and-error.
+
+I'm not actually sure why Guarded CPUs are showing up as possible but
+not present, did we do that on purpose or is it just happening by
+accident?
+
+I can merge this, but we need to make this less bug prone in future.
+
+cheers
+
+> diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
+> index 1f12ab1..1c5d067 100644
+> --- a/arch/powerpc/platforms/powernv/idle.c
+> +++ b/arch/powerpc/platforms/powernv/idle.c
+> @@ -79,7 +79,7 @@ static int pnv_save_sprs_for_deep_states(void)
+>  	uint64_t msr_val = MSR_IDLE;
+>  	uint64_t psscr_val = pnv_deepest_stop_psscr_val;
+>  
+> -	for_each_possible_cpu(cpu) {
+> +	for_each_present_cpu(cpu) {
+>  		uint64_t pir = get_hard_smp_processor_id(cpu);
+>  		uint64_t hsprg0_val = (uint64_t)paca_ptrs[cpu];
+>  
+> @@ -814,7 +814,7 @@ static int __init pnv_init_idle_states(void)
+>  		int cpu;
+>  
+>  		pr_info("powernv: idle: Saving PACA pointers of all CPUs in their thread sibling PACA\n");
+> -		for_each_possible_cpu(cpu) {
+> +		for_each_present_cpu(cpu) {
+>  			int base_cpu = cpu_first_thread_sibling(cpu);
+>  			int idx = cpu_thread_in_core(cpu);
+>  			int i;
+> -- 
+> 2.5.5
