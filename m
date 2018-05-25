@@ -1,121 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966275AbeEYLHN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 07:07:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59842 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965872AbeEYLHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 07:07:10 -0400
-Subject: Re: [PATCH] drm/rockchip: vop: fix irq disabled after vop driver
- probed
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Cc: xxm@rock-chips.com, Joerg Roedel <joro@8bytes.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Tomeu Vizoso <tomeu.vizoso@collabora.co.uk>, jcliang@chromium.org,
-        linux-rockchip@lists.infradead.org, iommu@lists.linux-foundation.org,
-        =?UTF-8?Q?Enric_Balletb=c3=b2?= <enric.balletbo@collabora.co.uk>,
-        tfiga@chromium.org, Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com>
- <25470133.K8n9sLBzRS@diego>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8495bffd-2a52-ca85-1bc9-afc3ea0af8e4@arm.com>
-Date: Fri, 25 May 2018 12:07:02 +0100
+        id S966330AbeEYLH7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 07:07:59 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4077 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966195AbeEYLH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 07:07:57 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 25 May 2018 04:07:59 -0700
+Subject: Re: [PATCH 9/9] PM / Domains: Add dev_pm_domain_attach_by_id() to
+ manage multi PM domains
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>
+References: <1526639490-12167-1-git-send-email-ulf.hansson@linaro.org>
+ <1526639490-12167-10-git-send-email-ulf.hansson@linaro.org>
+ <1c21d18e-954a-f3a8-9817-0117b7cb7e4f@nvidia.com>
+ <CAPDyKFozm88OM8cDFXXwvgdMirrt2=HhZtBdyhNjo2bgjHV2Mg@mail.gmail.com>
+ <2c63af8c-4745-a751-8d3d-f7122e921e6f@nvidia.com>
+ <CAPDyKFrTtvhxOhf9BPY1=cJ9VQyx9D=P3O0vCV+WXSVR82FozQ@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b3a94d63-678c-eab6-47a8-43eca95da979@nvidia.com>
+Date: Fri, 25 May 2018 12:07:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <25470133.K8n9sLBzRS@diego>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFrTtvhxOhf9BPY1=cJ9VQyx9D=P3O0vCV+WXSVR82FozQ@mail.gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Thanks Robin for pointing me to that patch.]
 
-Hi Heiko,
 
-On 24/05/18 23:06, Heiko Stübner wrote:
-> From: Sandy Huang <hjc@rock-chips.com>
-> 
-> The vop irq is shared between vop and iommu and irq probing in the
-> iommu driver moved to the probe function recently. This can in some
-> cases lead to a stall if the irq is triggered while the vop driver
-> still has it disabled.
-> 
-> But there is no real need to disable the irq, as the vop can simply
-> also track its enabled state and ignore irqs in that case.
-> 
-> So remove the enable/disable handling and add appropriate condition
-> to the irq handler.
-> 
-> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-> [added an actual commit message]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> Hi Ezequiel,
-> 
-> this patch came from a discussion I had with Rockchip people over the
-> iommu changes and resulting issues back in april, but somehow was
-> forgotten and not posted to the lists. Correcting that now.
-> 
-> So removing the enable/disable voodoo on the shared interrupt is
-> the preferred way.
-> 
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 13 ++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index 510cdf0..61493d4 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -549,8 +549,6 @@ static int vop_enable(struct drm_crtc *crtc)
->  
->  	spin_unlock(&vop->reg_lock);
->  
-> -	enable_irq(vop->irq);
-> -
->  	drm_crtc_vblank_on(crtc);
->  
->  	return 0;
-> @@ -596,8 +594,6 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
->  
->  	vop_dsp_hold_valid_irq_disable(vop);
->  
-> -	disable_irq(vop->irq);
-> -
->  	vop->is_enabled = false;
->  
->  	/*
-> @@ -1168,6 +1164,13 @@ static irqreturn_t vop_isr(int irq, void *data)
->  	int ret = IRQ_NONE;
->  
->  	/*
-> +	 * since the irq is shared with iommu, iommu irq is enabled before vop
-> +	 * enable, so before vop enable we do nothing.
-> +	 */
-> +	if (!vop->is_enabled)
-> +		return IRQ_NONE;
-> +
+On 25/05/18 11:45, Ulf Hansson wrote:
 
-What guarantee do we have that the IOMMU will actually service that
-interrupt? Can't we get into a situation where the interrupt gets
-ignored by both drivers and subsequently disabled by the core irq code
-as being spurious?
+...
 
->From what I understood of the way things are plugged together on the
-rockchip platforms, each individual VOP is behind a single IOMMU, hence
-there there is hardly any point in handling IOMMU interrupts if the VOP
-is off.
+>> Right, but this case still seems like an error. My understanding is that
+>> only drivers will use this API directly and it will not be used by the
+>> device driver core (unlike dev_pm_domain_attach), so if anyone calls this
+>> attempting to attach another PM domain when one is already attached, they
+>> are doing something wrong.
+> 
+> [...]
+> 
+> You may be right!
+> 
+> What I was thinking of is whether multiple PM domains may be optional
+> in some cases, but instead a PM domain have already been attached by
+> dev_pm_domain_attach(), prior the driver starts to probe.
+> 
+> Then, assuming we return an error for this case, that means the caller
+> then need to check the dev->pm_domain pointer, prior calling
+> dev_pm_domain_attach_by_id(). Wouldn't it? Perhaps that is more clear
+> though?
 
-But I'm missing the actual reason behind this patch. Could you enlighten me?
+IMO the driver should know whether is needs multiple power-domains or 
+not and if it needs multiple then it should just call 
+dev_pm_domain_attach_by_id() N times without needing to checking 
+dev->pm_domain first. If it fails then either the PM domain core did 
+something wrong or power-domains are missing from DT, but either way 
+there is an error, so let it fail.
 
-Thanks,
+Cheers
+Jon
 
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+nvpublic
