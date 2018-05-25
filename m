@@ -1,110 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030335AbeEYV3P (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:29:15 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34166 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030258AbeEYV3O (ORCPT
+        id S1030368AbeEYVd0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:33:26 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:47101 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030216AbeEYVdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:29:14 -0400
-X-Google-Smtp-Source: ADUXVKJQFtdF3lSFOEd8xX7FFSr0Jnl9s275SlGrmqoN645D4CMqumpaWwr0jdwOKfwpRmB034GD8bGf+tYkyNz6TvM=
-MIME-Version: 1.0
-In-Reply-To: <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com>
-References: <e2ec1a14-326a-57c2-56a6-7c2235e5b8b3@mellanox.com>
- <alpine.DEB.2.21.1802201829180.24268@nanos.tec.linutronix.de>
- <CAJwJo6aeb2q-C1R2MBnQQ8yR+7Xy4FWqSmBCE=7CkK_OHNCqSQ@mail.gmail.com>
- <alpine.DEB.2.21.1805191319190.1599@nanos.tec.linutronix.de>
- <16f47fa4-1555-cddb-3dfb-7d56fb992ea1@mellanox.com> <alpine.DEB.2.21.1805231049021.1598@nanos.tec.linutronix.de>
- <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com>
-From: Song Liu <liu.song.a23@gmail.com>
-Date: Fri, 25 May 2018 14:29:13 -0700
-Message-ID: <CAPhsuW4vp7cWYOWqF8p51LDHZgFaVZ3wdtWDdQvQSt6rWOZRYA@mail.gmail.com>
-Subject: Re: WARNING and PANIC in irq_matrix_free
-To: Thomas Gleixner <tglx@linutronix.de>, michael.chan@broadcom.com,
-        gospo@broadcom.com, vasundhara-v.volam@broadcom.com
-Cc: Tariq Toukan <tariqt@mellanox.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Maor Gottlieb <maorg@mellanox.com>, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 25 May 2018 17:33:23 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Arnd Bergmann <arnd@arndb.de>, Keith Busch <keith.busch@intel.com>,
+        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
+Subject: [PATCH] IB: Revert "remove redundant INFINIBAND kconfig dependencies"
+Date: Fri, 25 May 2018 23:29:59 +0200
+Message-Id: <20180525213123.2113748-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:6dM/aryXmjzl7pwalJqKM2a+q2VxZC/d9ShPqU2qlA6YJqgxUHJ
+ khLJoTtrRv3WYqEdB/sD9L4zueJ48TnOyppdGTedfal6DvSCSCsvzj+uqA79l8psC1RsdL5
+ 58ZcLdm1udoW8l/VMa02AWiD3p91Db8e5/D5J2sq3DsoPAmqx7A0Sy734agQbraBuQd6CbZ
+ lEEttKA9iaoxeScnc5MkQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:R6EwSW09LQ4=:Sn6V7Yx84VWkPuLklX9RAV
+ AEQAeAKTdUsliTLQCzaj4YFi2SMDO/cf5LefM9pAYff3jb6MViGFh2A1W6cBLN15OQlCKAiu4
+ 3Ei56CQE9LT3HoK70oyR8MEpSFz0kXx+X0jfPji+7/uEgbmTrXBzDbS1509abZQmE68lBGReV
+ gecQ3eZh22ymLwsB9D7wP3JYz018cXnBCF7hGIGmUJxN7nCAIuSMqtRpLyoubAEG/RFKBeAvk
+ HdPAcxbZ7u+JMmle9pvDX/f38oTiRakE1PgG+WE7KqXNIt8mMmdTD5Dvrfw76hXHpLBNKsrHR
+ ftJ5xIHbBfoKrdaTacBA8MlEF8R08GKsOFwKiQob7DAraKDP7ihEogjJa7duuG/3deTZZRcvc
+ SAAywTDeMK3rQ4nap5VitXORuQboVdusUOaeUcazSRgZhJIj0ZI4odD2N8E1IA3qlpmbYb1FZ
+ JOIWbdtLk+NeZ6LEeIVXCCfVQkrNObCLTYC0oQF6VGO2WJiuCyYzxfKHkn3DPDsgzGAMeMoK7
+ 90cCi+a6vob0/IK4j2JinwDfyOIn6tB1UgdjqM4JAZAjELCWcPgMN1Owfy1PhqrfrlSm24axx
+ r9oEOtxCVCPauj8uxcIULx+96o857bOcTE3hpRm+ZQj3L4R+G7O+mMzq6w8pajJfCr1lLVnoe
+ IcQKrp3Ip/uYDGMvDxFlbeu+LXWwNMWzcOCrjPOwwudkWsbEFAE4PRuvmVYSUbW/OVBM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Broadcom developers to the thread.
+Several subsystems depend on INFINIBAND_ADDR_TRANS, which in turn depends
+on INFINIBAND. However, when with CONFIG_INIFIBAND=m, this leads to a
+link error when another driver using it is built-in. The
+INFINIBAND_ADDR_TRANS dependency is insufficient here as this is
+a 'bool' symbol that does not force anything to be a module in turn.
 
-Hi Michael, Vasundhara, and Andy,
+fs/cifs/smbdirect.o: In function `smbd_disconnect_rdma_work':
+smbdirect.c:(.text+0x1e4): undefined reference to `rdma_disconnect'
+net/9p/trans_rdma.o: In function `rdma_request':
+trans_rdma.c:(.text+0x7bc): undefined reference to `rdma_disconnect'
+net/9p/trans_rdma.o: In function `rdma_destroy_trans':
+trans_rdma.c:(.text+0x830): undefined reference to `ib_destroy_qp'
+trans_rdma.c:(.text+0x858): undefined reference to `ib_dealloc_pd'
 
-Could you please help look into the case I found? ethtool crashes the system
-for both net/master and net-next/master.
+Fixes: 9533b292a7ac ("IB: remove redundant INFINIBAND kconfig dependencies")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+The patch that introduced the problem has been queued in the
+rdma-fixes/for-rc tree. Please revert the patch before sending
+the branch to Linus.
+---
+ drivers/infiniband/ulp/srpt/Kconfig | 2 +-
+ drivers/nvme/host/Kconfig           | 2 +-
+ drivers/nvme/target/Kconfig         | 2 +-
+ drivers/staging/lustre/lnet/Kconfig | 2 +-
+ fs/cifs/Kconfig                     | 2 +-
+ net/9p/Kconfig                      | 2 +-
+ net/rds/Kconfig                     | 2 +-
+ net/sunrpc/Kconfig                  | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
 
-Thanks,
-Song
-
-On Fri, May 25, 2018 at 1:10 PM, Song Liu <liu.song.a23@gmail.com> wrote:
-> Hi,
->
-> We are seeing something probably related.
->
-> We run ethtool on a system with Broadcom NIC to increase number of
-> combined queues.
->
->
->     [root@ ~]# ethtool -l eth0
->     Channel parameters for eth0:
->     Pre-set maximums:
->     RX:             9
->     TX:             8
->     Other:          0
->     Combined:       17
->     Current hardware settings:
->     RX:             0
->     TX:             0
->     Other:          0
->     Combined:       8
->
->     [root@ ~]# ethtool -L eth0 combined 16
->
-> The last command PANIC the kernel easily (5 out of 5 in my tests).
->
-> I haven't got luck to catch much console output, the only line I got is:
->
->     [ 504.727865] WARNING: CPU: 10 PID: 0 at kernel/irq/matrix.c:371
-> irq_matrix_free+0x32/0xd0
->
-> The NIC we have is
->
->     Broadcom Limited BCM57302 NetXtreme-C 10Gb/25Gb Ethernet Controller
->
-> Thanks,
-> Song
->
-> On Wed, May 23, 2018 at 1:49 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> On Wed, 23 May 2018, Tariq Toukan wrote:
->>> On 19/05/2018 2:20 PM, Thomas Gleixner wrote:
->>> > On Fri, 18 May 2018, Dmitry Safonov wrote:
->>> > > I'm not entirely sure that it's the same fault, but at least backtrace
->>> > > looks resembling.
->>> >
->>> > Yes, it's similar, but not the same issue. I'll stare are the code ...
->>> >
->>> > Thanks,
->>> >
->>> >     tglx
->>> >
->>>
->>> We still see the issue in our daily regression runs.
->>> I have your patch merged into my internal branch, it prints the following:
->>>
->>> [ 4898.226258] Trying to clear prev_vector: 0
->>> [ 4898.226439] Trying to clear prev_vector: 0
->>>
->>> i.e. vector(0) is lower than FIRST_EXTERNAL_VECTOR.
->>
->> Could you please enable the vector and irq matrix trace points and capture
->> the trace when this happens?
->>
->> Thanks,
->>
->>         tglx
->>
+diff --git a/drivers/infiniband/ulp/srpt/Kconfig b/drivers/infiniband/ulp/srpt/Kconfig
+index 25bf6955b6d0..fb8b7182f05e 100644
+--- a/drivers/infiniband/ulp/srpt/Kconfig
++++ b/drivers/infiniband/ulp/srpt/Kconfig
+@@ -1,6 +1,6 @@
+ config INFINIBAND_SRPT
+ 	tristate "InfiniBand SCSI RDMA Protocol target support"
+-	depends on INFINIBAND_ADDR_TRANS && TARGET_CORE
++	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && TARGET_CORE
+ 	---help---
+ 
+ 	  Support for the SCSI RDMA Protocol (SRP) Target driver. The
+diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
+index dbb7464c018c..88a8b5916624 100644
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -27,7 +27,7 @@ config NVME_FABRICS
+ 
+ config NVME_RDMA
+ 	tristate "NVM Express over Fabrics RDMA host driver"
+-	depends on INFINIBAND_ADDR_TRANS && BLOCK
++	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && BLOCK
+ 	select NVME_CORE
+ 	select NVME_FABRICS
+ 	select SG_POOL
+diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
+index 7595664ee753..3c7b61ddb0d1 100644
+--- a/drivers/nvme/target/Kconfig
++++ b/drivers/nvme/target/Kconfig
+@@ -27,7 +27,7 @@ config NVME_TARGET_LOOP
+ 
+ config NVME_TARGET_RDMA
+ 	tristate "NVMe over Fabrics RDMA target support"
+-	depends on INFINIBAND_ADDR_TRANS
++	depends on INFINIBAND && INFINIBAND_ADDR_TRANS
+ 	depends on NVME_TARGET
+ 	select SGL_ALLOC
+ 	help
+diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lustre/lnet/Kconfig
+index f3b1ad4bd3dc..ad049e6f24e4 100644
+--- a/drivers/staging/lustre/lnet/Kconfig
++++ b/drivers/staging/lustre/lnet/Kconfig
+@@ -34,7 +34,7 @@ config LNET_SELFTEST
+ 
+ config LNET_XPRT_IB
+ 	tristate "LNET infiniband support"
+-	depends on LNET && PCI && INFINIBAND_ADDR_TRANS
++	depends on LNET && PCI && INFINIBAND && INFINIBAND_ADDR_TRANS
+ 	default LNET && INFINIBAND
+ 	help
+ 	  This option allows the LNET users to use infiniband as an
+diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+index d61e2de8d0eb..5f132d59dfc2 100644
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -197,7 +197,7 @@ config CIFS_SMB311
+ 
+ config CIFS_SMB_DIRECT
+ 	bool "SMB Direct support (Experimental)"
+-	depends on CIFS=m && INFINIBAND_ADDR_TRANS || CIFS=y && INFINIBAND_ADDR_TRANS=y
++	depends on CIFS=m && INFINIBAND && INFINIBAND_ADDR_TRANS || CIFS=y && INFINIBAND=y && INFINIBAND_ADDR_TRANS=y
+ 	help
+ 	  Enables SMB Direct experimental support for SMB 3.0, 3.02 and 3.1.1.
+ 	  SMB Direct allows transferring SMB packets over RDMA. If unsure,
+diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+index 46c39f7da444..e6014e0e51f7 100644
+--- a/net/9p/Kconfig
++++ b/net/9p/Kconfig
+@@ -32,7 +32,7 @@ config NET_9P_XEN
+ 
+ 
+ config NET_9P_RDMA
+-	depends on INET && INFINIBAND_ADDR_TRANS
++	depends on INET && INFINIBAND && INFINIBAND_ADDR_TRANS
+ 	tristate "9P RDMA Transport (Experimental)"
+ 	help
+ 	  This builds support for an RDMA transport.
+diff --git a/net/rds/Kconfig b/net/rds/Kconfig
+index 1a31502ee7db..bffde4b46c5d 100644
+--- a/net/rds/Kconfig
++++ b/net/rds/Kconfig
+@@ -8,7 +8,7 @@ config RDS
+ 
+ config RDS_RDMA
+ 	tristate "RDS over Infiniband"
+-	depends on RDS && INFINIBAND_ADDR_TRANS
++	depends on RDS && INFINIBAND && INFINIBAND_ADDR_TRANS
+ 	---help---
+ 	  Allow RDS to use Infiniband as a transport.
+ 	  This transport supports RDMA operations.
+diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+index 6358e5271070..ac09ca803296 100644
+--- a/net/sunrpc/Kconfig
++++ b/net/sunrpc/Kconfig
+@@ -50,7 +50,7 @@ config SUNRPC_DEBUG
+ 
+ config SUNRPC_XPRT_RDMA
+ 	tristate "RPC-over-RDMA transport"
+-	depends on SUNRPC && INFINIBAND_ADDR_TRANS
++	depends on SUNRPC && INFINIBAND && INFINIBAND_ADDR_TRANS
+ 	default SUNRPC && INFINIBAND
+ 	select SG_POOL
+ 	help
+-- 
+2.9.0
