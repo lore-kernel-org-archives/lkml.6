@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030714AbeEYWBp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:01:45 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17942 "EHLO mga18.intel.com"
+        id S1030736AbeEYWCC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:02:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:17944 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030610AbeEYWBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1030599AbeEYWBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 25 May 2018 18:01:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="231900893"
+   d="scan'208";a="231900889"
 From: Ross Zwisler <ross.zwisler@linux.intel.com>
 To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
         dm-devel@redhat.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
         linux-xfs@vger.kernel.org
-Subject: [PATCH resend 7/7] dm-error: remove unnecessary direct_access() stub
-Date: Fri, 25 May 2018 16:00:55 -0600
-Message-Id: <20180525220055.18920-8-ross.zwisler@linux.intel.com>
+Subject: [PATCH resend 6/7] dm-snap: remove unnecessary direct_access() stub
+Date: Fri, 25 May 2018 16:00:54 -0600
+Message-Id: <20180525220055.18920-7-ross.zwisler@linux.intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
 References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
@@ -27,39 +27,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This stub was added so that we could use dm-error with
-DM_TYPE_DAX_BIO_BASED mode devices.  That mode and the transition issues
-associated with it no longer exist, so we can remove this dead code.
+This stub was added so that we could use dm-snap with DM_TYPE_DAX_BIO_BASED
+mode devices.  That mode and the transition issues associated with it no
+longer exist, so we can remove this dead code.
 
 Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
 ---
- drivers/md/dm-target.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/md/dm-snap.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
-index 314d17ca6466..c4dbc15f7862 100644
---- a/drivers/md/dm-target.c
-+++ b/drivers/md/dm-target.c
-@@ -140,12 +140,6 @@ static void io_err_release_clone_rq(struct request *clone)
- {
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 216035be5661..0143b158d52d 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -2305,13 +2305,6 @@ static int origin_map(struct dm_target *ti, struct bio *bio)
+ 	return do_origin(o->dev, bio);
  }
  
--static long io_err_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-static long origin_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
 -		long nr_pages, void **kaddr, pfn_t *pfn)
 -{
+-	DMWARN("device does not support dax.");
 -	return -EIO;
 -}
 -
- static struct target_type error_target = {
- 	.name = "error",
- 	.version = {1, 5, 0},
-@@ -155,7 +149,6 @@ static struct target_type error_target = {
- 	.map  = io_err_map,
- 	.clone_and_map_rq = io_err_clone_and_map_rq,
- 	.release_clone_rq = io_err_release_clone_rq,
--	.direct_access = io_err_dax_direct_access,
+ /*
+  * Set the target "max_io_len" field to the minimum of all the snapshots'
+  * chunk sizes.
+@@ -2371,7 +2364,6 @@ static struct target_type origin_target = {
+ 	.postsuspend = origin_postsuspend,
+ 	.status  = origin_status,
+ 	.iterate_devices = origin_iterate_devices,
+-	.direct_access = origin_dax_direct_access,
  };
  
- int __init dm_target_init(void)
+ static struct target_type snapshot_target = {
 -- 
 2.14.3
