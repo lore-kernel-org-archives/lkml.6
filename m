@@ -1,78 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966141AbeEYKl4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:41:56 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59298 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965255AbeEYKlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:41:55 -0400
-Subject: Re: [PATCH v4 02/26] arm64: cpufeature: Add cpufeature for IRQ
- priority masking
-To: Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com
-References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
- <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
- <e44df12f-9868-ae94-4623-ec221d72d783@arm.com>
- <b0673d7e-9a1e-7dcb-5322-c05fe0821349@arm.com>
- <c4e5f8ff-ecde-7b88-8a37-39e47ef22917@arm.com>
- <54ff6127-928d-99a3-a6e9-59799628ca87@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <3f0afa54-8e98-798e-68dc-bbbc74bd9e19@arm.com>
-Date: Fri, 25 May 2018 11:41:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <54ff6127-928d-99a3-a6e9-59799628ca87@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S966134AbeEYKmN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:42:13 -0400
+Received: from mail05-md.ns.itscom.net ([175.177.155.115]:60656 "EHLO
+        mail05-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965731AbeEYKmM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:42:12 -0400
+From: "J. R. Okajima" <hooanon05g@gmail.com>
+Subject: Re: Why is the length of max mount option a page size??
+To: Jungsub Shin <supsup5642@gmail.com>
+Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180521173959.GA12779@supsup-VirtualBox>
+References: <20180521173959.GA12779@supsup-VirtualBox>
+Date: Fri, 25 May 2018 19:42:10 +0900
+Message-ID: <5670.1527244930@jrobl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/18 11:39, Julien Thierry wrote:
-> 
-> 
-> On 25/05/18 11:36, Suzuki K Poulose wrote:
->> On 25/05/18 11:17, Julien Thierry wrote:
->>>
->>>
->>> On 25/05/18 11:04, Suzuki K Poulose wrote:
->>>> On 25/05/18 10:49, Julien Thierry wrote:
->>>>> Add a cpufeature indicating whether a cpu supports masking interrupts
->>>>> by priority.
->>>>
->>>> How is this different from the SYSREG_GIC_CPUIF cap ? Is it just
->>>> the description ?
->>>
->>> More or less.
->>>
->>> It is just to have an easier condition in the rest of the series. Basically the PRIO masking feature is enabled if we have a GICv3 CPUIF working *and* the option was selected at build time. Before this meant that I was checking for the GIC_CPUIF cap inside #ifdefs (and putting alternatives depending on that inside #ifdefs as well).
->>>
->>> Having this as a separate feature feels easier to manage in the code. It also makes it clearer at boot time that the kernel will be using irq priorities (although I admit it was not the initial intention):
->>>
->>> [    0.000000] CPU features: detected: IRQ priority masking
->>>
->>>
->>> But yes that new feature will be detected only if SYSREG_GIC_CPUIF gets detected as well.
->>
->> Well, you could always wrap the check like :
->>
->> static inline bool system_has_irq_priority_masking(void)
->> {
->>      return (IS_ENABLED(CONFIG_YOUR_CONFIG) && cpus_have_const_cap(HWCAP_SYSREG_GIC_CPUIF));
->> }
->>
->> and use it everywhere.
->>
-> 
-> Yes, but I can't use that in the asm parts that use alternatives and would need to surround them in #ifdef... :\
+Jungsub Shin:
+> I know that almost mount option short and page size is enough to
+> contain almost mount options. but because of options for 
+> unionfs(overlay, aufs), lenght of mount option could be exceed it
+> and cut.
+>
+> I suffer this problem with aufs. aufs's branch option is cut and 
+> fail to aufs mount. I know that aufs is not offical fs in linux, 
 
-I thought there is _ALTERNATIVE_CFG() to base the alternative depend on a CONFIG_xxx ?
-Doesn't that solve the problem ?
+For aufs, it should not happen because of the module parameter 'brs.'
 
-Suzuki
+(from the aufs manual)
+----------------------------------------------------------------------
+.SH Module Parameters
+.TP
+.B brs=1 | 0
+Specifies to use the branch path data file under sysfs or not.
+
+If the number of your branches is large or their path is long
+and you meet the limitation of mount(8) ro /etc/mtab, you need to
+enable CONFIG_SYSFS and set aufs module parameter brs=1.
+
+When this parameter is set as 1, aufs does not show `br:' (or dirs=)
+mount option through /proc/mounts (and /etc/mtab). So you can
+keep yourself from the page limitation of
+mount(8) or /etc/mtab.
+Aufs shows branch paths through <sysfs>/fs/aufs/si_XXX/brNNN.
+Actually the file under sysfs has also a size limitation, but I don't
+think it is harmful.
+
+There is one more side effect in setting 1 to this parameter.
+If you rename your branch, the branch path written in /etc/mtab will be
+obsoleted and the future remount will meet some error due to the
+unmatched parameters (Remember that mount(8) may take the options from
+/etc/mtab and pass them to the systemcall).
+If you set 1, /etc/mtab will not hold the branch path and you will not
+meet such trouble. On the other hand, the entries for the
+branch path under sysfs are generated dynamically. So it must not be obsoleted.
+But I don't think users want to rename branches so often.
+
+If CONFIG_SYSFS is disable, this parameter is always set to 0.
+----------------------------------------------------------------------
+
+
+If you post the details of your environment to aufs-users ML, then I
+may be able to describe more.
+
+
+J. R. Okajima
