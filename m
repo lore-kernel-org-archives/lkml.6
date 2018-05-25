@@ -1,167 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965822AbeEYJtw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:49:52 -0400
-Received: from mail-he1eur01on0059.outbound.protection.outlook.com ([104.47.0.59]:2128
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965486AbeEYJts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:49:48 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: RE: [PATCH V2 2/4] clk: add new APIs to operate on all available
- clocks
-Thread-Topic: [PATCH V2 2/4] clk: add new APIs to operate on all available
- clocks
-Thread-Index: AQHTwMOVeEEr+AzEv0OvX/23PdxhP6PeDmCAgGKLRnA=
-Date: Fri, 25 May 2018 09:49:45 +0000
-Message-ID: <AM0PR04MB42110066C43E037F2E0501CB80690@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
- <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
- <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
-In-Reply-To: <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4210;7:xY6pTVrX9Nh5RoV0niwlpN8K+Cu7dP5fuiwo3OA3PuRgMoefoAqlR5UpummJ5s7VAIAcQ5EVcCPyCKtKo4yKwZj3xvLKhzhaBgwUK27csGpRQ+SiEzG7bY4PofIG13PaLKhOxjWZZ7DhdSV2xqSxeyi+75u7AeCTM2ZK/jsS7TEOpiFKt5ifp+QHZGxcfbOwgnXEiOrMXGtwnHChwHnnfamtHHU41HsQT9hJ4FOYXANtl/GegKVgQyMefntzkwh5
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4210;
-x-ms-traffictypediagnostic: AM0PR04MB4210:
-x-microsoft-antispam-prvs: <AM0PR04MB4210E6E63DF2B20538C9D2FB80690@AM0PR04MB4210.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(258649278758335)(7411616537696);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4210;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4210;
-x-forefront-prvs: 06833C6A67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(366004)(39860400002)(376002)(346002)(377424004)(199004)(189003)(13464003)(8936002)(6246003)(478600001)(3846002)(6116002)(53936002)(2906002)(14454004)(6436002)(66066001)(53546011)(7696005)(68736007)(3280700002)(76176011)(229853002)(99286004)(102836004)(6506007)(9686003)(81166006)(81156014)(55016002)(8676002)(3660700001)(25786009)(4326008)(2501003)(7416002)(7736002)(305945005)(105586002)(106356001)(86362001)(5660300001)(5250100002)(74316002)(97736004)(476003)(26005)(2900100001)(486006)(110136005)(186003)(54906003)(316002)(33656002)(446003)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4210;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: NLH2HxHKX7Hf+8a9bSMqKyZcrWi1LDHznvh/zBVdSNcJL2Ta/6a3cYjkR5fN732yHAgsvNvLTG5iNOBhwqCgHD6CNc0hbRCqoJwPJjCKs4G5S+hruAUCDXkGpk8L9HfP1AfFdAU0kkmrz+Ate8x1rV+ZENqMT2sqBLALWTyUPlNrQ1nJwc/S5zjsaz41syK8
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 28e811e0-3c51-4998-3e1e-08d5c224d8bb
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28e811e0-3c51-4998-3e1e-08d5c224d8bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2018 09:49:45.2772
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4210
+        id S965841AbeEYJuB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:50:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57382 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965455AbeEYJt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:49:56 -0400
+From: Julien Thierry <julien.thierry@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v4 00/26] arm64: provide pseudo NMI with GICv3
+Date: Fri, 25 May 2018 10:49:06 +0100
+Message-Id: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4P9nud1010523
 
-> -----Original Message-----
-> From: Stephen Boyd [mailto:sboyd@kernel.org]
-> Sent: Saturday, March 24, 2018 12:57 AM
-> To: A.s. Dong <aisheng.dong@nxp.com>; linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; hdegoede@redhat.com;
-> b.zolnierkie@samsung.com; linux@armlinux.org.uk; linux-
-> fbdev@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; A.s. Dong
-> <aisheng.dong@nxp.com>; Stephen Boyd <sboyd@codeaurora.org>;
-> Masahiro Yamada <yamada.masahiro@socionext.com>
-> Subject: Re: [PATCH V2 2/4] clk: add new APIs to operate on all available
-> clocks
-> 
-> Quoting Dong Aisheng (2018-03-20 20:19:49)
-> > @@ -50,6 +52,38 @@ static int __must_check of_clk_bulk_get(struct
-> device_node *np, int num_clks,
-> >         return ret;
-> >  }
-> >  EXPORT_SYMBOL(of_clk_bulk_get);
-> > +
-> > +static int __must_check of_clk_bulk_get_all(struct device_node *np,
-> > +                                           struct clk_bulk_data
-> > +**clks) {
-> > +       struct clk_bulk_data *clk_bulk;
-> > +       int num_clks;
-> > +       int ret;
-> > +
-> > +       num_clks = of_clk_get_parent_count(np);
-> > +       if (!num_clks)
-> > +               return 0;
-> > +
-> > +       clk_bulk = kcalloc(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
-> 
-> Can be kmalloc_array? of_clk_bulk_get() already clears things out
-> appropriately.
+This series is a continuation of the work started by Daniel [1]. The goal
+is to use GICv3 interrupt priorities to simulate an NMI.
 
-Yes, indeed. Will use kmalloc_array instead.
+To achieve this, set two priorities, one for standard interrupts and
+another, higher priority, for NMIs. Whenever we want to disable interrupts,
+we mask the standard priority instead so NMIs can still be raised. Some
+corner cases though still require to actually mask all interrupts
+effectively disabling the NMI.
 
-> 
-> > +       if (!clk_bulk)
-> > +               return -ENOMEM;
-> > +
-> > +       ret = of_clk_bulk_get(np, num_clks, clk_bulk);
-> > +       if (ret) {
-> > +               kfree(clk_bulk);
-> > +               return ret;
-> > +       }
-> > +
-> > +       *clks = clk_bulk;
-> > +
-> > +       return num_clks;
-> > +}
-> > +#else
-> > +static int __must_check of_clk_bulk_get_all(struct device_node *np,
-> > +                                           struct clk_bulk_data
-> > +**clks) {
-> > +       return -ENOENT;
-> > +}
-> >  #endif
-> 
-> This else can probably be dropped too.
-> 
+Currently, only PPIs and SPIs can be set as NMIs. IPIs being currently
+hardcoded IRQ numbers, there isn't a generic interface to set SGIs as NMI
+for now. I don't think there is any reason LPIs should be allowed to be set
+as NMI as they do not have an active state.
+When an NMI is active on a CPU, no other NMI can be triggered on the CPU.
 
-Right.
+After the big refactoring I get performances similar to the ones I had
+in v3[2], reposting old results here:
 
-> >
-> >  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) @@ -90,6
-> > +124,29 @@ int __must_check clk_bulk_get(struct device *dev, int
-> > num_clks,  }  EXPORT_SYMBOL(clk_bulk_get);
-> >
-> > +void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {
-> > +       if (IS_ERR_OR_NULL(clks))
-> > +               return;
-> > +
-> > +       clk_bulk_put(num_clks, clks);
-> > +
-> > +       kfree(clks);
-> > +}
-> > +EXPORT_SYMBOL(clk_bulk_put_all);
-> > +
-> > +int __must_check clk_bulk_get_all(struct device *dev,
-> > +                                 struct clk_bulk_data **clks) {
-> > +       struct device_node *np = dev_of_node(dev);
-> > +
-> > +       if (!np)
-> > +               return 0;
-> > +
-> > +       return of_clk_bulk_get_all(np, clks); }
-> > +EXPORT_SYMBOL(clk_bulk_get_all);
-> 
-> Looks better!
+- "hackbench 200 process 1000" (average over 20 runs)
++-----------+----------+------------+------------------+
+|           | native   | PMR guest  | v4.17-rc6 guest  |
++-----------+----------+------------+------------------+
+| PMR host  | 40.0336s |   39.3039s |         39.2044s |
+| v4.17-rc6 | 40.4040s |   39.6011s |         39.1147s |
++-----------+----------+------------+------------------+
 
-Thanks
+- Kernel build from defconfig:
+PMR host:  13m45.743s
+v4.17-rc6: 13m40.400s
 
-Regards
-Dong Aisheng
+I'll try to post more detailed benchmarks later if I find notable
+differences with the previous version.
+
+
+Requirements to use this:
+- Have GICv3
+- SCR_EL3.FIQ is set to 1 when linux runs or have single security state
+- Select Kernel Feature -> Use ICC system registers for IRQ masking
+
+
+* Patches 1 to 4 aim at applying some alternatives early in the boot
+  process, including the feature for priority masking.
+
+* Patches 5 to 7 and 17 lightly refactor bits of GIC driver to make things
+  nicer for the rest of the series.
+
+* Patches 8 to 10 and 16 ensure the logic of daifflags remains valid
+  after arch_local_irq flags use ICC_PMR_EL1.
+
+* Patches 11 to 14 do some required PMR treatement in order for things to
+  work when the system uses priority masking.
+
+* Patches 15, 18, 19, 20 and 21 actually make the changes to use
+  ICC_PMR_EL1 for priority masking/unmasking when disabling/enabling
+  interrupts.
+
+* Patches 22 to 26 provide support for pseudo-NMI in the GICv3 driver
+  when priority masking is enabled.
+
+
+Changes since V3[2]:
+* Big refactoring. As suggested by Marc Z., some of the bigger patches
+  needed to be split into smaller one.
+
+* Try to reduce the amount of #ifdef for the new feature by introducing
+  an individual cpufeature for priority masking
+
+* Do not track which alternatives have been applied (was a bit dodgy
+  anyway), and use an alternative for VHE cpu_enable callback
+
+* Fix a build failure with arm by adding the correct RPR accessors
+
+* Added Suggested-by tags for changes from comming or inspired by Daniel's
+  series. Do let me know if you feel I missed something and am not giving
+  you due credit.
+
+Changes since V2[3]:
+* Series rebase to v4.17-rc6
+
+* Adapt pathces 1 and 2 to the rework of cpufeatures framework
+
+* Use the group0 detection scheme in the GICv3 driver to identify
+  the priority view, and drop the use of a fake interrupt
+
+* Add the case for a GIC configured in a single security state
+
+* Use local_daif_restore instead of local_irq_enable the first time
+  we enable interrupts after a bp hardening in the handling of a kernel
+  entry. Otherwise PRS.I remains set...
+
+Changes since V1[4]:
+* Series rebased to v4.15-rc8.
+
+* Check for arm64_early_features in this_cpu_has_cap (spotted by Suzuki).
+
+* Fix issue where debug exception were not masked when enabling debug in
+  mdscr_el1.
+
+Changes since RFC[5]:
+* The series was rebased to v4.15-rc2 which implied some changes mainly
+  related to the work on exception entries and daif flags by James Morse.
+
+  - The first patch in the previous series was dropped because no longer
+    applicable.
+
+  - With the semantics James introduced of "inheriting" daif flags,
+    handling of PMR on exception entry is simplified as PMR is not altered
+    by taking an exception and already inherited from previous state.
+
+  - James pointed out that taking a PseudoNMI before reading the FAR_EL1
+    register should not be allowed as per the TRM (D10.2.29):
+    "FAR_EL1 is made UNKNOWN on an exception return from EL1."
+    So in this submission PSR.I bit is cleared only after FAR_EL1 is read.
+
+* For KVM, only deal with PMR unmasking/restoring in common code, and VHE
+  specific code makes sure PSR.I bit is set when necessary.
+
+* When detecting the GIC priority view (patch 5), wait for an actual
+  interrupt instead of trying only once.
+
+
+[1] http://www.spinics.net/lists/arm-kernel/msg525077.html
+[2] https://lkml.org/lkml/2018/5/21/276
+[3] https://lkml.org/lkml/2018/1/17/335
+[4] https://www.spinics.net/lists/arm-kernel/msg620763.html
+[5] https://www.spinics.net/lists/arm-kernel/msg610736.html
+
+Cheers,
+
+Julien
+
+-->
+
+Daniel Thompson (1):
+  arm64: alternative: Apply alternatives early in boot process
+
+Julien Thierry (25):
+  arm64: cpufeature: Set SYSREG_GIC_CPUIF as a boot system feature
+  arm64: cpufeature: Add cpufeature for IRQ priority masking
+  arm64: cpufeature: Use alternatives for VHE cpu_enable
+  irqchip/gic: Unify GIC priority definitions
+  irqchip/gic: Lower priority of GIC interrupts
+  irqchip/gic-v3: Remove acknowledge loop
+  arm64: daifflags: Use irqflags functions for daifflags
+  arm64: Use daifflag_restore after bp_hardening
+  arm64: Delay daif masking for user return
+  arm64: Make PMR part of task context
+  arm64: Unmask PMR before going idle
+  arm/arm64: gic-v3: Add helper functions to manage IRQ priorities
+  arm64: kvm: Unmask PMR before entering guest
+  arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking
+  arm64: daifflags: Include PMR in daifflags restore operations
+  irqchip/gic-v3: Factor group0 detection into functions
+  irqchip/gic-v3: Do not overwrite PMR value
+  irqchip/gic-v3: Switch to PMR masking after IRQ acknowledge
+  arm64: Switch to PMR masking when starting CPUs
+  arm64: Add build option for IRQ masking via priority
+  arm64: Detect current view of GIC priorities
+  irqchip/gic: Add functions to access irq priorities
+  irqchip/gic-v3: Add base support for pseudo-NMI
+  irqchip/gic-v3: Provide NMI handlers
+  irqchip/gic-v3: Allow interrupts to be set as pseudo-NMI
+
+ Documentation/arm64/booting.txt        |   5 +
+ arch/arm/include/asm/arch_gicv3.h      |  33 ++++
+ arch/arm64/Kconfig                     |  15 ++
+ arch/arm64/include/asm/alternative.h   |   3 +-
+ arch/arm64/include/asm/arch_gicv3.h    |  32 ++++
+ arch/arm64/include/asm/assembler.h     |  17 +-
+ arch/arm64/include/asm/cpucaps.h       |   3 +-
+ arch/arm64/include/asm/cpufeature.h    |   2 +
+ arch/arm64/include/asm/daifflags.h     |  32 ++--
+ arch/arm64/include/asm/efi.h           |   3 +-
+ arch/arm64/include/asm/irqflags.h      | 100 ++++++++---
+ arch/arm64/include/asm/kvm_host.h      |  12 ++
+ arch/arm64/include/asm/processor.h     |   1 +
+ arch/arm64/include/asm/ptrace.h        |  13 +-
+ arch/arm64/kernel/alternative.c        |  30 +++-
+ arch/arm64/kernel/asm-offsets.c        |   1 +
+ arch/arm64/kernel/cpufeature.c         |  35 +++-
+ arch/arm64/kernel/entry.S              |  67 ++++++-
+ arch/arm64/kernel/head.S               |  35 ++++
+ arch/arm64/kernel/process.c            |   2 +
+ arch/arm64/kernel/smp.c                |  12 ++
+ arch/arm64/kvm/hyp/switch.c            |  17 ++
+ arch/arm64/mm/fault.c                  |   5 +-
+ arch/arm64/mm/proc.S                   |  18 ++
+ drivers/irqchip/irq-gic-common.c       |  10 ++
+ drivers/irqchip/irq-gic-common.h       |   2 +
+ drivers/irqchip/irq-gic-v3-its.c       |   2 +-
+ drivers/irqchip/irq-gic-v3.c           | 318 +++++++++++++++++++++++++++------
+ include/linux/interrupt.h              |   1 +
+ include/linux/irqchip/arm-gic-common.h |   6 +
+ include/linux/irqchip/arm-gic.h        |   5 -
+ 31 files changed, 719 insertions(+), 118 deletions(-)
+
+--
+1.9.1
