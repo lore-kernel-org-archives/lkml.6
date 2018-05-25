@@ -1,35 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967846AbeEYSx0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:53:26 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:36098 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967543AbeEYSxZ (ORCPT
+        id S967880AbeEYSzK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:55:10 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40410 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967543AbeEYSzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:53:25 -0400
-Date: Fri, 25 May 2018 14:53:23 -0400 (EDT)
-Message-Id: <20180525.145323.1635564901910925854.davem@davemloft.net>
-To: yuehaibing@huawei.com
-Cc: fugang.duan@nxp.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: fec: remove stale comment
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180524112707.3580-1-yuehaibing@huawei.com>
-References: <20180524112707.3580-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Fri, 25 May 2018 14:55:08 -0400
+X-Google-Smtp-Source: AB8JxZpixhlaWx8a+2loowbMSVsLJbAfViCz4jkcAoAC2cPp+ahK7YS7CKV1dXt2LEZUsY8+txs3sA==
+From: Shakeel Butt <shakeelb@google.com>
+To: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Linux MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH] memcg: force charge kmem counter too
+Date: Fri, 25 May 2018 11:55:01 -0700
+Message-Id: <20180525185501.82098-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 24 May 2018 19:27:07 +0800
+Based on several conditions the kernel can decide to force charge an
+allocation for a memcg i.e. overcharge memcg->memory and memcg->memsw
+counters. Do the same for memcg->kmem counter too. In cgroup-v1, this
+bug can cause a __GFP_NOFAIL kmem allocation fail if an explicit limit
+on kmem counter is set and reached.
 
-> This comment is outdated as fec_ptp_ioctl has been replaced by fec_ptp_set/fec_ptp_get 
-> since commit 1d5244d0e43b ("fec: Implement the SIOCGHWTSTAMP ioctl")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ mm/memcontrol.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-Applied, thank you.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index ab5673dbfc4e..0a88f824c550 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1893,6 +1893,18 @@ void mem_cgroup_handle_over_high(void)
+ 	current->memcg_nr_pages_over_high = 0;
+ }
+ 
++/*
++ * Based on try_charge() force charge conditions.
++ */
++static inline bool should_force_charge(gfp_t gfp_mask)
++{
++	return (unlikely(tsk_is_oom_victim(current) ||
++			 fatal_signal_pending(current) ||
++			 current->flags & PF_EXITING ||
++			 current->flags & PF_MEMALLOC ||
++			 gfp_mask & __GFP_NOFAIL));
++}
++
+ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 		      unsigned int nr_pages)
+ {
+@@ -2008,6 +2020,8 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	 * The allocation either can't fail or will lead to more memory
+ 	 * being freed very soon.  Allow memory usage go over the limit
+ 	 * temporarily by force charging it.
++	 *
++	 * NOTE: Please keep the should_force_charge() conditions in sync.
+ 	 */
+ 	page_counter_charge(&memcg->memory, nr_pages);
+ 	if (do_memsw_account())
+@@ -2331,8 +2345,11 @@ int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+ 
+ 	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+ 	    !page_counter_try_charge(&memcg->kmem, nr_pages, &counter)) {
+-		cancel_charge(memcg, nr_pages);
+-		return -ENOMEM;
++		if (!should_force_charge(gfp)) {
++			cancel_charge(memcg, nr_pages);
++			return -ENOMEM;
++		}
++		page_counter_charge(&memcg->kmem, nr_pages);
+ 	}
+ 
+ 	page->mem_cgroup = memcg;
+-- 
+2.17.0.921.gf22659ad46-goog
