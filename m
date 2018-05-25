@@ -1,53 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968152AbeEYTan (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:30:43 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38187 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967879AbeEYTak (ORCPT
+        id S968171AbeEYTbK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:31:10 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37543 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967926AbeEYTbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:30:40 -0400
-X-Google-Smtp-Source: AB8JxZr9frjeQIZi7qS/kWAGQLGNfcdQUE3kH8QVOCJm5j9rhpmSh5IsylH/tQnF+4eQA5AX1OaMvw==
-Date: Fri, 25 May 2018 12:32:19 -0700
+        Fri, 25 May 2018 15:31:08 -0400
+X-Google-Smtp-Source: AB8JxZrgVPPMkEbDYdgUpy/N8w/y6bR8LNaHbWwTPu7zxgXglyScLSWruSr1W38o2cBlorAm9xWv3Q==
+Date: Fri, 25 May 2018 12:32:47 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Niklas Cassel <niklas.cassel@linaro.org>
+To: Thierry Escande <thierry.escande@linaro.org>
 Cc: Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: fix regulator property name for wlan pcie
- endpoint
-Message-ID: <20180525193219.GY2259@tuxbook-pro>
-References: <20180522195758.24607-1-niklas.cassel@linaro.org>
+        Will Deacon <will.deacon@arm.com>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: apq8096-db820c: Removed bt-en-1-8v
+ regulator
+Message-ID: <20180525193247.GZ2259@tuxbook-pro>
+References: <20180524180155.24839-1-thierry.escande@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522195758.24607-1-niklas.cassel@linaro.org>
+In-Reply-To: <20180524180155.24839-1-thierry.escande@linaro.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 22 May 12:57 PDT 2018, Niklas Cassel wrote:
+On Thu 24 May 11:01 PDT 2018, Thierry Escande wrote:
 
-> The property name vddpe-supply is not included in
-> Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> nor in the pcie-qcom PCIe Root Complex driver.
+> This patch removes the unused bt-en-1-8v regulator and moves the
+> bt_en_gios claim to the pm8994_gpios node.
 > 
-> This property name was used in an initial patchset for pcie-qcom,
-> but was renamed in a later revision.
+> This bt_en_gpio could have been moved to the bluetooth serial node but
+> instead this node declares an 'enable' gpio addressing the bt_en_gpio.
+> This is needed by the Qualcomm QCA6174 WLAN/BT combo chip that needs to
+> have the bt_en_gpio claimed even if only WLAN is used.
 > 
-> Therefore, the regulator is currently never enabled, leaving us with
-> unoperational wlan.
-> 
-> Fix this by using the correct regulator property name, so that wlan
-> comes up correctly.
-> 
-> Fixes: 1c8ca74a2ea1 ("arm64: dts: apq8096-db820c: Enable wlan and bt en pins")
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
@@ -55,29 +50,63 @@ Regards,
 Bjorn
 
 > ---
-> Bluetooth needs a similar patch, but since bluetooth needs some more
-> work, submit this right now, so we at least have working wlan.
 > 
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Change in v2:
+> - Rebased on top of [1] posted a few days ago:
 > 
+> [1] https://lkml.org/lkml/2018/5/22/949
+>     "arm64: dts: fix regulator property name for wlan pcie endpoint"
+>     
+> 
+>  arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi |  2 +-
+>  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi           | 14 --------------
+>  2 files changed, 1 insertion(+), 15 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+> index 6167af955659..a6ad3d7fe655 100644
+> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+> @@ -4,7 +4,7 @@
+>  &pm8994_gpios {
+>  
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&ls_exp_gpio_f>;
+> +	pinctrl-0 = <&ls_exp_gpio_f &bt_en_gpios>;
+>  
+>  	ls_exp_gpio_f: pm8994_gpio5 {
+>  		pinconf {
 > diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> index 818bf0efd501..804268f54f37 100644
+> index 7ca6e78def55..2c026b8af792 100644
 > --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
 > +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> @@ -203,7 +203,7 @@
->  			pcie@600000 {
+> @@ -171,19 +171,6 @@
+>  			pinctrl-0 = <&usb2_vbus_det_gpio>;
+>  		};
+>  
+> -		bt_en: bt-en-1-8v {
+> -			pinctrl-names = "default";
+> -			pinctrl-0 = <&bt_en_gpios>;
+> -			compatible = "regulator-fixed";
+> -			regulator-name = "bt-en-regulator";
+> -			regulator-min-microvolt = <1800000>;
+> -			regulator-max-microvolt = <1800000>;
+> -
+> -			/* WLAN card specific delay */
+> -			startup-delay-us = <70000>;
+> -			enable-active-high;
+> -		};
+> -
+>  		wlan_en: wlan-en-1-8v {
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&wlan_en_gpios>;
+> @@ -204,7 +191,6 @@
 >  				status = "okay";
 >  				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
-> -				vddpe-supply = <&wlan_en>;
-> +				vddpe-3v3-supply = <&wlan_en>;
->  				vddpe1-supply = <&bt_en>;
+>  				vddpe-3v3-supply = <&wlan_en>;
+> -				vddpe1-supply = <&bt_en>;
 >  			};
 >  
+>  			pcie@608000 {
 > -- 
-> 2.17.0
+> 2.14.1
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
