@@ -1,89 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964845AbeEYDug (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:50:36 -0400
-Received: from mga01.intel.com ([192.55.52.88]:6227 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932570AbeEYDuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:50:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
-   d="scan'208";a="58357659"
-Subject: Re: Wrong -dirty suffix set by setlocalversion (was: BUG in git
- diff-index)
-To: Mike Mason <michael.w.mason@intel.com>
-Cc: andy.work@nglowry.com, git@vger.kernel.org, gitster@pobox.com,
-        josh@joshtriplett.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lists@nerdbynature.de, peff@peff.net,
-        nico-linuxsetlocalversion@schottelius.org
-References: <89d82c84-7a3b-9c4c-679e-a7a723669592@intel.com>
- <20180524230334.12452-1-michael.w.mason@intel.com>
-From: Marc Herbert <Marc.Herbert@intel.com>
-Message-ID: <0dc31052-4cfd-3b92-0a4a-96c8ecfafff6@intel.com>
-Date: Thu, 24 May 2018 20:50:28 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180524230334.12452-1-michael.w.mason@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S935767AbeEYDuk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:50:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41504 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932570AbeEYDuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:50:37 -0400
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
+        Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 20/33] md/dm/bcache: conver to bio_for_each_page_all2 and bio_for_each_segment
+Date: Fri, 25 May 2018 11:46:08 +0800
+Message-Id: <20180525034621.31147-21-ming.lei@redhat.com>
+In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/2018 16:03, Mike Mason wrote:
+In bch_bio_alloc_pages(), bio_for_each_segment() is fine because this
+helper can only be used on a freshly new bio.
 
-> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-> index 71f39410691b..9da4c5e83285 100755
-> --- a/scripts/setlocalversion
-> +++ b/scripts/setlocalversion
-> @@ -73,8 +73,10 @@ scm_version()
->  			printf -- '-svn%s' "`git svn find-rev $head`"
->  		fi
->  
-> -		# Check for uncommitted changes
-> -		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-> +		# Check for uncommitted changes. Only check mtime and size.
-> +       # Ignore insequential ctime, uid, gid and inode differences.
-> +		if git -c "core.checkstat=minimal" diff-index --name-only HEAD | \
-> +				grep -qv "^scripts/package"; then
->  			printf '%s' -dirty
->  		fi
+For other cases, we conver to bio_for_each_page_all2() since they needn't
+to update bvec table.
 
-FWIW:
+bio_for_each_page_all() can't be used any more after multipage bvec is
+enabled, so we have to convert to bio_for_each_page_all2().
 
-Reported-by: Marc.Herbert@intel.com
-Reviewed-by: Marc.Herbert@intel.com  (assuming a future and decent commit message)
-Tested-by: Marc.Herbert@intel.com
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ drivers/md/bcache/btree.c | 3 ++-
+ drivers/md/bcache/util.c  | 2 +-
+ drivers/md/dm-crypt.c     | 3 ++-
+ drivers/md/raid1.c        | 3 ++-
+ 4 files changed, 7 insertions(+), 4 deletions(-)
 
-
-So the real use case is making a copy of a whole tree before building.
-Typical in automated builds, old example:
-https://groups.google.com/a/chromium.org/d/msg/chromium-os-dev/zxOa0OLWFkw/N_Sb7EZOBwAJ 
-
-Here's a more complex but faster and more transparent way to test Mike's fix
-than copying an entire tree:
-
-# Make sure you start from a clean state
-git describe --dirty      # must not -dirty
-
-make prepare
-
-# Simulate a copy of the tree but with just one file
-rsync --perms --times  README   README.mtime_backup
-rm  README
-rsync --perms --times  README.mtime_backup   README
-stat  README  README.mtime_backup 
-
-# Demo the BUG fixed by Mike
-./scripts/setlocalversion # -dirty BUG! because spurious inode ctime difference
-git diff-index  HEAD
-git describe --dirty      # not -dirty
-./scripts/setlocalversion # not -dirty any more cause describe refreshed index
-
-# Make sure mtime still causes -dirty with AND without Mike's fix
-touch README
-./scripts/setlocalversion # -dirty
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index a9d82911c3d2..498f6b032b4c 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -423,8 +423,9 @@ static void do_btree_node_write(struct btree *b)
+ 		int j;
+ 		struct bio_vec *bv;
+ 		void *base = (void *) ((unsigned long) i & ~(PAGE_SIZE - 1));
++		struct bvec_iter_all bia;
+ 
+-		bio_for_each_page_all(bv, b->bio, j)
++		bio_for_each_page_all2(bv, b->bio, j, bia)
+ 			memcpy(page_address(bv->bv_page),
+ 			       base + j * PAGE_SIZE, PAGE_SIZE);
+ 
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index 77230973a110..74febd5230df 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -303,7 +303,7 @@ int bch_bio_alloc_pages(struct bio *bio, gfp_t gfp_mask)
+ 	int i;
+ 	struct bio_vec *bv;
+ 
+-	bio_for_each_page_all(bv, bio, i) {
++	bio_for_each_segment_all(bv, bio, i) {
+ 		bv->bv_page = alloc_page(gfp_mask);
+ 		if (!bv->bv_page) {
+ 			while (--bv >= bio->bi_io_vec)
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 74737ae0ef11..8fdc8349fd72 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -1450,8 +1450,9 @@ static void crypt_free_buffer_pages(struct crypt_config *cc, struct bio *clone)
+ {
+ 	unsigned int i;
+ 	struct bio_vec *bv;
++	struct bvec_iter_all bia;
+ 
+-	bio_for_each_page_all(bv, clone, i) {
++	bio_for_each_page_all2(bv, clone, i, bia) {
+ 		BUG_ON(!bv->bv_page);
+ 		mempool_free(bv->bv_page, cc->page_pool);
+ 	}
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index e318a0c19eb0..8b2b071619a2 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2117,13 +2117,14 @@ static void process_checks(struct r1bio *r1_bio)
+ 		struct page **spages = get_resync_pages(sbio)->pages;
+ 		struct bio_vec *bi;
+ 		int page_len[RESYNC_PAGES] = { 0 };
++		struct bvec_iter_all bia;
+ 
+ 		if (sbio->bi_end_io != end_sync_read)
+ 			continue;
+ 		/* Now we can 'fixup' the error value */
+ 		sbio->bi_status = 0;
+ 
+-		bio_for_each_page_all(bi, sbio, j)
++		bio_for_each_page_all2(bi, sbio, j, bia)
+ 			page_len[j] = bi->bv_len;
+ 
+ 		if (!status) {
+-- 
+2.9.5
