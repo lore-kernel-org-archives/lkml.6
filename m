@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936283AbeEYOfi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 10:35:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56620 "EHLO
+        id S936304AbeEYOfl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 10:35:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56720 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936227AbeEYOfd (ORCPT
+        with ESMTP id S936227AbeEYOfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 10:35:33 -0400
+        Fri, 25 May 2018 10:35:39 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
@@ -14,9 +14,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 Cc: x86@kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: [PATCH 2/7] ia64: remove the dead iommu_sac_force variable
-Date: Fri, 25 May 2018 16:35:07 +0200
-Message-Id: <20180525143512.1466-3-hch@lst.de>
+Subject: [PATCH 5/7] x86: remove the experimental forcesac boot option
+Date: Fri, 25 May 2018 16:35:10 +0200
+Message-Id: <20180525143512.1466-6-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180525143512.1466-1-hch@lst.de>
 References: <20180525143512.1466-1-hch@lst.de>
@@ -25,29 +25,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks like copy and paste from x86 that never actually got used.
+Limiting the dma mask to avoid PCI (pre-PCIe) DAC cycles while paying
+the huge overhead of an IOMMU is rather pointless, and this seriously
+gets in the way of dma mapping work.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/ia64/kernel/pci-dma.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  1 -
+ Documentation/x86/x86_64/boot-options.txt     |  4 +---
+ arch/x86/kernel/pci-dma.c                     | 21 +------------------
+ drivers/net/ethernet/sfc/efx.c                |  5 ++---
+ drivers/net/ethernet/sfc/falcon/efx.c         |  5 ++---
+ 5 files changed, 6 insertions(+), 30 deletions(-)
 
-diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
-index b5df084c0af4..50b6ad282a90 100644
---- a/arch/ia64/kernel/pci-dma.c
-+++ b/arch/ia64/kernel/pci-dma.c
-@@ -18,8 +18,6 @@
- dma_addr_t bad_dma_address __read_mostly;
- EXPORT_SYMBOL(bad_dma_address);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f2040d46f095..cc0ac035b8fe 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1705,7 +1705,6 @@
+ 		nopanic
+ 		merge
+ 		nomerge
+-		forcesac
+ 		soft
+ 		pt		[x86, IA-64]
+ 		nobypass	[PPC/POWERNV]
+diff --git a/Documentation/x86/x86_64/boot-options.txt b/Documentation/x86/x86_64/boot-options.txt
+index 153b3a57fba2..341588ec4e29 100644
+--- a/Documentation/x86/x86_64/boot-options.txt
++++ b/Documentation/x86/x86_64/boot-options.txt
+@@ -208,7 +208,7 @@ IOMMU (input/output memory management unit)
+       Kernel boot message: "PCI-DMA: Using Calgary IOMMU"
+ 
+  iommu=[<size>][,noagp][,off][,force][,noforce][,leak[=<nr_of_leak_pages>]
+-	[,memaper[=<order>]][,merge][,forcesac][,fullflush][,nomerge]
++	[,memaper[=<order>]][,merge][,fullflush][,nomerge]
+ 	[,noaperture][,calgary]
+ 
+   General iommu options:
+@@ -235,8 +235,6 @@ IOMMU (input/output memory management unit)
+                        (experimental).
+     nomerge            Don't do scatter-gather (SG) merging.
+     noaperture         Ask the IOMMU not to touch the aperture for AGP.
+-    forcesac           Force single-address cycle (SAC) mode for masks <40bits
+-                       (experimental).
+     noagp              Don't initialize the AGP driver and use full aperture.
+     allowdac           Allow double-address cycle (DAC) mode, i.e. DMA >4GB.
+                        DAC is used with 32-bit PCI to push a 64-bit address in
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index 77625b60a510..91dff954b745 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -20,8 +20,6 @@ static int forbid_dac __read_mostly;
+ const struct dma_map_ops *dma_ops = &dma_direct_ops;
+ EXPORT_SYMBOL(dma_ops);
  
 -static int iommu_sac_force __read_mostly;
 -
- int no_iommu __read_mostly;
  #ifdef CONFIG_IOMMU_DEBUG
+ int panic_on_overflow __read_mostly = 1;
  int force_iommu __read_mostly = 1;
-@@ -61,23 +59,6 @@ int iommu_dma_supported(struct device *dev, u64 mask)
- 	if (mask < DMA_BIT_MASK(24))
- 		return 0;
+@@ -125,7 +123,7 @@ static __init int iommu_setup(char *p)
+ 		if (!strncmp(p, "nomerge", 7))
+ 			iommu_merge = 0;
+ 		if (!strncmp(p, "forcesac", 8))
+-			iommu_sac_force = 1;
++			pr_warn("forcesac option ignored.\n");
+ 		if (!strncmp(p, "allowdac", 8))
+ 			forbid_dac = 0;
+ 		if (!strncmp(p, "nodac", 5))
+@@ -165,23 +163,6 @@ int arch_dma_supported(struct device *dev, u64 mask)
+ 	}
+ #endif
  
 -	/* Tell the device to use SAC when IOMMU force is on.  This
 -	   allows the driver to use cheaper accesses in some cases.
@@ -62,12 +111,44 @@ index b5df084c0af4..50b6ad282a90 100644
 -	   type. Normally this doesn't make any difference, but gives
 -	   more gentle handling of IOMMU overflow. */
 -	if (iommu_sac_force && (mask >= DMA_BIT_MASK(40))) {
--		dev_info(dev, "Force SAC with mask %llx\n", mask);
+-		dev_info(dev, "Force SAC with mask %Lx\n", mask);
 -		return 0;
 -	}
 -
  	return 1;
  }
- EXPORT_SYMBOL(iommu_dma_supported);
+ EXPORT_SYMBOL(arch_dma_supported);
+diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
+index a4ebd8715494..661828e8fdcf 100644
+--- a/drivers/net/ethernet/sfc/efx.c
++++ b/drivers/net/ethernet/sfc/efx.c
+@@ -1289,9 +1289,8 @@ static int efx_init_io(struct efx_nic *efx)
+ 
+ 	pci_set_master(pci_dev);
+ 
+-	/* Set the PCI DMA mask.  Try all possibilities from our
+-	 * genuine mask down to 32 bits, because some architectures
+-	 * (e.g. x86_64 with iommu_sac_force set) will allow 40 bit
++	/* Set the PCI DMA mask.  Try all possibilities from our genuine mask
++	 * down to 32 bits, because some architectures will allow 40 bit
+ 	 * masks event though they reject 46 bit masks.
+ 	 */
+ 	while (dma_mask > 0x7fffffffUL) {
+diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
+index 3d6c91e96589..dd5530a4f8c8 100644
+--- a/drivers/net/ethernet/sfc/falcon/efx.c
++++ b/drivers/net/ethernet/sfc/falcon/efx.c
+@@ -1242,9 +1242,8 @@ static int ef4_init_io(struct ef4_nic *efx)
+ 
+ 	pci_set_master(pci_dev);
+ 
+-	/* Set the PCI DMA mask.  Try all possibilities from our
+-	 * genuine mask down to 32 bits, because some architectures
+-	 * (e.g. x86_64 with iommu_sac_force set) will allow 40 bit
++	/* Set the PCI DMA mask.  Try all possibilities from our genuine mask
++	 * down to 32 bits, because some architectures will allow 40 bit
+ 	 * masks event though they reject 46 bit masks.
+ 	 */
+ 	while (dma_mask > 0x7fffffffUL) {
 -- 
 2.17.0
