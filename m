@@ -1,119 +1,330 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030499AbeEYVqc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:46:32 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:57525 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030291AbeEYVqb (ORCPT
+        id S1030493AbeEYVw5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:52:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51156 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030291AbeEYVw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:46:31 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] procfs: use inline functions instead of macros for proc_create_single_data stub
-Date: Fri, 25 May 2018 23:45:00 +0200
-Message-Id: <20180525214548.2122779-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:pjWjjUxM59AzxV4VH5Q5xayjthbeTTq9P5SZXZNErwcBwbJ5cU7
- sY/8qrk4dIVJHCcQEeDJL6z2DnqfyPXBiGK8pJWeRZOH7h42O3xyuPDtFOzagmseFQHd1St
- 0TO9aQOFdE4813KwQYXuEOSLoghFkTZg/aFb/qd1xPG+NDBRGCqBmxfQ7SN5iJPSNSrYDmA
- bN8TN/KfcY9hI8vcv6dgQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:fBKHoYUNifg=:GwXV8euQVo43dxGT2ra0ws
- LBxqUKQtIAgZ7kGYn/QMDzFmqSURKCWvmT/uL+/TAOkBgpXWPKg/MSj2ulcyoiSsccwazps9L
- 1REPxXvASH/nQBSLfPliMxEjSx7MZhoh8DgO27qoK9ObqJeC8DUG6NDGSdo87GdrEOb6GX/pf
- B/zwRz/rpUy6y2GjRgRgZJUYeVxEt++ldekMMCkF0uJmXhgb/qsTe1pM3nmlvnA5IDcjqfMT4
- WDbpXYnnATLK5bXTa6l2tKcHiEPLi4zrxblCU0SmiwrJjGyFaF5+r1n4987mXCCT4u248tv+r
- 7wiJ2UlWP7P8z6GQdC0yeB3lUpvbbyp0VSanQp2PrBo9m3cWF4d1CpemvTLk3qo3Y6JGfltWL
- XSnl9nimSxWtxH42K6cCxz2RFTYOC3Bi84ONVbUWLUEG50emx8CQSOvAXeCU1aKBsXT/hY+dd
- wxGT2560KfhRWZTjbO+A7D3/POxPjPywqKt2YxFHPS8HQhtwDRUS75Ac1cBhF3KdYHTNJjAVa
- MePSXaQZySBiuoGK/1OdZnaTwSxCHqKV+LmfsSwQTovL6bjEOCx9ixCzV5x+BoV5V5AEFE4xe
- tEBLcO4/RP4OTbN29KDGevBiuPXGOaY6O/YyT24H2X8xOAhJhp529qve5hPkFWxROti/y6m8N
- poyy8vukXoQsHO54PHRROSGI4MCBeeP36JN6fpJ/JTgC5p2ma53Wp++0bE9lBgQhCA3k=
+        Fri, 25 May 2018 17:52:56 -0400
+Date: Fri, 25 May 2018 14:52:54 -0700
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: mmotm 2018-05-25-14-52 uploaded
+Message-ID: <20180525215254.VTc61%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The procfs interface changes caused one warning in afs for
-a now unused function:
+The mm-of-the-moment snapshot 2018-05-25-14-52 has been uploaded to
 
-fs/afs/proc.c:818:12: error: 'afs_proc_stats_show' defined but not used [-Werror=unused-function]
- static int afs_proc_stats_show(struct seq_file *m, void *v)
+   http://www.ozlabs.org/~akpm/mmotm/
 
-This can be avoided by using an inline function instead of a macro
-to reference it, so now the compiler can silently drop the function
-after seeing that there is a reference but that it is never called.
+mmotm-readme.txt says
 
-Unfortunately, this change triggers another warning where a function
-is hidden and now unexpectedly referenced:
+README for mm-of-the-moment:
 
-drivers/mtd/mtdcore.c: In function 'init_mtd':
-drivers/mtd/mtdcore.c:1878:48: error: 'mtd_proc_show' undeclared (first use in this function); did you mean 'mtd_name_show'?
+http://www.ozlabs.org/~akpm/mmotm/
 
-It seems nicer to keep using the inline function and removing the #ifdef
-here than to add an #ifdef around every single function we pass into
-proc_create_single_data(), so I'm removing the #ifdef here.
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-After a few hundred randconfig builds, this was the only instance
-I found that caused a problem.
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-Fixes: 353861cf0594 ("afs: simplify procfs code")
-Fixes: 3f3942aca6da ("proc: introduce proc_create_single{,_data}")
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/mtd/mtdcore.c   |  3 ---
- include/linux/proc_fs.h | 10 ++++++++--
- 2 files changed, 8 insertions(+), 5 deletions(-)
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 42395df06be9..08d1e89faf9c 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -1814,8 +1814,6 @@ void *mtd_kmalloc_up_to(const struct mtd_info *mtd, size_t *size)
- }
- EXPORT_SYMBOL_GPL(mtd_kmalloc_up_to);
- 
--#ifdef CONFIG_PROC_FS
--
- /*====================================================================*/
- /* Support for /proc/mtd */
- 
-@@ -1833,7 +1831,6 @@ static int mtd_proc_show(struct seq_file *m, void *v)
- 	mutex_unlock(&mtd_table_mutex);
- 	return 0;
- }
--#endif /* CONFIG_PROC_FS */
- 
- /*====================================================================*/
- /* Init code */
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index e518352137e7..3b44c357a6e7 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -84,8 +84,14 @@ static inline struct proc_dir_entry *proc_mkdir_mode(const char *name,
- #define proc_create_seq_private(name, mode, parent, ops, size, data) ({NULL;})
- #define proc_create_seq_data(name, mode, parent, ops, data) ({NULL;})
- #define proc_create_seq(name, mode, parent, ops) ({NULL;})
--#define proc_create_single(name, mode, parent, show) ({NULL;})
--#define proc_create_single_data(name, mode, parent, show, data) ({NULL;})
-+static inline struct proc_dir_entry *proc_create_single_data(const char *name,
-+		umode_t mode, struct proc_dir_entry *parent,
-+		int (*show)(struct seq_file *, void *), void *data)
-+{
-+	return NULL;
-+}
-+#define proc_create_single(name, mode, parent, show) \
-+	proc_create_single_data(name, mode, parent, show, NULL)
- #define proc_create(name, mode, parent, proc_fops) ({NULL;})
- #define proc_create_data(name, mode, parent, proc_fops, data) ({NULL;})
- 
--- 
-2.9.0
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.17-rc6:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* mm-fix-nr_rotate_swap-leak-in-swapon-error-case.patch
+* revert-ocfs2-o2hb-check-len-for-bio_add_page-to-avoid-getting-incorrect-bio.patch
+* idr-fix-invalid-ptr-dereference-on-item-delete.patch
+* revert-ipc-shm-fix-shmat-mmap-nil-page-protection.patch
+* ipc-shm-fix-shmat-nil-address-after-round-down-when-remapping.patch
+* maintainers-change-hugetlbfs-maintainer-and-update-files.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* mm-memory_hotplug-make-has_unmovable_pages-more-robust.patch
+* mm-do-not-warn-on-offline-nodes-unless-the-specific-node-is-explicitly-requested.patch
+* proc-fix-smaps-and-meminfo-alignment.patch
+* mm-memory_hotplug-fix-leftover-use-of-struct-page-during-hotplug.patch
+* kernel-sys-fix-potential-spectre-v1.patch
+* add-missing-header-include-linux-mem_encrypth.patch
+* checkpatch-fix-macro-argument-precedence-test.patch
+* kasan-free-allocated-shadow-memory-on-mem_cancel_online.patch
+* kasan-fix-memory-hotplug-during-boot.patch
+* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2.patch
+* mm-fix-race-between-kmem_cache-destroy-create-and-deactivate-v2-fix.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* fs-dax-adding-new-return-type-vm_fault_t.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* ocfs2-clean-up-redundant-function-declarations.patch
+* ocfs2-ocfs2_inode_lock_tracker-does-not-distinguish-lock-level.patch
+* ocfs2-eliminate-a-misreported-warning.patch
+* ocfs2-correct-the-comments-position-of-the-structure-ocfs2_dir_block_trailer.patch
+* ocfs2-drop-a-vla-in-ocfs2_orphan_del.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* ocfs2-dont-put-and-assign-null-to-bh-allocated-outside.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* net-9p-detecting-invalid-options-as-much-as-possible.patch
+* fs-9p-detecting-invalid-options-as-much-as-possible.patch
+* xen-9pfs-dont-inclide-rwlockh-directly.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files-fix.patch
+  mm.patch
+* slab-__gfp_zero-is-incompatible-with-a-constructor.patch
+* mm-slubc-add-__printf-verification-to-slab_err.patch
+* mm-slub-remove-impertinent-comment.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct-fix.patch
+* mm-memcontrol-move-swap-charge-handling-into-get_swap_page.patch
+* mm-memcontrol-implement-memoryswapevents.patch
+* zram-correct-flag-name-of-zram_access.patch
+* zram-mark-incompressible-page-as-zram_huge.patch
+* zram-record-accessed-second.patch
+* zram-introduce-zram-memory-tracking.patch
+* zram-introduce-zram-memory-tracking-fix.patch
+* zram-introduce-zram-memory-tracking-update.patch
+* zram-introduce-zram-memory-tracking-update-fix.patch
+* zram-introduce-zram-memory-tracking-update-fix-fix.patch
+* zram-introduce-zram-memory-tracking-update-fix-fix-fix.patch
+* zram-introduce-zram-memory-tracking-update-fix-fix-fix-fix.patch
+* mm-shmem-add-__rcu-annotations-and-properly-deref-radix-entry.patch
+* mm-shmem-update-file-sealing-comments-and-file-checking.patch
+* mm-restructure-memfd-code.patch
+* mm-page_alloc-remove-realsize-in-free_area_init_core.patch
+* mm-introduce-arch_has_pte_special.patch
+* mm-remove-odd-have_pte_special.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop-fix.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* mm-memblock-introduce-phys_addr_max.patch
+* mm-rename-page_counters-count-limit-into-usage-max.patch
+* mm-memorylow-hierarchical-behavior.patch
+* mm-treat-memorylow-value-inclusive.patch
+* mm-docs-describe-memorylow-refinements.patch
+* mm-gup-prevent-pmd-checking-race-in-follow_pmd_mask.patch
+* mm-sparse-check-__highest_present_section_nr-only-for-a-present-section.patch
+* mm-sparse-pass-the-__highest_present_section_nr-1-to-alloc_func.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice-v3.patch
+* mm-vmalloc-avoid-racy-handling-of-debugobjects-in-vunmap.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects-fix.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on-fix.patch
+* lockdep-fix-fs_reclaim-annotation.patch
+* mm-ksm-remove-unused-page_referenced_ksm-declaration.patch
+* mm-ksm-move-page_stable_node-from-ksmh-to-ksmc.patch
+* mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix.patch
+* tmpfs-allow-decoding-a-file-handle-of-an-unlinked-file.patch
+* memcg-writeback-use-memcg-cgwb_list-directly.patch
+* memcg-replace-mm-owner-with-mm-memcg.patch
+* mm-memcontrolc-add-mem_cgroup_from_task-as-a-local-helper.patch
+* memcg-mark-memcg1_events-static-const.patch
+* mm-memcontrol-drain-stocks-on-resize-limit.patch
+* mm-memcontrol-drain-memcg-stock-on-force_empty.patch
+* mm-memblock-print-memblock_remove.patch
+* mm-pagemap-hide-swap-entry-for-unprivileged-users.patch
+* mm-move-is_pageblock_removable_nolock-to-mm-memory_hotplugc.patch
+* mm-introduce-memorymin.patch
+* mm-introduce-memorymin-fix.patch
+* mm-ksm-ignore-stable_flag-of-rmap_item-address-in-rmap_walk_ksm.patch
+* mm-vmpressure-use-kstrndup-instead-of-kmallocstrncpy.patch
+* mm-vmpressure-convert-to-use-match_string-helper.patch
+* mm-page_allocc-remove-useless-parameter-of-finalise_ac.patch
+* mm-adding-new-return-type-vm_fault_t.patch
+* mm-change-return-type-to-vm_fault_t.patch
+* mm-hugetlbfs-pass-fault-address-to-no-page-handler.patch
+* mm-save-two-stranding-bit-in-gfp_mask.patch
+* s390-use-_refcount-for-pgtables.patch
+* mm-split-page_type-out-from-_mapcount.patch
+* mm-mark-pages-in-use-for-page-tables.patch
+* mm-switch-s_mem-and-slab_cache-in-struct-page.patch
+* mm-move-private-union-within-struct-page.patch
+* mm-move-_refcount-out-of-struct-page-union.patch
+* mm-combine-first-three-unions-in-struct-page.patch
+* mm-use-page-deferred_list.patch
+* mm-move-lru-union-within-struct-page.patch
+* mm-combine-lru-and-main-union-in-struct-page.patch
+* mm-improve-struct-page-documentation.patch
+* mm-add-pt_mm-to-struct-page.patch
+* mm-add-hmm_data-to-struct-page.patch
+* slabslub-remove-rcu_head-size-checks.patch
+* slub-remove-kmem_cache-reserved.patch
+* slub-remove-reserved-file-from-sysfs.patch
+* mm-shmem-adding-new-return-type-vm_fault_t.patch
+* mm-devm_memremap_pages-mark-devm_memremap_pages-export_symbol_gpl.patch
+* mm-devm_memremap_pages-handle-errors-allocating-final-devres-action.patch
+* mm-hmm-use-devm-semantics-for-hmm_devmem_add-remove.patch
+* mm-hmm-replace-hmm_devmem_pages_create-with-devm_memremap_pages.patch
+* mm-hmm-mark-hmm_devmem_add-add_resource-export_symbol_gpl.patch
+* mm-memcg-allow-lowering-memoryswapmax-below-the-current-usage.patch
+* memcg-force-charge-kmem-counter-too.patch
+* userfaultfd-prevent-non-cooperative-events-vs-mcopy_atomic-races.patch
+* mm-page_alloc-do-not-break-__gfp_thisnode-by-zonelist-reset.patch
+* refactor-part-of-the-oom-report-in-dump_header.patch
+* refactor-part-of-the-oom-report-in-dump_header-fix.patch
+* mm-hugetlb_cgroup-suppress-sigbus-when-hugetlb_cgroup-charge-fails.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* proc-more-unsigned-int-in-proc-cmdline.patch
+* proc-somewhat-simpler-code-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline-fix.patch
+* proc-deduplicate-proc-cmdline-implementation.patch
+* proc-smaller-rcu-section-in-getattr.patch
+* proc-use-unsigned-int-in-proc_fill_cache.patch
+* proc-skip-branch-in-proc-lookup.patch
+* proc-use-unsigned-int-for-sigqueue-length.patch
+* proc-use-unsigned-int-for-proc-stack.patch
+* proc-test-proc-fd-a-bit-pf_kthread-is-abi.patch
+* int-ll64h-define-u8163264-and-s8163264-based-on-uapi-header.patch
+* types-define-aligned_-types-based-on-uapi-header.patch
+* types-use-fixed-width-types-without-double-underscore-prefix.patch
+* locking-hung_task-show-all-hung-tasks-before-panic.patch
+* get_maintainer-improve-patch-recognition.patch
+* lib-micro-optimization-for-__bitmap_complement.patch
+* ida-remove-simple_ida_lock.patch
+* percpu_ida-use-_irqsave-instead-of-local_irq_save-spin_lock.patch
+* nmi_backtrace-use-printk_safe_flush_on_panic-when-triggering-backtraces.patch
+* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
+* checkpatch-improve-patch-recognition.patch
+* autofs4-merge-auto_fsh-and-auto_fs4h.patch
+* autofs4-use-autofs-instead-of-autofs4-everywhere.patch
+* autofs-copy-autofs4-to-autofs.patch
+* autofs-update-fs-autofs4-kconfig.patch
+* autofs-update-fs-autofs4-kconfig-fix.patch
+* autofs-update-fs-autofs4-makefile.patch
+* autofs-delete-fs-autofs4-source-files.patch
+* autofs-create-autofs-kconfig-and-makefile.patch
+* autofs-rename-autofs-documentation-files.patch
+* autofs-use-autofs-instead-of-autofs4-in-documentation.patch
+* autofs-update-maintainers-entry-for-autofs.patch
+* autofs-comment-on-selinux-changes-needed-for-module-autoload.patch
+* autofs-clean-up-includes.patch
+* coredump-fix-spam-with-zero-vma-process.patch
+* exofs-avoid-vla-in-structures.patch
+* exofs-avoid-vla-in-structures-v2.patch
+* bfs-add-sanity-check-at-bfs_fill_super.patch
+* kernel-relay-change-return-type-to-vm_fault_t.patch
+* kcov-ensure-irq-code-sees-a-valid-area.patch
+* kcov-prefault-the-kcov_area.patch
+* kcov-prefault-the-kcov_area-fix.patch
+* kcov-prefault-the-kcov_area-fix-fix.patch
+* kcov-prefault-the-kcov_area-fix-fix-fix.patch
+* sched-core-kcov-avoid-kcov_area-during-task-switch.patch
+* arm-port-kcov-to-arm.patch
+* fault-injection-reorder-config-entries.patch
+* ipc-sem-mitigate-semnum-index-against-spectre-v1.patch
+* ipc-adding-new-return-type-vm_fault_t.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-git-rejects.patch
+* scripts-fixed-printf-format-mismatch.patch
+* mm-use-octal-not-symbolic-permissions.patch
+* treewide-use-phys_addr_max-to-avoid-type-casting-ullong_max.patch
+* mm-fix-oom_kill-event-handling.patch
+* hexagon-fix-printk-format-warning-in-setupc.patch
+* hexagon-drop-the-unused-variable-zero_page_mask.patch
+* mm-propagate-memory-effective-protection-on-setting-memorymin-low.patch
+* mm-dont-skip-memory-guarantee-calculations.patch
+* selftests-cgroup-add-test-for-memorylow-corner-cases.patch
+* resource-add-walk_system_ram_res_rev.patch
+* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
