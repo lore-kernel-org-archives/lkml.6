@@ -1,38 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030261AbeEYUwv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 16:52:51 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:37760 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968275AbeEYUwu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 16:52:50 -0400
-Date: Fri, 25 May 2018 16:52:48 -0400 (EDT)
-Message-Id: <20180525.165248.256217104154156598.davem@davemloft.net>
-To: f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch,
-        vivien.didelot@savoirfairelinux.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: dsa_loop: Make dynamic debugging
- helpful
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180525035215.19341-1-f.fainelli@gmail.com>
-References: <20180525035215.19341-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1030281AbeEYUyN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 16:54:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39866 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968275AbeEYUyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 16:54:11 -0400
+Date: Fri, 25 May 2018 14:54:08 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Linuxarm <linuxarm@huawei.com>, "John Garry" <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+ management
+Message-ID: <20180525145408.2938a9ec@w520.home>
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8386EE591@FRAEML521-MBX.china.huawei.com>
+References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
+        <20180524122032.724676b9@w520.home>
+        <5FC3163CFD30C246ABAA99954A238FA8386EE591@FRAEML521-MBX.china.huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Thu, 24 May 2018 20:52:14 -0700
+On Fri, 25 May 2018 08:45:36 +0000
+Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
 
-> Remove redundant debug prints from phy_read/write since we can trace those
-> calls through trace events. Enhance dynamic debug prints to print arguments
-> which helps figuring how what is going on at the driver level with higher level
-> configuration interfaces.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Yes, the above changes related to list empty cases looks fine to me. 
 
-Applied, thanks Florian.
+Thanks Shameer, applied to my next branch with the discussed fixes for
+v4.18 (modulo patch 4/7 which Joerg already pushed for v4.17).  Thanks,
+
+Alex
