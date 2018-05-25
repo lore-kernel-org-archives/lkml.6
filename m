@@ -1,107 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967195AbeEYQQe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:16:34 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:39292 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966725AbeEYQQb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:16:31 -0400
-Subject: Re: [RESEND PATCH V5 33/33] block: document usage of bio iterator
- helpers
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
- <20180525034621.31147-34-ming.lei@redhat.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <00b2a0e5-431c-1fc3-7cc8-602148c56457@infradead.org>
-Date: Fri, 25 May 2018 09:16:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S967272AbeEYQR2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:17:28 -0400
+Received: from verein.lst.de ([213.95.11.211]:37761 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966976AbeEYQR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 12:17:27 -0400
+Date: Fri, 25 May 2018 18:23:07 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/7] core, dma-direct: add a flag 32-bit dma limits
+Message-ID: <20180525162307.GB28900@lst.de>
+References: <20180525143512.1466-1-hch@lst.de> <20180525143512.1466-2-hch@lst.de> <20180525145012.GA3863@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20180525034621.31147-34-ming.lei@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525145012.GA3863@kroah.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/2018 08:46 PM, Ming Lei wrote:
-> Now multipage bvec is supported, and some helpers may return page by
-> page, and some may return segment by segment, this patch documents the
-> usage for helping us use them correctly.
+On Fri, May 25, 2018 at 04:50:12PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, May 25, 2018 at 04:35:06PM +0200, Christoph Hellwig wrote:
+> > Various PCI bridges (VIA PCI, Xilinx PCIe) limit DMA to only 32-bits
+> > even if the device itself supports more.  Add a single bit flag to
+> > struct device (to be moved into the dma extension once we around it)
 > 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  Documentation/block/biovecs.txt | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/Documentation/block/biovecs.txt b/Documentation/block/biovecs.txt
-> index b4d238b8d9fc..32a6643caeca 100644
-> --- a/Documentation/block/biovecs.txt
-> +++ b/Documentation/block/biovecs.txt
-> @@ -117,3 +117,35 @@ Other implications:
->     size limitations and the limitations of the underlying devices. Thus
->     there's no need to define ->merge_bvec_fn() callbacks for individual block
->     drivers.
-> +
-> +Usage of helpers:
-> +=================
-> +
-> +* The following helpers which name has suffix of "_all" can only be used on
+> "once we around it"?  I don't understand, sorry.
 
-   * The following helpers, whose names have the suffix "_all", can only be used on
-
-> +non-BIO_CLONED bio, and ususally they are used by filesystem code, and driver
-
-                           usually
-
-> +shouldn't use them becasue bio may have been splitted before they got to the
-
-                      because                   split
-
-> +driver:
-> +
-> +	bio_for_each_segment_all()
-> +	bio_for_each_page_all()
-> +	bio_pages_all()
-> +	bio_first_bvec_all()
-> +	bio_first_page_all()
-> +	bio_last_bvec_all()
-> +	segment_for_each_page_all()
-> +
-> +* The following helpers iterate bio page by page, and the local variable of
-> +'struct bio_vec' or the reference records single page io vector during the
-> +itearation:
-
-   iteration:
-
-> +
-> +	bio_for_each_page()
-> +	bio_for_each_page_all()
-> +	segment_for_each_page_all()
-> +
-> +* The following helpers iterate bio segment by segment, and each segment may
-> +include multiple physically contiguous pages, and the local variable of
-> +'struct bio_vec' or the reference records multi page io vector during the
-> +itearation:
-
-   iteration:
-
-> +
-> +	bio_for_each_segment()
-> +	bio_for_each_segment_all()
-> 
-
-
--- 
-~Randy
+Should be "once we get around it", which in proper grammar should
+probably be "once we get to it".  Anyway, the point is that right
+now struct device is bloated with a lot of fields for dma/iommu
+purposes and we need to clean this up.  It's been on my TODO list
+for a while.
