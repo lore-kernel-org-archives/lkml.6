@@ -1,80 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965405AbeEYJrD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:47:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55143 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965130AbeEYJrC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:47:02 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-pm@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] PM / s2idle: Make s2idle_wait_head swait based
-Date: Fri, 25 May 2018 11:46:47 +0200
-Message-Id: <20180525094648.15464-4-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525094648.15464-1-bigeasy@linutronix.de>
-References: <20180525094648.15464-1-bigeasy@linutronix.de>
+        id S965553AbeEYKBD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:01:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:58158 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965291AbeEYKBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:01:02 -0400
+Subject: Re: [PATCH v4 04/26] arm64: alternative: Apply alternatives early in
+ boot process
+To: Julien Thierry <julien.thierry@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, Christoffer Dall <christoffer.dall@linaro.org>
+References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
+ <1527241772-48007-5-git-send-email-julien.thierry@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <89769f8d-2ed0-1eb7-0373-09fc25f8071a@arm.com>
+Date: Fri, 25 May 2018 11:00:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1527241772-48007-5-git-send-email-julien.thierry@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-s2idle_wait_head is used during s2idle with interrupts disabled even on
-RT. There is no "custom" wake up function so swait could be used instead
-which is also lower weight compared to the wait_queue.
-Make s2idle_wait_head a swait_queue_head.
+On 25/05/18 10:49, Julien Thierry wrote:
+> From: Daniel Thompson <daniel.thompson@linaro.org>
+> 
+> Currently alternatives are applied very late in the boot process (and
+> a long time after we enable scheduling). Some alternative sequences,
+> such as those that alter the way CPU context is stored, must be applied
+> much earlier in the boot sequence.
+> 
+> Introduce apply_boot_alternatives() to allow some alternatives to be
+> applied immediately after we detect the CPU features of the boot CPU.
+> 
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> [julien.thierry@arm.com: rename to fit new cpufeature framework better,
+> 			 apply BOOT_SCOPE feature early in boot]
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@linaro.org>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   arch/arm64/include/asm/alternative.h |  3 +--
+>   arch/arm64/include/asm/cpufeature.h  |  2 ++
+>   arch/arm64/kernel/alternative.c      | 30 +++++++++++++++++++++++++++---
+>   arch/arm64/kernel/cpufeature.c       |  5 +++++
+>   arch/arm64/kernel/smp.c              |  7 +++++++
+>   5 files changed, 42 insertions(+), 5 deletions(-)
+> 
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/power/suspend.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+...
 
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 9108a99878bf..f865aa934835 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -27,6 +27,7 @@
- #include <linux/export.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/swait.h>
- #include <linux/ftrace.h>
- #include <trace/events/power.h>
- #include <linux/compiler.h>
-@@ -57,7 +58,7 @@ EXPORT_SYMBOL_GPL(pm_suspend_global_flags);
-=20
- static const struct platform_suspend_ops *suspend_ops;
- static const struct platform_s2idle_ops *s2idle_ops;
--static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
-+static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
-=20
- enum s2idle_states __read_mostly s2idle_state;
- static DEFINE_SPINLOCK(s2idle_lock);
-@@ -91,8 +92,8 @@ static void s2idle_enter(void)
- 	/* Push all the CPUs into the idle loop. */
- 	wake_up_all_idle_cpus();
- 	/* Make the current CPU wait so it can enter the idle loop too. */
--	wait_event(s2idle_wait_head,
--		   s2idle_state =3D=3D S2IDLE_STATE_WAKE);
-+	swait_event(s2idle_wait_head,
-+		    s2idle_state =3D=3D S2IDLE_STATE_WAKE);
-=20
- 	cpuidle_pause();
- 	put_online_cpus();
-@@ -161,7 +162,7 @@ void s2idle_wake(void)
- 	spin_lock_irqsave(&s2idle_lock, flags);
- 	if (s2idle_state > S2IDLE_STATE_NONE) {
- 		s2idle_state =3D S2IDLE_STATE_WAKE;
--		wake_up(&s2idle_wait_head);
-+		swake_up(&s2idle_wait_head);
- 	}
- 	spin_unlock_irqrestore(&s2idle_lock, flags);
- }
---=20
-2.17.0
+>   
+> +unsigned long boot_capabilities;
+> +
+>   /*
+>    * Flag to indicate if we have computed the system wide
+>    * capabilities based on the boot time active CPUs. This
+> @@ -1370,6 +1372,9 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+>   		if (!cpus_have_cap(caps->capability) && caps->desc)
+>   			pr_info("%s %s\n", info, caps->desc);
+>   		cpus_set_cap(caps->capability);
+> +
+> +		if (scope_mask & SCOPE_BOOT_CPU)
+> +			__set_bit(caps->capability, &boot_capabilities);
+
+Julien
+
+I think this check is problematic. The scope_mask passed on by the boot CPU
+is (SCOPE_BOOT_CPU | SCOPE_LOCAL_CPU) to cover both BOOT CPU capabilities *and*
+CPU local capabilites on the boot CPU. So, you might apply the alternatives for
+a "local" CPU erratum, which is not intended. You may change the above check to :
+
+	if (caps->type & SCOPE_BOOT_CPU)
+
+to make sure you check the "capability" has the SCOPE_BOOT_CPU set.
+
+Suzuki
