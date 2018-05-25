@@ -1,88 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752329AbeEYCyX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:54:23 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46677 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750824AbeEYCyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:54:17 -0400
-Subject: Re: [PATCH] cpufreq: reinitialize new policy min/max when writing
- scaling_(max|min)_freq
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        <gengyanping@hisilicon.com>, <sunzhaosheng@hisilicon.com>
-References: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com>
- <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
-From: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
-Message-ID: <7700fad7-211d-d8b2-e4ee-975c1cf1f9dc@hisilicon.com>
-Date: Fri, 25 May 2018 10:54:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.121.90.40]
-X-CFilter-Loop: Reflected
+        id S1753851AbeEYCzZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:55:25 -0400
+Received: from mga05.intel.com ([192.55.52.43]:22224 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751478AbeEYCzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:55:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,438,1520924400";
+   d="scan'208";a="42054613"
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>
+Subject: [PATCH 0/7] Fix DM DAX handling
+Date: Thu, 24 May 2018 20:55:11 -0600
+Message-Id: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series fixes a few issues that I found with DM's handling of DAX
+devices.  Here are some of the issues I found:
+
+ * We can create a dm-stripe or dm-linear device which is made up of an
+   fsdax PMEM namespace and a raw PMEM namespace but which can hold a
+   filesystem mounted with the -o dax mount option.  DAX operations to
+   the raw PMEM namespace part lack struct page and can fail in
+   interesting/unexpected ways when doing things like fork(), examining
+   memory with gdb, etc.
+
+ * We can create a dm-stripe or dm-linear device which is made up of an
+   fsdax PMEM namespace and a BRD ramdisk which can hold a filesystem
+   mounted with the -o dax mount option.  All I/O to this filesystem
+   will fail.
+
+ * In DM you can't transition a dm target which could possibly support
+   DAX (mode DM_TYPE_DAX_BIO_BASED) to one which can't support DAX
+   (mode DM_TYPE_BIO_BASED), even if you never use DAX.
+
+The first 2 patches in this series are prep work from Darrick and Dave
+which improve bdev_dax_supported().  The last 5 problems fix the above
+mentioned problems in DM.  I feel that this series simplifies the
+handling of DAX devices in DM, and the last 5 DM-related patches have a
+net code reduction of 50 lines.
 
 
-在 2018/5/24 15:45, Rafael J. Wysocki 写道:
-> On Thu, May 24, 2018 at 8:43 AM, Kevin Wangtao
-> <kevin.wangtao@hisilicon.com> wrote:
->> consider such situation, current user_policy.min is 1000000,
->> current user_policy.max is 1200000, in cpufreq_set_policy,
->> other driver may update policy.min to 1200000, policy.max to
->> 1300000. After that, If we input "echo 1300000 > scaling_min_freq",
->> then user_policy.min will be 1300000, and user_policy.max is
->> still 1200000, because the input value is checked with policy.max
->> not user_policy.max. if we get all related cpus offline and
->> online again, it will cause cpufreq_init_policy fail because
->> user_policy.min is higher than user_policy.max.
-> 
-> How do you reproduce this, exactly?
-I write a driver register CPUFREQ_POLICY_NOTIFIER, and when event is CPUFREQ_ADJUST,
-it will modify policy's min/max according to some conditions, I test it with writing
-scaling_(max|min)_freq to traverse all frequencies repeatly, and also repeat hotplug
-as background.
-> 
->> The solution is when user space tries to write scaling_(max|min)_freq,
->> the min/max of new_policy should be reinitialized with min/max
->> of user_policy, like what cpufreq_update_policy does.
->>
->> Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
->> ---
->>   drivers/cpufreq/cpufreq.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->> index b79c532..8b33e08 100644
->> --- a/drivers/cpufreq/cpufreq.c
->> +++ b/drivers/cpufreq/cpufreq.c
->> @@ -697,6 +697,8 @@ static ssize_t store_##file_name                                    \
->>          struct cpufreq_policy new_policy;                               \
->>                                                                          \
->>          memcpy(&new_policy, policy, sizeof(*policy));                   \
->> +       new_policy->min = policy->user_policy.min;                      \
-new_policy.min = policy->user_policy.min;
->> +       new_policy->max = policy->user_policy.max;                      \
-new_policy.max = policy->user_policy.max
-> 
-> It looks like you haven't even tried to build this, have you?
-sorry for that, I test it on another branch and write this patch manually without build
-> 
->>                                                                          \
->>          ret = sscanf(buf, "%u", &new_policy.object);                    \
->>          if (ret != 1)                                                   \
->> --
->> 2.8.1
->>
-> 
-> .
-> 
+Darrick J. Wong (1):
+  fs: allow per-device dax status checking for filesystems
+
+Dave Jiang (1):
+  dax: change bdev_dax_supported() to support boolean returns
+
+Ross Zwisler (5):
+  dm: fix test for DAX device support
+  dm: prevent DAX mounts if not supported
+  dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
+  dm-snap: remove unnecessary direct_access() stub
+  dm-error: remove unnecessary direct_access() stub
+
+ drivers/dax/super.c           | 44 +++++++++++++++++++++----------------------
+ drivers/md/dm-ioctl.c         | 16 ++++++----------
+ drivers/md/dm-snap.c          |  8 --------
+ drivers/md/dm-table.c         | 29 +++++++++++-----------------
+ drivers/md/dm-target.c        |  7 -------
+ drivers/md/dm.c               |  7 ++-----
+ fs/ext2/super.c               |  3 +--
+ fs/ext4/super.c               |  3 +--
+ fs/xfs/xfs_ioctl.c            |  3 ++-
+ fs/xfs/xfs_iops.c             | 30 ++++++++++++++++++++++++-----
+ fs/xfs/xfs_super.c            | 10 ++++++++--
+ include/linux/dax.h           | 12 ++++--------
+ include/linux/device-mapper.h |  8 ++++++--
+ 13 files changed, 88 insertions(+), 92 deletions(-)
+
+-- 
+2.14.3
