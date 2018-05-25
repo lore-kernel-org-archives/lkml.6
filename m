@@ -1,93 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935268AbeEYGlg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:41:36 -0400
-Received: from mga11.intel.com ([192.55.52.93]:59838 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751791AbeEYGle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:41:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,439,1520924400";
-   d="scan'208";a="58387185"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Joe Perches <joe@perches.com>, Russell King <linux@armlinux.org.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Rob Clark <robdclark@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David \(ChunMing\) Zhou" <David1.Zhou@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Roger He <Hongbo.He@amd.com>, Dave Airlie <airlied@redhat.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] gpu: Consistently use octal not symbolic permissions
-In-Reply-To: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <9b0f5f5cf6bccc003beef82f0972be655613075d.1527193246.git.joe@perches.com>
-Date: Fri, 25 May 2018 09:41:22 +0300
-Message-ID: <87a7so44q5.fsf@intel.com>
+        id S935747AbeEYGl4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:41:56 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54857 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935385AbeEYGly (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 02:41:54 -0400
+X-Google-Smtp-Source: AB8JxZp06I3NvQs1CqmrqzWXAHHbqj3M7MQKInd6ebJ4GFkMJGVt7+KZT/Lh+4q6raC1a7H0S36e4DIMzAUxrYWbIks=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180521165946.11778-2-ezequiel@collabora.com>
+References: <20180521165946.11778-1-ezequiel@collabora.com> <20180521165946.11778-2-ezequiel@collabora.com>
+From: sathyam panda <panda.sathyam9@gmail.com>
+Date: Fri, 25 May 2018 12:11:52 +0530
+Message-ID: <CAE6UAyx81nZDQEHuNn0BK5EkB-KmNdSnkiNF+NJTmiUkz72CrA@mail.gmail.com>
+Subject: Re: [PATCH v10 01/16] videobuf2: Make struct vb2_buffer refcounted
+To: Ezequiel Garcia <ezequiel@collabora.com>
+Cc: linux-media@vger.kernel.org, kernel@collabora.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Joe Perches <joe@perches.com> wrote:
-> There is currently a mixture of octal and symbolic permissions uses
-> in files in drivers/gpu/drm and one file in drivers/gpu.
+Hello,
+
+On 5/21/18, Ezequiel Garcia <ezequiel@collabora.com> wrote:
+> The in-fence implementation involves having a per-buffer fence callback,
+> that triggers on the fence signal. The fence callback is called
+> asynchronously
+> and needs a valid reference to the associated ideobuf2 buffer.
 >
-> There are ~270 existing octal uses and ~115 S_<FOO> uses.
+> Allow this by making the vb2_buffer refcounted, so it can be passed
+> to other contexts.
 >
-> Convert all the S_<FOO> symbolic permissions to their octal equivalents
-> as using octal and not symbolic permissions is preferred by many as more
-> readable.
->
-> see: https://lkml.org/lkml/2016/8/2/1945
->
-> Done with automated conversion via:
-> $ ./scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace <files...>
->
-> Miscellanea:
->
-> o Wrapped modified multi-line calls to a single line where appropriate
-> o Realign modified multi-line calls to open parenthesis
-> o drivers/gpu/drm/msm/adreno/a5xx_debugfs.c has a world-writeable
->   debug permission for "reset" - perhaps that should be modified
->
-> Signed-off-by: Joe Perches <joe@perches.com>
+
+-Is it really required, because when a queued buffer with an in_fence
+is deallocated, firstly queue is cancelled.
+-And __vb2_dqbuf is called which calls dma_fence_remove_callback.
+-So if fence callback has been called -__vb2_dqbuf will wait to
+acquire fence lock.
+-So during execution of fence callback, buffers and queue are still valid.
+-And if __vb2_dqbuf remove callback first ,then dma_fence_signal will
+wait for lock
+- so there won't be any fence callback to call for that buffer when
+dma_fence_signal resumes.
+
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c        |  2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c             | 98 +++++++++++-----------
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |  3 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c            |  9 +-
->  drivers/gpu/drm/armada/armada_debugfs.c            |  4 +-
->  drivers/gpu/drm/drm_debugfs.c                      |  6 +-
->  drivers/gpu/drm/drm_debugfs_crc.c                  |  4 +-
->  drivers/gpu/drm/drm_sysfs.c                        |  2 +-
->  drivers/gpu/drm/i915/gvt/firmware.c                |  2 +-
->  drivers/gpu/drm/i915/i915_debugfs.c                |  8 +-
->  drivers/gpu/drm/i915/i915_perf.c                   |  2 +-
->  drivers/gpu/drm/i915/i915_sysfs.c                  | 22 ++---
->  drivers/gpu/drm/i915/intel_pipe_crc.c              |  2 +-
+>  drivers/media/common/videobuf2/videobuf2-core.c | 27
+> ++++++++++++++++++++++---
+>  include/media/videobuf2-core.h                  |  7 +++++--
+>  2 files changed, 29 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c
+> b/drivers/media/common/videobuf2/videobuf2-core.c
+> index d3f7bb33a54d..f1feb45c1e37 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -190,6 +190,26 @@ module_param(debug, int, 0644);
+>  static void __vb2_queue_cancel(struct vb2_queue *q);
+>  static void __enqueue_in_driver(struct vb2_buffer *vb);
+>
+> +static void __vb2_buffer_free(struct kref *kref)
+> +{
+> +	struct vb2_buffer *vb =
+> +		container_of(kref, struct vb2_buffer, refcount);
+> +	kfree(vb);
+> +}
+> +
+> +static void __vb2_buffer_put(struct vb2_buffer *vb)
+> +{
+> +	if (vb)
+> +		kref_put(&vb->refcount, __vb2_buffer_free);
+> +}
+> +
+> +static struct vb2_buffer *__vb2_buffer_get(struct vb2_buffer *vb)
+> +{
+> +	if (vb)
+> +		kref_get(&vb->refcount);
+> +	return vb;
+> +}
+> +
+>  /*
+>   * __vb2_buf_mem_alloc() - allocate video memory for the given buffer
+>   */
+> @@ -346,6 +366,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum
+> vb2_memory memory,
+>  			break;
+>  		}
+>
+> +		kref_init(&vb->refcount);
+>  		vb->state = VB2_BUF_STATE_DEQUEUED;
+>  		vb->vb2_queue = q;
+>  		vb->num_planes = num_planes;
+> @@ -365,7 +386,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum
+> vb2_memory memory,
+>  				dprintk(1, "failed allocating memory for buffer %d\n",
+>  					buffer);
+>  				q->bufs[vb->index] = NULL;
+> -				kfree(vb);
+> +				__vb2_buffer_put(vb);
+>  				break;
+>  			}
+>  			__setup_offsets(vb);
+> @@ -380,7 +401,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum
+> vb2_memory memory,
+>  					buffer, vb);
+>  				__vb2_buf_mem_free(vb);
+>  				q->bufs[vb->index] = NULL;
+> -				kfree(vb);
+> +				__vb2_buffer_put(vb);
+>  				break;
+>  			}
+>  		}
+> @@ -520,7 +541,7 @@ static int __vb2_queue_free(struct vb2_queue *q,
+> unsigned int buffers)
+>  	/* Free videobuf buffers */
+>  	for (buffer = q->num_buffers - buffers; buffer < q->num_buffers;
+>  	     ++buffer) {
+> -		kfree(q->bufs[buffer]);
+> +		__vb2_buffer_put(q->bufs[buffer]);
+>  		q->bufs[buffer] = NULL;
+>  	}
+>
+> diff --git a/include/media/videobuf2-core.h
+> b/include/media/videobuf2-core.h
+> index f6818f732f34..baa4632c7e59 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -12,11 +12,12 @@
+>  #ifndef _MEDIA_VIDEOBUF2_CORE_H
+>  #define _MEDIA_VIDEOBUF2_CORE_H
+>
+> +#include <linux/bitops.h>
+> +#include <linux/dma-buf.h>
+> +#include <linux/kref.h>
+>  #include <linux/mm_types.h>
+>  #include <linux/mutex.h>
+>  #include <linux/poll.h>
+> -#include <linux/dma-buf.h>
+> -#include <linux/bitops.h>
+>
+>  #define VB2_MAX_FRAME	(32)
+>  #define VB2_MAX_PLANES	(8)
+> @@ -249,6 +250,7 @@ struct vb2_buffer {
+>
+>  	/* private: internal use only
+>  	 *
+> +	 * refcount:		refcount for this buffer
+>  	 * state:		current buffer state; do not change
+>  	 * queued_entry:	entry on the queued buffers list, which holds
+>  	 *			all buffers queued from userspace
+> @@ -256,6 +258,7 @@ struct vb2_buffer {
+>  	 *			to be dequeued to userspace
+>  	 * vb2_plane:		per-plane information; do not change
+>  	 */
+> +	struct kref		refcount;
+>  	enum vb2_buffer_state	state;
+>
+>  	struct vb2_plane	planes[VB2_MAX_PLANES];
+>
 
-Please send at least i915 changes separately. There's zero reason to
-make our lives harder for this change.
-
-BR,
-Jani.
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Regards,
+ Sathyam
