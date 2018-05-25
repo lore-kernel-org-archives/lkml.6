@@ -1,72 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935656AbeEYHLG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 03:11:06 -0400
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:60938 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934393AbeEYHLF (ORCPT
+        id S935831AbeEYHPv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 03:15:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36994 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934393AbeEYHPt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 03:11:05 -0400
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-X-Original-SENDERIP: 10.177.226.38
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-From: Hoeun Ryu <hoeun.ryu@lge.com.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Liu, Changcheng" <changcheng.liu@intel.com>
-Cc: Hoeun Ryu <hoeun.ryu@lge.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] nmi_backtrace: use printk_safe_flush_on_panic when triggering backtraces
-Date: Fri, 25 May 2018 16:09:19 +0900
-Message-Id: <1527232247-31693-1-git-send-email-hoeun.ryu@lge.com.com>
-X-Mailer: git-send-email 2.1.4
+        Fri, 25 May 2018 03:15:49 -0400
+Date: Fri, 25 May 2018 09:15:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v8 2/6] cpuset: Add new v2 cpuset.sched.domain flag
+Message-ID: <20180525071524.GQ12198@hirez.programming.kicks-ass.net>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-3-git-send-email-longman@redhat.com>
+ <20180524154156.GI12198@hirez.programming.kicks-ass.net>
+ <675f0f38-9154-4e73-1679-179eefdb7c9f@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <675f0f38-9154-4e73-1679-179eefdb7c9f@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hoeun Ryu <hoeun.ryu@lge.com>
+On Thu, May 24, 2018 at 02:53:31PM -0400, Waiman Long wrote:
+> On 05/24/2018 11:41 AM, Peter Zijlstra wrote:
+> > On Thu, May 17, 2018 at 04:55:41PM -0400, Waiman Long wrote:
+> >> A new cpuset.sched.domain boolean flag is added to cpuset v2. This new
+> >> flag indicates that the CPUs in the current cpuset should be treated
+> >> as a separate scheduling domain.
+> > The traditional name for this is a partition.
+> 
+> Do you want to call it cpuset.sched.partition? That name sounds strange
+> to me.
 
- Use printk_safe_flush_on_panic() in nmi_trigger_cpumask_backtrace().
-nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
-function is called in watchdog_overflow_callback() if the flag of hardlockup
-backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
-watchdog_overflow_callback() function is called in NMI context on some
-architectures.
- printk_safe_flush() eventually tries to lock logbuf_lock in vprintk_emit() but the
-logbuf_lock can be already locked in preempted contexts (task or irq in this case)
-or by other CPUs and it may cause deadlocks.
- By using printk_safe_flush_on_panic() instead of printk_safe_flush() in
-in nmi_trigger_cpumask_backtrace(), the backtrace triggering CPU can access the lock
-safely as the lock is reinitialized before calling printk_safe_flush().
- The messages in logbuf can be corrupted if the NMI context preempts other contexts
-or ignores the lock held by other CPUs writing the buffer.
+Let me explore the whole domain x load-balance space first. I'm thinking
+the two parameters are mostly redundant, but I might be overlooking
+something (trivial or otherwise).
 
-Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
----
- lib/nmi_backtrace.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> >> +  cpuset.sched.domain
+> >> +	A read-write single value file which exists on non-root
+> >> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+> >> +	either "0" (off) or a non-zero value (on).
+> > I would be conservative and only allow 0/1.
+> 
+> I stated that because echoing other integer value like 2 into the flag
+> file won't return any error. I will modify it to say just 0 and 1.
 
-diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
-index 61a6b5a..0ace3c9 100644
---- a/lib/nmi_backtrace.c
-+++ b/lib/nmi_backtrace.c
-@@ -78,8 +78,11 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
- 	/*
- 	 * Force flush any remote buffers that might be stuck in IRQ context
- 	 * and therefore could not run their irq_work.
-+	 * Call nmi-safe version of printk_safe_flush() because this function can be
-+	 * called in NMI context like watchdog_overflow_callback() if
-+	 * sysctl_hardlockup_all_cpu_backtrace is true.
- 	 */
--	printk_safe_flush();
-+	printk_safe_flush_on_panic();
- 
- 	clear_bit_unlock(0, &backtrace_flag);
- 	put_cpu();
--- 
-2.1.4
+Ah, I would make the file error on >1.
+
+Because then you can always extend the meaning afterwards because you
+know it won't be written to with the new value.
+
+> >> +	3) There is no child cgroups with cpuset enabled.
+> >> +
+> >> +	Setting this flag will take the CPUs away from the effective
+> >> +	CPUs of the parent cgroup. Once it is set, this flag cannot be
+> >> +	cleared if there are any child cgroups with cpuset enabled.
+> > This I'm not clear on. Why?
+> >
+> That is for pragmatic reason as it is easier to code this way. We could
+> remove this restriction but that will make the code more complex.
+
+Best to mention that I think.
