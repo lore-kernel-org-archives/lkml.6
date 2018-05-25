@@ -1,71 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030333AbeEYVJK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:09:10 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:41281 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968376AbeEYVJI (ORCPT
+        id S1030354AbeEYVJn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:09:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47020 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968411AbeEYVJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:09:08 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>, linux-pwm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: stm32: fix build warning with CONFIG_DMA_ENGINE disabled
-Date: Fri, 25 May 2018 23:08:30 +0200
-Message-Id: <20180525210843.1821071-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:+Fim8R0Ja3k85HCmDb2GmNGWMnqJJ1t1nOxSudEQgTeNt+z27hn
- fJaDp0W87fPuD7M+I1xV/nxs6hSC4wbPGHROZ6oLX2onGqaAJBGsuu/NPHw+feDhkFlV/MU
- EQYcouHPYL4O4YiU4FWzMKMEbnTG4ydkpCNxUIhRdJH9A8MCUjXGP8EZ0UrxM21rv131t/A
- Ssn0OHbol9HNyH2R1QrNg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Opm8/xm9O6A=:+ykAXxA/oiYU2O+3yLc/i3
- XmhUyfD3lF4MnY8HhqlZYkBHW+XxpsYF0ktV5IVCC6WsZL9letPxWO7SQzuXrlQODgUq6VVJk
- Pvj/DZ1bKFxMabWdbDEnmEHT4eWUTEfYYD4xscJxQCC4q5cN7JzTizjZJPWS3xLXhMvcylkgy
- /ABGE/TFQ43wyOxrcMhceNXsViHl8ktv3NDUiNHkQQfprzXftFyb7q4gAAFxapj0HXuWQ2mbs
- nT1BASnUtu8pqVaKCKQpwWclaYUhuxgmMMVVjBHjGzvgi0+8NXa0VFOs578QtsBNaOT+dHuua
- bmtSx6gbfKFtF+sItkcmtVoy9KO0asoOplEE0fXVUlqpVaiaBQuqLIGSbpM5xOqJHmybEkOPG
- TXLvKGPxTD949Se73QnjpPu3dt9U53ka0FbXm4+oXBLe3VelVMogJXifdZaeKcl3Twcdk0LjT
- dyeWf8+c9jryaG65K7sPaFo6MkjHfAatzAyY/zqBt1CrcYGfEptFoWZYMX8K0bq3SssNy/TMS
- sLCCuP58Bo1EKcJS7MMC9G94jNktPAAzmvu8prI+VZ8Z5U/SgNoApQmL+9eAKaTeSvKlsu1/S
- B+7KMC9M+j+YcT7IKATnq/6xO2IShtd0AVJGIJlwAk3ohBh+e6SQLEJsn8sDzKVWIegZSjVRV
- i9A+/sYTXqa4fQqwdQjoRPnPCWR+hXN08ckzDOy2FTUv64ee1ds+1ybJLKvznJC7C+B4=
+        Fri, 25 May 2018 17:09:42 -0400
+Date: Fri, 25 May 2018 14:09:40 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, hugetlb_cgroup: suppress SIGBUS when hugetlb_cgroup
+ charge fails
+Message-Id: <20180525140940.976ca667f3c6ff83238c3620@linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.21.1805251356570.7798@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805251316090.167008@chino.kir.corp.google.com>
+        <20180525134459.5c6f8e06f55307f72b95a901@linux-foundation.org>
+        <alpine.DEB.2.21.1805251356570.7798@chino.kir.corp.google.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without dmaengine support, we get a harmless warning about an
-unused function:
+On Fri, 25 May 2018 13:59:40 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 
-drivers/pwm/pwm-stm32.c:166:12: error: 'stm32_pwm_capture' defined but not used [-Werror=unused-function]
+> > > --- a/mm/hugetlb.c
+> > > +++ b/mm/hugetlb.c
+> > > @@ -2006,8 +2006,10 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
+> > >  	 * code of zero indicates a reservation exists (no change).
+> > >  	 */
+> > >  	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
+> > > -	if (map_chg < 0)
+> > > -		return ERR_PTR(-ENOMEM);
+> > > +	if (map_chg < 0) {
+> > > +		ret = -ENOMEM;
+> > > +		goto out;
+> > > +	}
+> > 
+> > This doesn't change the return value.
+> > 
+> 
+> This, and the subsequent comments, are referring to the third paragraph of 
+> the changelog.
+> 
+> The functional part of the change is for the 
+> hugetlb_cgroup_charge_cgroup() return value that is now actually used.
 
-Changing the #ifdef to an IS_ENABLED() check shuts up that warning
-and is slightly nicer to read.
 
-Fixes: 53e38fe73f94 ("pwm: stm32: Add capture support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pwm/pwm-stm32.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Ah.  Missed that bit.
 
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index 60bfc07c4912..97bbc1f18fd6 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -484,9 +484,7 @@ static int stm32_pwm_apply_locked(struct pwm_chip *chip, struct pwm_device *pwm,
- static const struct pwm_ops stm32pwm_ops = {
- 	.owner = THIS_MODULE,
- 	.apply = stm32_pwm_apply_locked,
--#if IS_ENABLED(CONFIG_DMA_ENGINE)
--	.capture = stm32_pwm_capture,
--#endif
-+	.capture = IS_ENABLED(CONFIG_DMA_ENGINE) ? stm32_pwm_capture : NULL,
- };
- 
- static int stm32_pwm_set_breakinput(struct stm32_pwm *priv,
--- 
-2.9.0
+Altered changelog:
+
+: When charging to a hugetlb_cgroup fails, alloc_huge_page() returns
+: ERR_PTR(-ENOSPC) which will cause VM_FAULT_SIGBUS to be returned to the
+: page fault handler.
+: 
+: This is because the return value from hugetlb_cgroup_charge_cgroup() is
+: overwritten with ERR_PTR(-ENOSPC).
+: 
+: Instead, propagate the error code from hugetlb_cgroup_charge_cgroup()
+: (ERR_PTR(-ENOMEM)), so VM_FAULT_OOM is handled correctly.  This is
+: consistent with failing mem cgroup charges in the non-hugetlb fault path.
+: 
+: At the same time, restructure the return paths of alloc_huge_page() so it
+: is consistent.
+
+>
+> > It would be nice if you could add a comment over alloc_huge_page()
+> > explaining the return values (at least).  Why sometimes ENOMEM, other
+> > times ENOSPC?
+> > 
+> 
+> The ENOSPC is used to specifically induce a VM_FAULT_SIGBUS, which 
+> Documentation/vm/hugetlbfs_reserv.txt specifies is how faults are handled 
+> if no hugetlb pages are available.
+
+That wasn't a code comment ;) Nobody will know to go looking in
+hugetlbfs_reserv.txt - it isn't even referred to from mm/*.c.
