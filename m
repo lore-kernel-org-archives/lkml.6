@@ -1,35 +1,35 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1807417-1527160247-2-3429427516658199394
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-39789-1527275332-2-15362243522112495983
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527160247; b=i5hA1GAsxSATL3trez1BLJc2e586E5GGtT0Jvti3s3UREt0seg
-    z8dB1epjvTzDgvwKYivxgWwH88FMzlCYElhfAnaOmsfdZLuU9xEX8qQhdmNnuOOd
-    EBIIWXYR1Zjqthtbx9EF9760OQg8cD9Jj9PGPR63eicT70x4LQFWimV7vE+USd6V
-    rNlz0qNY7gQLlDZXZ78YPZ+F3tVXJfnBD+Akd+EV1dle1CIjzTG2vi+07S5O765M
-    bICIRypNaZA20X/TAeh0n9E3LdNACb6rlzYrBL+Eln8aPssX3fuNScADQRggEfbi
-    CpCB5M6CRbgb8iuc+5nvMk+5z23xjJ8v8Jjg==
+    1527275332; b=gE8ImNuVrCy+T8XRnUiIhGEQL/I/sE6jVE9tUHdNZSnh0eOwOv
+    iJ+3moVhjIkQmkWTcucrgIZs9yVfF4YC84+KgXoZ34x337ZyP/FK3+YtNq5yvVyh
+    ppo+P4a0mk+i2JGzqbgXokAiAy4onU06k4rIfGZnVkTOK3F1w6UYIw04syCPkEuY
+    z9O0YhDqQoZfaKSSLHRhxcnSyuE9EB8nyMfVy/YLJoid1hh8XsRyKUvW5JGZ6fOu
+    lRvNx15VKCejG5GJpkvWZLu9jVoPvzmvuGsQhQu0ZYMiolSaLTt58s1Sv0Uvhc84
+    XeYVDOFDqlE1fCkI/A7DrFJ/DMZ3KY9nN/ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=fm2; t=1527160247; bh=D
-    21EqZBR1fzuRi2qnMDctRKMU8TCs9nPUndFz/HNRw4=; b=l4nYDF5e2aBrMTvNf
-    lpgcjwqzyL6OHcV6KSFb9UgiJgy2Lxd3y/x6efx7zyJ3AaVk1WQieTBNCPA1FM0j
-    deJJKHV2AubM8ap/OQuyswEkjNCQFUJxUMobUr95tf+MfTyPKFgDVCWXPZK5pnAK
-    UnXn9S0rc1Bi2S5RbxP+X103vVc8z4AWctZ0/kxGKnfuX8Qc6Q5FB3yLAF3OpiUx
-    gjk104PHeFxINytUAuMRiX2qNU6f1QONFw2zkxKwmgiwxjdCGvwk7F9R60WKoxPB
-    UBznlttZj5BxXay27od7WsN9l4+ADNW0mdMPm2DlokGsM6g47Aqo9NPbcUI9POca
-    vDc6Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:reply-to
+    :mime-version:content-type:message-id:sender:list-id; s=fm2; t=
+    1527275332; bh=MNI6aQ4klZzGYSjRFeW3EjAU4sv9H3vRmB4wpes6wk4=; b=D
+    8rJ1dN3Q8/bxSwOFUKuyu9YW+Sep3NQegAoPCNl82aTPVfkVwGqBG1qCvIGY5Suk
+    IlZeEreDvMIciWP5ch7wVt7qAbBDBQ9p/oqXWFdrngeE1v0flSNo0WqTuIyCmY+h
+    ZkJagDi43sMJ1OJgLPTFITcF+/GtrjScFCKSISQjGf4wqz98piRGAtV1O2v1ShJv
+    R+yAOrlTHu/XsYsnO55Lk8BdMZrbyjylNu/IEuZeUnWgb/tAlHC5Qp/QcpSQ3AZV
+    oWlcw6j2fSoU7eJIn4IIxa9PmjQ4j+LGHh8BFtAdFw7wSS+mFB99DuKP9aviw0Go
+    hj6NEeioeD+V2pO0rb3fg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
     header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
@@ -39,14 +39,14 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=linux.vnet.ibm.com header.result=pass
     header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
       header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
@@ -56,139 +56,212 @@ Authentication-Results: mx5.messagingengine.com;
       header.domain=linux.vnet.ibm.com header.result=pass
       header_org.domain=ibm.com header_org.result=pass
       header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM/FCJZOTV5YIZHgskfKBse63b50b8xgnuE55IgMB8/HHmymtHJjYnlzbrPMtJ4P8PLQm/NnBjaPTlchkONWSHX+oaUisxVcM8/MNQTFJUW951aiuVp7
-    +0qHnHiDg2ZVtdDvuvAeJtFVDHQkgcE3Ws3Ys/VtBlzTaGqHskOu4XmySj8X+PNp8OPEceKoHR1Kd7Ok1YR4zeO7qR3fmyv2MbjtsOWESA4vlZ4Wgh2GLEJm
-    Ejxq5ZRESh1QlMk/kJ/14Q==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VnNF1IyMAAAA:8
-    a=PtDNVHqPAAAA:8 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=20KFwNOVAAAA:8
-    a=lCymfdQyKLSz-83n_N0A:9 a=x8gzFH9gYPwA:10 a=BpimnaHY1jUKGyF_4-AF:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
+X-CM-Envelope: MS4wfCwlirqQW/kvBPsDryfh9fcJzH6x7DOT4Ja46BsG+YHSa9TOweikOlCy+bYdoNUusF3+baNIaRSINz0q/4wvNTqmj2ane4WDdIXKYju0dbKZMFtyLAs3
+    XjP1eXU1lptXxwQokuRGjSaSB8DjUBgT8r/saPz4pVHZnO606BjeHAZfLYtHYphVURSENesbfWRwxWMiHq8i03frS6fxaZPuFkVUKGvfri40Fwb7p1UppW02
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VnNF1IyMAAAA:8 a=NEAV23lmAAAA:8 a=B6GvL0XKAAAA:8 a=EGN5EXRUY38fXtR3c0AA:9
+    a=2Hgavh4ZxYnqBOMj:21 a=8vdSiBznHkN2PgGo:21 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033060AbeEXLKl (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 24 May 2018 07:10:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54262 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1032946AbeEXLKh (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 May 2018 07:10:37 -0400
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v3 3/7] ima: based on policy require signed kexec kernel images
-Date: Thu, 24 May 2018 07:09:32 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1527160176-29269-1-git-send-email-zohar@linux.vnet.ibm.com>
+        id S967810AbeEYTIs (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 25 May 2018 15:08:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52822 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967753AbeEYTIs (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 25 May 2018 15:08:48 -0400
+Date: Fri, 25 May 2018 12:10:20 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, mingo@kernel.org
+Subject: [PATCH RFC tools/memory-model] Add litmus-test naming scheme
+Reply-To: paulmck@linux.vnet.ibm.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18052411-0008-0000-0000-000004FAA7C3
+x-cbid: 18052519-0056-0000-0000-00000455C1D5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009083; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000262; SDB=6.01037571; UDB=6.00530875; IPR=6.00816699;
+ MB=3.00021296; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-25 19:08:44
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052411-0009-0000-0000-00001E8EAFD2
-Message-Id: <1527160176-29269-4-git-send-email-zohar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-24_03:,,
+x-cbparentid: 18052519-0057-0000-0000-00000899E090
+Message-Id: <20180525191020.GA5914@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-25_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805240132
-Sender: owner-linux-security-module@vger.kernel.org
+ definitions=main-1805250199
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The original kexec_load syscall can not verify file signatures.  This
-patch differentiates between the kexec_load and kexec_file_load
-syscalls.
+This commit documents the scheme used to generate the names for the
+litmus tests.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: David Howells <dhowells@redhat.com>
-
-Changelog v3:
-- use switch/case
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_main.c   | 22 +++++++++++++++++-----
- security/integrity/ima/ima_policy.c |  2 ++
- 3 files changed, 20 insertions(+), 5 deletions(-)
+ README |  136 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 135 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 354bb5716ce3..78c15264b17b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -232,6 +232,7 @@ int ima_policy_show(struct seq_file *m, void *v);
- #define IMA_APPRAISE_MODULES	0x08
- #define IMA_APPRAISE_FIRMWARE	0x10
- #define IMA_APPRAISE_POLICY	0x20
-+#define IMA_APPRAISE_KEXEC	0x40
+diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+index 00140aaf58b7..b81f51054cd3 100644
+--- a/tools/memory-model/litmus-tests/README
++++ b/tools/memory-model/litmus-tests/README
+@@ -1,4 +1,6 @@
+-This directory contains the following litmus tests:
++============
++LITMUS TESTS
++============
  
- #ifdef CONFIG_IMA_APPRAISE
- int ima_appraise_measurement(enum ima_hooks func,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index eeb7075868db..fbbcc02a1380 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -432,15 +432,27 @@ void ima_post_path_mknod(struct dentry *dentry)
-  */
- int ima_read_data(struct file *file, enum kernel_read_file_id read_id)
- {
--	bool sig_enforce = is_module_sig_enforced();
-+	bool sig_enforce;
+ CoRR+poonceonce+Once.litmus
+ 	Test of read-read coherence, that is, whether or not two
+@@ -151,3 +153,135 @@ Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
+ A great many more litmus tests are available here:
  
--	if (!file && read_id == READING_MODULE) {
--		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
--		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
-+		return 0;
+ 	https://github.com/paulmckrcu/litmus
 +
-+	switch (read_id) {
-+	case READING_MODULE:
-+		sig_enforce = is_module_sig_enforced(); /* appended sig */
-+		if (!file && !sig_enforce &&
-+		    (ima_appraise & IMA_APPRAISE_MODULES)) {
- 			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
- 		}
--		return 0;	/* We rely on module signature checking */
-+		break;
-+	case READING_KEXEC_IMAGE:
-+		if (!file && (ima_appraise & IMA_APPRAISE_KEXEC)) {
-+			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file syscall.\n");
-+			return -EACCES;	/* INTEGRITY_UNKNOWN */
-+		}
-+	default:
-+		break;
- 	}
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 8bbc18eb07eb..c27f6993b07a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -448,6 +448,8 @@ static int ima_appraise_flag(enum ima_hooks func)
- 		return IMA_APPRAISE_FIRMWARE;
- 	else if (func == POLICY_CHECK)
- 		return IMA_APPRAISE_POLICY;
-+	else if (func == KEXEC_KERNEL_CHECK)
-+		return IMA_APPRAISE_KEXEC;
- 	return 0;
- }
- 
--- 
-2.7.5
-
++==================
++LITMUS TEST NAMING
++==================
++
++Litmus tests are usually named based on their contents, which means that
++looking at the name tells you what the litmus test does.  The naming
++scheme covers litmus tests having a single cycle that passes through
++each process exactly once, so litmus tests not fitting this description
++are named on an ad-hoc basis.
++
++The structure of a litmus-test name is the litmus-test class, a plus
++sign ("+"), and one string for each process, separated by plus signs.
++The end of the name is ".litmus".
++
++The litmus-test classes may be found in the infamous test6.pdf:
++https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test6.pdf
++Each class defines the pattern of accesses and of the variables accessed.
++For example, if the one process writes to a pair of variables, and
++the other process reads from these same variables, the corresponding
++litmus-test class is "MP" (message passing), which may be found on the
++left-hand end of the second row of tests on page one of test6.pdf.
++
++The strings used to identify the actions carried out by each process are
++complex due to a desire to have finite-length names.  Thus, there is a
++tool to generate these strings from a given litmus test's actions.  For
++example, consider the processes from SB+rfionceonce-poonceonces.litmus:
++
++	P0(int *x, int *y)
++	{
++		int r1;
++		int r2;
++
++		WRITE_ONCE(*x, 1);
++		r1 = READ_ONCE(*x);
++		r2 = READ_ONCE(*y);
++	}
++
++	P1(int *x, int *y)
++	{
++		int r3;
++		int r4;
++
++		WRITE_ONCE(*y, 1);
++		r3 = READ_ONCE(*y);
++		r4 = READ_ONCE(*x);
++	}
++
++The next step is to construct a space-separated list of descriptors,
++interleaving descriptions of the relation between a pair of consecutive
++accesses with descriptions of the second access in the pair.
++
++P0()'s WRITE_ONCE() is read by its first READ_ONCE(), which is a
++reads-from link (rf) and internal to the P0() process.  This is
++"rfi", which is an abbreviation for "reads-from internal".  Because
++some of the tools string these abbreviations together with space
++characters separating processes, the first character is capitalized,
++resulting in "Rfi".
++
++P0()'s second access is a READ_ONCE(), as opposed to (for example)
++smp_load_acquire(), so next is "Once".  Thus far, we have "Rfi Once".
++
++P0()'s third access is also a READ_ONCE(), but to y rather than x.
++This is related to P0()'s second access by program order ("po"),
++to a different variable ("d"), and both accesses are reads ("RR").
++The resulting descriptor is "PodRR".  Because P0()'s third access is
++READ_ONCE(), we add another "Once" descriptor.
++
++A from-read ("fre") relation links P0()'s third to P1()'s first
++access, and the resulting descriptor is "Fre".  P1()'s first access is
++WRITE_ONCE(), which as before gives the descriptor "Once".  The string
++thus far is thus "Rfi Once PodRR Once Fre Once".
++
++The remainder of P1() is similar to P0(), which means we add
++"Rfi Once PodRR Once".  Another fre links P1()'s last access to
++P0()'s first access, which is WRITE_ONCE(), so we add "Fre Once".
++The full string is thus:
++
++	Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once
++
++This string can be given to the "norm7" and "classify7" tools to
++produce the name:
++
++$ norm7 -bell linux-kernel.bell Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once |  classify7 -bell linux-kernel.bell -diyone | sed -e 's/:.*//g'
++SB+rfionceonce-poonceonces
++
++Adding the ".litmus" suffix: SB+rfionceonce-poonceonces.litmus
++
++
++=======================
++LITMUS TEST DESCRIPTORS
++=======================
++
++These descriptors cover connections between consecutive accesses:
++
++Fre: From-read external.  The current process wrote a variable that
++	the previous process read.  Example: The SB (store buffering) test.
++Fri: From-read internal.  This process read a variable and then
++	immediately wrote to it.  Example: ???
++PodRR: Program-order different variable, read followed by read.
++	This process read a variable and again read a different variable.
++	Example: The read-side process in the MP (message-passing) test.
++PodRW: Program-order different variable, read followed by write.
++	This process read a variable and then wrote a different variable.
++	Example: The LB (load buffering) test.
++PodWR: Program-order different variable, write followed by read.
++	This process wrote a variable and then read a different variable.
++	Example: The SB (store buffering) test.
++PodWW: Program-order different variable, write followed by write.
++	This process wrote a variable and again wrote a different variable.
++	Example: The write-side process in the MP (message-passing) test.
++PosRR: Program-order same variable, read followed by read.
++	This process read a variable and again read that same variable.
++	Example: ???
++PosRW: Program-order same variable, read followed by write.
++	This process read a variable and then wrote that same variable.
++	Example: ???
++PosWR: Program-order same variable, write followed by read.
++	This process wrote a variable and then read that same variable.
++	Example: ???
++PosWW: Program-order same variable, write followed by write.
++	This process wrote a variable and again rrote that same variable.
++	Example: ???
++Rfe: Read-from external.  The current process read a variable written
++	by the previous process.  Example: The MP (message passing) test.
++Rfi: Read-from internal.  The current process wrote a variable and then
++	immediately read the value back from it.  Example:  ???
++	Comparison to PosWR???
++Wse: Write same external.  The current process wrote to a variable that
++	was also written to by the previous process.  Example:  ???
++Wsi: Write same internal.  The current process wrote to a variable and
++	then immediately wrote to it again.  Example:  ???
