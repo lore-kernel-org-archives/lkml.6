@@ -1,77 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030607AbeEYVhc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:37:32 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:51351 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030216AbeEYVh0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:37:26 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Timur Tabi <timur@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Hemanth Puranik <hpuranik@codeaurora.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH, net-next] qcom-emag: hide ACPI specific functions
-Date: Fri, 25 May 2018 23:37:10 +0200
-Message-Id: <20180525213714.2120604-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:JPcAZwiNhgkavDN4Bhbk/23Cw2ovy58EOQxA6F2SAFu0GgyFDtP
- Omm2Kow9Tl7wz6EiYtaG1l7zy2PgPpxKdl3BqHGYTrYr2UQJcXiotF9/FEiS2afQyo9z7tg
- CR83l6vOKfn8a8gmSYuZfzOElbejpF60LEzWVkzX/VSXplVh/0ZbaFsZpo1ZGcCqClciCxe
- 9YEN6nqN3HiAjZff9uDDw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:69QVh6dSxvg=:igmiAMIV/BrVqUjhyriCM0
- YFjkoCnwGc2Q3/jSRoL0I1bdTQjOSlu11IY8mdkgqIpnyzNm1Tx7RxveqKfPTAg3ifzdOOSqu
- GzYzkRUp5hWV4bU4Gos0s4zVh7tpU01/u16yfzwfrvS8PRf+X5Z8EUBiP1q49xRcMOpqTWgNN
- YniXCT+s2hy0BXCc3cuWX5qHD1r7xbyTSlxmbZzgA+Q2h7SzlFuFKYvbpUM+v2mBAqxNgMTw+
- ueRXZVQqkNIYrTWpsj2sbwVfQjxfVxgaL+x5srRQX7ORCScIJt2Ehelkf2q6vFy0XVL0hjZpt
- ZMpXz/n3K3Z1CCqHZTJ/biKe1UrFnUuX6A1P/DWOEy5ByUQyt/VXhQIr7KKKklAdtLhCTkboJ
- wLVq1uH7HgFHqvdE9Q5JiVJSAHw+iGo30AoISyvAVk75MSmd+T5BtayAGXit/Q7j0/zUWSORR
- sb7TUJh8IjcwXozRaxA2CyTvar2Hr844/7vYQjrfnLHfq9/J660z2+Ibek9GV0oH/CU8Q6pne
- tkNY2y9YsXUKTHbeYLdbDE+GKrHoDsW5IOl91UTG2yGYBo0hEPf2r31VqZmXGhwKyANAtSCdA
- zfMCBIflmCf8rWgz8Tejn4QUPT8qGO74m1aFgtN7JpUkcGKKpzt3YXQds5Vf7ZcNn7xU7U9Bk
- LqiXD91ft6evQMT8Bfli5ICMzM+dkeALBCf3XYxLbdm1A1o4iFV0LtmEKqzngeKAiaOk=
+        id S1030487AbeEYVi7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 17:38:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030216AbeEYVi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 17:38:56 -0400
+Date: Sat, 26 May 2018 00:38:53 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] IB: Revert "remove redundant INFINIBAND kconfig
+ dependencies"
+Message-ID: <20180525213853.GF22686@mtr-leonro.mtl.com>
+References: <20180525213123.2113748-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
+Content-Disposition: inline
+In-Reply-To: <20180525213123.2113748-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A couple of functions in this file are only used when building with
-ACPI enabled, leading to a build warning on most architectures:
 
-drivers/net/ethernet/qualcomm/emac/emac-sgmii.c:284:25: error: 'qdf2400_ops' defined but not used [-Werror=unused-variable]
- static struct sgmii_ops qdf2400_ops = {
-                         ^~~~~~~~~~~
-drivers/net/ethernet/qualcomm/emac/emac-sgmii.c:276:25: error: 'qdf2432_ops' defined but not used [-Werror=unused-variable]
- static struct sgmii_ops qdf2432_ops = {
+--bAmEntskrkuBymla
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This hides all the unused functions by putting them into the
-corresponding #ifdef.
+On Fri, May 25, 2018 at 11:29:59PM +0200, Arnd Bergmann wrote:
+> Several subsystems depend on INFINIBAND_ADDR_TRANS, which in turn depends
+> on INFINIBAND. However, when with CONFIG_INIFIBAND=m, this leads to a
+> link error when another driver using it is built-in. The
+> INFINIBAND_ADDR_TRANS dependency is insufficient here as this is
+> a 'bool' symbol that does not force anything to be a module in turn.
+>
+> fs/cifs/smbdirect.o: In function `smbd_disconnect_rdma_work':
+> smbdirect.c:(.text+0x1e4): undefined reference to `rdma_disconnect'
+> net/9p/trans_rdma.o: In function `rdma_request':
+> trans_rdma.c:(.text+0x7bc): undefined reference to `rdma_disconnect'
+> net/9p/trans_rdma.o: In function `rdma_destroy_trans':
+> trans_rdma.c:(.text+0x830): undefined reference to `ib_destroy_qp'
+> trans_rdma.c:(.text+0x858): undefined reference to `ib_dealloc_pd'
+>
+> Fixes: 9533b292a7ac ("IB: remove redundant INFINIBAND kconfig dependencies")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> The patch that introduced the problem has been queued in the
+> rdma-fixes/for-rc tree. Please revert the patch before sending
+> the branch to Linus.
+> ---
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 2 ++
- 1 file changed, 2 insertions(+)
+It was already sent to Linus.
 
-diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-index 562420b834df..01b80e0a5367 100644
---- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-@@ -108,6 +108,7 @@ static void emac_sgmii_link_init(struct emac_adapter *adpt)
- 	writel(val, phy->base + EMAC_SGMII_PHY_AUTONEG_CFG2);
- }
- 
-+#ifdef CONFIG_ACPI
- static int emac_sgmii_irq_clear(struct emac_adapter *adpt, u8 irq_bits)
- {
- 	struct emac_sgmii *phy = &adpt->phy;
-@@ -288,6 +289,7 @@ static struct sgmii_ops qdf2400_ops = {
- 	.link_change = emac_sgmii_common_link_change,
- 	.reset = emac_sgmii_common_reset,
- };
-+#endif
- 
- static int emac_sgmii_acpi_match(struct device *dev, void *data)
- {
--- 
-2.9.0
+https://marc.info/?l=linux-rdma&m=152719509803047&w=2
+
+Thanks
+
+--bAmEntskrkuBymla
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbCIJtAAoJEORje4g2clinFugQAIYNk8j6aOAN2MHradS5y6Ef
+GeQY7/H9j2PkMeK+KL4gf6bCHzvcgS/wqdrVMdl/TIc60iyNBL/UJwn5mjsNmRx5
+BG2B3VuXP0ZQNPouvyC9oCMq+fNJjeuvzWlHTz3Q8pjwwMuwDdbAaNCMbbEViZS8
+AhLcZtDxeTcrFaiSrjkzUfxcb7/rBxOInMlq90Xb4VGDKq6vK1rK18MszFOYI+1C
+l6KCeRbnDxAHvZFoIMzQOXM35AQoucGqRa8L14/go3eVKrIJPHowEC6/C4k5srsW
+pzMU1yktzdZKs1E7w8iHLxFQqHp6uiZKOEgBnTNRaSZbTfq5MNTb55uCsjJ3mlrd
+/YVa2sadrr+Ym4f058AKvt8y3kO71Yu7hTCg6UTPv9EJg94qUQ9apJMNVD9EUVzM
+7ZO7tez/WGsyai6PFv+gx1iZiJHpl9TXI5uYxPLsdz0EU5+dsB9pQCsNk8y0tTFZ
+aQeCLKxC5sqiDllBdECv2KQ2jOvnUy8PTx8VoV8e7kXaUI3YBSjHW+0x7wJgJJrZ
+5CEjW3cVCLvW3Iwp0dDnHyqX1Tp7cdEnJx4bzXBArVy+BlpDa0yrMKxNWaZnvRXf
+OBmwZxMlpRzpDpuA0lzwcTtO8fraJF8GyqrB9bCrVyHqcqziuduHroF6D4pU4s2X
+mWd8FMSweTSM6kPt2ytV
+=rjKg
+-----END PGP SIGNATURE-----
+
+--bAmEntskrkuBymla--
