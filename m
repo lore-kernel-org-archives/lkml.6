@@ -1,166 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966730AbeEYP1N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:27:13 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38083 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965570AbeEYP1L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:27:11 -0400
-X-Google-Smtp-Source: AB8JxZoe+qcPPcVfePArKTOAyfl6koY3TRzDTj1FgTQeKi/5tMrr5QZp+OyJtT864CwRF0xWPsbURZKJMN7AFC9AMp0=
-MIME-Version: 1.0
-In-Reply-To: <20180524183027.dc498058344604e2d6027eff@arm.com>
-References: <20180517070643.GC13919@kroah.com> <20180518012024.22645-1-kim.phillips@arm.com>
- <20180522173140.GA25658@xps15> <20180523145155.5929dd09c78a056ef19329be@arm.com>
- <CANLsYkw-KcEM43pqWgGU1XYOfSTD4cmspNcPM-u+n9x6Xtazbg@mail.gmail.com> <20180524183027.dc498058344604e2d6027eff@arm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Fri, 25 May 2018 09:27:09 -0600
-Message-ID: <CANLsYkwZtAptXtLK0HaDwmXbdAx24X+PEFVggakxe31nkH111g@mail.gmail.com>
-Subject: Re: [PATCH 1/6] coresight: remove CORESIGHT_LINKS_AND_SINKS
- dependencies and selections
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S966785AbeEYP1T (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:27:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965570AbeEYP1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 11:27:16 -0400
+Date: Fri, 25 May 2018 12:27:13 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Robert Walker <robert.walker@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rik van Riel <riel@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tor Jeremiassen <tor@ti.com>,
+        mike.leach@linaro.org, kim.phillips@arm.com,
+        coresight@lists.linaro.org, Mike Leach <mike.leach@arm.com>
+Subject: Re: [RFT v2 1/4] perf cs-etm: Generate sample for missed packets
+Message-ID: <20180525152713.GD4091@kernel.org>
+References: <1526892748-326-1-git-send-email-leo.yan@linaro.org>
+ <1526892748-326-2-git-send-email-leo.yan@linaro.org>
+ <bc320d6d-a21d-b5a4-e30d-511bb69aba32@arm.com>
+ <20180522083920.GD31075@leoy-ThinkPad-X240s>
+ <03a53a72-8af5-02de-21a8-fd02a0974ed6@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03a53a72-8af5-02de-21a8-fd02a0974ed6@arm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24 May 2018 at 17:30, Kim Phillips <kim.phillips@arm.com> wrote:
-> On Thu, 24 May 2018 09:32:48 -0600
-> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
->> On 23 May 2018 at 13:51, Kim Phillips <kim.phillips@arm.com> wrote:
->> > On Tue, 22 May 2018 11:31:40 -0600
->> > Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->> >
->> >> On Thu, May 17, 2018 at 08:20:19PM -0500, Kim Phillips wrote:
->> >> > A coresight topology doesn't need to include links, i.e., a source can
->> >> > be directly connected to a sink.  As such, selecting and/or depending on
->> >> > LINKS_AND_SINKS is no longer needed.
->> >>
->> >> I'm good with this patch but now the help text for CORESIGHT_LINKS_AND_SINKS no
->> >> longer match what the config does.  I see two ways to fix this:
->> >
->> > This patch doesn't change what the config does, it just changes what
->> > other config options depend on it.
->> >
->> >> 1) Rework the help text.
->> >
->> > I don't see how, given the above.  Here's the text:
->> >
->> > config CORESIGHT_LINKS_AND_SINKS
->> >         bool "CoreSight Link and Sink drivers"
->> >         help
->> >           This enables support for CoreSight link and sink drivers that are
->> >           responsible for transporting and collecting the trace data
->> >           respectively.  Link and sinks are dynamically aggregated with a trace
->> >           entity at run time to form a complete trace path.
->> >
->> > What part of that becomes invalid with this patch?
->>
->> Looking at the new Kconfig, what sink component depend on
->> CORESIGHT_LINKS_AND_SINKS?
->
-> How does that affect the description text?  The description text
-> doesn't insinuate any implicit dependencies or non-.
+Em Fri, May 25, 2018 at 03:03:47PM +0100, Robert Walker escreveu:
+> Hi Leo,
+> 
+> Following the discussions from your reply to this with a simplified patch,
+> this version of the patch works better as you also need to emit a branch
+> sample when handling a CS_ETM_TRACE_ON packet to indicate the end of a block
+> of trace.
+> 
+> This patch does not break the output from perf inject to generate
+> instruction samples for AutoFDO, so I am happy with that.
+> 
+> Regards
+> 
+> Rob
+> 
+> Reviewed-by: Robert Walker <robert.walker@arm.com>
 
-Now that the depends are gone there is no correlation between this
-config and sinks.
+So, Leo, can you please resubmit, bumping the v2 to v3 (or the latest
+one, I haven't fully reread this thread) add this "Reviewed-by: Robert"
+tag and any other that people may have provided, so that I can merge it?
 
->
->> config CORESIGHT_LINKS
->
-> Please, not another gratuitous config name change, I've already
-> experienced usage regressions from the CORESIGHT_QCOM_REPLICATOR =>
-> CORESIGHT_DYNAMIC_REPLICATOR change:
+Thanks,
 
-Defines within subsystems are bound to change as they evolves.  Most
-of the CoreSight subsystem was developed on the OMAP3 based
-beagleboard.  Since then new topologies have emerged and new IP blocks
-came along.  It is only normal that we adjust configuration options to
-reflect the reality of the HW the subsystem is managing.  I can guide
-you through the history of the replicator config name change if you
-want - it is quite logical.  Other than that and until this patchset,
-we haven't modified a single configuration in the 5 years the
-subsystem has existed.  Not bad for all the churn and new IP blocks
-that came in.
-
->
-> https://patchwork.kernel.org/patch/10206023/
->
->>          bool "CoreSight Link drivers"
->>          help
->>            This enables support for CoreSight link drivers that are responsible
->>            for transporting trace data from source to sink.  Links are
->> dynamically
->>            aggregated with other traces entities at run time to form a
->> complete trace
->>            path.
->
-> Oh, I see, so your point is that LINKS_AND_SINKS doesn't technically
-> build any sink drivers?  That's completely orthogonal to removing a
-> dependency chain:  that just tells me the name was a poor choice in the
-> first place maybe?  I don't see where the Makefile may have built a
-> sink, but it may be before the move to drivers/hwtracing/coresight, or
-> some other reorganization.
-
-Because of the depends property carried by the sink drivers (which we
-are now removing), defining CORESIGHT_LINKS_AND_SINKS was mandatory to
-build sink drivers.  That was accurate 5 years ago with the topologies
-that were available at that time.  Now there is no point in having the
-define, which is why I'm asking you to make this modification.
-
->
->> >> 2) Rework CORESIGHT_LINKS_AND_SINKS to be CORESIGHT_FUNNEL and move
->> >> coresight-replicator.o under CORESIGHT_DYNAMIC_REPLICATOR in the Makefile. I
->> >> really liked your idea of making the replicator driver intelligent enough to
->> >> deal with both DT and platform declaration, which merges two driver into one.
->> >>
->> >> I'm obviously favouring the second option but recognise it doesn't have to be
->> >> part of this patchet.  So for this set please rework the help text for
->> >> CORESIGHT_LINKS_AND_SINKS.  Once we've dealt with this topic we can refactor the
->> >> replicator driver.
->> >
->> > I'd really like to just focus on getting CoreSight to load as modules,
->> > something for which this patch isn't technically required...
->>
->> The only thing I'm asking is that the config description and help text
->> reflect what the Makefile does.
->
-> argh, wellll, it's a completely different change, and we're now
-> completely off the modularization topic, and I'm uncomfortable doing
-
-I don't agree with you.  This is a very simple change and I even wrote
-down what needed to be modified.
-
-> reorgs on things I don't understand, renaming CONFIG_s, esp. when
-> others such as the REPLICATOR, since as far as I know, that's also a
-> link??
-
-Correct, a replicator is a link and completely removed from this conversation.
-
-If this is so hard for you then simply don't make the modification - I
-will do it myself, something that will take me about 10 minutes
-(including writing the changelog).
-
->
-> Kim
+- Arnaldo
+ 
+> 
+> On 22/05/18 09:39, Leo Yan wrote:
+> > Hi Rob,
+> > 
+> > On Mon, May 21, 2018 at 12:27:42PM +0100, Robert Walker wrote:
+> > > Hi Leo,
+> > > 
+> > > On 21/05/18 09:52, Leo Yan wrote:
+> > > > Commit e573e978fb12 ("perf cs-etm: Inject capabilitity for CoreSight
+> > > > traces") reworks the samples generation flow from CoreSight trace to
+> > > > match the correct format so Perf report tool can display the samples
+> > > > properly.  But the change has side effect for packet handling, it only
+> > > > generate samples when 'prev_packet->last_instr_taken_branch' is true,
+> > > > this results in the start tracing packet and exception packets are
+> > > > dropped.
+> > > > 
+> > > > This patch checks extra two conditions for complete samples:
+> > > > 
+> > > > - If 'prev_packet->sample_type' is zero we can use this condition to
+> > > >    get to know this is the start tracing packet; for this case, the start
+> > > >    packet's end_addr is zero as well so we need to handle it in the
+> > > >    function cs_etm__last_executed_instr();
+> > > > 
+> > > I think you also need to add something in to handle discontinuities in
+> > > trace - for example it is possible to configure the ETM to only trace
+> > > execution in specific code regions or to trace a few cycles every so
+> > > often. In these cases, prev_packet->sample_type will not be zero, but
+> > > whatever the previous packet was.  You will get a CS_ETM_TRACE_ON packet in
+> > > such cases, generated by an I_TRACE_ON element in the trace stream.
+> > > You also get this on exception return.
+> > > 
+> > > However, you should also keep the test for prev_packet->sample_type == 0
+> > > as you may not see a CS_ETM_TRACE_ON when decoding a buffer that has
+> > > wrapped.
+> > Thanks for reviewing.  Let's dig more detailed into this issue,
+> > especially for handling packet CS_ETM_TRACE_ON, I'd like divide into two
+> > sub cases.
+> > 
+> > - The first case is for using python script:
+> > 
+> >    I use python script to analyze packets with below command:
+> >    ./perf script --itrace=ril128 -s arm-cs-trace-disasm.py -F cpu,event,ip,addr,sym -- -v -d objdump -k ./vmlinux
+> > 
+> >    What I observe is after we pass python script with parameter '-s
+> >    arm-cs-trace-disasm.py', then instruction tracing options
+> >    '--itrace=ril128' isn't really used;  the perf tool creates another
+> >    new process for launch python script and re-enter cmd_script()
+> >    function, but at the second time when invoke cmd_script() for python
+> >    script execution the option '--itrace=ril128' is dropped and all
+> >    parameters are only valid defined by the python script.
+> > 
+> >    As result, I can the variable 'etmq->etm->synth_opts.last_branch' is
+> >    always FALSE for running python script.  So all CS_ETM_TRACE_ON
+> >    packets will be ignored in the function cs_etm__flush().
+> > 
+> >    Even the CS_ETM_TRACE_ON packets are missed to handle, the program
+> >    flow still can work well.  The reason is without the interference by
+> >    CS_ETM_TRACE_ON, the CS_ETM_RANGE packets can smoothly create
+> >    instruction range by ignore the middle CS_ETM_TRACE_ON packet.
+> > 
+> >    Please see below example, in this example there have 3 packets, the
+> >    first one packet is CS_ETM_RANGE packet which is labelled with
+> >    'PACKET_1', the first one packet can properly generate branch sample
+> >    data with previous packet as expected;  the second packet is
+> >    PACKET_2 which is CS_ETM_TRACE_ON, but
+> >    'etmq->etm->synth_opts.last_branch' is false so function
+> >    cs_etm__flush() doesn't handle it and skip the swap operation
+> >    "etmq->prev_packet = tmp"; the third packet is PACKET_3, which is
+> >    CS_ETM_RANGE packet and we can see it's smoontly to create
+> >    continous instruction range between PACKET_1 and PACKET_3.
+> > 
+> >    cs_etm__sample: prev_packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f79c end_addr=0xffff000008a5f7bc last_instr_taken_branch=1
+> >    PACKET_1: cs_etm__sample: packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f858 end_addr=0xffff000008a5f864 last_instr_taken_branch=1
+> >    cs_etm__synth_branch_sample: ip=0xffff000008a5f7b8 addr=0xffff000008a5f858 pid=2290 tid=2290 id=1000000021 stream_id=1000000021 period=1 cpu=1 flags=0 cpumode=2
+> > 
+> >    cs_etm__flush: prev_packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f858 end_addr=0xffff000008a5f864 last_instr_taken_branch=1
+> >    PACKET_2: cs_etm__flush: packet: sample_type=2 exc=0 exc_ret=0 cpu=2 start_addr=0xdeadbeefdeadbeef end_addr=0xdeadbeefdeadbeef last_instr_taken_branch=1
+> > 
+> >    cs_etm__sample: prev_packet: sample_type=1 exc=0 exc_ret=0 cpu=1 start_addr=0xffff000008a5f858 end_addr=0xffff000008a5f864 last_instr_taken_branch=1
+> >    PACKET_3: cs_etm__sample: packet: sample_type=1 exc=0 exc_ret=0 cpu=2 start_addr=0xffff000008be7528 end_addr=0xffff000008be7538 last_instr_taken_branch=1
+> >    cs_etm__synth_branch_sample: ip=0xffff000008a5f860 addr=0xffff000008be7528 pid=2290 tid=2290 id=1000000021 stream_id=1000000021 period=1 cpu=2 flags=0 cpumode=2
+> > 
+> >    So seems to me, the CS_ETM_TRACE_ON packet doesn't introduce trouble
+> >    for the program flow analysis if we can handle all CS_ETM_RANGE
+> >    packets and without handling CS_ETM_TRACE_ON packet for branch
+> >    samples.
+> > 
+> > - The second case is for --itrace option without python script:
+> >    ./perf script --itrace=ril -F cpu,event,ip,addr,sym -k ./vmlinux
+> > 
+> >    In this case, the flag 'etmq->etm->synth_opts.last_branch' is true
+> >    so CS_ETM_TRACE_ON packet will be handled; but I can observe the
+> >    CS_ETM_RANGE packet in etmq->prev_packet isn't handled in the
+> >    function cs_etm__flush() for branch sample, so actually we miss some
+> >    branch sample for this case.
+> > 
+> >    So I think we also need handle CS_ETM_RANGE packet in function
+> >    cs_etm__flush() to generate branch samples.  But this has side
+> >    effect, we introduce the extra track for CS_ETM_TRACE_ON packet for
+> >    branch samples, so we will see one branch range like:
+> >    [ 0xdeadbeefdeadbeef .. 0xdeadbeefdeadbeef ].
+> > 
+> > Please reivew below change is okay for you?  Thanks a lot for
+> > suggestions.
+> > 
+> > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > index 822ba91..37d3722 100644
+> > --- a/tools/perf/util/cs-etm.c
+> > +++ b/tools/perf/util/cs-etm.c
+> > @@ -495,6 +495,13 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
+> >   static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+> >   {
+> >   	/*
+> > +	 * The packet is the start tracing packet if the end_addr is zero,
+> > +	 * returns 0 for this case.
+> > +	 */
+> > +	if (!packet->end_addr)
+> > +		return 0;
+> > +
+> > +	/*
+> >   	 * The packet records the execution range with an exclusive end address
+> >   	 *
+> >   	 * A64 instructions are constant size, so the last executed
+> > @@ -897,13 +904,28 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+> >   		etmq->period_instructions = instrs_over;
+> >   	}
+> > -	if (etm->sample_branches &&
+> > -	    etmq->prev_packet &&
+> > -	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+> > -	    etmq->prev_packet->last_instr_taken_branch) {
+> > -		ret = cs_etm__synth_branch_sample(etmq);
+> > -		if (ret)
+> > -			return ret;
+> > +	if (etm->sample_branches && etmq->prev_packet) {
+> > +		bool generate_sample = false;
+> > +
+> > +		/* Generate sample for start tracing packet */
+> > +		if (etmq->prev_packet->sample_type == 0 ||
+> > +		    etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
+> > +			generate_sample = true;
+> > +
+> > +		/* Generate sample for exception packet */
+> > +		if (etmq->prev_packet->exc == true)
+> > +			generate_sample = true;
+> > +
+> > +		/* Generate sample for normal branch packet */
+> > +		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+> > +		    etmq->prev_packet->last_instr_taken_branch)
+> > +			generate_sample = true;
+> > +
+> > +		if (generate_sample) {
+> > +			ret = cs_etm__synth_branch_sample(etmq);
+> > +			if (ret)
+> > +				return ret;
+> > +		}
+> >   	}
+> >   	if (etm->sample_branches || etm->synth_opts.last_branch) {
+> > @@ -921,12 +943,17 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+> >   static int cs_etm__flush(struct cs_etm_queue *etmq)
+> >   {
+> > +	struct cs_etm_auxtrace *etm = etmq->etm;
+> >   	int err = 0;
+> >   	struct cs_etm_packet *tmp;
+> > -	if (etmq->etm->synth_opts.last_branch &&
+> > -	    etmq->prev_packet &&
+> > -	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
+> > +	if (!etmq->prev_packet)
+> > +		return 0;
+> > +
+> > +	if (etmq->prev_packet->sample_type != CS_ETM_RANGE)
+> > +		return 0;
+> > +
+> > +	if (etmq->etm->synth_opts.last_branch) {
+> >   		/*
+> >   		 * Generate a last branch event for the branches left in the
+> >   		 * circular buffer at the end of the trace.
+> > @@ -939,18 +966,25 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+> >   		err = cs_etm__synth_instruction_sample(
+> >   			etmq, addr,
+> >   			etmq->period_instructions);
+> > +		if (err)
+> > +			return err;
+> >   		etmq->period_instructions = 0;
+> > +	}
+> > -		/*
+> > -		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+> > -		 * the next incoming packet.
+> > -		 */
+> > -		tmp = etmq->packet;
+> > -		etmq->packet = etmq->prev_packet;
+> > -		etmq->prev_packet = tmp;
+> > +	if (etm->sample_branches) {
+> > +		err = cs_etm__synth_branch_sample(etmq);
+> > +		if (err)
+> > +			return err;
+> >   	}
+> > -	return err;
+> > +	/*
+> > +	 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+> > +	 * the next incoming packet.
+> > +	 */
+> > +	tmp = etmq->packet;
+> > +	etmq->packet = etmq->prev_packet;
+> > +	etmq->prev_packet = tmp;
+> > +	return 0;
+> >   }
+> >   static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
