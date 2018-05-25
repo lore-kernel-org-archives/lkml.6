@@ -1,117 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965775AbeEYJtS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:49:18 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:34216 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965457AbeEYJtO (ORCPT
+        id S965798AbeEYJt1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:49:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58369 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965457AbeEYJtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:49:14 -0400
-X-Google-Smtp-Source: AB8JxZoo8wskHnyCNKEpcf9K2q7zJTpVMGx6iave6rGj9ftC0fxAlneApEMvU0jZqxTcxMIaBus2DQhznujQYVwqeKE=
+        Fri, 25 May 2018 05:49:24 -0400
+Date: Fri, 25 May 2018 02:48:59 -0700
+From: tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-a1150c202207cc8501bebc45b63c264f91959260@git.kernel.org>
+Cc: songliubraving@fb.com, eranian@google.com, peterz@infradead.org,
+        hpa@zytor.com, mingo@kernel.org, kernel-team@fb.com,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, acme@redhat.com, vincent.weaver@maine.edu
+Reply-To: vincent.weaver@maine.edu, jolsa@redhat.com, acme@redhat.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
+        kernel-team@fb.com, peterz@infradead.org, eranian@google.com,
+        songliubraving@fb.com, hpa@zytor.com
+In-Reply-To: <20180503194716.162815-1-songliubraving@fb.com>
+References: <20180503194716.162815-1-songliubraving@fb.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/core: Fix group scheduling with mixed hw and
+ sw events
+Git-Commit-ID: a1150c202207cc8501bebc45b63c264f91959260
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com> <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 May 2018 11:49:13 +0200
-X-Google-Sender-Auth: ybVlBR7ijuq0OGuEvBgiKVavXlE
-Message-ID: <CAMuHMdWv2ZRbX=k5+H_WfAeoQ4QsyQLU9iQ9TJ9OQ0fmwg0GOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@endlessm.com>, Kevin Hilman <khilman@baylibre.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+Commit-ID:  a1150c202207cc8501bebc45b63c264f91959260
+Gitweb:     https://git.kernel.org/tip/a1150c202207cc8501bebc45b63c264f91959260
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Thu, 3 May 2018 12:47:16 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 25 May 2018 08:11:10 +0200
 
-On Thu, May 24, 2018 at 12:30 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-> requires a special enable method to get it started.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+perf/core: Fix group scheduling with mixed hw and sw events
 
-Thanks for your patch!
+When hw and sw events are mixed in the same group, they are all attached
+to the hw perf_event_context. This sometimes requires moving group of
+perf_event to a different context.
 
->  arch/arm/mach-shmobile/smp-r9a06g032.c | 85 ++++++++++++++++++++++++++++++++++
+We found a bug in how the kernel handles this, for example if we do:
 
-I think you can safely call this driver smp-rzn1d.c, or smp-rzn1.c.
-Source files are not covered by the stable DT ABI, and can be reordered
-later at will.
+   perf stat -e '{faults,ref-cycles,faults}'  -I 1000
 
-I expect you will just add more CPU_METHOD_OF_DECLARE() lines later
-(perhaps with a little bit of extra code to handle deviations).
+     1.005591180              1,297      faults
+     1.005591180        457,476,576      ref-cycles
+     1.005591180    <not supported>      faults
 
-> --- /dev/null
-> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-> @@ -0,0 +1,85 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * RZ/N1D Second CA7 enabler.
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * Derived from action,s500-smp
-> + */
-> +
-> +#include <linux/delay.h>
+First, sw event "faults" is attached to the sw context, and becomes the
+group leader. Then, hw event "ref-cycles" is attached, so both events
+are moved to the hw context. Last, another sw "faults" tries to attach,
+but it fails because of mismatch between the new target ctx (from sw
+pmu) and the group_leader's ctx (hw context, same as ref-cycles).
 
-Do you need this?
+The broken condition is:
+   group_leader is sw event;
+   group_leader is on hw context;
+   add a sw event to the group.
 
-> +#include <asm/cacheflush.h>
-> +#include <asm/smp_plat.h>
-> +#include <asm/smp_scu.h>
+Fix this scenario by checking group_leader's context (instead of just
+event type). If group_leader is on hw context, use the ->pmu of this
+context to look up context for the new event.
 
-Do you need these?
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <kernel-team@fb.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: b04243ef7006 ("perf: Complete software pmu grouping")
+Link: http://lkml.kernel.org/r/20180503194716.162815-1-songliubraving@fb.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/perf_event.h |  8 ++++++++
+ kernel/events/core.c       | 21 +++++++++++----------
+ 2 files changed, 19 insertions(+), 10 deletions(-)
 
-> +static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
-> +{
-> +       struct device_node *dn;
-> +       int ret;
-> +       u32 bootaddr;
-
-> +       pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
-
-The cast is not needed.
-
-> +
-> +       cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-> +       if (!cpu_bootaddr)
-> +               pr_err("CPU#1: cpu-release-addr map failed\n");
-
-If this fails, that is basically an OOM condition, which will scream anyway.
-So I think you should drop the error message.
-
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index e71e99eb9a4e..def866f7269b 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1016,6 +1016,14 @@ static inline int is_software_event(struct perf_event *event)
+ 	return event->event_caps & PERF_EV_CAP_SOFTWARE;
+ }
+ 
++/*
++ * Return 1 for event in sw context, 0 for event in hw context
++ */
++static inline int in_software_context(struct perf_event *event)
++{
++	return event->ctx->pmu->task_ctx_nr == perf_sw_context;
++}
++
+ extern struct static_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
+ 
+ extern void ___perf_sw_event(u32, u64, struct pt_regs *, u64);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 67612ce359ad..ce6aa5ff3c96 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10521,19 +10521,20 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	if (pmu->task_ctx_nr == perf_sw_context)
+ 		event->event_caps |= PERF_EV_CAP_SOFTWARE;
+ 
+-	if (group_leader &&
+-	    (is_software_event(event) != is_software_event(group_leader))) {
+-		if (is_software_event(event)) {
++	if (group_leader) {
++		if (is_software_event(event) &&
++		    !in_software_context(group_leader)) {
+ 			/*
+-			 * If event and group_leader are not both a software
+-			 * event, and event is, then group leader is not.
++			 * If the event is a sw event, but the group_leader
++			 * is on hw context.
+ 			 *
+-			 * Allow the addition of software events to !software
+-			 * groups, this is safe because software events never
+-			 * fail to schedule.
++			 * Allow the addition of software events to hw
++			 * groups, this is safe because software events
++			 * never fail to schedule.
+ 			 */
+-			pmu = group_leader->pmu;
+-		} else if (is_software_event(group_leader) &&
++			pmu = group_leader->ctx->pmu;
++		} else if (!is_software_event(event) &&
++			   is_software_event(group_leader) &&
+ 			   (group_leader->group_caps & PERF_EV_CAP_SOFTWARE)) {
+ 			/*
+ 			 * In case the group is a pure software group, and we
