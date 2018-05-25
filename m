@@ -1,35 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967071AbeEYQOf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 12:14:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:39270 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966725AbeEYQOe (ORCPT
+        id S967227AbeEYQOm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 12:14:42 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34763 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966725AbeEYQOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 12:14:34 -0400
-Date: Fri, 25 May 2018 18:14:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net, juri.lelli@redhat.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        viresh.kumar@linaro.org, valentin.schneider@arm.com
-Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
- dedicated file
-Message-ID: <20180525161423.GP12180@hirez.programming.kicks-ass.net>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
- <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
+        Fri, 25 May 2018 12:14:39 -0400
+X-Google-Smtp-Source: ADUXVKK0+c1rQoY800n90FpSQd+2xGdCOdz8qrkznVJDFVqQyXPi+chyERvgYZS2UdnIqLIPl9J2tqLJmURFPrNIoVM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180525155228.GA17043@kroah.com>
+References: <20180525153841.3314617-1-arnd@arndb.de> <20180525155228.GA17043@kroah.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 25 May 2018 18:14:37 +0200
+X-Google-Sender-Auth: RDoT-0Q2lfVcKnRasKWWpaSf8_Q
+Message-ID: <CAK8P3a0g6gz=nSgPx3y+_XHM0VkdgSdZepws+XN5Mk95y7i0Zg@mail.gmail.com>
+Subject: Re: [PATCH] staging: typec: rt1711h: fix tcpci dependency
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 03:26:48PM +0100, Quentin Perret wrote:
-> (both quite old TBH -- 4.9.4 for arm64, 4.8.4 for x86).
+On Fri, May 25, 2018 at 5:52 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Fri, May 25, 2018 at 05:38:25PM +0200, Arnd Bergmann wrote:
+>> Using 'select' instead of the normal 'depends on' causes
+>> a build issue with CONFIG_I2C=m:
+>>
+>> WARNING: unmet direct dependencies detected for TYPEC_TCPCI
+>>   Depends on [m]: STAGING [=y] && TYPEC_TCPM [=y] && I2C [=m]
+>>   Selected by [y]:
+>>   - TYPEC_RT1711H [=y] && STAGING [=y] && TYPEC_TCPM [=y]
+>>
+>> Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  drivers/staging/typec/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> I think that this is already fixed in linux-next with some patches that
+> I queued up there yesterday.  When did you last see this problem?
 
-You really should try with a more recent compiler.
+It's on linux-next, but since there hasn't been a release this week,
+I'm sure you are right that this was already fixed.
+
+      Arnd
