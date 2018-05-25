@@ -1,227 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeEYGEm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:04:42 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8134 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752085AbeEYGEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:04:41 -0400
-Subject: Re: [PATCH] f2fs: let fstrim issue discard commands in lower priority
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180525051031.36443-1-jaegeuk@kernel.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
-Date: Fri, 25 May 2018 14:04:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S935453AbeEYGJI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:09:08 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:57678 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752085AbeEYGJG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 02:09:06 -0400
+Subject: Turris Omnia firmware possibilities [Was: Re: led: hw-trigger, global
+ brightness and multi-colored leds]
+To: Tomas Hlavacek <tomas.hlavacek@nic.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
+References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+ <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
+From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=uwe@kleine-koenig.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e72ed1b1-1225-2782-e207-1af6af347810@kleine-koenig.org>
+Date: Fri, 25 May 2018 08:08:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180525051031.36443-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="dqvHR029Jjs1R5OkF9AVYUPo7BNncKuoT"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--dqvHR029Jjs1R5OkF9AVYUPo7BNncKuoT
+Content-Type: multipart/mixed; boundary="UTtihMLZlz5WtpzAoJnLHRy3oyxth20Ej";
+ protected-headers="v1"
+From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
+To: Tomas Hlavacek <tomas.hlavacek@nic.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek
+ <pavel@ucw.cz>, linux-kernel@vger.kernel.org
+Message-ID: <e72ed1b1-1225-2782-e207-1af6af347810@kleine-koenig.org>
+Subject: Turris Omnia firmware possibilities [Was: Re: led: hw-trigger, global
+ brightness and multi-colored leds]
+References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+ <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
+In-Reply-To: <CAEB7QLBcLnv4JYphjxqESqofTbGyVWOd6QYKzfvdEZyDXH9LLQ@mail.gmail.com>
 
-On 2018/5/25 13:10, Jaegeuk Kim wrote:
-> The fstrim gathers huge number of large discard commands, and tries to issue
-> without IO awareness, which results in long user-perceive IO latencies on
-> READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
-> seconds due to long discard latency.
-> 
-> This patch limits the maximum size to 2MB per candidate, and check IO congestion
-> when issuing them to disk.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/f2fs.h    |   4 +-
->  fs/f2fs/segment.c | 123 +++++++++++++++++++++++-----------------------
->  2 files changed, 64 insertions(+), 63 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 3bddf13794d9..75ae7fc86ae8 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -178,6 +178,7 @@ enum {
->  
->  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
->  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> +#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
->  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
->  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
->  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> @@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
->  static inline bool __is_discard_mergeable(struct discard_info *back,
->  						struct discard_info *front)
->  {
-> -	return back->lstart + back->len == front->lstart;
-> +	return (back->lstart + back->len == front->lstart) &&
-> +		(back->len + front->len < DEF_MAX_DISCARD_LEN);
->  }
->  
->  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 843fc2e6d41c..ba996d4091bc 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->  	return 0;
->  }
->  
-> -static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-> -					struct discard_policy *dpolicy,
-> -					unsigned int start, unsigned int end)
-> -{
-> -	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> -	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-> -	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> -	struct discard_cmd *dc;
-> -	struct blk_plug plug;
-> -	int issued;
-> -
-> -next:
-> -	issued = 0;
-> -
-> -	mutex_lock(&dcc->cmd_lock);
-> -	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> -
-> -	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
-> -					NULL, start,
-> -					(struct rb_entry **)&prev_dc,
-> -					(struct rb_entry **)&next_dc,
-> -					&insert_p, &insert_parent, true);
-> -	if (!dc)
-> -		dc = next_dc;
-> -
-> -	blk_start_plug(&plug);
-> -
-> -	while (dc && dc->lstart <= end) {
-> -		struct rb_node *node;
-> -
-> -		if (dc->len < dpolicy->granularity)
-> -			goto skip;
-> -
-> -		if (dc->state != D_PREP) {
-> -			list_move_tail(&dc->list, &dcc->fstrim_list);
-> -			goto skip;
-> -		}
-> -
-> -		__submit_discard_cmd(sbi, dpolicy, dc);
-> -
-> -		if (++issued >= dpolicy->max_requests) {
-> -			start = dc->lstart + dc->len;
-> -
-> -			blk_finish_plug(&plug);
-> -			mutex_unlock(&dcc->cmd_lock);
-> -
-> -			schedule();
-> -
-> -			goto next;
-> -		}
-> -skip:
-> -		node = rb_next(&dc->rb_node);
-> -		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> -
-> -		if (fatal_signal_pending(current))
-> -			break;
-> -	}
-> -
-> -	blk_finish_plug(&plug);
-> -	mutex_unlock(&dcc->cmd_lock);
-> -}
-> -
->  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  					struct discard_policy *dpolicy)
->  {
-> @@ -2397,6 +2335,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	return has_candidate;
->  }
->  
-> +static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-> +					struct discard_policy *dpolicy,
-> +					unsigned int start, unsigned int end)
-> +{
-> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> +	struct discard_cmd *dc;
-> +	struct blk_plug plug;
-> +	int issued;
+--UTtihMLZlz5WtpzAoJnLHRy3oyxth20Ej
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-unsigned int cur = start;
+Hello Tomas,
 
-> +
-> +next:
-> +	issued = 0;
-> +
-> +	mutex_lock(&dcc->cmd_lock);
-> +	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> +
-> +	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
-> +					NULL, start,
+On 05/25/2018 12:08 AM, Tomas Hlavacek wrote:
+> But I also have good news: The FW of the MCU is also OSS (see the repo
+> in the link (1)). There is a method for flashing the MCU over I2C from
+> Linux and there is JTAG connector for the MCU, in case un-bricking is
+> needed. Therefore the LED protocol can be changed to be more sensible
+> and/or it is even possible to emulate some existing HW LED driver chip
+> in Omnia MCU and reuse OSS driver for that chip.
 
-NULL, cur,
+Yeah, I noticed, but when we start replacing the firmware, we'd need to
+detect somehow when a machine has an old (or only different) firmware.
+That would imply a versioning scheme and a generic way to read out the
+firmware version. (CMD_GET_FW_VERSION_BOOT is already a start, but this
+doesn't help me if I find an unknown hash.) So a CMD_GET_FW_SOMETHING
+that yields a version string that is similar to the soname of a library
+would be great.
 
-> +					(struct rb_entry **)&prev_dc,
-> +					(struct rb_entry **)&next_dc,
-> +					&insert_p, &insert_parent, true);
-> +	if (!dc)
-> +		dc = next_dc;
-> +
-> +	blk_start_plug(&plug);
-> +
-> +	while (dc && dc->lstart <= end) {
-> +		struct rb_node *node;
-> +
-> +		if (dc->len < dpolicy->granularity)
-> +			goto skip;
-> +
-> +		if (dc->state != D_PREP) {
-> +			list_move_tail(&dc->list, &dcc->fstrim_list);
-> +			goto skip;
-> +		}
-> +
-> +		__submit_discard_cmd(sbi, dpolicy, dc);
-> +
-> +		if (++issued >= dpolicy->max_requests) {
-> +			start = dc->lstart + dc->len;
+Talking about firmware, I wonder if there is firmware supported needed
+to solve
+https://wiki.debian.org/InstallingDebianOn/TurrisOmnia#Power_Management
+=2E Didn't look into that deeply yet and probably not high prio given tha=
+t
+normally the Turris Omnia will just run 7x24h.
 
-cur = dc->lstart + dc->len;
+Best regards
+Uwe
 
-> +
-> +			blk_finish_plug(&plug);
-> +			mutex_unlock(&dcc->cmd_lock);
-> +			__wait_all_discard_cmd(sbi, dpolicy);
 
-How about moving __wait_discard_cmd_range(sbi, &dpolicy, start, end) from
-f2fs_trim_fs here, this can avoid wait non-fstrim discard commands.
+--UTtihMLZlz5WtpzAoJnLHRy3oyxth20Ej--
 
-> +			congestion_wait(BLK_RW_ASYNC, HZ/50);
+--dqvHR029Jjs1R5OkF9AVYUPo7BNncKuoT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-What about using msleep(dpolicy->min_interval) instead?
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAlsHqHgACgkQwfwUeK3K
+7AnDxAf9F4gkgLDOo3theNCuDOU6f4aW46Bzp0fTlCXak2ZcFJk9T1wyFOdq5zBQ
+n+dxRAM/og8PIxe74F11uMveJHNXZbQDd+Pz0ojExn4ieF1TnGW68qb//O7dqBRD
+IVf/zle3q83hGfZXgEl0ziS2X6WQ6iBHNIKyz71vGeZ0X1ahcV66h0Vk0L6nZaFo
+ENWGinyO6VeaXltaTkUqwsTQoRytMr8UDvpi8+bdkHkcrqxEXx12aVfJFZj7GwLc
+6Ep57lvnm1BjzbEEU2rhT3xhxI9NaphZGHmFrdjVpI8h50xdGKGDJHvndLZ7EZf2
+mItg38rZiP5e7DeKiRW+/so/8pAbtQ==
+=4Ry1
+-----END PGP SIGNATURE-----
 
-> +			goto next;
-> +		}
-> +skip:
-> +		node = rb_next(&dc->rb_node);
-> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> +
-> +		if (fatal_signal_pending(current))
-> +			break;
-> +	}
-> +
-> +	blk_finish_plug(&plug);
-> +	mutex_unlock(&dcc->cmd_lock);
-> +}
-> +
->  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
->  {
->  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
-> 
+--dqvHR029Jjs1R5OkF9AVYUPo7BNncKuoT--
