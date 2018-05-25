@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935840AbeEYDvm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:51:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49916 "EHLO mx1.redhat.com"
+        id S935859AbeEYDvv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:51:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43558 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935453AbeEYDvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:51:38 -0400
+        id S935103AbeEYDvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:51:49 -0400
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -16,9 +16,9 @@ Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
         Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 26/33] exofs: conver to bio_for_each_page_all2
-Date: Fri, 25 May 2018 11:46:14 +0800
-Message-Id: <20180525034621.31147-27-ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 27/33] gfs2: conver to bio_for_each_page_all2
+Date: Fri, 25 May 2018 11:46:15 +0800
+Message-Id: <20180525034621.31147-28-ming.lei@redhat.com>
 In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
 References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -28,44 +28,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 bio_for_each_page_all() can't be used any more after multipage bvec is
 enabled, so we have to convert to bio_for_each_page_all2().
 
+Given bvec can't be changed inside bio_for_each_page_all2(), this patch
+marks the bvec parameter as 'const' for gfs2_end_log_write_bh().
+
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- fs/exofs/ore.c      | 3 ++-
- fs/exofs/ore_raid.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/gfs2/lops.c    | 6 ++++--
+ fs/gfs2/meta_io.c | 3 ++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/exofs/ore.c b/fs/exofs/ore.c
-index fe81fd6fe553..2a7e93f21695 100644
---- a/fs/exofs/ore.c
-+++ b/fs/exofs/ore.c
-@@ -406,8 +406,9 @@ static void _clear_bio(struct bio *bio)
+diff --git a/fs/gfs2/lops.c b/fs/gfs2/lops.c
+index a31b9b028957..0284cd66089c 100644
+--- a/fs/gfs2/lops.c
++++ b/fs/gfs2/lops.c
+@@ -168,7 +168,8 @@ u64 gfs2_log_bmap(struct gfs2_sbd *sdp)
+  * that is pinned in the pagecache.
+  */
+ 
+-static void gfs2_end_log_write_bh(struct gfs2_sbd *sdp, struct bio_vec *bvec,
++static void gfs2_end_log_write_bh(struct gfs2_sbd *sdp,
++				  const struct bio_vec *bvec,
+ 				  blk_status_t error)
  {
- 	struct bio_vec *bv;
- 	unsigned i;
+ 	struct buffer_head *bh, *next;
+@@ -207,6 +208,7 @@ static void gfs2_end_log_write(struct bio *bio)
+ 	struct bio_vec *bvec;
+ 	struct page *page;
+ 	int i;
 +	struct bvec_iter_all bia;
  
--	bio_for_each_page_all(bv, bio, i) {
-+	bio_for_each_page_all2(bv, bio, i, bia) {
- 		unsigned this_count = bv->bv_len;
+ 	if (bio->bi_status) {
+ 		fs_err(sdp, "Error %d writing to journal, jid=%u\n",
+@@ -214,7 +216,7 @@ static void gfs2_end_log_write(struct bio *bio)
+ 		wake_up(&sdp->sd_logd_waitq);
+ 	}
  
- 		if (likely(PAGE_SIZE == this_count))
-diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
-index 2c3346cd1b29..bb0cc314a987 100644
---- a/fs/exofs/ore_raid.c
-+++ b/fs/exofs/ore_raid.c
-@@ -433,11 +433,12 @@ static void _mark_read4write_pages_uptodate(struct ore_io_state *ios, int ret)
- 	/* loop on all devices all pages */
- 	for (d = 0; d < ios->numdevs; d++) {
- 		struct bio *bio = ios->per_dev[d].bio;
-+		struct bvec_iter_all bia;
+-	bio_for_each_page_all(bvec, bio, i) {
++	bio_for_each_page_all2(bvec, bio, i, bia) {
+ 		page = bvec->bv_page;
+ 		if (page_has_buffers(page))
+ 			gfs2_end_log_write_bh(sdp, bvec, bio->bi_status);
+diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
+index 1d720352310a..a945c9fa1dc6 100644
+--- a/fs/gfs2/meta_io.c
++++ b/fs/gfs2/meta_io.c
+@@ -190,8 +190,9 @@ static void gfs2_meta_read_endio(struct bio *bio)
+ {
+ 	struct bio_vec *bvec;
+ 	int i;
++	struct bvec_iter_all bia;
  
- 		if (!bio)
- 			continue;
- 
--		bio_for_each_page_all(bv, bio, i) {
-+		bio_for_each_page_all2(bv, bio, i, bia) {
- 			struct page *page = bv->bv_page;
- 
- 			SetPageUptodate(page);
+-	bio_for_each_page_all(bvec, bio, i) {
++	bio_for_each_page_all2(bvec, bio, i, bia) {
+ 		struct page *page = bvec->bv_page;
+ 		struct buffer_head *bh = page_buffers(page);
+ 		unsigned int len = bvec->bv_len;
 -- 
 2.9.5
