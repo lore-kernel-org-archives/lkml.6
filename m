@@ -1,210 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964976AbeEYIfo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 04:35:44 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:52908 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964790AbeEYIfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 04:35:42 -0400
-Subject: Re: [PATCH v2 08/13] ASoC: pxa: remove the dmaengine compat need
-To: Robert Jarzmik <robert.jarzmik@free.fr>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20180524070703.11901-1-robert.jarzmik@free.fr>
- <20180524070703.11901-9-robert.jarzmik@free.fr>
-From: Daniel Mack <daniel@zonque.org>
-Message-ID: <5bc2aa06-7939-1ca4-6704-30f307edcda4@zonque.org>
-Date: Fri, 25 May 2018 10:35:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965157AbeEYIgd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 04:36:33 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38921 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964791AbeEYIgb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 04:36:31 -0400
+X-Google-Smtp-Source: ADUXVKJ5cnj2pxDHrwn5I9Q7zS7+W3TyrwfP7TqEyGa9V0B0v5U4h7ZMSVbTmG27AUBbxWgKcoBOYMrxnmDxlptqUVE=
 MIME-Version: 1.0
-In-Reply-To: <20180524070703.11901-9-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAJZ5v0j80jbqLKORZR87mftbKDbAophywnuDqTfNf-VSBYfyOQ@mail.gmail.com>
+References: <20180523160020.15291-1-digetx@gmail.com> <20180523160020.15291-2-digetx@gmail.com>
+ <20180524043040.25pld3ezs4lpabro@vireshk-i7> <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
+ <CAJZ5v0iXibwwnAyjBXc+zO5YQ0=WwaoUqq1K3OWqojh8xX+Wjw@mail.gmail.com>
+ <5f9364c0-4ef5-0883-583d-42da8f016a80@gmail.com> <CAJZ5v0j80jbqLKORZR87mftbKDbAophywnuDqTfNf-VSBYfyOQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 25 May 2018 10:36:29 +0200
+X-Google-Sender-Auth: mTx7o6XcOd68udNtuIIlItFnPUs
+Message-ID: <CAJZ5v0hcvSFfWVCgVU8ApvODhyZqXduaGoBmmh345aGe5MN59g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock source
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, May 24, 2018 09:06 AM, Robert Jarzmik wrote:
-> As the pxa architecture switched towards the dmaengine slave map, the
-> old compatibility mechanism to acquire the dma requestor line number and
-> priority are not needed anymore.
-> 
-> This patch simplifies the dma resource acquisition, using the more
-> generic function dma_request_slave_channel().
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+On Fri, May 25, 2018 at 10:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Thu, May 24, 2018 at 2:28 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
+>> On 24.05.2018 11:01, Rafael J. Wysocki wrote:
+>>> On Thu, May 24, 2018 at 7:37 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>> On 24.05.2018 07:30, Viresh Kumar wrote:
+>>>>> On 23-05-18, 19:00, Dmitry Osipenko wrote:
+>>>>>> PLL_C is running at 600MHz which is significantly higher than the 216MHz
+>>>>>> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
+>>>>>> running on that PLL. Let's use PLL_C as intermediate clock source, making
+>>>>>> CPU snappier a tad during of the frequency transition.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> ---
+>>>>>>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
+>>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+>>>>>> index 3ad6bded6efc..4bf5ba7da40b 100644
+>>>>>> --- a/drivers/cpufreq/tegra20-cpufreq.c
+>>>>>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+>>>>>> @@ -25,12 +25,13 @@
+>>>>>>  #include <linux/types.h>
+>>>>>>
+>>>>>>  #define PLL_P_FREQ  216000
+>>>>>> +#define PLL_C_FREQ  600000
+>>>>>>
+>>>>>>  static struct cpufreq_frequency_table freq_table[] = {
+>>>>>>      { .frequency = 216000 },
+>>>>>>      { .frequency = 312000 },
+>>>>>>      { .frequency = 456000 },
+>>>>>> -    { .frequency = 608000 },
+>>>>>> +    { .frequency = 600000 },
+>>>>>>      { .frequency = 760000 },
+>>>>>>      { .frequency = 816000 },
+>>>>>>      { .frequency = 912000 },
+>>>>>> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
+>>>>>>      struct clk *cpu_clk;
+>>>>>>      struct clk *pll_x_clk;
+>>>>>>      struct clk *pll_p_clk;
+>>>>>> +    struct clk *pll_c_clk;
+>>>>>>      bool pll_x_prepared;
+>>>>>>  };
+>>>>>>
+>>>>>> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+>>>>>>      if (index == 0 || policy->cur == PLL_P_FREQ)
+>>>>>>              return 0;
+>>>>>>
+>>>>>> -    return PLL_P_FREQ;
+>>>>>> +    if (index == 3 || policy->cur == PLL_C_FREQ)
+>>>>>> +            return 0;
+>>>>>
+>>>>> So we can choose between two different intermediate frequencies ? And
+>>>>> I didn't like the way magic number 3 is used here. Its prone to errors
+>>>>> and we better use a macro or something else here.
+>>>>>
+>>>>> Like instead of doing index == 3, what about freq_table[index].freq ==
+>>>>> PLL_C_FREQ ? Same for the previous patch as well.
+>>>>
+>>>> The frequency is determined by the parent clock of CCLK (CPU clock), we can
+>>>> choose between different parents for the CCLK. PLL_C as PLL_P and PLL_X are
+>>>> among the available parents for the CCLK to choose from and there some others.
+>>>>
+>>>> I don't mind to use freq_table[index].freq, though I'd like to keep compiled
+>>>> assembly minimal where possible. Hence the freq_table should be made constant to
+>>>> tell compiler that it doesn't need to emit data fetches for the table values and
+>>>> could embed the constants into the code where appropriate.
+>>>>
+>>>> Could we constify the "struct cpufreq_frequency_table" within the cpufreq core?
+>>>> Seems nothing prevents this (I already tried to constify - there are no
+>>>> obstacles), unless some cpufreq driver would try to modify
+>>>> policy->freq_table->... within the cpufreq callback implementation.
+>>>
+>>> Some drivers generate frequency tables out of external data
+>>> unavailable at compile time, like ACPI tables.
+>>
+>> Instead of making the table constant itself (with its values), seems we can just
+>> make the policy->freq_table pointer constant. I'll try to make a patch for that,
+>> adjusting the pointers in cpufreq core and the drivers. This works for the
+>> acpi-cpufreq at least.
+>
+> Honestly, messing up with the whole subsystem in order to avoid an
+> explicit pointer case doesn't sound right to me.
 
-Reviewed-by: Daniel Mack <daniel@zonque.org>
+Actually, on a second thought I agree that it is better to do it as
+you suggested: make the policy->freq_table pointer constant
+everywhere.
 
-> ---
->   sound/arm/pxa2xx-ac97.c     | 14 ++------------
->   sound/arm/pxa2xx-pcm-lib.c  |  6 +++---
->   sound/soc/pxa/pxa2xx-ac97.c | 32 +++++---------------------------
->   sound/soc/pxa/pxa2xx-i2s.c  |  6 ++----
->   4 files changed, 12 insertions(+), 46 deletions(-)
-> 
-> diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
-> index 4bc244c40f80..236a63cdaf9f 100644
-> --- a/sound/arm/pxa2xx-ac97.c
-> +++ b/sound/arm/pxa2xx-ac97.c
-> @@ -63,28 +63,18 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
->   	.reset	= pxa2xx_ac97_legacy_reset,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_out_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 12,
-> -};
-> -
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_out = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_out",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_out_req,
-> -};
-> -
-> -static struct pxad_param pxa2xx_ac97_pcm_in_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 11,
->   };
->   
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_in = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_in",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_in_req,
->   };
->   
->   static struct snd_pcm *pxa2xx_ac97_pcm;
-> diff --git a/sound/arm/pxa2xx-pcm-lib.c b/sound/arm/pxa2xx-pcm-lib.c
-> index e8da3b8ee721..dcbe7ecc1835 100644
-> --- a/sound/arm/pxa2xx-pcm-lib.c
-> +++ b/sound/arm/pxa2xx-pcm-lib.c
-> @@ -125,9 +125,9 @@ int __pxa2xx_pcm_open(struct snd_pcm_substream *substream)
->   	if (ret < 0)
->   		return ret;
->   
-> -	return snd_dmaengine_pcm_open_request_chan(substream,
-> -					pxad_filter_fn,
-> -					dma_params->filter_data);
-> +	return snd_dmaengine_pcm_open(
-> +		substream, dma_request_slave_channel(rtd->cpu_dai->dev,
-> +						     dma_params->chan_name));
->   }
->   EXPORT_SYMBOL(__pxa2xx_pcm_open);
->   
-> diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-> index 803818aabee9..1b41c0f2a8fb 100644
-> --- a/sound/soc/pxa/pxa2xx-ac97.c
-> +++ b/sound/soc/pxa/pxa2xx-ac97.c
-> @@ -68,61 +68,39 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
->   	.reset	= pxa2xx_ac97_cold_reset,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_stereo_in_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 11,
-> -};
-> -
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_in = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_in",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_stereo_in_req,
-> -};
-> -
-> -static struct pxad_param pxa2xx_ac97_pcm_stereo_out_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 12,
->   };
->   
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_out = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_out",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_stereo_out_req,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_aux_mono_out_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 10,
-> -};
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_out = {
->   	.addr		= __PREG(MODR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-> +	.chan_name	= "pcm_aux_mono_out",
->   	.maxburst	= 16,
-> -	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_out_req,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_aux_mono_in_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 9,
-> -};
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_in = {
->   	.addr		= __PREG(MODR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-> +	.chan_name	= "pcm_aux_mono_in",
->   	.maxburst	= 16,
-> -	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_in_req,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_aux_mic_mono_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 8,
-> -};
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_mic_mono_in = {
->   	.addr		= __PREG(MCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-> +	.chan_name	= "pcm_aux_mic_mono",
->   	.maxburst	= 16,
-> -	.filter_data	= &pxa2xx_ac97_pcm_aux_mic_mono_req,
->   };
->   
->   static int pxa2xx_ac97_hifi_startup(struct snd_pcm_substream *substream,
-> diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
-> index 3fb60baf6eab..e7184de0de04 100644
-> --- a/sound/soc/pxa/pxa2xx-i2s.c
-> +++ b/sound/soc/pxa/pxa2xx-i2s.c
-> @@ -82,20 +82,18 @@ static struct pxa_i2s_port pxa_i2s;
->   static struct clk *clk_i2s;
->   static int clk_ena = 0;
->   
-> -static unsigned long pxa2xx_i2s_pcm_stereo_out_req = 3;
->   static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_out = {
->   	.addr		= __PREG(SADR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "tx",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_i2s_pcm_stereo_out_req,
->   };
->   
-> -static unsigned long pxa2xx_i2s_pcm_stereo_in_req = 2;
->   static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_in = {
->   	.addr		= __PREG(SADR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "rx",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_i2s_pcm_stereo_in_req,
->   };
->   
->   static int pxa2xx_i2s_startup(struct snd_pcm_substream *substream,
-> 
+Sorry for the noise.
