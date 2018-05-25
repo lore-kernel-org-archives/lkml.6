@@ -1,88 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965553AbeEYKBD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:01:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:58158 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965291AbeEYKBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:01:02 -0400
-Subject: Re: [PATCH v4 04/26] arm64: alternative: Apply alternatives early in
- boot process
-To: Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, Christoffer Dall <christoffer.dall@linaro.org>
-References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
- <1527241772-48007-5-git-send-email-julien.thierry@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <89769f8d-2ed0-1eb7-0373-09fc25f8071a@arm.com>
-Date: Fri, 25 May 2018 11:00:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1527241772-48007-5-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S965629AbeEYKBh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:01:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45184 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965259AbeEYKBe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:01:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D4F960618
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, collinsd@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 0/6] Add powerdomain driver for corners on msm8996/sdm845
+Date: Fri, 25 May 2018 15:31:15 +0530
+Message-Id: <20180525100121.28214-1-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/18 10:49, Julien Thierry wrote:
-> From: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> Currently alternatives are applied very late in the boot process (and
-> a long time after we enable scheduling). Some alternative sequences,
-> such as those that alter the way CPU context is stored, must be applied
-> much earlier in the boot sequence.
-> 
-> Introduce apply_boot_alternatives() to allow some alternatives to be
-> applied immediately after we detect the CPU features of the boot CPU.
-> 
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> [julien.thierry@arm.com: rename to fit new cpufeature framework better,
-> 			 apply BOOT_SCOPE feature early in boot]
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@linaro.org>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   arch/arm64/include/asm/alternative.h |  3 +--
->   arch/arm64/include/asm/cpufeature.h  |  2 ++
->   arch/arm64/kernel/alternative.c      | 30 +++++++++++++++++++++++++++---
->   arch/arm64/kernel/cpufeature.c       |  5 +++++
->   arch/arm64/kernel/smp.c              |  7 +++++++
->   5 files changed, 42 insertions(+), 5 deletions(-)
-> 
+Changes in v2:
+* added a powerdomain driver for sdm845 which supports communicating to RPMh
+* dropped the changes to sdhc driver to move over to using OPP
+as there is active discussion on using OPP as the interface vs
+handling all of it in clock drivers
+* Other minor binding updates based on review of v1
 
-...
+With performance state support for genpd merged, and with some more
+patches to add support for them in the OPP layer [1] in linux-next,
+this is an effort to model a powerdomain driver to communicate corner/level
+values for qualcomm platforms to RPM (Remote Power Manager) and RPMh.
 
->   
-> +unsigned long boot_capabilities;
-> +
->   /*
->    * Flag to indicate if we have computed the system wide
->    * capabilities based on the boot time active CPUs. This
-> @@ -1370,6 +1372,9 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
->   		if (!cpus_have_cap(caps->capability) && caps->desc)
->   			pr_info("%s %s\n", info, caps->desc);
->   		cpus_set_cap(caps->capability);
-> +
-> +		if (scope_mask & SCOPE_BOOT_CPU)
-> +			__set_bit(caps->capability, &boot_capabilities);
+The series is based on linux-next as it depends on OPP updates and SMD845
+specific patches which are all in linux-next. It also depends on the RPMH
+communication patches [2] for the sdm845 rpmhpd driver.
 
-Julien
+[1] https://lwn.net/Articles/742136/
+[2] https://lkml.org/lkml/2018/5/9/729
 
-I think this check is problematic. The scope_mask passed on by the boot CPU
-is (SCOPE_BOOT_CPU | SCOPE_LOCAL_CPU) to cover both BOOT CPU capabilities *and*
-CPU local capabilites on the boot CPU. So, you might apply the alternatives for
-a "local" CPU erratum, which is not intended. You may change the above check to :
+Rajendra Nayak (6):
+  soc: qcom: rpmpd: Add a powerdomain driver to model corners
+  dt-bindings: opp: Introduce qcom-opp bindings
+  soc: qcom: rpmpd: Add support for get/set performance state
+  arm64: dts: msm8996: Add rpmpd device node
+  soc: qcom: rpmh powerdomain driver
+  soc: qcom: rpmpd/rpmhpd: Add a max vote on all corners at init
 
-	if (caps->type & SCOPE_BOOT_CPU)
+ .../devicetree/bindings/opp/qcom-opp.txt      |  25 ++
+ .../devicetree/bindings/power/qcom,rpmhpd.txt |  65 +++
+ .../devicetree/bindings/power/qcom,rpmpd.txt  |  55 +++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  40 ++
+ drivers/soc/qcom/Kconfig                      |  18 +
+ drivers/soc/qcom/Makefile                     |   2 +
+ drivers/soc/qcom/rpmhpd.c                     | 369 ++++++++++++++++++
+ drivers/soc/qcom/rpmpd.c                      | 354 +++++++++++++++++
+ 8 files changed, 928 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+ create mode 100644 drivers/soc/qcom/rpmhpd.c
+ create mode 100644 drivers/soc/qcom/rpmpd.c
 
-to make sure you check the "capability" has the SCOPE_BOOT_CPU set.
-
-Suzuki
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
