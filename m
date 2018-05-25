@@ -1,151 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935908AbeEYDwX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:52:23 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45699 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754941AbeEYDwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:52:20 -0400
-X-Google-Smtp-Source: ADUXVKLiTUdVDjfCAVQeS/jORsqA7Em66vupICOggxNB4uig6uHuB83/oQB+kOz/pwyOyfCEZdsJdQ==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: dsa: dsa_loop: Make dynamic debugging helpful
-Date: Thu, 24 May 2018 20:52:14 -0700
-Message-Id: <20180525035215.19341-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        id S935926AbeEYDwd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:52:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38128 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934999AbeEYDwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:52:30 -0400
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
+        Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 31/33] block: bio: pass segments to bio if bio_add_page() is bypassed
+Date: Fri, 25 May 2018 11:46:19 +0800
+Message-Id: <20180525034621.31147-32-ming.lei@redhat.com>
+In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove redundant debug prints from phy_read/write since we can trace those
-calls through trace events. Enhance dynamic debug prints to print arguments
-which helps figuring how what is going on at the driver level with higher level
-configuration interfaces.
+Under some situations, such as block direct I/O, we can't use
+bio_add_page() for merging pages into multipage bvec, so
+a new function is implemented for converting page array into one
+segment array, then these cases can benefit from multipage bvec
+too.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/net/dsa/dsa_loop.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ block/bio.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 48 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
-index 58f14af04639..816f34d64736 100644
---- a/drivers/net/dsa/dsa_loop.c
-+++ b/drivers/net/dsa/dsa_loop.c
-@@ -67,7 +67,7 @@ static struct phy_device *phydevs[PHY_MAX_ADDR];
- static enum dsa_tag_protocol dsa_loop_get_protocol(struct dsa_switch *ds,
- 						   int port)
- {
--	dev_dbg(ds->dev, "%s\n", __func__);
-+	dev_dbg(ds->dev, "%s: port: %d\n", __func__, port);
- 
- 	return DSA_TAG_PROTO_NONE;
+diff --git a/block/bio.c b/block/bio.c
+index bc3992f52fe8..b7d9089cb28f 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -913,6 +913,41 @@ int bio_add_page(struct bio *bio, struct page *page,
  }
-@@ -124,8 +124,6 @@ static int dsa_loop_phy_read(struct dsa_switch *ds, int port, int regnum)
- 	struct mii_bus *bus = ps->bus;
- 	int ret;
+ EXPORT_SYMBOL(bio_add_page);
  
--	dev_dbg(ds->dev, "%s\n", __func__);
--
- 	ret = mdiobus_read_nested(bus, ps->port_base + port, regnum);
- 	if (ret < 0)
- 		ps->ports[port].mib[DSA_LOOP_PHY_READ_ERR].val++;
-@@ -142,8 +140,6 @@ static int dsa_loop_phy_write(struct dsa_switch *ds, int port,
- 	struct mii_bus *bus = ps->bus;
- 	int ret;
- 
--	dev_dbg(ds->dev, "%s\n", __func__);
--
- 	ret = mdiobus_write_nested(bus, ps->port_base + port, regnum, value);
- 	if (ret < 0)
- 		ps->ports[port].mib[DSA_LOOP_PHY_WRITE_ERR].val++;
-@@ -156,7 +152,8 @@ static int dsa_loop_phy_write(struct dsa_switch *ds, int port,
- static int dsa_loop_port_bridge_join(struct dsa_switch *ds, int port,
- 				     struct net_device *bridge)
- {
--	dev_dbg(ds->dev, "%s\n", __func__);
-+	dev_dbg(ds->dev, "%s: port: %d, bridge: %s\n",
-+		__func__, port, bridge->name);
- 
- 	return 0;
- }
-@@ -164,19 +161,22 @@ static int dsa_loop_port_bridge_join(struct dsa_switch *ds, int port,
- static void dsa_loop_port_bridge_leave(struct dsa_switch *ds, int port,
- 				       struct net_device *bridge)
- {
--	dev_dbg(ds->dev, "%s\n", __func__);
-+	dev_dbg(ds->dev, "%s: port: %d, bridge: %s\n",
-+		__func__, port, bridge->name);
- }
- 
- static void dsa_loop_port_stp_state_set(struct dsa_switch *ds, int port,
- 					u8 state)
- {
--	dev_dbg(ds->dev, "%s\n", __func__);
-+	dev_dbg(ds->dev, "%s: port: %d, state: %d\n",
-+		__func__, port, state);
- }
- 
- static int dsa_loop_port_vlan_filtering(struct dsa_switch *ds, int port,
- 					bool vlan_filtering)
- {
--	dev_dbg(ds->dev, "%s\n", __func__);
-+	dev_dbg(ds->dev, "%s: port: %d, vlan_filtering: %d\n",
-+		__func__, port, vlan_filtering);
- 
- 	return 0;
- }
-@@ -188,7 +188,8 @@ dsa_loop_port_vlan_prepare(struct dsa_switch *ds, int port,
- 	struct dsa_loop_priv *ps = ds->priv;
- 	struct mii_bus *bus = ps->bus;
- 
--	dev_dbg(ds->dev, "%s\n", __func__);
-+	dev_dbg(ds->dev, "%s: port: %d, vlan: %d-%d",
-+		__func__, port, vlan->vid_begin, vlan->vid_end);
- 
- 	/* Just do a sleeping operation to make lockdep checks effective */
- 	mdiobus_read(bus, ps->port_base + port, MII_BMSR);
-@@ -209,8 +210,6 @@ static void dsa_loop_port_vlan_add(struct dsa_switch *ds, int port,
- 	struct dsa_loop_vlan *vl;
- 	u16 vid;
- 
--	dev_dbg(ds->dev, "%s\n", __func__);
--
- 	/* Just do a sleeping operation to make lockdep checks effective */
- 	mdiobus_read(bus, ps->port_base + port, MII_BMSR);
- 
-@@ -222,6 +221,9 @@ static void dsa_loop_port_vlan_add(struct dsa_switch *ds, int port,
- 			vl->untagged |= BIT(port);
- 		else
- 			vl->untagged &= ~BIT(port);
++static unsigned convert_to_segs(struct bio* bio, struct page **pages,
++				unsigned char *page_cnt,
++				unsigned nr_pages)
++{
 +
-+		dev_dbg(ds->dev, "%s: port: %d vlan: %d, %stagged, pvid: %d\n",
-+			__func__, port, vid, untagged ? "un" : "", pvid);
++	unsigned idx;
++	unsigned nr_seg = 0;
++	struct request_queue *q = NULL;
++
++	if (bio->bi_disk)
++		q = bio->bi_disk->queue;
++
++	if (!q || !blk_queue_cluster(q)) {
++		memset(page_cnt, 0, nr_pages);
++		return nr_pages;
++	}
++
++	page_cnt[nr_seg] = 0;
++	for (idx = 1; idx < nr_pages; idx++) {
++		struct page *pg_s = pages[nr_seg];
++		struct page *pg = pages[idx];
++
++		if (page_to_pfn(pg_s) + page_cnt[nr_seg] + 1 ==
++		    page_to_pfn(pg)) {
++			page_cnt[nr_seg]++;
++		} else {
++			page_cnt[++nr_seg] = 0;
++			if (nr_seg < idx)
++				pages[nr_seg] = pg;
++		}
++	}
++
++	return nr_seg + 1;
++}
++
+ /**
+  * bio_iov_iter_get_pages - pin user or kernel pages and add them to a bio
+  * @bio: bio to add pages to
+@@ -928,6 +963,8 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	struct page **pages = (struct page **)bv;
+ 	size_t offset, diff;
+ 	ssize_t size;
++	unsigned short nr_segs;
++	unsigned char page_cnt[nr_pages];	/* at most 256 pages */
+ 
+ 	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
+ 	if (unlikely(size <= 0))
+@@ -943,13 +980,18 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	 * need to be reflected here as well.
+ 	 */
+ 	bio->bi_iter.bi_size += size;
+-	bio->bi_vcnt += nr_pages;
+-
+ 	diff = (nr_pages * PAGE_SIZE - offset) - size;
+-	while (nr_pages--) {
+-		bv[nr_pages].bv_page = pages[nr_pages];
+-		bv[nr_pages].bv_len = PAGE_SIZE;
+-		bv[nr_pages].bv_offset = 0;
++
++	/* convert into segments */
++	nr_segs = convert_to_segs(bio, pages, page_cnt, nr_pages);
++	bio->bi_vcnt += nr_segs;
++
++	while (nr_segs--) {
++		unsigned cnt = (unsigned)page_cnt[nr_segs] + 1;
++
++		bv[nr_segs].bv_page = pages[nr_segs];
++		bv[nr_segs].bv_len = PAGE_SIZE * cnt;
++		bv[nr_segs].bv_offset = 0;
  	}
  
- 	if (pvid)
-@@ -237,8 +239,6 @@ static int dsa_loop_port_vlan_del(struct dsa_switch *ds, int port,
- 	struct dsa_loop_vlan *vl;
- 	u16 vid, pvid = ps->pvid;
- 
--	dev_dbg(ds->dev, "%s\n", __func__);
--
- 	/* Just do a sleeping operation to make lockdep checks effective */
- 	mdiobus_read(bus, ps->port_base + port, MII_BMSR);
- 
-@@ -251,6 +251,9 @@ static int dsa_loop_port_vlan_del(struct dsa_switch *ds, int port,
- 
- 		if (pvid == vid)
- 			pvid = 1;
-+
-+		dev_dbg(ds->dev, "%s: port: %d vlan: %d, %stagged, pvid: %d\n",
-+			__func__, port, vid, untagged ? "un" : "", pvid);
- 	}
- 	ps->pvid = pvid;
- 
+ 	bv[0].bv_offset += offset;
 -- 
-2.14.1
+2.9.5
