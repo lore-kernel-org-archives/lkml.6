@@ -1,164 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964995AbeEYIla (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 04:41:30 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37422 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964791AbeEYIl2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 04:41:28 -0400
-X-Google-Smtp-Source: ADUXVKLpLzXpBNdqMdnO8Z2v/yvPEHAgoqu+QcQ9166XOOmqwmtYrToJjHuId5yfpGkGelm2r8eKXg==
-Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
- source
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180523160020.15291-1-digetx@gmail.com>
- <20180523160020.15291-2-digetx@gmail.com>
- <20180524043040.25pld3ezs4lpabro@vireshk-i7>
- <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
- <CAJZ5v0iXibwwnAyjBXc+zO5YQ0=WwaoUqq1K3OWqojh8xX+Wjw@mail.gmail.com>
- <5f9364c0-4ef5-0883-583d-42da8f016a80@gmail.com>
- <CAJZ5v0j80jbqLKORZR87mftbKDbAophywnuDqTfNf-VSBYfyOQ@mail.gmail.com>
- <CAJZ5v0hcvSFfWVCgVU8ApvODhyZqXduaGoBmmh345aGe5MN59g@mail.gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <1c901cf3-22c9-1784-9914-e460f1f9f22c@gmail.com>
-Date: Fri, 25 May 2018 11:41:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hcvSFfWVCgVU8ApvODhyZqXduaGoBmmh345aGe5MN59g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S965030AbeEYIpu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 04:45:50 -0400
+Received: from lhrrgout.huawei.com ([194.213.3.17]:38628 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964791AbeEYIps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 04:45:48 -0400
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Linuxarm <linuxarm@huawei.com>, "John Garry" <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>
+Subject: RE: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+ management
+Thread-Topic: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+ management
+Thread-Index: AQHT1wqCcRrQbFkI2kCtxRB2uUgynaQ/SDEAgAEB6kA=
+Date: Fri, 25 May 2018 08:45:36 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA8386EE591@FRAEML521-MBX.china.huawei.com>
+References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
+ <20180524122032.724676b9@w520.home>
+In-Reply-To: <20180524122032.724676b9@w520.home>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.05.2018 11:36, Rafael J. Wysocki wrote:
-> On Fri, May 25, 2018 at 10:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Thu, May 24, 2018 at 2:28 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
->>> On 24.05.2018 11:01, Rafael J. Wysocki wrote:
->>>> On Thu, May 24, 2018 at 7:37 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
->>>>> On 24.05.2018 07:30, Viresh Kumar wrote:
->>>>>> On 23-05-18, 19:00, Dmitry Osipenko wrote:
->>>>>>> PLL_C is running at 600MHz which is significantly higher than the 216MHz
->>>>>>> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
->>>>>>> running on that PLL. Let's use PLL_C as intermediate clock source, making
->>>>>>> CPU snappier a tad during of the frequency transition.
->>>>>>>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
->>>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->>>>>>> index 3ad6bded6efc..4bf5ba7da40b 100644
->>>>>>> --- a/drivers/cpufreq/tegra20-cpufreq.c
->>>>>>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
->>>>>>> @@ -25,12 +25,13 @@
->>>>>>>  #include <linux/types.h>
->>>>>>>
->>>>>>>  #define PLL_P_FREQ  216000
->>>>>>> +#define PLL_C_FREQ  600000
->>>>>>>
->>>>>>>  static struct cpufreq_frequency_table freq_table[] = {
->>>>>>>      { .frequency = 216000 },
->>>>>>>      { .frequency = 312000 },
->>>>>>>      { .frequency = 456000 },
->>>>>>> -    { .frequency = 608000 },
->>>>>>> +    { .frequency = 600000 },
->>>>>>>      { .frequency = 760000 },
->>>>>>>      { .frequency = 816000 },
->>>>>>>      { .frequency = 912000 },
->>>>>>> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
->>>>>>>      struct clk *cpu_clk;
->>>>>>>      struct clk *pll_x_clk;
->>>>>>>      struct clk *pll_p_clk;
->>>>>>> +    struct clk *pll_c_clk;
->>>>>>>      bool pll_x_prepared;
->>>>>>>  };
->>>>>>>
->>>>>>> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
->>>>>>>      if (index == 0 || policy->cur == PLL_P_FREQ)
->>>>>>>              return 0;
->>>>>>>
->>>>>>> -    return PLL_P_FREQ;
->>>>>>> +    if (index == 3 || policy->cur == PLL_C_FREQ)
->>>>>>> +            return 0;
->>>>>>
->>>>>> So we can choose between two different intermediate frequencies ? And
->>>>>> I didn't like the way magic number 3 is used here. Its prone to errors
->>>>>> and we better use a macro or something else here.
->>>>>>
->>>>>> Like instead of doing index == 3, what about freq_table[index].freq ==
->>>>>> PLL_C_FREQ ? Same for the previous patch as well.
->>>>>
->>>>> The frequency is determined by the parent clock of CCLK (CPU clock), we can
->>>>> choose between different parents for the CCLK. PLL_C as PLL_P and PLL_X are
->>>>> among the available parents for the CCLK to choose from and there some others.
->>>>>
->>>>> I don't mind to use freq_table[index].freq, though I'd like to keep compiled
->>>>> assembly minimal where possible. Hence the freq_table should be made constant to
->>>>> tell compiler that it doesn't need to emit data fetches for the table values and
->>>>> could embed the constants into the code where appropriate.
->>>>>
->>>>> Could we constify the "struct cpufreq_frequency_table" within the cpufreq core?
->>>>> Seems nothing prevents this (I already tried to constify - there are no
->>>>> obstacles), unless some cpufreq driver would try to modify
->>>>> policy->freq_table->... within the cpufreq callback implementation.
->>>>
->>>> Some drivers generate frequency tables out of external data
->>>> unavailable at compile time, like ACPI tables.
->>>
->>> Instead of making the table constant itself (with its values), seems we can just
->>> make the policy->freq_table pointer constant. I'll try to make a patch for that,
->>> adjusting the pointers in cpufreq core and the drivers. This works for the
->>> acpi-cpufreq at least.
->>
->> Honestly, messing up with the whole subsystem in order to avoid an
->> explicit pointer case doesn't sound right to me.
-> 
-> Actually, on a second thought I agree that it is better to do it as
-> you suggested: make the policy->freq_table pointer constant
-> everywhere.
-> 
-> Sorry for the noise.
+Hi Alex,
 
-No worries.
+> -----Original Message-----
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Thursday, May 24, 2018 7:21 PM
+> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
+> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; iommu@lists.linux-
+> foundation.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Joerg Roedel
+> <joro@8bytes.org>
+> Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+> management
+> 
+> [Cc +Joerg: AMD-Vi observation towards the end]
+> 
+> On Wed, 18 Apr 2018 12:40:38 +0100
+> Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
+> 
+> > This series introduces an iova list associated with a vfio
+> > iommu. The list is kept updated taking care of iommu apertures,
+> > and reserved regions. Also this series adds checks for any conflict
+> > with existing dma mappings whenever a new device group is attached to
+> > the domain.
+> >
+> > User-space can retrieve valid iova ranges using VFIO_IOMMU_GET_INFO
+> > ioctl capability chains. Any dma map request outside the valid iova
+> > range will be rejected.
+> 
+> Hi Shameer,
+> 
+> I ran into two minor issues in testing this series, both related to
+> mdev usage of type1.  First, in patch 5/7 when we try to validate a dma
+> map request:
 
-As I wrote in the reply to the other patch, the Tegra30 support is now on the
-way. These changes will collide a tad with the support integration, so I'll
-return to re-considering the changes made in this patchset after Tegra30 support
-will land. Thank you very much for your reviews and suggestions, I'll take them
-into account in the next iteration.
+I must admit I haven't looked into the mdev use case at all and my impression
+was that it will be same as others. Thanks for doing these tests.
+
+> > +static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
+> > +				dma_addr_t start, dma_addr_t end)
+> > +{
+> > +	struct list_head *iova = &iommu->iova_list;
+> > +	struct vfio_iova *node;
+> > +
+> > +	list_for_each_entry(node, iova, list) {
+> > +		if ((start >= node->start) && (end <= node->end))
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> 
+> A container with only an mdev device will have an empty list because it
+> has not backing iommu to set ranges or reserved regions, so any dma map
+> will fail.  I think this is resolved as follows:
+> 
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1100,7 +1100,7 @@ static bool vfio_iommu_iova_dma_valid(struct
+> vfio_iommu *iommu,
+>                         return true;
+>         }
+> 
+> -       return false;
+> +       return list_empty(&iommu->iova_list);
+>  }
+
+Ok.
+
+> ie. return false only if there was anything to test against.
+> 
+> The second issue is similar, patch 6/7 adds to VFIO_IOMMU_GET_INFO:
+> 
+> +		ret = vfio_iommu_iova_build_caps(iommu, &caps);
+> +		if (ret)
+> +			return ret;
+> 
+> And build_caps has:
+> 
+> +	list_for_each_entry(iova, &iommu->iova_list, list)
+> +		iovas++;
+> +
+> +	if (!iovas) {
+> +		ret = -EINVAL;
+> 
+> Therefore if the iova list is empty, as for mdevs, the use can no
+> longer even call VFIO_IOMMU_GET_INFO on the container, which is a
+> regression.  Again, I think the fix is simple:
+> 
+> @@ -2090,7 +2090,7 @@ static int vfio_iommu_iova_build_caps(struct
+> vfio_iommu *iommu,
+>                 iovas++;
+> 
+>         if (!iovas) {
+> -               ret = -EINVAL;
+> +               ret = 0;
+>                 goto out_unlock;
+>         }
+> 
+> ie. build_caps needs to handle lack of an iova_list as a non-error.
+
+Ok.
+
+> Also, I wrote a small unit test to validate the iova list for my
+> systems[1].  With the above changes, my Intel test system gives expected
+> results:
+> 
+> # ./vfio-type1-iova-list /sys/bus/mdev/devices/c08db5ed-05d3-4b39-b150-
+> 438a18bc698f /sys/bus/pci/devices/0000:00:1b.0
+> ---- Adding device: c08db5ed-05d3-4b39-b150-438a18bc698f ----
+> Initial info struct size: 0x18
+> No caps
+> ---- Adding device: 0000:00:1b.0 ----
+> Initial info struct size: 0x18
+> Requested info struct size: 0x48
+> New info struct size: 0x48
+> argsz: 0x48, flags: 0x3, cap_offset: 0x18
+> 	00: 4800 0000 0300 0000 00f0 ffff ffff ffff
+> 	10: 1800 0000 0000 0000 0100 0100 0000 0000
+> 	20: 0200 0000 0000 0000 0000 0000 0000 0000
+> 	30: ffff dffe 0000 0000 0000 f0fe 0000 0000
+> 	40: ffff ffff ffff ff01
+> [cap id: 1, version: 1, next: 0x0]
+> Found type1 iova range version: 1
+> 	00: 0000000000000000 - 00000000fedfffff
+> 	01: 00000000fef00000 - 01ffffffffffffff
+> 
+> Adding an mdev device to the container results in no iova list, adding
+> the physical device updates to the expected set with the MSI range
+> excluded.
+> 
+> I was a little surprised by an AMD system:
+> 
+> # ./vfio-type1-iova-list /sys/bus/pci/devices/0000:01:00.0
+> ---- Adding device: 0000:01:00.0 ----
+> Initial info struct size: 0x18
+> Requested info struct size: 0x58
+> New info struct size: 0x58
+> argsz: 0x58, flags: 0x3, cap_offset: 0x18
+> 	00: 5800 0000 0300 0000 00f0 ffff 7fff ffff
+> 	10: 1800 0000 0000 0000 0100 0100 0000 0000
+> 	20: 0300 0000 0000 0000 0000 0000 0000 0000
+> 	30: ffff dffe 0000 0000 0000 f0fe 0000 0000
+> 	40: ffff ffff fc00 0000 0000 0000 0001 0000
+> 	50: ffff ffff ffff ffff
+> [cap id: 1, version: 1, next: 0x0]
+> Found type1 iova range version: 1
+> 	00: 0000000000000000 - 00000000fedfffff
+> 	01: 00000000fef00000 - 000000fcffffffff
+> 	02: 0000010000000000 - ffffffffffffffff
+> 
+> The additional excluded range is the HyperTransport area (which for
+> 99.9+% of use cases isn't going to be a problem) is a rather surprising
+> limit for the size of a VM we can use on AMD, just under 1TB.  I fully
+> expect we'll see a bug report from that and we should be thinking about
+> how to address it.  Otherwise, if the changes above look good to you
+> I'll incorporate them into their respective patches and push to my next
+> branch.  Thanks,
+
+Yes, the above changes related to list empty cases looks fine to me. 
+
+Much appreciated,
+Shameer
+ 
+> Alex
+> 
+> [1] https://gist.github.com/awilliam/25e39252ab28101a2d89ace1ff765fdd
