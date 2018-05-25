@@ -1,52 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030656AbeEYWKi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:10:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030505AbeEYWKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:10:36 -0400
-Date: Fri, 25 May 2018 17:10:24 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Don Brace <don.brace@microsemi.com>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V2] PCI/portdrv: do not disable device on reboot/shutdown
-Message-ID: <20180525221024.GC92995@bhelgaas-glaptop.roam.corp.google.com>
-References: <1527043490-17268-1-git-send-email-okaya@codeaurora.org>
- <20180523213249.GD150632@bhelgaas-glaptop.roam.corp.google.com>
- <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
- <20180524183502.GB85822@bhelgaas-glaptop.roam.corp.google.com>
- <984b9734-244d-04e9-946f-7524f148ff7c@codeaurora.org>
+        id S1030575AbeEYWSO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:18:14 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44767 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030394AbeEYWSN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:18:13 -0400
+X-Google-Smtp-Source: AB8JxZpBg0qRw8DLF5jbDMFoMJelZKAkuC5izQc33jkGRg1kjHWWSPzdmrdp9UFiDejoiOHfiU785Q==
+Date: Fri, 25 May 2018 15:18:11 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Mike Kravetz <mike.kravetz@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, hugetlb_cgroup: suppress SIGBUS when hugetlb_cgroup
+ charge fails
+In-Reply-To: <20180525140940.976ca667f3c6ff83238c3620@linux-foundation.org>
+Message-ID: <alpine.DEB.2.21.1805251505110.50062@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805251316090.167008@chino.kir.corp.google.com> <20180525134459.5c6f8e06f55307f72b95a901@linux-foundation.org> <alpine.DEB.2.21.1805251356570.7798@chino.kir.corp.google.com>
+ <20180525140940.976ca667f3c6ff83238c3620@linux-foundation.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <984b9734-244d-04e9-946f-7524f148ff7c@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 09:30:59AM -0400, Sinan Kaya wrote:
-> On 5/24/2018 2:35 PM, Bjorn Helgaas wrote:
-> > That sounds like a reasonable idea, and it is definitely another can
-> > of worms.  I looked briefly at some of the .shutdown() cases:
+On Fri, 25 May 2018, Andrew Morton wrote:
+
+> > > > --- a/mm/hugetlb.c
+> > > > +++ b/mm/hugetlb.c
+> > > > @@ -2006,8 +2006,10 @@ struct page *alloc_huge_page(struct vm_area_struct *vma,
+> > > >  	 * code of zero indicates a reservation exists (no change).
+> > > >  	 */
+> > > >  	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
+> > > > -	if (map_chg < 0)
+> > > > -		return ERR_PTR(-ENOMEM);
+> > > > +	if (map_chg < 0) {
+> > > > +		ret = -ENOMEM;
+> > > > +		goto out;
+> > > > +	}
+> > > 
+> > > This doesn't change the return value.
+> > > 
+> > 
+> > This, and the subsequent comments, are referring to the third paragraph of 
+> > the changelog.
+> > 
+> > The functional part of the change is for the 
+> > hugetlb_cgroup_charge_cgroup() return value that is now actually used.
 > 
-> should we throw it into 4.18 and see what happens?
+> 
+> Ah.  Missed that bit.
+> 
 
-It wouldn't solve this particular problem because hpsa *does* have a
-.shutdown() method.  The problem is that it doesn't work -- it's
-supposed to stop DMA and interrupts but it apparently doesn't.
+If you'd like this separated into two separate patches, one that fixes the 
+actual issue with the hugetlb_cgroup_charge_cgroup() return value and the 
+other to use a single exit path with ERR_PTR(ret), that might make it 
+easier.  I think the latter is why the bug was introduced: it's too easy 
+to force -ENOSPC unintentionally.
 
-I think we need to fix hpsa first.
+> Altered changelog:
+> 
+> : When charging to a hugetlb_cgroup fails, alloc_huge_page() returns
+> : ERR_PTR(-ENOSPC) which will cause VM_FAULT_SIGBUS to be returned to the
+> : page fault handler.
+> : 
+> : This is because the return value from hugetlb_cgroup_charge_cgroup() is
+> : overwritten with ERR_PTR(-ENOSPC).
+> : 
+> : Instead, propagate the error code from hugetlb_cgroup_charge_cgroup()
+> : (ERR_PTR(-ENOMEM)), so VM_FAULT_OOM is handled correctly.  This is
+> : consistent with failing mem cgroup charges in the non-hugetlb fault path.
+> : 
+> : At the same time, restructure the return paths of alloc_huge_page() so it
+> : is consistent.
+> 
+
+LGTM, thanks.
+
+> >
+> > > It would be nice if you could add a comment over alloc_huge_page()
+> > > explaining the return values (at least).  Why sometimes ENOMEM, other
+> > > times ENOSPC?
+> > > 
+> > 
+> > The ENOSPC is used to specifically induce a VM_FAULT_SIGBUS, which 
+> > Documentation/vm/hugetlbfs_reserv.txt specifies is how faults are handled 
+> > if no hugetlb pages are available.
+> 
+> That wasn't a code comment ;) Nobody will know to go looking in
+> hugetlbfs_reserv.txt - it isn't even referred to from mm/*.c.
+> 
+
+Let's see what Mike and Aneesh say, because they may object to using 
+VM_FAULT_OOM because there's no way to guarantee that we'll come under the 
+limit of hugetlb_cgroup as a result of the oom.  My assumption is that we 
+use VM_FAULT_SIGBUS since oom killing will not guarantee that the 
+allocation can succeed.  But now a process can get a SIGBUS if its hugetlb 
+pages are not allocatable or its under a limit imposed by hugetlb_cgroup 
+that it's not aware of.  Faulting hugetlb pages is certainly risky 
+business these days...
+
+Perhaps the optimal solution for reaching hugetlb_cgroup limits is to 
+induce an oom kill from within the hugetlb_cgroup itself?  Otherwise the 
+unlucky process to fault their hugetlb pages last gets SIGBUS.
