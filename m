@@ -1,55 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966244AbeEYKgM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:36:12 -0400
-Received: from mail-pl0-f50.google.com ([209.85.160.50]:44208 "EHLO
-        mail-pl0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965883AbeEYKcW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:32:22 -0400
-X-Google-Smtp-Source: AB8JxZprRgkvD/K2n8gM+NcW1mDh32NADQp2mhyfKaOUO/hizju5RdFZ+9iJiRXiSAyzFp/sRraVXQ==
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: arm@kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 01/15] arm: dts: armada: Fix "#cooling-cells" property's name
-Date: Fri, 25 May 2018 16:01:47 +0530
-Message-Id: <26a0666368694db610414a85a08843435ea070a7.1527244201.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
-In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
+        id S966335AbeEYKga (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:36:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:59120 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965532AbeEYKg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:36:29 -0400
+Subject: Re: [PATCH v4 02/26] arm64: cpufeature: Add cpufeature for IRQ
+ priority masking
+To: Julien Thierry <julien.thierry@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
+ <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
+ <e44df12f-9868-ae94-4623-ec221d72d783@arm.com>
+ <b0673d7e-9a1e-7dcb-5322-c05fe0821349@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <c4e5f8ff-ecde-7b88-8a37-39e47ef22917@arm.com>
+Date: Fri, 25 May 2018 11:36:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <b0673d7e-9a1e-7dcb-5322-c05fe0821349@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It should be "#cooling-cells" instead of "cooling-cells". Fix it.
+On 25/05/18 11:17, Julien Thierry wrote:
+> 
+> 
+> On 25/05/18 11:04, Suzuki K Poulose wrote:
+>> On 25/05/18 10:49, Julien Thierry wrote:
+>>> Add a cpufeature indicating whether a cpu supports masking interrupts
+>>> by priority.
+>>
+>> How is this different from the SYSREG_GIC_CPUIF cap ? Is it just
+>> the description ?
+> 
+> More or less.
+> 
+> It is just to have an easier condition in the rest of the series. Basically the PRIO masking feature is enabled if we have a GICv3 CPUIF working *and* the option was selected at build time. Before this meant that I was checking for the GIC_CPUIF cap inside #ifdefs (and putting alternatives depending on that inside #ifdefs as well).
+> 
+> Having this as a separate feature feels easier to manage in the code. It also makes it clearer at boot time that the kernel will be using irq priorities (although I admit it was not the initial intention):
+> 
+> [    0.000000] CPU features: detected: IRQ priority masking
+> 
+> 
+> But yes that new feature will be detected only if SYSREG_GIC_CPUIF gets detected as well.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/armada-385-synology-ds116.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well, you could always wrap the check like :
 
-diff --git a/arch/arm/boot/dts/armada-385-synology-ds116.dts b/arch/arm/boot/dts/armada-385-synology-ds116.dts
-index 6782ce481ac9..d8769956cbfc 100644
---- a/arch/arm/boot/dts/armada-385-synology-ds116.dts
-+++ b/arch/arm/boot/dts/armada-385-synology-ds116.dts
-@@ -139,7 +139,7 @@
- 					      3700 5
- 					      3900 6
- 					      4000 7>;
--			cooling-cells = <2>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		gpio-leds {
--- 
-2.15.0.194.g9af6a3dea062
+static inline bool system_has_irq_priority_masking(void)
+{
+	return (IS_ENABLED(CONFIG_YOUR_CONFIG) && cpus_have_const_cap(HWCAP_SYSREG_GIC_CPUIF));
+}
+
+and use it everywhere.
+
+The description could be statically changed to reflect based on the #ifdef.
+
+
+static const struct arm64_cpu_capabilities arm64_features[] = {
+         {
+#ifdef CONFIG_YOUR_CONFIG
+		.desc = "GIC System register CPU interface with IRQ priority masking"
+#else
+                 .desc = "GIC system register CPU interface",
+#endif
+                 .capability = ARM64_HAS_SYSREG_GIC_CPUIF,
+                 .type = ARM64_CPUCAP_SYSTEM_FEATURE,
+                 .matches = has_useable_gicv3_cpuif,
+                 .sys_reg = SYS_ID_AA64PFR0_EL1,
+                 .field_pos = ID_AA64PFR0_GIC_SHIFT,
+                 .sign = FTR_UNSIGNED,
+                 .min_field_value = 1,
+
+Cheers
+Suzuki
