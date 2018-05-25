@@ -1,39 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755271AbeEYJY5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 05:24:57 -0400
-Received: from verein.lst.de ([213.95.11.211]:35805 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755045AbeEYJYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 05:24:55 -0400
-Date: Fri, 25 May 2018 11:30:33 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Huaisheng Ye <yehs2007@zoho.com>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, chengnt@lenovo.com, Huaisheng Ye <yehs1@lenovo.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v1] arch/x86/kernel/pci-dma: Remove useless parameter
-        of arch_dma_alloc_attrs
-Message-ID: <20180525093033.GA20094@lst.de>
-References: <20180525050000.6076-1-yehs2007@zoho.com>
+        id S965237AbeEYJZI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 05:25:08 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:22104 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753883AbeEYJZG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 05:25:06 -0400
+X-UUID: de19259166c04a4083abb6f8dec659cf-20180525
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] usb: gadget: composite: fix delayed_status race condition when set_interface
+Date: Fri, 25 May 2018 17:24:57 +0800
+Message-ID: <75dc545f259a68d36d49c0c663d5cac19bb61a24.1527240183.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525050000.6076-1-yehs2007@zoho.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks,
+It happens when enable debug log, if set_alt() returns
+USB_GADGET_DELAYED_STATUS and usb_composite_setup_continue()
+is called before increasing count of @delayed_status,
+so fix it by using spinlock of @cdev->lock.
 
-applied to the dma-mapping tree.
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Tested-by: Jay Hsu <shih-chieh.hsu@mediatek.com>
+---
+ drivers/usb/gadget/composite.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index f242c2b..d2fa071 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1719,6 +1719,8 @@ static int fill_ext_prop(struct usb_configuration *c, int interface, u8 *buf)
+ 		 */
+ 		if (w_value && !f->get_alt)
+ 			break;
++
++		spin_lock(&cdev->lock);
+ 		value = f->set_alt(f, w_index, w_value);
+ 		if (value == USB_GADGET_DELAYED_STATUS) {
+ 			DBG(cdev,
+@@ -1728,6 +1730,7 @@ static int fill_ext_prop(struct usb_configuration *c, int interface, u8 *buf)
+ 			DBG(cdev, "delayed_status count %d\n",
+ 					cdev->delayed_status);
+ 		}
++		spin_unlock(&cdev->lock);
+ 		break;
+ 	case USB_REQ_GET_INTERFACE:
+ 		if (ctrl->bRequestType != (USB_DIR_IN|USB_RECIP_INTERFACE))
+-- 
+1.9.1
