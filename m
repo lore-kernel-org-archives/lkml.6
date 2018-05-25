@@ -1,84 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030570AbeEYV5r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 17:57:47 -0400
-Received: from www.zeus03.de ([194.117.254.33]:52358 "EHLO mail.zeus03.de"
+        id S1030688AbeEYWBH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:01:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:17942 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030503AbeEYV5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 17:57:45 -0400
-X-UD-Smtp-Session: l3s3148p1@kN+J2w5tFs4gAwDPW8avAAId4P/+oMhl
-Date: Fri, 25 May 2018 23:57:43 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jean Delvare <jdelvare@suse.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: i801: mark PM functions as __maybe_unused
-Message-ID: <20180525215743.fwmvbapwh6kjpyrh@katana>
-References: <20180525210952.1861881-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t353iqtd4sucz3uc"
-Content-Disposition: inline
-In-Reply-To: <20180525210952.1861881-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1030596AbeEYWBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:01:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
+   d="scan'208";a="231900886"
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH resend 5/7] dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
+Date: Fri, 25 May 2018 16:00:53 -0600
+Message-Id: <20180525220055.18920-6-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
+References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The DM_TYPE_DAX_BIO_BASED dm_queue_mode was introduced to prevent DM
+devices that could possibly support DAX from transitioning into DM devices
+that cannot support DAX.
 
---t353iqtd4sucz3uc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For example, the following transition will currently fail:
 
-On Fri, May 25, 2018 at 11:09:46PM +0200, Arnd Bergmann wrote:
-> Changing from UNIVERSAL_DEV_PM_OPS to SIMPLE_DEV_PM_OPS caused a harmless
-> warning in configurations without CONFIG_PM_SLEEP:
->=20
-> drivers/i2c/busses/i2c-i801.c:1723:12: error: 'i801_resume' defined but n=
-ot used [-Werror=3Dunused-function]
->  static int i801_resume(struct device *dev)
->             ^~~~~~~~~~~
-> drivers/i2c/busses/i2c-i801.c:1714:12: error: 'i801_suspend' defined but =
-not used [-Werror=3Dunused-function]
->  static int i801_suspend(struct device *dev)
->=20
-> This removes the incorrect #ifdef and instead marks both functions as
-> __maybe_unused, which is a more robust way to express the same thing.
->=20
-> Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtim=
-e PM")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+ dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
+	      DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
 
-Should be fixed in my for-next branch:
+but these will both succeed:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git/commit/driver=
-s/i2c/busses/i2c-i801.c?h=3Di2c/for-next&id=3D4b2f9bd5e39fb47011074c9a26b64=
-b616acc18f0
+ dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
+ 		DM_TYPE_DAX_BASED        DM_TYPE_BIO_BASED
 
+ dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
+ 		DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
 
---t353iqtd4sucz3uc
-Content-Type: application/pgp-signature; name="signature.asc"
+This seems arbitrary, as really the choice on whether to use DAX happens at
+filesystem mount time.  There's no guarantee that the in the first case
+(double fsdax pmem) we were using the dax mount option with our file
+system.
 
------BEGIN PGP SIGNATURE-----
+Instead, get rid of DM_TYPE_DAX_BIO_BASED and all the special casing around
+it, and instead make the request queue's QUEUE_FLAG_DAX be our one source
+of truth.  If this is set, we can use DAX, and if not, not.  We keep this
+up to date in table_load() as the table changes.  As with regular block
+devices the filesystem will then know at mount time whether DAX is a
+supported mount option or not.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsIhs0ACgkQFA3kzBSg
-KbYfEg/+OG2T5tGeUVcOaWq4aEmKP48uI2IZi59UtguQ1BMSeHTv4yfaVcj7VJSb
-ijpxNX/Bsbrp3OnL19Xax2Qy4yrbXkl2kru5kEIU1UnHQLw8kC7bI19f/NPCXkks
-Jj97sYV5d1sszAFVsoZ0SlkqehuIow6p6K1mnrcd5mjnALQf1+VcOPUNZvduTA8I
-IR8UbrDNQTBSEBYdYICtzM0Vm+aaoMKzK9Ek4kItY3LwJYjjndHYlpIbjGckADWa
-DrCtoOKphCrUdZ/D0jpGWsrVnY0TqeGXVqW/NGnLd7sJ8W2yyrnYqEzI5gpD8HqZ
-h6AQcJOmZQg4W9RjWozwSSz94iIddikZXgNbzoZLG3MU1rMSSwNuH3PsPIDdBlC9
-yPD5q+0U07i/W2T0iE0dFxeEu7QTKp79lK6y8t8GkyPnUDNiQ91NaE37478QIoiK
-dHSoIQR35KuzzqSRWTtm9JsNOuzmurGAu0/whef5oC9yc3GrxWCXl/P+lr2R9EvL
-ifEA88lyLeU97SLlnO0go0mz1du/FF8P91Ko+IwqMdFvvrlxlkOCH4ctAT0KD2F7
-O1BeNlpvJzvIPIg5e1BE9Ws5TgRrHZ4k0QZ1cf1kw1fejSB6v+rLHq8oCI5ACWiM
-iGAS4FRVSq6NgmRSFmP9hIHy9Aj+dTVW2eXHort/MNVzpSleyzg=
-=Ta8Z
------END PGP SIGNATURE-----
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+---
+ drivers/md/dm-ioctl.c         | 16 ++++++----------
+ drivers/md/dm-table.c         | 25 ++++++++++---------------
+ drivers/md/dm.c               |  2 --
+ include/linux/device-mapper.h |  8 ++++++--
+ 4 files changed, 22 insertions(+), 29 deletions(-)
 
---t353iqtd4sucz3uc--
+diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+index 5acf77de5945..d1f86d0bb2d0 100644
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1292,15 +1292,6 @@ static int populate_table(struct dm_table *table,
+ 	return dm_table_complete(table);
+ }
+ 
+-static bool is_valid_type(enum dm_queue_mode cur, enum dm_queue_mode new)
+-{
+-	if (cur == new ||
+-	    (cur == DM_TYPE_BIO_BASED && new == DM_TYPE_DAX_BIO_BASED))
+-		return true;
+-
+-	return false;
+-}
+-
+ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_size)
+ {
+ 	int r;
+@@ -1343,12 +1334,17 @@ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_si
+ 			DMWARN("unable to set up device queue for new table.");
+ 			goto err_unlock_md_type;
+ 		}
+-	} else if (!is_valid_type(dm_get_md_type(md), dm_table_get_type(t))) {
++	} else if (dm_get_md_type(md) != dm_table_get_type(t)) {
+ 		DMWARN("can't change device type after initial table load.");
+ 		r = -EINVAL;
+ 		goto err_unlock_md_type;
+ 	}
+ 
++	if (dm_table_supports_dax(t))
++		blk_queue_flag_set(QUEUE_FLAG_DAX, md->queue);
++	else
++		blk_queue_flag_clear(QUEUE_FLAG_DAX, md->queue);
++
+ 	dm_unlock_md_type(md);
+ 
+ 	/* stage inactive table */
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 5bb994b012ca..ea5c4a1e6f5b 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -866,7 +866,6 @@ EXPORT_SYMBOL(dm_consume_args);
+ static bool __table_type_bio_based(enum dm_queue_mode table_type)
+ {
+ 	return (table_type == DM_TYPE_BIO_BASED ||
+-		table_type == DM_TYPE_DAX_BIO_BASED ||
+ 		table_type == DM_TYPE_NVME_BIO_BASED);
+ }
+ 
+@@ -888,7 +887,7 @@ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+ 	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
+ }
+ 
+-static bool dm_table_supports_dax(struct dm_table *t)
++bool dm_table_supports_dax(struct dm_table *t)
+ {
+ 	struct dm_target *ti;
+ 	unsigned i;
+@@ -907,6 +906,7 @@ static bool dm_table_supports_dax(struct dm_table *t)
+ 
+ 	return true;
+ }
++EXPORT_SYMBOL_GPL(dm_table_supports_dax);
+ 
+ static bool dm_table_does_not_support_partial_completion(struct dm_table *t);
+ 
+@@ -944,7 +944,6 @@ static int dm_table_determine_type(struct dm_table *t)
+ 			/* possibly upgrade to a variant of bio-based */
+ 			goto verify_bio_based;
+ 		}
+-		BUG_ON(t->type == DM_TYPE_DAX_BIO_BASED);
+ 		BUG_ON(t->type == DM_TYPE_NVME_BIO_BASED);
+ 		goto verify_rq_based;
+ 	}
+@@ -981,18 +980,14 @@ static int dm_table_determine_type(struct dm_table *t)
+ verify_bio_based:
+ 		/* We must use this table as bio-based */
+ 		t->type = DM_TYPE_BIO_BASED;
+-		if (dm_table_supports_dax(t) ||
+-		    (list_empty(devices) && live_md_type == DM_TYPE_DAX_BIO_BASED)) {
+-			t->type = DM_TYPE_DAX_BIO_BASED;
+-		} else {
+-			/* Check if upgrading to NVMe bio-based is valid or required */
+-			tgt = dm_table_get_immutable_target(t);
+-			if (tgt && !tgt->max_io_len && dm_table_does_not_support_partial_completion(t)) {
+-				t->type = DM_TYPE_NVME_BIO_BASED;
+-				goto verify_rq_based; /* must be stacked directly on NVMe (blk-mq) */
+-			} else if (list_empty(devices) && live_md_type == DM_TYPE_NVME_BIO_BASED) {
+-				t->type = DM_TYPE_NVME_BIO_BASED;
+-			}
++
++		/* Check if upgrading to NVMe bio-based is valid or required */
++		tgt = dm_table_get_immutable_target(t);
++		if (tgt && !tgt->max_io_len && dm_table_does_not_support_partial_completion(t)) {
++			t->type = DM_TYPE_NVME_BIO_BASED;
++			goto verify_rq_based; /* must be stacked directly on NVMe (blk-mq) */
++		} else if (list_empty(devices) && live_md_type == DM_TYPE_NVME_BIO_BASED) {
++			t->type = DM_TYPE_NVME_BIO_BASED;
+ 		}
+ 		return 0;
+ 	}
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 9728433362d1..0ce06fa292fd 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2192,7 +2192,6 @@ int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t)
+ 		}
+ 		break;
+ 	case DM_TYPE_BIO_BASED:
+-	case DM_TYPE_DAX_BIO_BASED:
+ 		dm_init_normal_md_queue(md);
+ 		blk_queue_make_request(md->queue, dm_make_request);
+ 		break;
+@@ -2910,7 +2909,6 @@ struct dm_md_mempools *dm_alloc_md_mempools(struct mapped_device *md, enum dm_qu
+ 
+ 	switch (type) {
+ 	case DM_TYPE_BIO_BASED:
+-	case DM_TYPE_DAX_BIO_BASED:
+ 	case DM_TYPE_NVME_BIO_BASED:
+ 		pool_size = max(dm_get_reserved_bio_based_ios(), min_pool_size);
+ 		front_pad = roundup(per_io_data_size, __alignof__(struct dm_target_io)) + offsetof(struct dm_target_io, clone);
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 31fef7c34185..cbf3d7e7ed33 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -27,8 +27,7 @@ enum dm_queue_mode {
+ 	DM_TYPE_BIO_BASED	 = 1,
+ 	DM_TYPE_REQUEST_BASED	 = 2,
+ 	DM_TYPE_MQ_REQUEST_BASED = 3,
+-	DM_TYPE_DAX_BIO_BASED	 = 4,
+-	DM_TYPE_NVME_BIO_BASED	 = 5,
++	DM_TYPE_NVME_BIO_BASED	 = 4,
+ };
+ 
+ typedef enum { STATUSTYPE_INFO, STATUSTYPE_TABLE } status_type_t;
+@@ -460,6 +459,11 @@ void dm_table_add_target_callbacks(struct dm_table *t, struct dm_target_callback
+  */
+ void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type);
+ 
++/*
++ * Check to see if this target type and all table devices support DAX.
++ */
++bool dm_table_supports_dax(struct dm_table *t);
++
+ /*
+  * Finally call this to make the table ready for use.
+  */
+-- 
+2.14.3
