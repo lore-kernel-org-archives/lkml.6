@@ -1,33 +1,32 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-94349-1527276231-2-4643365267288841208
+X-Cyrus-Session-Id: sloti22d1t05-285521-1527285668-2-16877424574357742340
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527276230; b=j2luKhFO6EfM5PNELAKo7uXmWeOYIwrXmczWZuL4t06rNLd/Tk
-    L5OHyoQdYoPgslWuS15N8h0KQuSb8iyLdRXGy948SzC3wvRkK1UJGhSP63oirHhs
-    ZRyybAWDOiw12fPj2AQJJvzDWWDT3aneed5K6ck+gJyXjinRT8GwRuVJAl7HR4t6
-    yUoFy2xiD0xHwN5NCpUSwDDVR40v6TmEuiDvHp4NjWr5rnuHKrKMtX92Aet6V5Jn
-    4D7qeKLGkY0TYg9Ea/WHFMZhUigYioUkKpOAZH5LLjo7e9nEklEAlBzLy6PJqo13
-    hdrFg2S2dZHPVrh7qDaoWm9QtrbClQerF1oQ==
+    1527285667; b=cdJJvotKT8HireLgzd6di8TelvD/CRwcv1Gt8cc9SjmM9g1yVf
+    2tKwnFC4dRnr1q2sBda7Mb1aH4EydE+MwATHqQhMrbCRN5KzFrPJicKt0drfPY0U
+    3MMvfJHmbZa9wCsj6XrC5TyI8ci15Yc/qC/xg6OR6JECWNRDcZbLoINumD1mJ2xn
+    gDxOeYMUYYfDP/r2I6SRHceuyKE9qXfAJjmSeg0nQweY4ySSMqiAbqAqGVKVWlgG
+    et5iI6mjN1M/9oxYSSYM7Rhfm8PiRoEFjCRx8G5WDWLdEN4n8gM54YnCIovPl6UD
+    cRwL3lDXDAeq+fLqCNo45xzItRCbOFiSoBeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527276230; bh=D5YwpzNe/8bLYFRa7bREBzvbgtGTo6
-    cMKEgkEET/54k=; b=evON8Cbr4TxSNJT4gKfxLjGBu5vTy8AZl8ZtnaHh9pTmjI
-    RqlxK3ClCghrxOtY4xr3gR+z+P7oeWUKoGLM+1GLZUGNCUB/auM0e8fJMGuUkkJm
-    hRjq7RKVyv5pL8zjdQsBZOMU7S/Nv5OYYq022JSVxWe887du1Of6b7TSGr61wumF
-    TsRtW04XELtXDOh4sfW5cNw7iRLUwbAUwuE12XgUwQrh3gDlmKo1qFb21CU4iVlD
-    rg91svG34tHNkaX+Zb2GNUK6MLROu8kalZyv/r85dYrsMFjHyrDkH5XqUeltHq5u
-    iBxGoZQs0sjlaSJUpWC7PPYmIgMao6fHElFdKeIg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-    header.i=@oracle.com header.b=DKjSdiXm x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527285667; bh=
+    qanCpA1+QGOhGOLfejPz5Yt/nZHp0tyw8ZpeO66SuW8=; b=JxozLMEj1cDhtuW6
+    X4AknxMbfijvJkVn5/HCq02FEA2WD6fnm7sci64yZLW9YAyA1pyXIbJ4x2mfAzIe
+    RUSlEV9HNR+yPk4GoQgiUkaePCeXmRHYw7Y6iK/Q30S7k1a6MYn/E0pU+GbjWVVN
+    mqqYHlX4cm397QpRX1VppOPRXgz9oUbHfXcqmo/oHSROUtMu84IoW+Sdl/fQZKq4
+    6sRRP7tXrSKZl6nMLioc7VsMbKWRABjZF1U0XUk3E/ZmZnY6T2cvgTHdjojSJcKD
+    cdtunk7mHxtqMl/1Bsu7VHvEJdtf/M6BL+YGN5TG1/UAtGiu1+vib1oc8cnpso8L
+    oO17mg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,14 +35,14 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    header.domain=linux.intel.com header.result=pass
+    header_org.domain=intel.com header_org.result=pass
+    header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-      header.i=@oracle.com header.b=DKjSdiXm x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -52,95 +51,86 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+      header.domain=linux.intel.com header.result=pass
+      header_org.domain=intel.com header_org.result=pass
+      header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF76ALnaIvg7a2PqZpxg0oBw1sYxQYs7EKx+yUx8Qk4jSWigk7GWATwTisTrWMp2DEFX5kazu5UaExrwuOLde284rtco8mTXkJ4wh/tT4+nZLuLNr9gP
-    Veh9SA0OJG92l6ScSgp+at2f03B1oIVn1TSkTYZS6R4fpBLtiIEl88xqZELpgSsVhO1V5KoqJi7Zaslbbd+QQ2eH2FMo9ThDjCPlAi9qL/QaX7K6jEML1s5v
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=QyXUC8HyAAAA:8 a=qjbXGoRJo5KrqO1P648A:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfFFny2hwykhFrAB6FpikQl0OUj/yJgrYxogyyncdQKwZJeM7tbscGyjeczjsEYXcdA2tdWM2FGbhTdc3UDeh1tSBi3pHQ9hRvT4+YUe34HoXOAGaFwiI
+    nupS2kfgHDQTRZG9ODzaBSWGzCA8sVGsqtDssoHpSF0dlg8ESQkNw5fQDlZTu8U+QGsJ+qsprt1vJEPO0NVkHN9M8avOGvnzM9wcKONU1Ie+QUyQly93EwsD
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
+    a=1b4FeyyPZkk651F0QM0A:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967879AbeEYTXt (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 25 May 2018 15:23:49 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34594 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967587AbeEYTXs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 May 2018 15:23:48 -0400
-Date: Fri, 25 May 2018 12:23:27 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH 1/7] fs: allow per-device dax status checking for
- filesystems
-Message-ID: <20180525192327.GR12940@magnolia>
-References: <20180525025518.11405-1-ross.zwisler@linux.intel.com>
- <20180525025518.11405-2-ross.zwisler@linux.intel.com>
- <20180525050218.GF4507@magnolia>
- <20180525154229.GA11044@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525154229.GA11044@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8904 signatures=668700
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805250201
+        id S1030609AbeEYWBD (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 25 May 2018 18:01:03 -0400
+Received: from mga18.intel.com ([134.134.136.126]:17942 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030550AbeEYWBC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 May 2018 18:01:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
+   d="scan'208";a="231900882"
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH resend 3/7] dm: fix test for DAX device support
+Date: Fri, 25 May 2018 16:00:51 -0600
+Message-Id: <20180525220055.18920-4-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
+References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 25, 2018 at 09:42:29AM -0600, Ross Zwisler wrote:
-> On Thu, May 24, 2018 at 10:02:18PM -0700, Darrick J. Wong wrote:
-> > On Thu, May 24, 2018 at 08:55:12PM -0600, Ross Zwisler wrote:
-> > > From: "Darrick J. Wong" <darrick.wong@oracle.com>
-> > > 
-> > > Remove __bdev_dax_supported and change to bdev_dax_supported that takes a
-> > > bdev parameter.  This enables multi-device filesystems like xfs to check
-> > > that a dax device can work for the particular filesystem.  Once that's
-> > > in place, actually fix all the parts of XFS where we need to be able to
-> > > distinguish between datadev and rtdev.
-> > > 
-> > > This patch fixes the problem where we screw up the dax support checking
-> > > in xfs if the datadev and rtdev have different dax capabilities.
-> > > 
-> > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > 
-> > Reviewed-by: Darr...oh, I'm not allowed to do that, am I?
-> > 
-> > Would you mind (re)sending this to the xfs list so that someone else can
-> > review it?
-> > 
-> > --D
-> 
-> Thanks for the review, Darrick.
-> 
-> I think at one point Dave said that if you touch more than 1 filesystem with a
-> series you should just CC linux-fsdevel and omit the individual filesystems?
-> I realize that this series only touches ext2 and ext4 a little, but that's
-> what I opted for.
-> 
-> Is that sufficient to get to the rest of the XFS developers, or would you like
-> a resend adding linux-xfs?
+Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
+flag is set on the device's request queue to decide whether or not the
+device supports filesystem DAX.  This is insufficient because there are
+devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
+which don't actually support DAX.
 
-For a patch by any other author I'd be fine with -fsdevel, but for this
-specific one (because it's written by me and I'm not yet so bofh that I
-review my own patches ;)) someone else from the xfs community has to
-review it, so yes I'd like it to be sent to linux-xfs, please.
+This means that you could create a dm-linear device, for example, where the
+first part of the dm-linear device was a PMEM namespace in fsdax mode and
+the second part was a PMEM namespace in raw mode.  Both DM and the
+filesystem you put on that dm-linear device would think the whole device
+supports DAX, which would lead to bad behavior once your raw PMEM namespace
+part using DAX needed struct page for something.
 
-(And it's ok to note in the resend that this is the same as the -fsdevel
-series, but posted here to attract the attention of the other xfs
-developers.)
+Fix this by using bdev_dax_supported() like filesystems do at mount time.
+This checks for raw mode and also performs other tests like checking to
+make sure the dax_direct_access() path works.
 
---D
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
+---
+ drivers/md/dm-table.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 0589a4da12bb..5bb994b012ca 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -885,9 +885,7 @@ EXPORT_SYMBOL_GPL(dm_table_set_type);
+ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+ 			       sector_t start, sector_t len, void *data)
+ {
+-	struct request_queue *q = bdev_get_queue(dev->bdev);
+-
+-	return q && blk_queue_dax(q);
++	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
+ }
+ 
+ static bool dm_table_supports_dax(struct dm_table *t)
+-- 
+2.14.3
