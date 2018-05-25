@@ -1,91 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966607AbeEYMMK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:12:10 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33865 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966448AbeEYMMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:12:07 -0400
-X-Google-Smtp-Source: AB8JxZr5WIDR9BomW0z+eFHvhubIBeeLX1dlx9qHng7GSODqUDZKqI6HlfoTjasfW9s718rRP0Ieldtji6JDAgXpx/I=
+        id S966559AbeEYMOc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:14:32 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:60766 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966243AbeEYMOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 08:14:30 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Ezequiel Garcia <ezequiel@collabora.com>, xxm@rock-chips.com,
+        Joerg Roedel <joro@8bytes.org>, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.co.uk>, jcliang@chromium.org,
+        linux-rockchip@lists.infradead.org, iommu@lists.linux-foundation.org,
+        Enric =?ISO-8859-1?Q?Balletb=F2?=
+        <enric.balletbo@collabora.co.uk>,
+        tfiga@chromium.org, Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm/rockchip: vop: fix irq disabled after vop driver probed
+Date: Fri, 25 May 2018 14:14:20 +0200
+Message-ID: <4318500.8KycslRrNH@phil>
+In-Reply-To: <8495bffd-2a52-ca85-1bc9-afc3ea0af8e4@arm.com>
+References: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com> <25470133.K8n9sLBzRS@diego> <8495bffd-2a52-ca85-1bc9-afc3ea0af8e4@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180525050103.3hg3u2v5mvftqhht@linaro.org>
-References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
- <20180520051736.4842-6-manivannan.sadhasivam@linaro.org> <CACRpkdYF7a-uwye0uwn-pT9Bprj74q1-Pcbq4WLyiE+kYY4j7w@mail.gmail.com>
- <25d1c303-71d7-8c38-880f-7bb0e133a876@suse.de> <20180525050103.3hg3u2v5mvftqhht@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 25 May 2018 14:12:06 +0200
-Message-ID: <CACRpkdaTQOWA_5nyasxTwE=cGRis+uaLhw66pmkd+qPxMC6FFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] MAINTAINERS: Add Actions Semi S900 pinctrl entries
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>, liuwei@actions-semi.com,
-        96boards@ucrobotics.com,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-        <devicetree@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
-        Jeff Chen <jeff.chen@actions-semi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 7:01 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+Hi Marc,
 
-> FYI, I have ordered S700 based Cubieboard and will work on adding support for
-> that first. I still don't have access to S500 board yet since it is not
-> available on my region. Will find a way to get this asap.
+Am Freitag, 25. Mai 2018, 13:07:02 CEST schrieb Marc Zyngier:
+> [Thanks Robin for pointing me to that patch.]
+> 
+> Hi Heiko,
+> 
+> On 24/05/18 23:06, Heiko Stübner wrote:
+> > From: Sandy Huang <hjc@rock-chips.com>
+> > 
+> > The vop irq is shared between vop and iommu and irq probing in the
+> > iommu driver moved to the probe function recently. This can in some
+> > cases lead to a stall if the irq is triggered while the vop driver
+> > still has it disabled.
+> > 
+> > But there is no real need to disable the irq, as the vop can simply
+> > also track its enabled state and ignore irqs in that case.
+> > 
+> > So remove the enable/disable handling and add appropriate condition
+> > to the irq handler.
+> > 
+> > Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+> > [added an actual commit message]
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> > Hi Ezequiel,
+> > 
+> > this patch came from a discussion I had with Rockchip people over the
+> > iommu changes and resulting issues back in april, but somehow was
+> > forgotten and not posted to the lists. Correcting that now.
+> > 
+> > So removing the enable/disable voodoo on the shared interrupt is
+> > the preferred way.
+> > 
+> >  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 13 ++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> > index 510cdf0..61493d4 100644
+> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> > @@ -549,8 +549,6 @@ static int vop_enable(struct drm_crtc *crtc)
+> >  
+> >  	spin_unlock(&vop->reg_lock);
+> >  
+> > -	enable_irq(vop->irq);
+> > -
+> >  	drm_crtc_vblank_on(crtc);
+> >  
+> >  	return 0;
+> > @@ -596,8 +594,6 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
+> >  
+> >  	vop_dsp_hold_valid_irq_disable(vop);
+> >  
+> > -	disable_irq(vop->irq);
+> > -
+> >  	vop->is_enabled = false;
+> >  
+> >  	/*
+> > @@ -1168,6 +1164,13 @@ static irqreturn_t vop_isr(int irq, void *data)
+> >  	int ret = IRQ_NONE;
+> >  
+> >  	/*
+> > +	 * since the irq is shared with iommu, iommu irq is enabled before vop
+> > +	 * enable, so before vop enable we do nothing.
+> > +	 */
+> > +	if (!vop->is_enabled)
+> > +		return IRQ_NONE;
+> > +
+> 
+> What guarantee do we have that the IOMMU will actually service that
+> interrupt? Can't we get into a situation where the interrupt gets
+> ignored by both drivers and subsequently disabled by the core irq code
+> as being spurious?
+> 
+> From what I understood of the way things are plugged together on the
+> rockchip platforms, each individual VOP is behind a single IOMMU, hence
+> there there is hardly any point in handling IOMMU interrupts if the VOP
+> is off.
 
-Awesome, then we can count on some actions action here.
+Yeah, which is probably the reason that patch fell through the cracks
+initially. I resurrected it from the internal discussion because of the issue
+described below.
 
->> Also I had been investing efforts in explaining the upstreaming process
->> to Actions, last in November. I see Thomas Liau and Jeff Chen missing in
->> CC and I have not seen any Reviewed-by or Acked-by from anyone at
->> Actions on this and the preceding series. There are more chips than the
->> one on Linaro's 96board, so I would prefer to assure that the design
->> works for all. Thus I am very critical of you applying the patches
->> without waiting for review by Actions.
->
-> I don't think Actions would be interested in any upstreaming efforts. It
-> is our (comunity) responsibility to add support for that in order to
-> have our boards running mainline kernel and that's what we both have been
-> doing. Moreover I only saw once David Liau responded to your patchset and
-> there isn't much further. So how can you expect the subsystem maintainer's
-> to hold the patch series waiting for a so far silent SoC manufacturer's
-> response?
+> But I'm missing the actual reason behind this patch. Could you enlighten me?
 
-They are certainly informed now! :D
+Recently the iommu driver moved the irq request from the iommu enablement
+to its probe function. With that change Ezequiel got various stalls, see
+	https://lkml.org/lkml/2018/5/24/1347
 
-Actions semi folks, please familiarize yourself with the following:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/tree/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt?h=devel
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/tree/drivers/pinctrl/actions?h=devel
 
-If you have any concerns with this, now is a good time to share them.
-
-> I
-> did ask you to add me as Co-Maintainer but you didn't responded to that.
-> I know that I can't send any pull requests to Arnd, but we should sort
-> it out IMO. Also, if you are completely swamped, then I take take up the
-> maintainership role now inorder to keep the things moving. TBH I don't
-> want my patches to be floating for months without any reason.
-
-Doing some comainatinership can very well include doing pull
-requests as long as you agree on who does what.
-
-I think it may be a bit late for the next merge window right now,
-but if you simply queue up stuff in some git tree and ask
-Srothwell to include it in linux-next then Andreas can very well
-pull it to his tree from there and then to ARM SoC or you can
-queue patches as well.
-
-Yours,
-Linus Walleij
+Heiko
