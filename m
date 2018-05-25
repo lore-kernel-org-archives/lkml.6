@@ -1,292 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030821AbeEYWc3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:32:29 -0400
-Received: from sandeen.net ([63.231.237.45]:36852 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030408AbeEYWc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:32:27 -0400
-Subject: Re: [PATCH resend 1/7] fs: allow per-device dax status checking for
- filesystems
-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
- <20180525220055.18920-2-ross.zwisler@linux.intel.com>
-From: Eric Sandeen <sandeen@sandeen.net>
-Message-ID: <924994ed-64c8-ca11-75c1-cb1a1f0f6d94@sandeen.net>
-Date: Fri, 25 May 2018 17:32:25 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1030806AbeEYWdr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:33:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40520 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030408AbeEYWdp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:33:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E35260392
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v2 2/6] dt-bindings: opp: Introduce qcom-opp bindings
+To: Rajendra Nayak <rnayak@codeaurora.org>, viresh.kumar@linaro.org,
+        sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180525100121.28214-1-rnayak@codeaurora.org>
+ <20180525100121.28214-3-rnayak@codeaurora.org>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <67054dca-33a8-7e7c-6218-dc5abf84f6d8@codeaurora.org>
+Date: Fri, 25 May 2018 15:33:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-In-Reply-To: <20180525220055.18920-2-ross.zwisler@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180525100121.28214-3-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/25/18 5:00 PM, Ross Zwisler wrote:
-> From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Hello Rajendra,
+
+On 05/25/2018 03:01 AM, Rajendra Nayak wrote:
+> On Qualcomm platforms, an OPP node needs to describe an
+
+s/Qualcomm/Qualcomm Technologies, Inc./
+
+
+> additional level/corner value that is then communicated to
+> a remote microprocessor by the CPU, which then takes some
+> actions (like adjusting voltage values across various rails)
+> based on the value passed.
 > 
-> Remove __bdev_dax_supported and change to bdev_dax_supported that takes a
-> bdev parameter.  This enables multi-device filesystems like xfs to check
-> that a dax device can work for the particular filesystem.  Once that's
-> in place, actually fix all the parts of XFS where we need to be able to
-> distinguish between datadev and rtdev.
+> Describe these bindings in the qcom-opp bindings document.
 > 
-> This patch fixes the problem where we screw up the dax support checking
-> in xfs if the datadev and rtdev have different dax capabilities.
-
-I wonder where we might be able to document this wrinkle, i.e. mount -o dax
-means at least /one/ of the devices must support it, and then at runtime
-whichever file you try to use dax on still needs to be on a device that
-supports it ... but ok, anyway this seems fine functionally.
-
-you've assured me that xfstests are coming ;)
-
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
-
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->   drivers/dax/super.c | 30 +++++++++++++++---------------
->   fs/ext2/super.c     |  2 +-
->   fs/ext4/super.c     |  2 +-
->   fs/xfs/xfs_ioctl.c  |  3 ++-
->   fs/xfs/xfs_iops.c   | 30 +++++++++++++++++++++++++-----
->   fs/xfs/xfs_super.c  | 10 ++++++++--
->   include/linux/dax.h | 10 +++-------
->   7 files changed, 55 insertions(+), 32 deletions(-)
+>  .../devicetree/bindings/opp/qcom-opp.txt      | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
 > 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 2b2332b605e4..9206539c8330 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -73,8 +73,8 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
->   #endif
->   
->   /**
-> - * __bdev_dax_supported() - Check if the device supports dax for filesystem
-> - * @sb: The superblock of the device
-> + * bdev_dax_supported() - Check if the device supports dax for filesystem
-> + * @bdev: block device to check
->    * @blocksize: The block size of the device
->    *
->    * This is a library function for filesystems to check if the block device
-> @@ -82,33 +82,33 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
->    *
->    * Return: negative errno if unsupported, 0 if supported.
->    */
-> -int __bdev_dax_supported(struct super_block *sb, int blocksize)
-> +int bdev_dax_supported(struct block_device *bdev, int blocksize)
->   {
-> -	struct block_device *bdev = sb->s_bdev;
->   	struct dax_device *dax_dev;
->   	pgoff_t pgoff;
->   	int err, id;
->   	void *kaddr;
->   	pfn_t pfn;
->   	long len;
-> +	char buf[BDEVNAME_SIZE];
->   
->   	if (blocksize != PAGE_SIZE) {
-> -		pr_debug("VFS (%s): error: unsupported blocksize for dax\n",
-> -				sb->s_id);
-> +		pr_debug("%s: error: unsupported blocksize for dax\n",
-> +				bdevname(bdev, buf));
->   		return -EINVAL;
->   	}
->   
->   	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
->   	if (err) {
-> -		pr_debug("VFS (%s): error: unaligned partition for dax\n",
-> -				sb->s_id);
-> +		pr_debug("%s: error: unaligned partition for dax\n",
-> +				bdevname(bdev, buf));
->   		return err;
->   	}
->   
->   	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
->   	if (!dax_dev) {
-> -		pr_debug("VFS (%s): error: device does not support dax\n",
-> -				sb->s_id);
-> +		pr_debug("%s: error: device does not support dax\n",
-> +				bdevname(bdev, buf));
->   		return -EOPNOTSUPP;
->   	}
->   
-> @@ -119,8 +119,8 @@ int __bdev_dax_supported(struct super_block *sb, int blocksize)
->   	put_dax(dax_dev);
->   
->   	if (len < 1) {
-> -		pr_debug("VFS (%s): error: dax access failed (%ld)\n",
-> -				sb->s_id, len);
-> +		pr_debug("%s: error: dax access failed (%ld)\n",
-> +				bdevname(bdev, buf), len);
->   		return len < 0 ? len : -EIO;
->   	}
->   
-> @@ -137,14 +137,14 @@ int __bdev_dax_supported(struct super_block *sb, int blocksize)
->   	} else if (pfn_t_devmap(pfn)) {
->   		/* pass */;
->   	} else {
-> -		pr_debug("VFS (%s): error: dax support not enabled\n",
-> -				sb->s_id);
-> +		pr_debug("%s: error: dax support not enabled\n",
-> +				bdevname(bdev, buf));
->   		return -EOPNOTSUPP;
->   	}
->   
->   	return 0;
->   }
-> -EXPORT_SYMBOL_GPL(__bdev_dax_supported);
-> +EXPORT_SYMBOL_GPL(bdev_dax_supported);
->   #endif
->   
->   enum dax_device_flags {
-> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-> index de1694512f1f..9627c3054b5c 100644
-> --- a/fs/ext2/super.c
-> +++ b/fs/ext2/super.c
-> @@ -961,7 +961,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->   	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
->   
->   	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
-> -		err = bdev_dax_supported(sb, blocksize);
-> +		err = bdev_dax_supported(sb->s_bdev, blocksize);
->   		if (err) {
->   			ext2_msg(sb, KERN_ERR,
->   				"DAX unsupported by block device. Turning off DAX.");
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index eb104e8476f0..089170e99895 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -3732,7 +3732,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
->   					" that may contain inline data");
->   			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
->   		}
-> -		err = bdev_dax_supported(sb, blocksize);
-> +		err = bdev_dax_supported(sb->s_bdev, blocksize);
->   		if (err) {
->   			ext4_msg(sb, KERN_ERR,
->   				"DAX unsupported by block device. Turning off DAX.");
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 89fb1eb80aae..0effd46b965f 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1103,7 +1103,8 @@ xfs_ioctl_setattr_dax_invalidate(
->   	if (fa->fsx_xflags & FS_XFLAG_DAX) {
->   		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
->   			return -EINVAL;
-> -		if (bdev_dax_supported(sb, sb->s_blocksize) < 0)
-> +		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
-> +				sb->s_blocksize) < 0)
->   			return -EINVAL;
->   	}
->   
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index a3ed3c811dfa..6e83acf74a95 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1195,6 +1195,30 @@ static const struct inode_operations xfs_inline_symlink_inode_operations = {
->   	.update_time		= xfs_vn_update_time,
->   };
->   
-> +/* Figure out if this file actually supports DAX. */
-> +static bool
-> +xfs_inode_supports_dax(
-> +	struct xfs_inode	*ip)
-> +{
-> +	struct xfs_mount	*mp = ip->i_mount;
+> diff --git a/Documentation/devicetree/bindings/opp/qcom-opp.txt b/Documentation/devicetree/bindings/opp/qcom-opp.txt
+> new file mode 100644
+> index 000000000000..db4d970c7ec7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/opp/qcom-opp.txt
+> @@ -0,0 +1,25 @@
+> +Qualcomm OPP bindings to descibe OPP nodes with corner/level values
+
+s/Qualcomm/Qualcomm Technologies, Inc./ ?
+
+s/descibe/describe/
+
+
 > +
-> +	/* Only supported on non-reflinked files. */
-> +	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
-> +		return false;
+> +OPP tables for devices on Qualcomm platforms require an additional
+
+s/Qualcomm/Qualcomm Technologies, Inc./
+
+
+> +platform specific corner/level value to be specified.
+> +This value is passed on to the RPM (Resource Power Manager) by
+
+Do you want to mention RPMh here as well?
+
+
+> +the CPU, which then takes the necessary actions to set a voltage
+> +rail to an appropriate voltage based on the value passed.
 > +
-> +	/* DAX mount option or DAX iflag must be set. */
-> +	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
-> +	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-> +		return false;
+> +The bindings are based on top of the operating-points-v2 bindings
+> +described in Documentation/devicetree/bindings/opp/opp.txt
+> +Additional properties are described below.
 > +
-> +	/* Block size must match page size */
-> +	if (mp->m_sb.sb_blocksize != PAGE_SIZE)
-> +		return false;
+> +* OPP Table Node
 > +
-> +	/* Device has to support DAX too. */
-> +	return xfs_find_daxdev_for_inode(VFS_I(ip)) != NULL;
-> +}
+> +Required properties:
+> +- compatible: Allow OPPs to express their compatibility. It should be:
+> +  "operating-points-v2-qcom-level"
 > +
->   STATIC void
->   xfs_diflags_to_iflags(
->   	struct inode		*inode,
-> @@ -1213,11 +1237,7 @@ xfs_diflags_to_iflags(
->   		inode->i_flags |= S_SYNC;
->   	if (flags & XFS_DIFLAG_NOATIME)
->   		inode->i_flags |= S_NOATIME;
-> -	if (S_ISREG(inode->i_mode) &&
-> -	    ip->i_mount->m_sb.sb_blocksize == PAGE_SIZE &&
-> -	    !xfs_is_reflink_inode(ip) &&
-> -	    (ip->i_mount->m_flags & XFS_MOUNT_DAX ||
-> -	     ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-> +	if (xfs_inode_supports_dax(ip))
->   		inode->i_flags |= S_DAX;
->   }
->   
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index d71424052917..62188c2a4c36 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1690,11 +1690,17 @@ xfs_fs_fill_super(
->   		sb->s_flags |= SB_I_VERSION;
->   
->   	if (mp->m_flags & XFS_MOUNT_DAX) {
-> +		int	error2 = 0;
+> +* OPP Node
 > +
->   		xfs_warn(mp,
->   		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
->   
-> -		error = bdev_dax_supported(sb, sb->s_blocksize);
-> -		if (error) {
-> +		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
-> +				sb->s_blocksize);
-> +		if (mp->m_rtdev_targp)
-> +			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
-> +					sb->s_blocksize);
-> +		if (error && error2) {
->   			xfs_alert(mp,
->   			"DAX unsupported by block device. Turning off DAX.");
->   			mp->m_flags &= ~XFS_MOUNT_DAX;
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index f9eb22ad341e..509a85ac8470 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -64,12 +64,7 @@ static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
->   struct writeback_control;
->   int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
->   #if IS_ENABLED(CONFIG_FS_DAX)
-> -int __bdev_dax_supported(struct super_block *sb, int blocksize);
-> -static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
-> -{
-> -	return __bdev_dax_supported(sb, blocksize);
-> -}
-> -
-> +int bdev_dax_supported(struct block_device *bdev, int blocksize);
->   static inline struct dax_device *fs_dax_get_by_host(const char *host)
->   {
->   	return dax_get_by_host(host);
-> @@ -84,7 +79,8 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
->   int dax_writeback_mapping_range(struct address_space *mapping,
->   		struct block_device *bdev, struct writeback_control *wbc);
->   #else
-> -static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
-> +static inline int bdev_dax_supported(struct block_device *bdev,
-> +		int blocksize)
->   {
->   	return -EOPNOTSUPP;
->   }
-> 
+> +Required properties:
+> +- qcom,level: On Qualcomm platforms an OPP node can describe a positive value
+
+s/Qualcomm/Qualcomm Technologies, Inc./
+
+
+> +representing a corner/level that's communicated with a remote microprocessor
+> +(usually called the RPM) which then translates it into a certain voltage on
+> +a voltage rail.
+
+Should these lines be indented 2 spaces as is the case for the compatible
+property above?
+
+Could you add an example for both RPM and RPMh in this binding file?
+
+Thanks,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
