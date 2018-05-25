@@ -1,81 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965111AbeEYIlg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 04:41:36 -0400
-Received: from mail.netline.ch ([148.251.143.178]:41889 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964791AbeEYIle (ORCPT
+        id S964995AbeEYIla (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 04:41:30 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37422 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964791AbeEYIl2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 04:41:34 -0400
-Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
-To: Christoph Hellwig <hch@lst.de>, christian.koenig@amd.com
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        iommu@lists.linux-foundation.org
-References: <20180501132411.2311-1-michel@daenzer.net>
- <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com>
- <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com>
- <20180502124151.GA22857@lst.de>
- <1066dfa2-2f78-815d-c65a-9d09eb35458c@daenzer.net>
- <20180502162145.GA26787@lst.de>
- <ba310210-6f3c-f4e6-29e5-5ae6e791ebeb@daenzer.net>
- <1cbc4e10-96e6-c222-fb1a-fd7847be5755@gmail.com>
- <20180525084120.GA19063@lst.de>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <0a17ab46-2d42-48ae-cf1f-492e17254767@daenzer.net>
-Date: Fri, 25 May 2018 10:41:29 +0200
+        Fri, 25 May 2018 04:41:28 -0400
+X-Google-Smtp-Source: ADUXVKLpLzXpBNdqMdnO8Z2v/yvPEHAgoqu+QcQ9166XOOmqwmtYrToJjHuId5yfpGkGelm2r8eKXg==
+Subject: Re: [PATCH v1 2/2] cpufreq: tegra20: Use PLL_C as intermediate clock
+ source
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180523160020.15291-1-digetx@gmail.com>
+ <20180523160020.15291-2-digetx@gmail.com>
+ <20180524043040.25pld3ezs4lpabro@vireshk-i7>
+ <56552c53-8868-af50-232e-b12e3c247ecd@gmail.com>
+ <CAJZ5v0iXibwwnAyjBXc+zO5YQ0=WwaoUqq1K3OWqojh8xX+Wjw@mail.gmail.com>
+ <5f9364c0-4ef5-0883-583d-42da8f016a80@gmail.com>
+ <CAJZ5v0j80jbqLKORZR87mftbKDbAophywnuDqTfNf-VSBYfyOQ@mail.gmail.com>
+ <CAJZ5v0hcvSFfWVCgVU8ApvODhyZqXduaGoBmmh345aGe5MN59g@mail.gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <1c901cf3-22c9-1784-9914-e460f1f9f22c@gmail.com>
+Date: Fri, 25 May 2018 11:41:23 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180525084120.GA19063@lst.de>
+In-Reply-To: <CAJZ5v0hcvSFfWVCgVU8ApvODhyZqXduaGoBmmh345aGe5MN59g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-25 10:41 AM, Christoph Hellwig wrote:
-> On Tue, May 22, 2018 at 03:13:58PM +0200, Christian König wrote:
->> Am 02.05.2018 um 18:59 schrieb Michel Dänzer:
->>> On 2018-05-02 06:21 PM, Christoph Hellwig wrote:
->>>> On Wed, May 02, 2018 at 04:31:09PM +0200, Michel Dänzer wrote:
->>>>>> No.  __GFP_NOWARN (and gfp_t flags in general) are the wrong interface
->>>>>> for dma allocations and just cause problems.  I actually plan to
->>>>>> get rid of the gfp_t argument in dma_alloc_attrs sooner, and only
->>>>>> allow either GFP_KERNEL or GFP_DMA passed in dma_alloc_coherent.
->>>>> How about GFP_TRANSHUGE_LIGHT? TTM uses that to opportunistically
->>>>> allocate huge pages (GFP_TRANSHUGE can result in unacceptably long
->>>>> delays with memory pressure).
->>>> Well, that is exactly what I don't want drivers to do - same for
->>>> __GFP_COMP in some drm code.  This very much assumes the page allocator
->>>> is used to back dma allocations, which very often it actually isn't, and
->>>> any use of magic gfp flags creates a tight coupling of consumers with a
->>>> specific implementation.
+On 25.05.2018 11:36, Rafael J. Wysocki wrote:
+> On Fri, May 25, 2018 at 10:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> On Thu, May 24, 2018 at 2:28 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>> On 24.05.2018 11:01, Rafael J. Wysocki wrote:
+>>>> On Thu, May 24, 2018 at 7:37 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>>> On 24.05.2018 07:30, Viresh Kumar wrote:
+>>>>>> On 23-05-18, 19:00, Dmitry Osipenko wrote:
+>>>>>>> PLL_C is running at 600MHz which is significantly higher than the 216MHz
+>>>>>>> of the PLL_P and it is known that PLL_C is always-ON because AHB BUS is
+>>>>>>> running on that PLL. Let's use PLL_C as intermediate clock source, making
+>>>>>>> CPU snappier a tad during of the frequency transition.
+>>>>>>>
+>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>> ---
+>>>>>>>  drivers/cpufreq/tegra20-cpufreq.c | 25 +++++++++++++++++++++----
+>>>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+>>>>>>> index 3ad6bded6efc..4bf5ba7da40b 100644
+>>>>>>> --- a/drivers/cpufreq/tegra20-cpufreq.c
+>>>>>>> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+>>>>>>> @@ -25,12 +25,13 @@
+>>>>>>>  #include <linux/types.h>
+>>>>>>>
+>>>>>>>  #define PLL_P_FREQ  216000
+>>>>>>> +#define PLL_C_FREQ  600000
+>>>>>>>
+>>>>>>>  static struct cpufreq_frequency_table freq_table[] = {
+>>>>>>>      { .frequency = 216000 },
+>>>>>>>      { .frequency = 312000 },
+>>>>>>>      { .frequency = 456000 },
+>>>>>>> -    { .frequency = 608000 },
+>>>>>>> +    { .frequency = 600000 },
+>>>>>>>      { .frequency = 760000 },
+>>>>>>>      { .frequency = 816000 },
+>>>>>>>      { .frequency = 912000 },
+>>>>>>> @@ -44,6 +45,7 @@ struct tegra20_cpufreq {
+>>>>>>>      struct clk *cpu_clk;
+>>>>>>>      struct clk *pll_x_clk;
+>>>>>>>      struct clk *pll_p_clk;
+>>>>>>> +    struct clk *pll_c_clk;
+>>>>>>>      bool pll_x_prepared;
+>>>>>>>  };
+>>>>>>>
+>>>>>>> @@ -58,7 +60,10 @@ static unsigned int tegra_get_intermediate(struct cpufreq_policy *policy,
+>>>>>>>      if (index == 0 || policy->cur == PLL_P_FREQ)
+>>>>>>>              return 0;
+>>>>>>>
+>>>>>>> -    return PLL_P_FREQ;
+>>>>>>> +    if (index == 3 || policy->cur == PLL_C_FREQ)
+>>>>>>> +            return 0;
+>>>>>>
+>>>>>> So we can choose between two different intermediate frequencies ? And
+>>>>>> I didn't like the way magic number 3 is used here. Its prone to errors
+>>>>>> and we better use a macro or something else here.
+>>>>>>
+>>>>>> Like instead of doing index == 3, what about freq_table[index].freq ==
+>>>>>> PLL_C_FREQ ? Same for the previous patch as well.
+>>>>>
+>>>>> The frequency is determined by the parent clock of CCLK (CPU clock), we can
+>>>>> choose between different parents for the CCLK. PLL_C as PLL_P and PLL_X are
+>>>>> among the available parents for the CCLK to choose from and there some others.
+>>>>>
+>>>>> I don't mind to use freq_table[index].freq, though I'd like to keep compiled
+>>>>> assembly minimal where possible. Hence the freq_table should be made constant to
+>>>>> tell compiler that it doesn't need to emit data fetches for the table values and
+>>>>> could embed the constants into the code where appropriate.
+>>>>>
+>>>>> Could we constify the "struct cpufreq_frequency_table" within the cpufreq core?
+>>>>> Seems nothing prevents this (I already tried to constify - there are no
+>>>>> obstacles), unless some cpufreq driver would try to modify
+>>>>> policy->freq_table->... within the cpufreq callback implementation.
 >>>>
->>>> In general I can't think of a good reason not to actually use
->>>> GFP_TRANSHUGE_LIGHT by default in the dma allocator unless
->>>> DMA_ATTR_ALLOC_SINGLE_PAGES is set.  Can you prepare a patch for that?
->>> I'm afraid I'll have to leave that to somebody else.
+>>>> Some drivers generate frequency tables out of external data
+>>>> unavailable at compile time, like ACPI tables.
+>>>
+>>> Instead of making the table constant itself (with its values), seems we can just
+>>> make the policy->freq_table pointer constant. I'll try to make a patch for that,
+>>> adjusting the pointers in cpufreq core and the drivers. This works for the
+>>> acpi-cpufreq at least.
 >>
->> Coming back to this topic once more, sorry for the delay but busy as usual 
->> :)
->>
->> What exactly do you mean with "dma allocator" here? The TTM allocator using 
->> the dma_alloc_coherent calls? Or the swiotlb implementation of the calls?
+>> Honestly, messing up with the whole subsystem in order to avoid an
+>> explicit pointer case doesn't sound right to me.
 > 
-> dma allocatr in this case: backends for dma_alloc_coherent/
-> dma_alloc_attrs.  Most importantly dma_direct_alloc.
+> Actually, on a second thought I agree that it is better to do it as
+> you suggested: make the policy->freq_table pointer constant
+> everywhere.
 > 
-> But while we're at it I can't actually see any GFP_TRANSHUGE_LIGHT
-> usage in TTM, just plain old GFP_TRANSHUGE.
+> Sorry for the noise.
 
-See
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=da291320baec914f0bb4e65a9dccb86bd6c728f2
-.
+No worries.
 
-
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+As I wrote in the reply to the other patch, the Tegra30 support is now on the
+way. These changes will collide a tad with the support integration, so I'll
+return to re-considering the changes made in this patchset after Tegra30 support
+will land. Thank you very much for your reviews and suggestions, I'll take them
+into account in the next iteration.
