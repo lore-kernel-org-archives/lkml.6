@@ -1,92 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S970349AbeEYAPG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 20:15:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59126 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970068AbeEYAPF (ORCPT
+        id S970375AbeEYATO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 20:19:14 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:34129 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967798AbeEYATN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 20:15:05 -0400
-Subject: Re: [PATCH v4] rcu: Speed up calling of RCU tasks callbacks
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20180524184946.5fa82d19@gandalf.local.home>
- <20180524231918.GA98334@joelaf.mtv.corp.google.com>
- <20180524192247.759f7572@gandalf.local.home>
- <076566f7-43ff-5cc8-03ba-ebde9c19418c@infradead.org>
-Message-ID: <e906cdde-855b-1fc6-8cdc-a1f969688c1a@infradead.org>
-Date: Thu, 24 May 2018 17:14:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 24 May 2018 20:19:13 -0400
+Message-Id: <201805250019.w4P0J3Dl018566@www262.sakura.ne.jp>
+Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional processes
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To: David Rientjes <rientjes@google.com>
+Cc: Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
 MIME-Version: 1.0
-In-Reply-To: <076566f7-43ff-5cc8-03ba-ebde9c19418c@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Date: Fri, 25 May 2018 09:19:03 +0900
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/2018 04:26 PM, Randy Dunlap wrote:
-> On 05/24/2018 04:22 PM, Steven Rostedt wrote:
->> On Thu, 24 May 2018 16:19:18 -0700
->> Joel Fernandes <joel@joelfernandes.org> wrote:
->>
->>> On Thu, May 24, 2018 at 06:49:46PM -0400, Steven Rostedt wrote:
->>>>
->>>> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
->>>>
->>>> Joel Fernandes found that the synchronize_rcu_tasks() was taking a
->>>> significant amount of time. He demonstrated it with the following test:
->>>>
->>>>  # cd /sys/kernel/tracing
->>>>  # while [ 1 ]; do x=1; done &
->>>>  # echo '__schedule_bug:traceon' > set_ftrace_filter
->>>>  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
->>>>
->>>> real	0m1.064s
->>>> user	0m0.000s
->>>> sys	0m0.004s
->>>>
->>>> Where it takes a little over a second to perform the synchronize,
->>>> because there's a loop that waits 1 second at a time for tasks to get
->>>> through their quiescent points when there's a task that must be waited
->>>> for.
->>>>
->>>> After discussion we came up with a simple way to wait for holdouts but
->>>> increase the time for each iteration of the loop but no more than a
->>>> full second.
->>>>
->>>> With the new patch we have:
->>>>
->>>>  # time echo '!__schedule_bug:traceon' > set_ftrace_filter;
->>>>
->>>> real	0m0.131s
->>>> user	0m0.000s
->>>> sys	0m0.004s
->>>>
->>>> Which drops it down to 13% of what the original wait time was.  
->>>
->>> Should be 90% of original?
->>
->> That would be if I said "drops it down X" but I said "drops it down to
->> X of what the original wait time was". And 0.131 is 13% of 1.064. :-)
+David Rientjes wrote:
+> The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
+> it cannot reap an mm.  This can happen for a variety of reasons,
+> including:
 > 
-> I think that you are confusing "drops it down to" with "drops it down by".
-> You said the former.  You should say the latter.
-> IOW, I agree with Joel.
+>  - the inability to grab mm->mmap_sem in a sufficient amount of time,
+> 
+>  - when the mm has blockable mmu notifiers that could cause the oom reaper
+>    to stall indefinitely,
+> 
+> but we can also add a third when the oom reaper can "reap" an mm but doing
+> so is unlikely to free any amount of memory:
+> 
+>  - when the mm's memory is fully mlocked.
 
+   - when the mm's memory is fully mlocked (needs privilege) or
+     fully shared (does not need privilege)
 
-Please forget this.  After reading the numbers, your comments look correct.
+> 
+> When all memory is mlocked, the oom reaper will not be able to free any
+> substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
+> unmap and free its memory in exit_mmap() and subsequent oom victims are
+> chosen unnecessarily.  This is trivial to reproduce if all eligible
+> processes on the system have mlocked their memory: the oom killer calls
+> panic() even though forward progress can be made.
 
+s/mlocked/mlocked or shared/g
 
--- 
-~Randy
+> 
+> This is the same issue where the exit path sets MMF_OOM_SKIP before
+> unmapping memory and additional processes can be chosen unnecessarily
+> because the oom killer is racing with exit_mmap().
+> 
+> We can't simply defer setting MMF_OOM_SKIP, however, because if there is
+> a true oom livelock in progress, it never gets set and no additional
+> killing is possible.
+> 
+> To fix this, this patch introduces a per-mm reaping timeout, initially set
+> at 10s.  It requires that the oom reaper's list becomes a properly linked
+> list so that other mm's may be reaped while waiting for an mm's timeout to
+> expire.
+
+I already proposed more simpler one at https://patchwork.kernel.org/patch/9877991/ .
+
+> 
+> The exit path will now set MMF_OOM_SKIP only after all memory has been
+> freed, so additional oom killing is justified, and rely on MMF_UNSTABLE to
+> determine when it can race with the oom reaper.
+> 
+> The oom reaper will now set MMF_OOM_SKIP only after the reap timeout has
+> lapsed because it can no longer guarantee forward progress.
+> 
+> The reaping timeout is intentionally set for a substantial amount of time
+> since oom livelock is a very rare occurrence and it's better to optimize
+> for preventing additional (unnecessary) oom killing than a scenario that
+> is much more unlikely.
+
+But before thinking about your proposal, please think about how to guarantee
+that the OOM reaper and the exit path can run discussed at
+http://lkml.kernel.org/r/201805122318.HJG81246.MFVFLFJOOQtSHO@I-love.SAKURA.ne.jp .
