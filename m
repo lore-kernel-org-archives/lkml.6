@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755401AbeEYDs2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 23:48:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37922 "EHLO mx1.redhat.com"
+        id S933536AbeEYDsi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 23:48:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37946 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755015AbeEYDs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 23:48:26 -0400
+        id S1755015AbeEYDsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 23:48:36 -0400
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -16,53 +16,38 @@ Cc: David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
         Filipe Manana <fdmanana@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Subject: [RESEND PATCH V5 08/33] block: introduce segment_last_page()
-Date: Fri, 25 May 2018 11:45:56 +0800
-Message-Id: <20180525034621.31147-9-ming.lei@redhat.com>
+Subject: [RESEND PATCH V5 09/33] fs/buffer.c: use bvec iterator to truncate the bio
+Date: Fri, 25 May 2018 11:45:57 +0800
+Message-Id: <20180525034621.31147-10-ming.lei@redhat.com>
 In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
 References: <20180525034621.31147-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BTRFS and guard_bio_eod() need to get the last page from one segment, so
-introduce this helper to make them happy.
+Once multipage bvec is enabled, the last bvec may include more than one
+page, this patch use segment_last_page() to truncate the bio.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- include/linux/bvec.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ fs/buffer.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index 84c395feed49..217afcd83a15 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -219,4 +219,26 @@ static inline bool bvec_iter_seg_advance(const struct bio_vec *bv,
- 	.bi_bvec_done	= 0,						\
- }
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 249b83fafe48..da4b19f7b67b 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -3021,7 +3021,10 @@ void guard_bio_eod(int op, struct bio *bio)
  
-+/* get the last page from the multipage bvec and store it in @pg */
-+static inline void segment_last_page(const struct bio_vec *seg,
-+		struct bio_vec *pg)
-+{
-+	unsigned total = seg->bv_offset + seg->bv_len;
-+	unsigned last_page = total / PAGE_SIZE;
+ 	/* ..and clear the end of the buffer for reads */
+ 	if (op == REQ_OP_READ) {
+-		zero_user(bvec->bv_page, bvec->bv_offset + bvec->bv_len,
++		struct bio_vec bv;
 +
-+	if (last_page * PAGE_SIZE == total)
-+		last_page--;
-+
-+	pg->bv_page = nth_page(seg->bv_page, last_page);
-+
-+	/* the whole segment is inside the last page */
-+	if (seg->bv_offset >= last_page * PAGE_SIZE) {
-+		pg->bv_offset = seg->bv_offset % PAGE_SIZE;
-+		pg->bv_len = seg->bv_len;
-+	} else {
-+		pg->bv_offset = 0;
-+		pg->bv_len = total - last_page * PAGE_SIZE;
-+	}
-+}
-+
- #endif /* __LINUX_BVEC_ITER_H */
++		segment_last_page(bvec, &bv);
++		zero_user(bv.bv_page, bv.bv_offset + bv.bv_len,
+ 				truncated_bytes);
+ 	}
+ }
 -- 
 2.9.5
