@@ -1,89 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935328AbeEYMuO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 08:50:14 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53771 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934059AbeEYMtt (ORCPT
+        id S935710AbeEYMu3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:50:29 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:43843 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935375AbeEYMuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 08:49:49 -0400
-X-Google-Smtp-Source: ADUXVKJ3dl3lhYZ6KYyx9dYGGjWtic7L8zPnKqKFTmDRfnxhK0HyALLC2IiVzUVR/N9cowkGFNvnzg==
-From: Christian Brauner <christian@brauner.io>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, tglx@linutronix.de,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, linux-api@vger.kernel.org, ebiederm@xmission.com,
-        seth.forshee@canonical.com, viro@zeniv.linux.org.uk,
-        Christian Brauner <christian@brauner.io>
-Subject: [PATCH 5/6 v1 resend] statfs: add ST_SLAVE
-Date: Fri, 25 May 2018 14:48:24 +0200
-Message-Id: <20180525124825.23875-6-christian@brauner.io>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525124825.23875-1-christian@brauner.io>
-References: <20180525124825.23875-1-christian@brauner.io>
+        Fri, 25 May 2018 08:50:25 -0400
+X-Google-Smtp-Source: ADUXVKK/G39icxDr3M+kJ6mRoJXeipx1MiAA/15/d1lO+WfacSiI3FWbO6Or+7uo4XYuuxDTL24lKQ==
+Date: Fri, 25 May 2018 08:50:23 -0400
+From: Bob Copeland <me@bobcopeland.com>
+To: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Adrian Chadd <adrian.chadd@gmail.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        David Miller <davem@davemloft.net>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ath10k: transmit queued frames after waking queues
+Message-ID: <20180525125023.alc42lkgehc6iodg@localhost>
+References: <20180517231512.13085-1-niklas.cassel@linaro.org>
+ <CAJ-Vmon1ybhWs_8Nv=w62pmhSizDdDeYCgK8_HTTwPZ=EEC46g@mail.gmail.com>
+ <20180521203701.GA7619@localhost.localdomain>
+ <20180524155034.xse7cfm5figfktuj@localhost>
+ <20180525123656.GB8780@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525123656.GB8780@localhost.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently userspace can only determine whether a mountpoint is slave
-by parsing /proc/<pid>/mountinfo. It would be convenient to simply retrieve
-this property with a statvfs() call.
-This let's userspace avoid costly parsing, supports cases where /proc is
-not mounted, and supports usecases where file descriptors to mountpoints
-are passed between processes that are inspected via fstatvfs().
-This is especially helpful in all cases where userspace is not interested
-in specific propagation properties our peer group layouts but rather just
-wants to either turn on or turn off propagation for specific mountpoints.
+On Fri, May 25, 2018 at 02:36:56PM +0200, Niklas Cassel wrote:
+> A spin lock does have the advantage of ordering: memory operations issued
+> before the spin_unlock_bh() will be completed before the spin_unlock_bh()
+> operation has completed.
+> 
+> However, ath10k_htt_tx_dec_pending() was called earlier in the same function,
+> which decreases htt->num_pending_tx, so that write will be completed before
+> our read. That is the only ordering we care about here (if we should call
+> ath10k_mac_tx_push_pending() or not).
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-v0->v1:
-* non-functional changes: extend commit message
----
- fs/statfs.c            | 10 +++++++++-
- include/linux/statfs.h |  1 +
- 2 files changed, 10 insertions(+), 1 deletion(-)
+Sure.  I also understand that reading inside a lock and operating on the
+value outside the lock isn't really the definition of synchronization
+(doesn't really matter in this case though).
 
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 2fc6f9c3793c..35ad0402c9a3 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -10,6 +10,7 @@
- #include <linux/uaccess.h>
- #include <linux/compat.h>
- #include "internal.h"
-+#include "pnode.h"
- 
- static int flags_by_mnt(int mnt_flags)
- {
-@@ -50,8 +51,15 @@ static int flags_by_sb(int s_flags)
- 
- static int calculate_f_flags(struct vfsmount *mnt)
- {
--	return ST_VALID | flags_by_mnt(mnt->mnt_flags) |
-+	int flags = 0;
-+
-+	flags = ST_VALID | flags_by_mnt(mnt->mnt_flags) |
- 		flags_by_sb(mnt->mnt_sb->s_flags);
-+
-+	if (IS_MNT_SLAVE(real_mount(mnt)))
-+		flags |= ST_SLAVE;
-+
-+	return flags;
- }
- 
- static int statfs_by_dentry(struct dentry *dentry, struct kstatfs *buf)
-diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index 5416b2936dd9..048127effaad 100644
---- a/include/linux/statfs.h
-+++ b/include/linux/statfs.h
-@@ -41,6 +41,7 @@ struct kstatfs {
- #define ST_NODIRATIME	(1<<11) /* do not update directory access times */
- #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
- #define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
-+#define ST_SLAVE	(1<<19)	/* change to slave */
- #define ST_SHARED	(1<<20)	/* change to shared */
- 
- #endif
+I was just suggesting that the implicit memory barrier in the spin unlock
+that we are already paying for would be sufficient here too, and it matches
+the semantic of "tx fields under tx_lock."  On the other hand, maybe it's
+just me, but I tend to look askance at just-in-case READ_ONCEs sprinkled
+about.
+
 -- 
-2.17.0
+Bob Copeland %% https://bobcopeland.com/
