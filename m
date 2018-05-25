@@ -1,112 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968171AbeEYTbK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 15:31:10 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37543 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967926AbeEYTbI (ORCPT
+        id S967932AbeEYTgN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 15:36:13 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46258 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967698AbeEYTgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 15:31:08 -0400
-X-Google-Smtp-Source: AB8JxZrgVPPMkEbDYdgUpy/N8w/y6bR8LNaHbWwTPu7zxgXglyScLSWruSr1W38o2cBlorAm9xWv3Q==
-Date: Fri, 25 May 2018 12:32:47 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Thierry Escande <thierry.escande@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: apq8096-db820c: Removed bt-en-1-8v
- regulator
-Message-ID: <20180525193247.GZ2259@tuxbook-pro>
-References: <20180524180155.24839-1-thierry.escande@linaro.org>
+        Fri, 25 May 2018 15:36:11 -0400
+X-Google-Smtp-Source: AB8JxZo98ItB6MiUcxLZM4HtDv9/HVhhTt6SAhwv9lBeLi1i/xyiE3h7lp+3XbSE8XxyxOOLBhJtqw==
+Date: Fri, 25 May 2018 12:36:08 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
+ processes
+In-Reply-To: <20180525072636.GE11881@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1805251227380.158701@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com> <20180525072636.GE11881@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524180155.24839-1-thierry.escande@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24 May 11:01 PDT 2018, Thierry Escande wrote:
+On Fri, 25 May 2018, Michal Hocko wrote:
 
-> This patch removes the unused bt-en-1-8v regulator and moves the
-> bt_en_gios claim to the pm8994_gpios node.
+> > The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
+> > it cannot reap an mm.  This can happen for a variety of reasons,
+> > including:
+> > 
+> >  - the inability to grab mm->mmap_sem in a sufficient amount of time,
+> > 
+> >  - when the mm has blockable mmu notifiers that could cause the oom reaper
+> >    to stall indefinitely,
+> > 
+> > but we can also add a third when the oom reaper can "reap" an mm but doing
+> > so is unlikely to free any amount of memory:
+> > 
+> >  - when the mm's memory is fully mlocked.
+> > 
+> > When all memory is mlocked, the oom reaper will not be able to free any
+> > substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
+> > unmap and free its memory in exit_mmap() and subsequent oom victims are
+> > chosen unnecessarily.  This is trivial to reproduce if all eligible
+> > processes on the system have mlocked their memory: the oom killer calls
+> > panic() even though forward progress can be made.
+> > 
+> > This is the same issue where the exit path sets MMF_OOM_SKIP before
+> > unmapping memory and additional processes can be chosen unnecessarily
+> > because the oom killer is racing with exit_mmap().
+> > 
+> > We can't simply defer setting MMF_OOM_SKIP, however, because if there is
+> > a true oom livelock in progress, it never gets set and no additional
+> > killing is possible.
+> > 
+> > To fix this, this patch introduces a per-mm reaping timeout, initially set
+> > at 10s.  It requires that the oom reaper's list becomes a properly linked
+> > list so that other mm's may be reaped while waiting for an mm's timeout to
+> > expire.
 > 
-> This bt_en_gpio could have been moved to the bluetooth serial node but
-> instead this node declares an 'enable' gpio addressing the bt_en_gpio.
-> This is needed by the Qualcomm QCA6174 WLAN/BT combo chip that needs to
-> have the bt_en_gpio claimed even if only WLAN is used.
-> 
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> No timeouts please! The proper way to handle this problem is to simply
+> teach the oom reaper to handle mlocked areas.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+That's not sufficient since the oom reaper is also not able to oom reap if 
+the mm has blockable mmu notifiers or all memory is shared filebacked 
+memory, so it immediately sets MMF_OOM_SKIP and additional processes are 
+oom killed.
 
-Regards,
-Bjorn
+The current implementation that relies on MAX_OOM_REAP_RETRIES is acting 
+as a timeout already for mm->mmap_sem, but it's doing so without 
+attempting to oom reap other victims that may actually allow it to grab 
+mm->mmap_sem if the allocator is waiting on a lock.
 
-> ---
-> 
-> Change in v2:
-> - Rebased on top of [1] posted a few days ago:
-> 
-> [1] https://lkml.org/lkml/2018/5/22/949
->     "arm64: dts: fix regulator property name for wlan pcie endpoint"
->     
-> 
->  arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi |  2 +-
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi           | 14 --------------
->  2 files changed, 1 insertion(+), 15 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-> index 6167af955659..a6ad3d7fe655 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-> @@ -4,7 +4,7 @@
->  &pm8994_gpios {
->  
->  	pinctrl-names = "default";
-> -	pinctrl-0 = <&ls_exp_gpio_f>;
-> +	pinctrl-0 = <&ls_exp_gpio_f &bt_en_gpios>;
->  
->  	ls_exp_gpio_f: pm8994_gpio5 {
->  		pinconf {
-> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> index 7ca6e78def55..2c026b8af792 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> @@ -171,19 +171,6 @@
->  			pinctrl-0 = <&usb2_vbus_det_gpio>;
->  		};
->  
-> -		bt_en: bt-en-1-8v {
-> -			pinctrl-names = "default";
-> -			pinctrl-0 = <&bt_en_gpios>;
-> -			compatible = "regulator-fixed";
-> -			regulator-name = "bt-en-regulator";
-> -			regulator-min-microvolt = <1800000>;
-> -			regulator-max-microvolt = <1800000>;
-> -
-> -			/* WLAN card specific delay */
-> -			startup-delay-us = <70000>;
-> -			enable-active-high;
-> -		};
-> -
->  		wlan_en: wlan-en-1-8v {
->  			pinctrl-names = "default";
->  			pinctrl-0 = <&wlan_en_gpios>;
-> @@ -204,7 +191,6 @@
->  				status = "okay";
->  				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
->  				vddpe-3v3-supply = <&wlan_en>;
-> -				vddpe1-supply = <&bt_en>;
->  			};
->  
->  			pcie@608000 {
-> -- 
-> 2.14.1
-> 
+The solution, as proposed, is to allow the oom reaper to iterate over all 
+victims and try to free memory rather than working on each victim one by 
+one and giving up.
+
+But also note that even if oom reaping is possible, in the presence of an 
+antagonist that continues to allocate memory, that it is possible to oom 
+kill additional victims unnecessarily if we aren't able to complete 
+free_pgtables() in exit_mmap() of the original victim.
+
+So this patch is solving all three issues: allowing a process to *fully* 
+exit (including free_pgtables()) before setting MMF_OOM_SKIP, allows the 
+oom reaper to act on parallel victims that may allow a victim to be 
+reaped, and preventing additional processes from being killed 
+unnecessarily when oom reaping isn't able to free memory (mlock, blockable 
+mmu invalidates, all VM_SHARED file backed, small rss, etc).
+
+The vast majority of the time, oom reaping can occur with this change or 
+the process can reach exit_mmap() itself; oom livelock appears to be very 
+rare with this patch even for mem cgroup constrained oom kills and very 
+tight limitation and thus it makes sense to wait for a prolonged period of 
+time before killing additional processes unnecessarily.
