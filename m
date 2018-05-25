@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030667AbeEYWBF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 18:01:05 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17944 "EHLO mga18.intel.com"
+        id S1030714AbeEYWBp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 18:01:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:17942 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030329AbeEYWBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 18:01:02 -0400
+        id S1030610AbeEYWBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 18:01:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,441,1520924400";
-   d="scan'208";a="231900884"
+   d="scan'208";a="231900893"
 From: Ross Zwisler <ross.zwisler@linux.intel.com>
 To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
         dm-devel@redhat.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
         linux-xfs@vger.kernel.org
-Subject: [PATCH resend 4/7] dm: prevent DAX mounts if not supported
-Date: Fri, 25 May 2018 16:00:52 -0600
-Message-Id: <20180525220055.18920-5-ross.zwisler@linux.intel.com>
+Subject: [PATCH resend 7/7] dm-error: remove unnecessary direct_access() stub
+Date: Fri, 25 May 2018 16:00:55 -0600
+Message-Id: <20180525220055.18920-8-ross.zwisler@linux.intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
 References: <20180525220055.18920-1-ross.zwisler@linux.intel.com>
@@ -27,59 +27,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the code in dm_dax_direct_access() only checks whether the target
-type has a direct_access() operation defined, not whether the underlying
-block devices all support DAX.  This latter property can be seen by looking
-at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
-DM device.
-
-This is problematic if we have, for example, a dm-linear device made up of
-a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
-QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
-we have a working direct_access() entry point and the first member of the
-dm-linear set *does* support DAX.
-
-This allows the user to create a filesystem on the dm-linear device, and
-then mount it with DAX.  The filesystem's bdev_dax_supported() test will
-pass because it'll operate on the first member of the dm-linear device,
-which happens to be a fsdax PMEM namespace.
-
-All DAX I/O will then fail to that dm-linear device because the lack of
-QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
-the struct dax_device isn't ever set in the filesystem, so
-dax_direct_access() will always return -EOPNOTSUPP.
-
-By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
-the filesystem know we don't support DAX at mount time.  The filesystem
-will then silently fall back and remove the dax mount option, causing it to
-work properly.
+This stub was added so that we could use dm-error with
+DM_TYPE_DAX_BIO_BASED mode devices.  That mode and the transition issues
+associated with it no longer exist, so we can remove this dead code.
 
 Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
 ---
- drivers/md/dm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/md/dm-target.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 0a7b0107ca78..9728433362d1 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1050,14 +1050,13 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
+index 314d17ca6466..c4dbc15f7862 100644
+--- a/drivers/md/dm-target.c
++++ b/drivers/md/dm-target.c
+@@ -140,12 +140,6 @@ static void io_err_release_clone_rq(struct request *clone)
+ {
+ }
  
- 	if (!ti)
- 		goto out;
--	if (!ti->type->direct_access)
-+	if (!blk_queue_dax(md->queue))
- 		goto out;
- 	len = max_io_len(sector, ti) / PAGE_SECTORS;
- 	if (len < 1)
- 		goto out;
- 	nr_pages = min(len, nr_pages);
--	if (ti->type->direct_access)
--		ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
-+	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
+-static long io_err_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
+-{
+-	return -EIO;
+-}
+-
+ static struct target_type error_target = {
+ 	.name = "error",
+ 	.version = {1, 5, 0},
+@@ -155,7 +149,6 @@ static struct target_type error_target = {
+ 	.map  = io_err_map,
+ 	.clone_and_map_rq = io_err_clone_and_map_rq,
+ 	.release_clone_rq = io_err_release_clone_rq,
+-	.direct_access = io_err_dax_direct_access,
+ };
  
-  out:
- 	dm_put_live_table(md, srcu_idx);
+ int __init dm_target_init(void)
 -- 
 2.14.3
