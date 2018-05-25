@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeEYEmU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 00:42:20 -0400
-Received: from mail-sn1nam02on0105.outbound.protection.outlook.com ([104.47.36.105]:26732
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S934405AbeEYEm0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 00:42:26 -0400
+Received: from mail-bn3nam01on0121.outbound.protection.outlook.com ([104.47.33.121]:51376
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750964AbeEYEmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 00:42:14 -0400
+        id S1752852AbeEYEmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 00:42:20 -0400
 Authentication-Results: spf=fail (sender IP is 64.157.242.222)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
@@ -16,369 +16,230 @@ To: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Richard Cochran <richardcochran@gmail.com>, <claudiu.manoil@nxp.com>,
         Rob Herring <robh+dt@kernel.org>
 CC: Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [PATCH 2/5] ptp_qoriq: move some definitions to header file
-Date: Fri, 25 May 2018 12:40:35 +0800
-Message-ID: <20180525044038.37756-2-yangbo.lu@nxp.com>
+Subject: [PATCH 4/5] dt-bindings: ptp: add ptp-qoriq.txt
+Date: Fri, 25 May 2018 12:40:37 +0800
+Message-ID: <20180525044038.37756-4-yangbo.lu@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180525044038.37756-1-yangbo.lu@nxp.com>
 References: <20180525044038.37756-1-yangbo.lu@nxp.com>
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:64.157.242.222;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(396003)(39380400002)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(77096007)(39060400002)(2906002)(5660300001)(105606002)(106466001)(4326008)(6666003)(8656006)(16586007)(51416003)(59450400001)(110136005)(86362001)(316002)(53936002)(26005)(76176011)(36756003)(2201001)(50466002)(498600001)(126002)(486006)(48376002)(85426001)(44832011)(81156014)(2616005)(476003)(446003)(11346002)(50226002)(336012)(8676002)(81166006)(97736004)(8936002)(1076002)(356003)(305945005)(47776003);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR03MB3108;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD013;1:z42V0/+a+MMMzsG+/s0W375ii9ZAjjfjKQHHJIpiMzWVfi41bZ4+SN215ZfhBhD0fNaPSicjqS0tB4/y5JigZEnDncqJwm0hZMFa1dKTRzH2uTzqKhjrJYBrshGPNxvv
+X-Forefront-Antispam-Report: CIP:64.157.242.222;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(7966004)(346002)(39380400002)(376002)(39860400002)(396003)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(8936002)(48376002)(106466001)(36756003)(53936002)(356003)(39060400002)(2616005)(2201001)(85426001)(11346002)(76176011)(4326008)(8656006)(105606002)(446003)(476003)(50226002)(77096007)(50466002)(126002)(305945005)(97736004)(508600001)(316002)(16586007)(486006)(26005)(110136005)(2906002)(51416003)(44832011)(81166006)(336012)(81156014)(6666003)(1076002)(47776003)(5660300001)(86362001)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM2PR03MB399;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD023;1:UfrRkNZbY0eHYhUciBprSBxYFKGxW+FR3H4UfTrzgxGBo9O6ewidoWca42F5zU85JGqvBXCBdXHF+SqVAo1zGOokIctJUNgawB2pBhJQUOLsl98x5dy7i4JnKJDqHfNu
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(8559017)(2017052603328);SRVR:BN6PR03MB3108;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3108;3:n61ig2sX2+b4YEOhRoy5pF7K8Cdf2GhgPYv4eqHNYXWNO1QOTDVsUET64CqHfvVXV42m8P2qF1Xe2SWz1DAhytUh1lN5oCCi0MjElRrNeYPspvmggg4HeoFePydUFSVR9x7HZxllI2lBmvZTo+SAPCObrxrGhPp0UdfnYpofsbpLOqKs+WbW8yYxYIOHx60IPbjPF0fv8seUvo2bdIMpOTLZYdsg+xRZNVbXb6LuKj6Z4awEhQo6HPN5Jkk/8UEgccc3/SCG2S6tGAexvwpW+AAxetABb2V9gBgMF7yIt1WamfgKGHcbkQRUJa0fXOZqVargEcLXhQXq7QN/vMKoMYC2eE1ZtLf3Nz36/h3tMCE=;25:thhgC62SWY3+oV8DC1aN0xGV/SrdneWoVwI9qL9sz29VezZAsOvnGYq2f4/AZpInEEs0jTUonbH7vEQtQbA4hJBF/zSH9HzXOrJEtpr3gaC6cIAzOjUau2MGSuKz7kAcao0VU1bNhEuPuUeZ6dvzw+P1KrIZPJDgaohWphCglldvjAWWe5vNYWDmVsDSeM7sqAy93WeZOvI3Fkv5clGj36Toft1zOD6ojPfzfSEssREmZ2BFS3HsFNvgLeFrtSIKh2wpyeBFEyh7GpQau1EcBUBGyC5syZeMGlHaWCP5J/n+wmDa90K/RMqFzPUjom4H0Ez6r0vQqIFDN2ysp8LF0w==
-X-MS-TrafficTypeDiagnostic: BN6PR03MB3108:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3108;31:66+kcGaKDEFB7lWtJl6/XVDZAtdtAmH3QT+do8328o3h9KqHJ5vvM/H4NdlaL0YHX3+y8j1GAzuWH8V1WPw0q5CtikbPZgKsNOrHc6fGIFtMswrmvtMIEFM6CkuoJ3V39ro8OKn4ATsQqH29MQwUSfVXau42BgKClE8imzcTJq5mU5DNyL4gwAIT3OQ9KY10ZU62FhuQgocgdphsOG0Ai6msdw4D/BtIxT+PPIqZEPg=;20:GAbMkPxmszgo4M7QRzcrkgKd/6hOX6lD0n4bNhyFPkJTP473V6mdF7PY9Hrgh82rk1W3/FiPjP10PKqR7ltbxqzk/wduijL2VKqghySx+qEzojrXv+mI+bwmGkdRJqA0HVP77DGkR/G2hMqH+nCgNLjZro4Wuz4RXTLhp/9grBVs5rKDt1k41pC7vSKMwhfT8UugWduGCyFrxj7nSueNVG1iWY3JK4N3dxm/hJImv4AhjNUtJRN2ZKp5nuQiHdp5q1CsXCDgLhhCpYnjysplkeuTqC7IwgVrD2iB6CA3DeHqtnPcthLEOK40U0lMX6JeE5t4nC26C8KOnuFfaqqBs1qyAHMYoVVUEVLAP5Y8iWPS/EoSbkMe8bMUSekWnxsV97T+6UGPim+F1tq8jZqw6uHuwYLcqoFvgKu42NMIBuUP+PqGpwzbAUbiTT5jXCTLGP4YR8s98QhDJdakt+al3LSH3ryOhyiZuhbg08g04YvtMTIvRhVSSM1SxZQRszW145DnLuwqsZEF5QwJSV4zJrXl7OZc3e4YRY3ipWEm1bx3kLcgfTdSvj9+udzK+TbEUOxU0wv3I85lafx5Qs7TD+RKM2SzDXL+i3qCryuZCjY=
-X-Microsoft-Antispam-PRVS: <BN6PR03MB31082279B5C17A508CEA8C2AF8690@BN6PR03MB3108.namprd03.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(8559017)(2017052603328);SRVR:DM2PR03MB399;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB399;3:OmkkmjmqcTebEWwX9PE827p3MVwxP9R6P++/JHnkqFrmMyH/q/EH9y9oYasT6EgX4IuYOygenc3pH6v8+SzsvC0v47K1RoX8YEjRCCC5dS5dKXbZuLhFUUONI/vH9HKDru8SES8qc3FzksKPnx+8HKkfy+7Z3k+Z8MJGdZfYZXXJ6PlF5xaNbSu/QssKJiTkk23i4Fb90bbMJnJGgTlsMyEMawnNJcEJD759vIYLC6lHaTMteDV16QvdMGo7LvqE4brqr1EDwLRP+JULoHhG0qeqDzAedTbBPZ8eGNrXEZQ4piQclgBZ6q4tcvOSezh4CdvhFhm6pye/xJ0DnoZX0r9DOcV+y1rfa8cejHJpNzw=;25:V5j9niROpot8KGcWZz6M846TQx1FwJ5zquKa8E/FLirjNB2YJu1/hi9hwsPso1CND04sCPYl6NBmdYQTjB590BgeIiVFef8sxpMeR6YSNy/hHebM+nVGyNdFDb4RnVusfWHahTy3bpnGvr4WqhmD6B4z9uHzWsv2OXEW/NDp6dgHMAJVpi9RmOX2ZnHOXk+jIKC3+gFQbSwn5rqqzM6bI6xavG1QMWcUafak5ckWLCOAUtvf1RGpavn5Am/WARWvLWhPpE2ITSm9ah8LchPfdW49YNDaGBbNodjeo5PMRrwydTjiCVvAe+jRaD5gzZdFA0hDERD77Y8enUhQR3Sf8g==
+X-MS-TrafficTypeDiagnostic: DM2PR03MB399:
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB399;31:M7eFxEOmZNEpF30bh8PyMibJC4umoFC5GMUfvQNTwWpjuW+/3wDfJT8IUxRqG8lAQLc3wLMfelXlI4CmCouBsKZN0Yn4RLr1wQjg1iXp/jBAKalcxHGnx12LiiPH/j11Yu0pfMeVdl/Hb4IiCSLhygTApnnVnZscBGLF1iEYjsQumF2rH96X05H0x3SyXr4cPLSI5LASX/JNgE67qTG8/bKlXogrl5iPWB7RR+yrtB8=;20:qEpx0nFtosR1as4i0vDsFMOFZ+Ova+dI/KgLKxgCuPBaii5VPYnJbe5HY8DTF3V0wTXMgP//v8HGJvN7rMaJfUQXR++07U5OnKIsqBkgPCAfhKZP9Ege7aaw46wBunGyo3/R+p6P5cMlsUv6p5+h64U0/u5+vcjzTm749XPcAwqY1BljNfB8txmTE8Blt1Ya3ALlo6cINYuQVu49LAa1zEd+/QsosgjHLWRAeYVIOkXvwSgAhGHBm9HSQYoKfdBzvuqy/0sjAeqL+reUTMAlpXQi6cjkvjpgXgp4QgKBSsuMc/fACpb8vMWxI9cU5IEjYrpHbt5X2jIssR1wyCZ2f4kIjjh2QWFkBq/rDqlkZGj/fTYs4xbE8UqqrAow4N6rmQBTZ4Bkyw3UwntTFlW1TST00xCI79m8glzhUQhJ2Mtzrqc3VEwIusph9Qyurj1Y0UGHF6U5vJwSTgZaY4KNBQwFZmJDX2eUDnpu9OK0cihA0P8JQoOIYLlOvicWKr9U9y58DRPPLd4TGFL7amzgZcZi0dBL8Q1Zbu9QyGq0RTxmDkWPSx2oght8fDzcOlXEyoQTqvL6Xyk6KQOJYzCQcPOtHTlpwqQFK1wKs3WKb7I=
+X-Microsoft-Antispam-PRVS: <DM2PR03MB399D06F0B88279C51828CAFF8690@DM2PR03MB399.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 0
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(10201501046)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:BN6PR03MB3108;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB3108;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3108;4:kEInL/KMc9q4zhYir2yM73+R4UMx75FYw79kqe/1NZ/HEpIr1tCihhb4AdKatFgI3Gpvk59tl3L98ff28s1MWAY6y3cwxvwg/qsu6ruyYxhGoCO2Yf2MGbCaIglfyhGy+EYD07FlfhMbnfEosjFs7SQv13yQHYRbXXoqbTmOqs9+OBpbdy36LzskiRnfRaxeyW1kKeKPRdAoYtjB4DCNyqj1nAZRjJ7nIA1nPxi7QIWFi2bbVe+r1POxMMtlDtyng5AYu/RptDu9mz/YY2EGntzh8xjKzSI3Nbg+GQYbTqdMjg6Piqo1MK88nvCaLRte
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201703011903075)(201702281528075)(20161123555045)(201703061421075)(6072148)(201708071742011)(7699016);SRVR:DM2PR03MB399;BCL:0;PCL:0;RULEID:;SRVR:DM2PR03MB399;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB399;4:borz6uKaDqRCiYl11ujEfpl0ahFxZXapFBbPsZw8LpTBG94dGfTsmwsHWlNpq7HuH1EoUQIGNK/AvHLzi7pla3zCGiDg0XTLtWEoB1EE2H3b5a6RXvusFAvKzUktZdVlVX1d7Jjgq16MMtM6AQcbYTiVqXFgb3OX6XMlMeuBsvYA+kyLC1w+9FiOsIqTQ3jgR3NiFKr7Azq7MgUjoCWKe6Idkk/X8JAnqWNoF0HXI7Rlytn74YvKjDue+eKxXKR99DjhJR4ntfs8Ps7Wf9kUqOwBwGoOvlwl1n6fUeP3Eo0FeHZAjCD136x5JWQspDcW
 X-Forefront-PRVS: 06833C6A67
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB3108;23:9SYD9NFt9Qe6q+W6MhOrF73CTXDxDNujM2SvbsjMZ?=
- =?us-ascii?Q?/bJmlTWXiV+UJEEvCCwvmaKRt6OwyIX3nlxVQLrhJLUEsCKkBv9MvUGNFLx7?=
- =?us-ascii?Q?ffRIAl8iGVwHoWKYlNn1GhUkfFRWf14ZL6Cu6kJBnVKsiYRzweOUxUABPQ1m?=
- =?us-ascii?Q?DKou7JO+XBLGBejFjcvzC4t8Aj44dauKQUhKe6SrgBlYSygk4meww2K0gmxg?=
- =?us-ascii?Q?nhsw79T8m2sKQhd9NedOXePoUZ8YNZBS6JIAyzrinU5YBk8tgCF6VkO/WqA6?=
- =?us-ascii?Q?kTDMQd9B8+QLXge3/HXr/NP1vEn6cETtnvajVLD7yVjyKyaAw3MZZauJUiFh?=
- =?us-ascii?Q?WIwGaeADdKpdu2GNLW2ffiuNV0MvlHNZRxxFtu61hlgSQLqJjc3d/rfIfby7?=
- =?us-ascii?Q?UiOl6+5tju1Zi316G73Wr/RKOI0ut/AQcXMN7wRMra2sjtwSHpw9a/I7C5r8?=
- =?us-ascii?Q?q2kja0OXzS6AtwhePPRj/l/mUSwCJTg63Bk4t8gQlGDAHlaMq01uRzOUTpTd?=
- =?us-ascii?Q?iQSD9RHTgR5dz6upiYFwYpbfTBXMi4N4EgqZGYOwA0Rz6bO0vePUc7tPQua/?=
- =?us-ascii?Q?79x3o1Jf8UMdlaO8gX//D301Cc2Wz2XmbR8IlBrMpg0nrk5AgQ0OqVxRw3h1?=
- =?us-ascii?Q?u1kD4Kh5yhvmL8UUFD4uOXOvdCCGxDWuf/vJDX8MT53lIGQBeZIJiwsFxUql?=
- =?us-ascii?Q?HzoRr8+JeDUL2NDc56akXtOmnRMCiquZMv3hKOfQPIwn+NF9M6g4wgnfJxhS?=
- =?us-ascii?Q?GlbTWJ7RBPrqJnmk+VL0WbKVtgGBNafDtxEOWivNWefyBacIbb6MT7BpdCUN?=
- =?us-ascii?Q?4jYRlmFaPFZnsr0Rer/mLOzc55PPsVYeHmELrMpO9+MTl0lXSLFcSwsQivjh?=
- =?us-ascii?Q?rjddagref66+yRASUdNdZDLNZ5fxZvr1f7PQDwOsXOK+j9u10fuQqAGyMJzJ?=
- =?us-ascii?Q?xNXD9o3zfCdD9mUVKhOL1aH8LNUdPldWkPvEQgh4EFy5VzUaf7LNDbR1yNEG?=
- =?us-ascii?Q?fXdSevqIwOOiM7QE6sd1uPu/ioYgoAzQdzH/MMRojN++t9SePVrNdCV/QXX2?=
- =?us-ascii?Q?Sotm7Dv4OJ9zwVDXEbWNhbFJkVKJlPFl3asIsa7uVj3CD2BD65Ed0e8wKaoG?=
- =?us-ascii?Q?A65dCn7zmBXDpO3DdU8jjQal9jYnJbVFTj7/ujzliccU6DMeQo+YjtcU8YGV?=
- =?us-ascii?Q?/YwwozEv9SpEy4QGy1LTc6dxIlw45pLbz+g?=
-X-Microsoft-Antispam-Message-Info: FqShDfakQrxoWAt7uwzlHT98icI4Bi7KbiNKFvCM/D/8TivAbaMdBLcB8y1XoT0gCCSgg/njWnMMKemcM5DcXYJeBAKYFqIi7pF3AN6vVNDP40jNEUDBAwN3C4mdku3ZMacY4HKmH8pqL3Lauu79ejAAEzPWCbCqpkX9bvKOOTxeHxCNUzJ38CT1RKySa737
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3108;6:21dfIudRKhhWQh/o/gMqYB4mVmjgsimmVhiiPtFsbXO+OV8DcOQi5X6SGru7h01Z3tqO7ZJN3JLvs8rDhXlQMf71wQCf9etu1XciLGtol9INz1bqnxs5oHQDVXsz1lcgdCKZWd6NerfHkl7pGB5OYtD8z7mNeSYR5XOPOG9VK3zOEhL4W+J0i2y19rBITxZVn6P9UGEjmma0brCX15M/HcE9vWTycRcNSqF6VH9ek8GlULyfDeXaftIK0Z7KwLymh/u//aiMWpZ3npOeowIU5Kr2tAitSkOBDfThdM8SLKwlRgzYMYHxyyVutOS5d70D7ZkhE3ke2k81zJcVYM04kTn/uPiMWngms2oBKGy7A6TGbmQfwK5u3Y0mSDWLPBKW5EndZMUeC0/p0liQ7o4NFS7JaktJqgpZI8v88hs9KODLDBpDhVHuZCn1qFgGtUCPtATZAetUE29C6NGPCzi+8g==;5:3J67YKe9eBeT4CjcVmVBlrHB5rWJUqzSsCkLba0jlRB/f4gdMp2HpVxhlEhJI73l0bOkBBSC1m98NhHv+nfQU8Q6zHrAQGAx4l6plpPUQq1AGQDTwmx8gbVIiKHUV9Qm1SMhTWPK75h38k65Eh0TEVleWW0Mfh1j0Q+q6Ih8/G8=;24:wjv4E/FOHe+icVWCxz4HU3/JbftcFyjCzkN6JQfgDgUWYMis2k0qlzVVcElRRJh30tb5UuSy70ILSAo7OALwAitg/ZnGyhwq6Do5jpPHrNM=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM2PR03MB399;23:GKlx6sH/xOyyARdU2NSX/65ObtPJ5dGpSHKuj0tnIi?=
+ =?us-ascii?Q?sepMsZrt0mt68ctRTjEuJQzsldhZ0NljYC8hcrT6sGedAzDG4wVMt+ACt6hV?=
+ =?us-ascii?Q?KYsdF9564Vq3f0UES84yclgA3S/ec4Z5db2USi4HQNI69kyfVBe4Ivf5aEaG?=
+ =?us-ascii?Q?H8+MOW9vbFXRNEkyBT/DBICqVDMN+QbBEBzI3ET/BJ/V520Xru2w5RMjy+U4?=
+ =?us-ascii?Q?gmotamAeOtIo5Az9w1nrjUQ/nbc0nBSEh0g9aZIEcrE3Qdwaf3viU31kPNzl?=
+ =?us-ascii?Q?EtcgT/IBa3LgZIWthkV+3GOQfpB8q76uSerQ4eTEFpDfFvxbdBBpTyhJImZv?=
+ =?us-ascii?Q?Qffdsc4alqwQwbNzYen++S1/JGvXbSq3YOd1G532XB25locwWmsH8Cz8VjOi?=
+ =?us-ascii?Q?ziNpE+OBBqz6D31dKZcQuSdwkaZ/VUX91yzNNzlztwyE9yNWTcn0nyk+XqGI?=
+ =?us-ascii?Q?tdV7OQ55ROGDQPyBPzcDWsLjtU3CFqqeKnSS3um8iQEkqhGWT1ijwsTTCcdp?=
+ =?us-ascii?Q?gxvSfHvZAB6lWKr7J4KsnVP/V2WUaBhQgLomNT/hRGP0TRSA709IgZiVncPw?=
+ =?us-ascii?Q?LxO4hP6zU4EEkJUHv1Q+LmdqINWPf8MtJDd4afKVSx17T1lWTzrIp95X5eS4?=
+ =?us-ascii?Q?KW2LvUaV+LZLuzj4ZXNQuYfm6NCZtsBcGtD5MG+PRekD4pHMgkfcULmgJ/UU?=
+ =?us-ascii?Q?fxWelhL/VEEnY9pQhVGyeu1VQbe3efNuqEGypY5ax/dRQbjwgM4/UkV/TOKM?=
+ =?us-ascii?Q?fq+gREeLxDTsHQpTNRH4QRXhQa+07gfhI14VSnqBatcr6HDjbFGmNKdczjSD?=
+ =?us-ascii?Q?xfes2rWk9YV8tEIYOdYeCkGRYkdilPJuvMbU/IOaNnXUEUhYfrp9P2We2JlJ?=
+ =?us-ascii?Q?AQiqSEoMKsjgHhnZxcz3Ng3l4DEqcuyowndGSjam+dDr3lObMGC3CCvyiq42?=
+ =?us-ascii?Q?AXGQbYprGii18NDzf5jaaCXFkLIYWQj2wm3POKOiJKJJgjM3ilqnSXG99m6l?=
+ =?us-ascii?Q?0UYrTluBX+gTTbpf/XavZ8Bc4Z9W+M9D6gi0xHbRVRTbUxurb09JkNd9+OmK?=
+ =?us-ascii?Q?+tiV5N0Frb5bhxfm9HUsm12SNavBNp3L7e+yivKx/AGQsQu06ItZz+GjkwVj?=
+ =?us-ascii?Q?nNscJb9Jcy7B3pDBoHwf8zuyjNN1GkbR7/fyAVWksUlTXUx4Pw1L4CCTcofY?=
+ =?us-ascii?Q?0XKqBdPlBbs5IueyIqGOYCUvmKWq0E61nz?=
+X-Microsoft-Antispam-Message-Info: sFDS9kjPDxVu/P57x9cZygGIY+R69TaWqxOnw6pbGdqgfPU82bj+LKxvI18YbKhCPNxdIE9MokVuOVKw+wJv+vHC/8CX619+sk5YHjOFAJ55aUKLD5e1aJZFk2q7SsXf4Y6jCVAf62NonFo9TJDd8DXmNSZGHdObFrJ1PYMwWaQImWw0iI7VZzs+P2/avfe5
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB399;6:MHZ0CWsPztmuJ62CoofoaxEdjKXwVHpIz8Go/3Azx5G4pqGFIR5j7MlrfBX0uujcUJqARa+8gXLcph2RwW/7X30hS2G0cHDKJ5z53qWD+i0cwRjsvhQ7ybjIR/RaIJv3JPI2t6MrBsgqiYU4sY0WxcKCeebpicjKx63C+niScYM+XlLFzOhA1aOuiE4ejfvlYi146/kYh3SfjQ/YvvlW7AHhAaLrPjyWIqq9aKACgfq2Gly/ekhXsLG4JszngY19s2+J59UQJlrNSA23/3itaHDGu3TSpXYDeYAmEesSkkJynCBoMxoP36YyGNqP8IqI8SrOyutGcVuQKkNZRS77N3Ez6Z/rhA1wyZoQq/B9L9lwuIYcPMSCCNKeN0gmQaYeVY+gsLjKO8HCOPuMnLY4s/9Omr6lNHB0SsfOHg7q8ebwvi3UZp0okgyszdyMuMuLF94kd29FYtLwDy4iFCS7hw==;5:Wuy9FgbT2N6PDbR3Gw4WMoWpylkje0sZLqVmAH3EoS3Ed1Jl57c4zvBIH04AgC0pKFHy2D7FRCFN/q2sbiAJOzfXgvkia3kR+SI917Rv9Y+f83xxmjBYW5QmpTRDo0+jl7KM+X411A46yX/8VA1Xn3GXhg+23GXbtAtxcSMPAGI=;24:s0S/YEXpRMzN/AEZOu7DLR8cb3ral90ual3+xc4F84vQydjVRFhqL5KefAwq7GMsnRk6PtE4svzBN51+iUGq6lQeEjlTPqZuyG9/4POcK4I=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3108;7:niP4tOX/rFNMo+ewER/WIUvsNuis0r8LpSdyDBE7lQzN2tNmnFbqSS3wErlpV4IniRglg+3CE++Mr7f1lmqq5cyBPQivIryWLQ5Jj0K9NM0cP9JN1PCYPRP0HTW6EONXe/L7CM+/ZOOaNYaqXIQD9NsPqZIBc97w8Xaf1rLr5irQqn/CwzjHiZH/c2BiOLrXggb5UYeDV0RcRzrnIA3tZUZOI0pfVKkqnvAlq4VZ1fHdczq/WP0X6EAhz1q/s25Q
-X-MS-Office365-Filtering-Correlation-Id: 9eec331b-dfbe-4f36-2ff7-08d5c1f9e02a
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB399;7:yYdMi0l6/BTb5GMePWGX7r1lIIhoojxDvlCV7ZjJnyYr1Br7e1VcVdShjYn7VEEtvt1ndVRY+gagRueHLPUeJBCSKL9KPuocsuOdSOGHkFvPwFo0kHcicAK1tNDLs0FEuktyWitpt2Hem61RNhM03o4ogqJHD3a6ymTK4rr+PlZnzRvnp3b1XesgGamFIZo7F6Cli4BH+phgibrlmltR6oVpCEW91nR8cbl3nTQI9f2WbS/WmQHgEVbAUchvE/RS
+X-MS-Office365-Filtering-Correlation-Id: 230da214-0d2c-49fc-96e4-08d5c1f9e299
 X-OriginatorOrg: freescale.onmicrosoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 04:42:09.2955
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2018 04:42:13.3811
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9eec331b-dfbe-4f36-2ff7-08d5c1f9e02a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 230da214-0d2c-49fc-96e4-08d5c1f9e299
 X-MS-Exchange-CrossTenant-Id: 710a03f5-10f6-4d38-9ff4-a80b81da590d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=710a03f5-10f6-4d38-9ff4-a80b81da590d;Ip=[64.157.242.222];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB3108
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR03MB399
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to move some definitions in ptp_qoriq.c
-to the header file.
+This patch is to add a documentation for ptp_qoriq dt-bindings.
+The description for ptp_qoriq dt-bindings was actually moved
+from Documentation/devicetree/bindings/net/fsl-tsec-phy.txt,
+since gianfar_ptp driver was moved to ptp_qoriq driver.
 
 Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
- drivers/ptp/ptp_qoriq.c       |  132 +--------------------------------------
- include/linux/fsl/ptp_qoriq.h |  141 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 142 insertions(+), 131 deletions(-)
- create mode 100644 include/linux/fsl/ptp_qoriq.h
+ .../devicetree/bindings/net/fsl-tsec-phy.txt       |   68 +-------------------
+ .../devicetree/bindings/ptp/ptp-qoriq.txt          |   69 ++++++++++++++++++++
+ 2 files changed, 70 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
 
-diff --git a/drivers/ptp/ptp_qoriq.c b/drivers/ptp/ptp_qoriq.c
-index 5110cce..1468a16 100644
---- a/drivers/ptp/ptp_qoriq.c
-+++ b/drivers/ptp/ptp_qoriq.c
-@@ -28,139 +28,9 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/timex.h>
--#include <linux/io.h>
- #include <linux/slab.h>
+diff --git a/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt b/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
+index 79bf352..047bdf7 100644
+--- a/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
++++ b/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
+@@ -86,70 +86,4 @@ Example:
  
--#include <linux/ptp_clock_kernel.h>
--
--/*
-- * qoriq ptp registers
-- * Generated by regen.tcl on Thu May 13 01:38:57 PM CEST 2010
-- */
--struct qoriq_ptp_registers {
--	u32 tmr_ctrl;     /* Timer control register */
--	u32 tmr_tevent;   /* Timestamp event register */
--	u32 tmr_temask;   /* Timer event mask register */
--	u32 tmr_pevent;   /* Timestamp event register */
--	u32 tmr_pemask;   /* Timer event mask register */
--	u32 tmr_stat;     /* Timestamp status register */
--	u32 tmr_cnt_h;    /* Timer counter high register */
--	u32 tmr_cnt_l;    /* Timer counter low register */
--	u32 tmr_add;      /* Timer drift compensation addend register */
--	u32 tmr_acc;      /* Timer accumulator register */
--	u32 tmr_prsc;     /* Timer prescale */
--	u8  res1[4];
--	u32 tmroff_h;     /* Timer offset high */
--	u32 tmroff_l;     /* Timer offset low */
--	u8  res2[8];
--	u32 tmr_alarm1_h; /* Timer alarm 1 high register */
--	u32 tmr_alarm1_l; /* Timer alarm 1 high register */
--	u32 tmr_alarm2_h; /* Timer alarm 2 high register */
--	u32 tmr_alarm2_l; /* Timer alarm 2 high register */
--	u8  res3[48];
--	u32 tmr_fiper1;   /* Timer fixed period interval */
--	u32 tmr_fiper2;   /* Timer fixed period interval */
--	u32 tmr_fiper3;   /* Timer fixed period interval */
--	u8  res4[20];
--	u32 tmr_etts1_h;  /* Timestamp of general purpose external trigger */
--	u32 tmr_etts1_l;  /* Timestamp of general purpose external trigger */
--	u32 tmr_etts2_h;  /* Timestamp of general purpose external trigger */
--	u32 tmr_etts2_l;  /* Timestamp of general purpose external trigger */
--};
--
--/* Bit definitions for the TMR_CTRL register */
--#define ALM1P                 (1<<31) /* Alarm1 output polarity */
--#define ALM2P                 (1<<30) /* Alarm2 output polarity */
--#define FIPERST               (1<<28) /* FIPER start indication */
--#define PP1L                  (1<<27) /* Fiper1 pulse loopback mode enabled. */
--#define PP2L                  (1<<26) /* Fiper2 pulse loopback mode enabled. */
--#define TCLK_PERIOD_SHIFT     (16) /* 1588 timer reference clock period. */
--#define TCLK_PERIOD_MASK      (0x3ff)
--#define RTPE                  (1<<15) /* Record Tx Timestamp to PAL Enable. */
--#define FRD                   (1<<14) /* FIPER Realignment Disable */
--#define ESFDP                 (1<<11) /* External Tx/Rx SFD Polarity. */
--#define ESFDE                 (1<<10) /* External Tx/Rx SFD Enable. */
--#define ETEP2                 (1<<9) /* External trigger 2 edge polarity */
--#define ETEP1                 (1<<8) /* External trigger 1 edge polarity */
--#define COPH                  (1<<7) /* Generated clock output phase. */
--#define CIPH                  (1<<6) /* External oscillator input clock phase */
--#define TMSR                  (1<<5) /* Timer soft reset. */
--#define BYP                   (1<<3) /* Bypass drift compensated clock */
--#define TE                    (1<<2) /* 1588 timer enable. */
--#define CKSEL_SHIFT           (0)    /* 1588 Timer reference clock source */
--#define CKSEL_MASK            (0x3)
--
--/* Bit definitions for the TMR_TEVENT register */
--#define ETS2                  (1<<25) /* External trigger 2 timestamp sampled */
--#define ETS1                  (1<<24) /* External trigger 1 timestamp sampled */
--#define ALM2                  (1<<17) /* Current time = alarm time register 2 */
--#define ALM1                  (1<<16) /* Current time = alarm time register 1 */
--#define PP1                   (1<<7)  /* periodic pulse generated on FIPER1 */
--#define PP2                   (1<<6)  /* periodic pulse generated on FIPER2 */
--#define PP3                   (1<<5)  /* periodic pulse generated on FIPER3 */
--
--/* Bit definitions for the TMR_TEMASK register */
--#define ETS2EN                (1<<25) /* External trigger 2 timestamp enable */
--#define ETS1EN                (1<<24) /* External trigger 1 timestamp enable */
--#define ALM2EN                (1<<17) /* Timer ALM2 event enable */
--#define ALM1EN                (1<<16) /* Timer ALM1 event enable */
--#define PP1EN                 (1<<7) /* Periodic pulse event 1 enable */
--#define PP2EN                 (1<<6) /* Periodic pulse event 2 enable */
--
--/* Bit definitions for the TMR_PEVENT register */
--#define TXP2                  (1<<9) /* PTP transmitted timestamp im TXTS2 */
--#define TXP1                  (1<<8) /* PTP transmitted timestamp in TXTS1 */
--#define RXP                   (1<<0) /* PTP frame has been received */
--
--/* Bit definitions for the TMR_PEMASK register */
--#define TXP2EN                (1<<9) /* Transmit PTP packet event 2 enable */
--#define TXP1EN                (1<<8) /* Transmit PTP packet event 1 enable */
--#define RXPEN                 (1<<0) /* Receive PTP packet event enable */
--
--/* Bit definitions for the TMR_STAT register */
--#define STAT_VEC_SHIFT        (0) /* Timer general purpose status vector */
--#define STAT_VEC_MASK         (0x3f)
--
--/* Bit definitions for the TMR_PRSC register */
--#define PRSC_OCK_SHIFT        (0) /* Output clock division/prescale factor. */
--#define PRSC_OCK_MASK         (0xffff)
--
--
--#define DRIVER		"ptp_qoriq"
--#define DEFAULT_CKSEL	1
--#define N_EXT_TS	2
--#define REG_SIZE	sizeof(struct qoriq_ptp_registers)
--
--struct qoriq_ptp {
--	struct qoriq_ptp_registers __iomem *regs;
--	spinlock_t lock; /* protects regs */
--	struct ptp_clock *clock;
--	struct ptp_clock_info caps;
--	struct resource *rsrc;
--	int irq;
--	int phc_index;
--	u64 alarm_interval; /* for periodic alarm */
--	u64 alarm_value;
--	u32 tclk_period;  /* nanoseconds */
--	u32 tmr_prsc;
--	u32 tmr_add;
--	u32 cksel;
--	u32 tmr_fiper1;
--	u32 tmr_fiper2;
--};
--
--static inline u32 qoriq_read(unsigned __iomem *addr)
--{
--	u32 val;
--
--	val = ioread32be(addr);
--	return val;
--}
--
--static inline void qoriq_write(unsigned __iomem *addr, u32 val)
--{
--	iowrite32be(val, addr);
--}
-+#include <linux/fsl/ptp_qoriq.h>
+ * Gianfar PTP clock nodes
  
- /*
-  * Register access functions
-diff --git a/include/linux/fsl/ptp_qoriq.h b/include/linux/fsl/ptp_qoriq.h
+-General Properties:
+-
+-  - compatible   Should be "fsl,etsec-ptp"
+-  - reg          Offset and length of the register set for the device
+-  - interrupts   There should be at least two interrupts. Some devices
+-                 have as many as four PTP related interrupts.
+-
+-Clock Properties:
+-
+-  - fsl,cksel        Timer reference clock source.
+-  - fsl,tclk-period  Timer reference clock period in nanoseconds.
+-  - fsl,tmr-prsc     Prescaler, divides the output clock.
+-  - fsl,tmr-add      Frequency compensation value.
+-  - fsl,tmr-fiper1   Fixed interval period pulse generator.
+-  - fsl,tmr-fiper2   Fixed interval period pulse generator.
+-  - fsl,max-adj      Maximum frequency adjustment in parts per billion.
+-
+-  These properties set the operational parameters for the PTP
+-  clock. You must choose these carefully for the clock to work right.
+-  Here is how to figure good values:
+-
+-  TimerOsc     = selected reference clock   MHz
+-  tclk_period  = desired clock period       nanoseconds
+-  NominalFreq  = 1000 / tclk_period         MHz
+-  FreqDivRatio = TimerOsc / NominalFreq     (must be greater that 1.0)
+-  tmr_add      = ceil(2^32 / FreqDivRatio)
+-  OutputClock  = NominalFreq / tmr_prsc     MHz
+-  PulseWidth   = 1 / OutputClock            microseconds
+-  FiperFreq1   = desired frequency in Hz
+-  FiperDiv1    = 1000000 * OutputClock / FiperFreq1
+-  tmr_fiper1   = tmr_prsc * tclk_period * FiperDiv1 - tclk_period
+-  max_adj      = 1000000000 * (FreqDivRatio - 1.0) - 1
+-
+-  The calculation for tmr_fiper2 is the same as for tmr_fiper1. The
+-  driver expects that tmr_fiper1 will be correctly set to produce a 1
+-  Pulse Per Second (PPS) signal, since this will be offered to the PPS
+-  subsystem to synchronize the Linux clock.
+-
+-  Reference clock source is determined by the value, which is holded
+-  in CKSEL bits in TMR_CTRL register. "fsl,cksel" property keeps the
+-  value, which will be directly written in those bits, that is why,
+-  according to reference manual, the next clock sources can be used:
+-
+-  <0> - external high precision timer reference clock (TSEC_TMR_CLK
+-        input is used for this purpose);
+-  <1> - eTSEC system clock;
+-  <2> - eTSEC1 transmit clock;
+-  <3> - RTC clock input.
+-
+-  When this attribute is not used, eTSEC system clock will serve as
+-  IEEE 1588 timer reference clock.
+-
+-Example:
+-
+-	ptp_clock@24e00 {
+-		compatible = "fsl,etsec-ptp";
+-		reg = <0x24E00 0xB0>;
+-		interrupts = <12 0x8 13 0x8>;
+-		interrupt-parent = < &ipic >;
+-		fsl,cksel       = <1>;
+-		fsl,tclk-period = <10>;
+-		fsl,tmr-prsc    = <100>;
+-		fsl,tmr-add     = <0x999999A4>;
+-		fsl,tmr-fiper1  = <0x3B9AC9F6>;
+-		fsl,tmr-fiper2  = <0x00018696>;
+-		fsl,max-adj     = <659999998>;
+-	};
++Refer to Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
+diff --git a/Documentation/devicetree/bindings/ptp/ptp-qoriq.txt b/Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
 new file mode 100644
-index 0000000..b462d9e
+index 0000000..0f569d8
 --- /dev/null
-+++ b/include/linux/fsl/ptp_qoriq.h
-@@ -0,0 +1,141 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2010 OMICRON electronics GmbH
-+ * Copyright 2018 NXP
-+ */
-+#ifndef __PTP_QORIQ_H__
-+#define __PTP_QORIQ_H__
++++ b/Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
+@@ -0,0 +1,69 @@
++* Freescale QorIQ 1588 timer based PTP clock
 +
-+#include <linux/io.h>
-+#include <linux/ptp_clock_kernel.h>
++General Properties:
 +
-+/*
-+ * qoriq ptp registers
-+ * Generated by regen.tcl on Thu May 13 01:38:57 PM CEST 2010
-+ */
-+struct qoriq_ptp_registers {
-+	u32 tmr_ctrl;     /* Timer control register */
-+	u32 tmr_tevent;   /* Timestamp event register */
-+	u32 tmr_temask;   /* Timer event mask register */
-+	u32 tmr_pevent;   /* Timestamp event register */
-+	u32 tmr_pemask;   /* Timer event mask register */
-+	u32 tmr_stat;     /* Timestamp status register */
-+	u32 tmr_cnt_h;    /* Timer counter high register */
-+	u32 tmr_cnt_l;    /* Timer counter low register */
-+	u32 tmr_add;      /* Timer drift compensation addend register */
-+	u32 tmr_acc;      /* Timer accumulator register */
-+	u32 tmr_prsc;     /* Timer prescale */
-+	u8  res1[4];
-+	u32 tmroff_h;     /* Timer offset high */
-+	u32 tmroff_l;     /* Timer offset low */
-+	u8  res2[8];
-+	u32 tmr_alarm1_h; /* Timer alarm 1 high register */
-+	u32 tmr_alarm1_l; /* Timer alarm 1 high register */
-+	u32 tmr_alarm2_h; /* Timer alarm 2 high register */
-+	u32 tmr_alarm2_l; /* Timer alarm 2 high register */
-+	u8  res3[48];
-+	u32 tmr_fiper1;   /* Timer fixed period interval */
-+	u32 tmr_fiper2;   /* Timer fixed period interval */
-+	u32 tmr_fiper3;   /* Timer fixed period interval */
-+	u8  res4[20];
-+	u32 tmr_etts1_h;  /* Timestamp of general purpose external trigger */
-+	u32 tmr_etts1_l;  /* Timestamp of general purpose external trigger */
-+	u32 tmr_etts2_h;  /* Timestamp of general purpose external trigger */
-+	u32 tmr_etts2_l;  /* Timestamp of general purpose external trigger */
-+};
++  - compatible   Should be "fsl,etsec-ptp"
++  - reg          Offset and length of the register set for the device
++  - interrupts   There should be at least two interrupts. Some devices
++                 have as many as four PTP related interrupts.
 +
-+/* Bit definitions for the TMR_CTRL register */
-+#define ALM1P                 (1<<31) /* Alarm1 output polarity */
-+#define ALM2P                 (1<<30) /* Alarm2 output polarity */
-+#define FIPERST               (1<<28) /* FIPER start indication */
-+#define PP1L                  (1<<27) /* Fiper1 pulse loopback mode enabled. */
-+#define PP2L                  (1<<26) /* Fiper2 pulse loopback mode enabled. */
-+#define TCLK_PERIOD_SHIFT     (16) /* 1588 timer reference clock period. */
-+#define TCLK_PERIOD_MASK      (0x3ff)
-+#define RTPE                  (1<<15) /* Record Tx Timestamp to PAL Enable. */
-+#define FRD                   (1<<14) /* FIPER Realignment Disable */
-+#define ESFDP                 (1<<11) /* External Tx/Rx SFD Polarity. */
-+#define ESFDE                 (1<<10) /* External Tx/Rx SFD Enable. */
-+#define ETEP2                 (1<<9) /* External trigger 2 edge polarity */
-+#define ETEP1                 (1<<8) /* External trigger 1 edge polarity */
-+#define COPH                  (1<<7) /* Generated clock output phase. */
-+#define CIPH                  (1<<6) /* External oscillator input clock phase */
-+#define TMSR                  (1<<5) /* Timer soft reset. */
-+#define BYP                   (1<<3) /* Bypass drift compensated clock */
-+#define TE                    (1<<2) /* 1588 timer enable. */
-+#define CKSEL_SHIFT           (0)    /* 1588 Timer reference clock source */
-+#define CKSEL_MASK            (0x3)
++Clock Properties:
 +
-+/* Bit definitions for the TMR_TEVENT register */
-+#define ETS2                  (1<<25) /* External trigger 2 timestamp sampled */
-+#define ETS1                  (1<<24) /* External trigger 1 timestamp sampled */
-+#define ALM2                  (1<<17) /* Current time = alarm time register 2 */
-+#define ALM1                  (1<<16) /* Current time = alarm time register 1 */
-+#define PP1                   (1<<7)  /* periodic pulse generated on FIPER1 */
-+#define PP2                   (1<<6)  /* periodic pulse generated on FIPER2 */
-+#define PP3                   (1<<5)  /* periodic pulse generated on FIPER3 */
++  - fsl,cksel        Timer reference clock source.
++  - fsl,tclk-period  Timer reference clock period in nanoseconds.
++  - fsl,tmr-prsc     Prescaler, divides the output clock.
++  - fsl,tmr-add      Frequency compensation value.
++  - fsl,tmr-fiper1   Fixed interval period pulse generator.
++  - fsl,tmr-fiper2   Fixed interval period pulse generator.
++  - fsl,max-adj      Maximum frequency adjustment in parts per billion.
 +
-+/* Bit definitions for the TMR_TEMASK register */
-+#define ETS2EN                (1<<25) /* External trigger 2 timestamp enable */
-+#define ETS1EN                (1<<24) /* External trigger 1 timestamp enable */
-+#define ALM2EN                (1<<17) /* Timer ALM2 event enable */
-+#define ALM1EN                (1<<16) /* Timer ALM1 event enable */
-+#define PP1EN                 (1<<7) /* Periodic pulse event 1 enable */
-+#define PP2EN                 (1<<6) /* Periodic pulse event 2 enable */
++  These properties set the operational parameters for the PTP
++  clock. You must choose these carefully for the clock to work right.
++  Here is how to figure good values:
 +
-+/* Bit definitions for the TMR_PEVENT register */
-+#define TXP2                  (1<<9) /* PTP transmitted timestamp im TXTS2 */
-+#define TXP1                  (1<<8) /* PTP transmitted timestamp in TXTS1 */
-+#define RXP                   (1<<0) /* PTP frame has been received */
++  TimerOsc     = selected reference clock   MHz
++  tclk_period  = desired clock period       nanoseconds
++  NominalFreq  = 1000 / tclk_period         MHz
++  FreqDivRatio = TimerOsc / NominalFreq     (must be greater that 1.0)
++  tmr_add      = ceil(2^32 / FreqDivRatio)
++  OutputClock  = NominalFreq / tmr_prsc     MHz
++  PulseWidth   = 1 / OutputClock            microseconds
++  FiperFreq1   = desired frequency in Hz
++  FiperDiv1    = 1000000 * OutputClock / FiperFreq1
++  tmr_fiper1   = tmr_prsc * tclk_period * FiperDiv1 - tclk_period
++  max_adj      = 1000000000 * (FreqDivRatio - 1.0) - 1
 +
-+/* Bit definitions for the TMR_PEMASK register */
-+#define TXP2EN                (1<<9) /* Transmit PTP packet event 2 enable */
-+#define TXP1EN                (1<<8) /* Transmit PTP packet event 1 enable */
-+#define RXPEN                 (1<<0) /* Receive PTP packet event enable */
++  The calculation for tmr_fiper2 is the same as for tmr_fiper1. The
++  driver expects that tmr_fiper1 will be correctly set to produce a 1
++  Pulse Per Second (PPS) signal, since this will be offered to the PPS
++  subsystem to synchronize the Linux clock.
 +
-+/* Bit definitions for the TMR_STAT register */
-+#define STAT_VEC_SHIFT        (0) /* Timer general purpose status vector */
-+#define STAT_VEC_MASK         (0x3f)
++  Reference clock source is determined by the value, which is holded
++  in CKSEL bits in TMR_CTRL register. "fsl,cksel" property keeps the
++  value, which will be directly written in those bits, that is why,
++  according to reference manual, the next clock sources can be used:
 +
-+/* Bit definitions for the TMR_PRSC register */
-+#define PRSC_OCK_SHIFT        (0) /* Output clock division/prescale factor. */
-+#define PRSC_OCK_MASK         (0xffff)
++  <0> - external high precision timer reference clock (TSEC_TMR_CLK
++        input is used for this purpose);
++  <1> - eTSEC system clock;
++  <2> - eTSEC1 transmit clock;
++  <3> - RTC clock input.
 +
++  When this attribute is not used, eTSEC system clock will serve as
++  IEEE 1588 timer reference clock.
 +
-+#define DRIVER		"ptp_qoriq"
-+#define DEFAULT_CKSEL	1
-+#define N_EXT_TS	2
-+#define REG_SIZE	sizeof(struct qoriq_ptp_registers)
++Example:
 +
-+struct qoriq_ptp {
-+	struct qoriq_ptp_registers __iomem *regs;
-+	spinlock_t lock; /* protects regs */
-+	struct ptp_clock *clock;
-+	struct ptp_clock_info caps;
-+	struct resource *rsrc;
-+	int irq;
-+	int phc_index;
-+	u64 alarm_interval; /* for periodic alarm */
-+	u64 alarm_value;
-+	u32 tclk_period;  /* nanoseconds */
-+	u32 tmr_prsc;
-+	u32 tmr_add;
-+	u32 cksel;
-+	u32 tmr_fiper1;
-+	u32 tmr_fiper2;
-+};
-+
-+static inline u32 qoriq_read(unsigned __iomem *addr)
-+{
-+	u32 val;
-+
-+	val = ioread32be(addr);
-+	return val;
-+}
-+
-+static inline void qoriq_write(unsigned __iomem *addr, u32 val)
-+{
-+	iowrite32be(val, addr);
-+}
-+
-+#endif
++	ptp_clock@24e00 {
++		compatible = "fsl,etsec-ptp";
++		reg = <0x24E00 0xB0>;
++		interrupts = <12 0x8 13 0x8>;
++		interrupt-parent = < &ipic >;
++		fsl,cksel       = <1>;
++		fsl,tclk-period = <10>;
++		fsl,tmr-prsc    = <100>;
++		fsl,tmr-add     = <0x999999A4>;
++		fsl,tmr-fiper1  = <0x3B9AC9F6>;
++		fsl,tmr-fiper2  = <0x00018696>;
++		fsl,max-adj     = <659999998>;
++	};
 -- 
 1.7.1
