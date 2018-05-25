@@ -1,106 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936009AbeEYNfu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 09:35:50 -0400
-Received: from mout01.posteo.de ([185.67.36.141]:36266 "EHLO mout01.posteo.de"
+        id S935656AbeEYNmH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 09:42:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:60048 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935320AbeEYNfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 09:35:47 -0400
-Subject: Re: [PATCH v3 6/6] tty/serial: atmel: changed the driver to work
- under at91-usart mfd
-To: Radu Pirea <radu.pirea@microchip.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Cc: mark.rutland@arm.com, robh+dt@kernel.org, lee.jones@linaro.org,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com,
-        broonie@kernel.org
-References: <20180511103822.31698-1-radu.pirea@microchip.com>
- <20180511103822.31698-7-radu.pirea@microchip.com>
- <4a75568e-a52e-3872-f465-d707372a5c12@sorico.fr>
- <95a51c6c69bf1a2422f545ac1f06846ebcdb186a.camel@microchip.com>
- <4d70c73e-9db7-bdff-7414-04a4843acae3@sorico.fr>
- <391de5c1-45d7-4773-fe57-7f2bc747214b@microchip.com>
-From: Richard Genoud <richard.genoud@gmail.com>
-Message-ID: <f817c82a-95b6-afb3-e662-c481a877cf01@sorico.fr>
-Date: Fri, 25 May 2018 15:35:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S934397AbeEYNmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 09:42:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,440,1520924400";
+   d="scan'208";a="227212395"
+Date: Fri, 25 May 2018 19:10:23 +0530
+From: Shreyas NC <shreyas.nc@intel.com>
+To: Guenter Roeck <groeck@google.com>
+Cc: pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Patel, Chintan M" <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [alsa-devel] [RFC/RFT PATCH] ASoC: topology: Improve backwards
+ compatibility with v4 topology files
+Message-ID: <20180525134023.GJ3116@snc-desk>
+References: <20180522165842.233949-1-groeck@google.com>
+ <649b1c14-e440-0c89-a59c-dc663344faa3@linux.intel.com>
+ <CABXOdTdyWVtbWXR6O3VenwTezVLGvEfKuvH=Xz6e5D3np-ZQNw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <391de5c1-45d7-4773-fe57-7f2bc747214b@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABXOdTdyWVtbWXR6O3VenwTezVLGvEfKuvH=Xz6e5D3np-ZQNw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/2018 14:17, Radu Pirea wrote:
+> > > +struct skl_dfw_v4_pipe {
+> > > +     u8 pipe_id;
+> > > +     u8 pipe_priority;
+> > > +     u16 conn_type:4;
+> > > +     u16 rsvd:4;
+> > > +     u16 memory_pages:8;
+> > > +} __packed;
+> > > +
+> > > +struct skl_dfw_v4_module {
+> > > +     char uuid[SKL_UUID_STR_SZ];
+> > > +
+
+Any reason to not have this as u8?
+commit 09305da97c7808b900985526aa9198233f32fb37 had changed this to u8..
+
+<snip>
+
+> > > +
+> > > +     mconfig->params_fixup = dfw->params_fixup;
+> > > +     mconfig->converter = dfw->converter;
+> > > +     mconfig->m_type = dfw->module_type;
+> > > +     mconfig->vbus_id = dfw->vbus_id;
+> > > +     mconfig->module->resources[0].is_pages = dfw->mem_pages;
+> > > +
+> > > +     ret = skl_tplg_add_pipe_v4(dev, mconfig, skl, &dfw->pipe);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     mconfig->dev_type = dfw->dev_type;
+> > > +     mconfig->hw_conn_type = dfw->hw_conn_type;
+> > > +     mconfig->time_slot = dfw->time_slot;
+> > > +     mconfig->formats_config.caps_size = dfw->caps.caps_size;
+> 
+> > chromeos-3.18 has this:
+> >       if (dfw_config->is_loadable)
+> >           memcpy(mconfig->guid, dfw_config->uuid,
+> >                       ARRAY_SIZE(dfw_config->uuid));
+> 
+> > Is this needed here?
 > 
 > 
-> On 05/15/2018 04:14 PM, Richard Genoud wrote:
->> On 15/05/2018 14:47, Radu Pirea wrote:
->>> On Mon, 2018-05-14 at 12:57 +0200, Richard Genoud wrote:
->>>> After your patch, the DMA is not selected anymore:
->>>> atmel_usart_serial atmel_usart_serial.0.auto: TX channel not
->>>> available, switch to pio
->>>> instead of:
->>>> atmel_usart fffff200.serial: using dma1chan2 for tx DMA transfers
->>>>
->>> Fixed.
->>>> And the kernel doesn't log anymore on the serial console, despite the
->>>> loglevel=8
->>>> (after reverting this series, the kernel logs reappears on the serial
->>>> console)
->>>>
->>> Which serial are you using as console?
->> fffff200.serial (sam9g35-cm)
->> ( stdout-path = "serial0:115200n8"; in the DTS )
->>
->> With this series applied, all the kernel log goes on the screen.
->> Without, it goes on the serial debug.
->>
-> I tested again with archlinux arm and poky-linux4sam release as distros
-> and kernel log goes on the serial debug. Can you give me more details
-> like cmdline?
-I used kernel 4.17-rc6
-at91_dt_defconfig
-at91sam9g35ek.dtb
+> Direct memcpy doesn't work anymore since the uuid format is different. The
+> above is replaced
+> with (unconditional)
+> 
+>          ret = guid_parse(dfw->uuid, (guid_t *)mconfig->guid);
+>          if (ret)
+>                  return ret;
+> 
+> at the beginning of skl_tplg_get_pvt_data_v4(). The new code, as far as I
+> can see, loads
+> the uuid unconditionally if it finds SND_SOC_TPLG_TUPLE_TYPE_UUID. I wanted
+> to
+> be on the safe side and decided to do the same.
+> 
 
-Kernel command line: root=/dev/mtdblock1 rw rootfstype=ubifs ubi.mtd=1 root=ubi0:rootfs
-( the one from the DTS )
+In the new code, still does a memcpy(). So, I am not sure if I understand
+why memcpy() does not work.
 
-Detailed instructions:
+        if (uuid_tkn->token == SKL_TKN_UUID) {
+                memcpy(guid, &uuid_tkn->uuid, 16);
+                return 0;
+        }
 
-git checkout v4.17-rc6 
-ARCH=arm CROSS_COMPILE=path_to_my_Xchain/arm-linux- LOADADDR=0x20008000 make -j 12 at91_dt_defconfig
-ARCH=arm CROSS_COMPILE=path_to_my_Xchain/arm-linux- LOADADDR=0x20008000 make -j 12 uImage at91sam9g35ek.dtb
-cp arch/arm/boot/uImage arch/arm/boot/dts/at91sam9g35ek.dtb /tftpboot/
+Replied on the older mail since Pierre had a similar question as well.
 
->From uboot:
-tftpboot 0x20007FC0 uImage
-tftpboot 0x26400000 at91sam9g35ek.dtb
-bootm 0x20007FC0 - 0x26400000
+--Shreyas
 
-[ I see the logs on the serial debug ]
-
-git am \[PATCH\ v3\ [1-6]*
-
-ARCH=arm CROSS_COMPILE=path_to_my_Xchain/arm-linux- LOADADDR=0x20008000 make -j 12 uImage at91sam9g35ek.dtb
-cp arch/arm/boot/uImage arch/arm/boot/dts/at91sam9g35ek.dtb /tftpboot/
-
->From uboot:
-tftpboot 0x20007FC0 uImage
-tftpboot 0x26400000 at91sam9g35ek.dtb
-bootm 0x20007FC0 - 0x26400000
-
-[ I don't see the logs on the serial debug anymore ]
-
-
->>>> (tests done on sam9g35)
->>>>
->>> I will consider the rest of suggestions.
->>>> regards,
->>>> Richard
->>
+-- 
