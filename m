@@ -1,153 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967466AbeEYRpq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 13:45:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44486 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967349AbeEYRpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 13:45:45 -0400
-Date: Fri, 25 May 2018 20:45:42 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180525202300-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
- <20180523213703-mutt-send-email-mst@kernel.org>
- <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+        id S967562AbeEYRqz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 13:46:55 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33401 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967490AbeEYRqu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 13:46:50 -0400
+X-Google-Smtp-Source: ADUXVKIzzs3WnyzxBmE2QXvzs7dFt8mgCwkGWiBzSZktt1nhe9yxF1HWSs8VVppqQs431sj3hxuBhw==
+From: Ivan Bornyakov <brnkv.i1@gmail.com>
+To: 3chas3@gmail.com
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ivan Bornyakov <brnkv.i1@gmail.com>
+Subject: [PATCH] atm: zatm: fix memcmp casting
+Date: Fri, 25 May 2018 20:49:52 +0300
+Message-Id: <20180525174952.21965-1-brnkv.i1@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 08:27:04AM +1000, Benjamin Herrenschmidt wrote:
-> On Wed, 2018-05-23 at 21:50 +0300, Michael S. Tsirkin wrote:
-> 
-> > I re-read that discussion and I'm still unclear on the
-> > original question, since I got several apparently
-> > conflicting answers.
-> > 
-> > I asked:
-> > 
-> > 	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
-> > 	hypervisor side sufficient?
-> 
-> I thought I had replied to this...
-> 
-> There are a couple of reasons:
-> 
-> - First qemu doesn't know that the guest will switch to "secure mode"
-> in advance. There is no difference between a normal and a secure
-> partition until the partition does the magic UV call to "enter secure
-> mode" and qemu doesn't see any of it. So who can set the flag here ?
+memcmp() returns int, but eprom_try_esi() cast it to unsigned char. One
+can lose significant bits and get 0 from non-0 value returned by the
+memcmp().
 
-Not sure I understand. Just set the flag e.g. on qemu command line.
-I might be wrong, but these secure mode things usually
-a. require hypervisor side tricks anyway
+Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+---
+ drivers/atm/zatm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
-> vhost) go through the emulated MMIO for every access to the guest,
-> which adds additional overhead.
-> 
-> Cheers,
-> Ben.
-
-Well it's not supposed to be much slower for the static case.
-
-vhost has a cache so should be fine.
-
-A while ago Paolo implemented a translation cache which should be
-perfect for this case - most of the code got merged but
-never enabled because of stability issues.
-
-If all else fails, we could teach QEMU to handle the no-iommu case
-as if VIRTIO_F_IOMMU_PLATFORM was off.
-
-
-
-> > 
-> > 
-> > >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
-> > >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
-> > >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
-> > >  3 files changed, 27 insertions(+)
-> > > 
-> > > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-> > > index 8fa3945..056e578 100644
-> > > --- a/arch/powerpc/include/asm/dma-mapping.h
-> > > +++ b/arch/powerpc/include/asm/dma-mapping.h
-> > > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
-> > >  #define ARCH_HAS_DMA_MMAP_COHERENT
-> > >  
-> > >  #endif /* __KERNEL__ */
-> > > +
-> > > +#define platform_forces_virtio_dma platform_forces_virtio_dma
-> > > +
-> > > +struct virtio_device;
-> > > +
-> > > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
-> > >  #endif	/* _ASM_DMA_MAPPING_H */
-> > > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-> > > index 06f0296..a2ec15a 100644
-> > > --- a/arch/powerpc/platforms/pseries/iommu.c
-> > > +++ b/arch/powerpc/platforms/pseries/iommu.c
-> > > @@ -38,6 +38,7 @@
-> > >  #include <linux/of.h>
-> > >  #include <linux/iommu.h>
-> > >  #include <linux/rculist.h>
-> > > +#include <linux/virtio.h>
-> > >  #include <asm/io.h>
-> > >  #include <asm/prom.h>
-> > >  #include <asm/rtas.h>
-> > > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
-> > >  __setup("multitce=", disable_multitce);
-> > >  
-> > >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
-> > > +
-> > > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> > > +{
-> > > +	/*
-> > > +	 * On protected guest platforms, force virtio core to use DMA
-> > > +	 * MAP API for all virtio devices. But there can also be some
-> > > +	 * exceptions for individual devices like virtio balloon.
-> > > +	 */
-> > > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
-> > > +}
-> > 
-> > Isn't this kind of slow?  vring_use_dma_api is on
-> > data path and supposed to be very fast.
-> > 
-> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > index 21d464a..47ea6c3 100644
-> > > --- a/drivers/virtio/virtio_ring.c
-> > > +++ b/drivers/virtio/virtio_ring.c
-> > > @@ -141,8 +141,18 @@ struct vring_virtqueue {
-> > >   * unconditionally on data path.
-> > >   */
-> > >  
-> > > +#ifndef platform_forces_virtio_dma
-> > > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> > > +{
-> > > +	return false;
-> > > +}
-> > > +#endif
-> > > +
-> > >  static bool vring_use_dma_api(struct virtio_device *vdev)
-> > >  {
-> > > +	if (platform_forces_virtio_dma(vdev))
-> > > +		return true;
-> > > +
-> > >  	if (!virtio_has_iommu_quirk(vdev))
-> > >  		return true;
-> > >  
-> > > -- 
-> > > 2.9.3
+diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+index 9c9a22958717..a8d2eb0ceb8d 100644
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -1151,8 +1151,8 @@ static void eprom_get_byte(struct zatm_dev *zatm_dev, unsigned char *byte,
+ }
+ 
+ 
+-static unsigned char eprom_try_esi(struct atm_dev *dev, unsigned short cmd,
+-				   int offset, int swap)
++static int eprom_try_esi(struct atm_dev *dev, unsigned short cmd, int offset,
++			 int swap)
+ {
+ 	unsigned char buf[ZEPROM_SIZE];
+ 	struct zatm_dev *zatm_dev;
+-- 
+2.16.1
