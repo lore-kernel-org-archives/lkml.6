@@ -1,71 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967837AbeEYSO2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 14:14:28 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46219 "EHLO vern.gendns.com"
+        id S967831AbeEYSPL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 14:15:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967708AbeEYSMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 14:12:06 -0400
-From: David Lechner <david@lechnology.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] clk: davinci: pll-dm355: drop pll2_sysclk2
-Date: Fri, 25 May 2018 13:11:42 -0500
-Message-Id: <20180525181150.17873-2-david@lechnology.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
-References: <20180525181150.17873-1-david@lechnology.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S967518AbeEYSPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 14:15:09 -0400
+Date: Fri, 25 May 2018 14:15:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v3 14/14] tracing/selftest: Add test to test hist
+ trigger between kernel event and trace_marker
+Message-ID: <20180525141506.65150cee@gandalf.local.home>
+In-Reply-To: <20180523231559.fdc6c528b49ce9764a0ceda5@kernel.org>
+References: <20180516150012.135869655@goodmis.org>
+        <20180516150201.411972764@goodmis.org>
+        <20180523231559.fdc6c528b49ce9764a0ceda5@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes pll2_sysclk2 from the TI DM355 clock driver. This SoC
-doesn't have such a clock. Also, SYSCLK_ALWAYS_ENABLED is transferred
-to pll2_sysclk1 since it drives the DDR and doesn't have another
-mechanism to keep it on.
+On Wed, 23 May 2018 23:15:59 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Reported-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
-Acked-by: Sekhar Nori <nsekhar@ti.com>
+> On Wed, 16 May 2018 11:00:26 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > Add a test that tests a trigger that is initiated by a kernel event
+> > (sched_waking) and compared to a write to the trace_marker.
+> > 
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> >  .../trigger/trigger-trace-marker-synthetic.tc | 22 +++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> > index 3666dd6ab02a..b06996ecd5e0 100644
+> > --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> > @@ -31,6 +31,11 @@ if [ ! -d events/ftrace/print ]; then
+> >      exit_unsupported
+> >  fi
+> >  
+> > +if [ ! -d events/sched/sched_waking ]; then
+> > +    echo "event sched_waking is not supported"
+> > +    exit_unsupported
+> > +fi  
+> 
+> Hmm, this looks no good sign... Can you split this out to another testcase,
+> since this check is only for new test case below?
+> 
+
+You mean like this?
+
+-- Steve
+
+
+>From 9a34a00fb3c44e5adebb31e6e7d9e8c233797200 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Mon, 14 May 2018 15:47:07 -0400
+Subject: [PATCH] tracing/selftest: Add test to test hist trigger between
+ kernel event and trace_marker
+
+Add a test that tests a trigger that is initiated by a kernel event
+(sched_waking) and compared to a write to the trace_marker.
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/clk/davinci/pll-dm355.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ .../trigger-trace-marker-synthetic-kernel.tc       | 68 ++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
 
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-index 5345f8286c50..718d9bbbf30d 100644
---- a/drivers/clk/davinci/pll-dm355.c
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -62,8 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
- 
--SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
--SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
- 
- int dm355_pll2_init(struct device *dev, void __iomem *base)
- {
-@@ -71,8 +70,6 @@ int dm355_pll2_init(struct device *dev, void __iomem *base)
- 
- 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
- 
--	davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
--
- 	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
- 
- 	return 0;
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
+new file mode 100644
+index 000000000000..447df015c56f
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
+@@ -0,0 +1,68 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: trace_marker trigger - test histogram with synthetic event
++# flags:
++
++do_reset() {
++    reset_trigger
++    echo > set_event
++    echo > synthetic_events
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f synthetic_events ]; then
++    echo "synthetic events not supported"
++    exit_unsupported
++fi
++
++if [ ! -d events/ftrace/print ]; then
++    echo "event trace_marker is not supported"
++    exit_unsupported
++fi
++
++if [ ! -d events/sched/sched_waking ]; then
++    echo "event sched_waking is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/trigger ]; then
++    echo "event trigger is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/hist ]; then
++    echo "hist trigger is not supported"
++    exit_unsupported
++fi
++
++do_reset
++
++echo "Test histogram kernel event to trace_marker latency histogram trigger"
++
++echo 'latency u64 lat' > synthetic_events
++echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
++echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).latency($lat)' > events/ftrace/print/trigger
++echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
++sleep 1
++echo "hello" > trace_marker
++
++grep 'hitcount: *1$' events/ftrace/print/hist > /dev/null || \
++    fail "hist trigger did not trigger correct times on trace_marker"
++
++grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
++    fail "hist trigger did not trigger "
++
++do_reset
++
++exit 0
 -- 
-2.17.0
+2.13.6
