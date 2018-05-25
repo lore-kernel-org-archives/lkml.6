@@ -1,88 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936118AbeEYKOb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:14:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42372 "EHLO
+        id S936126AbeEYKPb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:15:31 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44092 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935638AbeEYKO2 (ORCPT
+        with ESMTP id S935638AbeEYKP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:14:28 -0400
-Date: Fri, 25 May 2018 11:14:23 +0100
+        Fri, 25 May 2018 06:15:29 -0400
+Date: Fri, 25 May 2018 11:14:55 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-        "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180525101423.GH4828@sirena.org.uk>
-References: <20180524060036.GI4249@localhost.localdomain>
- <20180524141427.GU4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
- <20180525072253.GC16888@localhost.localdomain>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the userns tree with the arm tree
+Message-ID: <20180525101455.GI4828@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5joxkA65nhhP20dL"
+        protocol="application/pgp-signature"; boundary="SqJDPA0lBYgnDFWV"
 Content-Disposition: inline
-In-Reply-To: <20180525072253.GC16888@localhost.localdomain>
-X-Cookie: Excellent day to have a rotten day.
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---5joxkA65nhhP20dL
+--SqJDPA0lBYgnDFWV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 25, 2018 at 10:22:53AM +0300, Matti Vaittinen wrote:
-> On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
+Hi Eric,
 
-> > > devm_regulator_regster()
+Yesterday's linux-next merge of the userns tree got a conflict in:
 
-> > Makes sense. Thanks
+  arch/arm/mm/fault.c
 
-> I was going to do=20
+between commit:
 
-> -       pmic =3D kzalloc(sizeof(struct bd71837_pmic), GFP_KERNEL);
-> +       pmic =3D devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
-> +                           GFP_KERNEL);
+  8d9267cedb9e1d8edb8 ("ARM: spectre-v2: harden user aborts in kernel space=
+")
 
-> and
+=66rom the arm tree and commit:
 
-> -               rdev =3D regulator_register(desc, &config);
-> +               rdev =3D devm_regulator_register(&pdev->dev, desc, &confi=
-g);
->=20
-> but is there now a race regarding freeing the pmic structure and
-> unregistering the regulator?
+  3eb0f5193b497083391 ("signal: Ensure every siginfo we send has all bits i=
+nitialized")
 
-Why?  devm_ stuff gets unwound in the opposite order to the order in
-which it was allocated.
+=66rom the userns tree.
 
---5joxkA65nhhP20dL
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/arm/mm/fault.c
+index 3b1ba003c4f9,32034543f49c..000000000000
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@@ -163,9 -163,8 +163,11 @@@ __do_user_fault(struct task_struct *tsk
+  {
+  	struct siginfo si;
+ =20
++ 	clear_siginfo(&si);
++=20
+ +	if (addr > TASK_SIZE)
+ +		harden_branch_predictor();
+ +
+  #ifdef CONFIG_DEBUG_USER
+  	if (((user_debug & UDBG_SEGV) && (sig =3D=3D SIGSEGV)) ||
+  	    ((user_debug & UDBG_BUS)  && (sig =3D=3D SIGBUS))) {
+
+--SqJDPA0lBYgnDFWV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsH4f8ACgkQJNaLcl1U
-h9DKDQf4uSA3vgrIWIUP402K0U92AnqIGE1tuwBS18LG8nCPC8ZFZ1eCX6TiGT4Y
-EZazDly8jgR+PHzV7EqWpfw9HwhYjrRbBzuAbC7JdtQQVRT1e71OPiE8DIS8j9Il
-3T7/T3olewntmTbmYB74HC/lkR/eLm7b4n26JNVZQE0UuP1YV6RPi3gAHlFGmZov
-wEPbl4JhzJoDL3Wwjh0YzU66ZwwvgpvKsS6xBITDUn23npchiK5zJ3ue++ZeW4P9
-UhudtTqJr7Z8m5LKoMnGFPYeo9m5TjOKBxoCmoQFvoCo7EykP1DXeITA4uXnex3L
-w/0IG0ArdpwwX/Wuq65wz7EcL4jn
-=OtVA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsH4h4ACgkQJNaLcl1U
+h9AN/Af8DHm8jUlDa1D16t8lQPh7+oWpmZJFoK2133n5iHDnmmrZdQDWmOARZPQn
+nv3NPGmzySF9ZCw/JGXSDqBGaV1LOPDclQxNKbHtT//2Dxvb6uGV2AlI4pi9mGbm
+Thoy7PDXSW5q0pUEumcFQBtGfJ4E7sSUfJTb52f3uqlf1TTPwOIo8vCf3IbKjoMu
+TLQecvhhZJedFJUHRyAXR44ZR76BLSvOFJRgT0mkC1Ww2Tp8DoKi/idZejth3umF
+PtXY2HhmPDPmrQrcFRm2MytvfE2R4UdYRIHN51z4k42L7V4dTVbZ3F29qzoWBLs2
+O9ysrEPXMcA8IQBr6g2Ckjp3muLbsw==
+=k9nm
 -----END PGP SIGNATURE-----
 
---5joxkA65nhhP20dL--
+--SqJDPA0lBYgnDFWV--
