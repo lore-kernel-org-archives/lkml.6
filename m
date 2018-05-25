@@ -1,25 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966211AbeEYKcj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:32:39 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33976 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966151AbeEYKcd (ORCPT
+        id S966072AbeEYKc3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:32:29 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46193 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965999AbeEYKcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:32:33 -0400
-X-Google-Smtp-Source: AB8JxZqdumhz0j9ld4lKHnGMYAS2tszvv3kIe/vdc0tkURiIwSdPNHgtHFl9W5N/TyYg+DBM8SU9Fw==
+        Fri, 25 May 2018 06:32:25 -0400
+X-Google-Smtp-Source: AB8JxZp0SK+bgAUWejpZ0oejyQmnVgfEUk80TOOv6nP2WY49lodNW/fJY7qzUbmnW3M5ag3emPkgTQ==
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
+        Mark Rutland <mark.rutland@arm.com>
 Cc: Viresh Kumar <viresh.kumar@linaro.org>,
         Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
         Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 05/15] arm: dts: uniphier: Add missing cooling device properties for CPUs
-Date: Fri, 25 May 2018 16:01:51 +0530
-Message-Id: <51ac4a5f0466aeed3f223663d9c34d6345b2a1f2.1527244201.git.viresh.kumar@linaro.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 02/15] arm: dts: ls1021a: Add missing cooling device properties for CPUs
+Date: Fri, 25 May 2018 16:01:48 +0530
+Message-Id: <abb38102bb031a5c0d3ef9adf58b4b04ad38c07c.1527244201.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
 In-Reply-To: <cover.1527244200.git.viresh.kumar@linaro.org>
 References: <cover.1527244200.git.viresh.kumar@linaro.org>
@@ -41,33 +39,17 @@ Add such missing properties.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/boot/dts/uniphier-pxs2.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/ls1021a.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-index debcbd15c24b..40ed15465095 100644
---- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-+++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-@@ -36,6 +36,7 @@
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
- 			operating-points-v2 = <&cpu_opp>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -46,6 +47,7 @@
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
- 			operating-points-v2 = <&cpu_opp>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -56,6 +58,7 @@
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
- 			operating-points-v2 = <&cpu_opp>;
+diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
+index c55d479971cc..f18490548c78 100644
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -84,6 +84,7 @@
+ 			device_type = "cpu";
+ 			reg = <0xf01>;
+ 			clocks = <&clockgen 1 0>;
 +			#cooling-cells = <2>;
  		};
  	};
