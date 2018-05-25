@@ -1,56 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936328AbeEYPLm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:11:42 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:26402 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S936185AbeEYPLk (ORCPT
+        id S936310AbeEYPPD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:15:03 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:52581 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936240AbeEYPO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:11:40 -0400
-X-IronPort-AV: E=Sophos;i="5.49,440,1520866800";
-   d="scan'208";a="280614258"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] gpio: dwapb: Fix rework support for 1 interrupt per port A GPIO
-Date: Fri, 25 May 2018 16:11:34 +0100
-Message-Id: <1527261094-10412-1-git-send-email-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 25 May 2018 11:14:58 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Eric Sandeen <sandeen@redhat.com>,
+        Martin Sebor <msebor@gmail.com>, Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>, Eric Sandeen <sandeen@sandeen.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] xfs: mark sb_fname as nonstring
+Date: Fri, 25 May 2018 17:14:09 +0200
+Message-Id: <20180525151421.2317292-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:lGmfJXCqxIb8Cn75/TvWJg7ZLDnEMwqMV8Gc8T4Rf0uEWJ1/vnM
+ FmJ33CHgJcYUDAzP5LCmrToA3rDEqe9O6hTQ8d8k7eXQJ7OS+UgejIo+3nm9bj+BO3zvjxk
+ 5ua3ZX3N1i0P0SOLgN4G2/cA0Y4UpG6Wcf56uYJ4OgnMbpxObZHRThPGCn3+Dj2FCqi3sS7
+ PDJKCX3O29CoryGSGT6cg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:O4XavvwYowE=:yMOLKXG5mT5vgrW09iC7iR
+ X/4HkD2oB4CRkoideHg08sCBLKZiokRMIM2iQk169srGhbY4rhqvgzjauGZZIz0mRscXP1dfb
+ EC1WHjqP/dWe2gzD9IvCmOwcCf3rS2RLGZm6swwzoEAN4FnIPBPsoQi375fDaJP1IzAdzicD1
+ qn2G01yTB8cb8nuduHFaR93Xq3aqwG20RKKv+zbKl7MNORrRqIFhOO1pBBc8Xzeqju837TCBm
+ QVHc8Gr6aJXtVW8p1kurymgZgyVlRl/LtWggSkRFAwFXVEOxtYKbLE1YZs7GVpmc0TnSSYawG
+ U/lIKSUIQ+Bv06RtlooWE7u5y6mzoQWGxmbLOo159EXubrwaRif01qNJ0a3wsgA5F/R1Ao4HQ
+ 2dLwSFcDLBXBQOfgeDEDCaGZ6j2j2gTNf/YhWQMYoDJLnBjekcUJ1pZ3+SFK5qF5lbM5Qkw+1
+ SoZMKNjbefHRd92ea33pdaJxtoaYgWXy1cZUjFeXfVXgJs1FkebP417mokNfLfR4W/JJnsmS7
+ 7G+E6u1IqV0Xu4L2yZvvJfLx3yNeNtxWREP3u5ILaiu8IvPzf9q91PSN+lTP7reKAIjte8Dv/
+ fls6K8z8wVA8ghbC6VcR6PKvUz78WTuNNEg6kFdlJmiWXtH4JfR+KQd5CTROBy05+NoRUMJO5
+ 7P/Va1Fd6H6xvWTvfapGxD1QtVtieHgrhzgTZkHTWaIiEx2L+DmSxPpxFZVB10HhSvkA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit da069d5d2b814d9887989dcdb29fb0202eac8b38 ("gpio: dwapb: Rework
-support for 1 interrupt per port A GPIO"), was an incremental patch that
-was supposed to provide the delta between v5 and v6 patch set for
-adding support for 1 interupt per port A GPIO. v5 was applied, then some
-other feedback came afterwards.
+gcc-8 reports two warnings for the newly added getlabel/setlabel code:
 
-However, in my haste I managed to drop the changes made to dwapb_port_property
-struct. This patch includes those missing changes.
+fs/xfs/xfs_ioctl.c: In function 'xfs_ioc_getlabel':
+fs/xfs/xfs_ioctl.c:1822:38: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+  strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
+                                      ^
+In function 'strncpy',
+    inlined from 'xfs_ioc_setlabel' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1863:2,
+    inlined from 'xfs_file_ioctl' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1918:10:
+include/linux/string.h:254:9: error: '__builtin_strncpy' output may be truncated copying 12 bytes from a string of length 12 [-Werror=stringop-truncation]
+  return __builtin_strncpy(p, q, size);
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+In both cases, part of the problem is that one of the strncpy()
+arguments is a fixed-length character array with zero-padding rather
+than a zero-terminated string. In the first one case, we also get an
+odd warning about sizeof-pointer-memaccess, which doesn't seem right
+(the sizeof is for an array that happens to be the same as the second
+strncpy argument).
+
+To work around the bogus warning, I use a plain 'XFSLABEL_MAX' for
+the strncpy() length when copying the label in getlabel. For setlabel(),
+using memcpy() with the correct length that is already known avoids
+the second warning and is slightly simpler.
+
+In a related issue, it appears that we accidentally skip the trailing
+\0 when copying a 12-character label back to user space in getlabel().
+Using the correct sizeof() argument here copies the extra character.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85602
+Fixes: f7664b31975b ("xfs: implement online get/set fs label")
+Cc: Eric Sandeen <sandeen@redhat.com>
+Cc: Martin Sebor <msebor@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/platform_data/gpio-dwapb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/xfs_ioctl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 5a52d69..419cfac 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -19,7 +19,7 @@ struct dwapb_port_property {
- 	unsigned int	idx;
- 	unsigned int	ngpio;
- 	unsigned int	gpio_base;
--	unsigned int	irq[32];
-+	int		irq[32];
- 	bool		has_irq;
- 	bool		irq_shared;
- };
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 84fbf164cbc3..eb79f2bc4dcc 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1819,12 +1819,12 @@ xfs_ioc_getlabel(
+ 	BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+ 
+ 	spin_lock(&mp->m_sb_lock);
+-	strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
++	strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
+ 	spin_unlock(&mp->m_sb_lock);
+ 
+ 	/* xfs on-disk label is 12 chars, be sure we send a null to user */
+ 	label[XFSLABEL_MAX] = '\0';
+-	if (copy_to_user(user_label, label, sizeof(sbp->sb_fname)))
++	if (copy_to_user(user_label, label, sizeof(label)))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -1860,7 +1860,7 @@ xfs_ioc_setlabel(
+ 
+ 	spin_lock(&mp->m_sb_lock);
+ 	memset(sbp->sb_fname, 0, sizeof(sbp->sb_fname));
+-	strncpy(sbp->sb_fname, label, sizeof(sbp->sb_fname));
++	memcpy(sbp->sb_fname, label, len);
+ 	spin_unlock(&mp->m_sb_lock);
+ 
+ 	/*
 -- 
-2.7.4
+2.9.0
