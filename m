@@ -1,141 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935778AbeEYCn6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:43:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36352 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751358AbeEYCnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:43:52 -0400
-Date: Fri, 25 May 2018 10:43:39 +0800
-From: Dave Young <dyoung@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        Cong Wang <xiyou.wangcong@gmail.com>, Neil Horman <nhorman@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Vivek Goyal <vgoyal@redhat.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Anton Vorontsov <avorontsov@ru.mvista.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>, dzickus@redhat.com,
-        bhe@redhat.com
-Subject: Re: [PATCH] kdump: add default crashkernel reserve kernel config
- options
-Message-ID: <20180525024339.GA2720@dhcp-128-65.nay.redhat.com>
-References: <20180521025337.GA4627@dhcp-128-65.nay.redhat.com>
- <20180521120215.117d963a7619eb0d1f54bced@linux-foundation.org>
- <20180523070641.GA1689@dhcp-128-65.nay.redhat.com>
- <877enucqr0.fsf@xmission.com>
- <20180524014234.GA2031@dhcp-128-65.nay.redhat.com>
- <87bmd53t0p.fsf@xmission.com>
+        id S1752819AbeEYCvr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:51:47 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34251 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751235AbeEYCvo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:51:44 -0400
+X-Google-Smtp-Source: AB8JxZq6dJOXMSHBlhx5WF9B5DgqnegtTNF7STmA4bDavdF6rDnfJ+5AJjSPvnAQ3yrnhRWthv3vGhJ9UDOxTzhbS0U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87bmd53t0p.fsf@xmission.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
+References: <20180524093159.286472249@linuxfoundation.org> <20180524180652.7bqyquqfe2nqdxfg@xps>
+ <20180524190806.GE31019@kroah.com> <CADtBP2B=Yb22dUjW-X-1OEGUvMX81gfpQ2FqFAaQUnExduwq7Q@mail.gmail.com>
+ <006a01d3f3c8$88c24c40$9a46e4c0$@toshiba.co.jp>
+From: Rafael Tinoco <rafael.tinoco@linaro.org>
+Date: Thu, 24 May 2018 23:51:02 -0300
+Message-ID: <CADtBP2CDjgB_xizZdoKVQjxTcs7uKQccR3Phkd-0aEcogv912Q@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
+        stable@vger.kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, linux@roeck-us.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Thank you Daniel! Will investigate those.
 
-On 05/24/18 at 11:41am, Eric W. Biederman wrote:
-> Dave Young <dyoung@redhat.com> writes:
-> 
-> > Hi Eric,
-> > On 05/23/18 at 10:53am, Eric W. Biederman wrote:
-> >> Dave Young <dyoung@redhat.com> writes:
-> >> 
-> >> > [snip]
-> >> >
-> >> >> >  
-> >> >> > +config CRASHKERNEL_DEFAULT_THRESHOLD_MB
-> >> >> > +	int "System memory size threshold for kdump memory default reserving"
-> >> >> > +	depends on CRASH_CORE
-> >> >> > +	default 0
-> >> >> > +	help
-> >> >> > +	  CRASHKERNEL_DEFAULT_MB is used as default crashkernel value if
-> >> >> > +	  the system memory size is equal or bigger than the threshold.
-> >> >> 
-> >> >> "the threshold" is rather vague.  Can it be clarified?
-> >> >> 
-> >> >> In fact I'm really struggling to understand the logic here....
-> >> >> 
-> >> >> 
-> >> >> > +config CRASHKERNEL_DEFAULT_MB
-> >> >> > +	int "Default crashkernel memory size reserved for kdump"
-> >> >> > +	depends on CRASH_CORE
-> >> >> > +	default 0
-> >> >> > +	help
-> >> >> > +	  This is used as the default kdump reserved memory size in MB.
-> >> >> > +	  crashkernel=X kernel cmdline can overwrite this value.
-> >> >> > +
-> >> >> >  config HAVE_IMA_KEXEC
-> >> >> >  	bool
-> >> >> >  
-> >> >> > @@ -143,6 +144,24 @@ static int __init parse_crashkernel_simp
-> >> >> >  	return 0;
-> >> >> >  }
-> >> >> >  
-> >> >> > +static int __init get_crashkernel_default(unsigned long long system_ram,
-> >> >> > +					  unsigned long long *size)
-> >> >> > +{
-> >> >> > +	unsigned long long sz = CONFIG_CRASHKERNEL_DEFAULT_MB;
-> >> >> > +	unsigned long long thres = CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB;
-> >> >> > +
-> >> >> > +	thres *= SZ_1M;
-> >> >> > +	sz *= SZ_1M;
-> >> >> > +
-> >> >> > +	if (sz >= system_ram || system_ram < thres) {
-> >> >> > +		pr_debug("crashkernel default size can not be used.\n");
-> >> >> > +		return -EINVAL;
-> >> >> 
-> >> >> In other words,
-> >> >> 
-> >> >> 	if (system_ram <= CONFIG_CRASHKERNEL_DEFAULT_MB ||
-> >> >> 	    system_ram < CONFIG_CRASHKERNEL_DEFAULT_THRESHOLD_MB)
-> >> >> 		fail;
-> >> >> 
-> >> >> yes?
-> >> >> 
-> >> >> How come?  What's happening here?  Perhaps a (good) explanatory comment
-> >> >> is needed.  And clearer Kconfig text.
-> >> >> 
-> >> >> All confused :(
-> >> >
-> >> > Andrew, I tuned it a bit, removed the check of sz >= system_ram, so if
-> >> > the size is too large and kernel can not find enough memory it will
-> >> > still fail in latter code.
-> >> >
-> >> > Is below version looks clearer?
-> >> 
-> >> What is the advantage of providing this in a kconfig option rather
-> >> than on the kernel command line as we can now?
-> >
-> > It is not a replacement of the cmdline, this can be a supplement to
-> > the crashkernel command line.  For a lot of common use cases if we have
-> > the auto reservation user just do not need to manually set the cmdline
-> > for example on a virtual machine and usual setup (except of the
-> > comlicate storage and very large machines).  The crashkernel=auto
-> > has been used for long time, Red Hat QE tested it on a lot of different
-> > lab machines and proved it works well.  Kdump usually just works so admin
-> > do little work to enable kdump.
-> >
-> > But the crashkernel=auto implementation has some drawbacks that is it
-> > is more like embed policy in the code and it is not flexible like a
-> > config option.
-> 
-> Have you considered using the builtin command line aka CONFIG_CMDLINE?
-> If as you are reserving a fixed amount of memory as your patch does that
-> should be sufficient, and doable without any kernel changes.
+Meanwhile, Greg, I referred to:
 
-Hmm, even in builtin cmdline it is same as a explict used crashkernel=.
-If we think from a distribution point of view, it will be hard to
-differentiate the builtin provided param and bootloader provided
-params. It looks odd to see two crashkernel= when `cat /proc/cmdline`,
-it will confuse people and there could cause compatibility problems
-because it is explict value visible in kernel cmdline. 
+time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
 
-Thanks
-Dave
+Since we're not using this type of clock on arm64's 4.4 kernel vdso
+functions. This commit's description calls attention for it to be
+responsible for fixing kselftest flacking tests, we wouldn't get that
+on 4.4 according to bellow:
+
+stable-rc-linux-4.14.y
+dbb236c1ceb6 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
+49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in clock_gettime() vDSO
+82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
+9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
+
+stable-rc-linux-4.16.y
+dbb236c1ceb6 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
+49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in clock_gettime() vDSO
+82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
+9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
+
+stable-rc-linux-4.4.y
+<none>
+
+stable-rc-linux-4.9.y
+99f66b5182a4 arm64/vdso: Fix nsec handling for CLOCK_MONOTONIC_RAW
+49eea433b326 arm64: Add support for CLOCK_MONOTONIC_RAW in clock_gettime() vDSO
+82e88ff1ea94 hrtimer: Revert CLOCK_MONOTONIC_RAW support
+9c808765e88e hrtimer: Add support for CLOCK_MONOTONIC_RAW
+
+Yet, the second fix was backported to all (including 4.4.y):
+
+stable-rc-linux-4.14.y
+3d88d56c5873 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+stable-rc-linux-4.16.y
+3d88d56c5873 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+stable-rc-linux-4.4.y
+7c8bd6e07430 time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+stable-rc-linux-4.9.y
+a53bfdda06ac time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond accounting
+
+Not sure you want to keep it in 4.4, thought it was worth mentioning it.
+
+Cheers.
+
+On 24 May 2018 at 22:34, Daniel Sangorrin
+<daniel.sangorrin@toshiba.co.jp> wrote:
+> Hello Rafael,
+>
+> The tests fcntl35 and fcntl35_64 should have go from FAIL to PASS.
+> https://www.spinics.net/lists/stable/msg239475.html
+>
+> Looking at
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a3d7cdea9/testrun/228569/suite/ltp-syscalls-tests/tests/
+> I see that these two tests (and other important tests as well) are being SKIPPED.
+>
+> By the way, I see that select04 FAILS in your case. But in my setup, select04 was working fine (x86_64) in 4.4.132. I will confirm that it still works in 4.4.133
+>
+> Thanks,
+> Daniel Sangorrin
+>
+>> -----Original Message-----
+>> From: stable-owner@vger.kernel.org [mailto:stable-owner@vger.kernel.org] On
+>> Behalf Of Rafael Tinoco
+>> Sent: Friday, May 25, 2018 5:32 AM
+>> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: linux-kernel@vger.kernel.org; shuah@kernel.org; patches@kernelci.org;
+>> lkft-triage@lists.linaro.org; ben.hutchings@codethink.co.uk;
+>> stable@vger.kernel.org; akpm@linux-foundation.org;
+>> torvalds@linux-foundation.org; linux@roeck-us.net
+>> Subject: Re: [PATCH 4.4 00/92] 4.4.133-stable review
+>>
+>> > > kernel: 4.4.133-rc1
+>> > > git repo:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+>> > > git branch: linux-4.4.y
+>> > > git commit: 915a3d7cdea9daa9e9fb6b855f10c1312e6910c4
+>> > > git describe: v4.4.132-93-g915a3d7cdea9
+>> > > Test details:
+>> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.132-93-g915a
+>> 3d7cdea9
+>> > >
+>> > >
+>> > > No regressions (compared to build v4.4.132-71-g180635995c36)
+>> >
+>> > It should have gotten better, as there was a fix in here for at least 2
+>> > LTP tests that we previously were not passing.  I don't know why you all
+>> > were not reporting that in the past, it took someone else randomly
+>> > deciding to run LTP to report it to me...
+>> >
+>> > Why did an improvement in results not show up?
+>>
+>> Are you referring to the CLOCK_MONOTONIC_RAW fix for the arm64 vDSO ?
+>> I think that CLOCK_MONOTONIC_RAW in VDSO wasn't backported to 4.4.y
+>> (commit 49eea433b326 in mainline) so this "fix" is changing the
+>> timekeeping sauce (that would fix MONOTONIC RAW) but not for 4.4.y in
+>> ARM64. Needs review though :\
+>
+>
+>
