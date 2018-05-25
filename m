@@ -1,73 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966480AbeEYLwp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 07:52:45 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45610 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966158AbeEYLwo (ORCPT
+        id S966491AbeEYMAx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 08:00:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38282 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966243AbeEYMAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 07:52:44 -0400
-X-Google-Smtp-Source: AB8JxZrMxVlp0EAMkt1nDZvpn+AUqCfquxF6axfCSQIV4cF0rjTCPI87rJ6PdgbbPNiOiQ9JUCYtNA==
-Date: Fri, 25 May 2018 13:52:40 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/sched/topology: Clarify root domain(s) debug
- string
-Message-ID: <20180525115240.GA678@localhost.localdomain>
-References: <20180524152936.17611-1-juri.lelli@redhat.com>
- <ba17ff9c-d687-2099-eec5-211fd195efd0@arm.com>
+        Fri, 25 May 2018 08:00:51 -0400
+Date: Fri, 25 May 2018 05:00:44 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Huaisheng Ye <yehs2007@gmail.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, vbabka@suse.cz, mgorman@techsingularity.net,
+        kstewart@linuxfoundation.org, alexander.levin@verizon.com,
+        gregkh@linuxfoundation.org, colyli@suse.de, chengnt@lenovo.com,
+        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, xen-devel@lists.xenproject.org,
+        linux-btrfs@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
+Subject: Re: [RFC PATCH v2 00/12] get rid of GFP_ZONE_TABLE/BAD
+Message-ID: <20180525120044.GA4649@bombadil.infradead.org>
+References: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
+ <20180522183728.GB20441@dhcp22.suse.cz>
+ <20180524051919.GA9819@bombadil.infradead.org>
+ <20180524122323.GH20441@dhcp22.suse.cz>
+ <20180524151818.GA21245@bombadil.infradead.org>
+ <20180524152943.GA11881@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ba17ff9c-d687-2099-eec5-211fd195efd0@arm.com>
+In-Reply-To: <20180524152943.GA11881@dhcp22.suse.cz>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/18 13:35, Dietmar Eggemann wrote:
-
-[...]
-
+On Thu, May 24, 2018 at 05:29:43PM +0200, Michal Hocko wrote:
+> > ie if we had more,
+> > could we solve our pain by making them more generic?
 > 
-> Looks good to me. Probably especially helpful when setting up exclusive
-> cpusets.
+> Well, if you have more you will consume more bits in the struct pages,
+> right?
+
+Not necessarily ... the zone number is stored in the struct page
+currently, so either two or three bits are used right now.  In my
+proposal, one can infer the zone of a page from its PFN, except for
+ZONE_MOVABLE.  So we could trim down to just one bit per struct page
+for 32-bit machines while using 3 bits on 64-bit machines, where there
+is plenty of space.
+
+> > it more-or-less sucks that the devices with 28-bit DMA limits are forced
+> > to allocate from the low 16MB when they're perfectly capable of using the
+> > low 256MB.
 > 
-> Juno with big and little exclusive cpuset:
-> 
-> ...
-> [  124.231333] CPU1 attaching sched-domain(s):
-> [  124.235482]  domain-0: span=1-2 level=MC
-> [  124.239382]   groups: 1:{ span=1 }, 2:{ span=2 }
-> [  124.243969] CPU2 attaching sched-domain(s):
-> [  124.248112]  domain-0: span=1-2 level=MC
-> [  124.251998]   groups: 2:{ span=2 }, 1:{ span=1 }
-> [  124.256585] root domain span: 1-2 (max cpu_capacity = 1024)
-> [  124.262150] CPU0 attaching sched-domain(s):
-> [  124.266307]  domain-0: span=0,3-5 level=MC
-> [  124.270366]   groups: 0:{ span=0 cap=446 }, 3:{ span=3 cap=446 }, 4:{
-> span=4 cap=446 }, 5:{ span=5 cap=446 }
-> [  124.280131] CPU3 attaching sched-domain(s):
-> [  124.284273]  domain-0: span=0,3-5 level=MC
-> [  124.288334]   groups: 3:{ span=3 cap=446 }, 4:{ span=4 cap=446 }, 5:{
-> span=5 cap=446 }, 0:{ span=0 cap=446 }
-> [  124.298096] CPU4 attaching sched-domain(s):
-> [  124.302239]  domain-0: span=0,3-5 level=MC
-> [  124.306298]   groups: 4:{ span=4 cap=446 }, 5:{ span=5 cap=446 }, 0:{
-> span=0 cap=446 }, 3:{ span=3 cap=446 }
-> [  124.316063] CPU5 attaching sched-domain(s):
-> [  124.320205]  domain-0: span=0,3-5 level=MC
-> [  124.324265]   groups: 5:{ span=5 cap=446 }, 0:{ span=0 cap=446 }, 3:{
-> span=3 cap=446 }, 4:{ span=4 cap=446 }
-> [  124.334031] root domain span: 0,3-5 (max cpu_capacity = 446)
+> Do we actually care all that much about those? If yes then we should
+> probably follow the ZONE_DMA (x86) path and use a CMA region for them.
+> I mean most devices should be good with very limited addressability or
+> below 4G, no?
 
-Yep, that's similar to how I noticed.
-
-Thanks for testing.
-
-Best,
-
-- Juri
+Sure.  One other thing I meant to mention was the media devices
+(TV capture cards and so on) which want a vmalloc_32() allocation.
+On 32-bit machines right now, we allocate from LOWMEM, when we really
+should be allocating from the 1GB-4GB region.  32-bit machines generally
+don't have a ZONE_DMA32 today.
