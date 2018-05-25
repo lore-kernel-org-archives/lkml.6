@@ -1,93 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755233AbeEYC5g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 24 May 2018 22:57:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755262AbeEYC42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 May 2018 22:56:28 -0400
-Date: Fri, 25 May 2018 04:56:25 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Christoph Lameter <cl@linux.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [GIT PULL] isolation: 1Hz residual tick offloading v4
-Message-ID: <20180525025624.GB22082@lerouge>
-References: <1516320140-13189-1-git-send-email-frederic@kernel.org>
- <20180124104608.038fb212@redhat.com>
- <20180129011024.GA2942@lerouge>
- <xunyvabfjylg.fsf@redhat.com>
+        id S1755340AbeEYC6B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 24 May 2018 22:58:01 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:42750 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755268AbeEYC5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 May 2018 22:57:52 -0400
+X-Google-Smtp-Source: ADUXVKIUI/68QbTx09EH6iz3axYTZpW093yzBeozVeesbbafEmGNvmWNWQZXPw3pfgXZLdq/mWVffA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xunyvabfjylg.fsf@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <b8eb41e576c4007d40223699eb951db32916b86a.camel@collabora.com> <25470133.K8n9sLBzRS@diego>
+In-Reply-To: <25470133.K8n9sLBzRS@diego>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 25 May 2018 11:57:37 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DwFiKJ-JyFkFqC-XzTyBeanbQWazw8OqT4XQRmwrNJrA@mail.gmail.com>
+Message-ID: <CAAFQd5DwFiKJ-JyFkFqC-XzTyBeanbQWazw8OqT4XQRmwrNJrA@mail.gmail.com>
+Subject: Re: [PATCH] drm/rockchip: vop: fix irq disabled after vop driver probed
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Ezequiel Garcia <ezequiel@collabora.com>,
+        Jeffy <jeffy.chen@rock-chips.com>, enric.balletbo@collabora.co.uk,
+        tomeu.vizoso@collabora.co.uk, Robin Murphy <robin.murphy@arm.com>,
+        Ricky Liang <jcliang@chromium.org>, simon xue <xxm@rock-chips.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4P2w6pM017115
 
-On Tue, May 22, 2018 at 10:10:19PM +0300, Yauheni Kaliuta wrote:
-> Hi, Frederic!
-> 
-> >>>>> On Mon, 29 Jan 2018 02:10:26 +0100, Frederic Weisbecker  wrote:
->  > On Wed, Jan 24, 2018 at 10:46:08AM -0500, Luiz Capitulino wrote:
-> 
-> [...]
-> 
->  >> Since the 1Hz tick offload worked for you, I must be missing
->  >> a way to disable this timer or the kernel is thinking my CPU
->  >> has unstable TSC (which it doesn't AFAIK).
-> 
->  > It's beyond the scope of this patchset but indeed that's
->  > right, I run my kernels with tsc=reliable because my CPUs
->  > don't have the TSC_RELIABLE flag.  That's the only way I found
->  > to shutdown the tick completely on my test machine, otherwise
->  > I keep having that clocksource watchdog.
-> 
-> [...]
-> 
-> Thanks, it helps. But I have accounting problem:
-> 
-> if I run user busy loop on the nohz cpu, the task accounting works
-> correctly (top shows the task takes 100% cpu), but cpu accounting is
-> wrong (cpu is 100% idle, in the per-core view as well).
-> 
-> If I understand correctly, the stats are updated by account_user_time()
-> -> task_group_account_field() but there is no call for it in case of
-> offloading (it is called from irqtime_account_process_tick,
-> account_process_tick, vtime_user_exit).
+Hi Heiko, Sandy,
 
-Ah I forgot about kcpustat accounting. I remember I wanted to fix that a
-few years ago but I forgot about it when I removed the last tick. That
-thing was lurking behind 1Hz.
+On Fri, May 25, 2018 at 7:07 AM Heiko Stübner <heiko@sntech.de> wrote:
 
-> 
-> Moreover, task_group_account_field() uses __this_cpu_add() which will be
-> wrong for offloading.
-> 
-> For testing I used kcpustat_cpu(task_cpu(p)) in
-> task_group_account_field() and added call account_user_time(curr, delta)
-> to the sched_tick_remote() what fixes it for me, but what would be the
-> proper fix?
+> From: Sandy Huang <hjc@rock-chips.com>
 
-Yeah unfortunately that's unsafe. Task accounting is not designed for remote
-update. You could race with an update from another CPU, especially the local
-updater.
+> The vop irq is shared between vop and iommu and irq probing in the
+> iommu driver moved to the probe function recently. This can in some
+> cases lead to a stall if the irq is triggered while the vop driver
+> still has it disabled.
 
-I fear we need to take the same approach than task cputime, which is using a seqcount
-for updates. Then the reader would fetch the kcpustat values + the delta
-vtime from the task executing.
+> But there is no real need to disable the irq, as the vop can simply
+> also track its enabled state and ignore irqs in that case.
 
-Things can get complicated once we dive into corner cases: CPUTIME_IRQ,
-CPUTIME_SOFTIRQ, and CPUTIME_STEAL. At least we don't need to care about CPUTIME_IDLE
-and CPUTIME_IOWAIT that have their own delta.
+> So remove the enable/disable handling and add appropriate condition
+> to the irq handler.
 
-I'm trying that.
+> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+> [added an actual commit message]
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> Hi Ezequiel,
 
-Thanks.
+> this patch came from a discussion I had with Rockchip people over the
+> iommu changes and resulting issues back in april, but somehow was
+> forgotten and not posted to the lists. Correcting that now.
+
+> So removing the enable/disable voodoo on the shared interrupt is
+> the preferred way.
+
+>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 13 ++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index 510cdf0..61493d4 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -549,8 +549,6 @@ static int vop_enable(struct drm_crtc *crtc)
+
+>          spin_unlock(&vop->reg_lock);
+
+> -       enable_irq(vop->irq);
+> -
+
+While this one should be okay (+/- my comment for vop_isr()), because the
+hardware is already powered on and clocked at this point...
+
+>          drm_crtc_vblank_on(crtc);
+
+>          return 0;
+> @@ -596,8 +594,6 @@ static void vop_crtc_atomic_disable(struct drm_crtc
+*crtc,
+
+>          vop_dsp_hold_valid_irq_disable(vop);
+
+> -       disable_irq(vop->irq);
+> -
+>          vop->is_enabled = false;
+
+...this one is more tricky. There might be an interrupt handler still
+running at this point. disable_irq() waits for any running handler to
+complete before disabling, so we might want to call synchronize_irq() after
+setting is_enabled to false.
+
+
+>          /*
+> @@ -1168,6 +1164,13 @@ static irqreturn_t vop_isr(int irq, void *data)
+>          int ret = IRQ_NONE;
+
+>          /*
+> +        * since the irq is shared with iommu, iommu irq is enabled
+before vop
+> +        * enable, so before vop enable we do nothing.
+> +        */
+> +       if (!vop->is_enabled)
+> +               return IRQ_NONE;
+
+This doesn't seem to be properly synchronized. We don't even call it under
+a spinlock, so no barriers are issued. Perhaps we should make this atomic_t?
+
+Best regards,
+Tomasz
