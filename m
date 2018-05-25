@@ -1,72 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967050AbeEYPfe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 11:35:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:53991 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964823AbeEYPfb (ORCPT
+        id S966994AbeEYPf2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 11:35:28 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40093 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966571AbeEYPdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 11:35:31 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Quentin Schulz <quentin.schulz@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: sun4i-gpadc: select REGMAP_IRQ
-Date: Fri, 25 May 2018 17:34:23 +0200
-Message-Id: <20180525153451.3164970-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:pf+DpC+2VVNcYBJE5bLedG1UeFj9+burEl27fLrQWhwNElLuMWk
- rG/YGCLe1gOSt0CNYcbfxUCq3/E5FnPAZ6VF02aDeH4oZmUiCkXjXrgT0Zp6jwSREDZh41E
- PDTbLSxw/fEEoWwGwPnl6f7zyQazkSoVSBpQ0nxRhuqzzA+VYyuMPiD8QGhZRFxIZ37ShhL
- r4rmZWho+qEqmR7n4TkIw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OMGm2bA05a0=:C4zON3c8IRgF0WCdQZ/WUB
- bR1Piw7ebAUULa7EVLn8nIrhNtoKKrfGcep4h/sYu5gIR+UTOnMtLb/P+Kfuqdjr+iF4tKU6j
- HqXdN8Y6nol3XH83ksD2ED/WZ45QvpgM5vkmdOvQWRVzNh0OhaVPuUNAhTbliEU29W9OSnI8P
- 4t4BaUROb/cIZOaAyua65nBcQsPes4v5ipfIx8zLnTOjwzKHTyc6ThBSMcDx6OL48/28Hbh7l
- 3oW62ZM3YToyVrvxJzGDSpXez8HtCUzVumbPdhRzoBRR+dAAhG4BmpaZwZURJfTHCH5dlBlJG
- KEghPVSkvmd/ogLAIcxvKb0Ldp0ju6jwyWTWy7Vg7yviXKCcEQqzEK7FNMre+ZYACB+PMP8V0
- VU7OzjbxbZMuziCCMA1CNP3DuPgn8f4QLzCqcNSACZLqe5ORePJ7itze/tYMdAkx5mPbjPFcV
- T0p4xj1+AaiEBps2w1vu5H4Ap+G0Fb5HMlLO23CNmW1+CPsq16Qo46CUgcfrLFJbm4sOeNoJN
- UOj4kpn1410a6UI3FBKGU5vYyYEEQliluuturJgtBA/hWU+Vfq3AtZL6JGTdPNTTPrMB05DOy
- k0d0Z5bBVtojkYWWbogswjigdWeldeSA9N2WH9Ipt6N00hnrEIPx2Z39iXpObjdLAghVotQ12
- wDiqqZEcDsK65pHkzfRZ9NsUQcGPs0NiSp2SWuhDtDYBxYkx9dCjiyLNrk2DsvZtbKwY=
+        Fri, 25 May 2018 11:33:49 -0400
+X-Google-Smtp-Source: ADUXVKJnBKXy9tEdmfHA/eGFcXFfbRWW/l5kVBCDxRUOSJIdZgsCgx2JShMqdhpYrMUb8dM28k1bBQ==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH 3/8] xen/grant-table: Allow allocating buffers suitable for DMA
+Date: Fri, 25 May 2018 18:33:26 +0300
+Message-Id: <20180525153331.31188-4-andr2000@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180525153331.31188-1-andr2000@gmail.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can't call regmap_irq_get_virq() unless the regmap-irq support
-is enabled:
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-drivers/iio/adc/sun4i-gpadc-iio.o: In function `sun4i_irq_init':
-sun4i-gpadc-iio.c:(.text+0x59c): undefined reference to `regmap_irq_get_virq'
+Extend grant table module API to allow allocating buffers that can
+be used for DMA operations and mapping foreign grant references
+on top of those.
+The resulting buffer is similar to the one allocated by the balloon
+driver in terms that proper memory reservation is made
+({increase|decrease}_reservation and VA mappings updated if needed).
+This is useful for sharing foreign buffers with HW drivers which
+cannot work with scattered buffers provided by the balloon driver,
+but require DMAable memory instead.
 
-I came across this in a randconfig build now, but I guess this is
-a much older problem that I simply never hit before because regmap_irq
-is usually enabled by one of the other drivers that need it.
-
-Fixes: d1caa9905538 ("iio: adc: add support for Allwinner SoCs ADC")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/iio/adc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/Kconfig       |  13 ++++
+ drivers/xen/grant-table.c | 124 ++++++++++++++++++++++++++++++++++++++
+ include/xen/grant_table.h |  25 ++++++++
+ 3 files changed, 162 insertions(+)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 9da79070357c..13922b595503 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -717,6 +717,7 @@ config SUN4I_GPADC
- 	depends on IIO
- 	depends on MFD_SUN4I_GPADC || MACH_SUN8I
- 	depends on THERMAL || !THERMAL_OF
-+	select REGMAP_IRQ
- 	help
- 	  Say yes here to build support for Allwinner (A10, A13 and A31) SoCs
- 	  GPADC. This ADC provides 4 channels which can be used as an ADC or as
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index e5d0c28372ea..3431fe210624 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -161,6 +161,19 @@ config XEN_GRANT_DEV_ALLOC
+ 	  to other domains. This can be used to implement frontend drivers
+ 	  or as part of an inter-domain shared memory channel.
+ 
++config XEN_GRANT_DMA_ALLOC
++	bool "Allow allocating DMA capable buffers with grant reference module"
++	depends on XEN
++	help
++	  Extends grant table module API to allow allocating DMA capable
++	  buffers and mapping foreign grant references on top of it.
++	  The resulting buffer is similar to one allocated by the balloon
++	  driver in terms that proper memory reservation is made
++	  ({increase|decrease}_reservation and VA mappings updated if needed).
++	  This is useful for sharing foreign buffers with HW drivers which
++	  cannot work with scattered buffers provided by the balloon driver,
++	  but require DMAable memory instead.
++
+ config SWIOTLB_XEN
+ 	def_bool y
+ 	select SWIOTLB
+diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+index d7488226e1f2..06fe6e7f639c 100644
+--- a/drivers/xen/grant-table.c
++++ b/drivers/xen/grant-table.c
+@@ -45,6 +45,9 @@
+ #include <linux/workqueue.h>
+ #include <linux/ratelimit.h>
+ #include <linux/moduleparam.h>
++#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
++#include <linux/dma-mapping.h>
++#endif
+ 
+ #include <xen/xen.h>
+ #include <xen/interface/xen.h>
+@@ -57,6 +60,7 @@
+ #ifdef CONFIG_X86
+ #include <asm/xen/cpuid.h>
+ #endif
++#include <xen/mem_reservation.h>
+ #include <asm/xen/hypercall.h>
+ #include <asm/xen/interface.h>
+ 
+@@ -811,6 +815,82 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
+ }
+ EXPORT_SYMBOL(gnttab_alloc_pages);
+ 
++#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
++/**
++ * gnttab_dma_alloc_pages - alloc DMAable pages suitable for grant mapping into
++ * @args: arguments to the function
++ */
++int gnttab_dma_alloc_pages(struct gnttab_dma_alloc_args *args)
++{
++	unsigned long pfn, start_pfn;
++	xen_pfn_t *frames;
++	size_t size;
++	int i, ret;
++
++	frames = kcalloc(args->nr_pages, sizeof(*frames), GFP_KERNEL);
++	if (!frames)
++		return -ENOMEM;
++
++	size = args->nr_pages << PAGE_SHIFT;
++	if (args->coherent)
++		args->vaddr = dma_alloc_coherent(args->dev, size,
++						 &args->dev_bus_addr,
++						 GFP_KERNEL | __GFP_NOWARN);
++	else
++		args->vaddr = dma_alloc_wc(args->dev, size,
++					   &args->dev_bus_addr,
++					   GFP_KERNEL | __GFP_NOWARN);
++	if (!args->vaddr) {
++		pr_err("Failed to allocate DMA buffer of size %zu\n", size);
++		ret = -ENOMEM;
++		goto fail_free_frames;
++	}
++
++	start_pfn = __phys_to_pfn(args->dev_bus_addr);
++	for (pfn = start_pfn, i = 0; pfn < start_pfn + args->nr_pages;
++			pfn++, i++) {
++		struct page *page = pfn_to_page(pfn);
++
++		args->pages[i] = page;
++		frames[i] = xen_page_to_gfn(page);
++		xenmem_reservation_scrub_page(page);
++	}
++
++	xenmem_reservation_va_mapping_reset(args->nr_pages, args->pages);
++
++	ret = xenmem_reservation_decrease(args->nr_pages, frames);
++	if (ret != args->nr_pages) {
++		pr_err("Failed to decrease reservation for DMA buffer\n");
++		xenmem_reservation_increase(ret, frames);
++		ret = -EFAULT;
++		goto fail_free_dma;
++	}
++
++	ret = gnttab_pages_set_private(args->nr_pages, args->pages);
++	if (ret < 0)
++		goto fail_clear_private;
++
++	kfree(frames);
++	return 0;
++
++fail_clear_private:
++	gnttab_pages_clear_private(args->nr_pages, args->pages);
++fail_free_dma:
++	xenmem_reservation_va_mapping_update(args->nr_pages, args->pages,
++					     frames);
++	if (args->coherent)
++		dma_free_coherent(args->dev, size,
++				  args->vaddr, args->dev_bus_addr);
++	else
++		dma_free_wc(args->dev, size,
++			    args->vaddr, args->dev_bus_addr);
++fail_free_frames:
++	kfree(frames);
++	return ret;
++}
++EXPORT_SYMBOL(gnttab_dma_alloc_pages);
++#endif
++
+ void gnttab_pages_clear_private(int nr_pages, struct page **pages)
+ {
+ 	int i;
+@@ -838,6 +918,50 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
+ }
+ EXPORT_SYMBOL(gnttab_free_pages);
+ 
++#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
++/**
++ * gnttab_dma_free_pages - free DMAable pages
++ * @args: arguments to the function
++ */
++int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
++{
++	xen_pfn_t *frames;
++	size_t size;
++	int i, ret;
++
++	gnttab_pages_clear_private(args->nr_pages, args->pages);
++
++	frames = kcalloc(args->nr_pages, sizeof(*frames), GFP_KERNEL);
++	if (!frames)
++		return -ENOMEM;
++
++	for (i = 0; i < args->nr_pages; i++)
++		frames[i] = page_to_xen_pfn(args->pages[i]);
++
++	ret = xenmem_reservation_increase(args->nr_pages, frames);
++	if (ret != args->nr_pages) {
++		pr_err("Failed to decrease reservation for DMA buffer\n");
++		ret = -EFAULT;
++	} else {
++		ret = 0;
++	}
++
++	xenmem_reservation_va_mapping_update(args->nr_pages, args->pages,
++					     frames);
++
++	size = args->nr_pages << PAGE_SHIFT;
++	if (args->coherent)
++		dma_free_coherent(args->dev, size,
++				  args->vaddr, args->dev_bus_addr);
++	else
++		dma_free_wc(args->dev, size,
++			    args->vaddr, args->dev_bus_addr);
++	kfree(frames);
++	return ret;
++}
++EXPORT_SYMBOL(gnttab_dma_free_pages);
++#endif
++
+ /* Handling of paged out grant targets (GNTST_eagain) */
+ #define MAX_DELAY 256
+ static inline void
+diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
+index de03f2542bb7..982e34242b9c 100644
+--- a/include/xen/grant_table.h
++++ b/include/xen/grant_table.h
+@@ -198,6 +198,31 @@ void gnttab_free_auto_xlat_frames(void);
+ int gnttab_alloc_pages(int nr_pages, struct page **pages);
+ void gnttab_free_pages(int nr_pages, struct page **pages);
+ 
++#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
++struct gnttab_dma_alloc_args {
++	/* Device for which DMA memory will be/was allocated. */
++	struct device *dev;
++	/*
++	 * If set then DMA buffer is coherent and write-combine otherwise.
++	 */
++	bool coherent;
++	/*
++	 * Number of entries in the @pages array, defines the size
++	 * of the DMA buffer.
++	 */
++	int nr_pages;
++	/* Array of pages @pages filled with pages of the DMA buffer. */
++	struct page **pages;
++	/* Virtual/CPU address of the DMA buffer. */
++	void *vaddr;
++	/* Bus address of the DMA buffer. */
++	dma_addr_t dev_bus_addr;
++};
++
++int gnttab_dma_alloc_pages(struct gnttab_dma_alloc_args *args);
++int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args);
++#endif
++
+ int gnttab_pages_set_private(int nr_pages, struct page **pages);
+ void gnttab_pages_clear_private(int nr_pages, struct page **pages);
+ 
 -- 
-2.9.0
+2.17.0
