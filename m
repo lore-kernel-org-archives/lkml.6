@@ -1,265 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935769AbeEYGrR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 02:47:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36741 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753271AbeEYGrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 02:47:15 -0400
-Subject: Re: [PATCH] f2fs: let fstrim issue discard commands in lower priority
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180525051031.36443-1-jaegeuk@kernel.org>
- <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
- <20180525061851.GA38511@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <3e8dc0b1-acfd-a38d-8977-c54cec9d2dc3@huawei.com>
-Date: Fri, 25 May 2018 14:47:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S935826AbeEYGsu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 02:48:50 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:57842 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbeEYGsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 02:48:47 -0400
+Subject: Re: scsi/qla2xxx: BUG_ON(blk_queued_rq(req) is triggered in
+ blk_finish_request
+To: "Madhani, Himanshu" <Himanshu.Madhani@cavium.com>
+Cc: Dept-Eng QLA2xxx Upstream <qla2xxx-upstream@cavium.com>,
+        "jthumshirn@suse.de" <jthumshirn@suse.de>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Junxiao Bi <junxiao.bi@oracle.com>
+References: <66FCA66D-62D6-4B3F-A41D-BF50082E7572@cavium.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <104bc709-fd06-0465-2eaa-44154f9df437@oracle.com>
+Date: Fri, 25 May 2018 14:48:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180525061851.GA38511@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <66FCA66D-62D6-4B3F-A41D-BF50082E7572@cavium.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8903 signatures=668700
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805250083
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/5/25 14:18, Jaegeuk Kim wrote:
-> On 05/25, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2018/5/25 13:10, Jaegeuk Kim wrote:
->>> The fstrim gathers huge number of large discard commands, and tries to issue
->>> without IO awareness, which results in long user-perceive IO latencies on
->>> READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
->>> seconds due to long discard latency.
->>>
->>> This patch limits the maximum size to 2MB per candidate, and check IO congestion
->>> when issuing them to disk.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/f2fs.h    |   4 +-
->>>  fs/f2fs/segment.c | 123 +++++++++++++++++++++++-----------------------
->>>  2 files changed, 64 insertions(+), 63 deletions(-)
->>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 3bddf13794d9..75ae7fc86ae8 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -178,6 +178,7 @@ enum {
->>>  
->>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
->>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
->>> +#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
->>>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
->>>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
->>>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
->>> @@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
->>>  static inline bool __is_discard_mergeable(struct discard_info *back,
->>>  						struct discard_info *front)
->>>  {
->>> -	return back->lstart + back->len == front->lstart;
->>> +	return (back->lstart + back->len == front->lstart) &&
->>> +		(back->len + front->len < DEF_MAX_DISCARD_LEN);
->>>  }
->>>  
->>>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 843fc2e6d41c..ba996d4091bc 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->>>  	return 0;
->>>  }
->>>  
->>> -static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
->>> -					struct discard_policy *dpolicy,
->>> -					unsigned int start, unsigned int end)
->>> -{
->>> -	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->>> -	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
->>> -	struct rb_node **insert_p = NULL, *insert_parent = NULL;
->>> -	struct discard_cmd *dc;
->>> -	struct blk_plug plug;
->>> -	int issued;
->>> -
->>> -next:
->>> -	issued = 0;
->>> -
->>> -	mutex_lock(&dcc->cmd_lock);
->>> -	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->>> -
->>> -	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
->>> -					NULL, start,
->>> -					(struct rb_entry **)&prev_dc,
->>> -					(struct rb_entry **)&next_dc,
->>> -					&insert_p, &insert_parent, true);
->>> -	if (!dc)
->>> -		dc = next_dc;
->>> -
->>> -	blk_start_plug(&plug);
->>> -
->>> -	while (dc && dc->lstart <= end) {
->>> -		struct rb_node *node;
->>> -
->>> -		if (dc->len < dpolicy->granularity)
->>> -			goto skip;
->>> -
->>> -		if (dc->state != D_PREP) {
->>> -			list_move_tail(&dc->list, &dcc->fstrim_list);
->>> -			goto skip;
->>> -		}
->>> -
->>> -		__submit_discard_cmd(sbi, dpolicy, dc);
->>> -
->>> -		if (++issued >= dpolicy->max_requests) {
->>> -			start = dc->lstart + dc->len;
->>> -
->>> -			blk_finish_plug(&plug);
->>> -			mutex_unlock(&dcc->cmd_lock);
->>> -
->>> -			schedule();
->>> -
->>> -			goto next;
->>> -		}
->>> -skip:
->>> -		node = rb_next(&dc->rb_node);
->>> -		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
->>> -
->>> -		if (fatal_signal_pending(current))
->>> -			break;
->>> -	}
->>> -
->>> -	blk_finish_plug(&plug);
->>> -	mutex_unlock(&dcc->cmd_lock);
->>> -}
->>> -
->>>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>  					struct discard_policy *dpolicy)
->>>  {
->>> @@ -2397,6 +2335,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  	return has_candidate;
->>>  }
->>>  
->>> +static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
->>> +					struct discard_policy *dpolicy,
->>> +					unsigned int start, unsigned int end)
->>> +{
->>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->>> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
->>> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
->>> +	struct discard_cmd *dc;
->>> +	struct blk_plug plug;
->>> +	int issued;
->>
->> unsigned int cur = start;
->>
->>> +
->>> +next:
->>> +	issued = 0;
->>> +
->>> +	mutex_lock(&dcc->cmd_lock);
->>> +	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->>> +
->>> +	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
->>> +					NULL, start,
->>
->> NULL, cur,
->>
->>> +					(struct rb_entry **)&prev_dc,
->>> +					(struct rb_entry **)&next_dc,
->>> +					&insert_p, &insert_parent, true);
->>> +	if (!dc)
->>> +		dc = next_dc;
->>> +
->>> +	blk_start_plug(&plug);
->>> +
->>> +	while (dc && dc->lstart <= end) {
->>> +		struct rb_node *node;
->>> +
->>> +		if (dc->len < dpolicy->granularity)
->>> +			goto skip;
->>> +
->>> +		if (dc->state != D_PREP) {
->>> +			list_move_tail(&dc->list, &dcc->fstrim_list);
->>> +			goto skip;
->>> +		}
->>> +
->>> +		__submit_discard_cmd(sbi, dpolicy, dc);
->>> +
->>> +		if (++issued >= dpolicy->max_requests) {
->>> +			start = dc->lstart + dc->len;
->>
->> cur = dc->lstart + dc->len;
->>
->>> +
->>> +			blk_finish_plug(&plug);
->>> +			mutex_unlock(&dcc->cmd_lock);
->>> +			__wait_all_discard_cmd(sbi, dpolicy);
->>
->> How about moving __wait_discard_cmd_range(sbi, &dpolicy, start, end) from
->> f2fs_trim_fs here, this can avoid wait non-fstrim discard commands.
+Hi Himanshu
 
-Sorry, in fstrim, __wait_all_discard_cmd already just wait discard commands
-which are issued by itself.
+I'm afraid I cannot provide you the vmcore file, it is from our customer.
+If any information needed in the vmcore, I could provide with you.
 
-> 
-> The key here is to avoid any outstanding discard commands.
+In this scene, there are two contexts:
+1. the irq context, scsi_done() from qla2x00_sp_compl()
+2. the kworker context, scmd_eh_abort_handler which invokes the
+qla2xxx_eh_abort()
 
-You want to wait all in-flight discard commands? So we need to wrap one other
-function for that.
+Let's see the irq context.
+scsi_done() will invoke the blk_complete_request().
+In common case, the REQ_ATOM_COMPLETE　should have been set by
+blk_rq_check_expired() when the request was confirmed timeout. So
+__blk_complete_request() will not be invoked.
 
-static void wait_all_discard_cmd(struct f2fs_sb_info *sbi,
-				struct discard_policy *dpolicy, bool wait_all)
-{
-	if (dpolicy->type == DPOLICY_FSTRIM || wait_all)
-		__wait_discard_cmd_range(sbi, dpolicy, dcc->fstrim_list);
-	if (dpolicy->type != DPOLICY_FSTRIM || wait_all)
-		__wait_discard_cmd_range(sbi, dpolicy, dcc->wait_list);
+On the other hand, in the kworker context, scmd_eh_abort_handler() will do some
+other things on this aborted request.
+
+rtn = scsi_try_to_abort_cmd(sdev->host->hostt, scmd);
+if (rtn == SUCCESS) {
+    set_host_byte(scmd, DID_TIME_OUT)
+    if (scsi_host_eh_past_deadline(sdev->host)) {
+        >>>>
+    } else if (!scsi_noretry_cmd(scmd) &&
+        (++scmd->retries <= scmd->allowed)) {
+        scsi_queue_insert(scmd, SCSI_MLQUEUE_EH_RETRY)
+    }>>>>
+>>>>
 }
+The host type of the result will set to DID_TIME_OUT. scsi_noretry_cmd() will
+return false and scsi_queue_insert() will be invoked, finally the
+blk_requeue_request().
 
+blk_requeue_request() will clear the REQ_ATOM_COMPLETE and queue the request on
+request_queue->queue_head.
+
+There could be a race between these two contexts:
+what if the blk_clear_rq_complete() in kworker context is invoked before the
+blk_mark_rq_complete() in irq context ?
+
+BLK_SOFTIRQ will be raised by __blk_complete_request() in irq context. Then the
+scsi_softirq_done() will be invoked. At the moment, the request has been
+requeued by kworker context and scsi_cmnd->result is set 0. On the cpu of the
+irq context, the blk_finish_request() will be invoked finally, and panic comes
+up due to  BUG_ON(blk_queued_rq(req)
+
+Here is the dmesg log.
+[4937745.180213] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:5:5 --  1 2002.
+[4937745.180655] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:4:73 --  0 2002.
+[4937745.181059] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:5:5 --  1 2002.
+[4937745.181514] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:4:73 --  0 2002.
+[4937745.181636] ------------[ cut here ]------------
+[4937745.181900] kernel BUG at block/blk-core.c:2601!
+[4937745.182095] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:5:5 --  1 2002.
+[4937745.182338] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:4:73 --  1 2002.
+[4937745.183046] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:5:5 --  1 2002.
+[4937745.183213] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:4:73 --  1 2002.
+[4937745.183844] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:5:5 --  1 2002.
+[4937745.184038] qla2xxx [0000:92:00.1]-801c:4: Abort command issued nexus=4:4:73 --  1 2002.
+[4937745.184919] invalid opcode: 0000 [#1] SMP
+[4937745.185173] Modules linked in: ...
+[4937745.188237] CPU: 18 PID: 0 Comm: swapper/18 Not tainted 4.1.12-61.1.9.el6uek.x86_64 #2
+[4937745.188691] Hardware name: Oracle Corporation SUN BLADE X4-2B  /BD,ASSY,PCB,X4-2B     , BIOS 28010200 01/16/2014
+[4937745.189157] task: ffff880227fa9c00 ti: ffff880227fc0000 task.ti: ffff880227fc0000
+[4937745.189607] RIP: e030:[<ffffffff812ed130>]  [<ffffffff812ed130>] blk_finish_request+0xd0/0xe0
+[4937745.190104] RSP: e02b:ffff88022d483d78  EFLAGS: 00010083
+[4937745.190339] RAX: 0000000000000280 RBX: ffff8801c4508730 RCX: 0000000000000280
+[4937745.190791] RDX: 0000000000008b5a RSI: 0000000000000000 RDI: ffff8801c4508730
+[4937745.191246] RBP: ffff88022d483d88 R08: 0000000000000000 R09: 0000000000004000
+[4937745.191694] R10: 000000000000000b R11: 0000000000007ffe R12: 0000000000000000
+[4937745.192153] R13: ffff88022374d000 R14: ffff880184cb88c0 R15: ffff8800536ccc90
+[4937745.197930] FS:  0000000000000000(0000) GS:ffff88022d480000(0000) knlGS:ffff88022d480000
+[4937745.198389] CS:  e033 DS: 002b ES: 002b CR0: 0000000080050033
+[4937745.198627] CR2: 00000000016e1f18 CR3: 000000010caed000 CR4: 0000000000042660
+[4937745.199080] Stack:
+[4937745.199309]  ffff8801c4508730 0000000000000000 ffff88022d483dd8 ffffffff814ac82f
+[4937745.199790]  ffff88022d483da8 0000000000000280 ffff88022d483dd8 ffff880184cb88c0
+[4937745.200290]  ffff8801c4508730 0000000000000000 0000000000000000 0000000000000000
+[4937745.200745] Call Trace:
+[4937745.200968]  <IRQ>
+[4937745.200986]  [<ffffffff814ac82f>] scsi_end_request+0x11f/0x1e0
+[4937745.201422]  [<ffffffff814accfc>] scsi_io_completion+0xac/0x500
+[4937745.201651]  [<ffffffff814a3bb0>] scsi_finish_command+0xf0/0x150
+[4937745.201875]  [<ffffffff814ad2ba>] scsi_softirq_done+0x14a/0x160
+[4937745.202103]  [<ffffffff812f3c66>] blk_done_softirq+0x86/0xa0
+[4937745.202333]  [<ffffffff8108879a>] __do_softirq+0x10a/0x350
+[4937745.202558]  [<ffffffff81088b55>] irq_exit+0x125/0x130
+[4937745.202787]  [<ffffffff813e5a89>] xen_evtchn_do_upcall+0x39/0x50
+[4937745.203020]  [<ffffffff816cce5e>] xen_do_hypervisor_callback+0x1e/0x40
+[4937745.203247]  <EOI>
+[4937745.203263]  [<ffffffff810013aa>] ? xen_hypercall_sched_op+0xa/0x20
+[4937745.203703]  [<ffffffff810013aa>] ? xen_hypercall_sched_op+0xa/0x20
+[4937745.203930]  [<ffffffff8100baf0>] ? xen_safe_halt+0x10/0x20
+[4937745.204160]  [<ffffffff81022abe>] ? default_idle+0x1e/0x100
+[4937745.204387]  [<ffffffff8102210f>] ? arch_cpu_idle+0xf/0x20
+[4937745.204614]  [<ffffffff810c8f25>] ? cpuidle_idle_call+0x135/0x1e0
+[4937745.204841]  [<ffffffff810c91c5>] ? cpu_idle_loop+0x1f5/0x220
+[4937745.205070]  [<ffffffff810c920b>] ? cpu_startup_entry+0x1b/0x70
+[4937745.205294]  [<ffffffff810c924f>] ? cpu_startup_entry+0x5f/0x70
+[4937745.205524]  [<ffffffff81013a5a>] ? cpu_bringup_and_idle+0x2a/0x40
+[4937745.205749] Code: 89 de e8 a4 14 00 00 e9 6b ff ff ff 83 7b 48 01 0f 85
+78 ff ff ff 48 8b 7b 30 48 81 c7 98 01 00 00 e8 75 6b ea ff e9 63 ff ff ff
+<0f> 0b eb fe 66 66 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 48
+[4937745.206811] RIP  [<ffffffff812ed130>] blk_finish_request+0xd0/0xe0
+[4937745.207046]  RSP <ffff88022d483d78>
+[4937745.207687] ---[ end trace 0b43a57bdab9464f ]---
+[4937745.207693] ------------[ cut here ]------------
+
+On 05/25/2018 02:30 PM, Madhani, Himanshu wrote:
+> Hi Jianchao, 
 > 
->>
->>> +			congestion_wait(BLK_RW_ASYNC, HZ/50);
->>
->> What about using msleep(dpolicy->min_interval) instead?
+> Do you have any debug logs collected for us to look at this in details. 
 > 
-> We need to detect congestion in block layer.
-
-OK.
-
-Thanks,
-
+> Can you provide me crash/vmlinux/modules for details analysis. 
 > 
 > Thanks,
+> himanshu
 > 
->>
->> Thanks,
->>
->>> +			goto next;
->>> +		}
->>> +skip:
->>> +		node = rb_next(&dc->rb_node);
->>> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
->>> +
->>> +		if (fatal_signal_pending(current))
->>> +			break;
->>> +	}
->>> +
->>> +	blk_finish_plug(&plug);
->>> +	mutex_unlock(&dcc->cmd_lock);
->>> +}
->>> +
->>>  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
->>>  {
->>>  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
->>>
+> ﻿On 5/24/18, 6:49 AM, "Madhani, Himanshu" <Himanshu.Madhani@cavium.com> wrote:
 > 
-> .
+>     
+>     > On May 24, 2018, at 2:09 AM, jianchao.wang <jianchao.w.wang@oracle.com> wrote:
+>     > 
+>     > Hi Himanshu
+>     > 
+>     > Thanks god get response from your side finally :)
+>     > I get qla2xxx-upstream@qlogic.com from the maintainer information of driver/scsi/qla2xxx
+>     > Looks like it should be modified.
+>     > 
+>     Sorry for delay. I do try to respond quickly to any emails received on that ID as well. 
+>     
+>     We’ll keep it for now and I’ll look into updating it, if needed. 
+>     
+>     > Thanks
+>     > Jianchao
+>     > 
+>     > On 05/24/2018 12:21 PM, Madhani, Himanshu wrote:
+>     >> Hi, 
+>     >> 
+>     >> Yes. We'll look at this issue. 
+>     >> 
+>     >> Thanks,
+>     >> Himanshu  
+>     >> 
+>     >>> -----Original Message-----
+>     >>> From: jianchao.wang [mailto:jianchao.w.wang@oracle.com]
+>     >>> Sent: Wednesday, May 23, 2018 6:51 PM
+>     >>> To: Dept-Eng QLA2xxx Upstream <qla2xxx-upstream@cavium.com>; Madhani,
+>     >>> Himanshu <Himanshu.Madhani@cavium.com>; jthumshirn@suse.de
+>     >>> Cc: linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org;
+>     >>> jejb@linux.vnet.ibm.com; Martin K. Petersen <martin.petersen@oracle.com>;
+>     >>> Junxiao Bi <junxiao.bi@oracle.com>
+>     >>> Subject: Re: BUG: scsi/qla2xxx: BUG_ON(blk_queued_rq(req) is triggered in
+>     >>> blk_finish_request
+>     >>> 
+>     >>> Would anyone please take a look at this ?
+>     >>> 
+>     >>> Thanks in advance
+>     >>> Jianchao
+>     >>> 
+>     >>> On 05/23/2018 11:55 AM, jianchao.wang wrote:
+>     >>>> 
+>     >>>> 
+>     >>>> Hi all
+>     >>>> 
+>     >>>> Our customer met a panic triggered by BUG_ON in blk_finish_request.
+>     >>>>> From the dmesg log, the BUG_ON was triggered after command abort
+>     >>> occurred many times.
+>     >>>> There is a race condition in the following scenario.
+>     >>>> 
+>     >>>> cpu A                                   cpu B
+>     >>>> kworker                                 interrupt
+>     >>>> 
+>     >>>> scmd_eh_abort_handler()
+>     >>>>  -> scsi_try_to_abort_cmd()
+>     >>>>    -> qla2xxx_eh_abort()
+>     >>>>      -> qla2x00_eh_wait_on_command()   qla2x00_status_entry()
+>     >>>>                                          -> qla2x00_sp_compl()
+>     >>>>                                            -> qla2x00_sp_free_dma()
+>     >>>>  -> scsi_queue_insert()
+>     >>>>    -> __scsi_queue_insert()
+>     >>>>      -> blk_requeue_request()
+>     >>>>        -> blk_clear_rq_complete()
+>     >>>>                                            -> scsi_done
+>     >>>>                                              -> blk_complete_request
+>     >>>>                                                -> blk_mark_rq_complete
+>     >>>>          -> elv_requeue_request()              -> __blk_complete_request()
+>     >>>>            -> __elv_add_request()
+>     >>>>            // req will be queued here
+>     >>>>                                                    BLK_SOFTIRQ
+>     >>>>                                                    scsi_softirq_done()
+>     >>>>                                                      -> scsi_finish_command()
+>     >>>>                                                        -> scsi_io_completion()
+>     >>>>                                                          -> scsi_end_request()
+>     >>>>                                                            -> blk_finish_request()  //
+>     >>> BUG_ON(blk_queued_rq(req)) !!!
+>     >>>> 
+>     >>>> The issue will not be triggered most of time, because the request is marked as
+>     >>> complete by timeout path.
+>     >>>> So the scsi_done from qla2x00_sp_compl does nothing.
+>     >>>> But as the scenario above, if the complete state has been cleaned by
+>     >>> blk_requeue_request, we will get
+>     >>>> the request both requeued and completed, and then
+>     >>> BUG_ON(blk_queued_rq(req)) in blk_finish_request comes up.
+>     >>>> 
+>     >>>> Is there any solution for this in qla2xxx driver side ?
+>     >>>> 
+>     >>>> Thanks
+>     >>>> Jianchao
+>     >>>> 
+>     >>>> 
+>     
+>     Thanks,
+>     - Himanshu
+>     
+>     
 > 
