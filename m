@@ -1,87 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965763AbeEYKBp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:01:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58220 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965570AbeEYKBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:01:42 -0400
-Date: Fri, 25 May 2018 11:01:37 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, catalin.marinas@arm.com,
-        christoffer.dall@arm.com, drjones@redhat.com, marc.zyngier@arm.com,
-        ramana.radhakrishnan@arm.com, will.deacon@arm.com,
-        awallis@codeaurora.org
-Subject: Re: [PATCHv4 05/10] arm64/cpufeature: detect pointer authentication
-Message-ID: <20180525100137.mte5z2sonob3vffq@lakrids.cambridge.arm.com>
-References: <20180503132031.25705-1-mark.rutland@arm.com>
- <20180503132031.25705-6-mark.rutland@arm.com>
- <4c057e99-61a9-7f75-664d-1f16f2631766@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c057e99-61a9-7f75-664d-1f16f2631766@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S966018AbeEYKCz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:02:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45930 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965681AbeEYKBo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:01:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7D1F610D6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, collinsd@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 3/6] soc: qcom: rpmpd: Add support for get/set performance state
+Date: Fri, 25 May 2018 15:31:18 +0530
+Message-Id: <20180525100121.28214-4-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180525100121.28214-1-rnayak@codeaurora.org>
+References: <20180525100121.28214-1-rnayak@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 09:48:28AM +0100, Suzuki K Poulose wrote:
-> 
-> Mark,
-> 
-> On 03/05/18 14:20, Mark Rutland wrote:
-> > So that we can dynamically handle the presence of pointer authentication
-> > functionality, wire up probing code in cpufeature.c.
-> > 
-> >  From ARMv8.3 onwards, ID_AA64ISAR1 is no longer entirely RES0, and now
-> > has four fields describing the presence of pointer authentication
-> > functionality:
-> > 
-> > * APA - address authentication present, using an architected algorithm
-> > * API - address authentication present, using an IMP DEF algorithm
-> > * GPA - generic authentication present, using an architected algorithm
-> > * GPI - generic authentication present, using an IMP DEF algorithm
-> > 
-> > For the moment we only care about address authentication, so we only
-> > need to check APA and API. It is assumed that if all CPUs support an IMP
-> > DEF algorithm, the same algorithm is used across all CPUs.
-> > 
-> > Note that when we implement KVM support, we will also need to ensure
-> > that CPUs have uniform support for GPA and GPI.
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > ---
-> >   arch/arm64/include/asm/cpucaps.h |  5 ++++-
-> >   arch/arm64/kernel/cpufeature.c   | 47 ++++++++++++++++++++++++++++++++++++++++
-> >   2 files changed, 51 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> > index bc51b72fafd4..9dcb4d1b14f5 100644
-> > --- a/arch/arm64/include/asm/cpucaps.h
-> > +++ b/arch/arm64/include/asm/cpucaps.h
-> > @@ -48,7 +48,10 @@
-> >   #define ARM64_HAS_CACHE_IDC			27
-> >   #define ARM64_HAS_CACHE_DIC			28
-> >   #define ARM64_HW_DBM				29
-> > +#define ARM64_HAS_ADDRESS_AUTH_ARCH		30
-> > +#define ARM64_HAS_ADDRESS_AUTH_IMP_DEF		31
-> 
-> Where are these caps used ? I couldn't find anything in the series
-> that uses them. Otherwise looks good to me.
+Add support for the .set_performace_state() and .opp_to_performance_state()
+callbacks in the rpmpd driver.
 
-Those were consumed by KVM support, which needed to detect if CPUs had
-mismatched support. Currently they're just placeholders as I need a
-cpucap value for the separate IMP-DEF / architected probing cases.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/soc/qcom/rpmpd.c | 46 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-I *could* get rid of those and just have the ARM64_HAS_ADDRESS_AUTH case
-log "Address authentication", but I wanted to have separate messages for
-IMP-DEF vs architected.
-
-Thanks,
-Mark.
+diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+index df6427d43414..ff3d910f388c 100644
+--- a/drivers/soc/qcom/rpmpd.c
++++ b/drivers/soc/qcom/rpmpd.c
+@@ -14,6 +14,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_opp.h>
+ #include <linux/soc/qcom/smd-rpm.h>
+ 
+ #include <dt-bindings/mfd/qcom-rpm.h>
+@@ -29,6 +30,8 @@
+ #define KEY_ENABLE		0x6e657773 /* swen */
+ #define KEY_FLOOR_CORNER	0x636676   /* vfc */
+ 
++#define MAX_RPMPD_STATE		6
++
+ #define DEFINE_RPMPD_CORN_SMPA(_platform, _name, _active, r_id)		\
+ 	static struct rpmpd _platform##_##_active;			\
+ 	static struct rpmpd _platform##_##_name = {			\
+@@ -222,6 +225,47 @@ static int rpmpd_power_off(struct generic_pm_domain *domain)
+ 	return ret;
+ }
+ 
++static int rpmpd_set_performance(struct generic_pm_domain *domain,
++			     unsigned int state)
++{
++	int ret = 0;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	if (state > MAX_RPMPD_STATE)
++		goto out;
++
++	pd->corner = state;
++
++	if (!pd->enabled && (pd->key != KEY_FLOOR_CORNER))
++		goto out;
++
++	ret = rpmpd_aggregate_corner(pd);
++
++out:
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
++					  struct dev_pm_opp *opp)
++{
++	struct device_node *np;
++	unsigned int corner = 0;
++
++	np = dev_pm_opp_get_of_node(opp);
++	if (of_property_read_u32(np, "qcom,level", &corner)) {
++		pr_err("%s: missing 'qcom,level' property\n", __func__);
++		return 0;
++	}
++
++	of_node_put(np);
++
++	return corner;
++}
++
+ static int rpmpd_probe(struct platform_device *pdev)
+ {
+ 	int i;
+@@ -259,6 +303,8 @@ static int rpmpd_probe(struct platform_device *pdev)
+ 		rpmpds[i]->rpm = rpm;
+ 		rpmpds[i]->pd.power_off = rpmpd_power_off;
+ 		rpmpds[i]->pd.power_on = rpmpd_power_on;
++		rpmpds[i]->pd.set_performance_state = rpmpd_set_performance;
++		rpmpds[i]->pd.opp_to_performance_state = rpmpd_get_performance;
+ 		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
+ 
+ 		data->domains[i] = &rpmpds[i]->pd;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
