@@ -1,100 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966100AbeEYKsR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 06:48:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59408 "EHLO
+        id S966203AbeEYKsl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 06:48:41 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59426 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965255AbeEYKsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 06:48:14 -0400
-Subject: Re: [PATCH v4 02/26] arm64: cpufeature: Add cpufeature for IRQ
- priority masking
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com
-References: <1527241772-48007-1-git-send-email-julien.thierry@arm.com>
- <1527241772-48007-3-git-send-email-julien.thierry@arm.com>
- <e44df12f-9868-ae94-4623-ec221d72d783@arm.com>
- <b0673d7e-9a1e-7dcb-5322-c05fe0821349@arm.com>
- <c4e5f8ff-ecde-7b88-8a37-39e47ef22917@arm.com>
- <54ff6127-928d-99a3-a6e9-59799628ca87@arm.com>
- <3f0afa54-8e98-798e-68dc-bbbc74bd9e19@arm.com>
-From: Julien Thierry <julien.thierry@arm.com>
-Message-ID: <acf4b44f-d5c7-c31a-7f47-cfbe1049eadc@arm.com>
-Date: Fri, 25 May 2018 11:48:10 +0100
+        id S965255AbeEYKsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 06:48:39 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 1/2] cpufreq: Add Kryo CPU scaling driver
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        Ilia Lin <ilialin@codeaurora.org>
+References: <1527174220-13244-1-git-send-email-ilialin@codeaurora.org>
+ <1527174220-13244-2-git-send-email-ilialin@codeaurora.org>
+ <20180525035412.3jjocp7ccmv5u2il@vireshk-i7>
+ <DF878CBB-304A-4116-83D5-DF6BCEB7C131@codeaurora.org>
+ <20180525040536.njrdqjn376oehw2b@vireshk-i7>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <3aa2ced3-ad14-e02b-6702-c0fd1c48513b@arm.com>
+Date: Fri, 25 May 2018 11:48:33 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <3f0afa54-8e98-798e-68dc-bbbc74bd9e19@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180525040536.njrdqjn376oehw2b@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 25/05/18 11:41, Suzuki K Poulose wrote:
-> On 25/05/18 11:39, Julien Thierry wrote:
+On 25/05/18 05:05, Viresh Kumar wrote:
+> On 25-05-18, 07:00, Ilia Lin wrote:
 >>
 >>
->> On 25/05/18 11:36, Suzuki K Poulose wrote:
->>> On 25/05/18 11:17, Julien Thierry wrote:
->>>>
->>>>
->>>> On 25/05/18 11:04, Suzuki K Poulose wrote:
->>>>> On 25/05/18 10:49, Julien Thierry wrote:
->>>>>> Add a cpufeature indicating whether a cpu supports masking interrupts
->>>>>> by priority.
->>>>>
->>>>> How is this different from the SYSREG_GIC_CPUIF cap ? Is it just
->>>>> the description ?
->>>>
->>>> More or less.
->>>>
->>>> It is just to have an easier condition in the rest of the series. 
->>>> Basically the PRIO masking feature is enabled if we have a GICv3 
->>>> CPUIF working *and* the option was selected at build time. Before 
->>>> this meant that I was checking for the GIC_CPUIF cap inside #ifdefs 
->>>> (and putting alternatives depending on that inside #ifdefs as well).
->>>>
->>>> Having this as a separate feature feels easier to manage in the 
->>>> code. It also makes it clearer at boot time that the kernel will be 
->>>> using irq priorities (although I admit it was not the initial 
->>>> intention):
->>>>
->>>> [    0.000000] CPU features: detected: IRQ priority masking
->>>>
->>>>
->>>> But yes that new feature will be detected only if SYSREG_GIC_CPUIF 
->>>> gets detected as well.
+>> On May 25, 2018 6:54:12 AM GMT+03:00, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>>> On 24-05-18, 18:03, Ilia Lin wrote:
+>>>> +static int __init qcom_cpufreq_kryo_init(void)
+>>>> +{
+>>>> +	struct device_node *np;
+>>>> +	struct device *cpu_dev;
+>>>> +	int ret;
+>>>> +
+>>>> +	cpu_dev = get_cpu_device(0);
+>>>> +	if (NULL == cpu_dev)
+>>>> +		ret = -ENODEV;
+>>>> +
+>>>> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+>>>> +	if (IS_ERR(np))
+>>>> +		return PTR_ERR(np);
+>>>> +
+>>>> +	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu");
+>>>> +	of_node_put(np);
+>>>> +	if (!ret)
+>>>> +		return -ENOENT;
+>>>> +
 >>>
->>> Well, you could always wrap the check like :
+>>> I hate the fact that it is taking so long to get done with this. But
+>>> can't you
+>>> just check machine compatibility instead of this complicated setup to
+>>> check OPP
+>>> node ? Like:
 >>>
->>> static inline bool system_has_irq_priority_masking(void)
->>> {
->>>      return (IS_ENABLED(CONFIG_YOUR_CONFIG) && 
->>> cpus_have_const_cap(HWCAP_SYSREG_GIC_CPUIF));
->>> }
->>>
->>> and use it everywhere.
->>>
+>>>        if (!of_device_is_compatible("qcom,apq8096") &&
+>>>            !of_device_is_compatible("qcom,msm8996"))
+>>>                return;
 >>
->> Yes, but I can't use that in the asm parts that use alternatives and 
->> would need to surround them in #ifdef... :\
+>> I have to check the "operating-points-v2-kryo-cpu" anyway, so I moved it from probe to the init.
 > 
-> I thought there is _ALTERNATIVE_CFG() to base the alternative depend on 
-> a CONFIG_xxx ?
-> Doesn't that solve the problem ?
+> Okay, leave it as is then. Don't send anything yet and wait for Sudeep to
+> respond.
+> 
 
-Right, I didn't see that one. It should work yes.
-
-I'll try that when working on the next version.
-
-Thanks,
-
+I have already mentioned that I can't suggest since I don't have much
+knowledge on QCOM PM. I see lots of patches flying around these days
+with multiple people doing same things in different ways. That's why I
+suggested Ilia to check with Taniya or Saravana or SBoyd to see what's
+the best thing to do in this context. I don't prefer using OPP
+compatible and would go with machine compatibility as you suggested.
+But I am fine with OPP, just wanted to make sure it won't clash with
+anything else.
 -- 
-Julien Thierry
+Regards,
+Sudeep
