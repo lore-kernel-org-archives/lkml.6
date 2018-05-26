@@ -1,91 +1,269 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031735AbeEZL15 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 07:27:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41081 "EHLO huawei.com"
+        id S1031777AbeEZLfS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 07:35:18 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42963 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031606AbeEZL14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 07:27:56 -0400
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: fix overflow bug of start_sector
- when computing zone_align_start_offset
-To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yuchao0@huawei.com>, <yunlong.song@icloud.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>, <miaoxie@huawei.com>
-References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
-From: Junling Zheng <zhengjunling@huawei.com>
-Message-ID: <74a1a174-f7fe-4c96-6d60-62345355f070@huawei.com>
-Date: Sat, 26 May 2018 19:27:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1031606AbeEZLfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 07:35:17 -0400
+From: YueHaibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <jiri@resnulli.us>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johannes@sipsolutions.net>, <kvalo@codeaurora.org>,
+        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
+        <sameo@linux.intel.com>, <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: remove unnecessary genlmsg_cancel() calls
+Date: Sat, 26 May 2018 19:15:48 +0800
+Message-ID: <20180526111548.17184-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.111.155.88]
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No neet to change zone_align_start_offset to u64, because zone_align_start_offset is always
-smaller than zone_size_bytes, which is u32.
+the message be freed immediately, no need to trim it
+back to the previous size.
 
-Thanks,
-Junling
+Inspired by commit 7a9b3ec1e19f ("nl80211: remove unnecessary genlmsg_cancel() calls")
 
-On 2018/5/26 16:09, Yunlong Song wrote:
-> zone_align_start_offset should be u64, but config.start_sector is u32,
-> so it may be overflow when computing zone_align_start_offset.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fsck/resize.c      | 7 ++++---
->  mkfs/f2fs_format.c | 4 ++--
->  2 files changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fsck/resize.c b/fsck/resize.c
-> index d285dd7..8ac7d45 100644
-> --- a/fsck/resize.c
-> +++ b/fsck/resize.c
-> @@ -11,7 +11,8 @@
->  
->  static int get_new_sb(struct f2fs_super_block *sb)
->  {
-> -	u_int32_t zone_size_bytes, zone_align_start_offset;
-> +	u_int32_t zone_size_bytes;
-> +	u_int64_t zone_align_start_offset;
->  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
->  	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
->  	u_int32_t total_valid_blks_available;
-> @@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
->  
->  	zone_size_bytes = segment_size_bytes * segs_per_zone;
->  	zone_align_start_offset =
-> -		(c.start_sector * c.sector_size +
-> +		((u_int64_t) c.start_sector * c.sector_size +
->  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
->  		zone_size_bytes * zone_size_bytes -
-> -		c.start_sector * c.sector_size;
-> +		(u_int64_t) c.start_sector * c.sector_size;
->  
->  	set_sb(segment_count, (c.target_sectors * c.sector_size -
->  				zone_align_start_offset) / segment_size_bytes /
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 0a99a77..f045e23 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
->  	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
->  
->  	zone_align_start_offset =
-> -		(c.start_sector * c.sector_size +
-> +		((u_int64_t) c.start_sector * c.sector_size +
->  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
->  		zone_size_bytes * zone_size_bytes -
-> -		c.start_sector * c.sector_size;
-> +		(u_int64_t) c.start_sector * c.sector_size;
->  
->  	if (c.start_sector % c.sectors_per_blk) {
->  		MSG(1, "\t%s: Align start sector number to the page unit\n",
-> 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/team/team.c               |  2 --
+ drivers/net/wireless/mac80211_hwsim.c |  1 -
+ net/core/devlink.c                    |  4 ----
+ net/ipv6/seg6.c                       |  1 -
+ net/ncsi/ncsi-netlink.c               |  1 -
+ net/nfc/netlink.c                     | 17 -----------------
+ 6 files changed, 26 deletions(-)
+
+diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
+index e6730a0..267dcc9 100644
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -2426,7 +2426,6 @@ static int team_nl_send_options_get(struct team *team, u32 portid, u32 seq,
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ errout:
+-	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
+ }
+@@ -2720,7 +2719,6 @@ static int team_nl_send_port_list_get(struct team *team, u32 portid, u32 seq,
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ errout:
+-	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
+ }
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index c26469b..38e1135 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2514,7 +2514,6 @@ static void hwsim_mcast_new_radio(int id, struct genl_info *info,
+ 	return;
+ 
+ out_err:
+-	genlmsg_cancel(mcast_skb, data);
+ 	nlmsg_free(mcast_skb);
+ }
+ 
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 475246b..f75ee02 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -1826,7 +1826,6 @@ static int devlink_dpipe_tables_fill(struct genl_info *info,
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ err_table_put:
+-	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
+ }
+@@ -2032,7 +2031,6 @@ int devlink_dpipe_entry_ctx_prepare(struct devlink_dpipe_dump_ctx *dump_ctx)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(dump_ctx->skb, dump_ctx->hdr);
+ 	nlmsg_free(dump_ctx->skb);
+ 	return -EMSGSIZE;
+ }
+@@ -2249,7 +2247,6 @@ static int devlink_dpipe_headers_fill(struct genl_info *info,
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ err_table_put:
+-	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
+ }
+@@ -2551,7 +2548,6 @@ static int devlink_resource_fill(struct genl_info *info,
+ 	err = -EMSGSIZE;
+ err_resource_put:
+ err_skb_send_alloc:
+-	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
+ }
+diff --git a/net/ipv6/seg6.c b/net/ipv6/seg6.c
+index 7f5621d..0fdf2a5 100644
+--- a/net/ipv6/seg6.c
++++ b/net/ipv6/seg6.c
+@@ -226,7 +226,6 @@ static int seg6_genl_get_tunsrc(struct sk_buff *skb, struct genl_info *info)
+ 
+ nla_put_failure:
+ 	rcu_read_unlock();
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -ENOMEM;
+diff --git a/net/ncsi/ncsi-netlink.c b/net/ncsi/ncsi-netlink.c
+index b09ef77..99f4c22 100644
+--- a/net/ncsi/ncsi-netlink.c
++++ b/net/ncsi/ncsi-netlink.c
+@@ -201,7 +201,6 @@ static int ncsi_pkg_info_nl(struct sk_buff *msg, struct genl_info *info)
+ 	return genlmsg_reply(skb, info);
+ 
+ err:
+-	genlmsg_cancel(skb, hdr);
+ 	kfree_skb(skb);
+ 	return rc;
+ }
+diff --git a/net/nfc/netlink.c b/net/nfc/netlink.c
+index f018eaf..376181c 100644
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -206,7 +206,6 @@ int nfc_genl_targets_found(struct nfc_dev *dev)
+ 	return genlmsg_multicast(&nfc_genl_family, msg, 0, 0, GFP_ATOMIC);
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -237,7 +236,6 @@ int nfc_genl_target_lost(struct nfc_dev *dev, u32 target_idx)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -269,7 +267,6 @@ int nfc_genl_tm_activated(struct nfc_dev *dev, u32 protocol)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -299,7 +296,6 @@ int nfc_genl_tm_deactivated(struct nfc_dev *dev)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -340,7 +336,6 @@ int nfc_genl_device_added(struct nfc_dev *dev)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -370,7 +365,6 @@ int nfc_genl_device_removed(struct nfc_dev *dev)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -434,8 +428,6 @@ int nfc_genl_llc_send_sdres(struct nfc_dev *dev, struct hlist_head *sdres_list)
+ 	return genlmsg_multicast(&nfc_genl_family, msg, 0, 0, GFP_ATOMIC);
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+-
+ free_msg:
+ 	nlmsg_free(msg);
+ 
+@@ -470,7 +462,6 @@ int nfc_genl_se_added(struct nfc_dev *dev, u32 se_idx, u16 type)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -501,7 +492,6 @@ int nfc_genl_se_removed(struct nfc_dev *dev, u32 se_idx)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -546,7 +536,6 @@ int nfc_genl_se_transaction(struct nfc_dev *dev, u8 se_idx,
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	/* evt_transaction is no more used */
+ 	devm_kfree(&dev->dev, evt_transaction);
+@@ -585,7 +574,6 @@ int nfc_genl_se_connectivity(struct nfc_dev *dev, u8 se_idx)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -703,7 +691,6 @@ int nfc_genl_dep_link_up_event(struct nfc_dev *dev, u32 target_idx,
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -735,7 +722,6 @@ int nfc_genl_dep_link_down_event(struct nfc_dev *dev)
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -1030,7 +1016,6 @@ static int nfc_genl_send_params(struct sk_buff *msg,
+ 	return 0;
+ 
+ nla_put_failure:
+-
+ 	genlmsg_cancel(msg, hdr);
+ 	return -EMSGSIZE;
+ }
+@@ -1290,7 +1275,6 @@ int nfc_genl_fw_download_done(struct nfc_dev *dev, const char *firmware_name,
+ 	return 0;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	return -EMSGSIZE;
+@@ -1507,7 +1491,6 @@ static void se_io_cb(void *context, u8 *apdu, size_t apdu_len, int err)
+ 	return;
+ 
+ nla_put_failure:
+-	genlmsg_cancel(msg, hdr);
+ free_msg:
+ 	nlmsg_free(msg);
+ 	kfree(ctx);
+-- 
+2.7.0
