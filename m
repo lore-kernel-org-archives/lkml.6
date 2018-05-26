@@ -1,129 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032402AbeEZUJt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 16:09:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60285 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032327AbeEZUJs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 16:09:48 -0400
-Date: Sat, 26 May 2018 22:09:46 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] x86/pti updates for 4.17
-Message-ID: <alpine.DEB.2.21.1805262206270.1585@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1032395AbeEZUYw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 16:24:52 -0400
+Received: from imap.thunk.org ([74.207.234.97]:58062 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032365AbeEZUYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 16:24:50 -0400
+Date: Sat, 26 May 2018 16:24:36 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Eric Sandeen <sandeen@sandeen.net>, Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: Bugs involving maliciously crafted file system
+Message-ID: <20180526202436.GC4613@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <000000000000457b2d056cbb0044@google.com>
+ <20180522123107.GC3751@bfoster.bfoster>
+ <20180522222620.GW23861@dastard>
+ <20180522225208.GB658@sol.localdomain>
+ <20180523074425.GM14384@magnolia>
+ <20180523162015.GA3684@sol.localdomain>
+ <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+ <20180523234114.GA3434@thunk.org>
+ <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sat, May 26, 2018 at 07:12:49PM +0200, Dmitry Vyukov wrote:
+> 
+> I don't see that "some kind of machine learning or expert system
+> evaluation" is feasible. At least not in short/mid-term. There are
+> innocently-looking bugs that actually turn out to be very bad, and
+> there are badly looking at first glance bugs that actually not that
+> bad for some complex reasons. Full security assessment is a complex
+> task and I think stays "human expert area" for now. One can get some
+> coarse estimation by searching for "use-after-free" and
+> "out-of-bounds" on the dashboard.
 
-please pull the latest x86-pti-for-linus git tree from:
+If the kernel intentionally triggers a BUG_ON or a panic (as in file
+systems configured with 'tune2fs -e panic') it's pretty obvious that
+those errors can't be weaponized to execute code chosen by the
+attacker.  Would you agree with that?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
+The same should be true for "blocked for more than 120 seconds";
+again, I claim that those sorts of errors are by definition less
+serious than buffer overruns.
 
-Two fixes for the SSBD mitigation code:
+So there is at least some kind of automated evaluation that can be
+done, even if the general case problem is really hard.
 
- - Expose SSBD properly to guests. This got broken when the CPU feature
-   flags got reshuffled.
+> > Or maybe it would be useful if there was a way where maintainers could
+> > be able to annotate bugs with priority and severity levels, and maybe
+> > make comments that can be viewed from the Syzbot dashboard UI.
+> 
+> This looks more realistic. +Tetsuo proposed something similar:
+> https://github.com/google/syzkaller/issues/608
+> 
+> I think to make it useful we need to settle on some small set of
+> well-defined tags for bugs that we can show on the dashboard.
+> Arbitrary detailed free-form comments can be left on the mailing list
+> threads that are always referenced from the dashboard.
+> 
+> What tags would you use today for existing bugs? One would be
+> "security-critical", right?
 
- - Simplify the CPU detection logic to avoid duplicate entries in the
-   tables.
+For me, it's not about tags.  Things missing from the
+https://syzkaller.appspot.com/ front page are:
 
-Thanks,
+* Whether or not a repro is available
+* Which subsystems the bug has been tentatively assigned
+* A maintainer assigned priority and severity level
 
-	tglx
+I generally don't use the syzkaller.apptspot.com front page because
+it's too hard to find the sorts of thing that I'm looking for ---
+namely the most important syzkaller bug that I as an ext4 expert can
+work on.
 
------------------->
-Dominik Brodowski (1):
-      x86/speculation: Simplify the CPU bug detection logic
+If someone else sends me a well-formed bug report on
+bugzilla.kernel.org, with free-standing image file, and a simple .c
+reproducer, I can make forward progress much more quickly.  So if I'm
+time bound, guess which bug I'm going to pay attention to first?
+Especially when Syzkaller makes it hard for me to find the bug again
+once it ages out of my inbox?
 
-Konrad Rzeszutek Wilk (1):
-      KVM/VMX: Expose SSBD properly to guests
+> Well, we have KASAN, almost have KMSAN and will have KTSAN in future.
+> They can detect detect significant portion of bugs that go unnoticed
+> otherwise. At least this prevents "bad guys" from also using tooling
+> to cheaply harvest exploits. Systematic use of these tools on browsers
+> raised exploit costs to $1M+ for a reason.
 
+I'll note that browsers also use processes and capsicum to provide
+security boundaries.  This is why David and I have been suggesting
+solutions like FUSE or running the mount in a guest VM, which can act
+as an isolation layer.  Even if there is a bug in the guest kernel,
+the blast radius of the bug can be isolated, hopefully to the point
+where it can be completely contained.  It's not an either-or, but a
+both-and.
 
- arch/x86/kernel/cpu/common.c | 22 +++++++---------------
- arch/x86/kvm/cpuid.c         |  4 ++--
- 2 files changed, 9 insertions(+), 17 deletions(-)
+But the much more important thing is that mangement has to be willing
+to **fund** bug remediation.  That was true for Chrome; it doesn't
+seem to be as true for the Linux Kernel, for whatever reason.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 78decc3e3067..38276f58d3bf 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -942,12 +942,8 @@ static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
- 	{}
- };
- 
-+/* Only list CPUs which speculate but are non susceptible to SSB */
- static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PINEVIEW	},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_LINCROFT	},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PENWELL		},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CLOVERVIEW	},
--	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CEDARVIEW	},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
-@@ -955,14 +951,10 @@ static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_CORE_YONAH		},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
- 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
--	{ X86_VENDOR_CENTAUR,	5,					},
--	{ X86_VENDOR_INTEL,	5,					},
--	{ X86_VENDOR_NSC,	5,					},
- 	{ X86_VENDOR_AMD,	0x12,					},
- 	{ X86_VENDOR_AMD,	0x11,					},
- 	{ X86_VENDOR_AMD,	0x10,					},
- 	{ X86_VENDOR_AMD,	0xf,					},
--	{ X86_VENDOR_ANY,	4,					},
- 	{}
- };
- 
-@@ -970,6 +962,12 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- {
- 	u64 ia32_cap = 0;
- 
-+	if (x86_match_cpu(cpu_no_speculation))
-+		return;
-+
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+
- 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
- 
-@@ -977,12 +975,6 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	   !(ia32_cap & ARCH_CAP_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
--	if (x86_match_cpu(cpu_no_speculation))
--		return;
--
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
--	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
--
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index ced851169730..598461e24be3 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -407,8 +407,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) | F(SSBD) |
--		F(ARCH_CAPABILITIES);
-+		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
-+		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
- 
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
+People trying to fix Syzkaller and other fuzzer-found bugs on 20%
+time, or on the weekends, or as a background activity during
+low-bandwidth meetings, or as an unfunded mandate that doesn't show up
+on anyone's quarterly objectives upon which they are graded, is just
+not going to scale.
+
+And if that's the reality, it may very well be that if you want
+Syzkaller to make more a difference, anything you can do to reduce the
+human toil needed to investigate a bug is going to be hugely
+important.
+
+And if bug remediation is only going to be funded to a very limited
+extent, then it's important that the bugs we work on are the highest
+priority ones, since the lower priority ones *will* have to let slide.
+
+Regards,
+
+						- Ted
