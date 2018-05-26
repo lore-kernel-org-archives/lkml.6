@@ -1,65 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031183AbeEZGg7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 02:36:59 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35700 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932664AbeEZGg5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 02:36:57 -0400
-X-Google-Smtp-Source: AB8JxZpPcQwwv9W42yPLvD7GLd7v8h/tk2h+uSS+vLFxpJdHgKP6aqZdZGXBb1W0hXuIkRwKoSqTQEbyF9SQGhzn8jQ=
+        id S1031205AbeEZGvJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 02:51:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8149 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1031142AbeEZGvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 02:51:07 -0400
+Subject: Re: [PATCH] cpufreq: reinitialize new policy min/max when writing
+ scaling_(max|min)_freq
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <gengyanping@hisilicon.com>, <sunzhaosheng@hisilicon.com>
+References: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com>
+ <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
+From: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
+Message-ID: <c6d1e102-bfdb-572c-2045-bf669ee9d674@hisilicon.com>
+Date: Sat, 26 May 2018 14:50:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180524021451.GA23443@jagdpanzerIV>
-References: <20180511014515.GA895@jagdpanzerIV> <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
- <20180511062151.GA18160@jagdpanzerIV> <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
- <20180511095004.GA6575@jagdpanzerIV> <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
- <20180517112135.GB20796@jagdpanzerIV> <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
- <20180524021451.GA23443@jagdpanzerIV>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 26 May 2018 08:36:36 +0200
-Message-ID: <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
-Subject: Re: [PATCH] printk: inject caller information into the body of message
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.121.90.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 4:14 AM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
->> First, we should ask what we expect from this feature.
->
-> Yeah. Can't really comment on this, it's up to Tetsuo and Dmitry to
-> decide. So far I've seen slightly different requirements/expectations.
 
-The root problem is that it's not possible to make sense out of kernel
-output if message takes more than 1 line (or output non-atomically
-with several printk's) because of intermixed output from several
-tasks/interrupts/etc. For example, it's not generally possible to
-recover crash stack trace, because one gets random mix of frames.
-Humans usually, but not always, can restore most of the sense. So the
-goal is to make this ought-to-be-simple task actually simple and not
-requiring human intelligence and time each time.
 
-Prefixing each line with task/cpu/interrupt context should do the
-trick as it will be possible to split kernel output into multiple
-independent streams and analyze them independently.
-
-In our context (syzbot testing) we can enable an additional config,
-and adopt parser to understand additional line prefix. But I don't
-know how prefixing lines fits into a larger picture. Does it make
-sense to thought out a potential extension story for this format? E.g.
-user specifies set of extension records that are dumped before each
-line, and then can unambiguously parse them? I guess some
-consoles/interfaces will never be extended to provide access to the
-extension records, so it can make sense to make them accessible in
-text format too (optionally).
+在 2018/5/24 15:45, Rafael J. Wysocki 写道:
+> On Thu, May 24, 2018 at 8:43 AM, Kevin Wangtao
+> <kevin.wangtao@hisilicon.com> wrote:
+>> consider such situation, current user_policy.min is 1000000,
+>> current user_policy.max is 1200000, in cpufreq_set_policy,
+>> other driver may update policy.min to 1200000, policy.max to
+>> 1300000. After that, If we input "echo 1300000 > scaling_min_freq",
+>> then user_policy.min will be 1300000, and user_policy.max is
+>> still 1200000, because the input value is checked with policy.max
+>> not user_policy.max. if we get all related cpus offline and
+>> online again, it will cause cpufreq_init_policy fail because
+>> user_policy.min is higher than user_policy.max.
+> 
+> How do you reproduce this, exactly?
+I can also reproduce this issue with upstream code, write max frequency to scaling_max_freq
+and scaling_min_freq, run benchmark to let cpu cooling take effect to clip freq, then write
+the cliped freq to scaling_max_freq, thus user_policy.min is still max frequency but user_policy.max
+is cliped freq which is lower than max frequency.
+> 
+>> The solution is when user space tries to write scaling_(max|min)_freq,
+>> the min/max of new_policy should be reinitialized with min/max
+>> of user_policy, like what cpufreq_update_policy does.
+>>
+>> Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+>> ---
+>>   drivers/cpufreq/cpufreq.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>> index b79c532..8b33e08 100644
+>> --- a/drivers/cpufreq/cpufreq.c
+>> +++ b/drivers/cpufreq/cpufreq.c
+>> @@ -697,6 +697,8 @@ static ssize_t store_##file_name                                    \
+>>          struct cpufreq_policy new_policy;                               \
+>>                                                                          \
+>>          memcpy(&new_policy, policy, sizeof(*policy));                   \
+>> +       new_policy->min = policy->user_policy.min;                      \
+>> +       new_policy->max = policy->user_policy.max;                      \
+> 
+> It looks like you haven't even tried to build this, have you?
+> 
+>>                                                                          \
+>>          ret = sscanf(buf, "%u", &new_policy.object);                    \
+>>          if (ret != 1)                                                   \
+>> --
+>> 2.8.1
+>>
+> 
+> .
+> 
