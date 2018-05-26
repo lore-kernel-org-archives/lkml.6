@@ -1,159 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032249AbeEZRNN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 13:13:13 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44878 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032188AbeEZRNK (ORCPT
+        id S1032238AbeEZRPk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 13:15:40 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54978 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032007AbeEZRPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 13:13:10 -0400
-X-Google-Smtp-Source: AB8JxZrHbtK5ul+bWfoW2czH+5YtKAymgcNP7tGdEOait6SZRrBDnw045M71VRWqzfDfl5+h872vAaJOT52ldzHavx4=
+        Sat, 26 May 2018 13:15:38 -0400
+X-Google-Smtp-Source: ADUXVKKMPRiptFhOXIlY4DglnokH7zpfKQAjnz+U4vNgsDGjcuyhuKUQplGVBGxsGTslenbjFJEOHQ==
+Date: Sat, 26 May 2018 20:15:33 +0300
+From: Vladimir Davydov <vdavydov.dev@gmail.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: akpm@linux-foundation.org, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
+        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
+        linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
+Subject: Re: [PATCH v7 00/17] Improve shrink_slab() scalability (old
+ complexity was O(n^2), new is O(n))
+Message-ID: <20180526171533.ucg27d2tnbvzt4oz@esperanza>
+References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180523234114.GA3434@thunk.org>
-References: <000000000000457b2d056cbb0044@google.com> <20180522123107.GC3751@bfoster.bfoster>
- <20180522222620.GW23861@dastard> <20180522225208.GB658@sol.localdomain>
- <20180523074425.GM14384@magnolia> <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net> <20180523234114.GA3434@thunk.org>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 26 May 2018 19:12:49 +0200
-Message-ID: <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
-Subject: Re: Bugs involving maliciously crafted file system
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Eric Sandeen <sandeen@sandeen.net>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 1:41 AM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> On Wed, May 23, 2018 at 01:01:59PM -0500, Eric Sandeen wrote:
->>
->> What I'm personally hung up on are the bugs where the "exploit" involves merely
->> mounting a crafted filesystem that in reality would never (until the heat death
->> of the universe) corrupt itself into that state on its own; it's the "malicious
->> image" case, which is quite different than exposing fundamental bugs like the
->> SB_BORN race or or the user-exploitable ext4 flaw you mentioned in your reply.
->> Those are more insidious and/or things which can be hit by real users in real life.
->
-> Well, it *can* be hit in real life.  If you have a system which auto
-> mounts USB sticks, then an attacker might be able to weaponize that
-> bug by creating a USB stick where mounted and the user opens a
-> particular file, the buffer overrun causes code to be executed that
-> grabs the user's credentials (e.g., ssh-agent keys, OATH creds, etc.)
-> and exfiltrates them to a collection server.
->
-> Fedora and Chrome OS might be two such platforms where someone could
-> very easily create a weaponized exploit tool where you could insert a
-> file system buffer overrun bug, and "hey presto!" it becomes a serious
-> zero day vulnerability.
->
-> (I recently suggested to a security researcher who was concerned that
-> file system developers weren't taking these sorts of things seriously
-> enough could do a service to the community by creating a demonstration
-> about how these sorts of bugs can be weaponized.  And I suspect it
-> could be about just as easily on Chrome OS as Fedora, and that can be
-> one way that an argument could be made to management that more
-> resources should be applied to this problem.  :-)
->
-> Of course, not all bugs triggered by a maliciously crafted file system
-> are equally weaponizable.  An errors=panic or a NULL derefrence are
-> probably not easily exploitable at all.  A buffer overrun (and I fixed
-> two in ext4 in the last two days while being stuck in a T13 standards
-> meeting, so I do feel your pain) might be a very different story.
->
-> Solutions
-> ---------
->
-> One of the things I've wanted to get help from the syzbot folks is if
-> there was some kind of machine learning or expert system evaluation
-> that could be done so malicious image bugs could be binned into
-> different categories, based on how easily they can be weaponized.
-> That way, when there is a resource shortage situation, humans can be
-> more easily guided into detremining which bugs should be prioritized
-> and given attention, and which we can defer to when we have more time.
+Hello Kirill,
 
-Hi Ted,
+The whole patch set looks good to me now.
 
-I don't see that "some kind of machine learning or expert system
-evaluation" is feasible. At least not in short/mid-term. There are
-innocently-looking bugs that actually turn out to be very bad, and
-there are badly looking at first glance bugs that actually not that
-bad for some complex reasons. Full security assessment is a complex
-task and I think stays "human expert area" for now. One can get some
-coarse estimation by searching for "use-after-free" and
-"out-of-bounds" on the dashboard.
+Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
 
-Also note that even the most innocent bugs can block ability to
-discover deeper and worse bugs during any runtime testing. So
-ultimately all need to be fixed if we want correct, stable and secure
-kernel. To significant degree it's like compiler warnings: you either
-fix them all, or turn them off, there is no middle ground of having
-thousands of unfixed warnings and still getting benefit from them.
+Thanks,
+Vladimir
 
-
-> Or maybe it would be useful if there was a way where maintainers could
-> be able to annotate bugs with priority and severity levels, and maybe
-> make comments that can be viewed from the Syzbot dashboard UI.
-
-This looks more realistic. +Tetsuo proposed something similar:
-https://github.com/google/syzkaller/issues/608
-
-I think to make it useful we need to settle on some small set of
-well-defined tags for bugs that we can show on the dashboard.
-Arbitrary detailed free-form comments can be left on the mailing list
-threads that are always referenced from the dashboard.
-
-What tags would you use today for existing bugs? One would be
-"security-critical", right?
-
-
-
-> The other thing that perhaps could be done is to set up a system where
-> the USB stick is automounted in a guest VM (using libvirt in Fedora,
-> and perhaps Crostini for Chrome OS), and the contents of the file
-> system would then get exported from the guest OS to the host OS using
-> either NFS or 9P.  (9P2000.u is the solution that was used in
-> gVisor[1].)
->
-> [1] https://github.com/google/gvisor
->
-> It could be that putting this kind of security layer in front to
-> automounted USB sticks is less work than playing whack-a-mole fixing a
-> lot of security bugs with maliciously crafted file systems.
-
-I don't think that auto mounting or "requires root" is significantly
-relevant in this context. If one needs to use a USB stick, or DVD or
-just any filesystem that they did not create themselves, there is
-pretty much no choice than to mount it, issuing sudo if necessary. If
-you did not create it yourself with a trusted program, there is no way
-you can be sure in the contents of the thing and there is no way you
-can verify every byte of it before mounting. That's exactly the work
-for software. Responsibility shifting like "you said sudo so now it's
-all on you" is not useful for users. It's like web sites that give you
-a hundred page license agreement before you can use it, but now you
-clicked Agree so it's all on you, you read and understood every word
-of it and if there would be any concern you would not click Agree,
-right?
-Fixing large legacy code bases is hard. But there is no other way than
-persistent testing and fixing one bug at a time. We know that it's
-doable because browsers did it over the past 10 years for much larger
-set of input formats.
-
-
-
-> For sure.  I guess some subset of the crashes could be more carefully
-> crafted to be more dangerous, but fuzzers really don't tell us that today,
-> in fact the more insidious flaws that don't turn up as a crash or hang likely
-> go unnoticed.
-
-Well, we have KASAN, almost have KMSAN and will have KTSAN in future.
-They can detect detect significant portion of bugs that go unnoticed
-otherwise. At least this prevents "bad guys" from also using tooling
-to cheaply harvest exploits. Systematic use of these tools on browsers
-raised exploit costs to $1M+ for a reason.
+On Tue, May 22, 2018 at 01:07:10PM +0300, Kirill Tkhai wrote:
+> Hi,
+> 
+> this patches solves the problem with slow shrink_slab() occuring
+> on the machines having many shrinkers and memory cgroups (i.e.,
+> with many containers). The problem is complexity of shrink_slab()
+> is O(n^2) and it grows too fast with the growth of containers
+> numbers.
+> 
+> Let we have 200 containers, and every container has 10 mounts
+> and 10 cgroups. All container tasks are isolated, and they don't
+> touch foreign containers mounts.
+> 
+> In case of global reclaim, a task has to iterate all over the memcgs
+> and to call all the memcg-aware shrinkers for all of them. This means,
+> the task has to visit 200 * 10 = 2000 shrinkers for every memcg,
+> and since there are 2000 memcgs, the total calls of do_shrink_slab()
+> are 2000 * 2000 = 4000000.
+> 
+> 4 million calls are not a number operations, which can takes 1 cpu cycle.
+> E.g., super_cache_count() accesses at least two lists, and makes arifmetical
+> calculations. Even, if there are no charged objects, we do these calculations,
+> and replaces cpu caches by read memory. I observed nodes spending almost 100%
+> time in kernel, in case of intensive writing and global reclaim. The writer
+> consumes pages fast, but it's need to shrink_slab() before the reclaimer
+> reached shrink pages function (and frees SWAP_CLUSTER_MAX pages). Even if
+> there is no writing, the iterations just waste the time, and slows reclaim down.
+> 
+> Let's see the small test below:
+> 
+> $echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
+> $mkdir /sys/fs/cgroup/memory/ct
+> $echo 4000M > /sys/fs/cgroup/memory/ct/memory.kmem.limit_in_bytes
+> $for i in `seq 0 4000`;
+> 	do mkdir /sys/fs/cgroup/memory/ct/$i;
+> 	echo $$ > /sys/fs/cgroup/memory/ct/$i/cgroup.procs;
+> 	mkdir -p s/$i; mount -t tmpfs $i s/$i; touch s/$i/file;
+> done
+> 
+> Then, let's see drop caches time (5 sequential calls):
+> $time echo 3 > /proc/sys/vm/drop_caches
+> 
+> 0.00user 13.78system 0:13.78elapsed 99%CPU
+> 0.00user 5.59system 0:05.60elapsed 99%CPU
+> 0.00user 5.48system 0:05.48elapsed 99%CPU
+> 0.00user 8.35system 0:08.35elapsed 99%CPU
+> 0.00user 8.34system 0:08.35elapsed 99%CPU
+> 
+> 
+> Last four calls don't actually shrink something. So, the iterations
+> over slab shrinkers take 5.48 seconds. Not so good for scalability.
+> 
+> The patchset solves the problem by making shrink_slab() of O(n)
+> complexity. There are following functional actions:
+> 
+> 1)Assign id to every registered memcg-aware shrinker.
+> 2)Maintain per-memcgroup bitmap of memcg-aware shrinkers,
+>   and set a shrinker-related bit after the first element
+>   is added to lru list (also, when removed child memcg
+>   elements are reparanted).
+> 3)Split memcg-aware shrinkers and !memcg-aware shrinkers,
+>   and call a shrinker if its bit is set in memcg's shrinker
+>   bitmap.
+>   (Also, there is a functionality to clear the bit, after
+>   last element is shrinked).
+> 
+> This gives signify performance increase. The result after patchset is applied:
+> 
+> $time echo 3 > /proc/sys/vm/drop_caches
+> 
+> 0.00user 1.10system 0:01.10elapsed 99%CPU
+> 0.00user 0.00system 0:00.01elapsed 64%CPU
+> 0.00user 0.01system 0:00.01elapsed 82%CPU
+> 0.00user 0.00system 0:00.01elapsed 64%CPU
+> 0.00user 0.01system 0:00.01elapsed 82%CPU
+> 
+> The results show the performance increases at least in 548 times.
+> 
+> So, the patchset makes shrink_slab() of less complexity and improves
+> the performance in such types of load I pointed. This will give a profit
+> in case of !global reclaim case, since there also will be less
+> do_shrink_slab() calls.
+> 
+> This patchset is made against linux-next.git tree.
+> 
+> v7: Refactorings and readability improvements.
+> 
+> v6: Added missed rcu_dereference() to memcg_set_shrinker_bit().
+>     Use different functions for allocation and expanding map.
+>     Use new memcg_shrinker_map_size variable in memcontrol.c.
+>     Refactorings.
+> 
+> v5: Make the optimizing logic under CONFIG_MEMCG_SHRINKER instead of MEMCG && !SLOB
+> 
+> v4: Do not use memcg mem_cgroup_idr for iteration over mem cgroups
+> 
+> v3: Many changes requested in commentaries to v2:
+> 
+> 1)rebase on prealloc_shrinker() code base
+> 2)root_mem_cgroup is made out of memcg maps
+> 3)rwsem replaced with shrinkers_nr_max_mutex
+> 4)changes around assignment of shrinker id to list lru
+> 5)everything renamed
+> 
+> v2: Many changes requested in commentaries to v1:
+> 
+> 1)the code mostly moved to mm/memcontrol.c;
+> 2)using IDR instead of array of shrinkers;
+> 3)added a possibility to assign list_lru shrinker id
+>   at the time of shrinker registering;
+> 4)reorginized locking and renamed functions and variables.
+> 
+> ---
+> 
+> Kirill Tkhai (16):
+>       list_lru: Combine code under the same define
+>       mm: Introduce CONFIG_MEMCG_KMEM as combination of CONFIG_MEMCG && !CONFIG_SLOB
+>       mm: Assign id to every memcg-aware shrinker
+>       memcg: Move up for_each_mem_cgroup{,_tree} defines
+>       mm: Assign memcg-aware shrinkers bitmap to memcg
+>       mm: Refactoring in workingset_init()
+>       fs: Refactoring in alloc_super()
+>       fs: Propagate shrinker::id to list_lru
+>       list_lru: Add memcg argument to list_lru_from_kmem()
+>       list_lru: Pass dst_memcg argument to memcg_drain_list_lru_node()
+>       list_lru: Pass lru argument to memcg_drain_list_lru_node()
+>       mm: Export mem_cgroup_is_root()
+>       mm: Set bit in memcg shrinker bitmap on first list_lru item apearance
+>       mm: Iterate only over charged shrinkers during memcg shrink_slab()
+>       mm: Add SHRINK_EMPTY shrinker methods return value
+>       mm: Clear shrinker bit if there are no objects related to memcg
+> 
+> Vladimir Davydov (1):
+>       mm: Generalize shrink_slab() calls in shrink_node()
+> 
+> 
+>  fs/super.c                 |   11 ++
+>  include/linux/list_lru.h   |   18 ++--
+>  include/linux/memcontrol.h |   46 +++++++++-
+>  include/linux/sched.h      |    2 
+>  include/linux/shrinker.h   |   11 ++
+>  include/linux/slab.h       |    2 
+>  init/Kconfig               |    5 +
+>  mm/list_lru.c              |   90 ++++++++++++++-----
+>  mm/memcontrol.c            |  173 +++++++++++++++++++++++++++++++------
+>  mm/slab.h                  |    6 +
+>  mm/slab_common.c           |    8 +-
+>  mm/vmscan.c                |  204 +++++++++++++++++++++++++++++++++++++++-----
+>  mm/workingset.c            |   11 ++
+>  13 files changed, 478 insertions(+), 109 deletions(-)
+> 
+> --
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
