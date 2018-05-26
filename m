@@ -1,65 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031641AbeEZJyp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:54:45 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:46924 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031498AbeEZJyo (ORCPT
+        id S1031674AbeEZJ6v (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:58:51 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51439 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031487AbeEZJ6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:54:44 -0400
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 26 May 2018 11:54:42 +0200
-X-ME-IP: 90.55.202.35
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Vinod Koul <vinod.koul@intel.com>, Vinod Koul <vkoul@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [RESEND PATCH] dmaengine: pxa: add a default requestor policy
-Date: Sat, 26 May 2018 11:54:18 +0200
-Message-Id: <20180526095418.22960-1-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
+        Sat, 26 May 2018 05:58:50 -0400
+X-Google-Smtp-Source: ADUXVKIiyEONxgjtVM8XDrnP+uCHY+aACB4RZcNi/NB0HUIZ+h4Q+4/Aj+IMIp87q4+KcyeCV/m0MA==
+Subject: Re: [PATCH 2/6] mfd: da9063: Replace model with type
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
+ <201805261713.OJMLXvlB%fengguang.wu@intel.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <fca2a629-e5e8-6ef8-7e7d-d25353ab4c3e@gmail.com>
+Date: Sat, 26 May 2018 11:58:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <201805261713.OJMLXvlB%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As what former drcmr -1 value meant, add a this as a default to each
-channel, ie. that by default no requestor line is used.
+On 05/26/2018 11:16 AM, kbuild test robot wrote:
+> Hi Marek,
+> 
+> I love your patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on ljones-mfd/for-mfd-next]
+> [also build test WARNING on v4.17-rc6]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Marek-Vasut/mfd-da9063-Rename-PMIC_DA9063-to-PMIC_CHIP_ID_DA9063/20180526-162613
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+> config: x86_64-randconfig-x002-201820 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from include/linux/kernel.h:10:0,
+>                     from drivers//regulator/da9063-regulator.c:16:
+>    drivers//regulator/da9063-regulator.c: In function 'da9063_regulator_probe':
+>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>       if (model->dev_model == da9063->type)
+>                ^
+>    include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
+>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>                                  ^~~~
+>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>       if (model->dev_model == da9063->type)
+>       ^~
+>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>       if (model->dev_model == da9063->type)
+>                ^
+>    include/linux/compiler.h:58:42: note: in definition of macro '__trace_if'
+>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>                                              ^~~~
+>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>       if (model->dev_model == da9063->type)
+>       ^~
+>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>       if (model->dev_model == da9063->type)
+>                ^
+>    include/linux/compiler.h:69:16: note: in definition of macro '__trace_if'
+>       ______r = !!(cond);     \
+>                    ^~~~
+>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>       if (model->dev_model == da9063->type)
+>       ^~
+>    drivers//regulator/da9063-regulator.c:749:10: error: 'struct da9063' has no member named 'model'
+>        da9063->model);
+>              ^~
+> 
+> vim +/if +744 drivers//regulator/da9063-regulator.c
 
-This is specifically used for network drivers smc91x and smc911x, and
-needed for their port to slave maps.
+Is it testing this patch without the other patches in the series or at
+least 1/6 ?
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/dma/pxa_dma.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
-index 9505334f9c6e..604df1bdadf7 100644
---- a/drivers/dma/pxa_dma.c
-+++ b/drivers/dma/pxa_dma.c
-@@ -762,6 +762,8 @@ static void pxad_free_chan_resources(struct dma_chan *dchan)
- 	dma_pool_destroy(chan->desc_pool);
- 	chan->desc_pool = NULL;
- 
-+	chan->drcmr = (u32)-1;
-+	chan->prio = PXAD_PRIO_LOWEST;
- }
- 
- static void pxad_free_desc(struct virt_dma_desc *vd)
-@@ -1386,6 +1388,9 @@ static int pxad_init_dmadev(struct platform_device *op,
- 		c = devm_kzalloc(&op->dev, sizeof(*c), GFP_KERNEL);
- 		if (!c)
- 			return -ENOMEM;
-+
-+		c->drcmr = (u32)-1;
-+		c->prio = PXAD_PRIO_LOWEST;
- 		c->vc.desc_free = pxad_free_desc;
- 		vchan_init(&c->vc, &pdev->slave);
- 		init_waitqueue_head(&c->wq_state);
 -- 
-2.11.0
+Best regards,
+Marek Vasut
