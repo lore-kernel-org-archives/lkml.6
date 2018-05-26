@@ -1,44 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032157AbeEZQ1F (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 12:27:05 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:39714 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031950AbeEZQ1E (ORCPT
+        id S1032201AbeEZQ3P (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 12:29:15 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35052 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031950AbeEZQ3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 12:27:04 -0400
-Date: Sun, 27 May 2018 00:27:01 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, oferh@marvell.com,
-        igall@marvell.com
-Subject: Re: [PATCH] crypto: inside-secure - do not use memset on MMIO
-Message-ID: <20180526162701.ql2ryktszw2u6ic4@gondor.apana.org.au>
-References: <20180517132214.23528-1-antoine.tenart@bootlin.com>
+        Sat, 26 May 2018 12:29:12 -0400
+X-Google-Smtp-Source: ADUXVKJhcmo/eSkDE57ptr9gLyiq9GBpNEd6FanIeRJEdLuhshC7RsRDdbODiqjvfxJU63m4KBexSQ==
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com> <4468833.XY6THhPN9R@avalon>
+ <1762515.PDM3oOmb9k@avalon>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <aa16a9c8-cc17-564c-e5f6-d5f4f202a8b1@gmail.com>
+Date: Sat, 26 May 2018 19:29:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517132214.23528-1-antoine.tenart@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1762515.PDM3oOmb9k@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 03:22:14PM +0200, Antoine Tenart wrote:
-> This patch fixes the Inside Secure driver which uses a memtset() call to
-> set an MMIO area from the cryptographic engine to 0. This is wrong as
-> memset() isn't guaranteed to work on MMIO for many reasons. This led to
-> kernel paging request panics in certain cases. Use memset_io() instead.
+On 26.05.2018 19:18, Laurent Pinchart wrote:
+> On Saturday, 26 May 2018 19:16:54 EEST Laurent Pinchart wrote:
+>> Hi Dimitri,
 > 
-> Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-> Reported-by: Ofer Heifetz <oferh@marvell.com>
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> And sorry for the spelling mistake :-/
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+That's also a kinda correct spelling. No worries ;)
