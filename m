@@ -1,151 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031684AbeEZMRw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 08:17:52 -0400
-Received: from gofer.mess.org ([88.97.38.141]:53923 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031384AbeEZMRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 08:17:50 -0400
-Date: Sat, 26 May 2018 13:17:46 +0100
-From: Sean Young <sean@mess.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        Matthias Reichl <hias@horus.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Y Song <ys114321@gmail.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: Re: [PATCH v4 2/3] media: rc: introduce BPF_PROG_LIRC_MODE2
-Message-ID: <20180526121746.6epr54fgjdsl66ri@gofer.mess.org>
-References: <cover.1526651592.git.sean@mess.org>
- <cd5140387a0f9c5ffc68d1846774f12fed45f34d.1526651592.git.sean@mess.org>
- <20180525204509.7jsnnk2qzws3bmyd@ast-mbp>
+        id S1031738AbeEZMSb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 08:18:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54488 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1031384AbeEZMS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 08:18:29 -0400
+Date: Sat, 26 May 2018 09:18:26 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Stephane Eranian <eranian@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        mingo@elte.hu, Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Vince Weaver <vincent.weaver@maine.edu>
+Subject: Re: [BUG] perf/inject: crash in pipe mode
+Message-ID: <20180526121826.GB11944@redhat.com>
+References: <CABPqkBRi5T2-hqgywLundiu=w1ekbjdAeKCrzRaUUrMSPSxvFw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180525204509.7jsnnk2qzws3bmyd@ast-mbp>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CABPqkBRi5T2-hqgywLundiu=w1ekbjdAeKCrzRaUUrMSPSxvFw@mail.gmail.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 01:45:11PM -0700, Alexei Starovoitov wrote:
-> On Fri, May 18, 2018 at 03:07:29PM +0100, Sean Young wrote:
-> > Add support for BPF_PROG_LIRC_MODE2. This type of BPF program can call
-> > rc_keydown() to reported decoded IR scancodes, or rc_repeat() to report
-> > that the last key should be repeated.
-> > 
-> > The bpf program can be attached to using the bpf(BPF_PROG_ATTACH) syscall;
-> > the target_fd must be the /dev/lircN device.
-> > 
-> > Signed-off-by: Sean Young <sean@mess.org>
-> ...
-> >  enum bpf_attach_type {
-> > @@ -158,6 +159,7 @@ enum bpf_attach_type {
-> >  	BPF_CGROUP_INET6_CONNECT,
-> >  	BPF_CGROUP_INET4_POST_BIND,
-> >  	BPF_CGROUP_INET6_POST_BIND,
-> > +	BPF_LIRC_MODE2,
-> >  	__MAX_BPF_ATTACH_TYPE
-> >  };
-> >  
-> > @@ -1902,6 +1904,53 @@ union bpf_attr {
-> >   *		egress otherwise). This is the only flag supported for now.
-> >   *	Return
-> >   *		**SK_PASS** on success, or **SK_DROP** on error.
-> > + *
-> > + * int bpf_rc_keydown(void *ctx, u32 protocol, u64 scancode, u32 toggle)
-> > + *	Description
-> > + *		This helper is used in programs implementing IR decoding, to
-> > + *		report a successfully decoded key press with *scancode*,
-> > + *		*toggle* value in the given *protocol*. The scancode will be
-> > + *		translated to a keycode using the rc keymap, and reported as
-> > + *		an input key down event. After a period a key up event is
-> > + *		generated. This period can be extended by calling either
-> > + *		**bpf_rc_keydown** () with the same values, or calling
-> > + *		**bpf_rc_repeat** ().
-> > + *
-> > + *		Some protocols include a toggle bit, in case the button
-> > + *		was released and pressed again between consecutive scancodes
-> > + *
-> > + *		The *ctx* should point to the lirc sample as passed into
-> > + *		the program.
-> > + *
-> > + *		The *protocol* is the decoded protocol number (see
-> > + *		**enum rc_proto** for some predefined values).
-> > + *
-> > + *		This helper is only available is the kernel was compiled with
-> > + *		the **CONFIG_BPF_LIRC_MODE2** configuration option set to
-> > + *		"**y**".
-> > + *
-> > + *	Return
-> > + *		0
-> > + *
-> > + * int bpf_rc_repeat(void *ctx)
-> > + *	Description
-> > + *		This helper is used in programs implementing IR decoding, to
-> > + *		report a successfully decoded repeat key message. This delays
-> > + *		the generation of a key up event for previously generated
-> > + *		key down event.
-> > + *
-> > + *		Some IR protocols like NEC have a special IR message for
-> > + *		repeating last button, for when a button is held down.
-> > + *
-> > + *		The *ctx* should point to the lirc sample as passed into
-> > + *		the program.
-> > + *
-> > + *		This helper is only available is the kernel was compiled with
-> > + *		the **CONFIG_BPF_LIRC_MODE2** configuration option set to
-> > + *		"**y**".
+Em Fri, May 25, 2018 at 05:19:54PM -0700, Stephane Eranian escreveu:
 > 
-> Hi Sean,
+> With the latest tip.git perf, if you run
 > 
-> thank you for working on this. The patch set looks good to me.
-> I'd only ask to change above two helper names to something more specific.
-> Since BPF_PROG_TYPE_LIRC_MODE2 is the name of new prog type and kconfig.
-> May be bpf_lirc2_keydown() and bpf_lirc2_repeat() ?
+> $ perf record -a -o - sleep 2 | perf inject -b -i - | perf buildid-list -i -
+> SEGFAULT in perf inject:
 
-A little history might help here.
+I'm not being able to reproduce this problem here:
 
-lirc and rc-core have non-obvious meanings. So, lirc was the original project
-that dealt with IR. That project was rejected from mainline because it did
-not send translated keycodes to input devices (it exposed its own interface
-for keypresses).
+[root@seventh ~]# perf record -a -o - sleep 2 | perf inject -b -i - 2>
+/dev/null | perf buildid-list -i - | wc -l
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+1038
+[root@seventh ~]# perf --version
+perf version 4.17.rc5.g615aaf
+[root@seventh ~]#
 
-Then rc-core was written which maps IR scancodes to keycodes (using rc
-keymaps) and sends them to the input layer. The original lirc userspace ABI
-for receiving and sending raw IR pulses and spaces was retained (mode2 as
-it was called in lirc).
+This is with my private perf/core branch, lets see with tip.git/master
 
-Reusing parts of the lirc ABI for BPF decoding raw IR makes sense, however
-dispatching decoded scancodes was never part of lirc, only rc-core. In fact,
-rc-core is reused in hdmi-cec for cec commands, which does not use lirc
-at all. So for example, if we want to process cec messages in bpf, it would
-want call rc_keydown().
+[acme@seventh perf]$ git checkout -b tip-master tip/master
+Branch tip-master set up to track remote branch master from tip.
+Switched to a new branch 'tip-master'
+[acme@seventh perf]$ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf ; make -C tools/perf O=/tmp/build/perf install-bin
+[root@seventh ~]# perf --version
+perf version 4.17.rc6.g99a7f2
+[root@seventh ~]# 
+[root@seventh ~]# perf record -a -o - sleep 2 | perf inject -b -i - 2> /dev/null | perf buildid-list -i - | wc -l
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+1038
+[root@seventh ~]# 
+[acme@seventh perf]$ git log --oneline -5
+99a7f2c81712 (HEAD -> tip-master, tip/master) Merge branch 'perf/core'
+861410270ab5 (tip/perf/core, jouet/perf/core, acme/perf/core) Merge tag
+'perf-core-for-mingo-4.18-20180523' of
+git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core
+dc0a16dd9952 Merge branch 'x86/pti'
+88a582678aa9 Merge branch 'linus'
+bee797529d7c (torvalds/master) Merge tag 'mfd-fixes-4.17' of
+git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd
+[acme@seventh perf]$ 
+[acme@seventh perf]$ perf version --build-options
+perf version 4.17.rc6.g99a7f2
+                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+    dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+                 glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
+                  gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
+         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+                libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
+                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+[acme@seventh perf]$
+[acme@seventh perf]$ ldd ~/bin/perf
+	linux-vdso.so.1 (0x00007fff2095f000)
+	libunwind-x86_64.so.8 => /lib64/libunwind-x86_64.so.8 (0x00007fd0e7f01000)
+	libunwind.so.8 => /lib64/libunwind.so.8 (0x00007fd0e7ce7000)
+	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007fd0e7ac1000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fd0e78a3000)
+	librt.so.1 => /lib64/librt.so.1 (0x00007fd0e769b000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007fd0e7350000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fd0e714c000)
+	libelf.so.1 => /lib64/libelf.so.1 (0x00007fd0e6f34000)
+	libdw.so.1 => /lib64/libdw.so.1 (0x00007fd0e6cec000)
+	libcrypto.so.1.1 => /lib64/libcrypto.so.1.1 (0x00007fd0e6864000)
+	libslang.so.2 => /lib64/libslang.so.2 (0x00007fd0e639e000)
+	libperl.so.5.26 => /lib64/libperl.so.5.26 (0x00007fd0e5f97000)
+	libresolv.so.2 => /lib64/libresolv.so.2 (0x00007fd0e5d80000)
+	libnsl.so.1 => /lib64/libnsl.so.1 (0x00007fd0e5b68000)
+	libcrypt.so.1 => /lib64/libcrypt.so.1 (0x00007fd0e5932000)
+	libutil.so.1 => /lib64/libutil.so.1 (0x00007fd0e572f000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fd0e5379000) /lib64/ld-linux-x86-64.so.2 (0x00007fd0e8120000)
+	libpython2.7.so.1.0 => /lib64/libpython2.7.so.1.0 (0x00007fd0e4f3a000)
+	libz.so.1 => /lib64/libz.so.1 (0x00007fd0e4d23000)
+	libnuma.so.1 => /lib64/libnuma.so.1 (0x00007fd0e4b18000)
+	libbabeltrace-ctf.so.1 => /lib64/libbabeltrace-ctf.so.1 (0x00007fd0e48c8000)
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007fd0e46b1000)
+	libbz2.so.1 => /lib64/libbz2.so.1 (0x00007fd0e44a0000)
+	libfreebl3.so => /lib64/libfreebl3.so (0x00007fd0e429d000)
+	libbabeltrace.so.1 => /lib64/libbabeltrace.so.1 (0x00007fd0e4090000)
+	libpopt.so.0 => /lib64/libpopt.so.0 (0x00007fd0e3e83000)
+	libuuid.so.1 => /lib64/libuuid.so.1 (0x00007fd0e3c7e000)
+	libgmodule-2.0.so.0 => /lib64/libgmodule-2.0.so.0 (0x00007fd0e3a7a000)
+	libglib-2.0.so.0 => /lib64/libglib-2.0.so.0 (0x00007fd0e3766000)
+	libpcre.so.1 => /lib64/libpcre.so.1 (0x00007fd0e34f4000)
+[acme@seventh perf]$
+[root@seventh ~]# cat /etc/fedora-release 
+Fedora release 27 (Twenty Seven)
+[root@seventh ~]# 
 
-I don't think this lirc/rc-core duality is particularly great, but I'm
-not sure what the right answer to that is.
-
-> > @@ -1576,6 +1577,8 @@ static int bpf_prog_attach(const union bpf_attr *attr)
-> >  	case BPF_SK_SKB_STREAM_PARSER:
-> >  	case BPF_SK_SKB_STREAM_VERDICT:
-> >  		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, true);
-> > +	case BPF_LIRC_MODE2:
-> > +		return rc_dev_prog_attach(attr);
-> ...
-> > +	case BPF_LIRC_MODE2:
-> > +		return rc_dev_prog_detach(attr);
+> free_dup_event (oe=0x555555d25b88, oe=0x555555d25b88,
+> event=0x3030310931303031) at util/ordered-events.c:86
+> 86 oe->cur_alloc_size -= event->header.size;
+> (gdb) bt
+> #0  free_dup_event (oe=0x555555d25b88, oe=0x555555d25b88,
+> event=0x3030310931303031) at util/ordered-events.c:86
+> #1  ordered_events__free (oe=oe@entry=0x555555d25b88) at
+> util/ordered-events.c:310
+> #2  0x00005555557964f8 in __perf_session__process_pipe_events
+> (session=0x555555d1f910) at util/session.c:1778
+> #3  perf_session__process_events (session=session@entry=0x555555d1f910) at
+> util/session.c:1958
+> #4  0x00005555556ef9b2 in __cmd_inject (inject=0x7fffffffda40) at
+> builtin-inject.c:697
+> #5  cmd_inject (argc=<optimized out>, argv=<optimized out>) at
+> builtin-inject.c:871
+> #6  0x000055555572e8b1 in run_builtin (p=0x555555be8f98 <commands+600>,
+> argc=4, argv=0x7fffffffe460) at perf.c:303
+> #7  0x000055555572ebae in handle_internal_command (argc=4,
+> argv=0x7fffffffe460) at perf.c:355
+> #8  0x00005555556ae1e1 in run_argv (argcp=<synthetic pointer>,
+> argv=<synthetic pointer>) at perf.c:399
+> #9  main (argc=<optimized out>, argv=0x7fffffffe460) at perf.c:521
 > 
-> and similar rename for internal function names that go into bpf core.
-
-I agree with this.
-
-> Please add accumulated acks when you respin.
-
-Good point, will do.
-
-Thanks,
-
-Sean
+> In general I think the pipe mode is not very well tested. I think it could
+> be made the default file format. I believe perf can
+> autodetect file vs. pipe mode perf.data using the header.size field. This
+> would simplify a few things inside perf and ensure
+> the pipe mode format is well tested.
