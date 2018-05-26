@@ -1,220 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031425AbeEZIJt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 04:09:49 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8153 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031204AbeEZIJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 04:09:23 -0400
-From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-To: <dledford@redhat.com>, <jgg@ziepe.ca>
-CC: <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <charles.chenxin@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <leonro@mellanox.com>
-Subject: [PATCH V3 rdma-next 3/4] RDMA/uverbs: Hoist the common process of disassociate_ucontext into ib core
-Date: Sat, 26 May 2018 16:41:46 +0800
-Message-ID: <1527324107-56593-4-git-send-email-xavier.huwei@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527324107-56593-1-git-send-email-xavier.huwei@huawei.com>
-References: <1527324107-56593-1-git-send-email-xavier.huwei@huawei.com>
+        id S1031447AbeEZIKE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 04:10:04 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38865 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1031204AbeEZIKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 04:10:01 -0400
+From: Yunlong Song <yunlong.song@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] f2fs-tools: fix overflow bug of start_sector when computing zone_align_start_offset
+Date: Sat, 26 May 2018 16:09:49 +0800
+Message-ID: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
+X-Originating-IP: [10.113.189.234]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch hoisted the common process of disassociate_ucontext
-callback function into ib core code, and these code are common
-to ervery ib_device driver.
+zone_align_start_offset should be u64, but config.start_sector is u32,
+so it may be overflow when computing zone_align_start_offset.
 
-Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- drivers/infiniband/core/uverbs_main.c | 45 ++++++++++++++++++++++++++++++++++-
- drivers/infiniband/hw/mlx4/main.c     | 34 --------------------------
- drivers/infiniband/hw/mlx5/main.c     | 34 --------------------------
- 3 files changed, 44 insertions(+), 69 deletions(-)
+ fsck/resize.c      | 7 ++++---
+ mkfs/f2fs_format.c | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-index 4445d8e..a0a1c70 100644
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -41,6 +41,8 @@
- #include <linux/fs.h>
- #include <linux/poll.h>
- #include <linux/sched.h>
-+#include <linux/sched/mm.h>
-+#include <linux/sched/task.h>
- #include <linux/file.h>
- #include <linux/cdev.h>
- #include <linux/anon_inodes.h>
-@@ -1090,6 +1092,47 @@ static void ib_uverbs_add_one(struct ib_device *device)
- 	return;
- }
+diff --git a/fsck/resize.c b/fsck/resize.c
+index d285dd7..8ac7d45 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -11,7 +11,8 @@
  
-+static void ib_uverbs_disassociate_ucontext(struct ib_ucontext *ibcontext)
-+{
-+	struct ib_device *ib_dev = ibcontext->device;
-+	struct task_struct *owning_process  = NULL;
-+	struct mm_struct   *owning_mm       = NULL;
-+
-+	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
-+	if (!owning_process)
-+		return;
-+
-+	owning_mm = get_task_mm(owning_process);
-+	if (!owning_mm) {
-+		pr_info("no mm, disassociate ucontext is pending task termination\n");
-+		while (1) {
-+			put_task_struct(owning_process);
-+			usleep_range(1000, 2000);
-+			owning_process = get_pid_task(ibcontext->tgid,
-+						      PIDTYPE_PID);
-+			if (!owning_process ||
-+			    owning_process->state == TASK_DEAD) {
-+				pr_info("disassociate ucontext done, task was terminated\n");
-+				/* in case task was dead need to release the
-+				 * task struct.
-+				 */
-+				if (owning_process)
-+					put_task_struct(owning_process);
-+				return;
-+			}
-+		}
-+	}
-+
-+	/* need to protect from a race on closing the vma as part of
-+	 * mlx5_ib_vma_close.
-+	 */
-+	down_write(&owning_mm->mmap_sem);
-+	ib_dev->disassociate_ucontext(ibcontext);
-+	up_write(&owning_mm->mmap_sem);
-+	mmput(owning_mm);
-+	put_task_struct(owning_process);
-+}
-+
- static void ib_uverbs_free_hw_resources(struct ib_uverbs_device *uverbs_dev,
- 					struct ib_device *ib_dev)
+ static int get_new_sb(struct f2fs_super_block *sb)
  {
-@@ -1130,7 +1173,7 @@ static void ib_uverbs_free_hw_resources(struct ib_uverbs_device *uverbs_dev,
- 			 * (e.g mmput).
- 			 */
- 			ib_uverbs_event_handler(&file->event_handler, &event);
--			ib_dev->disassociate_ucontext(ucontext);
-+			ib_uverbs_disassociate_ucontext(ucontext);
- 			mutex_lock(&file->cleanup_mutex);
- 			ib_uverbs_cleanup_ucontext(file, ucontext, true);
- 			mutex_unlock(&file->cleanup_mutex);
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index bf12394..59aed45 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -1189,40 +1189,10 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 	int ret = 0;
- 	struct vm_area_struct *vma;
- 	struct mlx4_ib_ucontext *context = to_mucontext(ibcontext);
--	struct task_struct *owning_process  = NULL;
--	struct mm_struct   *owning_mm       = NULL;
--
--	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
--	if (!owning_process)
--		return;
--
--	owning_mm = get_task_mm(owning_process);
--	if (!owning_mm) {
--		pr_info("no mm, disassociate ucontext is pending task termination\n");
--		while (1) {
--			/* make sure that task is dead before returning, it may
--			 * prevent a rare case of module down in parallel to a
--			 * call to mlx4_ib_vma_close.
--			 */
--			put_task_struct(owning_process);
--			usleep_range(1000, 2000);
--			owning_process = get_pid_task(ibcontext->tgid,
--						      PIDTYPE_PID);
--			if (!owning_process ||
--			    owning_process->state == TASK_DEAD) {
--				pr_info("disassociate ucontext done, task was terminated\n");
--				/* in case task was dead need to release the task struct */
--				if (owning_process)
--					put_task_struct(owning_process);
--				return;
--			}
--		}
--	}
+-	u_int32_t zone_size_bytes, zone_align_start_offset;
++	u_int32_t zone_size_bytes;
++	u_int64_t zone_align_start_offset;
+ 	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+ 	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
+ 	u_int32_t total_valid_blks_available;
+@@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
  
- 	/* need to protect from a race on closing the vma as part of
- 	 * mlx4_ib_vma_close().
- 	 */
--	down_write(&owning_mm->mmap_sem);
- 	for (i = 0; i < HW_BAR_COUNT; i++) {
- 		vma = context->hw_bar_info[i].vma;
- 		if (!vma)
-@@ -1241,10 +1211,6 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 		/* context going to be destroyed, should not access ops any more */
- 		context->hw_bar_info[i].vma->vm_ops = NULL;
- 	}
--
--	up_write(&owning_mm->mmap_sem);
--	mmput(owning_mm);
--	put_task_struct(owning_process);
- }
+ 	zone_size_bytes = segment_size_bytes * segs_per_zone;
+ 	zone_align_start_offset =
+-		(c.start_sector * c.sector_size +
++		((u_int64_t) c.start_sector * c.sector_size +
+ 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+ 		zone_size_bytes * zone_size_bytes -
+-		c.start_sector * c.sector_size;
++		(u_int64_t) c.start_sector * c.sector_size;
  
- static void mlx4_ib_set_vma_data(struct vm_area_struct *vma,
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index f3e7d7c..136d64f 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -1965,38 +1965,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 	struct vm_area_struct *vma;
- 	struct mlx5_ib_vma_private_data *vma_private, *n;
- 	struct mlx5_ib_ucontext *context = to_mucontext(ibcontext);
--	struct task_struct *owning_process  = NULL;
--	struct mm_struct   *owning_mm       = NULL;
+ 	set_sb(segment_count, (c.target_sectors * c.sector_size -
+ 				zone_align_start_offset) / segment_size_bytes /
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 0a99a77..f045e23 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
  
--	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
--	if (!owning_process)
--		return;
--
--	owning_mm = get_task_mm(owning_process);
--	if (!owning_mm) {
--		pr_info("no mm, disassociate ucontext is pending task termination\n");
--		while (1) {
--			put_task_struct(owning_process);
--			usleep_range(1000, 2000);
--			owning_process = get_pid_task(ibcontext->tgid,
--						      PIDTYPE_PID);
--			if (!owning_process ||
--			    owning_process->state == TASK_DEAD) {
--				pr_info("disassociate ucontext done, task was terminated\n");
--				/* in case task was dead need to release the
--				 * task struct.
--				 */
--				if (owning_process)
--					put_task_struct(owning_process);
--				return;
--			}
--		}
--	}
--
--	/* need to protect from a race on closing the vma as part of
--	 * mlx5_ib_vma_close.
--	 */
--	down_write(&owning_mm->mmap_sem);
- 	mutex_lock(&context->vma_private_list_mutex);
- 	list_for_each_entry_safe(vma_private, n, &context->vma_private_list,
- 				 list) {
-@@ -2013,9 +1982,6 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 		kfree(vma_private);
- 	}
- 	mutex_unlock(&context->vma_private_list_mutex);
--	up_write(&owning_mm->mmap_sem);
--	mmput(owning_mm);
--	put_task_struct(owning_process);
- }
+ 	zone_align_start_offset =
+-		(c.start_sector * c.sector_size +
++		((u_int64_t) c.start_sector * c.sector_size +
+ 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+ 		zone_size_bytes * zone_size_bytes -
+-		c.start_sector * c.sector_size;
++		(u_int64_t) c.start_sector * c.sector_size;
  
- static inline char *mmap_cmd2str(enum mlx5_ib_mmap_cmd cmd)
+ 	if (c.start_sector % c.sectors_per_blk) {
+ 		MSG(1, "\t%s: Align start sector number to the page unit\n",
 -- 
-1.9.1
+1.8.5.2
