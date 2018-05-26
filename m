@@ -1,36 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031185AbeEZGNu (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 02:13:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:39991 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031051AbeEZGNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 02:13:49 -0400
-Date: Sat, 26 May 2018 08:19:34 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] procfs: use inline functions instead of macros for
-        proc_create_single_data stub
-Message-ID: <20180526061934.GA16485@lst.de>
-References: <20180525214548.2122779-1-arnd@arndb.de>
+        id S1031178AbeEZGcj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 02:32:39 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:38917 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031131AbeEZGci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 02:32:38 -0400
+X-Google-Smtp-Source: ADUXVKLSJMw/B4SViyOMREoXOwM1tuqRhPwah1YiQTENm3yLoHUSbrr5L5eHdHKcOPVzKkHg5MZIlzRNh9+VadxkW08=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525214548.2122779-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F39481456@ORSMSX114.amr.corp.intel.com>
+References: <1527285903-31799-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <CAKv+Gu_oNUmOwTgM9sAsfMn4WgY+grC2f12vRC4HH9CgxxkfXQ@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F39481456@ORSMSX114.amr.corp.intel.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Sat, 26 May 2018 08:32:37 +0200
+Message-ID: <CAKv+Gu_eShqmjkDSXnFs-_Hcay67+JTMdb6TatNZpV2v5_MoaQ@mail.gmail.com>
+Subject: Re: [PATCH V4 0/3] Use efi_rts_wq to invoke EFI Runtime Services
+To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        "Luck, Tony" <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Naresh Bhat <naresh.bhat@linaro.org>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks fine:
+On 26 May 2018 at 01:08, Prakhya, Sai Praneeth
+<sai.praneeth.prakhya@intel.com> wrote:
+>> > Changes from V3 to V4:
+>> > ----------------------
+>> > 1. As suggested by Peter, use completions instead of flush_work() as the
+>> >   former is cheaper
+>> > 2. Call efi_delete_dummy_variable() from efisubsys_init(). Sorry! Ard,
+>> >   wasn't able to find a better alternative to keep this change local to
+>> >   arch/x86.
+>> >
+>>
+>> Two questions:
+>> - Should the non-blocking variants of the query and set_variable_store use the
+>> work queue? Doesn't that make them blocking?
+>
+> That's a good question . I think you are right, calling non-blocking variants of efi_rts
+> using work queues makes them blocking. But, I have a follow on question.
+>
+> Assume some user requested to execute some non-blocking variant of efi_rts and
+> the kernel hasn't called efi_call_virt() yet, but was scheduled out. IOW, even though
+> user requests for non-blocking efi call, we might still block. Am I right?
+>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+No, that is the whole point. These functions may be called from atomic
+context, which is why they trylock() and give up rather than block on
+the semaphore if a rt services call is already in progress. E.g.,
+
+/*
+ * efivar_entry_set_nonblocking - call set_variable_nonblocking()
+ *
+ * This function is guaranteed to not block and is suitable for calling
+ * from crash/panic handlers.
+ *
+ * Crucially, this function will not block if it cannot acquire
+ * efivars_lock. Instead, it returns -EBUSY.
+ */
+
+> With efi_rts_wq, I think, I have increased the window of getting blocked. With efi_rts_wq,
+> kernel should explicitly call schedule() to run firmware and the chances of getting blocked
+> are much more.
+>
+> Expect this increased window, I think firmware should be executed as before.
+>
+> So, can you please explain me the difference between blocking and non-blocking variants
+> from kernel perspective?
+> (the way we get locks are different down_interruptible() vs down_trylock())
+>
+>> - If the non-blocking set_variable() does not use the work queue, can we just call
+>> it from efi_delete_dummy_variable(), and keep the calls where they are?
+>
+> Yes, I think we can do that (if we don't use efi_rts_wq for non-blocking variants).
+>
+
+OK, then please implement that change.
+
+Thanks,
+Ard.
