@@ -1,135 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031959AbeEZPP5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 11:15:57 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43758 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031790AbeEZPPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 11:15:55 -0400
-Subject: Re: [PATCH 1/2] arm64: arch_timer: Workaround for Allwinner A64 timer
- instability
-To: Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <Mark.Rutland@arm.com>
-References: <20180511022751.9096-1-samuel@sholland.org>
- <20180511022751.9096-2-samuel@sholland.org>
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Organization: ARM Ltd.
-Message-ID: <25fdc60f-db2f-0cf5-cee4-bd1854c429e9@arm.com>
-Date: Sat, 26 May 2018 16:15:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1031922AbeEZPPr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 11:15:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56762 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031790AbeEZPPq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 11:15:46 -0400
+From: Colin King <colin.king@canonical.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc-opal: fix spelling mistake "Uniterrupted" -> "Uninterrupted"
+Date: Sat, 26 May 2018 16:15:31 +0100
+Message-Id: <20180526151531.10920-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180511022751.9096-2-samuel@sholland.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 03:27 AM, Samuel Holland wrote:
-> The Allwinner A64 SoC is known [1] to have an unstable architectural
-> timer, which manifests itself most obviously in the time jumping forward
-> a multiple of 95 years [2][3]. This coincides with 2^56 cycles at a
-> timer frequency of 24 MHz, implying that the time went slightly backward
-> (and this was interpreted by the kernel as it jumping forward and
-> wrapping around past the epoch).
-> 
-> Further investigation revealed instability in the low bits of CNTVCT at
-> the point a high bit rolls over. This leads to power-of-two cycle
-> forward and backward jumps. (Testing shows that forward jumps are about
-> twice as likely as backward jumps.)
-> 
-> Without trapping reads to CNTVCT, a userspace program is able to read it
-> in a loop faster than it changes. A test program running on all 4 CPU
-> cores that reported jumps larger than 100 ms was run for 13.6 hours and
-> reported the following:
-> 
->  Count | Event
-> -------+---------------------------
->   9940 | jumped backward      699ms
->    268 | jumped backward     1398ms
->      1 | jumped backward     2097ms
->  16020 | jumped forward       175ms
->   6443 | jumped forward       699ms
->   2976 | jumped forward      1398ms
->      9 | jumped forward    356516ms
->      9 | jumped forward    357215ms
->      4 | jumped forward    714430ms
->      1 | jumped forward   3578440ms
-> 
-> This works out to a jump larger than 100 ms about every 5.5 seconds on
-> each CPU core.
-> 
-> The largest jump (almost an hour!) was the following sequence of reads:
->       0x0000007fffffffff → 0x00000093feffffff → 0x0000008000000000
-> 
-> Note that the middle bits don't necessarily all read as all zeroes or
-> all ones during the anomalous behavior; however the low 11 bits checked
-> by the function in this patch have never been observed with any other
-> value.
-> 
-> Also note that smaller jumps are much more common, with the smallest
-> backward jumps of 2048 cycles observed over 400 times per second on each
-> core. (Of course, this is partially due to lower bits rolling over more
-> frequently.) Any one of these could have caused the 95 year time skip.
-> 
-> Similar anomalies were observed while reading CNTPCT (after patching the
-> kernel to allow reads from userspace). However, the jumps are much less
-> frequent, and only small jumps were observed. The same program as before
-> (except now reading CNTPCT) observed after 72 hours:
-> 
->  Count | Event
-> -------+---------------------------
->     17 | jumped backward      699ms
->     52 | jumped forward       175ms
->   2831 | jumped forward       699ms
->      5 | jumped forward      1398ms
-> 
-> ========================================================================
-> 
-> Because the CPU can read the CNTPCT/CNTVCT registers faster than they
-> change, performing two reads of the register and comparing the high bits
-> (like other workarounds) is not a workable solution. And because the
-> timer can jump both forward and backward, no pair of reads can
-> distinguish a good value from a bad one. The only way to guarantee a
-> good value from consecutive reads would be to read _three_ times, and
-> take the middle value iff the three values are 1) individually unique
-> and 2) increasing. This takes at minimum 3 cycles (125 ns), or more if
-> an anomaly is detected.
-> 
-> However, since there is a distinct pattern to the bad values, we can
-> optimize the common case (2046/2048 of the time) to a single read by
-> simply ignoring values that match the pattern. This still takes no more
-> than 3 cycles in the worst case, and requires much less code.
+From: Colin Ian King <colin.king@canonical.com>
 
-Clever solution, and indeed much less costly than other workarounds.
+Trivial fix to spelling mistake in hmi_error_types text
 
-FWIW, I tested this on a Pine64 and can confirm that it works.
-I put a test program here:
-https://github.com/apritzel/pine64/blob/master/tools/test_timer.c
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/powerpc/platforms/powernv/opal-hmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This only checks for consecutive reads going backwards, but within a
-split second yells on an unpatched kernel:
-https://gist.github.com/apritzel/fc78ca6edb17be2024d5adfd35edb520
-
-Applying the patch and adding the DT property fixed that for me.
-
-I second Marc's request for an upper bound on the loop. Question is just
-what we do when we reach the loop count limit?
-
-But regardless, given that this fixes this nasty issue:
-
-Tested-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre.
+diff --git a/arch/powerpc/platforms/powernv/opal-hmi.c b/arch/powerpc/platforms/powernv/opal-hmi.c
+index 4efc95b4c7d4..586ec71a4e17 100644
+--- a/arch/powerpc/platforms/powernv/opal-hmi.c
++++ b/arch/powerpc/platforms/powernv/opal-hmi.c
+@@ -177,7 +177,7 @@ static void print_hmi_event_info(struct OpalHMIEvent *hmi_evt)
+ 		"Processor recovery occurred for masked error",
+ 		"Timer facility experienced an error",
+ 		"TFMR SPR is corrupted",
+-		"UPS (Uniterrupted Power System) Overflow indication",
++		"UPS (Uninterrupted Power System) Overflow indication",
+ 		"An XSCOM operation failure",
+ 		"An XSCOM operation completed",
+ 		"SCOM has set a reserved FIR bit to cause recovery",
+-- 
+2.17.0
