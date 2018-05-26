@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031913AbeEZPG5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 11:06:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56702 "EHLO
+        id S1031924AbeEZPLL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 11:11:11 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56731 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031848AbeEZPG4 (ORCPT
+        with ESMTP id S1031848AbeEZPLJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 11:06:56 -0400
+        Sat, 26 May 2018 11:11:09 -0400
 From: Colin King <colin.king@canonical.com>
-To: Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] 9p: fix spelling mistake "Uknown" -> "Unknown"
-Date: Sat, 26 May 2018 16:06:50 +0100
-Message-Id: <20180526150650.10562-1-colin.king@canonical.com>
+Subject: [PATCH] ALSA: seq: fix spelling mistake "Unamed" -> "Unnamed"
+Date: Sat, 26 May 2018 16:11:00 +0100
+Message-Id: <20180526151100.10774-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -25,25 +24,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in pr_info message text
+Trivial fix to spelling mistake in string
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/9p/v9fs.c | 2 +-
+ sound/core/seq/seq_ports.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 0429c8ee58f1..89bac3d2f05b 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -343,7 +343,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 				v9ses->uid = make_kuid(current_user_ns(), uid);
- 				if (!uid_valid(v9ses->uid)) {
- 					ret = -EINVAL;
--					pr_info("Uknown uid %s\n", s);
-+					pr_info("Unknown uid %s\n", s);
- 				}
- 			}
+diff --git a/sound/core/seq/seq_ports.c b/sound/core/seq/seq_ports.c
+index d21ece9f8d73..24d90abfc64d 100644
+--- a/sound/core/seq/seq_ports.c
++++ b/sound/core/seq/seq_ports.c
+@@ -669,7 +669,7 @@ int snd_seq_event_port_attach(int client,
+ 	/* Set up the port */
+ 	memset(&portinfo, 0, sizeof(portinfo));
+ 	portinfo.addr.client = client;
+-	strlcpy(portinfo.name, portname ? portname : "Unamed port",
++	strlcpy(portinfo.name, portname ? portname : "Unnamed port",
+ 		sizeof(portinfo.name));
  
+ 	portinfo.capability = cap;
 -- 
 2.17.0
