@@ -1,25 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032319AbeEZR7K (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 13:59:10 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59766 "EHLO huawei.com"
+        id S1032332AbeEZSAg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 14:00:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60902 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032112AbeEZR7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 13:59:07 -0400
-Subject: Re: [PATCH] arm64: dts: hikey: Fix eMMC corruption regression
-To: John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <1527304247-12868-1-git-send-email-john.stultz@linaro.org>
-CC: Ryan Grachek <ryan@edited.us>, Arnd Bergmann <arnd@arndb.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        YongQin Liu <yongqin.liu@linaro.org>, Leo Yan <leo.yan@linaro.org>
+        id S1032112AbeEZSAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 14:00:34 -0400
+Subject: Re: [PATCH 3/6] arm64: dts: hisilicon: Add missing cooling device
+ properties for CPUs
+To: Viresh Kumar <viresh.kumar@linaro.org>, <arm@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <cover.1527225682.git.viresh.kumar@linaro.org>
+ <0754957a2c3842cf4e36fa27231d327fd8d6d499.1527225682.git.viresh.kumar@linaro.org>
+CC: Vincent Guittot <vincent.guittot@linaro.org>,
+        <ionela.voinescu@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <chris.redpath@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B09A060.3040209@hisilicon.com>
-Date: Sat, 26 May 2018 18:58:56 +0100
+Message-ID: <5B09A0B4.2080400@hisilicon.com>
+Date: Sat, 26 May 2018 19:00:20 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
  Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <1527304247-12868-1-git-send-email-john.stultz@linaro.org>
+In-Reply-To: <0754957a2c3842cf4e36fa27231d327fd8d6d499.1527225682.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.47.84.85]
@@ -28,54 +33,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+Hi Viresh,
 
-On 2018/5/26 4:10, John Stultz wrote:
-> This patch is a partial revert of commit
-> abd7d0972a19 ("arm64: dts: hikey: Enable HS200 mode on eMMC")
+On 2018/5/25 6:40, Viresh Kumar wrote:
+> The cooling device properties, like "#cooling-cells" and
+> "dynamic-power-coefficient", should either be present for all the CPUs
+> of a cluster or none. If these are present only for a subset of CPUs of
+> a cluster then things will start falling apart as soon as the CPUs are
+> brought online in a different order. For example, this will happen
+> because the operating system looks for such properties in the CPU node
+> it is trying to bring up, so that it can register a cooling device.
 > 
-> which has been causing eMMC corruption on my HiKey board.
+> Add such missing properties.
 > 
-> Symptoms usually looked like:
+> Do minor rearrangement as well to keep ordering consistent.
 > 
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> ...
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> mmc0: new HS200 MMC card at address 0001
-> ...
-> dwmmc_k3 f723d000.dwmmc0: Unexpected command timeout, state 3
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> print_req_error: I/O error, dev mmcblk0, sector 8810504
-> Aborting journal on device mmcblk0p10-8.
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-> mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-> EXT4-fs error (device mmcblk0p10): ext4_journal_check_start:61: Detected aborted journal
-> EXT4-fs (mmcblk0p10): Remounting filesystem read-only
-> 
-> And quite often this would result in a disk that wouldn't properly
-> boot even with older kernels.
-> 
-> It seems the max-frequency property added by the above patch is
-> causing the problem, so remove it.
-> 
-> Cc: Ryan Grachek <ryan@edited.us>
-> Cc: Wei Xu <xuwei5@hisilicon.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: YongQin Liu <yongqin.liu@linaro.org>
-> Cc: Leo Yan <leo.yan@linaro.org>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 Thanks!
 Applied to the hisilicon fix tree.
@@ -84,19 +57,84 @@ Best Regards,
 Wei
 
 > ---
->  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 -
->  1 file changed, 1 deletion(-)
+>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> index 724a0d3..edb4ee0 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> @@ -299,7 +299,6 @@
->  		/* GPIO blocks 16 thru 19 do not appear to be routed to pins */
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+> index 586b281cd531..247024df714f 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+> @@ -88,8 +88,8 @@
+>  			next-level-cache = <&CLUSTER0_L2>;
+>  			clocks = <&stub_clock 0>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+> -			#cooling-cells = <2>; /* min followed by max */
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+>  			dynamic-power-coefficient = <311>;
+>  		};
 >  
->  		dwmmc_0: dwmmc0@f723d000 {
-> -			max-frequency = <150000000>;
->  			cap-mmc-highspeed;
->  			mmc-hs200-1_8v;
->  			non-removable;
+> @@ -101,6 +101,8 @@
+>  			next-level-cache = <&CLUSTER0_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		cpu2: cpu@2 {
+> @@ -111,6 +113,8 @@
+>  			next-level-cache = <&CLUSTER0_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		cpu3: cpu@3 {
+> @@ -121,6 +125,8 @@
+>  			next-level-cache = <&CLUSTER0_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		cpu4: cpu@100 {
+> @@ -131,6 +137,8 @@
+>  			next-level-cache = <&CLUSTER1_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		cpu5: cpu@101 {
+> @@ -141,6 +149,8 @@
+>  			next-level-cache = <&CLUSTER1_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		cpu6: cpu@102 {
+> @@ -151,6 +161,8 @@
+>  			next-level-cache = <&CLUSTER1_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		cpu7: cpu@103 {
+> @@ -161,6 +173,8 @@
+>  			next-level-cache = <&CLUSTER1_L2>;
+>  			operating-points-v2 = <&cpu_opp_table>;
+>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
+> +			#cooling-cells = <2>; /* min followed by max */
+> +			dynamic-power-coefficient = <311>;
+>  		};
+>  
+>  		CLUSTER0_L2: l2-cache0 {
 > 
