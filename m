@@ -1,61 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968477AbeEZAUK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 20:20:10 -0400
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:35781 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968411AbeEZAUI (ORCPT
+        id S1030899AbeEZAWO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 20:22:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42332 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968411AbeEZAWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 20:20:08 -0400
-X-Google-Smtp-Source: AB8JxZp+NYUS8nw55Cze4WCPOygzHM0Q0ICL150br1cDCgyc+WBUZjbKs2XhBRU+gfOK5oco9ipPSuaqZJ4tWKmi8hI=
+        Fri, 25 May 2018 20:22:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBAF460290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
+Subject: Re: [PATCH, net-next] qcom-emag: hide ACPI specific functions
+To: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>
+Cc: Hemanth Puranik <hpuranik@codeaurora.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180525213714.2120604-1-arnd@arndb.de>
+From: Timur Tabi <timur@codeaurora.org>
+Message-ID: <d625691f-a240-23ee-3751-d577c5e72423@codeaurora.org>
+Date: Fri, 25 May 2018 19:22:09 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Stephane Eranian <eranian@google.com>
-Date: Fri, 25 May 2018 17:19:54 -0700
-Message-ID: <CABPqkBRi5T2-hqgywLundiu=w1ekbjdAeKCrzRaUUrMSPSxvFw@mail.gmail.com>
-Subject: [BUG] perf/inject: crash in pipe mode
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, mingo@elte.hu,
-        Peter Zijlstra <peterz@infradead.org>, Andi Kleen <ak@linux.intel.com>,
-        Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180525213714.2120604-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 5/25/18 4:37 PM, Arnd Bergmann wrote:
+> +#ifdef CONFIG_ACPI
+>   static int emac_sgmii_irq_clear(struct emac_adapter *adpt, u8 irq_bits)
+>   {
+>   	struct emac_sgmii *phy = &adpt->phy;
+> @@ -288,6 +289,7 @@ static struct sgmii_ops qdf2400_ops = {
+>   	.link_change = emac_sgmii_common_link_change,
+>   	.reset = emac_sgmii_common_reset,
+>   };
+> +#endif
 
+This seems wrong.  The SGMII interrupt handler should still be viable on 
+a device-tree system.  There is a DT compatibility entry for the qdf2432.
 
-With the latest tip.git perf, if you run
+Looks like that most recent patch on net-next broke DT support, when it 
+removed these lines:
 
-$ perf record -a -o - sleep 2 | perf inject -b -i - | perf buildid-list -i -
-SEGFAULT in perf inject:
-free_dup_event (oe=0x555555d25b88, oe=0x555555d25b88,
-event=0x3030310931303031) at util/ordered-events.c:86
-86 oe->cur_alloc_size -= event->header.size;
-(gdb) bt
-#0  free_dup_event (oe=0x555555d25b88, oe=0x555555d25b88,
-event=0x3030310931303031) at util/ordered-events.c:86
-#1  ordered_events__free (oe=oe@entry=0x555555d25b88) at
-util/ordered-events.c:310
-#2  0x00005555557964f8 in __perf_session__process_pipe_events
-(session=0x555555d1f910) at util/session.c:1778
-#3  perf_session__process_events (session=session@entry=0x555555d1f910) at
-util/session.c:1958
-#4  0x00005555556ef9b2 in __cmd_inject (inject=0x7fffffffda40) at
-builtin-inject.c:697
-#5  cmd_inject (argc=<optimized out>, argv=<optimized out>) at
-builtin-inject.c:871
-#6  0x000055555572e8b1 in run_builtin (p=0x555555be8f98 <commands+600>,
-argc=4, argv=0x7fffffffe460) at perf.c:303
-#7  0x000055555572ebae in handle_internal_command (argc=4,
-argv=0x7fffffffe460) at perf.c:355
-#8  0x00005555556ae1e1 in run_argv (argcp=<synthetic pointer>,
-argv=<synthetic pointer>) at perf.c:399
-#9  main (argc=<optimized out>, argv=0x7fffffffe460) at perf.c:521
+-	phy->open = emac_sgmii_open;
+-	phy->close = emac_sgmii_close;
+-	phy->link_up = emac_sgmii_link_up;
+-	phy->link_down = emac_sgmii_link_down;
 
-In general I think the pipe mode is not very well tested. I think it could
-be made the default file format. I believe perf can
-autodetect file vs. pipe mode perf.data using the header.size field. This
-would simplify a few things inside perf and ensure
-the pipe mode format is well tested.
+I'll take it look at it next week when I'm back in the office.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
