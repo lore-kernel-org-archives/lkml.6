@@ -1,98 +1,286 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031032AbeEZC1M (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 22:27:12 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7749 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030648AbeEZC1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 22:27:11 -0400
-Subject: Re: [PATCH net-next] bpfilter: fix a build err
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-References: <20180525101757.13756-1-yuehaibing@huawei.com>
- <20180525161925.crdamzqjgs5wg77e@ast-mbp>
-CC: <davem@davemloft.net>, <ast@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: YueHaibing <yuehaibing@huawei.com>
-Message-ID: <176ee190-ecda-9b3e-5066-ecf3fbaf32bb@huawei.com>
-Date: Sat, 26 May 2018 10:25:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1031058AbeEZC3k (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 22:29:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51112 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030648AbeEZC3i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 22:29:38 -0400
+Subject: Re: [PATCH 10/14] documentation: fpga: move fpga-mgr.txt to
+ driver-api
+To: Alan Tull <atull@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+References: <20180516235007.3951-1-atull@kernel.org>
+ <20180516235007.3951-11-atull@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ac1c5182-918a-a305-eee1-3bb609e2d408@infradead.org>
+Date: Fri, 25 May 2018 19:29:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180525161925.crdamzqjgs5wg77e@ast-mbp>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180516235007.3951-11-atull@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/5/26 0:19, Alexei Starovoitov wrote:
-> On Fri, May 25, 2018 at 06:17:57PM +0800, YueHaibing wrote:
->> gcc-7.3.0 report following err:
->>
->>   HOSTCC  net/bpfilter/main.o
->> In file included from net/bpfilter/main.c:9:0:
->> ./include/uapi/linux/bpf.h:12:10: fatal error: linux/bpf_common.h: No such file or directory
->>  #include <linux/bpf_common.h>
->>
->> remove it by adding a include path.
->> Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  net/bpfilter/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
->> index 2af752c..3f3cb87 100644
->> --- a/net/bpfilter/Makefile
->> +++ b/net/bpfilter/Makefile
->> @@ -5,7 +5,7 @@
->>  
->>  hostprogs-y := bpfilter_umh
->>  bpfilter_umh-objs := main.o
->> -HOSTCFLAGS += -I. -Itools/include/
->> +HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
+On 05/16/2018 04:50 PM, Alan Tull wrote:
+> Move Documentation/fpga/fpga-mgr.txt to driver-api/fpga/fpga-mgr.rst
+> and:
+>  - Add to driver-api/fpga/index.rst
+>  - Format changes so documentation builds cleanly.
+>  - Minor rewrites that make the doc flow better as ReST documentation.
+>    - Such as moving API reference to end of doc
+>  - Change API reference section to refer to kernel-doc documentation in
+>    fpga-mgr.c driver code rather than statically defining each function.
 > 
-> Strangely I don't see this error with gcc 7.3
-> I've tried this patch and it doesn't hurt,
-> but before it gets applied could you please try
-> the top two patches from this tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ast/bpf.git/?h=ipt_bpf
-> in your environment?
-> These two patches add the actual meat of bpfilter and I'd like
-> to make sure the build setup is good for everyone before
-> we proceed too far.
-
-after applied these two patches on net-next, the err still here:
- bpfilter: rough bpfilter codegen example hack
- bpfilter: add iptable get/set parsing
-
-  HOSTCC  net/bpfilter/main.o
-In file included from net/bpfilter/main.c:13:0:
-./include/uapi/linux/bpf.h:12:10: fatal error: linux/bpf_common.h: No such file or directory
- #include <linux/bpf_common.h>
-          ^~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [net/bpfilter/main.o] Error 1
-make[1]: *** [net/bpfilter] Error 2
-make: *** [net] Error 2
-
-Also I compile your tree, error is same
-
-my gcc version info as follow:
-[root@localhost net-next]# gcc -v
-Using built-in specs.
-COLLECT_GCC=gcc
-COLLECT_LTO_WRAPPER=/home/yuehb/gcc-7.3.0-tools/libexec/gcc/x86_64-pc-linux-gnu/7.3.0/lto-wrapper
-Target: x86_64-pc-linux-gnu
-Configured with: ../gcc-7.3.0/configure --enable-checking=release --enable-languages=c,c++
---disable-multilib --prefix=/home/yuehb/gcc-7.3.0-tools
-Thread model: posix
-gcc version 7.3.0 (GCC)
-
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> ---
+>  Documentation/driver-api/fpga/fpga-mgr.rst | 220 +++++++++++++++++++++++++++++
+>  Documentation/driver-api/fpga/index.rst    |   1 +
+>  Documentation/fpga/fpga-mgr.txt            | 218 ----------------------------
+>  3 files changed, 221 insertions(+), 218 deletions(-)
+>  create mode 100644 Documentation/driver-api/fpga/fpga-mgr.rst
+>  delete mode 100644 Documentation/fpga/fpga-mgr.txt
 > 
-> 
-> .
-> 
+> diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
+> new file mode 100644
+> index 0000000..bcf2dd2
+> --- /dev/null
+> +++ b/Documentation/driver-api/fpga/fpga-mgr.rst
+> @@ -0,0 +1,220 @@
+> +FPGA Manager
+> +============
+> +
+> +Overview
+> +--------
+> +
+> +The FPGA manager core exports a set of functions for programming an FPGA with
+> +an image.  The API is manufacturer agnostic.  All manufacturer specifics are
+> +hidden away in a low level driver which registers a set of ops with the core.
+> +The FPGA image data itself is very manufacturer specific, but for our purposes
+> +it's just binary data.  The FPGA manager core won't parse it.
+> +
+> +The FPGA image to be programmed can be in a scatter gather list, a single
+> +contiguous buffer, or a firmware file.  Because allocating contiguous kernel
+> +memory for the buffer should be avoided, users are encouraged to use a scatter
+> +gather list instead if possible.
+> +
+> +The particulars for programming the image are presented in a structure (struct
+> +fpga_image_info).  This struct contains parameters such as pointers to the
+> +FPGA image as well as image-specific particulars such as whether the image was
+> +built for full or partial reconfiguration.
+> +
+> +How to support a new FPGA device
+> +--------------------------------
+> +
+> +To add another FPGA manager, write a driver that implements a set of ops.  The
+> +probe function calls fpga_mgr_register(), such as::
+> +
+> +	static const struct fpga_manager_ops socfpga_fpga_ops = {
+> +		.write_init = socfpga_fpga_ops_configure_init,
+> +		.write = socfpga_fpga_ops_configure_write,
+> +		.write_complete = socfpga_fpga_ops_configure_complete,
+> +		.state = socfpga_fpga_ops_state,
+> +	};
+> +
+> +	static int socfpga_fpga_probe(struct platform_device *pdev)
+> +	{
+> +		struct device *dev = &pdev->dev;
+> +		struct socfpga_fpga_priv *priv;
+> +		struct fpga_manager *mgr;
+> +		int ret;
+> +
+> +		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +		if (!priv)
+> +			return -ENOMEM;
+> +
+> +		/*
+> +		 * do ioremaps, get interrupts, etc. and save
+> +		 * them in priv
+> +		 */
+> +
+> +		mgr = fpga_mgr_create(dev, "Altera SOCFPGA FPGA Manager",
+> +				      &socfpga_fpga_ops, priv);
+> +		if (!mgr)
+> +			return -ENOMEM;
+> +
+> +		platform_set_drvdata(pdev, mgr);
+> +
+> +		ret = fpga_mgr_register(mgr);
+> +		if (ret)
+> +			fpga_mgr_free(mgr);
+> +
+> +		return ret;
+> +	}
+> +
+> +	static int socfpga_fpga_remove(struct platform_device *pdev)
+> +	{
+> +		struct fpga_manager *mgr = platform_get_drvdata(pdev);
+> +
+> +		fpga_mgr_unregister(mgr);
+> +
+> +		return 0;
+> +	}
+> +
+> +
+> +The ops will implement whatever device specific register writes are needed to
+> +do the programming sequence for this particular FPGA.  These ops return 0 for
+> +success or negative error codes otherwise.
+> +
+> +The programming sequence is::
+> + 1. .write_init
+> + 2. .write or .write_sg (may be called once or multiple times)
+> + 3. .write_complete
+> +
+> +The .write_init function will prepare the FPGA to receive the image data.  The
+> +buffer passed into .write_init will be atmost .initial_header_size bytes long,
+
+                                          at most                           long;
+
+> +if the whole bitstream is not immediately available then the core code will
+> +buffer up at least this much before starting.
+> +
+> +The .write function writes a buffer to the FPGA. The buffer may be contain the
+> +whole FPGA image or may be a smaller chunk of an FPGA image.  In the latter
+> +case, this function is called multiple times for successive chunks. This interface
+> +is suitable for drivers which use PIO.
+> +
+> +The .write_sg version behaves the same as .write except the input is a sg_table
+> +scatter list. This interface is suitable for drivers which use DMA.
+> +
+> +The .write_complete function is called after all the image has been written
+> +to put the FPGA into operating mode.
+> +
+> +The ops include a .state function which will read the hardware FPGA manager and
+
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ??
+
+> +return a code of type enum fpga_mgr_states.  It doesn't result in a change in
+> +hardware state.
+> +
+> +How to write an image buffer to a supported FPGA
+> +------------------------------------------------
+> +
+> +Some sample code::
+> +
+> +	#include <linux/fpga/fpga-mgr.h>
+> +
+> +	struct fpga_manager *mgr;
+> +	struct fpga_image_info *info;
+> +	int ret;
+> +
+> +	/*
+> +	 * Get a reference to FPGA manager.  The manager is not locked, so you can
+> +	 * hold onto this reference without it preventing programming.
+> +	 *
+> +	 * This example uses the device node of the manager.  Alternatively, use
+> +	 * fpga_mgr_get(dev) instead if you have the device.
+> +	 */
+> +	mgr = of_fpga_mgr_get(mgr_node);
+> +
+> +	/* struct with information about the FPGA image to program. */
+> +	info = fpga_image_info_alloc(dev);
+> +
+> +	/* flags indicates whether to do full or partial reconfiguration */
+> +	info->flags = FPGA_MGR_PARTIAL_RECONFIG;
+> +
+> +	/*
+> +	 * At this point, indicate where the image is. This is pseudo-code; you're
+> +	 * going to use one of these three.
+> +	 */
+> +	if (image is in a scatter gather table) {
+> +
+> +		info->sgt = [your scatter gather table]
+> +
+> +	} else if (image is in a buffer) {
+> +
+> +		info->buf = [your image buffer]
+> +		info->count = [image buffer size]
+> +
+> +	} else if (image is in a firmware file) {
+> +
+> +		info->firmware_name = devm_kstrdup(dev, firmware_name, GFP_KERNEL);
+> +
+> +	}
+> +
+> +	/* Get exclusive control of FPGA manager */
+> +	ret = fpga_mgr_lock(mgr);
+> +
+> +	/* Load the buffer to the FPGA */
+> +	ret = fpga_mgr_buf_load(mgr, &info, buf, count);
+> +
+> +	/* Release the FPGA manager */
+> +	fpga_mgr_unlock(mgr);
+> +	fpga_mgr_put(mgr);
+> +
+> +	/* Deallocate the image info if you're done with it */
+> +	fpga_image_info_free(info);
+> +
+> +API for implementing a new FPGA Manager driver
+> +----------------------------------------------
+> +
+> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+> +   :functions: fpga_manager
+> +
+> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+> +   :functions: fpga_manager_ops
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_create
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_free
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_register
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_unregister
+> +
+> +API for programming a FPGA
+> +--------------------------
+> +
+> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+> +   :functions: fpga_image_info
+> +
+> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+> +   :functions: fpga_mgr_states
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_image_info_alloc
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_image_info_free
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: of_fpga_mgr_get
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_get
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_put
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_lock
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_unlock
+> +
+> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+> +   :functions: fpga_mgr_states
+> +
+> +Note - use :c:func:`fpga_region_program_fpga()` instead of :c:func:`fpga_mgr_load()`
+> +
+> +.. kernel-doc:: drivers/fpga/fpga-mgr.c
+> +   :functions: fpga_mgr_load
+
+
+-- 
+~Randy
