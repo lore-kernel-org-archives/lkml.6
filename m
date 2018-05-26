@@ -1,60 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032202AbeEZQ1j (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 12:27:39 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:39738 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032091AbeEZQ1i (ORCPT
+        id S1032224AbeEZQ2A (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 12:28:00 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38895 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032091AbeEZQ15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 12:27:38 -0400
-Date: Sun, 27 May 2018 00:27:29 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Harsh Jain <harsh@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Michael Werner <werner@chelsio.com>, Casey Leedom <leedom@chelsio.com>,
-        "open list:CXGB4 CRYPTO DRIVER (chcr)" <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: chtls - fix a missing-check bug
-Message-ID: <20180526162729.vwxxnr6po36ipz7h@gondor.apana.org.au>
-References: <1526673338-486-1-git-send-email-wang6495@umn.edu>
+        Sat, 26 May 2018 12:27:57 -0400
+X-Google-Smtp-Source: AB8JxZos5ok4XBchUgMq7LQjpeugAO82Z+IJQDtjuTNQru4Aq6wap0JE5xjLhuyOQoMXZDOQVl9NcQ==
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com> <4468833.XY6THhPN9R@avalon>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <8b518eb4-07b6-bc03-b9af-804b5e9bafde@gmail.com>
+Date: Sat, 26 May 2018 19:27:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526673338-486-1-git-send-email-wang6495@umn.edu>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <4468833.XY6THhPN9R@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 02:55:35PM -0500, Wenwen Wang wrote:
-> In do_chtls_setsockopt(), the tls crypto info is first copied from the
-> poiner 'optval' in userspace and saved to 'tmp_crypto_info'. Then the
-> 'version' of the crypto info is checked. If the version is not as expected,
-> i.e., TLS_1_2_VERSION, error code -ENOTSUPP is returned to indicate that
-> the provided crypto info is not supported yet. Then, the 'cipher_type'
-> field of the 'tmp_crypto_info' is also checked to see if it is
-> TLS_CIPHER_AES_GCM_128. If it is, the whole struct of
-> tls12_crypto_info_aes_gcm_128 is copied from the pointer 'optval' and then
-> the function chtls_setkey() is invoked to set the key.
+On 26.05.2018 19:16, Laurent Pinchart wrote:
+> Hi Dimitri,
 > 
-> Given that the 'optval' pointer resides in userspace, a malicious userspace
-> process can race to change the data pointed by 'optval' between the two
-> copies. For example, a user can provide a crypto info with TLS_1_2_VERSION
-> and TLS_CIPHER_AES_GCM_128. After the first copy, the user can modify the
-> 'version' and the 'cipher_type' fields to any versions and/or cipher types
-> that are not allowed. This way, the user can bypass the checks, inject
-> bad data to the kernel, cause chtls_setkey() to set a wrong key or other
-> issues.
+> Thank you for the patch.
 > 
-> This patch reuses the data copied in the first try so as to ensure these
-> checks will not be bypassed.
-> 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> I'll review this in details, but as this patch is based on the "[PATCH/RFC 
+> 1/4] drm: Add colorkey properties" patch I've submitted, please retain the 
+> authorship, both in the Signed-off-by line, and in the patch author in git.
+Okay. /I think/ I've seen requests to do the other way around for the picked up
+and re-worked patches, though I don't mind at all to keep your authorship. I'll
+change the authorship in the next iteration. Waiting for you review comments,
+thanks.
