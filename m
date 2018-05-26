@@ -1,64 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031112AbeEZDsI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 23:48:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52358 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031051AbeEZDsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 23:48:07 -0400
-Date: Fri, 25 May 2018 20:48:04 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>, kbuild-all@01.org,
-        Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH] mm-kasan-dont-vfree-nonexistent-vm_area-fix
-Message-Id: <20180525204804.3a655370ef4b41e0d96e03f3@linux-foundation.org>
-In-Reply-To: <201805261122.HdUpobQm%fengguang.wu@intel.com>
-References: <dabee6ab-3a7a-51cd-3b86-5468718e0390@virtuozzo.com>
-        <201805261122.HdUpobQm%fengguang.wu@intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1031260AbeEZDuL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 23:50:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:36749 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031109AbeEZDuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 23:50:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Sat, 26 May 2018 13:50:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>
+Subject: linux-next: Signed-off-by missing for commits in the block tree
+Message-ID: <20180526135004.00b19986@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YoPSMsOCfX6+Y.YCKhw5fLQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 26 May 2018 11:31:35 +0800 kbuild test robot <lkp@intel.com> wrote:
+--Sig_/YoPSMsOCfX6+Y.YCKhw5fLQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Andrey,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on mmotm/master]
-> [cannot apply to v4.17-rc6]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Andrey-Ryabinin/mm-kasan-dont-vfree-nonexistent-vm_area-fix/20180526-093255
-> base:   git://git.cmpxchg.org/linux-mmotm.git master
-> config: sparc-allyesconfig (attached as .config)
-> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=sparc 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    fs/autofs/inode.o: In function `autofs_new_ino':
->    inode.c:(.text+0x220): multiple definition of `autofs_new_ino'
->    fs/autofs/inode.o:inode.c:(.text+0x220): first defined here
->    fs/autofs/inode.o: In function `autofs_clean_ino':
->    inode.c:(.text+0x280): multiple definition of `autofs_clean_ino'
->    fs/autofs/inode.o:inode.c:(.text+0x280): first defined here
+Hi Jens,
 
-There's bot breakage here - clearly that patch didn't cause this error.
+Commits
 
-Ian, this autofs glitch may still not be fixed.
+  287a63ebbe7c ("nvme: mark the result argument to nvme_complete_async_even=
+t volatile")
+  750dde4472e4 ("nvme-pci: simplify nvme_cqe_valid")
+  d1f06f4ae041 ("nvme-pci: move ->cq_vector =3D=3D -1 check outside of ->q_=
+lock")
+  1ab0cd6966fc ("nvme-pci: split the nvme queue lock into submission and co=
+mpletion locks")
+  1eae349d18fc ("nvme-pci: drop IRQ disabling on submission queue lock")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YoPSMsOCfX6+Y.YCKhw5fLQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsI2WwACgkQAVBC80lX
+0GwAqgf/YcYEJ2gUYrjIpTsqpZUw7jg8qdrjaE3Lv0GeWAajNrKkPuJt9Nfr5w3z
+vLfUGuldFn7yPAy8afpDPLpSnrpK4SKzrFBVUrDyvIel4QdBT0zaRrEyd14Tbaff
+yTkI4Ahh9uSsoJ+etXuzaEvazhXYYblfPusdggv8+KZ629415PS0aBy08mD+ZcBB
+ypg11OC87QE2KpADMEOyXYbsR8etnqniFWpr6zUQLSL0pRHPBI471d7WQ8iENr82
+v/w1om4HIdKrCcIux1ycuK0Y6LdY77FDZCqRMA1SdY+YShRkEEys2j386LzDIZDU
+maSu37Ybuz6HCyG9U9XyLUaDGpIArA==
+=9me+
+-----END PGP SIGNATURE-----
+
+--Sig_/YoPSMsOCfX6+Y.YCKhw5fLQ--
