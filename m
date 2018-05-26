@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031440AbeEZJQE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:16:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:46503 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031247AbeEZJQD (ORCPT
+        id S1031582AbeEZJQQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:16:16 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:59664 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031305AbeEZJQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 26 May 2018 05:16:03 -0400
-X-Google-Smtp-Source: AB8JxZraptaQ5FISmk9TYLbiDdqcOkl2j31Xy5jfN9pfP+/m+VNxuVaCzgSTzobjf4M3PH17IXBvRYzz/CDJcGC9Yi26cPv8aJC4
+X-Google-Smtp-Source: AB8JxZpO6vYPdcvI5P/RFdXrZfiJwPK6UfgcLdl1EP0OPq98qk0XgFJLSPTkW83HCw+4pb8fIrRFUhaw4vx2Hr4zH2Fo7ipgK1rf
 MIME-Version: 1.0
 Date: Sat, 26 May 2018 02:16:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006370c3056d1855e7@google.com>
-Subject: KASAN: use-after-free Read in do_general_protection
-From: syzbot <syzbot+a1264132fc103340628f@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000065ecae056d185548@google.com>
+Subject: KASAN: stack-out-of-bounds Read in do_general_protection
+From: syzbot <syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com>
+To: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,56 +29,81 @@ syzbot found the following crash on:
 
 HEAD commit:    62d18ecfa641 Merge tag 'arm64-fixes' of git://git.kernel.o..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e030d7800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1093ccb7800000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
-dashboard link: https://syzkaller.appspot.com/bug?extid=a1264132fc103340628f
+dashboard link: https://syzkaller.appspot.com/bug?extid=a5373bacd7643643b238
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16b624d7800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1364e0d7800000
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1067742f800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a1264132fc103340628f@syzkaller.appspotmail.com
+Reported-by: syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
+IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
 ==================================================================
-BUG: KASAN: use-after-free in do_general_protection+0x2ac/0x2f0  
+BUG: KASAN: stack-out-of-bounds in do_general_protection+0x2ac/0x2f0  
 arch/x86/kernel/traps.c:538
-Read of size 8 at addr ffff8801d7187398 by task syz-executor171/4544
+Read of size 8 at addr ffff8801b21273f8 by task syz-executor0/5106
 
-CPU: 0 PID: 4544 Comm: syz-executor171 Not tainted 4.17.0-rc6+ #67
+CPU: 0 PID: 5106 Comm: syz-executor0 Not tainted 4.17.0-rc6+ #92
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  do_general_protection+0x2ac/0x2f0 arch/x86/kernel/traps.c:538
+  general_protection+0x1e/0x30 arch/x86/entry/entry_64.S:1159
+RIP: 0010:msr_write_intercepted arch/x86/kvm/vmx.c:2132 [inline]
+RIP: 0010:vmx_vcpu_run+0xa12/0x25c0 arch/x86/kvm/vmx.c:9879
+RSP: 0018:ffff8801b2127410 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000010000000 RCX: ffffffff811f76f2
+RDX: 000000000836b156 RSI: ffffffff811f76ff RDI: 0000000000000005
+RBP: ffff8801b2127508 R08: ffff8801cf7a6500 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  mmu_notifier_release include/linux/mmu_notifier.h:244 [inline]
+  exit_mmap+0xa4/0x5a0 mm/mmap.c:3057
+  __mmput kernel/fork.c:961 [inline]
+  mmput+0x251/0x610 kernel/fork.c:982
+  exit_mm kernel/exit.c:544 [inline]
+  do_exit+0xe98/0x2730 kernel/exit.c:852
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  __do_sys_exit_group kernel/exit.c:979 [inline]
+  __se_sys_exit_group kernel/exit.c:977 [inline]
+  __ia32_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f88cb9
+RSP: 002b:00000000f7f7fa8c EFLAGS: 00000286 ORIG_RAX: 00000000000000fc
+RAX: ffffffffffffffda RBX: 000000000000000b RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 
 The buggy address belongs to the page:
-page:ffffea00075c61c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+page:ffffea0006c849c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
 flags: 0x2fffc0000000000()
 raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: 0000000000000000 ffffea00075c0101 0000000000000000 0000000000000000
+raw: 0000000000000000 ffffea0006c80101 0000000000000000 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801d7187280: 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801d7187300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff8801d7187380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                             ^
-  ffff8801d7187400: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801d7187480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801b2127280: 00 f2 00 00 00 00 00 00 00 00 00 00 00 00 f3 00
+  ffff8801b2127300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801b2127380: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 f8 f2 f2 f2
+                                                                 ^
+  ffff8801b2127400: f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2
+  ffff8801b2127480: f2 f2 f2 f2 00 f2 f2 f2 f3 f3 f3 f3 00 00 00 00
 ==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 4544 Comm: syz-executor171 Tainted: G    B              
-4.17.0-rc6+ #67
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
 
 
 ---
