@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031582AbeEZJQQ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:16:16 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:59664 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031305AbeEZJQD (ORCPT
+        id S1031600AbeEZJRF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:17:05 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:33161 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031380AbeEZJRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:16:03 -0400
-X-Google-Smtp-Source: AB8JxZpO6vYPdcvI5P/RFdXrZfiJwPK6UfgcLdl1EP0OPq98qk0XgFJLSPTkW83HCw+4pb8fIrRFUhaw4vx2Hr4zH2Fo7ipgK1rf
+        Sat, 26 May 2018 05:17:02 -0400
+X-Google-Smtp-Source: ADUXVKLOkbxk9k/5FZd15+7BWg1RwWJ9Sz6fLGq8Q0J2Sl9fntW61iUHXoKPaK2lvV20qAdblmOfiNTS9whWU/rTrPSXvcUDQfkb
 MIME-Version: 1.0
-Date: Sat, 26 May 2018 02:16:02 -0700
+Date: Sat, 26 May 2018 02:17:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000065ecae056d185548@google.com>
-Subject: KASAN: stack-out-of-bounds Read in do_general_protection
-From: syzbot <syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com>
-To: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Message-ID: <000000000000eb81b9056d1858c1@google.com>
+Subject: general protection fault in eventfd_ctx_remove_wait_queue
+From: syzbot <syzbot+f8c4b79b3cb98d795e59@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,83 +26,59 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    62d18ecfa641 Merge tag 'arm64-fixes' of git://git.kernel.o..
+HEAD commit:    75bc37fefc44 Linux 4.17-rc4
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1093ccb7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
-dashboard link: https://syzkaller.appspot.com/bug?extid=a5373bacd7643643b238
+console output: https://syzkaller.appspot.com/x/log.txt?x=161de3c7800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=31f4b3733894ef79
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8c4b79b3cb98d795e59
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1067742f800000
+
+Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com
+Reported-by: syzbot+f8c4b79b3cb98d795e59@syzkaller.appspotmail.com
 
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
 IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
 8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KASAN: stack-out-of-bounds in do_general_protection+0x2ac/0x2f0  
-arch/x86/kernel/traps.c:538
-Read of size 8 at addr ffff8801b21273f8 by task syz-executor0/5106
-
-CPU: 0 PID: 5106 Comm: syz-executor0 Not tainted 4.17.0-rc6+ #92
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4 Comm: kworker/0:0 Not tainted 4.17.0-rc4+ #37
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue: kvm-irqfd-cleanup irqfd_shutdown
+RIP: 0010:__list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51
+RSP: 0018:ffff8801d9a7f588 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff8801a87665e0 RCX: 1ffff1003644b29a
+RDX: 0000000000000000 RSI: ffffffff81d628fe RDI: ffff8801a87665e8
+RBP: ffff8801d9a7f5a0 R08: ffff8801d9a6a100 R09: ffffed003644b291
+R10: ffffed003644b291 R11: ffff8801b225948b R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8801a87665e0 R15: ffff8801d9a7f688
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1d83a8d000 CR3: 00000001cf4a2000 CR4: 00000000001426f0
+DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  do_general_protection+0x2ac/0x2f0 arch/x86/kernel/traps.c:538
-  general_protection+0x1e/0x30 arch/x86/entry/entry_64.S:1159
-RIP: 0010:msr_write_intercepted arch/x86/kvm/vmx.c:2132 [inline]
-RIP: 0010:vmx_vcpu_run+0xa12/0x25c0 arch/x86/kvm/vmx.c:9879
-RSP: 0018:ffff8801b2127410 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0000000010000000 RCX: ffffffff811f76f2
-RDX: 000000000836b156 RSI: ffffffff811f76ff RDI: 0000000000000005
-RBP: ffff8801b2127508 R08: ffff8801cf7a6500 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-  mmu_notifier_release include/linux/mmu_notifier.h:244 [inline]
-  exit_mmap+0xa4/0x5a0 mm/mmap.c:3057
-  __mmput kernel/fork.c:961 [inline]
-  mmput+0x251/0x610 kernel/fork.c:982
-  exit_mm kernel/exit.c:544 [inline]
-  do_exit+0xe98/0x2730 kernel/exit.c:852
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  __do_sys_exit_group kernel/exit.c:979 [inline]
-  __se_sys_exit_group kernel/exit.c:977 [inline]
-  __ia32_sys_exit_group+0x3e/0x50 kernel/exit.c:977
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f88cb9
-RSP: 002b:00000000f7f7fa8c EFLAGS: 00000286 ORIG_RAX: 00000000000000fc
-RAX: ffffffffffffffda RBX: 000000000000000b RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-The buggy address belongs to the page:
-page:ffffea0006c849c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: 0000000000000000 ffffea0006c80101 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b2127280: 00 f2 00 00 00 00 00 00 00 00 00 00 00 00 f3 00
-  ffff8801b2127300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8801b2127380: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 f8 f2 f2 f2
-                                                                 ^
-  ffff8801b2127400: f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2
-  ffff8801b2127480: f2 f2 f2 f2 00 f2 f2 f2 f3 f3 f3 f3 00 00 00 00
-==================================================================
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del include/linux/list.h:125 [inline]
+  __remove_wait_queue include/linux/wait.h:184 [inline]
+  eventfd_ctx_remove_wait_queue+0x16f/0x590 fs/eventfd.c:188
+  irqfd_shutdown+0x94/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:128
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Code: c5 0f 84 cc 00 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 a5  
+00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00  
+75 5f 49 8b 14 24 48 39 da 0f 85 ba 00 00 00 48 b8
+RIP: __list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51 RSP:  
+ffff8801d9a7f588
+---[ end trace 115284d8987d1fc5 ]---
 
 
 ---
@@ -114,5 +89,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
 syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
