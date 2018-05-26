@@ -1,80 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032481AbeEZWnj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 18:43:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34579 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032422AbeEZWnh (ORCPT
+        id S1032491AbeEZXxR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 19:53:17 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:39985 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032434AbeEZXxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 18:43:37 -0400
-X-Google-Smtp-Source: ADUXVKIbcbRCbCWexcwTSuAkdrJl275DT5V0eyNdaQwwaduRUEnIOSN6GfBAgX/Pgvz4v/rzElu+a9f5uTSvlzJrdao=
-MIME-Version: 1.0
-In-Reply-To: <20180526185837.k5ztrillokpi65qj@esperanza>
-References: <20180522201336.196994-1-shakeelb@google.com> <20180526185837.k5ztrillokpi65qj@esperanza>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Sat, 26 May 2018 15:43:34 -0700
-Message-ID: <CALvZod6kwrrsm7n1LJ51Eakv8sPauOLHjU_E958HueVx8J3H9Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: fix race between kmem_cache destroy, create and deactivate
-To: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 26 May 2018 19:53:15 -0400
+From: Guenter Roeck <linux@roeck-us.net>
+To: Joshua Thompson <funaho@jurai.org>
+Cc: Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC based ethernet
+Date: Sat, 26 May 2018 16:53:05 -0700
+Message-Id: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 11:58 AM, Vladimir Davydov
-<vdavydov.dev@gmail.com> wrote:
-> On Tue, May 22, 2018 at 01:13:36PM -0700, Shakeel Butt wrote:
->> The memcg kmem cache creation and deactivation (SLUB only) is
->> asynchronous. If a root kmem cache is destroyed whose memcg cache is in
->> the process of creation or deactivation, the kernel may crash.
->>
->> Example of one such crash:
->>       general protection fault: 0000 [#1] SMP PTI
->>       CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
->>       ...
->>       Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
->>       RIP: 0010:has_cpu_slab
->>       ...
->>       Call Trace:
->>       ? on_each_cpu_cond
->>       __kmem_cache_shrink
->>       kmemcg_cache_deact_after_rcu
->>       kmemcg_deactivate_workfn
->>       process_one_work
->>       worker_thread
->>       kthread
->>       ret_from_fork+0x35/0x40
->>
->> This issue is due to the lack of real reference counting for the root
->> kmem_caches. Currently kmem_cache does have a field named refcount which
->> has been used for multiple purposes i.e. shared count, reference count
->> and noshare flag. Due to its conflated nature, it can not be used for
->> reference counting by other subsystems.
->>
->> This patch decoupled the reference counting from shared count and
->> noshare flag. The new field 'shared_count' represents the shared count
->> and noshare flag while 'refcount' is converted into a real reference
->> counter.
->>
->> The reference counting is only implemented for root kmem_caches for
->> simplicity. The reference of a root kmem_cache is elevated on sharing or
->> while its memcg kmem_cache creation or deactivation request is in the
->> fly and thus it is made sure that the root kmem_cache is not destroyed
->> in the middle. As the reference of kmem_cache is elevated on sharing,
->> the 'shared_count' does not need any locking protection as at worst it
->> can be out-dated for a small window which is tolerable.
->
-> I wonder if we could fix this problem without introducing reference
-> counting for kmem caches (which seems a bit of an overkill to me TBO),
-> e.g. by flushing memcg_kmem_cache_wq before root cache destruction?
+As of commit 205e1b7f51e4 ("dma-mapping: warn when there is no
+coherent_dma_mask") the NatSemi SONIC Ethernet driver is issuing the
+following warning on driver initialization on Macintosh q800 systems.
 
-Thanks I will look into workqueue flushing.
+SONIC ethernet @50f0a000, MAC 08:00:07:12:34:56, IRQ 3
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 macsonic_init+0x6a/0x15a
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.17.0-rc6-mac-00286-g527f47c #1
+Stack from 0781fdd8:
+        0781fdd8 003615b3 000181ba 000005c4 07a24cbc 00000000 00000000 000020e8
+	07a24800 002c196c 0001824e 00334c06 00000204 001f782a 00000009 00000000
+	00000000 003358d9 001f782a 00334c06 00000204 00000003 00000000 07a24800
+	002b5cb6 000372ec 001f8b1a 07a24800 00359203 50f0a000 07a14a48 00000003
+	00000000 07845c0a 0039dcca 003c835c 003c835c 0035b924 001c19de 07845c00
+	07845c0a 0039dcca 001c06dc 07845c0a 0781fed8 00000007 0054d040 07845c0a
+Call Trace: [<000181ba>] __warn+0xc0/0xc2
+ [<000020e8>] do_one_initcall+0x0/0x140
+ [<0001824e>] warn_slowpath_null+0x26/0x2c
+ [<001f782a>] macsonic_init+0x6a/0x15a
+ [<001f782a>] macsonic_init+0x6a/0x15a
+ [<002b5cb6>] memcmp+0x0/0x2a
+ [<000372ec>] printk+0x0/0x18
+ [<001f8b1a>] mac_sonic_platform_probe+0x380/0x404
+
+As per the warning the coherent_dma_mask is not set on this device.
+There is nothing special about the DMA memory coherency on this hardware
+so we can just set the mask to 32bits in the platform data for the FEC
+ethernet devices.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+Modeled after f61e64310b75 ("m68k: set dma and coherent masks for platform
+FEC ethernets"). 
+
+RFC: Is "nothing special about the DMA memory coherency" correect ?
+
+ arch/m68k/mac/config.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index 0c3275aa0197..8e0476daddb8 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -17,6 +17,7 @@
+ #include <linux/tty.h>
+ #include <linux/console.h>
+ #include <linux/interrupt.h>
++#include <linux/dma-mapping.h>
+ /* keyb */
+ #include <linux/random.h>
+ #include <linux/delay.h>
+@@ -971,6 +972,15 @@ static const struct resource mac_scsi_ccl_rsrc[] __initconst = {
+ 	},
+ };
+ 
++static struct platform_device macsonic_dev = {
++	.name           = "macsonic",
++	.id             = -1,
++	.dev            = {
++		.dma_mask = &macsonic_dev.dev.coherent_dma_mask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++	},
++};
++
+ int __init mac_platform_init(void)
+ {
+ 	u8 *swim_base;
+@@ -1088,7 +1098,7 @@ int __init mac_platform_init(void)
+ 
+ 	if (macintosh_config->ether_type == MAC_ETHER_SONIC ||
+ 	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
+-		platform_device_register_simple("macsonic", -1, NULL, 0);
++		platform_device_register(&macsonic_dev);
+ 
+ 	if (macintosh_config->expansion_type == MAC_EXP_PDS ||
+ 	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
+-- 
+2.7.4
