@@ -1,36 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031022AbeEZAeQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 20:34:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43820 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030804AbeEZAeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 20:34:15 -0400
-Date: Sat, 26 May 2018 01:34:13 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs, proc: hide unused xfs procfs helpers
-Message-ID: <20180526003412.GN30522@ZenIV.linux.org.uk>
-References: <20180525151612.2408651-1-arnd@arndb.de>
- <20180525162204.GA28900@lst.de>
+        id S1030941AbeEZAhG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 20:37:06 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38665 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030804AbeEZAhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 20:37:04 -0400
+Subject: Re: [PATCH v3] f2fs: Fix deadlock in shutdown ioctl
+To: Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC: <linux-kernel@vger.kernel.org>
+References: <1526624512-32241-1-git-send-email-stummala@codeaurora.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <64178374-e67c-36a7-62a0-22c4e8ff9358@huawei.com>
+Date: Sat, 26 May 2018 08:37:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525162204.GA28900@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1526624512-32241-1-git-send-email-stummala@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 06:22:04PM +0200, Christoph Hellwig wrote:
-> Looks fine to me:
+On 2018/5/18 14:21, Sahitya Tummala wrote:
+> f2fs_ioc_shutdown() ioctl gets stuck in the below path
+> when issued with F2FS_GOING_DOWN_FULLSYNC option.
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> __switch_to+0x90/0xc4
+> percpu_down_write+0x8c/0xc0
+> freeze_super+0xec/0x1e4
+> freeze_bdev+0xc4/0xcc
+> f2fs_ioctl+0xc0c/0x1ce0
+> f2fs_compat_ioctl+0x98/0x1f0
 > 
-> Al, can you pick this up?
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-Done
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
