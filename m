@@ -1,64 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032336AbeEZS13 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 14:27:29 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:42649 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032233AbeEZS12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 14:27:28 -0400
-Subject: Re: arch/powerpc/kernel/head_32.S:1106: Error: missing operand
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <e015d6b2-79b8-e05d-5053-5ca0036679d3@molgen.mpg.de>
- <ba9e3312-1923-dcc5-b07e-20f491881328@c-s.fr>
-From: Paul Menzel <pmenzel+linuxppc-dev@molgen.mpg.de>
-Message-ID: <cabbedf3-8a8b-4862-3efe-4ca9d5f6946b@molgen.mpg.de>
-Date: Sat, 26 May 2018 20:27:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1032322AbeEZSvu (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 14:51:50 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33328 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032234AbeEZSvt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 14:51:49 -0400
+X-Google-Smtp-Source: ADUXVKIldQnE9uB85QsrcrLFbYdl5pVNJHABNpu7TerAfl4BQTEtHwZ+8jFqUtt+TnrCG9LlhK7I3Q==
+Date: Sat, 26 May 2018 21:51:44 +0300
+From: Vladimir Davydov <vdavydov.dev@gmail.com>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Linux MM <linux-mm@kvack.org>, cgroups@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg: force charge kmem counter too
+Message-ID: <20180526185144.xvh7ejlyelzvqwdb@esperanza>
+References: <20180525185501.82098-1-shakeelb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <ba9e3312-1923-dcc5-b07e-20f491881328@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525185501.82098-1-shakeelb@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Christophe,
+On Fri, May 25, 2018 at 11:55:01AM -0700, Shakeel Butt wrote:
+> Based on several conditions the kernel can decide to force charge an
+> allocation for a memcg i.e. overcharge memcg->memory and memcg->memsw
+> counters. Do the same for memcg->kmem counter too. In cgroup-v1, this
+> bug can cause a __GFP_NOFAIL kmem allocation fail if an explicit limit
+> on kmem counter is set and reached.
 
+memory.kmem.limit is broken and unlikely to ever be fixed as this knob
+was deprecated in cgroup-v2. The fact that hitting the limit doesn't
+trigger reclaim can result in unexpected behavior from user's pov, like
+getting ENOMEM while listing a directory. Bypassing the limit for NOFAIL
+allocations isn't going to fix those problem. So I'd suggest to avoid
+setting memory.kmem.limit instead of trying to fix it or, even better,
+switch to cgroup-v2.
 
-Am 26.05.2018 um 18:02 schrieb christophe leroy:
-
-> Le 26/05/2018 à 06:35, Paul Menzel a écrit :
-
->> Building the configuration created with `make tinyconfig` on the Power 
->> 8 system IBM S822LC with Ubuntu 18.04 fails with the error below.
->>
->> ```
->> $ git describe --dirty
->> v4.17-rc6-296-gbc2dbc5420e8
->> $ git log --oneline -1
->> bc2dbc5420e8 (HEAD -> master, origin/master, origin/HEAD) Merge branch 
->> 'akpm' (patches from Andrew)
->> $ make tinyconfig
->> $ make -j120
->> […]
->>    AS      arch/powerpc/kernel/head_32.o
->> arch/powerpc/kernel/head_32.S: Assembler messages:
->> arch/powerpc/kernel/head_32.S:1106: Error: missing operand
 > 
-> There was a similar problem in 2015, see 
-> http://linux-kernel.2935.n7.nabble.com/Missing-operand-for-tlbie-instruction-on-Power7-td1206917.html
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+>  mm/memcontrol.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
 > 
-> Which version of binutils do you use ?
-
-2.30-15ubuntu1 is installed.
-
-
-Kind regards,
-
-Paul
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index ab5673dbfc4e..0a88f824c550 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1893,6 +1893,18 @@ void mem_cgroup_handle_over_high(void)
+>  	current->memcg_nr_pages_over_high = 0;
+>  }
+>  
+> +/*
+> + * Based on try_charge() force charge conditions.
+> + */
+> +static inline bool should_force_charge(gfp_t gfp_mask)
+> +{
+> +	return (unlikely(tsk_is_oom_victim(current) ||
+> +			 fatal_signal_pending(current) ||
+> +			 current->flags & PF_EXITING ||
+> +			 current->flags & PF_MEMALLOC ||
+> +			 gfp_mask & __GFP_NOFAIL));
+> +}
+> +
+>  static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  		      unsigned int nr_pages)
+>  {
+> @@ -2008,6 +2020,8 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	 * The allocation either can't fail or will lead to more memory
+>  	 * being freed very soon.  Allow memory usage go over the limit
+>  	 * temporarily by force charging it.
+> +	 *
+> +	 * NOTE: Please keep the should_force_charge() conditions in sync.
+>  	 */
+>  	page_counter_charge(&memcg->memory, nr_pages);
+>  	if (do_memsw_account())
+> @@ -2331,8 +2345,11 @@ int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
+>  
+>  	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+>  	    !page_counter_try_charge(&memcg->kmem, nr_pages, &counter)) {
+> -		cancel_charge(memcg, nr_pages);
+> -		return -ENOMEM;
+> +		if (!should_force_charge(gfp)) {
+> +			cancel_charge(memcg, nr_pages);
+> +			return -ENOMEM;
+> +		}
+> +		page_counter_charge(&memcg->kmem, nr_pages);
+>  	}
+>  
+>  	page->mem_cgroup = memcg;
