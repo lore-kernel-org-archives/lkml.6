@@ -1,99 +1,741 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030935AbeEZBET (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 21:04:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030834AbeEZBES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 21:04:18 -0400
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [RFC PATCH] f2fs: add fsync_mode=nobarrier for non-atomic files
-Date: Fri, 25 May 2018 18:04:14 -0700
-Message-Id: <20180526010414.66014-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        id S1030969AbeEZBJC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 21:09:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54484 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030816AbeEZBI7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 21:08:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 711EC60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v2 5/6] soc: qcom: rpmh powerdomain driver
+To: Rajendra Nayak <rnayak@codeaurora.org>, viresh.kumar@linaro.org,
+        sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+References: <20180525100121.28214-1-rnayak@codeaurora.org>
+ <20180525100121.28214-6-rnayak@codeaurora.org>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
+Date: Fri, 25 May 2018 18:08:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
+MIME-Version: 1.0
+In-Reply-To: <20180525100121.28214-6-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For non-atomic files, this patch adds an option to give nobarrier which
-doesn't issue flush commands to the device.
+Hello Rajendra,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- Documentation/filesystems/f2fs.txt | 16 +++++++++-------
- fs/f2fs/f2fs.h                     |  1 +
- fs/f2fs/file.c                     |  2 +-
- fs/f2fs/super.c                    |  4 ++++
- 4 files changed, 15 insertions(+), 8 deletions(-)
+On 05/25/2018 03:01 AM, Rajendra Nayak wrote:
+> The RPMh powerdomain driver aggregates the corner votes from various
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 12a147c9f87f..69f8de995739 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -182,13 +182,15 @@ whint_mode=%s          Control which write hints are passed down to block
-                        passes down hints with its policy.
- alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
-                        and "default".
--fsync_mode=%s          Control the policy of fsync. Currently supports "posix"
--                       and "strict". In "posix" mode, which is default, fsync
--                       will follow POSIX semantics and does a light operation
--                       to improve the filesystem performance. In "strict" mode,
--                       fsync will be heavy and behaves in line with xfs, ext4
--                       and btrfs, where xfstest generic/342 will pass, but the
--                       performance will regress.
-+fsync_mode=%s          Control the policy of fsync. Currently supports "posix",
-+                       "strict", and "nobarrier". In "posix" mode, which is
-+                       default, fsync will follow POSIX semantics and does a
-+                       light operation to improve the filesystem performance.
-+                       In "strict" mode, fsync will be heavy and behaves in line
-+                       with xfs, ext4 and btrfs, where xfstest generic/342 will
-+                       pass, but the performance will regress. "nobarrier" is
-+                       based on "posix", but doesn't issue flush command for
-+                       non-atomic files likewise "nobarrier" mount option.
- test_dummy_encryption  Enable dummy encryption, which provides a fake fscrypt
-                        context. The fake fscrypt context is used by xfstests.
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6e0677aff8ca..659c63dae81c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1093,6 +1093,7 @@ enum {
- enum fsync_mode {
- 	FSYNC_MODE_POSIX,	/* fsync follows posix semantics */
- 	FSYNC_MODE_STRICT,	/* fsync behaves in line with ext4 */
-+	FSYNC_MODE_NOBARRIER,	/* fsync behaves nobarrier based on posix */
- };
- 
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7ac216bb560d..fab65a0bd4cc 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -306,7 +306,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 	remove_ino_entry(sbi, ino, APPEND_INO);
- 	clear_inode_flag(inode, FI_APPEND_WRITE);
- flush_out:
--	if (!atomic)
-+	if (!atomic && F2FS_OPTION(sbi).fsync_mode != FSYNC_MODE_NOBARRIER)
- 		ret = f2fs_issue_flush(sbi, inode->i_ino);
- 	if (!ret) {
- 		remove_ino_entry(sbi, ino, UPDATE_INO);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1b42fc7e4b29..12282b144651 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -740,6 +740,10 @@ static int parse_options(struct super_block *sb, char *options)
- 			} else if (strlen(name) == 6 &&
- 					!strncmp(name, "strict", 6)) {
- 				F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_STRICT;
-+			} else if (strlen(name) == 9 &&
-+					!strncmp(name, "nobarrier", 9)) {
-+				F2FS_OPTION(sbi).fsync_mode =
-+							FSYNC_MODE_NOBARRIER;
- 			} else {
- 				kfree(name);
- 				return -EINVAL;
+s/powerdomain/power domain/
+
+This applies to all instances in this patch.  "Power domain" seems to be
+the preferred spelling in the kernel.
+
+
+> consumers for the ARC resources and communicates it to RPMh.
+> 
+> We also add data for all powerdomains on sdm845 as part of the patch.
+> The driver can be extended to support other SoCs which support RPMh
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  .../devicetree/bindings/power/qcom,rpmhpd.txt |  65 ++++
+>  drivers/soc/qcom/Kconfig                      |   9 +
+>  drivers/soc/qcom/Makefile                     |   1 +
+>  drivers/soc/qcom/rpmhpd.c                     | 360 ++++++++++++++++++
+>  4 files changed, 435 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
+>  create mode 100644 drivers/soc/qcom/rpmhpd.c
+...
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
+
+I think that this binding documentation should be in a patch separate from
+the driver.
+
+
+> @@ -0,0 +1,65 @@
+> +Qualcomm RPMh Powerdomains
+
+s/Qualcomm/Qualcomm Technologies, Inc./
+
+
+> +
+> +* For RPMh powerdomains, we communicate a performance state to RPMh
+
+Does this line need to start with '*'?
+
+
+> +which then translates it into a corresponding voltage on a rail
+> +
+> +Required Properties:
+> + - compatible: Should be one of the following
+> +	* qcom,sdm845-rpmhpd: RPMh powerdomain for the sdm845 family of SoC
+> + - power-domain-cells: number of cells in power domain specifier
+> +	must be 1
+> + - operating-points-v2: Phandle to the OPP table for the power-domain.
+> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
+> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
+> +
+> +Example:
+> +
+> +	rpmhpd: power-controller {
+> +		compatible = "qcom,sdm845-rpmhpd";
+> +		#power-domain-cells = <1>;
+> +		operating-points-v2 = <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>,
+> +				      <&rpmhpd_opp_table>;
+
+Can this be changed to simply:
+  operating-points-v2 = <&rpmhpd_opp_table>;
+
+The opp binding documentation [1] states that this should be ok:
+
+    If only one phandle is available, then the same OPP table will be used
+    for all power domains provided by the power domain provider.
+
+
+> +	};
+> +
+> +	rpmhpd_opp_table: opp-table {
+> +		compatible = "operating-points-v2-qcom-level", "operating-points-v2";
+> +
+> +		rpmhpd_opp1: opp@1 {
+
+Is there any significance to the 1 through 8 values in these OPP table
+nodes?  If not, then could this be changed to something like:
+
+rpmhpd_retention: opp@16 {
+...
+rpmhpd_turbo_l1: opp@416 {
+
+
+> +			qcom-corner = <16>;
+
+s/qcom-corner/qcom,level/g
+
+
+> +		};
+> +
+> +		rpmhpd_opp2: opp@2 {
+> +			qcom-corner = <48>;
+> +		};
+> +
+> +		rpmhpd_opp3: opp@3 {
+> +			qcom-corner = <64>;
+> +		};
+> +
+> +		rpmhpd_opp4: opp@4 {
+> +			qcom-corner = <128>;
+> +		};
+> +
+> +		rpmhpd_opp5: opp@5 {
+> +			qcom-corner = <192>;
+> +		};
+> +
+> +		rpmhpd_opp6: opp@6 {
+> +			qcom-corner = <256>;
+> +		};
+> +
+> +		rpmhpd_opp7: opp@7 {
+> +			qcom-corner = <320>;
+> +		};
+
+Can you please add 336 and 384 to your example?  384 at least should be
+present as it corresponds to the Turbo level which all supplies support.
+
+
+> +		rpmhpd_opp8: opp@8 {
+> +			qcom-corner = <416>;
+> +		};
+> +	};
+
+How are consumers of these power domains supposed to identify which domain
+within <&rpmhpd> to use (e.g. VDD_CX vs VDD_MX)?  If the answer is a plain
+integer index, then could you please add per-platform #define constants in
+a DT header file which explicitly define the meaning for each index?
+
+How do consumers of these power domains identify which level they want to
+set for a specific power domain (e.g. Nominal vs Turbo)?
+
+Would it be helpful to provide a DT header file with #define constants for
+the cross-platform sparse level mapping?  This is done in [2] for the
+downstream rpmh-regulator driver that handles ARC managed regulators.
+
+
+Would it be ok to add some consumer DT nodes in this binding file example
+so that it is clear how consumers interact with the rpmhpd?
+
+
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index a7a405178967..1faed239701d 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -74,6 +74,15 @@ config QCOM_RMTFS_MEM
+>  
+>  	  Say y here if you intend to boot the modem remoteproc.
+>  
+> +config QCOM_RPMHPD
+> +	tristate "Qualcomm RPMh Powerdomain driver"
+
+s/Qualcomm/Qualcomm Technologies, Inc./
+
+
+> +	depends on QCOM_RPMH && QCOM_COMMAND_DB
+> +	help
+> +	  QCOM RPMh powerdomain driver to support powerdomain with
+> +	  performance states. The driver communicates a performance state
+> +	  value to RPMh which then translates it into corresponding voltage
+> +	  for the voltage rail.
+> +
+>  config QCOM_RPMPD
+>  	tristate "Qualcomm RPM Powerdomain driver"
+>  	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index 9550c170de93..499513f63bef 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -16,3 +16,4 @@ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+>  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+>  obj-$(CONFIG_QCOM_APR) += apr.o
+>  obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
+> +obj-$(CONFIG_QCOM_RPMHPD) += rpmhpd.o
+> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+> new file mode 100644
+> index 000000000000..a79f094ad326
+> --- /dev/null
+> +++ b/drivers/soc/qcom/rpmhpd.c
+> @@ -0,0 +1,360 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+
+Minor: The copyright comment could be made into a single line comment.
+
+
+> +
+> +#include <linux/err.h>
+> +#include <linux/export.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/slab.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/rpmh.h>
+> +
+> +#define domain_to_rpmhpd(domain) container_of(domain, struct rpmhpd, pd)
+> +
+> +#define DEFINE_RPMHPD_AO(_platform, _name, _active)			\
+> +	static struct rpmhpd _platform##_##_active;			\
+> +	static struct rpmhpd _platform##_##_name = {			\
+> +		.pd = {	.name = #_name,	},				\
+> +		.peer = &_platform##_##_active,				\
+> +		.res_name = #_name".lvl",				\
+> +	};								\
+> +	static struct rpmhpd _platform##_##_active = {			\
+> +		.pd = { .name = #_active, },				\
+> +		.peer = &_platform##_##_name,				\
+> +		.active_only = true,					\
+> +		.res_name = #_name".lvl",				\
+> +	}
+> +
+> +#define DEFINE_RPMHPD(_platform, _name)					\
+> +	static struct rpmhpd _platform##_##_name = {			\
+> +		.pd = { .name = #_name, },				\
+> +		.res_name = #_name".lvl",				\
+> +	}
+> +
+> +/*
+> + * This is the number of bytes used for each command DB aux data entry of an
+> + * ARC resource.
+> + */
+> +#define RPMH_ARC_LEVEL_SIZE	2
+> +#define RPMH_ARC_MAX_LEVELS	16
+> +
+> +struct rpmhpd {
+> +	struct device *dev;
+> +	struct generic_pm_domain pd;
+> +	struct rpmhpd *peer;
+> +	const bool active_only;
+> +	unsigned long corner;
+
+Does this actually need to be unsigned long?  It looks like unsigned int
+is being passed in from rpmhpd_set_performance().  Also, hlvl values sent
+to RPMh will only every be in the range 0 - 15.
+
+If you change the type here, then can you also please change long to int
+in to_active_sleep() and rpmhpd_aggregate_corner() below?
+
+
+> +	u32	level[RPMH_ARC_MAX_LEVELS];
+> +	int	level_count;
+> +	bool enabled;
+> +	const char *res_name;
+> +	u32	addr;
+> +};
+
+Can you please indent the fields of this struct to the same column with tabs?
+
+
+> +
+> +struct rpmhpd_desc {
+> +	struct rpmhpd **rpmhpds;
+> +	size_t num_pds;
+> +};
+
+This struct could be removed and the per-platform arrays could instead be
+NULL terminated.
+
+> +
+> +static DEFINE_MUTEX(rpmhpd_lock);
+> +
+> +/* sdm845 RPMh powerdomains */
+> +DEFINE_RPMHPD(sdm845, ebi);
+> +DEFINE_RPMHPD_AO(sdm845, mx, mx_ao);
+> +DEFINE_RPMHPD_AO(sdm845, cx, cx_ao);
+> +DEFINE_RPMHPD(sdm845, lmx);
+> +DEFINE_RPMHPD(sdm845, lcx);
+> +DEFINE_RPMHPD(sdm845, gfx);
+> +DEFINE_RPMHPD(sdm845, mss);
+> +
+> +static struct rpmhpd *sdm845_rpmhpds[] = {
+> +	[0] = &sdm845_ebi,
+
+If you are going to explicitly index these elements, then can you please
+use #define constants from a DT header file that specifies meaningful
+names?  The existing 0-8 indexing is no better than implicit indexing.
+
+
+> +	[1] = &sdm845_mx,
+> +	[2] = &sdm845_mx_ao,
+> +	[3] = &sdm845_cx,
+> +	[4] = &sdm845_cx_ao,
+> +	[5] = &sdm845_lmx,
+> +	[6] = &sdm845_lcx,
+> +	[7] = &sdm845_gfx,
+> +	[8] = &sdm845_mss,
+> +};
+> +
+> +static const struct rpmhpd_desc sdm845_desc = {
+> +	.rpmhpds = sdm845_rpmhpds,
+> +	.num_pds = ARRAY_SIZE(sdm845_rpmhpds),
+> +};
+> +
+> +static const struct of_device_id rpmhpd_match_table[] = {
+> +	{ .compatible = "qcom,sdm845-rpmhpd", .data = &sdm845_desc },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rpmhpd_match_table);
+> +
+> +static int rpmhpd_send_corner(struct rpmhpd *pd, int state, unsigned int corner)
+> +{
+> +	struct tcs_cmd cmd = {
+> +		.addr = pd->addr,
+> +		.data = corner,
+> +	};
+> +
+> +	return rpmh_write(pd->dev, state, &cmd, 1);
+
+This can be optimized by calling rpmh_write_async() whenever the corner
+being sent is smaller than the last value sent.  That way, no time is
+wasted waiting for an ACK when decreasing voltage.  Would you mind adding
+the necessary check and previous request caching for this?
+
+
+> +};
+> +
+> +static void to_active_sleep(struct rpmhpd *pd, unsigned long corner,
+> +			    unsigned long *active, unsigned long *sleep)
+> +{
+> +	*active = corner;
+> +
+> +	if (pd->active_only)
+> +		*sleep = 0;
+> +	else
+> +		*sleep = *active;
+> +}
+> +
+> +static int rpmhpd_aggregate_corner(struct rpmhpd *pd)
+> +{
+> +	int ret;
+> +	struct rpmhpd *peer = pd->peer;
+> +	unsigned long active_corner, sleep_corner;
+> +	unsigned long this_corner = 0, this_sleep_corner = 0;
+> +	unsigned long peer_corner = 0, peer_sleep_corner = 0;
+
+s/this_corner/this_active_corner/
+s/peer_corner/peer_active_corner/
+
+This is more consistent and I think that it makes the code a little more
+readable.
+
+
+> +
+> +	to_active_sleep(pd, pd->corner, &this_corner, &this_sleep_corner);
+> +
+> +	if (peer && peer->enabled)
+> +		to_active_sleep(peer, peer->corner, &peer_corner,
+> +				&peer_sleep_corner);
+> +
+> +	active_corner = max(this_corner, peer_corner);
+> +
+> +	ret = rpmhpd_send_corner(pd, RPMH_ACTIVE_ONLY_STATE, active_corner);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sleep_corner = max(this_sleep_corner, peer_sleep_corner);
+> +
+> +	return rpmhpd_send_corner(pd, RPMH_SLEEP_STATE, sleep_corner);
+> +}
+
+This aggregation function as well as the rpmhpd_send_corner() calls below
+are not sufficient for RPMh.  There are 3 states that must all be used:
+RPMH_ACTIVE_ONLY_STATE, RPMH_WAKE_ONLY_STATE, and RPMH_SLEEP_STATE.  The
+naming is somewhat confusing as rpmhpd is defining a different concept of
+active-only.
+
+For power domains without active-only or peers, only
+RPMH_ACTIVE_ONLY_STATE should be used.  This instructs RPMh to issue the
+request immediately.
+
+For power domains with active-only, requests will need to be made for all
+three.  active_corner would be sent for both RPMH_ACTIVE_ONLY_STATE (so
+that the request takes effect immediately) and RPMH_WAKE_ONLY_STATE (so
+that the request is inserted into the wake TCS).  sleep_corner would be
+sent for RPMH_SLEEP_STATE (so that the request is inserted into the sleep
+TCS).
+
+You can see how this is handled in the RPMh clock driver in patch [3].
+
+You may be able to get away with using only RPMH_SLEEP_STATE and
+RPMH_ACTIVE_ONLY_STATE assuming that you issue the RPMH_SLEEP_STATE
+request first due to the rpmh driver caching behavior added in the
+cache_rpm_request() function in [4].  However, could you please confirm
+with Lina that this usage will continue to work in the future?  I'm not
+sure what guarantees are made at the rpmh API level.
+
+
+> +
+> +static int rpmhpd_power_on(struct generic_pm_domain *domain)
+> +{
+> +	int ret = 0;
+> +	struct rpmhpd *pd = domain_to_rpmhpd(domain);
+
+Minor: It might look a little nicer to list 'pd' definition first amongst
+the local variables in this function as well as those below.
+
+
+> +
+> +	mutex_lock(&rpmhpd_lock);
+> +
+> +	pd->enabled = true;
+> +
+> +	if (pd->corner)
+> +		ret = rpmhpd_aggregate_corner(pd);
+> +
+> +	mutex_unlock(&rpmhpd_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rpmhpd_power_off(struct generic_pm_domain *domain)
+> +{
+> +	int ret;
+> +	struct rpmhpd *pd = domain_to_rpmhpd(domain);
+> +
+> +	mutex_lock(&rpmhpd_lock);
+> +
+> +	if (pd->level[0] == 0) {
+> +		ret = rpmhpd_send_corner(pd, RPMH_ACTIVE_ONLY_STATE, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = rpmhpd_send_corner(pd, RPMH_SLEEP_STATE, 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	pd->enabled = false;
+> +
+> +	mutex_unlock(&rpmhpd_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpmhpd_set_performance(struct generic_pm_domain *domain,
+> +			     unsigned int state)
+> +{
+> +	int ret = 0;
+> +	struct rpmhpd *pd = domain_to_rpmhpd(domain);
+> +
+> +	mutex_lock(&rpmhpd_lock);
+> +
+> +	pd->corner = state;
+
+What is the numbering space for 'state'?  I assume that it is a vlvl value
+corresponding to qcom,level in a DT OPP table node.  If so, additional
+logic is required.
+
+When using RPMh, the platform and supply independent vlvl sparse numbering
+space is used by consumers so that they can always have consistent values.
+ However, the actual requests sent to RPMh ARC must be in the hlvl
+numbering space (i.e. 0 - 15(max)).  In the case of this driver, the
+acceptable hlvl values for a given power domain are 0 to pd->level_count - 1.
+
+I suspect that you need to add something like this here:
+
+int i;
+
+for (i = 0; i < pd->level_count; i++)
+	if (state <= pd->level[i])
+		break;
+
+if (i == pd->level_count) {
+	ret = -EINVAL;
+	dev_err(pd->dev, "invalid state=%u for domain %s",
+		state, pd->pd.name);
+	goto out;
+}
+
+pd->corner = i;
+
+
+Note that a given power domain will likely not support all of the vlvl
+values listed in the DT OPP table nodes.
+
+
+> +
+> +	if (!pd->enabled)
+> +		goto out;
+> +
+> +	ret = rpmhpd_aggregate_corner(pd);
+> +out:
+> +	mutex_unlock(&rpmhpd_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static unsigned int rpmhpd_get_performance(struct generic_pm_domain *genpd,
+> +					   struct dev_pm_opp *opp)> +{
+> +	struct device_node *np;
+> +	unsigned int corner = 0;
+> +
+> +	np = dev_pm_opp_get_of_node(opp);
+> +	if (of_property_read_u32(np, "qcom,level", &corner)) {
+> +		pr_err("%s: missing 'qcom,level' property\n", __func__);
+> +		return 0;
+
+Why return 0 instead of an error?
+
+
+> +	}
+> +
+> +	of_node_put(np);
+> +
+> +	return corner;
+> +}
+
+Is there an API to determine the currently operating performance state of
+a given power domain?  Is this information accessible from userspace?  We
+will definitely need this for general debugging.
+
+
+> +
+> +static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
+> +{
+> +	u8 *buf;
+
+This could be changed to the following in order to remove the need for
+kzalloc() and kfree() calls below:
+
+u8 buf[RPMH_ARC_MAX_LEVELS * RPMH_ARC_LEVEL_SIZE];
+
+
+> +	int i, j, len, ret;
+> +
+> +	len = cmd_db_read_aux_data_len(rpmhpd->res_name);
+> +	if (len <= 0)
+> +		return len;
+> +
+
+A check like this is needed here:
+
+if (len > RPMH_ARC_MAX_LEVELS * RPMH_ARC_LEVEL_SIZE)
+	return -EINVAL;
+
+
+> +	buf = kzalloc(len, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	ret = cmd_db_read_aux_data(rpmhpd->res_name, buf, len);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	rpmhpd->level_count = len / RPMH_ARC_LEVEL_SIZE;
+> +
+> +	for (i = 0; i < rpmhpd->level_count; i++) {
+
+If you make buf a fixed size array, then rpmhpd->level[i] = 0; is needed
+here or a memset() outside of the for loop.
+
+
+> +		for (j = 0; j < RPMH_ARC_LEVEL_SIZE; j++)
+> +			rpmhpd->level[i] |=
+> +				buf[i * RPMH_ARC_LEVEL_SIZE + j] << (8 * j);
+> +
+> +		/*
+> +		 * The AUX data may be zero padded.  These 0 valued entries at
+> +		 * the end of the map must be ignored.
+> +		 */
+> +		if (i > 0 && rpmhpd->level[i] == 0) {
+> +			rpmhpd->level_count = i;
+> +			break;
+> +		}
+> +		pr_dbg("%s: ARC hlvl=%2d --> vlvl=%4u\n", rpmhpd->res_name, i,
+> +		       rpmhpd->level[i]);
+> +	}
+> +
+> +	kfree(buf);
+> +	return 0;
+> +}
+> +
+> +static int rpmhpd_probe(struct platform_device *pdev)
+> +{
+> +	int i, ret;
+> +	size_t num;
+> +	struct genpd_onecell_data *data;
+> +	struct rpmhpd **rpmhpds;
+> +	const struct rpmhpd_desc *desc;
+> +
+> +	desc = of_device_get_match_data(&pdev->dev);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	rpmhpds = desc->rpmhpds;
+> +	num = desc->num_pds;
+> +
+> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
+> +				     GFP_KERNEL);
+> +	data->num_domains = num;
+> +
+> +	ret = cmd_db_ready();
+> +	if (ret) {
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Command DB unavailable, ret=%d\n",
+> +				ret);
+> +		return ret;
+> +	}
+> +
+> +	for (i = 0; i < num; i++) {
+> +		if (!rpmhpds[i])
+> +			continue;
+
+Why is this check needed?
+
+
+> +
+> +		rpmhpds[i]->dev = &pdev->dev;
+> +		rpmhpds[i]->addr = cmd_db_read_addr(rpmhpds[i]->res_name);
+> +		if (!rpmhpds[i]->addr) {
+> +			dev_err(&pdev->dev, "Could not find RPMh address for resource %s\n",
+> +				rpmhpds[i]->res_name);
+> +			return -ENODEV;
+> +		}
+> +
+> +		ret = cmd_db_read_slave_id(rpmhpds[i]->res_name);
+> +		if (ret != CMD_DB_HW_ARC) {
+> +			dev_err(&pdev->dev, "RPMh slave ID mismatch\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		ret = rpmhpd_update_level_mapping(rpmhpds[i]);
+> +		if (ret)
+> +			return ret;
+> +
+> +		rpmhpds[i]->pd.power_off = rpmhpd_power_off;
+> +		rpmhpds[i]->pd.power_on = rpmhpd_power_on;
+> +		rpmhpds[i]->pd.set_performance_state = rpmhpd_set_performance;
+> +		rpmhpds[i]->pd.opp_to_performance_state = rpmhpd_get_performance;
+> +		pm_genpd_init(&rpmhpds[i]->pd, NULL, true);
+> +
+> +		data->domains[i] = &rpmhpds[i]->pd;
+> +	}
+> +
+> +	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+> +}
+> +
+> +static int rpmhpd_remove(struct platform_device *pdev)
+> +{
+> +	of_genpd_del_provider(pdev->dev.of_node);
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver rpmhpd_driver = {
+> +	.driver = {
+> +		.name = "qcom-rpmhpd",
+> +		.of_match_table = rpmhpd_match_table,
+> +	},
+> +	.probe = rpmhpd_probe,
+> +	.remove = rpmhpd_remove,
+> +};
+> +
+> +static int __init rpmhpd_init(void)
+> +{
+> +	return platform_driver_register(&rpmhpd_driver);
+> +}
+> +core_initcall(rpmhpd_init);
+> +
+> +static void __exit rpmhpd_exit(void)
+> +{
+> +	platform_driver_unregister(&rpmhpd_driver);
+> +}
+> +module_exit(rpmhpd_exit);
+> +
+> +MODULE_DESCRIPTION("Qualcomm RPMh Power Domain Driver");
+
+s/Qualcomm/Qualcomm Technologies, Inc./
+
+
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:qcom-rpmhpd");
+
+Thanks,
+David
+
+[1]:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/opp/opp.txt?h=v4.17-rc6#n49
+[2]:
+https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/include/dt-bindings/regulator/qcom,rpmh-regulator.h?h=msm-4.9
+[3]: https://lkml.org/lkml/2018/5/9/54
+[4]: https://lkml.org/lkml/2018/5/24/536
+
 -- 
-2.17.0.441.gb46fe60e1d-goog
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
