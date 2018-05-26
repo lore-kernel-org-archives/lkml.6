@@ -1,81 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032123AbeEZPsJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 11:48:09 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:41983 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031908AbeEZPsH (ORCPT
+        id S1032092AbeEZP5r (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 11:57:47 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35883 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031973AbeEZP5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 11:48:07 -0400
-From: Paul Burton <paul.burton@mips.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Paul Burton <paul.burton@mips.com>
-Subject: [PATCH 2/2] sched: Warn if we fail to migrate a task
-Date: Sat, 26 May 2018 08:46:48 -0700
-Message-ID: <20180526154648.11635-3-paul.burton@mips.com>
+        Sat, 26 May 2018 11:57:44 -0400
+X-Google-Smtp-Source: AB8JxZrV9gyFkkenIVNHypHIlgkPY3vh1McvRo94TNSPZEL6k2nUutmC4ZT11swN7n6CjmkTVFOCYg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2 0/2] Implement standard color keying properties for DRM planes
+Date: Sat, 26 May 2018 18:56:21 +0300
+Message-Id: <20180526155623.12610-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180526154648.11635-1-paul.burton@mips.com>
-References: <20180526154648.11635-1-paul.burton@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-BESS-ID: 1527349614-321459-6793-23952-3
-X-BESS-VER: 2018.6-r1805181819
-X-BESS-Apparent-Source-IP: 12.201.5.31
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193394
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__set_cpus_allowed_ptr() makes use of stop_one_cpu() to call
-migration_cpu_stop() in order to perform migration of a task away from
-the CPU it's currently running on. If all is as expected then this
-shouldn't fail, but as the preceding patch shows it's possible for this
-assumption to be broken fairly subtly.
+Hello, DRM maintainers!
 
-Add a warning to ensure that if stop_one_cpu() returns an error
-(-ENOENT is the only one it can currently return) then we warn about it
-in the kernel log, since this isn't expected to happen.
+Laurent Pinchart kindly agreed to allow me to pick up his work on
+the generic colorkey DRM plane property [0]. I've reworked the original
+patch a tad, hopefully making it flexible enough to cover various HW
+capabilities.
 
-I considered propogating the error upwards, but this would require a
-change to the return values allowed from the sched_setaffinity() syscall
-and would require that user programs handle errors other than those
-caused by their own bad input to the syscall. So for now this patch
-simply warns, which is an improvement over the silent error & incorrect
-scheduling we had before.
+Changes I've made:
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
+	- Some code clean up and reshuffle.
 
----
+	- Took into account some the Ville's Syrjälä review comments to [0].
 
- kernel/sched/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+	- The number of common DRM colorkey properties grows from 4 to 9.
+	  New properties:
+		- colorkey.mask
+		- colorkey.format
+		- colorkey.inverted-match
+		- colorkey.replacement-mask
+		- colorkey.replacement-format
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2380bc228dd0..cda3affd45b7 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1127,7 +1127,8 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
- 		struct migration_arg arg = { p, dest_cpu };
- 		/* Need help from migration thread: drop lock and wait. */
- 		task_rq_unlock(rq, p, &rf);
--		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
-+		ret = stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
-+		WARN_ON(ret);
- 		tlb_migrate_finish(p->mm);
- 		return 0;
- 	} else if (task_on_rq_queued(p)) {
+	  Renamed properties:
+		- colorkey.value -> colorkey.replacement-value
+
+	- colorkey.mode userspace-property ENUM's got a bit more explicit
+	  names, like "src" -> "src-match-src-replace".
+
+	- No driver-specific modes / properties allowed, all unsupported
+	  features are simply rejected by the drivers.
+
+This patchset includes initial colorkey property implementation for the
+older NVIDIA Tegra's.
+
+Please review, thanks.
+
+[0] https://lists.freedesktop.org/archives/dri-devel/2017-December/160510.html
+
+Dmitry Osipenko (2):
+  drm: Add generic colorkey properties
+  drm/tegra: plane: Implement generic colorkey property for older
+    Tegra's
+
+ drivers/gpu/drm/drm_atomic.c  |  36 ++++++
+ drivers/gpu/drm/drm_blend.c   | 229 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.c    |  31 +++++
+ drivers/gpu/drm/tegra/dc.h    |   7 ++
+ drivers/gpu/drm/tegra/plane.c | 147 ++++++++++++++++++++++
+ drivers/gpu/drm/tegra/plane.h |   1 +
+ include/drm/drm_blend.h       |   3 +
+ include/drm/drm_plane.h       |  77 ++++++++++++
+ 8 files changed, 531 insertions(+)
+
 -- 
 2.17.0
