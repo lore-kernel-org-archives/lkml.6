@@ -1,129 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031619AbeEZJaL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:30:11 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42244 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031362AbeEZJaJ (ORCPT
+        id S1031535AbeEZJcF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:32:05 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:41930 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031362AbeEZJcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:30:09 -0400
-X-Google-Smtp-Source: AB8JxZoF246wrxizN3KiKvAponGk5NfZbzuLYCPw3eQoCiZdns5RW5aVA65CBdmviu7bFyDvKkPN5HNrVLy/yrdRDeo=
-MIME-Version: 1.0
-In-Reply-To: <0000000000006370c3056d1855e7@google.com>
-References: <0000000000006370c3056d1855e7@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 26 May 2018 11:29:48 +0200
-Message-ID: <CACT4Y+Yqkon84bMamFNQTsn4npJtJnhOOd1ZHx+AkuKG-_eMsg@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in do_general_protection
-To: syzbot <syzbot+a1264132fc103340628f@syzkaller.appspotmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 26 May 2018 05:32:04 -0400
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 26 May 2018 11:32:00 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Lee Jones <lee.jones@linaro.org>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Paul Parsons <lost.distance@yahoo.com>
+Cc: linux-kernel@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH] mfd: asic3: Fix the broken MMC card detection
+Date: Sat, 26 May 2018 11:31:50 +0200
+Message-Id: <20180526093150.20989-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 11:16 AM, syzbot
-<syzbot+a1264132fc103340628f@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    62d18ecfa641 Merge tag 'arm64-fixes' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13e030d7800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a1264132fc103340628f
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16b624d7800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1364e0d7800000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a1264132fc103340628f@syzkaller.appspotmail.com
->
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> ==================================================================
-> BUG: KASAN: use-after-free in do_general_protection+0x2ac/0x2f0
-> arch/x86/kernel/traps.c:538
-> Read of size 8 at addr ffff8801d7187398 by task syz-executor171/4544
->
-> CPU: 0 PID: 4544 Comm: syz-executor171 Not tainted 4.17.0-rc6+ #67
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->
-> The buggy address belongs to the page:
-> page:ffffea00075c61c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-> flags: 0x2fffc0000000000()
-> raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-> raw: 0000000000000000 ffffea00075c0101 0000000000000000 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801d7187280: 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->  ffff8801d7187300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->>
->> ffff8801d7187380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->
->                             ^
->  ffff8801d7187400: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->  ffff8801d7187480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ==================================================================
-> Kernel panic - not syncing: panic_on_warn set ...
->
-> CPU: 0 PID: 4544 Comm: syz-executor171 Tainted: G    B
-> 4.17.0-rc6+ #67
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+The MMC framework requires the ocr_mask to be provided. Without it, the
+SD card is not detected, especially on the hx4700 platform.
 
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/mfd/asic3.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Dups of this bug:
-
-KASAN: stack-out-of-bounds Read in do_general_protection
-KASAN: slab-out-of-bounds Read in vmx_vcpu_run
-KASAN: use-after-scope Read in vmx_vcpu_run
-KASAN: stack-out-of-bounds Write in notify_die
-
-See full info at:
-https://syzkaller.appspot.com/bug?extid=a1264132fc103340628f
-
-
-There seems to be 2 problems:
-
-1. msr_write_intercepted doing something notoriously bad.
-
-2. general_protection fault handler somehow allocates pt_regs
-overlapping with vmx_run frame. This can be an issue with interrupts
-too.
-
-
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000006370c3056d1855e7%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+index cf2e25ab2940..1531302a50ec 100644
+--- a/drivers/mfd/asic3.c
++++ b/drivers/mfd/asic3.c
+@@ -31,6 +31,8 @@
+ #include <linux/mfd/ds1wm.h>
+ #include <linux/mfd/tmio.h>
+ 
++#include <linux/mmc/host.h>
++
+ enum {
+ 	ASIC3_CLOCK_SPI,
+ 	ASIC3_CLOCK_OWM,
+@@ -719,6 +721,7 @@ static void asic3_mmc_clk_div(struct platform_device *pdev, int state)
+ 
+ static struct tmio_mmc_data asic3_mmc_data = {
+ 	.hclk           = 24576000,
++	.ocr_mask	= MMC_VDD_32_33 | MMC_VDD_33_34,
+ 	.set_pwr        = asic3_mmc_pwr,
+ 	.set_clk_div    = asic3_mmc_clk_div,
+ };
+-- 
+2.11.0
