@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032379AbeEZUG2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 16:06:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60281 "EHLO
+        id S1032402AbeEZUJt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 16:09:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60285 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032327AbeEZUG1 (ORCPT
+        with ESMTP id S1032327AbeEZUJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 16:06:27 -0400
-Date: Sat, 26 May 2018 22:06:25 +0200 (CEST)
+        Sat, 26 May 2018 16:09:48 -0400
+Date: Sat, 26 May 2018 22:09:46 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] scheduler fixes for 4.17
-Message-ID: <alpine.DEB.2.21.1805262157520.1585@nanos.tec.linutronix.de>
+Subject: [GIT pull] x86/pti updates for 4.17
+Message-ID: <alpine.DEB.2.21.1805262206270.1585@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -25,94 +25,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest sched-urgent-for-linus git tree from:
+please pull the latest x86-pti-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
 
-Three fixes for scheduler and kthread code:
+Two fixes for the SSBD mitigation code:
 
- - Allow calling kthread_park() on an already parked thread
+ - Expose SSBD properly to guests. This got broken when the CPU feature
+   flags got reshuffled.
 
- - Restore the sched_pi_setprio() tracepoint behaviour
-
- - Clarify the unclear string for the scheduling domain debug output
+ - Simplify the CPU detection logic to avoid duplicate entries in the
+   tables.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Juri Lelli (1):
-      sched/topology: Clarify root domain(s) debug string
+Dominik Brodowski (1):
+      x86/speculation: Simplify the CPU bug detection logic
 
-Peter Zijlstra (1):
-      kthread: Allow kthread_park() on a parked kthread
-
-Sebastian Andrzej Siewior (1):
-      sched, tracing: Fix trace_sched_pi_setprio() for deboosting
+Konrad Rzeszutek Wilk (1):
+      KVM/VMX: Expose SSBD properly to guests
 
 
- include/trace/events/sched.h | 4 +++-
- kernel/kthread.c             | 6 ++----
- kernel/sched/topology.c      | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/common.c | 22 +++++++---------------
+ arch/x86/kvm/cpuid.c         |  4 ++--
+ 2 files changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index bc01e06bc716..0be866c91f62 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -435,7 +435,9 @@ TRACE_EVENT(sched_pi_setprio,
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
- 		__entry->pid		= tsk->pid;
- 		__entry->oldprio	= tsk->prio;
--		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
-+		__entry->newprio	= pi_task ?
-+				min(tsk->normal_prio, pi_task->prio) :
-+				tsk->normal_prio;
- 		/* XXX SCHED_DEADLINE bits missing */
- 	),
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 78decc3e3067..38276f58d3bf 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -942,12 +942,8 @@ static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
+ 	{}
+ };
  
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 2017a39ab490..481951bf091d 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -193,7 +193,7 @@ EXPORT_SYMBOL_GPL(kthread_parkme);
++/* Only list CPUs which speculate but are non susceptible to SSB */
+ static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PINEVIEW	},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_LINCROFT	},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_PENWELL		},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CLOVERVIEW	},
+-	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_CEDARVIEW	},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT1	},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_AIRMONT		},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_ATOM_SILVERMONT2	},
+@@ -955,14 +951,10 @@ static const __initconst struct x86_cpu_id cpu_no_spec_store_bypass[] = {
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_CORE_YONAH		},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNL		},
+ 	{ X86_VENDOR_INTEL,	6,	INTEL_FAM6_XEON_PHI_KNM		},
+-	{ X86_VENDOR_CENTAUR,	5,					},
+-	{ X86_VENDOR_INTEL,	5,					},
+-	{ X86_VENDOR_NSC,	5,					},
+ 	{ X86_VENDOR_AMD,	0x12,					},
+ 	{ X86_VENDOR_AMD,	0x11,					},
+ 	{ X86_VENDOR_AMD,	0x10,					},
+ 	{ X86_VENDOR_AMD,	0xf,					},
+-	{ X86_VENDOR_ANY,	4,					},
+ 	{}
+ };
  
- void kthread_park_complete(struct task_struct *k)
+@@ -970,6 +962,12 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
  {
--	complete(&to_kthread(k)->parked);
-+	complete_all(&to_kthread(k)->parked);
- }
+ 	u64 ia32_cap = 0;
  
- static int kthread(void *_create)
-@@ -459,6 +459,7 @@ void kthread_unpark(struct task_struct *k)
- 	if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
- 		__kthread_bind(k, kthread->cpu, TASK_PARKED);
++	if (x86_match_cpu(cpu_no_speculation))
++		return;
++
++	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
++	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
++
+ 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
  
-+	reinit_completion(&kthread->parked);
- 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
- 	wake_up_state(k, TASK_PARKED);
- }
-@@ -483,9 +484,6 @@ int kthread_park(struct task_struct *k)
- 	if (WARN_ON(k->flags & PF_EXITING))
- 		return -ENOSYS;
+@@ -977,12 +975,6 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 	   !(ia32_cap & ARCH_CAP_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
  
--	if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
--		return -EBUSY;
+-	if (x86_match_cpu(cpu_no_speculation))
+-		return;
 -
- 	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
- 	if (k != current) {
- 		wake_up_process(k);
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 64cc564f5255..61a1125c1ae4 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1708,7 +1708,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	rcu_read_unlock();
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
+-
+ 	if (x86_match_cpu(cpu_no_meltdown))
+ 		return;
  
- 	if (rq && sched_debug_enabled) {
--		pr_info("span: %*pbl (max cpu_capacity = %lu)\n",
-+		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
- 			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
- 	}
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index ced851169730..598461e24be3 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -407,8 +407,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
  
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) | F(SSBD) |
+-		F(ARCH_CAPABILITIES);
++		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
++		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
