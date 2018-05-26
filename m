@@ -1,57 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032138AbeEZQdn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 12:33:43 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:55871 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031950AbeEZQdm (ORCPT
+        id S1032137AbeEZQh2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 12:37:28 -0400
+Received: from spacedout.fries.net ([47.47.3.166]:56446 "EHLO
+        SpacedOut.fries.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031950AbeEZQh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 12:33:42 -0400
-X-Google-Smtp-Source: ADUXVKJyan9DhkJ9Ne/NDdS3lFhvq8WacdlRZ3P9RNpm2Y/rZImMSYVWdEJXFhSA+v3v9JACOM69hXOhvoPQ65Cy1gc=
+        Sat, 26 May 2018 12:37:27 -0400
+Date: Sat, 26 May 2018 11:37:18 -0500
+From: David Fries <David@fries.net>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] media: uvc_driver: fix USB Camera ref leak denial of
+ service
+Message-ID: <20180526163718.GE28969@spacedout.fries.net>
+References: <20180526155046.GA3327@spacedout.fries.net>
+ <3294600.sHRg43ppdH@avalon>
 MIME-Version: 1.0
-From: Lei Chen <losemyheaven@gmail.com>
-Date: Sun, 27 May 2018 00:33:40 +0800
-Message-ID: <CAKEZqKJhZNoF-29ymEmAjiYfVn64q5mHrMY9sC2NZ=EDqTHjeA@mail.gmail.com>
-Subject: Why does d_splice_alias need to check IS_ROOT?
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3294600.sHRg43ppdH@avalon>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello list,
+Laurent and Mauro,
 
-I'm insteresting in how hard link and denry lookup work and their
-implementation.
+I've reviewed Philipp Zabel's 49770 patch, it looks like they
+equivalent, but take a different path.  My version does the unref in
+uvc_unregister_video, Zabel's does the unref in each caller of
+uvc_unregister_video.  I think I would prefer it to be in fewer
+places.
 
-I know that this interface tries to connect an inode to a dentry, but
-why does it need
-to check whether the inode alias IS_ROOT if the inode represents a directory?
-And the code process in different way according to check result.  What
-occasions
-are they used for?
+Any ideas on the sysfs group 'power' not found bug on removal while on
+use?
 
-struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
-{
-    if (S_ISDIR(inode->i_mode)) {
-        struct dentry *new = __d_find_any_alias(inode);
-        if (unlikely(new)) {
-            if (unlikely(d_ancestor(new, dentry))) {
-                /*the code here is to forbidden ancestor hard link*/
-            } else if (!IS_ROOT(new)) {
-                __d_unalias(inode, dentry, new);
-            } else {
-                __d_move(new, dentry, false);
-            }
+Thanks, it will be great to get this fixed.
 
-        }
+On Sat, May 26, 2018 at 07:21:11PM +0300, Laurent Pinchart wrote:
+> Hi David,
+> 
+> Thank you for the patch.
+> 
+> On Saturday, 26 May 2018 18:50:46 EEST David Fries wrote:
+> > Commit 9d15cd958c17 ("media: uvcvideo: Convert from using an atomic
+> > variable to a reference count")
+> > didn't take into account that while the old counter was initialized to
+> > 0 (no stream open), kref_init starts with a reference of 1.  The
+> > reference count on unplug no longer reaches 0, uvc_delete isn't
+> > called, and evdev doesn't release /dev/input/event*.  Plug and unplug
+> > enough times and it runs out of device minors preventing any new input
+> > device and the use of newly plugged in USB video cameras until the
+> > system is rebooted.
+> > 
+> > Signed-off-by: David Fries <David@Fries.net>
+> > Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> > Cc: stable@vger.kernel.org
+> 
+> Philipp Zabel has already posted a similar patch, see https://
+> patchwork.linuxtv.org/patch/49770/
+> 
+> Mauro,
+> 
+> This is a serious issue so I'd like to get the patch merged in v4.18, but it 
+> could be argued that it's getting late for that, especially given that the bug 
+> has been there since v4.14. Would you be OK merging this in v4.18 ? If so 
+> could you pick https://patchwork.linuxtv.org/patch/49770/ up, or would you 
+> like me to send a pull request ?
+> 
+> > ---
+> >  drivers/media/usb/uvc/uvc_driver.c | 11 ++++-------
+> >  1 file changed, 4 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/media/usb/uvc/uvc_driver.c
+> > b/drivers/media/usb/uvc/uvc_driver.c index 2469b49..3cbdc87 100644
+> > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > @@ -1871,13 +1871,6 @@ static void uvc_unregister_video(struct uvc_device
+> > *dev) {
+> >  	struct uvc_streaming *stream;
+> > 
+> > -	/* Unregistering all video devices might result in uvc_delete() being
+> > -	 * called from inside the loop if there's no open file handle. To avoid
+> > -	 * that, increment the refcount before iterating over the streams and
+> > -	 * decrement it when done.
+> > -	 */
+> > -	kref_get(&dev->ref);
+> > -
+> >  	list_for_each_entry(stream, &dev->streams, list) {
+> >  		if (!video_is_registered(&stream->vdev))
+> >  			continue;
+> > @@ -1888,6 +1881,10 @@ static void uvc_unregister_video(struct uvc_device
+> > *dev) uvc_debugfs_cleanup_stream(stream);
+> >  	}
+> > 
+> > +	/* Release the reference implicit in kref_init from uvc_probe,
+> > +	 * the UVC device won't be deleted until the last file descriptor
+> > +	 * is also closed.
+> > +	 */
+> >  	kref_put(&dev->ref, uvc_delete);
+> >  }
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+> 
 
-
-    }
-}
-
-Thanks in advance.
-
-Regards,
-Larry
+-- 
+David Fries <david@fries.net>
