@@ -1,146 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032171AbeEZQBT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 12:01:19 -0400
-Received: from spacedout.fries.net ([47.47.3.166]:56388 "EHLO
-        SpacedOut.fries.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032084AbeEZQBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 12:01:16 -0400
-Date: Sat, 26 May 2018 10:50:46 -0500
-From: David Fries <David@Fries.net>
-To: linux-kernel@vger.kernel.org
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 1/1] media: uvc_driver: fix USB Camera ref leak denial of
- service
-Message-ID: <20180526155046.GA3327@spacedout.fries.net>
+        id S1032140AbeEZQCz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 12:02:55 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:55620 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032057AbeEZQCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 12:02:54 -0400
+Subject: Re: arch/powerpc/kernel/head_32.S:1106: Error: missing operand
+To: Paul Menzel <pmenzel+linuxppc-dev@molgen.mpg.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <e015d6b2-79b8-e05d-5053-5ca0036679d3@molgen.mpg.de>
+From: christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <ba9e3312-1923-dcc5-b07e-20f491881328@c-s.fr>
+Date: Sat, 26 May 2018 18:02:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <e015d6b2-79b8-e05d-5053-5ca0036679d3@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9d15cd958c17 ("media: uvcvideo: Convert from using an atomic
-variable to a reference count")
-didn't take into account that while the old counter was initialized to
-0 (no stream open), kref_init starts with a reference of 1.  The
-reference count on unplug no longer reaches 0, uvc_delete isn't
-called, and evdev doesn't release /dev/input/event*.  Plug and unplug
-enough times and it runs out of device minors preventing any new input
-device and the use of newly plugged in USB video cameras until the
-system is rebooted.
 
-Signed-off-by: David Fries <David@Fries.net>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: stable@vger.kernel.org
+
+Le 26/05/2018 à 06:35, Paul Menzel a écrit :
+> Dear Linux folks,
+> 
+> 
+> Building the configuration created with `make tinyconfig` on the Power 8 
+> system IBM S822LC with Ubuntu 18.04 fails with the error below.
+> 
+> ```
+> $ git describe --dirty
+> v4.17-rc6-296-gbc2dbc5420e8
+> $ git log --oneline -1
+> bc2dbc5420e8 (HEAD -> master, origin/master, origin/HEAD) Merge branch 
+> 'akpm' (patches from Andrew)
+> $ make tinyconfig
+> $ make -j120
+> […]
+>    AS      arch/powerpc/kernel/head_32.o
+> arch/powerpc/kernel/head_32.S: Assembler messages:
+> arch/powerpc/kernel/head_32.S:1106: Error: missing operand
+
+There was a similar problem in 2015, see 
+http://linux-kernel.2935.n7.nabble.com/Missing-operand-for-tlbie-instruction-on-Power7-td1206917.html
+
+Which version of binutils do you use ?
+
+Christophe
+
+> scripts/Makefile.build:413: recipe for target 
+> 'arch/powerpc/kernel/head_32.o' failed
+> make[1]: *** [arch/powerpc/kernel/head_32.o] Error 1
+> […]
+> ```
+> 
+> Is this expected? *ppc64_defconfig* and *ppc64e_defconfig* build fine.
+> 
+> 
+> Kind regards,
+> 
+> Paul
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 2469b49..3cbdc87 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1871,13 +1871,6 @@ static void uvc_unregister_video(struct uvc_device *dev)
- {
- 	struct uvc_streaming *stream;
- 
--	/* Unregistering all video devices might result in uvc_delete() being
--	 * called from inside the loop if there's no open file handle. To avoid
--	 * that, increment the refcount before iterating over the streams and
--	 * decrement it when done.
--	 */
--	kref_get(&dev->ref);
--
- 	list_for_each_entry(stream, &dev->streams, list) {
- 		if (!video_is_registered(&stream->vdev))
- 			continue;
-@@ -1888,6 +1881,10 @@ static void uvc_unregister_video(struct uvc_device *dev)
- 		uvc_debugfs_cleanup_stream(stream);
- 	}
- 
-+	/* Release the reference implicit in kref_init from uvc_probe,
-+	 * the UVC device won't be deleted until the last file descriptor
-+	 * is also closed.
-+	 */
- 	kref_put(&dev->ref, uvc_delete);
- }
- 
--- 
-2.1.4
-
-
->From 32a612bc06a2a1b9215f3b7166342c98043bd925 Mon Sep 17 00:00:00 2001
-From: David Fries <David@Fries.net>
-Date: Thu, 24 May 2018 23:43:15 -0500
-Subject: [PATCH] uvc_driver: UVC kref never reaches zero leading to denial of
- service
-
-Commit 9d15cd958c17 ("media: uvcvideo: Convert from using an atomic
-variable to a reference count")
-didn't take into account that while the counter was
-initialized to 0 (no stream open), kref_init starts with a reference
-of 1, leading to the device
-never reaching 0 and uvc_delete never getting called.  This leads to
-evdev never getting released and /dev/input/event* eventually running
-out of minors preventing any new event devices and new USB cameras from
-being usable until the system is rebooted.
-
-In my case "disabled by hub (EMI?), re-enabling..." kept
-removing/inserting the device until days later it ran out of minors
-and I lost the video security feed.
-
-Now that the device is actually being removed other problems are
-showing up.  Specifically the following if the camera is removed or
-`rmmod ehci_pci` while an application is getting video from it.  It
-doesn't happen if the camera is not in use.  How do I track that down?
-
-sysfs group 'power' not found for kobject 'event10'
-sysfs group 'power' not found for kobject 'input32'
-sysfs group 'id' not found for kobject 'input32'
-sysfs group 'capabilities' not found for kobject 'input32'
-sysfs group 'power' not found for kobject 'media0'
-
-Signed-off-by: David Fries <David@Fries.net>
----
- drivers/media/usb/uvc/uvc_driver.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 2469b49..3cbdc87 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1871,13 +1871,6 @@ static void uvc_unregister_video(struct uvc_device *dev)
- {
- 	struct uvc_streaming *stream;
- 
--	/* Unregistering all video devices might result in uvc_delete() being
--	 * called from inside the loop if there's no open file handle. To avoid
--	 * that, increment the refcount before iterating over the streams and
--	 * decrement it when done.
--	 */
--	kref_get(&dev->ref);
--
- 	list_for_each_entry(stream, &dev->streams, list) {
- 		if (!video_is_registered(&stream->vdev))
- 			continue;
-@@ -1888,6 +1881,10 @@ static void uvc_unregister_video(struct uvc_device *dev)
- 		uvc_debugfs_cleanup_stream(stream);
- 	}
- 
-+	/* Release the reference implicit in kref_init from uvc_probe,
-+	 * the UVC device won't be deleted until the last file descriptor
-+	 * is also closed.
-+	 */
- 	kref_put(&dev->ref, uvc_delete);
- }
- 
--- 
-2.1.4
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
