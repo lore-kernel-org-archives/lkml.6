@@ -1,87 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031080AbeEZDKy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 23:10:54 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38928 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030929AbeEZDKx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 23:10:53 -0400
-X-Google-Smtp-Source: AB8JxZrEIX1lMB8bSg1ALijagaS4ZavQSfyFPBmi9j87lIL+YdJGd0c+DSqxP2avlYpfnehUbx02Tg==
-From: John Stultz <john.stultz@linaro.org>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: John Stultz <john.stultz@linaro.org>, Ryan Grachek <ryan@edited.us>,
-        Wei Xu <xuwei5@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        YongQin Liu <yongqin.liu@linaro.org>, Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH] arm64: dts: hikey: Fix eMMC corruption regression
-Date: Fri, 25 May 2018 20:10:47 -0700
-Message-Id: <1527304247-12868-1-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S1031101AbeEZDb2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 23:31:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:56459 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031031AbeEZDb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 23:31:27 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Sat, 26 May 2018 13:31:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the rdma tree
+Message-ID: <20180526132829.0cbb8826@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1dZX0jbVyoDaE/35gobvpOl"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a partial revert of commit
-abd7d0972a19 ("arm64: dts: hikey: Enable HS200 mode on eMMC")
+--Sig_/1dZX0jbVyoDaE/35gobvpOl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-which has been causing eMMC corruption on my HiKey board.
+Hi all,
 
-Symptoms usually looked like:
+Commits
 
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-...
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-mmc0: new HS200 MMC card at address 0001
-...
-dwmmc_k3 f723d000.dwmmc0: Unexpected command timeout, state 3
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-print_req_error: I/O error, dev mmcblk0, sector 8810504
-Aborting journal on device mmcblk0p10-8.
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-mmc_host mmc0: Bus speed (slot 0) = 24800000Hz (slot req 400000Hz, actual 400000HZ div = 31)
-mmc_host mmc0: Bus speed (slot 0) = 148800000Hz (slot req 150000000Hz, actual 148800000HZ div = 0)
-EXT4-fs error (device mmcblk0p10): ext4_journal_check_start:61: Detected aborted journal
-EXT4-fs (mmcblk0p10): Remounting filesystem read-only
+  116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID informa=
+tion")
+to
+  0252f73334f9 ("IB/qib: Fix DMA api warning with debug kernel")
 
-And quite often this would result in a disk that wouldn't properly
-boot even with older kernels.
+are missing a Signed-off-by from their committer.  I presume they have
+been rebased?
 
-It seems the max-frequency property added by the above patch is
-causing the problem, so remove it.
+--=20
+Cheers,
+Stephen Rothwell
 
-Cc: Ryan Grachek <ryan@edited.us>
-Cc: Wei Xu <xuwei5@hisilicon.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: YongQin Liu <yongqin.liu@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 -
- 1 file changed, 1 deletion(-)
+--Sig_/1dZX0jbVyoDaE/35gobvpOl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-index 724a0d3..edb4ee0 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-@@ -299,7 +299,6 @@
- 		/* GPIO blocks 16 thru 19 do not appear to be routed to pins */
- 
- 		dwmmc_0: dwmmc0@f723d000 {
--			max-frequency = <150000000>;
- 			cap-mmc-highspeed;
- 			mmc-hs200-1_8v;
- 			non-removable;
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsI1QAACgkQAVBC80lX
+0GybhQgAg3N/9/DTlAdDSRfpxZuVnMUpQF3hEIp0OnjNXx6+mAWykey/c4dhd7gE
+HRNqyi8xRXp/QUBOfld9jUVN3vTtNpg25rXUZWC7Ht3sfo7XrSCleVQzccPvWDcs
+FLGbWOPUvJH/wrVFm/C/usL4VsnK1vN8qvuMac9odEnyr/Gz8aebmk395wWE1Xvl
+xKrgbzZdfeAZQzO113yJnbq14oAxTrrtpGE4avsb4/eeMvrxc0z0KMODCV9vuuXz
+H1OPyo99fyq5a6+7wLGxhvellXnKzefNX1H0fB8p/pLF0/wttIRJSNRk7jOQ0tGi
+6knuJz0TPA/XW88S7GHS8pkmGpsoJg==
+=RSAu
+-----END PGP SIGNATURE-----
+
+--Sig_/1dZX0jbVyoDaE/35gobvpOl--
