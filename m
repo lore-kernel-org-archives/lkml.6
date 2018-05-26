@@ -1,196 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030888AbeEZAxi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 20:53:38 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52232 "EHLO
+        id S1030949AbeEZAyN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 20:54:13 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:32781 "EHLO
         www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030802AbeEZAxh (ORCPT
+        with ESMTP id S1030896AbeEZAyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 20:53:37 -0400
+        Fri, 25 May 2018 20:54:12 -0400
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc: linux-kernel@vger.kernel.org,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Peter Hurley <peter@hurleysoftware.com>,
-        syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>
-Subject: [PATCH 2/2] n_tty: Access echo_* variables carefully.
-Date: Sat, 26 May 2018 09:53:14 +0900
-Message-Id: <1527295994-3440-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
+Subject: [PATCH 1/2] n_tty: Fix stall at n_tty_receive_char_special().
+Date: Sat, 26 May 2018 09:53:13 +0900
+Message-Id: <1527295994-3440-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527295994-3440-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1527295994-3440-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot is reporting stalls at __process_echoes() [1]. This is because
-since ldata->echo_commit < ldata->echo_tail becomes true for some reason,
-the discard loop is serving as almost infinite loop. This patch tries to
-avoid falling into ldata->echo_commit < ldata->echo_tail situation by
-making access to echo_* variables more carefully.
+syzbot is reporting stalls at n_tty_receive_char_special() [1]. This is
+because comparison is not working as expected since ldata->read_head can
+change at any moment. Mitigate this by explicitly masking with buffer size
+when checking condition for "while" loops.
 
-Since reset_buffer_flags() is called without output_lock held, it should
-not touch echo_* variables. And omit a call to reset_buffer_flags() from
-n_tty_open() by using vzalloc().
-
-Since add_echo_byte() is called without output_lock held, it needs memory
-barrier between storing into echo_buf[] and incrementing echo_head counter.
-echo_buf() needs corresponding memory barrier before reading echo_buf[].
-Lack of handling the possibility of not-yet-stored multi-byte operation
-might be the reason of falling into ldata->echo_commit < ldata->echo_tail
-situation, for if I do WARN_ON(ldata->echo_commit == tail + 1) prior to
-echo_buf(ldata, tail + 1), the WARN_ON() fires.
-
-Also, explicitly masking with buffer for the former "while" loop, and
-use ldata->echo_commit > tail for the latter "while" loop.
-
-[1] https://syzkaller.appspot.com/bug?id=17f23b094cd80df750e5b0f8982c521ee6bcbf40
+[1] https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
 
 Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
+Fixes: bc5a5e3f45d04784 ("n_tty: Don't wrap input buffer indices at buffer size")
 Cc: Peter Hurley <peter@hurleysoftware.com>
 ---
- drivers/tty/n_tty.c | 42 ++++++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+ drivers/tty/n_tty.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index b279f873..4317422 100644
+index cbe98bc..b279f873 100644
 --- a/drivers/tty/n_tty.c
 +++ b/drivers/tty/n_tty.c
-@@ -143,6 +143,7 @@ static inline unsigned char *read_buf_addr(struct n_tty_data *ldata, size_t i)
+@@ -124,6 +124,8 @@ struct n_tty_data {
+ 	struct mutex output_lock;
+ };
  
- static inline unsigned char echo_buf(struct n_tty_data *ldata, size_t i)
++#define MASK(x) ((x) & (N_TTY_BUF_SIZE - 1))
++
+ static inline size_t read_cnt(struct n_tty_data *ldata)
  {
-+	smp_rmb(); /* Matches smp_wmb() in add_echo_byte(). */
- 	return ldata->echo_buf[i & (N_TTY_BUF_SIZE - 1)];
- }
- 
-@@ -318,9 +319,7 @@ static inline void put_tty_queue(unsigned char c, struct n_tty_data *ldata)
- static void reset_buffer_flags(struct n_tty_data *ldata)
- {
- 	ldata->read_head = ldata->canon_head = ldata->read_tail = 0;
--	ldata->echo_head = ldata->echo_tail = ldata->echo_commit = 0;
- 	ldata->commit_head = 0;
--	ldata->echo_mark = 0;
- 	ldata->line_start = 0;
- 
- 	ldata->erasing = 0;
-@@ -619,13 +618,20 @@ static size_t __process_echoes(struct tty_struct *tty)
- 	old_space = space = tty_write_room(tty);
- 
- 	tail = ldata->echo_tail;
--	while (ldata->echo_commit != tail) {
-+	while (MASK(ldata->echo_commit) != MASK(tail)) {
- 		c = echo_buf(ldata, tail);
- 		if (c == ECHO_OP_START) {
- 			unsigned char op;
- 			int no_space_left = 0;
- 
- 			/*
-+			 * Since add_echo_byte() is called without holding
-+			 * output_lock, we might see only portion of multi-byte
-+			 * operation.
-+			 */
-+			if (MASK(ldata->echo_commit) == MASK(tail + 1))
-+				goto not_yet_stored;
-+			/*
- 			 * If the buffer byte is the start of a multi-byte
- 			 * operation, get the next byte, which is either the
- 			 * op code or a control character value.
-@@ -636,6 +642,8 @@ static size_t __process_echoes(struct tty_struct *tty)
- 				unsigned int num_chars, num_bs;
- 
- 			case ECHO_OP_ERASE_TAB:
-+				if (MASK(ldata->echo_commit) == MASK(tail + 2))
-+					goto not_yet_stored;
- 				num_chars = echo_buf(ldata, tail + 2);
- 
- 				/*
-@@ -730,7 +738,8 @@ static size_t __process_echoes(struct tty_struct *tty)
- 	/* If the echo buffer is nearly full (so that the possibility exists
- 	 * of echo overrun before the next commit), then discard enough
- 	 * data at the tail to prevent a subsequent overrun */
--	while (ldata->echo_commit - tail >= ECHO_DISCARD_WATERMARK) {
-+	while (ldata->echo_commit > tail &&
-+	       ldata->echo_commit - tail >= ECHO_DISCARD_WATERMARK) {
- 		if (echo_buf(ldata, tail) == ECHO_OP_START) {
- 			if (echo_buf(ldata, tail + 1) == ECHO_OP_ERASE_TAB)
- 				tail += 3;
-@@ -740,6 +749,7 @@ static size_t __process_echoes(struct tty_struct *tty)
- 			tail++;
+ 	return ldata->read_head - ldata->read_tail;
+@@ -978,14 +980,15 @@ static void eraser(unsigned char c, struct tty_struct *tty)
  	}
  
-+ not_yet_stored:
- 	ldata->echo_tail = tail;
- 	return old_space - space;
- }
-@@ -750,6 +760,7 @@ static void commit_echoes(struct tty_struct *tty)
- 	size_t nr, old, echoed;
- 	size_t head;
+ 	seen_alnums = 0;
+-	while (ldata->read_head != ldata->canon_head) {
++	while (MASK(ldata->read_head) != MASK(ldata->canon_head)) {
+ 		head = ldata->read_head;
  
-+	mutex_lock(&ldata->output_lock);
- 	head = ldata->echo_head;
- 	ldata->echo_mark = head;
- 	old = ldata->echo_commit - ldata->echo_tail;
-@@ -758,10 +769,12 @@ static void commit_echoes(struct tty_struct *tty)
- 	 * is over the threshold (and try again each time another
- 	 * block is accumulated) */
- 	nr = head - ldata->echo_tail;
--	if (nr < ECHO_COMMIT_WATERMARK || (nr % ECHO_BLOCK > old % ECHO_BLOCK))
-+	if (nr < ECHO_COMMIT_WATERMARK ||
-+	    (nr % ECHO_BLOCK > old % ECHO_BLOCK)) {
-+		mutex_unlock(&ldata->output_lock);
- 		return;
-+	}
+ 		/* erase a single possibly multibyte character */
+ 		do {
+ 			head--;
+ 			c = read_buf(ldata, head);
+-		} while (is_continuation(c, tty) && head != ldata->canon_head);
++		} while (is_continuation(c, tty) &&
++			 MASK(head) != MASK(ldata->canon_head));
  
--	mutex_lock(&ldata->output_lock);
- 	ldata->echo_commit = head;
- 	echoed = __process_echoes(tty);
- 	mutex_unlock(&ldata->output_lock);
-@@ -812,7 +825,9 @@ static void flush_echoes(struct tty_struct *tty)
- 
- static inline void add_echo_byte(unsigned char c, struct n_tty_data *ldata)
- {
--	*echo_buf_addr(ldata, ldata->echo_head++) = c;
-+	*echo_buf_addr(ldata, ldata->echo_head) = c;
-+	smp_wmb(); /* Matches smp_rmb() in echo_buf(). */
-+	ldata->echo_head++;
- }
- 
- /**
-@@ -1881,30 +1896,21 @@ static int n_tty_open(struct tty_struct *tty)
- 	struct n_tty_data *ldata;
- 
- 	/* Currently a malloc failure here can panic */
--	ldata = vmalloc(sizeof(*ldata));
-+	ldata = vzalloc(sizeof(*ldata));
- 	if (!ldata)
--		goto err;
-+		return -ENOMEM;
- 
- 	ldata->overrun_time = jiffies;
- 	mutex_init(&ldata->atomic_read_lock);
- 	mutex_init(&ldata->output_lock);
- 
- 	tty->disc_data = ldata;
--	reset_buffer_flags(tty->disc_data);
--	ldata->column = 0;
--	ldata->canon_column = 0;
--	ldata->num_overrun = 0;
--	ldata->no_room = 0;
--	ldata->lnext = 0;
- 	tty->closing = 0;
- 	/* indicate buffer work may resume */
- 	clear_bit(TTY_LDISC_HALTED, &tty->flags);
- 	n_tty_set_termios(tty, NULL);
- 	tty_unthrottle(tty);
--
- 	return 0;
--err:
--	return -ENOMEM;
- }
- 
- static inline int input_available_p(struct tty_struct *tty, int poll)
+ 		/* do not partially erase */
+ 		if (is_continuation(c, tty))
+@@ -1027,7 +1030,7 @@ static void eraser(unsigned char c, struct tty_struct *tty)
+ 				 * This info is used to go back the correct
+ 				 * number of columns.
+ 				 */
+-				while (tail != ldata->canon_head) {
++				while (MASK(tail) != MASK(ldata->canon_head)) {
+ 					tail--;
+ 					c = read_buf(ldata, tail);
+ 					if (c == '\t') {
+@@ -1302,7 +1305,7 @@ static void n_tty_receive_parity_error(struct tty_struct *tty, unsigned char c)
+ 			finish_erasing(ldata);
+ 			echo_char(c, tty);
+ 			echo_char_raw('\n', ldata);
+-			while (tail != ldata->read_head) {
++			while (MASK(tail) != MASK(ldata->read_head)) {
+ 				echo_char(read_buf(ldata, tail), tty);
+ 				tail++;
+ 			}
+@@ -2411,7 +2414,7 @@ static unsigned long inq_canon(struct n_tty_data *ldata)
+ 	tail = ldata->read_tail;
+ 	nr = head - tail;
+ 	/* Skip EOF-chars.. */
+-	while (head != tail) {
++	while (MASK(head) != MASK(tail)) {
+ 		if (test_bit(tail & (N_TTY_BUF_SIZE - 1), ldata->read_flags) &&
+ 		    read_buf(ldata, tail) == __DISABLED_CHAR)
+ 			nr--;
 -- 
 1.8.3.1
