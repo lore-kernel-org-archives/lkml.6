@@ -1,98 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032362AbeEZTf3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 15:35:29 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33483 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032304AbeEZTf1 (ORCPT
+        id S1032379AbeEZUG2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 16:06:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60281 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032327AbeEZUG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 15:35:27 -0400
-X-Google-Smtp-Source: AB8JxZqzUSGEQgwJ8iu4xpZ3LEQqVxRjG9G9CgKv1hjJh72H5FmVAgRM6ClB8b3hWZTcsmHpouRh2w==
-From: Matt Turner <mattst88@gmail.com>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Matt Turner <mattst88@gmail.com>,
-        Sergej Pupykin <ml@sergej.pp.ru>
-Subject: [PATCH] parport: Add support for the WCH384 4S multi-IO card
-Date: Sat, 26 May 2018 12:35:23 -0700
-Message-Id: <20180526193523.3896-1-mattst88@gmail.com>
-X-Mailer: git-send-email 2.16.1
+        Sat, 26 May 2018 16:06:27 -0400
+Date: Sat, 26 May 2018 22:06:25 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] scheduler fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1805262157520.1585@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This Multi-IO card has one serial 16550-like serial connectors. Here's
-the lspci output, after this commit is applied:
+Linus,
 
-01:00.0 Serial controller [0700]: Device [1c00:3470] (rev 10) (prog-if 05 [16850])
-        Subsystem: Device [1c00:3470]
-        Flags: fast devsel, IRQ 16
-        I/O ports at e000 [size=256]
-        Memory at f0100000 (32-bit, prefetchable) [size=32K]
-        I/O ports at e100 [size=4]
-        Expansion ROM at f7d00000 [disabled] [size=32K]
-        Capabilities: [60] Power Management version 3
-        Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
-        Capabilities: [80] Express Legacy Endpoint, MSI 00
-        Capabilities: [100] Advanced Error Reporting
-        Kernel driver in use: parport_serial
+please pull the latest sched-urgent-for-linus git tree from:
 
-This card was already added to the blacklist of 8250_pci.c in commit
-72a3c0e4e662 ("tty: Add support for the WCH384 4S multi-IO card").
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-Cc: Sergej Pupykin <ml@sergej.pp.ru>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
----
-It looks like CH355_4S is similarly missing, but I don't have hardware
-to test.
+Three fixes for scheduler and kthread code:
 
-This commit makes me wonder if I'm missing something -- how could
-anything have worked after commit 72a3c0e4e662 without support in
-parport_serial?
+ - Allow calling kthread_park() on an already parked thread
 
- drivers/parport/parport_serial.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ - Restore the sched_pi_setprio() tracepoint behaviour
 
-diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
-index e15b4845f7c6..2c166d5a0d91 100644
---- a/drivers/parport/parport_serial.c
-+++ b/drivers/parport/parport_serial.c
-@@ -65,6 +65,7 @@ enum parport_pc_pci_cards {
- 	wch_ch353_1s1p,
- 	wch_ch353_2s1p,
- 	wch_ch382_2s1p,
-+	wch_ch384_4,
- 	sunix_2s1p,
- };
+ - Clarify the unclear string for the scheduling domain debug output
+
+Thanks,
+
+	tglx
+
+------------------>
+Juri Lelli (1):
+      sched/topology: Clarify root domain(s) debug string
+
+Peter Zijlstra (1):
+      kthread: Allow kthread_park() on a parked kthread
+
+Sebastian Andrzej Siewior (1):
+      sched, tracing: Fix trace_sched_pi_setprio() for deboosting
+
+
+ include/trace/events/sched.h | 4 +++-
+ kernel/kthread.c             | 6 ++----
+ kernel/sched/topology.c      | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index bc01e06bc716..0be866c91f62 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -435,7 +435,9 @@ TRACE_EVENT(sched_pi_setprio,
+ 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
+ 		__entry->pid		= tsk->pid;
+ 		__entry->oldprio	= tsk->prio;
+-		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
++		__entry->newprio	= pi_task ?
++				min(tsk->normal_prio, pi_task->prio) :
++				tsk->normal_prio;
+ 		/* XXX SCHED_DEADLINE bits missing */
+ 	),
  
-@@ -153,6 +154,7 @@ static struct parport_pc_pci cards[] = {
- 	/* wch_ch353_1s1p*/             { 1, { { 1, -1}, } },
- 	/* wch_ch353_2s1p*/             { 1, { { 2, -1}, } },
- 	/* wch_ch382_2s1p*/             { 1, { { 2, -1}, } },
-+	/* wch_ch384_4 */               { 1, { { 4, -1}, } },
- 	/* sunix_2s1p */                { 1, { { 3, -1 }, } },
- };
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 2017a39ab490..481951bf091d 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -193,7 +193,7 @@ EXPORT_SYMBOL_GPL(kthread_parkme);
  
-@@ -260,6 +262,7 @@ static struct pci_device_id parport_serial_pci_tbl[] = {
- 	{ 0x4348, 0x5053, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p},
- 	{ 0x4348, 0x7053, 0x4348, 0x3253, 0, 0, wch_ch353_2s1p},
- 	{ 0x1c00, 0x3250, 0x1c00, 0x3250, 0, 0, wch_ch382_2s1p},
-+	{ 0x1c00, 0x3470, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch384_4},
+ void kthread_park_complete(struct task_struct *k)
+ {
+-	complete(&to_kthread(k)->parked);
++	complete_all(&to_kthread(k)->parked);
+ }
  
- 	/*
- 	 * More SUNIX variations. At least one of these has part number
-@@ -504,6 +507,13 @@ static struct pciserial_board pci_parport_serial_boards[] = {
- 		.uart_offset    = 8,
- 		.first_offset   = 0xC0,
- 	},
-+	[wch_ch384_4] = {
-+		.flags          = FL_BASE0,
-+		.num_ports      = 4,
-+		.base_baud      = 115200,
-+		.uart_offset    = 8,
-+		.first_offset   = 0xC0,
-+	},
- 	[sunix_2s1p] = {
- 		.flags		= FL_BASE0|FL_BASE_BARS,
- 		.num_ports	= 2,
--- 
-2.16.1
+ static int kthread(void *_create)
+@@ -459,6 +459,7 @@ void kthread_unpark(struct task_struct *k)
+ 	if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
+ 		__kthread_bind(k, kthread->cpu, TASK_PARKED);
+ 
++	reinit_completion(&kthread->parked);
+ 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	wake_up_state(k, TASK_PARKED);
+ }
+@@ -483,9 +484,6 @@ int kthread_park(struct task_struct *k)
+ 	if (WARN_ON(k->flags & PF_EXITING))
+ 		return -ENOSYS;
+ 
+-	if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
+-		return -EBUSY;
+-
+ 	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	if (k != current) {
+ 		wake_up_process(k);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 64cc564f5255..61a1125c1ae4 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1708,7 +1708,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 	rcu_read_unlock();
+ 
+ 	if (rq && sched_debug_enabled) {
+-		pr_info("span: %*pbl (max cpu_capacity = %lu)\n",
++		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
+ 			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
+ 	}
+ 
