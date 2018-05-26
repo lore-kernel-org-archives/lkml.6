@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031901AbeEZPCc (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 11:02:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56669 "EHLO
+        id S1031913AbeEZPG5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 11:06:57 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56702 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754946AbeEZPCb (ORCPT
+        with ESMTP id S1031848AbeEZPG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 11:02:31 -0400
+        Sat, 26 May 2018 11:06:56 -0400
 From: Colin King <colin.king@canonical.com>
-To: "Nicholas A . Bellinger" <nab@linux-iscsi.org>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
+        v9fs-developer@lists.sourceforge.net
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: target: fix spelling mistake "Uknown" -> "Unknown"
-Date: Sat, 26 May 2018 16:02:29 +0100
-Message-Id: <20180526150229.10416-1-colin.king@canonical.com>
+Subject: [PATCH] 9p: fix spelling mistake "Uknown" -> "Unknown"
+Date: Sat, 26 May 2018 16:06:50 +0100
+Message-Id: <20180526150650.10562-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -24,25 +25,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in pr_err message text
+Trivial fix to spelling mistake in pr_info message text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/target/target_core_transport.c | 2 +-
+ fs/9p/v9fs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index bde14f46ed5b..f0e8f0f4ccb4 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -3366,7 +3366,7 @@ static void target_tmr_work(struct work_struct *work)
- 		tmr->response = TMR_FUNCTION_REJECTED;
- 		break;
- 	default:
--		pr_err("Uknown TMR function: 0x%02x.\n",
-+		pr_err("Unknown TMR function: 0x%02x.\n",
- 				tmr->function);
- 		tmr->response = TMR_FUNCTION_REJECTED;
- 		break;
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 0429c8ee58f1..89bac3d2f05b 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -343,7 +343,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 				v9ses->uid = make_kuid(current_user_ns(), uid);
+ 				if (!uid_valid(v9ses->uid)) {
+ 					ret = -EINVAL;
+-					pr_info("Uknown uid %s\n", s);
++					pr_info("Unknown uid %s\n", s);
+ 				}
+ 			}
+ 
 -- 
 2.17.0
