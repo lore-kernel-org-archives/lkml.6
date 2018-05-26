@@ -1,36 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031247AbeEZJYZ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:24:25 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33153 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031336AbeEZJYX (ORCPT
+        id S1031577AbeEZJZf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:25:35 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43665 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031336AbeEZJZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:24:23 -0400
-X-Google-Smtp-Source: AB8JxZrMxrJCNSp0ERwlA5UrQwtk+nEB3XF4tfNTkR4WgHRvELqTB5ZC4YkRAcr+1kEjlt8ogjVgcqI2og4TNIM+IvY=
+        Sat, 26 May 2018 05:25:33 -0400
+X-Google-Smtp-Source: AB8JxZr3k/H1IJZfA/1uhJ1UBSR0wZNNgLMbnl1/Q9yhItXMCejKk8GpYoNXHfDwQufOks9wpqGt+ttDUYaoP2nEpmw=
 MIME-Version: 1.0
-In-Reply-To: <20180513062131.GB654@sol.localdomain>
-References: <001a1143e716efd3a9055cc8696b@google.com> <001a1146f1146fe0b505605e42c1@google.com>
- <CAOLK0pxR1qJC3sT2QoHgj-ys7FgFqY8724Xo9CLjWxi439ZrTw@mail.gmail.com>
- <91a32ec1-64e7-8b6b-9464-6599dd6735ad@intel.com> <20180126232755.z3gtqrm2oz6sp2t6@gmail.com>
- <d630a4c9-04ba-9e41-1f7b-11c59b2cd8e4@gmail.com> <20180406031524.GB21382@sol.localdomain>
- <20180513062131.GB654@sol.localdomain>
+In-Reply-To: <00000000000065ecae056d185548@google.com>
+References: <00000000000065ecae056d185548@google.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 26 May 2018 11:24:01 +0200
-Message-ID: <CACT4Y+a-3sP2DEbAp5G4YpKtu9jei-V_eyprMGjGyy60cZhPjA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Write in irq_bypass_register_consumer
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Tianyu Lan <lantianyu1986@gmail.com>,
-        "Lan, Tianyu" <tianyu.lan@intel.com>,
-        syzbot
-        <bot+7ad82526b98c64c90062275162dacfa48c20dbd3@syzkaller.appspotmail.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cornelia.huck@de.ibm.com>,
-        David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        jschoenh@amazon.de, kvm <kvm@vger.kernel.org>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
+Date: Sat, 26 May 2018 11:25:11 +0200
+Message-ID: <CACT4Y+buh1GE5zBFfUrPe9keTXioW=rp27o1sShwuKcuJ55eCw@mail.gmail.com>
+Subject: Re: KASAN: stack-out-of-bounds Read in do_general_protection
+To: syzbot <syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "the arch/x86 maintainers" <x86@kernel.org>
@@ -39,175 +28,111 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 8:21 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Thu, Apr 05, 2018 at 08:15:24PM -0700, Eric Biggers wrote:
->> On Mon, Jan 29, 2018 at 01:29:48PM +0800, Tianyu Lan wrote:
->> >
->> >
->> > On 1/27/2018 7:27 AM, Eric Biggers wrote:
->> > > On Sat, Dec 16, 2017 at 04:37:02PM +0800, Lan, Tianyu wrote:
->> > > > The root cause is that kvm_irqfd_assign() and kvm_irqfd_deassign() can't
->> > > > be run in parallel. Some data structure(e.g, irqfd->consumer) will be
->> > > > crashed because irqfd may be freed in deassign path before they are used
->> > > > in assign path. The other data maybe used in deassign path before
->> > > > initialization. Syzbot test hit such case. Add mutx between
->> > > > kvm_irqfd_assign() and kvm_irqfd_deassign() can fix such issue. Will
->> > > > send patch to fix it.
->> > > >
->> > > > On 12/16/2017 12:53 PM, Tianyu Lan wrote:
->> > > > > I reproduced the issue. Will have a look.
->> > > > >
->> > > > > -- Best regards Tianyu Lan 2017-12-15 18:14 GMT+08:00 syzbot
->> > > > > <bot+7ad82526b98c64c90062275162dacfa48c20dbd3@syzkaller.appspotmail.com>:
->> > > > > > syzkaller has found reproducer for the following crash on
->> > > > > > 82bcf1def3b5f1251177ad47c44f7e17af039b4b
->> > > > > > git://git.cmpxchg.org/linux-mmots.git/master
->> > > > > > compiler: gcc (GCC) 7.1.1 20170620
->> > > > > > .config is attached
->> > > > > > Raw console output is attached.
->> > > > > > C reproducer is attached
->> > > > > > syzkaller reproducer is attached. Seehttps://goo.gl/kgGztJ
->> > > > > > for information about syzkaller reproducers
->> > > > > >
->> > > > > >
->> > > > > > ==================================================================
->> > > > > > BUG: KASAN: use-after-free in __list_add include/linux/list.h:64 [inline]
->> > > > > > BUG: KASAN: use-after-free in list_add include/linux/list.h:79 [inline]
->> > > > > > BUG: KASAN: use-after-free in irq_bypass_register_consumer+0x4b4/0x500
->> > > > > > virt/lib/irqbypass.c:217
->> > > > > > Write of size 8 at addr ffff8801cdf51180 by task syzkaller436086/15031
->> > > > > >
->> > > > > > CPU: 1 PID: 15031 Comm: syzkaller436086 Not tainted 4.15.0-rc2-mm1+ #39
->> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> > > > > > Google 01/01/2011
->> > > > > > Call Trace:
->> > > > > >    __dump_stack lib/dump_stack.c:17 [inline]
->> > > > > >    dump_stack+0x194/0x257 lib/dump_stack.c:53
->> > > > > >    print_address_description+0x73/0x250 mm/kasan/report.c:252
->> > > > > >    kasan_report_error mm/kasan/report.c:351 [inline]
->> > > > > >    kasan_report+0x25b/0x340 mm/kasan/report.c:409
->> > > > > >    __asan_report_store8_noabort+0x17/0x20 mm/kasan/report.c:435
->> > > > > >    __list_add include/linux/list.h:64 [inline]
->> > > > > >    list_add include/linux/list.h:79 [inline]
->> > > > > >    irq_bypass_register_consumer+0x4b4/0x500 virt/lib/irqbypass.c:217
->> > > > > >    kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:417 [inline]
->> > > > > >    kvm_irqfd+0x137f/0x1d50 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
->> > > > > >    kvm_vm_ioctl+0x1079/0x1c40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2992
->> > > > > >    vfs_ioctl fs/ioctl.c:46 [inline]
->> > > > > >    do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
->> > > > > >    SYSC_ioctl fs/ioctl.c:701 [inline]
->> > > > > >    SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
->> > > > > >    entry_SYSCALL_64_fastpath+0x1f/0x96
->> > > > > > RIP: 0033:0x44d379
->> > > > > > RSP: 002b:00007fc5ff9a9d08 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->> > > > > > RAX: ffffffffffffffda RBX: 00007fc5ff9aa700 RCX: 000000000044d379
->> > > > > > RDX: 0000000020080fe0 RSI: 000000004020ae76 RDI: 0000000000000005
->> > > > > > RBP: 00000000007ff900 R08: 00007fc5ff9aa700 R09: 00007fc5ff9aa700
->> > > > > > R10: 00007fc5ff9aa700 R11: 0000000000000246 R12: 0000000000000000
->> > > > > > R13: 00000000007ff8ff R14: 00007fc5ff9aa9c0 R15: 0000000000000000
->> > > > > >
->> > > > > > Allocated by task 15031:
->> > > > > >    save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->> > > > > >    set_track mm/kasan/kasan.c:459 [inline]
->> > > > > >    kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
->> > > > > >    kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3614
->> > > > > >    kmalloc include/linux/slab.h:516 [inline]
->> > > > > >    kzalloc include/linux/slab.h:705 [inline]
->> > > > > >    kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:296 [inline]
->> > > > > >    kvm_irqfd+0x16c/0x1d50 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
->> > > > > >    kvm_vm_ioctl+0x1079/0x1c40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2992
->> > > > > >    vfs_ioctl fs/ioctl.c:46 [inline]
->> > > > > >    do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
->> > > > > >    SYSC_ioctl fs/ioctl.c:701 [inline]
->> > > > > >    SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
->> > > > > >    entry_SYSCALL_64_fastpath+0x1f/0x96
->> > > > > >
->> > > > > > Freed by task 1402:
->> > > > > >    save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->> > > > > >    set_track mm/kasan/kasan.c:459 [inline]
->> > > > > >    kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
->> > > > > >    __cache_free mm/slab.c:3492 [inline]
->> > > > > >    kfree+0xca/0x250 mm/slab.c:3807
->> > > > > >    irqfd_shutdown+0x13c/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:148
->> > > > > >    process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
->> > > > > >    worker_thread+0x223/0x1990 kernel/workqueue.c:2247
->> > > > > >    kthread+0x37a/0x440 kernel/kthread.c:238
->> > > > > >    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
->> > > > > >
->> > > > > > The buggy address belongs to the object at ffff8801cdf51000
->> > > > > >    which belongs to the cache kmalloc-512 of size 512
->> > > > > > The buggy address is located 384 bytes inside of
->> > > > > >    512-byte region [ffff8801cdf51000, ffff8801cdf51200)
->> > > > > > The buggy address belongs to the page:
->> > > > > > page:00000000d08a0d63 count:1 mapcount:0 mapping:00000000d54c7be6 index:0x0
->> > > > > > flags: 0x2fffc0000000100(slab)
->> > > > > > raw: 02fffc0000000100 ffff8801cdf51000 0000000000000000 0000000100000006
->> > > > > > raw: ffffea00073a7660 ffffea000737f3a0 ffff8801dac00940 0000000000000000
->> > > > > > page dumped because: kasan: bad access detected
->> > > > > >
->> > > > > > Memory state around the buggy address:
->> > > > > >    ffff8801cdf51080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> > > > > >    ffff8801cdf51100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> > > > > > > ffff8801cdf51180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> > > > > >                      ^
->> > > > > >    ffff8801cdf51200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> > > > > >    ffff8801cdf51280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> > > > > > ==================================================================
->> > > > > >
->> > > Tianyu, are you still planning to send a patch for this?  This is still
->> > > happening.
->> > >
->> > > - Eric
->> > Yes, I sent out fix patch and wait for review.
->> >  https://patchwork.kernel.org/patch/10128925/
->> >
+#syz dup: KASAN: use-after-free Read in do_general_protection
+
+On Sat, May 26, 2018 at 11:16 AM, syzbot
+<syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    62d18ecfa641 Merge tag 'arm64-fixes' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1093ccb7800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a5373bacd7643643b238
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> userspace arch: i386
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1067742f800000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a5373bacd7643643b238@syzkaller.appspotmail.com
+>
+> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+> 8021q: adding VLAN 0 to HW filter on device team0
+> ==================================================================
+> BUG: KASAN: stack-out-of-bounds in do_general_protection+0x2ac/0x2f0
+> arch/x86/kernel/traps.c:538
+> Read of size 8 at addr ffff8801b21273f8 by task syz-executor0/5106
+>
+> CPU: 0 PID: 5106 Comm: syz-executor0 Not tainted 4.17.0-rc6+ #92
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  do_general_protection+0x2ac/0x2f0 arch/x86/kernel/traps.c:538
+>  general_protection+0x1e/0x30 arch/x86/entry/entry_64.S:1159
+> RIP: 0010:msr_write_intercepted arch/x86/kvm/vmx.c:2132 [inline]
+> RIP: 0010:vmx_vcpu_run+0xa12/0x25c0 arch/x86/kvm/vmx.c:9879
+> RSP: 0018:ffff8801b2127410 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000010000000 RCX: ffffffff811f76f2
+> RDX: 000000000836b156 RSI: ffffffff811f76ff RDI: 0000000000000005
+> RBP: ffff8801b2127508 R08: ffff8801cf7a6500 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  mmu_notifier_release include/linux/mmu_notifier.h:244 [inline]
+>  exit_mmap+0xa4/0x5a0 mm/mmap.c:3057
+>  __mmput kernel/fork.c:961 [inline]
+>  mmput+0x251/0x610 kernel/fork.c:982
+>  exit_mm kernel/exit.c:544 [inline]
+>  do_exit+0xe98/0x2730 kernel/exit.c:852
+>  do_group_exit+0x16f/0x430 kernel/exit.c:968
+>  __do_sys_exit_group kernel/exit.c:979 [inline]
+>  __se_sys_exit_group kernel/exit.c:977 [inline]
+>  __ia32_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+>  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+>  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+> RIP: 0023:0xf7f88cb9
+> RSP: 002b:00000000f7f7fa8c EFLAGS: 00000286 ORIG_RAX: 00000000000000fc
+> RAX: ffffffffffffffda RBX: 000000000000000b RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>
+> The buggy address belongs to the page:
+> page:ffffea0006c849c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> flags: 0x2fffc0000000000()
+> raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+> raw: 0000000000000000 ffffea0006c80101 0000000000000000 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8801b2127280: 00 f2 00 00 00 00 00 00 00 00 00 00 00 00 f3 00
+>  ffff8801b2127300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >>
->> This is still happening.  Can you please resend your patch?
->>
+>> ffff8801b2127380: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 f8 f2 f2 f2
 >
-> Still happening; it's pretty easily reproducible, using the program below.
-> (Sometimes it crashes in different ways too.  It also spams the log, ignore
-> that.)  Tianyu's patch at https://patchwork.kernel.org/patch/10128925/ fixes it,
-> though the locking is difficult to understand so I'm not sure it's correct yet.
-> Probably the comment that says "do not drop the file until the irqfd is fully
-> initialized, otherwise we might race against the EPOLLHUP" would be obsoleted
-> and should be removed?  Can the KVM maintainers please review the patch too?
+>                                                                 ^
+>  ffff8801b2127400: f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2
+>  ffff8801b2127480: f2 f2 f2 f2 00 f2 f2 f2 f3 f3 f3 f3 00 00 00 00
+> ==================================================================
 >
-> #include <fcntl.h>
-> #include <linux/kvm.h>
-> #include <pthread.h>
-> #include <sys/eventfd.h>
-> #include <sys/ioctl.h>
 >
-> static int dev, vm, event;
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 >
-> static void *irqfd_thrproc(void *_flags)
-> {
->         struct kvm_irqfd irqfd = { .fd = event, .flags = (long)_flags };
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 >
->         for (;;)
->                 ioctl(vm, KVM_IRQFD, &irqfd);
-> }
->
-> int main()
-> {
->         pthread_t t;
->
->         event = eventfd(0, 0);
->         dev = open("/dev/kvm", 0);
->         vm = ioctl(dev, KVM_CREATE_VM, 0);
->         ioctl(vm, KVM_CREATE_IRQCHIP, 0);
->         pthread_create(&t, NULL, irqfd_thrproc, (void *)(long)0);
->         irqfd_thrproc((void *)(long)KVM_IRQFD_FLAG_DEASSIGN);
-> }
-
-
-Tentative duplicates of this bug:
-
-BUG: unable to handle kernel NULL pointer dereference in
-irq_bypass_register_consumer
-KASAN: use-after-free Read in irq_bypass_unregister_consumer
-general protection fault in eventfd_ctx_remove_wait_queue
-KASAN: use-after-free Read in irq_bypass_register_consumer
-
-https://syzkaller.appspot.com/bug?id=45591ae3053c59fb50169401fb61cb596735f9d1
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/00000000000065ecae056d185548%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
