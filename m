@@ -1,281 +1,162 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2486798-1527616976-2-5206002759653966788
+Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1059408-1527326107-2-12586230305224091149
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527616976; b=bW+wwvhbwTjsdmJ/lml6QKisGrDaz2hTqOY+cFpBKYjW3LKJuF
-    +EbEQtg4ZM28Tws3uTdmgS2BOa5BUbGLnINJHQ1+RwCFCsbxT1OMVk6l4UF4flb+
-    U4oRWwkm0VMN32hXQhtzgqko4exPRoTn89naXG4RByDudyXp+F3glLl7nHw16Gt7
-    N70kziMsdP9N3gGTfP9MMwhFn4kGUkEe2bgMcZ+JzSfrqX7cgryl3bHQtS8B/kyW
-    gXcAh2hLzTF16ig2RuroMTMiYJZHQ3n+cWBppS+WCixs+WoIe2fXiCjrWifYzIdT
-    DfjHb7CMmD6yRt9C2bPy5YMbqx4J86mXJAJw==
+    1527326107; b=Pa//5/O90FM7aFDiCASmziJ6kdBN2/hqq6gUvhEicsa04vTDYf
+    cTVGcah9ewMUfPn/FxrHbi/sjWbF+UvKCsft16LgZdoHHCumD76T/dLf/rDVmMVC
+    OmkCnwOSCIHhCPvpnzjm9t6nEMiBr7eJWkYsJ2WxhfzeJm98QUawOPlYm45UxpfD
+    OE5xRLIRN1YUFYkUbpeqK2SSWKZEX06gWwTObsDo+a+n1hBZKOH/8TKH+nLDIWxp
+    M0A+sOD5O3VBNFqOoHzcOxGmrg15Kk8zoPDUCm39+ip7T4fvqP+Yv2OKyqUMTc2H
+    JX+9nmGYOCDsma6U6qiLrJ15hwu6G90C4yEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=fm2; t=1527616976; bh=3
-    4nB5JlQAygF7pP9TwCqmbcq6z95Qg2LmtA04u5xTwE=; b=KtBUQLh11RJxNqpMo
-    WfDwyphWJZ32Y/9cDAl2fogodRNoNBp98N0i4pbvnKuljW8q9QkPAXlekH9wqhFl
-    7bnLt6/EwZ/v40EZcfY3UlYF+xwNezAhknEN2/AD33xPLX/isfyLjC7jgyY8E3C8
-    8xeMnueZeGPCW51UBwzzU+K1o8oh/KpcEgE2h/a4puUFopEnLrst59+9E5bRLKHW
-    nW+GVarx/gpZHFChLdlakA5aH9LMueZjFSsnRpz+dN6MOqNRMX1qwkDlcKbU32uY
-    dPRNZ414zbjZRMBN8N31GU8I3WhJB+FvV3HxAUzRTnIMpSG+u1JTJbhHmzaYENFr
-    jSWBQ==
+    messagingengine.com; h=mime-version:date:message-id:subject:from
+    :to:content-type:sender:list-id; s=fm2; t=1527326107; bh=A0xHgnJ
+    C4RuX8xcDxB2ZujUcjANo698K0vv1ejsjB4E=; b=RKKa1Owm1ZzuDBkARFDKgsT
+    hAhqcjNF1xTvk/Fj4AbSUPJaedgH6b4H9fRiqiBKMZafyre3iVabgXdj9bH2Z8vk
+    eRVvnYUl9L6Ox3jfTHDSW7fY4HYNiFyb8D1rQUNPVHSxaYLa9jjnzk5u9Et0KoEp
+    DGOy2oCGIYqeLpoJiOMPKP72qHiQf6IgOhPluZLZmdv6c8zViJctwYety7Dn6T/V
+    LDLGZSZ0Qo+o+hJI1Ai77ISJuYXQKU8qIqK23CrXAbXKvYI1v83ozQd2R7mLV903
+    p0V6PXaZOdfHE5xWLMBvVsxoYKYRycXWo7vLhTGpsGqjOpmyIYuYD453yyhZZdQ=
+    =
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    header.from=syzkaller.appspotmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=jlpiu5Rz;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
+    header.domain=syzkaller.appspotmail.com header.result=pass
+    header_org.domain=appspotmail.com header_org.result=pass
     header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=49 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+      header.from=syzkaller.appspotmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=jlpiu5Rz;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
+      header.domain=syzkaller.appspotmail.com header.result=pass
+      header_org.domain=appspotmail.com header_org.result=pass
       header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=49 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGtjBuhkZ7pIENQ3GpjsyWvPYawTHFgvzFZIhUpAit+Dk1bzUOssHc585w3g13PMd9Xj7QrwvjUgWzzlXBeqfcR/GjVjawzhgBSugNSGlMwF25fK+hQO
-    Of8ss5+KtdVqiu8zUVhWk235LeMpN/AxqzusLUo8ZXwGXljbAGIiLKHKQQvAVayhGZzaR91bO3QjmQAa8vm+yKbtd5VFGZUnGrzMRAzZrjCHdnsnlfNLrkgj
-    x6vT9DGOdSBRS81/JSfsBQ==
+X-CM-Envelope: MS4wfEh9b8Nu2/eEUPzyBhI2+rcf8xt90G6OMBJOVbBc4dEUsQsq75QWWILZxeXMTNvhqyxXXHTqVJbikj8E9TatNM8kxzW2lUlFYfG9WaJiPUBLGP6yelAj
+    RysflupZ7hCt88bHRa/+hdKwv6Fv6Vw5nV5WAV76dA4biItjY2e03hG8Hl34wHN6uqBp71ldbSwqvMpjpu27nugjlG/Hn8kXxJ6FWk7257ZiRJoA4lTG+YRk
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VnNF1IyMAAAA:8
-    a=FP58Ms26AAAA:8 a=VwQbUJbxAAAA:8 a=8RqDXDEII9YSNXipYuUA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=mzoz-TVAAAAA:20 a=4RBUngkUAAAA:8
+    a=42MPjglSIj8MkqavDpkA:9 a=QEXdDO2ut3YA:10 a=vVHabExCe68A:10
+    a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965863AbeE2SCj (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 14:02:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54146 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965825AbeE2SCc (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 May 2018 14:02:32 -0400
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 6/8] ima: add build time policy
-Date: Tue, 29 May 2018 14:01:58 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18052918-0008-0000-0000-000004FC48D2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052918-0009-0000-0000-00001E906784
-Message-Id: <1527616920-5415-7-git-send-email-zohar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=6 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290195
-Sender: owner-linux-security-module@vger.kernel.org
+        id S1031552AbeEZJPE (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 26 May 2018 05:15:04 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:39525 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031380AbeEZJPD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 26 May 2018 05:15:03 -0400
+X-Google-Smtp-Source: ADUXVKLlJnoeU/bz5k4+F315zKABFnWJX2GbvqEpQvzYWHH8JlT4Rb63J3+yS56Rea7pTAj3UTyT8KRBJDCu97dl6c815nvjJ7Dv
+MIME-Version: 1.0
+Date: Sat, 26 May 2018 02:15:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cbd959056d1851ca@google.com>
+Subject: general protection fault in wb_workfn (2)
+From: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Sender: linux-fsdevel-owner@vger.kernel.org
+X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-IMA by default does not measure, appraise or audit files, but can be
-enabled at runtime by specifying a builtin policy on the boot command line
-or by loading a custom policy.
+Hello,
 
-This patch defines a build time policy, which verifies kernel modules,
-firmware, kexec image, and/or the IMA policy signatures.  This build time
-policy is automatically enabled at runtime and persists after loading a
-custom policy.
+syzbot found the following crash on:
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+HEAD commit:    305bb5521282 Merge tag 'selinux-pr-20180516' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=153eb40f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=4a7438e774b21ddd8eca
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com
+
+binder: 13169:13171 ioctl 40047459 20000000 returned -22
+sock: process `syz-executor6' is using obsolete setsockopt SO_BSDCOMPAT
+binder: 13169:13202 Acquire 1 refcount change on invalid ref 0 ret -22
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 88 Comm: kworker/u4:3 Not tainted 4.17.0-rc5+ #55
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: writeback wb_workfn
+RIP: 0010:dev_name include/linux/device.h:1008 [inline]
+RIP: 0010:wb_workfn+0x195/0x1740 fs/fs-writeback.c:1937
+RSP: 0018:ffff8801d964f270 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff814e0f15
+RDX: 000000000000000a RSI: ffffffff81cd221d RDI: 0000000000000050
+RBP: ffff8801d964f750 R08: ffff8801d97c6700 R09: ffffed003b5e46c2
+R10: ffffed003b5e46c2 R11: ffff8801daf23613 R12: 0000000000000001
+R13: 1ffff1003b2c9f37 R14: ffff8801d964f728 R15: ffff8801d6836f18
+FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fec3a840db8 CR3: 00000001b49ae000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  process_scheduled_works kernel/workqueue.c:2205 [inline]
+  worker_thread+0xa30/0x1440 kernel/workqueue.c:2284
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 ee 13 00 00 48 8b 9b 08 06 00 00 48  
+b8 00 00 00 00 00 fc ff df 48 8d 7b 50 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+0f 85 3f 14 00 00 4c 8b 63 50 4d 85 e4 0f 84 a9 0e
+RIP: dev_name include/linux/device.h:1008 [inline] RSP: ffff8801d964f270
+RIP: wb_workfn+0x195/0x1740 fs/fs-writeback.c:1937 RSP: ffff8801d964f270
+---[ end trace baf4ced88bb756b8 ]---
+
+
 ---
- security/integrity/ima/Kconfig      | 58 +++++++++++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c | 46 +++++++++++++++++++++++++++--
- 2 files changed, 101 insertions(+), 3 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 6a8f67714c83..004919d9bf09 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -156,6 +156,64 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_APPRAISE_BUILD_POLICY
-+	bool "IMA build time configured policy rules"
-+	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+	default n
-+	help
-+	  This option defines an IMA appraisal policy at build time, which
-+	  is enforced at run time without having to specify a builtin
-+	  policy name on the boot command line.  The build time appraisal
-+	  policy rules persist after loading a custom policy.
-+
-+	  Depending on the rules configured, this policy may require kernel
-+	  modules, firmware, the kexec kernel image, and/or the IMA policy
-+	  to be signed.  Unsigned files might prevent the system from
-+	  booting or applications from working properly.
-+
-+config IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
-+	bool "Appraise firmware signatures"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  This option defines a policy requiring all firmware to be signed,
-+	  including the regulatory.db.  If both this option and
-+	  CFG80211_REQUIRE_SIGNED_REGDB are enabled, then both signature
-+	  verification methods are necessary.
-+
-+config IMA_APPRAISE_REQUIRE_KEXEC_SIGS
-+	bool "Appraise kexec kernel image signatures"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  Enabling this rule will require all kexec'ed kernel images to
-+	  be signed and verified by a public key on the trusted IMA
-+	  keyring.
-+
-+	  Kernel image signatures can not be verified by the original
-+	  kexec_load syscall.  Enabling this rule will prevent its
-+	  usage.
-+
-+config IMA_APPRAISE_REQUIRE_MODULE_SIGS
-+	bool "Appraise kernel modules signatures"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  Enabling this rule will require all kernel modules to be signed
-+	  and verified by a public key on the trusted IMA keyring.
-+
-+	  Kernel module signatures can only be verified by IMA-appraisal,
-+	  via the finit_module syscall. Enabling this rule will prevent
-+	  the usage of the init_module syscall.
-+
-+config IMA_APPRAISE_REQUIRE_POLICY_SIGS
-+	bool "Appraise IMA policy signature"
-+	depends on IMA_APPRAISE_BUILD_POLICY
-+	default n
-+	help
-+	  Enabling this rule will require the IMA policy to be signed and
-+	  and verified by a key on the trusted IMA keyring.
-+
- config IMA_APPRAISE_BOOTPARAM
- 	bool "ima_appraise boot parameter"
- 	depends on IMA_APPRAISE
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index c27f6993b07a..3c0bc8a1a88e 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -49,6 +49,7 @@
- 
- int ima_policy_flag;
- static int temp_ima_appraise;
-+static int build_ima_appraise __ro_after_init;
- 
- #define MAX_LSM_RULES 6
- enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
-@@ -162,6 +163,25 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- #endif
- };
- 
-+static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS
-+	{.action = APPRAISE, .func = MODULE_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
-+	{.action = APPRAISE, .func = FIRMWARE_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS
-+	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+#ifdef CONFIG_IMA_APPRAISE_REQUIRE_POLICY_SIGS
-+	{.action = APPRAISE, .func = POLICY_CHECK,
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+#endif
-+};
-+
- static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	{.action = APPRAISE, .func = MODULE_CHECK,
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-@@ -435,7 +455,7 @@ void ima_update_policy_flag(void)
- 			ima_policy_flag |= entry->action;
- 	}
- 
--	ima_appraise |= temp_ima_appraise;
-+	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
- 	if (!ima_appraise)
- 		ima_policy_flag &= ~IMA_APPRAISE;
- }
-@@ -488,8 +508,8 @@ void __init ima_init_policy(void)
- 	}
- 
- 	/*
--	 * Insert the appraise rules requiring file signatures, prior to
--	 * any other appraise rules.
-+	 * Insert the builtin "secure_boot" policy rules requiring file
-+	 * signatures, prior to any other appraise rules.
- 	 */
- 	for (i = 0; i < secure_boot_entries; i++) {
- 		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
-@@ -497,6 +517,26 @@ void __init ima_init_policy(void)
- 		    ima_appraise_flag(secure_boot_rules[i].func);
- 	}
- 
-+	/*
-+	 * Insert the build time appraise rules requiring file signatures
-+	 * for both the initial and custom policies, prior to other appraise
-+	 * rules.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
-+		struct ima_rule_entry *entry;
-+
-+		if (!secure_boot_entries)
-+			list_add_tail(&build_appraise_rules[i].list,
-+				      &ima_default_rules);
-+
-+		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
-+				GFP_KERNEL);
-+		if (entry)
-+			list_add_tail(&entry->list, &ima_policy_rules);
-+		build_ima_appraise |=
-+			ima_appraise_flag(build_appraise_rules[i].func);
-+	}
-+
- 	for (i = 0; i < appraise_entries; i++) {
- 		list_add_tail(&default_appraise_rules[i].list,
- 			      &ima_default_rules);
--- 
-2.7.5
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
