@@ -1,140 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032211AbeEZQrP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 12:47:15 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41140 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031950AbeEZQrO (ORCPT
+        id S1032213AbeEZRCG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 13:02:06 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:44134 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031950AbeEZRCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 12:47:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: David Fries <David@fries.net>
-Cc: linux-kernel@vger.kernel.org,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] media: uvc_driver: fix USB Camera ref leak denial of service
-Date: Sat, 26 May 2018 19:47:12 +0300
-Message-ID: <7755956.sgLFZZjbUQ@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180526163718.GE28969@spacedout.fries.net>
-References: <20180526155046.GA3327@spacedout.fries.net> <3294600.sHRg43ppdH@avalon> <20180526163718.GE28969@spacedout.fries.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Sat, 26 May 2018 13:02:04 -0400
+X-Google-Smtp-Source: AB8JxZq2WeQ7kUv0I78aHHCQA/nR0QLxV3BhOkCQDjsC6AkDYmpVSGYPasGYk+pMUX5yPXv9Z+08SA==
+From: Jeffrin Jose T <ahiliation@gmail.com>
+To: shuah@kernel.org, kstewart@linuxfoundation.org, daniel.diaz@linaro.org,
+        pombredanne@nexb.com, thomas@m3y3r.de, gregkh@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrin Jose T <ahiliation@gmail.com>
+Subject: [PATCH] selftests: intel_pstate: notification about privilege required to run intel_pstate testing script
+Date: Sat, 26 May 2018 22:31:35 +0530
+Message-Id: <20180526170135.3340-1-ahiliation@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+The intel_pstate related testing script need root level privileges
+when trying to access certain file for the successful execution of
+the script.But this is not the case always like when using evaluation
+only mode, which only require user level privilege.
 
-On Saturday, 26 May 2018 19:37:18 EEST David Fries wrote:
-> Laurent and Mauro,
-> 
-> I've reviewed Philipp Zabel's 49770 patch, it looks like they
-> equivalent, but take a different path.  My version does the unref in
-> uvc_unregister_video, Zabel's does the unref in each caller of
-> uvc_unregister_video.  I think I would prefer it to be in fewer
-> places.
+This patch is to notify the user about the privilege the script
+demands for the successful execution of the test.
 
-While I agree that avoiding code duplication is a good idea, we also need to 
-ensure that the unref call is the very last operation we perform, otherwise 
-we'll risk a use-after-free. The uvc_unregister_video() function is called 
-last so that's guaranteed with your patch. However, by hiding the unref there 
-from the callers, I wonder whether it couldn't result in issues in the future 
-if someone decides to add code after the uvc_unregister_video() calls without 
-noticing the unref issue.
+Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
+---
+ tools/testing/selftests/intel_pstate/run.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Any ideas on the sysfs group 'power' not found bug on removal while on
-> use?
-
-I haven't had time to investigate them yet, please feel free to give it a go 
-without waiting for me :-)
-
-> Thanks, it will be great to get this fixed.
-> 
-> On Sat, May 26, 2018 at 07:21:11PM +0300, Laurent Pinchart wrote:
-> > Hi David,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Saturday, 26 May 2018 18:50:46 EEST David Fries wrote:
-> > > Commit 9d15cd958c17 ("media: uvcvideo: Convert from using an atomic
-> > > variable to a reference count")
-> > > didn't take into account that while the old counter was initialized to
-> > > 0 (no stream open), kref_init starts with a reference of 1.  The
-> > > reference count on unplug no longer reaches 0, uvc_delete isn't
-> > > called, and evdev doesn't release /dev/input/event*.  Plug and unplug
-> > > enough times and it runs out of device minors preventing any new input
-> > > device and the use of newly plugged in USB video cameras until the
-> > > system is rebooted.
-> > > 
-> > > Signed-off-by: David Fries <David@Fries.net>
-> > > Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> > > Cc: stable@vger.kernel.org
-> > 
-> > Philipp Zabel has already posted a similar patch, see https://
-> > patchwork.linuxtv.org/patch/49770/
-> > 
-> > Mauro,
-> > 
-> > This is a serious issue so I'd like to get the patch merged in v4.18, but
-> > it could be argued that it's getting late for that, especially given that
-> > the bug has been there since v4.14. Would you be OK merging this in v4.18
-> > ? If so could you pick https://patchwork.linuxtv.org/patch/49770/ up, or
-> > would you like me to send a pull request ?
-> > 
-> > > ---
-> > > 
-> > >  drivers/media/usb/uvc/uvc_driver.c | 11 ++++-------
-> > >  1 file changed, 4 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/usb/uvc/uvc_driver.c
-> > > b/drivers/media/usb/uvc/uvc_driver.c index 2469b49..3cbdc87 100644
-> > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > @@ -1871,13 +1871,6 @@ static void uvc_unregister_video(struct
-> > > uvc_device
-> > > *dev) {
-> > > 
-> > >  	struct uvc_streaming *stream;
-> > > 
-> > > -	/* Unregistering all video devices might result in uvc_delete() 
-being
-> > > -	 * called from inside the loop if there's no open file handle. To
-> > > avoid
-> > > -	 * that, increment the refcount before iterating over the streams 
-and
-> > > -	 * decrement it when done.
-> > > -	 */
-> > > -	kref_get(&dev->ref);
-> > > -
-> > > 
-> > >  	list_for_each_entry(stream, &dev->streams, list) {
-> > >  	
-> > >  		if (!video_is_registered(&stream->vdev))
-> > >  		
-> > >  			continue;
-> > > 
-> > > @@ -1888,6 +1881,10 @@ static void uvc_unregister_video(struct
-> > > uvc_device
-> > > *dev) uvc_debugfs_cleanup_stream(stream);
-> > > 
-> > >  	}
-> > > 
-> > > +	/* Release the reference implicit in kref_init from uvc_probe,
-> > > +	 * the UVC device won't be deleted until the last file descriptor
-> > > +	 * is also closed.
-> > > +	 */
-> > > 
-> > >  	kref_put(&dev->ref, uvc_delete);
-> > >  
-> > >  }
-
-
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index 6ded61670f6d..4ddd389c2cb9 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -33,6 +33,12 @@ EVALUATE_ONLY=0
+ # Kselftest framework requirement - SKIP code is 4.
+ ksft_skip=4
+ 
++msg="skip all tests:"
++if [ $UID != 0 ] && [ $EVALUATE_ONLY == 0 ]; then
++    echo $msg please run this as root >&2
++    exit $ksft_skip
++fi
++
+ if ! uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ | grep -q x86; then
+ 	echo "$0 # Skipped: Test can only run on x86 architectures."
+ 	exit $ksft_skip
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.0
