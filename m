@@ -1,96 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031674AbeEZJ6v (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:58:51 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51439 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031487AbeEZJ6u (ORCPT
+        id S1031662AbeEZKCr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 06:02:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39874 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031487AbeEZKCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:58:50 -0400
-X-Google-Smtp-Source: ADUXVKIiyEONxgjtVM8XDrnP+uCHY+aACB4RZcNi/NB0HUIZ+h4Q+4/Aj+IMIp87q4+KcyeCV/m0MA==
-Subject: Re: [PATCH 2/6] mfd: da9063: Replace model with type
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
- <201805261713.OJMLXvlB%fengguang.wu@intel.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <fca2a629-e5e8-6ef8-7e7d-d25353ab4c3e@gmail.com>
-Date: Sat, 26 May 2018 11:58:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 26 May 2018 06:02:46 -0400
+Date: Sat, 26 May 2018 11:02:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 10/19 v3] regulator: s2mps11: Pass descriptor instead of
+ GPIO number
+Message-ID: <20180526100243.GA1564@sirena.org.uk>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
+ <20180514080640.12515-11-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <201805261713.OJMLXvlB%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Content-Disposition: inline
+In-Reply-To: <20180514080640.12515-11-linus.walleij@linaro.org>
+X-Cookie: Adapt.  Enjoy.  Survive.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/26/2018 11:16 AM, kbuild test robot wrote:
-> Hi Marek,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on ljones-mfd/for-mfd-next]
-> [also build test WARNING on v4.17-rc6]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Marek-Vasut/mfd-da9063-Rename-PMIC_DA9063-to-PMIC_CHIP_ID_DA9063/20180526-162613
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-> config: x86_64-randconfig-x002-201820 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from include/linux/kernel.h:10:0,
->                     from drivers//regulator/da9063-regulator.c:16:
->    drivers//regulator/da9063-regulator.c: In function 'da9063_regulator_probe':
->    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
->       if (model->dev_model == da9063->type)
->                ^
->    include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
->      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
->                                  ^~~~
->>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
->       if (model->dev_model == da9063->type)
->       ^~
->    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
->       if (model->dev_model == da9063->type)
->                ^
->    include/linux/compiler.h:58:42: note: in definition of macro '__trace_if'
->      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
->                                              ^~~~
->>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
->       if (model->dev_model == da9063->type)
->       ^~
->    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
->       if (model->dev_model == da9063->type)
->                ^
->    include/linux/compiler.h:69:16: note: in definition of macro '__trace_if'
->       ______r = !!(cond);     \
->                    ^~~~
->>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
->       if (model->dev_model == da9063->type)
->       ^~
->    drivers//regulator/da9063-regulator.c:749:10: error: 'struct da9063' has no member named 'model'
->        da9063->model);
->              ^~
-> 
-> vim +/if +744 drivers//regulator/da9063-regulator.c
 
-Is it testing this patch without the other patches in the series or at
-least 1/6 ?
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best regards,
-Marek Vasut
+On Mon, May 14, 2018 at 10:06:31AM +0200, Linus Walleij wrote:
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up with the standard devm_gpiod_get_optional()
+> call.
+>=20
+> This regulator supports passing platform data, but enable/sleep
+> regulators are looked up from the device tree exclusively, so
+> we can need not touch other files.
+
+This seems to have broken the boot on Odroid XU3 so I'm going to revert
+it:
+
+https://storage.kernelci.org/next/master/v4.17-rc6-9523-g47b9cef0672d/arm/m=
+ulti_v7_defconfig/lab-baylibre-seattle/boot-exynos5422-odroidxu3.html
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsJMMIACgkQJNaLcl1U
+h9ArKQf/aW630c4kG7yzTjeA537pwxTsJwzggWNWOH8FWhKSvPsTU2uLLvhzOZdb
+rv3Q0KhCFVE0Py21hEhUiHub9yyiyDR6iD8slmM1kyM12WZr7uUg40P0FIfQ3Swz
+sBHGULbV4qngAyKlLsBVHh6sC9wbN8QvfBagGS4IaK2yMuIRmj8uISUZkBTLRyuX
+eco2nwpu59onV+Cw9We3PBGVe76hZwqplPgRD0w9qdDobRoUdvrRZpX4XbCpTMDE
+NfjbfL7rYSfx6jVTZt/g6Y68IrNg/2ej3Hxm2bBDJ9Gvr9oVQ6cmFQb5rOp3ali2
+Kp24C9j6XF4mWStc785KrUfgWQEAqw==
+=pjAA
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
