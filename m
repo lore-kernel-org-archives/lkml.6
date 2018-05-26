@@ -1,75 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031769AbeEZOVF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 10:21:05 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42330 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754475AbeEZOVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 10:21:04 -0400
-X-Google-Smtp-Source: AB8JxZpjy9KxOXlKqKc03dRa4wWAeISS4FlYYCn0YnAEm/3ln1t6qQ4AR6Hs07zP00pUcA5U00nh+Q==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1] memory: tegra: Correct driver probe order
-Date: Sat, 26 May 2018 17:20:35 +0300
-Message-Id: <20180526142035.21741-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1031797AbeEZOYH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 10:24:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46064 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753924AbeEZOYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 10:24:06 -0400
+Date: Sat, 26 May 2018 16:24:01 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Brijesh Singh <brijesh.singh@amd.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        Joerg Roedel <joro@8bytes.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] KVM: X86: prevent integer overflows in
+ KVM_MEMORY_ENCRYPT_REG_REGION
+Message-ID: <20180526142400.GD23390@flask>
+References: <20180519060135.GA4991@mwanda>
+ <f8e3af2e-08d2-bcb2-be09-c93f8b6d6bd6@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8e3af2e-08d2-bcb2-be09-c93f8b6d6bd6@amd.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Reset Controller should be registered in the end of probe, otherwise
-Memory Controller device goes away if IRQ requesting fails and the Reset
-Controller stays registered. To avoid having to unwind the MC probing in
-a case of SMMU probe failure, let's simply print the error message without
-failing the MC probe. This allows us to just move the Reset Controller
-registering before the SMMU registration, reducing code churning. Also
-let's not fail MC probe in a case of Reset Controller registration failure
-as it doesn't prevent the MC driver to work.
+2018-05-21 10:52-0500, Brijesh Singh:
+> On 05/19/2018 01:01 AM, Dan Carpenter wrote:
+> > This is a fix from reviewing the code, but it looks like it might be
+> > able to lead to an Oops.  It affects 32bit systems.
+> > 
+> 
+> Please note that SEV is not available on 32bit systems.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/mc.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 22ec959db7d3..8ef95e34b5c7 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -692,13 +692,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = tegra_mc_reset_setup(mc);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
--			err);
--		return err;
--	}
--
- 	mc->irq = platform_get_irq(pdev, 0);
- 	if (mc->irq < 0) {
- 		dev_err(&pdev->dev, "interrupt not specified\n");
-@@ -717,13 +710,16 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	err = tegra_mc_reset_setup(mc);
-+	if (err < 0)
-+		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
-+			err);
-+
- 	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU)) {
- 		mc->smmu = tegra_smmu_probe(&pdev->dev, mc->soc->smmu, mc);
--		if (IS_ERR(mc->smmu)) {
-+		if (IS_ERR(mc->smmu))
- 			dev_err(&pdev->dev, "failed to probe SMMU: %ld\n",
- 				PTR_ERR(mc->smmu));
--			return PTR_ERR(mc->smmu);
--		}
- 	}
- 
- 	return 0;
--- 
-2.17.0
+Added this note and queued, thanks.
