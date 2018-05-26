@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031519AbeEZJWS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:22:18 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37413 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031247AbeEZJWO (ORCPT
+        id S1031569AbeEZJWW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:22:22 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41360 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031247AbeEZJWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:22:14 -0400
-X-Google-Smtp-Source: AB8JxZorN8GaOIo07wfhayDq0x7WicMOmEz1bkzz+fNgdkqNDEKVlQFAl2+7GexhQmJu35bOZycztEvQlKPL1FVa4K0=
+        Sat, 26 May 2018 05:22:19 -0400
+X-Google-Smtp-Source: AB8JxZrbVVcv1O7n4k+OGnXu6hM78Jq8lpNwvWSPzJj28ONRhtt65qSaCI4245Ic2uBvu+bP9RVMKkn4Qnv8QTu4fK0=
 MIME-Version: 1.0
-In-Reply-To: <000000000000fd91d7056cba9422@google.com>
-References: <000000000000fd91d7056cba9422@google.com>
+In-Reply-To: <000000000000eb81b9056d1858c1@google.com>
+References: <000000000000eb81b9056d1858c1@google.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 26 May 2018 11:21:53 +0200
-Message-ID: <CACT4Y+YcwrahWb9Q4EgdSqZtpsCA5Gimib4g=Smq9wscUascGw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in irq_bypass_unregister_consumer
-To: syzbot <syzbot+37364ced0d0b0fdf115c@syzkaller.appspotmail.com>
-Cc: KVM list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Date: Sat, 26 May 2018 11:21:57 +0200
+Message-ID: <CACT4Y+bDfFW8Gym23OeKuYcCcex=gE_fJPumeK0bzE31uPaSjQ@mail.gmail.com>
+Subject: Re: general protection fault in eventfd_ctx_remove_wait_queue
+To: syzbot <syzbot+f8c4b79b3cb98d795e59@syzkaller.appspotmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,105 +27,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 #syz dup: KASAN: use-after-free Write in irq_bypass_register_consumer
 
-On Mon, May 21, 2018 at 7:25 PM, syzbot
-<syzbot+37364ced0d0b0fdf115c@syzkaller.appspotmail.com> wrote:
+On Sat, May 26, 2018 at 11:17 AM, syzbot
+<syzbot+f8c4b79b3cb98d795e59@syzkaller.appspotmail.com> wrote:
 > Hello,
 >
 > syzbot found the following crash on:
 >
-> HEAD commit:    0b449a441dac Merge tag 'dmaengine-fix-4.17-rc6' of git://g..
+> HEAD commit:    75bc37fefc44 Linux 4.17-rc4
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16a44b37800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
-> dashboard link: https://syzkaller.appspot.com/bug?extid=37364ced0d0b0fdf115c
+> console output: https://syzkaller.appspot.com/x/log.txt?x=161de3c7800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=31f4b3733894ef79
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f8c4b79b3cb98d795e59
 > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1120eb37800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f1227b800000
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+37364ced0d0b0fdf115c@syzkaller.appspotmail.com
+> Reported-by: syzbot+f8c4b79b3cb98d795e59@syzkaller.appspotmail.com
 >
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> IPVS: ftp: loaded support on port[0] = 21
-> ==================================================================
-> BUG: KASAN: use-after-free in irq_bypass_unregister_consumer+0x3cd/0x4a0
-> virt/lib/irqbypass.c:247
-> Read of size 8 at addr ffff8801adf2a168 by task kworker/0:1/24
->
-> CPU: 0 PID: 24 Comm: kworker/0:1 Not tainted 4.17.0-rc5+ #59
+> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> 8021q: adding VLAN 0 to HW filter on device team0
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 4 Comm: kworker/0:0 Not tainted 4.17.0-rc4+ #37
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
 > Workqueue: kvm-irqfd-cleanup irqfd_shutdown
+> RIP: 0010:__list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51
+> RSP: 0018:ffff8801d9a7f588 EFLAGS: 00010046
+> RAX: dffffc0000000000 RBX: ffff8801a87665e0 RCX: 1ffff1003644b29a
+> RDX: 0000000000000000 RSI: ffffffff81d628fe RDI: ffff8801a87665e8
+> RBP: ffff8801d9a7f5a0 R08: ffff8801d9a6a100 R09: ffffed003644b291
+> R10: ffffed003644b291 R11: ffff8801b225948b R12: 0000000000000000
+> R13: 0000000000000000 R14: ffff8801a87665e0 R15: ffff8801d9a7f688
+> FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f1d83a8d000 CR3: 00000001cf4a2000 CR4: 00000000001426f0
+> DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
 > Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  irq_bypass_unregister_consumer+0x3cd/0x4a0 virt/lib/irqbypass.c:247
->  irqfd_shutdown+0x112/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:145
+>  __list_del_entry include/linux/list.h:117 [inline]
+>  list_del include/linux/list.h:125 [inline]
+>  __remove_wait_queue include/linux/wait.h:184 [inline]
+>  eventfd_ctx_remove_wait_queue+0x16f/0x590 fs/eventfd.c:188
+>  irqfd_shutdown+0x94/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:128
 >  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
 >  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->  kthread+0x345/0x410 kernel/kthread.c:240
+>  kthread+0x345/0x410 kernel/kthread.c:238
 >  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
->
-> Allocated by task 4534:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
->  kmalloc include/linux/slab.h:512 [inline]
->  kzalloc include/linux/slab.h:701 [inline]
->  kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:296 [inline]
->  kvm_irqfd+0x187/0x1ec0 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
->  kvm_vm_ioctl+0xf84/0x1d90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2997
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  file_ioctl fs/ioctl.c:500 [inline]
->  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
->  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
->  __do_sys_ioctl fs/ioctl.c:708 [inline]
->  __se_sys_ioctl fs/ioctl.c:706 [inline]
->  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 24:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xd9/0x260 mm/slab.c:3813
->  irqfd_shutdown+0x13a/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:148
->  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
->  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->  kthread+0x345/0x410 kernel/kthread.c:240
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
->
-> The buggy address belongs to the object at ffff8801adf2a000
->  which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 360 bytes inside of
->  512-byte region [ffff8801adf2a000, ffff8801adf2a200)
-> The buggy address belongs to the page:
-> page:ffffea0006b7ca80 count:1 mapcount:0 mapping:ffff8801adf2a000 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801adf2a000 0000000000000000 0000000100000006
-> raw: ffffea0007647a20 ffffea0006b45ba0 ffff8801da800940 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801adf2a000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801adf2a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>
->> ffff8801adf2a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->
->                                                           ^
->  ffff8801adf2a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801adf2a200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
+> Code: c5 0f 84 cc 00 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 a5
+> 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75
+> 5f 49 8b 14 24 48 39 da 0f 85 ba 00 00 00 48 b8
+> RIP: __list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51 RSP:
+> ffff8801d9a7f588
+> ---[ end trace 115284d8987d1fc5 ]---
 >
 >
 > ---
@@ -136,8 +96,6 @@ On Mon, May 21, 2018 at 7:25 PM, syzbot
 > syzbot will keep track of this bug report. See:
 > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
 > syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
 >
 > --
 > You received this message because you are subscribed to the Google Groups
@@ -145,5 +103,5 @@ On Mon, May 21, 2018 at 7:25 PM, syzbot
 > To unsubscribe from this group and stop receiving emails from it, send an
 > email to syzkaller-bugs+unsubscribe@googlegroups.com.
 > To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000fd91d7056cba9422%40google.com.
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000eb81b9056d1858c1%40google.com.
 > For more options, visit https://groups.google.com/d/optout.
