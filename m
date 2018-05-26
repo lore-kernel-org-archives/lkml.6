@@ -1,51 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031633AbeEZJjS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:39:18 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8155 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031487AbeEZJjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:39:12 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Steven Royer <seroyer@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] misc: ibmvmc: Use GFP_ATOMIC under spin lock
-Date: Sat, 26 May 2018 09:45:59 +0000
-Message-ID: <1527327959-83701-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1031641AbeEZJyp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:54:45 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:46924 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031498AbeEZJyo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 05:54:44 -0400
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 26 May 2018 11:54:42 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Vinod Koul <vinod.koul@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [RESEND PATCH] dmaengine: pxa: add a default requestor policy
+Date: Sat, 26 May 2018 11:54:18 +0200
+Message-Id: <20180526095418.22960-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function alloc_dma_buffer() is called from ibmvmc_add_buffer(),
-in which a spin lock be held here, so we should use GFP_ATOMIC when
-a lock is held.
+As what former drcmr -1 value meant, add a this as a default to each
+channel, ie. that by default no requestor line is used.
 
-Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+This is specifically used for network drivers smc91x and smc911x, and
+needed for their port to slave maps.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- drivers/misc/ibmvmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/pxa_dma.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
-index fb83d13..8f82bb9 100644
---- a/drivers/misc/ibmvmc.c
-+++ b/drivers/misc/ibmvmc.c
-@@ -273,7 +273,7 @@ static void *alloc_dma_buffer(struct vio_dev *vdev, size_t size,
- 			      dma_addr_t *dma_handle)
- {
- 	/* allocate memory */
--	void *buffer = kzalloc(size, GFP_KERNEL);
-+	void *buffer = kzalloc(size, GFP_ATOMIC);
+diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
+index 9505334f9c6e..604df1bdadf7 100644
+--- a/drivers/dma/pxa_dma.c
++++ b/drivers/dma/pxa_dma.c
+@@ -762,6 +762,8 @@ static void pxad_free_chan_resources(struct dma_chan *dchan)
+ 	dma_pool_destroy(chan->desc_pool);
+ 	chan->desc_pool = NULL;
  
- 	if (!buffer) {
- 		*dma_handle = 0;
++	chan->drcmr = (u32)-1;
++	chan->prio = PXAD_PRIO_LOWEST;
+ }
+ 
+ static void pxad_free_desc(struct virt_dma_desc *vd)
+@@ -1386,6 +1388,9 @@ static int pxad_init_dmadev(struct platform_device *op,
+ 		c = devm_kzalloc(&op->dev, sizeof(*c), GFP_KERNEL);
+ 		if (!c)
+ 			return -ENOMEM;
++
++		c->drcmr = (u32)-1;
++		c->prio = PXAD_PRIO_LOWEST;
+ 		c->vc.desc_free = pxad_free_desc;
+ 		vchan_init(&c->vc, &pdev->slave);
+ 		init_waitqueue_head(&c->wq_state);
+-- 
+2.11.0
