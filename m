@@ -1,67 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031586AbeEZJjL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:39:11 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:43709 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031347AbeEZJjK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 05:39:10 -0400
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 26 May 2018 11:39:09 +0200
-X-ME-IP: 90.55.202.35
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Philipp Zabel <philipp.zabel@gmail.com>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: pxa: hx4700: fix the usb client
-Date: Sat, 26 May 2018 11:38:34 +0200
-Message-Id: <20180526093834.21277-1-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
+        id S1031633AbeEZJjS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:39:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8155 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1031487AbeEZJjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 05:39:12 -0400
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        Steven Royer <seroyer@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] misc: ibmvmc: Use GFP_ATOMIC under spin lock
+Date: Sat, 26 May 2018 09:45:59 +0000
+Message-ID: <1527327959-83701-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The usb client of the hx4700 is not working because no platform data is
-declared. Fix it by adding the missing call.
+The function alloc_dma_buffer() is called from ibmvmc_add_buffer(),
+in which a spin lock be held here, so we should use GFP_ATOMIC when
+a lock is held.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- arch/arm/mach-pxa/hx4700.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/misc/ibmvmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index e2e7f247a645..b79b757fdd41 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -54,6 +54,7 @@
+diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
+index fb83d13..8f82bb9 100644
+--- a/drivers/misc/ibmvmc.c
++++ b/drivers/misc/ibmvmc.c
+@@ -273,7 +273,7 @@ static void *alloc_dma_buffer(struct vio_dev *vdev, size_t size,
+ 			      dma_addr_t *dma_handle)
+ {
+ 	/* allocate memory */
+-	void *buffer = kzalloc(size, GFP_KERNEL);
++	void *buffer = kzalloc(size, GFP_ATOMIC);
  
- #include "devices.h"
- #include "generic.h"
-+#include "udc.h"
- 
- /* Physical address space information */
- 
-@@ -594,6 +595,8 @@ static struct platform_device gpio_vbus = {
- 	},
- };
- 
-+static struct pxa2xx_udc_mach_info hx4700_udc_info;
-+
- /*
-  * Touchscreen - TSC2046 connected to SSP2
-  */
-@@ -891,6 +894,7 @@ static void __init hx4700_init(void)
- 	gpio_set_value(GPIO71_HX4700_ASIC3_nRESET, 1);
- 	mdelay(10);
- 
-+	pxa_set_udc_info(&hx4700_udc_info);
- 	regulator_has_full_constraints();
- }
- 
--- 
-2.11.0
+ 	if (!buffer) {
+ 		*dma_handle = 0;
