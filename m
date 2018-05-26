@@ -1,193 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031412AbeEZIq4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 04:46:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36047 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031329AbeEZIqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 04:46:54 -0400
-Date: Sat, 26 May 2018 10:46:29 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
- for bad block check
-Message-ID: <20180526104629.74315561@xps13>
-In-Reply-To: <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
-        <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1031408AbeEZIyG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 04:54:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:51150 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031301AbeEZIyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 04:54:02 -0400
+X-Google-Smtp-Source: ADUXVKK0WWk58ms9LP9pS3Teany2ytaL7HecwJi2bXiqrbgyoM9FMgCKoHGAI92+WUANnt94Ch8wqJ81G3mIWBoK6VcBAqQOJlaC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Date: Sat, 26 May 2018 01:54:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ac9069056d1806c4@google.com>
+Subject: KASAN: use-after-free Read in bpf_tcp_close
+From: syzbot <syzbot+fce8f2462c403d02af98@syzkaller.appspotmail.com>
+To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+Hello,
 
-On Fri, 25 May 2018 17:51:41 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+syzbot found the following crash on:
 
-> The QCOM NAND controller layout is such that, the bad block byte
-> offset for last codeword will come to first byte in spare area.
+HEAD commit:    3fb48d881dbe Merge branch 'bpf-fib-mtu-check'
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fc1977800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=fce8f2462c403d02af98
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1310c857800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17de7177800000
 
-"is the first spare byte"?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fce8f2462c403d02af98@syzkaller.appspotmail.com
 
+==================================================================
+BUG: KASAN: use-after-free in hlist_del_rcu include/linux/rculist.h:427  
+[inline]
+BUG: KASAN: use-after-free in bpf_tcp_close+0xd7f/0xf80  
+kernel/bpf/sockmap.c:271
+Read of size 8 at addr ffff8801c884cf90 by task syz-executor330/11778
 
-> Currently, the raw read for last codeword is being done with
-> copy_last_cw function. It does following 2 things:
+CPU: 1 PID: 11778 Comm: syz-executor330 Not tainted 4.17.0-rc4+ #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  hlist_del_rcu include/linux/rculist.h:427 [inline]
+  bpf_tcp_close+0xd7f/0xf80 kernel/bpf/sockmap.c:271
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+  sock_release+0x96/0x1b0 net/socket.c:594
+  sock_close+0x16/0x20 net/socket.c:1149
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  get_signal+0x886/0x1960 kernel/signal.c:2469
+  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445ed9
+RSP: 002b:00007f0078c0adb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00000000006dbc24 RCX: 0000000000445ed9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000006dbc24
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcd147dbef R14: 00007f0078c0b9c0 R15: 0000000000000007
 
-"It does the following:"
+Allocated by task 11787:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc_node mm/slab.c:3682 [inline]
+  __kmalloc_node+0x47/0x70 mm/slab.c:3689
+  kmalloc_node include/linux/slab.h:554 [inline]
+  alloc_sock_hash_elem kernel/bpf/sockmap.c:2114 [inline]
+  sock_hash_ctx_update_elem.isra.23+0xa57/0x1560 kernel/bpf/sockmap.c:2245
+  sock_hash_update_elem+0x14f/0x2d0 kernel/bpf/sockmap.c:2303
+  map_update_elem+0x5c4/0xc90 kernel/bpf/syscall.c:760
+  __do_sys_bpf kernel/bpf/syscall.c:2134 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2105 [inline]
+  __x64_sys_bpf+0x32a/0x4f0 kernel/bpf/syscall.c:2105
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-> 
-> 1. Read the last codeword bytes from NAND chip to NAND
->    controller internal HW buffer.
-> 2. Copy all these bytes from HW buffer to actual buffer.
-> 
-> For bad block check, maximum two bytes are required so instead of
-> copying the complete bytes in step 2, only those bbm_size bytes
-> can be copied.
-> 
-> This patch does minor code reorganization for the same. After
-> this, copy_last_cw function won’t be required.
+Freed by task 8998:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  sock_hash_free+0x24e/0x6e0 kernel/bpf/sockmap.c:2093
+  bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:259
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
 
-"This patch does minor code reorganization to just retrieve these two
-bytes when checking for bad blocks, allowing to remove
-copy_last_cw() now useless."
+The buggy address belongs to the object at ffff8801c884cf80
+  which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 16 bytes inside of
+  64-byte region [ffff8801c884cf80, ffff8801c884cfc0)
+The buggy address belongs to the page:
+page:ffffea0007221300 count:1 mapcount:0 mapping:ffff8801c884c000 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801c884c000 0000000000000000 0000000100000020
+raw: ffffea00072e08e0 ffffea0006e99660 ffff8801da800340 0000000000000000
+page dumped because: kasan: bad access detected
 
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
-> * Changes from v2:
->   1. Changed commit message and comments slightly
-> 
-> * Changes from v1:
->   NEW CHANGE
-> 
->  drivers/mtd/nand/raw/qcom_nandc.c | 66 +++++++++++++++------------------------
->  1 file changed, 25 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-> index d693b5f..f72bc8a 100644
-> --- a/drivers/mtd/nand/raw/qcom_nandc.c
-> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-> @@ -1769,41 +1769,6 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
->  	return parse_read_errors(host, data_buf_start, oob_buf_start);
->  }
->  
-> -/*
-> - * a helper that copies the last step/codeword of a page (containing free oob)
-> - * into our local buffer
-> - */
-> -static int copy_last_cw(struct qcom_nand_host *host, int page)
-> -{
-> -	struct nand_chip *chip = &host->chip;
-> -	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-> -	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> -	int size;
-> -	int ret;
-> -
-> -	clear_read_regs(nandc);
-> -
-> -	size = host->use_ecc ? host->cw_data : host->cw_size;
-> -
-> -	/* prepare a clean read buffer */
-> -	memset(nandc->data_buffer, 0xff, size);
-> -
-> -	set_address(host, host->cw_size * (ecc->steps - 1), page);
-> -	update_rw_regs(host, 1, true);
-> -
-> -	config_nand_single_cw_page_read(nandc);
-> -
-> -	read_data_dma(nandc, FLASH_BUF_ACC, nandc->data_buffer, size, 0);
-> -
-> -	ret = submit_descs(nandc);
-> -	if (ret)
-> -		dev_err(nandc->dev, "failed to copy last codeword\n");
-> -
-> -	free_descs(nandc);
-> -
-> -	return ret;
-> -}
-> -
->  /* implements ecc->read_page() */
->  static int qcom_nandc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
->  				uint8_t *buf, int oob_required, int page)
-> @@ -2118,6 +2083,7 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
->  	struct nand_ecc_ctrl *ecc = &chip->ecc;
->  	int page, ret, bbpos, bad = 0;
->  	u32 flash_status;
-> +	u8 *bbm_bytes_buf = chip->data_buf;
->  
->  	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
->  
-> @@ -2128,11 +2094,31 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
->  	 * that contains the BBM
->  	 */
->  	host->use_ecc = false;
-> +	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
-
-Are we sure there is no layout with only 1 step?
-
->  
->  	clear_bam_transaction(nandc);
-> -	ret = copy_last_cw(host, page);
-> -	if (ret)
-> +	clear_read_regs(nandc);
-> +
-> +	set_address(host, host->cw_size * (ecc->steps - 1), page);
-> +	update_rw_regs(host, 1, true);
-> +
-> +	/*
-> +	 * The last codeword data will be copied from NAND device to NAND
-> +	 * controller internal HW buffer. Copy only required BBM size bytes
-> +	 * from this HW buffer to bbm_bytes_buf which is present at
-> +	 * bbpos offset.
-> +	 */
-> +	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
-> +	config_nand_single_cw_page_read(nandc);
-> +	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
-> +		      host->bbm_size, 0);
-> +
-> +	ret = submit_descs(nandc);
-> +	free_descs(nandc);
-> +	if (ret) {
-> +		dev_err(nandc->dev, "failed to copy bad block bytes\n");
->  		goto err;
-> +	}
->  
->  	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
->  
-> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct mtd_info *mtd, loff_t ofs)
->  		goto err;
->  	}
->  
-> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
-> -
-> -	bad = nandc->data_buffer[bbpos] != 0xff;
-> +	bad = bbm_bytes_buf[0] != 0xff;
-
-This is suspect as it still points to the beginning of the data buffer.
-Can you please check you did not meant bbm_bytes_buf[bbpos]?
-
->  
->  	if (chip->options & NAND_BUSWIDTH_16)
-> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
-> +		bad = bad || (bbm_bytes_buf[1] != 0xff);
->  err:
->  	return bad;
->  }
+Memory state around the buggy address:
+  ffff8801c884ce80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8801c884cf00: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801c884cf80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                          ^
+  ffff8801c884d000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+  ffff8801c884d080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
-Thanks,
-Miquèl
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
