@@ -1,64 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031814AbeEZOef (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 10:34:35 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38917 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754775AbeEZOed (ORCPT
+        id S1755010AbeEZOmd (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 10:42:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56486 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752095AbeEZOmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 10:34:33 -0400
-X-Google-Smtp-Source: AB8JxZpRT9BS1wI5Fk+3RXSvozfcbXxi2wPbrxSlg42xvVu7j+a93Ro2ipt7OeKp9R77d1hJ5sQ6Vw==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1] media: dt: bindings: tegra-vde: Document new optional Memory Client reset property
-Date: Sat, 26 May 2018 17:33:55 +0300
-Message-Id: <20180526143355.24288-1-digetx@gmail.com>
+        Sat, 26 May 2018 10:42:32 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: pm80xx: fix spelling mistake "UNSORPORTED" -> "SUPPORTED"
+Date: Sat, 26 May 2018 15:42:18 +0100
+Message-Id: <20180526144218.9891-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently binding of the Memory Controller has been extended, exposing
-the Memory Client reset controls and hence it is now a reset controller.
-Tegra video-decoder device is among the Memory Controller reset users,
-document the new optional VDE HW reset property.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Trivial fix to spelling mistake in pm8001_printk message text; also
+I believe NOT_UNSUPPORTED should probably be NOT_SUPPORTED. Also
+fix the indent of the pm8001_printk statement.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../devicetree/bindings/media/nvidia,tegra-vde.txt    | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/scsi/pm8001/pm8001_hwi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-index 470237ed6fe5..7302e949e662 100644
---- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-+++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-@@ -27,9 +27,15 @@ Required properties:
-   - sxe
- - clocks : Must include the following entries:
-   - vde
--- resets : Must include the following entries:
-+- resets : Must contain an entry for each entry in reset-names.
-+- reset-names : Should include the following entries:
-   - vde
- 
-+Optional properties:
-+- resets : Must contain an entry for each entry in reset-names.
-+- reset-names : Must include the following entries:
-+  - mc
-+
- Example:
- 
- video-codec@6001a000 {
-@@ -51,5 +57,6 @@ video-codec@6001a000 {
- 		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
- 	interrupt-names = "sync-token", "bsev", "sxe";
- 	clocks = <&tegra_car TEGRA20_CLK_VDE>;
--	resets = <&tegra_car 61>;
-+	reset-names = "vde", "mc";
-+	resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
- };
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index db88a8e7ee0e..4dd6cad330e8 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -3607,7 +3607,7 @@ int pm8001_mpi_reg_resp(struct pm8001_hba_info *pm8001_ha, void *piomb)
+ 		break;
+ 	default:
+ 		PM8001_MSG_DBG(pm8001_ha,
+-		 pm8001_printk("DEVREG_FAILURE_DEVICE_TYPE_NOT_UNSORPORTED\n"));
++			pm8001_printk("DEVREG_FAILURE_DEVICE_TYPE_NOT_SUPPORTED\n"));
+ 		break;
+ 	}
+ 	complete(pm8001_dev->dcompletion);
 -- 
 2.17.0
