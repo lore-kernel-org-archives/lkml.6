@@ -1,95 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031178AbeEZGcj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 02:32:39 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38917 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031131AbeEZGci (ORCPT
+        id S1031183AbeEZGg7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 02:36:59 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35700 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932664AbeEZGg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 02:32:38 -0400
-X-Google-Smtp-Source: ADUXVKLSJMw/B4SViyOMREoXOwM1tuqRhPwah1YiQTENm3yLoHUSbrr5L5eHdHKcOPVzKkHg5MZIlzRNh9+VadxkW08=
+        Sat, 26 May 2018 02:36:57 -0400
+X-Google-Smtp-Source: AB8JxZpPcQwwv9W42yPLvD7GLd7v8h/tk2h+uSS+vLFxpJdHgKP6aqZdZGXBb1W0hXuIkRwKoSqTQEbyF9SQGhzn8jQ=
 MIME-Version: 1.0
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F39481456@ORSMSX114.amr.corp.intel.com>
-References: <1527285903-31799-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <CAKv+Gu_oNUmOwTgM9sAsfMn4WgY+grC2f12vRC4HH9CgxxkfXQ@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F39481456@ORSMSX114.amr.corp.intel.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sat, 26 May 2018 08:32:37 +0200
-Message-ID: <CAKv+Gu_eShqmjkDSXnFs-_Hcay67+JTMdb6TatNZpV2v5_MoaQ@mail.gmail.com>
-Subject: Re: [PATCH V4 0/3] Use efi_rts_wq to invoke EFI Runtime Services
-To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "Luck, Tony" <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Naresh Bhat <naresh.bhat@linaro.org>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+In-Reply-To: <20180524021451.GA23443@jagdpanzerIV>
+References: <20180511014515.GA895@jagdpanzerIV> <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+ <20180511062151.GA18160@jagdpanzerIV> <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+ <20180511095004.GA6575@jagdpanzerIV> <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
+ <20180517112135.GB20796@jagdpanzerIV> <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
+ <20180524021451.GA23443@jagdpanzerIV>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sat, 26 May 2018 08:36:36 +0200
+Message-ID: <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
+Subject: Re: [PATCH] printk: inject caller information into the body of message
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 May 2018 at 01:08, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
->> > Changes from V3 to V4:
->> > ----------------------
->> > 1. As suggested by Peter, use completions instead of flush_work() as the
->> >   former is cheaper
->> > 2. Call efi_delete_dummy_variable() from efisubsys_init(). Sorry! Ard,
->> >   wasn't able to find a better alternative to keep this change local to
->> >   arch/x86.
->> >
->>
->> Two questions:
->> - Should the non-blocking variants of the query and set_variable_store use the
->> work queue? Doesn't that make them blocking?
+On Thu, May 24, 2018 at 4:14 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+>> First, we should ask what we expect from this feature.
 >
-> That's a good question . I think you are right, calling non-blocking variants of efi_rts
-> using work queues makes them blocking. But, I have a follow on question.
->
-> Assume some user requested to execute some non-blocking variant of efi_rts and
-> the kernel hasn't called efi_call_virt() yet, but was scheduled out. IOW, even though
-> user requests for non-blocking efi call, we might still block. Am I right?
->
+> Yeah. Can't really comment on this, it's up to Tetsuo and Dmitry to
+> decide. So far I've seen slightly different requirements/expectations.
 
-No, that is the whole point. These functions may be called from atomic
-context, which is why they trylock() and give up rather than block on
-the semaphore if a rt services call is already in progress. E.g.,
+The root problem is that it's not possible to make sense out of kernel
+output if message takes more than 1 line (or output non-atomically
+with several printk's) because of intermixed output from several
+tasks/interrupts/etc. For example, it's not generally possible to
+recover crash stack trace, because one gets random mix of frames.
+Humans usually, but not always, can restore most of the sense. So the
+goal is to make this ought-to-be-simple task actually simple and not
+requiring human intelligence and time each time.
 
-/*
- * efivar_entry_set_nonblocking - call set_variable_nonblocking()
- *
- * This function is guaranteed to not block and is suitable for calling
- * from crash/panic handlers.
- *
- * Crucially, this function will not block if it cannot acquire
- * efivars_lock. Instead, it returns -EBUSY.
- */
+Prefixing each line with task/cpu/interrupt context should do the
+trick as it will be possible to split kernel output into multiple
+independent streams and analyze them independently.
 
-> With efi_rts_wq, I think, I have increased the window of getting blocked. With efi_rts_wq,
-> kernel should explicitly call schedule() to run firmware and the chances of getting blocked
-> are much more.
->
-> Expect this increased window, I think firmware should be executed as before.
->
-> So, can you please explain me the difference between blocking and non-blocking variants
-> from kernel perspective?
-> (the way we get locks are different down_interruptible() vs down_trylock())
->
->> - If the non-blocking set_variable() does not use the work queue, can we just call
->> it from efi_delete_dummy_variable(), and keep the calls where they are?
->
-> Yes, I think we can do that (if we don't use efi_rts_wq for non-blocking variants).
->
-
-OK, then please implement that change.
-
-Thanks,
-Ard.
+In our context (syzbot testing) we can enable an additional config,
+and adopt parser to understand additional line prefix. But I don't
+know how prefixing lines fits into a larger picture. Does it make
+sense to thought out a potential extension story for this format? E.g.
+user specifies set of extension records that are dumped before each
+line, and then can unambiguously parse them? I guess some
+consoles/interfaces will never be extended to provide access to the
+extension records, so it can make sense to make them accessible in
+text format too (optionally).
