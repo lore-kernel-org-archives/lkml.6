@@ -1,46 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031781AbeEZOSR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 10:18:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60404 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752095AbeEZOSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 10:18:16 -0400
-Date: Sat, 26 May 2018 16:18:11 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jim Mattson <jmattson@google.com>, Wanpeng Li <wanpengli@tencent.com>,
-        David Hildenbrand <david@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: VMX: fix building without CONFIG_HYPERV
-Message-ID: <20180526141810.GA23390@flask>
-References: <20180525153640.3228067-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525153640.3228067-1-arnd@arndb.de>
+        id S1031769AbeEZOVF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 10:21:05 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42330 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754475AbeEZOVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 10:21:04 -0400
+X-Google-Smtp-Source: AB8JxZpjy9KxOXlKqKc03dRa4wWAeISS4FlYYCn0YnAEm/3ln1t6qQ4AR6Hs07zP00pUcA5U00nh+Q==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] memory: tegra: Correct driver probe order
+Date: Sat, 26 May 2018 17:20:35 +0300
+Message-Id: <20180526142035.21741-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-25 17:36+0200, Arnd Bergmann:
-> The global ms_hyperv variable is part of the hyperv support, so
-> we get a link error from accessing it in kernels that have this
-> turned off:
-> 
-> arch/x86/kvm/vmx.o: In function `alloc_loaded_vmcs':
-> vmx.c:(.text+0x1654a): undefined reference to `ms_hyperv'
-> vmx.c:(.text+0x1657a): undefined reference to `ms_hyperv'
-> 
-> This changes the condition to first check the compile-time
-> configuration symbol to avoid the link error.
-> 
-> Fixes: ceef7d10dfb6 ("KVM: x86: VMX: hyper-v: Enlightened MSR-Bitmap support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The Reset Controller should be registered in the end of probe, otherwise
+Memory Controller device goes away if IRQ requesting fails and the Reset
+Controller stays registered. To avoid having to unwind the MC probing in
+a case of SMMU probe failure, let's simply print the error message without
+failing the MC probe. This allows us to just move the Reset Controller
+registering before the SMMU registration, reducing code churning. Also
+let's not fail MC probe in a case of Reset Controller registration failure
+as it doesn't prevent the MC driver to work.
 
-Queued, thanks.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/mc.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index 22ec959db7d3..8ef95e34b5c7 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -692,13 +692,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	err = tegra_mc_reset_setup(mc);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
+-			err);
+-		return err;
+-	}
+-
+ 	mc->irq = platform_get_irq(pdev, 0);
+ 	if (mc->irq < 0) {
+ 		dev_err(&pdev->dev, "interrupt not specified\n");
+@@ -717,13 +710,16 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	err = tegra_mc_reset_setup(mc);
++	if (err < 0)
++		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
++			err);
++
+ 	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU)) {
+ 		mc->smmu = tegra_smmu_probe(&pdev->dev, mc->soc->smmu, mc);
+-		if (IS_ERR(mc->smmu)) {
++		if (IS_ERR(mc->smmu))
+ 			dev_err(&pdev->dev, "failed to probe SMMU: %ld\n",
+ 				PTR_ERR(mc->smmu));
+-			return PTR_ERR(mc->smmu);
+-		}
+ 	}
+ 
+ 	return 0;
+-- 
+2.17.0
