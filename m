@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031385AbeEZJNE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 05:13:04 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:39278 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031278AbeEZJNC (ORCPT
+        id S1031451AbeEZJNU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 05:13:20 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:44701 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031256AbeEZJNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 26 May 2018 05:13:02 -0400
-X-Google-Smtp-Source: ADUXVKI0q3LsnqhgHyRXYkkzBNjTh5rMrfO4AgsQ/Zf/NtcSR5qQTKfbJSYEbyPaAydsGOwkoxLFHZhcrtYx/n7BhiTDHa5WjF5v
+X-Google-Smtp-Source: ADUXVKKTbUNKhrosKVaGcdV2zuze6gv814DqY1rjN1xRf2t6bkiTazpKu4RzIiBPVUDt8pwF91GHDwoN4Po4U5SKz7kP9NDrPhaM
 MIME-Version: 1.0
 Date: Sat, 26 May 2018 02:13:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000098e65b056d184a11@google.com>
-Subject: general protection fault in bpf_tcp_close
-From: syzbot <syzbot+0ce137753c78f7b6acc1@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000009b811c056d184aa8@google.com>
+Subject: KASAN: stack-out-of-bounds Write in notify_die
+From: syzbot <syzbot+cadaa9a49085b3cc83d3@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, arjan@linux.intel.com,
+        josh@joshtriplett.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -26,75 +27,60 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    fd0bfa8d6e04 Merge branch 'bpf-af-xdp-cleanups'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11da9427800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ce137753c78f7b6acc1
+HEAD commit:    203ec2fed17a Merge tag 'armsoc-fixes' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14feff97800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=cadaa9a49085b3cc83d3
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0ce137753c78f7b6acc1@syzkaller.appspotmail.com
+Reported-by: syzbot+cadaa9a49085b3cc83d3@syzkaller.appspotmail.com
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 12139 Comm: syz-executor2 Not tainted 4.17.0-rc4+ #17
+==================================================================
+BUG: KASAN: stack-out-of-bounds in notify_die+0x291/0x2b0  
+kernel/notifier.c:539
+Write of size 8 at addr ffff8801c74d7258 by task syz-executor7/17787
+
+CPU: 1 PID: 17787 Comm: syz-executor7 Not tainted 4.17.0-rc5+ #60
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:__hlist_del include/linux/list.h:649 [inline]
-RIP: 0010:hlist_del_rcu include/linux/rculist.h:427 [inline]
-RIP: 0010:bpf_tcp_close+0x7d2/0xf80 kernel/bpf/sockmap.c:271
-RSP: 0018:ffff8801a8f8ef70 EFLAGS: 00010a02
-RAX: ffffed00351f1dfd RBX: dffffc0000000000 RCX: dead000000000200
-RDX: 0000000000000000 RSI: 1bd5a00000000040 RDI: ffff8801cb710910
-RBP: ffff8801a8f8f110 R08: ffffed003350ac9d R09: ffffed003350ac9c
-R10: ffffed003350ac9c R11: ffff88019a8564e3 R12: ffff8801cb710380
-R13: ffff8801b17ea6e0 R14: ffff8801cb710398 R15: ffff8801cb710900
-FS:  00007f9890c43700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fde1a668000 CR3: 000000019dca2000 CR4: 00000000001406f0
-DR0: 00000000200001c0 DR1: 00000000200001c0 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
 Call Trace:
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2469
-  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
-  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455a09
-RSP: 002b:00007f9890c42ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000072bec8 RCX: 0000000000455a09
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bec8
-RBP: 000000000072bec8 R08: 0000000000000000 R09: 000000000072bea0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffcb48ac3ff R14: 00007f9890c439c0 R15: 0000000000000000
-Code: ff 48 c1 e9 03 80 3c 19 00 0f 85 a9 05 00 00 49 8b 4f 18 48 8b 85 98  
-fe ff ff 48 89 ce c6 00 00 48 c1 ee 03 48 89 95 d8 fe ff ff <80> 3c 1e 00  
-0f 85 c6 05 00 00 48 8b 85 98 fe ff ff 48 85 d2 48
-RIP: __hlist_del include/linux/list.h:649 [inline] RSP: ffff8801a8f8ef70
-RIP: hlist_del_rcu include/linux/rculist.h:427 [inline] RSP:  
-ffff8801a8f8ef70
-RIP: bpf_tcp_close+0x7d2/0xf80 kernel/bpf/sockmap.c:271 RSP:  
-ffff8801a8f8ef70
----[ end trace e81227e93c7e7b75 ]---
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_store8_noabort+0x17/0x20 mm/kasan/report.c:438
+  notify_die+0x291/0x2b0 kernel/notifier.c:539
+  do_general_protection+0x248/0x2f0 arch/x86/kernel/traps.c:558
+  general_protection+0x1e/0x30 arch/x86/entry/entry_64.S:1159
+RIP: 0010:msr_write_intercepted arch/x86/kvm/vmx.c:2132 [inline]
+RIP: 0010:vmx_vcpu_run+0xa2f/0x25f0 arch/x86/kvm/vmx.c:9871
+RSP: 0018:ffff8801c74d73b0 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000010000000 RCX: ffffffff811f778f
+RDX: 000000000836b156 RSI: ffffffff811f779c RDI: 0000000000000005
+RBP: ffff8801c74d7898 R08: ffff8801ab74e140 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the page:
+page:ffffea00071d35c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: 0000000000000000 ffffea00071d0101 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801c74d7100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801c74d7180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801c74d7200: 00 00 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f3 f3
+                                                     ^
+  ffff8801c74d7280: f3 f3 00 f2 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f3 f3
+  ffff8801c74d7300: f3 f3 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
 ---
