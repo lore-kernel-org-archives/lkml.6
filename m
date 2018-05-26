@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031890AbeEZPAY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 11:00:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56654 "EHLO
+        id S1031901AbeEZPCc (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 11:02:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56669 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754989AbeEZPAX (ORCPT
+        with ESMTP id S1754946AbeEZPCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 11:00:23 -0400
+        Sat, 26 May 2018 11:02:31 -0400
 From: Colin King <colin.king@canonical.com>
-To: Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: "Nicholas A . Bellinger" <nab@linux-iscsi.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rsi: fix spelling mistake "Uknown" -> "Unknown"
-Date: Sat, 26 May 2018 16:00:19 +0100
-Message-Id: <20180526150019.10288-1-colin.king@canonical.com>
+Subject: [PATCH] scsi: target: fix spelling mistake "Uknown" -> "Unknown"
+Date: Sat, 26 May 2018 16:02:29 +0100
+Message-Id: <20180526150229.10416-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -25,25 +24,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in rsi_dbg message text
+Trivial fix to spelling mistake in pr_err message text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 +-
+ drivers/target/target_core_transport.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-index bfa7569c85bb..2ca7464b7fa3 100644
---- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-@@ -1103,7 +1103,7 @@ static int rsi_mac80211_ampdu_action(struct ieee80211_hw *hw,
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index bde14f46ed5b..f0e8f0f4ccb4 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -3366,7 +3366,7 @@ static void target_tmr_work(struct work_struct *work)
+ 		tmr->response = TMR_FUNCTION_REJECTED;
  		break;
- 
  	default:
--		rsi_dbg(ERR_ZONE, "%s: Uknown AMPDU action\n", __func__);
-+		rsi_dbg(ERR_ZONE, "%s: Unknown AMPDU action\n", __func__);
+-		pr_err("Uknown TMR function: 0x%02x.\n",
++		pr_err("Unknown TMR function: 0x%02x.\n",
+ 				tmr->function);
+ 		tmr->response = TMR_FUNCTION_REJECTED;
  		break;
- 	}
- 
 -- 
 2.17.0
