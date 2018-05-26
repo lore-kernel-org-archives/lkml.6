@@ -1,113 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755045AbeEZO26 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 10:28:58 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43193 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeEZO24 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 10:28:56 -0400
-X-Google-Smtp-Source: AB8JxZqF+OhLlxj5c+NygbI/APOtirvXgBnjH8wcwl+WH+vUgI5GTUU1m0RJpdeu2+r0BNs9etgt1Q==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: staging: tegra-vde: Reset memory client
-Date: Sat, 26 May 2018 17:27:55 +0300
-Message-Id: <20180526142755.22966-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1031808AbeEZObR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 10:31:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754951AbeEZObQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 10:31:16 -0400
+Date: Sat, 26 May 2018 16:31:11 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/8] KVM: x86: hyperv: PV TLB flush for Windows guests
+Message-ID: <20180526143111.GE23390@flask>
+References: <20180516152131.30689-1-vkuznets@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180516152131.30689-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DMA requests must be blocked before resetting VDE HW, otherwise it is
-possible to get a memory corruption or a machine hang. Use the reset
-control provided by the Memory Controller to block DMA before resetting
-the VDE HW.
+2018-05-16 17:21+0200, Vitaly Kuznetsov:
+> Changes since v3 [Radim Krcmar]:
+> - PATCH2 fixing 'HV_GENERIC_SET_SPARCE_4K' typo added.
+> - PATCH5 introducing kvm_make_vcpus_request_mask() API added.
+> - Fix undefined behavior for hv->vp_index >= 64.
+> - Merge kvm_hv_flush_tlb() and kvm_hv_flush_tlb_ex()
+> - For -ex case preload all banks with a single kvm_read_guest().
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
-
-Changelog:
-
-v2:
-	- Reset HW even if Memory Client resetting fails.
-
- drivers/staging/media/tegra-vde/tegra-vde.c | 35 +++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index 90177a59b97c..6f06061a40d9 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -73,6 +73,7 @@ struct tegra_vde {
- 	struct mutex lock;
- 	struct miscdevice miscdev;
- 	struct reset_control *rst;
-+	struct reset_control *rst_mc;
- 	struct gen_pool *iram_pool;
- 	struct completion decode_completion;
- 	struct clk *clk;
-@@ -850,9 +851,23 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 	 * We rely on the VDE registers reset value, otherwise VDE
- 	 * causes bus lockup.
- 	 */
-+	ret = reset_control_assert(vde->rst_mc);
-+	if (ret) {
-+		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
-+			ret);
-+		goto put_runtime_pm;
-+	}
-+
- 	ret = reset_control_reset(vde->rst);
- 	if (ret) {
--		dev_err(dev, "Failed to reset HW: %d\n", ret);
-+		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
-+		goto put_runtime_pm;
-+	}
-+
-+	ret = reset_control_deassert(vde->rst_mc);
-+	if (ret) {
-+		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
-+			ret);
- 		goto put_runtime_pm;
- 	}
- 
-@@ -880,9 +895,18 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 		ret = timeout;
- 	}
- 
-+	/*
-+	 * At first reset memory client to avoid resetting VDE HW in the
-+	 * middle of DMA which could result into memory corruption or hang
-+	 * the whole system.
-+	 */
-+	err = reset_control_assert(vde->rst_mc);
-+	if (err)
-+		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
-+
- 	err = reset_control_assert(vde->rst);
- 	if (err)
--		dev_err(dev, "Failed to assert HW reset: %d\n", err);
-+		dev_err(dev, "DEC end: Failed to assert HW reset: %d\n", err);
- 
- put_runtime_pm:
- 	pm_runtime_mark_last_busy(dev);
-@@ -1074,6 +1098,13 @@ static int tegra_vde_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
-+	if (IS_ERR(vde->rst_mc)) {
-+		err = PTR_ERR(vde->rst_mc);
-+		dev_err(dev, "Could not get MC reset %d\n", err);
-+		return err;
-+	}
-+
- 	irq = platform_get_irq_byname(pdev, "sync-token");
- 	if (irq < 0)
- 		return irq;
--- 
-2.17.0
+I've pulled tip/hyperv into kvm/queue and applied on top, thanks.
