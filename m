@@ -1,108 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032073AbeEZPr1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 11:47:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031908AbeEZPrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1032010AbeEZPrX (ORCPT <rfc822;w@1wt.eu>);
         Sat, 26 May 2018 11:47:23 -0400
-Date: Sat, 26 May 2018 17:47:20 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.17-rc7
-Message-ID: <20180526154720.GB23383@flask>
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:52054 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031885AbeEZPrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 11:47:22 -0400
+From: Paul Burton <paul.burton@mips.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Paul Burton <paul.burton@mips.com>
+Subject: [PATCH 0/2] sched: Fix a race between CPU onlining & user task scheduling
+Date: Sat, 26 May 2018 08:46:46 -0700
+Message-ID: <20180526154648.11635-1-paul.burton@mips.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-BESS-ID: 1527349614-321459-6793-23952-1
+X-BESS-VER: 2018.6-r1805181819
+X-BESS-Apparent-Source-IP: 12.201.5.31
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193394
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+This short series fixes a race condition I've observed in which user
+tasks can be scheduled on CPUs that are still in the process of being
+brought online (or rather being made active) by hotplug.
 
-The following changes since commit 633711e82878dc29083fc5d2605166755e25b57a:
+I've created a small test case for the observed problem here:
 
-  kvm: rename KVM_HINTS_DEDICATED to KVM_HINTS_REALTIME (2018-05-17 19:12:13 +0200)
+  https://gist.github.com/paulburton/25187c4f537263a6be9c8aac67bd33bf
 
-are available in the Git repository at:
+The issue was first observed on a MIPS system running a test program
+that was sensitive to CPU affinity, but has been reproduced on x86_64
+using the above program too. On my laptop with an Intel i7-5600U CPU the
+test tends to fail within 10 minutes, but with this series applied runs
+cleanly overnight.
 
-  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
+Thanks,
+    Paul
 
-for you to fetch changes up to 696ca779a928d0e93d61c38ffc3a4d8914a9b9a0:
+Paul Burton (2):
+  sched: Make select_task_rq() require cpu_active() for user tasks
+  sched: Warn if we fail to migrate a task
 
-  KVM: x86: fix #UD address of failed Hyper-V hypercalls (2018-05-25 21:33:31 +0200)
+ kernel/sched/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-----------------------------------------------------------------
-KVM fixes for v4.17-rc7
-
-PPC:
- - Close a hole which could possibly lead to the host timebase getting
-   out of sync.
-
- - Three fixes relating to PTEs and TLB entries for radix guests.
-
- - Fix a bug which could lead to an interrupt never getting delivered
-   to the guest, if it is pending for a guest vCPU when the vCPU gets
-   offlined.
-
-s390:
- - Fix false negatives in VSIE validity check (Cc stable)
-
-x86:
- - Fix time drift of VMX preemption timer when a guest uses LAPIC timer
-   in periodic mode (Cc stable)
-
- - Unconditionally expose CPUID.IA32_ARCH_CAPABILITIES to allow
-   migration from hosts that don't need retpoline mitigation (Cc stable)
-
- - Fix guest crashes on reboot by properly coupling CR4.OSXSAVE and
-   CPUID.OSXSAVE (Cc stable)
-
- - Report correct RIP after Hyper-V hypercall #UD (introduced in -rc6)
-
-----------------------------------------------------------------
-Benjamin Herrenschmidt (1):
-      KVM: PPC: Book3S HV: XIVE: Resend re-routed interrupts on CPU priority change
-
-David Hildenbrand (1):
-      KVM: s390: vsie: fix < 8k check for the itdba
-
-David Vrabel (1):
-      x86/kvm: fix LAPIC timer drift when guest uses periodic mode
-
-Jim Mattson (1):
-      kvm: x86: IA32_ARCH_CAPABILITIES is always supported
-
-Nicholas Piggin (2):
-      KVM: PPC: Book3S HV: Make radix use correct tlbie sequence in kvmppc_radix_tlbie_page
-      KVM: PPC: Book3S HV: Make radix clear pte when unmapping
-
-Paolo Bonzini (1):
-      Merge tag 'kvm-s390-master-4.17-1' of git://git.kernel.org/.../kvms390/linux into kvm-master
-
-Paul Mackerras (2):
-      KVM: PPC: Book3S HV: Snapshot timebase offset on guest entry
-      KVM: PPC: Book 3S HV: Do ptesync in radix guest exit path
-
-Radim Krčmář (2):
-      Merge tag 'kvm-ppc-fixes-4.17-1' of git://git.kernel.org/.../paulus/powerpc
-      KVM: x86: fix #UD address of failed Hyper-V hypercalls
-
-Wei Huang (1):
-      KVM: x86: Update cpuid properly when CR4.OSXAVE or CR4.PKE is changed
-
- arch/powerpc/include/asm/kvm_book3s.h   |   1 +
- arch/powerpc/kernel/asm-offsets.c       |   1 +
- arch/powerpc/kvm/book3s_64_mmu_radix.c  |   6 +-
- arch/powerpc/kvm/book3s_hv.c            |   1 +
- arch/powerpc/kvm/book3s_hv_rmhandlers.S |  97 +++++++++++++++-------------
- arch/powerpc/kvm/book3s_xive_template.c | 108 +++++++++++++++++++++++++++++---
- arch/s390/kvm/vsie.c                    |   2 +-
- arch/x86/kvm/cpuid.c                    |   5 ++
- arch/x86/kvm/hyperv.c                   |  19 +++---
- arch/x86/kvm/lapic.c                    |  16 ++++-
- arch/x86/kvm/x86.c                      |  17 +++--
- 11 files changed, 198 insertions(+), 75 deletions(-)
+-- 
+2.17.0
