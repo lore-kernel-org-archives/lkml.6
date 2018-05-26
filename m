@@ -1,89 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeEZESo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 00:18:44 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34913 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeEZESm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 00:18:42 -0400
-X-Google-Smtp-Source: AB8JxZp5TsjhcOTvstkTha/ORoNZE1M+wW5jvCkGv66Q+qknKbvKkj/g2i1VC7h7HLj4+wIxPsVD+A==
-Date: Fri, 25 May 2018 21:20:20 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] qcom: cmd-db: enforce CONFIG_OF_RESERVED_MEM dependency
-Message-ID: <20180526042020.GA2259@tuxbook-pro>
-References: <20180525160836.125531-1-arnd@arndb.de>
+        id S932911AbeEZEeU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 00:34:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:53975 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932323AbeEZEeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 00:34:19 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Sat, 26 May 2018 14:34:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc
+ tree
+Message-ID: <20180526143416.5eeea2d8@canb.auug.org.au>
+In-Reply-To: <80df07c8-b89c-503e-ad25-9f235cb08038@st.com>
+References: <20180515072217.0a2ffe25@canb.auug.org.au>
+        <80df07c8-b89c-503e-ad25-9f235cb08038@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525160836.125531-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WQyqSeLa0C9MvHIQlquDk5Q"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25 May 09:08 PDT 2018, Arnd Bergmann wrote:
+--Sig_/WQyqSeLa0C9MvHIQlquDk5Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Without CONFIG_OF_RESERVED_MEM, gcc sees that the global cmd_db_header
-> variable is never initialized, and through code optimization concludes
-> that a lot of other code cannot possibly work after that:
-> 
-> drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_addr':
-> drivers/soc/qcom/cmd-db.c:197:21: error: 'ent.addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   return ret < 0 ? 0 : le32_to_cpu(ent.addr);
-> drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_aux_data':
-> drivers/soc/qcom/cmd-db.c:224:10: error: 'ent.len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   ent_len = le16_to_cpu(ent.len);
-> drivers/soc/qcom/cmd-db.c:115:6: error: 'rsc_hdr.data_offset' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   u16 offset = le16_to_cpu(hdr->data_offset);
->       ^~~~~~
-> drivers/soc/qcom/cmd-db.c:116:6: error: 'ent.offset' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   u16 loffset = le16_to_cpu(ent->offset);
->       ^~~~~~~
-> drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_aux_data_len':
-> drivers/soc/qcom/cmd-db.c:250:38: error: 'ent.len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   return ret < 0 ? 0 : le16_to_cpu(ent.len);
->                                       ^
-> drivers/soc/qcom/cmd-db.c: In function 'cmd_db_read_slave_id':
-> drivers/soc/qcom/cmd-db.c:272:7: error: 'ent.addr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> 
-> Using a hard CONFIG_OF_RESERVED_MEM dependency avoids this warning,
-> and we can remove the CONFIG_OF dependency.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Alexandre,
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Tue, 15 May 2018 09:15:23 +0200 Alexandre Torgue <alexandre.torgue@st.co=
+m> wrote:
+>
+> On 05/14/2018 11:22 PM, Stephen Rothwell wrote:
+> >=20
+> > Commit
+> >=20
+> >    949a0c0dec85 ("ARM: dts: stm32: add USB Host (USBH) support to stm32=
+mp157c")
+> >=20
+> > is missing a Signed-off-by from its committer.
+>=20
+> My fault, I forgot it when I applied patch on my branch. Do we need an=20
+> update or it is just a reminder?
 
-Regards,
-Bjorn
+Some people rebase their tree to fix these up, some just take it as a
+learning experience :-)
 
-> ---
->  drivers/soc/qcom/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index 9dc02f390ba3..5856e792d09c 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -5,7 +5,8 @@ menu "Qualcomm SoC drivers"
->  
->  config QCOM_COMMAND_DB
->  	bool "Qualcomm Command DB"
-> -	depends on (ARCH_QCOM && OF) || COMPILE_TEST
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	depends on OF_RESERVED_MEM
->  	help
->  	  Command DB queries shared memory by key string for shared system
->  	  resources. Platform drivers that require to set state of a shared
-> -- 
-> 2.9.0
-> 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WQyqSeLa0C9MvHIQlquDk5Q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsI48gACgkQAVBC80lX
+0Gz6PQf+PfTQbubqyUAglH4nBgrX5viZJ8RNA+hdAHKfF2N1h1UOjupYrZOOtQ+d
+RAszyWuxW5Yd1iK9zy7tar3OF2870A89KA4CQIJ7QSE882mdUxdhTb/q7Z24ooCr
+kKNZPX70vpG1Kpn3o1eSJEtdHQSpXcTCDF4mF4Sg/ONYIB8xbJ5D04/VhCVXC12U
+kfYA5S0SFyIaxzT+tVE8btp2G4geMBcH7Ktz1Ra4kXEHMjry32Ad6nubWssL+NI1
+3xkRdJSL91jQ/LSqZowcnIUtgVn3ieotJkJ0Qpdga9ISwyKE40jVHDWqaM20jtQj
+TKv3INxsPPgcKvma0iDTuZtTDNZyQA==
+=bkua
+-----END PGP SIGNATURE-----
+
+--Sig_/WQyqSeLa0C9MvHIQlquDk5Q--
