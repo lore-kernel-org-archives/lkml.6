@@ -1,145 +1,314 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032395AbeEZUYw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 16:24:52 -0400
-Received: from imap.thunk.org ([74.207.234.97]:58062 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032365AbeEZUYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 16:24:50 -0400
-Date: Sat, 26 May 2018 16:24:36 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Sandeen <sandeen@sandeen.net>, Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>, Brian Foster <bfoster@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: Bugs involving maliciously crafted file system
-Message-ID: <20180526202436.GC4613@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster>
- <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain>
- <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
- <20180523234114.GA3434@thunk.org>
- <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        id S1032436AbeEZUfQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 16:35:16 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37665 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032375AbeEZUfM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 16:35:12 -0400
+X-Google-Smtp-Source: ADUXVKJ9Iy+CDiCEKfX0EjX/PWWnTej9qoVQZ5Oh0zNoruIqEI3fBpRsyiOTxf1b+62ThVPC/9BIsg==
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
+        davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH 2/3] Documentation: usb: add documentation for USB CCID Gadget Device
+Date: Sat, 26 May 2018 22:34:00 +0200
+Message-Id: <20180526203401.16586-2-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180526203401.16586-1-marcus.folkesson@gmail.com>
+References: <20180526203401.16586-1-marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 07:12:49PM +0200, Dmitry Vyukov wrote:
-> 
-> I don't see that "some kind of machine learning or expert system
-> evaluation" is feasible. At least not in short/mid-term. There are
-> innocently-looking bugs that actually turn out to be very bad, and
-> there are badly looking at first glance bugs that actually not that
-> bad for some complex reasons. Full security assessment is a complex
-> task and I think stays "human expert area" for now. One can get some
-> coarse estimation by searching for "use-after-free" and
-> "out-of-bounds" on the dashboard.
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ Documentation/usb/gadget_ccid.rst | 267 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 267 insertions(+)
+ create mode 100644 Documentation/usb/gadget_ccid.rst
 
-If the kernel intentionally triggers a BUG_ON or a panic (as in file
-systems configured with 'tune2fs -e panic') it's pretty obvious that
-those errors can't be weaponized to execute code chosen by the
-attacker.  Would you agree with that?
-
-The same should be true for "blocked for more than 120 seconds";
-again, I claim that those sorts of errors are by definition less
-serious than buffer overruns.
-
-So there is at least some kind of automated evaluation that can be
-done, even if the general case problem is really hard.
-
-> > Or maybe it would be useful if there was a way where maintainers could
-> > be able to annotate bugs with priority and severity levels, and maybe
-> > make comments that can be viewed from the Syzbot dashboard UI.
-> 
-> This looks more realistic. +Tetsuo proposed something similar:
-> https://github.com/google/syzkaller/issues/608
-> 
-> I think to make it useful we need to settle on some small set of
-> well-defined tags for bugs that we can show on the dashboard.
-> Arbitrary detailed free-form comments can be left on the mailing list
-> threads that are always referenced from the dashboard.
-> 
-> What tags would you use today for existing bugs? One would be
-> "security-critical", right?
-
-For me, it's not about tags.  Things missing from the
-https://syzkaller.appspot.com/ front page are:
-
-* Whether or not a repro is available
-* Which subsystems the bug has been tentatively assigned
-* A maintainer assigned priority and severity level
-
-I generally don't use the syzkaller.apptspot.com front page because
-it's too hard to find the sorts of thing that I'm looking for ---
-namely the most important syzkaller bug that I as an ext4 expert can
-work on.
-
-If someone else sends me a well-formed bug report on
-bugzilla.kernel.org, with free-standing image file, and a simple .c
-reproducer, I can make forward progress much more quickly.  So if I'm
-time bound, guess which bug I'm going to pay attention to first?
-Especially when Syzkaller makes it hard for me to find the bug again
-once it ages out of my inbox?
-
-> Well, we have KASAN, almost have KMSAN and will have KTSAN in future.
-> They can detect detect significant portion of bugs that go unnoticed
-> otherwise. At least this prevents "bad guys" from also using tooling
-> to cheaply harvest exploits. Systematic use of these tools on browsers
-> raised exploit costs to $1M+ for a reason.
-
-I'll note that browsers also use processes and capsicum to provide
-security boundaries.  This is why David and I have been suggesting
-solutions like FUSE or running the mount in a guest VM, which can act
-as an isolation layer.  Even if there is a bug in the guest kernel,
-the blast radius of the bug can be isolated, hopefully to the point
-where it can be completely contained.  It's not an either-or, but a
-both-and.
-
-But the much more important thing is that mangement has to be willing
-to **fund** bug remediation.  That was true for Chrome; it doesn't
-seem to be as true for the Linux Kernel, for whatever reason.
-
-People trying to fix Syzkaller and other fuzzer-found bugs on 20%
-time, or on the weekends, or as a background activity during
-low-bandwidth meetings, or as an unfunded mandate that doesn't show up
-on anyone's quarterly objectives upon which they are graded, is just
-not going to scale.
-
-And if that's the reality, it may very well be that if you want
-Syzkaller to make more a difference, anything you can do to reduce the
-human toil needed to investigate a bug is going to be hugely
-important.
-
-And if bug remediation is only going to be funded to a very limited
-extent, then it's important that the bugs we work on are the highest
-priority ones, since the lower priority ones *will* have to let slide.
-
-Regards,
-
-						- Ted
+diff --git a/Documentation/usb/gadget_ccid.rst b/Documentation/usb/gadget_ccid.rst
+new file mode 100644
+index 000000000000..5ac806b14604
+--- /dev/null
++++ b/Documentation/usb/gadget_ccid.rst
+@@ -0,0 +1,267 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============
++CCID Gadget
++============
++
++:Author: Marcus Folkesson <marcus.folkesson@gmail.com>
++
++Introduction
++============
++
++The CCID Gadget will present itself as a CCID device to the host system.
++The device supports two endpoints for now; BULK IN and BULK OUT.
++These endpoints is exposed to userspace via /dev/ccidg*.
++
++All CCID commands are sent on the BULK-OUT endpoint. Each command sent to the CCID
++has an associated ending response. Some commands can also have intermediate
++responses. The response is sent on the BULK-IN endpoint.
++See Figure 3-3 in the CCID Specification [1]_ for more details.
++
++The CCID commands must be handled in userspace since the driver is only working
++as a transport layer for the TPDUs.
++
++
++CCID Commands
++--------------
++
++All CCID commands begins with a 10 bytes header followed by an optional
++data field depending on message type.
++
+++--------+--------------+-------+----------------------------------+
++| Offset | Field        | Size  | Description                      |
+++========+==============+=======+==================================+
++| 0      | bMessageType | 1     | Type of message                  |
+++--------+--------------+-------+----------------------------------+
++| 1      | dwLength     | 4     | Message specific data length     |
++|        |              |       |                                  |
+++--------+--------------+-------+----------------------------------+
++| 5      | bSlot        | 1     | Identifies the slot number       |
++|        |              |       | for this command                 |
+++--------+--------------+-------+----------------------------------+
++| 6      | bSeq         | 1     | Sequence number for command      |
+++--------+--------------+-------+----------------------------------+
++| 7      | ...          | 3     | Fields depends on message type   |
+++--------+--------------+-------+----------------------------------+
++| 10     | abData       | array | Message specific data (OPTIONAL) |
+++--------+--------------+-------+----------------------------------+
++
++
++Multiple CCID gadgets
++----------------------
++
++It is possible to create multiple instances of the CCID gadget, however,
++a much more flexible way is to create one gadget and set the `nslots` attribute
++to the number of desired CCID devices.
++
++All CCID commands specifies which slot that is the receiver in the `bSlot` field
++of the CCID header.
++
++Usage
++=====
++
++Access from userspace
++----------------------
++All communication is by read(2) and write(2) to the corresponding /dev/ccidg* device.
++Only one filedescriptor is allowed to be open to the device at a time.
++
++The buffer size provided to read(2) **must be at least** 522 (10 bytes header + 512 bytes payload)
++bytes as we are working with whole commands.
++
++The buffer size provided to write(2) **may not exceed** 522 (10 bytes header + 512 bytes payload)
++bytes as we are working with whole commands.
++
++
++Configuration with configfs
++----------------------------
++
++ConfigFS is used to create and configure the CCID gadget.
++In order to get a device to work as intended, a few attributes must
++be considered.
++
++The attributes is described below followed by an example.
++
++features
++~~~~~~~~~
++
++The `feature` attribute writes to the dwFeatures field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++The value indicates what intelligent features the CCID has.
++These values are available to user application as defines in ccid.h [2]_.
++The default value is 0x00000000.
++
++The value is a bitwise OR operation performed on the following values:
++
+++------------+----------------------------------------------------------------+
++| Value      | Description                                                    |
+++============+================================================================+
++| 0x00000000 | No special characteristics                                     |
+++------------+----------------------------------------------------------------+
++| 0x00000002 | Automatic parameter configuration based on ATR data            |
+++------------+----------------------------------------------------------------+
++| 0x00000004 | Automatic activation of ICC on inserting                       |
+++------------+----------------------------------------------------------------+
++| 0x00000008 | Automatic ICC voltage selection                                |
+++------------+----------------------------------------------------------------+
++| 0x00000010 | Automatic ICC clock frequency change according to active       |
++|            | parameters provided by the Host or self determined             |
+++------------+----------------------------------------------------------------+
++| 0x00000020 | Automatic baud rate change according to active                 |
++|            | parameters provided by the Host or self determined             |
+++------------+----------------------------------------------------------------+
++| 0x00000040 | Automatic parameters negotiation made by the CCID              |
+++------------+----------------------------------------------------------------+
++| 0x00000080 | Automatic PPS made by the CCID according to the                |
++|            | active parameters                                              |
+++------------+----------------------------------------------------------------+
++| 0x00000100 | CCID can set ICC in clock stop mode                            |
+++------------+----------------------------------------------------------------+
++| 0x00000200 | NAD value other than 00 accepted (T=1 protocol in use)         |
+++------------+----------------------------------------------------------------+
++| 0x00000400 | Automatic IFSD exchange as first exchange                      |
+++------------+----------------------------------------------------------------+
++
++
++Only one of the following values may be present to select a level of exchange:
++
+++------------+--------------------------------------------------+
++| Value      | Description                                      |
+++============+==================================================+
++| 0x00010000 | TPDU level exchanges with CCID                   |
+++------------+--------------------------------------------------+
++| 0x00020000 | Short APDU level exchange with CCID              |
+++------------+--------------------------------------------------+
++| 0x00040000 | Short and Extended APDU level exchange with CCID |
+++------------+--------------------------------------------------+
++
++If none of those values is indicated the level of exchange is
++character.
++
++
++protocols
++~~~~~~~~~~
++The `protocols` attribute writes to the dwProtocols field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++The value is a bitwise OR operation performed on the following values:
++
+++--------+--------------+
++| Value  | Description  |
+++========+==============+
++| 0x0001 | Protocol T=0 |
+++--------+--------------+
++| 0x0002 | Protocol T=1 |
+++--------+--------------+
++
++If no protocol is selected both T=0 and T=1 will be supported (`protocols` = 0x0003).
++
++nslots
++~~~~~~
++
++The `nslots` attribute writes to the bMaxSlotIndex field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++This is the index of the highest available slot on this device. All slots are consecutive starting at 00h.
++i.e. 0Fh = 16 slots on this device numbered 00h to 0Fh.
++
++The default value is 0, which means one slot.
++
++
++pinsupport
++~~~~~~~~~~~~
++
++This value indicates what PIN support features the CCID has.
++
++The `pinsupport` attribute writes to the dwPINSupport field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++
++The value is a bitwise OR operation performed on the following values:
++
+++--------+----------------------------+
++| Value  | Description                |
+++========+============================+
++| 0x00   | No PIN support             |
+++--------+----------------------------+
++| 0x01   | PIN Verification supported |
+++--------+----------------------------+
++| 0x02   | PIN Modification supported |
+++--------+----------------------------+
++
++The default value is set to 0x00.
++
++
++lcdlayout
++~~~~~~~~~~
++
++Number of lines and characters for the LCD display used to send messages for PIN entry.
++
++The `lcdLayout` attribute writes to the wLcdLayout field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++
++The value is set as follows:
++
+++--------+------------------------------------+
++| Value  | Description                        |
+++========+====================================+
++| 0x0000 | No LCD                             |
+++--------+------------------------------------+
++| 0xXXYY | XX: number of lines                |
++|        | YY: number of characters per line. |
+++--------+------------------------------------+
++
++The default value is set to 0x0000.
++
++
++Example
++-------
++
++Here is an example on how to setup a CCID gadget with configfs ::
++
++    #!/bin/sh
++
++    CONFIGDIR=/sys/kernel/config
++    GADGET=$CONFIGDIR/usb_gadget/g0
++    FUNCTION=$GADGET/functions/ccid.sc0
++
++    VID=YOUR_VENDOR_ID_HERE
++    PID=YOUR_PRODUCT_ID_HERE
++    UDC=YOUR_UDC_HERE
++
++    #Mount filesystem
++    mount none -t configfs $CONFIGDIR
++
++    #Populate ID:s
++    echo $VID > $GADGET/idVendor
++    echo $PID > $GADGET/idProduct
++
++    #Create and configure the gadget
++    mkdir $FUNCTION
++    echo 0x000407B8 > $FUNCTION/features
++    echo 0x02 > $FUNCTION/protocols
++
++    #Create our english strings
++    mkdir  $GADGET/strings/0x409
++    echo 556677 > $GADGET/strings/0x409/serialnumber
++    echo "Hungry Penguins" > $GADGET/strings/0x409/manufacturer
++    echo "Harpoon With SmartCard"  > $GADGET/strings/0x409/product
++
++    #Create configuration
++    mkdir  $GADGET/configs/c.1
++    mkdir  $GADGET/configs/c.1/strings/0x409
++    echo Config1 > $GADGET/configs/c.1/strings/0x409/configuration
++
++    #Use `Config1` for our CCID gadget
++    ln -s $FUNCTION $GADGET/configs/c.1
++
++    #Execute
++    echo $UDC > $GADGET/UDC
++
++
++References
++==========
++
++.. [1] http://www.usb.org/developers/docs/devclass_docs/DWG_Smart-Card_CCID_Rev110.pdf
++.. [2] include/uapi/linux/usb/ccid.h
+-- 
+2.16.2
