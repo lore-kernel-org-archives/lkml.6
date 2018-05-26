@@ -1,136 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031002AbeEZCVZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 25 May 2018 22:21:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51016 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030648AbeEZCVX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 May 2018 22:21:23 -0400
-Subject: Re: [PATCH 09/14] Documentation: fpga: move fpga overview to
- driver-api
-To: Alan Tull <atull@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-References: <20180516235007.3951-1-atull@kernel.org>
- <20180516235007.3951-10-atull@kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4799501f-bca4-0a56-6d93-6cae844d7973@infradead.org>
-Date: Fri, 25 May 2018 19:21:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1031032AbeEZC1M (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 25 May 2018 22:27:12 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7749 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030648AbeEZC1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 May 2018 22:27:11 -0400
+Subject: Re: [PATCH net-next] bpfilter: fix a build err
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+References: <20180525101757.13756-1-yuehaibing@huawei.com>
+ <20180525161925.crdamzqjgs5wg77e@ast-mbp>
+CC: <davem@davemloft.net>, <ast@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Message-ID: <176ee190-ecda-9b3e-5066-ecf3fbaf32bb@huawei.com>
+Date: Sat, 26 May 2018 10:25:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180516235007.3951-10-atull@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180525161925.crdamzqjgs5wg77e@ast-mbp>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/16/2018 04:50 PM, Alan Tull wrote:
-> Start of moving Documentation/fpga/*.txt to driver-api, including:
->  - Add new directory driver-api/fpga
->  - Add new file driver-api/fpga/index.rst
->  - Add driver-api/fpga to driver-api/index.rst
->  - Move Documentation/fpga/overview.txt to driver-api/fpga/intro.rst
->  - Formatting and rewrites so that intro.rst will build cleanly
->    and form a good introduction to the rest of the docs to be added.
+On 2018/5/26 0:19, Alexei Starovoitov wrote:
+> On Fri, May 25, 2018 at 06:17:57PM +0800, YueHaibing wrote:
+>> gcc-7.3.0 report following err:
+>>
+>>   HOSTCC  net/bpfilter/main.o
+>> In file included from net/bpfilter/main.c:9:0:
+>> ./include/uapi/linux/bpf.h:12:10: fatal error: linux/bpf_common.h: No such file or directory
+>>  #include <linux/bpf_common.h>
+>>
+>> remove it by adding a include path.
+>> Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  net/bpfilter/Makefile | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+>> index 2af752c..3f3cb87 100644
+>> --- a/net/bpfilter/Makefile
+>> +++ b/net/bpfilter/Makefile
+>> @@ -5,7 +5,7 @@
+>>  
+>>  hostprogs-y := bpfilter_umh
+>>  bpfilter_umh-objs := main.o
+>> -HOSTCFLAGS += -I. -Itools/include/
+>> +HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
 > 
-> Signed-off-by: Alan Tull <atull@kernel.org>
-> ---
->  Documentation/driver-api/fpga/index.rst | 10 ++++++
->  Documentation/driver-api/fpga/intro.rst | 54 +++++++++++++++++++++++++++++++++
->  Documentation/driver-api/index.rst      |  1 +
->  Documentation/fpga/overview.txt         | 23 --------------
->  4 files changed, 65 insertions(+), 23 deletions(-)
->  create mode 100644 Documentation/driver-api/fpga/index.rst
->  create mode 100644 Documentation/driver-api/fpga/intro.rst
->  delete mode 100644 Documentation/fpga/overview.txt
+> Strangely I don't see this error with gcc 7.3
+> I've tried this patch and it doesn't hurt,
+> but before it gets applied could you please try
+> the top two patches from this tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/ast/bpf.git/?h=ipt_bpf
+> in your environment?
+> These two patches add the actual meat of bpfilter and I'd like
+> to make sure the build setup is good for everyone before
+> we proceed too far.
 
-Hi,
-Just a few comments for you.
+after applied these two patches on net-next, the err still here:
+ bpfilter: rough bpfilter codegen example hack
+ bpfilter: add iptable get/set parsing
 
-> diff --git a/Documentation/driver-api/fpga/intro.rst b/Documentation/driver-api/fpga/intro.rst
-> new file mode 100644
-> index 0000000..51cd81d
-> --- /dev/null
-> +++ b/Documentation/driver-api/fpga/intro.rst
-> @@ -0,0 +1,54 @@
-> +Introduction
-> +============
-> +
-> +The FPGA subsystem supports reprogramming FPGAs dynamically under
-> +Linux.  Some of the core intentions of the FPGA subsystems are:
-> +
-> +* The FPGA subsystem is vendor agnostic.
-> +
-> +* The FPGA subsystem separates upper layers (userspace interfaces and
-> +  enumeration) from lower layers that know how to program a specific
-> +  FPGA.
-> +
-> +* Code should not be shared between upper and lower layers.  This
-> +  should go without saying.  If that seems necessary, there's probably
-> +  framework functionality that that can be added that will benefit
+  HOSTCC  net/bpfilter/main.o
+In file included from net/bpfilter/main.c:13:0:
+./include/uapi/linux/bpf.h:12:10: fatal error: linux/bpf_common.h: No such file or directory
+ #include <linux/bpf_common.h>
+          ^~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [net/bpfilter/main.o] Error 1
+make[1]: *** [net/bpfilter] Error 2
+make: *** [net] Error 2
 
-                             that      can be
+Also I compile your tree, error is same
 
-> +  other users.  Write the linux-fpga mailing list and maintainers and
-> +  seek out a solution that expands the framework for broad reuse.
+my gcc version info as follow:
+[root@localhost net-next]# gcc -v
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/home/yuehb/gcc-7.3.0-tools/libexec/gcc/x86_64-pc-linux-gnu/7.3.0/lto-wrapper
+Target: x86_64-pc-linux-gnu
+Configured with: ../gcc-7.3.0/configure --enable-checking=release --enable-languages=c,c++
+--disable-multilib --prefix=/home/yuehb/gcc-7.3.0-tools
+Thread model: posix
+gcc version 7.3.0 (GCC)
 
-                          choose one spelling:                ^^^^vvvvv
-
-> +* Generally, when adding code, think of the future.  Plan for re-use.
-> +
-> +The framework in the kernel is divided into:
-> +
-> +FPGA Manager
-> +------------
-> +
-> +If you are adding a new FPGA or a new method of programming a FPGA,
-> +this is the subsystem for you.  Low level FPGA manager drivers contain
-> +the knowledge of how to program a specific device.  This subsystem
-> +includes the framework in fpga-mgr.c and the low level drivers that
-> +are registered with it.
-> +
-> +FPGA Bridge
-> +-----------
-> +
-> +FPGA Bridges prevent spurious signals from going out of a FPGA or a
-
-                                                        of an
-
-> +region of a FPGA during programming.  They are disabled before
-
-          of an 
-
-> +programming begins and re-enabled afterwards.  An FPGA bridge may be
-> +actual hard hardware that gates a bus to a cpu or a soft ("freeze")
-
-                                              CPU
-
-> +bridge in FPGA fabric that surrounds a partial reconfiguration region
-> +of an FPGA.  This subsystem includes fpga-bridge.c and the low level
-> +drivers that are registered with it.
-> +
-> +FPGA Region
-> +-----------
-> +
-> +If you are adding a new interface to the FPGA framework, add it on top
-> +of a FPGA region to allow the most reuse of your interface.
-
-   of an
-
-> +
-> +The FPGA Region framework (fpga-region.c) associates managers and
-> +bridges as reconfigurable regions.  A region may refer to the whole
-> +FPGA in full reconfiguration or to a partial reconfiguration region.
-> +
-> +The Device Tree FPGA Region support (of-fpga-region.c) handles
-> +reprogramming FPGAs when device tree overlays are applied.
-
-
-
--- 
-~Randy
+> 
+> 
+> .
+> 
