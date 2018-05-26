@@ -1,152 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032334AbeEZSVw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 14:21:52 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37856 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032230AbeEZSVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 14:21:50 -0400
-Subject: Re: [PATCH 3/6] arm64: dts: hisilicon: Add missing cooling device
- properties for CPUs
-To: Viresh Kumar <viresh.kumar@linaro.org>, <arm@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <cover.1527225682.git.viresh.kumar@linaro.org>
- <0754957a2c3842cf4e36fa27231d327fd8d6d499.1527225682.git.viresh.kumar@linaro.org>
- <5B09A0B4.2080400@hisilicon.com>
-CC: Vincent Guittot <vincent.guittot@linaro.org>,
-        <ionela.voinescu@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        <chris.redpath@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B09A5B4.4050904@hisilicon.com>
-Date: Sat, 26 May 2018 19:21:40 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S1032336AbeEZS13 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 14:27:29 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:42649 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1032233AbeEZS12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 14:27:28 -0400
+Subject: Re: arch/powerpc/kernel/head_32.S:1106: Error: missing operand
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <e015d6b2-79b8-e05d-5053-5ca0036679d3@molgen.mpg.de>
+ <ba9e3312-1923-dcc5-b07e-20f491881328@c-s.fr>
+From: Paul Menzel <pmenzel+linuxppc-dev@molgen.mpg.de>
+Message-ID: <cabbedf3-8a8b-4862-3efe-4ca9d5f6946b@molgen.mpg.de>
+Date: Sat, 26 May 2018 20:27:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <5B09A0B4.2080400@hisilicon.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.84.85]
-X-CFilter-Loop: Reflected
+In-Reply-To: <ba9e3312-1923-dcc5-b07e-20f491881328@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
+Dear Christophe,
 
-On 2018/5/26 19:00, Wei Xu wrote:
-> Hi Viresh,
-> 
-> On 2018/5/25 6:40, Viresh Kumar wrote:
->> The cooling device properties, like "#cooling-cells" and
->> "dynamic-power-coefficient", should either be present for all the CPUs
->> of a cluster or none. If these are present only for a subset of CPUs of
->> a cluster then things will start falling apart as soon as the CPUs are
->> brought online in a different order. For example, this will happen
->> because the operating system looks for such properties in the CPU node
->> it is trying to bring up, so that it can register a cooling device.
->>
->> Add such missing properties.
->>
->> Do minor rearrangement as well to keep ordering consistent.
->>
->> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Thanks!
-> Applied to the hisilicon fix tree.
 
-Sorry for the noise!
-It seems this patch is still under discussion.
-I will drop it firstly.
+Am 26.05.2018 um 18:02 schrieb christophe leroy:
 
-Best Regards,
-Wei
+> Le 26/05/2018 à 06:35, Paul Menzel a écrit :
 
-> 
-> Best Regards,
-> Wei
-> 
->> ---
->>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 16 +++++++++++++++-
->>  1 file changed, 15 insertions(+), 1 deletion(-)
+>> Building the configuration created with `make tinyconfig` on the Power 
+>> 8 system IBM S822LC with Ubuntu 18.04 fails with the error below.
 >>
->> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
->> index 586b281cd531..247024df714f 100644
->> --- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
->> +++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
->> @@ -88,8 +88,8 @@
->>  			next-level-cache = <&CLUSTER0_L2>;
->>  			clocks = <&stub_clock 0>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->> -			#cooling-cells = <2>; /* min followed by max */
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->>  			dynamic-power-coefficient = <311>;
->>  		};
->>  
->> @@ -101,6 +101,8 @@
->>  			next-level-cache = <&CLUSTER0_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		cpu2: cpu@2 {
->> @@ -111,6 +113,8 @@
->>  			next-level-cache = <&CLUSTER0_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		cpu3: cpu@3 {
->> @@ -121,6 +125,8 @@
->>  			next-level-cache = <&CLUSTER0_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		cpu4: cpu@100 {
->> @@ -131,6 +137,8 @@
->>  			next-level-cache = <&CLUSTER1_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		cpu5: cpu@101 {
->> @@ -141,6 +149,8 @@
->>  			next-level-cache = <&CLUSTER1_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		cpu6: cpu@102 {
->> @@ -151,6 +161,8 @@
->>  			next-level-cache = <&CLUSTER1_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		cpu7: cpu@103 {
->> @@ -161,6 +173,8 @@
->>  			next-level-cache = <&CLUSTER1_L2>;
->>  			operating-points-v2 = <&cpu_opp_table>;
->>  			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
->> +			#cooling-cells = <2>; /* min followed by max */
->> +			dynamic-power-coefficient = <311>;
->>  		};
->>  
->>  		CLUSTER0_L2: l2-cache0 {
->>
+>> ```
+>> $ git describe --dirty
+>> v4.17-rc6-296-gbc2dbc5420e8
+>> $ git log --oneline -1
+>> bc2dbc5420e8 (HEAD -> master, origin/master, origin/HEAD) Merge branch 
+>> 'akpm' (patches from Andrew)
+>> $ make tinyconfig
+>> $ make -j120
+>> […]
+>>    AS      arch/powerpc/kernel/head_32.o
+>> arch/powerpc/kernel/head_32.S: Assembler messages:
+>> arch/powerpc/kernel/head_32.S:1106: Error: missing operand
+> 
+> There was a similar problem in 2015, see 
+> http://linux-kernel.2935.n7.nabble.com/Missing-operand-for-tlbie-instruction-on-Power7-td1206917.html
+> 
+> Which version of binutils do you use ?
+
+2.30-15ubuntu1 is installed.
+
+
+Kind regards,
+
+Paul
