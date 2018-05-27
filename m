@@ -1,113 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032491AbeEZXxR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 19:53:17 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:39985 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032434AbeEZXxP (ORCPT
+        id S1032501AbeE0Ani (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 20:43:38 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45514 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbeE0Ang (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 19:53:15 -0400
-From: Guenter Roeck <linux@roeck-us.net>
-To: Joshua Thompson <funaho@jurai.org>
-Cc: Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
-Subject: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC based ethernet
-Date: Sat, 26 May 2018 16:53:05 -0700
-Message-Id: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Sat, 26 May 2018 20:43:36 -0400
+X-Google-Smtp-Source: AB8JxZpHpFUfnY6ITBTFfFF3nrO5FhqDGu3cRIKfwIgEFudWXI60pLEhbo8t4IooM5V5ZG0xBe5Shg==
+Date: Sun, 27 May 2018 06:15:50 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: willy@infradead.org, patrik.r.jakobsson@gmail.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] gpu: drm: gma500: Change return type to vm_fault_t
+Message-ID: <20180527004550.GA2263@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-coherent_dma_mask") the NatSemi SONIC Ethernet driver is issuing the
-following warning on driver initialization on Macintosh q800 systems.
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-SONIC ethernet @50f0a000, MAC 08:00:07:12:34:56, IRQ 3
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 macsonic_init+0x6a/0x15a
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Not tainted 4.17.0-rc6-mac-00286-g527f47c #1
-Stack from 0781fdd8:
-        0781fdd8 003615b3 000181ba 000005c4 07a24cbc 00000000 00000000 000020e8
-	07a24800 002c196c 0001824e 00334c06 00000204 001f782a 00000009 00000000
-	00000000 003358d9 001f782a 00334c06 00000204 00000003 00000000 07a24800
-	002b5cb6 000372ec 001f8b1a 07a24800 00359203 50f0a000 07a14a48 00000003
-	00000000 07845c0a 0039dcca 003c835c 003c835c 0035b924 001c19de 07845c00
-	07845c0a 0039dcca 001c06dc 07845c0a 0781fed8 00000007 0054d040 07845c0a
-Call Trace: [<000181ba>] __warn+0xc0/0xc2
- [<000020e8>] do_one_initcall+0x0/0x140
- [<0001824e>] warn_slowpath_null+0x26/0x2c
- [<001f782a>] macsonic_init+0x6a/0x15a
- [<001f782a>] macsonic_init+0x6a/0x15a
- [<002b5cb6>] memcmp+0x0/0x2a
- [<000372ec>] printk+0x0/0x18
- [<001f8b1a>] mac_sonic_platform_probe+0x380/0x404
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-As per the warning the coherent_dma_mask is not set on this device.
-There is nothing special about the DMA memory coherency on this hardware
-so we can just set the mask to 32bits in the platform data for the FEC
-ethernet devices.
+Previously vm_insert_{pfn,mixed} returns err which driver
+mapped into VM_FAULT_* type. The new function
+vmf_insert_{pfn,mixed} will replace this inefficiency by
+returning VM_FAULT_* type.
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+vmf_error() is the newly introduce inline function
+in 4.17-rc6.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
-Modeled after f61e64310b75 ("m68k: set dma and coherent masks for platform
-FEC ethernets"). 
+v2: updated the change log
 
-RFC: Is "nothing special about the DMA memory coherency" correect ?
+v3: Fixed kbuild error
 
- arch/m68k/mac/config.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/gma500/framebuffer.c | 14 +++++---------
+ drivers/gpu/drm/gma500/gem.c         | 27 ++++++++++-----------------
+ drivers/gpu/drm/gma500/psb_drv.h     |  3 ++-
+ 3 files changed, 17 insertions(+), 27 deletions(-)
 
-diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-index 0c3275aa0197..8e0476daddb8 100644
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -17,6 +17,7 @@
- #include <linux/tty.h>
- #include <linux/console.h>
- #include <linux/interrupt.h>
-+#include <linux/dma-mapping.h>
- /* keyb */
- #include <linux/random.h>
- #include <linux/delay.h>
-@@ -971,6 +972,15 @@ static const struct resource mac_scsi_ccl_rsrc[] __initconst = {
- 	},
- };
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index cb0a2ae..632aadb 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -111,7 +111,7 @@ static int psbfb_pan(struct fb_var_screeninfo *var, struct fb_info *info)
+         return 0;
+ }
  
-+static struct platform_device macsonic_dev = {
-+	.name           = "macsonic",
-+	.id             = -1,
-+	.dev            = {
-+		.dma_mask = &macsonic_dev.dev.coherent_dma_mask,
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
-+	},
-+};
-+
- int __init mac_platform_init(void)
+-static int psbfb_vm_fault(struct vm_fault *vmf)
++static vm_fault_t psbfb_vm_fault(struct vm_fault *vmf)
  {
- 	u8 *swim_base;
-@@ -1088,7 +1098,7 @@ int __init mac_platform_init(void)
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct psb_framebuffer *psbfb = vma->vm_private_data;
+@@ -120,7 +120,7 @@ static int psbfb_vm_fault(struct vm_fault *vmf)
+ 	int page_num;
+ 	int i;
+ 	unsigned long address;
+-	int ret;
++	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 	unsigned long pfn;
+ 	unsigned long phys_addr = (unsigned long)dev_priv->stolen_base +
+ 				  psbfb->gtt->offset;
+@@ -133,18 +133,14 @@ static int psbfb_vm_fault(struct vm_fault *vmf)
+ 	for (i = 0; i < page_num; i++) {
+ 		pfn = (phys_addr >> PAGE_SHIFT);
  
- 	if (macintosh_config->ether_type == MAC_ETHER_SONIC ||
- 	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
--		platform_device_register_simple("macsonic", -1, NULL, 0);
-+		platform_device_register(&macsonic_dev);
+-		ret = vm_insert_mixed(vma, address,
++		ret = vmf_insert_mixed(vma, address,
+ 				__pfn_to_pfn_t(pfn, PFN_DEV));
+-		if (unlikely((ret == -EBUSY) || (ret != 0 && i > 0)))
++		if (unlikely(ret & VM_FAULT_ERROR))
+ 			break;
+-		else if (unlikely(ret != 0)) {
+-			ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
+-			return ret;
+-		}
+ 		address += PAGE_SIZE;
+ 		phys_addr += PAGE_SIZE;
+ 	}
+-	return VM_FAULT_NOPAGE;
++	return ret;
+ }
  
- 	if (macintosh_config->expansion_type == MAC_EXP_PDS ||
- 	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
+ static void psbfb_vm_open(struct vm_area_struct *vma)
+diff --git a/drivers/gpu/drm/gma500/gem.c b/drivers/gpu/drm/gma500/gem.c
+index 1312397..e7be5c9 100644
+--- a/drivers/gpu/drm/gma500/gem.c
++++ b/drivers/gpu/drm/gma500/gem.c
+@@ -134,12 +134,13 @@ int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+  *	vma->vm_private_data points to the GEM object that is backing this
+  *	mapping.
+  */
+-int psb_gem_fault(struct vm_fault *vmf)
++vm_fault_t psb_gem_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj;
+ 	struct gtt_range *r;
+-	int ret;
++	int err;
++	vm_fault_t ret;
+ 	unsigned long pfn;
+ 	pgoff_t page_offset;
+ 	struct drm_device *dev;
+@@ -158,9 +159,10 @@ int psb_gem_fault(struct vm_fault *vmf)
+ 	/* For now the mmap pins the object and it stays pinned. As things
+ 	   stand that will do us no harm */
+ 	if (r->mmapping == 0) {
+-		ret = psb_gtt_pin(r);
+-		if (ret < 0) {
+-			dev_err(dev->dev, "gma500: pin failed: %d\n", ret);
++		err = psb_gtt_pin(r);
++		if (err < 0) {
++			dev_err(dev->dev, "gma500: pin failed: %d\n", err);
++			ret = vmf_error(err);
+ 			goto fail;
+ 		}
+ 		r->mmapping = 1;
+@@ -175,18 +177,9 @@ int psb_gem_fault(struct vm_fault *vmf)
+ 		pfn = (dev_priv->stolen_base + r->offset) >> PAGE_SHIFT;
+ 	else
+ 		pfn = page_to_pfn(r->pages[page_offset]);
+-	ret = vm_insert_pfn(vma, vmf->address, pfn);
+-
++	ret = vmf_insert_pfn(vma, vmf->address, pfn);
+ fail:
+ 	mutex_unlock(&dev_priv->mmap_mutex);
+-	switch (ret) {
+-	case 0:
+-	case -ERESTARTSYS:
+-	case -EINTR:
+-		return VM_FAULT_NOPAGE;
+-	case -ENOMEM:
+-		return VM_FAULT_OOM;
+-	default:
+-		return VM_FAULT_SIGBUS;
+-	}
++
++	return ret;
+ }
+diff --git a/drivers/gpu/drm/gma500/psb_drv.h b/drivers/gpu/drm/gma500/psb_drv.h
+index e8300f5..93d2f40 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.h
++++ b/drivers/gpu/drm/gma500/psb_drv.h
+@@ -21,6 +21,7 @@
+ #define _PSB_DRV_H_
+ 
+ #include <linux/kref.h>
++#include <linux/mm_types.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_global.h>
+@@ -749,7 +750,7 @@ extern int psb_gem_get_aperture(struct drm_device *dev, void *data,
+ 			struct drm_file *file);
+ extern int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 			struct drm_mode_create_dumb *args);
+-extern int psb_gem_fault(struct vm_fault *vmf);
++extern vm_fault_t psb_gem_fault(struct vm_fault *vmf);
+ 
+ /* psb_device.c */
+ extern const struct psb_ops psb_chip_ops;
 -- 
-2.7.4
+1.9.1
