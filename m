@@ -1,140 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeE0WYA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 18:24:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57002 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751710AbeE0WX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 18:23:58 -0400
-Date: Mon, 28 May 2018 00:23:54 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
-Message-ID: <20180528002354.45025afd@xps13>
-In-Reply-To: <20180527215442.14760-3-stefan@agner.ch>
-References: <20180527215442.14760-3-stefan@agner.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752352AbeE0WZP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 18:25:15 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42405 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751582AbeE0WZO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 18:25:14 -0400
+From: Colin King <colin.king@canonical.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] dm writecache: fix missing goto in error handling code
+Date: Sun, 27 May 2018 23:25:12 +0100
+Message-Id: <20180527222512.25280-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Sun, 27 May 2018 23:54:38 +0200, Stefan Agner <stefan@agner.ch>
-wrote:
+Currently, the -EFBIG error condition when n_bitmaps_bits is
+too large is falling through to the next statement and the
+error assignment to r is potentially being ignored.  The code
+should be exiting to the error path via label 'bad'. Fix
+this by adding the missing goto statement.
 
-> From: Lucas Stach <dev@lynxeye.de>
-> 
-> This adds the devicetree binding for the Tegra 2 NAND flash
-> controller.
-> 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> new file mode 100644
-> index 000000000000..49e472af1b39
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> @@ -0,0 +1,62 @@
-> +NVIDIA Tegra NAND Flash controller
-> +
-> +Required properties:
-> +- compatible: Must be one of:
+Detected by CoverityScan, CID#1469377 ("Unused value")
 
-Nitpick: just put the compatible here as there is only one?
+Fixes: bb15b431d650 ("dm: add writecache target")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/dm-writecache.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +  - "nvidia,tegra20-nand"
-> +- reg: MMIO address range
-> +- interrupts: interrupt output of the NFC controller
-> +- clocks: Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names: Must include the following entries:
-> +  - nand
-> +- resets: Must contain an entry for each entry in reset-names.
-> +  See ../reset/reset.txt for details.
-> +- reset-names: Must include the following entries:
-> +  - nand
-> +
-> +Optional children nodes:
-> +Individual NAND chips are children of the NAND controller node. Currently
-> +only one NAND chip supported.
-> +
-> +Required children node properties:
-> +- reg: An integer ranging from 1 to 6 representing the CS line to use.
-
->From 1? It usually starts at 0.
-
-> +
-> +Optional children node properties:
-> +- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by default
-> +- nand-ecc-algo: string, algorithm of NAND ECC.
-> +		 Supported values are: "rs", "bch".
-> +- nand-bus-width : 8 or 16 bus width if not present 8
-> +- nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
-> +- nand-ecc-strength: integer representing the number of bits to correct
-> +		     per ECC step. Supported strength using HW ECC modes are:
-> +		     - RS: 4, 6, 8
-> +		     - BCH: 4, 8, 14, 16
-> +- nand-ecc-step-size: integer representing the number of data bytes
-> +		      that are covered by a single ECC step. Must be 512.
-
-Please don't re-explain nand generic DT properties, point to nand.txt
-instead.
-
-> +- wp-gpios: GPIO specifier for the write protect pin.
-> +
-> +Optional child node of NAND chip nodes:
-> +Partitions: see partition.txt
-> +
-> +  Example:
-> +	nand@70008000 {
-> +		compatible = "nvidia,tegra20-nand";
-> +		reg = <0x70008000 0x100>;
-> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-> +		clock-names = "nand";
-> +		resets = <&tegra_car 13>;
-> +		reset-names = "nand";
-> +
-> +		nand-chip@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			nand-bus-width = <8>;
-> +			nand-on-flash-bbt;
-> +			nand-ecc-algo = "bch";
-> +			nand-ecc-step-size = <512>;
-
-In the driver you only refer to step sizes of 512 B, you can remove the
-property from the bindings.
-
-> +			nand-ecc-strength = <8>;
-> +			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-
-
-
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 1ef06e738eb6..e61704b6eae1 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -2077,6 +2077,7 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		if (n_bitmap_bits > 1U << 31) {
+ 			r = -EFBIG;
+ 			ti->error = "Invalid device size";
++			goto bad;
+ 		}
+ 
+ 		wc->memory_map = vmalloc(n_metadata_blocks << wc->block_size_bits);
 -- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
