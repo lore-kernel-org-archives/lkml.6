@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032834AbeE0PqW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 11:46:22 -0400
+        id S1033041AbeE0Prz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 11:47:55 -0400
 Received: from mga02.intel.com ([134.134.136.20]:28381 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032707AbeE0PqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 11:46:17 -0400
+        id S1032825AbeE0PqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 11:46:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,448,1520924400";
-   d="scan'208";a="227741061"
+   d="scan'208";a="227741112"
 From: Fenghua Yu <fenghua.yu@intel.com>
 To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
         "H. Peter Anvin" <hpa@linux.intel.com>
@@ -22,9 +22,9 @@ Cc: "Ashok Raj" <ashok.raj@intel.com>,
         "Arjan van de Ven" <arjan@infradead.org>,
         "linux-kernel" <linux-kernel@vger.kernel.org>, "x86" <x86@kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [RFC PATCH 01/16] x86/split_lock: Add CONFIG and enumerate #AC exception for split locked access feature
-Date: Sun, 27 May 2018 08:45:50 -0700
-Message-Id: <1527435965-202085-2-git-send-email-fenghua.yu@intel.com>
+Subject: [RFC PATCH 15/16] x86/split_lock: Add CONFIG and debugfs interface for testing #AC for split lock in kernel mode
+Date: Sun, 27 May 2018 08:46:04 -0700
+Message-Id: <1527435965-202085-16-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
 References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
@@ -32,186 +32,121 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-#AC for split lock is supported on Tremont and future processors. We
-need to enumerate the feature on processors.
+Sometimes user wants to test how split lock in kernel mode is process.
 
-Add CONFIG_SPLIT_LOCK_AC (default: y, dependent on X86 and CPU_SUP_INTEL)
-to control inclusion of the feature.
+debugfs interface /sys/kernel/debug/x86/split_lock/test_kernel is provided
+to do the test. The interface is enabled by CONFIG_SPLIT_LOCK_AC_TEST.
 
-Bit 29 in MSR TEST_CTL 0x33 can only be set on processors that support
-the feature. On processors not supporting the feature, the bit is reserved
-i.e. can not be set as one) or the MSR doesn't exist.
+Writing 1 to the interface file triggers a split locked access in kernel
+and procedure of handling the split lock.
 
-To detect the feature, attempt to set the bit in the MSR. If the writing
-succeeds, the feature is available. Otherwise, the feature is not
-supported on this platform.
-
-And the enumeration happens before SMP so all processors can use
-enumerated result when SMP boots.
-
-test_ctl.c is created to contain majority of split lock code. Hopefully
-more features related to MSR_TEST_CTL will be added to the file and
-share some code with split lock in future.
-
-More information on the bit 29 and MSR TEST_CTL can be found in the latest
-Intel Architecture Instruction Set Extensions and Future Features
-Programming Reference.
+The file is not readable.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/Kconfig                   | 12 ++++++++++
- arch/x86/include/asm/cpu.h         |  5 ++++
- arch/x86/include/asm/cpufeatures.h |  1 +
- arch/x86/include/asm/msr-index.h   |  4 ++++
- arch/x86/kernel/cpu/Makefile       |  1 +
- arch/x86/kernel/cpu/test_ctl.c     | 49 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/setup.c            |  2 ++
- 7 files changed, 74 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/test_ctl.c
+ arch/x86/Kconfig               | 10 +++++++
+ arch/x86/kernel/cpu/test_ctl.c | 61 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 6ca22706cd64..043cde9a9b08 100644
+index d42d90abd644..5d44cc86aecf 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -449,6 +449,18 @@ config INTEL_RDT
+@@ -488,6 +488,16 @@ config SPLIT_LOCK_AC_PANIC_ON_KERNEL
  
  	  Say N if unsure.
  
-+config SPLIT_LOCK_AC
-+	bool "#AC exception for split locked accesses support"
-+	default y
-+	depends on X86 && CPU_SUP_INTEL
++config SPLIT_LOCK_AC_TEST
++	bool "Test #AC exception for split locked accesses"
++	default n
++	depends on SPLIT_LOCK_AC
 +	help
-+	  Select to support #AC exception for split locked accesses. More
-+	  detailed information about the feature can be found in
-+	  Intel Architecture Instruction Set Extensions and Future Feature
-+	  Programming Reference.
-+
-+	  Say N if unsure.
++	  Select to enable testing #AC exception for split lock accesses.
++	  This adds interface /sys/kernel/debug/x86/split_lock/test_kernel
++	  to allow user to trigger split locked access in kernel and test
++	  split lock handling.
 +
  if X86_32
  config X86_BIGSMP
  	bool "Support for big SMP systems with more than 8 CPUs"
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index adc6cc86b062..8e224956e3e2 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -40,4 +40,9 @@ int mwait_usable(const struct cpuinfo_x86 *);
- unsigned int x86_family(unsigned int sig);
- unsigned int x86_model(unsigned int sig);
- unsigned int x86_stepping(unsigned int sig);
-+#ifdef CONFIG_SPLIT_LOCK_AC
-+void detect_split_lock_ac(void);
-+#else /* CONFIG_SPLIT_LOCK_AC */
-+static inline void detect_split_lock_ac(void) {}
-+#endif /* CONFIG_SPLIT_LOCK_AC */
- #endif /* _ASM_X86_CPU_H */
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index fb00a2fca990..8278d2ced4ea 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -219,6 +219,7 @@
- #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
-+#define X86_FEATURE_SPLIT_LOCK_AC	( 7*32+29) /* #AC exception for split locked access */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index fda2114197b3..3b0fe0f55a61 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -39,6 +39,10 @@
- 
- /* Intel MSRs. Some also available on other CPUs */
- 
-+#define MSR_TEST_CTL					0x00000033
-+#define MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK_SHIFT	29
-+#define MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK		BIT(29)
-+
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 7a40196967cb..228654485b3f 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_MICROCODE)			+= microcode/
- obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
- 
- obj-$(CONFIG_HYPERVISOR_GUEST)		+= vmware.o hypervisor.o mshyperv.o
-+obj-$(CONFIG_SPLIT_LOCK_AC)		+= test_ctl.o
- 
- ifdef CONFIG_X86_FEATURE_NAMES
- quiet_cmd_mkcapflags = MKCAP   $@
 diff --git a/arch/x86/kernel/cpu/test_ctl.c b/arch/x86/kernel/cpu/test_ctl.c
-new file mode 100644
-index 000000000000..46fa8e21f9f6
---- /dev/null
+index 8bdc01067be9..910ff19c2a3e 100644
+--- a/arch/x86/kernel/cpu/test_ctl.c
 +++ b/arch/x86/kernel/cpu/test_ctl.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Enable #AC exception for split locked accesses in TEST_CTL MSR
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ *
-+ * Author:
-+ *	Fenghua Yu <fenghua.yu@intel.com>
-+ */
-+
-+#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
-+
-+#include <linux/printk.h>
-+#include <linux/cpufeature.h>
-+#include <asm/msr.h>
-+
-+/* Detete feature of #AC for split lock by probing bit 29 in MSR_TEST_CTL. */
-+void detect_split_lock_ac(void)
+@@ -541,6 +541,64 @@ static int firmware_store(void *data, u64 val)
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(firmware_ops, firmware_show, firmware_store, "%llx\n");
+ 
++#ifdef CONFIG_SPLIT_LOCK_AC_TEST
++/* Execute locked btsl instruction with split lock operand. */
++static void split_lock_test_kernel(void)
 +{
-+	u64 val, orig_val;
-+	int ret;
-+
-+	/* Attempt to read the MSR. If the MSR doesn't exist, reading fails. */
-+	ret = rdmsrl_safe(MSR_TEST_CTL, &val);
-+	if (ret)
-+		return;
-+
-+	orig_val = val;
-+
-+	/* Turn on the split lock bit */
-+	val |= MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK;
++	char cptr[128] __aligned(64);
++	int *iptr;
 +
 +	/*
-+	 * Attempt to set bit 29 in the MSR. The bit is set successfully
-+	 * only on processors that support #AC for split lock.
++	 * Change the pointer, making it 3-byte away from the next cache
++	 * line.
 +	 */
-+	ret = wrmsrl_safe(MSR_TEST_CTL, val);
-+	if (ret)
-+		return;
++	iptr = (int *)(cptr + 61);
 +
-+	/* The feature is supported on CPU. */
-+	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_AC);
++	/* Initial value 0 in iptr */
++	*iptr = 0;
++
++	pr_info("split lock test: split lock address=0x%lx\n",
++		(unsigned long)iptr);
 +
 +	/*
-+	 * Need to restore split lock setting to original firmware setting
-+	 * before leaving.
++	 * The distance between iptr and next cache line is 3 bytes.
++	 * Operand size in "btsl" is 4 bytes. So iptr will span two cache
++	 * lines. "lock btsl" instruction will trigger #AC in hardware
++	 * and kernel will either re-execute the instruction or go to panic
++	 * depending on user configuration in
++	 * /sys/kernel/debug/x86/split_lock/kernel_mode.
 +	 */
-+	wrmsrl(MSR_TEST_CTL, orig_val);
++	asm volatile ("lock btsl $0, %0\n\t"
++		      : "=m" (*iptr));
++
++	if (*iptr == 1)
++		pr_info("split lock kernel test passes\n");
++	else
++		pr_info("split lock kernel test fails\n");
 +}
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 5c623dfe39d1..4deb1ad5b442 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1272,6 +1272,8 @@ void __init setup_arch(char **cmdline_p)
- 
- 	mcheck_init();
- 
-+	detect_split_lock_ac();
 +
- 	arch_init_ideal_nops();
- 
- 	register_refined_jiffies(CLOCK_TICK_RATE);
++/*
++ * Writing 1 to /sys/kernel/debug/x86/split_lock/test_kernel triggers
++ * split locke daccess in kernel mode.
++ */
++static int test_kernel_store(void *data, u64 val)
++{
++	if (split_lock_ac_kernel == DISABLE_SPLIT_LOCK_AC)
++		return -ENODEV;
++
++	if (val != 1)
++		return -EINVAL;
++
++	mutex_lock(&split_lock_mutex);
++	split_lock_test_kernel();
++	mutex_unlock(&split_lock_mutex);
++
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(test_kernel_ops, NULL, test_kernel_store, "%llx\n");
++#endif /* CONFIG_SPLIT_LOCK_AC_TEST */
++
+ static int __init debugfs_setup_split_lock(void)
+ {
+ 	struct debugfs_file debugfs_files[] = {
+@@ -548,6 +606,9 @@ static int __init debugfs_setup_split_lock(void)
+ 		{"kernel_mode",	0600, &kernel_mode_ops },
+ 		{"user_mode",	0600, &user_mode_ops },
+ 		{"firmware",	0600, &firmware_ops },
++#ifdef CONFIG_SPLIT_LOCK_AC_TEST
++		{"test_kernel",	0200, &test_kernel_ops },
++#endif
+ 	};
+ 	struct dentry *split_lock_dir, *fd;
+ 	int i;
 -- 
 2.5.0
