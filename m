@@ -1,62 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964783AbeE0KSI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 06:18:08 -0400
-Received: from mail-ot0-f176.google.com ([74.125.82.176]:44578 "EHLO
-        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935648AbeE0KSG (ORCPT
+        id S936409AbeE0LJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 07:09:27 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:32947 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936373AbeE0LJZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 06:18:06 -0400
-X-Google-Smtp-Source: ADUXVKJrMwHK7AN6g3z4kWMleHsnV0T496+n6PA1qLltodOOp9Ns4GLlGLZ8VGmSF6gsUQrsmmWUZzp0HQP/LUNMMp4=
+        Sun, 27 May 2018 07:09:25 -0400
+X-Google-Smtp-Source: AB8JxZqRwZpUmZnBCo1UMHFxxartOzn3RNTuoyOM3kA9AhSPb27HBdcAJq3i1Baq+QCJ3dCI2kynrZ9n6eskDTdYfbw=
 MIME-Version: 1.0
-In-Reply-To: <1527150816-8459-1-git-send-email-ulf.hansson@linaro.org>
-References: <1527150816-8459-1-git-send-email-ulf.hansson@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 27 May 2018 12:18:05 +0200
-X-Google-Sender-Auth: yIWARc75jDzVoOsXCJhjgVKIvBs
-Message-ID: <CAJZ5v0gGLvKS6yDuBokJzm2gAhM=VMSaz5frvWq=eRPkAD-z6g@mail.gmail.com>
-Subject: Re: [PATCH] PM / runtime: Drop usage count for suppliers at device
- link removal
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <CAKEZqKJhZNoF-29ymEmAjiYfVn64q5mHrMY9sC2NZ=EDqTHjeA@mail.gmail.com>
+ <20180526171206.GP30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180526171206.GP30522@ZenIV.linux.org.uk>
+From: Lei Chen <losemyheaven@gmail.com>
+Date: Sun, 27 May 2018 19:09:14 +0800
+Message-ID: <CAKEZqK+x7MLBRFnez-XzTi3GPxoEr9p+1w25d3hkr5JLrWW2Lw@mail.gmail.com>
+Subject: Re: Why does d_splice_alias need to check IS_ROOT?
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4RB9hCG026049
 
-On Thu, May 24, 2018 at 10:33 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> In the case consumer device is runtime resumed, while the link to the
-> supplier is removed, the earlier call to pm_runtime_get_sync() made from
-> rpm_get_suppliers() does not get properly balanced with a corresponding
-> call to pm_runtime_put(). This leads to that suppliers remains to be
-> runtime resumed forever, while they don't need to.
->
-> Let's fix the behaviour by calling rpm_put_suppliers() when dropping a
-> device link. Not that, since rpm_put_suppliers() checks the
-> link->rpm_active flag, we can correctly avoid to call pm_runtime_put() in
-> cases when we shouldn't.
->
-> Reported-by: Todor Tomov <todor.tomov@linaro.org>
-> Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->
-> Rafael, I am not sure if this is safe from locking point of view. The device
-> link write lock has been taken when pm_runtime_drop_link() is called, hence I
-> assume calling rpm_put_suppliers() should be fine!? If not, can you please
-> advise how to change?
+Al Viro <viro@zeniv.linux.org.uk> 于2018年5月27日周日 上午1:12写道：
 
-Holding the lock should be sufficient for the list to be stable, so
-AFAICS it is OK.
+> On Sun, May 27, 2018 at 12:33:40AM +0800, Lei Chen wrote:
+> > Hello list,
+> >
+> > I'm insteresting in how hard link and denry lookup work and their
+> > implementation.
+> >
+> > I know that this interface tries to connect an inode to a dentry, but
+> > why does it need
+> > to check whether the inode alias IS_ROOT if the inode represents a
+directory?
+> > And the code process in different way according to check result.  What
+> > occasions
+> > are they used for?
 
-Thanks,
-Rafael
+> If it's disconnected (and not an ancestor of the place where we want it),
+> we can just move it in place, no questions asked.  If it is *NOT*
+> disconnected, the only thing we can do is to detach it from where it
+> is and move it over.  Which takes a lot more care wrt locking.
+
+Thanks for your reply.
+
+But why does it mean "disconnected" if IS_ROOT returns true??
+Why not use hlist_unhashed(&entry->d_u.d_alias) or d_is_negative to
+determine whether a dentry is connected to an inode??
+
+I found that when we allocate a new dentry struct, its parent is not
+always itself.
