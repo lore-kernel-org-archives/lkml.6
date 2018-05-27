@@ -1,123 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032584AbeE0DBP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 23:01:15 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58716 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032539AbeE0DBO (ORCPT
+        id S1032603AbeE0DpI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 23:45:08 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:46286 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032558AbeE0DpH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 23:01:14 -0400
-Date: Sun, 27 May 2018 13:01:11 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Guenter Roeck <linux@roeck-us.net>
-cc: Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
+        Sat, 26 May 2018 23:45:07 -0400
+Date: Sat, 26 May 2018 20:45:03 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Michael Ellerman <michael@ellerman.id.au>
+Cc: Michael Neuling <mikey@neuling.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-In-Reply-To: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
-Message-ID: <alpine.LNX.2.21.1805271212480.9@nippy.intranet>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
+Subject: Re: [PATCH] powerpc/64s: Clear PCR on boot
+Message-ID: <20180527034503.GA31985@roeck-us.net>
+References: <20180525133308.GA17443@roeck-us.net>
+ <31148B04-5AA9-4F4F-BD34-CD9665F7F6D6@ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31148B04-5AA9-4F4F-BD34-CD9665F7F6D6@ellerman.id.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 26 May 2018, Guenter Roeck wrote:
+Hi Michael,
 
-> As of commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-> coherent_dma_mask") the NatSemi SONIC Ethernet driver is issuing the
-> following warning on driver initialization on Macintosh q800 systems.
+On Sun, May 27, 2018 at 12:22:23PM +1000, Michael Ellerman wrote:
 > 
-> SONIC ethernet @50f0a000, MAC 08:00:07:12:34:56, IRQ 3
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 macsonic_init+0x6a/0x15a
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.17.0-rc6-mac-00286-g527f47c #1
-> Stack from 0781fdd8:
->         0781fdd8 003615b3 000181ba 000005c4 07a24cbc 00000000 00000000 000020e8
-> 	07a24800 002c196c 0001824e 00334c06 00000204 001f782a 00000009 00000000
-> 	00000000 003358d9 001f782a 00334c06 00000204 00000003 00000000 07a24800
-> 	002b5cb6 000372ec 001f8b1a 07a24800 00359203 50f0a000 07a14a48 00000003
-> 	00000000 07845c0a 0039dcca 003c835c 003c835c 0035b924 001c19de 07845c00
-> 	07845c0a 0039dcca 001c06dc 07845c0a 0781fed8 00000007 0054d040 07845c0a
-> Call Trace: [<000181ba>] __warn+0xc0/0xc2
->  [<000020e8>] do_one_initcall+0x0/0x140
->  [<0001824e>] warn_slowpath_null+0x26/0x2c
->  [<001f782a>] macsonic_init+0x6a/0x15a
->  [<001f782a>] macsonic_init+0x6a/0x15a
->  [<002b5cb6>] memcmp+0x0/0x2a
->  [<000372ec>] printk+0x0/0x18
->  [<001f8b1a>] mac_sonic_platform_probe+0x380/0x404
 > 
-> As per the warning the coherent_dma_mask is not set on this device.
-> There is nothing special about the DMA memory coherency on this hardware
-> so we can just set the mask to 32bits in the platform data for the FEC
-> ethernet devices.
+> On 25 May 2018 11:33:08 pm AEST, Guenter Roeck <linux@roeck-us.net> wrote:
+> >On Fri, May 18, 2018 at 11:37:42AM +1000, Michael Neuling wrote:
+> >> Clear the PCR (Processor Compatibility Register) on boot to ensure we
+> >> are not running in a compatibility mode.
+> >> 
+> >> We've seen this cause problems when a crash (and kdump) occurs while
+> >> running compat mode guests. The kdump kernel then runs with the PCR
+> >> set and causes problems. The symptom in the kdump kernel (also seen
+> >in
+> >> petitboot after fast-reboot) is early userspace programs taking
+> >> sigills on newer instructions (seen in libc).
+> >> 
+> >
+> >Hi folks,
+> >
+> >this patch causes qemu to bail out with
+> >
+> >Trying to write privileged spr 338 (0x152) at c000000000033454
+> >
+> >when running it with "-M powernv -cpu POWER8" and powernv_defconfig.
+> >
+> >Can you confirm that this is a bug in qemu ?
 > 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-
-Acked-by: Finn Thain <fthain@telegraphics.com.au>
-
-Geert, assuming that Guenter's patch is acceptable, would you also accept 
-a similar patch for the "macmace" platform device?
-
-> ---
-> Modeled after f61e64310b75 ("m68k: set dma and coherent masks for platform
-> FEC ethernets"). 
+> Hi Guenter,
 > 
-> RFC: Is "nothing special about the DMA memory coherency" correect ?
+> Thanks for the report. As far as I'm concerned this is a qemu bug, that register should exist on a bare metal Power8.
 > 
+> Will try and get you a qemu patch to fix it.
+> 
+I already have a patch, or at least one that does the trick for me.
+Getting qemu patched was not the problem. I just want to be sure that
+the problem is indeed a qemu problem.
 
-As I understand it, "cache-coherence" is meaningless unless you have 
-multiple CPU cores and caches. If there's only one CPU core, its cache 
-can't be said to be "coherent" or "non-coherent". Moreover, DMA (direct 
-memory access) concerns an IO device and a memory, not a cache, so the 
-term "coherent dma" is bogus IMHO.
+Thanks,
+Guenter
 
+---
+>From 1617bac264b4c49d817b6947611affa9b73318f6 Mon Sep 17 00:00:00 2001
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Fri, 25 May 2018 06:38:40 -0700
+Subject: [PATCH] PowerPC: Permit privileged access to SPR_PCR for POWER7+
+
+Without this access, Linux mainline bails out.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ target/ppc/translate_init.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/target/ppc/translate_init.c b/target/ppc/translate_init.c
+index 391b94b..3b09c49 100644
+--- a/target/ppc/translate_init.c
++++ b/target/ppc/translate_init.c
+@@ -7953,11 +7953,12 @@ static void gen_spr_power6_common(CPUPPCState *env)
+ #endif
+     /*
+      * Register PCR to report POWERPC_EXCP_PRIV_REG instead of
+-     * POWERPC_EXCP_INVAL_SPR.
++     * POWERPC_EXCP_INVAL_SPR in userspace. Permit privileged
++     * access.
+      */
+     spr_register(env, SPR_PCR, "PCR",
+                  SPR_NOACCESS, SPR_NOACCESS,
+-                 SPR_NOACCESS, SPR_NOACCESS,
++                 &spr_read_generic, &spr_write_generic,
+                  0x00000000);
+ }
+ 
 -- 
-
->  arch/m68k/mac/config.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-> index 0c3275aa0197..8e0476daddb8 100644
-> --- a/arch/m68k/mac/config.c
-> +++ b/arch/m68k/mac/config.c
-> @@ -17,6 +17,7 @@
->  #include <linux/tty.h>
->  #include <linux/console.h>
->  #include <linux/interrupt.h>
-> +#include <linux/dma-mapping.h>
->  /* keyb */
->  #include <linux/random.h>
->  #include <linux/delay.h>
-> @@ -971,6 +972,15 @@ static const struct resource mac_scsi_ccl_rsrc[] __initconst = {
->  	},
->  };
->  
-> +static struct platform_device macsonic_dev = {
-> +	.name           = "macsonic",
-> +	.id             = -1,
-> +	.dev            = {
-> +		.dma_mask = &macsonic_dev.dev.coherent_dma_mask,
-> +		.coherent_dma_mask = DMA_BIT_MASK(32),
-> +	},
-> +};
-> +
->  int __init mac_platform_init(void)
->  {
->  	u8 *swim_base;
-> @@ -1088,7 +1098,7 @@ int __init mac_platform_init(void)
->  
->  	if (macintosh_config->ether_type == MAC_ETHER_SONIC ||
->  	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
-> -		platform_device_register_simple("macsonic", -1, NULL, 0);
-> +		platform_device_register(&macsonic_dev);
->  
->  	if (macintosh_config->expansion_type == MAC_EXP_PDS ||
->  	    macintosh_config->expansion_type == MAC_EXP_PDS_COMM)
-> -- 
-> 2.7.4
-> 
+2.7.4
