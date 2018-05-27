@@ -1,56 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeE0VnD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 17:43:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42071 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751582AbeE0VnC (ORCPT
+        id S1751911AbeE0Vpa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 17:45:30 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55703 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751547AbeE0Vp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 17:43:02 -0400
-From: Colin King <colin.king@canonical.com>
-To: David Airlie <airlied@linux.ie>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i2c: tda9950: fix timeout counter check
-Date: Sun, 27 May 2018 22:42:55 +0100
-Message-Id: <20180527214255.24473-1-colin.king@canonical.com>
+        Sun, 27 May 2018 17:45:27 -0400
+X-Google-Smtp-Source: AB8JxZoikRRRq1ds+TT+Rp9kwoLWRYA0S4ZtBw7qQ0nFkJ4/wrKqLMLNpCvIdXOb5/EdIPvVX3egZw==
+From: Artiom Vaskov <velemas@gmail.com>
+Cc: honwchong@gmail.com, Larry.Finger@lwfinger.net,
+        Artiom Vaskov <velemas@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: btusb: Add additional device ID for RTL8822BE
+Date: Mon, 28 May 2018 00:44:01 +0300
+Message-Id: <20180527214402.12831-1-velemas@gmail.com>
 X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The Asus ROG GL702ZC laptop contains a Realtek RTL8822BE device with
+an associated BT chip using a USB ID of 13d3:3526. This ID is added
+to the driver.
 
-Currently the check to see if the timeout has reached zero is incorrect
-and the check is instead checking if the timeout is non-zero and not
-zero, hence it will break out of the loop on the first iteration and
-the msleep is never executed.  Fix this by breaking from the loop when
-timeout is zero.
-
-Detected by CoverityScan, CID#1469404 ("Logically Dead Code")
-
-Fixes: f0316f93897c ("drm/i2c: tda9950: add CEC driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Artiom Vaskov <velemas@gmail.com>
 ---
- drivers/gpu/drm/i2c/tda9950.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index 3f7396caad48..f2186409f0cf 100644
---- a/drivers/gpu/drm/i2c/tda9950.c
-+++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -307,7 +307,7 @@ static void tda9950_release(struct tda9950_priv *priv)
- 	/* Wait up to .5s for it to signal non-busy */
- 	do {
- 		csr = tda9950_read(client, REG_CSR);
--		if (!(csr & CSR_BUSY) || --timeout)
-+		if (!(csr & CSR_BUSY) || !--timeout)
- 			break;
- 		msleep(10);
- 	} while (1);
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index b937cc1e2c07..34e5aedd4e27 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -379,6 +379,7 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3462), .driver_info = BTUSB_REALTEK },
+ 
+ 	/* Additional Realtek 8822BE Bluetooth devices */
++	{ USB_DEVICE(0x13d3, 0x3526), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
+ 
+ 	/* Silicon Wave based devices */
 -- 
 2.17.0
