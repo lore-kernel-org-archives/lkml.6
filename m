@@ -1,103 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032661AbeE0OSk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 10:18:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51034 "EHLO mail.bootlin.com"
+        id S1032678AbeE0OvG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 10:51:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:26557 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965011AbeE0OSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 10:18:38 -0400
-Date: Sun, 27 May 2018 16:18:32 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        Lucas Stach <dev@lynxeye.de>, richard@nod.at, marcel@ziswiler.com,
-        krzk@kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180527161832.1152be6e@xps13>
-In-Reply-To: <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-        <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-        <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-        <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-        <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
-        <20180524135335.6aa0b7a4@bbrezillon>
-        <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S965011AbeE0OvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 10:51:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,448,1520924400";
+   d="scan'208";a="42578915"
+Date: Sun, 27 May 2018 22:50:58 +0800
+From: kbuild test robot <lkp@intel.com>
+To: David Lechner <david@lechnology.com>
+Cc: kbuild-all@01.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        limor@ladyada.net, David Lechner <david@lechnology.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Nitin Patil <nitin@mindsensors.com>
+Subject: Re: [PATCH v2 4/4] drm/tinydrm: new driver for ILI9341 display panels
+Message-ID: <201805272045.EwwwImqG%fengguang.wu@intel.com>
+References: <20180525193623.15533-5-david@lechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525193623.15533-5-david@lechnology.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+Hi David,
 
-On Thu, 24 May 2018 14:19:18 +0200, Stefan Agner <stefan@agner.ch>
-wrote:
+I love your patch! Perhaps something to improve:
 
-> On 24.05.2018 13:53, Boris Brezillon wrote:
-> > Hi Benjamin,
-> > 
-> > On Thu, 24 May 2018 13:30:14 +0200
-> > Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
-> >   
-> >> Hi Stefan,
-> >>
-> >> It seems to me that a probe similar to what the BootROM does shouldn't
-> >> be awfully complicated to implement - just cycle through the switch
-> >> cases in case of an ECC error. But I guess that's more of an idea for
-> >> further improvements rather than a comment to the patch set under
-> >> review.  
-> > 
-> > Nope, not really an option, because you're not guaranteed that the NAND
-> > will be used as a boot media, and the first page or first set of pages
-> > might just be erased.
-> >   
-> 
-> Yeah I did not meant probing like the Boot ROM does.
-> 
-> What I meant was using only the ECC modes which are supported by the
-> Boot ROM when the driver tries to choose a viable mode. So that would
-> be:
-> - RS t=4
-> - BCH t=8
-> - BCH t=16
-> 
-> Maybe we could add a property to enable that behavior:
-> 
-> tegra,use-bootable-ecc-only;
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.17-rc6]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-I'm not sure a property is needed.
+url:    https://github.com/0day-ci/linux/commits/David-Lechner/drm-tinydrm-new-dirver-for-ILI9341-displays/20180527-182036
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-As there is currently no official user of this driver, why not turning
-mandatory the nand-ecc-xxx properties? In the documentation you can add
-a note saying that using other algorithms than the three above is not
-supported by the BootROM.
 
-> 
-> >>
-> >> However, I think that allowing for an override of the oobsize
-> >> inference would be a good idea before merging, no? This could just be
-> >> a trivial #ifdef (at least temporarily). If you agree but don't feel
-> >> like doing it yourself, I'd be happy to pitch in. Let me know.  
-> > 
-> > That's why we have nand-ecc-xxx properties in the DT.
-> >   
-> 
-> Yes, nand-ecc-strength is the first thing I plan to implement, that way
-> strength can be defined in dt.
-> 
-> --
-> Stefan
+sparse warnings: (new ones prefixed by >>)
 
-Thanks,
-Miquèl
+   drivers/gpu/drm/tinydrm/ili9341.c:128:30: sparse: too many arguments for function mipi_dbi_enable_flush
+>> drivers/gpu/drm/tinydrm/ili9341.c:132:19: sparse: incorrect type in initializer (different argument counts) @@    expected void ( *enable )( ... ) @@    got void ( *enable )( ... ) @@
+   drivers/gpu/drm/tinydrm/ili9341.c:132:19:    expected void ( *enable )( ... )
+   drivers/gpu/drm/tinydrm/ili9341.c:132:19:    got void ( *<noident> )( ... )
+   drivers/gpu/drm/tinydrm/ili9341.c:135:23: sparse: undefined identifier 'drm_gem_fb_simple_display_pipe_prepare_fb'
+   drivers/gpu/drm/tinydrm/ili9341.c: In function 'yx240qv29_enable':
+   drivers/gpu/drm/tinydrm/ili9341.c:128:2: error: too many arguments to function 'mipi_dbi_enable_flush'
+     mipi_dbi_enable_flush(mipi, crtc_state, plane_state);
+     ^~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/tinydrm/ili9341.c:21:0:
+   include/drm/tinydrm/mipi-dbi.h:70:6: note: declared here
+    void mipi_dbi_enable_flush(struct mipi_dbi *mipi);
+         ^~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tinydrm/ili9341.c: At top level:
+   drivers/gpu/drm/tinydrm/ili9341.c:132:12: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+     .enable = yx240qv29_enable,
+               ^~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tinydrm/ili9341.c:132:12: note: (near initialization for 'ili9341_pipe_funcs.enable')
+   drivers/gpu/drm/tinydrm/ili9341.c:135:16: error: 'drm_gem_fb_simple_display_pipe_prepare_fb' undeclared here (not in a function); did you mean 'tinydrm_display_pipe_prepare_fb'?
+     .prepare_fb = drm_gem_fb_simple_display_pipe_prepare_fb,
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   tinydrm_display_pipe_prepare_fb
+   cc1: some warnings being treated as errors
+
+vim +132 drivers/gpu/drm/tinydrm/ili9341.c
+
+    49	
+    50	static void yx240qv29_enable(struct drm_simple_display_pipe *pipe,
+    51				     struct drm_crtc_state *crtc_state,
+    52				     struct drm_plane_state *plane_state)
+    53	{
+    54		struct tinydrm_device *tdev = pipe_to_tinydrm(pipe);
+    55		struct mipi_dbi *mipi = mipi_dbi_from_tinydrm(tdev);
+    56		u8 addr_mode;
+    57		int ret;
+    58	
+    59		DRM_DEBUG_KMS("\n");
+    60	
+    61		ret = mipi_dbi_poweron_conditional_reset(mipi);
+    62		if (ret < 0)
+    63			return;
+    64		if (ret == 1)
+    65			goto out_enable;
+    66	
+    67		mipi_dbi_command(mipi, MIPI_DCS_SET_DISPLAY_OFF);
+    68	
+    69		mipi_dbi_command(mipi, ILI9341_PWCTRLB, 0x00, 0xc1, 0x30);
+    70		mipi_dbi_command(mipi, ILI9341_PWRSEQ, 0x64, 0x03, 0x12, 0x81);
+    71		mipi_dbi_command(mipi, ILI9341_DTCTRLA, 0x85, 0x00, 0x78);
+    72		mipi_dbi_command(mipi, ILI9341_PWCTRLA, 0x39, 0x2c, 0x00, 0x34, 0x02);
+    73		mipi_dbi_command(mipi, ILI9341_PUMPCTRL, 0x20);
+    74		mipi_dbi_command(mipi, ILI9341_DTCTRLB, 0x00, 0x00);
+    75	
+    76		/* Power Control */
+    77		mipi_dbi_command(mipi, ILI9341_PWCTRL1, 0x23);
+    78		mipi_dbi_command(mipi, ILI9341_PWCTRL2, 0x10);
+    79		/* VCOM */
+    80		mipi_dbi_command(mipi, ILI9341_VMCTRL1, 0x3e, 0x28);
+    81		mipi_dbi_command(mipi, ILI9341_VMCTRL2, 0x86);
+    82	
+    83		/* Memory Access Control */
+    84		mipi_dbi_command(mipi, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_16BIT);
+    85	
+    86		/* Frame Rate */
+    87		mipi_dbi_command(mipi, ILI9341_FRMCTR1, 0x00, 0x1b);
+    88	
+    89		/* Gamma */
+    90		mipi_dbi_command(mipi, ILI9341_EN3GAM, 0x00);
+    91		mipi_dbi_command(mipi, MIPI_DCS_SET_GAMMA_CURVE, 0x01);
+    92		mipi_dbi_command(mipi, ILI9341_PGAMCTRL,
+    93				 0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
+    94				 0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00);
+    95		mipi_dbi_command(mipi, ILI9341_NGAMCTRL,
+    96				 0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
+    97				 0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f);
+    98	
+    99		/* DDRAM */
+   100		mipi_dbi_command(mipi, ILI9341_ETMOD, 0x07);
+   101	
+   102		/* Display */
+   103		mipi_dbi_command(mipi, ILI9341_DISCTRL, 0x08, 0x82, 0x27, 0x00);
+   104		mipi_dbi_command(mipi, MIPI_DCS_EXIT_SLEEP_MODE);
+   105		msleep(100);
+   106	
+   107		mipi_dbi_command(mipi, MIPI_DCS_SET_DISPLAY_ON);
+   108		msleep(100);
+   109	
+   110	out_enable:
+   111		switch (mipi->rotation) {
+   112		default:
+   113			addr_mode = ILI9341_MADCTL_MX;
+   114			break;
+   115		case 90:
+   116			addr_mode = ILI9341_MADCTL_MV;
+   117			break;
+   118		case 180:
+   119			addr_mode = ILI9341_MADCTL_MY;
+   120			break;
+   121		case 270:
+   122			addr_mode = ILI9341_MADCTL_MV | ILI9341_MADCTL_MY |
+   123				    ILI9341_MADCTL_MX;
+   124			break;
+   125		}
+   126		addr_mode |= ILI9341_MADCTL_BGR;
+   127		mipi_dbi_command(mipi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
+ > 128		mipi_dbi_enable_flush(mipi, crtc_state, plane_state);
+   129	}
+   130	
+   131	static const struct drm_simple_display_pipe_funcs ili9341_pipe_funcs = {
+ > 132		.enable = yx240qv29_enable,
+   133		.disable = mipi_dbi_pipe_disable,
+   134		.update = tinydrm_display_pipe_update,
+   135		.prepare_fb = drm_gem_fb_simple_display_pipe_prepare_fb,
+   136	};
+   137	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
