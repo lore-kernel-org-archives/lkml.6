@@ -1,65 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032566AbeE0CWd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 22:22:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:50943 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032474AbeE0CWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 22:22:32 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Date: Sun, 27 May 2018 12:22:23 +1000
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180525133308.GA17443@roeck-us.net>
-References: <20180525133308.GA17443@roeck-us.net>
+        id S1032596AbeE0CW5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 22:22:57 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57850 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032474AbeE0CWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 22:22:55 -0400
+Subject: [PATCH] bdi: Fix another oops in wb_workfn()
+To: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, tj@kernel.org,
+        david@fromorbit.com, linux-block@vger.kernel.org
+References: <000000000000cbd959056d1851ca@google.com>
+ <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <314ae2e0-c873-04ce-9cd5-fe2acadaee26@I-love.SAKURA.ne.jp>
+Date: Sun, 27 May 2018 11:21:25 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] powerpc/64s: Clear PCR on boot
-To: Guenter Roeck <linux@roeck-us.net>,
-        Michael Neuling <mikey@neuling.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-CC: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-From: Michael Ellerman <michael@ellerman.id.au>
-Message-ID: <31148B04-5AA9-4F4F-BD34-CD9665F7F6D6@ellerman.id.au>
+In-Reply-To: <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>From 8a8222698163d1fe180258566e9a3ff43f54fcd9 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Sun, 27 May 2018 11:08:20 +0900
+Subject: [PATCH] bdi: Fix another oops in wb_workfn()
 
+syzbot is still hitting NULL pointer dereference at wb_workfn() [1].
+This might be because we overlooked that delayed_work_timer_fn() does not
+check WB_registered before calling __queue_work() while mod_delayed_work()
+does not wait for already started delayed_work_timer_fn() because it uses
+del_timer() rather than del_timer_sync().
 
-On 25 May 2018 11:33:08 pm AEST, Guenter Roeck <linux@roeck-us.net> wrote:
->On Fri, May 18, 2018 at 11:37:42AM +1000, Michael Neuling wrote:
->> Clear the PCR (Processor Compatibility Register) on boot to ensure we
->> are not running in a compatibility mode.
->> 
->> We've seen this cause problems when a crash (and kdump) occurs while
->> running compat mode guests. The kdump kernel then runs with the PCR
->> set and causes problems. The symptom in the kdump kernel (also seen
->in
->> petitboot after fast-reboot) is early userspace programs taking
->> sigills on newer instructions (seen in libc).
->> 
->
->Hi folks,
->
->this patch causes qemu to bail out with
->
->Trying to write privileged spr 338 (0x152) at c000000000033454
->
->when running it with "-M powernv -cpu POWER8" and powernv_defconfig.
->
->Can you confirm that this is a bug in qemu ?
+Make wb_shutdown() be careful about wb_wakeup_delayed() path.
 
-Hi Guenter,
+[1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
 
-Thanks for the report. As far as I'm concerned this is a qemu bug, that register should exist on a bare metal Power8.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Dave Chinner <dchinner@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>
+---
+ mm/backing-dev.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-Will try and get you a qemu patch to fix it.
-
-cheers
-
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 7441bd9..31e1d7e 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -372,11 +372,24 @@ static void wb_shutdown(struct bdi_writeback *wb)
+ 
+ 	cgwb_remove_from_bdi_list(wb);
+ 	/*
++	 * mod_delayed_work() is not appropriate here, for
++	 * delayed_work_timer_fn() from wb_wakeup_delayed() does not check
++	 * WB_registered before calling __queue_work().
++	 */
++	del_timer_sync(&wb->dwork.timer);
++	/*
++	 * Clear WORK_STRUCT_PENDING_BIT in order to make sure that next
++	 * queue_delayed_work() actually enqueues this work to the tail, for
++	 * wb_wakeup_delayed() already set WORK_STRUCT_PENDING_BIT before
++	 * scheduling delayed_work_timer_fn().
++	 */
++	cancel_delayed_work_sync(&wb->dwork);
++	/*
+ 	 * Drain work list and shutdown the delayed_work.  !WB_registered
+ 	 * tells wb_workfn() that @wb is dying and its work_list needs to
+ 	 * be drained no matter what.
+ 	 */
+-	mod_delayed_work(bdi_wq, &wb->dwork, 0);
++	queue_delayed_work(bdi_wq, &wb->dwork, 0);
+ 	flush_delayed_work(&wb->dwork);
+ 	WARN_ON(!list_empty(&wb->work_list));
+ 	/*
 -- 
-Sent from my Android phone with K-9 Mail. Please excuse my brevity.
+1.8.3.1
