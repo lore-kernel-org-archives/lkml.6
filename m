@@ -1,48 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751911AbeE0Vpa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 17:45:30 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55703 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751547AbeE0Vp1 (ORCPT
+        id S1751844AbeE0VyS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 17:54:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42204 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbeE0VyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 17:45:27 -0400
-X-Google-Smtp-Source: AB8JxZoikRRRq1ds+TT+Rp9kwoLWRYA0S4ZtBw7qQ0nFkJ4/wrKqLMLNpCvIdXOb5/EdIPvVX3egZw==
-From: Artiom Vaskov <velemas@gmail.com>
-Cc: honwchong@gmail.com, Larry.Finger@lwfinger.net,
-        Artiom Vaskov <velemas@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btusb: Add additional device ID for RTL8822BE
-Date: Mon, 28 May 2018 00:44:01 +0300
-Message-Id: <20180527214402.12831-1-velemas@gmail.com>
+        Sun, 27 May 2018 17:54:15 -0400
+From: Colin King <colin.king@canonical.com>
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/nouveau/disp: avoid potential overflow on shift of int value
+Date: Sun, 27 May 2018 22:54:11 +0100
+Message-Id: <20180527215411.24701-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
-To: unlisted-recipients:; (no To-header on input)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Asus ROG GL702ZC laptop contains a Realtek RTL8822BE device with
-an associated BT chip using a USB ID of 13d3:3526. This ID is added
-to the driver.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Artiom Vaskov <velemas@gmail.com>
+The constant values being shifted are 32 bit integers and may potentially
+overflow on the shift.  Avoid this potential overflow by making them
+unsigned long long values before the shift.
+
+Detected by CoverityScan, CID#1469383, 1469400 ("Unintentional
+integer overflow")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/bluetooth/btusb.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c | 2 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index b937cc1e2c07..34e5aedd4e27 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -379,6 +379,7 @@ static const struct usb_device_id blacklist_table[] = {
- 	{ USB_DEVICE(0x13d3, 0x3462), .driver_info = BTUSB_REALTEK },
- 
- 	/* Additional Realtek 8822BE Bluetooth devices */
-+	{ USB_DEVICE(0x13d3, 0x3526), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
- 
- 	/* Silicon Wave based devices */
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+index 29e6dd58ac48..99b94802ed63 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+@@ -52,7 +52,7 @@ void
+ gf119_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
+ {
+ 	struct nvkm_device *device = chan->disp->base.engine.subdev.device;
+-	const u64 mask = 0x00000001 << chan->chid.user;
++	const u64 mask = 0x00000001ULL << chan->chid.user;
+ 	if (!en) {
+ 		nvkm_mask(device, 0x610090, mask, 0x00000000);
+ 		nvkm_mask(device, 0x6100a0, mask, 0x00000000);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+index 57719f675eec..43ae3b092e43 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+@@ -166,7 +166,7 @@ void
+ nv50_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
+ {
+ 	struct nvkm_device *device = chan->disp->base.engine.subdev.device;
+-	const u64 mask = 0x00010001 << chan->chid.user;
++	const u64 mask = 0x00010001ULL << chan->chid.user;
+ 	const u64 data = en ? 0x00010000 : 0x00000000;
+ 	nvkm_mask(device, 0x610028, mask, data);
+ }
 -- 
 2.17.0
