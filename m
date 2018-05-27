@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032859AbeE0RCL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 13:02:11 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:46787 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032763AbeE0RCJ (ORCPT
+        id S1032875AbeE0RTK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 13:19:10 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:40596 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032764AbeE0RTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 13:02:09 -0400
-X-Google-Smtp-Source: ADUXVKKAFqAVxy5ITra2FA8+ZtXh0RlWw9nLq0DzLKPKTANqznIH1x5J4khvxDwEFQJ8lPldDC3qgA==
+        Sun, 27 May 2018 13:19:08 -0400
+X-Google-Smtp-Source: ADUXVKLw+RatTIs7l2r8ZkvCvt2WUajR4OqOz4ZncI7MBw0je1vHIM7F/UQcNBzwGwVtS1XoapvtNw==
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
 To: jic23@kernel.org
 Cc: knaack.h@gmx.de, linux-kernel@vger.kernel.org,
         linux-iio@vger.kernel.org, pmeerw@pmeerw.net, lars@metafoo.de,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2] iio: 104-quad-8: Provide defines for magic numbers
-Date: Sun, 27 May 2018 13:01:48 -0400
-Message-Id: <20180527170148.2027-1-vilhelm.gray@gmail.com>
+Subject: [PATCH v3] iio: 104-quad-8: Provide defines for magic numbers
+Date: Sun, 27 May 2018 13:18:43 -0400
+Message-Id: <20180527171843.2664-1-vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -26,23 +26,24 @@ clarity of the code by cleaning up magic numbers throughout the driver.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
-Changes in v2:
-  - Add "QUAD8_" prefix to defines to help prevent future name
-    collisions
+Changes in v3:
+ - Rename REG_CHANNEL_OPERATION to QUAD8_REG_CHAN_OP and
+   REG_INDEX_INPUT_LEVELS to QUAD_8_REG_INDEX_INPUT_LEVELS (these two
+   defines were missed in v2)
 
  drivers/iio/counter/104-quad-8.c | 87 ++++++++++++++++++++++----------
  1 file changed, 61 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/iio/counter/104-quad-8.c b/drivers/iio/counter/104-quad-8.c
-index 4be85ec54af4..9a63afcb887c 100644
+index 4be85ec54af4..92be8d0f7735 100644
 --- a/drivers/iio/counter/104-quad-8.c
 +++ b/drivers/iio/counter/104-quad-8.c
 @@ -59,6 +59,39 @@ struct quad8_iio {
  	unsigned int base;
  };
  
-+#define REG_CHANNEL_OPERATION 0x11
-+#define REG_INDEX_INPUT_LEVELS 0x16
++#define QUAD8_REG_CHAN_OP 0x11
++#define QUAD8_REG_INDEX_INPUT_LEVELS 0x16
 +/* Borrow Toggle flip-flop */
 +#define QUAD8_FLAG_BT BIT(0)
 +/* Carry Toggle flip-flop */
@@ -82,7 +83,7 @@ index 4be85ec54af4..9a63afcb887c 100644
  	case IIO_CHAN_INFO_RAW:
  		if (chan->type == IIO_INDEX) {
 -			*val = !!(inb(priv->base + 0x16) & BIT(chan->channel));
-+			*val = !!(inb(priv->base + REG_INDEX_INPUT_LEVELS)
++			*val = !!(inb(priv->base + QUAD8_REG_INDEX_INPUT_LEVELS)
 +				& BIT(chan->channel));
  			return IIO_VAL_INT;
  		}
@@ -222,7 +223,7 @@ index 4be85ec54af4..9a63afcb887c 100644
  
  	/* Reset all counters and disable interrupt function */
 -	outb(0x01, base[id] + 0x11);
-+	outb(QUAD8_CHAN_OP_RESET_COUNTERS, base[id] + REG_CHANNEL_OPERATION);
++	outb(QUAD8_CHAN_OP_RESET_COUNTERS, base[id] + QUAD8_REG_CHAN_OP);
  	/* Set initial configuration for all counters */
  	for (i = 0; i < QUAD8_NUM_COUNTERS; i++) {
  		base_offset = base[id] + 2 * i;
@@ -250,7 +251,7 @@ index 4be85ec54af4..9a63afcb887c 100644
  	}
  	/* Enable all counters */
 -	outb(0x00, base[id] + 0x11);
-+	outb(QUAD8_CHAN_OP_ENABLE_COUNTERS, base[id] + REG_CHANNEL_OPERATION);
++	outb(QUAD8_CHAN_OP_ENABLE_COUNTERS, base[id] + QUAD8_REG_CHAN_OP);
  
  	return devm_iio_device_register(dev, indio_dev);
  }
