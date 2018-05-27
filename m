@@ -1,56 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936409AbeE0LJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 07:09:27 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:32947 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936373AbeE0LJZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 07:09:25 -0400
-X-Google-Smtp-Source: AB8JxZqRwZpUmZnBCo1UMHFxxartOzn3RNTuoyOM3kA9AhSPb27HBdcAJq3i1Baq+QCJ3dCI2kynrZ9n6eskDTdYfbw=
-MIME-Version: 1.0
-References: <CAKEZqKJhZNoF-29ymEmAjiYfVn64q5mHrMY9sC2NZ=EDqTHjeA@mail.gmail.com>
- <20180526171206.GP30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180526171206.GP30522@ZenIV.linux.org.uk>
-From: Lei Chen <losemyheaven@gmail.com>
-Date: Sun, 27 May 2018 19:09:14 +0800
-Message-ID: <CAKEZqK+x7MLBRFnez-XzTi3GPxoEr9p+1w25d3hkr5JLrWW2Lw@mail.gmail.com>
-Subject: Re: Why does d_splice_alias need to check IS_ROOT?
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1755258AbeE0LYQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 07:24:16 -0400
+Received: from gofer.mess.org ([88.97.38.141]:49335 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755127AbeE0LYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 07:24:14 -0400
+From: Sean Young <sean@mess.org>
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Matthias Reichl <hias@horus.com>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: [PATCH v5 1/3] bpf: bpf_prog_array_copy() should return -ENOENT if exclude_prog not found
+Date: Sun, 27 May 2018 12:24:08 +0100
+Message-Id: <d44044258b35a965d71db5e8ee26289d0fc75ec2.1527419762.git.sean@mess.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1527419762.git.sean@mess.org>
+References: <cover.1527419762.git.sean@mess.org>
+In-Reply-To: <cover.1527419762.git.sean@mess.org>
+References: <cover.1527419762.git.sean@mess.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4RB9hCG026049
 
-Al Viro <viro@zeniv.linux.org.uk> 于2018年5月27日周日 上午1:12写道：
+This makes is it possible for bpf prog detach to return -ENOENT.
 
-> On Sun, May 27, 2018 at 12:33:40AM +0800, Lei Chen wrote:
-> > Hello list,
-> >
-> > I'm insteresting in how hard link and denry lookup work and their
-> > implementation.
-> >
-> > I know that this interface tries to connect an inode to a dentry, but
-> > why does it need
-> > to check whether the inode alias IS_ROOT if the inode represents a
-directory?
-> > And the code process in different way according to check result.  What
-> > occasions
-> > are they used for?
+Acked-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ kernel/bpf/core.c        | 11 +++++++++--
+ kernel/trace/bpf_trace.c |  2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-> If it's disconnected (and not an ancestor of the place where we want it),
-> we can just move it in place, no questions asked.  If it is *NOT*
-> disconnected, the only thing we can do is to detach it from where it
-> is and move it over.  Which takes a lot more care wrt locking.
-
-Thanks for your reply.
-
-But why does it mean "disconnected" if IS_ROOT returns true??
-Why not use hlist_unhashed(&entry->d_u.d_alias) or d_is_negative to
-determine whether a dentry is connected to an inode??
-
-I found that when we allocate a new dentry struct, its parent is not
-always itself.
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index b574dddc05b8..527587de8a67 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -1616,6 +1616,7 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 	int new_prog_cnt, carry_prog_cnt = 0;
+ 	struct bpf_prog **existing_prog;
+ 	struct bpf_prog_array *array;
++	bool found_exclude = false;
+ 	int new_prog_idx = 0;
+ 
+ 	/* Figure out how many existing progs we need to carry over to
+@@ -1624,14 +1625,20 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 	if (old_array) {
+ 		existing_prog = old_array->progs;
+ 		for (; *existing_prog; existing_prog++) {
+-			if (*existing_prog != exclude_prog &&
+-			    *existing_prog != &dummy_bpf_prog.prog)
++			if (*existing_prog == exclude_prog) {
++				found_exclude = true;
++				continue;
++			}
++			if (*existing_prog != &dummy_bpf_prog.prog)
+ 				carry_prog_cnt++;
+ 			if (*existing_prog == include_prog)
+ 				return -EEXIST;
+ 		}
+ 	}
+ 
++	if (exclude_prog && !found_exclude)
++		return -ENOENT;
++
+ 	/* How many progs (not NULL) will be in the new array? */
+ 	new_prog_cnt = carry_prog_cnt;
+ 	if (include_prog)
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 81fdf2fc94ac..af1486d9a0ed 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1006,6 +1006,8 @@ void perf_event_detach_bpf_prog(struct perf_event *event)
+ 
+ 	old_array = event->tp_event->prog_array;
+ 	ret = bpf_prog_array_copy(old_array, event->prog, NULL, &new_array);
++	if (ret == -ENOENT)
++		goto unlock;
+ 	if (ret < 0) {
+ 		bpf_prog_array_delete_safe(old_array, event->prog);
+ 	} else {
+-- 
+2.17.0
