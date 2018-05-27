@@ -1,150 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751501AbeE0UGF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 16:06:05 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:43986 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751360AbeE0UGD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 16:06:03 -0400
-X-Google-Smtp-Source: ADUXVKIL8n6pFX2JGsSyJJg59wYTMlw7A+l+BApEN53eFb9diKmNlgBW9n9XI2iEvjwFgdV+YKTBiTGlh+c1ANpREk4uyuIxAnFr
+        id S1751581AbeE0UHN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 16:07:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:44516 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751343AbeE0UHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 16:07:12 -0400
+Date: Sun, 27 May 2018 22:07:08 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Gabriel C <nix.or.die@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: smpboot seems to be confused on dual EPYC system
+Message-ID: <20180527200707.GC6349@zn.tnic>
+References: <CAEJqkgjMdeeiF+apcAGKdOJQRvaq8SLFsS2dvpuapY1DQn6oTA@mail.gmail.com>
 MIME-Version: 1.0
-Date: Sun, 27 May 2018 13:06:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cb4149056d3587f5@google.com>
-Subject: KASAN: use-after-free Write in bpf_tcp_close
-From: syzbot <syzbot+31025a5f3f7650081204@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAEJqkgjMdeeiF+apcAGKdOJQRvaq8SLFsS2dvpuapY1DQn6oTA@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sun, May 20, 2018 at 03:23:32PM +0200, Gabriel C wrote:
+> Hello,
+> 
+> I have an H11DSi-NT board with 2 *  EPYC 7281 16C/32T CPUs.
+> 
+> On that box for some reason spmboot things '4' logical packages
+> are possible.
 
-syzbot found the following crash on:
+First of all, which kernel?
 
-HEAD commit:    ff4fb475cea8 Merge branch 'btf-uapi-cleanups'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b3d577800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=31025a5f3f7650081204
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=109a2f37800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171a727b800000
+> Max CPUs can be 128 ( 2 * 32C/64T ), however only 2 CPUs are possible
+> not 4 and therefor there is no way to add other 64 hotplug CPUs.
+> ( not even sure cpu hotplug will work here )
+> 
+> $ dmesg | egrep "smpboot|NR_CPUS|CPUs"
+> [    0.000000] smpboot: Allowing 128 CPUs, 64 hotplug CPUs
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+31025a5f3f7650081204@syzkaller.appspotmail.com
+Your BIOS is made to support 32-Core CPUs too.
 
-==================================================================
-BUG: KASAN: use-after-free in cmpxchg_size  
-include/asm-generic/atomic-instrumented.h:355 [inline]
-BUG: KASAN: use-after-free in bpf_tcp_close+0x6f5/0xf80  
-kernel/bpf/sockmap.c:265
-Write of size 8 at addr ffff8801ca277680 by task syz-executor749/9723
+> [    0.000000] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:128
+> nr_cpu_ids:128 nr_node_ids:8
+> [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=128, Nodes=8
+> [    0.000000]  RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=128.
+> [    0.037000] smpboot: CPU0: AMD EPYC 7281 16-Core Processor (family:
+> 0x17, model: 0x1, stepping: 0x2)
 
-CPU: 0 PID: 9723 Comm: syz-executor749 Not tainted 4.17.0-rc4+ #19
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
-  cmpxchg_size include/asm-generic/atomic-instrumented.h:355 [inline]
-  bpf_tcp_close+0x6f5/0xf80 kernel/bpf/sockmap.c:265
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  __do_sys_exit_group kernel/exit.c:979 [inline]
-  __se_sys_exit_group kernel/exit.c:977 [inline]
-  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440a59
-RSP: 002b:00007ffdadf92488 EFLAGS: 00000206 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440a59
-RDX: 0000000000440a59 RSI: 0000000000000020 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 00000000004002c8 R09: 0000000000401ea0
-R10: 00000000004002c8 R11: 0000000000000206 R12: 000000000001b5ac
-R13: 0000000000401ea0 R14: 0000000000000000 R15: 0000000000000000
+That says 2 * 16C * 2T = 64T.
 
-Allocated by task 9723:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc_node mm/slab.c:3682 [inline]
-  __kmalloc_node+0x47/0x70 mm/slab.c:3689
-  kmalloc_node include/linux/slab.h:554 [inline]
-  bpf_map_area_alloc+0x3f/0x90 kernel/bpf/syscall.c:144
-  sock_map_alloc+0x376/0x410 kernel/bpf/sockmap.c:1555
-  find_and_alloc_map kernel/bpf/syscall.c:126 [inline]
-  map_create+0x393/0x1010 kernel/bpf/syscall.c:448
-  __do_sys_bpf kernel/bpf/syscall.c:2128 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2105 [inline]
-  __x64_sys_bpf+0x300/0x4f0 kernel/bpf/syscall.c:2105
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [    0.048005] smp: Bringing up secondary CPUs ...
+> [    0.055042] .... node  #0, CPUs:          #1   #2   #3
+> [    0.079029] .... node  #1, CPUs:     #4   #5   #6   #7
+> [    0.111049] .... node  #2, CPUs:     #8   #9  #10  #11
+> [    0.143050] .... node  #3, CPUs:    #12  #13  #14  #15
+> [    0.175031] .... node  #4, CPUs:    #16  #17  #18  #19
+> [    0.217031] .... node  #5, CPUs:    #20  #21  #22  #23
+> [    0.249062] .... node  #6, CPUs:    #24  #25  #26  #27
+> [    0.281058] .... node  #7, CPUs:    #28  #29  #30  #31
+> [    0.313028] .... node  #0, CPUs:    #32  #33  #34  #35
+> [    0.345028] .... node  #1, CPUs:    #36  #37  #38  #39
+> [    0.377046] .... node  #2, CPUs:    #40  #41  #42  #43
+> [    0.409043] .... node  #3, CPUs:    #44  #45  #46  #47
+> [    0.441028] .... node  #4, CPUs:    #48  #49  #50  #51
+> [    0.473029] .... node  #5, CPUs:    #52  #53  #54  #55
+> [    0.505060] .... node  #6, CPUs:    #56  #57  #58  #59
+> [    0.537052] .... node  #7, CPUs:    #60  #61  #62  #63
+> [    0.562171] smp: Brought up 8 nodes, 64 CPUs
+> [    0.562171] smpboot: Max logical packages: 4
+> [    0.562171] smpboot: Total of 64 processors activated (268089.53 BogoMIPS)
 
-Freed by task 4521:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  kvfree+0x61/0x70 mm/util.c:440
-  bpf_map_area_free+0x15/0x20 kernel/bpf/syscall.c:155
-  sock_map_remove_complete kernel/bpf/sockmap.c:1443 [inline]
-  sock_map_free+0x408/0x540 kernel/bpf/sockmap.c:1619
-  bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:259
-  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
-  kthread+0x345/0x410 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+You have 64 logical CPUs.
 
-The buggy address belongs to the object at ffff8801ca277680
-  which belongs to the cache kmalloc-1024 of size 1024
-The buggy address is located 0 bytes inside of
-  1024-byte region [ffff8801ca277680, ffff8801ca277a80)
-The buggy address belongs to the page:
-page:ffffea0007289d80 count:1 mapcount:0 mapping:ffff8801ca276000 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801ca276000 0000000000000000 0000000100000007
-raw: ffffea0006d12b20 ffffea000763bba0 ffff8801da800ac0 0000000000000000
-page dumped because: kasan: bad access detected
+So what is the problem?
 
-Memory state around the buggy address:
-  ffff8801ca277580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801ca277600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801ca277680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff8801ca277700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ca277780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+-- 
+Regards/Gruss,
+    Boris.
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Good mailing practices for 400: avoid top-posting and trim the reply.
