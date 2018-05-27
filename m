@@ -1,126 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032593AbeE0JuP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 05:50:15 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:40201 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933214AbeE0JuN (ORCPT
+        id S964783AbeE0KSI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 06:18:08 -0400
+Received: from mail-ot0-f176.google.com ([74.125.82.176]:44578 "EHLO
+        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935648AbeE0KSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 05:50:13 -0400
-X-Google-Smtp-Source: ADUXVKLHjLJGJ3EPcLOkm+HLGpj0r8Xk47xx/dCTRanXcWSrAZe4EER2ST4c5+fZ63/V6yOt45ZK6t6kr9HLaP3HekE=
+        Sun, 27 May 2018 06:18:06 -0400
+X-Google-Smtp-Source: ADUXVKJrMwHK7AN6g3z4kWMleHsnV0T496+n6PA1qLltodOOp9Ns4GLlGLZ8VGmSF6gsUQrsmmWUZzp0HQP/LUNMMp4=
 MIME-Version: 1.0
-In-Reply-To: <20180524141023.13765-2-patrick.bellasi@arm.com>
-References: <20180524141023.13765-1-patrick.bellasi@arm.com> <20180524141023.13765-2-patrick.bellasi@arm.com>
+In-Reply-To: <1527150816-8459-1-git-send-email-ulf.hansson@linaro.org>
+References: <1527150816-8459-1-git-send-email-ulf.hansson@linaro.org>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 27 May 2018 11:50:12 +0200
-X-Google-Sender-Auth: VlU7I09dAD0sxvCPT8hlv3qqFek
-Message-ID: <CAJZ5v0iq-k4QeeEm6vzfWNLkXxNtLZa0Y9_bBcYWCGQ_FjzgDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] sched/cpufreq: always consider blocked FAIR utilization
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+Date: Sun, 27 May 2018 12:18:05 +0200
+X-Google-Sender-Auth: yIWARc75jDzVoOsXCJhjgVKIvBs
+Message-ID: <CAJZ5v0gGLvKS6yDuBokJzm2gAhM=VMSaz5frvWq=eRPkAD-z6g@mail.gmail.com>
+Subject: Re: [PATCH] PM / runtime: Drop usage count for suppliers at device
+ link removal
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 4:10 PM, Patrick Bellasi
-<patrick.bellasi@arm.com> wrote:
-> Since the refactoring introduced by:
+On Thu, May 24, 2018 at 10:33 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> In the case consumer device is runtime resumed, while the link to the
+> supplier is removed, the earlier call to pm_runtime_get_sync() made from
+> rpm_get_suppliers() does not get properly balanced with a corresponding
+> call to pm_runtime_put(). This leads to that suppliers remains to be
+> runtime resumed forever, while they don't need to.
 >
->    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+> Let's fix the behaviour by calling rpm_put_suppliers() when dropping a
+> device link. Not that, since rpm_put_suppliers() checks the
+> link->rpm_active flag, we can correctly avoid to call pm_runtime_put() in
+> cases when we shouldn't.
 >
-> we aggregate FAIR utilization only if this class has runnable tasks.
-> This was mainly due to avoid the risk to stay on an high frequency just
-> because of the blocked utilization of a CPU not being properly decayed
-> while the CPU was idle.
->
-> However, since:
->
->    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
->
-> the FAIR blocked utilization is properly decayed also for IDLE CPUs.
->
-> This allows us to use the FAIR blocked utilization as a safe mechanism
-> to gracefully reduce the frequency only if no FAIR tasks show up on a
-> CPU for a reasonable period of time.
->
-> Moreover, we also reduce the frequency drops of CPUs running periodic
-> tasks which, depending on the task periodicity and the time required
-> for a frequency switch, was increasing the chances to introduce some
-> undesirable performance variations.
->
-> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Or please let me know if you want me to apply this one.
-
+> Reported-by: Todor Tomov <todor.tomov@linaro.org>
+> Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 > ---
-> Changes in v3:
->  - add "Tested-by" and "Acked-by" Vincent tags
 >
-> Changes in v2:
->  - add "Acked-by" Viresh tag
-> ---
->  kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index e13df951aca7..28592b62b1d5 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
->  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->  {
->         struct rq *rq = cpu_rq(sg_cpu->cpu);
-> -       unsigned long util;
->
-> -       if (rq->rt.rt_nr_running) {
-> -               util = sg_cpu->max;
-> -       } else {
-> -               util = sg_cpu->util_dl;
-> -               if (rq->cfs.h_nr_running)
-> -                       util += sg_cpu->util_cfs;
-> -       }
-> +       if (rq->rt.rt_nr_running)
-> +               return sg_cpu->max;
->
->         /*
-> +        * Utilization required by DEADLINE must always be granted while, for
-> +        * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-> +        * gracefully reduce the frequency when no tasks show up for longer
-> +        * periods of time.
-> +        *
->          * Ideally we would like to set util_dl as min/guaranteed freq and
->          * util_cfs + util_dl as requested freq. However, cpufreq is not yet
->          * ready for such an interface. So, we only do the latter for now.
->          */
-> -       return min(util, sg_cpu->max);
-> +       return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
->  }
->
->  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
-> --
-> 2.15.1
->
+> Rafael, I am not sure if this is safe from locking point of view. The device
+> link write lock has been taken when pm_runtime_drop_link() is called, hence I
+> assume calling rpm_put_suppliers() should be fine!? If not, can you please
+> advise how to change?
+
+Holding the lock should be sufficient for the list to be stable, so
+AFAICS it is OK.
+
+Thanks,
+Rafael
