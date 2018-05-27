@@ -1,92 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeE0TSm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 15:18:42 -0400
-Received: from vps01.wiesinger.com ([46.36.37.179]:51448 "EHLO
-        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeE0TSk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 15:18:40 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com w4RJIYUp019093
-Subject: Re: B53 DSA switch problem on Banana Pi-R1 on Fedora 26 -
- systemd-networkd problem
-From: Gerhard Wiesinger <lists@wiesinger.com>
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        initramfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <3bdb712d-38bd-e2ca-63cf-8406a7b5689d@wiesinger.com>
- <20180522201632.GB4396@lunn.ch>
- <59d6b55f-d50a-063c-90a9-31a758e01383@gmail.com>
- <fa5c2615-40b3-62bc-3dda-59f9ef574686@wiesinger.com>
- <76c3f5ec-0ab2-c06d-98e8-277284bb1a8e@gmail.com>
- <779f2be3-3e74-e650-5240-efaf1003d77c@wiesinger.com>
- <4f7c5173-019d-ba0e-70b3-addf64a6a9fa@gmail.com>
- <aba2788a-ba54-dbc8-dd60-e862ba31d66d@wiesinger.com>
- <53c9272a-0e1a-e8fb-a3e4-b4e23e77be10@gmail.com>
- <ba1a6179-48ff-ca2b-bb3c-f99f8376df50@wiesinger.com>
- <18ca17a1-4673-2ace-7142-d4aef6854bc4@wiesinger.com>
- <219eaac0-3d76-005a-f8d6-c54ea21f205e@wiesinger.com>
-Message-ID: <485b3a0e-23d6-c90c-6f41-8d9f33b1ad1f@wiesinger.com>
-Date: Sun, 27 May 2018 21:18:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751507AbeE0TUp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 15:20:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:54269 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751291AbeE0TUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 15:20:42 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 28 May 2018 05:20:24 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for May 24
+Message-ID: <20180528052024.757922c4@canb.auug.org.au>
+In-Reply-To: <20180527184639.GD1564@sirena.org.uk>
+References: <20180525173025.GO4828@sirena.org.uk>
+        <20180527184639.GD1564@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <219eaac0-3d76-005a-f8d6-c54ea21f205e@wiesinger.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vjVfSQbXWouyAxBpg+5/Hf5"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.05.2018 21:01, Gerhard Wiesinger wrote:
-> On 24.05.2018 08:22, Gerhard Wiesinger wrote:
->> On 24.05.2018 07:29, Gerhard Wiesinger wrote:
->>> After some analysis with Florian (thnx) we found out that the 
->>> current implementation is broken:
->>>
->>> https://patchwork.ozlabs.org/patch/836538/
->>> https://github.com/torvalds/linux/commit/c499696e7901bda18385ac723b7bd27c3a4af624#diff-a2b6f8d89e18de600e873ac3ac43fa1d 
->>>
->>>
->>> Florians comment:
->>>
->>> c499696e7901bda18385ac723b7bd27c3a4af624 ("net: dsa: b53: Stop using
->>> dev->cpu_port incorrectly") since it would result in no longer setting
->>> the CPU port as tagged for a specific VLAN. Easiest way for you right
->>> now is to just revert it, but this needs some more thoughts for a 
->>> proper
->>> upstream change. I will think about it some more.
->>
->> Can confirm 4.14.18-200.fc26.armv7hl works, 4.15.x should be broken.
->>
->> # Kernel 4.14.x ok
->> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/log/drivers/net/dsa/b53?h=v4.14.43 
->>
->> # Kernel 4.15.x should be NOT ok
->> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/log/drivers/net/dsa/b53?h=v4.15.18 
->>
+--Sig_/vjVfSQbXWouyAxBpg+5/Hf5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Mark,
+
+On Sun, 27 May 2018 19:46:39 +0100 Mark Brown <broonie@kernel.org> wrote:
 >
->
+> On Fri, May 25, 2018 at 06:30:25PM +0100, Mark Brown wrote:
+>=20
+> > quickly as hoped, sorry.  There should be another linux-next done by me
+> > for today (25th) as well, that will appear tomorrow all being well. =20
 
-Forgot to mention: What's also strange is that the VLAN ID is very high:
+Thanks for taking this on.  It's not a good time in the cycle :-(
 
-# 4.14.18-300.fc27.armv7hl, iproute-4.15.0-1.fc28.armv7hl
-ip -d link show eth0.101 | grep "vlan protocol"
-     vlan protocol 802.1Q id 3069279796 <REORDER_HDR>
-ip -d link show eth0.102 | grep "vlan protocol"
-     vlan protocol 802.1Q id 3068673588 <REORDER_HDR>
+> There won't be.  For some reason I need to get to the bottom of the
+> builds are taking a lot longer than they have previously which has
+> caused a whole bunch of problems.
 
-On older kernels this looks ok: 4.12.8-200.fc25.armv7hl, 
-iproute-4.11.0-1.fc25.armv7hl:
-  ip -d link show eth0.101 | grep "vlan protocol"
-     vlan protocol 802.1Q id 101 <REORDER_HDR>
-ip -d link show eth0.102 | grep "vlan protocol"
-     vlan protocol 802.1Q id 102 <REORDER_HDR>
+Hmmm, that doesn't sound good.
 
-Ideas?
+> > Stephen should be back on Monday. =20
 
-Thank you.
+I will start again tomorrow (Tuesday) as today is a public holiday
+here.  It seems to be a holiday in the US as well, so things should be
+OK (at least quiet :-)).
 
-Ciao,
-Gerhard
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vjVfSQbXWouyAxBpg+5/Hf5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsLBPgACgkQAVBC80lX
+0Gxbywf/R2Dj9VY+dLoKmwhDIgRU1S0/f3Crr3aX5ddZsCUPk0r1I+bI/0KRHRmY
+BhtpqHRfkf+f5IsK4HMzJWY5D/jIznXOQWq28okAq/bDX3zmYxC3m85ZqAtyJD2s
+GqvVJsJ8QWGghxHyA1VU8UNXhcUABMCJhH/RFh/mGWUCi8/eAZGm/K/8TDe0F2Hs
+V4pyA0CD0k6irU/GJxEkOW6mGCPLOgAHvsPvDXia6a709oXOHFqpzJvIhNn2M2Dx
+XCfZchorI8KUKql7/SSatKl56Xcrkj1EPbRG7yjoaumjRQ0rgdLqJoHSKBZdzRzv
+FrA3RDmdqGDRJgeQCzXrOjjCFeBJTw==
+=cCWN
+-----END PGP SIGNATURE-----
+
+--Sig_/vjVfSQbXWouyAxBpg+5/Hf5--
