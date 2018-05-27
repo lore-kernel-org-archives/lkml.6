@@ -1,70 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936370AbeE0Jf3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 05:35:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933214AbeE0Jf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 05:35:26 -0400
-Date: Sun, 27 May 2018 10:35:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Quentin Schulz <quentin.schulz@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: sun4i-gpadc: select REGMAP_IRQ
-Message-ID: <20180527103520.134fb6f8@archlinux>
-In-Reply-To: <20180525153451.3164970-1-arnd@arndb.de>
-References: <20180525153451.3164970-1-arnd@arndb.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1032610AbeE0Jgx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 05:36:53 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44380 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933214AbeE0Jgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 05:36:50 -0400
+X-Google-Smtp-Source: ADUXVKJS6m3DN11f427vxHU/aMVYr4AYdboeRtSKMTNi8Pru6H2u3IVkyFjXnsn676DBX5/y1aidVdxpfobBckiOI38=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180525155352.22350-1-mr.nuke.me@gmail.com>
+References: <20180525155352.22350-1-mr.nuke.me@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 27 May 2018 11:36:49 +0200
+X-Google-Sender-Auth: neGXZg5UJC7Fh5DPlDH_QQ2ysbQ
+Message-ID: <CAJZ5v0g_wQ0zhjbohQaU1GNxpri_Nkm=bOXyMQ8zi8dOGTxmYA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] acpi: apei: Drop panic() on fatal errors policy
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>,
+        "open list:EDAC-CORE" <linux-edac@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devel@acpica.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018 17:34:23 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, May 25, 2018 at 5:53 PM, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+> FFS (firmware-first) handling through APEI seems to have developed a
+> policy to panic() on any fatal errors. This policy is completely
+> independent of the non-FFS case. It is also inconsistent with how the
+> native error handlers, a number of which will recover the system from
+> fatal errors.
+>
+> The purpose of this series is to obsolete this idiotic policy, with
+> the motivation to enable identical handling of PCIe errors to native
+> reporting.
+>
+>
+> Rafael, this is copypaste from the previous patch series. I suspect
+> you might have missed it last time, because you asked questions which
+> were answered here. I've included it so you don't have to go digging
+> old emails:
 
-> We can't call regmap_irq_get_virq() unless the regmap-irq support
-> is enabled:
-> 
-> drivers/iio/adc/sun4i-gpadc-iio.o: In function `sun4i_irq_init':
-> sun4i-gpadc-iio.c:(.text+0x59c): undefined reference to `regmap_irq_get_virq'
-> 
-> I came across this in a randconfig build now, but I guess this is
-> a much older problem that I simply never hit before because regmap_irq
-> is usually enabled by one of the other drivers that need it.
-> 
-> Fixes: d1caa9905538 ("iio: adc: add support for Allwinner SoCs ADC")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+I didn't miss it, but I didn't like your answers.
 
-Applied to the togreg branch of iio.git.  I might move it to the fixes
-branch if the merge window opens shortly so as to get it upstream
-faster. Pushed out as testing for the autobuilders to play with it.
+Anyway, as a rule, no GHES/APEI patches are applied without an ACK
+from either Boris or Tony, so you need to talk to them about the
+patches.
 
 Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/adc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 9da79070357c..13922b595503 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -717,6 +717,7 @@ config SUN4I_GPADC
->  	depends on IIO
->  	depends on MFD_SUN4I_GPADC || MACH_SUN8I
->  	depends on THERMAL || !THERMAL_OF
-> +	select REGMAP_IRQ
->  	help
->  	  Say yes here to build support for Allwinner (A10, A13 and A31) SoCs
->  	  GPADC. This ADC provides 4 channels which can be used as an ADC or as
+Rafael
