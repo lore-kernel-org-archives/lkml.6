@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751623AbeE0VRL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 17:17:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41879 "EHLO
+        id S1751605AbeE0VXY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 17:23:24 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41921 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751439AbeE0VRJ (ORCPT
+        with ESMTP id S1751439AbeE0VXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 17:17:09 -0400
+        Sun, 27 May 2018 17:23:22 -0400
 From: Colin King <colin.king@canonical.com>
-To: Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath10k: fix memory leak of tpc_stats
-Date: Sun, 27 May 2018 22:17:02 +0100
-Message-Id: <20180527211702.23778-1-colin.king@canonical.com>
+Subject: [PATCH][next] ALSA: xen-front: remove redundant error check on ret
+Date: Sun, 27 May 2018 22:23:12 +0100
+Message-Id: <20180527212312.23997-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -25,44 +25,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently tpc_stats is allocated and is leaked on the return
-path if num_tx_chain is greater than WMI_TPC_TX_N_CHAIN. Avoid
-this leak by performing the check on num_tx_chain before the
-allocation of tpc_stats.
+The error for a -ve value in ret is redundant as all previous
+assignments to ret have an associated -ve check and hence it
+is impossible for ret to be less that zero at the point of the
+check.  Remove this redundant error check.
 
-Detected by CoverityScan, CID#1469422 ("Resource Leak")
-Fixes: 4b190675ad06 ("ath10k: fix kernel panic while reading tpc_stats")
+Detected by CoveritScan, CID#1469407 ("Logically Dead code")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/xen/xen_snd_front_evtchnl.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index 46fb96ee5852..694f46fa9e14 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -4470,10 +4470,6 @@ void ath10k_wmi_event_pdev_tpc_config(struct ath10k *ar, struct sk_buff *skb)
- 
- 	ev = (struct wmi_pdev_tpc_config_event *)skb->data;
- 
--	tpc_stats = kzalloc(sizeof(*tpc_stats), GFP_ATOMIC);
--	if (!tpc_stats)
--		return;
--
- 	num_tx_chain = __le32_to_cpu(ev->num_tx_chain);
- 
- 	if (num_tx_chain > WMI_TPC_TX_N_CHAIN) {
-@@ -4482,6 +4478,10 @@ void ath10k_wmi_event_pdev_tpc_config(struct ath10k *ar, struct sk_buff *skb)
- 		return;
+diff --git a/sound/xen/xen_snd_front_evtchnl.c b/sound/xen/xen_snd_front_evtchnl.c
+index d70a62e7f910..102d6e096cc8 100644
+--- a/sound/xen/xen_snd_front_evtchnl.c
++++ b/sound/xen/xen_snd_front_evtchnl.c
+@@ -351,8 +351,6 @@ int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
+ 			}
+ 		}
  	}
+-	if (ret < 0)
+-		goto fail;
  
-+	tpc_stats = kzalloc(sizeof(*tpc_stats), GFP_ATOMIC);
-+	if (!tpc_stats)
-+		return;
-+
- 	ath10k_wmi_tpc_config_get_rate_code(rate_code, pream_table,
- 					    num_tx_chain);
- 
+ 	front_info->num_evt_pairs = num_streams;
+ 	return 0;
 -- 
 2.17.0
