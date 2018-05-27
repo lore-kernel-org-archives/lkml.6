@@ -1,56 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934508AbeE0GkK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 02:40:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933685AbeE0GkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 02:40:08 -0400
-Date: Sun, 27 May 2018 08:39:46 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        davem@davemloft.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>, linux-usb@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] usb: gadget: ccid: add support for USB CCID Gadget
- Device
-Message-ID: <20180527063946.GA1232@kroah.com>
-References: <20180526203401.16586-1-marcus.folkesson@gmail.com>
- <20180526205652.GA25534@kroah.com>
- <20180527054847.GB22105@gmail.com>
+        id S934706AbeE0HYC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 03:24:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38110 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932993AbeE0HYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 03:24:00 -0400
+Date: Sun, 27 May 2018 15:23:38 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
+        Filipe Manana <fdmanana@gmail.com>
+Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
+Message-ID: <20180527072332.GA18240@ming.t460p>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
+ <20180525045306.GB8740@kmo-pixel>
+ <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180527054847.GB22105@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 07:48:47AM +0200, Marcus Folkesson wrote:
-> On Sat, May 26, 2018 at 10:56:52PM +0200, Greg Kroah-Hartman wrote:
-> > On Sat, May 26, 2018 at 10:33:59PM +0200, Marcus Folkesson wrote:
-> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+On Fri, May 25, 2018 at 10:30:46AM -0600, Jens Axboe wrote:
+> On 5/24/18 10:53 PM, Kent Overstreet wrote:
+> > On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
+> >> Hi,
+> >>
+> >> This patchset brings multipage bvec into block layer:
 > > 
-> > I can't take patches without any changelog text.  And why would you
-> > submit a patch over 1000 lines without any?
+> > patch series looks sane to me. goddamn that's a lot of renaming.
 > 
-> I'm sorry, obviously not much went well for me yesterday.
-> The changlelog was "fixup:ed" away and now I noticed that my
-> patch version history did not follow for v2.
+> Indeed... I actually objected to some of the segment -> page renaming,
+> but it's still in there. The foo2() temporary functions also concern me,
+> we all know there's nothing more permanent than a temporary fixup.
+
+Jens, I remember I explained the renaming story to you in lsfmm a bit:
+
+1) the current naming of segment is actually wrong, since every segment
+only stores one single-page vector
+
+2) the most important part is that once multipage bvec is introduced,
+if the old _segment naming is still kept, it can be very confusing,
+especially no good name is left for the helpers of dealing with real
+segment.
+
+For the foo2() temporary change, that is only for avoiding tree-wide
+change in one single tree, with this way, we can change sub-system one
+by one, but if you think it is good to do tree-wide conversion in one
+patch, I am fine to do it in next version.
+
 > 
-> Is it better to send a v3 with updated version history or wait for more
-> comments?
+> > Things are going to get interesting when we start sticking compound pages in the
+> > page cache, there'll be some interesting questions of semantics to deal with
+> > then but I think getting this will only help w.r.t. plumbing that through and
+> > not dealing with 4k pages unnecessarily - but I think even if we were to decide
+> > that merging in bio_add_page() is not the way to go when the upper layers are
+> > passing compound pages around already, this patch series helps because
+> > regardless at some point everything under generic_make_request() is going to
+> > have to deal with segments that are more than one page, and this patch series
+> > makes that happen. So incremental progress.
+> > 
+> > Jens, any objections to getting this in?
+> 
+> I like most of it, but I'd much rather get this way earlier in the series.
+> We're basically just one week away from the merge window, it needs more simmer
+> and testing time than that. On top of that, it hasn't received much review
+> yet.
+> 
+> So as far as I'm concerned, we can kick off the 4.19 block branch with
+> iterated versions of this patchset.
 
-Nah, that's fine, but I'll let Felipe decide as he is the one that has
-to review this, not me.
+OK, I will post out again once v4.19 is started.
 
-thanks,
-
-greg k-h
+Thanks,
+Ming
