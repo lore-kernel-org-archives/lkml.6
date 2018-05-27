@@ -1,156 +1,123 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2038031-1527597052-2-2509759474115794484
+X-Cyrus-Session-Id: sloti22d1t05-3530501-1527459311-2-7336991881888524824
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527597052; b=JCay2RaP+8tVIsVIyy/fTjWaGCKGKOiEiIteKzOAM1WSG5spLS
-    JkX/ds6IThfr0+f1182qAgha56Y67g1Yu41UUBoV/LBWrMU8rdXO6DNB79Vh30M3
-    6+P7ul4KIdyNBFnn/LKYU+qiwv/Jazba05JaKf7F+5kndc19ELBWrXtyz/eAF9fd
-    KttODDHef9zefjVi5e1Njm8umINoDjnq3fF1hbMS7A9BlAE/jjxA+JcAW1SHcDhr
-    +yfYE/Smu0PGAzBvcqWQercgNJKqkL9X/TOk/LJaEEnf67pyFrFn9rr+YLWGH6TL
-    Pq1DjVk4jTHVqRtgrsIPsfYuqfCJ6WlmrNeA==
+    1527459311; b=VJOTIyKmSCZWbLZ4MgmPDsd0X3a7eTSZYoN2vx7eZI3mMhx92X
+    f9kr+sFnLcREbeVjL4zrGkY+6hRNS2d/fKralaC713837hZktdH4aDD/sk0wzM8b
+    MoGtw4IkHC3StUTYg7R9cAa8GasCAimgHn2ocDqOu0TgegnejdWnDRSa5+kFIo50
+    mFz/yVTr+yYltl5iQesHca9k9R3w51Dwa2QtFE1VOBFKQnlitfIyu1/BGlCAEe9+
+    cvK7PLSKcKLBEWaHdj3RWq5YAOiefO4zaWZw1tN2POJG7LNla3T1U+vDftBY4kCe
+    wWBhW5r6OeWgZaBtMAaM+zRxLapyYDqzfkMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:in-reply-to
-    :references:content-type:mime-version:content-transfer-encoding
-    :message-id:sender:list-id; s=fm2; t=1527597052; bh=FMO8PBD6SRZX
-    ORoJUlUM4AjrreMnK/3cW/b8dWJIHzA=; b=IPDZ6DLzUwcWLz6qnaHhNIAGYVUu
-    NPkEEOerWkIOdAhxRLcL4BhJa/bf4ZD9WAkqWZqFuJj0VAK4Ur+DOza2vnQ/6G4P
-    eF5c48mTDr6vKzq/o7BwbmH8WffD2Ve4Vp93f+bG1P8hoHCH7yWjmNcvjwRNucgZ
-    W9LpJlZokwiBA1PzCrOx3PJRfkMxkVnSTw40SiIsbymD+UWfhOrkauOfdBSo4jeJ
-    f4uY820SEvvo0tzveygBnmosRJ+aA5wSVWepJv4F+3f6z7H6QpUAMVKeWqVJvRCJ
-    BzKYLR7clRhL3fS93csY2OqHZ8DutDhsMSW004CgO/ATQvXDFI3mnEalvg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1527459311; bh=2VNhjCxV2h1XMaoVLher5h5YHGqdIu
+    p7NNhL+vHYrHM=; b=SKgcf/zeA7E1XLW5vFAWKBSsaLIdsVDOQAwFQ1IuirSzzl
+    IMQvwz7oYZeZADaA93v+EmwSLJC7YSKmbdF9MdjmJhepfapfCewLe64Z7WmkBjxQ
+    uhOZ3ep8AAoZEBHEDStWS7fcLpfCniuBnxYszHyifv8i42Oo0K76yJoxVvBMlPM9
+    XcG0Vpix1JKwE8hzT1QsoGYzxvEc5cV097vqxFqR5SlIjJCmVG+B3nO3nPuGOKSM
+    9FvRonlfSqErki15zZl2vSYaVLu+ASmyieBwZQGPZs+/lNnkFWrGiSHDsNAbIwos
+    Gi1i+Cxxvd0G37PglC3o1rrC7zxERygvz0iJU+ZA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=canonical.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=canonical.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJN4STBtThS6cbqEJWa6Bu48AB3WDm68rmknGoNjCiEnMFNp+nM5Fc7PtK+j0OKgvtsY+RxVdKibynO9+4/+LNY0a6FFkIJhy9Br6YhG0cB7HwNcxLZH
-    g0JLh2jdjN+fCXnj8K9DtFbm3+tZL/IKe9gv7gk1p6gtUE4ZAeExIJV4P9CcsVAw+cJqCphtTjXxJYK1DSfk1EGkzwa8zKWJKDUCzid5E94k8RcTIeibsl2R
-    9PQ5+3MQZqQBgNZcMkUehw==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfO7KwRJj8xK/z29eW2asmFAdAbb0FmP/8yVA1BCRiNxMijxkz5FL6jQrYLHAGqo8fSLmAVd5+ab/pGmqajkrS6XzhQQdAr6GBZ/xwI2ipSeF32ENzKim
+    cqD5CYhq4xQl3tec3z7B1fKV5GcfF4KUmDNKrjP4fugIYKTZ33a+XsOdKYI2NrAP0oOEhFYDRAw8axK78zgz6QvU2DxjxDwVXjoTdrl88qoUUGY6MRJF5tXN
+    wW5y6qRejEkB+yG6Pk6Gcw==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=nwZw_7uSb73Hb-8ZWD8A:9 a=QEXdDO2ut3YA:10
+    a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=0Y_sIrUEXXJ0DDch8e8A:9 a=QEXdDO2ut3YA:10
     a=x8gzFH9gYPwA:10 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933761AbeE2Mau (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 08:30:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47830 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933728AbeE2Mas (ORCPT
+        id S1751710AbeE0WPI (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 27 May 2018 18:15:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42332 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbeE0WPH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 May 2018 08:30:48 -0400
-Subject: Re: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
- allocate
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Colin King <colin.king@canonical.com>,
-        Matthew Garrett <mjg59@google.com>,
+        Sun, 27 May 2018 18:15:07 -0400
+From: Colin King <colin.king@canonical.com>
+To: Matthew Garrett <mjg59@google.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 29 May 2018 08:30:27 -0400
-In-Reply-To: <20180527225510.25612-1-colin.king@canonical.com>
-References: <20180527225510.25612-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+Subject: [PATCH][next] EVM: fix memory leak of temporary buffer 'temp'
+Date: Sun, 27 May 2018 23:15:02 +0100
+Message-Id: <20180527221502.25073-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052912-0044-0000-0000-00000557F62A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052912-0045-0000-0000-0000289A042E
-Message-Id: <1527597027.10176.16.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290143
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Sun, 2018-05-27 at 23:55 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where the allocation of xattr fails and xattr is NULL, the
-> error exit return path via label 'out' will dereference xattr when
-> kfree'ing xattr-name.  Fix this by only kfree'ing xattr->name and xattr
-> when xattr is non-null.
-> 
-> Detected by CoverityScan, CID#1469366 ("Dereference after null check")
-> 
-> Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/integrity/evm/evm_secfs.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index fb8bc950aceb..cf5cd303d7c0 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -253,8 +253,10 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
->  out:
->  	audit_log_format(ab, " res=%d", err);
->  	audit_log_end(ab);
-> -	kfree(xattr->name);
-> -	kfree(xattr);
-> +	if (xattr) {
-> +		kfree(xattr->name);
-> +		kfree(xattr);
-> +	}
->  	return err;
->  }
-> 
+The allocation of 'temp' is not kfree'd and hence there is a memory
+leak on each call of evm_read_xattrs.  Fix this by kfree'ing it
+after copying data from it back to the user space buffer 'buf'.
 
-Thanks!  To fix this problem, I think more is needed.
+Detected by CoverityScan, CID#1469386 ("Resource Leak")
 
-Without the xattr, there is nothing to audit except the attempt to
-extend the xattr list.  Failure to allocate the xattr or xattr->name
-should either result in a different audit message or return
-immediately without any audit message.
+Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/integrity/evm/evm_secfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Mimi
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index a7a0a1acae99..fb8bc950aceb 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -158,6 +158,8 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
+ 	mutex_unlock(&xattr_list_mutex);
+ 	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
+ 
++	kfree(temp);
++
+ 	return rc;
+ }
+ 
+-- 
+2.17.0
 
