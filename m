@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032975AbeE0R7Q (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 13:59:16 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:36096 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032821AbeE0R7N (ORCPT
+        id S1032982AbeE0SF4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 14:05:56 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43443 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032846AbeE0SFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 13:59:13 -0400
-X-Google-Smtp-Source: ADUXVKIGZinyCcp+JT5iiUjO6D1FJzgmtRyNzkk5fMUf9+HIuJn8M0h8OKuBOC7XDsfTb1bT9QOOxg==
-Date: Sun, 27 May 2018 14:59:08 -0300
+        Sun, 27 May 2018 14:05:53 -0400
+X-Google-Smtp-Source: ADUXVKLL7Jw3Gx4A4CR1C57LuQQ95P+IiFCf81n9+E4MkQRfeMxNG1vIFrowTuQdlhRLmUkZgQukfA==
+Date: Sun, 27 May 2018 15:05:49 -0300
 From: Jefferson Capovilla <jefcap@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: mt7621-eth: fix line over 80 char in
+Subject: [PATCH] staging: mt7621-eth: Remove extra line in
  mtk_set_link_ksettings()
-Message-ID: <20180527175908.GA11653@jefcap-VirtualBox>
+Message-ID: <20180527180549.GA11995@jefcap-VirtualBox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -23,27 +23,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix 'line over 80 characters' issue found by checkpatch.pl script in
-mtk_set_link_ksettings().
+Fix extra line before end of function.
 
 Signed-off-by: Jefferson Capovilla <jefcap@gmail.com>
 ---
- drivers/staging/mt7621-eth/ethtool.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/mt7621-eth/ethtool.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/staging/mt7621-eth/ethtool.c b/drivers/staging/mt7621-eth/ethtool.c
-index 38ba0c0..b565d2a 100644
+index b565d2a..e9f4092 100644
 --- a/drivers/staging/mt7621-eth/ethtool.c
 +++ b/drivers/staging/mt7621-eth/ethtool.c
-@@ -52,7 +52,8 @@ static int mtk_set_link_ksettings(struct net_device *dev,
- 			mac->phy_dev = mac->hw->phy->phy[cmd->base.phy_address];
- 			mac->phy_flags = MTK_PHY_FLAG_PORT;
- 		} else if (mac->hw->mii_bus) {
--			mac->phy_dev = mdiobus_get_phy(mac->hw->mii_bus, cmd->base.phy_address);
-+			mac->phy_dev = mdiobus_get_phy(mac->hw->mii_bus,
-+						       cmd->base.phy_address);
- 			if (!mac->phy_dev)
- 				return -ENODEV;
- 			mac->phy_flags = MTK_PHY_FLAG_ATTACH;
+@@ -63,7 +63,6 @@ static int mtk_set_link_ksettings(struct net_device *dev,
+ 	}
+ 
+ 	return phy_ethtool_ksettings_set(mac->phy_dev, cmd);
+-
+ }
+ 
+ static void mtk_get_drvinfo(struct net_device *dev,
 -- 
 2.7.4
