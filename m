@@ -1,5 +1,5 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-280420-1527499958-2-8488477589975509357
+X-Cyrus-Session-Id: sloti22d1t05-2955833-1527432113-2-10037764162502724745
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='UTF-8'
@@ -8,87 +8,96 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527499957; b=hbLu0YG/zZG6INTeQ3LvaQkcD3iL+hfJstzvZarBlZ7pRQTKFt
-    9hhtQqDkAAwjzWZnHXo1jBJcsgwOKIOk7jleA2wFPO3lR3lwJ4TqoVWKqW06gSY4
-    JEkQ+u43tm5s7rRM2ejJUELPqHLZObGZvwn4aKC79dXeBfSPi55lgRgxAnX4Hj1U
-    ZIUQqG3Vzh7R3eskPgQIAq7tFVlbtbDaLQ1dOp2msHOs9IhFcI9PGKjK2t0JlqyX
-    XsaJzgnP+0efxlcoBfVx8iCA+DFIVlKxAKpvQlhulMpMQ/3awaj5FjL7rS5LKTRm
-    Ai1VKHcWXehbAz6JMbQV+ZvK7Kl9W0AtOVGw==
+    1527432112; b=Bgj/wdxYnxL1ROlxT3anQDcpv281hNcYrbpqq8o7/Lqq+F0j0o
+    KmQ8AOBus45XH9DE7+pT1LKc3lCxZ2jER7UwieBUSUcE08azFard/56TbFUhhpYH
+    rjYhlj97pqDP7iQdGLnToUP2gXoLGyiL60QoVcmQJWomPXExUMj/SAlkKVy7W0yp
+    VulsYYWdS2/INaj5vGnjYj0VCMjiUhHsuu+o+HCjYIjkss+UP+sRcDv0Dt5SwpJZ
+    yjKTblMGv5ToQNj6JYtn41PmamQXIN7EErnWx68c9vbve9STsaSkCx64axgxjM51
+    HZQ3ll4BXqtxO2UlxxkYNGrhDPFdguYYM/Rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1527499957; bh=lt3vMmGgeUvaVgCCC0uVH1VOvxV0eSuC0a+j9165E0
-    k=; b=ScwWufGKWU63QduMTuHjp1xC14Sa2Sf/51+B0nqFaMgg7tuXuHkpLAHSPq
-    pEk/BSiceAOME+sAQXICNTmVAjk5ZjVNBnQPSDjxLfCQNGlUk6iu59UTetdP9/F0
-    46daqI+EQXdJBNNuuMFfJCfx/Ijc8kKuD2NX4jUVUzHgrUxAvOYtl/+HQrHeLpF2
-    V7P5jTjHXrl1Lj6CReOwQ5mJwQhPKd1Q2JJe4McCHiimhogGQVMNzH6pyIHA4jkF
-    TsB0VhtW+uaIEhVLWSYO+OLVFG7AII1xAjaniOA7BYdr5A7ZSMkTFLLd2DXL8+KM
-    b1FMLAloZVvcv7V8NkDapwzza/fg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=gUiycgvp
-    header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    fm2; t=1527432112; bh=9ipuLu7e8NbqP7Xv60oArnFmet3EKUDj4pGFB/jb+s
+    E=; b=QFUyXUJ8alvwIGo9Sbt2FQsT1/SBgaKIvjJXnxFXArXqZqhNNZ8HQ7bXN8
+    Cl0b5xgXen9ZKRuGMhTOHf3As5usHdnoBp7JbS5t3AydZh0qBE1KBJ+9+VLGCwWo
+    YW0ECrYpK35Sa90irBWoUrDuUDqidw5tL3bQ5GuAEKIZXfkwtu9sdc+RZSAYlWHV
+    WXnhwVW6MB+7G+e0Y4XvsA/JNsX9irI5oZlO4EOk/67t7qxTWhq4IrgpTrNkkayj
+    kjH9sDUFe5fbkoCpzFPy9Oua8MToQRLxjOYZYHseJhXGqlUffVKiJAaek/N/ARVn
+    gwJFLLrTy62V+NPwyDxnF8XG8Grg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+    header.d=chromium.org header.i=@chromium.org header.b=YAclngd5
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=google.com header.i=@google.com header.b=rn4Zgw06 x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=oE2Z95/w;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=EMo3++l7;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    header.domain=chromium.org header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=gUiycgvp
-      header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+      header.d=chromium.org header.i=@chromium.org header.b=YAclngd5
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=google.com header.i=@google.com header.b=rn4Zgw06 x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=oE2Z95/w;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=EMo3++l7;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+      header.domain=chromium.org header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIsuucFneAAUbz4m5qiVek6OqIDwBNnrJTjvZt1X0BMJsCUumXdvju0U9d/ASEJQ9n9EqvMrC673h7l5fPi3MMyQeYonXgnJsCQY8MhKqaA+m57r6/w0
-    QGsUvSnGdz65p+i5X7yKGC7wTsgGbwlC6HpcuQno3DSe0QjZ9VcZl9jmoxiPjzJhObzhKiX3MyTGTkyxRKprjR5LBw6P7Pl1TkXqMc0uaYd0pHSVSI+i0WYX
-    TJ8tQ5y1YWkFcL8yEDmEMA==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=8r6i9kuyV-oA:10 a=VUJBJC2UJ8kA:10 a=Z4Rwk6OoAAAA:8 a=cm27Pg_UAAAA:8
-    a=VwQbUJbxAAAA:8 a=q4xLdUcud8kkguz4o8YA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=HkZW87K1Qel5hWWM3VKY:22 a=xmb-EsYY8bH0VWELuYED:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfPiDo6ST5o7i/XGiRHUIQqdks9VBckE48ZSPtd4JAfniBkJBw/KLTbiQS6tVE6JyROEwbDR16r0miRxMu0XVKXKiSbrllhd5OsQ58I41IUYiFp6AoAjh
+    mYRkuVvZ9Atu+rAvFfQRsAyYP6je1F21cXa677ReW/kuElgRhboGuM3gfInAUfBDvsppYl4IFF2oCPTEKSyb1fjhTzywtfViGwV+3yyu3b3HKHqdyHqDpco9
+    FzEXqTG7c5uppqlGscviPQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=h-S6D512bQwJWK2uGKkA:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754171AbeE1Jcf (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 05:32:35 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:32879 "EHLO
+        id S1030337AbeE0Oli (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 27 May 2018 10:41:38 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46335 "EHLO
         mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754121AbeE1Jce (ORCPT
+        with ESMTP id S1032669AbeE0Olg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 May 2018 05:32:34 -0400
-X-Google-Smtp-Source: ADUXVKJHGWuHbvl+YYVRUJK8qDxO/X02F0o7FqvYAlVG79S5TEZ2X7TKsi+7OWBeQUl1NHMhTSIwlS4JRG6t2y6kfgE=
+        Sun, 27 May 2018 10:41:36 -0400
+X-Google-Smtp-Source: ADUXVKL8OcHj7GsAwLpbVfutX4eAWKSlXM7++vtyCl5e5ECauFJYpG0MkvpQXMJb9Gz3t4q7EIfRN5erEoohvUKX4D4=
 MIME-Version: 1.0
 In-Reply-To: <CA+55aFx6DBp+d33_fytOGPWw11xg_L0MdGp1M2e5Obc0N9kMRQ@mail.gmail.com>
 References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
  <CAGXu5j+PHzDwnJxJwMJ=WuhacDn_vJWe9xZx+Kbsh28vxOGRiA@mail.gmail.com> <CA+55aFx6DBp+d33_fytOGPWw11xg_L0MdGp1M2e5Obc0N9kMRQ@mail.gmail.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Mon, 28 May 2018 11:32:13 +0200
-Message-ID: <CAJHCu1Ky09DWskcD4nVW5u1C5faWMv1A4kcxWzdiap7+G1SPkg@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sun, 27 May 2018 07:41:34 -0700
+X-Google-Sender-Auth: MBxWaeJKZn9g-ucVVcsszG2pvEc
+Message-ID: <CAGXu5jK_YfFLKt4vde__bzmhH9SCEz01ET9wyycYkhSSQj5+RA@mail.gmail.com>
 Subject: Re: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+Cc: Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        Jann Horn <jannh@google.com>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -105,16 +114,8 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-05-27 3:33 GMT+02:00 Linus Torvalds <torvalds@linux-foundation.org>:
-> On Sat, May 26, 2018 at 5:32 PM Kees Cook <keescook@chromium.org> wrote:
->
->> I went through some old threads from 2012 when e268337dfe26 was
->> introduced, and later when things got looked at during DirtyCOW. There
->> was discussion about removing FOLL_FORCE (in order to block writes on
->> a read-only memory region).
->
-> Side note, we did that for /dev/mem, and things broke.
->
+On Sat, May 26, 2018 at 6:33 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 > Thus commit f511c0b17b08 "Yes, people use FOLL_FORCE ;)"
 >
 > Side note, that very sam ecommit f511c0b17b08 is also the explanation for
@@ -123,9 +124,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 > People really do use "write to /proc/self/mem" as a way to keep the
 > mappings read-only, but have a way to change them when required.
 
-Oh, I didn't expect this, interesting...
-A configurable LSM is probably the right way to do this.
+Ah! Yes, that is the commit I was trying to find. Thanks!
 
-Thank you for your time,
+-Kees
 
-Salvatore
+-- 
+Kees Cook
+Pixel Security
