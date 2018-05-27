@@ -1,58 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032601AbeE0C2X (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 22:28:23 -0400
-Received: from mga03.intel.com ([134.134.136.65]:22405 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032514AbeE0C2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 22:28:20 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,446,1520924400";
-   d="scan'208";a="44500498"
-Date: Sun, 27 May 2018 10:27:39 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
-        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
-Message-ID: <201805270821.IfPrgwb1%fengguang.wu@intel.com>
-References: <20180524060114.GJ4249@localhost.localdomain>
+        id S1032564AbeE0CgJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 22:36:09 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:42608 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032500AbeE0CgH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 22:36:07 -0400
+X-Google-Smtp-Source: AB8JxZrKbfJU7Ge8TKJzy4uB83cCr88VzRKoncROSdHrVrpALPemDw6w08BeaQU8ncuuTzFj871Jsg==
+Date: Sat, 26 May 2018 19:36:02 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, david@fromorbit.com,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
+Message-ID: <20180527023602.GE1351649@devbig577.frc2.facebook.com>
+References: <000000000000cbd959056d1851ca@google.com>
+ <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
+ <314ae2e0-c873-04ce-9cd5-fe2acadaee26@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180524060114.GJ4249@localhost.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <314ae2e0-c873-04ce-9cd5-fe2acadaee26@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matti,
+On Sun, May 27, 2018 at 11:21:25AM +0900, Tetsuo Handa wrote:
+> From 8a8222698163d1fe180258566e9a3ff43f54fcd9 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Sun, 27 May 2018 11:08:20 +0900
+> Subject: [PATCH] bdi: Fix another oops in wb_workfn()
+> 
+> syzbot is still hitting NULL pointer dereference at wb_workfn() [1].
+> This might be because we overlooked that delayed_work_timer_fn() does not
+> check WB_registered before calling __queue_work() while mod_delayed_work()
+> does not wait for already started delayed_work_timer_fn() because it uses
+> del_timer() rather than del_timer_sync().
 
-Thank you for the patch! Perhaps something to improve:
+It shouldn't be that as dwork timer is an irq safe timer.  Even if
+that's the case, the right thing to do would be fixing workqueue
+rather than reaching into workqueue internals from backing-dev code.
 
-[auto build test WARNING on ljones-mfd/for-mfd-next]
-[also build test WARNING on v4.17-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Thanks.
 
-url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/mfd-regulator-clk-bd71837-ROHM-BD71837-PMIC-driver/20180526-192351
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+tejun
