@@ -1,118 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032778AbeE0PNo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 11:13:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51613 "EHLO mail.bootlin.com"
+        id S1032796AbeE0POJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 11:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032595AbeE0PNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 11:13:41 -0400
-Date: Sun, 27 May 2018 17:13:37 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Stefan Agner <stefan@agner.ch>,
-        Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        Lucas Stach <dev@lynxeye.de>, richard@nod.at, marcel@ziswiler.com,
-        krzk@kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180527171337.002eeb9f@bbrezillon>
-In-Reply-To: <20180527161832.1152be6e@xps13>
-References: <cover.1526990589.git.stefan@agner.ch>
-        <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-        <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-        <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-        <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
-        <20180524135335.6aa0b7a4@bbrezillon>
-        <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
-        <20180527161832.1152be6e@xps13>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1032595AbeE0POH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 11:14:07 -0400
+Date: Sun, 27 May 2018 17:13:47 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vadim Pasternak <vadimp@mellanox.com>
+Cc: dvhart@infradead.org, andy.shevchenko@gmail.com,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com
+Subject: Re: [PATCH v3 6/7] platform/mellanox: Introduce support for Mellanox
+ register access driver
+Message-ID: <20180527151347.GA15487@kroah.com>
+References: <1527439664-127317-1-git-send-email-vadimp@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527439664-127317-1-git-send-email-vadimp@mellanox.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 27 May 2018 16:18:32 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+On Sun, May 27, 2018 at 04:47:43PM +0000, Vadim Pasternak wrote:
+> Introduce new Mellanox platform driver to allow access to Mellanox
+> programmable device register space trough sysfs interface.
+> The driver purpose is to provide sysfs interface for user space for the
+> registers essential for system control and monitoring.
+> The sets of registers for sysfs access are supposed to be defined per
+> system type bases and include the registers related to system resets
+> operation, system reset causes monitoring and some kinds of mux selection.
+> 
+> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+> ---
+> v1->v2:
+>  Changed added by Vadim:
+>  - Change ---help--- to help in Kconfig, according to new requirements;
+> v2->v3:
+>  Comments pointed out by Darren:
+>  - Remove conditional assignment per attribute mode type, because mode
+>    will guard against not permitted access.
+>    Verified by Vadim.
+> ---
+>  drivers/platform/mellanox/Kconfig     |  11 ++
+>  drivers/platform/mellanox/Makefile    |   1 +
+>  drivers/platform/mellanox/mlxreg-io.c | 203 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 215 insertions(+)
+>  create mode 100644 drivers/platform/mellanox/mlxreg-io.c
+> 
+> diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
+> index 591bccd..ddfae9fc 100644
+> --- a/drivers/platform/mellanox/Kconfig
+> +++ b/drivers/platform/mellanox/Kconfig
+> @@ -23,4 +23,15 @@ config MLXREG_HOTPLUG
+>  	  This driver handles hot-plug events for the power suppliers, power
+>  	  cables and fans on the wide range Mellanox IB and Ethernet systems.
+>  
+> +config MLXREG_IO
+> +	tristate "Mellanox platform register access driver support"
+> +	depends on REGMAP
+> +	depends on HWMON
+> +	help
+> +	  This driver allows access to Mellanox programmable device register
+> +	  space trough sysfs interface. The sets of registers for sysfs access
+> +	  are defined per system type bases and includes the registers related
+> +	  to system resets operation, system reset causes monitoring and some
+> +	  kinds of mux selection.
 
-> Hi Stefan,
-> 
-> On Thu, 24 May 2018 14:19:18 +0200, Stefan Agner <stefan@agner.ch>
-> wrote:
-> 
-> > On 24.05.2018 13:53, Boris Brezillon wrote:  
-> > > Hi Benjamin,
-> > > 
-> > > On Thu, 24 May 2018 13:30:14 +0200
-> > > Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
-> > >     
-> > >> Hi Stefan,
-> > >>
-> > >> It seems to me that a probe similar to what the BootROM does shouldn't
-> > >> be awfully complicated to implement - just cycle through the switch
-> > >> cases in case of an ECC error. But I guess that's more of an idea for
-> > >> further improvements rather than a comment to the patch set under
-> > >> review.    
-> > > 
-> > > Nope, not really an option, because you're not guaranteed that the NAND
-> > > will be used as a boot media, and the first page or first set of pages
-> > > might just be erased.
-> > >     
-> > 
-> > Yeah I did not meant probing like the Boot ROM does.
-> > 
-> > What I meant was using only the ECC modes which are supported by the
-> > Boot ROM when the driver tries to choose a viable mode. So that would
-> > be:
-> > - RS t=4
-> > - BCH t=8
-> > - BCH t=16
-> > 
-> > Maybe we could add a property to enable that behavior:
-> > 
-> > tegra,use-bootable-ecc-only;  
-> 
-> I'm not sure a property is needed.
-> 
-> As there is currently no official user of this driver, why not turning
-> mandatory the nand-ecc-xxx properties?
+No Documentation/ABI/ entries for these new sysfs files?  Not good :(
 
-Not a big fan of this solution. We already have a few cases where the
-NAND part was changed on a design and the new NAND had different ECC
-requirements, With your suggestion, that means creating a new .dts file
-for each possible NAND part.
-
-Note that having a solution that picks the best ECC config based on
-chip->ecc_xxx_ds should be the preferred approach. nand-ecc- props are
-mainly here to address the case where you need/want to assign a config
-that does not match the ECC requirements exposed by the chip.
-
-> In the documentation you can add
-> a note saying that using other algorithms than the three above is not
-> supported by the BootROM.
-> 
-> >   
-> > >>
-> > >> However, I think that allowing for an override of the oobsize
-> > >> inference would be a good idea before merging, no? This could just be
-> > >> a trivial #ifdef (at least temporarily). If you agree but don't feel
-> > >> like doing it yourself, I'd be happy to pitch in. Let me know.    
-> > > 
-> > > That's why we have nand-ecc-xxx properties in the DT.
-> > >     
-> > 
-> > Yes, nand-ecc-strength is the first thing I plan to implement, that way
-> > strength can be defined in dt.
-> > 
-> > --
-> > Stefan  
-> 
-> Thanks,
-> Miquèl
+greg k-h
