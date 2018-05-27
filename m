@@ -1,339 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032724AbeE0OwI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 10:52:08 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:42300 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S965011AbeE0OwE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 10:52:04 -0400
-From: Vadim Pasternak <vadimp@mellanox.com>
-To: dvhart@infradead.org, andy.shevchenko@gmail.com,
-        gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
-        Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v3 7/7] platform/x86: mlx-platform: Add mlxreg-io platform driver activation
-Date: Sun, 27 May 2018 16:47:44 +0000
-Message-Id: <1527439664-127317-2-git-send-email-vadimp@mellanox.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527439664-127317-1-git-send-email-vadimp@mellanox.com>
-References: <1527439664-127317-1-git-send-email-vadimp@mellanox.com>
+        id S968543AbeE0PCS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 11:02:18 -0400
+Received: from mx.kolabnow.com ([95.128.36.41]:44864 "EHLO mx.kolabnow.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966919AbeE0PCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 11:02:13 -0400
+X-Spam-Flag: NO
+X-Spam-Score: -1
+From: Federico Vaga <federico.vaga@vaga.pv.it>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        Federico Vaga <federico.vaga@vaga.pv.it>
+Subject: [PATCH 1/5] doc: typos and minor fixes
+Date: Sun, 27 May 2018 16:55:56 +0200
+Message-Id: <20180527145559.16411-2-federico.vaga@vaga.pv.it>
+In-Reply-To: <20180527145559.16411-1-federico.vaga@vaga.pv.it>
+References: <20180527145559.16411-1-federico.vaga@vaga.pv.it>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add mlxreg-io platform driver activation. Access driver uses the same
-regmap infrastructure as others Mellanox platform drivers.
-Specific registers description for default platform data configuration are
-added to mlx-platform. There are the registers for resets control, reset
-causes monitoring, programmable devices version reading and mux select
-control. This platform data is passed to mlxreg-io driver. Also some
-default values for the register are set at initialization time through
-the regmap infrastructure, which are necessary for moving write protection
-from the general purpose registers, which are used by mlxreg-io for
-write access.
-
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 ---
- drivers/platform/x86/mlx-platform.c | 159 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 157 insertions(+), 2 deletions(-)
+ Documentation/doc-guide/kernel-doc.rst    | 2 +-
+ Documentation/doc-guide/parse-headers.rst | 4 ++--
+ Documentation/doc-guide/sphinx.rst        | 4 ++--
+ Documentation/index.rst                   | 2 +-
+ Documentation/sphinx/parse-headers.pl     | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index a0fd9aa..87ddd3a 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -47,11 +47,18 @@
- /* LPC bus IO offsets */
- #define MLXPLAT_CPLD_LPC_I2C_BASE_ADRR		0x2000
- #define MLXPLAT_CPLD_LPC_REG_BASE_ADRR		0x2500
-+#define MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET	0x00
-+#define MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET	0x01
-+#define MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET	0x1d
- #define MLXPLAT_CPLD_LPC_REG_LED1_OFFSET	0x20
- #define MLXPLAT_CPLD_LPC_REG_LED2_OFFSET	0x21
- #define MLXPLAT_CPLD_LPC_REG_LED3_OFFSET	0x22
- #define MLXPLAT_CPLD_LPC_REG_LED4_OFFSET	0x23
- #define MLXPLAT_CPLD_LPC_REG_LED5_OFFSET	0x24
-+#define MLXPLAT_CPLD_LPC_REG_GP1_OFFSET		0x30
-+#define MLXPLAT_CPLD_LPC_REG_WP1_OFFSET		0x31
-+#define MLXPLAT_CPLD_LPC_REG_GP2_OFFSET		0x32
-+#define MLXPLAT_CPLD_LPC_REG_WP2_OFFSET		0x33
- #define MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET	0x3a
- #define MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET	0x3b
- #define MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET	0x40
-@@ -122,12 +129,14 @@
-  * @pdev_mux - array of mux platform devices
-  * @pdev_hotplug - hotplug platform devices
-  * @pdev_led - led platform devices
-+ * @pdev_io_regs - register access platform devices
-  */
- struct mlxplat_priv {
- 	struct platform_device *pdev_i2c;
- 	struct platform_device *pdev_mux[MLXPLAT_CPLD_LPC_MUX_DEVS];
- 	struct platform_device *pdev_hotplug;
- 	struct platform_device *pdev_led;
-+	struct platform_device *pdev_io_regs;
- };
+diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
+index 0268335414ce..d322367f70d7 100644
+--- a/Documentation/doc-guide/kernel-doc.rst
++++ b/Documentation/doc-guide/kernel-doc.rst
+@@ -262,7 +262,7 @@ comment block.
  
- /* Regions for LPC I2C controller and LPC base register space */
-@@ -813,6 +822,98 @@ static struct mlxreg_core_platform_data mlxplat_default_ng_led_data = {
- 		.counter = ARRAY_SIZE(mlxplat_mlxcpld_default_ng_led_data),
- };
+ The kernel-doc data structure comments describe each member of the structure, in
+ order, with the ``@member:`` descriptions. The ``@member:`` descriptions must
+-begin on the very next line following the opening brief function description
++begin on the very next line following the opening brief structure description
+ line, with no intervening blank comment lines. The ``@member:`` descriptions may
+ span multiple lines. The continuation lines may contain indentation.
  
-+/* Platform register access default */
-+static struct mlxreg_core_data mlxplat_mlxcpld_default_regs_io_data[] = {
-+	{
-+		.label = "cpld1_version",
-+		.reg = MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET,
-+		.bit = GENMASK(7, 0),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cpld2_version",
-+		.reg = MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET,
-+		.bit = GENMASK(7, 0),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_long_pb",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(0),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_short_pb",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(1),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_aux_pwr_or_ref",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(2),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_main_pwr_fail",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(3),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_sw_reset",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(4),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_fw_reset",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(5),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_hotswap_or_wd",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(6),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cause_asic_thermal",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(7),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "psu1_on",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(0),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "psu2_on",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(1),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "pwr_cycle",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(2),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "select_iio",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP2_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(6),
-+		.mode = 0644,
-+	},
-+};
-+
-+static struct mlxreg_core_platform_data mlxplat_default_regs_io_data = {
-+		.data = mlxplat_mlxcpld_default_regs_io_data,
-+		.counter = ARRAY_SIZE(mlxplat_mlxcpld_default_regs_io_data),
-+};
+diff --git a/Documentation/doc-guide/parse-headers.rst b/Documentation/doc-guide/parse-headers.rst
+index 96a0423d5dba..cbfbd1748f8f 100644
+--- a/Documentation/doc-guide/parse-headers.rst
++++ b/Documentation/doc-guide/parse-headers.rst
+@@ -32,7 +32,7 @@ SYNOPSIS
  
- static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
- {
-@@ -822,6 +923,10 @@ static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
- 	case MLXPLAT_CPLD_LPC_REG_LED3_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED4_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED5_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP2_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_EVENT_OFFSET:
-@@ -838,11 +943,18 @@ static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
- static bool mlxplat_mlxcpld_readable_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED1_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED3_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED4_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED5_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP2_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET:
-@@ -864,11 +976,16 @@ static bool mlxplat_mlxcpld_readable_reg(struct device *dev, unsigned int reg)
- static bool mlxplat_mlxcpld_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED1_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED3_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED4_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED5_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET:
-@@ -887,6 +1004,11 @@ static bool mlxplat_mlxcpld_volatile_reg(struct device *dev, unsigned int reg)
- 	return false;
- }
+ \ **parse_headers.pl**\  [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
  
-+static const struct reg_default mlxplat_mlxcpld_regmap_default[] = {
-+	{ MLXPLAT_CPLD_LPC_REG_WP1_OFFSET, 0x00 },
-+	{ MLXPLAT_CPLD_LPC_REG_WP2_OFFSET, 0x00 },
-+};
-+
- struct mlxplat_mlxcpld_regmap_context {
- 	void __iomem *base;
- };
-@@ -919,6 +1041,8 @@ static const struct regmap_config mlxplat_mlxcpld_regmap_config = {
- 	.writeable_reg = mlxplat_mlxcpld_writeable_reg,
- 	.readable_reg = mlxplat_mlxcpld_readable_reg,
- 	.volatile_reg = mlxplat_mlxcpld_volatile_reg,
-+	.reg_defaults = mlxplat_mlxcpld_regmap_default,
-+	.num_reg_defaults = ARRAY_SIZE(mlxplat_mlxcpld_regmap_default),
- 	.reg_read = mlxplat_mlxcpld_reg_read,
- 	.reg_write = mlxplat_mlxcpld_reg_write,
- };
-@@ -930,6 +1054,7 @@ static struct resource mlxplat_mlxcpld_resources[] = {
- static struct platform_device *mlxplat_dev;
- static struct mlxreg_core_hotplug_platform_data *mlxplat_hotplug;
- static struct mlxreg_core_platform_data *mlxplat_led;
-+static struct mlxreg_core_platform_data *mlxplat_regs_io;
+-Where <options> can be: --debug, --help or --man.
++Where <options> can be: --debug, --usage or --help.
  
- static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
- {
-@@ -944,6 +1069,7 @@ static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
- 	mlxplat_hotplug->deferred_nr =
- 		mlxplat_default_channels[i - 1][MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
- 	mlxplat_led = &mlxplat_default_led_data;
-+	mlxplat_regs_io = &mlxplat_default_regs_io_data;
  
- 	return 1;
- };
-@@ -978,6 +1104,7 @@ static int __init mlxplat_dmi_msn274x_matched(const struct dmi_system_id *dmi)
- 	mlxplat_hotplug->deferred_nr =
- 		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
- 	mlxplat_led = &mlxplat_default_led_data;
-+	mlxplat_regs_io = &mlxplat_default_regs_io_data;
+ OPTIONS
+@@ -133,7 +133,7 @@ For both statements, \ **type**\  can be either one of the following:
  
- 	return 1;
- };
-@@ -1163,7 +1290,7 @@ static int mlxplat_mlxcpld_verify_bus_topology(int *nr)
- static int __init mlxplat_init(void)
- {
- 	struct mlxplat_priv *priv;
--	int i, nr, err;
-+	int i, j, nr, err;
+ \ **symbol**\
  
- 	if (!dmi_check_system(mlxplat_dmi_table))
- 		return -ENODEV;
-@@ -1233,6 +1360,15 @@ static int __init mlxplat_init(void)
- 		goto fail_platform_mux_register;
- 	}
+- The ignore or replace statement will apply to the name of enum statements
++ The ignore or replace statement will apply to the name of enum values
+  at C_FILE.
  
-+	/* Set default registers. */
-+	for (j = 0; j <  mlxplat_mlxcpld_regmap_config.num_reg_defaults; j++) {
-+		err = regmap_write(mlxplat_hotplug->regmap,
-+				   mlxplat_mlxcpld_regmap_default[j].reg,
-+				   mlxplat_mlxcpld_regmap_default[j].def);
-+		if (err)
-+			goto fail_platform_mux_register;
-+	}
-+
- 	/* Add LED driver. */
- 	mlxplat_led->regmap = mlxplat_hotplug->regmap;
- 	priv->pdev_led = platform_device_register_resndata(
-@@ -1244,14 +1380,31 @@ static int __init mlxplat_init(void)
- 		goto fail_platform_hotplug_register;
- 	}
+  For replace statements, \ **new_value**\  will automatically use :c:type:
+diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
+index a2417633fdd8..8d789a117a4f 100644
+--- a/Documentation/doc-guide/sphinx.rst
++++ b/Documentation/doc-guide/sphinx.rst
+@@ -28,7 +28,7 @@ The ReST markups currently used by the Documentation/ files are meant to be
+ built with ``Sphinx`` version 1.3 or upper. If you're desiring to build
+ PDF outputs, it is recommended to use version 1.4.6 or upper.
  
-+	/* Add registers io access driver. */
-+	if (mlxplat_regs_io) {
-+		mlxplat_regs_io->regmap = mlxplat_hotplug->regmap;
-+		priv->pdev_io_regs = platform_device_register_resndata(
-+					&mlxplat_dev->dev, "mlxreg-io",
-+					PLATFORM_DEVID_NONE, NULL, 0,
-+					mlxplat_regs_io,
-+					sizeof(*mlxplat_regs_io));
-+		if (IS_ERR(priv->pdev_io_regs)) {
-+			err = PTR_ERR(priv->pdev_io_regs);
-+			goto fail_platform_led_register;
-+		}
-+	}
-+
- 	/* Sync registers with hardware. */
- 	regcache_mark_dirty(mlxplat_hotplug->regmap);
- 	err = regcache_sync(mlxplat_hotplug->regmap);
- 	if (err)
--		goto fail_platform_led_register;
-+		goto fail_platform_io_regs_register;
+-There's a script that checks for the Spinx requirements. Please see
++There's a script that checks for the Sphinx requirements. Please see
+ :ref:`sphinx-pre-install` for further details.
  
- 	return 0;
+ Most distributions are shipped with Sphinx, but its toolchain is fragile,
+@@ -266,7 +266,7 @@ some additional features:
+ * row-span: with the role ``rspan`` a cell can be extended through
+   additional rows
  
-+fail_platform_io_regs_register:
-+	if (mlxplat_regs_io)
-+		platform_device_unregister(priv->pdev_io_regs);
- fail_platform_led_register:
- 	platform_device_unregister(priv->pdev_led);
- fail_platform_hotplug_register:
-@@ -1272,6 +1425,8 @@ static void __exit mlxplat_exit(void)
- 	struct mlxplat_priv *priv = platform_get_drvdata(mlxplat_dev);
- 	int i;
+-* auto span rightmost cell of a table row over the missing cells on the right
++* auto-span: rightmost cell of a table row over the missing cells on the right
+   side of that table-row.  With Option ``:fill-cells:`` this behavior can
+   changed from *auto span* to *auto fill*, which automatically inserts (empty)
+   cells instead of spanning the last cell.
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index cb7f1ba5b3b1..331da87c82c8 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -33,7 +33,7 @@ the kernel interface as seen by application developers.
+ .. toctree::
+    :maxdepth: 2
  
-+	if (priv->pdev_io_regs)
-+		platform_device_unregister(priv->pdev_io_regs);
- 	platform_device_unregister(priv->pdev_led);
- 	platform_device_unregister(priv->pdev_hotplug);
+-   userspace-api/index	      
++   userspace-api/index
+ 
+ 
+ Introduction to kernel development
+diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
+index a958d8b5e99d..27117194d41f 100755
+--- a/Documentation/sphinx/parse-headers.pl
++++ b/Documentation/sphinx/parse-headers.pl
+@@ -344,7 +344,7 @@ enums and defines and create cross-references to a Sphinx book.
+ 
+ B<parse_headers.pl> [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
+ 
+-Where <options> can be: --debug, --help or --man.
++Where <options> can be: --debug, --help or --usage.
+ 
+ =head1 OPTIONS
  
 -- 
-2.1.4
+2.14.3
