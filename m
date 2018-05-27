@@ -1,178 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752727AbeE0Xgo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 19:36:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35400 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752466AbeE0Xgm (ORCPT
+        id S1752724AbeE0Xs7 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 19:48:59 -0400
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:15684 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752406AbeE0Xs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 19:36:42 -0400
-Subject: Re: [PATCH v2 2/3] Documentation: usb: add documentation for USB CCID
- Gadget Device
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        davem@davemloft.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180526211940.25474-1-marcus.folkesson@gmail.com>
- <20180526211940.25474-2-marcus.folkesson@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2225254e-a8f1-570e-8b1c-f68168376784@infradead.org>
-Date: Sun, 27 May 2018 16:36:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 27 May 2018 19:48:57 -0400
+Date: Mon, 28 May 2018 09:48:54 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+Message-ID: <20180527234854.GF23861@dastard>
+References: <20180424183536.GF30619@thunk.org>
+ <20180524114341.1101-1-mhocko@kernel.org>
+ <20180524221715.GY10363@dastard>
+ <20180525081624.GH11881@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180526211940.25474-2-marcus.folkesson@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525081624.GH11881@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I have a few documentation comments below...
-
-On 05/26/2018 02:19 PM, Marcus Folkesson wrote:
-> Add documentation to give a brief description on how to use the
-> CCID Gadget Device.
-> This includes a description for all attributes followed by an example on
-> how to setup the device with ConfigFS.
+On Fri, May 25, 2018 at 10:16:24AM +0200, Michal Hocko wrote:
+> On Fri 25-05-18 08:17:15, Dave Chinner wrote:
+> > On Thu, May 24, 2018 at 01:43:41PM +0200, Michal Hocko wrote:
+> [...]
+> > > +FS/IO code then simply calls the appropriate save function right at the
+> > > +layer where a lock taken from the reclaim context (e.g. shrinker) and
+> > > +the corresponding restore function when the lock is released. All that
+> > > +ideally along with an explanation what is the reclaim context for easier
+> > > +maintenance.
+> > 
+> > This paragraph doesn't make much sense to me. I think you're trying
+> > to say that we should call the appropriate save function "before
+> > locks are taken that a reclaim context (e.g a shrinker) might
+> > require access to."
+> > 
+> > I think it's also worth making a note about recursive/nested
+> > save/restore stacking, because it's not clear from this description
+> > that this is allowed and will work as long as inner save/restore
+> > calls are fully nested inside outer save/restore contexts.
 > 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  Documentation/usb/gadget_ccid.rst | 267 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 267 insertions(+)
->  create mode 100644 Documentation/usb/gadget_ccid.rst
+> Any better?
 > 
-> diff --git a/Documentation/usb/gadget_ccid.rst b/Documentation/usb/gadget_ccid.rst
-> new file mode 100644
-> index 000000000000..5ac806b14604
-> --- /dev/null
-> +++ b/Documentation/usb/gadget_ccid.rst
-> @@ -0,0 +1,267 @@
-> +.. SPDX-License-Identifier: GPL-2.0
+> -FS/IO code then simply calls the appropriate save function right at the
+> -layer where a lock taken from the reclaim context (e.g. shrinker) and
+> -the corresponding restore function when the lock is released. All that
+> -ideally along with an explanation what is the reclaim context for easier
+> -maintenance.
+> +FS/IO code then simply calls the appropriate save function before any
+> +lock shared with the reclaim context is taken.  The corresponding
+> +restore function when the lock is released. All that ideally along with
+> +an explanation what is the reclaim context for easier maintenance.
 > +
-> +============
-> +CCID Gadget
-> +============
-> +
-> +:Author: Marcus Folkesson <marcus.folkesson@gmail.com>
-> +
-> +Introduction
-> +============
-> +
-> +The CCID Gadget will present itself as a CCID device to the host system.
-> +The device supports two endpoints for now; BULK IN and BULK OUT.
-> +These endpoints is exposed to userspace via /dev/ccidg*.
+> +Please note that the proper pairing of save/restore function allows nesting
+> +so memalloc_noio_save is safe to be called from an existing NOIO or NOFS scope.
 
-                   are exposed
+It's better, but the talk of this being necessary for locking makes
+me cringe. XFS doesn't do it for locking reasons - it does it
+largely for preventing transaction context nesting, which has all
+sorts of problems that cause hangs (e.g. log space reservations
+can't be filled) that aren't directly locking related.
 
-> +
-> +All CCID commands are sent on the BULK-OUT endpoint. Each command sent to the CCID
-> +has an associated ending response. Some commands can also have intermediate
-> +responses. The response is sent on the BULK-IN endpoint.
-> +See Figure 3-3 in the CCID Specification [1]_ for more details.
-> +
-> +The CCID commands must be handled in userspace since the driver is only working
-> +as a transport layer for the TPDUs.
-> +
-> +
-> +CCID Commands
-> +--------------
-> +
-> +All CCID commands begins with a 10 bytes header followed by an optional
+i.e we should be talking about using these functions around contexts
+where recursion back into the filesystem through reclaim is
+problematic, not that "holding locks" is problematic. Locks can be
+used as an example of a problematic context, but locks are not the
+only recursion issue that require GFP_NOFS allocation contexts to
+avoid.
 
-                            with a 10-byte header
-(or maybe that's a locale difference)
+Cheers,
 
-> +data field depending on message type.
-> +
-> ++--------+--------------+-------+----------------------------------+
-> +| Offset | Field        | Size  | Description                      |
-> ++========+==============+=======+==================================+
-> +| 0      | bMessageType | 1     | Type of message                  |
-> ++--------+--------------+-------+----------------------------------+
-> +| 1      | dwLength     | 4     | Message specific data length     |
-> +|        |              |       |                                  |
-> ++--------+--------------+-------+----------------------------------+
-> +| 5      | bSlot        | 1     | Identifies the slot number       |
-> +|        |              |       | for this command                 |
-> ++--------+--------------+-------+----------------------------------+
-> +| 6      | bSeq         | 1     | Sequence number for command      |
-> ++--------+--------------+-------+----------------------------------+
-> +| 7      | ...          | 3     | Fields depends on message type   |
-> ++--------+--------------+-------+----------------------------------+
-> +| 10     | abData       | array | Message specific data (OPTIONAL) |
-> ++--------+--------------+-------+----------------------------------+
-> +
-> +
-> +Multiple CCID gadgets
-> +----------------------
-> +
-> +It is possible to create multiple instances of the CCID gadget, however,
-> +a much more flexible way is to create one gadget and set the `nslots` attribute
-> +to the number of desired CCID devices.
-> +
-> +All CCID commands specifies which slot that is the receiver in the `bSlot` field
-
-                     specify which slot is the receiver
-
-> +of the CCID header.
-> +
-> +Usage
-> +=====
-> +
-> +Access from userspace
-> +----------------------
-> +All communication is by read(2) and write(2) to the corresponding /dev/ccidg* device.
-> +Only one filedescriptor is allowed to be open to the device at a time.
-
-            file descriptor
-
-> +
-> +The buffer size provided to read(2) **must be at least** 522 (10 bytes header + 512 bytes payload)
-> +bytes as we are working with whole commands.
-> +
-> +The buffer size provided to write(2) **may not exceed** 522 (10 bytes header + 512 bytes payload)
-> +bytes as we are working with whole commands.
-> +
-> +
-> +Configuration with configfs
-> +----------------------------
-> +
-> +ConfigFS is used to create and configure the CCID gadget.
-> +In order to get a device to work as intended, a few attributes must
-> +be considered.
-> +
-> +The attributes is described below followed by an example.
-
-                  are
-
-> +
-> +features
-> +~~~~~~~~~
-> +
-> +The `feature` attribute writes to the dwFeatures field in the class descriptor.
-> +See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
-> +
-> +The value indicates what intelligent features the CCID has.
-> +These values are available to user application as defines in ccid.h [2]_.
-
-                                                  as defined
-
-> +The default value is 0x00000000.
-
-
-[snip]
-
-HTH.
+Dave.
 -- 
-~Randy
+Dave Chinner
+david@fromorbit.com
