@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033063AbeE0PsR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 11:48:17 -0400
+        id S1032962AbeE0Pst (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 11:48:49 -0400
 Received: from mga02.intel.com ([134.134.136.20]:28379 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032820AbeE0PqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 11:46:22 -0400
+        id S1032803AbeE0PqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 11:46:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,448,1520924400";
-   d="scan'208";a="227741108"
+   d="scan'208";a="227741099"
 From: Fenghua Yu <fenghua.yu@intel.com>
 To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
         "H. Peter Anvin" <hpa@linux.intel.com>
@@ -22,9 +22,9 @@ Cc: "Ashok Raj" <ashok.raj@intel.com>,
         "Arjan van de Ven" <arjan@infradead.org>,
         "linux-kernel" <linux-kernel@vger.kernel.org>, "x86" <x86@kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [RFC PATCH 14/16] x86/split_lock: Add debugfs interface to show and control firmware setting for split lock
-Date: Sun, 27 May 2018 08:46:03 -0700
-Message-Id: <1527435965-202085-15-git-send-email-fenghua.yu@intel.com>
+Subject: [RFC PATCH 11/16] x86/split_lock: Add CONFIG to control #AC for split lock from kernel at boot time
+Date: Sun, 27 May 2018 08:46:00 -0700
+Message-Id: <1527435965-202085-12-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
 References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
@@ -32,76 +32,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, the firmware setting for split lock inherits from firmware
-setting before kernel boots.
+By default, faulting kernel instruction that generates #AC due to
+split locked access is re-executed and doesn't block system.
 
-In cases like hard real time, user wants to identify split lock issues in
-firmware even when #AC for split lock is not enabled in firmware before
-kernel boots. The user may explicitly enable #AC for split lock for
-firmware. Getting bang whenever there is a split lock in firmware helps
-identify and fix the firmware split lock issue.
+But in cases when user doesn't tolerate any split lock (e.g. in hard real
+time system), CONFIG_SPLIT_LOCK_AC_PANIC_ON_KERNEL is added to opt-in panic
+when #AC for split lock is triggered from kernel.
 
-The debugfs interface /sys/kernel/debug/x86/split_lock/firmware shows the
-firmware split lock setting: 0 for disabled and 1 for enabled.
+If it's configured as N (default), faulting instruction in kernel mode
+will be recorded in #AC handler and re-executed. Split lock is not
+treated as fatal fault.
 
-User can override the firmware setting by writing 1 to enable #AC for
-split lock in firmware and write 0 to disable #AC for split lock in
-firmware.
-
-When control flow comes to firmware (e.g. in S3, S4, S5, and EFI runtime),
-kernel sets the firmware setting for split lock. Kernel restores to kernel
-setting for split lock after coming back to kernel.
-
-Please note: System Management Mode (SMM) is out of control of
-kernel. So this interface cannot control split lock in SMM.
+If configured as Y, kernel will panic if #AC triggered by split lock
+is from a kernel instruction.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/kernel/cpu/test_ctl.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/x86/Kconfig               | 13 +++++++++++++
+ arch/x86/kernel/cpu/test_ctl.c | 15 +++++++++++++++
+ 2 files changed, 28 insertions(+)
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1d0dcd6fa69a..d42d90abd644 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -475,6 +475,19 @@ config SPLIT_LOCK_AC_ENABLE_DEFAULT
+ 
+ 	  Leave this to the default value of 2 if you are unsure.
+ 
++config SPLIT_LOCK_AC_PANIC_ON_KERNEL
++	bool "Panic on #AC for split lock in kernel mode"
++	default n
++	depends on SPLIT_LOCK_AC
++	help
++	  If you enable this option, kernel goes to panic when hitting
++	  #AC for split lock from kernel.
++
++	  If you disable this option, the kernel faulting instruction
++	  is re-executed after hitting #AC for split lock.
++
++	  Say N if unsure.
++
+ if X86_32
+ config X86_BIGSMP
+ 	bool "Support for big SMP systems with more than 8 CPUs"
 diff --git a/arch/x86/kernel/cpu/test_ctl.c b/arch/x86/kernel/cpu/test_ctl.c
-index d774485a5ca4..8bdc01067be9 100644
+index e8b3032f3db0..6784f68af26a 100644
 --- a/arch/x86/kernel/cpu/test_ctl.c
 +++ b/arch/x86/kernel/cpu/test_ctl.c
-@@ -516,12 +516,38 @@ static const struct file_operations user_mode_ops = {
- 	.llseek	= default_llseek,
+@@ -43,6 +43,14 @@ struct debugfs_file {
+ 	const struct file_operations	*fops;
  };
  
-+static int firmware_show(void *data, u64 *val)
-+{
-+	*val = split_lock_ac_firmware;
++enum {
++	KERNEL_MODE_RE_EXECUTE,
++	KERNEL_MODE_PANIC,
++	KERNEL_MODE_LAST
++};
 +
-+	return 0;
-+}
++static int kernel_mode_reaction = KERNEL_MODE_RE_EXECUTE;
 +
-+static int firmware_store(void *data, u64 val)
-+{
-+	if (val != DISABLE_SPLIT_LOCK_AC && val != ENABLE_SPLIT_LOCK_AC)
-+		return -EINVAL;
-+
-+	/* No need to update setting if new setting is the same as old one. */
-+	if (val == split_lock_ac_firmware)
-+		return 0;
-+
-+	mutex_lock(&split_lock_mutex);
-+	split_lock_ac_firmware = val;
-+	mutex_unlock(&split_lock_mutex);
-+
-+	return 0;
-+}
-+
-+DEFINE_DEBUGFS_ATTRIBUTE(firmware_ops, firmware_show, firmware_store, "%llx\n");
-+
- static int __init debugfs_setup_split_lock(void)
+ /* Detete feature of #AC for split lock by probing bit 29 in MSR_TEST_CTL. */
+ void detect_split_lock_ac(void)
  {
- 	struct debugfs_file debugfs_files[] = {
- 		{"enable",      0600, &enable_ops},
- 		{"kernel_mode",	0600, &kernel_mode_ops },
- 		{"user_mode",	0600, &user_mode_ops },
-+		{"firmware",	0600, &firmware_ops },
- 	};
- 	struct dentry *split_lock_dir, *fd;
- 	int i;
+@@ -238,6 +246,10 @@ bool do_split_lock_exception(struct pt_regs *regs, unsigned long error_code)
+ 	struct task_struct *tsk = current;
+ 	int cpu = task_cpu(tsk);
+ 
++	/* If configured as panic for split lock in kernel mode, panic. */
++	if (kernel_mode_reaction == KERNEL_MODE_PANIC && !user_mode(regs))
++		panic("Alignment Check exception for split lock in kernel.");
++
+ 	if (!re_execute(regs))
+ 		return false;
+ 
+@@ -391,6 +403,9 @@ static int __init split_lock_init(void)
+ 	if (ret)
+ 		pr_warn("debugfs for #AC for split lock cannot be set up\n");
+ 
++	if (IS_ENABLED(CONFIG_SPLIT_LOCK_AC_PANIC_ON_KERNEL))
++		kernel_mode_reaction = KERNEL_MODE_PANIC;
++
+ 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/split_lock:online",
+ 				split_lock_online, split_lock_offline);
+ 	if (ret < 0)
 -- 
 2.5.0
