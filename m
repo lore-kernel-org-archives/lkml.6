@@ -1,67 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751476AbeE0TfH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 15:35:07 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:19339 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751351AbeE0TfG (ORCPT
+        id S1751479AbeE0T4S (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 15:56:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59831 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751343AbeE0T4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 15:35:06 -0400
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sun, 27 May 2018 21:35:05 +0200
-X-ME-IP: 90.55.202.35
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: pxa: add the missing AC97 clocks
-Date: Sun, 27 May 2018 21:34:56 +0200
-Message-Id: <20180527193456.3799-1-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
+        Sun, 27 May 2018 15:56:16 -0400
+Date: Sun, 27 May 2018 12:55:00 -0700
+From: tip-bot for Scott Wood <tipbot@zytor.com>
+Message-ID: <tip-ff987fcf011d20c53b3a613edf6e2055ea48e26e@git.kernel.org>
+Cc: williams@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@suse.de, ashok.raj@intel.com, mingo@kernel.org, x86@kernel.org,
+        pezhang@redhat.com, swood@redhat.com, hpa@zytor.com
+Reply-To: ashok.raj@intel.com, pezhang@redhat.com, mingo@kernel.org,
+        x86@kernel.org, swood@redhat.com, hpa@zytor.com, williams@redhat.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@suse.de
+In-Reply-To: <20180524154420.24455-1-swood@redhat.com>
+References: <20180524154420.24455-1-swood@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/microcode] x86/microcode: Make the late update update_lock
+ a raw lock for RT
+Git-Commit-ID: ff987fcf011d20c53b3a613edf6e2055ea48e26e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AC97 bit clock is added as the pxa internally generated 13MHz
-clock. This is a consequence of the new ac97 framework.
+Commit-ID:  ff987fcf011d20c53b3a613edf6e2055ea48e26e
+Gitweb:     https://git.kernel.org/tip/ff987fcf011d20c53b3a613edf6e2055ea48e26e
+Author:     Scott Wood <swood@redhat.com>
+AuthorDate: Thu, 24 May 2018 10:44:20 -0500
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 27 May 2018 21:50:09 +0200
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+x86/microcode: Make the late update update_lock a raw lock for RT
+
+__reload_late() is called from stop_machine context and thus cannot
+acquire a non-raw spinlock on PREEMPT_RT.
+
+Signed-off-by: Scott Wood <swood@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Pei Zhang <pezhang@redhat.com>
+Cc: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20180524154420.24455-1-swood@redhat.com
 ---
- arch/arm/mach-pxa/devices.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/kernel/cpu/microcode/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
-index d7c9a8476d57..018fbfc64851 100644
---- a/arch/arm/mach-pxa/devices.c
-+++ b/arch/arm/mach-pxa/devices.c
-@@ -3,6 +3,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/spi/pxa2xx_spi.h>
- #include <linux/platform_data/i2c-pxa.h>
-@@ -496,6 +497,18 @@ struct platform_device pxa_device_ac97 = {
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 77e201301528..08286269fd24 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -70,7 +70,7 @@ static DEFINE_MUTEX(microcode_mutex);
+ /*
+  * Serialize late loading so that CPUs get updated one-by-one.
+  */
+-static DEFINE_SPINLOCK(update_lock);
++static DEFINE_RAW_SPINLOCK(update_lock);
  
- void __init pxa_set_ac97_info(pxa2xx_audio_ops_t *ops)
- {
-+	int ret;
-+
-+	ret = clk_add_alias("ac97_clk", "pxa2xx-ac97:0", "AC97CLK",
-+			   &pxa_device_ac97.dev);
-+	if (ret)
-+		pr_err("PXA AC97 clock1 alias error: %d\n", ret);
-+
-+	ret = clk_add_alias("ac97_clk", "pxa2xx-ac97:1", "AC97CLK",
-+			    &pxa_device_ac97.dev);
-+	if (ret)
-+		pr_err("PXA AC97 clock2 alias error: %d\n", ret);
-+
- 	pxa_register_device(&pxa_device_ac97, ops);
- }
+ struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
  
--- 
-2.11.0
+@@ -560,9 +560,9 @@ static int __reload_late(void *info)
+ 	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
+ 		return -1;
+ 
+-	spin_lock(&update_lock);
++	raw_spin_lock(&update_lock);
+ 	apply_microcode_local(&err);
+-	spin_unlock(&update_lock);
++	raw_spin_unlock(&update_lock);
+ 
+ 	/* siblings return UCODE_OK because their engine got updated already */
+ 	if (err > UCODE_NFOUND) {
