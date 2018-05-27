@@ -1,108 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936424AbeE0NnZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 09:43:25 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8188 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936400AbeE0NnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 09:43:23 -0400
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: fix overflow bug of start_sector
- when computing zone_align_start_offset
-To: Junling Zheng <zhengjunling@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yuchao0@huawei.com>, <yunlong.song@icloud.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>, <miaoxie@huawei.com>
-References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
- <74a1a174-f7fe-4c96-6d60-62345355f070@huawei.com>
-From: Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <bc79c076-1106-54c6-ba43-040669186997@huawei.com>
-Date: Sun, 27 May 2018 21:41:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1032635AbeE0NxR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 09:53:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50709 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936400AbeE0NxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 09:53:15 -0400
+Date: Sun, 27 May 2018 15:53:11 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v3 15/16] mtd: rawnand: qcom: helper function for raw
+ read
+Message-ID: <20180527155311.4c05d7ab@xps13>
+In-Reply-To: <1527250904-21988-16-git-send-email-absahu@codeaurora.org>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+        <1527250904-21988-16-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <74a1a174-f7fe-4c96-6d60-62345355f070@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just keep it same with u_int64_t defined in mkfs/f2fs_format.c, and 
-c.start_sector * c.sector_size
-may be u32 overflow, so add (u_int64_t) before c.start_sector * 
-c.sector_size and change the target
-value zone_align_start_offset to (u_int64_t).
+Hi Abhishek,
 
-On 2018/5/26 19:27, Junling Zheng wrote:
-> No neet to change zone_align_start_offset to u64, because zone_align_start_offset is always
-> smaller than zone_size_bytes, which is u32.
->
-> Thanks,
-> Junling
->
-> On 2018/5/26 16:09, Yunlong Song wrote:
->> zone_align_start_offset should be u64, but config.start_sector is u32,
->> so it may be overflow when computing zone_align_start_offset.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fsck/resize.c      | 7 ++++---
->>   mkfs/f2fs_format.c | 4 ++--
->>   2 files changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/fsck/resize.c b/fsck/resize.c
->> index d285dd7..8ac7d45 100644
->> --- a/fsck/resize.c
->> +++ b/fsck/resize.c
->> @@ -11,7 +11,8 @@
->>   
->>   static int get_new_sb(struct f2fs_super_block *sb)
->>   {
->> -	u_int32_t zone_size_bytes, zone_align_start_offset;
->> +	u_int32_t zone_size_bytes;
->> +	u_int64_t zone_align_start_offset;
->>   	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
->>   	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
->>   	u_int32_t total_valid_blks_available;
->> @@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
->>   
->>   	zone_size_bytes = segment_size_bytes * segs_per_zone;
->>   	zone_align_start_offset =
->> -		(c.start_sector * c.sector_size +
->> +		((u_int64_t) c.start_sector * c.sector_size +
->>   		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
->>   		zone_size_bytes * zone_size_bytes -
->> -		c.start_sector * c.sector_size;
->> +		(u_int64_t) c.start_sector * c.sector_size;
->>   
->>   	set_sb(segment_count, (c.target_sectors * c.sector_size -
->>   				zone_align_start_offset) / segment_size_bytes /
->> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->> index 0a99a77..f045e23 100644
->> --- a/mkfs/f2fs_format.c
->> +++ b/mkfs/f2fs_format.c
->> @@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
->>   	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
->>   
->>   	zone_align_start_offset =
->> -		(c.start_sector * c.sector_size +
->> +		((u_int64_t) c.start_sector * c.sector_size +
->>   		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
->>   		zone_size_bytes * zone_size_bytes -
->> -		c.start_sector * c.sector_size;
->> +		(u_int64_t) c.start_sector * c.sector_size;
->>   
->>   	if (c.start_sector % c.sectors_per_blk) {
->>   		MSG(1, "\t%s: Align start sector number to the page unit\n",
->>
->
->
-> .
->
+On Fri, 25 May 2018 17:51:43 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
 
--- 
+> This patch does minor code reorganization for raw reads.
+> Currently the raw read is required for complete page but for
+> subsequent patches related with erased codeword bit flips
+> detection, only few CW should be read. So, this patch adds
+> helper function and introduces the read CW bitmask which
+> specifies which CW reads are required in complete page.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+> * Changes from v2:
+>   NONE
+> 
+> * Changes from v1:
+>  1. Included more detail in function comment
+> 
+>  drivers/mtd/nand/raw/qcom_nandc.c | 197 ++++++++++++++++++++++++--------------
+>  1 file changed, 123 insertions(+), 74 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+> index 87f900e..34143a4 100644
+> --- a/drivers/mtd/nand/raw/qcom_nandc.c
+> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
+> @@ -1588,6 +1588,127 @@ static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
+>  }
+>  
+>  /*
+> + * Helper to perform the page raw read operation. The read_cw_mask will be
+> + * used to specify the codewords (CW) for which the data should be read. The
+> + * single page contains multiple CW.
+> + *
+> + * Normally other NAND controllers store the data in main area and
+> + * ecc bytes in OOB area. So, if page size is 2048+64 then 2048
+> + * data bytes will go in main area followed by ECC bytes. The QCOM NAND
+> + * controller follows different layout in which the data+OOB is internally
+> + * divided in 528/532 bytes CW and each CW contains 516 bytes followed by
+> + * ECC parity bytes for that CW. By this, 4 available OOB bytes per CW
+> + * will also be protected with ECC.
+> + *
+> + * For each CW read, following are the 2 steps:
+> + * 1. Read the codeword bytes from NAND chip to NAND controller internal HW
+> + *    buffer.
+> + * 2. Copy all these bytes from this HW buffer to actual buffer.
+> + *
+> + * Sometime, only few CW data is required in complete page. The read_cw_mask
+> + * specifies which CW in a page needs to be read. Start address will be
+> + * determined with this CW mask to skip unnecessary data copy from NAND
+> + * flash device. Then, actual data copy from NAND controller HW internal buffer
+> + * to data buffer will be done only for the CWs, which have the mask set.
+> + */
+> +static int
+> +nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
+> +		    u8 *data_buf, u8 *oob_buf,
+> +		    int page, unsigned long read_cw_mask)
+
+Please prefix the helper with "qcom_nandc"
+
+> +{
+> +	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+> +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> +	int i, ret;
+> +	int read_loc, start_step, last_step;
+> +
+> +	nand_read_page_op(chip, page, 0, NULL, 0);
+> +
+> +	host->use_ecc = false;
+> +	start_step = ffs(read_cw_mask) - 1;
+> +	last_step = fls(read_cw_mask);
+> +
+> +	clear_bam_transaction(nandc);
+> +	set_address(host, host->cw_size * start_step, page);
+> +	update_rw_regs(host, last_step - start_step, true);
+> +	config_nand_page_read(nandc);
+> +
+> +	for (i = start_step; i < last_step; i++) {
+
+This comment applies for both patches 15 and 16:
+
+I would really prefer having a qcom_nandc_read_cw_raw() that reads only
+one CW. From qcom_nandc_read_page_raw() you would loop over all the CW
+calling qcom_nandc_read_cw_raw() helper (it's raw reads, we don't care
+about performances) and from ->read_page_raw() you would check
+CW with uncorrectable errors for being blank with that helper. You
+would avoid the not-so-nice logic where you read all the CW between the
+first bad one and the last bad one.
+
 Thanks,
-Yunlong Song
+Miquèl
