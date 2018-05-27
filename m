@@ -1,88 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032596AbeE0CW5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 26 May 2018 22:22:57 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57850 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032474AbeE0CWz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 May 2018 22:22:55 -0400
-Subject: [PATCH] bdi: Fix another oops in wb_workfn()
-To: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, tj@kernel.org,
-        david@fromorbit.com, linux-block@vger.kernel.org
-References: <000000000000cbd959056d1851ca@google.com>
- <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <314ae2e0-c873-04ce-9cd5-fe2acadaee26@I-love.SAKURA.ne.jp>
-Date: Sun, 27 May 2018 11:21:25 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1032572AbeE0C2W (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 26 May 2018 22:28:22 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35692 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032474AbeE0C2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 May 2018 22:28:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,446,1520924400";
+   d="scan'208";a="50636453"
+Date: Sun, 27 May 2018 10:27:39 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
+        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [RFC PATCH] regulator: bd71837: buck_7_volts[] can be static
+Message-ID: <20180527022739.GA21367@lkp-wsm-ep1>
+References: <20180524060114.GJ4249@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524060114.GJ4249@localhost.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 8a8222698163d1fe180258566e9a3ff43f54fcd9 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Sun, 27 May 2018 11:08:20 +0900
-Subject: [PATCH] bdi: Fix another oops in wb_workfn()
 
-syzbot is still hitting NULL pointer dereference at wb_workfn() [1].
-This might be because we overlooked that delayed_work_timer_fn() does not
-check WB_registered before calling __queue_work() while mod_delayed_work()
-does not wait for already started delayed_work_timer_fn() because it uses
-del_timer() rather than del_timer_sync().
-
-Make wb_shutdown() be careful about wb_wakeup_delayed() path.
-
-[1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>
+Fixes: 9ebaeaf21446 ("regulator: bd71837: Build BD71837 regulator driver")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
- mm/backing-dev.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ bd71837-regulator.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 7441bd9..31e1d7e 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -372,11 +372,24 @@ static void wb_shutdown(struct bdi_writeback *wb)
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index e6c3fa7..d48b71c 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -207,7 +207,7 @@ static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
+  * 110 = 1.95V
+  * 111 = 1.995V
+  */
+-const unsigned int buck_7_volts[] = {
++static const unsigned int buck_7_volts[] = {
+ 	1605000, 1695000, 1755000, 1800000, 1845000, 1905000, 1950000, 1995000
+ };
  
- 	cgwb_remove_from_bdi_list(wb);
- 	/*
-+	 * mod_delayed_work() is not appropriate here, for
-+	 * delayed_work_timer_fn() from wb_wakeup_delayed() does not check
-+	 * WB_registered before calling __queue_work().
-+	 */
-+	del_timer_sync(&wb->dwork.timer);
-+	/*
-+	 * Clear WORK_STRUCT_PENDING_BIT in order to make sure that next
-+	 * queue_delayed_work() actually enqueues this work to the tail, for
-+	 * wb_wakeup_delayed() already set WORK_STRUCT_PENDING_BIT before
-+	 * scheduling delayed_work_timer_fn().
-+	 */
-+	cancel_delayed_work_sync(&wb->dwork);
-+	/*
- 	 * Drain work list and shutdown the delayed_work.  !WB_registered
- 	 * tells wb_workfn() that @wb is dying and its work_list needs to
- 	 * be drained no matter what.
- 	 */
--	mod_delayed_work(bdi_wq, &wb->dwork, 0);
-+	queue_delayed_work(bdi_wq, &wb->dwork, 0);
- 	flush_delayed_work(&wb->dwork);
- 	WARN_ON(!list_empty(&wb->work_list));
- 	/*
--- 
-1.8.3.1
+@@ -232,7 +232,7 @@ static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
+  * LDO2
+  * 0.8 or 0.9V
+  */
+-const unsigned int ldo_2_volts[] = {
++static const unsigned int ldo_2_volts[] = {
+ 	900000, 800000
+ };
+ 
