@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423204AbeE1MHi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:07:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52348 "EHLO mail.kernel.org"
+        id S1423240AbeE1MIC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:08:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423097AbeE1LFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:05:18 -0400
+        id S932509AbeE1LFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 031/272] idr: fix invalid ptr dereference on item delete
-Date: Mon, 28 May 2018 12:01:04 +0200
-Message-Id: <20180528100243.344810743@linuxfoundation.org>
+        stable@vger.kernel.org, Lidong Chen <lidongchen@tencent.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.16 028/272] IB/umem: Use the correct mm during ib_umem_release
+Date: Mon, 28 May 2018 12:01:01 +0200
+Message-Id: <20180528100243.031689488@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,80 +29,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Lidong Chen <jemmy858585@gmail.com>
 
-commit 7a4deea1aa8bddfed4ef1b35fc2b6732563d8ad5 upstream.
+commit 8e907ed4882714fd13cfe670681fc6cb5284c780 upstream.
 
-If the radix tree underlying the IDR happens to be full and we attempt
-to remove an id which is larger than any id in the IDR, we will call
-__radix_tree_delete() with an uninitialised 'slot' pointer, at which
-point anything could happen.  This was easiest to hit with a single
-entry at id 0 and attempting to remove a non-0 id, but it could have
-happened with 64 entries and attempting to remove an id >= 64.
+User-space may invoke ibv_reg_mr and ibv_dereg_mr in different threads.
 
-Roman said:
+If ibv_dereg_mr is called after the thread which invoked ibv_reg_mr has
+exited, get_pid_task will return NULL and ib_umem_release will not
+decrease mm->pinned_vm.
 
-  The syzcaller test boils down to opening /dev/kvm, creating an
-  eventfd, and calling a couple of KVM ioctls. None of this requires
-  superuser. And the result is dereferencing an uninitialized pointer
-  which is likely a crash. The specific path caught by syzbot is via
-  KVM_HYPERV_EVENTD ioctl which is new in 4.17. But I guess there are
-  other user-triggerable paths, so cc:stable is probably justified.
+Instead of using threads to locate the mm, use the overall tgid from the
+ib_ucontext struct instead. This matches the behavior of ODP and
+disassociate in handling the mm of the process that called ibv_reg_mr.
 
-Matthew added:
-
-  We have around 250 calls to idr_remove() in the kernel today. Many of
-  them pass an ID which is embedded in the object they're removing, so
-  they're safe. Picking a few likely candidates:
-
-  drivers/firewire/core-cdev.c looks unsafe; the ID comes from an ioctl.
-  drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c is similar
-  drivers/atm/nicstar.c could be taken down by a handcrafted packet
-
-Link: http://lkml.kernel.org/r/20180518175025.GD6361@bombadil.infradead.org
-Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-Reported-by: <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>
-Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 87773dd56d54 ("IB: ib_umem_release() should decrement mm->pinned_vm from ib_umem_get")
+Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/radix-tree.c                    |    4 +++-
- tools/testing/radix-tree/idr-test.c |    7 +++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/umem.c |    7 +------
+ include/rdma/ib_umem.h         |    1 -
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -2034,10 +2034,12 @@ void *radix_tree_delete_item(struct radi
- 			     unsigned long index, void *item)
- {
- 	struct radix_tree_node *node = NULL;
--	void __rcu **slot;
-+	void __rcu **slot = NULL;
- 	void *entry;
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -119,7 +119,6 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 	umem->length     = size;
+ 	umem->address    = addr;
+ 	umem->page_shift = PAGE_SHIFT;
+-	umem->pid	 = get_task_pid(current, PIDTYPE_PID);
+ 	/*
+ 	 * We ask for writable memory if any of the following
+ 	 * access flags are set.  "Local write" and "remote write"
+@@ -132,7 +131,6 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
  
- 	entry = __radix_tree_lookup(root, index, &node, &slot);
-+	if (!slot)
-+		return NULL;
- 	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
- 						get_slot_offset(node, slot))))
- 		return NULL;
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -252,6 +252,13 @@ void idr_checks(void)
- 	idr_remove(&idr, 3);
- 	idr_remove(&idr, 0);
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+-		put_pid(umem->pid);
+ 		ret = ib_umem_odp_get(context, umem, access);
+ 		if (ret) {
+ 			kfree(umem);
+@@ -148,7 +146,6 @@ struct ib_umem *ib_umem_get(struct ib_uc
  
-+	assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == 0);
-+	idr_remove(&idr, 1);
-+	for (i = 1; i < RADIX_TREE_MAP_SIZE; i++)
-+		assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == i);
-+	idr_remove(&idr, 1 << 30);
-+	idr_destroy(&idr);
-+
- 	for (i = INT_MAX - 3UL; i < INT_MAX + 1UL; i++) {
- 		struct item *item = item_create(i, 0);
- 		assert(idr_alloc(&idr, item, i, i + 10, GFP_KERNEL) == i);
+ 	page_list = (struct page **) __get_free_page(GFP_KERNEL);
+ 	if (!page_list) {
+-		put_pid(umem->pid);
+ 		kfree(umem);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -231,7 +228,6 @@ out:
+ 	if (ret < 0) {
+ 		if (need_release)
+ 			__ib_umem_release(context->device, umem, 0);
+-		put_pid(umem->pid);
+ 		kfree(umem);
+ 	} else
+ 		current->mm->pinned_vm = locked;
+@@ -274,8 +270,7 @@ void ib_umem_release(struct ib_umem *ume
+ 
+ 	__ib_umem_release(umem->context->device, umem, 1);
+ 
+-	task = get_pid_task(umem->pid, PIDTYPE_PID);
+-	put_pid(umem->pid);
++	task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
+ 	if (!task)
+ 		goto out;
+ 	mm = get_task_mm(task);
+--- a/include/rdma/ib_umem.h
++++ b/include/rdma/ib_umem.h
+@@ -48,7 +48,6 @@ struct ib_umem {
+ 	int                     writable;
+ 	int                     hugetlb;
+ 	struct work_struct	work;
+-	struct pid             *pid;
+ 	struct mm_struct       *mm;
+ 	unsigned long		diff;
+ 	struct ib_umem_odp     *odp_data;
