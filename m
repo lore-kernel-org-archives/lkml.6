@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162056AbeE1KfX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:35:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55630 "EHLO mail.kernel.org"
+        id S1165580AbeE1OTk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:19:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162025AbeE1KfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:17 -0400
+        id S1162049AbeE1KfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Moni Shoua <monis@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 184/329] IB/mlx4: Include GID type when deleting GIDs from HW table under RoCE
-Date: Mon, 28 May 2018 12:01:53 +0200
-Message-Id: <20180528100257.639128060@linuxfoundation.org>
+Subject: [PATCH 4.9 203/329] batman-adv: Fix skbuff rcsum on packet reroute
+Date: Mon, 28 May 2018 12:02:12 +0200
+Message-Id: <20180528100259.127247117@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,53 +32,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack M <jackm@dev.mellanox.co.il>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit a18177925c252da7801149abe217c05b80884798 ]
+[ Upstream commit fc04fdb2c8a894283259f5621d31d75610701091 ]
 
-The commit cited below added a gid_type field (RoCEv1 or RoCEv2)
-to GID properties.
+batadv_check_unicast_ttvn may redirect a packet to itself or another
+originator. This involves rewriting the ttvn and the destination address in
+the batadv unicast header. These field were not yet pulled (with skb rcsum
+update) and thus any change to them also requires a change in the receive
+checksum.
 
-When adding GIDs, this gid_type field was copied over to the
-hardware gid table. However, when deleting GIDs, the gid_type field
-was not copied over to the hardware gid table.
-
-As a result, when running RoCEv2, all RoCEv2 gids in the
-hardware gid table were set to type RoCEv1 when any gid was deleted.
-
-This problem would persist until the next gid was added (which would again
-restore the gid_type field for all the gids in the hardware gid table).
-
-Fix this by copying over the gid_type field to the hardware gid table
-when deleting gids, so that the gid_type of all remaining gids is
-preserved when a gid is deleted.
-
-Fixes: b699a859d17b ("IB/mlx4: Add gid_type to GID properties")
-Reviewed-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Fixes: a73105b8d4c7 ("batman-adv: improved client announcement mechanism")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/main.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/batman-adv/routing.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -361,8 +361,13 @@ static int mlx4_ib_del_gid(struct ib_dev
- 		if (!gids) {
- 			ret = -ENOMEM;
- 		} else {
--			for (i = 0; i < MLX4_MAX_PORT_GIDS; i++)
--				memcpy(&gids[i].gid, &port_gid_table->gids[i].gid, sizeof(union ib_gid));
-+			for (i = 0; i < MLX4_MAX_PORT_GIDS; i++) {
-+				memcpy(&gids[i].gid,
-+				       &port_gid_table->gids[i].gid,
-+				       sizeof(union ib_gid));
-+				gids[i].gid_type =
-+				    port_gid_table->gids[i].gid_type;
-+			}
- 		}
+--- a/net/batman-adv/routing.c
++++ b/net/batman-adv/routing.c
+@@ -724,6 +724,7 @@ out:
+ /**
+  * batadv_reroute_unicast_packet - update the unicast header for re-routing
+  * @bat_priv: the bat priv with all the soft interface information
++ * @skb: unicast packet to process
+  * @unicast_packet: the unicast header to be updated
+  * @dst_addr: the payload destination
+  * @vid: VLAN identifier
+@@ -735,7 +736,7 @@ out:
+  * Return: true if the packet header has been updated, false otherwise
+  */
+ static bool
+-batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
++batadv_reroute_unicast_packet(struct batadv_priv *bat_priv, struct sk_buff *skb,
+ 			      struct batadv_unicast_packet *unicast_packet,
+ 			      u8 *dst_addr, unsigned short vid)
+ {
+@@ -764,8 +765,10 @@ batadv_reroute_unicast_packet(struct bat
  	}
- 	spin_unlock_bh(&iboe->lock);
+ 
+ 	/* update the packet header */
++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 	ether_addr_copy(unicast_packet->dest, orig_addr);
+ 	unicast_packet->ttvn = orig_ttvn;
++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 
+ 	ret = true;
+ out:
+@@ -806,7 +809,7 @@ static bool batadv_check_unicast_ttvn(st
+ 	 * the packet to
+ 	 */
+ 	if (batadv_tt_local_client_is_roaming(bat_priv, ethhdr->h_dest, vid)) {
+-		if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
++		if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
+ 						  ethhdr->h_dest, vid))
+ 			batadv_dbg_ratelimited(BATADV_DBG_TT,
+ 					       bat_priv,
+@@ -852,7 +855,7 @@ static bool batadv_check_unicast_ttvn(st
+ 	 * destination can possibly be updated and forwarded towards the new
+ 	 * target host
+ 	 */
+-	if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
++	if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
+ 					  ethhdr->h_dest, vid)) {
+ 		batadv_dbg_ratelimited(BATADV_DBG_TT, bat_priv,
+ 				       "Rerouting unicast packet to %pM (dst=%pM): TTVN mismatch old_ttvn=%u new_ttvn=%u\n",
+@@ -875,12 +878,14 @@ static bool batadv_check_unicast_ttvn(st
+ 	if (!primary_if)
+ 		return false;
+ 
++	/* update the packet header */
++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 	ether_addr_copy(unicast_packet->dest, primary_if->net_dev->dev_addr);
++	unicast_packet->ttvn = curr_ttvn;
++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 
+ 	batadv_hardif_put(primary_if);
+ 
+-	unicast_packet->ttvn = curr_ttvn;
+-
+ 	return true;
+ }
+ 
