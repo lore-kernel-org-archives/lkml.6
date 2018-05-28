@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165080AbeE1NDM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42330 "EHLO mail.kernel.org"
+        id S1165123AbeE1NDa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:03:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163509AbeE1KxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:06 -0400
+        id S1164074AbeE1KxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 263/496] vti4: Dont count header length twice on tunnel setup
-Date: Mon, 28 May 2018 12:00:48 +0200
-Message-Id: <20180528100330.948425698@linuxfoundation.org>
+Subject: [PATCH 4.14 245/496] bnxt_en: Check valid VNIC ID in bnxt_hwrm_vnic_set_tpa().
+Date: Mon, 28 May 2018 12:00:30 +0200
+Message-Id: <20180528100330.224375339@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,64 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit dd1df24737727e119c263acf1be2a92763938297 ]
+[ Upstream commit 3c4fe80b32c685bdc02b280814d0cfe80d441c72 ]
 
-This re-introduces the effect of commit a32452366b72 ("vti4:
-Don't count header length twice.") which was accidentally
-reverted by merge commit f895f0cfbb77 ("Merge branch 'master' of
-git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec").
+During initialization, if we encounter errors, there is a code path that
+calls bnxt_hwrm_vnic_set_tpa() with invalid VNIC ID.  This may cause a
+warning in firmware logs.
 
-The commit message from Steffen Klassert said:
-
-    We currently count the size of LL_MAX_HEADER and struct iphdr
-    twice for vti4 devices, this leads to a wrong device mtu.
-    The size of LL_MAX_HEADER and struct iphdr is already counted in
-    ip_tunnel_bind_dev(), so don't do it again in vti_tunnel_init().
-
-And this is still the case now: ip_tunnel_bind_dev() already
-accounts for the header length of the link layer (not
-necessarily LL_MAX_HEADER, if the output device is found), plus
-one IP header.
-
-For example, with a vti device on top of veth, with MTU of 1500,
-the existing implementation would set the initial vti MTU to
-1332, accounting once for LL_MAX_HEADER (128, included in
-hard_header_len by vti) and twice for the same IP header (once
-from hard_header_len, once from ip_tunnel_bind_dev()).
-
-It should instead be 1480, because ip_tunnel_bind_dev() is able
-to figure out that the output device is veth, so no additional
-link layer header is attached, and will properly count one
-single IP header.
-
-The existing issue had the side effect of avoiding PMTUD for
-most xfrm policies, by arbitrarily lowering the initial MTU.
-However, the only way to get a consistent PMTU value is to let
-the xfrm PMTU discovery do its course, and commit d6af1a31cc72
-("vti: Add pmtu handling to vti_xmit.") now takes care of local
-delivery cases where the application ignores local socket
-notifications.
-
-Fixes: b9959fd3b0fa ("vti: switch to new ip tunnel code")
-Fixes: f895f0cfbb77 ("Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Acked-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_vti.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -396,7 +396,6 @@ static int vti_tunnel_init(struct net_de
- 	memcpy(dev->dev_addr, &iph->saddr, 4);
- 	memcpy(dev->broadcast, &iph->daddr, 4);
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -3808,6 +3808,9 @@ static int bnxt_hwrm_vnic_set_tpa(struct
+ 	struct bnxt_vnic_info *vnic = &bp->vnic_info[vnic_id];
+ 	struct hwrm_vnic_tpa_cfg_input req = {0};
  
--	dev->hard_header_len	= LL_MAX_HEADER + sizeof(struct iphdr);
- 	dev->mtu		= ETH_DATA_LEN;
- 	dev->flags		= IFF_NOARP;
- 	dev->addr_len		= 4;
++	if (vnic->fw_vnic_id == INVALID_HW_RING_ID)
++		return 0;
++
+ 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_VNIC_TPA_CFG, -1, -1);
+ 
+ 	if (tpa_flags) {
