@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933473AbeE1QGM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:06:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34886 "EHLO mail.kernel.org"
+        id S965844AbeE1KOn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:14:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965861AbeE1KOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:47 -0400
+        id S936516AbeE1KOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 019/268] NFSv4: always set NFS_LOCK_LOST when a lock is lost.
-Date: Mon, 28 May 2018 11:59:53 +0200
-Message-Id: <20180528100204.273457878@linuxfoundation.org>
+        stable@vger.kernel.org, Corneliu Doban <corneliu.doban@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.4 007/268] mmc: sdhci-iproc: fix 32bit writes for TRANSFER_MODE register
+Date: Mon, 28 May 2018 11:59:41 +0200
+Message-Id: <20180528100202.915284507@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,102 +30,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Corneliu Doban <corneliu.doban@broadcom.com>
 
-[ Upstream commit dce2630c7da73b0634686bca557cc8945cc450c8 ]
+commit 5f651b870485ee60f5abbbd85195a6852978894a upstream.
 
-There are 2 comments in the NFSv4 code which suggest that
-SIGLOST should possibly be sent to a process.  In these
-cases a lock has been lost.
-The current practice is to set NFS_LOCK_LOST so that
-read/write returns EIO when a lock is lost.
-So change these comments to code when sets NFS_LOCK_LOST.
+When the host controller accepts only 32bit writes, the value of the
+16bit TRANSFER_MODE register, that has the same 32bit address as the
+16bit COMMAND register, needs to be saved and it will be written
+in a 32bit write together with the command as this will trigger the
+host to send the command on the SD interface.
+When sending the tuning command, TRANSFER_MODE is written and then
+sdhci_set_transfer_mode reads it back to clear AUTO_CMD12 bit and
+write it again resulting in wrong value to be written because the
+initial write value was saved in a shadow and the read-back returned
+a wrong value, from the register.
+Fix sdhci_iproc_readw to return the saved value of TRANSFER_MODE
+when a saved value exist.
+Same fix for read of BLOCK_SIZE and BLOCK_COUNT registers, that are
+saved for a different reason, although a scenario that will cause the
+mentioned problem on this registers is not probable.
 
-One case is when lock recovery after apparent server restart
-fails with NFS4ERR_DENIED, NFS4ERR_RECLAIM_BAD, or
-NFS4ERRO_RECLAIM_CONFLICT.  The other case is when a lock
-attempt as part of lease recovery fails with NFS4ERR_DENIED.
-
-In an ideal world, these should not happen.  However I have
-a packet trace showing an NFSv4.1 session getting
-NFS4ERR_BADSESSION after an extended network parition.  The
-NFSv4.1 client treats this like server reboot until/unless
-it get NFS4ERR_NO_GRACE, in which case it switches over to
-"nograce" recovery mode.  In this network trace, the client
-attempts to recover a lock and the server (incorrectly)
-reports NFS4ERR_DENIED rather than NFS4ERR_NO_GRACE.  This
-leads to the ineffective comment and the client then
-continues to write using the OPEN stateid.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
+Signed-off-by: Corneliu Doban <corneliu.doban@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/nfs/nfs4proc.c  |   12 ++++++++----
- fs/nfs/nfs4state.c |    5 ++++-
- 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -1780,7 +1780,7 @@ static int nfs4_open_reclaim(struct nfs4
- 	return ret;
- }
+---
+ drivers/mmc/host/sdhci-iproc.c |   30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
+
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -32,6 +32,8 @@ struct sdhci_iproc_host {
+ 	const struct sdhci_iproc_data *data;
+ 	u32 shadow_cmd;
+ 	u32 shadow_blk;
++	bool is_cmd_shadowed;
++	bool is_blk_shadowed;
+ };
  
--static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct nfs4_state *state, const nfs4_stateid *stateid, int err)
-+static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct nfs4_state *state, const nfs4_stateid *stateid, struct file_lock *fl, int err)
+ #define REG_OFFSET_IN_BITS(reg) ((reg) << 3 & 0x18)
+@@ -47,8 +49,22 @@ static inline u32 sdhci_iproc_readl(stru
+ 
+ static u16 sdhci_iproc_readw(struct sdhci_host *host, int reg)
  {
- 	switch (err) {
- 		default:
-@@ -1827,7 +1827,11 @@ static int nfs4_handle_delegation_recall
- 			return -EAGAIN;
- 		case -ENOMEM:
- 		case -NFS4ERR_DENIED:
--			/* kill_proc(fl->fl_pid, SIGLOST, 1); */
-+			if (fl) {
-+				struct nfs4_lock_state *lsp = fl->fl_u.nfs4_fl.owner;
-+				if (lsp)
-+					set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
-+			}
- 			return 0;
- 	}
- 	return err;
-@@ -1863,7 +1867,7 @@ int nfs4_open_delegation_recall(struct n
- 		err = nfs4_open_recover_helper(opendata, FMODE_READ);
- 	}
- 	nfs4_opendata_put(opendata);
--	return nfs4_handle_delegation_recall_error(server, state, stateid, err);
-+	return nfs4_handle_delegation_recall_error(server, state, stateid, NULL, err);
+-	u32 val = sdhci_iproc_readl(host, (reg & ~3));
+-	u16 word = val >> REG_OFFSET_IN_BITS(reg) & 0xffff;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_iproc_host *iproc_host = sdhci_pltfm_priv(pltfm_host);
++	u32 val;
++	u16 word;
++
++	if ((reg == SDHCI_TRANSFER_MODE) && iproc_host->is_cmd_shadowed) {
++		/* Get the saved transfer mode */
++		val = iproc_host->shadow_cmd;
++	} else if ((reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) &&
++		   iproc_host->is_blk_shadowed) {
++		/* Get the saved block info */
++		val = iproc_host->shadow_blk;
++	} else {
++		val = sdhci_iproc_readl(host, (reg & ~3));
++	}
++	word = val >> REG_OFFSET_IN_BITS(reg) & 0xffff;
+ 	return word;
  }
  
- static void nfs4_open_confirm_prepare(struct rpc_task *task, void *calldata)
-@@ -6157,7 +6161,7 @@ int nfs4_lock_delegation_recall(struct f
- 	if (err != 0)
- 		return err;
- 	err = _nfs4_do_setlk(state, F_SETLK, fl, NFS_LOCK_NEW);
--	return nfs4_handle_delegation_recall_error(server, state, stateid, err);
-+	return nfs4_handle_delegation_recall_error(server, state, stateid, fl, err);
- }
+@@ -104,13 +120,15 @@ static void sdhci_iproc_writew(struct sd
  
- struct nfs_release_lockowner_data {
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1386,6 +1386,7 @@ static int nfs4_reclaim_locks(struct nfs
- 	struct inode *inode = state->inode;
- 	struct nfs_inode *nfsi = NFS_I(inode);
- 	struct file_lock *fl;
-+	struct nfs4_lock_state *lsp;
- 	int status = 0;
- 	struct file_lock_context *flctx = inode->i_flctx;
- 	struct list_head *list;
-@@ -1426,7 +1427,9 @@ restart:
- 		case -NFS4ERR_DENIED:
- 		case -NFS4ERR_RECLAIM_BAD:
- 		case -NFS4ERR_RECLAIM_CONFLICT:
--			/* kill_proc(fl->fl_pid, SIGLOST, 1); */
-+			lsp = fl->fl_u.nfs4_fl.owner;
-+			if (lsp)
-+				set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
- 			status = 0;
+ 	if (reg == SDHCI_COMMAND) {
+ 		/* Write the block now as we are issuing a command */
+-		if (iproc_host->shadow_blk != 0) {
++		if (iproc_host->is_blk_shadowed) {
+ 			sdhci_iproc_writel(host, iproc_host->shadow_blk,
+ 				SDHCI_BLOCK_SIZE);
+-			iproc_host->shadow_blk = 0;
++			iproc_host->is_blk_shadowed = false;
  		}
- 		spin_lock(&flctx->flc_lock);
+ 		oldval = iproc_host->shadow_cmd;
+-	} else if (reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) {
++		iproc_host->is_cmd_shadowed = false;
++	} else if ((reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) &&
++		   iproc_host->is_blk_shadowed) {
+ 		/* Block size and count are stored in shadow reg */
+ 		oldval = iproc_host->shadow_blk;
+ 	} else {
+@@ -122,9 +140,11 @@ static void sdhci_iproc_writew(struct sd
+ 	if (reg == SDHCI_TRANSFER_MODE) {
+ 		/* Save the transfer mode until the command is issued */
+ 		iproc_host->shadow_cmd = newval;
++		iproc_host->is_cmd_shadowed = true;
+ 	} else if (reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) {
+ 		/* Save the block info until the command is issued */
+ 		iproc_host->shadow_blk = newval;
++		iproc_host->is_blk_shadowed = true;
+ 	} else {
+ 		/* Command or other regular 32-bit write */
+ 		sdhci_iproc_writel(host, newval, reg & ~3);
