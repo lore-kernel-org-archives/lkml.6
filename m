@@ -1,18 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033913AbeE1PMF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:12:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43164 "EHLO mail.kernel.org"
+        id S1033705AbeE1KXn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:23:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033718AbeE1KXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:48 -0400
+        id S1033286AbeE1KXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 186/268] m68k: set dma and coherent masks for platform FEC ethernets
-Date: Mon, 28 May 2018 12:02:40 +0200
-Message-Id: <20180528100223.428219253@linuxfoundation.org>
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 211/268] PCI: Restore config space on runtime resume despite being unbound
+Date: Mon, 28 May 2018 12:03:05 +0200
+Message-Id: <20180528100226.090589268@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -28,69 +31,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Ungerer <gerg@linux-m68k.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-[ Upstream commit f61e64310b75733d782e930d1fb404b84699eed6 ]
+[ Upstream commit 5775b843a619b3c93f946e2b55a208d9f0f48b59 ]
 
-As of commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-coherent_dma_mask") the Freescale FEC driver is issuing the following
-warning on driver initialization on ColdFire systems:
+We leave PCI devices not bound to a driver in D0 during runtime suspend.
+But they may have a parent which is bound and can be transitioned to
+D3cold at runtime.  Once the parent goes to D3cold, the unbound child
+may go to D3cold as well.  When the child goes to D3cold, its internal
+state, including configuration of BARs, MSI, ASPM, MPS, etc., is lost.
 
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 0x40159e20
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc7-dirty #4
-Stack from 41833dd8:
-        41833dd8 40259c53 40025534 40279e26 00000003 00000000 4004e514 41827000
-        400255de 40244e42 00000204 40159e20 00000009 00000000 00000000 4024531d
-        40159e20 40244e42 00000204 00000000 00000000 00000000 00000007 00000000
-        00000000 40279e26 4028d040 40226576 4003ae88 40279e26 418273f6 41833ef8
-        7fffffff 418273f2 41867028 4003c9a2 4180ac6c 00000004 41833f8c 4013e71c
-        40279e1c 40279e26 40226c16 4013ced2 40279e26 40279e58 4028d040 00000000
-Call Trace:
-        [<40025534>] 0x40025534
- [<4004e514>] 0x4004e514
- [<400255de>] 0x400255de
- [<40159e20>] 0x40159e20
- [<40159e20>] 0x40159e20
+One example are recent hybrid graphics laptops which cut power to the
+discrete GPU when the root port above it goes to ACPI power state D3.
+Users may provoke this by unbinding the GPU driver and allowing runtime
+PM on the GPU via sysfs:  The PM core will then treat the GPU as
+"suspended", which in turn allows the root port to runtime suspend,
+causing the power resources listed in its _PR3 object to be powered off.
+The GPU's BARs will be uninitialized when a driver later probes it.
 
-It is not fatal, the driver and the system continue to function normally.
+Another example are hybrid graphics laptops where the GPU itself (rather
+than the root port) is capable of runtime suspending to D3cold.  If the
+GPU's integrated HDA controller is not bound and the GPU's driver
+decides to runtime suspend to D3cold, the HDA controller's BARs will be
+uninitialized when a driver later probes it.
 
-As per the warning the coherent_dma_mask is not set on this device.
-There is nothing special about the DMA memory coherency on this hardware
-so we can just set the mask to 32bits in the platform data for the FEC
-ethernet devices.
+Fix by saving and restoring config space over a runtime suspend cycle
+even if the device is not bound.
 
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Peter Wu <peter@lekensteyn.nl>              # Nvidia Optimus
+Tested-by: Lukas Wunner <lukas@wunner.de>              # MacBook Pro
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[lukas: add commit message, bikeshed code comments for clarity]
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/92fb6e6ae2730915eb733c08e2f76c6a313e3860.1520068884.git.lukas@wunner.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/m68k/coldfire/device.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/pci/pci-driver.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/arch/m68k/coldfire/device.c
-+++ b/arch/m68k/coldfire/device.c
-@@ -135,7 +135,11 @@ static struct platform_device mcf_fec0 =
- 	.id			= 0,
- 	.num_resources		= ARRAY_SIZE(mcf_fec0_resources),
- 	.resource		= mcf_fec0_resources,
--	.dev.platform_data	= FEC_PDATA,
-+	.dev = {
-+		.dma_mask		= &mcf_fec0.dev.coherent_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+		.platform_data		= FEC_PDATA,
-+	}
- };
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1140,11 +1140,14 @@ static int pci_pm_runtime_suspend(struct
+ 	int error;
  
- #ifdef MCFFEC_BASE1
-@@ -167,7 +171,11 @@ static struct platform_device mcf_fec1 =
- 	.id			= 1,
- 	.num_resources		= ARRAY_SIZE(mcf_fec1_resources),
- 	.resource		= mcf_fec1_resources,
--	.dev.platform_data	= FEC_PDATA,
-+	.dev = {
-+		.dma_mask		= &mcf_fec1.dev.coherent_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+		.platform_data		= FEC_PDATA,
+ 	/*
+-	 * If pci_dev->driver is not set (unbound), the device should
+-	 * always remain in D0 regardless of the runtime PM status
++	 * If pci_dev->driver is not set (unbound), we leave the device in D0,
++	 * but it may go to D3cold when the bridge above it runtime suspends.
++	 * Save its config space in case that happens.
+ 	 */
+-	if (!pci_dev->driver)
++	if (!pci_dev->driver) {
++		pci_save_state(pci_dev);
+ 		return 0;
 +	}
- };
- #endif /* MCFFEC_BASE1 */
- #endif /* CONFIG_FEC */
+ 
+ 	if (!pm || !pm->runtime_suspend)
+ 		return -ENOSYS;
+@@ -1195,16 +1198,18 @@ static int pci_pm_runtime_resume(struct
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+ 
+ 	/*
+-	 * If pci_dev->driver is not set (unbound), the device should
+-	 * always remain in D0 regardless of the runtime PM status
++	 * Restoring config space is necessary even if the device is not bound
++	 * to a driver because although we left it in D0, it may have gone to
++	 * D3cold when the bridge above it runtime suspended.
+ 	 */
++	pci_restore_standard_config(pci_dev);
++
+ 	if (!pci_dev->driver)
+ 		return 0;
+ 
+ 	if (!pm || !pm->runtime_resume)
+ 		return -ENOSYS;
+ 
+-	pci_restore_standard_config(pci_dev);
+ 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+ 	__pci_enable_wake(pci_dev, PCI_D0, true, false);
+ 	pci_fixup_device(pci_fixup_resume, pci_dev);
