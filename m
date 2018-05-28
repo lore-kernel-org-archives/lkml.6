@@ -1,32 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934335AbeE1VlN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 17:41:13 -0400
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:42391 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934294AbeE1VlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 17:41:10 -0400
-X-Google-Smtp-Source: ADUXVKLDphph2upkbHwqvyaoO9o91/bTnu5Nl/DQTDG5To3Xcone0fgfsVhwLM5lgiPWBNETPljyfvOWjrAUFYJBuxc=
+        id S934390AbeE1Vrc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 17:47:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33653 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933771AbeE1Vra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 17:47:30 -0400
+Date: Mon, 28 May 2018 14:30:39 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
+Message-ID: <20180528213039.yy2madue67njkmw5@linux-n805>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <CA+G9fYsS50-auAAe79hSGAQ8b1jzkfdcUvuHq0WpAJk17JQkEA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1527540057.30075.21.camel@gnu.org>
-References: <1527540057.30075.21.camel@gnu.org>
-From: Gabriel C <nix.or.die@gmail.com>
-Date: Mon, 28 May 2018 23:40:39 +0200
-Message-ID: <CAEJqkggH=_eKUJgigxYqfxGuJhQZ4bCaX5n-jqQ2kBAXtHuDuA@mail.gmail.com>
-Subject: Re: Linux and autoconfig of kernel on iso-image boot.
-To: egnuph@gmail.com
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYsS50-auAAe79hSGAQ8b1jzkfdcUvuHq0WpAJk17JQkEA@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-28 22:40 GMT+02:00 Phillip Hugo <egnuph@googlemail.com>:
-> Hi all, thanks for your work.
->
-> Linux should have "make grab_config" that sets loaded modules to be
-> built in the kernel build and make modules.
->
+On Tue, 29 May 2018, Naresh Kamboju wrote:
 
-make localmodconfig ?
+>On 28 May 2018 at 15:30, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>On all devices,
+>  ltp-syscalls-tests:
+>    * cve-2017-5669
+>
+>  ltp-cve-tests:
+>    * cve-2017-5669
+>
+>Test log:
+>------------
+>cve-2017-5669.c:62: INFO: Attempting to attach shared memory to null page
+>cve-2017-5669.c:74: INFO: Mapped shared memory to (nil)
+>cve-2017-5669.c:78: FAIL: We have mapped a VM address within the first 64Kb
+>cve-2017-5669.c:84: INFO: Touching shared memory to see if anything
+>strange happens
+>Summary:
+>passed   0
+>failed   1
+>skipped  0
+>warnings 0
+>
+>
+>The root cause is,
+>"Revert "ipc/shm: Fix shmat mmap nil-page protection"",
+>which explicitly rolls back the original change and mentions that
+>the LTP test case needs to be updated accordingly.
+
+This is expected in that the ltp testcase was made based on wrong assumptions.
+Furthermore, the reversion is being done because without it we breaks userspace;
+X11 most noticeably -- that alone indicates that the cve testcase is bogus.
+
+>
+>This regression initially detected on 4.17.0-rc5-next-20180516
+>Need more investigation on this issue.
+
+The correct way of proceeding is to update the ltp testcase to deal with the
+remap option only, which I mentioned and they are Cc'ed.
+
+Thanks,
+Davidlohr
