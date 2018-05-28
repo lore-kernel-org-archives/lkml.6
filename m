@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938072AbeE1K64 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:58:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46804 "EHLO mail.kernel.org"
+        id S938085AbeE1K7A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:59:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938038AbeE1K6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:44 -0400
+        id S938058AbeE1K6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 353/496] btrfs: tests/qgroup: Fix wrong tree backref level
-Date: Mon, 28 May 2018 12:02:18 +0200
-Message-Id: <20180528100334.679044439@linuxfoundation.org>
+Subject: [PATCH 4.14 354/496] Btrfs: fix copy_items() return value when logging an inode
+Date: Mon, 28 May 2018 12:02:19 +0200
+Message-Id: <20180528100334.718425651@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,50 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 3c0efdf03b2d127f0e40e30db4e7aa0429b1b79a ]
+[ Upstream commit 8434ec46c6e3232cebc25a910363b29f5c617820 ]
 
-The extent tree of the test fs is like the following:
+When logging an inode, at tree-log.c:copy_items(), if we call
+btrfs_next_leaf() at the loop which checks for the need to log holes, we
+need to make sure copy_items() returns the value 1 to its caller and
+not 0 (on success). This is because the path the caller passed was
+released and is now different from what is was before, and the caller
+expects a return value of 0 to mean both success and that the path
+has not changed, while a return value of 1 means both success and
+signals the caller that it can not reuse the path, it has to perform
+another tree search.
 
- BTRFS info (device (null)): leaf 16327509003777336587 total ptrs 1 free space 3919
-  item 0 key (4096 168 4096) itemoff 3944 itemsize 51
-          extent refs 1 gen 1 flags 2
-          tree block key (68719476736 0 0) level 1
-                                           ^^^^^^^
-          ref#0: tree block backref root 5
+Even though this is a case that should not be triggered on normal
+circumstances or very rare at least, its consequences can be very
+unpredictable (especially when replaying a log tree).
 
-And it's using an empty tree for fs tree, so there is no way that its
-level can be 1.
-
-For REAL (created by mkfs) fs tree backref with no skinny metadata, the
-result should look like:
-
- item 3 key (30408704 EXTENT_ITEM 4096) itemoff 3845 itemsize 51
-         refs 1 gen 4 flags TREE_BLOCK
-         tree block key (256 INODE_ITEM 0) level 0
-                                           ^^^^^^^
-         tree block backref root 5
-
-Fix the level to 0, so it won't break later tree level checker.
-
-Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
-Signed-off-by: Qu Wenruo <wqu@suse.com>
+Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tests/qgroup-tests.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tests/qgroup-tests.c
-+++ b/fs/btrfs/tests/qgroup-tests.c
-@@ -63,7 +63,7 @@ static int insert_normal_tree_ref(struct
- 	btrfs_set_extent_generation(leaf, item, 1);
- 	btrfs_set_extent_flags(leaf, item, BTRFS_EXTENT_FLAG_TREE_BLOCK);
- 	block_info = (struct btrfs_tree_block_info *)(item + 1);
--	btrfs_set_tree_block_level(leaf, block_info, 1);
-+	btrfs_set_tree_block_level(leaf, block_info, 0);
- 	iref = (struct btrfs_extent_inline_ref *)(block_info + 1);
- 	if (parent > 0) {
- 		btrfs_set_extent_inline_ref_type(leaf, iref,
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3918,6 +3918,7 @@ fill_holes:
+ 			ASSERT(ret == 0);
+ 			src = src_path->nodes[0];
+ 			i = 0;
++			need_find_last_extent = true;
+ 		}
+ 
+ 		btrfs_item_key_to_cpu(src, &key, i);
