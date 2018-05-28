@@ -1,94 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754070AbeE1Ikb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:40:31 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:41360 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753986AbeE1Ik1 (ORCPT
+        id S1754092AbeE1Ile (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:41:34 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36656 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753986AbeE1Ild (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:40:27 -0400
-X-Google-Smtp-Source: ADUXVKI/5H5s0qY9hWw2DoMZjf9BqMwGB7oy/rxM6DAMmx40fBo60YUkIW4cGiorN8rkKYbp+2HmvdXSuZIqqLB2284=
+        Mon, 28 May 2018 04:41:33 -0400
+X-Google-Smtp-Source: ADUXVKILjP2jZxVnpVFJRUBUcInSU8KrBF7He8BsK5xHO8WcPzO2YHKGrCX4T3mJuOOhLHxWTihwhTpy9A4gAgsRs+0=
 MIME-Version: 1.0
-In-Reply-To: <20180517094658.18707-1-douly.fnst@cn.fujitsu.com>
-References: <20180517094658.18707-1-douly.fnst@cn.fujitsu.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 28 May 2018 10:40:26 +0200
-X-Google-Sender-Auth: NiOJyOJ7vIJfEMD0WYo0FHgdB4U
-Message-ID: <CAJZ5v0hpEf3gxfAtfufGQVyGEWoszMfEciNKiYf0TrUWNXtiuQ@mail.gmail.com>
-Subject: Re: [PATCH 0/1] Remove the check of duplicate processors
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
+In-Reply-To: <20180526100243.GA1564@sirena.org.uk>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
+ <20180514080640.12515-11-linus.walleij@linaro.org> <20180526100243.GA1564@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 May 2018 10:41:31 +0200
+Message-ID: <CACRpkdZFrFuNnP=uJyREckr8EXW6L2ku+=QwVA7Tva3CpfrpCQ@mail.gmail.com>
+Subject: Re: [PATCH 10/19 v3] regulator: s2mps11: Pass descriptor instead of
+ GPIO number
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 11:46 AM, Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
-> There is a bug in CPU hotplug code, I have two simple fix method, but I can't
-> ensure which one is better. So sent it out,  seek help.
+On Sat, May 26, 2018 at 12:02 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, May 14, 2018 at 10:06:31AM +0200, Linus Walleij wrote:
+>> Instead of passing a global GPIO number for the enable GPIO, pass
+>> a descriptor looked up with the standard devm_gpiod_get_optional()
+>> call.
+>>
+>> This regulator supports passing platform data, but enable/sleep
+>> regulators are looked up from the device tree exclusively, so
+>> we can need not touch other files.
 >
-> We found some processors which have the same processor ID but in different
-> PXM in ACPI namespace. such as this:
+> This seems to have broken the boot on Odroid XU3 so I'm going to revert
+> it:
 >
-> proc_id   |    pxm
-> --------------------
-> 0       <->     0
-> 1       <->     0
-> 2       <->     1
-> 3       <->     1
-> ......
-> 89      <->     0
-> 89      <->     1
-> 89      <->     2
-> 89      <->     3
-> ......
->
-> So we create a mechanism to validate them. make the processor(ID=89)
-> as invalid. And once a processor be hotplugged physically, we check its
-> processor id.
->
->     Commit 8e089eaa1999 ("acpi: Provide mechanism to validate processors in the ACPI tables")
->     Commit a77d6cd96849 ("acpi/processor: Check for duplicate processor ids at hotplug time")
->
-> Recently, I found the check mechanism has a bug, it didn't use the
-> acpi_processor_ids_walk() right and always gave us a wrong result.
-> First, I fixed it by modifying the value with AE_OK which is the
-> standard acpi_status value.
->
->     https://lkml.org/lkml/2018/3/20/273
->
-> But, now, I even think this check is useless. my reasons are following:
->
->     1). Based on the practical effect, It works well, and no bug be reported
->     2). Based on the code, the duplicate cases can be dealed with by
->
->        if (invalid_logical_cpuid(pr->id) || !cpu_present(pr->id))
->
-> That seems more reasonable, let's see the following case:
->
->                           Before the patch,             After the patch
->
-> the first processor(ID=89)
-> hot-add                        failed                        success
->
-> the others processor(ID=89)
-> hot-add                        failed                        failed
->
->
-> So, What's your idea about it.
->
-> Dou Liyang (1):
->   acpi/processor: Remove the check of duplicates processor ids
+> https://storage.kernelci.org/next/master/v4.17-rc6-9523-g47b9cef0672d/arm/multi_v7_defconfig/lab-baylibre-seattle/boot-exynos5422-odroidxu3.html
 
-Can you please resend the patch with the above information in the
-changelog of it?
+How annoying. I will check with a colleague who might have this
+board so I can test it on hardware.
 
-That would make it easier to review and discuss it.
-
-Also I think that we need some sort of a check against duplicate IDs.
+Yours,
+Linus Walleij
