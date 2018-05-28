@@ -1,32 +1,32 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3573297-1527670882-2-17849697459762816179
+X-Cyrus-Session-Id: sloti22d1t05-133372-1527491589-2-4853363998278143946
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527670882; b=h2/eOLwyLe8Y5RgS3zV9NPmlGsV4AwrAadVyPKybH5CmxEfKrW
-    vExnHdqkedr7gbOjKsqgRBQSUUCOU05PsreK0Igg5TVZ5bjja7Bt6kwQYFXr8njr
-    8u4yxjCZrUaAE+A35oOjbGw1G1tB90HQy+Y7HvQhvF7l1N19HnoEJkKQn5CUZ/IK
-    opEJpxJk2W9Fn5+VEYY7CegA31JhOfHVNGLkjq7dCsA59v2FJABj1MB+1qB4pKEc
-    NxxezPbqWyeA3jF+7T2zh5XZjS6UcHtrdq7ERjudLSrWt015D1IQVU4uHn7zy2qA
-    KxaV3NnNnK+1FEEQ/53g/BqiriSlcp+SrbxQ==
+    1527491589; b=G+gc5uRdMgsCN1JaAH3eogATWuSGw9UCAAG8XNHD0nRG9y6/Gv
+    MOMUtB8J7tJqDnAQoEe7yzAbOUkUygfSutZTRVWc+e/ByKyI+fc+6sgyv1ymPFI+
+    EavpX/gldR7OXAlHp0VBIrJpuN5UOMSrLtLQbirtwjOIqRjeDKxbR4Nf1mYeIYYT
+    E4I4lgR2kXAZBoCW54A6cwEUmGXM6qb7l9Ev7b8r53Y6O0R3jBq9xStSX/g+gh/d
+    3MNu3H/z36Z80ru1b6v8ehPSY0Ut+IyqkP1r1UOdney18DysCyzkoRsoYZmtj/AL
+    RUAsbRsZdt/X/VQ8t1mOF1f64yvaEkgbyzqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
+    messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527670882;
-    bh=mZ+jwWFYuCpPq+2jAjmpIodoZ6g/6e3KTnZEBYHZLio=; b=TUELNr0yzoO4
-    F8poXt85o7ZvBe3qHChRF3hNYVRh0ok23gl/3rv8gQzIqMtScc8E6TwzrpwwTYvL
-    8/TpK7rtWp9Pa0ljcciFmAMDGxNI4neP12MTCtaGHnk2ZGdB5s5Mv/8hcdm2VI+i
-    Cf0+IJYivkUPBQBb/v6dmT6fHJZGdIx2aWYsvzzBQ8SMsJzT6FmQXe1mxhQYNlHw
-    eDm1X93111LpVRsaKuA5/eGMQvILg9edjaKrHbVt+omfXQXw/HmqGB9abwWfuZwD
-    wXUCZU3uzu2iuPzjTr2l+9eyzxCRa6yxwzVU2RxZPqmFKfYzlcV2ltbfxKSKQjJd
-    0puLdwHKpQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491589;
+    bh=mmlh+E1MV8VnWGOwdUW9+JOccUp5zraRZxeGRT23m0Q=; b=hsQ2iss1W+FM
+    eyYs09hCoHeEgB+gxWHKp8d1Ft0bGKCuBNcJEq2n33DJK1yvxqJAjSNTvCFyk1Tc
+    AN5bNOfP4QZWBPjX9uswmsWc5RjZwohIuR502VMWzQucaE0YvMpI+KDgbaVm8axO
+    tEnRnJ7Tn0p471DsT6xt/uik2TZjsU+Ld0i95x6zY4FyAThjkmYsCzODNWTtbqFa
+    EQo3wj8Evn7Beeyr8At6XlGJSmTT8s3xIZjYl6nU/1+HYOgJaCw5tjsM0jG7tHcl
+    7aiAWmde+VQDnJS9H3cJWMUozKH4c2QP6rvekIX23F6YQqCjlwKnbZRxEeB5zSFt
+    +ZCFecz4eQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=yQHKuTaA header.a=rsa-sha256
+    header.i=@kernel.org header.b=QnGJsGcY header.a=rsa-sha256
     header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=yQHKuTaA header.a=rsa-sha256
+      header.i=@kernel.org header.b=QnGJsGcY header.a=rsa-sha256
       header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -56,26 +56,25 @@ Authentication-Results: mx1.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKYNKV4DeeFm3FCFRAw3AAV1583FEmiHKtaaKpKu2RCXRc/IYACeIX0ip7bYrxytBYvQQZA+CtnNb74e7l+IU12SL6r2zkZp2M8/0bY8ueLHAYe9IbAk
-    bhVeset8/Kto+VXiwFRQJLajGCp8R9S54keB9Q2BrtD1oqNdYNAUDjHE7MZGkFnJ9pqqi5jyGqC+h20KgM6yzoctcZwb3tkNY8xp3j9VCwOpsjtesQqheCY9
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=D19gQVrFAAAA:8 a=GVvBtGTFHZWgCG7zfkIA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=W4TVW4IDbPiebHqcZpNg:22
+X-CM-Envelope: MS4wfCjSZfd1P/hJJn/FItlSjlBAIUIyysTwy4OrOpEhrWbyNyR93bW88Dn4xfuC0ZiOM1pgzE1QELWF7LVr6Q7pBWkAP6QWgTk6qVbrtouVnDc8WFgpkIg+
+    xcNKLOTk2h8a4+OVFuAaCNh6pJeAPbejDGO9jbFwcfvSSl2a8lFPka4igsMf1J9FzgdXJYQrja16fpgaCsalNuxFa0JlpHejc88E2+tUg2macwmLdPdhGSRr
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=gCol6u2zAc9TF8PHovMA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936014AbeE3JBT (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 05:01:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40404 "EHLO mail.kernel.org"
+        id S1753854AbeE1HNH (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 03:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935975AbeE3JBO (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Wed, 30 May 2018 05:01:14 -0400
-Date: Wed, 30 May 2018 18:01:08 +0900
+        id S1753820AbeE1HNG (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 28 May 2018 03:13:06 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
-To: naveen.n.rao@linux.vnet.ibm.com
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
         Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
@@ -99,13 +98,15 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Rich Felker <dalias@libc.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arch@vger.kernel.org
-Subject: Re: [PATCH -tip v4 00/27] kprobes: Cleanup jprobe implementation
-Message-Id: <20180530180108.e3a7a37672e65d5ee685596f@kernel.org>
+Subject: [PATCH -tip v4 26/27] Documentation: kprobes: Add how to change the execution path
+Date: Mon, 28 May 2018 16:12:40 +0900
+Message-Id: <152749156011.15132.15417205958490100087.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
 References: <152749074878.15132.16693721906742461289.stgit@devbox>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
@@ -113,167 +114,42 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Naveen,
+Add a section that explaining how to change the execution
+path with kprobes.
 
-Sorry, I might miss to add you on CC list. Could you test and review this on powerpc?
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Documentation/kprobes.txt |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Thank you,
-
-On Mon, 28 May 2018 15:59:09 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Hello,
-> 
-> Since we decided to remove jprobe from kernel last year,
-> its APIs are disabled and we worked on moving in-kernel
-> jprobe users to kprobes or trace-events. And now no jprobe
-> users are here anymore.
-> 
-> This is the 4th version of the series for removing jprobe.
-> Previous version is here:
-> 
->  https://lkml.org/lkml/2018/5/16/1052
-> 
-> Unlike previous versions, this version removes jprobe from
-> all architectures, as Ingo asked me in the previous thread.
-> 
-> I marked this as RFC again because it introduced changes for
-> many arch. It should be reviewed by some arch which is not
-> simply removing code (e.g. powerpc, arm).
-> 
-> BTW, this series are based on -tip tree as same as its
-> previous version, and I'm sure it can be applied to
-> linus tree/linux-next too.
-> 
-> Series structure
-> =====
-> Basically this series introduces 3 major changes;
-> 
-> - Remove jprobe implementation ([2/27] - [12/27])
-> 
-> - Remove break_handler() related code ([13/27] - [23/27])
->   This should be done after (or with) removing jprobe
->   because break_handler is only used by jprobe.
->  (I'm not so sure, should I merge above patches into one
->   arch-wide patch as next one does?)
-> 
-> - Clean current_kprobe and enable preempt if pre_handler()
->   returns !0 ([24/27] and [25/27]<- x86 specific update)
->   This also depends on above patches because those
->   current_kprobe and preemption are expected to be adjusted
->   by jprobe implementation via break_handler.
-> 
-> And some minor changes;
-> 
-> - Document cleanup and update ([1/27], [26/27])
-> 
-> And finally remove jprobe stub APIs and break_handler
-> from kprobes.h ([27/27]). Of course this depends on
-> above patches.
-> 
-> Since removing jprobes and break_handler related code
-> involve archtecture specific changes in some archs,
-> I splitted it for each arch. But "clean current_kprobe and
-> enable preempt if pre_handler() returns !0" patch modifies
-> all architectures, since it changes expected kprobe
-> handler behavior. I think this would be better done in
-> one patch for consistency.
-> 
-> Result
-> =====
-> I've tested it with kprobe sanity test on x86-64, and arm64
-> but for other archs, I just did cross-build test.
-> 
-> With this series, we finally cleanup all jprobe code
-> and break_handler as below.
-> 
-> $ git grep -wi break_handler | wc -l
-> 0
-> $ git grep -wi jprobe | wc -l
-> 0
-> 
-> Actually, there is one place where mentioning jprobe,
-> Documentation/kprobes.txt explains jprobe is deprecated
-> and how to migrate jprobe user to ftrace or kprobe.
-> I didn't remove it because it might be useful for
-> some users.
-> 
-> Thank you,
-> 
-> ---
-> 
-> Masami Hiramatsu (27):
->       Documentation/kprobes: Fix to remove remaining jprobe
->       kprobes: Remove jprobe API implementation
->       kprobes/x86: Remove jprobe implementation
->       ARC: kprobes: Remove jprobe implementation
->       ARM: kprobes: Remove jprobe arm implementation
->       arm64: kprobes: Remove jprobe implementation
->       powerpc/kprobes: Remove jprobe powerpc implementation
->       ia64: kprobes: Remove jprobe implementation
->       MIPS: kprobes: Remove jprobe implementation
->       s390/kprobes: Remove jprobe implementation
->       sh: kprobes: Remove jprobe implementation
->       sparc64: kprobes: Remove jprobe implementation
->       kprobes: Don't check the ->break_handler() in generic kprobes code
->       kprobes/x86: Don't call ->break_handler() in x86 kprobes
->       ARC: kprobes: Don't call the ->break_handler() in ARC kprobes code
->       ARM: kprobes: Don't call the ->break_handler() in arm kprobes code
->       arm64: kprobes: Don't call the ->break_handler() in arm kprobes code
->       powerpc/kprobes: Don't call the ->break_handler() in arm kprobes code
->       ia64: kprobes: Don't call the ->break_handler() in ia64 kprobes code
->       MIPS: kprobes: Don't call the ->break_handler() in MIPS kprobes code
->       s390/kprobes: Don't call the ->break_handler() in s390 kprobes code
->       sh: kprobes: Don't call the ->break_handler() in SH kprobes code
->       sparc64: kprobes: Don't call the ->break_handler() in sparc64 kprobes code
->       bpf: error-inject: kprobes: Clear current_kprobe and enable preempt in kprobe
->       x86: kprobes: Do not disable preempt on int3 path
->       Documentation: kprobes: Add how to change the execution path
->       kprobes: Remove jprobe stub API
-> 
-> 
->  Documentation/kprobes.txt                      |   35 +++++-
->  arch/arc/include/asm/kprobes.h                 |    2 
->  arch/arc/kernel/kprobes.c                      |   50 +--------
->  arch/arm/include/asm/kprobes.h                 |    2 
->  arch/arm/include/asm/probes.h                  |    1 
->  arch/arm/probes/kprobes/core.c                 |  135 +-----------------------
->  arch/arm64/include/asm/kprobes.h               |    1 
->  arch/arm64/kernel/probes/kprobes.c             |   86 +--------------
->  arch/ia64/include/asm/kprobes.h                |    2 
->  arch/ia64/include/uapi/asm/break.h             |    1 
->  arch/ia64/kernel/Makefile                      |    2 
->  arch/ia64/kernel/jprobes.S                     |   90 ----------------
->  arch/ia64/kernel/kprobes.c                     |   93 +----------------
->  arch/mips/include/asm/kprobes.h                |   13 --
->  arch/mips/kernel/kprobes.c                     |   70 ++----------
->  arch/powerpc/include/asm/kprobes.h             |   12 --
->  arch/powerpc/kernel/kprobes-ftrace.c           |   31 +-----
->  arch/powerpc/kernel/kprobes.c                  |   92 +++-------------
->  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   39 +------
->  arch/s390/include/asm/kprobes.h                |    2 
->  arch/s390/kernel/kprobes.c                     |   86 +--------------
->  arch/sh/include/asm/kprobes.h                  |    4 -
->  arch/sh/kernel/kprobes.c                       |   72 +------------
->  arch/sparc/include/asm/kprobes.h               |    1 
->  arch/sparc/kernel/kprobes.c                    |   65 +-----------
->  arch/x86/include/asm/kprobes.h                 |    5 -
->  arch/x86/kernel/kprobes/common.h               |   10 --
->  arch/x86/kernel/kprobes/core.c                 |  119 +--------------------
->  arch/x86/kernel/kprobes/ftrace.c               |   31 ++----
->  arch/x86/kernel/kprobes/opt.c                  |    1 
->  include/linux/kprobes.h                        |   53 ---------
->  kernel/fail_function.c                         |    3 -
->  kernel/kprobes.c                               |  115 +-------------------
->  kernel/test_kprobes.c                          |   94 -----------------
->  kernel/trace/trace_kprobe.c                    |   11 +-
->  lib/Kconfig.debug                              |    2 
->  36 files changed, 125 insertions(+), 1306 deletions(-)
->  delete mode 100644 arch/ia64/kernel/jprobes.S
-> 
-> --
-> Masami Hiramatsu (Linaro)
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
+index 3e9e99ea751b..8a98eed1521b 100644
+--- a/Documentation/kprobes.txt
++++ b/Documentation/kprobes.txt
+@@ -80,6 +80,26 @@ After the instruction is single-stepped, Kprobes executes the
+ "post_handler," if any, that is associated with the kprobe.
+ Execution then continues with the instruction following the probepoint.
+ 
++Changing Execution Path
++-----------------------
++
++Since the kprobes can probe into a running kernel code, it can change
++the register set, including instruction pointer. This operation
++requires maximum attention, such as keeping the stack frame, recovering
++execution path etc. Since it is operated on running kernel and need deep
++knowladge of the archtecture and concurrent computing, you can easily
++shot your foot.
++
++If you change the instruction pointer (and set up other related
++registers) in pre_handler, you must return !0 so that the kprobes
++stops single stepping and just returns to given address.
++This also means post_handler should not be called anymore.
++
++Note that this operation may be harder on some architectures which
++use TOC (Table of Contents) for function call, since you have to
++setup new TOC for your function in your module, and recover old
++one after back from it.
++
+ Return Probes
+ -------------
+ 
