@@ -1,171 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754040AbeE1I3N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:29:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33630 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753849AbeE1I3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:29:11 -0400
-Date: Mon, 28 May 2018 16:28:46 +0800
-From: Dave Young <dyoung@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Jaewon Kim <jaewon31.kim@samsung.com>,
-        Jan Kara <jack@suse.cz>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
- device driver
-Message-ID: <20180528082846.GA7884@dhcp-128-65.nay.redhat.com>
-References: <20180523151151.6730-1-david@redhat.com>
- <20180524075327.GU20441@dhcp22.suse.cz>
- <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
- <20180524085610.GA5467@dhcp-128-65.nay.redhat.com>
- <e70de03e-6965-749a-6c3c-ecf6dcb60c71@redhat.com>
+        id S1754052AbeE1IaW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:30:22 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:13575 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753849AbeE1IaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:30:21 -0400
+X-UUID: b2fb65dc70194e7aa017d1a174b83b2e-20180528
+Message-ID: <1527496214.396.6.camel@mtksdaap41>
+Subject: Re: [PATCH v1 2/7] drm/mediatek: fix to get right bridge for dpi
+ encoder
+From: CK Hu <ck.hu@mediatek.com>
+To: Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC: David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date: Mon, 28 May 2018 16:30:14 +0800
+In-Reply-To: <20180514075243.5442-3-bibby.hsieh@mediatek.com>
+References: <20180514075243.5442-1-bibby.hsieh@mediatek.com>
+         <20180514075243.5442-3-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e70de03e-6965-749a-6c3c-ecf6dcb60c71@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/18 at 11:14am, David Hildenbrand wrote:
-> On 24.05.2018 10:56, Dave Young wrote:
-> > Hi,
-> > 
-> > [snip]
-> >>>
-> >>>> For kdump and onlining/offlining code, we
-> >>>> have to mark pages as offline before a new segment is visible to the system
-> >>>> (e.g. as these pages might not be backed by real memory in the hypervisor).
-> >>>
-> >>> Please expand on the kdump part. That is really confusing because
-> >>> hotplug should simply not depend on kdump at all. Moreover why don't you
-> >>> simply mark those pages reserved and pull them out from the page
-> >>> allocator?
-> >>
-> >> 1. "hotplug should simply not depend on kdump at all"
-> >>
-> >> In theory yes. In the current state we already have to trigger kdump to
-> >> reload whenever we add/remove a memory block.
-> >>
-> >>
-> >> 2. kdump part
-> >>
-> >> Whenever we offline a page and tell the hypervisor about it ("unplug"),
-> >> we should not assume that we can read that page again. Now, if dumping
-> >> tools assume they can read all memory that is offline, we are in trouble.
-> >>
-> >> It is the same thing as we already have with Pg_hwpoison. Just a
-> >> different meaning - "don't touch this page, it is offline" compared to
-> >> "don't touch this page, hw is broken".
-> > 
-> > Does that means in case an offline no kdump reload as mentioned in 1)?
-> > 
-> > If we have the offline event and reload kdump, I assume the memory state
-> > is refreshed so kdump will not read the memory offlined, am I missing
-> > something?
-> 
-> If a whole section is offline: yes. (ACPI hotplug)
-> 
-> If pages are online but broken ("logically offline" - hwpoison): no
-> 
-> If single pages are logically offline: no. (Balloon inflation - let's
-> call it unplug as that's what some people refer to)
-> 
-> If only subsections (4MB chunks) are offline: no.
-> 
-> Exporting memory ranges in a smaller granularity to kdump than section
-> size would a) be heavily complicated b) introduce a lot of overhead for
-> this tracking data c) make us retrigger kdump way too often.
-> 
-> So simply marking pages offline in the struct pages and telling kdump
-> about it is the straight forward thing to do. And it is fairly easy to
-> add and implement as we have the exact same thing in place for hwpoison.
+Hi, Bibby:
 
-Ok, it is clear enough.   If case fine grained page offline is is like
-a hwpoison page so a userspace patch for makedumpfile is needes to
-exclude them when copying vmcore.
+Some inline comment.
 
+On Mon, 2018-05-14 at 15:52 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
 > 
-> > 
-> >>
-> >> Balloon drivers solve this problem by always allowing to read unplugged
-> >> memory. In virtio-mem, this cannot and should even not be guaranteed.
-> >>
-> > 
-> > Hmm, that sounds a bug..
-> 
-> I can give you a simple example why reading such unplugged (or balloon
-> inflated) memory is problematic: Huge page backed guests.
-> 
-> There is no zero page for huge pages. So if we allow the guest to read
-> that memory any time, we cannot guarantee that we actually consume less
-> memory in the hypervisor. This is absolutely to be avoided.
-> 
-> Existing balloon drivers don't support huge page backed guests. (well
-> you can inflate, but the hypervisor cannot madvise() 4k on a huge page,
-> resulting in no action being performed). This scenario is to be
-> supported with virtio-mem.
-> 
-> 
-> So yes, this is actually a bug in e.g. virtio-balloon implementations:
-> 
-> With "VIRTIO_BALLOON_F_MUST_TELL_HOST" we have to tell the hypervisor
-> before we access a page again. kdump cannot do this and does not care,
-> so this page is silently accessed and dumped. One of the main problems
-> why extending virtio-balloon hypervisor implementations to support
-> host-enforced R/W protection is impossible.
+> 1, dpi is an encoder, there is an bridge in the struct
+> of decoder, we could use it.
 
-I'm not sure I got all virt related background, but still thank you
-for the detailed explanation.  This is the first time I heard about
-this, nobody complained before :(
+The encoder.bridge is assigned in drm_bridge_attach(), so I think the
+design is to assign this member in drm_bridge_attach().
+Any assignment outside this function may conflict with this design.
 
+> 2, using of_graph_get_remote_port_parent to get right
+> bridge in device tree.
 > 
-> > 
-> >> And what we have to do to make this work is actually pretty simple: Just
-> >> like Pg_hwpoison, track per page if it is online and provide this
-> >> information to kdump.
-> >>
-> >>
-> > 
-> > Thanks
-> > Dave
-> > 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dpi.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
 > 
-> 
-> -- 
-> 
-> Thanks,
-> 
-> David / dhildenb
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> index 0a44ab175422..2b8b34c72697 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> @@ -63,7 +63,6 @@ enum mtk_dpi_out_color_format {
+>  struct mtk_dpi {
+>  	struct mtk_ddp_comp ddp_comp;
+>  	struct drm_encoder encoder;
+> -	struct drm_bridge *bridge;
+>  	void __iomem *regs;
+>  	struct device *dev;
+>  	struct clk *engine_clk;
+> @@ -643,8 +642,8 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
+>  
+>  	/* Currently DPI0 is fixed to be driven by OVL1 */
+>  	dpi->encoder.possible_crtcs = BIT(1);
+> -
+> -	ret = drm_bridge_attach(&dpi->encoder, dpi->bridge, NULL);
+> +	dpi->encoder.bridge->encoder = &dpi->encoder;
 
-Thanks
-Dave
+This is done inside drm_bridge_attach().
+
+> +	ret = drm_bridge_attach(&dpi->encoder, dpi->encoder.bridge, NULL);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to attach bridge: %d\n", ret);
+>  		goto err_cleanup;
+> @@ -709,7 +708,7 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_dpi *dpi;
+>  	struct resource *mem;
+> -	struct device_node *bridge_node;
+> +	struct device_node *ep, *bridge_node;
+>  	int comp_id;
+>  	const struct of_device_id *match;
+>  	int ret;
+> @@ -759,15 +758,21 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	bridge_node = of_graph_get_remote_node(dev->of_node, 0, 0);
+> -	if (!bridge_node)
+> +	ep = of_graph_get_next_endpoint(dev->of_node, NULL);
+> +	if (ep) {
+> +		bridge_node = of_graph_get_remote_port_parent(ep);
+> +		of_node_put(ep);
+> +	}
+> +	if (!bridge_node) {
+> +		dev_err(dev, "Failed to find bridge node\n");
+>  		return -ENODEV;
+> +	}
+
+This looks like mt8173 has the same bug, so send this patch
+independently and it would be more quick to merge.
+For mtk_dsi, it use drm_of_find_panel_or_bridge(), so I think you could
+use the same function to get bridge.
+
+Regards,
+CK
+
+>  
+>  	dev_info(dev, "Found bridge node: %pOF\n", bridge_node);
+>  
+> -	dpi->bridge = of_drm_find_bridge(bridge_node);
+> +	dpi->encoder.bridge = of_drm_find_bridge(bridge_node);
+>  	of_node_put(bridge_node);
+> -	if (!dpi->bridge)
+> +	if (!dpi->encoder.bridge)
+>  		return -EPROBE_DEFER;
+>  
+>  	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DPI);
