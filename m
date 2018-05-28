@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165315AbeE1N1l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:27:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37610 "EHLO mail.kernel.org"
+        id S1165396AbeE1N17 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:27:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163246AbeE1Krb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:31 -0400
+        id S1163235AbeE1KrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 110/496] md: raid5: avoid string overflow warning
-Date: Mon, 28 May 2018 11:58:15 +0200
-Message-Id: <20180528100324.540683730@linuxfoundation.org>
+Subject: [PATCH 4.14 107/496] ibmvnic: Check for NULL skbs in NAPI poll routine
+Date: Mon, 28 May 2018 11:58:12 +0200
+Message-Id: <20180528100324.412139231@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,63 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
 
-[ Upstream commit 53b8d89ddbdbb0e4625a46d2cdbb6f106c52f801 ]
+[ Upstream commit abe27a885d9e6575e663a16176dabc58ce9d7188 ]
 
-gcc warns about a possible overflow of the kmem_cache string, when adding
-four characters to a string of the same length:
+After introduction of commit d0869c0071e4, there were some instances of
+RX queue entries from a previous session (before the device was closed
+and reopened) returned to the NAPI polling routine. Since the corresponding
+socket buffers were freed, this resulted in a panic on reopen. Include
+a check for a NULL skb here to avoid this.
 
-drivers/md/raid5.c: In function 'setup_conf':
-drivers/md/raid5.c:2207:34: error: '-alt' directive writing 4 bytes into a region of size between 1 and 32 [-Werror=format-overflow=]
-  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-                                  ^~~~
-drivers/md/raid5.c:2207:2: note: 'sprintf' output between 5 and 36 bytes into a destination of size 32
-  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If I'm counting correctly, we need 11 characters for the fixed part
-of the string and 18 characters for a 64-bit pointer (when no gendisk
-is used), so that leaves three characters for conf->level, which should
-always be sufficient.
-
-This makes the code use snprintf() with the correct length, to
-make the code more robust against changes, and to get the compiler
-to shut up.
-
-In commit f4be6b43f1ac ("md/raid5: ensure we create a unique name for
-kmem_cache when mddev has no gendisk") from 2010, Neil said that
-the pointer could be removed "shortly" once devices without gendisk
-are disallowed. I have no idea if that happened, but if it did, that
-should probably be changed as well.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Fixes: d0869c0071e4 ("ibmvnic: Clean RX pool buffers during device close")
+Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid5.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2197,15 +2197,16 @@ static int grow_one_stripe(struct r5conf
- static int grow_stripes(struct r5conf *conf, int num)
- {
- 	struct kmem_cache *sc;
-+	size_t namelen = sizeof(conf->cache_name[0]);
- 	int devs = max(conf->raid_disks, conf->previous_raid_disks);
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1668,6 +1668,11 @@ restart_poll:
+ 			dev_kfree_skb_any(rx_buff->skb);
+ 			remove_buff_from_pool(adapter, rx_buff);
+ 			continue;
++		} else if (!rx_buff->skb) {
++			/* free the entry */
++			next->rx_comp.first = 0;
++			remove_buff_from_pool(adapter, rx_buff);
++			continue;
+ 		}
  
- 	if (conf->mddev->gendisk)
--		sprintf(conf->cache_name[0],
-+		snprintf(conf->cache_name[0], namelen,
- 			"raid%d-%s", conf->level, mdname(conf->mddev));
- 	else
--		sprintf(conf->cache_name[0],
-+		snprintf(conf->cache_name[0], namelen,
- 			"raid%d-%p", conf->level, conf->mddev);
--	sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-+	snprintf(conf->cache_name[1], namelen, "%.27s-alt", conf->cache_name[0]);
- 
- 	conf->active_name = 0;
- 	sc = kmem_cache_create(conf->cache_name[conf->active_name],
+ 		length = be32_to_cpu(next->rx_comp.len);
