@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424454AbeE1LOp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:14:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        id S1424480AbeE1LO5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:14:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424442AbeE1LOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:40 -0400
+        id S1424202AbeE1LOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Govindarajulu Varadarajan <gvaradar@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 213/272] enic: enable rq before updating rq descriptors
-Date: Mon, 28 May 2018 12:04:06 +0200
-Message-Id: <20180528100258.376432154@linuxfoundation.org>
+Subject: [PATCH 4.16 216/272] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+Date: Mon, 28 May 2018 12:04:09 +0200
+Message-Id: <20180528100258.631577028@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,52 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Govindarajulu Varadarajan <gvaradar@cisco.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-[ Upstream commit e8588e268509292550634d9a35f2723a207683b2 ]
+[ Upstream commit b89405b6102fcc3746f43697b826028caa94c823 ]
 
-rq should be enabled before posting the buffers to rq desc. If not hw sees
-stale value and casuses DMAR errors.
+When dt_to_map_one_config() is called with a pinctrl_dev passed
+in, it should only be using this if the node being looked up
+is a hog. The code was always using the passed pinctrl_dev
+without checking whether the dt node referred to it.
 
-Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+A pin controller can have pinctrl-n dependencies on other pin
+controllers in these cases:
+
+- the pin controller hardware is external, for example I2C, so
+  needs other pin controller(s) to be setup to communicate with
+  the hardware device.
+
+- it is a child of a composite MFD so its of_node is shared with
+  the parent MFD and other children of that MFD. Any part of that
+  MFD could have dependencies on other pin controllers.
+
+Because of this, dt_to_map_one_config() can't assume that if it
+has a pinctrl_dev passed in then the node it looks up must be
+a hog. It could be a reference to some other pin controller.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cisco/enic/enic_main.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/pinctrl/devicetree.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -1898,6 +1898,8 @@ static int enic_open(struct net_device *
- 	}
- 
- 	for (i = 0; i < enic->rq_count; i++) {
-+		/* enable rq before updating rq desc */
-+		vnic_rq_enable(&enic->rq[i]);
- 		vnic_rq_fill(&enic->rq[i], enic_rq_alloc_buf);
- 		/* Need at least one buffer on ring to get going */
- 		if (vnic_rq_desc_used(&enic->rq[i]) == 0) {
-@@ -1909,8 +1911,6 @@ static int enic_open(struct net_device *
- 
- 	for (i = 0; i < enic->wq_count; i++)
- 		vnic_wq_enable(&enic->wq[i]);
--	for (i = 0; i < enic->rq_count; i++)
--		vnic_rq_enable(&enic->rq[i]);
- 
- 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
- 		enic_dev_add_station_addr(enic);
-@@ -1936,8 +1936,12 @@ static int enic_open(struct net_device *
- 	return 0;
- 
- err_out_free_rq:
--	for (i = 0; i < enic->rq_count; i++)
-+	for (i = 0; i < enic->rq_count; i++) {
-+		err = vnic_rq_disable(&enic->rq[i]);
-+		if (err)
-+			return err;
- 		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
-+	}
- 	enic_dev_notify_unset(enic);
- err_out_free_intr:
- 	enic_unset_affinity_hint(enic);
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -122,8 +122,10 @@ static int dt_to_map_one_config(struct p
+ 			/* OK let's just assume this will appear later then */
+ 			return -EPROBE_DEFER;
+ 		}
+-		if (!pctldev)
+-			pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
++		/* If we're creating a hog we can use the passed pctldev */
++		if (pctldev && (np_pctldev == p->dev->of_node))
++			break;
++		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
+ 		if (pctldev)
+ 			break;
+ 		/* Do not defer probing of hogs (circular loop) */
