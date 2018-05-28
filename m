@@ -1,91 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425445AbeE1Qc4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:32:56 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44371 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940155AbeE1Qcq (ORCPT
+        id S940131AbeE1QdC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:33:02 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55660 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936654AbeE1Qcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:32:46 -0400
-X-Google-Smtp-Source: AB8JxZqs4iXQNYAmIWaLEHpgVzlEaPniCOq7AdRYY/7m0IbViq9EMq6J3Z2vYPlETalMjpPBCrScNw==
-Date: Mon, 28 May 2018 21:57:25 +0530
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
+        Mon, 28 May 2018 12:32:51 -0400
+X-Google-Smtp-Source: ADUXVKL7DSm2WyOIZqr6xoAZTmpqQXNAE70/xxjJnkZ3Wm+CVr1fXKLcyF27CH+f0EUndT/BWL0eew==
+Subject: Re: [PATCH] md: dm-crypt: Add Inline Encryption support for dmcrypt
+To: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
+        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Manjunath M Bettegowda <manjumb@synopsys.com>,
+        Prabu Thangamuthu <prabut@synopsys.com>,
+        Tejas Joglekar <Tejas.Joglekar@synopsys.com>,
+        device-mapper development <dm-devel@redhat.com>
+References: <e9120efc-1e25-79c8-6132-9062dd030539@synopsys.com>
+From: Milan Broz <gmazyland@gmail.com>
+Message-ID: <7a510610-9133-39aa-6841-3925c532f3c0@gmail.com>
+Date: Mon, 28 May 2018 18:32:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+ Thunderbird/31.3.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Autocrypt: addr=harsh@prjkt.io; keydata=mQINBForuUUBEADNrWLYhW8qjO6GmfU32cqU
- IgKkyZsPGEZ33Vof1smCdCKXHrtbQCha5sao0TWbueAlG9Vr9HM4LpG8fGkMyrRvcTs+vrgS/b9M
- c2sFI8SFvCzakYNnb0ZK70Drht71ixfvcPORIxFf0eaPh+yHBuf05A7dErbz5xkdWbiu3aixh180
- //QBHaymrp/nw85qd15Pgpqm9Ew7TBGYaQn6RKa5SD+y6Pvs7rInViAB3EIOqGv7ACYrEIGJU4Ft
- HuvQDloVSJ71oTP/Kf+RGCGNz+xMp9yGGcjP/TqtzVcoInF1VZ8Hhbuk+19OI6O1nFV3beUBkC3A
- UdriptzIaribJEqT9RzGdwI+6LaPsiTl+/6icz7n5tRxo0wZicrMy0NHyPgObjjegogwDs4LqxAt
- gBWPHIrgjPldcSVEDRcvGQhtoPU9+geCwWLUKljtUjgULtKKFdYoUYerWT+dzQA+IXAoL9FdLWIB
- 1T+57sCOGWl3B2qcaYAJxldQZlfy8N2FC3hwyF3tBb5viOEVmC1o88slFolR9MeoY/u1Ovj8S5cI
- yOUYQ2aB0Vog3D6HLx2EuS0Ni/zm5FNsc8IFwWp4F5APttOQxvFAlAo60u5wr7o3e6L86S4jnPeK
- Ff1jCGMlBy3CYOdLbbKfwCYOJglgs64Xy6Qm356ydz5+5+PMVjPhNwARAQABtCBIYXJzaCBTaGFu
- ZGlseWEgPGhhcnNoQHByamt0LmlvPokCOAQTAQIAIgUCWiu5RQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AACgkQStdXWNnudBxRSA/+MJYAADUsJZuZa5N6g/ECIi+MEEimHnEDdctSMryJut7H
- onV8bI9LNuharCOaL/V3ttX4Yq+Z5VHIIEPjgOvbAdo6LUkDhz8kDlKk9xCDn6HV70OmSAXMV/fs
- 5DutM1wEyWOPbS4xDJNNDxN4U6jRq2QiAhsbOQp9L4Dw+gPQPVhyeg6CZ2anXJTUB/ZpaHTSuLpi
- 8/JHKSaz0XYmOcpsT2M+OAM03/PtvbOdxsCS8qDmCX5YI+/s22AVdNLObt7ZLcpoME0o0d0xyh2G
- 87FaTyDqcfyjWH9RrzPuMvRCAfD50oZYAqLu4DSuipBkZubSYi/dWuuiYOB/ezMofohHbr3fGrub
- Bx4ZzofMgYLTUN9hydo6xKBjJSg7Q2+uPzRa4k0pV975KGjZUbV9DZztvE9GtE5t8n8CLWKzWe+x
- +GamOEpe5xMhj+ITE7gbDeeEqYX+jfb5TYpmkDlZfy7xWA2a+mR70Sz4XiE0TCj7nPkJATzWmutG
- 41FNW5g90EIjOw6EYfMOCUxGULCb5qaQCbZWnJKm3cnV8VoOqbzUf65Ux/TAairmfsu6IORfucSf
- K4jqYOYcq2Rw7Xxlm9Kf2G5NW/r2dOhaHI8R4YEVZN4ldzcpr0ydk3Q8OW6xL0YYTS8oUKUqjIhA
- zqzo0LmC7PVq7oTBCNGT6FaFhS18T4m5Ag0EWiu5RQEQAMJ4X8DQGP8/z+7m+VcBb93VnEMDqNmC
- VHxTXo17PsNgKXAvzeWGUvCYvAEuOVEtDCYfDbZa81Jrkpkt2MlqMkxFuuteX/UFU0+CHFZ9/ap4
- 0+4tTLYphqFXyxZhKI3qc14y4PZtzcUsvx1uc9+KQH2+18XJ7kfT1XIBqb9cKNwdLdil2UaXCe7h
- C066a8MudhYb+kJQnqRmFwtbUAhDimMYql0hMwC1LWMxPQLsWyvZGwLORLoK3Qt/3eQZ+1R+efSQ
- HaZKRwrjKh3C9oaj9hFIGZIZeDAn33rnJ5+8NTWVHeDyay5S8IkDb0QMXMmP1IzrbxZqvOiFS7Zi
- poJWPmr4U+G0UvWmWNHMBW291oMRTRH/MqJTzXAcw0ra6THUDO5tiTAWwjubl7P+giW5c8lZQQ/f
- 0Zsld1PfY92jqtGwiG7rxNQtUBHcX8GFr0WKCpgS7Xyo+XuQU1L6Bz4WWgeKFyyDv7sE/iAOAbI6
- JgC/RhatXZkYZ774UEh5BSVWc//D4oDyHNLWZC0QloOK+6J9FoG4DQHE/W2J57F8rIt2ttcTzJ1j
- BK9IL7ys9ly6vAjshv/dHsdBEHOTi2bDqelwPEr/6CgaXviUHOqNyDf7PWTqJL14u//hVnrd/mir
- OsuVWhBJd7oicP0fg2otm+S1F/EYnlQ3shjDKCECA+B9ABEBAAGJAh8EGAECAAkFAloruUUCGwwA
- CgkQStdXWNnudBxVoQ/9FalIPufte2x4cv1Uu5lwclh/YoM4rymm4UOaY13SeTLb/5x+TF0SpVss
- PW9UF2u7mCWSzWWb1qc1sFTFwJGdLdpApw2okSg16F41HlB6buAshQuG8sL0Tkb7085s4QVG/aPB
- n5EIOlogtmvQhpnamo4lyu3VthbfIkd2nL54YcBq+4dkuzF4VafVQfi8HvbkrvAuVlCWRpNapgk6
- 2PHNEjV+aKrWXO5AY6UhGiU2c4tSSLlgk9MlsjhBGoa1bhyaLVCaboFpfK7ZIp/duKgsMP5tymME
- aSZAfoEeckkG+S8EfdLbGLOrLM+WNdNYn07+rEa4wuSx7BiFOc/fo4LfOtK5rCxbkWBVDtIEA2aV
- AfgYgv4qqxY4YnTgt3/wv7IWnKgnygpfv2QjNleVdpImNgKDTIijsjssA1M7RdEz7/B99sUcsdxi
- IsVzu/0DDPcFa5Shd+Kc8lufNiS/WeL8IOVtV4TPp35H06nQiV6aEPB7zYTTJmWGfkRIsC8RKufW
- xMxeQ5A7briwk81uvYOKV5GjJkPn8hEUrUU1JPuLeluYcUE/uW51VYwqvqW4BJ/Faz12zQoy2kzd
- Jk241bEaXbSTPgCY1WfOqs9tL32Gn7y8d/u3tQ6z2Rc6h0FY1V/NOlKjw9rg/y21EK/M5/6IqgEK
- GOzuzn9qgWR/VAqd9BA=
-Subject: Re: [PATCH 3.18 000/185] 3.18.111-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-CC: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-From: Harsh Shandilya <harsh@prjkt.io>
-Message-ID: <1B222449-12F3-405D-B475-A112A5483E0A@prjkt.io>
+In-Reply-To: <e9120efc-1e25-79c8-6132-9062dd030539@synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4SGX4vv012205
 
-On 28 May 2018 3:30:41 PM IST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->This is the start of the stable review cycle for the 3.18.111 release.
->There are 185 patches in this series, all will be posted as a response
->to this one.  If anyone has any issues with these being applied, please
->let me know.
->
->Responses should be made by Wed May 30 10:00:18 UTC 2018.
->Anything received after that time might be too late.
->
->The whole patch series can be found in one patch at:
->	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.111-rc1.gz
->or in the git tree and branch at:
->	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
->linux-3.18.y
->and the diffstat can be found below.
+On 05/28/2018 03:01 PM, Ladvine D Almeida wrote:
+> 
+> This patch adds new option
+>     -- perform_inline_encrypt
+> that set the option inside dmcrypt to use inline encryption for
+> the configured mapping. I want to introduce inline encryption support
+> in the UFS Host Controller driver. The usage of the same for accomplishing
+> the Full Disk Encryption is done by the following changes in the
+> dmcrypt subsystem:
+>     - New function crypt_inline_encrypt_submit() is added to the
+> dmcrypt which associate the crypto context to the bios which
+> are submitted by the subsystem.
+>     - Successful configuration for the inline encryption will result in
+> the crypto transformation job being bypassed in the dmcrypt layer and the
+> actual encryption happens inline to the block device.
 
-Merged and flashed onto the OnePlus 3T, no regressions noticed so far. Thanks for the update!
--- 
-Harsh Shandilya, PRJKT Development LLC
+I am not sure this is a good idea. Dm-crypt should never ever forward
+plaintext sector to underlying device.
+
+And you do not even check that your hw is available in the underlying device!
+
+If you want to use dm-crypt, write a crypto API driver for your crypto hw that defines
+specific cipher and let dm-crypt use this cipher (no patches needed in this case!)
+
+If I read the patch correctly, you do not check any parameters for
+compatibility with your hw support (cipher, mode, IV algorithm, key length, sector size ...)
+
+It seems like if the "perform_inline_encrypt" option is present, you just submit
+the whole bio to your code with new INLINE_ENCRYPTION bit set.
+
+What happens, if the cipher in table is different from what your hw is doing?
+
+Milan
+
+> Another patch set is sent to the block layer community for
+> CONFIG_BLK_DEV_INLINE_ENCRYPTION config, which enables changes in the
+> block layer for adding the bi_ie_private variable to the bio structure.
+> 
+> Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
+> ---
+>  drivers/md/dm-crypt.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 53 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+> index 44ff473..a9ed567 100644
+> --- a/drivers/md/dm-crypt.c
+> +++ b/drivers/md/dm-crypt.c
+> @@ -39,6 +39,7 @@
+>  #include <linux/device-mapper.h>
+>  
+>  #define DM_MSG_PREFIX "crypt"
+> +#define REQ_INLINE_ENCRYPTION REQ_DRV
+>  
+>  /*
+>   * context holding the current state of a multi-part conversion
+> @@ -125,7 +126,8 @@ struct iv_tcw_private {
+>   * and encrypts / decrypts at the same time.
+>   */
+>  enum flags { DM_CRYPT_SUSPENDED, DM_CRYPT_KEY_VALID,
+> -	     DM_CRYPT_SAME_CPU, DM_CRYPT_NO_OFFLOAD };
+> +	     DM_CRYPT_SAME_CPU, DM_CRYPT_NO_OFFLOAD,
+> +		 DM_CRYPT_INLINE_ENCRYPT };
+>  
+>  enum cipher_flags {
+>  	CRYPT_MODE_INTEGRITY_AEAD,	/* Use authenticated mode for cihper */
+> @@ -215,6 +217,10 @@ struct crypt_config {
+>  
+>  	u8 *authenc_key; /* space for keys in authenc() format (if used) */
+>  	u8 key[0];
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +	void *ie_private; /* crypto context for inline enc drivers */
+> +	int key_cfg_idx;  /* key configuration index for inline enc */
+> +#endif
+>  };
+>  
+>  #define MIN_IOS		64
+> @@ -1470,6 +1476,20 @@ static void crypt_io_init(struct dm_crypt_io *io, struct crypt_config *cc,
+>  	atomic_set(&io->io_pending, 0);
+>  }
+>  
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +static void crypt_inline_encrypt_submit(struct crypt_config *cc,
+> +	struct dm_target *ti, struct bio *bio)
+> +{
+> +	bio_set_dev(bio, cc->dev->bdev);
+> +	if (bio_sectors(bio))
+> +		bio->bi_iter.bi_sector = cc->start +
+> +			dm_target_offset(ti, bio->bi_iter.bi_sector);
+> +	bio->bi_opf |= REQ_INLINE_ENCRYPTION;
+> +	bio->bi_ie_private = cc->ie_private;
+> +	generic_make_request(bio);
+> +}
+> +#endif
+> +
+>  static void crypt_inc_pending(struct dm_crypt_io *io)
+>  {
+>  	atomic_inc(&io->io_pending);
+> @@ -1960,6 +1980,9 @@ static int crypt_setkey(struct crypt_config *cc)
+>  
+>  	/* Ignore extra keys (which are used for IV etc) */
+>  	subkey_size = crypt_subkey_size(cc);
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +	cc->key_cfg_idx = -1;
+> +#endif
+>  
+>  	if (crypt_integrity_hmac(cc)) {
+>  		if (subkey_size < cc->key_mac_size)
+> @@ -1978,10 +2001,19 @@ static int crypt_setkey(struct crypt_config *cc)
+>  			r = crypto_aead_setkey(cc->cipher_tfm.tfms_aead[i],
+>  					       cc->key + (i * subkey_size),
+>  					       subkey_size);
+> -		else
+> +		else {
+>  			r = crypto_skcipher_setkey(cc->cipher_tfm.tfms[i],
+>  						   cc->key + (i * subkey_size),
+>  						   subkey_size);
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +			if (r > 0) {
+> +				cc->key_cfg_idx = r;
+> +				cc->ie_private = cc->cipher_tfm.tfms[i];
+> +				r = 0;
+> +			}
+> +#endif
+> +		}
+> +
+>  		if (r)
+>  			err = r;
+>  	}
+> @@ -2654,6 +2686,10 @@ static int crypt_ctr_optional(struct dm_target *ti, unsigned int argc, char **ar
+>  			cc->sector_shift = __ffs(cc->sector_size) - SECTOR_SHIFT;
+>  		} else if (!strcasecmp(opt_string, "iv_large_sectors"))
+>  			set_bit(CRYPT_IV_LARGE_SECTORS, &cc->cipher_flags);
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +		else if (!strcasecmp(opt_string, "perform_inline_encrypt"))
+> +			set_bit(DM_CRYPT_INLINE_ENCRYPT, &cc->flags);
+> +#endif
+>  		else {
+>  			ti->error = "Invalid feature arguments";
+>  			return -EINVAL;
+> @@ -2892,6 +2928,13 @@ static int crypt_map(struct dm_target *ti, struct bio *bio)
+>  	if (unlikely(bio->bi_iter.bi_size & (cc->sector_size - 1)))
+>  		return DM_MAPIO_KILL;
+>  
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +	if (cc->key_cfg_idx > 0) {
+> +		crypt_inline_encrypt_submit(cc, ti, bio);
+> +		return DM_MAPIO_SUBMITTED;
+> +	}
+> +#endif
+> +
+>  	io = dm_per_bio_data(bio, cc->per_bio_data_size);
+>  	crypt_io_init(io, cc, bio, dm_target_offset(ti, bio->bi_iter.bi_sector));
+>  
+> @@ -2954,6 +2997,10 @@ static void crypt_status(struct dm_target *ti, status_type_t type,
+>  		num_feature_args += test_bit(DM_CRYPT_NO_OFFLOAD, &cc->flags);
+>  		num_feature_args += cc->sector_size != (1 << SECTOR_SHIFT);
+>  		num_feature_args += test_bit(CRYPT_IV_LARGE_SECTORS, &cc->cipher_flags);
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +		num_feature_args +=
+> +			test_bit(DM_CRYPT_INLINE_ENCRYPT, &cc->flags);
+> +#endif
+>  		if (cc->on_disk_tag_size)
+>  			num_feature_args++;
+>  		if (num_feature_args) {
+> @@ -2970,6 +3017,10 @@ static void crypt_status(struct dm_target *ti, status_type_t type,
+>  				DMEMIT(" sector_size:%d", cc->sector_size);
+>  			if (test_bit(CRYPT_IV_LARGE_SECTORS, &cc->cipher_flags))
+>  				DMEMIT(" iv_large_sectors");
+> +#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
+> +			if (test_bit(DM_CRYPT_INLINE_ENCRYPT, &cc->flags))
+> +				DMEMIT(" perform_inline_encrypt");
+> +#endif
+>  		}
+>  
+>  		break;
+> 
