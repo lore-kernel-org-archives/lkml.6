@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937361AbeE1K3h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:29:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
+        id S1166000AbeE1OrG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936976AbeE1K33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:29 -0400
+        id S937354AbeE1K3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Ed Swierk <eswierk@skyportsystems.com>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 046/329] kconfig: Fix automatic menu creation mem leak
-Date: Mon, 28 May 2018 11:59:35 +0200
-Message-Id: <20180528100246.292640704@linuxfoundation.org>
+Subject: [PATCH 4.9 075/329] openvswitch: Remove padding from packet before L3+ conntrack processing
+Date: Mon, 28 May 2018 12:00:04 +0200
+Message-Id: <20180528100249.088945809@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,56 +31,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: Ed Swierk <eswierk@skyportsystems.com>
 
-[ Upstream commit ae7440ef0c8013d68c00dad6900e7cce5311bb1c ]
+[ Upstream commit 9382fe71c0058465e942a633869629929102843d ]
 
-expr_trans_compare() always allocates and returns a new expression,
-giving the following leak outline:
+IPv4 and IPv6 packets may arrive with lower-layer padding that is not
+included in the L3 length. For example, a short IPv4 packet may have
+up to 6 bytes of padding following the IP payload when received on an
+Ethernet device with a minimum packet length of 64 bytes.
 
-	...
-	*Allocate*
-	basedep = expr_trans_compare(basedep, E_UNEQUAL, &symbol_no);
-	...
-	for (menu = parent->next; menu; menu = menu->next) {
-		...
-		*Copy*
-		dep2 = expr_copy(basedep);
-		...
-		*Free copy*
-		expr_free(dep2);
-	}
-	*basedep lost!*
+Higher-layer processing functions in netfilter (e.g. nf_ip_checksum(),
+and help() in nf_conntrack_ftp) assume skb->len reflects the length of
+the L3 header and payload, rather than referring back to
+ip_hdr->tot_len or ipv6_hdr->payload_len, and get confused by
+lower-layer padding.
 
-Fix by freeing 'basedep' after the loop.
+In the normal IPv4 receive path, ip_rcv() trims the packet to
+ip_hdr->tot_len before invoking netfilter hooks. In the IPv6 receive
+path, ip6_rcv() does the same using ipv6_hdr->payload_len. Similarly
+in the br_netfilter receive path, br_validate_ipv4() and
+br_validate_ipv6() trim the packet to the L3 length before invoking
+netfilter hooks.
 
-Summary from Valgrind on 'menuconfig' (ARCH=x86) before the fix:
+Currently in the OVS conntrack receive path, ovs_ct_execute() pulls
+the skb to the L3 header but does not trim it to the L3 length before
+calling nf_conntrack_in(NF_INET_PRE_ROUTING). When
+nf_conntrack_proto_tcp encounters a packet with lower-layer padding,
+nf_ip_checksum() fails causing a "nf_ct_tcp: bad TCP checksum" log
+message. While extra zero bytes don't affect the checksum, the length
+in the IP pseudoheader does. That length is based on skb->len, and
+without trimming, it doesn't match the length the sender used when
+computing the checksum.
 
-	LEAK SUMMARY:
-	   definitely lost: 344,376 bytes in 14,349 blocks
-	   ...
+In ovs_ct_execute(), trim the skb to the L3 length before higher-layer
+processing.
 
-Summary after the fix:
-
-	LEAK SUMMARY:
-	   definitely lost: 44,448 bytes in 1,852 blocks
-	   ...
-
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Ed Swierk <eswierk@skyportsystems.com>
+Acked-by: Pravin B Shelar <pshelar@ovn.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/kconfig/menu.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/openvswitch/conntrack.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
---- a/scripts/kconfig/menu.c
-+++ b/scripts/kconfig/menu.c
-@@ -364,6 +364,7 @@ void menu_finalize(struct menu *parent)
- 			menu->parent = parent;
- 			last_menu = menu;
- 		}
-+		expr_free(basedep);
- 		if (last_menu) {
- 			parent->list = parent->next;
- 			parent->next = last_menu->next;
+--- a/net/openvswitch/conntrack.c
++++ b/net/openvswitch/conntrack.c
+@@ -906,6 +906,36 @@ static int ovs_ct_commit(struct net *net
+ 	return 0;
+ }
+ 
++/* Trim the skb to the length specified by the IP/IPv6 header,
++ * removing any trailing lower-layer padding. This prepares the skb
++ * for higher-layer processing that assumes skb->len excludes padding
++ * (such as nf_ip_checksum). The caller needs to pull the skb to the
++ * network header, and ensure ip_hdr/ipv6_hdr points to valid data.
++ */
++static int ovs_skb_network_trim(struct sk_buff *skb)
++{
++	unsigned int len;
++	int err;
++
++	switch (skb->protocol) {
++	case htons(ETH_P_IP):
++		len = ntohs(ip_hdr(skb)->tot_len);
++		break;
++	case htons(ETH_P_IPV6):
++		len = sizeof(struct ipv6hdr)
++			+ ntohs(ipv6_hdr(skb)->payload_len);
++		break;
++	default:
++		len = skb->len;
++	}
++
++	err = pskb_trim_rcsum(skb, len);
++	if (err)
++		kfree_skb(skb);
++
++	return err;
++}
++
+ /* Returns 0 on success, -EINPROGRESS if 'skb' is stolen, or other nonzero
+  * value if 'skb' is freed.
+  */
+@@ -920,6 +950,10 @@ int ovs_ct_execute(struct net *net, stru
+ 	nh_ofs = skb_network_offset(skb);
+ 	skb_pull_rcsum(skb, nh_ofs);
+ 
++	err = ovs_skb_network_trim(skb);
++	if (err)
++		return err;
++
+ 	if (key->ip.frag != OVS_FRAG_TYPE_NONE) {
+ 		err = handle_fragments(net, key, info->zone.id, skb);
+ 		if (err)
