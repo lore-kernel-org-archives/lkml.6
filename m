@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938746AbeE1MUM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:20:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49882 "EHLO mail.kernel.org"
+        id S1422857AbeE1MUa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:20:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164828AbeE1LC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:29 -0400
+        id S1422794AbeE1LCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 466/496] power: supply: ltc2941-battery-gauge: Fix temperature units
-Date: Mon, 28 May 2018 12:04:11 +0200
-Message-Id: <20180528100339.551165957@linuxfoundation.org>
+Subject: [PATCH 4.14 464/496] ixgbe: prevent ptp_rx_hang from running when in FILTER_ALL mode
+Date: Mon, 28 May 2018 12:04:09 +0200
+Message-Id: <20180528100339.463355716@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,40 +31,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ladislav Michl <ladis@linux-mips.org>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-[ Upstream commit dde5953f05a89eb63a0d666ffe51d447b2ac3e05 ]
+[ Upstream commit 6704a3abf4cf4181a1ee64f5db4969347b88ca1d ]
 
-Temperature is measured in tenths of degree Celsius.
+On hardware which supports timestamping all packets, the timestamps are
+recorded in the packet buffer, and the driver no longer uses or reads
+the registers. This makes the logic for checking and clearing Rx
+timestamp hangs meaningless.
 
-Fixes: 085bc24d1553 ("Add LTC2941/LTC2943 Battery Gauge Driver")
-Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+If we run the ixgbe_ptp_rx_hang() function in this case, then the driver
+will continuously spam the log output with "Clearing Rx timestamp hang".
+These messages are spurious, and confusing to end users.
+
+The original code in commit a9763f3cb54c ("ixgbe: Update PTP to support
+X550EM_x devices", 2015-12-03) did have a flag PTP_RX_TIMESTAMP_IN_REGISTER
+which was intended to be used to avoid the Rx timestamp hang check,
+however it did not actually check the flag before calling the function.
+
+Do so now in order to stop the checks and prevent the spurious log
+messages.
+
+Fixes: a9763f3cb54c ("ixgbe: Update PTP to support X550EM_x devices", 2015-12-03)
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/ltc2941-battery-gauge.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/power/supply/ltc2941-battery-gauge.c
-+++ b/drivers/power/supply/ltc2941-battery-gauge.c
-@@ -316,15 +316,15 @@ static int ltc294x_get_temperature(const
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -7658,7 +7658,8 @@ static void ixgbe_service_task(struct wo
  
- 	if (info->id == LTC2942_ID) {
- 		reg = LTC2942_REG_TEMPERATURE_MSB;
--		value = 60000;	/* Full-scale is 600 Kelvin */
-+		value = 6000;	/* Full-scale is 600 Kelvin */
- 	} else {
- 		reg = LTC2943_REG_TEMPERATURE_MSB;
--		value = 51000;	/* Full-scale is 510 Kelvin */
-+		value = 5100;	/* Full-scale is 510 Kelvin */
+ 	if (test_bit(__IXGBE_PTP_RUNNING, &adapter->state)) {
+ 		ixgbe_ptp_overflow_check(adapter);
+-		ixgbe_ptp_rx_hang(adapter);
++		if (adapter->flags & IXGBE_FLAG_RX_HWTSTAMP_IN_REGISTER)
++			ixgbe_ptp_rx_hang(adapter);
+ 		ixgbe_ptp_tx_hang(adapter);
  	}
- 	ret = ltc294x_read_regs(info->client, reg, &datar[0], 2);
- 	value *= (datar[0] << 8) | datar[1];
--	/* Convert to centidegrees  */
--	*val = value / 0xFFFF - 27215;
-+	/* Convert to tenths of degree Celsius */
-+	*val = value / 0xFFFF - 2722;
- 	return ret;
- }
  
