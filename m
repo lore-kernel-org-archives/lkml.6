@@ -1,63 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423454AbeE1MWP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:22:15 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:43767 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938694AbeE1MWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 08:22:04 -0400
-X-Google-Smtp-Source: AB8JxZopL/Dw1LWRE4n+oEG66pMX4jNtCYkbcWZuuNgSvASVmZzdjgXpzET9sBWs2jXNeWmeVI2MRg==
+        id S938751AbeE1MWs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1164874AbeE1LBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:51 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 450/496] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+Date: Mon, 28 May 2018 12:03:55 +0200
+Message-Id: <20180528100338.854245918@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20180517095349.203865-1-keiichiw@chromium.org> <a618b1b5-48ac-f725-39a6-50ba81b167f0@xs4all.nl>
-In-Reply-To: <a618b1b5-48ac-f725-39a6-50ba81b167f0@xs4all.nl>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Mon, 28 May 2018 21:21:48 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AR=At5n=_ZyB_LM8cV6Mw5H5cqBqAH7-b6JUeE0b8Q9g@mail.gmail.com>
-Message-ID: <CAAFQd5AR=At5n=_ZyB_LM8cV6Mw5H5cqBqAH7-b6JUeE0b8Q9g@mail.gmail.com>
-Subject: Re: [PATCH] media: v4l2-ctrl: Add control for VP9 profile
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Keiichi Watanabe <keiichiw@google.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>, keiichiw@chromium.org,
-        smitha.t@samsung.com, viro@zeniv.linux.org.uk,
-        andriy.shevchenko@linux.intel.com, ricardo.ribalda@gmail.com,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-On Fri, May 25, 2018 at 6:09 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+------------------
 
-> On 17/05/18 11:53, Keiichi Watanabe wrote:
-> > Add a new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE for selecting desired
-> > profile for VP9 encoder and querying for supported profiles by VP9
-encoder
-> > or decoder.
-> >
-> > An existing control V4L2_CID_MPEG_VIDEO_VPX_PROFILE cannot be
-> > used for querying since it is not a menu control but an integer
-> > control, which cannot return an arbitrary set of supported profiles.
-> >
-> > The new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE is a menu control as
-> > with controls for other codec profiles. (e.g. H264)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-> I don't mind adding this control (although I would like to have an Ack
-from
-> Sylwester), but we also need this to be used in an actual kernel driver.
+[ Upstream commit b89405b6102fcc3746f43697b826028caa94c823 ]
 
-> Otherwise we're adding a control that nobody uses.
+When dt_to_map_one_config() is called with a pinctrl_dev passed
+in, it should only be using this if the node being looked up
+is a hog. The code was always using the passed pinctrl_dev
+without checking whether the dt node referred to it.
 
-Indeed. We were supposed to also include a patch for mtk-vcodec driver, but
-somehow it went MIA. Keiichi will add it in next revision. Thanks for
-giving this a look.
+A pin controller can have pinctrl-n dependencies on other pin
+controllers in these cases:
 
-Best regards,
-Tomasz
+- the pin controller hardware is external, for example I2C, so
+  needs other pin controller(s) to be setup to communicate with
+  the hardware device.
+
+- it is a child of a composite MFD so its of_node is shared with
+  the parent MFD and other children of that MFD. Any part of that
+  MFD could have dependencies on other pin controllers.
+
+Because of this, dt_to_map_one_config() can't assume that if it
+has a pinctrl_dev passed in then the node it looks up must be
+a hog. It could be a reference to some other pin controller.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/pinctrl/devicetree.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -122,8 +122,10 @@ static int dt_to_map_one_config(struct p
+ 			/* OK let's just assume this will appear later then */
+ 			return -EPROBE_DEFER;
+ 		}
+-		if (!pctldev)
+-			pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
++		/* If we're creating a hog we can use the passed pctldev */
++		if (pctldev && (np_pctldev == p->dev->of_node))
++			break;
++		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
+ 		if (pctldev)
+ 			break;
+ 		/* Do not defer probing of hogs (circular loop) */
