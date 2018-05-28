@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937915AbeE1Mw3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:52:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44368 "EHLO mail.kernel.org"
+        id S1164576AbeE1Mwt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:52:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164439AbeE1Kzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:52 -0400
+        id S1164260AbeE1Kzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitriy Vyukov <dvyukov@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 279/496] net/sched: fix idr leak on the error path of tcf_bpf_init()
-Date: Mon, 28 May 2018 12:01:04 +0200
-Message-Id: <20180528100331.606177007@linuxfoundation.org>
+Subject: [PATCH 4.14 288/496] mm/mempolicy.c: avoid use uninitialized preferred_node
+Date: Mon, 28 May 2018 12:01:13 +0200
+Message-Id: <20180528100331.969878072@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,44 +34,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
-[ Upstream commit bbc09e7842a5023ba5bc0f8d559b9dd464e44006 ]
+[ Upstream commit 8970a63e965b43288c4f5f40efbc2bbf80de7f16 ]
 
-when the following command sequence is entered
+Alexander reported a use of uninitialized memory in __mpol_equal(),
+which is caused by incorrect use of preferred_node.
 
- # tc action add action bpf bytecode '4,40 0 0 12,31 0 1 2048,6 0 0 262144,6 0 0 0' index 100
- RTNETLINK answers: Invalid argument
- We have an error talking to the kernel
- # tc action add action bpf bytecode '4,40 0 0 12,21 0 1 2048,6 0 0 262144,6 0 0 0' index 100
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
+When mempolicy in mode MPOL_PREFERRED with flags MPOL_F_LOCAL, it uses
+numa_node_id() instead of preferred_node, however, __mpol_equal() uses
+preferred_node without checking whether it is MPOL_F_LOCAL or not.
 
-act_bpf correctly refuses to install the first TC rule, because 31 is not
-a valid instruction. However, it refuses to install the second TC rule,
-even if the BPF code is correct. Furthermore, it's no more possible to
-install any other rule having the same value of 'index' until act_bpf
-module is unloaded/inserted again. After the idr has been reserved, call
-tcf_idr_release() instead of tcf_idr_cleanup(), to fix this issue.
-
-Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[akpm@linux-foundation.org: slight comment tweak]
+Link: http://lkml.kernel.org/r/4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com
+Fixes: fc36b8d3d819 ("mempolicy: use MPOL_F_LOCAL to Indicate Preferred Local Policy")
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Reported-by: Alexander Potapenko <glider@google.com>
+Tested-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dmitriy Vyukov <dvyukov@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_bpf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/mempolicy.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/sched/act_bpf.c
-+++ b/net/sched/act_bpf.c
-@@ -356,7 +356,7 @@ static int tcf_bpf_init(struct net *net,
- 	return res;
- out:
- 	if (res == ACT_P_CREATED)
--		tcf_idr_cleanup(*act, est);
-+		tcf_idr_release(*act, bind);
- 
- 	return ret;
- }
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2128,6 +2128,9 @@ bool __mpol_equal(struct mempolicy *a, s
+ 	case MPOL_INTERLEAVE:
+ 		return !!nodes_equal(a->v.nodes, b->v.nodes);
+ 	case MPOL_PREFERRED:
++		/* a's ->flags is the same as b's */
++		if (a->flags & MPOL_F_LOCAL)
++			return true;
+ 		return a->v.preferred_node == b->v.preferred_node;
+ 	default:
+ 		BUG();
