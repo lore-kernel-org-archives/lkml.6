@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162472AbeE1KiS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:38:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58614 "EHLO mail.kernel.org"
+        id S1162341AbeE1KiY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:38:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162454AbeE1KiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:12 -0400
+        id S1161220AbeE1KiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:38:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
-        Casey Leedom <leedom@chelsio.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Philipp Puschmann <pp@emlix.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 267/329] cxgb4: Setup FW queues before registering netdev
-Date: Mon, 28 May 2018 12:03:16 +0200
-Message-Id: <20180528100304.131701650@linuxfoundation.org>
+Subject: [PATCH 4.9 270/329] arm: dts: socfpga: fix GIC PPI warning
+Date: Mon, 28 May 2018 12:03:19 +0200
+Message-Id: <20180528100304.394502386@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,65 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Philipp Puschmann <pp@emlix.com>
 
-[ Upstream commit 843bd7db79c861b49e2912d723625f5fa8e94502 ]
+[ Upstream commit 6d97d5aba08b26108f95dc9fb7bbe4d9436c769c ]
 
-When NetworkManager is enabled, there are chances that interface up
-is called even before probe completes. This means we have not yet
-allocated the FW sge queues, hence rest of ingress queue allocation
-wont be proper. Fix this by calling setup_fw_sge_queues() before
-register_netdev().
+Fixes the warning "GIC: PPI13 is secure or misconfigured" by
+changing the interrupt type from level_low to edge_raising
 
-Fixes: 0fbc81b3ad51 ('chcr/cxgb4i/cxgbit/RDMA/cxgb4: Allocate resources dynamically for all cxgb4 ULD's')
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Philipp Puschmann <pp@emlix.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/socfpga.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -836,8 +836,6 @@ static int setup_fw_sge_queues(struct ad
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -759,7 +759,7 @@
+ 		timer@fffec600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0xfffec600 0x100>;
+-			interrupts = <1 13 0xf04>;
++			interrupts = <1 13 0xf01>;
+ 			clocks = <&mpu_periph_clk>;
+ 		};
  
- 	err = t4_sge_alloc_rxq(adap, &s->fw_evtq, true, adap->port[0],
- 			       adap->msi_idx, NULL, fwevtq_handler, NULL, -1);
--	if (err)
--		t4_free_sge_resources(adap);
- 	return err;
- }
- 
-@@ -4940,6 +4938,13 @@ static int init_one(struct pci_dev *pdev
- 	if (err)
- 		goto out_free_dev;
- 
-+	err = setup_fw_sge_queues(adapter);
-+	if (err) {
-+		dev_err(adapter->pdev_dev,
-+			"FW sge queue allocation failed, err %d", err);
-+		goto out_free_dev;
-+	}
-+
- 	/*
- 	 * The card is now ready to go.  If any errors occur during device
- 	 * registration we do not fail the whole card but rather proceed only
-@@ -4983,7 +4988,6 @@ static int init_one(struct pci_dev *pdev
- 	}
- 
- 	print_adapter_info(adapter);
--	setup_fw_sge_queues(adapter);
- 	return 0;
- 
- sriov:
-@@ -5035,6 +5039,7 @@ sriov:
- #endif
- 
-  out_free_dev:
-+	t4_free_sge_resources(adapter);
- 	free_some_resources(adapter);
- 	if (adapter->flags & USING_MSIX)
- 		free_msix_info(adapter);
