@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968591AbeE1KQw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36918 "EHLO mail.kernel.org"
+        id S968619AbeE1KQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:16:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966741AbeE1KQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:47 -0400
+        id S968567AbeE1KQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Steve French <smfrench@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 062/268] arm64: spinlock: Fix theoretical trylock() A-B-A with LSE atomics
-Date: Mon, 28 May 2018 12:00:36 +0200
-Message-Id: <20180528100208.956172970@linuxfoundation.org>
+Subject: [PATCH 4.4 064/268] cifs: silence compiler warnings showing up with gcc-8.0.0
+Date: Mon, 28 May 2018 12:00:38 +0200
+Message-Id: <20180528100209.167819785@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,39 +30,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 202fb4ef81e3ec765c23bd1e6746a5c25b797d0e ]
+[ Upstream commit ade7db991b47ab3016a414468164f4966bd08202 ]
 
-If the spinlock "next" ticket wraps around between the initial LDR
-and the cmpxchg in the LSE version of spin_trylock, then we can erroneously
-think that we have successfuly acquired the lock because we only check
-whether the next ticket return by the cmpxchg is equal to the owner ticket
-in our updated lock word.
+This bug was fixed before, but came up again with the latest
+compiler in another function:
 
-This patch fixes the issue by performing a full 32-bit check of the lock
-word when trying to determine whether or not the CASA instruction updated
-memory.
+fs/cifs/cifssmb.c: In function 'CIFSSMBSetEA':
+fs/cifs/cifssmb.c:6362:3: error: 'strncpy' offset 8 is out of the bounds [0, 4] [-Werror=array-bounds]
+   strncpy(parm_data->list[0].name, ea_name, name_len);
 
-Reported-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Let's apply the same fix that was used for the other instances.
+
+Fixes: b2a3ad9ca502 ("cifs: silence compiler warnings showing up with gcc-4.7.0")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/spinlock.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/cifssmb.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/arm64/include/asm/spinlock.h
-+++ b/arch/arm64/include/asm/spinlock.h
-@@ -94,8 +94,8 @@ static inline int arch_spin_trylock(arch
- 	"	cbnz	%w1, 1f\n"
- 	"	add	%w1, %w0, %3\n"
- 	"	casa	%w0, %w1, %2\n"
--	"	and	%w1, %w1, #0xffff\n"
--	"	eor	%w1, %w1, %w0, lsr #16\n"
-+	"	sub	%w1, %w1, %3\n"
-+	"	eor	%w1, %w1, %w0\n"
- 	"1:")
- 	: "=&r" (lockval), "=&r" (tmp), "+Q" (*lock)
- 	: "I" (1 << TICKET_SHIFT)
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -6421,9 +6421,7 @@ SetEARetry:
+ 	pSMB->InformationLevel =
+ 		cpu_to_le16(SMB_SET_FILE_EA);
+ 
+-	parm_data =
+-		(struct fealist *) (((char *) &pSMB->hdr.Protocol) +
+-				       offset);
++	parm_data = (void *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
+ 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
+ 	pSMB->DataOffset = cpu_to_le16(offset);
+ 	pSMB->SetupCount = 1;
