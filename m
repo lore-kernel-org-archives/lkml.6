@@ -1,29 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164174AbeE1Kxl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:53:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42650 "EHLO mail.kernel.org"
+        id S1164223AbeE1Kxy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:53:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163766AbeE1Kxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:32 -0400
+        id S1164165AbeE1Kxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ephraim Park <ephiepark@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>, jolsa@redhat.com,
-        kernel-team@fb.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Thomas Lindroth <thomas.lindroth@gmail.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 272/496] perf/cgroup: Fix child event counting bug
-Date: Mon, 28 May 2018 12:00:57 +0200
-Message-Id: <20180528100331.312543282@linuxfoundation.org>
+Subject: [PATCH 4.14 274/496] kbuild: make scripts/adjust_autoksyms.sh robust against timestamp races
+Date: Mon, 28 May 2018 12:00:59 +0200
+Message-Id: <20180528100331.392392518@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -39,103 +31,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Song Liu <songliubraving@fb.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 
-[ Upstream commit c917e0f259908e75bd2a65877e25f9d90c22c848 ]
+[ Upstream commit 825d487583089f9a33d31650c9c41f6474aab7fc ]
 
-When a perf_event is attached to parent cgroup, it should count events
-for all children cgroups:
+Some filesystems have timestamps with coarse precision that may allow
+for a recently built object file to have the same timestamp as the
+updated time on one of its dependency files. When that happens, the
+object file doesn't get rebuilt as it should.
 
-   parent_group   <---- perf_event
-     \
-      - child_group  <---- process(es)
+This is especially the case on filesystems that don't have sub-second
+time precision, such as ext3 or Ext4 with 128B inodes.
 
-However, in our tests, we found this perf_event cannot report reliable
-results. Here is an example case:
+Let's prevent that by making sure updated dependency files have a newer
+timestamp than the first file we created (i.e. autoksyms.h.tmpnew).
 
-  # create cgroups
-  mkdir -p /sys/fs/cgroup/p/c
-  # start perf for parent group
-  perf stat -e instructions -G "p"
-
-  # on another console, run test process in child cgroup:
-  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
-
-  # after the test process is done, stop perf in the first console shows
-
-       <not counted>      instructions              p
-
-The instruction should not be "not counted" as the process runs in the
-child cgroup.
-
-We found this is because perf_event->cgrp and cpuctx->cgrp are not
-identical, thus perf_event->cgrp are not updated properly.
-
-This patch fixes this by updating perf_cgroup properly for ancestor
-cgroup(s).
-
-Reported-by: Ephraim Park <ephiepark@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <jolsa@redhat.com>
-Cc: <kernel-team@fb.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20180312165943.1057894-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Tested-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/core.c |   21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ scripts/adjust_autoksyms.sh |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -642,9 +642,15 @@ static inline void __update_cgrp_time(st
- 
- static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
- {
--	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
--	if (cgrp_out)
--		__update_cgrp_time(cgrp_out);
-+	struct perf_cgroup *cgrp = cpuctx->cgrp;
-+	struct cgroup_subsys_state *css;
-+
-+	if (cgrp) {
-+		for (css = &cgrp->css; css; css = css->parent) {
-+			cgrp = container_of(css, struct perf_cgroup, css);
-+			__update_cgrp_time(cgrp);
-+		}
-+	}
- }
- 
- static inline void update_cgrp_time_from_event(struct perf_event *event)
-@@ -672,6 +678,7 @@ perf_cgroup_set_timestamp(struct task_st
- {
- 	struct perf_cgroup *cgrp;
- 	struct perf_cgroup_info *info;
-+	struct cgroup_subsys_state *css;
- 
- 	/*
- 	 * ctx->lock held by caller
-@@ -682,8 +689,12 @@ perf_cgroup_set_timestamp(struct task_st
- 		return;
- 
- 	cgrp = perf_cgroup_from_task(task, ctx);
--	info = this_cpu_ptr(cgrp->info);
--	info->timestamp = ctx->timestamp;
-+
-+	for (css = &cgrp->css; css; css = css->parent) {
-+		cgrp = container_of(css, struct perf_cgroup, css);
-+		info = this_cpu_ptr(cgrp->info);
-+		info->timestamp = ctx->timestamp;
-+	}
- }
- 
- static DEFINE_PER_CPU(struct list_head, cgrp_cpuctx_list);
+--- a/scripts/adjust_autoksyms.sh
++++ b/scripts/adjust_autoksyms.sh
+@@ -84,6 +84,13 @@ while read sympath; do
+ 	depfile="include/config/ksym/${sympath}.h"
+ 	mkdir -p "$(dirname "$depfile")"
+ 	touch "$depfile"
++	# Filesystems with coarse time precision may create timestamps
++	# equal to the one from a file that was very recently built and that
++	# needs to be rebuild. Let's guard against that by making sure our
++	# dep files are always newer than the first file we created here.
++	while [ ! "$depfile" -nt "$new_ksyms_file" ]; do
++		touch "$depfile"
++	done
+ 	echo $((count += 1))
+ done | tail -1 )
+ changed=${changed:-0}
