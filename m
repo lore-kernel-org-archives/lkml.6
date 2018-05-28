@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937396AbeE1KaU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:30:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49442 "EHLO mail.kernel.org"
+        id S1165865AbeE1OoS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:44:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161010AbeE1K34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:56 -0400
+        id S937101AbeE1KaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Hannes Reinecke <hare@suse.de>, Michael Lyle <mlyle@lyle.org>,
+        Junhui Tang <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 051/329] btrfs: Fix out of bounds access in btrfs_search_slot
-Date: Mon, 28 May 2018 11:59:40 +0200
-Message-Id: <20180528100246.764790967@linuxfoundation.org>
+Subject: [PATCH 4.9 092/329] bcache: properly set task state in bch_writeback_thread()
+Date: Mon, 28 May 2018 12:00:21 +0200
+Message-Id: <20180528100250.475588639@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,62 +31,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit 9ea2c7c9da13c9073e371c046cbbc45481ecb459 ]
+[ Upstream commit 99361bbf26337186f02561109c17a4c4b1a7536a ]
 
-When modifying a tree where the root is at BTRFS_MAX_LEVEL - 1 then
-the level variable is going to be 7 (this is the max height of the
-tree). On the other hand btrfs_cow_block is always called with
-"level + 1" as an index into the nodes and slots arrays. This leads to
-an out of bounds access. Admittdely this will be benign since an OOB
-access of the nodes array will likely read the 0th element from the
-slots array, which in this case is going to be 0 (since we start CoW at
-the top of the tree). The OOB access into the slots array in turn will
-read the 0th and 1st values of the locks array, which would both be 0
-at the time. However, this benign behavior relies on the fact that the
-path being passed hasn't been initialised, if it has already been used to
-query a btree then it could potentially have populated the nodes/slots arrays.
+Kernel thread routine bch_writeback_thread() has the following code block,
 
-Fix it by explicitly checking if we are at level 7 (the maximum allowed
-index in nodes/slots arrays) and explicitly call the CoW routine with
-NULL for parent's node/slot.
+447         down_write(&dc->writeback_lock);
+448~450     if (check conditions) {
+451                 up_write(&dc->writeback_lock);
+452                 set_current_state(TASK_INTERRUPTIBLE);
+453
+454                 if (kthread_should_stop())
+455                         return 0;
+456
+457                 schedule();
+458                 continue;
+459         }
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Fixes-coverity-id: 711515
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+If condition check is true, its task state is set to TASK_INTERRUPTIBLE
+and call schedule() to wait for others to wake up it.
+
+There are 2 issues in current code,
+1, Task state is set to TASK_INTERRUPTIBLE after the condition checks, if
+   another process changes the condition and call wake_up_process(dc->
+   writeback_thread), then at line 452 task state is set back to
+   TASK_INTERRUPTIBLE, the writeback kernel thread will lose a chance to be
+   waken up.
+2, At line 454 if kthread_should_stop() is true, writeback kernel thread
+   will return to kernel/kthread.c:kthread() with TASK_INTERRUPTIBLE and
+   call do_exit(). It is not good to enter do_exit() with task state
+   TASK_INTERRUPTIBLE, in following code path might_sleep() is called and a
+   warning message is reported by __might_sleep(): "WARNING: do not call
+   blocking ops when !TASK_RUNNING; state=1 set at [xxxx]".
+
+For the first issue, task state should be set before condition checks.
+Ineed because dc->writeback_lock is required when modifying all the
+conditions, calling set_current_state() inside code block where dc->
+writeback_lock is hold is safe. But this is quite implicit, so I still move
+set_current_state() before all the condition checks.
+
+For the second issue, frankley speaking it does not hurt when kernel thread
+exits with TASK_INTERRUPTIBLE state, but this warning message scares users,
+makes them feel there might be something risky with bcache and hurt their
+data.  Setting task state to TASK_RUNNING before returning fixes this
+problem.
+
+In alloc.c:allocator_wait(), there is also a similar issue, and is also
+fixed in this patch.
+
+Changelog:
+v3: merge two similar fixes into one patch
+v2: fix the race issue in v1 patch.
+v1: initial buggy fix.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Cc: Michael Lyle <mlyle@lyle.org>
+Cc: Junhui Tang <tang.junhui@zte.com.cn>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/ctree.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/md/bcache/alloc.c     |    4 +++-
+ drivers/md/bcache/writeback.c |    7 +++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -2760,6 +2760,8 @@ again:
- 		 * contention with the cow code
- 		 */
- 		if (cow) {
-+			bool last_level = (level == (BTRFS_MAX_LEVEL - 1));
-+
- 			/*
- 			 * if we don't really need to cow this block
- 			 * then we don't want to set the path blocking,
-@@ -2784,9 +2786,13 @@ again:
- 			}
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -284,8 +284,10 @@ do {									\
+ 			break;						\
+ 									\
+ 		mutex_unlock(&(ca)->set->bucket_lock);			\
+-		if (kthread_should_stop())				\
++		if (kthread_should_stop()) {				\
++			set_current_state(TASK_RUNNING);		\
+ 			return 0;					\
++		}							\
+ 									\
+ 		schedule();						\
+ 		mutex_lock(&(ca)->set->bucket_lock);			\
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -420,18 +420,21 @@ static int bch_writeback_thread(void *ar
  
- 			btrfs_set_path_blocking(p);
--			err = btrfs_cow_block(trans, root, b,
--					      p->nodes[level + 1],
--					      p->slots[level + 1], &b);
-+			if (last_level)
-+				err = btrfs_cow_block(trans, root, b, NULL, 0,
-+						      &b);
-+			else
-+				err = btrfs_cow_block(trans, root, b,
-+						      p->nodes[level + 1],
-+						      p->slots[level + 1], &b);
- 			if (err) {
- 				ret = err;
- 				goto done;
+ 	while (!kthread_should_stop()) {
+ 		down_write(&dc->writeback_lock);
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		if (!atomic_read(&dc->has_dirty) ||
+ 		    (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
+ 		     !dc->writeback_running)) {
+ 			up_write(&dc->writeback_lock);
+-			set_current_state(TASK_INTERRUPTIBLE);
+ 
+-			if (kthread_should_stop())
++			if (kthread_should_stop()) {
++				set_current_state(TASK_RUNNING);
+ 				return 0;
++			}
+ 
+ 			schedule();
+ 			continue;
+ 		}
++		set_current_state(TASK_RUNNING);
+ 
+ 		searched_full_index = refill_dirty(dc);
+ 
