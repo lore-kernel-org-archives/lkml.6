@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425401AbeE1QcM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:32:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57480 "EHLO mail.kernel.org"
+        id S935227AbeE1KJO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:09:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753342AbeE1KJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:09:22 -0400
+        id S935128AbeE1KJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
-        Sasha Neftin <sasha.neftin@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Matthias Ferdinand <bcache@mfedv.net>,
+        Tang Junhui <tang.junhui@zte.com.cn>, Michael Lyle <mlyle@lyle.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 085/185] e1000e: Fix check_for_link return value with autoneg off
-Date: Mon, 28 May 2018 12:02:06 +0200
-Message-Id: <20180528100057.825306933@linuxfoundation.org>
+Subject: [PATCH 3.18 079/185] bcache: fix kcrashes with fio in RAID5 backend dev
+Date: Mon, 28 May 2018 12:02:00 +0200
+Message-Id: <20180528100057.411873511@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,46 +31,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-[ Upstream commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 ]
+[ Upstream commit 60eb34ec5526e264c2bbaea4f7512d714d791caf ]
 
-When autoneg is off, the .check_for_link callback functions clear the
-get_link_status flag and systematically return a "pseudo-error". This means
-that the link is not detected as up until the next execution of the
-e1000_watchdog_task() 2 seconds later.
+Kernel crashed when run fio in a RAID5 backend bcache device, the call
+trace is bellow:
+[  440.012034] kernel BUG at block/blk-ioc.c:146!
+[  440.012696] invalid opcode: 0000 [#1] SMP NOPTI
+[  440.026537] CPU: 2 PID: 2205 Comm: md127_raid5 Not tainted 4.15.0 #8
+[  440.027441] Hardware name: HP ProLiant MicroServer Gen8, BIOS J06 07/16
+/2015
+[  440.028615] RIP: 0010:put_io_context+0x8b/0x90
+[  440.029246] RSP: 0018:ffffa8c882b43af8 EFLAGS: 00010246
+[  440.029990] RAX: 0000000000000000 RBX: ffffa8c88294fca0 RCX: 0000000000
+0f4240
+[  440.031006] RDX: 0000000000000004 RSI: 0000000000000286 RDI: ffffa8c882
+94fca0
+[  440.032030] RBP: ffffa8c882b43b10 R08: 0000000000000003 R09: ffff949cb8
+0c1700
+[  440.033206] R10: 0000000000000104 R11: 000000000000b71c R12: 00000000000
+01000
+[  440.034222] R13: 0000000000000000 R14: ffff949cad84db70 R15: ffff949cb11
+bd1e0
+[  440.035239] FS:  0000000000000000(0000) GS:ffff949cba280000(0000) knlGS:
+0000000000000000
+[  440.060190] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  440.084967] CR2: 00007ff0493ef000 CR3: 00000002f1e0a002 CR4: 00000000001
+606e0
+[  440.110498] Call Trace:
+[  440.135443]  bio_disassociate_task+0x1b/0x60
+[  440.160355]  bio_free+0x1b/0x60
+[  440.184666]  bio_put+0x23/0x30
+[  440.208272]  search_free+0x23/0x40 [bcache]
+[  440.231448]  cached_dev_write_complete+0x31/0x70 [bcache]
+[  440.254468]  closure_put+0xb6/0xd0 [bcache]
+[  440.277087]  request_endio+0x30/0x40 [bcache]
+[  440.298703]  bio_endio+0xa1/0x120
+[  440.319644]  handle_stripe+0x418/0x2270 [raid456]
+[  440.340614]  ? load_balance+0x17b/0x9c0
+[  440.360506]  handle_active_stripes.isra.58+0x387/0x5a0 [raid456]
+[  440.380675]  ? __release_stripe+0x15/0x20 [raid456]
+[  440.400132]  raid5d+0x3ed/0x5d0 [raid456]
+[  440.419193]  ? schedule+0x36/0x80
+[  440.437932]  ? schedule_timeout+0x1d2/0x2f0
+[  440.456136]  md_thread+0x122/0x150
+[  440.473687]  ? wait_woken+0x80/0x80
+[  440.491411]  kthread+0x102/0x140
+[  440.508636]  ? find_pers+0x70/0x70
+[  440.524927]  ? kthread_associate_blkcg+0xa0/0xa0
+[  440.541791]  ret_from_fork+0x35/0x40
+[  440.558020] Code: c2 48 00 5b 41 5c 41 5d 5d c3 48 89 c6 4c 89 e7 e8 bb c2
+48 00 48 8b 3d bc 36 4b 01 48 89 de e8 7c f7 e0 ff 5b 41 5c 41 5d 5d c3 <0f> 0b
+0f 1f 00 0f 1f 44 00 00 55 48 8d 47 b8 48 89 e5 41 57 41
+[  440.610020] RIP: put_io_context+0x8b/0x90 RSP: ffffa8c882b43af8
+[  440.628575] ---[ end trace a1fd79d85643a73e ]--
 
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+All the crash issue happened when a bypass IO coming, in such scenario
+s->iop.bio is pointed to the s->orig_bio. In search_free(), it finishes the
+s->orig_bio by calling bio_complete(), and after that, s->iop.bio became
+invalid, then kernel would crash when calling bio_put(). Maybe its upper
+layer's faulty, since bio should not be freed before we calling bio_put(),
+but we'd better calling bio_put() first before calling bio_complete() to
+notify upper layer ending this bio.
+
+This patch moves bio_complete() under bio_put() to avoid kernel crash.
+
+[mlyle: fixed commit subject for character limits]
+
+Reported-by: Matthias Ferdinand <bcache@mfedv.net>
+Tested-by: Matthias Ferdinand <bcache@mfedv.net>
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/ich8lan.c |    2 +-
- drivers/net/ethernet/intel/e1000e/mac.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/bcache/request.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1441,7 +1441,7 @@ static s32 e1000_check_for_copper_link_i
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -631,11 +631,11 @@ static void do_bio_hook(struct search *s
+ static void search_free(struct closure *cl)
+ {
+ 	struct search *s = container_of(cl, struct search, cl);
+-	bio_complete(s);
  
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
+ 	if (s->iop.bio)
+ 		bio_put(s->iop.bio);
  
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
++	bio_complete(s);
+ 	closure_debug_destroy(cl);
+ 	mempool_free(s, s->d->c->search);
+ }
