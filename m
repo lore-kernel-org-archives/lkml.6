@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161874AbeE1KeN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:34:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
+        id S1161953AbeE1Ken (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:34:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161834AbeE1KeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:09 -0400
+        id S1161940AbeE1Kej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@icloud.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 150/329] batman-adv: Ignore invalid batadv_v_gw during netlink send
-Date: Mon, 28 May 2018 12:01:19 +0200
-Message-Id: <20180528100255.028405597@linuxfoundation.org>
+Subject: [PATCH 4.9 155/329] ceph: fix dentry leak when failing to init debugfs
+Date: Mon, 28 May 2018 12:01:24 +0200
+Message-Id: <20180528100255.411283035@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,34 +30,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Chengguang Xu <cgxu519@icloud.com>
 
-[ Upstream commit 011c935fceae5252619ef730baa610c655281dda ]
+[ Upstream commit 18106734b512664a8541026519ce4b862498b6c3 ]
 
-The function batadv_v_gw_dump stops the processing loop when
-batadv_v_gw_dump_entry returns a non-0 return code. This should only
-happen when the buffer is full. Otherwise, an empty message may be
-returned by batadv_gw_dump. This empty message will then stop the netlink
-dumping of gateway entries. At worst, not a single entry is returned to
-userspace even when plenty of possible gateways exist.
+When failing from ceph_fs_debugfs_init() in ceph_real_mount(),
+there is lack of dput of root_dentry and it causes slab errors,
+so change the calling order of ceph_fs_debugfs_init() and
+open_root_dentry() and do some cleanups to avoid this issue.
 
-Fixes: b71bb6f924fe ("batman-adv: add B.A.T.M.A.N. V bat_gw_dump implementations")
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_v.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/super.c |   16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
---- a/net/batman-adv/bat_v.c
-+++ b/net/batman-adv/bat_v.c
-@@ -920,7 +920,7 @@ static int batadv_v_gw_dump_entry(struct
- 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
- 	struct batadv_neigh_node *router;
- 	struct batadv_gw_node *curr_gw;
--	int ret = -EINVAL;
-+	int ret = 0;
- 	void *hdr;
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -816,7 +816,6 @@ static struct dentry *ceph_real_mount(st
+ 	int err;
+ 	unsigned long started = jiffies;  /* note the start time */
+ 	struct dentry *root;
+-	int first = 0;   /* first vfsmount for this super_block */
  
- 	router = batadv_orig_router_get(gw_node->orig_node, BATADV_IF_DEFAULT);
+ 	dout("mount start %p\n", fsc);
+ 	mutex_lock(&fsc->client->mount_mutex);
+@@ -834,17 +833,17 @@ static struct dentry *ceph_real_mount(st
+ 			path = fsc->mount_options->server_path + 1;
+ 			dout("mount opening path %s\n", path);
+ 		}
++
++		err = ceph_fs_debugfs_init(fsc);
++		if (err < 0)
++			goto out;
++
+ 		root = open_root_dentry(fsc, path, started);
+ 		if (IS_ERR(root)) {
+ 			err = PTR_ERR(root);
+ 			goto out;
+ 		}
+ 		fsc->sb->s_root = dget(root);
+-		first = 1;
+-
+-		err = ceph_fs_debugfs_init(fsc);
+-		if (err < 0)
+-			goto fail;
+ 	} else {
+ 		root = dget(fsc->sb->s_root);
+ 	}
+@@ -854,11 +853,6 @@ static struct dentry *ceph_real_mount(st
+ 	mutex_unlock(&fsc->client->mount_mutex);
+ 	return root;
+ 
+-fail:
+-	if (first) {
+-		dput(fsc->sb->s_root);
+-		fsc->sb->s_root = NULL;
+-	}
+ out:
+ 	mutex_unlock(&fsc->client->mount_mutex);
+ 	return ERR_PTR(err);
