@@ -1,76 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425335AbeE1QZR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:25:17 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51294 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932473AbeE1QZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:25:11 -0400
-Subject: Re: [PATCH 08/12] drm/bridge: tc358764: Add DSI to LVDS bridge driver
-To: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
- <CGME20180528094728eucas1p128e8a44fa6c3bcb29d056a8191c039af@eucas1p1.samsung.com>
- <1527500833-16005-9-git-send-email-m.purski@samsung.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <153d1f8c-a0b4-b189-34b5-42a81d15f66b@infradead.org>
-Date: Mon, 28 May 2018 09:24:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966138AbeE1QZg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:25:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935013AbeE1KKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:46 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 116/185] mm/ksm: fix interaction with THP
+Date: Mon, 28 May 2018 12:02:37 +0200
+Message-Id: <20180528100101.823061351@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <1527500833-16005-9-git-send-email-m.purski@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 02:47 AM, Maciej Purski wrote:
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index fa2c799..58e19af 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -110,6 +110,13 @@ config DRM_THINE_THC63LVD1024
->  	---help---
->  	  Thine THC63LVD1024 LVDS/parallel converter driver.
->  
-> +config DRM_TOSHIBA_TC358764
-> +	tristate "TC358764 DSI/LVDS bridge"
-> +	depends on DRM && DRM_PANEL
-> +	depends on OF
-> +	select DRM_MIPI_DSI
-> +	select VIDEOMODE_HELPERS
-> +
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Kconfig symbols with "prompt strings" should also have help text.
+------------------
 
-I expected checkpatch to catch that, but I tested it and there was no warning
-from checkpatch about help text.  OTOH, there was a warning that there are
-2 lines in this patch that end with whitespace, so that should be fixed.
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-Did you use checkpatch (scripts/checkpatch.pl)?
+[ Upstream commit 77da2ba0648a4fd52e5ff97b8b2b8dd312aec4b0 ]
 
->  config DRM_TOSHIBA_TC358767
->  	tristate "Toshiba TC358767 eDP bridge"
->  	depends on OF
+This patch fixes a corner case for KSM.  When two pages belong or
+belonged to the same transparent hugepage, and they should be merged,
+KSM fails to split the page, and therefore no merging happens.
 
-thanks,
--- 
-~Randy
+This bug can be reproduced by:
+* making sure ksm is running (in case disabling ksmtuned)
+* enabling transparent hugepages
+* allocating a THP-aligned 1-THP-sized buffer
+  e.g. on amd64: posix_memalign(&p, 1<<21, 1<<21)
+* filling it with the same values
+  e.g. memset(p, 42, 1<<21)
+* performing madvise to make it mergeable
+  e.g. madvise(p, 1<<21, MADV_MERGEABLE)
+* waiting for KSM to perform a few scans
+
+The expected outcome is that the all the pages get merged (1 shared and
+the rest sharing); the actual outcome is that no pages get merged (1
+unshared and the rest volatile)
+
+The reason of this behaviour is that we increase the reference count
+once for both pages we want to merge, but if they belong to the same
+hugepage (or compound page), the reference counter used in both cases is
+the one of the head of the compound page.  This means that
+split_huge_page will find a value of the reference counter too high and
+will fail.
+
+This patch solves this problem by testing if the two pages to merge
+belong to the same hugepage when attempting to merge them.  If so, the
+hugepage is split safely.  This means that the hugepage is not split if
+not necessary.
+
+Link: http://lkml.kernel.org/r/1521548069-24758-1-git-send-email-imbrenda@linux.vnet.ibm.com
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Co-authored-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ mm/ksm.c |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1475,8 +1475,22 @@ static void cmp_and_merge_page(struct pa
+ 	tree_rmap_item =
+ 		unstable_tree_search_insert(rmap_item, page, &tree_page);
+ 	if (tree_rmap_item) {
++		bool split;
++
+ 		kpage = try_to_merge_two_pages(rmap_item, page,
+ 						tree_rmap_item, tree_page);
++		/*
++		 * If both pages we tried to merge belong to the same compound
++		 * page, then we actually ended up increasing the reference
++		 * count of the same compound page twice, and split_huge_page
++		 * failed.
++		 * Here we set a flag if that happened, and we use it later to
++		 * try split_huge_page again. Since we call put_page right
++		 * afterwards, the reference count will be correct and
++		 * split_huge_page should succeed.
++		 */
++		split = PageTransCompound(page)
++			&& compound_head(page) == compound_head(tree_page);
+ 		put_page(tree_page);
+ 		if (kpage) {
+ 			/*
+@@ -1501,6 +1515,20 @@ static void cmp_and_merge_page(struct pa
+ 				break_cow(tree_rmap_item);
+ 				break_cow(rmap_item);
+ 			}
++		} else if (split) {
++			/*
++			 * We are here if we tried to merge two pages and
++			 * failed because they both belonged to the same
++			 * compound page. We will split the page now, but no
++			 * merging will take place.
++			 * We do not want to add the cost of a full lock; if
++			 * the page is locked, it is better to skip it and
++			 * perhaps try again later.
++			 */
++			if (!trylock_page(page))
++				return;
++			split_huge_page(page);
++			unlock_page(page);
+ 		}
+ 	}
+ }
