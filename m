@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161175AbeE1Kap (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:30:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50236 "EHLO mail.kernel.org"
+        id S1161225AbeE1Ka6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:30:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161117AbeE1Kai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:38 -0400
+        id S1161181AbeE1Kat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 099/329] locking/qspinlock: Ensure node->count is updated before initialising node
-Date: Mon, 28 May 2018 12:00:28 +0200
-Message-Id: <20180528100251.057133987@linuxfoundation.org>
+Subject: [PATCH 4.9 103/329] ARC: Fix malformed ARC_EMUL_UNALIGNED default
+Date: Mon, 28 May 2018 12:00:32 +0200
+Message-Id: <20180528100251.359664593@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,50 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
 
-[ Upstream commit 11dc13224c975efcec96647a4768a6f1bb7a19a8 ]
+[ Upstream commit 827cc2fa024dd6517d62de7a44c7b42f32af371b ]
 
-When queuing on the qspinlock, the count field for the current CPU's head
-node is incremented. This needn't be atomic because locking in e.g. IRQ
-context is balanced and so an IRQ will return with node->count as it
-found it.
+'default N' should be 'default n', though they happen to have the same
+effect here, due to undefined symbols (N in this case) evaluating to n
+in a tristate sense.
 
-However, the compiler could in theory reorder the initialisation of
-node[idx] before the increment of the head node->count, causing an
-IRQ to overwrite the initialised node and potentially corrupt the lock
-state.
+Remove the default from ARC_EMUL_UNALIGNED instead of changing it. bool
+and tristate symbols implicitly default to n.
 
-Avoid the potential for this harmful compiler reordering by placing a
-barrier() between the increment of the head node->count and the subsequent
-node initialisation.
+Discovered with the
+https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_ulfalizer_Kconfiglib_blob_master_examples_list-5Fundefined.py&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=c14YS-cH-kdhTOW89KozFhBtBJgs1zXscZojEZQ0THs&m=WxxD8ozR7QQUVzNCBksiznaisBGO_crN7PBOvAoju8s&s=1LmxsNqxwT-7wcInVpZ6Z1J27duZKSoyKxHIJclXU_M&e=
+script.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1518528177-19169-3-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/locking/qspinlock.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arc/Kconfig |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -495,6 +495,14 @@ queue:
- 	tail = encode_tail(smp_processor_id(), idx);
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -495,7 +495,6 @@ config ARC_CURR_IN_REG
  
- 	node += idx;
-+
-+	/*
-+	 * Ensure that we increment the head node->count before initialising
-+	 * the actual node. If the compiler is kind enough to reorder these
-+	 * stores, then an IRQ could overwrite our assignments.
-+	 */
-+	barrier();
-+
- 	node->locked = 0;
- 	node->next = NULL;
- 	pv_init_node(node);
+ config ARC_EMUL_UNALIGNED
+ 	bool "Emulate unaligned memory access (userspace only)"
+-	default N
+ 	select SYSCTL_ARCH_UNALIGN_NO_WARN
+ 	select SYSCTL_ARCH_UNALIGN_ALLOW
+ 	depends on ISA_ARCOMPACT
