@@ -1,64 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425325AbeE1QYr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:24:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59058 "EHLO mail.kernel.org"
+        id S1425300AbeE1QYn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:24:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964857AbeE1KKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:51 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 118/185] Btrfs: bail out on error during replay_dir_deletes
-Date: Mon, 28 May 2018 12:02:39 +0200
-Message-Id: <20180528100102.174583249@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S932473AbeE1QYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:24:38 -0400
+X-Google-Smtp-Source: ADUXVKJ/CnodSWI+CsvASqknqprDiQb4CgUgxrt3Q272lqO5CU0LuDHbAFdOXntGpr2FkeDPohTXgi4iluV4y7nfTM4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1527500833-16005-10-git-send-email-m.purski@samsung.com>
+References: <CGME20180528094729eucas1p1cc26ea191a4ee1ba9daa06fae93037bf@eucas1p1.samsung.com>
+ <1527500833-16005-1-git-send-email-m.purski@samsung.com> <1527500833-16005-10-git-send-email-m.purski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 28 May 2018 18:24:35 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPe0gq8U+7xSaxaZFjsGxx7iRGKMEtYn==fAZajJkfasxw@mail.gmail.com>
+Message-ID: <CAJKOXPe0gq8U+7xSaxaZFjsGxx7iRGKMEtYn==fAZajJkfasxw@mail.gmail.com>
+Subject: Re: [PATCH 09/12] ARM: dts: exynos5250: add mipi-phy node
+To: Maciej Purski <m.purski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 11:47 AM, Maciej Purski <m.purski@samsung.com> wrote:
+> The patch adds phy node, required by MIPI devices.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
 
-------------------
+This have pretty small changes since original Andrzej's patch so
+probably Andrzej's authorship should be preserved.
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 2daf505..a63b655 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -733,6 +733,12 @@
+>                         #phy-cells = <0>;
+>                 };
+>
+> +               mipi_phy: video-phy@10040710 {
+> +                       compatible = "samsung,s5pv210-mipi-video-phy";
 
-[ Upstream commit b98def7ca6e152ee55e36863dddf6f41f12d1dc6 ]
+No DTC warnings (make dtbs W=1)? reg is missing so DTC should complain.
 
-If errors were returned by btrfs_next_leaf(), replay_dir_deletes needs
-to bail out, otherwise @ret would be forced to be 0 after 'break;' and
-the caller won't be aware of it.
+Best regards,
+Krzysztof
 
-Fixes: e02119d5a7b4 ("Btrfs: Add a write ahead tree log to optimize synchronous operations")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/tree-log.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -1983,8 +1983,10 @@ again:
- 			nritems = btrfs_header_nritems(path->nodes[0]);
- 			if (path->slots[0] >= nritems) {
- 				ret = btrfs_next_leaf(root, path);
--				if (ret)
-+				if (ret == 1)
- 					break;
-+				else if (ret < 0)
-+					goto out;
- 			}
- 			btrfs_item_key_to_cpu(path->nodes[0], &found_key,
- 					      path->slots[0]);
+> +                       #phy-cells = <1>;
+> +                       syscon = <&pmu_system_controller>;
+> +               };
+> +
+>                 adc: adc@12d10000 {
+>                         compatible = "samsung,exynos-adc-v1";
+>                         reg = <0x12D10000 0x100>;
+> --
+> 2.7.4
+>
