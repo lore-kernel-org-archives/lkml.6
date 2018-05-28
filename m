@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934697AbeE1V7c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 17:59:32 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34866 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934524AbeE1V6W (ORCPT
+        id S934676AbeE1V73 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 17:59:29 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39609 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934533AbeE1V6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 17:58:22 -0400
-X-Google-Smtp-Source: ADUXVKKy5Ut8V1PseA5xkD/TluJrWOEWBQQNXxZtnLHsCZOn9/zxOjRyGb8R9e6lRplCKLCqTgkHiQ==
+        Mon, 28 May 2018 17:58:23 -0400
+X-Google-Smtp-Source: AB8JxZomqudCZuQv8recdyJO8MGZgaN+z/ZD0vW/d1B2tiHGVo+eT4WVyOOi3w2iUp2kYBlw2hs4Fg==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v1 16/20] signal: make flush_sigqueue_mask() void
-Date: Mon, 28 May 2018 23:53:51 +0200
-Message-Id: <20180528215355.16119-17-christian@brauner.io>
+Subject: [PATCH v1 17/20] signal: make wants_signal() return bool
+Date: Mon, 28 May 2018 23:53:52 +0200
+Message-Id: <20180528215355.16119-18-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528215355.16119-1-christian@brauner.io>
 References: <20180528215355.16119-1-christian@brauner.io>
@@ -25,44 +25,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The return value of flush_sigqueue_mask() is never checked anywhere.
+wants_signal() already behaves like a boolean function. Let's actually
+declare it as such too.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
 v0->v1:
 * patch introduced
 ---
- kernel/signal.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/signal.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/signal.c b/kernel/signal.c
-index c382ac346a81..0959965b523d 100644
+index 0959965b523d..ac5c2700901d 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -697,14 +697,14 @@ void signal_wake_up_state(struct task_struct *t, unsigned int state)
-  *
-  * All callers must be holding the siglock.
+@@ -889,16 +889,20 @@ static bool prepare_signal(int sig, struct task_struct *p, bool force)
+  * as soon as they're available, so putting the signal on the shared queue
+  * will be equivalent to sending it to one such thread.
   */
--static int flush_sigqueue_mask(sigset_t *mask, struct sigpending *s)
-+static void flush_sigqueue_mask(sigset_t *mask, struct sigpending *s)
+-static inline int wants_signal(int sig, struct task_struct *p)
++static inline bool wants_signal(int sig, struct task_struct *p)
  {
- 	struct sigqueue *q, *n;
- 	sigset_t m;
- 
- 	sigandsets(&m, mask, &s->signal);
- 	if (sigisemptyset(&m))
+ 	if (sigismember(&p->blocked, sig))
 -		return 0;
-+		return;
- 
- 	sigandnsets(&s->signal, &s->signal, mask);
- 	list_for_each_entry_safe(q, n, &s->list, list) {
-@@ -713,7 +713,6 @@ static int flush_sigqueue_mask(sigset_t *mask, struct sigpending *s)
- 			__sigqueue_free(q);
- 		}
- 	}
--	return 1;
++		return false;
++
+ 	if (p->flags & PF_EXITING)
+-		return 0;
++		return false;
++
+ 	if (sig == SIGKILL)
+-		return 1;
++		return true;
++
+ 	if (task_is_stopped_or_traced(p))
+-		return 0;
++		return false;
++
+ 	return task_curr(p) || !signal_pending(p);
  }
  
- static inline int is_si_special(const struct siginfo *info)
 -- 
 2.17.0
