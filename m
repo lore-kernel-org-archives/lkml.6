@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164368AbeE1KzO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:55:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43684 "EHLO mail.kernel.org"
+        id S1164379AbeE1KzV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:55:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164327AbeE1KzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:01 -0400
+        id S1164369AbeE1KzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
+        Tejun Heo <tj@kernel.org>, Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, kan.liang@intel.com,
-        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 303/496] perf/x86/intel: Fix linear IP of PEBS real_ip on Haswell and later CPUs
-Date: Mon, 28 May 2018 12:01:28 +0200
-Message-Id: <20180528100332.582354084@linuxfoundation.org>
+Subject: [PATCH 4.14 308/496] mm, slab: memcg_link the SLABs kmem_cache
+Date: Mon, 28 May 2018 12:01:33 +0200
+Message-Id: <20180528100332.776782008@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -37,121 +37,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephane Eranian <eranian@google.com>
+From: Shakeel Butt <shakeelb@google.com>
 
-[ Upstream commit 71eb9ee9596d8df3d5723c3cfc18774c6235e8b1 ]
+[ Upstream commit 880cd276dff17ea29e9a8404275c9502b265afa7 ]
 
-this patch fix a bug in how the pebs->real_ip is handled in the PEBS
-handler. real_ip only exists in Haswell and later processor. It is
-actually the eventing IP, i.e., where the event occurred. As opposed
-to the pebs->ip which is the PEBS interrupt IP which is always off
-by one.
+All the root caches are linked into slab_root_caches which was
+introduced by the commit 510ded33e075 ("slab: implement slab_root_caches
+list") but it missed to add the SLAB's kmem_cache.
 
-The problem is that the real_ip just like the IP needs to be fixed up
-because PEBS does not record all the machine state registers, and
-in particular the code segement (cs). This is why we have the set_linear_ip()
-function. The problem was that set_linear_ip() was only used on the pebs->ip
-and not the pebs->real_ip.
+While experimenting with opt-in/opt-out kmem accounting, I noticed
+system crashes due to NULL dereference inside cache_from_memcg_idx()
+while deferencing kmem_cache.memcg_params.memcg_caches.  The upstream
+clean kernel will not see these crashes but SLAB should be consistent
+with SLUB which does linked its boot caches (kmem_cache_node and
+kmem_cache) into slab_root_caches.
 
-We have profiles which ran into invalid callstacks because of this.
-Here is an example:
-
- .....  0: ffffffffffffff80 recent entry, marker kernel v
- .....  1: 000000000040044d <= user address in kernel space!
- .....  2: fffffffffffffe00 marker enter user v
- .....  3: 000000000040044d
- .....  4: 00000000004004b6 oldest entry
-
-Debugging output in get_perf_callchain():
-
- [  857.769909] CALLCHAIN: CPU8 ip=40044d regs->cs=10 user_mode(regs)=0
-
-The problem is that the kernel entry in 1: points to a user level
-address. How can that be?
-
-The reason is that with PEBS sampling the instruction that caused the event
-to occur and the instruction where the CPU was when the interrupt was posted
-may be far apart. And sometime during that time window, the privilege level may
-change. This happens, for instance, when the PEBS sample is taken close to a
-kernel entry point. Here PEBS, eventing IP (real_ip) captured a user level
-instruction. But by the time the PMU interrupt fired, the processor had already
-entered kernel space. This is why the debug output shows a user address with
-user_mode() false.
-
-The problem comes from PEBS not recording the code segment (cs) register.
-The register is used in x86_64 to determine if executing in kernel vs user
-space. This is okay because the kernel has a software workaround called
-set_linear_ip(). But the issue in setup_pebs_sample_data() is that
-set_linear_ip() is never called on the real_ip value when it is available
-(Haswell and later) and precise_ip > 1.
-
-This patch fixes this problem and eliminates the callchain discrepancy.
-
-The patch restructures the code around set_linear_ip() to minimize the number
-of times the IP has to be set.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: kan.liang@intel.com
-Link: http://lkml.kernel.org/r/1521788507-10231-1-git-send-email-eranian@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: http://lkml.kernel.org/r/20180319210020.60289-1-shakeelb@google.com
+Fixes: 510ded33e075c ("slab: implement slab_root_caches list")
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Greg Thelen <gthelen@google.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/ds.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ mm/slab.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1150,6 +1150,7 @@ static void setup_pebs_sample_data(struc
- 	if (pebs == NULL)
- 		return;
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1283,6 +1283,7 @@ void __init kmem_cache_init(void)
+ 				  nr_node_ids * sizeof(struct kmem_cache_node *),
+ 				  SLAB_HWCACHE_ALIGN);
+ 	list_add(&kmem_cache->list, &slab_caches);
++	memcg_link_cache(kmem_cache);
+ 	slab_state = PARTIAL;
  
-+	regs->flags &= ~PERF_EFLAGS_EXACT;
- 	sample_type = event->attr.sample_type;
- 	dsrc = sample_type & PERF_SAMPLE_DATA_SRC;
- 
-@@ -1194,7 +1195,6 @@ static void setup_pebs_sample_data(struc
- 	 */
- 	*regs = *iregs;
- 	regs->flags = pebs->flags;
--	set_linear_ip(regs, pebs->ip);
- 
- 	if (sample_type & PERF_SAMPLE_REGS_INTR) {
- 		regs->ax = pebs->ax;
-@@ -1230,13 +1230,22 @@ static void setup_pebs_sample_data(struc
- #endif
- 	}
- 
--	if (event->attr.precise_ip > 1 && x86_pmu.intel_cap.pebs_format >= 2) {
--		regs->ip = pebs->real_ip;
--		regs->flags |= PERF_EFLAGS_EXACT;
--	} else if (event->attr.precise_ip > 1 && intel_pmu_pebs_fixup_ip(regs))
--		regs->flags |= PERF_EFLAGS_EXACT;
--	else
--		regs->flags &= ~PERF_EFLAGS_EXACT;
-+	if (event->attr.precise_ip > 1) {
-+		/* Haswell and later have the eventing IP, so use it: */
-+		if (x86_pmu.intel_cap.pebs_format >= 2) {
-+			set_linear_ip(regs, pebs->real_ip);
-+			regs->flags |= PERF_EFLAGS_EXACT;
-+		} else {
-+			/* Otherwise use PEBS off-by-1 IP: */
-+			set_linear_ip(regs, pebs->ip);
-+
-+			/* ... and try to fix it up using the LBR entries: */
-+			if (intel_pmu_pebs_fixup_ip(regs))
-+				regs->flags |= PERF_EFLAGS_EXACT;
-+		}
-+	} else
-+		set_linear_ip(regs, pebs->ip);
-+
- 
- 	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR)) &&
- 	    x86_pmu.intel_cap.pebs_format >= 1)
+ 	/*
