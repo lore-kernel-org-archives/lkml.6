@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937081AbeE1PDd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:03:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45076 "EHLO mail.kernel.org"
+        id S937150AbeE1PD7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:03:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033615AbeE1KZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:44 -0400
+        id S1033632AbeE1KZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        stable@vger.kernel.org,
+        Chris Dickens <christopher.a.dickens@gmail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 251/268] clk: samsung: exynos3250: Fix PLL rates
-Date: Mon, 28 May 2018 12:03:45 +0200
-Message-Id: <20180528100231.659790391@linuxfoundation.org>
+Subject: [PATCH 4.4 224/268] usb: gadget: composite: fix incorrect handling of OS desc requests
+Date: Mon, 28 May 2018 12:03:18 +0200
+Message-Id: <20180528100227.886691710@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,53 +31,156 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Chris Dickens <christopher.a.dickens@gmail.com>
 
-[ Upstream commit a8321e7887410a2b2e80ab89d1ef7b30562658ea ]
+[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+When handling an OS descriptor request, one of the first operations is
+to zero out the request buffer using the wLength from the setup packet.
+There is no bounds checking, so a wLength > 4096 would clobber memory
+adjacent to the request buffer. Fix this by taking the min of wLength
+and the request buffer length prior to the memset. While at it, define
+the buffer length in a header file so that magic numbers don't appear
+throughout the code.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
+When returning data to the host, the data length should be the min of
+the wLength and the valid data we have to return. Currently we are
+returning wLength, thus requests for a wLength greater than the amount
+of data in the OS descriptor buffer would return invalid (albeit zero'd)
+data following the valid descriptor data. Fix this by counting the
+number of bytes when constructing the data and using this when
+determining the length of the request.
 
-In this patch an erroneous P value for 74176002 output frequency is also
-corrected.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
+ include/linux/usb/composite.h  |    3 +++
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -683,7 +683,7 @@ static struct samsung_pll_rate_table exy
- 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
- 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
- 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
--	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
-+	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
- 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
- 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
- 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
-@@ -719,7 +719,7 @@ static struct samsung_pll_rate_table exy
- 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
- 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
- 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
--	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
-+	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
- 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
- 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
- 	{ /* sentinel */ }
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1328,7 +1328,7 @@ static int count_ext_compat(struct usb_c
+ 	return res;
+ }
+ 
+-static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
++static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
+ {
+ 	int i, count;
+ 
+@@ -1355,10 +1355,12 @@ static void fill_ext_compat(struct usb_c
+ 				buf += 23;
+ 			}
+ 			count += 24;
+-			if (count >= 4096)
+-				return;
++			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
++				return count;
+ 		}
+ 	}
++
++	return count;
+ }
+ 
+ static int count_ext_prop(struct usb_configuration *c, int interface)
+@@ -1403,25 +1405,20 @@ static int fill_ext_prop(struct usb_conf
+ 	struct usb_os_desc *d;
+ 	struct usb_os_desc_ext_prop *ext_prop;
+ 	int j, count, n, ret;
+-	u8 *start = buf;
+ 
+ 	f = c->interface[interface];
++	count = 10; /* header length */
+ 	for (j = 0; j < f->os_desc_n; ++j) {
+ 		if (interface != f->os_desc_table[j].if_id)
+ 			continue;
+ 		d = f->os_desc_table[j].os_desc;
+ 		if (d)
+ 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
+-				/* 4kB minus header length */
+-				n = buf - start;
+-				if (n >= 4086)
+-					return 0;
+-
+-				count = ext_prop->data_len +
++				n = ext_prop->data_len +
+ 					ext_prop->name_len + 14;
+-				if (count > 4086 - n)
+-					return -EINVAL;
+-				usb_ext_prop_put_size(buf, count);
++				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
++					return count;
++				usb_ext_prop_put_size(buf, n);
+ 				usb_ext_prop_put_type(buf, ext_prop->type);
+ 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
+ 							    ext_prop->name_len);
+@@ -1447,11 +1444,12 @@ static int fill_ext_prop(struct usb_conf
+ 				default:
+ 					return -EINVAL;
+ 				}
+-				buf += count;
++				buf += n;
++				count += n;
+ 			}
+ 	}
+ 
+-	return 0;
++	return count;
+ }
+ 
+ /*
+@@ -1720,6 +1718,7 @@ unknown:
+ 			req->complete = composite_setup_complete;
+ 			buf = req->buf;
+ 			os_desc_cfg = cdev->os_desc_config;
++			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
+ 			memset(buf, 0, w_length);
+ 			buf[5] = 0x01;
+ 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
+@@ -1743,8 +1742,8 @@ unknown:
+ 					count += 16; /* header */
+ 					put_unaligned_le32(count, buf);
+ 					buf += 16;
+-					fill_ext_compat(os_desc_cfg, buf);
+-					value = w_length;
++					value = fill_ext_compat(os_desc_cfg, buf);
++					value = min_t(u16, w_length, value);
+ 				}
+ 				break;
+ 			case USB_RECIP_INTERFACE:
+@@ -1773,8 +1772,7 @@ unknown:
+ 							      interface, buf);
+ 					if (value < 0)
+ 						return value;
+-
+-					value = w_length;
++					value = min_t(u16, w_length, value);
+ 				}
+ 				break;
+ 			}
+@@ -2038,8 +2036,8 @@ int composite_os_desc_req_prepare(struct
+ 		goto end;
+ 	}
+ 
+-	/* OS feature descriptor length <= 4kB */
+-	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
++	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
++					 GFP_KERNEL);
+ 	if (!cdev->os_desc_req->buf) {
+ 		ret = PTR_ERR(cdev->os_desc_req->buf);
+ 		kfree(cdev->os_desc_req);
+--- a/include/linux/usb/composite.h
++++ b/include/linux/usb/composite.h
+@@ -53,6 +53,9 @@
+ /* big enough to hold our biggest descriptor */
+ #define USB_COMP_EP0_BUFSIZ	1024
+ 
++/* OS feature descriptor length <= 4kB */
++#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
++
+ #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
+ struct usb_configuration;
+ 
