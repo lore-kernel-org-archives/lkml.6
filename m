@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939558AbeE1PIK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:08:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43962 "EHLO mail.kernel.org"
+        id S1033836AbeE1KYc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:24:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033613AbeE1KYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:38 -0400
+        id S1033792AbeE1KYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:24:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 217/268] ASoC: topology: create TLV data for dapm widgets
-Date: Mon, 28 May 2018 12:03:11 +0200
-Message-Id: <20180528100226.854436214@linuxfoundation.org>
+Subject: [PATCH 4.4 228/268] media: cx23885: Override 888 ImpactVCBe crystal frequency
+Date: Mon, 28 May 2018 12:03:22 +0200
+Message-Id: <20180528100228.897294331@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,32 +30,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit bde8b3887add8368ecf0ca71117baf2fd56a6fc9 ]
+[ Upstream commit 779c79d4b833ec646b0aed878da38edb45bbe156 ]
 
-This patch adds the change required to create the TLV data
-for dapm widget kcontrols from topology. This also fixes the following
-TLV read error shown in amixer while showing the card control contents.
-"amixer: Control hw:1 element TLV read error: No such device or address"
+Hauppauge produced a revision of ImpactVCBe using an 888,
+with a 25MHz crystal, instead of using the default third
+overtone 50Mhz crystal. This overrides that frequency so
+that the cx25840 is properly configured. Without the proper
+crystal setup the cx25840 cannot load the firmware or
+decode video.
 
-Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-topology.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/pci/cx23885/cx23885-core.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1188,6 +1188,9 @@ static struct snd_kcontrol_new *soc_tplg
- 			kfree(sm);
- 			continue;
- 		}
-+
-+		/* create any TLV data */
-+		soc_tplg_create_tlv(tplg, &kc[i], &mc->hdr);
- 	}
- 	return kc;
+--- a/drivers/media/pci/cx23885/cx23885-core.c
++++ b/drivers/media/pci/cx23885/cx23885-core.c
+@@ -872,6 +872,16 @@ static int cx23885_dev_setup(struct cx23
+ 	if (cx23885_boards[dev->board].clk_freq > 0)
+ 		dev->clk_freq = cx23885_boards[dev->board].clk_freq;
  
++	if (dev->board == CX23885_BOARD_HAUPPAUGE_IMPACTVCBE &&
++		dev->pci->subsystem_device == 0x7137) {
++		/* Hauppauge ImpactVCBe device ID 0x7137 is populated
++		 * with an 888, and a 25Mhz crystal, instead of the
++		 * usual third overtone 50Mhz. The default clock rate must
++		 * be overridden so the cx25840 is properly configured
++		 */
++		dev->clk_freq = 25000000;
++	}
++
+ 	dev->pci_bus  = dev->pci->bus->number;
+ 	dev->pci_slot = PCI_SLOT(dev->pci->devfn);
+ 	cx23885_irq_add(dev, 0x001f00);
