@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966352AbeE1KPW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:15:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35434 "EHLO mail.kernel.org"
+        id S966998AbeE1KPv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936923AbeE1KPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:16 -0400
+        id S966828AbeE1KPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Chochol <jan@chochol.info>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 029/268] nfs: Do not convert nfs_idmap_cache_timeout to jiffies
-Date: Mon, 28 May 2018 12:00:03 +0200
-Message-Id: <20180528100205.373153187@linuxfoundation.org>
+Subject: [PATCH 4.4 038/268] Btrfs: fix scrub to repair raid6 corruption
+Date: Mon, 28 May 2018 12:00:12 +0200
+Message-Id: <20180528100206.374694208@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,36 +30,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Chochol <jan@chochol.info>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-[ Upstream commit cbebc6ef4fc830f4040d4140bf53484812d5d5d9 ]
+[ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
 
-Since commit 57e62324e469 ("NFS: Store the legacy idmapper result in the
-keyring") nfs_idmap_cache_timeout changed units from jiffies to seconds.
-Unfortunately sysctl interface was not updated accordingly.
+The raid6 corruption is that,
+suppose that all disks can be read without problems and if the content
+that was read out doesn't match its checksum, currently for raid6
+btrfs at most retries twice,
 
-As a effect updating /proc/sys/fs/nfs/idmap_cache_timeout with some
-value will incorrectly multiply this value by HZ.
-Also reading /proc/sys/fs/nfs/idmap_cache_timeout will show real value
-divided by HZ.
+- the 1st retry is to rebuild with all other stripes, it'll eventually
+  be a raid5 xor rebuild,
+- if the 1st fails, the 2nd retry will deliberately fail parity p so
+  that it will do raid6 style rebuild,
 
-Fixes: 57e62324e469 ("NFS: Store the legacy idmapper result in the keyring")
-Signed-off-by: Jan Chochol <jan@chochol.info>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+however, the chances are that another non-parity stripe content also
+has something corrupted, so that the above retries are not able to
+return correct content.
+
+We've fixed normal reads to rebuild raid6 correctly with more retries
+in Patch "Btrfs: make raid6 rebuild retry more"[1], this is to fix
+scrub to do the exactly same rebuild process.
+
+[1]: https://patchwork.kernel.org/patch/10091755/
+
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4sysctl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/raid56.c  |   18 ++++++++++++++----
+ fs/btrfs/volumes.c |    9 ++++++++-
+ 2 files changed, 22 insertions(+), 5 deletions(-)
 
---- a/fs/nfs/nfs4sysctl.c
-+++ b/fs/nfs/nfs4sysctl.c
-@@ -31,7 +31,7 @@ static struct ctl_table nfs4_cb_sysctls[
- 		.data = &nfs_idmap_cache_timeout,
- 		.maxlen = sizeof(int),
- 		.mode = 0644,
--		.proc_handler = proc_dointvec_jiffies,
-+		.proc_handler = proc_dointvec,
- 	},
- 	{ }
- };
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -2160,11 +2160,21 @@ int raid56_parity_recover(struct btrfs_r
+ 	}
+ 
+ 	/*
+-	 * reconstruct from the q stripe if they are
+-	 * asking for mirror 3
++	 * Loop retry:
++	 * for 'mirror == 2', reconstruct from all other stripes.
++	 * for 'mirror_num > 2', select a stripe to fail on every retry.
+ 	 */
+-	if (mirror_num == 3)
+-		rbio->failb = rbio->real_stripes - 2;
++	if (mirror_num > 2) {
++		/*
++		 * 'mirror == 3' is to fail the p stripe and
++		 * reconstruct from the q stripe.  'mirror > 3' is to
++		 * fail a data stripe and reconstruct from p+q stripe.
++		 */
++		rbio->failb = rbio->real_stripes - (mirror_num - 1);
++		ASSERT(rbio->failb > 0);
++		if (rbio->failb <= rbio->faila)
++			rbio->failb--;
++	}
+ 
+ 	ret = lock_stripe_add(rbio);
+ 
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -5056,7 +5056,14 @@ int btrfs_num_copies(struct btrfs_fs_inf
+ 	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
+ 		ret = 2;
+ 	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
+-		ret = 3;
++		/*
++		 * There could be two corrupted data stripes, we need
++		 * to loop retry in order to rebuild the correct data.
++		 *
++		 * Fail a stripe at a time on every retry except the
++		 * stripe under reconstruction.
++		 */
++		ret = map->num_stripes;
+ 	else
+ 		ret = 1;
+ 	free_extent_map(em);
