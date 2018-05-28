@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165458AbeE1Ngx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:36:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35930 "EHLO mail.kernel.org"
+        id S1165430AbeE1NhP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:37:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937069AbeE1KpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:24 -0400
+        id S937753AbeE1KpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:45:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -13,9 +13,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 096/496] mac80211: Fix sending ADDBA response for an ongoing session
-Date: Mon, 28 May 2018 11:58:01 +0200
-Message-Id: <20180528100323.911299200@linuxfoundation.org>
+Subject: [PATCH 4.14 095/496] mac80211: Do not disconnect on invalid operating class
+Date: Mon, 28 May 2018 11:58:00 +0200
+Message-Id: <20180528100323.873276378@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,11 +33,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ilan Peer <ilan.peer@intel.com>
 
-[ Upstream commit 3b07029729e347f288c70227cfe3c66b085d6b0b ]
+[ Upstream commit 191da271ac260700db3e5b4bb982a17ca78769d6 ]
 
-In case an ADDBA request is received while there is already
-an ongoing BA sessions with the same parameters, i.e., update
-flow, an ADBBA response with decline status was sent twice. Fix it.
+Some APs include a non global operating class in their extended channel
+switch information element. In such a case, as the operating class is not
+known, mac80211 would decide to disconnect.
+
+However the specification states that the operating class needs to be
+taken from Annex E, but it does not specify from which table it should be
+taken, so it is valid for an AP to use a non global operating class.
+
+To avoid possibly unneeded disconnection, in such a case ignore the
+operating class and assume that the current band is used, and if the
+resulting channel and band configuration is invalid disconnect.
 
 Signed-off-by: Ilan Peer <ilan.peer@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
@@ -45,26 +53,42 @@ Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/agg-rx.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/mac80211/spectmgmt.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/net/mac80211/agg-rx.c
-+++ b/net/mac80211/agg-rx.c
+--- a/net/mac80211/spectmgmt.c
++++ b/net/mac80211/spectmgmt.c
 @@ -8,6 +8,7 @@
   * Copyright 2007, Michael Wu <flamingice@sourmilk.net>
-  * Copyright 2007-2010, Intel Corporation
-  * Copyright(c) 2015-2017 Intel Deutschland GmbH
+  * Copyright 2007-2008, Intel Corporation
+  * Copyright 2008, Johannes Berg <johannes@sipsolutions.net>
 + * Copyright (C) 2018        Intel Corporation
   *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License version 2 as
-@@ -322,9 +323,6 @@ void ___ieee80211_start_rx_ba_session(st
- 			 * driver so reject the timeout update.
- 			 */
- 			status = WLAN_STATUS_REQUEST_DECLINED;
--			ieee80211_send_addba_resp(sta->sdata, sta->sta.addr,
--						  tid, dialog_token, status,
--						  1, buf_size, timeout);
- 			goto end;
+@@ -27,7 +28,7 @@ int ieee80211_parse_ch_switch_ie(struct
+ 				 u32 sta_flags, u8 *bssid,
+ 				 struct ieee80211_csa_ie *csa_ie)
+ {
+-	enum nl80211_band new_band;
++	enum nl80211_band new_band = current_band;
+ 	int new_freq;
+ 	u8 new_chan_no;
+ 	struct ieee80211_channel *new_chan;
+@@ -55,15 +56,13 @@ int ieee80211_parse_ch_switch_ie(struct
+ 				elems->ext_chansw_ie->new_operating_class,
+ 				&new_band)) {
+ 			sdata_info(sdata,
+-				   "cannot understand ECSA IE operating class %d, disconnecting\n",
++				   "cannot understand ECSA IE operating class, %d, ignoring\n",
+ 				   elems->ext_chansw_ie->new_operating_class);
+-			return -EINVAL;
  		}
- 
+ 		new_chan_no = elems->ext_chansw_ie->new_ch_num;
+ 		csa_ie->count = elems->ext_chansw_ie->count;
+ 		csa_ie->mode = elems->ext_chansw_ie->mode;
+ 	} else if (elems->ch_switch_ie) {
+-		new_band = current_band;
+ 		new_chan_no = elems->ch_switch_ie->new_ch_num;
+ 		csa_ie->count = elems->ch_switch_ie->count;
+ 		csa_ie->mode = elems->ch_switch_ie->mode;
