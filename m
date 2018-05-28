@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162610AbeE1KjS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:39:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
+        id S1163019AbeE1ODO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:03:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162574AbeE1KjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:11 -0400
+        id S1162574AbeE1KjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Carlo Pisani <carlojpisani@gmail.com>,
+        Kyle McMartin <kyle@mcmartin.ca>,
+        Grant Grundler <grantgrundler@gmail.com>, Helge Deller <deller@gmx.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 256/329] ACPI: acpi_pad: Fix memory leak in power saving threads
-Date: Mon, 28 May 2018 12:03:05 +0200
-Message-Id: <20180528100303.269035752@linuxfoundation.org>
+Subject: [PATCH 4.9 259/329] parisc/pci: Switch LBA PCI bus from Hard Fail to Soft Fail mode
+Date: Mon, 28 May 2018 12:03:08 +0200
+Message-Id: <20180528100303.498255933@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,39 +31,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lenny Szubowicz <lszubowi@redhat.com>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
+[ Upstream commit b845f66f78bf42a4ce98e5cfe0e94fab41dd0742 ]
 
-Fix once per second (round_robin_time) memory leak of about 1 KB in
-each acpi_pad kernel idling thread that is activated.
+Carlo Pisani noticed that his C3600 workstation behaved unstable during heavy
+I/O on the PCI bus with a VIA VT6421 IDE/SATA PCI card.
 
-Found by testing with kmemleak.
+To avoid such instability, this patch switches the LBA PCI bus from Hard Fail
+mode into Soft Fail mode. In this mode the bus will return -1UL for timed out
+MMIO transactions, which is exactly how the x86 (and most other architectures)
+PCI busses behave.
 
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This patch is based on a proposal by Grant Grundler and Kyle McMartin 10
+years ago:
+https://www.spinics.net/lists/linux-parisc/msg01027.html
+
+Cc: Carlo Pisani <carlojpisani@gmail.com>
+Cc: Kyle McMartin <kyle@mcmartin.ca>
+Reviewed-by: Grant Grundler <grantgrundler@gmail.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_pad.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/parisc/lba_pci.c |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/acpi_pad.c
-+++ b/drivers/acpi/acpi_pad.c
-@@ -109,6 +109,7 @@ static void round_robin_cpu(unsigned int
- 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
- 	if (cpumask_empty(tmp)) {
- 		mutex_unlock(&round_robin_lock);
-+		free_cpumask_var(tmp);
- 		return;
+--- a/drivers/parisc/lba_pci.c
++++ b/drivers/parisc/lba_pci.c
+@@ -1367,9 +1367,27 @@ lba_hw_init(struct lba_device *d)
+ 		WRITE_REG32(stat, d->hba.base_addr + LBA_ERROR_CONFIG);
  	}
- 	for_each_cpu(cpu, tmp) {
-@@ -126,6 +127,8 @@ static void round_robin_cpu(unsigned int
- 	mutex_unlock(&round_robin_lock);
  
- 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
+-	/* Set HF mode as the default (vs. -1 mode). */
 +
-+	free_cpumask_var(tmp);
- }
++	/*
++	 * Hard Fail vs. Soft Fail on PCI "Master Abort".
++	 *
++	 * "Master Abort" means the MMIO transaction timed out - usually due to
++	 * the device not responding to an MMIO read. We would like HF to be
++	 * enabled to find driver problems, though it means the system will
++	 * crash with a HPMC.
++	 *
++	 * In SoftFail mode "~0L" is returned as a result of a timeout on the
++	 * pci bus. This is like how PCI busses on x86 and most other
++	 * architectures behave.  In order to increase compatibility with
++	 * existing (x86) PCI hardware and existing Linux drivers we enable
++	 * Soft Faul mode on PA-RISC now too.
++	 */
+         stat = READ_REG32(d->hba.base_addr + LBA_STAT_CTL);
++#if defined(ENABLE_HARDFAIL)
+ 	WRITE_REG32(stat | HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
++#else
++	WRITE_REG32(stat & ~HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
++#endif
  
- static void exit_round_robin(unsigned int tsk_index)
+ 	/*
+ 	** Writing a zero to STAT_CTL.rf (bit 0) will clear reset signal
