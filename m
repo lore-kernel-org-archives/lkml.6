@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936683AbeE1KLz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59918 "EHLO mail.kernel.org"
+        id S936731AbeE1KMV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:12:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936646AbeE1KLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:45 -0400
+        id S936718AbeE1KMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:12:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Giuseppe Lippolis <giu.lippolis@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 105/185] net-usb: add qmi_wwan if on lte modem wistron neweb d18q1
-Date: Mon, 28 May 2018 12:02:26 +0200
-Message-Id: <20180528100100.322768348@linuxfoundation.org>
+Subject: [PATCH 3.18 147/185] xhci: zero usb device slot_id member when disabling and freeing a xhci slot
+Date: Mon, 28 May 2018 12:03:08 +0200
+Message-Id: <20180528100108.667025238@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,65 +29,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Giuseppe Lippolis <giu.lippolis@gmail.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit d4c4bc11353f3bea6754f7d21e3612c9f32d1d64 ]
+[ Upstream commit a400efe455f7b61ac9a801ac8d0d01f8c8d82dd5 ]
 
-This modem is embedded on dlink dwr-921 router.
-    The oem configuration states:
+set udev->slot_id to zero when disabling and freeing the xhci slot.
+Prevents usb core from calling xhci with a stale slot id.
 
-    T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480 MxCh= 0
-    D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-    P:  Vendor=1435 ProdID=0918 Rev= 2.32
-    S:  Manufacturer=Android
-    S:  Product=Android
-    S:  SerialNumber=0123456789ABCDEF
-    C:* #Ifs= 7 Cfg#= 1 Atr=80 MxPwr=500mA
-    I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-    E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-    E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-    E:  Ad=84(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-    E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-    E:  Ad=86(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-    E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-    E:  Ad=88(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-    E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    I:* If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-    E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-    E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    I:* If#= 6 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
-    E:  Ad=8b(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-    E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
+xHC controller may be reset during resume to recover from some error.
+All slots are unusable as they are disabled and freed.
+xhci driver starts slot enumeration again from 1 in the order they are
+enabled. In the worst case a stale udev->slot_id for one device matches
+a newly enabled slot_id for a different device, causing us to
+perform a action on the wrong device.
 
-Tested on openwrt distribution
-
-Signed-off-by: Giuseppe Lippolis <giu.lippolis@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/host/xhci-mem.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -679,6 +679,9 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x0846, 0x68a2, 8)},
- 	{QMI_FIXED_INTF(0x12d1, 0x140c, 1)},	/* Huawei E173 */
- 	{QMI_FIXED_INTF(0x12d1, 0x14ac, 1)},	/* Huawei E1820 */
-+	{QMI_FIXED_INTF(0x1435, 0xd181, 3)},	/* Wistron NeWeb D18Q1 */
-+	{QMI_FIXED_INTF(0x1435, 0xd181, 4)},	/* Wistron NeWeb D18Q1 */
-+	{QMI_FIXED_INTF(0x1435, 0xd181, 5)},	/* Wistron NeWeb D18Q1 */
- 	{QMI_FIXED_INTF(0x16d8, 0x6003, 0)},	/* CMOTech 6003 */
- 	{QMI_FIXED_INTF(0x16d8, 0x6007, 0)},	/* CMOTech CHE-628S */
- 	{QMI_FIXED_INTF(0x16d8, 0x6008, 0)},	/* CMOTech CMU-301 */
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -962,6 +962,8 @@ void xhci_free_virt_device(struct xhci_h
+ 	if (dev->out_ctx)
+ 		xhci_free_container_ctx(xhci, dev->out_ctx);
+ 
++	if (dev->udev && dev->udev->slot_id)
++		dev->udev->slot_id = 0;
+ 	kfree(xhci->devs[slot_id]);
+ 	xhci->devs[slot_id] = NULL;
+ }
