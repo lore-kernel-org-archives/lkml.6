@@ -1,76 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165767AbeE1OgH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:36:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:38269 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161431AbeE1OgC (ORCPT
+        id S1165787AbeE1Ogb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:36:31 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:56456 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968924AbeE1Og0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 10:36:02 -0400
-Date: Mon, 28 May 2018 16:35:18 +0200
-From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-To: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "daniel@bristot.me" <daniel@bristot.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
-        "williams@redhat.com" <williams@redhat.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "lclaudio@redhat.com" <lclaudio@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
-Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
- combo checks
-Message-ID: <20180528143518.f46hyhi5r5jd3oxe@linutronix.de>
-References: <20180322093745.GC4229@kernel.org>
- <20180323155513.dwbgvblenlji33as@linutronix.de>
- <1521822325.2535.5.camel@wdc.com>
- <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
- <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
- <20180326111359.180f1604@gandalf.local.home>
- <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
- <c9f5df1e54bb2bd8f3f0aef86a55deb11888a6a4.camel@wdc.com>
- <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
- <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
+        Mon, 28 May 2018 10:36:26 -0400
+From: Roger Quadros <rogerq@ti.com>
+To: <balbi@kernel.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 2/2] usb: dwc3: of_simple: don't call pm_runtime_set_active()
+Date: Mon, 28 May 2018 17:36:14 +0300
+Message-ID: <1527518174-27860-2-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527518174-27860-1-git-send-email-rogerq@ti.com>
+References: <1527518174-27860-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-28 08:31:38 [-0700], Bart Van Assche wrote:
-> On 03/28/18 08:14, bigeasy@linutronix.de wrote:
-> > On 2018-03-28 15:05:41 [+0000], Bart Van Assche wrote:
-> > > The names of the two functions touched by patch 1/2 start with a double
-> > > underscore. That by itself is already a hint that these should be called with
-> > > a lock held (I know that this is not a universal convention in the Linux
-> > > kernel). I'm fine either way - either with patch 1/2 as posted or patch 1/2
-> > > with the above comment added.
-> > 
-> > Okay. In that case let me update 1/2.
-> > But 2/2 with the comment as Steven suggested is still a no no for you?
-> 
-> Although I'm not enthusiast about patch 2/2, if others agree with that patch
-> I'm fine with that patch being sent upstream.
+Don't call pm_runtime_set_active() as it will prevent the device
+from being activated in the next pm_runtime_get_sync() call.
 
-I've been waiting for something to happen but nobody replied.
-Bart, you were fine with 1/2 as posted but not too happy about 2/2.
-Assuming we keep 1/2 as is and I remove just the
-"WARN_ON_ONCE(!irqs_disabled());" from 2/2 (keeping the
-assert_spin_locked()), would that improve your mood? Lockdep would still
-perform full validation, yell if __transport_check_aborted_status() was
-invoked without locking and also yell abut missing IRQ-save at locking
-time of ->t_state_lock).
+Also call pm_runtime_get_sync() before of_platform_populate().
 
-> Thanks,
-> 
-> Bart.
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/usb/dwc3/dwc3-of-simple.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Sebastian
+diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+index e98d221..2cbb5c0 100644
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -121,6 +121,9 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_resetc_assert;
+ 
++	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
++
+ 	ret = of_platform_populate(np, NULL, NULL, dev);
+ 	if (ret) {
+ 		for (i = 0; i < simple->num_clocks; i++) {
+@@ -131,10 +134,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 		goto err_resetc_assert;
+ 	}
+ 
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-	pm_runtime_get_sync(dev);
+-
+ 	return 0;
+ 
+ err_resetc_assert:
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
