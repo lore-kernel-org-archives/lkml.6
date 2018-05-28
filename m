@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938708AbeE1MNY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:13:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51192 "EHLO mail.kernel.org"
+        id S1422998AbeE1LED (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:04:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164883AbeE1LEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:04:05 -0400
+        id S1422940AbeE1LD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Filip Sadowski <filip.sadowski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 493/496] pinctrl: msm: Use dynamic GPIO numbering
-Date: Mon, 28 May 2018 12:04:38 +0200
-Message-Id: <20180528100340.660553668@linuxfoundation.org>
+Subject: [PATCH 4.14 489/496] i40e: Add delay after EMP reset for firmware to recover
+Date: Mon, 28 May 2018 12:04:34 +0200
+Message-Id: <20180528100340.483692315@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +31,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Filip Sadowski <filip.sadowski@intel.com>
 
-[ Upstream commit a7aa75a2a7dba32594291a71c3704000a2fd7089 ]
+[ Upstream commit 1fa51a650e1deb50410677f1bd6c0ce17aa48a49 ]
 
-The base of the TLMM gpiochip should not be statically defined as 0, fix
-this to not artificially restrict the existence of multiple pinctrl-msm
-devices.
+This patch adds necessary delay for 4.33 firmware to recover after
+EMP reset. Without this patch driver occasionally reinitializes
+structures too quickly to communicate with firmware after EMP reset
+causing AdminQ to timeout.
 
-Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
-Reported-by: Timur Tabi <timur@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Filip Sadowski <filip.sadowski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
- 		return -EINVAL;
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -7196,6 +7196,17 @@ static void i40e_rebuild(struct i40e_pf
+ 	}
+ 	i40e_get_oem_version(&pf->hw);
  
- 	chip = &pctrl->chip;
--	chip->base = 0;
-+	chip->base = -1;
- 	chip->ngpio = ngpio;
- 	chip->label = dev_name(pctrl->dev);
- 	chip->parent = pctrl->dev;
++	if (test_bit(__I40E_EMP_RESET_INTR_RECEIVED, pf->state) &&
++	    ((hw->aq.fw_maj_ver == 4 && hw->aq.fw_min_ver <= 33) ||
++	     hw->aq.fw_maj_ver < 4) && hw->mac.type == I40E_MAC_XL710) {
++		/* The following delay is necessary for 4.33 firmware and older
++		 * to recover after EMP reset. 200 ms should suffice but we
++		 * put here 300 ms to be sure that FW is ready to operate
++		 * after reset.
++		 */
++		mdelay(300);
++	}
++
+ 	/* re-verify the eeprom if we just had an EMP reset */
+ 	if (test_and_clear_bit(__I40E_EMP_RESET_INTR_RECEIVED, pf->state))
+ 		i40e_verify_eeprom(pf);
