@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969092AbeE1Pno (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:43:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37512 "EHLO mail.kernel.org"
+        id S969110AbeE1PoE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:44:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968681AbeE1KRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:22 -0400
+        id S968662AbeE1KRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
+        stable@vger.kernel.org, Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 074/268] scsi: sym53c8xx_2: iterator underflow in sym_getsync()
-Date: Mon, 28 May 2018 12:00:48 +0200
-Message-Id: <20180528100210.248518398@linuxfoundation.org>
+Subject: [PATCH 4.4 072/268] scsi: ufs: Enable quirk to ignore sending WRITE_SAME command
+Date: Mon, 28 May 2018 12:00:46 +0200
+Message-Id: <20180528100210.007728396@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,32 +32,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Sujit Reddy Thumma <sthumma@codeaurora.org>
 
-[ Upstream commit e6f791d95313c85f3dd4a26141e28e50ae9aa0ae ]
+[ Upstream commit 84af7e8b895088d89f246d6b0f82717fafdebf61 ]
 
-We wanted to exit the loop with "div" set to zero, but instead, if we
-don't hit the break then "div" is -1 when we finish the loop.  It leads
-to an array underflow a few lines later.
+WRITE_SAME command is not supported by UFS. Enable a quirk for the upper
+level drivers to not send WRITE SAME command.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Acked-by: Matthew Wilcox <mawilcox@microsoft.com>
+[mkp: botched patch, applied by hand]
+
+Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/sym53c8xx_2/sym_hipd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-@@ -536,7 +536,7 @@ sym_getsync(struct sym_hcb *np, u_char d
- 	 *  Look for the greatest clock divisor that allows an 
- 	 *  input speed faster than the period.
- 	 */
--	while (div-- > 0)
-+	while (--div > 0)
- 		if (kpc >= (div_10M[div] << 2)) break;
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -2923,6 +2923,8 @@ static int ufshcd_slave_alloc(struct scs
+ 	/* REPORT SUPPORTED OPERATION CODES is not supported */
+ 	sdev->no_report_opcodes = 1;
  
- 	/*
++	/* WRITE_SAME command is not supported */
++	sdev->no_write_same = 1;
+ 
+ 	ufshcd_set_queue_depth(sdev);
+ 
