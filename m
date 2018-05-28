@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939433AbeE1O4Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:56:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46956 "EHLO mail.kernel.org"
+        id S937007AbeE1K1d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:27:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936905AbeE1K1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:34 -0400
+        id S936905AbeE1K1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>, John Stultz <john.stultz@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 031/329] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
-Date: Mon, 28 May 2018 11:59:20 +0200
-Message-Id: <20180528100245.006157220@linuxfoundation.org>
+Subject: [PATCH 4.9 028/329] ALSA: hda - Use IS_REACHABLE() for dependency on input
+Date: Mon, 28 May 2018 11:59:17 +0200
+Message-Id: <20180528100244.767779994@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -34,66 +30,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
+[ Upstream commit c469652bb5e8fb715db7d152f46d33b3740c9b87 ]
 
-So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
-well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
-detecting the ABS or REL timer modes is not valid anymore, it got broken
-by the introduction of HRTIMER_MODE_PINNED.
+The commit ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek
+HD-audio codec") introduced the reverse-selection of CONFIG_INPUT for
+Realtek codec in order to avoid the mess with dependency between
+built-in and modules.  Later on, we obtained IS_REACHABLE() macro
+exactly for this kind of problems, and now we can remove th INPUT
+selection in Kconfig and put IS_REACHABLE(INPUT) to the appropriate
+places in the code, so that the driver doesn't need to select other
+subsystem forcibly.
 
-HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
-sake of completeness print all given modes.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: keescook@chromium.org
-Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek HD-audio codec")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # and build-tested
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/trace/events/timer.h |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ sound/pci/hda/Kconfig         |    1 -
+ sound/pci/hda/patch_realtek.c |    5 +++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/trace/events/timer.h
-+++ b/include/trace/events/timer.h
-@@ -125,6 +125,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
- 	TP_ARGS(timer)
- );
+--- a/sound/pci/hda/Kconfig
++++ b/sound/pci/hda/Kconfig
+@@ -88,7 +88,6 @@ config SND_HDA_PATCH_LOADER
+ config SND_HDA_CODEC_REALTEK
+ 	tristate "Build Realtek HD-audio codec support"
+ 	select SND_HDA_GENERIC
+-	select INPUT
+ 	help
+ 	  Say Y or M here to include Realtek HD-audio codec support in
+ 	  snd-hda-intel driver, such as ALC880.
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -3495,6 +3495,7 @@ static void alc280_fixup_hp_gpio4(struct
+ 	}
+ }
  
-+#define decode_clockid(type)						\
-+	__print_symbolic(type,						\
-+		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
-+		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
-+		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
-+		{ CLOCK_TAI,		"CLOCK_TAI"		})
-+
-+#define decode_hrtimer_mode(mode)					\
-+	__print_symbolic(mode,						\
-+		{ HRTIMER_MODE_ABS,		"ABS"		},	\
-+		{ HRTIMER_MODE_REL,		"REL"		},	\
-+		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
-+		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
-+
- /**
-  * hrtimer_init - called when the hrtimer is initialized
-  * @hrtimer:	pointer to struct hrtimer
-@@ -151,10 +165,8 @@ TRACE_EVENT(hrtimer_init,
- 	),
++#if IS_REACHABLE(INPUT)
+ static void gpio2_mic_hotkey_event(struct hda_codec *codec,
+ 				   struct hda_jack_callback *event)
+ {
+@@ -3627,6 +3628,10 @@ static void alc233_fixup_lenovo_line2_mi
+ 		spec->kb_dev = NULL;
+ 	}
+ }
++#else /* INPUT */
++#define alc280_fixup_hp_gpio2_mic_hotkey	NULL
++#define alc233_fixup_lenovo_line2_mic_hotkey	NULL
++#endif /* INPUT */
  
- 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
--		  __entry->clockid == CLOCK_REALTIME ?
--			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
--		  __entry->mode == HRTIMER_MODE_ABS ?
--			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
-+		  decode_clockid(__entry->clockid),
-+		  decode_hrtimer_mode(__entry->mode))
- );
- 
- /**
+ static void alc269_fixup_hp_line1_mic1_led(struct hda_codec *codec,
+ 				const struct hda_fixup *fix, int action)
