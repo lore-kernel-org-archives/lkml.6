@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161850AbeE1KeF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:34:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54062 "EHLO mail.kernel.org"
+        id S1165680AbeE1OZv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:25:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161293AbeE1Kdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:53 -0400
+        id S1161841AbeE1KeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Igor Pylypiv <igor.pylypiv@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 171/329] Btrfs: send, fix issuing write op when processing hole in no data mode
-Date: Mon, 28 May 2018 12:01:40 +0200
-Message-Id: <20180528100256.644380006@linuxfoundation.org>
+Subject: [PATCH 4.9 175/329] watchdog: f71808e_wdt: Fix magic close handling
+Date: Mon, 28 May 2018 12:01:44 +0200
+Message-Id: <20180528100256.935713101@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,65 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Igor Pylypiv <igor.pylypiv@gmail.com>
 
-[ Upstream commit d4dfc0f4d39475ccbbac947880b5464a74c30b99 ]
+[ Upstream commit 7bd3e7b743956afbec30fb525bc3c5e22e3d475c ]
 
-When doing an incremental send of a filesystem with the no-holes feature
-enabled, we end up issuing a write operation when using the no data mode
-send flag, instead of issuing an update extent operation. Fix this by
-issuing the update extent operation instead.
+Watchdog close is "expected" when any byte is 'V' not just the last one.
+Writing "V" to the device fails because the last byte is the end of string.
 
-Trivial reproducer:
+$ echo V > /dev/watchdog
+f71808e_wdt: Unexpected close, not stopping watchdog!
 
-  $ mkfs.btrfs -f -O no-holes /dev/sdc
-  $ mkfs.btrfs -f /dev/sdd
-  $ mount /dev/sdc /mnt/sdc
-  $ mount /dev/sdd /mnt/sdd
-
-  $ xfs_io -f -c "pwrite -S 0xab 0 32K" /mnt/sdc/foobar
-  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap1
-
-  $ xfs_io -c "fpunch 8K 8K" /mnt/sdc/foobar
-  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap2
-
-  $ btrfs send /mnt/sdc/snap1 | btrfs receive /mnt/sdd
-  $ btrfs send --no-data -p /mnt/sdc/snap1 /mnt/sdc/snap2 \
-       | btrfs receive -vv /mnt/sdd
-
-Before this change the output of the second receive command is:
-
-  receiving snapshot snap2 uuid=f6922049-8c22-e544-9ff9-fc6755918447...
-  utimes
-  write foobar, offset 8192, len 8192
-  utimes foobar
-  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=f6922049-8c22-e544-9ff9-...
-
-After this change it is:
-
-  receiving snapshot snap2 uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
-  utimes
-  update_extent foobar: offset=8192, len=8192
-  utimes foobar
-  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
-
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Igor Pylypiv <igor.pylypiv@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/send.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/watchdog/f71808e_wdt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -4822,6 +4822,9 @@ static int send_hole(struct send_ctx *sc
- 	u64 len;
- 	int ret = 0;
+--- a/drivers/watchdog/f71808e_wdt.c
++++ b/drivers/watchdog/f71808e_wdt.c
+@@ -566,7 +566,8 @@ static ssize_t watchdog_write(struct fil
+ 				char c;
+ 				if (get_user(c, buf + i))
+ 					return -EFAULT;
+-				expect_close = (c == 'V');
++				if (c == 'V')
++					expect_close = true;
+ 			}
  
-+	if (sctx->flags & BTRFS_SEND_FLAG_NO_FILE_DATA)
-+		return send_update_extent(sctx, offset, end - offset);
-+
- 	p = fs_path_alloc();
- 	if (!p)
- 		return -ENOMEM;
+ 			/* Properly order writes across fork()ed processes */
