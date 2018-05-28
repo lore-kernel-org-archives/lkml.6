@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934838AbeE1WBk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 18:01:40 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40417 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934447AbeE1V6I (ORCPT
+        id S934872AbeE1WCE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 18:02:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52494 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934437AbeE1V6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 17:58:08 -0400
-X-Google-Smtp-Source: AB8JxZqr0/Iza0K7/ocFPdN/Jr5Mvb6Co9Wdc8dPZC+nRYv9VvbaLhRnIXlaBo9Vul8w0LM0i2ErjQ==
+        Mon, 28 May 2018 17:58:06 -0400
+X-Google-Smtp-Source: ADUXVKLsLC+L2vQmUYP/xxLic+VNzQX7UWrmBeXhY8t3UoLtlC9/d7tt3MrHXaaarzdWc4DSIrqyrw==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v1 05/20] signal: flatten do_send_sig_info()
-Date: Mon, 28 May 2018 23:53:40 +0200
-Message-Id: <20180528215355.16119-6-christian@brauner.io>
+Subject: [PATCH v1 03/20] signal: make may_ptrace_stop() return bool
+Date: Mon, 28 May 2018 23:53:38 +0200
+Message-Id: <20180528215355.16119-4-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528215355.16119-1-christian@brauner.io>
 References: <20180528215355.16119-1-christian@brauner.io>
@@ -25,42 +25,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's return early when lock_task_sighand() fails and move send_signal()
-and unlock_task_sighand() out of the if block.
+may_ptrace_stop() already behaves like a boolean function. Let's actually
+declare it as such too.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
 v0->v1:
 * patch unchanged
 ---
- kernel/signal.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/signal.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/signal.c b/kernel/signal.c
-index baae137455eb..a628b56415e6 100644
+index 6c71d6b8d2b8..bc750fb4ddcc 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -1167,16 +1167,16 @@ specific_send_sig_info(int sig, struct siginfo *info, struct task_struct *t)
+@@ -1889,10 +1889,10 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
+ 	spin_unlock_irqrestore(&sighand->siglock, flags);
  }
  
- int do_send_sig_info(int sig, struct siginfo *info, struct task_struct *p,
--			bool group)
-+		     bool group)
+-static inline int may_ptrace_stop(void)
++static inline bool may_ptrace_stop(void)
  {
- 	unsigned long flags;
- 	int ret = -ESRCH;
+ 	if (!likely(current->ptrace))
+-		return 0;
++		return false;
+ 	/*
+ 	 * Are we in the middle of do_coredump?
+ 	 * If so and our tracer is also part of the coredump stopping
+@@ -1906,11 +1906,11 @@ static inline int may_ptrace_stop(void)
+ 	 * block in TASK_TRACED. But PTRACE_EVENT_EXIT can be reported
+ 	 * after SIGKILL was already dequeued.
+ 	 */
+-	if (unlikely(current->mm->core_state) &&
+-	    unlikely(current->mm == current->parent->mm))
+-		return 0;
++	if (likely(!current->mm->core_state ||
++		   current->mm != current->parent->mm))
++		return false;
  
--	if (lock_task_sighand(p, &flags)) {
--		ret = send_signal(sig, info, p, group);
--		unlock_task_sighand(p, &flags);
--	}
-+	if (!lock_task_sighand(p, &flags))
-+		return ret;
- 
-+	ret = send_signal(sig, info, p, group);
-+	unlock_task_sighand(p, &flags);
- 	return ret;
+-	return 1;
++	return true;
  }
  
+ /*
 -- 
 2.17.0
