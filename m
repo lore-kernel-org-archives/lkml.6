@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935456AbeE1KNX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:13:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33170 "EHLO mail.kernel.org"
+        id S933467AbeE1QNi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:13:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932430AbeE1KNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:18 -0400
+        id S965325AbeE1KNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michal Simek <michal.simek@xilinx.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 139/185] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
-Date: Mon, 28 May 2018 12:03:00 +0200
-Message-Id: <20180528100106.889697486@linuxfoundation.org>
+Subject: [PATCH 3.18 167/185] serial: xuartps: Fix out-of-bounds access through DT alias
+Date: Mon, 28 May 2018 12:03:28 +0200
+Message-Id: <20180528100112.974627197@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,49 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Vosburgh <jay.vosburgh@canonical.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
+[ Upstream commit e7d75e18d0fc3f7193b65282b651f980c778d935 ]
 
-The operstate update logic will leave an interface in the
-default UNKNOWN operstate if the interface carrier state never changes
-from the default carrier up state set at creation.  This includes the
-case of an explicit call to netif_carrier_on, as the carrier on to on
-transition has no effect on operstate.
+The cdns_uart_port[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-	This affects virtio-net for the case that the virtio peer does
-not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
-updates).  Without this feature, the virtio specification states that
-"the link should be assumed active," so, logically, the operstate should
-be UP instead of UNKNOWN.  This has impact on user space applications
-that use the operstate to make availability decisions for the interface.
+Fix this by adding a range check.
 
-	Resolve this by changing the virtio probe logic slightly to call
-netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
-cases, and then the existing call to netif_carrier_on for the "without"
-case will cause an operstate transition.
-
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 928e9263492069ee ("tty: xuartps: Initialize ports according to aliases")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |    2 +-
+ drivers/tty/serial/xilinx_uartps.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1876,8 +1876,8 @@ static int virtnet_probe(struct virtio_d
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1001,7 +1001,7 @@ static struct uart_port *cdns_uart_get_p
+ 	struct uart_port *port;
  
- 	/* Assume link up if device can't report link status,
- 	   otherwise get link status from config. */
-+	netif_carrier_off(dev);
- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		netif_carrier_off(dev);
- 		schedule_work(&vi->config_work);
- 	} else {
- 		vi->status = VIRTIO_NET_S_LINK_UP;
+ 	/* Try the given port id if failed use default method */
+-	if (cdns_uart_port[id].mapbase != 0) {
++	if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
+ 		/* Find the next unused port */
+ 		for (id = 0; id < CDNS_UART_NR_PORTS; id++)
+ 			if (cdns_uart_port[id].mapbase == 0)
