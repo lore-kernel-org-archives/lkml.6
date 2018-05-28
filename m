@@ -1,71 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423486AbeE1LHu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:07:50 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:43993 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423471AbeE1LHm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:42 -0400
-X-Google-Smtp-Source: AB8JxZpVMlxdj3f9bYxIALid2OwwGBO3RGBCVq0mBvd3EfqoTgfbPjePoJ+HYCK1IizdINecFGbcZA==
-Date: Mon, 28 May 2018 16:37:39 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: arm@kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, chris.redpath@arm.com,
-        ionela.voinescu@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 15/15] arm: dts: imx: Add missing OPP properties for CPUs
-Message-ID: <20180528110739.ewmhlf72sl7u5ju7@vireshk-i7>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <264124e14b966a1bbc07c364fbd89fc55aa765e6.1527244201.git.viresh.kumar@linaro.org>
- <1527248760.3472.6.camel@pengutronix.de>
+        id S1423573AbeE1LIU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:08:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423503AbeE1LH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:57 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 081/272] fscache: Fix hanging wait on page discarded by writeback
+Date: Mon, 28 May 2018 12:01:54 +0200
+Message-Id: <20180528100247.947838077@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527248760.3472.6.camel@pengutronix.de>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lucas,
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-On 25-05-18, 13:46, Lucas Stach wrote:
-> This is a lot of duplicate information for what is effectively a shared
->  cluster wide thing. This does absolutely not _feel_ right.
+------------------
 
-I cannot agree more :)
+From: David Howells <dhowells@redhat.com>
 
-> What problem are you solving here? Why do we need all this duplicate
-> information? Why can't we fix it by falling back to looking at cpu0 if
-> needed?
+[ Upstream commit 2c98425720233ae3e135add0c7e869b32913502f ]
 
-Let me try explaining one of the problem scenarios to you as your
-platform is a single cluster one. Make cpufreq driver as module, don't
-insert it, hotplug out CPU0 and now insert the cpufreq driver. The
-cpufreq core will try adding the cpufreq policy for CPU1 but wouldn't
-find the required information in the DT node of CPU1 and so will fail
-or behave incorrectly.
+If the fscache asynchronous write operation elects to discard a page that's
+pending storage to the cache because the page would be over the store limit
+then it needs to wake the page as someone may be waiting on completion of
+the write.
 
-We can't look at CPU0 as we don't know they are related at all.
-Nothing tells that to us. The right solution to fix the duplication is
-to move to OPP-v2 bindings, which allow us to create a single OPP
-table node and refer to it from all the CPU nodes. Because in case of
-imx platforms getting updated here, we use the old and some platforms
-specific frequency tables, we have to duplicate it everywhere.
+The problem is that the store limit may be updated by a different
+asynchronous operation - and so may miss the write - and that the store
+limit may not even get updated until later by the netfs.
 
-But looking from DT otherwise, all the device should anyway have all
-the information required right in their node. That can be simplified
-with things like phandle to opp-v2 node, but still everything needs to
-be there. We shouldn't really rely on other CPU nodes to make it work.
-That would be an incomplete definition of the hardware IMHO.
+Fix the kernel hang by making fscache_write_op() mark as written any pages
+that are over the limit.
 
--- 
-viresh
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/fscache/page.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+--- a/fs/fscache/page.c
++++ b/fs/fscache/page.c
+@@ -776,6 +776,7 @@ static void fscache_write_op(struct fsca
+ 
+ 	_enter("{OP%x,%d}", op->op.debug_id, atomic_read(&op->op.usage));
+ 
++again:
+ 	spin_lock(&object->lock);
+ 	cookie = object->cookie;
+ 
+@@ -816,10 +817,6 @@ static void fscache_write_op(struct fsca
+ 		goto superseded;
+ 	page = results[0];
+ 	_debug("gang %d [%lx]", n, page->index);
+-	if (page->index >= op->store_limit) {
+-		fscache_stat(&fscache_n_store_pages_over_limit);
+-		goto superseded;
+-	}
+ 
+ 	radix_tree_tag_set(&cookie->stores, page->index,
+ 			   FSCACHE_COOKIE_STORING_TAG);
+@@ -829,6 +826,9 @@ static void fscache_write_op(struct fsca
+ 	spin_unlock(&cookie->stores_lock);
+ 	spin_unlock(&object->lock);
+ 
++	if (page->index >= op->store_limit)
++		goto discard_page;
++
+ 	fscache_stat(&fscache_n_store_pages);
+ 	fscache_stat(&fscache_n_cop_write_page);
+ 	ret = object->cache->ops->write_page(op, page);
+@@ -844,6 +844,11 @@ static void fscache_write_op(struct fsca
+ 	_leave("");
+ 	return;
+ 
++discard_page:
++	fscache_stat(&fscache_n_store_pages_over_limit);
++	fscache_end_page_write(object, page);
++	goto again;
++
+ superseded:
+ 	/* this writer is going away and there aren't any more things to
+ 	 * write */
