@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162958AbeE1ORA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:17:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56346 "EHLO mail.kernel.org"
+        id S1165428AbeE1ORZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:17:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162125AbeE1Kf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:56 -0400
+        id S1162120AbeE1Kft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 215/329] selftests: ftrace: Add probe event argument syntax testcase
-Date: Mon, 28 May 2018 12:02:24 +0200
-Message-Id: <20180528100300.064028640@linuxfoundation.org>
+Subject: [PATCH 4.9 212/329] macsec: missing dev_put() on error in macsec_newlink()
+Date: Mon, 28 May 2018 12:02:21 +0200
+Message-Id: <20180528100259.842186279@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,122 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 871bef2000968c312a4000b2f56d370dcedbc93c ]
+[ Upstream commit 5dcd8400884cc4a043a6d4617e042489e5d566a9 ]
 
-Add a testcase for probe event argument syntax which
-ensures the kprobe_events interface correctly parses
-given event arguments.
+We moved the dev_hold(real_dev); call earlier in the function but forgot
+to update the error paths.
 
-Link: http://lkml.kernel.org/r/152129033679.31874.12705519603869152799.stgit@devbox
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 0759e552bce7 ("macsec: fix negative refcnt on parent link")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc |   97 ++++++++++
- 1 file changed, 97 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+ drivers/net/macsec.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -0,0 +1,97 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event argument syntax
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+grep "x8/16/32/64" README > /dev/null || exit_unsupported # version issue
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+PROBEFUNC="vfs_read"
-+GOODREG=
-+BADREG=
-+GOODSYM="_sdata"
-+if ! grep -qw ${GOODSYM} /proc/kallsyms ; then
-+  GOODSYM=$PROBEFUNC
-+fi
-+BADSYM="deaqswdefr"
-+SYMADDR=0x`grep -w ${GOODSYM} /proc/kallsyms | cut -f 1 -d " "`
-+GOODTYPE="x16"
-+BADTYPE="y16"
-+
-+case `uname -m` in
-+x86_64|i[3456]86)
-+  GOODREG=%ax
-+  BADREG=%ex
-+;;
-+aarch64)
-+  GOODREG=%x0
-+  BADREG=%ax
-+;;
-+arm*)
-+  GOODREG=%r0
-+  BADREG=%ax
-+;;
-+esac
-+
-+test_goodarg() # Good-args
-+{
-+  while [ "$1" ]; do
-+    echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
-+
-+test_badarg() # Bad-args
-+{
-+  while [ "$1" ]; do
-+    ! echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
-+
-+echo > kprobe_events
-+
-+: "Register access"
-+test_goodarg ${GOODREG}
-+test_badarg ${BADREG}
-+
-+: "Symbol access"
-+test_goodarg "@${GOODSYM}" "@${SYMADDR}" "@${GOODSYM}+10" "@${GOODSYM}-10"
-+test_badarg "@" "@${BADSYM}" "@${GOODSYM}*10" "@${GOODSYM}/10" \
-+	    "@${GOODSYM}%10" "@${GOODSYM}&10" "@${GOODSYM}|10"
-+
-+: "Stack access"
-+test_goodarg "\$stack" "\$stack0" "\$stack1"
-+test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
-+
-+: "Retval access"
-+echo "r ${PROBEFUNC} \$retval" > kprobe_events
-+! echo "p ${PROBEFUNC} \$retval" > kprobe_events
-+
-+: "Comm access"
-+test_goodarg "\$comm"
-+
-+: "Indirect memory access"
-+test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
-+	"+0(\$stack1)" "+10(@${GOODSYM}-10)" "+0(+10(+20(\$stack)))"
-+test_badarg "+(${GOODREG})" "(${GOODREG}+10)" "-(${GOODREG})" "(${GOODREG})" \
-+	"+10(\$comm)" "+0(${GOODREG})+10"
-+
-+: "Name assignment"
-+test_goodarg "varname=${GOODREG}"
-+test_badarg "varname=varname2=${GOODREG}"
-+
-+: "Type syntax"
-+test_goodarg "${GOODREG}:${GOODTYPE}"
-+test_badarg "${GOODREG}::${GOODTYPE}" "${GOODREG}:${BADTYPE}" \
-+	"${GOODTYPE}:${GOODREG}"
-+
-+: "Combination check"
-+
-+test_goodarg "\$comm:string" "+0(\$stack):string"
-+test_badarg "\$comm:x64" "\$stack:string" "${GOODREG}:string"
-+
-+echo > kprobe_events
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -3244,7 +3244,7 @@ static int macsec_newlink(struct net *ne
+ 
+ 	err = netdev_upper_dev_link(real_dev, dev);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_dev;
+ 
+ 	/* need to be already registered so that ->init has run and
+ 	 * the MAC addr is set
+@@ -3280,7 +3280,8 @@ del_dev:
+ 	macsec_del_dev(macsec);
+ unlink:
+ 	netdev_upper_dev_unlink(real_dev, dev);
+-unregister:
++put_dev:
++	dev_put(real_dev);
+ 	unregister_netdevice(dev);
+ 	return err;
+ }
