@@ -1,127 +1,290 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166000AbeE1OrG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:47:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937354AbeE1K3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:37 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ed Swierk <eswierk@skyportsystems.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 075/329] openvswitch: Remove padding from packet before L3+ conntrack processing
-Date: Mon, 28 May 2018 12:00:04 +0200
-Message-Id: <20180528100249.088945809@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1166015AbeE1OrZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:47:25 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:43939 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161075AbeE1OrD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:47:03 -0400
+X-Google-Smtp-Source: ADUXVKK/WHzwVrZtDsjiy8uAiifTnhVwHbfx/ohuNF1gsoik39oJJM9OuOozcyTxFMHWVPFbC46ovEvtxgcmcYM+l9w7VHAjbmHr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 May 2018 07:47:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca8a42056d4530a5@google.com>
+Subject: possible deadlock in bpf_tcp_close
+From: syzbot <syzbot+47ed903f50684f046b15@syzkaller.appspotmail.com>
+To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hello,
 
-------------------
+syzbot found the following crash on:
 
-From: Ed Swierk <eswierk@skyportsystems.com>
+HEAD commit:    7a1a98c171ea Merge branch 'bpf-sendmsg-hook'
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fd82d7800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
+dashboard link: https://syzkaller.appspot.com/bug?extid=47ed903f50684f046b15
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-[ Upstream commit 9382fe71c0058465e942a633869629929102843d ]
+Unfortunately, I don't have any reproducer for this crash yet.
 
-IPv4 and IPv6 packets may arrive with lower-layer padding that is not
-included in the L3 length. For example, a short IPv4 packet may have
-up to 6 bytes of padding following the IP payload when received on an
-Ethernet device with a minimum packet length of 64 bytes.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+47ed903f50684f046b15@syzkaller.appspotmail.com
 
-Higher-layer processing functions in netfilter (e.g. nf_ip_checksum(),
-and help() in nf_conntrack_ftp) assume skb->len reflects the length of
-the L3 header and payload, rather than referring back to
-ip_hdr->tot_len or ipv6_hdr->payload_len, and get confused by
-lower-layer padding.
 
-In the normal IPv4 receive path, ip_rcv() trims the packet to
-ip_hdr->tot_len before invoking netfilter hooks. In the IPv6 receive
-path, ip6_rcv() does the same using ipv6_hdr->payload_len. Similarly
-in the br_netfilter receive path, br_validate_ipv4() and
-br_validate_ipv6() trim the packet to the L3 length before invoking
-netfilter hooks.
+======================================================
+WARNING: possible circular locking dependency detected
+4.17.0-rc6+ #25 Not tainted
+------------------------------------------------------
+syz-executor4/7489 is trying to acquire lock:
+         (ptrval) (&htab->buckets[i].lock#2){+...}, at:  
+bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
 
-Currently in the OVS conntrack receive path, ovs_ct_execute() pulls
-the skb to the L3 header but does not trim it to the L3 length before
-calling nf_conntrack_in(NF_INET_PRE_ROUTING). When
-nf_conntrack_proto_tcp encounters a packet with lower-layer padding,
-nf_ip_checksum() fails causing a "nf_ct_tcp: bad TCP checksum" log
-message. While extra zero bytes don't affect the checksum, the length
-in the IP pseudoheader does. That length is based on skb->len, and
-without trimming, it doesn't match the length the sender used when
-computing the checksum.
+but task is already holding lock:
+         (ptrval) (clock-AF_INET6){++..}, at: bpf_tcp_close+0x241/0x10b0  
+kernel/bpf/sockmap.c:260
 
-In ovs_ct_execute(), trim the skb to the L3 length before higher-layer
-processing.
+which lock already depends on the new lock.
 
-Signed-off-by: Ed Swierk <eswierk@skyportsystems.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (clock-AF_INET6){++..}:
+        __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
+        _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
+        sock_hash_delete_elem+0x7c6/0xaf0 kernel/bpf/sockmap.c:2338
+        map_delete_elem+0x32e/0x4e0 kernel/bpf/syscall.c:815
+        __do_sys_bpf kernel/bpf/syscall.c:2349 [inline]
+        __se_sys_bpf kernel/bpf/syscall.c:2317 [inline]
+        __x64_sys_bpf+0x342/0x510 kernel/bpf/syscall.c:2317
+        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&htab->buckets[i].lock#2){+...}:
+        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
+        __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+        _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
+        bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
+        inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+        inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+        sock_release+0x96/0x1b0 net/socket.c:594
+        sock_close+0x16/0x20 net/socket.c:1149
+        __fput+0x34d/0x890 fs/file_table.c:209
+        ____fput+0x15/0x20 fs/file_table.c:243
+        task_work_run+0x1e4/0x290 kernel/task_work.c:113
+        exit_task_work include/linux/task_work.h:22 [inline]
+        do_exit+0x1aee/0x2730 kernel/exit.c:865
+        do_group_exit+0x16f/0x430 kernel/exit.c:968
+        get_signal+0x886/0x1960 kernel/signal.c:2482
+        do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+        exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+        prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+        syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+        do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(clock-AF_INET6);
+                                lock(&htab->buckets[i].lock#2);
+                                lock(clock-AF_INET6);
+   lock(&htab->buckets[i].lock#2);
+
+  *** DEADLOCK ***
+
+2 locks held by syz-executor4/7489:
+  #0:         (ptrval) (rcu_read_lock){....}, at: bpf_tcp_close+0x0/0x10b0  
+kernel/bpf/sockmap.c:2106
+  #1:         (ptrval) (clock-AF_INET6){++..}, at:  
+bpf_tcp_close+0x241/0x10b0 kernel/bpf/sockmap.c:260
+
+stack backtrace:
+CPU: 1 PID: 7489 Comm: syz-executor4 Not tainted 4.17.0-rc6+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_circular_bug.isra.36.cold.54+0x1bd/0x27d  
+kernel/locking/lockdep.c:1223
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2417 [inline]
+  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
+  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
+  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+  _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
+  bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+  sock_release+0x96/0x1b0 net/socket.c:594
+  sock_close+0x16/0x20 net/socket.c:1149
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  get_signal+0x886/0x1960 kernel/signal.c:2482
+  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455a09
+RSP: 002b:00007f95715e8ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000072c028 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072c028
+RBP: 000000000072c028 R08: 0000000000000000 R09: 000000000072c000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fffdce9240f R14: 00007f95715e99c0 R15: 0000000000000002
+cgroup: cgroup2: unknown option "cgroup2"
+cgroup: cgroup2: unknown option "cgroup2"
+syz-executor4 uses obsolete (PF_INET,SOCK_PACKET)
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 1
+CPU: 0 PID: 7912 Comm: syz-executor0 Not tainted 4.17.0-rc6+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  fail_dump lib/fault-inject.c:51 [inline]
+  should_fail.cold.4+0xa/0x1a lib/fault-inject.c:149
+  __should_failslab+0x124/0x180 mm/failslab.c:32
+  should_failslab+0x9/0x14 mm/slab_common.c:1522
+  slab_pre_alloc_hook mm/slab.h:423 [inline]
+  slab_alloc_node mm/slab.c:3299 [inline]
+  kmem_cache_alloc_node+0x272/0x780 mm/slab.c:3642
+  __alloc_skb+0x111/0x780 net/core/skbuff.c:193
+  alloc_skb include/linux/skbuff.h:989 [inline]
+  alloc_skb_with_frags+0x137/0x760 net/core/skbuff.c:5266
+  sock_alloc_send_pskb+0x87a/0xae0 net/core/sock.c:2095
+  unix_dgram_sendmsg+0x4f9/0x1730 net/unix/af_unix.c:1672
+  unix_seqpacket_sendmsg+0x115/0x18f net/unix/af_unix.c:2053
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:639
+  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
+  __sys_sendmsg+0x115/0x270 net/socket.c:2155
+  __do_sys_sendmsg net/socket.c:2164 [inline]
+  __se_sys_sendmsg net/socket.c:2162 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2162
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455a09
+RSP: 002b:00007f85737fdc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f85737fe6d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 00000000200013c0 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000015
+R13: 000000000000057f R14: 00000000006fc488 R15: 0000000000000000
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 0
+CPU: 1 PID: 7947 Comm: syz-executor0 Not tainted 4.17.0-rc6+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  fail_dump lib/fault-inject.c:51 [inline]
+  should_fail.cold.4+0xa/0x1a lib/fault-inject.c:149
+  __should_failslab+0x124/0x180 mm/failslab.c:32
+  should_failslab+0x9/0x14 mm/slab_common.c:1522
+  slab_pre_alloc_hook mm/slab.h:423 [inline]
+  slab_alloc_node mm/slab.c:3299 [inline]
+  kmem_cache_alloc_node_trace+0x26f/0x770 mm/slab.c:3661
+  __do_kmalloc_node mm/slab.c:3681 [inline]
+  __kmalloc_node_track_caller+0x33/0x70 mm/slab.c:3696
+  __kmalloc_reserve.isra.39+0x3a/0xe0 net/core/skbuff.c:137
+  __alloc_skb+0x14d/0x780 net/core/skbuff.c:205
+  alloc_skb include/linux/skbuff.h:989 [inline]
+  alloc_skb_with_frags+0x137/0x760 net/core/skbuff.c:5266
+  sock_alloc_send_pskb+0x87a/0xae0 net/core/sock.c:2095
+  unix_dgram_sendmsg+0x4f9/0x1730 net/unix/af_unix.c:1672
+  unix_seqpacket_sendmsg+0x115/0x18f net/unix/af_unix.c:2053
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:639
+  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
+  __sys_sendmsg+0x115/0x270 net/socket.c:2155
+  __do_sys_sendmsg net/socket.c:2164 [inline]
+  __se_sys_sendmsg net/socket.c:2162 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2162
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455a09
+RSP: 002b:00007f85737fdc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f85737fe6d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 00000000200013c0 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000015
+R13: 000000000000057f R14: 00000000006fc488 R15: 0000000000000001
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 0
+CPU: 1 PID: 8051 Comm: syz-executor1 Not tainted 4.17.0-rc6+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  fail_dump lib/fault-inject.c:51 [inline]
+  should_fail.cold.4+0xa/0x1a lib/fault-inject.c:149
+  __should_failslab+0x124/0x180 mm/failslab.c:32
+  should_failslab+0x9/0x14 mm/slab_common.c:1522
+  slab_pre_alloc_hook mm/slab.h:423 [inline]
+  slab_alloc mm/slab.c:3378 [inline]
+  __do_kmalloc mm/slab.c:3716 [inline]
+  __kmalloc+0x2c8/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:517 [inline]
+  map_get_next_key+0x24a/0x640 kernel/bpf/syscall.c:863
+  __do_sys_bpf kernel/bpf/syscall.c:2352 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2317 [inline]
+  __x64_sys_bpf+0x357/0x510 kernel/bpf/syscall.c:2317
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455a09
+RSP: 002b:00007fbd35c1ac68 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fbd35c1b6d4 RCX: 0000000000455a09
+RDX: 000000000000002c RSI: 0000000020003000 RDI: 0000000000000004
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000014
+R13: 000000000000003d R14: 00000000006f4658 R15: 0000000000000000
+FAULT_INJECTION: forcing a failure.
+name fail_page_alloc, interval 1, probability 0, space 0, times 1
+CPU: 1 PID: 8104 Comm: syz-executor1 Not tainted 4.17.0-rc6+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  fail_dump lib/fault-inject.c:51 [inline]
+  should_fail.cold.4+0xa/0x1a lib/fault-inject.c:149
+  should_fail_alloc_page mm/page_alloc.c:3060 [inline]
+  prepare_alloc_pages mm/page_alloc.c:4319 [inline]
+  __alloc_pages_nodemask+0x34e/0xd70 mm/page_alloc.c:4358
+  alloc_pages_vma+0xdd/0x540 mm/mempolicy.c:2057
+  wp_page_copy+0x24c/0x1440 mm/memory.c:2490
+  do_wp_page+0x425/0x1990 mm/memory.c:2776
+  handle_pte_fault mm/memory.c:3979 [inline]
+  __handle_mm_fault+0x2996/0x4310 mm/memory.c:4087
+
+
 ---
- net/openvswitch/conntrack.c |   34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -906,6 +906,36 @@ static int ovs_ct_commit(struct net *net
- 	return 0;
- }
- 
-+/* Trim the skb to the length specified by the IP/IPv6 header,
-+ * removing any trailing lower-layer padding. This prepares the skb
-+ * for higher-layer processing that assumes skb->len excludes padding
-+ * (such as nf_ip_checksum). The caller needs to pull the skb to the
-+ * network header, and ensure ip_hdr/ipv6_hdr points to valid data.
-+ */
-+static int ovs_skb_network_trim(struct sk_buff *skb)
-+{
-+	unsigned int len;
-+	int err;
-+
-+	switch (skb->protocol) {
-+	case htons(ETH_P_IP):
-+		len = ntohs(ip_hdr(skb)->tot_len);
-+		break;
-+	case htons(ETH_P_IPV6):
-+		len = sizeof(struct ipv6hdr)
-+			+ ntohs(ipv6_hdr(skb)->payload_len);
-+		break;
-+	default:
-+		len = skb->len;
-+	}
-+
-+	err = pskb_trim_rcsum(skb, len);
-+	if (err)
-+		kfree_skb(skb);
-+
-+	return err;
-+}
-+
- /* Returns 0 on success, -EINPROGRESS if 'skb' is stolen, or other nonzero
-  * value if 'skb' is freed.
-  */
-@@ -920,6 +950,10 @@ int ovs_ct_execute(struct net *net, stru
- 	nh_ofs = skb_network_offset(skb);
- 	skb_pull_rcsum(skb, nh_ofs);
- 
-+	err = ovs_skb_network_trim(skb);
-+	if (err)
-+		return err;
-+
- 	if (key->ip.frag != OVS_FRAG_TYPE_NONE) {
- 		err = handle_fragments(net, key, info->zone.id, skb);
- 		if (err)
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
