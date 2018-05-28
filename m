@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162418AbeE1Khz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:37:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58338 "EHLO mail.kernel.org"
+        id S1162431AbeE1KiA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:38:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162404AbeE1Khu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:50 -0400
+        id S1162404AbeE1Khz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 217/329] selftests: ftrace: Add a testcase for probepoint
-Date: Mon, 28 May 2018 12:02:26 +0200
-Message-Id: <20180528100300.231546224@linuxfoundation.org>
+Subject: [PATCH 4.9 261/329] powerpc/perf: Prevent kernel address leak to userspace via BHRB buffer
+Date: Mon, 28 May 2018 12:03:10 +0200
+Message-Id: <20180528100303.644848416@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,68 +31,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
 
-[ Upstream commit dfa453bc90eca0febff33c8d292a656e53702158 ]
+[ Upstream commit bb19af816025d495376bd76bf6fbcf4244f9a06d ]
 
-Add a testcase for probe point definition. This tests
-symbol, address and symbol+offset syntax. The offset
-must be positive and smaller than UINT_MAX.
+The current Branch History Rolling Buffer (BHRB) code does not check
+for any privilege levels before updating the data from BHRB. This
+could leak kernel addresses to userspace even when profiling only with
+userspace privileges. Add proper checks to prevent it.
 
-Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc |   43 +++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+ arch/powerpc/perf/core-book3s.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-@@ -0,0 +1,43 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe events - probe points
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -448,6 +448,16 @@ static void power_pmu_bhrb_read(struct c
+ 				/* invalid entry */
+ 				continue;
+ 
++			/*
++			 * BHRB rolling buffer could very much contain the kernel
++			 * addresses at this point. Check the privileges before
++			 * exporting it to userspace (avoid exposure of regions
++			 * where we could have speculative execution)
++			 */
++			if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
++				is_kernel_addr(addr))
++				continue;
 +
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+TARGET_FUNC=create_trace_kprobe
-+
-+dec_addr() { # hexaddr
-+  printf "%d" "0x"`echo $1 | tail -c 8`
-+}
-+
-+set_offs() { # prev target next
-+  A1=`dec_addr $1`
-+  A2=`dec_addr $2`
-+  A3=`dec_addr $3`
-+  TARGET="0x$2" # an address
-+  PREV=`expr $A1 - $A2` # offset to previous symbol
-+  NEXT=+`expr $A3 - $A2` # offset to next symbol
-+  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
-+}
-+
-+# We have to decode symbol addresses to get correct offsets.
-+# If the offset is not an instruction boundary, it cause -EILSEQ.
-+set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
-+
-+UINT_TEST=no
-+# printf "%x" -1 returns (unsigned long)-1.
-+if [ `printf "%x" -1 | wc -c` != 9 ]; then
-+  UINT_TEST=yes
-+fi
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
-+echo "p:testprobe ${TARGET}" > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
-+! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
-+if [ "${UINT_TEST}" = yes ]; then
-+! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
-+fi
-+echo > kprobe_events
-+clear_trace
+ 			/* Branches are read most recent first (ie. mfbhrb 0 is
+ 			 * the most recent branch).
+ 			 * There are two types of valid entries:
