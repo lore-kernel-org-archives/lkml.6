@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164743AbeE1McF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:32:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47836 "EHLO mail.kernel.org"
+        id S1164795AbeE1Mc2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:32:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164687AbeE1LAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:05 -0400
+        id S937945AbeE1K74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 412/496] watchdog: dw: RMW the control register
-Date: Mon, 28 May 2018 12:03:17 +0200
-Message-Id: <20180528100337.112929138@linuxfoundation.org>
+Subject: [PATCH 4.14 410/496] MIPS: ath79: Fix AR724X_PLL_REG_PCIE_CONFIG offset
+Date: Mon, 28 May 2018 12:03:15 +0200
+Message-Id: <20180528100337.034682667@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,88 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Mathias Kresin <dev@kresin.me>
 
-[ Upstream commit a81abbb412341e9e3b2d42ed7d310cf71fbb84a8 ]
+[ Upstream commit 05454c1bde91fb013c0431801001da82947e6b5a ]
 
-RK3399 has rst_pulse_length in CONTROL_REG[4:2], determining the length
-of pulse to issue for system reset. We shouldn't clobber this value,
-because that might make the system reset ineffective. On RK3399, we're
-seeing that a value of 000b (meaning 2 cycles) yields an unreliable
-(partial?) reset, and so we only fully reset after the watchdog fires a
-second time. If we retain the system default (010b, or 8 clock cycles),
-then the watchdog reset is much more reliable.
+According to the QCA u-boot source the "PCIE Phase Lock Loop
+Configuration (PCIE_PLL_CONFIG)" register is for all SoCs except the
+QCA955X and QCA956X at offset 0x10.
 
-Read-modify-write retains the system value and improves reset
-reliability.
+Since the PCIE PLL config register is only defined for the AR724x fix
+only this value. The value is wrong since the day it was added and isn't
+used by any driver yet.
 
-It seems we were intentionally clobbering the response mode previously,
-to ensure we performed a system reset (we don't support an interrupt
-notification), so retain that explicitly.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/16048/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/dw_wdt.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ arch/mips/include/asm/mach-ath79/ar71xx_regs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/watchdog/dw_wdt.c
-+++ b/drivers/watchdog/dw_wdt.c
-@@ -34,6 +34,7 @@
+--- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+@@ -167,7 +167,7 @@
+ #define AR71XX_AHB_DIV_MASK		0x7
  
- #define WDOG_CONTROL_REG_OFFSET		    0x00
- #define WDOG_CONTROL_REG_WDT_EN_MASK	    0x01
-+#define WDOG_CONTROL_REG_RESP_MODE_MASK	    0x02
- #define WDOG_TIMEOUT_RANGE_REG_OFFSET	    0x04
- #define WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT    4
- #define WDOG_CURRENT_COUNT_REG_OFFSET	    0x08
-@@ -121,14 +122,23 @@ static int dw_wdt_set_timeout(struct wat
- 	return 0;
- }
+ #define AR724X_PLL_REG_CPU_CONFIG	0x00
+-#define AR724X_PLL_REG_PCIE_CONFIG	0x18
++#define AR724X_PLL_REG_PCIE_CONFIG	0x10
  
-+static void dw_wdt_arm_system_reset(struct dw_wdt *dw_wdt)
-+{
-+	u32 val = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+
-+	/* Disable interrupt mode; always perform system reset. */
-+	val &= ~WDOG_CONTROL_REG_RESP_MODE_MASK;
-+	/* Enable watchdog. */
-+	val |= WDOG_CONTROL_REG_WDT_EN_MASK;
-+	writel(val, dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+}
-+
- static int dw_wdt_start(struct watchdog_device *wdd)
- {
- 	struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
- 
- 	dw_wdt_set_timeout(wdd, wdd->timeout);
--
--	writel(WDOG_CONTROL_REG_WDT_EN_MASK,
--	       dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+	dw_wdt_arm_system_reset(dw_wdt);
- 
- 	return 0;
- }
-@@ -152,16 +162,13 @@ static int dw_wdt_restart(struct watchdo
- 			  unsigned long action, void *data)
- {
- 	struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
--	u32 val;
- 
- 	writel(0, dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
--	val = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
--	if (val & WDOG_CONTROL_REG_WDT_EN_MASK)
-+	if (dw_wdt_is_enabled(dw_wdt))
- 		writel(WDOG_COUNTER_RESTART_KICK_VALUE,
- 		       dw_wdt->regs + WDOG_COUNTER_RESTART_REG_OFFSET);
- 	else
--		writel(WDOG_CONTROL_REG_WDT_EN_MASK,
--		       dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+		dw_wdt_arm_system_reset(dw_wdt);
- 
- 	/* wait for reset to assert... */
- 	mdelay(500);
+ #define AR724X_PLL_FB_SHIFT		0
+ #define AR724X_PLL_FB_MASK		0x3ff
