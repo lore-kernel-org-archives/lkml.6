@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934759AbeE1KId (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:08:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56520 "EHLO mail.kernel.org"
+        id S934866AbeE1KIp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:08:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934203AbeE1KI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:28 -0400
+        id S934203AbeE1KIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Dave Jiang <dave.jiang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 064/185] kernel/relay.c: limit kmalloc size to KMALLOC_MAX_SIZE
-Date: Mon, 28 May 2018 12:01:45 +0200
-Message-Id: <20180528100056.340583664@linuxfoundation.org>
+Subject: [PATCH 3.18 066/185] s390/cio: clear timer when terminating driver I/O
+Date: Mon, 28 May 2018 12:01:47 +0200
+Message-Id: <20180528100056.456495774@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,42 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-[ Upstream commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e ]
+[ Upstream commit 410d5e13e7638bc146321671e223d56495fbf3c7 ]
 
-chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
-of chan->n_subbufs * sizeof(size_t *).
+When we terminate driver I/O (because we need to stop using a certain
+channel path) we also need to ensure that a timer (which may have been
+set up using ccw_device_start_timeout) is cleared.
 
-kmalloc_slab() will generate a warning when this fails if
-chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
-
-Limit chan->n_subbufs to the maximum allowed kmalloc() size.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
-Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/relay.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/cio/device_fsm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -166,7 +166,7 @@ static struct rchan_buf *relay_create_bu
+--- a/drivers/s390/cio/device_fsm.c
++++ b/drivers/s390/cio/device_fsm.c
+@@ -885,6 +885,7 @@ void ccw_device_kill_io(struct ccw_devic
  {
- 	struct rchan_buf *buf;
+ 	int ret;
  
--	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
-+	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
- 		return NULL;
- 
- 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
++	ccw_device_set_timeout(cdev, 0);
+ 	cdev->private->iretry = 255;
+ 	cdev->private->async_kill_io_rc = -EIO;
+ 	ret = ccw_device_cancel_halt_clear(cdev);
