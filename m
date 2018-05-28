@@ -1,159 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1035016AbeE1PvG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:51:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965345AbeE1KQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:10 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 042/268] powerpc/numa: Use ibm,max-associativity-domains to discover possible nodes
-Date: Mon, 28 May 2018 12:00:16 +0200
-Message-Id: <20180528100206.791672570@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1035036AbeE1PvR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:51:17 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:49581 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034909AbeE1PvK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:51:10 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Florian Fainelli <f.fainelli@gmail.com>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: davinci: fix building davinci mdio code without CONFIG_OF
+Date: Mon, 28 May 2018 17:50:20 +0200
+Message-Id: <20180528155059.2736080-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:laYbLfwtkFRugoloOA16dfhOo0aZWP/ZLkfgUgyWktElNUmlMnB
+ Jj2ImGl805agh63By3fzBaC4CBiZKEJd3rjKAJ8smCUKIevSUgr4/1b/702vJ9ALGuPk2K3
+ TI9uKN984Q61cFhojIZmUA+1dA1t2n6S7EUUM2VlDpQ8vAQBCFafa+SYe/nSOdqSpHDr2Fb
+ 9pEPBvcHK/12p0bzpqh6A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:DEd8Fye4Caw=:1Oc9WAhq36axtVZFjJkO6j
+ hSC0hh7vrDjV4UAkGGdWqoEc3SN8q3qb7j+u3KCVzTsaztF9VHKOpAVOmcVMAMAYinY6HaGW7
+ C1bJWZI3XI2SmFnaMdu0MaNlmaotXEHJxduBIpgMC1oIim78fjUqdk+/tMlJx9YuiMaOHtWdj
+ PamLs4ccLZeTep5qCRdvBju8hGfv95jWmIEavJ1mnIdzcSGFij+UdIScRnR53rvkcEcYuxhmM
+ 9MSuuBPQ3T0hnZYaoBlWFo0Ki64GdI3/ausk7ywne0g03Sk/Fzjw+zv+S0Xdl2xlBdtiII1Ml
+ BvBM05iqVNZLMQLICpbQd7vb9yb8Q9+FDt0F630sBW75XhlQ8KNlgLaLEpx5nltVgeCes2yYL
+ mvp2xuhcvI2+XZU/kd3vHZzsX7wyQrpmdCd5VORi6DnnnDqZCmfdn4h3aPLCya72Bog8rRbuW
+ JHiv/J8dQXxiespJhTIArafZi4g6mTuVNUkdQovdYgc37CutKJmFZYVKmg3R2YP3I4wF9jTr7
+ 7/cjH/fq4R5ra/sVgbpkNcGMa910pfpsXL1np77A/XnldvG+TqeAmGer5q8gb9QbzQyx4kPvc
+ AxhCSqbUGTzlyY5LXiqRtbIi+xFqKDmzusSF2jpxHTRTZPk7eFhBGzolUv4B1r3LkTaQ9ubrH
+ dLR2KTTeHRp8IZDXLbnDByQByk/QZFiR8OB5NzxIpEb+j0qwrwpBKMbFfy6Sm8ld2YuI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Test-building this driver on targets without CONFIG_OF revealed a build
+failure:
 
-------------------
+drivers/net/ethernet/ti/davinci_mdio.c: In function 'davinci_mdio_probe':
+drivers/net/ethernet/ti/davinci_mdio.c:380:9: error: implicit declaration of function 'davinci_mdio_probe_dt'; did you mean 'davinci_mdio_probe'? [-Werror=implicit-function-declaration]
 
-From: Michael Bringmann <mwb@linux.vnet.ibm.com>
+This adjusts the #ifdef logic in the driver to make it build in
+all configurations.
 
-[ Upstream commit a346137e9142b039fd13af2e59696e3d40c487ef ]
-
-On powerpc systems which allow 'hot-add' of CPU or memory resources,
-it may occur that the new resources are to be inserted into nodes that
-were not used for these resources at bootup. In the kernel, any node
-that is used must be defined and initialized. These empty nodes may
-occur when,
-
-* Dedicated vs. shared resources. Shared resources require information
-  such as the VPHN hcall for CPU assignment to nodes. Associativity
-  decisions made based on dedicated resource rules, such as
-  associativity properties in the device tree, may vary from decisions
-  made using the values returned by the VPHN hcall.
-
-* memoryless nodes at boot. Nodes need to be defined as 'possible' at
-  boot for operation with other code modules. Previously, the powerpc
-  code would limit the set of possible nodes to those which have
-  memory assigned at boot, and were thus online. Subsequent add/remove
-  of CPUs or memory would only work with this subset of possible
-  nodes.
-
-* memoryless nodes with CPUs at boot. Due to the previous restriction
-  on nodes, nodes that had CPUs but no memory were being collapsed
-  into other nodes that did have memory at boot. In practice this
-  meant that the node assignment presented by the runtime kernel
-  differed from the affinity and associativity attributes presented by
-  the device tree or VPHN hcalls. Nodes that might be known to the
-  pHyp were not 'possible' in the runtime kernel because they did not
-  have memory at boot.
-
-This patch ensures that sufficient nodes are defined to support
-configuration requirements after boot, as well as at boot. This patch
-set fixes a couple of problems.
-
-* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
-  them are allowed to be 'possible' and 'online'. Memory allocations
-  for those nodes are taken from another node that does have memory
-  until and if memory is hot-added to the node. * Nodes which have no
-  resources assigned at boot, but which may still be referenced
-  subsequently by affinity or associativity attributes, are kept in
-  the list of 'possible' nodes for powerpc. Hot-add of memory or CPUs
-  to the system can reference these nodes and bring them online
-  instead of redirecting to one of the set of nodes that were known to
-  have memory at boot.
-
-This patch extracts the value of the lowest domain level (number of
-allocable resources) from the device tree property
-"ibm,max-associativity-domains" to use as the maximum number of nodes
-to setup as possibly available in the system. This new setting will
-override the instruction:
-
-    nodes_and(node_possible_map, node_possible_map, node_online_map);
-
-presently seen in the function arch/powerpc/mm/numa.c:initmem_init().
-
-If the "ibm,max-associativity-domains" property is not present at
-boot, no operation will be performed to define or enable additional
-nodes, or enable the above 'nodes_and()'.
-
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 2652113ff043 ("net: ethernet: ti: Allow most drivers with COMPILE_TEST")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/mm/numa.c |   37 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 34 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/ti/davinci_mdio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -951,6 +951,34 @@ static void __init setup_node_data(int n
- 	NODE_DATA(nid)->node_spanned_pages = spanned_pages;
+diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
+index 8ac72831af05..a98aedae1b41 100644
+--- a/drivers/net/ethernet/ti/davinci_mdio.c
++++ b/drivers/net/ethernet/ti/davinci_mdio.c
+@@ -321,7 +321,6 @@ static int davinci_mdio_write(struct mii_bus *bus, int phy_id,
+ 	return ret;
  }
  
-+static void __init find_possible_nodes(void)
-+{
-+	struct device_node *rtas;
-+	u32 numnodes, i;
-+
-+	if (min_common_depth <= 0)
-+		return;
-+
-+	rtas = of_find_node_by_path("/rtas");
-+	if (!rtas)
-+		return;
-+
-+	if (of_property_read_u32_index(rtas,
-+				"ibm,max-associativity-domains",
-+				min_common_depth, &numnodes))
-+		goto out;
-+
-+	for (i = 0; i < numnodes; i++) {
-+		if (!node_possible(i)) {
-+			setup_node_data(i, 0, 0);
-+			node_set(i, node_possible_map);
-+		}
-+	}
-+
-+out:
-+	of_node_put(rtas);
-+}
-+
- void __init initmem_init(void)
+-#if IS_ENABLED(CONFIG_OF)
+ static int davinci_mdio_probe_dt(struct mdio_platform_data *data,
+ 			 struct platform_device *pdev)
  {
- 	int nid, cpu;
-@@ -966,12 +994,15 @@ void __init initmem_init(void)
- 	memblock_dump_all();
+@@ -339,7 +338,6 @@ static int davinci_mdio_probe_dt(struct mdio_platform_data *data,
  
- 	/*
--	 * Reduce the possible NUMA nodes to the online NUMA nodes,
--	 * since we do not support node hotplug. This ensures that  we
--	 * lower the maximum NUMA node ID to what is actually present.
-+	 * Modify the set of possible NUMA nodes to reflect information
-+	 * available about the set of online nodes, and the set of nodes
-+	 * that we expect to make use of for this platform's affinity
-+	 * calculations.
- 	 */
- 	nodes_and(node_possible_map, node_possible_map, node_online_map);
+ 	return 0;
+ }
+-#endif
  
-+	find_possible_nodes();
-+
- 	for_each_online_node(nid) {
- 		unsigned long start_pfn, end_pfn;
+ #if IS_ENABLED(CONFIG_OF)
+ static const struct davinci_mdio_of_param of_cpsw_mdio_data = {
+@@ -374,7 +372,7 @@ static int davinci_mdio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
+-	if (dev->of_node) {
++	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+ 		const struct of_device_id	*of_id;
+ 
+ 		ret = davinci_mdio_probe_dt(&data->pdata, pdev);
+-- 
+2.9.0
