@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940047AbeE1Q1S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:27:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        id S936458AbeE1KKN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:10:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933411AbeE1KKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:21 -0400
+        id S936428AbeE1KJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        kernel-janitors@vger.kernel.org,
+        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 077/185] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Date: Mon, 28 May 2018 12:01:58 +0200
-Message-Id: <20180528100057.270284399@linuxfoundation.org>
+Subject: [PATCH 3.18 097/185] vti4: Dont override MTU passed on link creation via IFLA_MTU
+Date: Mon, 28 May 2018 12:02:18 +0200
+Message-Id: <20180528100059.256948895@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,40 +31,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
+[ Upstream commit 03080e5ec72740c1a62e6730f2a5f3f114f11b19 ]
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
+Don't hardcode a MTU value on vti tunnel initialization,
+ip_tunnel_newlink() is able to deal with this already. See also
+commit ffc2b6ee4174 ("ip_gre: fix IFLA_MTU ignored on NEWLINK").
 
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
+Fixes: 1181412c1a67 ("net/ipv4: VTI support new module for ip_vti.")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clocksource/fsl_ftm_timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_vti.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -282,7 +282,7 @@ static int __init __ftm_clk_init(struct
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -365,7 +365,6 @@ static int vti_tunnel_init(struct net_de
+ 	memcpy(dev->dev_addr, &iph->saddr, 4);
+ 	memcpy(dev->broadcast, &iph->daddr, 4);
  
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
+-	dev->mtu		= ETH_DATA_LEN;
+ 	dev->flags		= IFF_NOARP;
+ 	dev->iflink		= 0;
+ 	dev->addr_len		= 4;
