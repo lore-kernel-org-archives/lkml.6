@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422772AbeE1LFI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:05:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45142 "EHLO mail.kernel.org"
+        id S1423082AbeE1LFF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:05:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164593AbeE1K4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:52 -0400
+        id S1165043AbeE1LE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:04:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 343/496] powerpc/64s/idle: Fix restore of AMOR on POWER9 after deep sleep
-Date: Mon, 28 May 2018 12:02:08 +0200
-Message-Id: <20180528100334.268146588@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Martin <dave.martin@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Salter <msalter@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.16 024/272] arm64: lse: Add early clobbers to some input/output asm operands
+Date: Mon, 28 May 2018 12:00:57 +0200
+Message-Id: <20180528100242.541763658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -26,36 +26,150 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit c1b25a17d24925b0961c319cfc3fd7e1dc778914 ]
+commit 32c3fa7cdf0c4a3eb8405fc3e13398de019e828b upstream.
 
-POWER8 restores AMOR when waking from deep sleep, but POWER9 does not,
-because it does not go through the subcore restore.
+For LSE atomics that read and write a register operand, we need to
+ensure that these operands are annotated as "early clobber" if the
+register is written before all of the input operands have been consumed.
+Failure to do so can result in the compiler allocating the same register
+to both operands, leading to splats such as:
 
-Have POWER9 restore it in core restore.
+ Unable to handle kernel paging request at virtual address 11111122222221
+ [...]
+ x1 : 1111111122222222 x0 : 1111111122222221
+ Process swapper/0 (pid: 1, stack limit = 0x000000008209f908)
+ Call trace:
+  test_atomic64+0x1360/0x155c
 
-Fixes: ee97b6b99f42 ("powerpc/mm/radix: Setup AMOR in HV mode to allow key 0")
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+where x0 has been allocated as both the value to be stored and also the
+atomic_t pointer.
+
+This patch adds the missing clobbers.
+
+Cc: <stable@vger.kernel.org>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Reported-by: Mark Salter <msalter@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/kernel/idle_book3s.S |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/arch/powerpc/kernel/idle_book3s.S
-+++ b/arch/powerpc/kernel/idle_book3s.S
-@@ -838,6 +838,8 @@ BEGIN_FTR_SECTION
- 	mtspr	SPRN_PTCR,r4
- 	ld	r4,_RPR(r1)
- 	mtspr	SPRN_RPR,r4
-+	ld	r4,_AMOR(r1)
-+	mtspr	SPRN_AMOR,r4
- END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
+---
+ arch/arm64/include/asm/atomic_lse.h |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+--- a/arch/arm64/include/asm/atomic_lse.h
++++ b/arch/arm64/include/asm/atomic_lse.h
+@@ -117,7 +117,7 @@ static inline void atomic_and(int i, ato
+ 	/* LSE atomics */
+ 	"	mvn	%w[i], %w[i]\n"
+ 	"	stclr	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -135,7 +135,7 @@ static inline int atomic_fetch_and##name
+ 	/* LSE atomics */						\
+ 	"	mvn	%w[i], %w[i]\n"					\
+ 	"	ldclr" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -161,7 +161,7 @@ static inline void atomic_sub(int i, ato
+ 	/* LSE atomics */
+ 	"	neg	%w[i], %w[i]\n"
+ 	"	stadd	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -180,7 +180,7 @@ static inline int atomic_sub_return##nam
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], w30, %[v]\n"			\
+ 	"	add	%w[i], %w[i], w30")				\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS , ##cl);					\
+ 									\
+@@ -207,7 +207,7 @@ static inline int atomic_fetch_sub##name
+ 	/* LSE atomics */						\
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -314,7 +314,7 @@ static inline void atomic64_and(long i,
+ 	/* LSE atomics */
+ 	"	mvn	%[i], %[i]\n"
+ 	"	stclr	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -332,7 +332,7 @@ static inline long atomic64_fetch_and##n
+ 	/* LSE atomics */						\
+ 	"	mvn	%[i], %[i]\n"					\
+ 	"	ldclr" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -358,7 +358,7 @@ static inline void atomic64_sub(long i,
+ 	/* LSE atomics */
+ 	"	neg	%[i], %[i]\n"
+ 	"	stadd	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -377,7 +377,7 @@ static inline long atomic64_sub_return##
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], x30, %[v]\n"			\
+ 	"	add	%[i], %[i], x30")				\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -404,7 +404,7 @@ static inline long atomic64_fetch_sub##n
+ 	/* LSE atomics */						\
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -435,7 +435,7 @@ static inline long atomic64_dec_if_posit
+ 	"	sub	x30, x30, %[ret]\n"
+ 	"	cbnz	x30, 1b\n"
+ 	"2:")
+-	: [ret] "+r" (x0), [v] "+Q" (v->counter)
++	: [ret] "+&r" (x0), [v] "+Q" (v->counter)
+ 	:
+ 	: __LL_SC_CLOBBERS, "cc", "memory");
  
- 	ld	r4,_TSCR(r1)
+@@ -516,7 +516,7 @@ static inline long __cmpxchg_double##nam
+ 	"	eor	%[old1], %[old1], %[oldval1]\n"			\
+ 	"	eor	%[old2], %[old2], %[oldval2]\n"			\
+ 	"	orr	%[old1], %[old1], %[old2]")			\
+-	: [old1] "+r" (x0), [old2] "+r" (x1),				\
++	: [old1] "+&r" (x0), [old2] "+&r" (x1),				\
+ 	  [v] "+Q" (*(unsigned long *)ptr)				\
+ 	: [new1] "r" (x2), [new2] "r" (x3), [ptr] "r" (x4),		\
+ 	  [oldval1] "r" (oldval1), [oldval2] "r" (oldval2)		\
