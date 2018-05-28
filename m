@@ -1,81 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeE1C1E (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 22:27:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752970AbeE1C1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 22:27:02 -0400
-Date: Mon, 28 May 2018 10:26:54 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Ian Ray <ian.ray@ge.com>,
-        Nandor Han <nandor.han@ge.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv4 1/2] ARM: imx53: add secure-reg-access support for PMU
-Message-ID: <20180528022652.GA3143@dragon>
-References: <20180212123945.15732-1-sebastian.reichel@collabora.co.uk>
- <20180212123945.15732-2-sebastian.reichel@collabora.co.uk>
- <20180224074543.GF3217@dragon>
- <20180226134741.neqkpge33zo3pfzt@earth.universe>
- <20180227011033.GV3217@dragon>
- <20180227101712.3zwobvs4ox4jchcj@earth.universe>
+        id S1753025AbeE1CbF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 22:31:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38878 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752952AbeE1CbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 22:31:04 -0400
+Date: Mon, 28 May 2018 10:30:43 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
+        Filipe Manana <fdmanana@gmail.com>
+Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
+Message-ID: <20180528023042.GC26790@ming.t460p>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
+ <20180525045306.GB8740@kmo-pixel>
+ <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
+ <20180527072332.GA18240@ming.t460p>
+ <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180227101712.3zwobvs4ox4jchcj@earth.universe>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 11:17:12AM +0100, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Tue, Feb 27, 2018 at 09:10:34AM +0800, Shawn Guo wrote:
-> > On Mon, Feb 26, 2018 at 02:47:41PM +0100, Sebastian Reichel wrote:
-> > > On Sat, Feb 24, 2018 at 03:45:44PM +0800, Shawn Guo wrote:
-> > > > On Mon, Feb 12, 2018 at 01:39:44PM +0100, Sebastian Reichel wrote:
-> > > > > On i.MX53 it is necessary to set the DBG_EN bit in the
-> > > > > platform GPC register to enable access to PMU counters
-> > > > > other than the cycle counter.
-> > > > > 
-> > > > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > > > > ---
-> > > > >  arch/arm/mach-imx/mach-imx53.c | 39 ++++++++++++++++++++++++++++++++++++++-
-> > > > >  1 file changed, 38 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/arch/arm/mach-imx/mach-imx53.c b/arch/arm/mach-imx/mach-imx53.c
-> > > > > index 07c2e8dca494..658e28604dca 100644
-> > > > > --- a/arch/arm/mach-imx/mach-imx53.c
-> > > > > +++ b/arch/arm/mach-imx/mach-imx53.c
-> > > > > @@ -28,10 +28,47 @@ static void __init imx53_init_early(void)
-> > > > >  	mxc_set_cpu_type(MXC_CPU_MX53);
-> > > > >  }
-> > > > >  
-> > > > > +#define MXC_CORTEXA8_PLAT_GPC 0x63fa0004
-> > > > 
-> > > > The base address should be retrieved from device tree.
-> > > 
-> > > DT has no entry for 0x63fa0000-0x63fa3fff. iMX53 TRM lists it as "ARM Platform"
-> > > with 8 platform specific 32 bit registers. Do you think it's worth the trouble
-> > > adding a new binding? Do you have a suggestion for a compatible value?
+On Sun, May 27, 2018 at 07:44:52PM -0600, Jens Axboe wrote:
+> On 5/27/18 1:23 AM, Ming Lei wrote:
+> > On Fri, May 25, 2018 at 10:30:46AM -0600, Jens Axboe wrote:
+> >> On 5/24/18 10:53 PM, Kent Overstreet wrote:
+> >>> On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
+> >>>> Hi,
+> >>>>
+> >>>> This patchset brings multipage bvec into block layer:
+> >>>
+> >>> patch series looks sane to me. goddamn that's a lot of renaming.
+> >>
+> >> Indeed... I actually objected to some of the segment -> page
+> >> renaming, but it's still in there. The foo2() temporary functions
+> >> also concern me, we all know there's nothing more permanent than a
+> >> temporary fixup.
 > > 
-> > Looking at it more closely, I feel that patching every single platform
-> > which needs to set up additional register for secure-reg-access support
-> > doesn't really scale.  Can we have pmu driver do it with a phandle in
-> > DT pointing to the register and bit that need to be configured?
+> > Jens, I remember I explained the renaming story to you in lsfmm a bit:
+> > 
+> > 1) the current naming of segment is actually wrong, since every segment
+> > only stores one single-page vector
+> > 
+> > 2) the most important part is that once multipage bvec is introduced,
+> > if the old _segment naming is still kept, it can be very confusing,
+> > especially no good name is left for the helpers of dealing with real
+> > segment.
 > 
-> The PMU driver used to have a feature for initialising platform
-> specific bits, but it is currently being removed to make the PMU
-> code more maintainable. My understanding is, that it's very uncommon
-> to require platform specific setup to get secure-reg-access working.
-> I.e. it is not needed for newer iMX platforms.
+> Yes, we discussed exactly this, which is why I'm surprised you went
+> ahead with the same approach. I told you I don't like tree wide renames,
 
-Are you saying this is a very specific setup required by i.MX53 only?
-In that case, I can live with it.
+Maybe I misunderstood your point, that isn't strange given my poor
+english, :-)
 
-Shawn
+> if they can be avoided. I'd rather suffer some pain wrt page vs segments
+> naming, and then later do a rename (if it bothers us) once the dust has
+> settled on the interesting part of the changes.
+> 
+> I'm very well away of our current naming and what it signifies.  With
+> #1, you are really splitting hairs, imho. Find a decent name for
+> multiple segment. Chunk?
+
+OK, will try _chunk in next post.
+
+> 
+> > For the foo2() temporary change, that is only for avoiding tree-wide
+> > change in one single tree, with this way, we can change sub-system one
+> > by one, but if you think it is good to do tree-wide conversion in one
+> > patch, I am fine to do it in next version.
+> 
+> It's still a painful middle step.
+
+I hate the conversion too, but looks it can't be avoided since
+bio_for_each_segment_all() has to be changed.
+
+Could you share us what your favorite approach is for this conversion?
+
+
+Thanks,
+Ming
