@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754506AbeE1KGJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:06:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53968 "EHLO mail.kernel.org"
+        id S932132AbeE1KGR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:06:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754038AbeE1KGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:04 -0400
+        id S1754481AbeE1KGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 011/185] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
-Date: Mon, 28 May 2018 12:00:52 +0200
-Message-Id: <20180528100051.335435393@linuxfoundation.org>
+Subject: [PATCH 3.18 013/185] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
+Date: Mon, 28 May 2018 12:00:54 +0200
+Message-Id: <20180528100051.432439052@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,43 +34,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-[ Upstream commit 123af9043e93cb6f235207d260d50f832cdb5439 ]
+[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
 
-The loop timeout doesn't work because it's a post op and ends with "tmo"
-set to -1.  I changed it from a post-op to a pre-op and I changed the
-initial the starting value from 5 to 6 so we still iterate 5 times.  I
-left the other as it was because it's a large number.
+So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
+well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
+detecting the ABS or REL timer modes is not valid anymore, it got broken
+by the introduction of HRTIMER_MODE_PINNED.
 
-Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
+sake of completeness print all given modes.
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org
+Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/au1x/ac97c.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/trace/events/timer.h |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/sound/soc/au1x/ac97c.c
-+++ b/sound/soc/au1x/ac97c.c
-@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
- 	do {
- 		mutex_lock(&ctx->lock);
+--- a/include/trace/events/timer.h
++++ b/include/trace/events/timer.h
+@@ -121,6 +121,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
+ 	TP_ARGS(timer)
+ );
  
--		tmo = 5;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		tmo = 6;
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			udelay(21);	/* wait an ac97 frame time */
- 		if (!tmo) {
- 			pr_debug("ac97rd timeout #1\n");
-@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
- 		 * poll, Forrest, poll...
- 		 */
- 		tmo = 0x10000;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			asm volatile ("nop");
- 		data = RD(ctx, AC97_CMDRESP);
++#define decode_clockid(type)						\
++	__print_symbolic(type,						\
++		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
++		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
++		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
++		{ CLOCK_TAI,		"CLOCK_TAI"		})
++
++#define decode_hrtimer_mode(mode)					\
++	__print_symbolic(mode,						\
++		{ HRTIMER_MODE_ABS,		"ABS"		},	\
++		{ HRTIMER_MODE_REL,		"REL"		},	\
++		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
++		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
++
+ /**
+  * hrtimer_init - called when the hrtimer is initialized
+  * @hrtimer:	pointer to struct hrtimer
+@@ -147,10 +161,8 @@ TRACE_EVENT(hrtimer_init,
+ 	),
  
+ 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
+-		  __entry->clockid == CLOCK_REALTIME ?
+-			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
+-		  __entry->mode == HRTIMER_MODE_ABS ?
+-			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
++		  decode_clockid(__entry->clockid),
++		  decode_hrtimer_mode(__entry->mode))
+ );
+ 
+ /**
