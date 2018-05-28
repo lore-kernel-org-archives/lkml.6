@@ -1,758 +1,610 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933504AbeE1JBw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:01:52 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38045 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932129AbeE1JBq (ORCPT
+        id S1754226AbeE1I7T (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:59:19 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41644 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754110AbeE1I7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:01:46 -0400
-X-Google-Smtp-Source: ADUXVKLwMUzrpNQ5OacfHMWzlFV4LHKjesn74gG7SNhnu5kv5e6eAhaPfqEh6A7M/t0RUMLL57anfg==
-Date: Mon, 28 May 2018 12:01:41 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v2 6/6] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180528090141.GG8778@localhost.localdomain>
+        Mon, 28 May 2018 04:59:08 -0400
+X-Google-Smtp-Source: ADUXVKIPBFFMfRzIHrriPMIfSba977w8LsXhatAq2yPWEfzZ3kxEYR3OBaiEshmZA40p/1TgkeIrGA==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 13/20] lightnvm: pblk: garbage collect lines with failed writes
+Date: Mon, 28 May 2018 10:58:34 +0200
+Message-Id: <20180528085841.26684-14-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
+References: <20180528085841.26684-1-mb@lightnvm.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Write failures should not happen under normal circumstances,
+so in order to bring the chunk back into a known state as soon
+as possible, evacuate all the valid data out of the line and let the
+fw judge if the block can be written to in the next reset cycle.
+
+Do this by introducing a new gc list for lines with failed writes,
+and ensure that the rate limiter allocates a small portion of
+the write bandwidth to get the job done.
+
+The lba list is saved in memory for use during gc as we
+cannot gurantee that the emeta data is readable if a write
+error occurred.
+
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/regulator/Kconfig             |  11 +
- drivers/regulator/Makefile            |   1 +
- drivers/regulator/bd71837-regulator.c | 678 ++++++++++++++++++++++++++++++++++
- 3 files changed, 690 insertions(+)
- create mode 100644 drivers/regulator/bd71837-regulator.c
+ drivers/lightnvm/pblk-core.c  |  45 ++++++++++++++++++-
+ drivers/lightnvm/pblk-gc.c    | 102 +++++++++++++++++++++++++++---------------
+ drivers/lightnvm/pblk-init.c  |  46 ++++++++++++-------
+ drivers/lightnvm/pblk-rl.c    |  29 ++++++++++--
+ drivers/lightnvm/pblk-sysfs.c |  15 ++++++-
+ drivers/lightnvm/pblk-write.c |   2 +
+ drivers/lightnvm/pblk.h       |  25 +++++++++--
+ 7 files changed, 200 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 097f61784a7d..139f4b53fea0 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
- 	  BCM590xx PMUs. This will enable support for the software
- 	  controllable LDO/Switching regulators.
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 5dae72e8b46b..263da2e43567 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -373,7 +373,13 @@ struct list_head *pblk_line_gc_list(struct pblk *pblk, struct pblk_line *line)
  
-+config REGULATOR_BD71837
-+	tristate "ROHM BD71837 Power Regulator"
-+	depends on MFD_BD71837
-+	help
-+	  This driver supports voltage regulators on ROHM BD71837 PMIC.
-+	  This will enable support for the software controllable buck
-+	  and LDO regulators.
+ 	lockdep_assert_held(&line->lock);
+ 
+-	if (!vsc) {
++	if (line->w_err_gc->has_write_err) {
++		if (line->gc_group != PBLK_LINEGC_WERR) {
++			line->gc_group = PBLK_LINEGC_WERR;
++			move_list = &l_mg->gc_werr_list;
++			pblk_rl_werr_line_in(&pblk->rl);
++		}
++	} else if (!vsc) {
+ 		if (line->gc_group != PBLK_LINEGC_FULL) {
+ 			line->gc_group = PBLK_LINEGC_FULL;
+ 			move_list = &l_mg->gc_full_list;
+@@ -1589,8 +1595,13 @@ static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
+ 	line->state = PBLK_LINESTATE_FREE;
+ 	line->gc_group = PBLK_LINEGC_NONE;
+ 	pblk_line_free(line);
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called bd71837-regulator.
-+
- config REGULATOR_BD9571MWV
- 	tristate "ROHM BD9571MWV Regulators"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 590674fbecd7..1b4d8ec416c2 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
- obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
- obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
- obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
-+obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
- obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
- obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
- obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
-new file mode 100644
-index 000000000000..227a952e49cb
---- /dev/null
-+++ b/drivers/regulator/bd71837-regulator.c
-@@ -0,0 +1,678 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+/*
-+ * bd71837-regulator.c ROHM BD71837MWV regulator driver
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+#include <linux/gpio.h>
-+#include <linux/mfd/bd71837.h>
-+#include <linux/regulator/of_regulator.h>
-+
-+struct bd71837_pmic {
-+	struct regulator_desc descs[BD71837_REGULATOR_CNT];
-+	struct bd71837 *mfd;
-+	struct platform_device *pdev;
-+	struct regulator_dev *rdev[BD71837_REGULATOR_CNT];
-+	struct mutex mtx;
-+};
-+
-+/*
-+ * BUCK1/2/3/4
-+ * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
-+ * 00: 10.00mV/usec 10mV 1uS
-+ * 01: 5.00mV/usec	10mV 2uS
-+ * 10: 2.50mV/usec	10mV 4uS
-+ * 11: 1.25mV/usec	10mV 8uS
-+ */
-+static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
-+					   int ramp_delay)
-+{
-+	struct bd71837_pmic *pmic = rdev_get_drvdata(rdev);
-+	struct bd71837 *mfd = pmic->mfd;
-+	int id = rdev->desc->id;
-+	unsigned int ramp_value = BUCK1_RAMPRATE_10P00MV;
-+
-+	dev_dbg(&(pmic->pdev->dev), "Buck[%d] Set Ramp = %d\n", id + 1,
-+		ramp_delay);
-+	switch (ramp_delay) {
-+	case 1 ... 1250:
-+		ramp_value = BUCK1_RAMPRATE_1P25MV;
-+		break;
-+	case 1251 ... 2500:
-+		ramp_value = BUCK1_RAMPRATE_2P50MV;
-+		break;
-+	case 2501 ... 5000:
-+		ramp_value = BUCK1_RAMPRATE_5P00MV;
-+		break;
-+	case 5001 ... 10000:
-+		ramp_value = BUCK1_RAMPRATE_10P00MV;
-+		break;
-+	default:
-+		ramp_value = BUCK1_RAMPRATE_10P00MV;
-+		dev_err(&pmic->pdev->dev,
-+			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
-+			rdev->desc->name, ramp_delay);
++	if (line->w_err_gc->has_write_err) {
++		pblk_rl_werr_line_out(&pblk->rl);
++		line->w_err_gc->has_write_err = 0;
 +	}
 +
-+	return regmap_update_bits(mfd->regmap, BD71837_REG_BUCK1_CTRL + id,
-+				  BUCK1_RAMPRATE_MASK, ramp_value << 6);
-+}
+ 	spin_unlock(&line->lock);
+-
+ 	atomic_dec(&gc->pipeline_gc);
+ 
+ 	spin_lock(&l_mg->free_lock);
+@@ -1753,11 +1764,34 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+ 
+ 	spin_lock(&l_mg->close_lock);
+ 	spin_lock(&line->lock);
 +
-+static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
-+{
-+	int ret = -EINVAL;
-+	struct bd71837_pmic *pmic = rdev->reg_data;
-+
-+	/* According to the data sheet we must not change regulator voltage
-+	 * when it is enabled. Thus we need to check if regulator is enabled
-+	 * before changing the voltage. This mutex is used to avoid race where
-+	 * we might enable regulator after it's state has been checked but
-+	 * before the voltage is changed
++	/* Update the in-memory start address for emeta, in case it has
++	 * shifted due to write errors
 +	 */
-+	mutex_lock(&pmic->mtx);
-+	if (!set)
-+		ret = regulator_disable_regmap(rdev);
-+	else
-+		ret = regulator_enable_regmap(rdev);
-+	mutex_unlock(&pmic->mtx);
++	if (line->emeta_ssec != line->cur_sec)
++		line->emeta_ssec = line->cur_sec;
 +
-+	return ret;
+ 	list_add_tail(&line->list, &l_mg->emeta_list);
+ 	spin_unlock(&line->lock);
+ 	spin_unlock(&l_mg->close_lock);
+ 
+ 	pblk_line_should_sync_meta(pblk);
++
++
 +}
 +
-+static int bd71837_regulator_enable_regmap(struct regulator_dev *rdev)
++static void pblk_save_lba_list(struct pblk *pblk, struct pblk_line *line)
 +{
-+	return bd71837_regulator_set_regmap(rdev, 1);
-+}
++	struct pblk_line_meta *lm = &pblk->lm;
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++	unsigned int lba_list_size = lm->emeta_len[2];
++	struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
++	struct pblk_emeta *emeta = line->emeta;
 +
-+static int bd71837_regulator_disable_regmap(struct regulator_dev *rdev)
-+{
-+	return bd71837_regulator_set_regmap(rdev, 0);
-+}
++	w_err_gc->lba_list = pblk_malloc(lba_list_size,
++					 l_mg->emeta_alloc_type, GFP_KERNEL);
++	memcpy(w_err_gc->lba_list, emeta_to_lbas(pblk, emeta->buf),
++				lba_list_size);
+ }
+ 
+ void pblk_line_close_ws(struct work_struct *work)
+@@ -1766,6 +1800,13 @@ void pblk_line_close_ws(struct work_struct *work)
+ 									ws);
+ 	struct pblk *pblk = line_ws->pblk;
+ 	struct pblk_line *line = line_ws->line;
++	struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
 +
-+static int bd71837_regulator_set_voltage_sel_regmap(struct regulator_dev *rdev,
-+						    unsigned int sel)
++	/* Write errors makes the emeta start address stored in smeta invalid,
++	 * so keep a copy of the lba list until we've gc'd the line
++	 */
++	if (w_err_gc->has_write_err)
++		pblk_save_lba_list(pblk, line);
+ 
+ 	pblk_line_close(pblk, line);
+ 	mempool_free(line_ws, pblk->gen_ws_pool);
+diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+index b0cc277bf972..df88f1bdd921 100644
+--- a/drivers/lightnvm/pblk-gc.c
++++ b/drivers/lightnvm/pblk-gc.c
+@@ -129,6 +129,53 @@ static void pblk_gc_line_ws(struct work_struct *work)
+ 	kfree(gc_rq_ws);
+ }
+ 
++static __le64 *get_lba_list_from_emeta(struct pblk *pblk,
++				       struct pblk_line *line)
 +{
++	struct line_emeta *emeta_buf;
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++	struct pblk_line_meta *lm = &pblk->lm;
++	unsigned int lba_list_size = lm->emeta_len[2];
++	__le64 *lba_list;
 +	int ret;
-+	struct bd71837_pmic *pmic = rdev->reg_data;
 +
-+	/* According to the data sheet we must not change regulator voltage
-+	 * when it is enabled. Error out if regulator is enabled.
++	emeta_buf = pblk_malloc(lm->emeta_len[0],
++				l_mg->emeta_alloc_type, GFP_KERNEL);
++	if (!emeta_buf)
++		return NULL;
++
++	ret = pblk_line_read_emeta(pblk, line, emeta_buf);
++	if (ret) {
++		pr_err("pblk: line %d read emeta failed (%d)\n",
++				line->id, ret);
++		pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++		return NULL;
++	}
++
++	/* If this read fails, it means that emeta is corrupted.
++	 * For now, leave the line untouched.
++	 * TODO: Implement a recovery routine that scans and moves
++	 * all sectors on the line.
 +	 */
-+	mutex_lock(&pmic->mtx);
-+	ret = regulator_is_enabled_regmap(rdev);
-+	if (!ret)
-+		ret = regulator_set_voltage_sel_regmap(rdev, sel);
-+	else if (ret == 1)
-+		ret = -EBUSY;
-+	mutex_unlock(&pmic->mtx);
-+	return ret;
++
++	ret = pblk_recov_check_emeta(pblk, emeta_buf);
++	if (ret) {
++		pr_err("pblk: inconsistent emeta (line %d)\n",
++				line->id);
++		pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++		return NULL;
++	}
++
++	lba_list = pblk_malloc(lba_list_size,
++			       l_mg->emeta_alloc_type, GFP_KERNEL);
++	if (lba_list)
++		memcpy(lba_list, emeta_to_lbas(pblk, emeta_buf), lba_list_size);
++
++	pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++
++	return lba_list;
 +}
 +
-+static struct regulator_ops bd71837_ldo_regulator_ops = {
-+	.enable = bd71837_regulator_enable_regmap,
-+	.disable = bd71837_regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+};
-+
-+static struct regulator_ops bd71837_ldo_regulator_nolinear_ops = {
-+	.enable = bd71837_regulator_enable_regmap,
-+	.disable = bd71837_regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_table,
-+	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+};
-+
-+static struct regulator_ops bd71837_buck_regulator_ops = {
-+	.enable = bd71837_regulator_enable_regmap,
-+	.disable = bd71837_regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+};
-+
-+static struct regulator_ops bd71837_buck_regulator_nolinear_ops = {
-+	.enable = bd71837_regulator_enable_regmap,
-+	.disable = bd71837_regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_table,
-+	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+};
-+
-+static struct regulator_ops bd71837_buck1234_regulator_ops = {
-+	.enable = bd71837_regulator_enable_regmap,
-+	.disable = bd71837_regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.set_ramp_delay = bd71837_buck1234_set_ramp_delay,
-+};
-+
-+/*
-+ * BUCK1/2/3/4
-+ * 0.70 to 1.30V (10mV step)
-+ */
-+static const struct regulator_linear_range bd71837_buck1234_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x3C, 10000),
-+	REGULATOR_LINEAR_RANGE(1300000, 0x3D, 0x3F, 0),
-+};
-+
-+/*
-+ * BUCK5
-+ * 0.9V to 1.35V ()
-+ */
-+static const struct regulator_linear_range bd71837_buck5_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x03, 100000),
-+	REGULATOR_LINEAR_RANGE(1050000, 0x04, 0x05, 50000),
-+	REGULATOR_LINEAR_RANGE(1200000, 0x06, 0x07, 150000),
-+};
-+
-+/*
-+ * BUCK6
-+ * 3.0V to 3.3V (step 100mV)
-+ */
-+static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
-+};
-+
-+/*
-+ * BUCK7
-+ * 000 = 1.605V
-+ * 001 = 1.695V
-+ * 010 = 1.755V
-+ * 011 = 1.8V (Initial)
-+ * 100 = 1.845V
-+ * 101 = 1.905V
-+ * 110 = 1.95V
-+ * 111 = 1.995V
-+ */
-+static const unsigned int buck_7_volts[] = {
-+	1605000, 1695000, 1755000, 1800000, 1845000, 1905000, 1950000, 1995000
-+};
-+
-+/*
-+ * BUCK8
-+ * 0.8V to 1.40V (step 10mV)
-+ */
-+static const struct regulator_linear_range bd71837_buck8_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(800000, 0x00, 0x3C, 10000),
-+	REGULATOR_LINEAR_RANGE(1400000, 0x3D, 0x3F, 0),
-+};
-+
-+/*
-+ * LDO1
-+ * 3.0 to 3.3V (100mV step)
-+ */
-+static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
-+};
-+
-+/*
-+ * LDO2
-+ * 0.8 or 0.9V
-+ */
-+const unsigned int ldo_2_volts[] = {
-+	900000, 800000
-+};
-+
-+/*
-+ * LDO3
-+ * 1.8 to 3.3V (100mV step)
-+ */
-+static const struct regulator_linear_range bd71837_ldo3_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
-+};
-+
-+/*
-+ * LDO4
-+ * 0.9 to 1.8V (100mV step)
-+ */
-+static const struct regulator_linear_range bd71837_ldo4_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
-+	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
-+};
-+
-+/*
-+ * LDO5
-+ * 1.8 to 3.3V (100mV step)
-+ */
-+static const struct regulator_linear_range bd71837_ldo5_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
-+};
-+
-+/*
-+ * LDO6
-+ * 0.9 to 1.8V (100mV step)
-+ */
-+static const struct regulator_linear_range bd71837_ldo6_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
-+	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
-+};
-+
-+/*
-+ * LDO7
-+ * 1.8 to 3.3V (100mV step)
-+ */
-+static const struct regulator_linear_range bd71837_ldo7_voltage_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
-+};
-+
-+static const struct regulator_desc bd71837_regulators[] = {
-+	{
-+	 .name = "buck1",
-+	 .of_match = of_match_ptr("BUCK1"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK1,
-+	 .ops = &bd71837_buck1234_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK1_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck1234_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK1_VOLT_RUN,
-+	 .vsel_mask = BUCK1_RUN_MASK,
-+	 .enable_reg = BD71837_REG_BUCK1_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck2",
-+	 .of_match = of_match_ptr("BUCK2"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK2,
-+	 .ops = &bd71837_buck1234_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK2_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck1234_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK2_VOLT_RUN,
-+	 .vsel_mask = BUCK2_RUN_MASK,
-+	 .enable_reg = BD71837_REG_BUCK2_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck3",
-+	 .of_match = of_match_ptr("BUCK3"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK3,
-+	 .ops = &bd71837_buck1234_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK3_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck1234_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK3_VOLT_RUN,
-+	 .vsel_mask = BUCK3_RUN_MASK,
-+	 .enable_reg = BD71837_REG_BUCK3_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck4",
-+	 .of_match = of_match_ptr("BUCK4"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK4,
-+	 .ops = &bd71837_buck1234_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK4_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck1234_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK4_VOLT_RUN,
-+	 .vsel_mask = BUCK4_RUN_MASK,
-+	 .enable_reg = BD71837_REG_BUCK4_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck5",
-+	 .of_match = of_match_ptr("BUCK5"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK5,
-+	 .ops = &bd71837_buck_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK5_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck5_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck5_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK5_VOLT,
-+	 .vsel_mask = BUCK5_MASK,
-+	 .enable_reg = BD71837_REG_BUCK5_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck6",
-+	 .of_match = of_match_ptr("BUCK6"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK6,
-+	 .ops = &bd71837_buck_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK6_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck6_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck6_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK6_VOLT,
-+	 .vsel_mask = BUCK6_MASK,
-+	 .enable_reg = BD71837_REG_BUCK6_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck7",
-+	 .of_match = of_match_ptr("BUCK7"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK7,
-+	 .ops = &bd71837_buck_regulator_nolinear_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .volt_table = &buck_7_volts[0],
-+	 .n_voltages = ARRAY_SIZE(buck_7_volts),
-+	 .vsel_reg = BD71837_REG_BUCK7_VOLT,
-+	 .vsel_mask = BUCK7_MASK,
-+	 .enable_reg = BD71837_REG_BUCK7_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "buck8",
-+	 .of_match = of_match_ptr("BUCK8"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_BUCK8,
-+	 .ops = &bd71837_buck_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_BUCK8_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_buck8_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck8_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_BUCK8_VOLT,
-+	 .vsel_mask = BUCK8_MASK,
-+	 .enable_reg = BD71837_REG_BUCK8_CTRL,
-+	 .enable_mask = BD71837_BUCK_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo1",
-+	 .of_match = of_match_ptr("LDO1"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO1,
-+	 .ops = &bd71837_ldo_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_LDO1_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_ldo1_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo1_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_LDO1_VOLT,
-+	 .vsel_mask = LDO1_MASK,
-+	 .enable_reg = BD71837_REG_LDO1_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo2",
-+	 .of_match = of_match_ptr("LDO2"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO2,
-+	 .ops = &bd71837_ldo_regulator_nolinear_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .volt_table = &ldo_2_volts[0],
-+	 .vsel_reg = BD71837_REG_LDO2_VOLT,
-+	 .vsel_mask = LDO2_MASK,
-+	 .n_voltages = ARRAY_SIZE(ldo_2_volts),
-+	 .n_voltages = BD71837_LDO2_VOLTAGE_NUM,
-+	 .enable_reg = BD71837_REG_LDO2_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo3",
-+	 .of_match = of_match_ptr("LDO3"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO3,
-+	 .ops = &bd71837_ldo_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_LDO3_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_ldo3_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo3_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_LDO3_VOLT,
-+	 .vsel_mask = LDO3_MASK,
-+	 .enable_reg = BD71837_REG_LDO3_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo4",
-+	 .of_match = of_match_ptr("LDO4"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO4,
-+	 .ops = &bd71837_ldo_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_LDO4_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_ldo4_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo4_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_LDO4_VOLT,
-+	 .vsel_mask = LDO4_MASK,
-+	 .enable_reg = BD71837_REG_LDO4_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo5",
-+	 .of_match = of_match_ptr("LDO5"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO5,
-+	 .ops = &bd71837_ldo_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_LDO5_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_ldo5_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo5_voltage_ranges),
-+	 /* LDO5 is supplied by buck6 */
-+	 .supply_name = "buck6",
-+	 .vsel_reg = BD71837_REG_LDO5_VOLT,
-+	 .vsel_mask = LDO5_MASK,
-+	 .enable_reg = BD71837_REG_LDO5_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo6",
-+	 .of_match = of_match_ptr("LDO6"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO6,
-+	 .ops = &bd71837_ldo_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_LDO6_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_ldo6_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo6_voltage_ranges),
-+	 /* LDO6 is supplied by buck7 */
-+	 .supply_name = "buck7",
-+	 .vsel_reg = BD71837_REG_LDO6_VOLT,
-+	 .vsel_mask = LDO6_MASK,
-+	 .enable_reg = BD71837_REG_LDO6_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+	{
-+	 .name = "ldo7",
-+	 .of_match = of_match_ptr("LDO7"),
-+	 .regulators_node = of_match_ptr("regulators"),
-+	 .id = BD71837_LDO7,
-+	 .ops = &bd71837_ldo_regulator_ops,
-+	 .type = REGULATOR_VOLTAGE,
-+	 .n_voltages = BD71837_LDO7_VOLTAGE_NUM,
-+	 .linear_ranges = bd71837_ldo7_voltage_ranges,
-+	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo7_voltage_ranges),
-+	 .vsel_reg = BD71837_REG_LDO7_VOLT,
-+	 .vsel_mask = LDO7_MASK,
-+	 .enable_reg = BD71837_REG_LDO7_VOLT,
-+	 .enable_mask = BD71837_LDO_EN,
-+	 .owner = THIS_MODULE,
-+	 },
-+};
-+
-+struct reg_init {
-+	unsigned int reg;
-+	unsigned int mask;
-+};
-+
-+static int bd71837_probe(struct platform_device *pdev)
-+{
-+	struct bd71837_pmic *pmic;
-+	struct bd71837_board *pdata;
-+	struct regulator_config config = { 0 };
-+	struct reg_init pmic_regulator_inits[] = {
-+		{
-+		 .reg = BD71837_REG_BUCK1_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK2_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK3_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK4_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK5_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK6_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK7_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_BUCK8_CTRL,
-+		 .mask = BD71837_BUCK_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO1_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO2_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO3_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO4_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO5_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO6_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}, {
-+		 .reg = BD71837_REG_LDO7_VOLT,
-+		 .mask = BD71837_LDO_SEL,
-+		}
-+	};
-+
-+	int i, err;
-+
-+	pmic = devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
-+			    GFP_KERNEL);
-+	if (!pmic)
-+		return -ENOMEM;
-+
-+	mutex_init(&pmic->mtx);
-+
-+	memcpy(pmic->descs, bd71837_regulators, sizeof(pmic->descs));
-+
-+	pmic->pdev = pdev;
-+	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
-+
-+	if (!pmic->mfd) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		err = -EINVAL;
-+		goto err;
-+	}
-+	platform_set_drvdata(pdev, pmic);
-+	pdata = dev_get_platdata(pmic->mfd->dev);
-+
-+	/* Register LOCK release */
-+	err = regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
-+				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
-+	if (err) {
-+		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
-+		goto err;
+ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ {
+ 	struct pblk_line_ws *line_ws = container_of(work, struct pblk_line_ws,
+@@ -138,46 +185,26 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+ 	struct pblk_line_meta *lm = &pblk->lm;
+ 	struct pblk_gc *gc = &pblk->gc;
+-	struct line_emeta *emeta_buf;
+ 	struct pblk_line_ws *gc_rq_ws;
+ 	struct pblk_gc_rq *gc_rq;
+ 	__le64 *lba_list;
+ 	unsigned long *invalid_bitmap;
+ 	int sec_left, nr_secs, bit;
+-	int ret;
+ 
+ 	invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
+ 	if (!invalid_bitmap)
+ 		goto fail_free_ws;
+ 
+-	emeta_buf = pblk_malloc(lm->emeta_len[0], l_mg->emeta_alloc_type,
+-								GFP_KERNEL);
+-	if (!emeta_buf) {
+-		pr_err("pblk: cannot use GC emeta\n");
+-		goto fail_free_bitmap;
+-	}
+-
+-	ret = pblk_line_read_emeta(pblk, line, emeta_buf);
+-	if (ret) {
+-		pr_err("pblk: line %d read emeta failed (%d)\n", line->id, ret);
+-		goto fail_free_emeta;
+-	}
+-
+-	/* If this read fails, it means that emeta is corrupted. For now, leave
+-	 * the line untouched. TODO: Implement a recovery routine that scans and
+-	 * moves all sectors on the line.
+-	 */
+-
+-	ret = pblk_recov_check_emeta(pblk, emeta_buf);
+-	if (ret) {
+-		pr_err("pblk: inconsistent emeta (line %d)\n", line->id);
+-		goto fail_free_emeta;
+-	}
+-
+-	lba_list = emeta_to_lbas(pblk, emeta_buf);
+-	if (!lba_list) {
+-		pr_err("pblk: could not interpret emeta (line %d)\n", line->id);
+-		goto fail_free_emeta;
++	if (line->w_err_gc->has_write_err) {
++		lba_list = line->w_err_gc->lba_list;
++		line->w_err_gc->lba_list = NULL;
 +	} else {
-+		dev_dbg(&pmic->pdev->dev, "%s: Unlocked lock register 0x%x\n",
-+			__func__, BD71837_REG_REGLOCK);
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
-+
-+		struct regulator_desc *desc;
-+		struct regulator_dev *rdev;
-+		uint32_t val;
-+
-+		desc = &pmic->descs[i];
-+
-+		if (pdata)
-+			config.init_data = pdata->init_data[i];
-+
-+		config.dev = pdev->dev.parent;
-+		config.driver_data = pmic;
-+		config.regmap = pmic->mfd->regmap;
-+
-+		rdev = devm_regulator_register(&pdev->dev, desc, &config);
-+		if (IS_ERR(rdev)) {
-+			dev_err(pmic->mfd->dev,
-+				"failed to register %s regulator\n",
-+				desc->name);
-+			err = PTR_ERR(rdev);
-+			goto err;
++		lba_list = get_lba_list_from_emeta(pblk, line);
++		if (!lba_list) {
++			pr_err("pblk: could not interpret emeta (line %d)\n",
++					line->id);
++			goto fail_free_ws;
 +		}
-+		/* Regulator register gets the regulator constraints and
-+		 * applies them (set_machine_constraints). This should have
-+		 * turned the control register(s) to correct values and we
-+		 * can now switch the control from PMIC state machine to the
-+		 * register interface
-+		 */
-+		err = regmap_update_bits(pmic->mfd->regmap,
-+					 pmic_regulator_inits[i].reg,
-+					 pmic_regulator_inits[i].mask,
-+					 0xFFFFFFFF);
-+		if (err) {
-+			dev_err(&pmic->pdev->dev,
-+				"Failed to write BUCK/LDO SEL bit for (%s)\n",
-+				desc->name);
-+			goto err;
-+		}
+ 	}
+ 
+ 	spin_lock(&line->lock);
+@@ -187,14 +214,14 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 
+ 	if (sec_left < 0) {
+ 		pr_err("pblk: corrupted GC line (%d)\n", line->id);
+-		goto fail_free_emeta;
++		goto fail_free_lba_list;
+ 	}
+ 
+ 	bit = -1;
+ next_rq:
+ 	gc_rq = kmalloc(sizeof(struct pblk_gc_rq), GFP_KERNEL);
+ 	if (!gc_rq)
+-		goto fail_free_emeta;
++		goto fail_free_lba_list;
+ 
+ 	nr_secs = 0;
+ 	do {
+@@ -240,7 +267,7 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 		goto next_rq;
+ 
+ out:
+-	pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++	pblk_mfree(lba_list, l_mg->emeta_alloc_type);
+ 	kfree(line_ws);
+ 	kfree(invalid_bitmap);
+ 
+@@ -251,9 +278,8 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 
+ fail_free_gc_rq:
+ 	kfree(gc_rq);
+-fail_free_emeta:
+-	pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+-fail_free_bitmap:
++fail_free_lba_list:
++	pblk_mfree(lba_list, l_mg->emeta_alloc_type);
+ 	kfree(invalid_bitmap);
+ fail_free_ws:
+ 	kfree(line_ws);
+@@ -349,12 +375,14 @@ static struct pblk_line *pblk_gc_get_victim_line(struct pblk *pblk,
+ static bool pblk_gc_should_run(struct pblk_gc *gc, struct pblk_rl *rl)
+ {
+ 	unsigned int nr_blocks_free, nr_blocks_need;
++	unsigned int werr_lines = atomic_read(&rl->werr_lines);
+ 
+ 	nr_blocks_need = pblk_rl_high_thrs(rl);
+ 	nr_blocks_free = pblk_rl_nr_free_blks(rl);
+ 
+ 	/* This is not critical, no need to take lock here */
+-	return ((gc->gc_active) && (nr_blocks_need > nr_blocks_free));
++	return ((werr_lines > 0) ||
++		((gc->gc_active) && (nr_blocks_need > nr_blocks_free)));
+ }
+ 
+ void pblk_gc_free_full_lines(struct pblk *pblk)
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 6f06727afcf6..d65d2f972ccf 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -493,11 +493,17 @@ static void pblk_line_mg_free(struct pblk *pblk)
+ 	}
+ }
+ 
+-static void pblk_line_meta_free(struct pblk_line *line)
++static void pblk_line_meta_free(struct pblk_line_mgmt *l_mg,
++				struct pblk_line *line)
+ {
++	struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
 +
-+		pmic->rdev[i] = rdev;
-+	}
+ 	kfree(line->blk_bitmap);
+ 	kfree(line->erase_bitmap);
+ 	kfree(line->chks);
 +
-+	return 0;
++	pblk_mfree(w_err_gc->lba_list, l_mg->emeta_alloc_type);
++	kfree(w_err_gc);
+ }
+ 
+ static void pblk_lines_free(struct pblk *pblk)
+@@ -511,7 +517,7 @@ static void pblk_lines_free(struct pblk *pblk)
+ 		line = &pblk->lines[i];
+ 
+ 		pblk_line_free(line);
+-		pblk_line_meta_free(line);
++		pblk_line_meta_free(l_mg, line);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
+ 
+@@ -813,20 +819,28 @@ static int pblk_alloc_line_meta(struct pblk *pblk, struct pblk_line *line)
+ 		return -ENOMEM;
+ 
+ 	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+-	if (!line->erase_bitmap) {
+-		kfree(line->blk_bitmap);
+-		return -ENOMEM;
+-	}
++	if (!line->erase_bitmap)
++		goto free_blk_bitmap;
 +
-+err:
-+	return err;
+ 
+ 	line->chks = kmalloc(lm->blk_per_line * sizeof(struct nvm_chk_meta),
+ 								GFP_KERNEL);
+-	if (!line->chks) {
+-		kfree(line->erase_bitmap);
+-		kfree(line->blk_bitmap);
+-		return -ENOMEM;
+-	}
++	if (!line->chks)
++		goto free_erase_bitmap;
++
++	line->w_err_gc = kzalloc(sizeof(struct pblk_w_err_gc), GFP_KERNEL);
++	if (!line->w_err_gc)
++		goto free_chks;
+ 
+ 	return 0;
++
++free_chks:
++	kfree(line->chks);
++free_erase_bitmap:
++	kfree(line->erase_bitmap);
++free_blk_bitmap:
++	kfree(line->blk_bitmap);
++	return -ENOMEM;
+ }
+ 
+ static int pblk_line_mg_init(struct pblk *pblk)
+@@ -851,12 +865,14 @@ static int pblk_line_mg_init(struct pblk *pblk)
+ 	INIT_LIST_HEAD(&l_mg->gc_mid_list);
+ 	INIT_LIST_HEAD(&l_mg->gc_low_list);
+ 	INIT_LIST_HEAD(&l_mg->gc_empty_list);
++	INIT_LIST_HEAD(&l_mg->gc_werr_list);
+ 
+ 	INIT_LIST_HEAD(&l_mg->emeta_list);
+ 
+-	l_mg->gc_lists[0] = &l_mg->gc_high_list;
+-	l_mg->gc_lists[1] = &l_mg->gc_mid_list;
+-	l_mg->gc_lists[2] = &l_mg->gc_low_list;
++	l_mg->gc_lists[0] = &l_mg->gc_werr_list;
++	l_mg->gc_lists[1] = &l_mg->gc_high_list;
++	l_mg->gc_lists[2] = &l_mg->gc_mid_list;
++	l_mg->gc_lists[3] = &l_mg->gc_low_list;
+ 
+ 	spin_lock_init(&l_mg->free_lock);
+ 	spin_lock_init(&l_mg->close_lock);
+@@ -1063,7 +1079,7 @@ static int pblk_lines_init(struct pblk *pblk)
+ 
+ fail_free_lines:
+ 	while (--i >= 0)
+-		pblk_line_meta_free(&pblk->lines[i]);
++		pblk_line_meta_free(l_mg, &pblk->lines[i]);
+ 	kfree(pblk->lines);
+ fail_free_chunk_meta:
+ 	kfree(chunk_meta);
+diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+index 883a7113b19d..6a0616a6fcaf 100644
+--- a/drivers/lightnvm/pblk-rl.c
++++ b/drivers/lightnvm/pblk-rl.c
+@@ -73,6 +73,16 @@ void pblk_rl_user_in(struct pblk_rl *rl, int nr_entries)
+ 	pblk_rl_kick_u_timer(rl);
+ }
+ 
++void pblk_rl_werr_line_in(struct pblk_rl *rl)
++{
++	atomic_inc(&rl->werr_lines);
 +}
 +
-+static struct platform_driver bd71837_regulator = {
-+	.driver = {
-+		   .name = "bd71837-pmic",
-+		   .owner = THIS_MODULE,
-+		   },
-+	.probe = bd71837_probe,
++void pblk_rl_werr_line_out(struct pblk_rl *rl)
++{
++	atomic_dec(&rl->werr_lines);
++}
++
+ void pblk_rl_gc_in(struct pblk_rl *rl, int nr_entries)
+ {
+ 	atomic_add(nr_entries, &rl->rb_gc_cnt);
+@@ -99,11 +109,21 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+ {
+ 	struct pblk *pblk = container_of(rl, struct pblk, rl);
+ 	int max = rl->rb_budget;
++	int werr_gc_needed = atomic_read(&rl->werr_lines);
+ 
+ 	if (free_blocks >= rl->high) {
+-		rl->rb_user_max = max;
+-		rl->rb_gc_max = 0;
+-		rl->rb_state = PBLK_RL_HIGH;
++		if (werr_gc_needed) {
++			/* Allocate a small budget for recovering
++			 * lines with write errors
++			 */
++			rl->rb_gc_max = 1 << rl->rb_windows_pw;
++			rl->rb_user_max = max - rl->rb_gc_max;
++			rl->rb_state = PBLK_RL_WERR;
++		} else {
++			rl->rb_user_max = max;
++			rl->rb_gc_max = 0;
++			rl->rb_state = PBLK_RL_OFF;
++		}
+ 	} else if (free_blocks < rl->high) {
+ 		int shift = rl->high_pw - rl->rb_windows_pw;
+ 		int user_windows = free_blocks >> shift;
+@@ -124,7 +144,7 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+ 		rl->rb_state = PBLK_RL_LOW;
+ 	}
+ 
+-	if (rl->rb_state == (PBLK_RL_MID | PBLK_RL_LOW))
++	if (rl->rb_state != PBLK_RL_OFF)
+ 		pblk_gc_should_start(pblk);
+ 	else
+ 		pblk_gc_should_stop(pblk);
+@@ -221,6 +241,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	atomic_set(&rl->rb_user_cnt, 0);
+ 	atomic_set(&rl->rb_gc_cnt, 0);
+ 	atomic_set(&rl->rb_space, -1);
++	atomic_set(&rl->werr_lines, 0);
+ 
+ 	timer_setup(&rl->u_timer, pblk_rl_u_timer, 0);
+ 
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index e61909af23a5..88a0a7c407aa 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -173,6 +173,8 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 	int free_line_cnt = 0, closed_line_cnt = 0, emeta_line_cnt = 0;
+ 	int d_line_cnt = 0, l_line_cnt = 0;
+ 	int gc_full = 0, gc_high = 0, gc_mid = 0, gc_low = 0, gc_empty = 0;
++	int gc_werr = 0;
++
+ 	int bad = 0, cor = 0;
+ 	int msecs = 0, cur_sec = 0, vsc = 0, sec_in_line = 0;
+ 	int map_weight = 0, meta_weight = 0;
+@@ -237,6 +239,15 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 		gc_empty++;
+ 	}
+ 
++	list_for_each_entry(line, &l_mg->gc_werr_list, list) {
++		if (line->type == PBLK_LINETYPE_DATA)
++			d_line_cnt++;
++		else if (line->type == PBLK_LINETYPE_LOG)
++			l_line_cnt++;
++		closed_line_cnt++;
++		gc_werr++;
++	}
++
+ 	list_for_each_entry(line, &l_mg->bad_list, list)
+ 		bad++;
+ 	list_for_each_entry(line, &l_mg->corrupt_list, list)
+@@ -275,8 +286,8 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 					l_mg->nr_lines);
+ 
+ 	sz += snprintf(page + sz, PAGE_SIZE - sz,
+-		"GC: full:%d, high:%d, mid:%d, low:%d, empty:%d, queue:%d\n",
+-			gc_full, gc_high, gc_mid, gc_low, gc_empty,
++		"GC: full:%d, high:%d, mid:%d, low:%d, empty:%d, werr: %d, queue:%d\n",
++			gc_full, gc_high, gc_mid, gc_low, gc_empty, gc_werr,
+ 			atomic_read(&pblk->gc.read_inflight_gc));
+ 
+ 	sz += snprintf(page + sz, PAGE_SIZE - sz,
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index f62e432f7c91..f33c2c3993f0 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -136,6 +136,7 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+ 		}
+ 	}
+ 
++	line->w_err_gc->has_write_err = 1;
+ 	spin_unlock(&line->lock);
+ }
+ 
+@@ -279,6 +280,7 @@ static void pblk_end_io_write_meta(struct nvm_rq *rqd)
+ 	if (rqd->error) {
+ 		pblk_log_write_err(pblk, rqd);
+ 		pr_err("pblk: metadata I/O failed. Line %d\n", line->id);
++		line->w_err_gc->has_write_err = 1;
+ 	}
+ 
+ 	sync = atomic_add_return(rqd->nr_ppas, &emeta->sync);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index a75ffae53a0d..7fbdfdc809d3 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -89,12 +89,14 @@ struct pblk_sec_meta {
+ /* The number of GC lists and the rate-limiter states go together. This way the
+  * rate-limiter can dictate how much GC is needed based on resource utilization.
+  */
+-#define PBLK_GC_NR_LISTS 3
++#define PBLK_GC_NR_LISTS 4
+ 
+ enum {
+-	PBLK_RL_HIGH = 1,
+-	PBLK_RL_MID = 2,
+-	PBLK_RL_LOW = 3,
++	PBLK_RL_OFF = 0,
++	PBLK_RL_WERR = 1,
++	PBLK_RL_HIGH = 2,
++	PBLK_RL_MID = 3,
++	PBLK_RL_LOW = 4
+ };
+ 
+ #define pblk_dma_meta_size (sizeof(struct pblk_sec_meta) * PBLK_MAX_REQ_ADDRS)
+@@ -278,6 +280,8 @@ struct pblk_rl {
+ 	int rb_user_active;
+ 	int rb_gc_active;
+ 
++	atomic_t werr_lines;	/* Number of write error lines that needs gc */
++
+ 	struct timer_list u_timer;
+ 
+ 	unsigned long long nr_secs;
+@@ -311,6 +315,7 @@ enum {
+ 	PBLK_LINEGC_MID = 23,
+ 	PBLK_LINEGC_HIGH = 24,
+ 	PBLK_LINEGC_FULL = 25,
++	PBLK_LINEGC_WERR = 26
+ };
+ 
+ #define PBLK_MAGIC 0x70626c6b /*pblk*/
+@@ -412,6 +417,11 @@ struct pblk_smeta {
+ 	struct line_smeta *buf;		/* smeta buffer in persistent format */
+ };
+ 
++struct pblk_w_err_gc {
++	int has_write_err;
++	__le64 *lba_list;
 +};
 +
-+module_platform_driver(bd71837_regulator);
+ struct pblk_line {
+ 	struct pblk *pblk;
+ 	unsigned int id;		/* Line number corresponds to the
+@@ -457,6 +467,8 @@ struct pblk_line {
+ 
+ 	struct kref ref;		/* Write buffer L2P references */
+ 
++	struct pblk_w_err_gc *w_err_gc;	/* Write error gc recovery metadata */
 +
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 voltage regulator driver");
-+MODULE_LICENSE("GPL");
+ 	spinlock_t lock;		/* Necessary for invalid_bitmap only */
+ };
+ 
+@@ -488,6 +500,8 @@ struct pblk_line_mgmt {
+ 	struct list_head gc_mid_list;	/* Full lines ready to GC, mid isc */
+ 	struct list_head gc_low_list;	/* Full lines ready to GC, low isc */
+ 
++	struct list_head gc_werr_list;  /* Write err recovery list */
++
+ 	struct list_head gc_full_list;	/* Full lines ready to GC, no valid */
+ 	struct list_head gc_empty_list;	/* Full lines close, all valid */
+ 
+@@ -890,6 +904,9 @@ void pblk_rl_free_lines_dec(struct pblk_rl *rl, struct pblk_line *line,
+ 			    bool used);
+ int pblk_rl_is_limit(struct pblk_rl *rl);
+ 
++void pblk_rl_werr_line_in(struct pblk_rl *rl);
++void pblk_rl_werr_line_out(struct pblk_rl *rl);
++
+ /*
+  * pblk sysfs
+  */
 -- 
-2.14.3
+2.11.0
