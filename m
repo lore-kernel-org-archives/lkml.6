@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939450AbeE1OyF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:54:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47506 "EHLO mail.kernel.org"
+        id S939456AbeE1Oy3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:54:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937107AbeE1K2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:07 -0400
+        id S937024AbeE1K16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>,
+        Peter Xu <peterx@redhat.com>, Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 042/329] net: stmmac: dwmac-meson8b: propagate rate changes to the parent clock
-Date: Mon, 28 May 2018 11:59:31 +0200
-Message-Id: <20180528100245.948719589@linuxfoundation.org>
+Subject: [PATCH 4.9 039/329] iommu/vt-d: Use domain instead of cache fetching
+Date: Mon, 28 May 2018 11:59:28 +0200
+Message-Id: <20180528100245.725983214@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,52 +30,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Peter Xu <peterx@redhat.com>
 
-[ Upstream commit fb7d38a70e1d8ffd54f7a7464dcc4889d7e490ad ]
+[ Upstream commit 9d2e6505f6d6934e681aed502f566198cb25c74a ]
 
-On Meson8b the only valid input clock is MPLL2. The bootloader
-configures that to run at 500002394Hz which cannot be divided evenly
-down to 125MHz using the m250_div clock. Currently the common clock
-framework chooses a m250_div of 2 - with the internal fixed
-"divide by 10" this results in a RGMII TX clock of 125001197Hz (120Hz
-above the requested 125MHz).
+after commit a1ddcbe93010 ("iommu/vt-d: Pass dmar_domain directly into
+iommu_flush_iotlb_psi", 2015-08-12), we have domain pointer as parameter
+to iommu_flush_iotlb_psi(), so no need to fetch it from cache again.
 
-Letting the common clock framework propagate the rate changes up to the
-parent of m250_mux allows us to get the best possible clock rate. With
-this patch the common clock framework calculates a rate of
-very-close-to-250MHz (249999701Hz to be exact) for the MPLL2 clock
-(which is the mux input). Dividing that by 2 (which is an internal,
-fixed divider for the RGMII TX clock) gives us an RGMII TX clock of
-124999850Hz (which is only 150Hz off the requested 125MHz, compared to
-1197Hz based on the MPLL2 rate set by u-boot and the Amlogic GPL kernel
-sources).
+More importantly, a NULL reference pointer bug is reported on RHEL7 (and
+it can be reproduced on some old upstream kernels too, e.g., v4.13) by
+unplugging an 40g nic from a VM (hard to test unplug on real host, but
+it should be the same):
 
-SoCs from the Meson GX series are not affected by this change because
-the input clock is FCLK_DIV2 whose rate cannot be changed (which is fine
-since it's running at 1GHz, so it's already a multiple of 250MHz and
-125MHz).
+https://bugzilla.redhat.com/show_bug.cgi?id=1531367
 
-Fixes: 566e8251625304 ("net: stmmac: add a glue driver for the Amlogic Meson 8b / GXBB DWMAC")
-Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[   24.391863] pciehp 0000:00:03.0:pcie004: Slot(0): Attention button pressed
+[   24.393442] pciehp 0000:00:03.0:pcie004: Slot(0): Powering off due to button press
+[   29.721068] i40evf 0000:01:00.0: Unable to send opcode 2 to PF, err I40E_ERR_QUEUE_EMPTY, aq_err OK
+[   29.783557] iommu: Removing device 0000:01:00.0 from group 3
+[   29.784662] BUG: unable to handle kernel NULL pointer dereference at 0000000000000304
+[   29.785817] IP: iommu_flush_iotlb_psi+0xcf/0x120
+[   29.786486] PGD 0
+[   29.786487] P4D 0
+[   29.786812]
+[   29.787390] Oops: 0000 [#1] SMP
+[   29.787876] Modules linked in: ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_ng
+[   29.795371] CPU: 0 PID: 156 Comm: kworker/0:2 Not tainted 4.13.0 #14
+[   29.796366] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.11.0-1.el7 04/01/2014
+[   29.797593] Workqueue: pciehp-0 pciehp_power_thread
+[   29.798328] task: ffff94f5745b4a00 task.stack: ffffb326805ac000
+[   29.799178] RIP: 0010:iommu_flush_iotlb_psi+0xcf/0x120
+[   29.799919] RSP: 0018:ffffb326805afbd0 EFLAGS: 00010086
+[   29.800666] RAX: ffff94f5bc56e800 RBX: 0000000000000000 RCX: 0000000200000025
+[   29.801667] RDX: ffff94f5bc56e000 RSI: 0000000000000082 RDI: 0000000000000000
+[   29.802755] RBP: ffffb326805afbf8 R08: 0000000000000000 R09: ffff94f5bc86bbf0
+[   29.803772] R10: ffffb326805afba8 R11: 00000000000ffdc4 R12: ffff94f5bc86a400
+[   29.804789] R13: 0000000000000000 R14: 00000000ffdc4000 R15: 0000000000000000
+[   29.805792] FS:  0000000000000000(0000) GS:ffff94f5bfc00000(0000) knlGS:0000000000000000
+[   29.806923] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   29.807736] CR2: 0000000000000304 CR3: 000000003499d000 CR4: 00000000000006f0
+[   29.808747] Call Trace:
+[   29.809156]  flush_unmaps_timeout+0x126/0x1c0
+[   29.809800]  domain_exit+0xd6/0x100
+[   29.810322]  device_notifier+0x6b/0x70
+[   29.810902]  notifier_call_chain+0x4a/0x70
+[   29.812822]  __blocking_notifier_call_chain+0x47/0x60
+[   29.814499]  blocking_notifier_call_chain+0x16/0x20
+[   29.816137]  device_del+0x233/0x320
+[   29.817588]  pci_remove_bus_device+0x6f/0x110
+[   29.819133]  pci_stop_and_remove_bus_device+0x1a/0x20
+[   29.820817]  pciehp_unconfigure_device+0x7a/0x1d0
+[   29.822434]  pciehp_disable_slot+0x52/0xe0
+[   29.823931]  pciehp_power_thread+0x8a/0xa0
+[   29.825411]  process_one_work+0x18c/0x3a0
+[   29.826875]  worker_thread+0x4e/0x3b0
+[   29.828263]  kthread+0x109/0x140
+[   29.829564]  ? process_one_work+0x3a0/0x3a0
+[   29.831081]  ? kthread_park+0x60/0x60
+[   29.832464]  ret_from_fork+0x25/0x30
+[   29.833794] Code: 85 ed 74 0b 5b 41 5c 41 5d 41 5e 41 5f 5d c3 49 8b 54 24 60 44 89 f8 0f b6 c4 48 8b 04 c2 48 85 c0 74 49 45 0f b6 ff 4a 8b 3c f8 <80> bf
+[   29.838514] RIP: iommu_flush_iotlb_psi+0xcf/0x120 RSP: ffffb326805afbd0
+[   29.840362] CR2: 0000000000000304
+[   29.841716] ---[ end trace b10ec0d6900868d3 ]---
+
+This patch fixes that problem if applied to v4.13 kernel.
+
+The bug does not exist on latest upstream kernel since it's fixed as a
+side effect of commit 13cf01744608 ("iommu/vt-d: Make use of iova
+deferred flushing", 2017-08-15).  But IMHO it's still good to have this
+patch upstream.
+
+CC: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+Fixes: a1ddcbe93010 ("iommu/vt-d: Pass dmar_domain directly into iommu_flush_iotlb_psi")
+Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/intel-iommu.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -118,7 +118,7 @@ static int meson8b_init_clk(struct meson
- 	snprintf(clk_name, sizeof(clk_name), "%s#m250_sel", dev_name(dev));
- 	init.name = clk_name;
- 	init.ops = &clk_mux_ops;
--	init.flags = 0;
-+	init.flags = CLK_SET_RATE_PARENT;
- 	init.parent_names = mux_parent_names;
- 	init.num_parents = MUX_CLK_NUM_PARENTS;
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1612,8 +1612,7 @@ static void iommu_flush_iotlb_psi(struct
+ 	 * flush. However, device IOTLB doesn't need to be flushed in this case.
+ 	 */
+ 	if (!cap_caching_mode(iommu->cap) || !map)
+-		iommu_flush_dev_iotlb(get_iommu_domain(iommu, did),
+-				      addr, mask);
++		iommu_flush_dev_iotlb(domain, addr, mask);
+ }
  
+ static void iommu_disable_protect_mem_regions(struct intel_iommu *iommu)
