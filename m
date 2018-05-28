@@ -1,18 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162943AbeE1N6k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:58:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60354 "EHLO mail.kernel.org"
+        id S1162800AbeE1KkW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:40:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162591AbeE1Kk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:26 -0400
+        id S1162761AbeE1KkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:40:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 315/329] rcu: Call touch_nmi_watchdog() while printing stall warnings
-Date: Mon, 28 May 2018 12:04:04 +0200
-Message-Id: <20180528100307.205352064@linuxfoundation.org>
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 309/329] net: stmmac: ensure that the MSS desc is the last desc to set the own bit
+Date: Mon, 28 May 2018 12:03:58 +0200
+Message-Id: <20180528100306.812824747@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -28,47 +30,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-[ Upstream commit 3caa973b7a260e7a2a69edc94c300ab9c65148c3 ]
+[ Upstream commit 15d2ee42a3087089e73ad52fd8c1b37ab496b87c ]
 
-When RCU stall warning triggers, it can print out a lot of messages
-while holding spinlocks.  If the console device is slow (e.g. an
-actual or IPMI serial console), it may end up triggering NMI hard
-lockup watchdog like the following.
+A dma_wmb() is used to guarantee the ordering, with respect to
+other writes, to cache coherent DMA memory.
 
+There is a dma_wmb() in prepare_tx_desc()/prepare_tso_tx_desc() which
+ensures that TDES0/1/2 is written before TDES3 (which contains the own
+bit), for First Desc.
+
+However, in the rare case that MSS changes, there will be a MSS
+context descriptor in front of the regular DMA descriptors:
+
+<MSS desc> <- DMA Next Descriptor
+<First Desc>
+<desc n>
+<Last Desc>
+
+Thus, for this special case, we need a dma_wmb()
+after prepare_tso_tx_desc()/before writing the own bit to the MSS desc,
+so that we flush the write to TDES3 for First Desc,
+in order to ensure that the MSS descriptor is the last descriptor to
+set the own bit.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/rcu/tree_plugin.h |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -521,8 +521,14 @@ static void rcu_print_detail_task_stall_
- 	}
- 	t = list_entry(rnp->gp_tasks->prev,
- 		       struct task_struct, rcu_node_entry);
--	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry)
-+	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
-+		/*
-+		 * We could be printing a lot while holding a spinlock.
-+		 * Avoid triggering hard lockup.
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2141,8 +2141,15 @@ static netdev_tx_t stmmac_tso_xmit(struc
+ 			tcp_hdrlen(skb) / 4, (skb->len - proto_hdr_len));
+ 
+ 	/* If context desc is used to change MSS */
+-	if (mss_desc)
++	if (mss_desc) {
++		/* Make sure that first descriptor has been completely
++		 * written, including its own bit. This is because MSS is
++		 * actually before first descriptor, so we need to make
++		 * sure that MSS's own bit is the last thing written.
 +		 */
-+		touch_nmi_watchdog();
- 		sched_show_task(t);
++		dma_wmb();
+ 		priv->hw->desc->set_tx_owner(mss_desc);
 +	}
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- }
  
-@@ -1629,6 +1635,12 @@ static void print_cpu_stall_info(struct
- 	char *ticks_title;
- 	unsigned long ticks_value;
- 
-+	/*
-+	 * We could be printing a lot while holding a spinlock.  Avoid
-+	 * triggering hard lockup.
-+	 */
-+	touch_nmi_watchdog();
-+
- 	if (rsp->gpnum == rdp->gpnum) {
- 		ticks_title = "ticks this GP";
- 		ticks_value = rdp->ticks_this_gp;
+ 	/* The own bit must be the latest setting done when prepare the
+ 	 * descriptor and then barrier is needed to make sure that
