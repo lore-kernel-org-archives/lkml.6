@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165911AbeE1OnU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:43:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50018 "EHLO mail.kernel.org"
+        id S937409AbeE1KaZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:30:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161103AbeE1Ka2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:28 -0400
+        id S1161066AbeE1KaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Len Brown <len.brown@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Nicolas Pitre <nico@linaro.org>,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Bart Van Assche <bart.vanassche@wdc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 096/329] tools/libbpf: handle issues with bpf ELF objects containing .eh_frames
-Date: Mon, 28 May 2018 12:00:25 +0200
-Message-Id: <20180528100250.818469079@linuxfoundation.org>
+Subject: [PATCH 4.9 079/329] x86/power: Fix swsusp_arch_resume prototype
+Date: Mon, 28 May 2018 12:00:08 +0200
+Message-Id: <20180528100249.405566287@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,86 +33,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit e3d91b0ca523d53158f435a3e13df7f0cb360ea2 ]
+[ Upstream commit 328008a72d38b5bde6491e463405c34a81a65d3e ]
 
-V3: More generic skipping of relo-section (suggested by Daniel)
+The declaration for swsusp_arch_resume marks it as 'asmlinkage', but the
+definition in x86-32 does not, and it fails to include the header with the
+declaration. This leads to a warning when building with
+link-time-optimizations:
 
-If clang >= 4.0.1 is missing the option '-target bpf', it will cause
-llc/llvm to create two ELF sections for "Exception Frames", with
-section names '.eh_frame' and '.rel.eh_frame'.
+kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not match original declaration [-Werror=lto-type-mismatch]
+ extern asmlinkage int swsusp_arch_resume(void);
+                       ^
+arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previously declared here
+ int swsusp_arch_resume(void)
 
-The BPF ELF loader library libbpf fails when loading files with these
-sections.  The other in-kernel BPF ELF loader in samples/bpf/bpf_load.c,
-handle this gracefully. And iproute2 loader also seems to work with these
-"eh" sections.
+This moves the declaration into a globally visible header file and fixes up
+both x86 definitions to match it.
 
-The issue in libbpf is caused by bpf_object__elf_collect() skipping
-some sections, and later when performing relocation it will be
-pointing to a skipped section, as these sections cannot be found by
-bpf_object__find_prog_by_idx() in bpf_object__collect_reloc().
-
-This is a general issue that also occurs for other sections, like
-debug sections which are also skipped and can have relo section.
-
-As suggested by Daniel.  To avoid keeping state about all skipped
-sections, instead perform a direct qlookup in the ELF object.  Lookup
-the section that the relo-section points to and check if it contains
-executable machine instructions (denoted by the sh_flags
-SHF_EXECINSTR).  Use this check to also skip irrelevant relo-sections.
-
-Note, for samples/bpf/ the '-target bpf' parameter to clang cannot be used
-due to incompatibility with asm embedded headers, that some of the samples
-include. This is explained in more details by Yonghong Song in bpf_devel_QA.
-
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: linux-pm@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Link: https://lkml.kernel.org/r/20180202145634.200291-2-arnd@arndb.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/lib/bpf/libbpf.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/x86/power/hibernate_32.c |    2 +-
+ arch/x86/power/hibernate_64.c |    2 +-
+ include/linux/suspend.h       |    2 ++
+ kernel/power/power.h          |    3 ---
+ 4 files changed, 4 insertions(+), 5 deletions(-)
 
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -590,6 +590,24 @@ bpf_object__init_maps_name(struct bpf_ob
+--- a/arch/x86/power/hibernate_32.c
++++ b/arch/x86/power/hibernate_32.c
+@@ -142,7 +142,7 @@ static inline void resume_init_first_lev
+ #endif
+ }
+ 
+-int swsusp_arch_resume(void)
++asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
+ 
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -149,7 +149,7 @@ static int relocate_restore_code(void)
  	return 0;
  }
  
-+static bool section_have_execinstr(struct bpf_object *obj, int idx)
-+{
-+	Elf_Scn *scn;
-+	GElf_Shdr sh;
-+
-+	scn = elf_getscn(obj->efile.elf, idx);
-+	if (!scn)
-+		return false;
-+
-+	if (gelf_getshdr(scn, &sh) != &sh)
-+		return false;
-+
-+	if (sh.sh_flags & SHF_EXECINSTR)
-+		return true;
-+
-+	return false;
-+}
-+
- static int bpf_object__elf_collect(struct bpf_object *obj)
+-int swsusp_arch_resume(void)
++asmlinkage int swsusp_arch_resume(void)
  {
- 	Elf *elf = obj->efile.elf;
-@@ -673,6 +691,14 @@ static int bpf_object__elf_collect(struc
- 		} else if (sh.sh_type == SHT_REL) {
- 			void *reloc = obj->efile.reloc;
- 			int nr_reloc = obj->efile.nr_reloc + 1;
-+			int sec = sh.sh_info; /* points to other section */
-+
-+			/* Only do relo for section with exec instructions */
-+			if (!section_have_execinstr(obj, sec)) {
-+				pr_debug("skip relo %s(%d) for section(%d)\n",
-+					 name, idx, sec);
-+				continue;
-+			}
+ 	int error;
  
- 			reloc = realloc(reloc,
- 					sizeof(*obj->efile.reloc) * nr_reloc);
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -378,6 +378,8 @@ extern int swsusp_page_is_forbidden(stru
+ extern void swsusp_set_page_free(struct page *);
+ extern void swsusp_unset_page_free(struct page *);
+ extern unsigned long get_safe_page(gfp_t gfp_mask);
++extern asmlinkage int swsusp_arch_suspend(void);
++extern asmlinkage int swsusp_arch_resume(void);
+ 
+ extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
+ extern int hibernate(void);
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -103,9 +103,6 @@ extern int in_suspend;
+ extern dev_t swsusp_resume_device;
+ extern sector_t swsusp_resume_block;
+ 
+-extern asmlinkage int swsusp_arch_suspend(void);
+-extern asmlinkage int swsusp_arch_resume(void);
+-
+ extern int create_basic_memory_bitmaps(void);
+ extern void free_basic_memory_bitmaps(void);
+ extern int hibernate_preallocate_memory(void);
