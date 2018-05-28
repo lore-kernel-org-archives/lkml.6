@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425351AbeE1QZx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:25:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58932 "EHLO mail.kernel.org"
+        id S939972AbeE1Q0M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:26:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933824AbeE1KKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:43 -0400
+        id S936512AbeE1KKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 115/185] dp83640: Ensure against premature access to PHY registers after reset
-Date: Mon, 28 May 2018 12:02:36 +0200
-Message-Id: <20180528100101.671047677@linuxfoundation.org>
+Subject: [PATCH 3.18 113/185] Force log to disk before reading the AGF during a fstrim
+Date: Mon, 28 May 2018 12:02:34 +0200
+Message-Id: <20180528100101.471049782@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,54 +30,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Esben Haabendal <eha@deif.com>
+From: Carlos Maiolino <cmaiolino@redhat.com>
 
-[ Upstream commit 76327a35caabd1a932e83d6a42b967aa08584e5d ]
+[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
 
-The datasheet specifies a 3uS pause after performing a software
-reset. The default implementation of genphy_soft_reset() does not
-provide this, so implement soft_reset with the needed pause.
+Forcing the log to disk after reading the agf is wrong, we might be
+calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This can cause a deadlock when racing a fstrim with a filesystem
+shutdown.
+
+The deadlock has been identified due a miscalculation bug in device-mapper
+dm-thin, which returns lack of space to its users earlier than the device itself
+really runs out of space, changing the device-mapper volume into an error state.
+
+The problem happened while filling the filesystem with a single file,
+triggering the bug in device-mapper, consequently causing an IO error
+and shutting down the filesystem.
+
+If such file is removed, and fstrim executed before the XFS finishes the
+shut down process, the fstrim process will end up holding the buffer
+lock, and going to sleep on the cil wait queue.
+
+At this point, the shut down process will try to wake up all the threads
+waiting on the cil wait queue, but for this, it will try to hold the
+same buffer log already held my the fstrim, locking up the filesystem.
+
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83640.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/xfs/xfs_discard.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1173,6 +1173,23 @@ static void dp83640_remove(struct phy_de
- 	kfree(dp83640);
- }
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -51,19 +51,19 @@ xfs_trim_extents(
  
-+static int dp83640_soft_reset(struct phy_device *phydev)
-+{
-+	int ret;
+ 	pag = xfs_perag_get(mp, agno);
+ 
+-	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
+-	if (error || !agbp)
+-		goto out_put_perag;
+-
+-	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
+-
+ 	/*
+ 	 * Force out the log.  This means any transactions that might have freed
+-	 * space before we took the AGF buffer lock are now on disk, and the
++	 * space before we take the AGF buffer lock are now on disk, and the
+ 	 * volatile disk cache is flushed.
+ 	 */
+ 	xfs_log_force(mp, XFS_LOG_SYNC);
+ 
++	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
++	if (error || !agbp)
++		goto out_put_perag;
 +
-+	ret = genphy_soft_reset(phydev);
-+	if (ret < 0)
-+		return ret;
++	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
 +
-+	/* From DP83640 datasheet: "Software driver code must wait 3 us
-+	 * following a software reset before allowing further serial MII
-+	 * operations with the DP83640."
-+	 */
-+	udelay(10);		/* Taking udelay inaccuracy into account */
-+
-+	return 0;
-+}
-+
- static int dp83640_config_init(struct phy_device *phydev)
- {
- 	struct dp83640_private *dp83640 = phydev->priv;
-@@ -1470,6 +1487,7 @@ static struct phy_driver dp83640_driver
- 	.flags		= PHY_HAS_INTERRUPT,
- 	.probe		= dp83640_probe,
- 	.remove		= dp83640_remove,
-+	.soft_reset	= dp83640_soft_reset,
- 	.config_init	= dp83640_config_init,
- 	.config_aneg	= genphy_config_aneg,
- 	.read_status	= genphy_read_status,
+ 	/*
+ 	 * Look up the longest btree in the AGF and start with it.
+ 	 */
