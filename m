@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424134AbeE1LLu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:11:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59636 "EHLO mail.kernel.org"
+        id S1424121AbeE1LLr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:11:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424110AbeE1LLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:11:45 -0400
+        id S1424090AbeE1LLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:11:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 170/272] watchdog: sprd_wdt: Fix error handling in sprd_wdt_enable()
-Date: Mon, 28 May 2018 12:03:23 +0200
-Message-Id: <20180528100255.054081581@linuxfoundation.org>
+Subject: [PATCH 4.16 151/272] ACPICA: Events: add a return on failure from acpi_hw_register_read
+Date: Mon, 28 May 2018 12:03:04 +0200
+Message-Id: <20180528100253.633098230@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,36 +30,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-[ Upstream commit 3c578cd4bc52b6e65d65be1abad9a8aa489ec207 ]
+[ Upstream commit b4c0de312613ca676db5bd7e696a44b56795612a ]
 
-If clk_prepare_enable(wdt->rtc_enable) fails,
-wdt->enable clock is left enabled.
+This ensures that acpi_ev_fixed_event_detect() does not use fixed_status
+and and fixed_enable as uninitialized variables.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/sprd_wdt.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/acpi/acpica/evevent.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/watchdog/sprd_wdt.c
-+++ b/drivers/watchdog/sprd_wdt.c
-@@ -154,8 +154,10 @@ static int sprd_wdt_enable(struct sprd_w
- 	if (ret)
- 		return ret;
- 	ret = clk_prepare_enable(wdt->rtc_enable);
--	if (ret)
-+	if (ret) {
-+		clk_disable_unprepare(wdt->enable);
- 		return ret;
+--- a/drivers/acpi/acpica/evevent.c
++++ b/drivers/acpi/acpica/evevent.c
+@@ -204,6 +204,7 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	u32 fixed_status;
+ 	u32 fixed_enable;
+ 	u32 i;
++	acpi_status status;
+ 
+ 	ACPI_FUNCTION_NAME(ev_fixed_event_detect);
+ 
+@@ -211,8 +212,12 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	 * Read the fixed feature status and enable registers, as all the cases
+ 	 * depend on their values. Ignore errors here.
+ 	 */
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
++	status |=
++	    acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	if (ACPI_FAILURE(status)) {
++		return (int_status);
 +	}
  
- 	sprd_wdt_unlock(wdt->base);
- 	val = readl_relaxed(wdt->base + SPRD_WDT_CTRL);
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INTERRUPTS,
+ 			  "Fixed Event Block: Enable %08X Status %08X\n",
