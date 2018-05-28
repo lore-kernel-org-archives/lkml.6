@@ -1,22 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940285AbeE1QqH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:46:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55122 "EHLO mail.kernel.org"
+        id S1425481AbeE1QqY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:46:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932224AbeE1KHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:05 -0400
+        id S932198AbeE1KHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:07:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>,
-        Minchan Kim <minchan@kernel.org>, "Huang, Ying" <ying.huang@intel.com>,
-        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        David Daney <david.daney@cavium.com>,
+        David Miller <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Nitin Gupta <nitin.m.gupta@oracle.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 032/185] mm: pin address_space before dereferencing it while isolating an LRU page
-Date: Mon, 28 May 2018 12:01:13 +0200
-Message-Id: <20180528100052.556669568@linuxfoundation.org>
+Subject: [PATCH 3.18 031/185] asm-generic: provide generic_pmdp_establish()
+Date: Mon, 28 May 2018 12:01:12 +0200
+Message-Id: <20180528100052.466166017@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,94 +45,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mel Gorman <mgorman@techsingularity.net>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-[ Upstream commit 69d763fc6d3aee787a3e8c8c35092b4f4960fa5d ]
+[ Upstream commit c58f0bb77ed8bf93dfdde762b01cb67eebbdfc29 ]
 
-Minchan Kim asked the following question -- what locks protects
-address_space destroying when race happens between inode trauncation and
-__isolate_lru_page? Jan Kara clarified by describing the race as follows
+Patch series "Do not lose dirty bit on THP pages", v4.
 
-CPU1                                            CPU2
+Vlastimil noted that pmdp_invalidate() is not atomic and we can lose
+dirty and access bits if CPU sets them after pmdp dereference, but
+before set_pmd_at().
 
-truncate(inode)                                 __isolate_lru_page()
-  ...
-  truncate_inode_page(mapping, page);
-    delete_from_page_cache(page)
-      spin_lock_irqsave(&mapping->tree_lock, flags);
-        __delete_from_page_cache(page, NULL)
-          page_cache_tree_delete(..)
-            ...                                   mapping = page_mapping(page);
-            page->mapping = NULL;
-            ...
-      spin_unlock_irqrestore(&mapping->tree_lock, flags);
-      page_cache_free_page(mapping, page)
-        put_page(page)
-          if (put_page_testzero(page)) -> false
-- inode now has no pages and can be freed including embedded address_space
+The bug can lead to data loss, but the race window is tiny and I haven't
+seen any reports that suggested that it happens in reality.  So I don't
+think it worth sending it to stable.
 
-                                                  if (mapping && !mapping->a_ops->migratepage)
-- we've dereferenced mapping which is potentially already free.
+Unfortunately, there's no way to address the issue in a generic way.  We
+need to fix all architectures that support THP one-by-one.
 
-The race is theoretically possible but unlikely.  Before the
-delete_from_page_cache, truncate_cleanup_page is called so the page is
-likely to be !PageDirty or PageWriteback which gets skipped by the only
-caller that checks the mappping in __isolate_lru_page.  Even if the race
-occurs, a substantial amount of work has to happen during a tiny window
-with no preemption but it could potentially be done using a virtual
-machine to artifically slow one CPU or halt it during the critical
-window.
+All architectures that have THP supported have to provide atomic
+pmdp_invalidate() that returns previous value.
 
-This patch should eliminate the race with truncation by try-locking the
-page before derefencing mapping and aborting if the lock was not
-acquired.  There was a suggestion from Huang Ying to use RCU as a
-side-effect to prevent mapping being freed.  However, I do not like the
-solution as it's an unconventional means of preserving a mapping and
-it's not a context where rcu_read_lock is obviously protecting rcu data.
+If generic implementation of pmdp_invalidate() is used, architecture
+needs to provide atomic pmdp_estabish().
 
-Link: http://lkml.kernel.org/r/20180104102512.2qos3h5vqzeisrek@techsingularity.net
-Fixes: c82449352854 ("mm: compaction: make isolate_lru_page() filter-aware again")
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Jan Kara <jack@suse.cz>
+pmdp_estabish() is not used out-side generic implementation of
+pmdp_invalidate() so far, but I think this can change in the future.
+
+This patch (of 12):
+
+This is an implementation of pmdp_establish() that is only suitable for
+an architecture that doesn't have hardware dirty/accessed bits.  In this
+case we can't race with CPU which sets these bits and non-atomic
+approach is fine.
+
+Link: http://lkml.kernel.org/r/20171213105756.69879-2-kirill.shutemov@linux.intel.com
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: David Daney <david.daney@cavium.com>
+Cc: David Miller <davem@davemloft.net>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Nitin Gupta <nitin.m.gupta@oracle.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmscan.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ include/asm-generic/pgtable.h |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1215,6 +1215,7 @@ int __isolate_lru_page(struct page *page
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -181,6 +181,21 @@ extern void pgtable_trans_huge_deposit(s
+ extern pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm, pmd_t *pmdp);
+ #endif
  
- 		if (PageDirty(page)) {
- 			struct address_space *mapping;
-+			bool migrate_dirty;
- 
- 			/* ISOLATE_CLEAN means only clean pages */
- 			if (mode & ISOLATE_CLEAN)
-@@ -1223,10 +1224,19 @@ int __isolate_lru_page(struct page *page
- 			/*
- 			 * Only pages without mappings or that have a
- 			 * ->migratepage callback are possible to migrate
--			 * without blocking
-+			 * without blocking. However, we can be racing with
-+			 * truncation so it's necessary to lock the page
-+			 * to stabilise the mapping as truncation holds
-+			 * the page lock until after the page is removed
-+			 * from the page cache.
- 			 */
-+			if (!trylock_page(page))
-+				return ret;
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++/*
++ * This is an implementation of pmdp_establish() that is only suitable for an
++ * architecture that doesn't have hardware dirty/accessed bits. In this case we
++ * can't race with CPU which sets these bits and non-atomic aproach is fine.
++ */
++static inline pmd_t generic_pmdp_establish(struct vm_area_struct *vma,
++		unsigned long address, pmd_t *pmdp, pmd_t pmd)
++{
++	pmd_t old_pmd = *pmdp;
++	set_pmd_at(vma->vm_mm, address, pmdp, pmd);
++	return old_pmd;
++}
++#endif
 +
- 			mapping = page_mapping(page);
--			if (mapping && !mapping->a_ops->migratepage)
-+			migrate_dirty = mapping && mapping->a_ops->migratepage;
-+			unlock_page(page);
-+			if (!migrate_dirty)
- 				return ret;
- 		}
- 	}
+ #ifndef __HAVE_ARCH_PMDP_INVALIDATE
+ extern void pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
+ 			    pmd_t *pmdp);
