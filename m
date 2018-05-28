@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969148AbeE1Por (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:44:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37272 "EHLO mail.kernel.org"
+        id S969165AbeE1PpI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:45:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966814AbeE1KRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:08 -0400
+        id S968626AbeE1KRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 070/268] locking/qspinlock: Ensure node->count is updated before initialising node
-Date: Mon, 28 May 2018 12:00:44 +0200
-Message-Id: <20180528100209.755214820@linuxfoundation.org>
+Subject: [PATCH 4.4 069/268] tools/libbpf: handle issues with bpf ELF objects containing .eh_frames
+Date: Mon, 28 May 2018 12:00:43 +0200
+Message-Id: <20180528100209.680966894@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,50 +30,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Jesper Dangaard Brouer <brouer@redhat.com>
 
-[ Upstream commit 11dc13224c975efcec96647a4768a6f1bb7a19a8 ]
+[ Upstream commit e3d91b0ca523d53158f435a3e13df7f0cb360ea2 ]
 
-When queuing on the qspinlock, the count field for the current CPU's head
-node is incremented. This needn't be atomic because locking in e.g. IRQ
-context is balanced and so an IRQ will return with node->count as it
-found it.
+V3: More generic skipping of relo-section (suggested by Daniel)
 
-However, the compiler could in theory reorder the initialisation of
-node[idx] before the increment of the head node->count, causing an
-IRQ to overwrite the initialised node and potentially corrupt the lock
-state.
+If clang >= 4.0.1 is missing the option '-target bpf', it will cause
+llc/llvm to create two ELF sections for "Exception Frames", with
+section names '.eh_frame' and '.rel.eh_frame'.
 
-Avoid the potential for this harmful compiler reordering by placing a
-barrier() between the increment of the head node->count and the subsequent
-node initialisation.
+The BPF ELF loader library libbpf fails when loading files with these
+sections.  The other in-kernel BPF ELF loader in samples/bpf/bpf_load.c,
+handle this gracefully. And iproute2 loader also seems to work with these
+"eh" sections.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1518528177-19169-3-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+The issue in libbpf is caused by bpf_object__elf_collect() skipping
+some sections, and later when performing relocation it will be
+pointing to a skipped section, as these sections cannot be found by
+bpf_object__find_prog_by_idx() in bpf_object__collect_reloc().
+
+This is a general issue that also occurs for other sections, like
+debug sections which are also skipped and can have relo section.
+
+As suggested by Daniel.  To avoid keeping state about all skipped
+sections, instead perform a direct qlookup in the ELF object.  Lookup
+the section that the relo-section points to and check if it contains
+executable machine instructions (denoted by the sh_flags
+SHF_EXECINSTR).  Use this check to also skip irrelevant relo-sections.
+
+Note, for samples/bpf/ the '-target bpf' parameter to clang cannot be used
+due to incompatibility with asm embedded headers, that some of the samples
+include. This is explained in more details by Yonghong Song in bpf_devel_QA.
+
+Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/locking/qspinlock.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/lib/bpf/libbpf.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -423,6 +423,14 @@ queue:
- 	tail = encode_tail(smp_processor_id(), idx);
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -487,6 +487,24 @@ bpf_object__init_maps(struct bpf_object
+ 	return 0;
+ }
  
- 	node += idx;
++static bool section_have_execinstr(struct bpf_object *obj, int idx)
++{
++	Elf_Scn *scn;
++	GElf_Shdr sh;
 +
-+	/*
-+	 * Ensure that we increment the head node->count before initialising
-+	 * the actual node. If the compiler is kind enough to reorder these
-+	 * stores, then an IRQ could overwrite our assignments.
-+	 */
-+	barrier();
++	scn = elf_getscn(obj->efile.elf, idx);
++	if (!scn)
++		return false;
 +
- 	node->locked = 0;
- 	node->next = NULL;
- 	pv_init_node(node);
++	if (gelf_getshdr(scn, &sh) != &sh)
++		return false;
++
++	if (sh.sh_flags & SHF_EXECINSTR)
++		return true;
++
++	return false;
++}
++
+ static int bpf_object__elf_collect(struct bpf_object *obj)
+ {
+ 	Elf *elf = obj->efile.elf;
+@@ -567,6 +585,14 @@ static int bpf_object__elf_collect(struc
+ 		} else if (sh.sh_type == SHT_REL) {
+ 			void *reloc = obj->efile.reloc;
+ 			int nr_reloc = obj->efile.nr_reloc + 1;
++			int sec = sh.sh_info; /* points to other section */
++
++			/* Only do relo for section with exec instructions */
++			if (!section_have_execinstr(obj, sec)) {
++				pr_debug("skip relo %s(%d) for section(%d)\n",
++					 name, idx, sec);
++				continue;
++			}
+ 
+ 			reloc = realloc(reloc,
+ 					sizeof(*obj->efile.reloc) * nr_reloc);
