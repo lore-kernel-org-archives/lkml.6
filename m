@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032251AbeE1KS7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:18:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38868 "EHLO mail.kernel.org"
+        id S1032426AbeE1KTI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:19:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031888AbeE1KSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:50 -0400
+        id S1030676AbeE1KTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 107/268] batman-adv: fix packet checksum in receive path
-Date: Mon, 28 May 2018 12:01:21 +0200
-Message-Id: <20180528100214.304598433@linuxfoundation.org>
+Subject: [PATCH 4.4 082/268] scsi: storvsc: Increase cmd_per_lun for higher speed devices
+Date: Mon, 28 May 2018 12:00:56 +0200
+Message-Id: <20180528100211.385480794@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,46 +31,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
 
-[ Upstream commit abd6360591d3f8259f41c34e31ac4826dfe621b8 ]
+[ Upstream commit cabe92a55e3a12005a4ac4d3954c9a174b0efe2a ]
 
-eth_type_trans() internally calls skb_pull(), which does not adjust the
-skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
-form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
-received.
+Increase cmd_per_lun to allow more I/Os in progress per device,
+particularly for NVMe's.  The Hyper-V host side can handle the higher
+count with no issues.
 
-Note that in usual setups, packets don't reach batman-adv with
-CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
-batadv's ethtype?), which is why the log messages do not occur on every
-system using batman-adv. I could reproduce this issue by stacking
-batman-adv on top of a VXLAN interface.
-
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Tested-by: Maximilian Wilhelm <max@sdn.clinic>
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: K. Y. Srinivasan <kys@microsoft.com>
+Acked-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/soft-interface.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/scsi/storvsc_drv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -430,13 +430,7 @@ void batadv_interface_rx(struct net_devi
- 
- 	/* skb->dev & skb->pkt_type are set here */
- 	skb->protocol = eth_type_trans(skb, soft_iface);
--
--	/* should not be necessary anymore as we use skb_pull_rcsum()
--	 * TODO: please verify this and remove this TODO
--	 * -- Dec 21st 2009, Simon Wunderlich
--	 */
--
--	/* skb->ip_summed = CHECKSUM_UNNECESSARY; */
-+	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
- 
- 	batadv_inc_counter(bat_priv, BATADV_CNT_RX);
- 	batadv_add_counter(bat_priv, BATADV_CNT_RX_BYTES,
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1538,7 +1538,7 @@ static struct scsi_host_template scsi_dr
+ 	.eh_timed_out =		storvsc_eh_timed_out,
+ 	.slave_alloc =		storvsc_device_alloc,
+ 	.slave_configure =	storvsc_device_configure,
+-	.cmd_per_lun =		255,
++	.cmd_per_lun =		2048,
+ 	.this_id =		-1,
+ 	.use_clustering =	ENABLE_CLUSTERING,
+ 	/* Make sure we dont get a sg segment crosses a page boundary */
