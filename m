@@ -1,32 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937688AbeE1K5T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:57:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45266 "EHLO mail.kernel.org"
+        id S937820AbeE1K5Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:57:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937377AbeE1K5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:00 -0400
+        id S937520AbeE1K5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Matt Fleming <matt@codeblueprint.co.uk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Alexander Graf <agraf@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 345/496] x86/mm: Fix bogus warning during EFI bootup, use boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
-Date: Mon, 28 May 2018 12:02:10 +0200
-Message-Id: <20180528100334.344786377@linuxfoundation.org>
+Subject: [PATCH 4.14 347/496] lan78xx: Connect phy early
+Date: Mon, 28 May 2018 12:02:12 +0200
+Message-Id: <20180528100334.426485423@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -42,84 +30,172 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+From: Alexander Graf <agraf@suse.de>
 
-[ Upstream commit 162ee5a8ab49be40d253f90e94aef712470a3a24 ]
+[ Upstream commit 92571a1aae40d291158d16e7142637908220f470 ]
 
-Linus reported the following boot warning:
+When using wicked with a lan78xx device attached to the system, we
+end up with ethtool commands issued on the device before an ifup
+got issued. That lead to the following crash:
 
-  WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134 load_new_mm_cr3+0x114/0x170
-  [...]
-  Call Trace:
-  switch_mm_irqs_off+0x267/0x590
-  switch_mm+0xe/0x20
-  efi_switch_mm+0x3e/0x50
-  efi_enter_virtual_mode+0x43f/0x4da
-  start_kernel+0x3bf/0x458
-  secondary_startup_64+0xa5/0xb0
+    Unable to handle kernel NULL pointer dereference at virtual address 0000039c
+    pgd = ffff800035b30000
+    [0000039c] *pgd=0000000000000000
+    Internal error: Oops: 96000004 [#1] SMP
+    Modules linked in: [...]
+    Supported: Yes
+    CPU: 3 PID: 638 Comm: wickedd Tainted: G            E      4.12.14-0-default #1
+    Hardware name: raspberrypi rpi/rpi, BIOS 2018.03-rc2 02/21/2018
+    task: ffff800035e74180 task.stack: ffff800036718000
+    PC is at phy_ethtool_ksettings_get+0x20/0x98
+    LR is at lan78xx_get_link_ksettings+0x44/0x60 [lan78xx]
+    pc : [<ffff0000086f7f30>] lr : [<ffff000000dcca84>] pstate: 20000005
+    sp : ffff80003671bb20
+    x29: ffff80003671bb20 x28: ffff800035e74180
+    x27: ffff000008912000 x26: 000000000000001d
+    x25: 0000000000000124 x24: ffff000008f74d00
+    x23: 0000004000114809 x22: 0000000000000000
+    x21: ffff80003671bbd0 x20: 0000000000000000
+    x19: ffff80003671bbd0 x18: 000000000000040d
+    x17: 0000000000000001 x16: 0000000000000000
+    x15: 0000000000000000 x14: ffffffffffffffff
+    x13: 0000000000000000 x12: 0000000000000020
+    x11: 0101010101010101 x10: fefefefefefefeff
+    x9 : 7f7f7f7f7f7f7f7f x8 : fefefeff31677364
+    x7 : 0000000080808080 x6 : ffff80003671bc9c
+    x5 : ffff80003671b9f8 x4 : ffff80002c296190
+    x3 : 0000000000000000 x2 : 0000000000000000
+    x1 : ffff80003671bbd0 x0 : ffff80003671bc00
+    Process wickedd (pid: 638, stack limit = 0xffff800036718000)
+    Call trace:
+    Exception stack(0xffff80003671b9e0 to 0xffff80003671bb20)
+    b9e0: ffff80003671bc00 ffff80003671bbd0 0000000000000000 0000000000000000
+    ba00: ffff80002c296190 ffff80003671b9f8 ffff80003671bc9c 0000000080808080
+    ba20: fefefeff31677364 7f7f7f7f7f7f7f7f fefefefefefefeff 0101010101010101
+    ba40: 0000000000000020 0000000000000000 ffffffffffffffff 0000000000000000
+    ba60: 0000000000000000 0000000000000001 000000000000040d ffff80003671bbd0
+    ba80: 0000000000000000 ffff80003671bbd0 0000000000000000 0000004000114809
+    baa0: ffff000008f74d00 0000000000000124 000000000000001d ffff000008912000
+    bac0: ffff800035e74180 ffff80003671bb20 ffff000000dcca84 ffff80003671bb20
+    bae0: ffff0000086f7f30 0000000020000005 ffff80002c296000 ffff800035223900
+    bb00: 0000ffffffffffff 0000000000000000 ffff80003671bb20 ffff0000086f7f30
+    [<ffff0000086f7f30>] phy_ethtool_ksettings_get+0x20/0x98
+    [<ffff000000dcca84>] lan78xx_get_link_ksettings+0x44/0x60 [lan78xx]
+    [<ffff0000087cbc40>] ethtool_get_settings+0x68/0x210
+    [<ffff0000087cc0d4>] dev_ethtool+0x214/0x2180
+    [<ffff0000087e5008>] dev_ioctl+0x400/0x630
+    [<ffff00000879dd00>] sock_do_ioctl+0x70/0x88
+    [<ffff00000879f5f8>] sock_ioctl+0x208/0x368
+    [<ffff0000082cde10>] do_vfs_ioctl+0xb0/0x848
+    [<ffff0000082ce634>] SyS_ioctl+0x8c/0xa8
+    Exception stack(0xffff80003671bec0 to 0xffff80003671c000)
+    bec0: 0000000000000009 0000000000008946 0000fffff4e841d0 0000aa0032687465
+    bee0: 0000aaaafa2319d4 0000fffff4e841d4 0000000032687465 0000000032687465
+    bf00: 000000000000001d 7f7fff7f7f7f7f7f 72606b622e71ff4c 7f7f7f7f7f7f7f7f
+    bf20: 0101010101010101 0000000000000020 ffffffffffffffff 0000ffff7f510c68
+    bf40: 0000ffff7f6a9d18 0000ffff7f44ce30 000000000000040d 0000ffff7f6f98f0
+    bf60: 0000fffff4e842c0 0000000000000001 0000aaaafa2c2e00 0000ffff7f6ab000
+    bf80: 0000fffff4e842c0 0000ffff7f62a000 0000aaaafa2b9f20 0000aaaafa2c2e00
+    bfa0: 0000fffff4e84818 0000fffff4e841a0 0000ffff7f5ad0cc 0000fffff4e841a0
+    bfc0: 0000ffff7f44ce3c 0000000080000000 0000000000000009 000000000000001d
+    bfe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
 
-... after merging:
+The culprit is quite simple: The driver tries to access the phy left and right,
+but only actually has a working reference to it when the device is up.
 
-  03781e40890c: x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
+The fix thus is quite simple too: Get a reference to the phy on probe already
+and keep it even when the device is going down.
 
-When the platform supports PCID and if CONFIG_DEBUG_VM=y is enabled,
-build_cr3_noflush() (called via switch_mm()) does a sanity check to see
-if X86_FEATURE_PCID is set.
+With this patch applied, I can successfully run wicked on my system and bring
+the interface up and down as many times as I want, without getting NULL pointer
+dereferences in between.
 
-Presently, build_cr3_noflush() uses "this_cpu_has(X86_FEATURE_PCID)" to
-perform the check but this_cpu_has() works only after SMP is initialized
-(i.e. per cpu cpu_info's should be populated) and this happens to be very
-late in the boot process (during rest_init()).
-
-As efi_runtime_services() are called during (early) kernel boot time
-and run time, modify build_cr3_noflush() to use boot_cpu_has() all the
-time. As suggested by Dave Hansen, this should be OK because all CPU's have
-same capabilities on x86.
-
-With this change the warning is fixed.
-
-( Dave also suggested that we put a warning in this_cpu_has() if it's used
-  early in the boot process. This is still work in progress as it affects
-  MCE. )
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Alexander Graf <agraf@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/tlbflush.h |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c |   34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -131,7 +131,12 @@ static inline unsigned long build_cr3(pg
- static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- {
- 	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
--	VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
-+	/*
-+	 * Use boot_cpu_has() instead of this_cpu_has() as this function
-+	 * might be called during early boot. This should work even after
-+	 * boot because all CPU's the have same capabilities:
-+	 */
-+	VM_WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_PCID));
- 	return __sme_pa(pgd) | kern_pcid(asid) | CR3_NOFLUSH;
- }
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2083,10 +2083,6 @@ static int lan78xx_phy_init(struct lan78
  
+ 	dev->fc_autoneg = phydev->autoneg;
+ 
+-	phy_start(phydev);
+-
+-	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
+-
+ 	return 0;
+ 
+ error:
+@@ -2523,9 +2519,9 @@ static int lan78xx_open(struct net_devic
+ 	if (ret < 0)
+ 		goto done;
+ 
+-	ret = lan78xx_phy_init(dev);
+-	if (ret < 0)
+-		goto done;
++	phy_start(net->phydev);
++
++	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
+ 
+ 	/* for Link Check */
+ 	if (dev->urb_intr) {
+@@ -2586,13 +2582,8 @@ static int lan78xx_stop(struct net_devic
+ 	if (timer_pending(&dev->stat_monitor))
+ 		del_timer_sync(&dev->stat_monitor);
+ 
+-	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
+-	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
+-
+-	phy_stop(net->phydev);
+-	phy_disconnect(net->phydev);
+-
+-	net->phydev = NULL;
++	if (net->phydev)
++		phy_stop(net->phydev);
+ 
+ 	clear_bit(EVENT_DEV_OPEN, &dev->flags);
+ 	netif_stop_queue(net);
+@@ -3507,8 +3498,13 @@ static void lan78xx_disconnect(struct us
+ 		return;
+ 
+ 	udev = interface_to_usbdev(intf);
+-
+ 	net = dev->net;
++
++	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
++	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
++
++	phy_disconnect(net->phydev);
++
+ 	unregister_netdev(net);
+ 
+ 	cancel_delayed_work_sync(&dev->wq);
+@@ -3668,8 +3664,14 @@ static int lan78xx_probe(struct usb_inte
+ 	pm_runtime_set_autosuspend_delay(&udev->dev,
+ 					 DEFAULT_AUTOSUSPEND_DELAY);
+ 
++	ret = lan78xx_phy_init(dev);
++	if (ret < 0)
++		goto out4;
++
+ 	return 0;
+ 
++out4:
++	unregister_netdev(netdev);
+ out3:
+ 	lan78xx_unbind(dev, intf);
+ out2:
+@@ -4017,7 +4019,7 @@ static int lan78xx_reset_resume(struct u
+ 
+ 	lan78xx_reset(dev);
+ 
+-	lan78xx_phy_init(dev);
++	phy_start(dev->net->phydev);
+ 
+ 	return lan78xx_resume(intf);
+ }
