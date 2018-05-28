@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162979AbeE1Kl2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:41:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32924 "EHLO mail.kernel.org"
+        id S1162991AbeE1Kld (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:41:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162961AbeE1KlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:22 -0400
+        id S1162220AbeE1KlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 329/329] kdb: make "mdr" command repeat
-Date: Mon, 28 May 2018 12:04:18 +0200
-Message-Id: <20180528100308.365040048@linuxfoundation.org>
+Subject: [PATCH 4.9 321/329] perf report: Fix memory corruption in --branch-history mode --branch-history
+Date: Mon, 28 May 2018 12:04:10 +0200
+Message-Id: <20180528100307.688308121@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,86 +34,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Jiri Olsa <jolsa@redhat.com>
 
-[ Upstream commit 1e0ce03bf142454f38a5fc050bf4fd698d2d36d8 ]
+[ Upstream commit e3ebaa465136ecfedf9c6f4671df02bf625f8125 ]
 
-The "mdr" command should repeat (continue) when only Enter/Return
-is pressed, so make it do so.
+Jin Yao reported memory corrupton in perf report with
+branch info used for stack trace:
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: kgdb-bugreport@lists.sourceforge.net
-Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
+  > Following command lines will cause perf crash.
+
+  > perf record -j call -g -a <application>
+  > perf report --branch-history
+  >
+  > *** Error in `perf': double free or corruption (!prev): 0x00000000104aa040 ***
+  > ======= Backtrace: =========
+  > /lib/x86_64-linux-gnu/libc.so.6(+0x77725)[0x7f6b37254725]
+  > /lib/x86_64-linux-gnu/libc.so.6(+0x7ff4a)[0x7f6b3725cf4a]
+  > /lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f6b37260abc]
+  > perf[0x51b914]
+  > perf(hist_entry_iter__add+0x1e5)[0x51f305]
+  > perf[0x43cf01]
+  > perf[0x4fa3bf]
+  > perf[0x4fa923]
+  > perf[0x4fd396]
+  > perf[0x4f9614]
+  > perf(perf_session__process_events+0x89e)[0x4fc38e]
+  > perf(cmd_report+0x15d2)[0x43f202]
+  > perf[0x4a059f]
+  > perf(main+0x631)[0x427b71]
+  > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f6b371fd830]
+  > perf(_start+0x29)[0x427d89]
+
+For the cumulative output, we allocate the he_cache array based on the
+--max-stack option value and populate it with data from 'callchain_cursor'.
+
+The --max-stack option value does not ensure now the limit for number of
+callchain_cursor nodes, so the cumulative iter code will allocate smaller array
+than it's actually needed and cause above corruption.
+
+I think the --max-stack limit does not apply here anyway, because we add
+callchain data as normal hist entries, while the --max-stack control the limit
+of single entry callchain depth.
+
+Using the callchain_cursor.nr as he_cache array count to fix this. Also
+removing struct hist_entry_iter::max_stack, because there's no longer any use
+for it.
+
+We need more fixes to ensure that the branch stack code follows properly the
+logic of --max-stack, which is not the case at the moment.
+
+Original-patch-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180216123619.GA9945@krava
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/debug/kdb/kdb_main.c |   27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ tools/perf/util/hist.c |    4 +---
+ tools/perf/util/hist.h |    1 -
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1564,6 +1564,7 @@ static int kdb_md(int argc, const char *
- 	int symbolic = 0;
- 	int valid = 0;
- 	int phys = 0;
-+	int raw = 0;
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -865,7 +865,7 @@ iter_prepare_cumulative_entry(struct his
+ 	 * cumulated only one time to prevent entries more than 100%
+ 	 * overhead.
+ 	 */
+-	he_cache = malloc(sizeof(*he_cache) * (iter->max_stack + 1));
++	he_cache = malloc(sizeof(*he_cache) * (callchain_cursor.nr + 1));
+ 	if (he_cache == NULL)
+ 		return -ENOMEM;
  
- 	kdbgetintenv("MDCOUNT", &mdcount);
- 	kdbgetintenv("RADIX", &radix);
-@@ -1573,9 +1574,10 @@ static int kdb_md(int argc, const char *
- 	repeat = mdcount * 16 / bytesperword;
+@@ -1030,8 +1030,6 @@ int hist_entry_iter__add(struct hist_ent
+ 	if (err)
+ 		return err;
  
- 	if (strcmp(argv[0], "mdr") == 0) {
--		if (argc != 2)
-+		if (argc == 2 || (argc == 0 && last_addr != 0))
-+			valid = raw = 1;
-+		else
- 			return KDB_ARGCOUNT;
--		valid = 1;
- 	} else if (isdigit(argv[0][2])) {
- 		bytesperword = (int)(argv[0][2] - '0');
- 		if (bytesperword == 0) {
-@@ -1611,7 +1613,10 @@ static int kdb_md(int argc, const char *
- 		radix = last_radix;
- 		bytesperword = last_bytesperword;
- 		repeat = last_repeat;
--		mdcount = ((repeat * bytesperword) + 15) / 16;
-+		if (raw)
-+			mdcount = repeat;
-+		else
-+			mdcount = ((repeat * bytesperword) + 15) / 16;
- 	}
+-	iter->max_stack = max_stack_depth;
+-
+ 	err = iter->ops->prepare_entry(iter, al);
+ 	if (err)
+ 		goto out;
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -102,7 +102,6 @@ struct hist_entry_iter {
+ 	int curr;
  
- 	if (argc) {
-@@ -1628,7 +1633,10 @@ static int kdb_md(int argc, const char *
- 			diag = kdbgetularg(argv[nextarg], &val);
- 			if (!diag) {
- 				mdcount = (int) val;
--				repeat = mdcount * 16 / bytesperword;
-+				if (raw)
-+					repeat = mdcount;
-+				else
-+					repeat = mdcount * 16 / bytesperword;
- 			}
- 		}
- 		if (argc >= nextarg+1) {
-@@ -1638,8 +1646,15 @@ static int kdb_md(int argc, const char *
- 		}
- 	}
+ 	bool hide_unresolved;
+-	int max_stack;
  
--	if (strcmp(argv[0], "mdr") == 0)
--		return kdb_mdr(addr, mdcount);
-+	if (strcmp(argv[0], "mdr") == 0) {
-+		int ret;
-+		last_addr = addr;
-+		ret = kdb_mdr(addr, mdcount);
-+		last_addr += mdcount;
-+		last_repeat = mdcount;
-+		last_bytesperword = bytesperword; // to make REPEAT happy
-+		return ret;
-+	}
- 
- 	switch (radix) {
- 	case 10:
+ 	struct perf_evsel *evsel;
+ 	struct perf_sample *sample;
