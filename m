@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033251AbeE1KU4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:20:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40370 "EHLO mail.kernel.org"
+        id S1033299AbeE1KVF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:21:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033218AbeE1KUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:20:46 -0400
+        id S1033218AbeE1KU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Claudiu Manoil <claudiu.manoil@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 117/268] gianfar: Fix Rx byte accounting for ndev stats
-Date: Mon, 28 May 2018 12:01:31 +0200
-Message-Id: <20180528100215.377943044@linuxfoundation.org>
+Subject: [PATCH 4.4 146/268] selftests: ftrace: Add a testcase for string type with kprobe_event
+Date: Mon, 28 May 2018 12:02:00 +0200
+Message-Id: <20180528100218.879984627@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,54 +30,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 590399ddf9561f2ed0839311c8ae1be21597ba68 ]
+[ Upstream commit 5fbdbed797b6d12d043a5121fdbc8d8b49d10e80 ]
 
-Don't include in the Rx bytecount of the packet sent up the stack:
-the FCB (frame control block), and the padding bytes inserted by
-the controller into the frame payload, nor the FCS. All these are
-being pulled out of the skb by gfar_process_frame().
-This issue is old, likely from the driver's beginnings, however
-it was amplified by recent:
-commit d903ec77118c ("gianfar: simplify FCS handling and fix memory leak")
-which basically added the FCS to the Rx bytecount, and so brought
-this to my attention.
+Add a testcase for string type with kprobe event.
+This tests good/bad syntax combinations and also
+the traced data is correct in several way.
 
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/152129038381.31874.9201387794548737554.stgit@devbox
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/gianfar.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc |   46 ++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
 
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -3053,9 +3053,6 @@ static void gfar_process_frame(struct ne
- 	if (ndev->features & NETIF_F_RXCSUM)
- 		gfar_rx_checksum(skb, fcb);
- 
--	/* Tell the skb what kind of packet this is */
--	skb->protocol = eth_type_trans(skb, ndev);
--
- 	/* There's need to check for NETIF_F_HW_VLAN_CTAG_RX here.
- 	 * Even if vlan rx accel is disabled, on some chips
- 	 * RXFCB_VLN is pseudo randomly set.
-@@ -3126,13 +3123,15 @@ int gfar_clean_rx_ring(struct gfar_priv_
- 			continue;
- 		}
- 
-+		gfar_process_frame(ndev, skb);
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -0,0 +1,46 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe event string type argument
 +
- 		/* Increment the number of packets */
- 		total_pkts++;
- 		total_bytes += skb->len;
- 
- 		skb_record_rx_queue(skb, rx_queue->qindex);
- 
--		gfar_process_frame(ndev, skb);
-+		skb->protocol = eth_type_trans(skb, ndev);
- 
- 		/* Send the packet up the stack */
- 		napi_gro_receive(&rx_queue->grp->napi_rx, skb);
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++echo 0 > events/enable
++echo > kprobe_events
++
++case `uname -m` in
++x86_64)
++  ARG2=%si
++  OFFS=8
++;;
++i[3456]86)
++  ARG2=%cx
++  OFFS=4
++;;
++aarch64)
++  ARG2=%x1
++  OFFS=8
++;;
++arm*)
++  ARG2=%r1
++  OFFS=4
++;;
++*)
++  echo "Please implement other architecture here"
++  exit_untested
++esac
++
++: "Test get argument (1)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
++
++echo 0 > events/kprobes/testprobe/enable
++: "Test get argument (2)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test1 test2 >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
++
++echo 0 > events/enable
++echo > kprobe_events
