@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939243AbeE1Ncj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:32:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
+        id S1163115AbeE1KqY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:46:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163121AbeE1Kq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:27 -0400
+        id S1163049AbeE1KqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Mark Lord <mlord@pobox.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 120/496] s390/cio: clear timer when terminating driver I/O
-Date: Mon, 28 May 2018 11:58:25 +0200
-Message-Id: <20180528100324.979969124@linuxfoundation.org>
+Subject: [PATCH 4.14 117/496] powerpc/bpf/jit: Fix 32-bit JIT for seccomp_data access
+Date: Mon, 28 May 2018 11:58:22 +0200
+Message-Id: <20180528100324.865556860@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,29 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: Mark Lord <mlord@pobox.com>
 
-[ Upstream commit 410d5e13e7638bc146321671e223d56495fbf3c7 ]
+[ Upstream commit 083b20907185b076f21c265b30fe5b5f24c03d8c ]
 
-When we terminate driver I/O (because we need to stop using a certain
-channel path) we also need to ensure that a timer (which may have been
-set up using ccw_device_start_timeout) is cleared.
+I am using SECCOMP to filter syscalls on a ppc32 platform, and noticed
+that the JIT compiler was failing on the BPF even though the
+interpreter was working fine.
 
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+The issue was that the compiler was missing one of the instructions
+used by SECCOMP, so here is a patch to enable JIT for that
+instruction.
+
+Fixes: eb84bab0fb38 ("ppc: Kconfig: Enable BPF JIT on ppc32")
+Signed-off-by: Mark Lord <mlord@pobox.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/device_fsm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/net/bpf_jit_comp.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/s390/cio/device_fsm.c
-+++ b/drivers/s390/cio/device_fsm.c
-@@ -897,6 +897,7 @@ void ccw_device_kill_io(struct ccw_devic
- {
- 	int ret;
- 
-+	ccw_device_set_timeout(cdev, 0);
- 	cdev->private->iretry = 255;
- 	cdev->private->async_kill_io_rc = -EIO;
- 	ret = ccw_device_cancel_halt_clear(cdev);
+--- a/arch/powerpc/net/bpf_jit_comp.c
++++ b/arch/powerpc/net/bpf_jit_comp.c
+@@ -329,6 +329,9 @@ static int bpf_jit_build_body(struct bpf
+ 			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, len) != 4);
+ 			PPC_LWZ_OFFS(r_A, r_skb, offsetof(struct sk_buff, len));
+ 			break;
++		case BPF_LDX | BPF_W | BPF_ABS: /* A = *((u32 *)(seccomp_data + K)); */
++			PPC_LWZ_OFFS(r_A, r_skb, K);
++			break;
+ 		case BPF_LDX | BPF_W | BPF_LEN: /* X = skb->len; */
+ 			PPC_LWZ_OFFS(r_X, r_skb, offsetof(struct sk_buff, len));
+ 			break;
