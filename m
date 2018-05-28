@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423775AbeE1LJb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:09:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57172 "EHLO mail.kernel.org"
+        id S1423762AbeE1LJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:09:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423736AbeE1LJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:09:21 -0400
+        id S1423305AbeE1LJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:09:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Graf <agraf@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 080/272] lan78xx: Connect phy early
-Date: Mon, 28 May 2018 12:01:53 +0200
-Message-Id: <20180528100247.869973608@linuxfoundation.org>
+Subject: [PATCH 4.16 089/272] powerpc/64s: sreset panic if there is no debugger or crash dump handlers
+Date: Mon, 28 May 2018 12:02:02 +0200
+Message-Id: <20180528100248.625273444@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,172 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Graf <agraf@suse.de>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 92571a1aae40d291158d16e7142637908220f470 ]
+[ Upstream commit d40b6768e45bd9213139b2d91d30c7692b6007b1 ]
 
-When using wicked with a lan78xx device attached to the system, we
-end up with ethtool commands issued on the device before an ifup
-got issued. That lead to the following crash:
+system_reset_exception does most of its own crash handling now,
+invoking the debugger or crash dumps if they are registered. If not,
+then it goes through to die() to print stack traces, and then is
+supposed to panic (according to comments).
 
-    Unable to handle kernel NULL pointer dereference at virtual address 0000039c
-    pgd = ffff800035b30000
-    [0000039c] *pgd=0000000000000000
-    Internal error: Oops: 96000004 [#1] SMP
-    Modules linked in: [...]
-    Supported: Yes
-    CPU: 3 PID: 638 Comm: wickedd Tainted: G            E      4.12.14-0-default #1
-    Hardware name: raspberrypi rpi/rpi, BIOS 2018.03-rc2 02/21/2018
-    task: ffff800035e74180 task.stack: ffff800036718000
-    PC is at phy_ethtool_ksettings_get+0x20/0x98
-    LR is at lan78xx_get_link_ksettings+0x44/0x60 [lan78xx]
-    pc : [<ffff0000086f7f30>] lr : [<ffff000000dcca84>] pstate: 20000005
-    sp : ffff80003671bb20
-    x29: ffff80003671bb20 x28: ffff800035e74180
-    x27: ffff000008912000 x26: 000000000000001d
-    x25: 0000000000000124 x24: ffff000008f74d00
-    x23: 0000004000114809 x22: 0000000000000000
-    x21: ffff80003671bbd0 x20: 0000000000000000
-    x19: ffff80003671bbd0 x18: 000000000000040d
-    x17: 0000000000000001 x16: 0000000000000000
-    x15: 0000000000000000 x14: ffffffffffffffff
-    x13: 0000000000000000 x12: 0000000000000020
-    x11: 0101010101010101 x10: fefefefefefefeff
-    x9 : 7f7f7f7f7f7f7f7f x8 : fefefeff31677364
-    x7 : 0000000080808080 x6 : ffff80003671bc9c
-    x5 : ffff80003671b9f8 x4 : ffff80002c296190
-    x3 : 0000000000000000 x2 : 0000000000000000
-    x1 : ffff80003671bbd0 x0 : ffff80003671bc00
-    Process wickedd (pid: 638, stack limit = 0xffff800036718000)
-    Call trace:
-    Exception stack(0xffff80003671b9e0 to 0xffff80003671bb20)
-    b9e0: ffff80003671bc00 ffff80003671bbd0 0000000000000000 0000000000000000
-    ba00: ffff80002c296190 ffff80003671b9f8 ffff80003671bc9c 0000000080808080
-    ba20: fefefeff31677364 7f7f7f7f7f7f7f7f fefefefefefefeff 0101010101010101
-    ba40: 0000000000000020 0000000000000000 ffffffffffffffff 0000000000000000
-    ba60: 0000000000000000 0000000000000001 000000000000040d ffff80003671bbd0
-    ba80: 0000000000000000 ffff80003671bbd0 0000000000000000 0000004000114809
-    baa0: ffff000008f74d00 0000000000000124 000000000000001d ffff000008912000
-    bac0: ffff800035e74180 ffff80003671bb20 ffff000000dcca84 ffff80003671bb20
-    bae0: ffff0000086f7f30 0000000020000005 ffff80002c296000 ffff800035223900
-    bb00: 0000ffffffffffff 0000000000000000 ffff80003671bb20 ffff0000086f7f30
-    [<ffff0000086f7f30>] phy_ethtool_ksettings_get+0x20/0x98
-    [<ffff000000dcca84>] lan78xx_get_link_ksettings+0x44/0x60 [lan78xx]
-    [<ffff0000087cbc40>] ethtool_get_settings+0x68/0x210
-    [<ffff0000087cc0d4>] dev_ethtool+0x214/0x2180
-    [<ffff0000087e5008>] dev_ioctl+0x400/0x630
-    [<ffff00000879dd00>] sock_do_ioctl+0x70/0x88
-    [<ffff00000879f5f8>] sock_ioctl+0x208/0x368
-    [<ffff0000082cde10>] do_vfs_ioctl+0xb0/0x848
-    [<ffff0000082ce634>] SyS_ioctl+0x8c/0xa8
-    Exception stack(0xffff80003671bec0 to 0xffff80003671c000)
-    bec0: 0000000000000009 0000000000008946 0000fffff4e841d0 0000aa0032687465
-    bee0: 0000aaaafa2319d4 0000fffff4e841d4 0000000032687465 0000000032687465
-    bf00: 000000000000001d 7f7fff7f7f7f7f7f 72606b622e71ff4c 7f7f7f7f7f7f7f7f
-    bf20: 0101010101010101 0000000000000020 ffffffffffffffff 0000ffff7f510c68
-    bf40: 0000ffff7f6a9d18 0000ffff7f44ce30 000000000000040d 0000ffff7f6f98f0
-    bf60: 0000fffff4e842c0 0000000000000001 0000aaaafa2c2e00 0000ffff7f6ab000
-    bf80: 0000fffff4e842c0 0000ffff7f62a000 0000aaaafa2b9f20 0000aaaafa2c2e00
-    bfa0: 0000fffff4e84818 0000fffff4e841a0 0000ffff7f5ad0cc 0000fffff4e841a0
-    bfc0: 0000ffff7f44ce3c 0000000080000000 0000000000000009 000000000000001d
-    bfe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+However after die() prints oopses, it does its own handling which
+doesn't allow system_reset_exception to panic (e.g., it may just
+kill the current process). This patch causes sreset exceptions to
+return from die after it prints messages but before acting.
 
-The culprit is quite simple: The driver tries to access the phy left and right,
-but only actually has a working reference to it when the device is up.
+This also stops die from invoking the debugger on 0x100 crashes.
+system_reset_exception similarly calls the debugger. It had been
+thought this was harmless (because if the debugger was disabled,
+neither call would fire, and if it was enabled the first call
+would return). However in some cases like xmon 'X' command, the
+debugger returns 0, which currently causes it to be entered
+again (first in system_reset_exception, then in die), which is
+confusing.
 
-The fix thus is quite simple too: Get a reference to the phy on probe already
-and keep it even when the device is going down.
-
-With this patch applied, I can successfully run wicked on my system and bring
-the interface up and down as many times as I want, without getting NULL pointer
-dereferences in between.
-
-Signed-off-by: Alexander Graf <agraf@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |   34 ++++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
+ arch/powerpc/kernel/traps.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2083,10 +2083,6 @@ static int lan78xx_phy_init(struct lan78
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -208,6 +208,12 @@ static void oops_end(unsigned long flags
+ 	}
+ 	raw_local_irq_restore(flags);
  
- 	dev->fc_autoneg = phydev->autoneg;
- 
--	phy_start(phydev);
--
--	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
--
- 	return 0;
- 
- error:
-@@ -2523,9 +2519,9 @@ static int lan78xx_open(struct net_devic
- 	if (ret < 0)
- 		goto done;
- 
--	ret = lan78xx_phy_init(dev);
--	if (ret < 0)
--		goto done;
-+	phy_start(net->phydev);
++	/*
++	 * system_reset_excption handles debugger, crash dump, panic, for 0x100
++	 */
++	if (TRAP(regs) == 0x100)
++		return;
 +
-+	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
+ 	crash_fadump(regs, "die oops");
  
- 	/* for Link Check */
- 	if (dev->urb_intr) {
-@@ -2586,13 +2582,8 @@ static int lan78xx_stop(struct net_devic
- 	if (timer_pending(&dev->stat_monitor))
- 		del_timer_sync(&dev->stat_monitor);
+ 	if (kexec_should_crash(current))
+@@ -272,8 +278,13 @@ void die(const char *str, struct pt_regs
+ {
+ 	unsigned long flags;
  
--	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
--	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
--
--	phy_stop(net->phydev);
--	phy_disconnect(net->phydev);
--
--	net->phydev = NULL;
-+	if (net->phydev)
-+		phy_stop(net->phydev);
+-	if (debugger(regs))
+-		return;
++	/*
++	 * system_reset_excption handles debugger, crash dump, panic, for 0x100
++	 */
++	if (TRAP(regs) != 0x100) {
++		if (debugger(regs))
++			return;
++	}
  
- 	clear_bit(EVENT_DEV_OPEN, &dev->flags);
- 	netif_stop_queue(net);
-@@ -3507,8 +3498,13 @@ static void lan78xx_disconnect(struct us
- 		return;
- 
- 	udev = interface_to_usbdev(intf);
--
- 	net = dev->net;
-+
-+	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
-+	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
-+
-+	phy_disconnect(net->phydev);
-+
- 	unregister_netdev(net);
- 
- 	cancel_delayed_work_sync(&dev->wq);
-@@ -3664,8 +3660,14 @@ static int lan78xx_probe(struct usb_inte
- 	pm_runtime_set_autosuspend_delay(&udev->dev,
- 					 DEFAULT_AUTOSUSPEND_DELAY);
- 
-+	ret = lan78xx_phy_init(dev);
-+	if (ret < 0)
-+		goto out4;
-+
- 	return 0;
- 
-+out4:
-+	unregister_netdev(netdev);
- out3:
- 	lan78xx_unbind(dev, intf);
- out2:
-@@ -4013,7 +4015,7 @@ static int lan78xx_reset_resume(struct u
- 
- 	lan78xx_reset(dev);
- 
--	lan78xx_phy_init(dev);
-+	phy_start(dev->net->phydev);
- 
- 	return lan78xx_resume(intf);
- }
+ 	flags = oops_begin(regs);
+ 	if (__die(str, regs, err))
