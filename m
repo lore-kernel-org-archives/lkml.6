@@ -1,172 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163644AbeE1KuN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:13 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:63764 "EHLO pegase1.c-s.fr"
+        id S1163690AbeE1Kub (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:50:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163600AbeE1KuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:05 -0400
-Message-Id: <e4fd8e5f953df2b68300f2e8da4614b8d2733a26.1527503958.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1527503958.git.christophe.leroy@c-s.fr>
-References: <cover.1527503958.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 2/3] powerpc/lib: optimise 32 bits __clear_user()
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Mon, 28 May 2018 10:49:56 +0000 (UTC)
+        id S1163660AbeE1KuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:20 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 203/496] iwlwifi: mvm: fix assert 0x2B00 on older FWs
+Date: Mon, 28 May 2018 11:59:48 +0200
+Message-Id: <20180528100328.490239029@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite clear_user() on the same principle as memset(0), making use
-of dcbz to clear complete cache lines.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-This code is a copy/paste of memset(), with some modifications
-in order to retrieve remaining number of bytes to be cleared,
-as it needs to be returned in case of error.
+------------------
 
-On a MPC885, throughput is almost doubled:
+From: Sara Sharon <sara.sharon@intel.com>
 
-Before:
-~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 18.990779 seconds, 52.7MB/s
+[ Upstream commit 63dd5d022f4766e6b05ee611124afcc7cbfbb953 ]
 
-After:
-~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 9.611468 seconds, 104.0MB/s
+We should add the multicast station before adding the
+broadcast station.
 
-On a MPC8321, throughput is multiplied by 2.12:
+However, in older FW, the firmware will start beaconing
+when we add the multicast station, and since the broadcast
+station is not added at this point so the transmission
+of the beacon will fail on assert 0x2b00.
 
-Before:
-root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 6.844352 seconds, 146.1MB/s
+This is fixed in later firmware, so make the order
+of addition depend on the TLV.
 
-After:
-root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-1048576000 bytes (1000.0MB) copied, 3.218854 seconds, 310.7MB/s
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 26d6c16bed53 ("iwlwifi: mvm: add multicast station")
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/lib/string_32.S | 85 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 60 insertions(+), 25 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |   45 +++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
-index 204db8a834fd..40a576d56ac7 100644
---- a/arch/powerpc/lib/string_32.S
-+++ b/arch/powerpc/lib/string_32.S
-@@ -11,6 +11,7 @@
- #include <asm/errno.h>
- #include <asm/ppc_asm.h>
- #include <asm/export.h>
-+#include <asm/cache.h>
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -8,6 +8,7 @@
+  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
++ * Copyright(c) 2018        Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -2127,15 +2128,40 @@ static int iwl_mvm_start_ap_ibss(struct
+ 	if (ret)
+ 		goto out_remove;
  
- 	.text
+-	ret = iwl_mvm_add_mcast_sta(mvm, vif);
+-	if (ret)
+-		goto out_unbind;
+-
+-	/* Send the bcast station. At this stage the TBTT and DTIM time events
+-	 * are added and applied to the scheduler */
+-	ret = iwl_mvm_send_add_bcast_sta(mvm, vif);
+-	if (ret)
+-		goto out_rm_mcast;
++	/*
++	 * This is not very nice, but the simplest:
++	 * For older FWs adding the mcast sta before the bcast station may
++	 * cause assert 0x2b00.
++	 * This is fixed in later FW so make the order of removal depend on
++	 * the TLV
++	 */
++	if (fw_has_api(&mvm->fw->ucode_capa, IWL_UCODE_TLV_API_STA_TYPE)) {
++		ret = iwl_mvm_add_mcast_sta(mvm, vif);
++		if (ret)
++			goto out_unbind;
++		/*
++		 * Send the bcast station. At this stage the TBTT and DTIM time
++		 * events are added and applied to the scheduler
++		 */
++		ret = iwl_mvm_send_add_bcast_sta(mvm, vif);
++		if (ret) {
++			iwl_mvm_rm_mcast_sta(mvm, vif);
++			goto out_unbind;
++		}
++	} else {
++		/*
++		 * Send the bcast station. At this stage the TBTT and DTIM time
++		 * events are added and applied to the scheduler
++		 */
++		iwl_mvm_send_add_bcast_sta(mvm, vif);
++		if (ret)
++			goto out_unbind;
++		iwl_mvm_add_mcast_sta(mvm, vif);
++		if (ret) {
++			iwl_mvm_send_rm_bcast_sta(mvm, vif);
++			goto out_unbind;
++		}
++	}
  
-@@ -29,44 +30,78 @@ _GLOBAL(memcmp)
- 	blr
- EXPORT_SYMBOL(memcmp)
- 
-+CACHELINE_BYTES = L1_CACHE_BYTES
-+LG_CACHELINE_BYTES = L1_CACHE_SHIFT
-+CACHELINE_MASK = (L1_CACHE_BYTES-1)
-+
- _GLOBAL(__clear_user)
--	addi	r6,r3,-4
--	li	r3,0
--	li	r5,0
--	cmplwi	0,r4,4
-+/*
-+ * Use dcbz on the complete cache lines in the destination
-+ * to set them to zero.  This requires that the destination
-+ * area is cacheable.
-+ */
-+	cmplwi	cr0, r4, 4
-+	mr	r10, r3
-+	li	r3, 0
- 	blt	7f
--	/* clear a single word */
--11:	stwu	r5,4(r6)
-+
-+11:	stw	r3, 0(r10)
- 	beqlr
--	/* clear word sized chunks */
--	andi.	r0,r6,3
--	add	r4,r0,r4
--	subf	r6,r0,r6
--	srwi	r0,r4,2
--	andi.	r4,r4,3
-+	andi.	r0, r10, 3
-+	add	r11, r0, r4
-+	subf	r6, r0, r10
-+
-+	clrlwi	r7, r6, 32 - LG_CACHELINE_BYTES
-+	add	r8, r7, r11
-+	srwi	r9, r8, LG_CACHELINE_BYTES
-+	addic.	r9, r9, -1	/* total number of complete cachelines */
-+	ble	2f
-+	xori	r0, r7, CACHELINE_MASK & ~3
-+	srwi.	r0, r0, 2
-+	beq	3f
-+	mtctr	r0
-+4:	stwu	r3, 4(r6)
-+	bdnz	4b
-+3:	mtctr	r9
-+	li	r7, 4
-+10:	dcbz	r7, r6
-+	addi	r6, r6, CACHELINE_BYTES
-+	bdnz	10b
-+	clrlwi	r11, r8, 32 - LG_CACHELINE_BYTES
-+	addi	r11, r11, 4
-+
-+2:	srwi	r0 ,r11 ,2
- 	mtctr	r0
--	bdz	7f
--1:	stwu	r5,4(r6)
-+	bdz	6f
-+1:	stwu	r3, 4(r6)
- 	bdnz	1b
--	/* clear byte sized chunks */
--7:	cmpwi	0,r4,0
-+6:	andi.	r11, r11, 3
- 	beqlr
--	mtctr	r4
--	addi	r6,r6,3
--8:	stbu	r5,1(r6)
-+	mtctr	r11
-+	addi	r6, r6, 3
-+8:	stbu	r3, 1(r6)
- 	bdnz	8b
- 	blr
--90:	mr	r3,r4
-+
-+7:	cmpwi	cr0, r4, 0
-+	beqlr
-+	mtctr	r4
-+	addi	r6, r10, -1
-+9:	stbu	r3, 1(r6)
-+	bdnz	9b
- 	blr
--91:	mfctr	r3
--	slwi	r3,r3,2
--	add	r3,r3,r4
-+
-+90:	mr	r3, r4
- 	blr
--92:	mfctr	r3
-+91:	add	r3, r10, r4
-+	subf	r3, r6, r3
- 	blr
- 
- 	EX_TABLE(11b, 90b)
-+	EX_TABLE(4b, 91b)
-+	EX_TABLE(10b, 91b)
- 	EX_TABLE(1b, 91b)
--	EX_TABLE(8b, 92b)
-+	EX_TABLE(8b, 91b)
-+	EX_TABLE(9b, 91b)
- 
- EXPORT_SYMBOL(__clear_user)
--- 
-2.13.3
+ 	/* must be set before quota calculations */
+ 	mvmvif->ap_ibss_active = true;
+@@ -2165,7 +2191,6 @@ out_quota_failed:
+ 	iwl_mvm_power_update_mac(mvm);
+ 	mvmvif->ap_ibss_active = false;
+ 	iwl_mvm_send_rm_bcast_sta(mvm, vif);
+-out_rm_mcast:
+ 	iwl_mvm_rm_mcast_sta(mvm, vif);
+ out_unbind:
+ 	iwl_mvm_binding_remove_vif(mvm, vif);
