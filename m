@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938845AbeE1MnM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:43:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46152 "EHLO mail.kernel.org"
+        id S937903AbeE1K5w (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:57:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937899AbeE1K56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:58 -0400
+        id S932527AbeE1K5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Anilkumar Kolli <akolli@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 350/496] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
-Date: Mon, 28 May 2018 12:02:15 +0200
-Message-Id: <20180528100334.559261349@linuxfoundation.org>
+Subject: [PATCH 4.14 364/496] ath10k: advertize beacon_int_min_gcd
+Date: Mon, 28 May 2018 12:02:29 +0200
+Message-Id: <20180528100335.133360897@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,32 +30,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Anilkumar Kolli <akolli@codeaurora.org>
 
-[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
+[ Upstream commit 8ebee73b574ad3dd1f14d461f65ceaffbd637650 ]
 
-bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
-32-bit word without using proper accessors, fix this, and because a
-length cannot be negative, use unsigned int while at it.
+This patch fixes regression caused by 0c317a02ca98
+("cfg80211: support virtual interfaces with different beacon intervals"),
+with this change cfg80211 expects the driver to advertize
+'beacon_int_min_gcd' to support different beacon intervals in multivap
+scenario. This support is added for, QCA988X/QCA99X0/QCA9984/QCA4019.
 
-Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Verifed AP + mesh bring up on QCA9984 with beacon interval 100msec and
+1000msec respectively.
+Frimware: firmware-5.bin_10.4-3.5.3-00053
+
+Fixes: 0c317a02ca98 ("cfg80211: support virtual interfaces with different beacon intervals")
+Signed-off-by: Anilkumar Kolli <akolli@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/mac.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bgmac.c
-+++ b/drivers/net/ethernet/broadcom/bgmac.c
-@@ -532,7 +532,8 @@ static void bgmac_dma_tx_ring_free(struc
- 	int i;
- 
- 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
--		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
-+		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
-+		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
- 
- 		slot = &ring->slots[i];
- 		dev_kfree_skb(slot->skb);
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -7810,6 +7810,7 @@ static const struct ieee80211_iface_comb
+ 		.max_interfaces = 8,
+ 		.num_different_channels = 1,
+ 		.beacon_int_infra_match = true,
++		.beacon_int_min_gcd = 1,
+ #ifdef CONFIG_ATH10K_DFS_CERTIFIED
+ 		.radar_detect_widths =	BIT(NL80211_CHAN_WIDTH_20_NOHT) |
+ 					BIT(NL80211_CHAN_WIDTH_20) |
+@@ -7933,6 +7934,7 @@ static const struct ieee80211_iface_comb
+ 		.max_interfaces = 16,
+ 		.num_different_channels = 1,
+ 		.beacon_int_infra_match = true,
++		.beacon_int_min_gcd = 1,
+ #ifdef CONFIG_ATH10K_DFS_CERTIFIED
+ 		.radar_detect_widths =	BIT(NL80211_CHAN_WIDTH_20_NOHT) |
+ 					BIT(NL80211_CHAN_WIDTH_20) |
