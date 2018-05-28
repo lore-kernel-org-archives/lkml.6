@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033468AbeE1KWE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:22:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41240 "EHLO mail.kernel.org"
+        id S1033485AbeE1KWO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:22:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033383AbeE1KVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:45 -0400
+        id S1032806AbeE1KWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Bryan ODonoghue <pure.logic@nexus-software.ie>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 171/268] btrfs: Fix possible softlock on single core machines
-Date: Mon, 28 May 2018 12:02:25 +0200
-Message-Id: <20180528100221.790975719@linuxfoundation.org>
+Subject: [PATCH 4.4 177/268] rtc: snvs: Fix usage of snvs_rtc_enable
+Date: Mon, 28 May 2018 12:02:31 +0200
+Message-Id: <20180528100222.445274026@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,36 +31,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
-[ Upstream commit 1e1c50a929bc9e49bc3f9935b92450d9e69f8158 ]
+[ Upstream commit 1485991c024603b2fb4ae77beb7a0d741128a48e ]
 
-do_chunk_alloc implements a loop checking whether there is a pending
-chunk allocation and if so causes the caller do loop. Generally this
-loop is executed only once, however testing with btrfs/072 on a single
-core vm machines uncovered an extreme case where the system could loop
-indefinitely. This is due to a missing cond_resched when loop which
-doesn't give a chance to the previous chunk allocator finish its job.
+commit 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver") introduces
+the SNVS RTC driver with a function snvs_rtc_enable().
 
-The fix is to simply add the missing cond_resched.
+snvs_rtc_enable() can return an error on the enable path however this
+driver does not currently trap that failure on the probe() path and
+consequently if enabling the RTC fails we encounter a later error spinning
+forever in rtc_write_sync_lp().
 
-Fixes: 6d74119f1a3e ("Btrfs: avoid taking the chunk_mutex in do_chunk_alloc")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+[   36.093481] [<c010d630>] (__irq_svc) from [<c0c2e9ec>] (_raw_spin_unlock_irqrestore+0x34/0x44)
+[   36.102122] [<c0c2e9ec>] (_raw_spin_unlock_irqrestore) from [<c072e32c>] (regmap_read+0x4c/0x5c)
+[   36.110938] [<c072e32c>] (regmap_read) from [<c085d0f4>] (rtc_write_sync_lp+0x6c/0x98)
+[   36.118881] [<c085d0f4>] (rtc_write_sync_lp) from [<c085d160>] (snvs_rtc_alarm_irq_enable+0x40/0x4c)
+[   36.128041] [<c085d160>] (snvs_rtc_alarm_irq_enable) from [<c08567b4>] (rtc_timer_do_work+0xd8/0x1a8)
+[   36.137291] [<c08567b4>] (rtc_timer_do_work) from [<c01441b8>] (process_one_work+0x28c/0x76c)
+[   36.145840] [<c01441b8>] (process_one_work) from [<c01446cc>] (worker_thread+0x34/0x58c)
+[   36.153961] [<c01446cc>] (worker_thread) from [<c014aee4>] (kthread+0x138/0x150)
+[   36.161388] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
+[   36.168635] rcu_sched kthread starved for 2602 jiffies! g496 c495 f0x2 RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
+[   36.178564] rcu_sched       R  running task        0     8      2 0x00000000
+[   36.185664] [<c0c288b0>] (__schedule) from [<c0c29134>] (schedule+0x3c/0xa0)
+[   36.192739] [<c0c29134>] (schedule) from [<c0c2db80>] (schedule_timeout+0x78/0x4e0)
+[   36.200422] [<c0c2db80>] (schedule_timeout) from [<c01a7ab0>] (rcu_gp_kthread+0x648/0x1864)
+[   36.208800] [<c01a7ab0>] (rcu_gp_kthread) from [<c014aee4>] (kthread+0x138/0x150)
+[   36.216309] [<c014aee4>] (kthread) from [<c0107e14>] (ret_from_fork+0x14/0x20)
+
+This patch fixes by parsing the result of rtc_write_sync_lp() and
+propagating both in the probe and elsewhere. If the RTC doesn't start we
+don't proceed loading the driver and don't get into this loop mess later
+on.
+
+Fixes: 179a502f8c46 ("rtc: snvs: add Freescale rtc-snvs driver")
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent-tree.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-snvs.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4392,6 +4392,7 @@ again:
- 	if (wait_for_alloc) {
- 		mutex_unlock(&fs_info->chunk_mutex);
- 		wait_for_alloc = 0;
-+		cond_resched();
- 		goto again;
- 	}
+--- a/drivers/rtc/rtc-snvs.c
++++ b/drivers/rtc/rtc-snvs.c
+@@ -132,20 +132,23 @@ static int snvs_rtc_set_time(struct devi
+ {
+ 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
+ 	unsigned long time;
++	int ret;
+ 
+ 	rtc_tm_to_time(tm, &time);
+ 
+ 	/* Disable RTC first */
+-	snvs_rtc_enable(data, false);
++	ret = snvs_rtc_enable(data, false);
++	if (ret)
++		return ret;
+ 
+ 	/* Write 32-bit time to 47-bit timer, leaving 15 LSBs blank */
+ 	regmap_write(data->regmap, data->offset + SNVS_LPSRTCLR, time << CNTR_TO_SECS_SH);
+ 	regmap_write(data->regmap, data->offset + SNVS_LPSRTCMR, time >> (32 - CNTR_TO_SECS_SH));
+ 
+ 	/* Enable RTC again */
+-	snvs_rtc_enable(data, true);
++	ret = snvs_rtc_enable(data, true);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int snvs_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+@@ -287,7 +290,11 @@ static int snvs_rtc_probe(struct platfor
+ 	regmap_write(data->regmap, data->offset + SNVS_LPSR, 0xffffffff);
+ 
+ 	/* Enable RTC */
+-	snvs_rtc_enable(data, true);
++	ret = snvs_rtc_enable(data, true);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to enable rtc %d\n", ret);
++		goto error_rtc_device_register;
++	}
+ 
+ 	device_init_wakeup(&pdev->dev, true);
  
