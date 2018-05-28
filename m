@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939141AbeE1N3O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:29:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37366 "EHLO mail.kernel.org"
+        id S1163217AbeE1KrK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:47:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034180AbeE1KrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:12 -0400
+        id S1034269AbeE1KrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, jgross@suse.com, luto@kernel.org,
+        prarit@redhat.com, vkuznets@redhat.com, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 134/496] macvlan: fix use-after-free in macvlan_common_newlink()
-Date: Mon, 28 May 2018 11:58:39 +0200
-Message-Id: <20180528100325.585248818@linuxfoundation.org>
+Subject: [PATCH 4.14 131/496] x86/topology: Update the cpu cores field in /proc/cpuinfo correctly across CPU hotplug operations
+Date: Mon, 28 May 2018 11:58:36 +0200
+Message-Id: <20180528100325.446368556@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,72 +34,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Samuel Neves <sneves@dei.uc.pt>
 
-[ Upstream commit 4e14bf4236490306004782813b8b4494b18f5e60 ]
+[ Upstream commit 4596749339e06dc7a424fc08a15eded850ed78b7 ]
 
-The following use-after-free was reported by KASan when running
-LTP macvtap01 test on 4.16-rc2:
+Without this fix, /proc/cpuinfo will display an incorrect amount
+of CPU cores, after bringing them offline and online again, as
+exemplified below:
 
-[10642.528443] BUG: KASAN: use-after-free in
-               macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
-[10642.626607] Read of size 8 at addr ffff880ba49f2100 by task ip/18450
-...
-[10642.963873] Call Trace:
-[10642.994352]  dump_stack+0x5c/0x7c
-[10643.035325]  print_address_description+0x75/0x290
-[10643.092938]  kasan_report+0x28d/0x390
-[10643.137971]  ? macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
-[10643.207963]  macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
-[10643.275978]  macvtap_newlink+0x171/0x260 [macvtap]
-[10643.334532]  rtnl_newlink+0xd4f/0x1300
-...
-[10646.256176] Allocated by task 18450:
-[10646.299964]  kasan_kmalloc+0xa6/0xd0
-[10646.343746]  kmem_cache_alloc_trace+0xf1/0x210
-[10646.397826]  macvlan_common_newlink+0x6de/0x14a0 [macvlan]
-[10646.464386]  macvtap_newlink+0x171/0x260 [macvtap]
-[10646.522728]  rtnl_newlink+0xd4f/0x1300
-...
-[10647.022028] Freed by task 18450:
-[10647.061549]  __kasan_slab_free+0x138/0x180
-[10647.111468]  kfree+0x9e/0x1c0
-[10647.147869]  macvlan_port_destroy+0x3db/0x650 [macvlan]
-[10647.211411]  rollback_registered_many+0x5b9/0xb10
-[10647.268715]  rollback_registered+0xd9/0x190
-[10647.319675]  register_netdevice+0x8eb/0xc70
-[10647.370635]  macvlan_common_newlink+0xe58/0x14a0 [macvlan]
-[10647.437195]  macvtap_newlink+0x171/0x260 [macvtap]
+  $ cat /proc/cpuinfo | grep cores
+  cpu cores	: 4
+  cpu cores	: 8
+  cpu cores	: 8
+  cpu cores	: 20
+  cpu cores	: 4
+  cpu cores	: 3
+  cpu cores	: 2
+  cpu cores	: 2
 
-Commit d02fd6e7d293 ("macvlan: Fix one possible double free") handles
-the case when register_netdevice() invokes ndo_uninit() on error and
-as a result free the port. But 'macvlan_port_get_rtnl(dev))' check
-(returns dev->rx_handler_data), which was added by this commit in order
-to prevent double free, is not quite correct:
+This patch fixes this by always zeroing the booted_cores variable
+upon turning off a logical CPU.
 
-* for macvlan it always returns NULL because 'lowerdev' is the one that
-  was used to register rx handler (port) in macvlan_port_create() as
-  well as to unregister it in macvlan_port_destroy().
-* for macvtap it always returns a valid pointer because macvtap registers
-  its own rx handler before macvlan_common_newlink().
-
-Fixes: d02fd6e7d293 ("macvlan: Fix one possible double free")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: jgross@suse.com
+Cc: luto@kernel.org
+Cc: prarit@redhat.com
+Cc: vkuznets@redhat.com
+Link: http://lkml.kernel.org/r/20180221205036.5244-1-sneves@dei.uc.pt
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/macvlan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/smpboot.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -1448,7 +1448,7 @@ destroy_macvlan_port:
- 	/* the macvlan port may be freed by macvlan_uninit when fail to register.
- 	 * so we destroy the macvlan port only when it's valid.
- 	 */
--	if (create && macvlan_port_get_rtnl(dev))
-+	if (create && macvlan_port_get_rtnl(lowerdev))
- 		macvlan_port_destroy(port->dev);
- 	return err;
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1521,6 +1521,7 @@ static void remove_siblinginfo(int cpu)
+ 	cpumask_clear(topology_core_cpumask(cpu));
+ 	c->phys_proc_id = 0;
+ 	c->cpu_core_id = 0;
++	c->booted_cores = 0;
+ 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+ 	recompute_smt_state();
  }
