@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422901AbeE1MST (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:18:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50124 "EHLO mail.kernel.org"
+        id S1422842AbeE1LCo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:02:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422854AbeE1LCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:51 -0400
+        id S1164678AbeE1LCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org, Henry Zhang <henryzhang62@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 473/496] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for SSI pins group
-Date: Mon, 28 May 2018 12:04:18 +0200
-Message-Id: <20180528100339.842775284@linuxfoundation.org>
+Subject: [PATCH 4.14 468/496] ARM: dts: bcm283x: Fix pin function of JTAG pins
+Date: Mon, 28 May 2018 12:04:13 +0200
+Message-Id: <20180528100339.631650173@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,189 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Henry Zhang <henryzhang62@gmail.com>
 
-[ Upstream commit b418c4609d5052d174668ad6d13efe023c45c595 ]
+[ Upstream commit 1a012cb2569f2031b3636232c3ab21c20c92d281 ]
 
-This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
-for SSI pins group.
+BCM2835 ARM Peripherals doc shows gpio pins 4, 5, 6, 12 and 13
+carry altenate function, ALT5 for ARM JTAG
 
-This is a correction to the incorrect implementation of MOD_SEL register
-pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+Fixes: 21ff843931b2 ("ARM: dts: bcm283x: Define standard pinctrl groups in the gpio node.")
 
-Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Henry Zhang <henryzhang62@gmail.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c |   40 +++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/bcm283x.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1,7 +1,7 @@
- /*
-  * R8A7796 processor support - PFC hardware block.
-  *
-- * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016-2017 Renesas Electronics Corp.
-  *
-  * This file is based on the drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-  *
-@@ -477,7 +477,7 @@ FM(IP16_31_28)	IP16_31_28	FM(IP17_31_28)
- #define MOD_SEL1_26		FM(SEL_TIMER_TMU_0)	FM(SEL_TIMER_TMU_1)
- #define MOD_SEL1_25_24		FM(SEL_SSP1_1_0)	FM(SEL_SSP1_1_1)	FM(SEL_SSP1_1_2)	FM(SEL_SSP1_1_3)
- #define MOD_SEL1_23_22_21	FM(SEL_SSP1_0_0)	FM(SEL_SSP1_0_1)	FM(SEL_SSP1_0_2)	FM(SEL_SSP1_0_3)	FM(SEL_SSP1_0_4)	F_(0, 0)		F_(0, 0)		F_(0, 0)
--#define MOD_SEL1_20		FM(SEL_SSI_0)		FM(SEL_SSI_1)
-+#define MOD_SEL1_20		FM(SEL_SSI1_0)		FM(SEL_SSI1_1)
- #define MOD_SEL1_19		FM(SEL_SPEED_PULSE_0)	FM(SEL_SPEED_PULSE_1)
- #define MOD_SEL1_18_17		FM(SEL_SIMCARD_0)	FM(SEL_SIMCARD_1)	FM(SEL_SIMCARD_2)	FM(SEL_SIMCARD_3)
- #define MOD_SEL1_16		FM(SEL_SDHI2_0)		FM(SEL_SDHI2_1)
-@@ -1224,7 +1224,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP13_11_8,	HSCK0),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	MSIOF1_SCK_D,		SEL_MSIOF1_3),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	AUDIO_CLKB_A,		SEL_ADG_B_0),
--	PINMUX_IPSR_MSEL(IP13_11_8,	SSI_SDATA1_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP13_11_8,	SSI_SDATA1_B,		SEL_SSI1_1),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	TS_SCK0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	STP_ISCLK_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	RIF0_CLK_C,		SEL_DRIF0_2),
-@@ -1232,14 +1232,14 @@ static const u16 pinmux_data[] = {
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -251,7 +251,7 @@
  
- 	PINMUX_IPSR_GPSR(IP13_15_12,	HRX0),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	MSIOF1_RXD_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_15_12,	SSI_SDATA2_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP13_15_12,	SSI_SDATA2_B,		SEL_SSI2_1),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	TS_SDEN0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	STP_ISEN_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	RIF0_D0_C,		SEL_DRIF0_2),
- 
- 	PINMUX_IPSR_GPSR(IP13_19_16,	HTX0),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	MSIOF1_TXD_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_19_16,	SSI_SDATA9_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP13_19_16,	SSI_SDATA9_B,		SEL_SSI9_1),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	TS_SDAT0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	STP_ISD_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	RIF0_D1_C,		SEL_DRIF0_2),
-@@ -1247,7 +1247,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP13_23_20,	HCTS0_N),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	RX2_B,			SEL_SCIF2_1),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	MSIOF1_SYNC_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_23_20,	SSI_SCK9_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP13_23_20,	SSI_SCK9_A,		SEL_SSI9_0),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	TS_SPSYNC0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	STP_ISSYNC_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	RIF0_SYNC_C,		SEL_DRIF0_2),
-@@ -1256,7 +1256,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP13_27_24,	HRTS0_N),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	TX2_B,			SEL_SCIF2_1),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	MSIOF1_SS1_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_27_24,	SSI_WS9_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP13_27_24,	SSI_WS9_A,		SEL_SSI9_0),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	STP_IVCXO27_0_D,	SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	BPFCLK_A,		SEL_FM_0),
- 	PINMUX_IPSR_GPSR(IP13_27_24,	AUDIO_CLKOUT2_A),
-@@ -1271,7 +1271,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP14_3_0,	RX5_A,			SEL_SCIF5_0),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	NFWP_N_A,		SEL_NDF_0),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	AUDIO_CLKA_C,		SEL_ADG_A_2),
--	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI2_0),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	STP_IVCXO27_0_C,	SEL_SSP1_0_2),
- 	PINMUX_IPSR_GPSR(IP14_3_0,	AUDIO_CLKOUT3_A),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	TCLK1_B,		SEL_TIMER_TMU_1),
-@@ -1280,7 +1280,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP14_7_4,	TX5_A,			SEL_SCIF5_0),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	MSIOF1_SS2_D,		SEL_MSIOF1_3),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	AUDIO_CLKC_A,		SEL_ADG_C_0),
--	PINMUX_IPSR_MSEL(IP14_7_4,	SSI_WS2_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP14_7_4,	SSI_WS2_A,		SEL_SSI2_0),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	STP_OPWM_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_GPSR(IP14_7_4,	AUDIO_CLKOUT_D),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	SPEEDIN_B,		SEL_SPEED_PULSE_1),
-@@ -1308,10 +1308,10 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP14_31_28,	MSIOF1_SS2_F,		SEL_MSIOF1_5),
- 
- 	/* IPSR15 */
--	PINMUX_IPSR_MSEL(IP15_3_0,	SSI_SDATA1_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP15_3_0,	SSI_SDATA1_A,		SEL_SSI1_0),
- 
--	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SDATA2_A,		SEL_SSI_0),
--	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SCK1_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SDATA2_A,		SEL_SSI2_0),
-+	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SCK1_B,		SEL_SSI1_1),
- 
- 	PINMUX_IPSR_GPSR(IP15_11_8,	SSI_SCK349),
- 	PINMUX_IPSR_MSEL(IP15_11_8,	MSIOF1_SS1_A,		SEL_MSIOF1_0),
-@@ -1397,11 +1397,11 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP16_27_24,	RIF1_D1_A,		SEL_DRIF1_0),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	RIF3_D1_A,		SEL_DRIF3_0),
- 
--	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_SDATA9_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_SDATA9_A,		SEL_SSI9_0),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	HSCK2_B,		SEL_HSCIF2_1),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	MSIOF1_SS1_C,		SEL_MSIOF1_2),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	HSCK1_A,		SEL_HSCIF1_0),
--	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_WS1_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_WS1_B,		SEL_SSI1_1),
- 	PINMUX_IPSR_GPSR(IP16_31_28,	SCK1),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	STP_IVCXO27_1_A,	SEL_SSP1_1_0),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	SCK5_A,			SEL_SCIF5_0),
-@@ -1433,7 +1433,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_19_16,	USB1_PWEN),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	SIM0_CLK_C,		SEL_SIMCARD_2),
--	PINMUX_IPSR_MSEL(IP17_19_16,	SSI_SCK1_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP17_19_16,	SSI_SCK1_A,		SEL_SSI1_0),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	TS_SCK0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	STP_ISCLK_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	FMCLK_B,		SEL_FM_1),
-@@ -1443,7 +1443,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_23_20,	USB1_OVC),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	MSIOF1_SS2_C,		SEL_MSIOF1_2),
--	PINMUX_IPSR_MSEL(IP17_23_20,	SSI_WS1_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP17_23_20,	SSI_WS1_A,		SEL_SSI1_0),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	TS_SDAT0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	STP_ISD_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	FMIN_B,			SEL_FM_1),
-@@ -1453,7 +1453,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_27_24,	USB30_PWEN),
- 	PINMUX_IPSR_GPSR(IP17_27_24,	AUDIO_CLKOUT_B),
--	PINMUX_IPSR_MSEL(IP17_27_24,	SSI_SCK2_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP17_27_24,	SSI_SCK2_B,		SEL_SSI2_1),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	TS_SDEN1_D,		SEL_TSIF1_3),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
-@@ -1465,7 +1465,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_31_28,	USB30_OVC),
- 	PINMUX_IPSR_GPSR(IP17_31_28,	AUDIO_CLKOUT1_B),
--	PINMUX_IPSR_MSEL(IP17_31_28,	SSI_WS2_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP17_31_28,	SSI_WS2_B,		SEL_SSI2_1),
- 	PINMUX_IPSR_MSEL(IP17_31_28,	TS_SPSYNC1_D,		SEL_TSIF1_3),
- 	PINMUX_IPSR_MSEL(IP17_31_28,	STP_ISSYNC_1_D,		SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP17_31_28,	STP_IVCXO27_0_E,	SEL_SSP1_0_4),
-@@ -1476,7 +1476,7 @@ static const u16 pinmux_data[] = {
- 	/* IPSR18 */
- 	PINMUX_IPSR_GPSR(IP18_3_0,	GP6_30),
- 	PINMUX_IPSR_GPSR(IP18_3_0,	AUDIO_CLKOUT2_B),
--	PINMUX_IPSR_MSEL(IP18_3_0,	SSI_SCK9_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP18_3_0,	SSI_SCK9_B,		SEL_SSI9_1),
- 	PINMUX_IPSR_MSEL(IP18_3_0,	TS_SDEN0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP18_3_0,	STP_ISEN_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP18_3_0,	RIF2_D0_B,		SEL_DRIF2_1),
-@@ -1486,7 +1486,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP18_7_4,	GP6_31),
- 	PINMUX_IPSR_GPSR(IP18_7_4,	AUDIO_CLKOUT3_B),
--	PINMUX_IPSR_MSEL(IP18_7_4,	SSI_WS9_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP18_7_4,	SSI_WS9_B,		SEL_SSI9_1),
- 	PINMUX_IPSR_MSEL(IP18_7_4,	TS_SPSYNC0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP18_7_4,	STP_ISSYNC_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP18_7_4,	RIF2_D1_B,		SEL_DRIF2_1),
+ 			jtag_gpio4: jtag_gpio4 {
+ 				brcm,pins = <4 5 6 12 13>;
+-				brcm,function = <BCM2835_FSEL_ALT4>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
+ 			};
+ 			jtag_gpio22: jtag_gpio22 {
+ 				brcm,pins = <22 23 24 25 26 27>;
