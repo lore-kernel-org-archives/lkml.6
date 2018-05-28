@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165817AbeE1Oir (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:38:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51358 "EHLO mail.kernel.org"
+        id S1165829AbeE1OjC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:39:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161314AbeE1Kbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:36 -0400
+        id S1161308AbeE1Kbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Naftali Goldstein <naftali.goldstein@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 113/329] iwlwifi: mvm: always init rs with 20mhz bandwidth rates
-Date: Mon, 28 May 2018 12:00:42 +0200
-Message-Id: <20180528100252.130901995@linuxfoundation.org>
+Subject: [PATCH 4.9 078/329] netfilter: ipv6: nf_defrag: Kill frag queue on RFC2460 failure
+Date: Mon, 28 May 2018 12:00:07 +0200
+Message-Id: <20180528100249.333943475@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,98 +31,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naftali Goldstein <naftali.goldstein@intel.com>
+From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 
-[ Upstream commit 6b7a5aea71b342ec0593d23b08383e1f33da4c9a ]
+[ Upstream commit ea23d5e3bf340e413b8e05c13da233c99c64142b ]
 
-In AP mode, when a new station associates, rs is initialized immediately
-upon association completion, before the phy context is updated with the
-association parameters, so the sta bandwidth might be wider than the phy
-context allows.
-To avoid this issue, always initialize rs with 20mhz bandwidth rate, and
-after authorization, when the phy context is already up-to-date, re-init
-rs with the correct bw.
+Failures were seen in ICMPv6 fragmentation timeout tests if they were
+run after the RFC2460 failure tests. Kernel was not sending out the
+ICMPv6 fragment reassembly time exceeded packet after the fragmentation
+reassembly timeout of 1 minute had elapsed.
 
-Signed-off-by: Naftali Goldstein <naftali.goldstein@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+This happened because the frag queue was not released if an error in
+IPv6 fragmentation header was detected by RFC2460.
+
+Fixes: 83f1999caeb1 ("netfilter: ipv6: nf_defrag: Pass on packets to stack per RFC2460")
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    4 +++
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c       |   28 +++++++++++++++-------
- 2 files changed, 24 insertions(+), 8 deletions(-)
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -2585,6 +2585,10 @@ static int iwl_mvm_mac_sta_state(struct
- 
- 		/* enable beacon filtering */
- 		WARN_ON(iwl_mvm_enable_beacon_filter(mvm, vif, 0));
-+
-+		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band,
-+				     false);
-+
- 		ret = 0;
- 	} else if (old_state == IEEE80211_STA_AUTHORIZED &&
- 		   new_state == IEEE80211_STA_ASSOC) {
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -2709,7 +2709,8 @@ static void rs_get_initial_rate(struct i
- 				struct ieee80211_sta *sta,
- 				struct iwl_lq_sta *lq_sta,
- 				enum nl80211_band band,
--				struct rs_rate *rate)
-+				struct rs_rate *rate,
-+				bool init)
- {
- 	int i, nentries;
- 	unsigned long active_rate;
-@@ -2763,14 +2764,25 @@ static void rs_get_initial_rate(struct i
- 	 */
- 	if (sta->vht_cap.vht_supported &&
- 	    best_rssi > IWL_RS_LOW_RSSI_THRESHOLD) {
--		switch (sta->bandwidth) {
--		case IEEE80211_STA_RX_BW_160:
--		case IEEE80211_STA_RX_BW_80:
--		case IEEE80211_STA_RX_BW_40:
-+		/*
-+		 * In AP mode, when a new station associates, rs is initialized
-+		 * immediately upon association completion, before the phy
-+		 * context is updated with the association parameters, so the
-+		 * sta bandwidth might be wider than the phy context allows.
-+		 * To avoid this issue, always initialize rs with 20mhz
-+		 * bandwidth rate, and after authorization, when the phy context
-+		 * is already up-to-date, re-init rs with the correct bw.
-+		 */
-+		u32 bw = init ? RATE_MCS_CHAN_WIDTH_20 : rs_bw_from_sta_bw(sta);
-+
-+		switch (bw) {
-+		case RATE_MCS_CHAN_WIDTH_40:
-+		case RATE_MCS_CHAN_WIDTH_80:
-+		case RATE_MCS_CHAN_WIDTH_160:
- 			initial_rates = rs_optimal_rates_vht;
- 			nentries = ARRAY_SIZE(rs_optimal_rates_vht);
- 			break;
--		case IEEE80211_STA_RX_BW_20:
-+		case RATE_MCS_CHAN_WIDTH_20:
- 			initial_rates = rs_optimal_rates_vht_20mhz;
- 			nentries = ARRAY_SIZE(rs_optimal_rates_vht_20mhz);
- 			break;
-@@ -2781,7 +2793,7 @@ static void rs_get_initial_rate(struct i
- 
- 		active_rate = lq_sta->active_siso_rate;
- 		rate->type = LQ_VHT_SISO;
--		rate->bw = rs_bw_from_sta_bw(sta);
-+		rate->bw = bw;
- 	} else if (sta->ht_cap.ht_supported &&
- 		   best_rssi > IWL_RS_LOW_RSSI_THRESHOLD) {
- 		initial_rates = rs_optimal_rates_ht;
-@@ -2863,7 +2875,7 @@ static void rs_initialize_lq(struct iwl_
- 	tbl = &(lq_sta->lq_info[active_tbl]);
- 	rate = &tbl->rate;
- 
--	rs_get_initial_rate(mvm, sta, lq_sta, band, rate);
-+	rs_get_initial_rate(mvm, sta, lq_sta, band, rate, init);
- 	rs_init_optimal_rate(mvm, sta, lq_sta);
- 
- 	WARN_ON_ONCE(rate->ant != ANT_A && rate->ant != ANT_B);
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -263,6 +263,7 @@ static int nf_ct_frag6_queue(struct frag
+ 			 * this case. -DaveM
+ 			 */
+ 			pr_debug("end of fragment not rounded to 8 bytes.\n");
++			inet_frag_kill(&fq->q, &nf_frags);
+ 			return -EPROTO;
+ 		}
+ 		if (end > fq->q.len) {
