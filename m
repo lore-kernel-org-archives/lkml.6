@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2618787-1527625007-2-15288624864001465838
+X-Cyrus-Session-Id: sloti22d1t05-378789-1527506474-2-3357981427915611648
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='us-ascii'
@@ -7,126 +7,355 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527625007; b=PlTAiRmpin1NWPAacjXdxnufFWilmQJXVU6noDFlEStsacUWhF
-    DHzaz1ChOgBOo63JMPmpsqeEtR2J+1uCGU65gKgcf2CkJIg/moo4y0e/c5NFGfLb
-    qU+myB5oK2Hqmplcx63BsQG6qEps9dvurPys2mjsG/ylGA3TlxXxqQB777jyjHH8
-    G8Z4Pt7dNK+JDLaDl4HTO+eZJ0UAv8A0oy+Q/kKSW6eIwYfUFaEyc5/xcPWn77R1
-    1l1ORp1dQm0n1XmxDUTPCqjVub+P5+XCLO1SESF9PoR9ED33KbxjjRw2au/fLSpp
-    nAv2vVNrNZg6idqYqzFcooDd0nJ6O5zd0b1A==
+    1527506473; b=Vdw+vaqcl9OZYLaLG6V7mrPQyFvnta+edAeNtUWkTRiBsqJVcj
+    yll/JnADwWlfTY3C2Vajrz6sauxiiTotKocFtMxlgnc0NMz22nTgkqEZ2BJwzXpS
+    DFTPWQb8UxQ5Yv0xNIf07GpQqVuYRsIRFqkawMv5Tb/jhWHsZyi82GIMqCZ0EBYn
+    TiPPHAyA2ZWXwRuQ+d46cijx46EEh/YhE5VY6s0rwUUh726h4UnoC7hGxzId5ErN
+    M930A7KbluCYLqIF/dt7nmDp30BWXx9NqlK/TcCfuIXRCYwe/dqPcA3hvTi3NAPw
+    K0qu82ArIjvM13DDWoPR1EeLZhXKuG7wvN0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527625007; bh=pNtvNhOPpD5XrckiJseQJ7X5ksI7WY
-    kN8cpMetI2SrY=; b=c20NE3dhbVi5lFw6+N3bjiw4HBJS8mjwdg5/mVvU8DOB17
-    adMesvC9JT1blOYbUbnmbf9KnYbWnZNc/hVlneBktcscQNLc+wzs3CG5ukQG1rUg
-    9Js7UeW5do+/2oGzvmpN1jCtkJ3FR/AAJU9HqYVMcyk9kW4ljgjaPZ9GoyXe53Rx
-    0jAFe5q2TDoUrSWs64LD2dIxUQdQteHnkAsawRLz7VzWCrkTc/LwfpH5g9UmVXHD
-    g05nYAchU5rHIAV1Q4ZE7ryGKRJa8MIL74wEEr/ZoT4bszWA9fMmlTYLCV/ImzbN
-    4VvCL8Ol+AKSXsIHcjIJMcCm9jgWknFLP1mCTzQw==
+    :list-id; s=fm2; t=1527506473; bh=bA1Up4M03z2sBTF40q4+jm95tadDP7
+    k0Tx4RXXbEzmk=; b=JhAFuCe5+8To8gTdZtklIGSV9vEJZ2W1IXKIV7ew0sFAj6
+    4DVVqVV5+3QGdGCh24mof/XbGjYuhVsDOXgoH48Fct+9aNcTnE90z8IdqrXUT7ot
+    hu+S0zFK5TCnLUl06WTMUt8FBSog5bjhrj/WfwsqIIjM24u5wImqgr3RpDsw1z4x
+    JEwYbHgLfCRQ8L6rrwoEvHvYRV2o0qJaam1iVd8of4hvFMKwGtbZqPXeZ9B+Bc/y
+    UvjdiXWu1rQqWj9kjKEafhgj56A/U9RtvCYsKMW0ou4RJ28+upw3fXcTebuzfErX
+    RO323I0WC4i7AiEtKu50LR/exiWN1St2qdV/SRmQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=amarulasolutions.com
+    header.i=@amarulasolutions.com header.b=rG+o+tMn header.a=rsa-sha256
+    header.s=google x-bits=1024;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=amarulasolutions.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=KsvxJ2bS;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    header.domain=amarulasolutions.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=amarulasolutions.com
+      header.i=@amarulasolutions.com header.b=rG+o+tMn header.a=rsa-sha256
+      header.s=google x-bits=1024;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=amarulasolutions.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=KsvxJ2bS;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arm.com header.result=pass header_is_org_domain=yes;
+      header.domain=amarulasolutions.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD/M8RirFZl0QEXO9gr7QwjbSQU+xhRsXkwWxzz/sCJbCOK6S17F9zb3c3sLYVJ9g6n1cw5kqZJjBgoWNDjOHp2T9sUuorRPhTB1lng/bu6j1pselHl7
-    OBrD/6fZ2YPYZaYZR4/EtnMHSFeEBc42fSaGh3spF44McsIJevtwwHZYt/nrjRWXr7uPXfopT88m1lucTqQetfvwjT1s9Rm3JV3YUA/JGpEz7U1Ey3YusFjT
+X-CM-Envelope: MS4wfK8T0fdRHT9bpdzUHWLTqjMhL+sDXYMEmrUtW6Q5Njqu0hm1Kfd7i+UFYCVVaYb3wIpBojmAwUsxS0Ze5JdGZMXHEPefGb0J+0QSkRPgd0LAidgD9DS3
+    NIkbJJbDrsIjOvc+iTubzjeSMjsSig86m9boucvd6EWDMFcGMU9cZIcWSa0FzWbCQU6mUaRrZAS4xZAZ6ajweTT+HbKtLQut0HogrulONtjZnbJn2Z4INTim
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=B9yYOL9k-iUm9KP2FWoA:9 a=CjuIK1q_8ugA:10
+    a=VnNF1IyMAAAA:8 a=NEAV23lmAAAA:8 a=B6GvL0XKAAAA:8 a=-nhRomgNHd-089ebQx8A:9
+    a=F3rQi7Rqy_V75h4A:21 a=fP7FpV8jrpm8hqN8:21 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966511AbeE2UQp (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 16:16:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47220 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966179AbeE2UQo (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Tue, 29 May 2018 16:16:44 -0400
-Date: Tue, 29 May 2018 21:17:13 +0100
-From: Will Deacon <will.deacon@arm.com>
+        id S1424828AbeE1LUW (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 07:20:22 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38803 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424613AbeE1LUS (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Mon, 28 May 2018 07:20:18 -0400
+X-Google-Smtp-Source: ADUXVKLcr5qLDYPInBf5RrNiGei8jcCZwWwLhDR3q8ktmwO6A2GFk7sYpNeGVfL0Dj6Dp4OpepJ6iA==
+Date: Mon, 28 May 2018 13:20:10 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
+        stern@rowland.harvard.edu, will.deacon@arm.com,
         peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
         dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
         akiyks@gmail.com, mingo@kernel.org
 Subject: Re: [PATCH RFC tools/memory-model] Add litmus-test naming scheme
-Message-ID: <20180529201713.GD591@arm.com>
+Message-ID: <20180528112010.GA8801@andrea>
 References: <20180525191020.GA5914@linux.vnet.ibm.com>
- <20180529093050.GB6533@arm.com>
- <20180529121107.GF3803@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529121107.GF3803@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180525191020.GA5914@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 29, 2018 at 05:11:07AM -0700, Paul E. McKenney wrote:
-> On Tue, May 29, 2018 at 10:30:50AM +0100, Will Deacon wrote:
-> > Hi Paul,
-> > 
-> > On Fri, May 25, 2018 at 12:10:20PM -0700, Paul E. McKenney wrote:
-> > > This commit documents the scheme used to generate the names for the
-> > > litmus tests.
-> > > 
-> > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > ---
-> > >  README |  136 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 135 insertions(+), 1 deletion(-)
-> > 
-> > Whilst I think documentation like this is extremely important for users,
-> > this feels like it's documenting how to drive parts of diy and I'm not
-> > convinced that it belongs in the kernel source tree as long as the projects
-> > remain separate.
-> > 
-> > Why not contribute this to the herdtools7 documentation, then just reference
-> > that from here? That would also be helpful for other people interested in
-> > memory models, but perhaps not interested in Linux (assuming such people
-> > exist ;).
+On Fri, May 25, 2018 at 12:10:20PM -0700, Paul E. McKenney wrote:
+> This commit documents the scheme used to generate the names for the
+> litmus tests.
 > 
-> We would still need at least a pointer from the Linux kernel to that
-> documentation, but I am happy either way.  We probably need examples of
-> the common cases, but probably not a full exposition of all the available
-> herd7 edges.
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> ---
+>  README |  136 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 135 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+> index 00140aaf58b7..b81f51054cd3 100644
+> --- a/tools/memory-model/litmus-tests/README
+> +++ b/tools/memory-model/litmus-tests/README
+> @@ -1,4 +1,6 @@
+> -This directory contains the following litmus tests:
+> +============
+> +LITMUS TESTS
+> +============
+>  
+>  CoRR+poonceonce+Once.litmus
+>  	Test of read-read coherence, that is, whether or not two
+> @@ -151,3 +153,135 @@ Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
+>  A great many more litmus tests are available here:
+>  
+>  	https://github.com/paulmckrcu/litmus
+> +
+> +==================
+> +LITMUS TEST NAMING
+> +==================
+> +
+> +Litmus tests are usually named based on their contents, which means that
+> +looking at the name tells you what the litmus test does.  The naming
+> +scheme covers litmus tests having a single cycle that passes through
+> +each process exactly once, so litmus tests not fitting this description
+> +are named on an ad-hoc basis.
+> +
+> +The structure of a litmus-test name is the litmus-test class, a plus
+> +sign ("+"), and one string for each process, separated by plus signs.
+> +The end of the name is ".litmus".
 
-Completely agreed.
+We used to distinguigh between the test name and the test filename; we
+currently have only one test whose name ends with .litmus:
 
-> Should this be in the herdtools7 documentation, or as added detail
-> from a variation on the "diyone7 -bell linux-kernel.bell -show edges"
-> command?  If the latter, I suppose that the ones coming from the .bell
-> file might simply be labelled as such.
+  ISA2+pooncelock+pooncelock+pombonce.litmus
 
-Many of the edges aren't specific to the Linux kernel, so I think they
-should be part of the diyone7 documentation. We could then describe only
-the additional edges added by the kernel memory model (e.g. "Once") in
-the kernel documentation.
+(that I missed until now...).
 
-Will
+
+> +
+> +The litmus-test classes may be found in the infamous test6.pdf:
+> +https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test6.pdf
+> +Each class defines the pattern of accesses and of the variables accessed.
+> +For example, if the one process writes to a pair of variables, and
+> +the other process reads from these same variables, the corresponding
+> +litmus-test class is "MP" (message passing), which may be found on the
+> +left-hand end of the second row of tests on page one of test6.pdf.
+> +
+> +The strings used to identify the actions carried out by each process are
+> +complex due to a desire to have finite-length names.
+
+I'm not sure what you mean here: can you elaborate/rephrase?
+
+
+> Thus, there is a
+> +tool to generate these strings from a given litmus test's actions.  For
+> +example, consider the processes from SB+rfionceonce-poonceonces.litmus:
+> +
+> +	P0(int *x, int *y)
+> +	{
+> +		int r1;
+> +		int r2;
+> +
+> +		WRITE_ONCE(*x, 1);
+> +		r1 = READ_ONCE(*x);
+> +		r2 = READ_ONCE(*y);
+> +	}
+> +
+> +	P1(int *x, int *y)
+> +	{
+> +		int r3;
+> +		int r4;
+> +
+> +		WRITE_ONCE(*y, 1);
+> +		r3 = READ_ONCE(*y);
+> +		r4 = READ_ONCE(*x);
+> +	}
+> +
+> +The next step is to construct a space-separated list of descriptors,
+> +interleaving descriptions of the relation between a pair of consecutive
+> +accesses with descriptions of the second access in the pair.
+> +
+> +P0()'s WRITE_ONCE() is read by its first READ_ONCE(), which is a
+> +reads-from link (rf) and internal to the P0() process.  This is
+> +"rfi", which is an abbreviation for "reads-from internal".  Because
+> +some of the tools string these abbreviations together with space
+> +characters separating processes, the first character is capitalized,
+> +resulting in "Rfi".
+> +
+> +P0()'s second access is a READ_ONCE(), as opposed to (for example)
+> +smp_load_acquire(), so next is "Once".  Thus far, we have "Rfi Once".
+> +
+> +P0()'s third access is also a READ_ONCE(), but to y rather than x.
+> +This is related to P0()'s second access by program order ("po"),
+> +to a different variable ("d"), and both accesses are reads ("RR").
+> +The resulting descriptor is "PodRR".  Because P0()'s third access is
+> +READ_ONCE(), we add another "Once" descriptor.
+> +
+> +A from-read ("fre") relation links P0()'s third to P1()'s first
+> +access, and the resulting descriptor is "Fre".  P1()'s first access is
+> +WRITE_ONCE(), which as before gives the descriptor "Once".  The string
+> +thus far is thus "Rfi Once PodRR Once Fre Once".
+> +
+> +The remainder of P1() is similar to P0(), which means we add
+> +"Rfi Once PodRR Once".  Another fre links P1()'s last access to
+> +P0()'s first access, which is WRITE_ONCE(), so we add "Fre Once".
+> +The full string is thus:
+> +
+> +	Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once
+> +
+> +This string can be given to the "norm7" and "classify7" tools to
+> +produce the name:
+> +
+> +$ norm7 -bell linux-kernel.bell Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once |  classify7 -bell linux-kernel.bell -diyone | sed -e 's/:.*//g'
+> +SB+rfionceonce-poonceonces
+
+We should check for the required version of herdtools7; a quick search
+here pointed out:
+
+  ad5681da10fafb ("gen: add the tool 'norm' that normalise and name one cycle given as command line arguments.")
+
+(so after v7.49), but I do remember a 'norm7' tool during my 'Parisian
+days', mmh...
+
+I also notice that, with the current version, the above command can be
+simplified to:
+
+  $ norm7 -bell linux-kernel.bell Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once | sed -e 's/:.*//g'
+
+but we might want to list other commands for backward compatibility.
+
+
+> +
+> +Adding the ".litmus" suffix: SB+rfionceonce-poonceonces.litmus
+> +
+> +
+> +=======================
+> +LITMUS TEST DESCRIPTORS
+> +=======================
+> +
+> +These descriptors cover connections between consecutive accesses:
+
+Maybe expand to recall that we're referring to a particular cycle (the
+cycle referred to in the previous section)? (the term 'consecutive' is
+overloaded ;-)
+
+
+> +
+> +Fre: From-read external.  The current process wrote a variable that
+> +	the previous process read.  Example: The SB (store buffering) test.
+> +Fri: From-read internal.  This process read a variable and then
+> +	immediately wrote to it.  Example: ???
+> +PodRR: Program-order different variable, read followed by read.
+> +	This process read a variable and again read a different variable.
+> +	Example: The read-side process in the MP (message-passing) test.
+> +PodRW: Program-order different variable, read followed by write.
+> +	This process read a variable and then wrote a different variable.
+> +	Example: The LB (load buffering) test.
+> +PodWR: Program-order different variable, write followed by read.
+> +	This process wrote a variable and then read a different variable.
+> +	Example: The SB (store buffering) test.
+> +PodWW: Program-order different variable, write followed by write.
+> +	This process wrote a variable and again wrote a different variable.
+> +	Example: The write-side process in the MP (message-passing) test.
+> +PosRR: Program-order same variable, read followed by read.
+> +	This process read a variable and again read that same variable.
+> +	Example: ???
+> +PosRW: Program-order same variable, read followed by write.
+> +	This process read a variable and then wrote that same variable.
+> +	Example: ???
+> +PosWR: Program-order same variable, write followed by read.
+> +	This process wrote a variable and then read that same variable.
+> +	Example: ???
+> +PosWW: Program-order same variable, write followed by write.
+> +	This process wrote a variable and again rrote that same variable.
+
+s/rrote/wrote
+
+
+> +	Example: ???
+> +Rfe: Read-from external.  The current process read a variable written
+> +	by the previous process.  Example: The MP (message passing) test.
+> +Rfi: Read-from internal.  The current process wrote a variable and then
+> +	immediately read the value back from it.  Example:  ???
+> +	Comparison to PosWR???
+
+I'm not sure if it is worth commenting on this, but compare, e.g., the
+'exists' clauses of the following two tests (thinking at 'coherence'):
+
+$ diyone7 -arch LISA PosWR PodRR Fre PosWR PodRR Fre
+LISA A
+"PosWR PodRR Fre PosWR PodRR Fre"
+Generator=diyone7 (version 7.49+02(dev))
+Prefetch=0:x=F,0:y=T,1:y=F,1:x=T
+Com=Fr Fr
+Orig=PosWR PodRR Fre PosWR PodRR Fre
+{
+}
+ P0       | P1       ;
+ w[] x 1  | w[] y 1  ;
+ r[] r0 x | r[] r0 y ;
+ r[] r1 y | r[] r1 x ;
+exists
+(0:r1=0 /\ 1:r1=0)
+
+$ diyone7 -arch LISA Rfi PodRR Fre Rfi PodRR Fre
+LISA A
+"Rfi PodRR Fre Rfi PodRR Fre"
+Generator=diyone7 (version 7.49+02(dev))
+Prefetch=0:x=F,0:y=T,1:y=F,1:x=T
+Com=Fr Fr
+Orig=Rfi PodRR Fre Rfi PodRR Fre
+{
+}
+ P0       | P1       ;
+ w[] x 1  | w[] y 1  ;
+ r[] r0 x | r[] r0 y ;
+ r[] r1 y | r[] r1 x ;
+exists
+(0:r0=1 /\ 0:r1=0 /\ 1:r0=1 /\ 1:r1=0)
+
+
+> +Wse: Write same external.  The current process wrote to a variable that
+> +	was also written to by the previous process.  Example:  ???
+> +Wsi: Write same internal.  The current process wrote to a variable and
+> +	then immediately wrote to it again.  Example:  ???
+
+The list of descriptors is incomplete; the command:
+
+  $ diyone7 -bell linux-kernel.bell -show edges
+
+shows other descriptors (including fences and dependencies).  We might
+want to list this command; searching the commit history, I found:
+
+   3c24730ef6c662 ("gen: Add a new command line option -show (edges|fences|annotations) that list various categories of candidate relaxations.")
+
+I also notice that our current names for tests with fences (and cycle)
+deviate from the corresponding 'norm7' results; e.g.,
+
+  $ norm7 -bell linux-kernel.bell FenceWmbdWW Once Rfe Once FenceRmbdRR Once Fre Once | sed -e 's/:.*//g'
+  MP+fencewmbonceonce+fencermbonceonce
+
+while we use 'MP+wmbonceonce+rmbonceonce' (that is, we omit the 'fence'
+prefixes).
+
+  Andrea
+
+
+> 
