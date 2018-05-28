@@ -1,78 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753153AbeE1FGh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 01:06:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45842 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751238AbeE1FGe (ORCPT
+        id S1753152AbeE1FTk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 01:19:40 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33208 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750765AbeE1FTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 01:06:34 -0400
-X-Google-Smtp-Source: ADUXVKIx6ICLaUQ1bg/u8U09LIeO3NXCR5hdEMUw43dCRE3RuAdfW7XBRRkxLvkQ88ehqJQ43oc/y4IGfD7WxHUnTTc=
+        Mon, 28 May 2018 01:19:37 -0400
+X-Google-Smtp-Source: ADUXVKIGyH75RqJaczrFjC6yqok6W71OsP9yyTlYel+peb47lJQYPm+Z0slZ4dE8vg1FZWEDU0B4kQ==
+Date: Sun, 27 May 2018 22:19:36 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>, Davidlohr Bueso <dave@stgolabs.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-i2c@vger.kernel.org, Peter Chang <dpf@google.com>,
+        Deepa Dinamani <deepadinamani@google.com>,
+        John Sperbeck <jsperbeck@google.com>
+Subject: Re: [PATCH v3 1/2] rtmutex: allow specifying a subclass for nested
+ locking
+Message-ID: <20180528051936.GA205298@joelaf.mtv.corp.google.com>
+References: <CAFNjLiXZk3Zigfpy9Hj2uY92sPGB7msUxoZHf6pFDOWSuBwkBA@mail.gmail.com>
+ <20180524135240.10881-1-peda@axentia.se>
+ <20180524135240.10881-2-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20180520.231820.868530785962553925.davem@davemloft.net>
-References: <20180514032839.32079-1-acelan.kao@canonical.com>
- <20180514.093504.1396660355199793729.davem@davemloft.net> <CAFv23Q=RGo5Tw4sL5GiYM69xeGUPReiBE290rnzCvOPezQinCg@mail.gmail.com>
- <20180520.231820.868530785962553925.davem@davemloft.net>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Mon, 28 May 2018 13:06:31 +0800
-Message-ID: <CAFv23QnGJz8YUwzqmzHii=Obg8D9sb25Z4A+FFv2ze7HYXXG8g@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "alx: remove WoL support"
-To: David Miller <davem@davemloft.net>
-Cc: James Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>, rakesh@tuxera.com,
-        netdev@vger.kernel.org, Emily Chien <emily.chien@canonical.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Johannes Stezenbach <js@sig21.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524135240.10881-2-peda@axentia.se>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Thu, May 24, 2018 at 03:52:39PM +0200, Peter Rosin wrote:
+> Needed for annotating rt_mutex locks.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  include/linux/rtmutex.h  |  7 +++++++
+>  kernel/locking/rtmutex.c | 29 +++++++++++++++++++++++++----
+>  2 files changed, 32 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
+> index 1b92a28dd672..6fd615a0eea9 100644
+> --- a/include/linux/rtmutex.h
+> +++ b/include/linux/rtmutex.h
+> @@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(struct rt_mutex *lock)
+>  extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
+>  extern void rt_mutex_destroy(struct rt_mutex *lock);
+>  
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
+> +#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
+> +#else
+>  extern void rt_mutex_lock(struct rt_mutex *lock);
+> +#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
+> +#endif
+> +
+>  extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
+>  extern int rt_mutex_timed_lock(struct rt_mutex *lock,
+>  			       struct hrtimer_sleeper *timeout);
+> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+:
+>  }
+>  
+> +static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
+> +{
+> +	might_sleep();
+> +
+> +	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
+> +	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
+> +}
+> +
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +/**
+> + * rt_mutex_lock_nested - lock a rt_mutex
 
-Just inform you a news reported by a user who confirmed the wake up
-issue can't be reproduce by the new kernel.
-https://bugzilla.kernel.org/show_bug.cgi?id=61651#c126
+This ifdef seems consistent with other nested locking primitives, but its
+kind of confusing.
 
-<quote>
-Guillaume de Jabrun 2018-05-27 15:12:54 UTC
+The Kconfig.debug for DEBUG_LOCK_ALLOC says:
 
-I am using this patch for a long time. I was experiencing the "wake up
-twice" bug, but with recent kernel version, I don't have this issue
-anymore.
-I can't tell which version actually fix the bug (I don't remember..).
-</quote>
+config DEBUG_LOCK_ALLOC
+	bool "Lock debugging: detect incorrect freeing of live locks"
+	[...]
+	help
+	 This feature will check whether any held lock (spinlock, rwlock,
+	 mutex or rwsem) is incorrectly freed by the kernel, via any of the
+	 memory-freeing routines (kfree(), kmem_cache_free(), free_pages(),
+	 vfree(), etc.), whether a live lock is incorrectly reinitialized via
+	 spin_lock_init()/mutex_init()/etc., or whether there is any lock
+	 held during task exit.
 
-Best regards,
-AceLan Kao.
+Shouldn't this ideally be ifdef'd under PROVE_LOCKING for this and other
+locking primitives? Any idea what's the reason? I know PROVE_LOCKING selects
+DEBUG_LOCK_ALLOC but still..
 
-2018-05-21 11:18 GMT+08:00 David Miller <davem@davemloft.net>:
-> From: AceLan Kao <acelan.kao@canonical.com>
-> Date: Mon, 21 May 2018 11:14:00 +0800
->
->> We are willing to fix the issue, but we don't have a machine to
->> reproduce it, and the WoL feature has been removed 5 years ago, it's
->> hard to find those buggy machines.
->
-> Have you bothered to ask the person who did the revert?
->
->> WoL is a feature that is only used by a very small group of people,
->> and the wake up issue looks like only happens on some
->> platforms. Which means only small part of the group of people are
->> affected.
->
-> One of those people was the wireless networking stack maintainer.
->
->> So, it's not a serious issue worth to remove it from alx driver.
->
-> I disagree.
->
-> You must fix the regression solved by the revert, before adding
-> WoL support back to the driver.
->
-> I'm not going to say this again.
->
-> Thank you.
->
+thanks!
+
+- Joel
+ 
