@@ -1,58 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165109AbeE1NBH (ORCPT <rfc822;w@1wt.eu>);
+        id S1165118AbeE1NBO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:01:14 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:50774 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165094AbeE1NBH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 09:01:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163591AbeE1Kxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:35 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 246/496] workqueue: use put_device() instead of kfree()
-Date: Mon, 28 May 2018 12:00:31 +0200
-Message-Id: <20180528100330.261720481@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+To: "Alasdair Kergon <agk@redhat.com>; Mike Snitzer" <snitzer@redhat.com>
+Subject: [PATCH] md: dm-crypt: Add Inline Encryption support for dmcrypt
+CC: <linux-kernel@vger.kernel.org>,
+        "Manjunath M Bettegowda <manjumb@synopsys.com>; Prabu Thangamuthu
+        <prabut@synopsys.com>; Tejas Joglekar" <Tejas.Joglekar@synopsys.com>
+From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+Message-ID: <e9120efc-1e25-79c8-6132-9062dd030539@synopsys.com>
+Date: Mon, 28 May 2018 14:01:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.144.133.104]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+This patch adds new option
+    -- perform_inline_encrypt
+that set the option inside dmcrypt to use inline encryption for
+the configured mapping. I want to introduce inline encryption support
+in the UFS Host Controller driver. The usage of the same for accomplishing
+the Full Disk Encryption is done by the following changes in the
+dmcrypt subsystem:
+    - New function crypt_inline_encrypt_submit() is added to the
+dmcrypt which associate the crypto context to the bios which
+are submitted by the subsystem.
+    - Successful configuration for the inline encryption will result in
+the crypto transformation job being bypassed in the dmcrypt layer and the
+actual encryption happens inline to the block device.
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Another patch set is sent to the block layer community for
+CONFIG_BLK_DEV_INLINE_ENCRYPTION config, which enables changes in the
+block layer for adding the bi_ie_private variable to the bio structure.
 
-[ Upstream commit 537f4146c53c95aac977852b371bafb9c6755ee1 ]
-
-Never directly free @dev after calling device_register(), even
-if it returned an error! Always use put_device() to give up the
-reference initialized in this function instead.
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
 ---
- kernel/workqueue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-crypt.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 53 insertions(+), 2 deletions(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5350,7 +5350,7 @@ int workqueue_sysfs_register(struct work
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 44ff473..a9ed567 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -39,6 +39,7 @@
+ #include <linux/device-mapper.h>
  
- 	ret = device_register(&wq_dev->dev);
- 	if (ret) {
--		kfree(wq_dev);
-+		put_device(&wq_dev->dev);
- 		wq->wq_dev = NULL;
- 		return ret;
+ #define DM_MSG_PREFIX "crypt"
++#define REQ_INLINE_ENCRYPTION REQ_DRV
+ 
+ /*
+  * context holding the current state of a multi-part conversion
+@@ -125,7 +126,8 @@ struct iv_tcw_private {
+  * and encrypts / decrypts at the same time.
+  */
+ enum flags { DM_CRYPT_SUSPENDED, DM_CRYPT_KEY_VALID,
+-	     DM_CRYPT_SAME_CPU, DM_CRYPT_NO_OFFLOAD };
++	     DM_CRYPT_SAME_CPU, DM_CRYPT_NO_OFFLOAD,
++		 DM_CRYPT_INLINE_ENCRYPT };
+ 
+ enum cipher_flags {
+ 	CRYPT_MODE_INTEGRITY_AEAD,	/* Use authenticated mode for cihper */
+@@ -215,6 +217,10 @@ struct crypt_config {
+ 
+ 	u8 *authenc_key; /* space for keys in authenc() format (if used) */
+ 	u8 key[0];
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++	void *ie_private; /* crypto context for inline enc drivers */
++	int key_cfg_idx;  /* key configuration index for inline enc */
++#endif
+ };
+ 
+ #define MIN_IOS		64
+@@ -1470,6 +1476,20 @@ static void crypt_io_init(struct dm_crypt_io *io, struct crypt_config *cc,
+ 	atomic_set(&io->io_pending, 0);
+ }
+ 
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++static void crypt_inline_encrypt_submit(struct crypt_config *cc,
++	struct dm_target *ti, struct bio *bio)
++{
++	bio_set_dev(bio, cc->dev->bdev);
++	if (bio_sectors(bio))
++		bio->bi_iter.bi_sector = cc->start +
++			dm_target_offset(ti, bio->bi_iter.bi_sector);
++	bio->bi_opf |= REQ_INLINE_ENCRYPTION;
++	bio->bi_ie_private = cc->ie_private;
++	generic_make_request(bio);
++}
++#endif
++
+ static void crypt_inc_pending(struct dm_crypt_io *io)
+ {
+ 	atomic_inc(&io->io_pending);
+@@ -1960,6 +1980,9 @@ static int crypt_setkey(struct crypt_config *cc)
+ 
+ 	/* Ignore extra keys (which are used for IV etc) */
+ 	subkey_size = crypt_subkey_size(cc);
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++	cc->key_cfg_idx = -1;
++#endif
+ 
+ 	if (crypt_integrity_hmac(cc)) {
+ 		if (subkey_size < cc->key_mac_size)
+@@ -1978,10 +2001,19 @@ static int crypt_setkey(struct crypt_config *cc)
+ 			r = crypto_aead_setkey(cc->cipher_tfm.tfms_aead[i],
+ 					       cc->key + (i * subkey_size),
+ 					       subkey_size);
+-		else
++		else {
+ 			r = crypto_skcipher_setkey(cc->cipher_tfm.tfms[i],
+ 						   cc->key + (i * subkey_size),
+ 						   subkey_size);
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++			if (r > 0) {
++				cc->key_cfg_idx = r;
++				cc->ie_private = cc->cipher_tfm.tfms[i];
++				r = 0;
++			}
++#endif
++		}
++
+ 		if (r)
+ 			err = r;
  	}
+@@ -2654,6 +2686,10 @@ static int crypt_ctr_optional(struct dm_target *ti, unsigned int argc, char **ar
+ 			cc->sector_shift = __ffs(cc->sector_size) - SECTOR_SHIFT;
+ 		} else if (!strcasecmp(opt_string, "iv_large_sectors"))
+ 			set_bit(CRYPT_IV_LARGE_SECTORS, &cc->cipher_flags);
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++		else if (!strcasecmp(opt_string, "perform_inline_encrypt"))
++			set_bit(DM_CRYPT_INLINE_ENCRYPT, &cc->flags);
++#endif
+ 		else {
+ 			ti->error = "Invalid feature arguments";
+ 			return -EINVAL;
+@@ -2892,6 +2928,13 @@ static int crypt_map(struct dm_target *ti, struct bio *bio)
+ 	if (unlikely(bio->bi_iter.bi_size & (cc->sector_size - 1)))
+ 		return DM_MAPIO_KILL;
+ 
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++	if (cc->key_cfg_idx > 0) {
++		crypt_inline_encrypt_submit(cc, ti, bio);
++		return DM_MAPIO_SUBMITTED;
++	}
++#endif
++
+ 	io = dm_per_bio_data(bio, cc->per_bio_data_size);
+ 	crypt_io_init(io, cc, bio, dm_target_offset(ti, bio->bi_iter.bi_sector));
+ 
+@@ -2954,6 +2997,10 @@ static void crypt_status(struct dm_target *ti, status_type_t type,
+ 		num_feature_args += test_bit(DM_CRYPT_NO_OFFLOAD, &cc->flags);
+ 		num_feature_args += cc->sector_size != (1 << SECTOR_SHIFT);
+ 		num_feature_args += test_bit(CRYPT_IV_LARGE_SECTORS, &cc->cipher_flags);
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++		num_feature_args +=
++			test_bit(DM_CRYPT_INLINE_ENCRYPT, &cc->flags);
++#endif
+ 		if (cc->on_disk_tag_size)
+ 			num_feature_args++;
+ 		if (num_feature_args) {
+@@ -2970,6 +3017,10 @@ static void crypt_status(struct dm_target *ti, status_type_t type,
+ 				DMEMIT(" sector_size:%d", cc->sector_size);
+ 			if (test_bit(CRYPT_IV_LARGE_SECTORS, &cc->cipher_flags))
+ 				DMEMIT(" iv_large_sectors");
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++			if (test_bit(DM_CRYPT_INLINE_ENCRYPT, &cc->flags))
++				DMEMIT(" perform_inline_encrypt");
++#endif
+ 		}
+ 
+ 		break;
+-- 
+2.7.4
