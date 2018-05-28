@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937053AbeE1K1o (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:27:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47074 "EHLO mail.kernel.org"
+        id S937070AbeE1K1t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:27:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937024AbeE1K1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:39 -0400
+        id S937024AbeE1K1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 033/329] Input: psmouse - fix Synaptics detection when protocol is disabled
-Date: Mon, 28 May 2018 11:59:22 +0200
-Message-Id: <20180528100245.187673827@linuxfoundation.org>
+Subject: [PATCH 4.9 035/329] tools lib traceevent: Simplify pointer print logic and fix %pF
+Date: Mon, 28 May 2018 11:59:24 +0200
+Message-Id: <20180528100245.384552537@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,86 +32,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 2bc4298f59d2f15175bb568e2d356b5912d0cdd9 ]
+[ Upstream commit 38d70b7ca1769f26c0b79f3c08ff2cc949712b59 ]
 
-When Synaptics protocol is disabled, we still need to try and detect the
-hardware, so we can switch to SMBus device if SMbus is detected, or we know
-that it is Synaptics device and reset it properly for the bare PS/2
-protocol.
+When processing %pX in pretty_print(), simplify the logic slightly by
+incrementing the ptr to the format string if isalnum(ptr[1]) is true.
+This follows the logic a bit more closely to what is in the kernel.
 
-Fixes: c378b5119eb0 ("Input: psmouse - factor out common protocol probing code")
-Reported-by: Matteo Croce <mcroce@redhat.com>
-Tested-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Also, this fixes a small bug where %pF was not giving the offset of the
+function.
+
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: http://lkml.kernel.org/r/20180112004822.260262257@goodmis.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/mouse/psmouse-base.c |   34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ tools/lib/traceevent/event-parse.c |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -937,6 +937,21 @@ static void psmouse_apply_defaults(struc
- 	psmouse->pt_deactivate = NULL;
- }
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -4927,21 +4927,22 @@ static void pretty_print(struct trace_se
+ 				else
+ 					ls = 2;
  
-+static bool psmouse_do_detect(int (*detect)(struct psmouse *, bool),
-+			      struct psmouse *psmouse, bool allow_passthrough,
-+			      bool set_properties)
-+{
-+	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
-+	    !allow_passthrough) {
-+		return false;
-+	}
+-				if (*(ptr+1) == 'F' || *(ptr+1) == 'f' ||
+-				    *(ptr+1) == 'S' || *(ptr+1) == 's') {
++				if (isalnum(ptr[1]))
+ 					ptr++;
 +
-+	if (set_properties)
-+		psmouse_apply_defaults(psmouse);
-+
-+	return detect(psmouse, set_properties) == 0;
-+}
-+
- static bool psmouse_try_protocol(struct psmouse *psmouse,
- 				 enum psmouse_type type,
- 				 unsigned int *max_proto,
-@@ -948,15 +963,8 @@ static bool psmouse_try_protocol(struct
- 	if (!proto)
- 		return false;
++				if (*ptr == 'F' || *ptr == 'f' ||
++				    *ptr == 'S' || *ptr == 's') {
+ 					show_func = *ptr;
+-				} else if (*(ptr+1) == 'M' || *(ptr+1) == 'm') {
+-					print_mac_arg(s, *(ptr+1), data, size, event, arg);
+-					ptr++;
++				} else if (*ptr == 'M' || *ptr == 'm') {
++					print_mac_arg(s, *ptr, data, size, event, arg);
+ 					arg = arg->next;
+ 					break;
+-				} else if (*(ptr+1) == 'I' || *(ptr+1) == 'i') {
++				} else if (*ptr == 'I' || *ptr == 'i') {
+ 					int n;
  
--	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
--	    !proto->try_passthru) {
--		return false;
--	}
--
--	if (set_properties)
--		psmouse_apply_defaults(psmouse);
--
--	if (proto->detect(psmouse, set_properties) != 0)
-+	if (!psmouse_do_detect(proto->detect, psmouse, proto->try_passthru,
-+			       set_properties))
- 		return false;
- 
- 	if (set_properties && proto->init && init_allowed) {
-@@ -988,8 +996,8 @@ static int psmouse_extensions(struct psm
- 	 * Always check for focaltech, this is safe as it uses pnp-id
- 	 * matching.
- 	 */
--	if (psmouse_try_protocol(psmouse, PSMOUSE_FOCALTECH,
--				 &max_proto, set_properties, false)) {
-+	if (psmouse_do_detect(focaltech_detect,
-+			      psmouse, false, set_properties)) {
- 		if (max_proto > PSMOUSE_IMEX &&
- 		    IS_ENABLED(CONFIG_MOUSE_PS2_FOCALTECH) &&
- 		    (!set_properties || focaltech_init(psmouse) == 0)) {
-@@ -1035,8 +1043,8 @@ static int psmouse_extensions(struct psm
- 	 * probing for IntelliMouse.
- 	 */
- 	if (max_proto > PSMOUSE_PS2 &&
--	    psmouse_try_protocol(psmouse, PSMOUSE_SYNAPTICS, &max_proto,
--				 set_properties, false)) {
-+	    psmouse_do_detect(synaptics_detect,
-+			      psmouse, false, set_properties)) {
- 		synaptics_hardware = true;
- 
- 		if (max_proto > PSMOUSE_IMEX) {
+-					n = print_ip_arg(s, ptr+1, data, size, event, arg);
++					n = print_ip_arg(s, ptr, data, size, event, arg);
+ 					if (n > 0) {
+-						ptr += n;
++						ptr += n - 1;
+ 						arg = arg->next;
+ 						break;
+ 					}
