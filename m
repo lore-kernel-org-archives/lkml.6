@@ -1,18 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937603AbeE1Nqs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:46:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
+        id S937626AbeE1NrM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:47:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937431AbeE1Km5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:57 -0400
+        id S937507AbeE1Kmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, greg@kroah.com
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 043/496] powerpc: Add security feature flags for Spectre/Meltdown
-Date: Mon, 28 May 2018 11:57:08 +0200
-Message-Id: <20180528100321.511531817@linuxfoundation.org>
+        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 005/496] affs_lookup(): close a race with affs_remove_link()
+Date: Mon, 28 May 2018 11:56:30 +0200
+Message-Id: <20180528100319.764203737@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -28,127 +29,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 9a868f634349e62922c226834aa23e3d1329ae7f upstream.
+commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
 
-This commit adds security feature flags to reflect the settings we
-receive from firmware regarding Spectre/Meltdown mitigations.
+we unlock the directory hash too early - if we are looking at secondary
+link and primary (in another directory) gets removed just as we unlock,
+we could have the old primary moved in place of the secondary, leaving
+us to look into freed entry (and leaving our dentry with ->d_fsdata
+pointing to a freed entry).
 
-The feature names reflect the names we are given by firmware on bare
-metal machines. See the hostboot source for details.
-
-Arguably these could be firmware features, but that then requires them
-to be read early in boot so they're available prior to asm feature
-patching, but we don't actually want to use them for patching. We may
-also want to dynamically update them in future, which would be
-incompatible with the way firmware features work (at the moment at
-least). So for now just make them separate flags.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: stable@vger.kernel.org # 2.4.4+
+Acked-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/include/asm/security_features.h |   65 +++++++++++++++++++++++++++
- arch/powerpc/kernel/Makefile                 |    2 
- arch/powerpc/kernel/security.c               |   15 ++++++
- 3 files changed, 81 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/include/asm/security_features.h
- create mode 100644 arch/powerpc/kernel/security.c
 
---- /dev/null
-+++ b/arch/powerpc/include/asm/security_features.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Security related feature bit definitions.
-+ *
-+ * Copyright 2018, Michael Ellerman, IBM Corporation.
-+ */
-+
-+#ifndef _ASM_POWERPC_SECURITY_FEATURES_H
-+#define _ASM_POWERPC_SECURITY_FEATURES_H
-+
-+
-+extern unsigned long powerpc_security_features;
-+
-+static inline void security_ftr_set(unsigned long feature)
-+{
-+	powerpc_security_features |= feature;
-+}
-+
-+static inline void security_ftr_clear(unsigned long feature)
-+{
-+	powerpc_security_features &= ~feature;
-+}
-+
-+static inline bool security_ftr_enabled(unsigned long feature)
-+{
-+	return !!(powerpc_security_features & feature);
-+}
-+
-+
-+// Features indicating support for Spectre/Meltdown mitigations
-+
-+// The L1-D cache can be flushed with ori r30,r30,0
-+#define SEC_FTR_L1D_FLUSH_ORI30		0x0000000000000001ull
-+
-+// The L1-D cache can be flushed with mtspr 882,r0 (aka SPRN_TRIG2)
-+#define SEC_FTR_L1D_FLUSH_TRIG2		0x0000000000000002ull
-+
-+// ori r31,r31,0 acts as a speculation barrier
-+#define SEC_FTR_SPEC_BAR_ORI31		0x0000000000000004ull
-+
-+// Speculation past bctr is disabled
-+#define SEC_FTR_BCCTRL_SERIALISED	0x0000000000000008ull
-+
-+// Entries in L1-D are private to a SMT thread
-+#define SEC_FTR_L1D_THREAD_PRIV		0x0000000000000010ull
-+
-+// Indirect branch prediction cache disabled
-+#define SEC_FTR_COUNT_CACHE_DISABLED	0x0000000000000020ull
-+
-+
-+// Features indicating need for Spectre/Meltdown mitigations
-+
-+// The L1-D cache should be flushed on MSR[HV] 1->0 transition (hypervisor to guest)
-+#define SEC_FTR_L1D_FLUSH_HV		0x0000000000000040ull
-+
-+// The L1-D cache should be flushed on MSR[PR] 0->1 transition (kernel to userspace)
-+#define SEC_FTR_L1D_FLUSH_PR		0x0000000000000080ull
-+
-+// A speculation barrier should be used for bounds checks (Spectre variant 1)
-+#define SEC_FTR_BNDS_CHK_SPEC_BAR	0x0000000000000100ull
-+
-+// Firmware configuration indicates user favours security over performance
-+#define SEC_FTR_FAVOUR_SECURITY		0x0000000000000200ull
-+
-+#endif /* _ASM_POWERPC_SECURITY_FEATURES_H */
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -42,7 +42,7 @@ obj-$(CONFIG_VDSO32)		+= vdso32/
- obj-$(CONFIG_PPC_WATCHDOG)	+= watchdog.o
- obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
- obj-$(CONFIG_PPC_BOOK3S_64)	+= cpu_setup_ppc970.o cpu_setup_pa6t.o
--obj-$(CONFIG_PPC_BOOK3S_64)	+= cpu_setup_power.o
-+obj-$(CONFIG_PPC_BOOK3S_64)	+= cpu_setup_power.o security.o
- obj-$(CONFIG_PPC_BOOK3S_64)	+= mce.o mce_power.o
- obj-$(CONFIG_PPC_BOOK3E_64)	+= exceptions-64e.o idle_book3e.o
- obj-$(CONFIG_PPC64)		+= vdso64/
---- /dev/null
-+++ b/arch/powerpc/kernel/security.c
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Security related flags and so on.
-+//
-+// Copyright 2018, Michael Ellerman, IBM Corporation.
-+
-+#include <linux/kernel.h>
-+#include <asm/security_features.h>
-+
-+
-+unsigned long powerpc_security_features __read_mostly = \
-+	SEC_FTR_L1D_FLUSH_HV | \
-+	SEC_FTR_L1D_FLUSH_PR | \
-+	SEC_FTR_BNDS_CHK_SPEC_BAR | \
-+	SEC_FTR_FAVOUR_SECURITY;
+---
+ fs/affs/namei.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -206,9 +206,10 @@ affs_lookup(struct inode *dir, struct de
+ 
+ 	affs_lock_dir(dir);
+ 	bh = affs_find_entry(dir, dentry);
+-	affs_unlock_dir(dir);
+-	if (IS_ERR(bh))
++	if (IS_ERR(bh)) {
++		affs_unlock_dir(dir);
+ 		return ERR_CAST(bh);
++	}
+ 	if (bh) {
+ 		u32 ino = bh->b_blocknr;
+ 
+@@ -222,10 +223,13 @@ affs_lookup(struct inode *dir, struct de
+ 		}
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+-		if (IS_ERR(inode))
++		if (IS_ERR(inode)) {
++			affs_unlock_dir(dir);
+ 			return ERR_CAST(inode);
++		}
+ 	}
+ 	d_add(dentry, inode);
++	affs_unlock_dir(dir);
+ 	return NULL;
+ }
+ 
