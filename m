@@ -1,90 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938192AbeE1L0B (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:26:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S938135AbeE1LZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:25:29 -0400
-Subject: Re: KASAN: use-after-free Read in do_general_protection
-To: Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+a1264132fc103340628f@syzkaller.appspotmail.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <0000000000006370c3056d1855e7@google.com>
- <CACT4Y+Yqkon84bMamFNQTsn4npJtJnhOOd1ZHx+AkuKG-_eMsg@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <79eb119f-efc3-35b7-1377-9e4c03182ebd@redhat.com>
-Date: Mon, 28 May 2018 13:25:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S938179AbeE1LZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:25:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932603AbeE1LZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:25:33 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.16 009/272] fix breakage caused by d_find_alias() semantics change
+Date: Mon, 28 May 2018 12:00:42 +0200
+Message-Id: <20180528100240.988073616@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Yqkon84bMamFNQTsn4npJtJnhOOd1ZHx+AkuKG-_eMsg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/05/2018 11:29, Dmitry Vyukov wrote:
-> KASAN: stack-out-of-bounds Read in do_general_protection
-> KASAN: slab-out-of-bounds Read in vmx_vcpu_run
-> KASAN: use-after-scope Read in vmx_vcpu_run
-> KASAN: stack-out-of-bounds Write in notify_die
-> 
-> See full info at:
-> https://syzkaller.appspot.com/bug?extid=a1264132fc103340628f
-> 
-> 
-> There seems to be 2 problems:
-> 
-> 1. msr_write_intercepted doing something notoriously bad.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-The faulting line is
+------------------
 
-        msr_bitmap = to_vmx(vcpu)->loaded_vmcs->msr_bitmap;
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-so I suppose to_vmx(vcpu)->loaded_vmcs is bogus?  That seems like "just"
-a corruption of the struct kvm_vcpu, because the loaded_vmcs field is
-pointing elsewhere inside the same struct.
+commit b127125d9db23e4856156a7c909a3c8e18b69f99 upstream.
 
-Paolo
+"VFS: don't keep disconnected dentries on d_anon" had a non-trivial
+side-effect - d_unhashed() now returns true for those dentries,
+making d_find_alias() skip them altogether.  For most of its callers
+that's fine - we really want a connected alias there.  However,
+there is a codepath where we relied upon picking such aliases
+if nothing else could be found - selinux delayed initialization
+of contexts for inodes on already mounted filesystems used to
+rely upon that.
+
+Cc: stable@kernel.org # f1ee616214cb "VFS: don't keep disconnected dentries on d_anon"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ security/selinux/hooks.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -1532,8 +1532,15 @@ static int inode_doinit_with_dentry(stru
+ 			/* Called from d_instantiate or d_splice_alias. */
+ 			dentry = dget(opt_dentry);
+ 		} else {
+-			/* Called from selinux_complete_init, try to find a dentry. */
++			/*
++			 * Called from selinux_complete_init, try to find a dentry.
++			 * Some filesystems really want a connected one, so try
++			 * that first.  We could split SECURITY_FS_USE_XATTR in
++			 * two, depending upon that...
++			 */
+ 			dentry = d_find_alias(inode);
++			if (!dentry)
++				dentry = d_find_any_alias(inode);
+ 		}
+ 		if (!dentry) {
+ 			/*
+@@ -1636,14 +1643,19 @@ static int inode_doinit_with_dentry(stru
+ 		if ((sbsec->flags & SE_SBGENFS) && !S_ISLNK(inode->i_mode)) {
+ 			/* We must have a dentry to determine the label on
+ 			 * procfs inodes */
+-			if (opt_dentry)
++			if (opt_dentry) {
+ 				/* Called from d_instantiate or
+ 				 * d_splice_alias. */
+ 				dentry = dget(opt_dentry);
+-			else
++			} else {
+ 				/* Called from selinux_complete_init, try to
+-				 * find a dentry. */
++				 * find a dentry.  Some filesystems really want
++				 * a connected one, so try that first.
++				 */
+ 				dentry = d_find_alias(inode);
++				if (!dentry)
++					dentry = d_find_any_alias(inode);
++			}
+ 			/*
+ 			 * This can be hit on boot when a file is accessed
+ 			 * before the policy is loaded.  When we load policy we
