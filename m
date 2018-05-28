@@ -1,18 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936608AbeE1KLd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59666 "EHLO mail.kernel.org"
+        id S936594AbeE1KL1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936567AbeE1KL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:28 -0400
+        id S936567AbeE1KLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 130/185] m68k: set dma and coherent masks for platform FEC ethernets
-Date: Mon, 28 May 2018 12:02:51 +0200
-Message-Id: <20180528100104.382199809@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 127/185] xen/acpi: off by one in read_acpi_id()
+Date: Mon, 28 May 2018 12:02:48 +0200
+Message-Id: <20180528100103.735618261@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -28,69 +32,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Ungerer <gerg@linux-m68k.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit f61e64310b75733d782e930d1fb404b84699eed6 ]
+[ Upstream commit c37a3c94775855567b90f91775b9691e10bd2806 ]
 
-As of commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-coherent_dma_mask") the Freescale FEC driver is issuing the following
-warning on driver initialization on ColdFire systems:
+If acpi_id is == nr_acpi_bits, then we access one element beyond the end
+of the acpi_psd[] array or we set one bit beyond the end of the bit map
+when we do __set_bit(acpi_id, acpi_id_present);
 
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 0x40159e20
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc7-dirty #4
-Stack from 41833dd8:
-        41833dd8 40259c53 40025534 40279e26 00000003 00000000 4004e514 41827000
-        400255de 40244e42 00000204 40159e20 00000009 00000000 00000000 4024531d
-        40159e20 40244e42 00000204 00000000 00000000 00000000 00000007 00000000
-        00000000 40279e26 4028d040 40226576 4003ae88 40279e26 418273f6 41833ef8
-        7fffffff 418273f2 41867028 4003c9a2 4180ac6c 00000004 41833f8c 4013e71c
-        40279e1c 40279e26 40226c16 4013ced2 40279e26 40279e58 4028d040 00000000
-Call Trace:
-        [<40025534>] 0x40025534
- [<4004e514>] 0x4004e514
- [<400255de>] 0x400255de
- [<40159e20>] 0x40159e20
- [<40159e20>] 0x40159e20
-
-It is not fatal, the driver and the system continue to function normally.
-
-As per the warning the coherent_dma_mask is not set on this device.
-There is nothing special about the DMA memory coherency on this hardware
-so we can just set the mask to 32bits in the platform data for the FEC
-ethernet devices.
-
+Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/m68k/coldfire/device.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/xen/xen-acpi-processor.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/m68k/coldfire/device.c
-+++ b/arch/m68k/coldfire/device.c
-@@ -135,7 +135,11 @@ static struct platform_device mcf_fec0 =
- 	.id			= 0,
- 	.num_resources		= ARRAY_SIZE(mcf_fec0_resources),
- 	.resource		= mcf_fec0_resources,
--	.dev.platform_data	= FEC_PDATA,
-+	.dev = {
-+		.dma_mask		= &mcf_fec0.dev.coherent_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+		.platform_data		= FEC_PDATA,
-+	}
- };
- 
- #ifdef MCFFEC_BASE1
-@@ -167,7 +171,11 @@ static struct platform_device mcf_fec1 =
- 	.id			= 1,
- 	.num_resources		= ARRAY_SIZE(mcf_fec1_resources),
- 	.resource		= mcf_fec1_resources,
--	.dev.platform_data	= FEC_PDATA,
-+	.dev = {
-+		.dma_mask		= &mcf_fec1.dev.coherent_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+		.platform_data		= FEC_PDATA,
-+	}
- };
- #endif /* MCFFEC_BASE1 */
- #endif /* CONFIG_FEC */
+--- a/drivers/xen/xen-acpi-processor.c
++++ b/drivers/xen/xen-acpi-processor.c
+@@ -362,9 +362,9 @@ read_acpi_id(acpi_handle handle, u32 lvl
+ 	}
+ 	/* There are more ACPI Processor objects than in x2APIC or MADT.
+ 	 * This can happen with incorrect ACPI SSDT declerations. */
+-	if (acpi_id > nr_acpi_bits) {
+-		pr_debug("We only have %u, trying to set %u\n",
+-			 nr_acpi_bits, acpi_id);
++	if (acpi_id >= nr_acpi_bits) {
++		pr_debug("max acpi id %u, trying to set %u\n",
++			 nr_acpi_bits - 1, acpi_id);
+ 		return AE_OK;
+ 	}
+ 	/* OK, There is a ACPI Processor object */
