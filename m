@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936927AbeE1KPR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:15:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35198 "EHLO mail.kernel.org"
+        id S966491AbeE1KPZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936913AbeE1KPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:03 -0400
+        id S966327AbeE1KPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 025/268] tools lib traceevent: Simplify pointer print logic and fix %pF
-Date: Mon, 28 May 2018 11:59:59 +0200
-Message-Id: <20180528100204.933706663@linuxfoundation.org>
+Subject: [PATCH 4.4 031/268] kconfig: Dont leak main menus during parsing
+Date: Mon, 28 May 2018 12:00:05 +0200
+Message-Id: <20180528100205.607731142@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,58 +30,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Ulf Magnusson <ulfalizer@gmail.com>
 
-[ Upstream commit 38d70b7ca1769f26c0b79f3c08ff2cc949712b59 ]
+[ Upstream commit 0724a7c32a54e3e50d28e19e30c59014f61d4e2c ]
 
-When processing %pX in pretty_print(), simplify the logic slightly by
-incrementing the ptr to the format string if isalnum(ptr[1]) is true.
-This follows the logic a bit more closely to what is in the kernel.
+If a 'mainmenu' entry appeared in the Kconfig files, two things would
+leak:
 
-Also, this fixes a small bug where %pF was not giving the offset of the
-function.
+	- The 'struct property' allocated for the default "Linux Kernel
+	  Configuration" prompt.
 
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: http://lkml.kernel.org/r/20180112004822.260262257@goodmis.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+	- The string for the T_WORD/T_WORD_QUOTE prompt after the
+	  T_MAINMENU token, allocated on the heap in zconf.l.
+
+To fix it, introduce a new 'no_mainmenu_stmt' nonterminal that matches
+if there's no 'mainmenu' and adds the default prompt. That means the
+prompt only gets allocated once regardless of whether there's a
+'mainmenu' statement or not, and managing it becomes simple.
+
+Summary from Valgrind on 'menuconfig' (ARCH=x86) before the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 344,568 bytes in 14,352 blocks
+	   ...
+
+Summary after the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 344,440 bytes in 14,350 blocks
+	   ...
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/lib/traceevent/event-parse.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ scripts/kconfig/zconf.y |   33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
 
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -4905,21 +4905,22 @@ static void pretty_print(struct trace_se
- 				else
- 					ls = 2;
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -107,7 +107,27 @@ static struct menu *current_menu, *curre
+ %%
+ input: nl start | start;
  
--				if (*(ptr+1) == 'F' || *(ptr+1) == 'f' ||
--				    *(ptr+1) == 'S' || *(ptr+1) == 's') {
-+				if (isalnum(ptr[1]))
- 					ptr++;
+-start: mainmenu_stmt stmt_list | stmt_list;
++start: mainmenu_stmt stmt_list | no_mainmenu_stmt stmt_list;
 +
-+				if (*ptr == 'F' || *ptr == 'f' ||
-+				    *ptr == 'S' || *ptr == 's') {
- 					show_func = *ptr;
--				} else if (*(ptr+1) == 'M' || *(ptr+1) == 'm') {
--					print_mac_arg(s, *(ptr+1), data, size, event, arg);
--					ptr++;
-+				} else if (*ptr == 'M' || *ptr == 'm') {
-+					print_mac_arg(s, *ptr, data, size, event, arg);
- 					arg = arg->next;
- 					break;
--				} else if (*(ptr+1) == 'I' || *(ptr+1) == 'i') {
-+				} else if (*ptr == 'I' || *ptr == 'i') {
- 					int n;
++/* mainmenu entry */
++
++mainmenu_stmt: T_MAINMENU prompt nl
++{
++	menu_add_prompt(P_MENU, $2, NULL);
++};
++
++/* Default main menu, if there's no mainmenu entry */
++
++no_mainmenu_stmt: /* empty */
++{
++	/*
++	 * Hack: Keep the main menu title on the heap so we can safely free it
++	 * later regardless of whether it comes from the 'prompt' in
++	 * mainmenu_stmt or here
++	 */
++	menu_add_prompt(P_MENU, strdup("Linux Kernel Configuration"), NULL);
++};
++
  
--					n = print_ip_arg(s, ptr+1, data, size, event, arg);
-+					n = print_ip_arg(s, ptr, data, size, event, arg);
- 					if (n > 0) {
--						ptr += n;
-+						ptr += n - 1;
- 						arg = arg->next;
- 						break;
- 					}
+ stmt_list:
+ 	  /* empty */
+@@ -344,13 +364,6 @@ if_block:
+ 	| if_block choice_stmt
+ ;
+ 
+-/* mainmenu entry */
+-
+-mainmenu_stmt: T_MAINMENU prompt nl
+-{
+-	menu_add_prompt(P_MENU, $2, NULL);
+-};
+-
+ /* menu entry */
+ 
+ menu: T_MENU prompt T_EOL
+@@ -495,6 +508,7 @@ word_opt: /* empty */			{ $$ = NULL; }
+ 
+ void conf_parse(const char *name)
+ {
++	const char *tmp;
+ 	struct symbol *sym;
+ 	int i;
+ 
+@@ -502,7 +516,6 @@ void conf_parse(const char *name)
+ 
+ 	sym_init();
+ 	_menu_init();
+-	rootmenu.prompt = menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
+ 
+ 	if (getenv("ZCONF_DEBUG"))
+ 		zconfdebug = 1;
+@@ -512,8 +525,10 @@ void conf_parse(const char *name)
+ 	if (!modules_sym)
+ 		modules_sym = sym_find( "n" );
+ 
++	tmp = rootmenu.prompt->text;
+ 	rootmenu.prompt->text = _(rootmenu.prompt->text);
+ 	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
++	free((char*)tmp);
+ 
+ 	menu_finalize(&rootmenu);
+ 	for_all_symbols(i, sym) {
