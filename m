@@ -1,156 +1,180 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1625927-1527357196-2-4543143509491334000
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1111766-1527545200-2-17032558016244259252
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527357196; b=Wu2Csed2cci/qAJsf81i5lEIncTdgqX5AFI/WlwKFBsZEKn7RJ
-    8FwZtUq2lbZXz2P+vcgVSVpQNlhEPXyAq4KU/G8SXuMuUX8O3oshQ6s5JhcdZOME
-    aZK7RKtYDW6ThbcW8Eob0J3tZMB2eXaRP792s4aiTz7VNne9B+omq2KPra5K+FR3
-    PDIarqcTEjRkMzL1W0hROArE3Lq/u6hIf4Sm9mdD99y+Bl1MNg/r8e4JhGiuf0j2
-    WBZDhOh2O2iHhF2S5tYcgeWVLXqlFXhoJmIgzQAJVwrE4LVwaeEfSTwexF0MKdsv
-    k1IRzswLmDvHV6qqV1f5LRZhsS4+faNhx9cQ==
+    1527545200; b=WnK8Ep2Ut15X57jxAaNm2xIPFk53NZ9GN27+adwJYePdB4Jp0a
+    hIH3P+wlLXH9gifoe0jGOrRtr0SlE+hBkZPzRjoVmiwxo3YXbzUYXihPcHgo65P0
+    dBG3YfuR9srto+K2NZy7U6EkeECVGJNH+3Gmuzzx4xlNgdKgkBchyEOTrqYS7cC4
+    8+hMtX9GpDo2yh36TWhEk1B0W4PJbWIM8L1P8mAmA29PRXt9vml1gQASfpuCuQ7m
+    ifbbxVMC1esxMz3aGLvfYBXjVgpJl7ZZUUrAelWov7QoECpgqLs0WkPgAAYc3NYs
+    Hcw+kfwCA4ddFU2Kb3Rmt+4gL8pgkObN46sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527357196;
-    bh=HXKdePOYIWzHnjFQtHg+EmDhwMNxFnCQt1yDr7fN5lY=; b=CXNXdnHvQO80
-    VeOJl9BuW8/f9Bc0vjH5DkIligCy8ivckj6uk9xtDv/7s9FefyR8EFSO2edGaL2w
-    4f7fvwUeaOne6Wo3S5FDULXbeRVT2sGIBtw1cFgPkKG+knQRzvUZ/5f8ZcA9ZuGu
-    d+gw4Fgjp2tKvIboVszctg7FomMkf4H1WwO1O+VrlNY06VNfwCZS5FJMF+v15pnU
-    KHZx3VJQRYmF8tYit1YEeppF8TGuEw8wXvtSX/bzwCgddGjIxFndARDtMsGPPnqi
-    88dMrgy8tR9fHdeZHUzrhBIyMCUVNuGpWgav/RQGgVtDHGOzirdlcrlzi44UBQ52
-    THdv9+GnyA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=yahoo.com header.i=@yahoo.com header.b=uDFYTvi5 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=s2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    messagingengine.com; h=date:from:to:cc:subject:reply-to
+    :mime-version:content-type:message-id:sender:list-id; s=fm2; t=
+    1527545200; bh=nh0OnXUhtbz1A7/iby1jf55iCNggdTwSJQcQkFqX7mE=; b=P
+    WLeIyeIhOUPTm6AQAGyh8r7Ov4xvB4+2USMIXqJuLDGwIg0Ni708m+McZLEmfDlX
+    pFNxoWijztDMr50eH1fPbhBThTtKamTk6dvMKPW/f01fSKuQVhM/y3mAgUITVLxH
+    /UEM1MXAxMTuHmznEAxoI1R24bKdYOzbYAyxYZgZhmYkEaiMNn0UBUbfYTr4pL/w
+    i2ojf6Xsj03hd/HC8MsJEAaejPn+4BlPB/RINFUA23AxLH3WM+VkyhrVWj2pZiTx
+    RqYFJMIiZM8hyl+fhrD1tbCu0MZj7ozdfzr+30sHl2S9mvMYj8UGM7THVm1QTuyv
+    JcclcOWq5MVzHYZDBFgAQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=schaufler-ca.com header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
-Authentication-Results: mx3.messagingengine.com;
+    header.domain=linux.vnet.ibm.com header.result=pass
+    header_org.domain=ibm.com header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=yahoo.com header.i=@yahoo.com header.b=uDFYTvi5 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=s2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=schaufler-ca.com header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
+      header.domain=linux.vnet.ibm.com header.result=pass
+      header_org.domain=ibm.com header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI27MV55Bx2lDydD9/lo2unfYeQgBILBmP7Ku9mQhxgYN4KlEiHlvndEZ+VlSKjnPf9mcBvqFatKKu6Mg0wjkUhwIu2IspIcfwN8J65YpTsNMOQr01PR
-    vh7JauCSLkMjNM/4MhWxT/CgpdNOxEFH5C5+uvQDZocnxOLzlGtQO2g7C8rrgGcKHpKw3rgEcCRr6ORIKWyLqUzdSUAlEuJdKD3Krb4+uwwy6TJu4wNX9zdi
-    8cpcJAJ4Ldd7qFhvJzvKHA==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=5HJ6KZJP-kkA:10
-    a=VUJBJC2UJ8kA:10 a=TftV-o5MLXgA:10 a=3NGxsLzzGfgA:10 a=ZZnuYtJkoWoA:10
-    a=pGLkceISAAAA:8 a=P-IC7800AAAA:8 a=VwQbUJbxAAAA:8 a=b8oQmyZUZ2kxXGd1OyIA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=d3PnA9EDa4IxuAV0gXij:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfBgCSPXfseweGZWev7SxVd4IfGV5YdSd7h+1p1cZVodJ5ce+PT+L6tNP/FqCXjAxqwTBy/NO6lZnRvEwL7hLRbX5+OxbdIygnbjlnSUln4GALPiCdJSR
+    OkEX4euOUJXdN9KiQDTi+l32KLZsAkTc8oer4MbUeqkrNa4TgImkmPo3vFqRQBpJt/4oHuEkG8z3wf7t8hkEjIieQZvg+DQd5VPXklGrTuVzYNj0hu0VuML1
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=NEAV23lmAAAA:8 a=5jCBht2tGJ4gRT6qiNAA:9 a=erNY0-7vEpguNVtA:21
+    a=Xbo8Jzl48kCKX_Gh:21 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032230AbeEZRxN (ORCPT <rfc822;linux@kroah.com>);
-        Sat, 26 May 2018 13:53:13 -0400
-Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:42456
-        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1032115AbeEZRxM (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 26 May 2018 13:53:12 -0400
-X-YMail-OSG: m4YGGE0VM1kyTL9g.lgw83ZLkNDly6unPNA5wpQnigdWflt3E2INhsmzPozvpfU
- if4pZ2Z_Hw.509sEPUOAd6sJFWblTz9L4LOuBlJPbYsrYmrpb2Mus37EXIvK8KhqmPwonrnmP0Dn
- dEooyyVH1F64d2_R0W8dIiz.tSaXLnmiNf.p.GDECkEb2TTdGpsoKmgwBNLbkNCbaTT2HahdzA56
- faC.ywP8EQzmHEwsRdmayyQP5v.3vxznb9YfKGpTHrp6Q4XKNMy55e9lEedQYetO9_XmRhpaXQlo
- 7M_zvKqz7pMlrGrEmf.5bgQtYUUlLPGdVYlRicDqvfu0quLc_3SqJZZKaSIFsJPzGF12K6xj0KLz
- Sde2EQKzO4bA48HSUMddkduoqmUVVsD76nFam1PXPx7fzvJHpxlEd7uVN1pwQvLI4rVmKl6d7adT
- YesOos8E6eT4yZKQoEuyU7J2piseNmKwYXK2j12Jd2DQWZToC24OFkTdgtDZbHTB8cNpD5RExQUL
- Sh_Ra1Py.49lIflFARtkKx553wSsvn6PmpgvzZGX.PUN0YKtI9UP7sBZgzdT7BY1cF9x_9xUbVL6
- kERr45UNAo5G65uvzsLdiOw7E.lQ9sT.JNvbuq17pWKN78ang1XLYBQb6aSPdwufKIFnP46cyFFs
- hbTBB.lkyDRvZ95s.6cpKu74KufaCxe2MfVo390t2UcF_lQM2SUckuFrxoX2e5U_MhZNLSByjcCO
- VfAxvw0O4LRpBNwpypwLnJAMrTSGPzg--
-Subject: Re: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
-To: Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Kees Cook <keescook@chromium.org>
-References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
- <20180526154819.GA14016@avx2>
- <CAJHCu1LgSUJdiZEfParCH7aLERWM1bgwC7e8wQKgmkNE01_4KA@mail.gmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <df12287e-7c19-61a6-b94a-5b7186a1e2a3@schaufler-ca.com>
-Date: Sat, 26 May 2018 10:53:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934824AbeE1WGh (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 18:06:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49314 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934434AbeE1WGg (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 28 May 2018 18:06:36 -0400
+Date: Mon, 28 May 2018 15:08:11 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, roman.penyaev@profitbricks.com
+Subject: LKMM litmus test for Roman Penyaev's rcu-rr
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <CAJHCu1LgSUJdiZEfParCH7aLERWM1bgwC7e8wQKgmkNE01_4KA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-Sender: owner-linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052822-0044-0000-0000-0000041E72E2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009096; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000263; SDB=6.01039070; UDB=6.00531776; IPR=6.00818198;
+ MB=3.00021346; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-28 22:06:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052822-0045-0000-0000-000008509605
+Message-Id: <20180528220811.GA5221@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805280262
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 5/26/2018 10:30 AM, Salvatore Mesoraca wrote:
-> 2018-05-26 17:48 GMT+02:00 Alexey Dobriyan <adobriyan@gmail.com>:
->> On Sat, May 26, 2018 at 04:50:46PM +0200, Salvatore Mesoraca wrote:
->>> Prevent a task from opening, in "write" mode, any /proc/*/mem
->>> file that operates on the task's mm.
->>> /proc/*/mem is mainly a debugging means and, as such, it shouldn't
->>> be used by the inspected process itself.
->>> Current implementation always allow a task to access its own
->>> /proc/*/mem file.
->>> A process can use it to overwrite read-only memory, making
->>> pointless the use of security_file_mprotect() or other ways to
->>> enforce RO memory.
->> You can do it in security_ptrace_access_check()
-> No, because that hook is skipped when mm == current->mm:
-> https://elixir.bootlin.com/linux/v4.17-rc6/source/kernel/fork.c#L1111
->
->> or security_file_open()
-> This is true, but it looks a bit overkill to me, especially since many of
-> the macros/functions used to handle proc's files won't be in scope
-> for an external LSM.
-> Is there any particular reason why you prefer it done via LSM?
+Hello!
 
-If you did a Yama style LSM it would be easy to configure.
-Even though it might make no sense to allow this behavior,
-someone, somewhere is counting on it.
+The litmus test below is a first attempt to model Roman's rcu-rr
+round-robin RCU-protected linked list.  His test code, which includes
+the algorithm under test, may be found here:
 
->
-> Thank you,
->
-> Salvatore
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+https://github.com/rouming/rcu-rr/blob/master/rcu-rr.c
 
+The P0() process below roughly corresponds to remove_conn_from_arr(),
+with litmus-test variable "c" standing in for the per-CPU ppcpu_con.
+Similarly, P1() roughly corresponds to get_next_conn_rr().  It claims
+that the algorithm is safe, and also claims that it becomes unsafe if
+either synchronize_rcu() is removed.
+
+Does this in fact realistically model Roman's algorithm?  Either way,
+is there a better approach?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+C C-RomanPenyaev-list-rcu-rr
+
+{
+	int *z=1; (* List: v->w->x->y->z. Noncircular, but long enough. *)
+	int *y=z;
+	int *x=y;
+	int *w=x;
+	int *v=w; (* List head is v. *)
+	int *c=w; (* Cache, emulating ppcpu_con. *)
+}
+
+P0(int *c, int *v, int *w, int *x, int *y)
+{
+	rcu_assign_pointer(*w, y); /* Remove x from list. */
+	synchronize_rcu();
+	r1 = READ_ONCE(*c);
+	if (r1 == x) {
+		WRITE_ONCE(*c, 0); /* Invalidate cache. */
+		synchronize_rcu();
+	}
+	smp_store_release(x, 0);  /* Emulate kfree(x). */
+}
+
+P1(int *c, int *v)
+{
+	rcu_read_lock();
+	r1 = READ_ONCE(*c); /* Pick up cache. */
+	if (r1 == 0) {
+		r1 = READ_ONCE(*v); /* Cache empty, start from head. */
+	}
+	r2 = rcu_dereference(*r1); /* Advance to next element. */
+	smp_store_release(c, r2); /* Update cache. */
+	rcu_read_unlock();
+
+	/* And repeat. */
+	rcu_read_lock();
+	r3 = READ_ONCE(*c);
+	if (r3 == 0) {
+		r3 = READ_ONCE(*v);
+	}
+	r4 = rcu_dereference(*r3);
+	smp_store_release(c, r4);
+	rcu_read_unlock();
+}
+
+locations [0:r1; 1:r1; 1:r3; c; v; w; x; y]
+exists (1:r1=0 \/ 1:r2=0 \/ 1:r3=0 \/ 1:r4=0) (* Better not be freed!!! *)
