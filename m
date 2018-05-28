@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937104AbeE1K2D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47320 "EHLO mail.kernel.org"
+        id S937124AbeE1K2J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:28:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937072AbeE1K1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:53 -0400
+        id S937072AbeE1K2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Emiliano Ingrassia <ingrassia@epigenesys.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 038/329] perf record: Fix failed memory allocation for get_cpuid_str
-Date: Mon, 28 May 2018 11:59:27 +0200
-Message-Id: <20180528100245.634352346@linuxfoundation.org>
+Subject: [PATCH 4.9 041/329] net: stmmac: dwmac-meson8b: fix setting the RGMII TX clock on Meson8b
+Date: Mon, 28 May 2018 11:59:30 +0200
+Message-Id: <20180528100245.878317175@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,39 +32,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 81fccd6ca507d3b2012eaf1edeb9b1dbf4bd22db ]
+[ Upstream commit 433c6cab9d298687c097f6ee82e49157044dc7c6 ]
 
-In x86 architecture dependend part function get_cpuid_str() mallocs a
-128 byte buffer, but does not check if the memory allocation succeeded
-or not.
+Meson8b only supports MPLL2 as clock input. The rate of the MPLL2 clock
+set by Odroid-C1's u-boot is close to (but not exactly) 500MHz. The
+exact rate is 500002394Hz, which is calculated in
+drivers/clk/meson/clk-mpll.c using the following formula:
+DIV_ROUND_UP_ULL((u64)parent_rate * SDM_DEN, (SDM_DEN * n2) + sdm)
+Odroid-C1's u-boot configures MPLL2 with the following values:
+- SDM_DEN = 16384
+- SDM = 1638
+- N2 = 5
 
-When the memory allocation fails, function __get_cpuid() is called with
-first parameter being a NULL pointer.  However this function references
-its first parameter and operates on a NULL pointer which might cause
-core dumps.
+The 250MHz clock (m250_div) inside dwmac-meson8b driver is derived from
+the MPLL2 clock. Due to MPLL2 running slightly faster than 500MHz the
+common clock framework chooses a divider which is too big to generate
+the 250MHz clock (a divider of 2 would be needed, but this is rounded up
+to a divider of 3). This breaks the RTL8211F RGMII PHY on Odroid-C1
+because it requires a (close to) 125MHz RGMII TX clock (on Gbit speeds,
+the IP block internally divides that down to 25MHz on 100Mbit/s
+connections and 2.5MHz on 10Mbit/s connections - we don't need any
+special configuration for that).
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180117131611.34319-1-tmricht@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Round the divider to the closest value to prevent this issue on Meson8b.
+This means we'll now end up with a clock rate for the RGMII TX clock of
+125001197Hz (= 125MHz plus 1197Hz), which is close-enough to 125MHz.
+This has no effect on the Meson GX SoCs since there fclk_div2 is used as
+input clock, which has a rate of 1000MHz (and thus is divisible cleanly
+to 250MHz and 125MHz).
+
+Fixes: 566e8251625304 ("net: stmmac: add a glue driver for the Amlogic Meson 8b / GXBB DWMAC")
+Reported-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/x86/util/header.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/tools/perf/arch/x86/util/header.c
-+++ b/tools/perf/arch/x86/util/header.c
-@@ -69,7 +69,7 @@ get_cpuid_str(void)
- {
- 	char *buf = malloc(128);
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+@@ -146,7 +146,9 @@ static int meson8b_init_clk(struct meson
+ 	dwmac->m250_div.shift = PRG_ETH0_CLK_M250_DIV_SHIFT;
+ 	dwmac->m250_div.width = PRG_ETH0_CLK_M250_DIV_WIDTH;
+ 	dwmac->m250_div.hw.init = &init;
+-	dwmac->m250_div.flags = CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO;
++	dwmac->m250_div.flags = CLK_DIVIDER_ONE_BASED |
++				CLK_DIVIDER_ALLOW_ZERO |
++				CLK_DIVIDER_ROUND_CLOSEST;
  
--	if (__get_cpuid(buf, 128, "%s-%u-%X$") < 0) {
-+	if (buf && __get_cpuid(buf, 128, "%s-%u-%X$") < 0) {
- 		free(buf);
- 		return NULL;
- 	}
+ 	dwmac->m250_div_clk = devm_clk_register(dev, &dwmac->m250_div.hw);
+ 	if (WARN_ON(IS_ERR(dwmac->m250_div_clk)))
