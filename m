@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933153AbeE1QDV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:03:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        id S933204AbeE1QDi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:03:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936445AbeE1KPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:11 -0400
+        id S966073AbeE1KPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gopanapalli Pradeep <prap_hai@yahoo.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hendrick Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 027/268] tools lib traceevent: Fix get_field_str() for dynamic strings
-Date: Mon, 28 May 2018 12:00:01 +0200
-Message-Id: <20180528100205.142026298@linuxfoundation.org>
+Subject: [PATCH 4.4 026/268] perf callchain: Fix attr.sample_max_stack setting
+Date: Mon, 28 May 2018 12:00:00 +0200
+Message-Id: <20180528100205.048023171@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -33,53 +35,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit d777f8de99b05d399c0e4e51cdce016f26bd971b ]
+[ Upstream commit 249d98e567e25dd03e015e2d31e1b7b9648f34df ]
 
-If a field is a dynamic string, get_field_str() returned just the
-offset/size value and not the string. Have it parse the offset/size
-correctly to return the actual string. Otherwise filtering fails when
-trying to filter fields that are dynamic strings.
+When setting the "dwarf" unwinder for a specific event and not
+specifying the max-stack, the attr.sample_max_stack ended up using an
+uninitialized callchain_param.max_stack, fix it by using designated
+initializers for that callchain_param variable, zeroing all non
+explicitely initialized struct members.
 
-Reported-by: Gopanapalli Pradeep <prap_hai@yahoo.com>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: http://lkml.kernel.org/r/20180112004823.146333275@goodmis.org
+Here is what happened:
+
+  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+  callchain: type DWARF
+  callchain: stack dump size 8192
+  perf_event_attr:
+    type                             2
+    size                             112
+    config                           0x730
+    { sample_period, sample_freq }   1
+    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
+    exclude_callchain_user           1
+    { wakeup_events, wakeup_watermark } 1
+    sample_regs_user                 0xff0fff
+    sample_stack_user                8192
+    sample_max_stack                 50656
+  sys_perf_event_open failed, error -75
+  Value too large for defined data type
+  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+  callchain: type DWARF
+  callchain: stack dump size 8192
+  perf_event_attr:
+    type                             2
+    size                             112
+    config                           0x730
+    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
+    exclude_callchain_user           1
+    sample_regs_user                 0xff0fff
+    sample_stack_user                8192
+    sample_max_stack                 30448
+  sys_perf_event_open failed, error -75
+  Value too large for defined data type
+  #
+
+Now the attr.sample_max_stack is set to zero and the above works as
+expected:
+
+  # perf trace --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+  PING ::1(::1) 56 data bytes
+  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.072 ms
+
+  --- ::1 ping statistics ---
+  1 packets transmitted, 1 received, 0% packet loss, time 0ms
+  rtt min/avg/max/mdev = 0.072/0.072/0.072/0.000 ms
+       0.000 probe_libc:inet_pton:(7feb7a998350))
+                                         __inet_pton (inlined)
+                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+                                         __GI_getaddrinfo (inlined)
+                                         [0xffffaa39b6108f3f] (/usr/bin/ping)
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Hendrick Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-is9tramondqa9jlxxsgcm9iz@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/lib/traceevent/parse-filter.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tools/perf/util/evsel.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1867,17 +1867,25 @@ static const char *get_field_str(struct
- 	struct pevent *pevent;
- 	unsigned long long addr;
- 	const char *val = NULL;
-+	unsigned int size;
- 	char hex[64];
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -624,13 +624,13 @@ static void apply_config_terms(struct pe
+ 	struct perf_evsel_config_term *term;
+ 	struct list_head *config_terms = &evsel->config_terms;
+ 	struct perf_event_attr *attr = &evsel->attr;
+-	struct callchain_param param;
++	/* callgraph default */
++	struct callchain_param param = {
++		.record_mode = callchain_param.record_mode,
++	};
+ 	u32 dump_size = 0;
+ 	char *callgraph_buf = NULL;
  
- 	/* If the field is not a string convert it */
- 	if (arg->str.field->flags & FIELD_IS_STRING) {
- 		val = record->data + arg->str.field->offset;
-+		size = arg->str.field->size;
-+
-+		if (arg->str.field->flags & FIELD_IS_DYNAMIC) {
-+			addr = *(unsigned int *)val;
-+			val = record->data + (addr & 0xffff);
-+			size = addr >> 16;
-+		}
- 
- 		/*
- 		 * We need to copy the data since we can't be sure the field
- 		 * is null terminated.
- 		 */
--		if (*(val + arg->str.field->size - 1)) {
-+		if (*(val + size - 1)) {
- 			/* copy it */
- 			memcpy(arg->str.buffer, val, arg->str.field->size);
- 			/* the buffer is already NULL terminated */
+-	/* callgraph default */
+-	param.record_mode = callchain_param.record_mode;
+-
+ 	list_for_each_entry(term, config_terms, list) {
+ 		switch (term->type) {
+ 		case PERF_EVSEL__CONFIG_TERM_PERIOD:
