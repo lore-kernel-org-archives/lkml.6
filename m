@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937173AbeE1K2X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47670 "EHLO mail.kernel.org"
+        id S937188AbeE1K21 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937098AbeE1K2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:17 -0400
+        id S937166AbeE1K2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Manfred Spraul <manfred@colorfullife.com>,
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 016/329] Revert "ipc/shm: Fix shmat mmap nil-page protection"
-Date: Mon, 28 May 2018 11:59:05 +0200
-Message-Id: <20180528100243.667989069@linuxfoundation.org>
+Subject: [PATCH 4.9 018/329] kasan: fix memory hotplug during boot
+Date: Mon, 28 May 2018 11:59:07 +0200
+Message-Id: <20180528100243.851065824@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,67 +33,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: David Hildenbrand <david@redhat.com>
 
-commit a73ab244f0dad8fffb3291b905f73e2d3eaa7c00 upstream.
+commit 3f1959721558a976aaf9c2024d5bc884e6411bf7 upstream.
 
-Patch series "ipc/shm: shmat() fixes around nil-page".
+Using module_init() is wrong.  E.g.  ACPI adds and onlines memory before
+our memory notifier gets registered.
 
-These patches fix two issues reported[1] a while back by Joe and Andrea
-around how shmat(2) behaves with nil-page.
+This makes sure that ACPI memory detected during boot up will not result
+in a kernel crash.
 
-The first reverts a commit that it was incorrectly thought that mapping
-nil-page (address=0) was a no no with MAP_FIXED.  This is not the case,
-with the exception of SHM_REMAP; which is address in the second patch.
+Easily reproducible with QEMU, just specify a DIMM when starting up.
 
-I chose two patches because it is easier to backport and it explicitly
-reverts bogus behaviour.  Both patches ought to be in -stable and ltp
-testcases need updated (the added testcase around the cve can be
-modified to just test for SHM_RND|SHM_REMAP).
-
-[1] lkml.kernel.org/r/20180430172152.nfa564pvgpk3ut7p@linux-n805
-
-This patch (of 2):
-
-Commit 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
-worked on the idea that we should not be mapping as root addr=0 and
-MAP_FIXED.  However, it was reported that this scenario is in fact
-valid, thus making the patch both bogus and breaks userspace as well.
-
-For example X11's libint10.so relies on shmat(1, SHM_RND) for lowmem
-initialization[1].
-
-[1] https://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/os-support/linux/int10/linux.c#n347
-Link: http://lkml.kernel.org/r/20180503203243.15045-2-dave@stgolabs.net
-Fixes: 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reported-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>
+Link: http://lkml.kernel.org/r/20180522100756.18478-3-david@redhat.com
+Fixes: 786a8959912e ("kasan: disable memory hotplug")
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/shm.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ mm/kasan/kasan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1127,13 +1127,8 @@ long do_shmat(int shmid, char __user *sh
- 		goto out;
- 	else if ((addr = (ulong)shmaddr)) {
- 		if (addr & (shmlba - 1)) {
--			/*
--			 * Round down to the nearest multiple of shmlba.
--			 * For sane do_mmap_pgoff() parameters, avoid
--			 * round downs that trigger nil-page and MAP_FIXED.
--			 */
--			if ((shmflg & SHM_RND) && addr >= shmlba)
--				addr &= ~(shmlba - 1);
-+			if (shmflg & SHM_RND)
-+				addr &= ~(shmlba - 1);  /* round down */
- 			else
- #ifndef __ARCH_FORCE_SHMLBA
- 				if (addr & ~PAGE_MASK)
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -800,5 +800,5 @@ static int __init kasan_memhotplug_init(
+ 	return 0;
+ }
+ 
+-module_init(kasan_memhotplug_init);
++core_initcall(kasan_memhotplug_init);
+ #endif
