@@ -1,91 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969220AbeE1Ppt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:45:49 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:34186 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968684AbeE1Ppq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:45:46 -0400
-Date: Mon, 28 May 2018 08:45:16 -0700
-From: Paul Burton <paul.burton@mips.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] sched: Make select_task_rq() require cpu_active()
- for user tasks
-Message-ID: <20180528154516.c54b37ygekcn3p4g@pburton-laptop>
-References: <20180526154648.11635-1-paul.burton@mips.com>
- <20180526154648.11635-2-paul.burton@mips.com>
- <20180528144924.GE12217@hirez.programming.kicks-ass.net>
+        id S969238AbeE1PqK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:46:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968571AbeE1KQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:50 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Pavel Emelyanov <xemul@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 063/268] proc: fix /proc/*/map_files lookup
+Date: Mon, 28 May 2018 12:00:37 +0200
+Message-Id: <20180528100209.066625799@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180528144924.GE12217@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180512
-X-BESS-ID: 1527522316-321458-31141-136399-1
-X-BESS-VER: 2018.6-r1805181819
-X-BESS-Apparent-Source-IP: 12.201.5.33
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193454
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-On Mon, May 28, 2018 at 04:49:24PM +0200, Peter Zijlstra wrote:
-> On Sat, May 26, 2018 at 08:46:47AM -0700, Paul Burton wrote:
-> 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -1565,7 +1565,8 @@ int select_task_rq(struct task_struct *p, int cpu, int sd_flags, int wake_flags)
-> >  	 *   not worry about this generic constraint ]
-> >  	 */
-> >  	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
-> > -		     !cpu_online(cpu)))
-> > +		     !cpu_online(cpu) ||
-> > +		     (!cpu_active(cpu) && !(p->flags & PF_KTHREAD))))
-> >  		cpu = select_fallback_rq(task_cpu(p), p);
-> 
-> That is not quite right.. and I find that the wrong patch:
-> 
->   955dbdf4ce87 ("sched: Allow migrating kthreads into online but inactive CPUs")
-> 
-> got merged over my suggested alternative :-(
-> 
->   http://lkml.kernel.org/r/20170725165821.cejhb7v2s3kecems@hirez.programming.kicks-ass.net
-> 
-> So, lets first fix that
+------------------
 
-Thanks for the link - just knowing that the intention is that only
-per-CPU kthreads are allowed on !active CPUs is useful.
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-> , and then your patch becomes something like the below I think.
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1562,7 +1562,7 @@ int select_task_rq(struct task_struct *p
->  	 *   not worry about this generic constraint ]
->  	 */
->  	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
-> -		     !cpu_online(cpu)))
-> +		     (is_per_cpu_kthread(p) ? !cpu_online(cpu) : !cpu_active(cpu)))
->  		cpu = select_fallback_rq(task_cpu(p), p);
->  
->  	return cpu;
+[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
 
-Yes this looks good to me.
+Current code does:
 
-Are you planning to submit your change to introduce
-is_per_cpu_kthread(), or shall I?
+	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
 
-Thanks,
-    Paul
+However sscanf() is broken garbage.
+
+It silently accepts whitespace between format specifiers
+(did you know that?).
+
+It silently accepts valid strings which result in integer overflow.
+
+Do not use sscanf() for any even remotely reliable parsing code.
+
+	OK
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+	broken
+	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+	broken
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
+	/lib/systemd/systemd
+
+	very broken
+	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+Andrei said:
+
+: This patch breaks criu.  It was a bug in criu.  And this bug is on a minor
+: path, which works when memfd_create() isn't available.  It is a reason why
+: I ask to not backport this patch to stable kernels.
+:
+: In CRIU this bug can be triggered, only if this patch will be backported
+: to a kernel which version is lower than v3.16.
+
+Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Pavel Emelyanov <xemul@openvz.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/proc/base.c |   29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,8 @@
+ #include "internal.h"
+ #include "fd.h"
+ 
++#include "../../lib/kstrtox.h"
++
+ /* NOTE:
+  *	Implementing inode permission operations in /proc is almost
+  *	certainly an error.  Permission checks need to happen during
+@@ -1836,8 +1838,33 @@ end_instantiate:
+ static int dname_to_vma_addr(struct dentry *dentry,
+ 			     unsigned long *start, unsigned long *end)
+ {
+-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
++	const char *str = dentry->d_name.name;
++	unsigned long long sval, eval;
++	unsigned int len;
++
++	len = _parse_integer(str, 16, &sval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (sval != (unsigned long)sval)
+ 		return -EINVAL;
++	str += len;
++
++	if (*str != '-')
++		return -EINVAL;
++	str++;
++
++	len = _parse_integer(str, 16, &eval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (eval != (unsigned long)eval)
++		return -EINVAL;
++	str += len;
++
++	if (*str != '\0')
++		return -EINVAL;
++
++	*start = sval;
++	*end = eval;
+ 
+ 	return 0;
+ }
