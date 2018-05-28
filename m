@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164285AbeE1Kya (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:54:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43208 "EHLO mail.kernel.org"
+        id S1164302AbeE1Kyi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:54:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164256AbeE1KyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:15 -0400
+        id S1164279AbeE1Ky3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 280/496] net/sched: fix idr leak in the error path of tcf_simp_init()
-Date: Mon, 28 May 2018 12:01:05 +0200
-Message-Id: <20180528100331.649896896@linuxfoundation.org>
+Subject: [PATCH 4.14 293/496] selftests: ftrace: Add a testcase for probepoint
+Date: Mon, 28 May 2018 12:01:18 +0200
+Message-Id: <20180528100332.168568461@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,56 +30,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 60e10b3adc3bac0f6a894c28e0eb1f2d13607362 ]
+[ Upstream commit dfa453bc90eca0febff33c8d292a656e53702158 ]
 
-if the kernel fails to duplicate 'sdata', creation of a new action fails
-with -ENOMEM. However, subsequent attempts to install the same action
-using the same value of 'index' systematically fail with -ENOSPC, and
-that value of 'index' will no more be usable by act_simple, until rmmod /
-insmod of act_simple.ko is done:
+Add a testcase for probe point definition. This tests
+symbol, address and symbol+offset syntax. The offset
+must be positive and smaller than UINT_MAX.
 
- # tc actions add action simple sdata hello index 100
- # tc actions list action simple
+Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
 
-        action order 0: Simple <hello>
-         index 100 ref 1 bind 0
- # tc actions flush action simple
- # tc actions add action simple sdata hello index 100
- RTNETLINK answers: Cannot allocate memory
- We have an error talking to the kernel
- # tc actions flush action simple
- # tc actions add action simple sdata hello index 100
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
- # tc actions add action simple sdata hello index 100
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
- ...
-
-Fix this in the error path of tcf_simp_init(), calling tcf_idr_release()
-in place of tcf_idr_cleanup().
-
-Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
-Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_simple.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc |   43 +++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
 
---- a/net/sched/act_simple.c
-+++ b/net/sched/act_simple.c
-@@ -121,7 +121,7 @@ static int tcf_simp_init(struct net *net
- 		d = to_defact(*a);
- 		ret = alloc_defdata(d, defdata);
- 		if (ret < 0) {
--			tcf_idr_cleanup(*a, est);
-+			tcf_idr_release(*a, bind);
- 			return ret;
- 		}
- 		d->tcf_action = parm->action;
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+@@ -0,0 +1,43 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe events - probe points
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++TARGET_FUNC=create_trace_kprobe
++
++dec_addr() { # hexaddr
++  printf "%d" "0x"`echo $1 | tail -c 8`
++}
++
++set_offs() { # prev target next
++  A1=`dec_addr $1`
++  A2=`dec_addr $2`
++  A3=`dec_addr $3`
++  TARGET="0x$2" # an address
++  PREV=`expr $A1 - $A2` # offset to previous symbol
++  NEXT=+`expr $A3 - $A2` # offset to next symbol
++  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
++}
++
++# We have to decode symbol addresses to get correct offsets.
++# If the offset is not an instruction boundary, it cause -EILSEQ.
++set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
++
++UINT_TEST=no
++# printf "%x" -1 returns (unsigned long)-1.
++if [ `printf "%x" -1 | wc -c` != 9 ]; then
++  UINT_TEST=yes
++fi
++
++echo 0 > events/enable
++echo > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
++echo "p:testprobe ${TARGET}" > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
++! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
++if [ "${UINT_TEST}" = yes ]; then
++! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
++fi
++echo > kprobe_events
++clear_trace
