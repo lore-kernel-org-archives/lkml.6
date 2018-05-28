@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162071AbeE1Kf1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:35:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55690 "EHLO mail.kernel.org"
+        id S1162087AbeE1Kff (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:35:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161788AbeE1KfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:19 -0400
+        id S1162072AbeE1Kf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 202/329] batman-adv: fix header size check in batadv_dbg_arp()
-Date: Mon, 28 May 2018 12:02:11 +0200
-Message-Id: <20180528100259.052029815@linuxfoundation.org>
+Subject: [PATCH 4.9 205/329] vti4: Dont override MTU passed on link creation via IFLA_MTU
+Date: Mon, 28 May 2018 12:02:14 +0200
+Message-Id: <20180528100259.308605780@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,32 +31,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit 6f27d2c2a8c236d296201c19abb8533ec20d212b ]
+[ Upstream commit 03080e5ec72740c1a62e6730f2a5f3f114f11b19 ]
 
-Checking for 0 is insufficient: when an SKB without a batadv header, but
-with a VLAN header is received, hdr_size will be 4, making the following
-code interpret the Ethernet header as a batadv header.
+Don't hardcode a MTU value on vti tunnel initialization,
+ip_tunnel_newlink() is able to deal with this already. See also
+commit ffc2b6ee4174 ("ip_gre: fix IFLA_MTU ignored on NEWLINK").
 
-Fixes: be1db4f6615b ("batman-adv: make the Distributed ARP Table vlan aware")
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Fixes: 1181412c1a67 ("net/ipv4: VTI support new module for ip_vti.")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/distributed-arp-table.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_vti.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/batman-adv/distributed-arp-table.c
-+++ b/net/batman-adv/distributed-arp-table.c
-@@ -391,7 +391,7 @@ static void batadv_dbg_arp(struct batadv
- 		   batadv_arp_hw_src(skb, hdr_size), &ip_src,
- 		   batadv_arp_hw_dst(skb, hdr_size), &ip_dst);
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -396,7 +396,6 @@ static int vti_tunnel_init(struct net_de
+ 	memcpy(dev->dev_addr, &iph->saddr, 4);
+ 	memcpy(dev->broadcast, &iph->daddr, 4);
  
--	if (hdr_size == 0)
-+	if (hdr_size < sizeof(struct batadv_unicast_packet))
- 		return;
- 
- 	unicast_4addr_packet = (struct batadv_unicast_4addr_packet *)skb->data;
+-	dev->mtu		= ETH_DATA_LEN;
+ 	dev->flags		= IFF_NOARP;
+ 	dev->addr_len		= 4;
+ 	dev->features		|= NETIF_F_LLTX;
