@@ -1,54 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940210AbeE1QfP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:35:15 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37880 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934820AbeE1QfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:35:11 -0400
-X-Google-Smtp-Source: AB8JxZpdWc0hJ78ArjBaj2JtXDp7vYTHEBMs1OmWPQHeqxdrmAFpKEevLku2AdTuFjb/lSChsW+eNA==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: linux-kernel@vger.kernel.org, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH] riscv: pass machine size to sparse
-Date: Mon, 28 May 2018 18:35:05 +0200
-Message-Id: <20180528163505.15698-1-luc.vanoostenryck@gmail.com>
+        id S940223AbeE1Qf2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:35:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934778AbeE1KIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:38 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Keerthy <j-keerthy@ti.com>, Ladislav Michl <ladis@linux-mips.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 067/185] ARM: OMAP: Fix dmtimer init for omap1
+Date: Mon, 28 May 2018 12:01:48 +0200
+Message-Id: <20180528100056.524499510@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, sparse assumes a 64bit machine when compiled on x86-64
-and 32bit when compiled on anything else.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-This can of course create all sort of problems when this doesn't
-correspond to the target's machine size, like issuing false
-warnings like: 'shift too big (32) for type unsigned long' or
-is 64bit while sparse was compiled on a 32bit machine, or worse,
-to not emit legitimate warnings.
+------------------
 
-Fix this by passing the appropriate -m32/-m64 flag to sparse.
+From: Tony Lindgren <tony@atomide.com>
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+[ Upstream commit ba6887836178d43b3665b9da075c2c5dfe1d207c ]
+
+We need to enable PM runtime on omap1 also as otherwise we
+will get errors:
+
+omap_timer omap_timer.1: omap_dm_timer_probe: pm_runtime_get_sync failed!
+omap_timer: probe of omap_timer.1 failed with error -13
+...
+
+We are checking for OMAP_TIMER_NEEDS_RESET flag elsewhere so this is
+safe to do.
+
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/plat-omap/dmtimer.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 76e958a54..cb2502e4c 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -71,6 +71,8 @@ KBUILD_CFLAGS_MODULE += $(call cc-option,-mno-relax)
- # architectures.  It's faster to have GCC emit only aligned accesses.
- KBUILD_CFLAGS += $(call cc-option,-mstrict-align)
+--- a/arch/arm/plat-omap/dmtimer.c
++++ b/arch/arm/plat-omap/dmtimer.c
+@@ -853,11 +853,8 @@ static int omap_dm_timer_probe(struct pl
+ 	timer->irq = irq->start;
+ 	timer->pdev = pdev;
  
-+CHECKFLAGS += -m$(BITS)
-+
- head-y := arch/riscv/kernel/head.o
+-	/* Skip pm_runtime_enable for OMAP1 */
+-	if (!(timer->capability & OMAP_TIMER_NEEDS_RESET)) {
+-		pm_runtime_enable(dev);
+-		pm_runtime_irq_safe(dev);
+-	}
++	pm_runtime_enable(dev);
++	pm_runtime_irq_safe(dev);
  
- core-y += arch/riscv/kernel/ arch/riscv/mm/
--- 
-2.17.0
+ 	if (!timer->reserved) {
+ 		pm_runtime_get_sync(dev);
