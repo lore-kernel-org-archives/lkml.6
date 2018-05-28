@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034043AbeE1PN4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:13:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42670 "EHLO mail.kernel.org"
+        id S1166105AbeE1POT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:14:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033634AbeE1KXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:16 -0400
+        id S1033611AbeE1KXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
+        stable@vger.kernel.org, Chunyu Hu <chuhu@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 205/268] ACPICA: Events: add a return on failure from acpi_hw_register_read
-Date: Mon, 28 May 2018 12:02:59 +0200
-Message-Id: <20180528100225.483459544@linuxfoundation.org>
+Subject: [PATCH 4.4 201/268] cpufreq: cppc_cpufreq: Fix cppc_cpufreq_init() failure path
+Date: Mon, 28 May 2018 12:02:55 +0200
+Message-Id: <20180528100225.071400774@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,43 +31,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erik Schmauss <erik.schmauss@intel.com>
+From: Chunyu Hu <chuhu@redhat.com>
 
-[ Upstream commit b4c0de312613ca676db5bd7e696a44b56795612a ]
+[ Upstream commit 55b55abc17f238c61921360e61dde90dd9a326d1 ]
 
-This ensures that acpi_ev_fixed_event_detect() does not use fixed_status
-and and fixed_enable as uninitialized variables.
+Kmemleak reported the below leak. When cppc_cpufreq_init went into
+failure path, the cpu mask is not freed. After fix, this report is
+gone. And to avaoid potential NULL pointer reference, check the cpu
+value first.
 
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+unreferenced object 0xffff800fd5ea4880 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294939510 (age 668.680s)
+  hex dump (first 32 bytes):
+    00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00  .... ...........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffff0000082c4ae4>] __kmalloc_node+0x278/0x634
+    [<ffff0000088f4a74>] alloc_cpumask_var_node+0x28/0x60
+    [<ffff0000088f4af0>] zalloc_cpumask_var+0x14/0x1c
+    [<ffff000008d20254>] cppc_cpufreq_init+0xd0/0x19c
+    [<ffff000008083828>] do_one_initcall+0xec/0x15c
+    [<ffff000008cd1018>] kernel_init_freeable+0x1f4/0x2a4
+    [<ffff0000089099b0>] kernel_init+0x18/0x10c
+    [<ffff000008084d50>] ret_from_fork+0x10/0x18
+    [<ffffffffffffffff>] 0xffffffffffffffff
+
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpica/evevent.c |    9 +++++++--
+ drivers/cpufreq/cppc_cpufreq.c |    9 +++++++--
  1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/acpica/evevent.c
-+++ b/drivers/acpi/acpica/evevent.c
-@@ -204,6 +204,7 @@ u32 acpi_ev_fixed_event_detect(void)
- 	u32 fixed_status;
- 	u32 fixed_enable;
- 	u32 i;
-+	acpi_status status;
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -176,8 +176,13 @@ static int __init cppc_cpufreq_init(void
+ 	return ret;
  
- 	ACPI_FUNCTION_NAME(ev_fixed_event_detect);
- 
-@@ -211,8 +212,12 @@ u32 acpi_ev_fixed_event_detect(void)
- 	 * Read the fixed feature status and enable registers, as all the cases
- 	 * depend on their values. Ignore errors here.
- 	 */
--	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
--	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
-+	status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
-+	status |=
-+	    acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
-+	if (ACPI_FAILURE(status)) {
-+		return (int_status);
+ out:
+-	for_each_possible_cpu(i)
+-		kfree(all_cpu_data[i]);
++	for_each_possible_cpu(i) {
++		cpu = all_cpu_data[i];
++		if (!cpu)
++			break;
++		free_cpumask_var(cpu->shared_cpu_map);
++		kfree(cpu);
 +	}
  
- 	ACPI_DEBUG_PRINT((ACPI_DB_INTERRUPTS,
- 			  "Fixed Event Block: Enable %08X Status %08X\n",
+ 	kfree(all_cpu_data);
+ 	return -ENODEV;
