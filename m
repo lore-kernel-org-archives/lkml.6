@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938842AbeE1M2q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:28:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48410 "EHLO mail.kernel.org"
+        id S938809AbeE1M3Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:29:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422692AbeE1LAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:50 -0400
+        id S1164795AbeE1LAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 430/496] cdrom: do not call check_disk_change() inside cdrom_open()
-Date: Mon, 28 May 2018 12:03:35 +0200
-Message-Id: <20180528100337.861190446@linuxfoundation.org>
+Subject: [PATCH 4.14 418/496] powerpc/powernv/npu: Fix deadlock in mmio_invalidate()
+Date: Mon, 28 May 2018 12:03:23 +0200
+Message-Id: <20180528100337.368028435@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,153 +30,368 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Alistair Popple <alistair@popple.id.au>
 
-[ Upstream commit 2bbea6e117357d17842114c65e9a9cf2d13ae8a3 ]
+[ Upstream commit 2b74e2a9b39df40a2b489af2d24079617c61ee0e ]
 
-when mounting an ISO filesystem sometimes (very rarely)
-the system hangs because of a race condition between two tasks.
+When sending TLB invalidates to the NPU we need to send extra flushes due
+to a hardware issue. The original implementation would lock the all the
+ATSD MMIO registers sequentially before unlocking and relocking each of
+them sequentially to do the extra flush.
 
-PID: 6766   TASK: ffff88007b2a6dd0  CPU: 0   COMMAND: "mount"
- #0 [ffff880078447ae0] __schedule at ffffffff8168d605
- #1 [ffff880078447b48] schedule_preempt_disabled at ffffffff8168ed49
- #2 [ffff880078447b58] __mutex_lock_slowpath at ffffffff8168c995
- #3 [ffff880078447bb8] mutex_lock at ffffffff8168bdef
- #4 [ffff880078447bd0] sr_block_ioctl at ffffffffa00b6818 [sr_mod]
- #5 [ffff880078447c10] blkdev_ioctl at ffffffff812fea50
- #6 [ffff880078447c70] ioctl_by_bdev at ffffffff8123a8b3
- #7 [ffff880078447c90] isofs_fill_super at ffffffffa04fb1e1 [isofs]
- #8 [ffff880078447da8] mount_bdev at ffffffff81202570
- #9 [ffff880078447e18] isofs_mount at ffffffffa04f9828 [isofs]
-#10 [ffff880078447e28] mount_fs at ffffffff81202d09
-#11 [ffff880078447e70] vfs_kern_mount at ffffffff8121ea8f
-#12 [ffff880078447ea8] do_mount at ffffffff81220fee
-#13 [ffff880078447f28] sys_mount at ffffffff812218d6
-#14 [ffff880078447f80] system_call_fastpath at ffffffff81698c49
-    RIP: 00007fd9ea914e9a  RSP: 00007ffd5d9bf648  RFLAGS: 00010246
-    RAX: 00000000000000a5  RBX: ffffffff81698c49  RCX: 0000000000000010
-    RDX: 00007fd9ec2bc210  RSI: 00007fd9ec2bc290  RDI: 00007fd9ec2bcf30
-    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000010
-    R10: 00000000c0ed0001  R11: 0000000000000206  R12: 00007fd9ec2bc040
-    R13: 00007fd9eb6b2380  R14: 00007fd9ec2bc210  R15: 00007fd9ec2bcf30
-    ORIG_RAX: 00000000000000a5  CS: 0033  SS: 002b
+This introduced a deadlock as it is possible for one thread to hold one
+ATSD register whilst waiting for another register to be freed while the
+other thread is holding that register waiting for the one in the first
+thread to be freed.
 
-This task was trying to mount the cdrom.  It allocated and configured a
-super_block struct and owned the write-lock for the super_block->s_umount
-rwsem. While exclusively owning the s_umount lock, it called
-sr_block_ioctl and waited to acquire the global sr_mutex lock.
+For example if there are two threads and two ATSD registers:
 
-PID: 6785   TASK: ffff880078720fb0  CPU: 0   COMMAND: "systemd-udevd"
- #0 [ffff880078417898] __schedule at ffffffff8168d605
- #1 [ffff880078417900] schedule at ffffffff8168dc59
- #2 [ffff880078417910] rwsem_down_read_failed at ffffffff8168f605
- #3 [ffff880078417980] call_rwsem_down_read_failed at ffffffff81328838
- #4 [ffff8800784179d0] down_read at ffffffff8168cde0
- #5 [ffff8800784179e8] get_super at ffffffff81201cc7
- #6 [ffff880078417a10] __invalidate_device at ffffffff8123a8de
- #7 [ffff880078417a40] flush_disk at ffffffff8123a94b
- #8 [ffff880078417a88] check_disk_change at ffffffff8123ab50
- #9 [ffff880078417ab0] cdrom_open at ffffffffa00a29e1 [cdrom]
-#10 [ffff880078417b68] sr_block_open at ffffffffa00b6f9b [sr_mod]
-#11 [ffff880078417b98] __blkdev_get at ffffffff8123ba86
-#12 [ffff880078417bf0] blkdev_get at ffffffff8123bd65
-#13 [ffff880078417c78] blkdev_open at ffffffff8123bf9b
-#14 [ffff880078417c90] do_dentry_open at ffffffff811fc7f7
-#15 [ffff880078417cd8] vfs_open at ffffffff811fc9cf
-#16 [ffff880078417d00] do_last at ffffffff8120d53d
-#17 [ffff880078417db0] path_openat at ffffffff8120e6b2
-#18 [ffff880078417e48] do_filp_open at ffffffff8121082b
-#19 [ffff880078417f18] do_sys_open at ffffffff811fdd33
-#20 [ffff880078417f70] sys_open at ffffffff811fde4e
-#21 [ffff880078417f80] system_call_fastpath at ffffffff81698c49
-    RIP: 00007f29438b0c20  RSP: 00007ffc76624b78  RFLAGS: 00010246
-    RAX: 0000000000000002  RBX: ffffffff81698c49  RCX: 0000000000000000
-    RDX: 00007f2944a5fa70  RSI: 00000000000a0800  RDI: 00007f2944a5fa70
-    RBP: 00007f2944a5f540   R8: 0000000000000000   R9: 0000000000000020
-    R10: 00007f2943614c40  R11: 0000000000000246  R12: ffffffff811fde4e
-    R13: ffff880078417f78  R14: 000000000000000c  R15: 00007f2944a4b010
-    ORIG_RAX: 0000000000000002  CS: 0033  SS: 002b
+  Thread A	Thread B
+  ----------------------
+  Acquire 1
+  Acquire 2
+  Release 1	Acquire 1
+  Wait 1	Wait 2
 
-This task tried to open the cdrom device, the sr_block_open function
-acquired the global sr_mutex lock. The call to check_disk_change()
-then saw an event flag indicating a possible media change and tried
-to flush any cached data for the device.
-As part of the flush, it tried to acquire the super_block->s_umount
-lock associated with the cdrom device.
-This was the same super_block as created and locked by the previous task.
+Both threads will be stuck waiting to acquire a register resulting in an
+RCU stall warning or soft lockup.
 
-The first task acquires the s_umount lock and then the sr_mutex_lock;
-the second task acquires the sr_mutex_lock and then the s_umount lock.
+This patch solves the deadlock by refactoring the code to ensure registers
+are not released between flushes and to ensure all registers are either
+acquired or released together and in order.
 
-This patch fixes the issue by moving check_disk_change() out of
-cdrom_open() and let the caller take care of it.
-
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: bbd5ff50afff ("powerpc/powernv/npu-dma: Add explicit flush when sending an ATSD")
+Signed-off-by: Alistair Popple <alistair@popple.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/paride/pcd.c |    2 ++
- drivers/cdrom/cdrom.c      |    3 ---
- drivers/cdrom/gdrom.c      |    3 +++
- drivers/ide/ide-cd.c       |    2 ++
- drivers/scsi/sr.c          |    2 ++
- 5 files changed, 9 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/powernv/npu-dma.c |  227 +++++++++++++++++++------------
+ 1 file changed, 140 insertions(+), 87 deletions(-)
 
---- a/drivers/block/paride/pcd.c
-+++ b/drivers/block/paride/pcd.c
-@@ -230,6 +230,8 @@ static int pcd_block_open(struct block_d
- 	struct pcd_unit *cd = bdev->bd_disk->private_data;
- 	int ret;
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -413,6 +413,11 @@ struct npu_context {
+ 	void *priv;
+ };
  
-+	check_disk_change(bdev);
++struct mmio_atsd_reg {
++	struct npu *npu;
++	int reg;
++};
 +
- 	mutex_lock(&pcd_mutex);
- 	ret = cdrom_open(&cd->info, bdev, mode);
- 	mutex_unlock(&pcd_mutex);
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -1152,9 +1152,6 @@ int cdrom_open(struct cdrom_device_info
+ /*
+  * Find a free MMIO ATSD register and mark it in use. Return -ENOSPC
+  * if none are available.
+@@ -422,7 +427,7 @@ static int get_mmio_atsd_reg(struct npu
+ 	int i;
  
- 	cd_dbg(CD_OPEN, "entering cdrom_open\n");
+ 	for (i = 0; i < npu->mmio_atsd_count; i++) {
+-		if (!test_and_set_bit(i, &npu->mmio_atsd_usage))
++		if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
+ 			return i;
+ 	}
  
--	/* open is event synchronization point, check events first */
--	check_disk_change(bdev);
--
- 	/* if this was a O_NONBLOCK open and we should honor the flags,
- 	 * do a quick open without drive/disc integrity checks. */
- 	cdi->use_count++;
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -497,6 +497,9 @@ static const struct cdrom_device_ops gdr
- static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
+@@ -431,86 +436,90 @@ static int get_mmio_atsd_reg(struct npu
+ 
+ static void put_mmio_atsd_reg(struct npu *npu, int reg)
  {
- 	int ret;
-+
-+	check_disk_change(bdev);
-+
- 	mutex_lock(&gdrom_mutex);
- 	ret = cdrom_open(gd.cd_info, bdev, mode);
- 	mutex_unlock(&gdrom_mutex);
---- a/drivers/ide/ide-cd.c
-+++ b/drivers/ide/ide-cd.c
-@@ -1614,6 +1614,8 @@ static int idecd_open(struct block_devic
- 	struct cdrom_info *info;
- 	int rc = -ENXIO;
+-	clear_bit(reg, &npu->mmio_atsd_usage);
++	clear_bit_unlock(reg, &npu->mmio_atsd_usage);
+ }
  
-+	check_disk_change(bdev);
-+
- 	mutex_lock(&ide_cd_mutex);
- 	info = ide_cd_get(bdev->bd_disk);
- 	if (!info)
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -525,6 +525,8 @@ static int sr_block_open(struct block_de
- 	struct scsi_cd *cd;
- 	int ret = -ENXIO;
+ /* MMIO ATSD register offsets */
+ #define XTS_ATSD_AVA  1
+ #define XTS_ATSD_STAT 2
  
-+	check_disk_change(bdev);
+-static int mmio_launch_invalidate(struct npu *npu, unsigned long launch,
+-				unsigned long va)
++static void mmio_launch_invalidate(struct mmio_atsd_reg *mmio_atsd_reg,
++				unsigned long launch, unsigned long va)
+ {
+-	int mmio_atsd_reg;
+-
+-	do {
+-		mmio_atsd_reg = get_mmio_atsd_reg(npu);
+-		cpu_relax();
+-	} while (mmio_atsd_reg < 0);
++	struct npu *npu = mmio_atsd_reg->npu;
++	int reg = mmio_atsd_reg->reg;
+ 
+ 	__raw_writeq(cpu_to_be64(va),
+-		npu->mmio_atsd_regs[mmio_atsd_reg] + XTS_ATSD_AVA);
++		npu->mmio_atsd_regs[reg] + XTS_ATSD_AVA);
+ 	eieio();
+-	__raw_writeq(cpu_to_be64(launch), npu->mmio_atsd_regs[mmio_atsd_reg]);
+-
+-	return mmio_atsd_reg;
++	__raw_writeq(cpu_to_be64(launch), npu->mmio_atsd_regs[reg]);
+ }
+ 
+-static int mmio_invalidate_pid(struct npu *npu, unsigned long pid, bool flush)
++static void mmio_invalidate_pid(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
++				unsigned long pid, bool flush)
+ {
++	int i;
+ 	unsigned long launch;
+ 
+-	/* IS set to invalidate matching PID */
+-	launch = PPC_BIT(12);
++	for (i = 0; i <= max_npu2_index; i++) {
++		if (mmio_atsd_reg[i].reg < 0)
++			continue;
 +
- 	mutex_lock(&sr_mutex);
- 	cd = scsi_cd_get(bdev->bd_disk);
- 	if (cd) {
++		/* IS set to invalidate matching PID */
++		launch = PPC_BIT(12);
+ 
+-	/* PRS set to process-scoped */
+-	launch |= PPC_BIT(13);
++		/* PRS set to process-scoped */
++		launch |= PPC_BIT(13);
+ 
+-	/* AP */
+-	launch |= (u64) mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
++		/* AP */
++		launch |= (u64)
++			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
+ 
+-	/* PID */
+-	launch |= pid << PPC_BITLSHIFT(38);
++		/* PID */
++		launch |= pid << PPC_BITLSHIFT(38);
+ 
+-	/* No flush */
+-	launch |= !flush << PPC_BITLSHIFT(39);
++		/* No flush */
++		launch |= !flush << PPC_BITLSHIFT(39);
+ 
+-	/* Invalidating the entire process doesn't use a va */
+-	return mmio_launch_invalidate(npu, launch, 0);
++		/* Invalidating the entire process doesn't use a va */
++		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, 0);
++	}
+ }
+ 
+-static int mmio_invalidate_va(struct npu *npu, unsigned long va,
+-			unsigned long pid, bool flush)
++static void mmio_invalidate_va(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
++			unsigned long va, unsigned long pid, bool flush)
+ {
++	int i;
+ 	unsigned long launch;
+ 
+-	/* IS set to invalidate target VA */
+-	launch = 0;
++	for (i = 0; i <= max_npu2_index; i++) {
++		if (mmio_atsd_reg[i].reg < 0)
++			continue;
+ 
+-	/* PRS set to process scoped */
+-	launch |= PPC_BIT(13);
++		/* IS set to invalidate target VA */
++		launch = 0;
+ 
+-	/* AP */
+-	launch |= (u64) mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
++		/* PRS set to process scoped */
++		launch |= PPC_BIT(13);
+ 
+-	/* PID */
+-	launch |= pid << PPC_BITLSHIFT(38);
++		/* AP */
++		launch |= (u64)
++			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
+ 
+-	/* No flush */
+-	launch |= !flush << PPC_BITLSHIFT(39);
++		/* PID */
++		launch |= pid << PPC_BITLSHIFT(38);
+ 
+-	return mmio_launch_invalidate(npu, launch, va);
++		/* No flush */
++		launch |= !flush << PPC_BITLSHIFT(39);
++
++		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, va);
++	}
+ }
+ 
+ #define mn_to_npu_context(x) container_of(x, struct npu_context, mn)
+ 
+-struct mmio_atsd_reg {
+-	struct npu *npu;
+-	int reg;
+-};
+-
+ static void mmio_invalidate_wait(
+-	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS], bool flush)
++	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
+ {
+ 	struct npu *npu;
+ 	int i, reg;
+@@ -525,16 +534,67 @@ static void mmio_invalidate_wait(
+ 		reg = mmio_atsd_reg[i].reg;
+ 		while (__raw_readq(npu->mmio_atsd_regs[reg] + XTS_ATSD_STAT))
+ 			cpu_relax();
++	}
++}
++
++/*
++ * Acquires all the address translation shootdown (ATSD) registers required to
++ * launch an ATSD on all links this npu_context is active on.
++ */
++static void acquire_atsd_reg(struct npu_context *npu_context,
++			struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
++{
++	int i, j;
++	struct npu *npu;
++	struct pci_dev *npdev;
++	struct pnv_phb *nphb;
++
++	for (i = 0; i <= max_npu2_index; i++) {
++		mmio_atsd_reg[i].reg = -1;
++		for (j = 0; j < NV_MAX_LINKS; j++) {
++			/*
++			 * There are no ordering requirements with respect to
++			 * the setup of struct npu_context, but to ensure
++			 * consistent behaviour we need to ensure npdev[][] is
++			 * only read once.
++			 */
++			npdev = READ_ONCE(npu_context->npdev[i][j]);
++			if (!npdev)
++				continue;
++
++			nphb = pci_bus_to_host(npdev->bus)->private_data;
++			npu = &nphb->npu;
++			mmio_atsd_reg[i].npu = npu;
++			mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
++			while (mmio_atsd_reg[i].reg < 0) {
++				mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
++				cpu_relax();
++			}
++			break;
++		}
++	}
++}
+ 
+-		put_mmio_atsd_reg(npu, reg);
++/*
++ * Release previously acquired ATSD registers. To avoid deadlocks the registers
++ * must be released in the same order they were acquired above in
++ * acquire_atsd_reg.
++ */
++static void release_atsd_reg(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
++{
++	int i;
+ 
++	for (i = 0; i <= max_npu2_index; i++) {
+ 		/*
+-		 * The GPU requires two flush ATSDs to ensure all entries have
+-		 * been flushed. We use PID 0 as it will never be used for a
+-		 * process on the GPU.
++		 * We can't rely on npu_context->npdev[][] being the same here
++		 * as when acquire_atsd_reg() was called, hence we use the
++		 * values stored in mmio_atsd_reg during the acquire phase
++		 * rather than re-reading npdev[][].
+ 		 */
+-		if (flush)
+-			mmio_invalidate_pid(npu, 0, true);
++		if (mmio_atsd_reg[i].reg < 0)
++			continue;
++
++		put_mmio_atsd_reg(mmio_atsd_reg[i].npu, mmio_atsd_reg[i].reg);
+ 	}
+ }
+ 
+@@ -545,10 +605,6 @@ static void mmio_invalidate_wait(
+ static void mmio_invalidate(struct npu_context *npu_context, int va,
+ 			unsigned long address, bool flush)
+ {
+-	int i, j;
+-	struct npu *npu;
+-	struct pnv_phb *nphb;
+-	struct pci_dev *npdev;
+ 	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS];
+ 	unsigned long pid = npu_context->mm->context.id;
+ 
+@@ -562,37 +618,25 @@ static void mmio_invalidate(struct npu_c
+ 	 * Loop over all the NPUs this process is active on and launch
+ 	 * an invalidate.
+ 	 */
+-	for (i = 0; i <= max_npu2_index; i++) {
+-		mmio_atsd_reg[i].reg = -1;
+-		for (j = 0; j < NV_MAX_LINKS; j++) {
+-			npdev = npu_context->npdev[i][j];
+-			if (!npdev)
+-				continue;
++	acquire_atsd_reg(npu_context, mmio_atsd_reg);
++	if (va)
++		mmio_invalidate_va(mmio_atsd_reg, address, pid, flush);
++	else
++		mmio_invalidate_pid(mmio_atsd_reg, pid, flush);
+ 
+-			nphb = pci_bus_to_host(npdev->bus)->private_data;
+-			npu = &nphb->npu;
+-			mmio_atsd_reg[i].npu = npu;
+-
+-			if (va)
+-				mmio_atsd_reg[i].reg =
+-					mmio_invalidate_va(npu, address, pid,
+-							flush);
+-			else
+-				mmio_atsd_reg[i].reg =
+-					mmio_invalidate_pid(npu, pid, flush);
+-
+-			/*
+-			 * The NPU hardware forwards the shootdown to all GPUs
+-			 * so we only have to launch one shootdown per NPU.
+-			 */
+-			break;
+-		}
++	mmio_invalidate_wait(mmio_atsd_reg);
++	if (flush) {
++		/*
++		 * The GPU requires two flush ATSDs to ensure all entries have
++		 * been flushed. We use PID 0 as it will never be used for a
++		 * process on the GPU.
++		 */
++		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
++		mmio_invalidate_wait(mmio_atsd_reg);
++		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
++		mmio_invalidate_wait(mmio_atsd_reg);
+ 	}
+-
+-	mmio_invalidate_wait(mmio_atsd_reg, flush);
+-	if (flush)
+-		/* Wait for the flush to complete */
+-		mmio_invalidate_wait(mmio_atsd_reg, false);
++	release_atsd_reg(mmio_atsd_reg);
+ }
+ 
+ static void pnv_npu2_mn_release(struct mmu_notifier *mn,
+@@ -735,7 +779,16 @@ struct npu_context *pnv_npu2_init_contex
+ 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
+ 							&nvlink_index)))
+ 		return ERR_PTR(-ENODEV);
+-	npu_context->npdev[npu->index][nvlink_index] = npdev;
++
++	/*
++	 * npdev is a pci_dev pointer setup by the PCI code. We assign it to
++	 * npdev[][] to indicate to the mmu notifiers that an invalidation
++	 * should also be sent over this nvlink. The notifiers don't use any
++	 * other fields in npu_context, so we just need to ensure that when they
++	 * deference npu_context->npdev[][] it is either a valid pointer or
++	 * NULL.
++	 */
++	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], npdev);
+ 
+ 	return npu_context;
+ }
+@@ -774,7 +827,7 @@ void pnv_npu2_destroy_context(struct npu
+ 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
+ 							&nvlink_index)))
+ 		return;
+-	npu_context->npdev[npu->index][nvlink_index] = NULL;
++	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], NULL);
+ 	opal_npu_destroy_context(nphb->opal_id, npu_context->mm->context.id,
+ 				PCI_DEVID(gpdev->bus->number, gpdev->devfn));
+ 	kref_put(&npu_context->kref, pnv_npu2_release_context);
