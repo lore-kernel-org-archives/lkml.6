@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164305AbeE1NCl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:02:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42434 "EHLO mail.kernel.org"
+        id S1165080AbeE1NDM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:03:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164096AbeE1KxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:12 -0400
+        id S1163509AbeE1KxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -13,9 +13,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sabrina Dubroca <sd@queasysnail.net>,
         Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 265/496] vti4: Dont override MTU passed on link creation via IFLA_MTU
-Date: Mon, 28 May 2018 12:00:50 +0200
-Message-Id: <20180528100331.027308221@linuxfoundation.org>
+Subject: [PATCH 4.14 263/496] vti4: Dont count header length twice on tunnel setup
+Date: Mon, 28 May 2018 12:00:48 +0200
+Message-Id: <20180528100330.948425698@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,13 +33,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit 03080e5ec72740c1a62e6730f2a5f3f114f11b19 ]
+[ Upstream commit dd1df24737727e119c263acf1be2a92763938297 ]
 
-Don't hardcode a MTU value on vti tunnel initialization,
-ip_tunnel_newlink() is able to deal with this already. See also
-commit ffc2b6ee4174 ("ip_gre: fix IFLA_MTU ignored on NEWLINK").
+This re-introduces the effect of commit a32452366b72 ("vti4:
+Don't count header length twice.") which was accidentally
+reverted by merge commit f895f0cfbb77 ("Merge branch 'master' of
+git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec").
 
-Fixes: 1181412c1a67 ("net/ipv4: VTI support new module for ip_vti.")
+The commit message from Steffen Klassert said:
+
+    We currently count the size of LL_MAX_HEADER and struct iphdr
+    twice for vti4 devices, this leads to a wrong device mtu.
+    The size of LL_MAX_HEADER and struct iphdr is already counted in
+    ip_tunnel_bind_dev(), so don't do it again in vti_tunnel_init().
+
+And this is still the case now: ip_tunnel_bind_dev() already
+accounts for the header length of the link layer (not
+necessarily LL_MAX_HEADER, if the output device is found), plus
+one IP header.
+
+For example, with a vti device on top of veth, with MTU of 1500,
+the existing implementation would set the initial vti MTU to
+1332, accounting once for LL_MAX_HEADER (128, included in
+hard_header_len by vti) and twice for the same IP header (once
+from hard_header_len, once from ip_tunnel_bind_dev()).
+
+It should instead be 1480, because ip_tunnel_bind_dev() is able
+to figure out that the output device is veth, so no additional
+link layer header is attached, and will properly count one
+single IP header.
+
+The existing issue had the side effect of avoiding PMTUD for
+most xfrm policies, by arbitrarily lowering the initial MTU.
+However, the only way to get a consistent PMTU value is to let
+the xfrm PMTU discovery do its course, and commit d6af1a31cc72
+("vti: Add pmtu handling to vti_xmit.") now takes care of local
+delivery cases where the application ignores local socket
+notifications.
+
+Fixes: b9959fd3b0fa ("vti: switch to new ip tunnel code")
+Fixes: f895f0cfbb77 ("Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec")
 Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
 Acked-by: Sabrina Dubroca <sd@queasysnail.net>
 Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
@@ -55,7 +88,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	memcpy(dev->dev_addr, &iph->saddr, 4);
  	memcpy(dev->broadcast, &iph->daddr, 4);
  
--	dev->mtu		= ETH_DATA_LEN;
+-	dev->hard_header_len	= LL_MAX_HEADER + sizeof(struct iphdr);
+ 	dev->mtu		= ETH_DATA_LEN;
  	dev->flags		= IFF_NOARP;
  	dev->addr_len		= 4;
- 	dev->features		|= NETIF_F_LLTX;
