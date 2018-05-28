@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163502AbeE1NXl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:23:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
+        id S1425097AbeE1NYB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163158AbeE1Ksj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:39 -0400
+        id S1163222AbeE1Ksg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Mason <jon.mason@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 167/496] ARM: dts: NSP: Fix amount of RAM on BCM958625HR
-Date: Mon, 28 May 2018 11:59:12 +0200
-Message-Id: <20180528100326.901056919@linuxfoundation.org>
+Subject: [PATCH 4.14 166/496] nbd: fix return value in error handling path
+Date: Mon, 28 May 2018 11:59:11 +0200
+Message-Id: <20180528100326.858140919@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,36 +31,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 0a5aff64f20d92c5a6e9aeed7b5950b0b817bcd9 ]
+[ Upstream commit 0979962f5490abe75b3e2befb07a564fa0cf631b ]
 
-Jon attempted to fix the amount of RAM on the BCM958625HR in commit
-c53beb47f621 ("ARM: dts: NSP: Correct RAM amount for BCM958625HR board")
-but it seems like we tripped over some poorly documented schematics.
+It seems that the proper value to return in this particular case is the
+one contained into variable new_index instead of ret.
 
-The top-level page of the schematics says the board has 2GB, but when
-you end-up scrolling to page 6, you see two chips of 4GBit (512MB) but
-what the bootloader really initializes only 512MB, any attempt to use
-more than that results in data aborts. Fix this again back to 512MB.
-
-Fixes: c53beb47f621 ("ARM: dts: NSP: Correct RAM amount for BCM958625HR board")
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Addresses-Coverity-ID: 1465148 ("Copy-paste error")
+Fixes: e46c7287b1c2 ("nbd: add a basic netlink interface")
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm958625hr.dts |    2 +-
+ drivers/block/nbd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/bcm958625hr.dts
-+++ b/arch/arm/boot/dts/bcm958625hr.dts
-@@ -49,7 +49,7 @@
- 
- 	memory {
- 		device_type = "memory";
--		reg = <0x60000000 0x80000000>;
-+		reg = <0x60000000 0x20000000>;
- 	};
- 
- 	gpio-restart {
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1591,7 +1591,7 @@ again:
+ 			if (new_index < 0) {
+ 				mutex_unlock(&nbd_index_mutex);
+ 				printk(KERN_ERR "nbd: failed to add new device\n");
+-				return ret;
++				return new_index;
+ 			}
+ 			nbd = idr_find(&nbd_index_idr, new_index);
+ 		}
