@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937124AbeE1K2J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47476 "EHLO mail.kernel.org"
+        id S937088AbeE1K14 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:27:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937072AbeE1K2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:03 -0400
+        id S937024AbeE1K1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Emiliano Ingrassia <ingrassia@epigenesys.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Gopanapalli Pradeep <prap_hai@yahoo.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 041/329] net: stmmac: dwmac-meson8b: fix setting the RGMII TX clock on Meson8b
-Date: Mon, 28 May 2018 11:59:30 +0200
-Message-Id: <20180528100245.878317175@linuxfoundation.org>
+Subject: [PATCH 4.9 037/329] tools lib traceevent: Fix get_field_str() for dynamic strings
+Date: Mon, 28 May 2018 11:59:26 +0200
+Message-Id: <20180528100245.544494287@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,59 +33,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 433c6cab9d298687c097f6ee82e49157044dc7c6 ]
+[ Upstream commit d777f8de99b05d399c0e4e51cdce016f26bd971b ]
 
-Meson8b only supports MPLL2 as clock input. The rate of the MPLL2 clock
-set by Odroid-C1's u-boot is close to (but not exactly) 500MHz. The
-exact rate is 500002394Hz, which is calculated in
-drivers/clk/meson/clk-mpll.c using the following formula:
-DIV_ROUND_UP_ULL((u64)parent_rate * SDM_DEN, (SDM_DEN * n2) + sdm)
-Odroid-C1's u-boot configures MPLL2 with the following values:
-- SDM_DEN = 16384
-- SDM = 1638
-- N2 = 5
+If a field is a dynamic string, get_field_str() returned just the
+offset/size value and not the string. Have it parse the offset/size
+correctly to return the actual string. Otherwise filtering fails when
+trying to filter fields that are dynamic strings.
 
-The 250MHz clock (m250_div) inside dwmac-meson8b driver is derived from
-the MPLL2 clock. Due to MPLL2 running slightly faster than 500MHz the
-common clock framework chooses a divider which is too big to generate
-the 250MHz clock (a divider of 2 would be needed, but this is rounded up
-to a divider of 3). This breaks the RTL8211F RGMII PHY on Odroid-C1
-because it requires a (close to) 125MHz RGMII TX clock (on Gbit speeds,
-the IP block internally divides that down to 25MHz on 100Mbit/s
-connections and 2.5MHz on 10Mbit/s connections - we don't need any
-special configuration for that).
-
-Round the divider to the closest value to prevent this issue on Meson8b.
-This means we'll now end up with a clock rate for the RGMII TX clock of
-125001197Hz (= 125MHz plus 1197Hz), which is close-enough to 125MHz.
-This has no effect on the Meson GX SoCs since there fclk_div2 is used as
-input clock, which has a rate of 1000MHz (and thus is divisible cleanly
-to 250MHz and 125MHz).
-
-Fixes: 566e8251625304 ("net: stmmac: add a glue driver for the Amlogic Meson 8b / GXBB DWMAC")
-Reported-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Gopanapalli Pradeep <prap_hai@yahoo.com>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: http://lkml.kernel.org/r/20180112004823.146333275@goodmis.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/lib/traceevent/parse-filter.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -146,7 +146,9 @@ static int meson8b_init_clk(struct meson
- 	dwmac->m250_div.shift = PRG_ETH0_CLK_M250_DIV_SHIFT;
- 	dwmac->m250_div.width = PRG_ETH0_CLK_M250_DIV_WIDTH;
- 	dwmac->m250_div.hw.init = &init;
--	dwmac->m250_div.flags = CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO;
-+	dwmac->m250_div.flags = CLK_DIVIDER_ONE_BASED |
-+				CLK_DIVIDER_ALLOW_ZERO |
-+				CLK_DIVIDER_ROUND_CLOSEST;
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -1879,17 +1879,25 @@ static const char *get_field_str(struct
+ 	struct pevent *pevent;
+ 	unsigned long long addr;
+ 	const char *val = NULL;
++	unsigned int size;
+ 	char hex[64];
  
- 	dwmac->m250_div_clk = devm_clk_register(dev, &dwmac->m250_div.hw);
- 	if (WARN_ON(IS_ERR(dwmac->m250_div_clk)))
+ 	/* If the field is not a string convert it */
+ 	if (arg->str.field->flags & FIELD_IS_STRING) {
+ 		val = record->data + arg->str.field->offset;
++		size = arg->str.field->size;
++
++		if (arg->str.field->flags & FIELD_IS_DYNAMIC) {
++			addr = *(unsigned int *)val;
++			val = record->data + (addr & 0xffff);
++			size = addr >> 16;
++		}
+ 
+ 		/*
+ 		 * We need to copy the data since we can't be sure the field
+ 		 * is null terminated.
+ 		 */
+-		if (*(val + arg->str.field->size - 1)) {
++		if (*(val + size - 1)) {
+ 			/* copy it */
+ 			memcpy(arg->str.buffer, val, arg->str.field->size);
+ 			/* the buffer is already NULL terminated */
