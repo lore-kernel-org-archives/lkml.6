@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163398AbeE1Ksi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:48:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38362 "EHLO mail.kernel.org"
+        id S1163363AbeE1Ks3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:48:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163354AbeE1Ks2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:28 -0400
+        id S1163331AbeE1KsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Garver <e@erig.me>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 163/496] ip_gre: fix IFLA_MTU ignored on NEWLINK
-Date: Mon, 28 May 2018 11:59:08 +0200
-Message-Id: <20180528100326.737036984@linuxfoundation.org>
+Subject: [PATCH 4.14 160/496] virtio-gpu: fix ioctl and expose the fixed status to userspace.
+Date: Mon, 28 May 2018 11:59:05 +0200
+Message-Id: <20180528100326.624120508@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,50 +30,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Dave Airlie <airlied@redhat.com>
 
-[ Upstream commit ffc2b6ee417435605ee8bb1eb4c8f02e9ff4b4a5 ]
+[ Upstream commit 9a191b114906457c4b2494c474f58ae4142d4e67 ]
 
-It's safe to remove the setting of dev's needed_headroom and mtu in
-__gre_tunnel_init, as discussed in [1], ip_tunnel_newlink can do it
-properly.
+This exposes to mesa that it can use the fixed ioctl for querying
+later cap sets, cap set 1 is forever frozen in time.
 
-Now Eric noticed that it could cover the mtu value set in do_setlink
-when creating a ip_gre dev. It makes IFLA_MTU param not take effect.
-
-So this patch is to remove them to make IFLA_MTU work, as in other
-ipv4 tunnels.
-
-  [1]: https://patchwork.ozlabs.org/patch/823504/
-
-Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
-Reported-by: Eric Garver <e@erig.me>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180221015003.22884-1-airlied@gmail.com
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    5 -----
- 1 file changed, 5 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |   17 +++++++++++------
+ include/uapi/drm/virtgpu_drm.h         |    1 +
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -951,9 +951,6 @@ static void __gre_tunnel_init(struct net
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -196,6 +196,9 @@ static int virtio_gpu_getparam_ioctl(str
+ 	case VIRTGPU_PARAM_3D_FEATURES:
+ 		value = vgdev->has_virgl_3d == true ? 1 : 0;
+ 		break;
++	case VIRTGPU_PARAM_CAPSET_QUERY_FIX:
++		value = 1;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -471,7 +474,7 @@ static int virtio_gpu_get_caps_ioctl(str
+ {
+ 	struct virtio_gpu_device *vgdev = dev->dev_private;
+ 	struct drm_virtgpu_get_caps *args = data;
+-	int size;
++	unsigned size, host_caps_size;
+ 	int i;
+ 	int found_valid = -1;
+ 	int ret;
+@@ -480,6 +483,10 @@ static int virtio_gpu_get_caps_ioctl(str
+ 	if (vgdev->num_capsets == 0)
+ 		return -ENOSYS;
  
- 	t_hlen = tunnel->hlen + sizeof(struct iphdr);
++	/* don't allow userspace to pass 0 */
++	if (args->size == 0)
++		return -EINVAL;
++
+ 	spin_lock(&vgdev->display_info_lock);
+ 	for (i = 0; i < vgdev->num_capsets; i++) {
+ 		if (vgdev->capsets[i].id == args->cap_set_id) {
+@@ -495,11 +502,9 @@ static int virtio_gpu_get_caps_ioctl(str
+ 		return -EINVAL;
+ 	}
  
--	dev->needed_headroom	= LL_MAX_HEADER + t_hlen + 4;
--	dev->mtu		= ETH_DATA_LEN - t_hlen - 4;
--
- 	dev->features		|= GRE_FEATURES;
- 	dev->hw_features	|= GRE_FEATURES;
+-	size = vgdev->capsets[found_valid].max_size;
+-	if (args->size > size) {
+-		spin_unlock(&vgdev->display_info_lock);
+-		return -EINVAL;
+-	}
++	host_caps_size = vgdev->capsets[found_valid].max_size;
++	/* only copy to user the minimum of the host caps size or the guest caps size */
++	size = min(args->size, host_caps_size);
  
-@@ -1253,8 +1250,6 @@ static int erspan_tunnel_init(struct net
- 		       sizeof(struct erspanhdr);
- 	t_hlen = tunnel->hlen + sizeof(struct iphdr);
+ 	list_for_each_entry(cache_ent, &vgdev->cap_cache, head) {
+ 		if (cache_ent->id == args->cap_set_id &&
+--- a/include/uapi/drm/virtgpu_drm.h
++++ b/include/uapi/drm/virtgpu_drm.h
+@@ -63,6 +63,7 @@ struct drm_virtgpu_execbuffer {
+ };
  
--	dev->needed_headroom = LL_MAX_HEADER + t_hlen + 4;
--	dev->mtu = ETH_DATA_LEN - t_hlen - 4;
- 	dev->features		|= GRE_FEATURES;
- 	dev->hw_features	|= GRE_FEATURES;
- 	dev->priv_flags		|= IFF_LIVE_ADDR_CHANGE;
+ #define VIRTGPU_PARAM_3D_FEATURES 1 /* do we have 3D features in the hw */
++#define VIRTGPU_PARAM_CAPSET_QUERY_FIX 2 /* do we have the capset fix */
+ 
+ struct drm_virtgpu_getparam {
+ 	__u64 param;
