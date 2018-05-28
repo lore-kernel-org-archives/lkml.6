@@ -1,82 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034513AbeE1Pd2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:33:28 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:40771 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032932AbeE1Pcm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:32:42 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [net-next, wrong] make BPFILTER_UMH depend on X86
-Date: Mon, 28 May 2018 17:31:01 +0200
-Message-Id: <20180528153222.2037158-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:ivnaRPfIEFtNNJ4kQMM7qjepuTZcsTkjMrVsVlMufh+C95dLyf6
- 94y1kCbDQXiPqNkEx4l0q7FSSuIgL3Z0X5aR+zeQWziBO3TFRjXXTNq6/NGYTi2wGLrrZfn
- DAswGdlFyYMZdMzGg8jBAouNMOit0ARQaGZTpkTOSX3kVsqUL2PqCrXb+085lFvHtWswJ71
- CalneFaRZBO7WloJZ58Dw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NT5PdMcGH9Q=:G7frivC4faYB4eQKitWU/O
- 2PnP5iaH6YqIBlkJ7xNd267i+DidTNjmSTj2Wvelw5HuQarJ22BBtrgc0wqZSieEqqlUuyDXy
- sx10cgo54XhOhPP+AWNKUnNfls7NJrUw6aYbkyOR6yX8vwFJQz6s+bgELrKEffIvnBa5FCDCJ
- tO/D55H5Fd31yTLgtxYvDJdqoSnuB6MQINdWVz1HiqvMgxwGqndQtjTotZO7PBl1rx+1bgiBP
- E/sqBF0qw2G5kc1++tHupBr2V2ASWx5Z4IXoUAu4KG+3X6ef5WpVIPv2F5qwP7kgaxzY10l7W
- kpzRMzCPGAWR/W9oB2ZEH9haQAUwg9t6VOkNRqPbbGSlSFnArZ25qLwYjvgo457S1aZbH5s8W
- CyezT8mB7FD1aTIczhP0EPGb0l9lvkYXBmHffQiihZXMV8KNBI3kvfrn1fwX14a0FRlUE5hYx
- PSuWzmXM9S6lgS0GpUMM92B4g9ZU0clCl7fkyQMpfKF1DJlhbavlwasE4hSgwCgBPZd39AzMq
- wf2LZe8//ECqbwJlhWCK1VShqMlSE8bSYdIsYjnp5KlGn1/L7YuN7aNhU5bR+9XMOdGD0vVSt
- 3oIlt7LNslbEAf2YN3xnU+KXpfK4DCSWOxwEg7xEVn+PHcbsPqCPvyNbuZtzyaf61v+Nv3d2d
- iUjuqnmQdsXldMkUjDHITDCh1YVPhk6h+px95irdIjzFJlx2lxElF9Kpt9U4N6FqD5z0=
+        id S1031991AbeE1KS5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:18:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031903AbeE1KSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:53 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 108/268] batman-adv: invalidate checksum on fragment reassembly
+Date: Mon, 28 May 2018 12:01:22 +0200
+Message-Id: <20180528100214.428111909@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When build testing across architectures, I run into a build error on
-all targets other than X86:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-gcc-8.1.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-objdump: net/bpfilter/bpfilter_umh: File format not recognized
-gcc-8.1.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-objcopy:net/bpfilter/bpfilter_umh.o: Invalid bfd target
+------------------
 
-The problem is that 'hostprogs' get built with 'gcc' rather than
-'$(CROSS_COMPILE)gcc', and my default gcc (as most people's) targets x86.
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-To work around it, adding an X86 dependency gets randconfigs building
-again on my box.
+[ Upstream commit 3bf2a09da956b43ecfaa630a2ef9a477f991a46a ]
 
-Clearly, this is not a good solution, since it should actually work fine
-when building native kernels on other architectures but that is now
-disabled, while cross building an x86 kernel on another host is still
-broken after my patch.
+A more sophisticated implementation could try to combine fragment checksums
+when all fragments have CHECKSUM_COMPLETE and are split at even offsets.
+For now, we just set ip_summed to CHECKSUM_NONE to avoid "hw csum failure"
+warnings in the kernel log when fragmented frames are received. In
+consequence, skb_pull_rcsum() can be replaced with skb_pull().
 
-What we probably want here is to try out if the compiler is able to build
-executables for the target architecture and not build the helper otherwise,
-at least when compile-testing. No idea how to do that though.
+Note that in usual setups, packets don't reach batman-adv with
+CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
+batadv's ethtype?), which is why the log messages do not occur on every
+system using batman-adv. I could reproduce this issue by stacking
+batman-adv on top of a VXLAN interface.
 
-Link: http://www.kernel.org/pub/tools/crosstool/
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 610bfc6bc99b ("batman-adv: Receive fragmented packets and merge")
+Tested-by: Maximilian Wilhelm <max@sdn.clinic>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bpfilter/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ net/batman-adv/fragmentation.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
-index 60725c5f79db..61cc4fcbb4d0 100644
---- a/net/bpfilter/Kconfig
-+++ b/net/bpfilter/Kconfig
-@@ -9,6 +9,7 @@ menuconfig BPFILTER
- if BPFILTER
- config BPFILTER_UMH
- 	tristate "bpfilter kernel module with user mode helper"
-+	depends on X86 # actually depends on native builds
- 	default m
- 	help
- 	  This builds bpfilter kernel module with embedded user mode helper
--- 
-2.9.0
+--- a/net/batman-adv/fragmentation.c
++++ b/net/batman-adv/fragmentation.c
+@@ -278,7 +278,8 @@ batadv_frag_merge_packets(struct hlist_h
+ 	/* Move the existing MAC header to just before the payload. (Override
+ 	 * the fragment header.)
+ 	 */
+-	skb_pull_rcsum(skb_out, hdr_size);
++	skb_pull(skb_out, hdr_size);
++	skb_out->ip_summed = CHECKSUM_NONE;
+ 	memmove(skb_out->data - ETH_HLEN, skb_mac_header(skb_out), ETH_HLEN);
+ 	skb_set_mac_header(skb_out, -ETH_HLEN);
+ 	skb_reset_network_header(skb_out);
