@@ -1,57 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753928AbeE1Htu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:49:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55096 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753734AbeE1Htr (ORCPT
+        id S1753996AbeE1Hur (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:50:47 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42843 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753797AbeE1Huo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:49:47 -0400
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf docu: Update section on cpu description
-Date: Mon, 28 May 2018 09:49:03 +0200
-X-Mailer: git-send-email 2.16.3
-X-TM-AS-GCONF: 00
-x-cbid: 18052807-0020-0000-0000-00000421E1C2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052807-0021-0000-0000-000042B73139
-Message-Id: <20180528074903.21781-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805280097
+        Mon, 28 May 2018 03:50:44 -0400
+X-Google-Smtp-Source: AB8JxZo9wZz1QSqFUhw8Fpff5iTc6ucVIO/CV3ZbOQtaS38XcBsW2iTGerYATcqp9p4P1gczcRNXrQ==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Cc: linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH] rtc: sun6i: Fix bit_idx value for clk_register_gate
+Date: Mon, 28 May 2018 13:20:32 +0530
+Message-Id: <20180528075032.6769-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the section HEADER_CPUDESC so the documentation
-matches code.  Swap the two members of struct nr_cpus.
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+clk-gate core will take bit_idx through clk_register_gate
+and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
+is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
+which is wrong and eventually external gate clock is not enabling.
+
+This patch fixed by passing bit index and the original change
+introduced from below commit.
+"rtc: sun6i: Add support for the external oscillator gate"
+(sha1: 	17ecd246414b3a0fe0cb248c86977a8bda465b7b)
+
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- tools/perf/Documentation/perf.data-file-format.txt | 2 +-
+ drivers/rtc/rtc-sun6i.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index d00f0d51cab8..16e2da0b674c 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -111,8 +111,8 @@ A perf_header_string with the CPU architecture (uname -m)
- A structure defining the number of CPUs.
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index 2e6fb275acc8..a66f40c96582 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -74,7 +74,7 @@
+ #define SUN6I_ALARM_CONFIG_WAKEUP		BIT(0)
  
- struct nr_cpus {
--       uint32_t nr_cpus_online;
-        uint32_t nr_cpus_available; /* CPUs not yet onlined */
-+       uint32_t nr_cpus_online;
- };
+ #define SUN6I_LOSC_OUT_GATING			0x0060
+-#define SUN6I_LOSC_OUT_GATING_EN		BIT(0)
++#define SUN6I_LOSC_OUT_GATING_EN		0
  
- 	HEADER_CPUDESC = 8,
+ /*
+  * Get date values
 -- 
 2.14.3
