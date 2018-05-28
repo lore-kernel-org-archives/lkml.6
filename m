@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938330AbeE1Lb5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:31:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33656 "EHLO mail.kernel.org"
+        id S938365AbeE1LcW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:32:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424398AbeE1LOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:23 -0400
+        id S1424396AbeE1LOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 210/272] powerpc/mm/slice: Enhance for supporting PPC32
-Date: Mon, 28 May 2018 12:04:03 +0200
-Message-Id: <20180528100258.147686815@linuxfoundation.org>
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 227/272] cpufreq: Reorder cpufreq_online() error code path
+Date: Mon, 28 May 2018 12:04:20 +0200
+Message-Id: <20180528100259.512640011@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,192 +30,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit db3a528db41caaa6dfd4c64e9f5efb1c81a80467 upstream.
+[ Upstream commit b24b6478e65f140610ab1ffaadc7bc6bf0be8aad ]
 
-In preparation for the following patch which will fix an issue on
-the 8xx by re-using the 'slices', this patch enhances the
-'slices' implementation to support 32 bits CPUs.
+Ideally the de-allocation of resources should happen in the exact
+opposite order in which they were allocated. It helps maintain the code
+in long term, even if nothing really breaks with incorrect ordering.
 
-On PPC32, the address space is limited to 4Gbytes, hence only the low
-slices will be used.
+That wasn't followed in cpufreq_online() and it has some
+inconsistencies.  For example, the symlinks were created from within
+the locked region while they are removed only after putting the locks.
+Also ->exit() should have been called only after the symlinks are
+removed and the lock is dropped, as that was the case when ->init()
+was first called.
 
-The high slices use bitmaps. As bitmap functions are not prepared to
-handle bitmaps of size 0, this patch ensures that bitmap functions
-are called only when SLICE_NUM_HIGH is not nul.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Subject ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/include/asm/nohash/32/slice.h |   18 ++++++++++++++
- arch/powerpc/include/asm/slice.h           |    4 ++-
- arch/powerpc/mm/slice.c                    |   37 ++++++++++++++++++++++-------
- 3 files changed, 50 insertions(+), 9 deletions(-)
+ drivers/cpufreq/cpufreq.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- /dev/null
-+++ b/arch/powerpc/include/asm/nohash/32/slice.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_POWERPC_NOHASH_32_SLICE_H
-+#define _ASM_POWERPC_NOHASH_32_SLICE_H
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1327,14 +1327,14 @@ static int cpufreq_online(unsigned int c
+ 	return 0;
+ 
+ out_exit_policy:
++	for_each_cpu(j, policy->real_cpus)
++		remove_cpu_dev_symlink(policy, get_cpu_device(j));
 +
-+#ifdef CONFIG_PPC_MM_SLICES
-+
-+#define SLICE_LOW_SHIFT		28
-+#define SLICE_LOW_TOP		(0x100000000ull)
-+#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
-+#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
-+
-+#define SLICE_HIGH_SHIFT	0
-+#define SLICE_NUM_HIGH		0ul
-+#define GET_HIGH_SLICE_INDEX(addr)	(addr & 0)
-+
-+#endif /* CONFIG_PPC_MM_SLICES */
-+
-+#endif /* _ASM_POWERPC_NOHASH_32_SLICE_H */
---- a/arch/powerpc/include/asm/slice.h
-+++ b/arch/powerpc/include/asm/slice.h
-@@ -4,8 +4,10 @@
+ 	up_write(&policy->rwsem);
  
- #ifdef CONFIG_PPC_BOOK3S_64
- #include <asm/book3s/64/slice.h>
--#else
-+#elif defined(CONFIG_PPC64)
- #include <asm/nohash/64/slice.h>
-+#elif defined(CONFIG_PPC_MMU_NOHASH)
-+#include <asm/nohash/32/slice.h>
- #endif
+ 	if (cpufreq_driver->exit)
+ 		cpufreq_driver->exit(policy);
  
- #ifdef CONFIG_PPC_MM_SLICES
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -73,10 +73,12 @@ static void slice_range_to_mask(unsigned
- 	unsigned long end = start + len - 1;
- 
- 	ret->low_slices = 0;
--	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
-+	if (SLICE_NUM_HIGH)
-+		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
- 
- 	if (start < SLICE_LOW_TOP) {
--		unsigned long mend = min(end, (SLICE_LOW_TOP - 1));
-+		unsigned long mend = min(end,
-+					 (unsigned long)(SLICE_LOW_TOP - 1));
- 
- 		ret->low_slices = (1u << (GET_LOW_SLICE_INDEX(mend) + 1))
- 			- (1u << GET_LOW_SLICE_INDEX(start));
-@@ -113,11 +115,13 @@ static int slice_high_has_vma(struct mm_
- 	unsigned long start = slice << SLICE_HIGH_SHIFT;
- 	unsigned long end = start + (1ul << SLICE_HIGH_SHIFT);
- 
-+#ifdef CONFIG_PPC64
- 	/* Hack, so that each addresses is controlled by exactly one
- 	 * of the high or low area bitmaps, the first high area starts
- 	 * at 4GB, not 0 */
- 	if (start == 0)
- 		start = SLICE_LOW_TOP;
-+#endif
- 
- 	return !slice_area_is_free(mm, start, end - start);
- }
-@@ -128,7 +132,8 @@ static void slice_mask_for_free(struct m
- 	unsigned long i;
- 
- 	ret->low_slices = 0;
--	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
-+	if (SLICE_NUM_HIGH)
-+		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
- 
- 	for (i = 0; i < SLICE_NUM_LOW; i++)
- 		if (!slice_low_has_vma(mm, i))
-@@ -151,7 +156,8 @@ static void slice_mask_for_size(struct m
- 	u64 lpsizes;
- 
- 	ret->low_slices = 0;
--	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
-+	if (SLICE_NUM_HIGH)
-+		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
- 
- 	lpsizes = mm->context.low_slices_psize;
- 	for (i = 0; i < SLICE_NUM_LOW; i++)
-@@ -180,6 +186,10 @@ static int slice_check_fit(struct mm_str
- 	 */
- 	unsigned long slice_count = GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit);
- 
-+	if (!SLICE_NUM_HIGH)
-+		return (mask.low_slices & available.low_slices) ==
-+		       mask.low_slices;
-+
- 	bitmap_and(result, mask.high_slices,
- 		   available.high_slices, slice_count);
- 
-@@ -189,6 +199,7 @@ static int slice_check_fit(struct mm_str
- 
- static void slice_flush_segments(void *parm)
- {
-+#ifdef CONFIG_PPC64
- 	struct mm_struct *mm = parm;
- 	unsigned long flags;
- 
-@@ -200,6 +211,7 @@ static void slice_flush_segments(void *p
- 	local_irq_save(flags);
- 	slb_flush_and_rebolt();
- 	local_irq_restore(flags);
-+#endif
- }
- 
- static void slice_convert(struct mm_struct *mm, struct slice_mask mask, int psize)
-@@ -389,6 +401,8 @@ static unsigned long slice_find_area(str
- static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
- {
- 	dst->low_slices |= src->low_slices;
-+	if (!SLICE_NUM_HIGH)
-+		return;
- 	bitmap_or(dst->high_slices, dst->high_slices, src->high_slices,
- 		  SLICE_NUM_HIGH);
- }
-@@ -397,6 +411,8 @@ static inline void slice_andnot_mask(str
- {
- 	dst->low_slices &= ~src->low_slices;
- 
-+	if (!SLICE_NUM_HIGH)
-+		return;
- 	bitmap_andnot(dst->high_slices, dst->high_slices, src->high_slices,
- 		      SLICE_NUM_HIGH);
- }
-@@ -446,14 +462,17 @@ unsigned long slice_get_unmapped_area(un
- 	 * init different masks
- 	 */
- 	mask.low_slices = 0;
--	bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
- 
- 	/* silence stupid warning */;
- 	potential_mask.low_slices = 0;
--	bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
- 
- 	compat_mask.low_slices = 0;
--	bitmap_zero(compat_mask.high_slices, SLICE_NUM_HIGH);
-+
-+	if (SLICE_NUM_HIGH) {
-+		bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
-+		bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
-+		bitmap_zero(compat_mask.high_slices, SLICE_NUM_HIGH);
-+	}
- 
- 	/* Sanity checks */
- 	BUG_ON(mm->task_size == 0);
-@@ -591,7 +610,9 @@ unsigned long slice_get_unmapped_area(un
-  convert:
- 	slice_andnot_mask(&mask, &good_mask);
- 	slice_andnot_mask(&mask, &compat_mask);
--	if (mask.low_slices || !bitmap_empty(mask.high_slices, SLICE_NUM_HIGH)) {
-+	if (mask.low_slices ||
-+	    (SLICE_NUM_HIGH &&
-+	     !bitmap_empty(mask.high_slices, SLICE_NUM_HIGH))) {
- 		slice_convert(mm, mask, psize);
- 		if (psize > MMU_PAGE_BASE)
- 			on_each_cpu(slice_flush_segments, mm, 1);
+-	for_each_cpu(j, policy->real_cpus)
+-		remove_cpu_dev_symlink(policy, get_cpu_device(j));
+-
+ out_free_policy:
+ 	cpufreq_policy_free(policy);
+ 	return ret;
