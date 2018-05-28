@@ -1,50 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754092AbeE1Ile (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:41:34 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36656 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753986AbeE1Ild (ORCPT
+        id S1754045AbeE1Inb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:43:31 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31806 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753493AbeE1In3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:41:33 -0400
-X-Google-Smtp-Source: ADUXVKILjP2jZxVnpVFJRUBUcInSU8KrBF7He8BsK5xHO8WcPzO2YHKGrCX4T3mJuOOhLHxWTihwhTpy9A4gAgsRs+0=
-MIME-Version: 1.0
-In-Reply-To: <20180526100243.GA1564@sirena.org.uk>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180514080640.12515-11-linus.walleij@linaro.org> <20180526100243.GA1564@sirena.org.uk>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 28 May 2018 10:41:31 +0200
-Message-ID: <CACRpkdZFrFuNnP=uJyREckr8EXW6L2ku+=QwVA7Tva3CpfrpCQ@mail.gmail.com>
-Subject: Re: [PATCH 10/19 v3] regulator: s2mps11: Pass descriptor instead of
- GPIO number
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
+        Mon, 28 May 2018 04:43:29 -0400
+X-UUID: a7d50e9f5149476aa6f545ecf470a147-20180528
+Message-ID: <1527497004.6333.8.camel@mtksdaap41>
+Subject: About the DRM Mediatek patches
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
+To: <ulrich.hecht+renesas@gmail.com>
+CC: <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+        <p.zabel@pengutronix.de>, <ck.hu@mediatek.com>,
+        <bibby.hsieh@mediatek.com>
+Date: Mon, 28 May 2018 16:43:24 +0800
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 12:02 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, May 14, 2018 at 10:06:31AM +0200, Linus Walleij wrote:
->> Instead of passing a global GPIO number for the enable GPIO, pass
->> a descriptor looked up with the standard devm_gpiod_get_optional()
->> call.
->>
->> This regulator supports passing platform data, but enable/sleep
->> regulators are looked up from the device tree exclusively, so
->> we can need not touch other files.
->
-> This seems to have broken the boot on Odroid XU3 so I'm going to revert
-> it:
->
-> https://storage.kernelci.org/next/master/v4.17-rc6-9523-g47b9cef0672d/arm/multi_v7_defconfig/lab-baylibre-seattle/boot-exynos5422-odroidxu3.html
+Hi, Ulrich,
 
-How annoying. I will check with a colleague who might have this
-board so I can test it on hardware.
+I found two DRM-Mediatek related patches as below from you.
+https://patchwork.kernel.org/patch/10009039/
+https://patchwork.kernel.org/patch/10009049/
 
-Yours,
-Linus Walleij
+Did you have any plans to send the new version (There are some comments
+from Philipp)? If not, may I send the new version?
+
+Thanks.
+
+-- 
+Bibby
