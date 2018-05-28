@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755343AbeE1Ntp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:49:45 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43372 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755244AbeE1Ntd (ORCPT
+        id S1755308AbeE1Ntk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:49:40 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46157 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755248AbeE1Nte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:49:33 -0400
-X-Google-Smtp-Source: AB8JxZpsvY8AHqW5EFYS1fMdgVycN9MFNKNNBjZlxrfpRBDZwfT4x9mOH99JzLHEUQJ92AhihHv3Zg==
+        Mon, 28 May 2018 09:49:34 -0400
+X-Google-Smtp-Source: AB8JxZperSjron3088xVM49QiTro9yVdSfW5/nheC9qvEcIJ9xuTbJjELNeMEqusioS+fiH9H3s+Rg==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,38 +15,70 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH 0/8] signal: refactor some functions
-Date: Mon, 28 May 2018 15:49:08 +0200
-Message-Id: <20180528134916.7568-1-christian@brauner.io>
+Subject: [PATCH 1/8] signal: make force_sigsegv() void
+Date: Mon, 28 May 2018 15:49:09 +0200
+Message-Id: <20180528134916.7568-2-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528134916.7568-1-christian@brauner.io>
+References: <20180528134916.7568-1-christian@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+force_sigsegv() returned 0 unconditionally so it doesn't make sense to have
+it return at all. In addition, there are no callers that check
+force_sigsegv()'s return value.
 
-This series refactors a bunch of functions in signal.c to simplify parts
-of the code.
-The greatest single change is declaring the static do_sigpending()
-helper as void which makes it possible to remove a bunch of unnecessary
-checks in the syscalls later on.
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+ include/linux/sched/signal.h | 2 +-
+ kernel/signal.c              | 7 ++-----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-Thanks!
-Christian
-
-Christian Brauner (8):
-  signal: make force_sigsegv() void
-  signal: make kill_as_cred_perm() return bool
-  signal: make may_ptrace_stop() return bool
-  signal: add copy_pending() helper
-  signal: flatten do_send_sig_info()
-  signal: drop else branch in do_signal_stop()
-  signal: make do_sigpending() void
-  signal: simplify rt_sigaction()
-
- include/linux/sched/signal.h |   2 +-
- kernel/signal.c              | 154 +++++++++++++++++------------------
- 2 files changed, 78 insertions(+), 78 deletions(-)
-
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 113d1ad1ced7..e138ac16c650 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -314,7 +314,7 @@ int force_sig_pkuerr(void __user *addr, u32 pkey);
+ int force_sig_ptrace_errno_trap(int errno, void __user *addr);
+ 
+ extern int send_sig_info(int, struct siginfo *, struct task_struct *);
+-extern int force_sigsegv(int, struct task_struct *);
++extern void force_sigsegv(int sig, struct task_struct *p);
+ extern int force_sig_info(int, struct siginfo *, struct task_struct *);
+ extern int __kill_pgrp_info(int sig, struct siginfo *info, struct pid *pgrp);
+ extern int kill_pid_info(int sig, struct siginfo *info, struct pid *pid);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 9c33163a6165..c756008d589e 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1468,8 +1468,7 @@ send_sig(int sig, struct task_struct *p, int priv)
+ 	return send_sig_info(sig, __si_special(priv), p);
+ }
+ 
+-void
+-force_sig(int sig, struct task_struct *p)
++void force_sig(int sig, struct task_struct *p)
+ {
+ 	force_sig_info(sig, SEND_SIG_PRIV, p);
+ }
+@@ -1480,8 +1479,7 @@ force_sig(int sig, struct task_struct *p)
+  * the problem was already a SIGSEGV, we'll want to
+  * make sure we don't even try to deliver the signal..
+  */
+-int
+-force_sigsegv(int sig, struct task_struct *p)
++void force_sigsegv(int sig, struct task_struct *p)
+ {
+ 	if (sig == SIGSEGV) {
+ 		unsigned long flags;
+@@ -1490,7 +1488,6 @@ force_sigsegv(int sig, struct task_struct *p)
+ 		spin_unlock_irqrestore(&p->sighand->siglock, flags);
+ 	}
+ 	force_sig(SIGSEGV, p);
+-	return 0;
+ }
+ 
+ int force_sig_fault(int sig, int code, void __user *addr
 -- 
 2.17.0
