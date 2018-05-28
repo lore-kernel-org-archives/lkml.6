@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163738AbeE1Kut (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40232 "EHLO mail.kernel.org"
+        id S1163764AbeE1KvD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:51:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163473AbeE1Kun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:43 -0400
+        id S1163581AbeE1Ku6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        Marius Gligor <mgligor@kalray.eu>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 180/496] ARC: setup cpu possible mask according to possible-cpus dts property
-Date: Mon, 28 May 2018 11:59:25 +0200
-Message-Id: <20180528100327.528488760@linuxfoundation.org>
+Subject: [PATCH 4.14 218/496] e1000e: allocate ring descriptors with dma_zalloc_coherent
+Date: Mon, 28 May 2018 12:00:03 +0200
+Message-Id: <20180528100329.106906221@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,106 +33,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
 
-[ Upstream commit a29a25275452c97fe35815f1eb9564f2a07a1965 ]
+[ Upstream commit aea3fca005fb45f80869f2e8d56fd4e64c1d1fdb ]
 
-As we have option in u-boot to set CPU mask for running linux,
-we want to pass information to kernel about CPU cores should
-be brought up. So we patch kernel dtb in u-boot to set
-possible-cpus property.
+Descriptor rings were not initialized at zero when allocated
+When area contained garbage data, it caused skb_over_panic in
+e1000_clean_rx_irq (if data had E1000_RXD_STAT_DD bit set)
 
-This also allows us to have correctly setuped MCIP debug mask.
+This patch makes use of dma_zalloc_coherent to make sure the
+ring is memset at 0 to prevent the area from containing garbage.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Following is the signature of the panic:
+IODDR0@0.0: skbuff: skb_over_panic: text:80407b20 len:64010 put:64010 head:ab46d800 data:ab46d842 tail:0xab47d24c end:0xab46df40 dev:eth0
+IODDR0@0.0: BUG: failure at net/core/skbuff.c:105/skb_panic()!
+IODDR0@0.0: Kernel panic - not syncing: BUG!
+IODDR0@0.0:
+IODDR0@0.0: Process swapper/0 (pid: 0, threadinfo=81728000, task=8173cc00 ,cpu: 0)
+IODDR0@0.0: SP = <815a1c0c>
+IODDR0@0.0: Stack:      00000001
+IODDR0@0.0: b2d89800 815e33ac
+IODDR0@0.0: ea73c040 00000001
+IODDR0@0.0: 60040003 0000fa0a
+IODDR0@0.0: 00000002
+IODDR0@0.0:
+IODDR0@0.0: 804540c0 815a1c70
+IODDR0@0.0: b2744000 602ac070
+IODDR0@0.0: 815a1c44 b2d89800
+IODDR0@0.0: 8173cc00 815a1c08
+IODDR0@0.0:
+IODDR0@0.0:     00000006
+IODDR0@0.0: 815a1b50 00000000
+IODDR0@0.0: 80079434 00000001
+IODDR0@0.0: ab46df40 b2744000
+IODDR0@0.0: b2d89800
+IODDR0@0.0:
+IODDR0@0.0: 0000fa0a 8045745c
+IODDR0@0.0: 815a1c88 0000fa0a
+IODDR0@0.0: 80407b20 b2789f80
+IODDR0@0.0: 00000005 80407b20
+IODDR0@0.0:
+IODDR0@0.0:
+IODDR0@0.0: Call Trace:
+IODDR0@0.0: [<804540bc>] skb_panic+0xa4/0xa8
+IODDR0@0.0: [<80079430>] console_unlock+0x2f8/0x6d0
+IODDR0@0.0: [<80457458>] skb_put+0xa0/0xc0
+IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
+IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
+IODDR0@0.0: [<804079c8>] e1000_clean_rx_irq+0x188/0x3e8
+IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
+IODDR0@0.0: [<80468b48>] __dev_kfree_skb_any+0x88/0xa8
+IODDR0@0.0: [<804101ac>] e1000e_poll+0x94/0x288
+IODDR0@0.0: [<8046e9d4>] net_rx_action+0x19c/0x4e8
+IODDR0@0.0:   ...
+IODDR0@0.0: Maximum depth to print reached. Use kstack=<maximum_depth_to_print> To specify a custom value (where 0 means to display the full backtrace)
+IODDR0@0.0: ---[ end Kernel panic - not syncing: BUG!
+
+Signed-off-by: Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
+Signed-off-by: Marius Gligor <mgligor@kalray.eu>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/kernel/smp.c |   50 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 40 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arc/kernel/smp.c
-+++ b/arch/arc/kernel/smp.c
-@@ -24,6 +24,7 @@
- #include <linux/reboot.h>
- #include <linux/irqdomain.h>
- #include <linux/export.h>
-+#include <linux/of_fdt.h>
- 
- #include <asm/processor.h>
- #include <asm/setup.h>
-@@ -47,6 +48,42 @@ void __init smp_prepare_boot_cpu(void)
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -2329,8 +2329,8 @@ static int e1000_alloc_ring_dma(struct e
  {
- }
+ 	struct pci_dev *pdev = adapter->pdev;
  
-+static int __init arc_get_cpu_map(const char *name, struct cpumask *cpumask)
-+{
-+	unsigned long dt_root = of_get_flat_dt_root();
-+	const char *buf;
-+
-+	buf = of_get_flat_dt_prop(dt_root, name, NULL);
-+	if (!buf)
-+		return -EINVAL;
-+
-+	if (cpulist_parse(buf, cpumask))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Read from DeviceTree and setup cpu possible mask. If there is no
-+ * "possible-cpus" property in DeviceTree pretend all [0..NR_CPUS-1] exist.
-+ */
-+static void __init arc_init_cpu_possible(void)
-+{
-+	struct cpumask cpumask;
-+
-+	if (arc_get_cpu_map("possible-cpus", &cpumask)) {
-+		pr_warn("Failed to get possible-cpus from dtb, pretending all %u cpus exist\n",
-+			NR_CPUS);
-+
-+		cpumask_setall(&cpumask);
-+	}
-+
-+	if (!cpumask_test_cpu(0, &cpumask))
-+		panic("Master cpu (cpu[0]) is missed in cpu possible mask!");
-+
-+	init_cpu_possible(&cpumask);
-+}
-+
- /*
-  * Called from setup_arch() before calling setup_processor()
-  *
-@@ -58,10 +95,7 @@ void __init smp_prepare_boot_cpu(void)
-  */
- void __init smp_init_cpus(void)
- {
--	unsigned int i;
--
--	for (i = 0; i < NR_CPUS; i++)
--		set_cpu_possible(i, true);
-+	arc_init_cpu_possible();
+-	ring->desc = dma_alloc_coherent(&pdev->dev, ring->size, &ring->dma,
+-					GFP_KERNEL);
++	ring->desc = dma_zalloc_coherent(&pdev->dev, ring->size, &ring->dma,
++					 GFP_KERNEL);
+ 	if (!ring->desc)
+ 		return -ENOMEM;
  
- 	if (plat_smp_ops.init_early_smp)
- 		plat_smp_ops.init_early_smp();
-@@ -70,16 +104,12 @@ void __init smp_init_cpus(void)
- /* called from init ( ) =>  process 1 */
- void __init smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * if platform didn't set the present map already, do it now
- 	 * boot cpu is set to present already by init/main.c
- 	 */
--	if (num_present_cpus() <= 1) {
--		for (i = 0; i < max_cpus; i++)
--			set_cpu_present(i, true);
--	}
-+	if (num_present_cpus() <= 1)
-+		init_cpu_present(cpu_possible_mask);
- }
- 
- void __init smp_cpus_done(unsigned int max_cpus)
