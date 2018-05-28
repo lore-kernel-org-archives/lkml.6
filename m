@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423501AbeE1Mdm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:33:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47540 "EHLO mail.kernel.org"
+        id S1423565AbeE1MeD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:34:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937886AbeE1K7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:41 -0400
+        id S1164281AbeE1K7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org, Milton Miller <miltonm@us.ibm.com>,
+        Eddie James <eajames@linux.vnet.ibm.com>,
+        Joel Stanley <joel@jms.id.au>, Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@iguana.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 405/496] drm/amdkfd: add missing include of mm.h
-Date: Mon, 28 May 2018 12:03:10 +0200
-Message-Id: <20180528100336.831350520@linuxfoundation.org>
+Subject: [PATCH 4.14 384/496] watchdog: aspeed: Allow configuring for alternate boot
+Date: Mon, 28 May 2018 12:02:49 +0200
+Message-Id: <20180528100335.962534832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -29,26 +32,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oded Gabbay <oded.gabbay@gmail.com>
+From: Milton Miller <miltonm@us.ibm.com>
 
-[ Upstream commit 7420f482ea5163bf6dae39a5c7628d5397cd6307 ]
+[ Upstream commit 6ffa3402211acc30e47e691e14d62f3fd065a54e ]
 
-This patch fixes kernel build in ARCH=frv
+Allow the device tree to specify a watchdog to fallover to
+the alternate boot source.
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+The aspeeed watchdog can set a latch directing flash chip select 0 to
+chip select 1, allowing boot from an alternate media if the watchdog
+is not reset in time.  On the ast2400 bank 1 also goes to flash bank 1,
+while on the ast2500 the chip selects are swapped.
+
+Also clear the secondary boot bit during the machine restart operation.
+Otherwise, the system will switch to the alternate boot after every
+reboot, which is not desired.
+
+Signed-off-by: Milton Miller <miltonm@us.ibm.com>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+Reviewed-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/watchdog/aspeed_wdt.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-@@ -26,6 +26,7 @@
- #define AMDGPU_AMDKFD_H_INCLUDED
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -46,6 +46,7 @@ MODULE_DEVICE_TABLE(of, aspeed_wdt_of_ta
+ #define WDT_RELOAD_VALUE	0x04
+ #define WDT_RESTART		0x08
+ #define WDT_CTRL		0x0C
++#define   WDT_CTRL_BOOT_SECONDARY	BIT(7)
+ #define   WDT_CTRL_RESET_MODE_SOC	(0x00 << 5)
+ #define   WDT_CTRL_RESET_MODE_FULL_CHIP	(0x01 << 5)
+ #define   WDT_CTRL_RESET_MODE_ARM_CPU	(0x10 << 5)
+@@ -158,6 +159,7 @@ static int aspeed_wdt_restart(struct wat
+ {
+ 	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
  
- #include <linux/types.h>
-+#include <linux/mm.h>
- #include <linux/mmu_context.h>
- #include <kgd_kfd_interface.h>
++	wdt->ctrl &= ~WDT_CTRL_BOOT_SECONDARY;
+ 	aspeed_wdt_enable(wdt, 128 * WDT_RATE_1MHZ / 1000);
+ 
+ 	mdelay(1000);
+@@ -242,6 +244,8 @@ static int aspeed_wdt_probe(struct platf
+ 	}
+ 	if (of_property_read_bool(np, "aspeed,external-signal"))
+ 		wdt->ctrl |= WDT_CTRL_WDT_EXT;
++	if (of_property_read_bool(np, "aspeed,alt-boot"))
++		wdt->ctrl |= WDT_CTRL_BOOT_SECONDARY;
+ 
+ 	writel(wdt->ctrl, wdt->base + WDT_CTRL);
  
