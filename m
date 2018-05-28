@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163067AbeE1Kou (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:44:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
+        id S1162988AbeE1Nj5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:39:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937393AbeE1Kon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:43 -0400
+        id S937693AbeE1Koq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 082/496] iwlwifi: mvm: fix security bug in PN checking
-Date: Mon, 28 May 2018 11:57:47 +0200
-Message-Id: <20180528100323.238939701@linuxfoundation.org>
+Subject: [PATCH 4.14 083/496] iwlwifi: mvm: fix IBSS for devices that support station type API
+Date: Mon, 28 May 2018 11:57:48 +0200
+Message-Id: <20180528100323.289146303@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,112 +32,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 5ab2ba931255d8bf03009c06d58dce97de32797c ]
+[ Upstream commit fc07bd8ce19bff9e7479c04077ddb5957d1a27be ]
 
-A previous patch allowed the same PN for packets originating from the
-same AMSDU by copying PN only for the last packet in the series.
+In IBSS, the mac80211 sets the cab_queue to be invalid.
 
-This however is bogus since we cannot assume the last frame will be
-received on the same queue, and if it is received on a different ueue
-we will end up not incrementing the PN and possibly let the next
-packet to have the same PN and pass through.
+However, the multicast station uses it, so we need to override it.
 
-Change the logic instead to driver explicitly indicate for the second
-sub frame and on to be allowed to have the same PN as the first
-subframe. Indicate it to mac80211 as well for the fallback queue.
+A previous patch did it, but it was nested inside the if's and was
+applied only for legacy FWs that don't support the new station type
+API, instead of being applied for all paths.
 
-Fixes: f1ae02b186d9 ("iwlwifi: mvm: allow same PN for de-aggregated AMSDU")
+In addition, add a missing NL80211_IFTYPE_ADHOC to the initialization
+of the queues in iwl_mvm_mac_ctxt_init()
+
+Fixes: ee48b72211f8 ("iwlwifi: mvm: support ibss in dqa mode")
 Signed-off-by: Sara Sharon <sara.sharon@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c |   39 +++++++++++++-------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c |    3 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.c      |   24 +++++++++++-----------
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
-@@ -71,6 +71,7 @@ static inline int iwl_mvm_check_pn(struc
- 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
- 	struct ieee80211_rx_status *stats = IEEE80211_SKB_RXCB(skb);
- 	struct iwl_mvm_key_pn *ptk_pn;
-+	int res;
- 	u8 tid, keyidx;
- 	u8 pn[IEEE80211_CCMP_PN_LEN];
- 	u8 *extiv;
-@@ -127,12 +128,13 @@ static inline int iwl_mvm_check_pn(struc
- 	pn[4] = extiv[1];
- 	pn[5] = extiv[0];
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+@@ -438,7 +438,8 @@ int iwl_mvm_mac_ctxt_init(struct iwl_mvm
+ 	}
  
--	if (memcmp(pn, ptk_pn->q[queue].pn[tid],
--		   IEEE80211_CCMP_PN_LEN) <= 0)
-+	res = memcmp(pn, ptk_pn->q[queue].pn[tid], IEEE80211_CCMP_PN_LEN);
-+	if (res < 0)
-+		return -1;
-+	if (!res && !(stats->flag & RX_FLAG_ALLOW_SAME_PN))
- 		return -1;
+ 	/* Allocate the CAB queue for softAP and GO interfaces */
+-	if (vif->type == NL80211_IFTYPE_AP) {
++	if (vif->type == NL80211_IFTYPE_AP ||
++	    vif->type == NL80211_IFTYPE_ADHOC) {
+ 		/*
+ 		 * For TVQM this will be overwritten later with the FW assigned
+ 		 * queue value (when queue is enabled).
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
+@@ -2037,6 +2037,17 @@ int iwl_mvm_add_mcast_sta(struct iwl_mvm
+ 		return -ENOTSUPP;
  
--	if (!(stats->flag & RX_FLAG_AMSDU_MORE))
--		memcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);
-+	memcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);
- 	stats->flag |= RX_FLAG_PN_VALIDATED;
+ 	/*
++	 * In IBSS, ieee80211_check_queues() sets the cab_queue to be
++	 * invalid, so make sure we use the queue we want.
++	 * Note that this is done here as we want to avoid making DQA
++	 * changes in mac80211 layer.
++	 */
++	if (vif->type == NL80211_IFTYPE_ADHOC) {
++		vif->cab_queue = IWL_MVM_DQA_GCAST_QUEUE;
++		mvmvif->cab_queue = vif->cab_queue;
++	}
++
++	/*
+ 	 * While in previous FWs we had to exclude cab queue from TFD queue
+ 	 * mask, now it is needed as any other queue.
+ 	 */
+@@ -2067,20 +2078,9 @@ int iwl_mvm_add_mcast_sta(struct iwl_mvm
+ 						    timeout);
+ 		mvmvif->cab_queue = queue;
+ 	} else if (!fw_has_api(&mvm->fw->ucode_capa,
+-			       IWL_UCODE_TLV_API_STA_TYPE)) {
+-		/*
+-		 * In IBSS, ieee80211_check_queues() sets the cab_queue to be
+-		 * invalid, so make sure we use the queue we want.
+-		 * Note that this is done here as we want to avoid making DQA
+-		 * changes in mac80211 layer.
+-		 */
+-		if (vif->type == NL80211_IFTYPE_ADHOC) {
+-			vif->cab_queue = IWL_MVM_DQA_GCAST_QUEUE;
+-			mvmvif->cab_queue = vif->cab_queue;
+-		}
++			       IWL_UCODE_TLV_API_STA_TYPE))
+ 		iwl_mvm_enable_txq(mvm, vif->cab_queue, vif->cab_queue, 0,
+ 				   &cfg, timeout);
+-	}
  
  	return 0;
-@@ -310,28 +312,21 @@ static void iwl_mvm_rx_csum(struct ieee8
  }
- 
- /*
-- * returns true if a packet outside BA session is a duplicate and
-- * should be dropped
-+ * returns true if a packet is a duplicate and should be dropped.
-+ * Updates AMSDU PN tracking info
-  */
--static bool iwl_mvm_is_nonagg_dup(struct ieee80211_sta *sta, int queue,
--				  struct ieee80211_rx_status *rx_status,
--				  struct ieee80211_hdr *hdr,
--				  struct iwl_rx_mpdu_desc *desc)
-+static bool iwl_mvm_is_dup(struct ieee80211_sta *sta, int queue,
-+			   struct ieee80211_rx_status *rx_status,
-+			   struct ieee80211_hdr *hdr,
-+			   struct iwl_rx_mpdu_desc *desc)
- {
- 	struct iwl_mvm_sta *mvm_sta;
- 	struct iwl_mvm_rxq_dup_data *dup_data;
--	u8 baid, tid, sub_frame_idx;
-+	u8 tid, sub_frame_idx;
- 
- 	if (WARN_ON(IS_ERR_OR_NULL(sta)))
- 		return false;
- 
--	baid = (le32_to_cpu(desc->reorder_data) &
--		IWL_RX_MPDU_REORDER_BAID_MASK) >>
--		IWL_RX_MPDU_REORDER_BAID_SHIFT;
--
--	if (baid != IWL_RX_REORDER_DATA_INVALID_BAID)
--		return false;
--
- 	mvm_sta = iwl_mvm_sta_from_mac80211(sta);
- 	dup_data = &mvm_sta->dup_data[queue];
- 
-@@ -361,6 +356,12 @@ static bool iwl_mvm_is_nonagg_dup(struct
- 		     dup_data->last_sub_frame[tid] >= sub_frame_idx))
- 		return true;
- 
-+	/* Allow same PN as the first subframe for following sub frames */
-+	if (dup_data->last_seq[tid] == hdr->seq_ctrl &&
-+	    sub_frame_idx > dup_data->last_sub_frame[tid] &&
-+	    desc->mac_flags2 & IWL_RX_MPDU_MFLG2_AMSDU)
-+		rx_status->flag |= RX_FLAG_ALLOW_SAME_PN;
-+
- 	dup_data->last_seq[tid] = hdr->seq_ctrl;
- 	dup_data->last_sub_frame[tid] = sub_frame_idx;
- 
-@@ -929,7 +930,7 @@ void iwl_mvm_rx_mpdu_mq(struct iwl_mvm *
- 		if (ieee80211_is_data(hdr->frame_control))
- 			iwl_mvm_rx_csum(sta, skb, desc);
- 
--		if (iwl_mvm_is_nonagg_dup(sta, queue, rx_status, hdr, desc)) {
-+		if (iwl_mvm_is_dup(sta, queue, rx_status, hdr, desc)) {
- 			kfree_skb(skb);
- 			goto out;
- 		}
