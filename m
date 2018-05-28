@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163616AbeE1KuD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39498 "EHLO mail.kernel.org"
+        id S1163632AbeE1KuH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:50:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163249AbeE1Kt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:56 -0400
+        id S1163598AbeE1Kt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 195/496] block: display the correct diskname for bio
-Date: Mon, 28 May 2018 11:59:40 +0200
-Message-Id: <20180528100328.143742866@linuxfoundation.org>
+Subject: [PATCH 4.14 196/496] nvme-pci: Fix EEH failure on ppc
+Date: Mon, 28 May 2018 11:59:41 +0200
+Message-Id: <20180528100328.186085304@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,58 +30,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Wen Xiong <wenxiong@linux.vnet.ibm.com>
 
-[ Upstream commit 9c0fb1e313aaf4e8edec22433c8b22dd308e466c ]
+[ Upstream commit 651438bb0af5213f1f70d66e75bf11d08cb5537a ]
 
-bio_devname use __bdevname to display the device name, and can
-only show the major and minor of the part0,
-Fix this by using disk_name to display the correct name.
+Triggering PPC EEH detection and handling requires a memory mapped read
+failure. The NVMe driver removed the periodic health check MMIO, so
+there's no early detection mechanism to trigger the recovery. Instead,
+the detection now happens when the nvme driver handles an IO timeout
+event. This takes the pci channel offline, so we do not want the driver
+to proceed with escalating its own recovery efforts that may conflict
+with the EEH handler.
 
-Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This patch ensures the driver will observe the channel was set to offline
+after a failed MMIO read and resets the IO timer so the EEH handler has
+a chance to recover the device.
+
+Signed-off-by: Wen Xiong <wenxiong@linux.vnet.ibm.com>
+[updated change log]
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/partition-generic.c |    6 ++++++
- include/linux/bio.h       |    4 +---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/nvme/host/pci.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/block/partition-generic.c
-+++ b/block/partition-generic.c
-@@ -51,6 +51,12 @@ const char *bdevname(struct block_device
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1013,12 +1013,6 @@ static bool nvme_should_reset(struct nvm
+ 	if (!(csts & NVME_CSTS_CFS) && !nssro)
+ 		return false;
  
- EXPORT_SYMBOL(bdevname);
- 
-+const char *bio_devname(struct bio *bio, char *buf)
-+{
-+	return disk_name(bio->bi_disk, bio->bi_partno, buf);
-+}
-+EXPORT_SYMBOL(bio_devname);
-+
- /*
-  * There's very little reason to use this, you should really
-  * have a struct block_device just about everywhere and use
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -501,6 +501,7 @@ void zero_fill_bio(struct bio *bio);
- extern struct bio_vec *bvec_alloc(gfp_t, int, unsigned long *, mempool_t *);
- extern void bvec_free(mempool_t *, struct bio_vec *, unsigned int);
- extern unsigned int bvec_nr_vecs(unsigned short idx);
-+extern const char *bio_devname(struct bio *bio, char *buffer);
- 
- #define bio_set_dev(bio, bdev) 			\
- do {						\
-@@ -519,9 +520,6 @@ do {						\
- #define bio_dev(bio) \
- 	disk_devt((bio)->bi_disk)
- 
--#define bio_devname(bio, buf) \
--	__bdevname(bio_dev(bio), (buf))
+-	/* If PCI error recovery process is happening, we cannot reset or
+-	 * the recovery mechanism will surely fail.
+-	 */
+-	if (pci_channel_offline(to_pci_dev(dev->dev)))
+-		return false;
 -
- #ifdef CONFIG_BLK_CGROUP
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
- int bio_associate_current(struct bio *bio);
+ 	return true;
+ }
+ 
+@@ -1049,6 +1043,13 @@ static enum blk_eh_timer_return nvme_tim
+ 	struct nvme_command cmd;
+ 	u32 csts = readl(dev->bar + NVME_REG_CSTS);
+ 
++	/* If PCI error recovery process is happening, we cannot reset or
++	 * the recovery mechanism will surely fail.
++	 */
++	mb();
++	if (pci_channel_offline(to_pci_dev(dev->dev)))
++		return BLK_EH_RESET_TIMER;
++
+ 	/*
+ 	 * Reset immediately if the controller is failed
+ 	 */
