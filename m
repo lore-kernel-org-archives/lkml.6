@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423483AbeE1MZC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48830 "EHLO mail.kernel.org"
+        id S1164847AbeE1LBN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:01:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422724AbeE1LBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:17 -0400
+        id S1164833AbeE1LBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Ziyuan Xu <xzy.xu@rock-chips.com>, Caesar Wang <wxt@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 439/496] phy: rockchip-emmc: retry calpad busy trimming
-Date: Mon, 28 May 2018 12:03:44 +0200
-Message-Id: <20180528100338.342507955@linuxfoundation.org>
+Subject: [PATCH 4.14 419/496] cxl: Check if PSL data-cache is available before issue flush request
+Date: Mon, 28 May 2018 12:03:24 +0200
+Message-Id: <20180528100337.410672129@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,72 +32,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
 
-[ Upstream commit a4781c2a74b249cad814ceea7272997bbd20051e ]
+[ Upstream commit 94322ed8e857e3b2a33cf75118051af9baaa110f ]
 
-It turns out that 5us isn't enough for all cases, so let's
-retry some more times to wait for caldone.
+PSL9D doesn't have a data-cache that needs to be flushed before
+resetting the card. However when cxl tries to flush data-cache on such
+a card, it times-out as PSL_Control register never indicates flush
+operation complete due to missing data-cache. This is usually
+indicated in the kernel logs with this message:
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Tested-by: Ziyuan Xu <xzy.xu@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+"WARNING: cache flush timed out"
+
+To fix this the patch checks PSL_Debug register CDC-Field(BIT:27)
+which indicates the absence of a data-cache and sets a flag
+'no_data_cache' in 'struct cxl_native' to indicate this. When
+cxl_data_cache_flush() is called it checks the flag and if set bails
+out early without requesting a data-cache flush operation to the PSL.
+
+Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/phy/rockchip/phy-rockchip-emmc.c |   27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/misc/cxl/cxl.h    |    4 ++++
+ drivers/misc/cxl/native.c |   11 ++++++++++-
+ drivers/misc/cxl/pci.c    |   19 +++++++++++++------
+ 3 files changed, 27 insertions(+), 7 deletions(-)
 
---- a/drivers/phy/rockchip/phy-rockchip-emmc.c
-+++ b/drivers/phy/rockchip/phy-rockchip-emmc.c
-@@ -76,6 +76,10 @@
- #define PHYCTRL_OTAPDLYSEL_MASK		0xf
- #define PHYCTRL_OTAPDLYSEL_SHIFT	0x7
+--- a/drivers/misc/cxl/cxl.h
++++ b/drivers/misc/cxl/cxl.h
+@@ -365,6 +365,9 @@ static const cxl_p2n_reg_t CXL_PSL_WED_A
+ #define CXL_PSL_TFC_An_AE (1ull << (63-30)) /* Restart PSL with address error */
+ #define CXL_PSL_TFC_An_R  (1ull << (63-31)) /* Restart PSL transaction */
  
-+#define PHYCTRL_IS_CALDONE(x) \
-+	((((x) >> PHYCTRL_CALDONE_SHIFT) & \
-+	  PHYCTRL_CALDONE_MASK) == PHYCTRL_CALDONE_DONE)
++/****** CXL_PSL_DEBUG *****************************************************/
++#define CXL_PSL_DEBUG_CDC  (1ull << (63-27)) /* Coherent Data cache support */
 +
- struct rockchip_emmc_phy {
- 	unsigned int	reg_offset;
- 	struct regmap	*reg_base;
-@@ -90,6 +94,7 @@ static int rockchip_emmc_phy_power(struc
- 	unsigned int freqsel = PHYCTRL_FREQSEL_200M;
- 	unsigned long rate;
- 	unsigned long timeout;
-+	int ret;
+ /****** CXL_XSL9_IERAT_ERAT - CAIA 2 **********************************/
+ #define CXL_XSL9_IERAT_MLPID    (1ull << (63-0))  /* Match LPID */
+ #define CXL_XSL9_IERAT_MPID     (1ull << (63-1))  /* Match PID */
+@@ -659,6 +662,7 @@ struct cxl_native {
+ 	irq_hw_number_t err_hwirq;
+ 	unsigned int err_virq;
+ 	u64 ps_off;
++	bool no_data_cache; /* set if no data cache on the card */
+ 	const struct cxl_service_layer_ops *sl_ops;
+ };
+ 
+--- a/drivers/misc/cxl/native.c
++++ b/drivers/misc/cxl/native.c
+@@ -352,8 +352,17 @@ int cxl_data_cache_flush(struct cxl *ada
+ 	u64 reg;
+ 	unsigned long timeout = jiffies + (HZ * CXL_TIMEOUT);
+ 
+-	pr_devel("Flushing data cache\n");
++	/*
++	 * Do a datacache flush only if datacache is available.
++	 * In case of PSL9D datacache absent hence flush operation.
++	 * would timeout.
++	 */
++	if (adapter->native->no_data_cache) {
++		pr_devel("No PSL data cache. Ignoring cache flush req.\n");
++		return 0;
++	}
+ 
++	pr_devel("Flushing data cache\n");
+ 	reg = cxl_p1_read(adapter, CXL_PSL_Control);
+ 	reg |= CXL_PSL_Control_Fr;
+ 	cxl_p1_write(adapter, CXL_PSL_Control, reg);
+--- a/drivers/misc/cxl/pci.c
++++ b/drivers/misc/cxl/pci.c
+@@ -457,6 +457,7 @@ static int init_implementation_adapter_r
+ 	u64 chipid;
+ 	u32 phb_index;
+ 	u64 capp_unit_id;
++	u64 psl_debug;
+ 	int rc;
+ 
+ 	rc = cxl_calc_capp_routing(dev, &chipid, &phb_index, &capp_unit_id);
+@@ -507,6 +508,16 @@ static int init_implementation_adapter_r
+ 	if (cxl_is_power9_dd1())
+ 		cxl_p1_write(adapter, CXL_PSL9_GP_CT, 0x0400000000000001ULL);
+ 
++	/*
++	 * Check if PSL has data-cache. We need to flush adapter datacache
++	 * when as its about to be removed.
++	 */
++	psl_debug = cxl_p1_read(adapter, CXL_PSL9_DEBUG);
++	if (psl_debug & CXL_PSL_DEBUG_CDC) {
++		dev_dbg(&dev->dev, "No data-cache present\n");
++		adapter->native->no_data_cache = true;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1450,10 +1461,8 @@ int cxl_pci_reset(struct cxl *adapter)
  
  	/*
- 	 * Keep phyctrl_pdb and phyctrl_endll low to allow
-@@ -160,17 +165,19 @@ static int rockchip_emmc_phy_power(struc
- 				   PHYCTRL_PDB_SHIFT));
- 
- 	/*
--	 * According to the user manual, it asks driver to
--	 * wait 5us for calpad busy trimming
-+	 * According to the user manual, it asks driver to wait 5us for
-+	 * calpad busy trimming. However it is documented that this value is
-+	 * PVT(A.K.A process,voltage and temperature) relevant, so some
-+	 * failure cases are found which indicates we should be more tolerant
-+	 * to calpad busy trimming.
+ 	 * The adapter is about to be reset, so ignore errors.
+-	 * Not supported on P9 DD1
  	 */
--	udelay(5);
--	regmap_read(rk_phy->reg_base,
--		    rk_phy->reg_offset + GRF_EMMCPHY_STATUS,
--		    &caldone);
--	caldone = (caldone >> PHYCTRL_CALDONE_SHIFT) & PHYCTRL_CALDONE_MASK;
--	if (caldone != PHYCTRL_CALDONE_DONE) {
--		pr_err("rockchip_emmc_phy_power: caldone timeout.\n");
--		return -ETIMEDOUT;
-+	ret = regmap_read_poll_timeout(rk_phy->reg_base,
-+				       rk_phy->reg_offset + GRF_EMMCPHY_STATUS,
-+				       caldone, PHYCTRL_IS_CALDONE(caldone),
-+				       0, 50);
-+	if (ret) {
-+		pr_err("%s: caldone failed, ret=%d\n", __func__, ret);
-+		return ret;
- 	}
+-	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
+-		cxl_data_cache_flush(adapter);
++	cxl_data_cache_flush(adapter);
  
- 	/* Set the frequency of the DLL operation */
+ 	/* pcie_warm_reset requests a fundamental pci reset which includes a
+ 	 * PERST assert/deassert.  PERST triggers a loading of the image
+@@ -1898,10 +1907,8 @@ static void cxl_pci_remove_adapter(struc
+ 
+ 	/*
+ 	 * Flush adapter datacache as its about to be removed.
+-	 * Not supported on P9 DD1.
+ 	 */
+-	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
+-		cxl_data_cache_flush(adapter);
++	cxl_data_cache_flush(adapter);
+ 
+ 	cxl_deconfigure_adapter(adapter);
+ 
