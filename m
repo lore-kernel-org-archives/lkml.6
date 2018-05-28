@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164074AbeE1ND4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:03:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
+        id S1165139AbeE1NET (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:04:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163127AbeE1KxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:01 -0400
+        id S1164043AbeE1Kwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:52:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 262/496] batman-adv: Fix skbuff rcsum on packet reroute
-Date: Mon, 28 May 2018 12:00:47 +0200
-Message-Id: <20180528100330.906106023@linuxfoundation.org>
+Subject: [PATCH 4.14 259/496] vlan: Fix out of order vlan headers with reorder header off
+Date: Mon, 28 May 2018 12:00:44 +0200
+Message-Id: <20180528100330.785067771@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,88 +31,163 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-[ Upstream commit fc04fdb2c8a894283259f5621d31d75610701091 ]
+[ Upstream commit cbe7128c4b92e2004984f477fd38dfa81662f02e ]
 
-batadv_check_unicast_ttvn may redirect a packet to itself or another
-originator. This involves rewriting the ttvn and the destination address in
-the batadv unicast header. These field were not yet pulled (with skb rcsum
-update) and thus any change to them also requires a change in the receive
-checksum.
+With reorder header off, received packets are untagged in skb_vlan_untag()
+called from within __netif_receive_skb_core(), and later the tag will be
+inserted back in vlan_do_receive().
 
-Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Fixes: a73105b8d4c7 ("batman-adv: improved client announcement mechanism")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+This caused out of order vlan headers when we create a vlan device on top
+of another vlan device, because vlan_do_receive() inserts a tag as the
+outermost vlan tag. E.g. the outer tag is first removed in skb_vlan_untag()
+and inserted back in vlan_do_receive(), then the inner tag is next removed
+and inserted back as the outermost tag.
+
+This patch fixes the behaviour by inserting the inner tag at the right
+position.
+
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/routing.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ include/linux/if_vlan.h |   66 ++++++++++++++++++++++++++++++++++++++++--------
+ net/8021q/vlan_core.c   |    4 +-
+ 2 files changed, 57 insertions(+), 13 deletions(-)
 
---- a/net/batman-adv/routing.c
-+++ b/net/batman-adv/routing.c
-@@ -743,6 +743,7 @@ free_skb:
- /**
-  * batadv_reroute_unicast_packet - update the unicast header for re-routing
-  * @bat_priv: the bat priv with all the soft interface information
-+ * @skb: unicast packet to process
-  * @unicast_packet: the unicast header to be updated
-  * @dst_addr: the payload destination
-  * @vid: VLAN identifier
-@@ -754,7 +755,7 @@ free_skb:
-  * Return: true if the packet header has been updated, false otherwise
-  */
- static bool
--batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
-+batadv_reroute_unicast_packet(struct batadv_priv *bat_priv, struct sk_buff *skb,
- 			      struct batadv_unicast_packet *unicast_packet,
- 			      u8 *dst_addr, unsigned short vid)
- {
-@@ -783,8 +784,10 @@ batadv_reroute_unicast_packet(struct bat
- 	}
- 
- 	/* update the packet header */
-+	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 	ether_addr_copy(unicast_packet->dest, orig_addr);
- 	unicast_packet->ttvn = orig_ttvn;
-+	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 
- 	ret = true;
- out:
-@@ -825,7 +828,7 @@ static bool batadv_check_unicast_ttvn(st
- 	 * the packet to
- 	 */
- 	if (batadv_tt_local_client_is_roaming(bat_priv, ethhdr->h_dest, vid)) {
--		if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
-+		if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
- 						  ethhdr->h_dest, vid))
- 			batadv_dbg_ratelimited(BATADV_DBG_TT,
- 					       bat_priv,
-@@ -871,7 +874,7 @@ static bool batadv_check_unicast_ttvn(st
- 	 * destination can possibly be updated and forwarded towards the new
- 	 * target host
- 	 */
--	if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
-+	if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
- 					  ethhdr->h_dest, vid)) {
- 		batadv_dbg_ratelimited(BATADV_DBG_TT, bat_priv,
- 				       "Rerouting unicast packet to %pM (dst=%pM): TTVN mismatch old_ttvn=%u new_ttvn=%u\n",
-@@ -894,12 +897,14 @@ static bool batadv_check_unicast_ttvn(st
- 	if (!primary_if)
- 		return false;
- 
-+	/* update the packet header */
-+	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 	ether_addr_copy(unicast_packet->dest, primary_if->net_dev->dev_addr);
-+	unicast_packet->ttvn = curr_ttvn;
-+	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 
- 	batadv_hardif_put(primary_if);
- 
--	unicast_packet->ttvn = curr_ttvn;
--
- 	return true;
+--- a/include/linux/if_vlan.h
++++ b/include/linux/if_vlan.h
+@@ -300,30 +300,34 @@ static inline bool vlan_hw_offload_capab
  }
  
+ /**
+- * __vlan_insert_tag - regular VLAN tag inserting
++ * __vlan_insert_inner_tag - inner VLAN tag inserting
+  * @skb: skbuff to tag
+  * @vlan_proto: VLAN encapsulation protocol
+  * @vlan_tci: VLAN TCI to insert
++ * @mac_len: MAC header length including outer vlan headers
+  *
+- * Inserts the VLAN tag into @skb as part of the payload
++ * Inserts the VLAN tag into @skb as part of the payload at offset mac_len
+  * Returns error if skb_cow_head failes.
+  *
+  * Does not change skb->protocol so this function can be used during receive.
+  */
+-static inline int __vlan_insert_tag(struct sk_buff *skb,
+-				    __be16 vlan_proto, u16 vlan_tci)
++static inline int __vlan_insert_inner_tag(struct sk_buff *skb,
++					  __be16 vlan_proto, u16 vlan_tci,
++					  unsigned int mac_len)
+ {
+ 	struct vlan_ethhdr *veth;
+ 
+ 	if (skb_cow_head(skb, VLAN_HLEN) < 0)
+ 		return -ENOMEM;
+ 
+-	veth = skb_push(skb, VLAN_HLEN);
++	skb_push(skb, VLAN_HLEN);
+ 
+-	/* Move the mac addresses to the beginning of the new header. */
+-	memmove(skb->data, skb->data + VLAN_HLEN, 2 * ETH_ALEN);
++	/* Move the mac header sans proto to the beginning of the new header. */
++	memmove(skb->data, skb->data + VLAN_HLEN, mac_len - ETH_TLEN);
+ 	skb->mac_header -= VLAN_HLEN;
+ 
++	veth = (struct vlan_ethhdr *)(skb->data + mac_len - ETH_HLEN);
++
+ 	/* first, the ethernet type */
+ 	veth->h_vlan_proto = vlan_proto;
+ 
+@@ -334,12 +338,30 @@ static inline int __vlan_insert_tag(stru
+ }
+ 
+ /**
+- * vlan_insert_tag - regular VLAN tag inserting
++ * __vlan_insert_tag - regular VLAN tag inserting
+  * @skb: skbuff to tag
+  * @vlan_proto: VLAN encapsulation protocol
+  * @vlan_tci: VLAN TCI to insert
+  *
+  * Inserts the VLAN tag into @skb as part of the payload
++ * Returns error if skb_cow_head failes.
++ *
++ * Does not change skb->protocol so this function can be used during receive.
++ */
++static inline int __vlan_insert_tag(struct sk_buff *skb,
++				    __be16 vlan_proto, u16 vlan_tci)
++{
++	return __vlan_insert_inner_tag(skb, vlan_proto, vlan_tci, ETH_HLEN);
++}
++
++/**
++ * vlan_insert_inner_tag - inner VLAN tag inserting
++ * @skb: skbuff to tag
++ * @vlan_proto: VLAN encapsulation protocol
++ * @vlan_tci: VLAN TCI to insert
++ * @mac_len: MAC header length including outer vlan headers
++ *
++ * Inserts the VLAN tag into @skb as part of the payload at offset mac_len
+  * Returns a VLAN tagged skb. If a new skb is created, @skb is freed.
+  *
+  * Following the skb_unshare() example, in case of error, the calling function
+@@ -347,12 +369,14 @@ static inline int __vlan_insert_tag(stru
+  *
+  * Does not change skb->protocol so this function can be used during receive.
+  */
+-static inline struct sk_buff *vlan_insert_tag(struct sk_buff *skb,
+-					      __be16 vlan_proto, u16 vlan_tci)
++static inline struct sk_buff *vlan_insert_inner_tag(struct sk_buff *skb,
++						    __be16 vlan_proto,
++						    u16 vlan_tci,
++						    unsigned int mac_len)
+ {
+ 	int err;
+ 
+-	err = __vlan_insert_tag(skb, vlan_proto, vlan_tci);
++	err = __vlan_insert_inner_tag(skb, vlan_proto, vlan_tci, mac_len);
+ 	if (err) {
+ 		dev_kfree_skb_any(skb);
+ 		return NULL;
+@@ -361,6 +385,26 @@ static inline struct sk_buff *vlan_inser
+ }
+ 
+ /**
++ * vlan_insert_tag - regular VLAN tag inserting
++ * @skb: skbuff to tag
++ * @vlan_proto: VLAN encapsulation protocol
++ * @vlan_tci: VLAN TCI to insert
++ *
++ * Inserts the VLAN tag into @skb as part of the payload
++ * Returns a VLAN tagged skb. If a new skb is created, @skb is freed.
++ *
++ * Following the skb_unshare() example, in case of error, the calling function
++ * doesn't have to worry about freeing the original skb.
++ *
++ * Does not change skb->protocol so this function can be used during receive.
++ */
++static inline struct sk_buff *vlan_insert_tag(struct sk_buff *skb,
++					      __be16 vlan_proto, u16 vlan_tci)
++{
++	return vlan_insert_inner_tag(skb, vlan_proto, vlan_tci, ETH_HLEN);
++}
++
++/**
+  * vlan_insert_tag_set_proto - regular VLAN tag inserting
+  * @skb: skbuff to tag
+  * @vlan_proto: VLAN encapsulation protocol
+--- a/net/8021q/vlan_core.c
++++ b/net/8021q/vlan_core.c
+@@ -48,8 +48,8 @@ bool vlan_do_receive(struct sk_buff **sk
+ 		 * original position later
+ 		 */
+ 		skb_push(skb, offset);
+-		skb = *skbp = vlan_insert_tag(skb, skb->vlan_proto,
+-					      skb->vlan_tci);
++		skb = *skbp = vlan_insert_inner_tag(skb, skb->vlan_proto,
++						    skb->vlan_tci, skb->mac_len);
+ 		if (!skb)
+ 			return false;
+ 		skb_pull(skb, offset + VLAN_HLEN);
