@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424621AbeE1LP5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:15:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34918 "EHLO mail.kernel.org"
+        id S1424544AbeE1LPW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424178AbeE1LPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:15:50 -0400
+        id S1424498AbeE1LPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:15:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 257/272] netlabel: If PF_INET6, check sk_buff ip header version
-Date: Mon, 28 May 2018 12:04:50 +0200
-Message-Id: <20180528100301.796743057@linuxfoundation.org>
+Subject: [PATCH 4.16 246/272] MIPS: Octeon: Fix logging messages with spurious periods after newlines
+Date: Mon, 28 May 2018 12:04:39 +0200
+Message-Id: <20180528100300.939640366@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,39 +31,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Haines <richard_c_haines@btinternet.com>
+From: Joe Perches <joe@perches.com>
 
-[ Upstream commit 213d7f94775322ba44e0bbb55ec6946e9de88cea ]
+[ Upstream commit db6775ca6e0353d2618ca7d5e210fc36ad43bbd4 ]
 
-When resolving a fallback label, check the sk_buff version as it
-is possible (e.g. SCTP) to have family = PF_INET6 while
-receiving ip_hdr(skb)->version = 4.
+Using a period after a newline causes bad output.
 
-Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+Signed-off-by: Joe Perches <joe@perches.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/17886/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlabel/netlabel_unlabeled.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/mips/cavium-octeon/octeon-irq.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -1472,6 +1472,16 @@ int netlbl_unlabel_getattr(const struct
- 		iface = rcu_dereference(netlbl_unlhsh_def);
- 	if (iface == NULL || !iface->valid)
- 		goto unlabel_getattr_nolabel;
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+	/* When resolving a fallback label, check the sk_buff version as
-+	 * it is possible (e.g. SCTP) to have family = PF_INET6 while
-+	 * receiving ip_hdr(skb)->version = 4.
-+	 */
-+	if (family == PF_INET6 && ip_hdr(skb)->version == 4)
-+		family = PF_INET;
-+#endif /* IPv6 */
-+
- 	switch (family) {
- 	case PF_INET: {
- 		struct iphdr *hdr4;
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2271,7 +2271,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	parent_irq = irq_of_parse_and_map(ciu_node, 0);
+ 	if (!parent_irq) {
+-		pr_err("ERROR: Couldn't acquire parent_irq for %s\n.",
++		pr_err("ERROR: Couldn't acquire parent_irq for %s\n",
+ 			ciu_node->name);
+ 		return -EINVAL;
+ 	}
+@@ -2283,7 +2283,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	addr = of_get_address(ciu_node, 0, NULL, NULL);
+ 	if (!addr) {
+-		pr_err("ERROR: Couldn't acquire reg(0) %s\n.", ciu_node->name);
++		pr_err("ERROR: Couldn't acquire reg(0) %s\n", ciu_node->name);
+ 		return -EINVAL;
+ 	}
+ 	host_data->raw_reg = (u64)phys_to_virt(
+@@ -2291,7 +2291,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	addr = of_get_address(ciu_node, 1, NULL, NULL);
+ 	if (!addr) {
+-		pr_err("ERROR: Couldn't acquire reg(1) %s\n.", ciu_node->name);
++		pr_err("ERROR: Couldn't acquire reg(1) %s\n", ciu_node->name);
+ 		return -EINVAL;
+ 	}
+ 	host_data->en_reg = (u64)phys_to_virt(
+@@ -2299,7 +2299,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	r = of_property_read_u32(ciu_node, "cavium,max-bits", &val);
+ 	if (r) {
+-		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n.",
++		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n",
+ 			ciu_node->name);
+ 		return r;
+ 	}
+@@ -2309,7 +2309,7 @@ static int __init octeon_irq_init_cib(st
+ 					   &octeon_irq_domain_cib_ops,
+ 					   host_data);
+ 	if (!cib_domain) {
+-		pr_err("ERROR: Couldn't irq_domain_add_linear()\n.");
++		pr_err("ERROR: Couldn't irq_domain_add_linear()\n");
+ 		return -ENOMEM;
+ 	}
+ 
