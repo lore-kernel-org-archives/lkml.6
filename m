@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965719AbeE1QUc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:20:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60160 "EHLO mail.kernel.org"
+        id S965986AbeE1QUv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:20:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936681AbeE1KL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:58 -0400
+        id S936670AbeE1KLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 100/185] selftests: ftrace: Add a testcase for string type with kprobe_event
-Date: Mon, 28 May 2018 12:02:21 +0200
-Message-Id: <20180528100059.634163039@linuxfoundation.org>
+Subject: [PATCH 3.18 108/185] net: mvneta: fix enable of all initialized RXQs
+Date: Mon, 28 May 2018 12:02:29 +0200
+Message-Id: <20180528100100.714855612@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,71 +31,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-[ Upstream commit 5fbdbed797b6d12d043a5121fdbc8d8b49d10e80 ]
+[ Upstream commit e81b5e01c14add8395dfba7130f8829206bb507d ]
 
-Add a testcase for string type with kprobe event.
-This tests good/bad syntax combinations and also
-the traced data is correct in several way.
+In mvneta_port_up() we enable relevant RX and TX port queues by write
+queues bit map to an appropriate register.
 
-Link: http://lkml.kernel.org/r/152129038381.31874.9201387794548737554.stgit@devbox
+q_map must be ZERO in the beginning of this process.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc |   46 ++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+ drivers/net/ethernet/marvell/mvneta.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -0,0 +1,46 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event string type argument
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+case `uname -m` in
-+x86_64)
-+  ARG2=%si
-+  OFFS=8
-+;;
-+i[3456]86)
-+  ARG2=%cx
-+  OFFS=4
-+;;
-+aarch64)
-+  ARG2=%x1
-+  OFFS=8
-+;;
-+arm*)
-+  ARG2=%r1
-+  OFFS=4
-+;;
-+*)
-+  echo "Please implement other architecture here"
-+  exit_untested
-+esac
-+
-+: "Test get argument (1)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
-+
-+echo 0 > events/kprobes/testprobe/enable
-+: "Test get argument (2)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test1 test2 >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
-+
-+echo 0 > events/enable
-+echo > kprobe_events
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -748,6 +748,7 @@ static void mvneta_port_up(struct mvneta
+ 	}
+ 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
+ 
++	q_map = 0;
+ 	/* Enable all initialized RXQs. */
+ 	q_map = 0;
+ 	for (queue = 0; queue < rxq_number; queue++) {
