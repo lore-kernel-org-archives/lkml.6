@@ -1,338 +1,170 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2228598-1527604923-2-6818689519678979118
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-253466-1527499199-2-9624857945470567137
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527604923; b=GQmkZLMGe3pojX0anpKYGfKwaTcj7yVSiIG0H9GbiTaKi/S+2Q
-    +9IdfrozprRVdN5GbJMebqVOQVGjCStcw9kD40TqVJg0GEDJyPVchpV9mrGi0LF4
-    poejbHOH84WD6m0cRGP3pxDFuw1T0LYM9DBcpW46Eh7zFGj8stNfPT/nATFmKJZm
-    WupXO6puzDuSwyGNwPH4bx7FJd6EvrRezfte8yxlkpxzN/ssmQXi3fCBNnQnheUC
-    c9fBp5sNHxPEQanue6UmlyebfO2v4XNmajYfAc2iSi8o5W8x1nZy8E+vwCCqPD5J
-    raaqGhPcrKW0E2X0MIe6tyKe+0+HSewhLYAA==
+    1527499199; b=UB+8QVeqKeZtztVa6I8fRqQjSA/5fOv4VtSiWnuRXK6TRX0hmD
+    5Hs2PUHzmNLlrdESLqWQMAelVcoK7wGw6ZnJdsf6gMzRzKRuBQAMa6WHTpPDXa5M
+    VTyQMtBCOuy/xxXWrnrZo4Qycb+hVTtftPjgtVWsQv8ZEcZvEr8ptZgSl3cZbW9a
+    EfYwtquCvC19DKj2jCs8WblVfu5LvTQKqfXWgogVDyAecmhNOgo0WusnwPRja/Zu
+    tp6+gTOUGeeMItFg9FNhkW804b4GdBLf3bMjL7smsuv/wtNaZD9859M0JQlRWR86
+    PV7x7d1gpyDBCDPiUR0VZhvgu5uL5lm4L7BQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527604923; bh=
-    8zNZrCfqGENqCL0Jm6hT8IySzx5C0iIC2jVl81TMwyc=; b=M8EeC7GjIG52FSoB
-    ca1bXGjNQl/qlY9ctTX0+I0vsiybpj9FNiz+caOLd9wER2fiGoOA+cMeQaxVycK6
-    UK5muH/tPonIatVZ2hBHLbYT+EU2NpQ8cee8GI6mGbPSzSZlWKhdnuVnnsCZ+DUF
-    xsCFIwhcU2N74pqtHmK+CsMEna0qUarGPq3DbFv8id/r5Lx98r18hIWPK1ReNObQ
-    AiZgpog/mU/R/qx32AQjl6cHdONCiugqMVuaFdJfdNoC1e7RFtjKXcTt+b4o4PJ4
-    yMSHk14quSuNJKISDvyVE2HBNCIedbTZKy/xPqhTremcjBHEjzMAhL74uWtlRqm1
-    KkquxA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1527499199; bh=qB3y1DSfeQ5ZP8E+zNFqFQhI7HLv4FzTIzRlorhy8D
+    U=; b=eOrPxyP4y056G8uwqbePWOgoL8zu+1bmnFyEsC78G31xP4R7cSsLUhELm7
+    Kc0h5NZQwmMd4WFQTkE+mnb1K1bGjGNsHAjEGQS7T3iRJdMLtl4wEJGxxd7+L3Hw
+    rQeP4hW8Weq/mUEDZ2X61JelQaI7mZYhskQRc6Ywrte85+HgUZDpH2z5ehAhT1Dx
+    UVXDea8eaE9+N4Ss1O8TzaNLe8dP+cVqmsFYr6aCEr6PDAzcRIpuXuLmRWGX4mwM
+    7skrL0QEbIvqkKUjBWhvIki4YS8fWaA60W4+DKDC4ZQ2dRylRKi9bXS0sk1NBfqs
+    UdfwzARmCaWwr8FLJEfdtubaC/Uw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=AcWcOhNw
+    header.a=rsa-sha256 header.s=20161025 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=UgZRqJJH;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=ajA/Pm00;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
+    header.domain=linux-m68k.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=AcWcOhNw
+      header.a=rsa-sha256 header.s=20161025 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=UgZRqJJH;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=ajA/Pm00;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=linux-m68k.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCRNIcn6aQrIJo06XZRSRGXMevSQ747ar0iP+iIso2QUE/x2J+o3dGFa6/l4EfsbOwGF0F0Lz5L11Y7eakOrmxFbcFfCS7cyGXPwnZ2Tfh2L2OaFEgq3
-    ch/eMIAOOLPzF+GQK/dUc0raRSS/W9Sm9aE9sJYkM+PlRpJubI9pNf2rrxwB9UwzcUZmupTf2EyUUymBSTmpQl1dsh/D7iJTAAq5hlK1RUPJ0zHTks0oXHcG
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8
-    a=20KFwNOVAAAA:8 a=o-RSvVeydOcGQp-WhVMA:9 a=Q8HEMPcRX8kA:10
+X-CM-Envelope: MS4wfN8KMscFb18YjJXckOCmLXRLqlZwBOlplOi19bTaspwrIZ/AsBynmFiqrgdyUKNYBrSg78NH1ko1WAZvUShcDt0tWPstaUQH8JfgL0rEYVtUMBywcpRg
+    pYftIM4CNmVeRdOkl3ikPqko3jhuQ9+pmViryo/pbd4sSvorNsIxVpKUILTHteN4YEurY3jLAN60dSWaSb8SclrKpk6Cyz8go2w3x9Au7bk+ZjKpDm5B7QEW
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=hAG5_4vcAAAA:8 a=VwQbUJbxAAAA:8 a=PtDNVHqPAAAA:8 a=6Fu7hv2xAAAA:8
+    a=tBb2bbeoAAAA:8 a=VeD6qxPExNqVWWePgFgA:9 a=QEXdDO2ut3YA:10
+    a=8Bh8Pg2EFav9IBZ9i9Tn:22 a=AjGcO6oz07-iQ99wixmX:22 a=BpimnaHY1jUKGyF_4-AF:22
+    a=OCr_TKDY-yBPQKLGgHr3:22 a=Oj-tNtZlA1e06AYgeCfH:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935176AbeE2Ol6 (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 10:41:58 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43846 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755032AbeE2Olw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 May 2018 10:41:52 -0400
-X-Google-Smtp-Source: AB8JxZp33h2x8RJ19taM0DrCXZWTHB540AzL7+7R8yh1Wv+Gl7Ga6EYyQkogC5Ea+FiZDDgKGUQPEQ==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/11] ovl: strip debug argument from ovl_do_ helpers
-Date: Tue, 29 May 2018 16:41:35 +0200
-Message-Id: <20180529144143.16378-4-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144143.16378-1-mszeredi@redhat.com>
-References: <20180529144143.16378-1-mszeredi@redhat.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+        id S1754144AbeE1JT5 (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 05:19:57 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:45338 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753984AbeE1JT4 (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Mon, 28 May 2018 05:19:56 -0400
+X-Google-Smtp-Source: ADUXVKIf9JrSFyw4Jp6NUbtQOG+m865V7fuj53wq6ogOCno607ZTKRz8ZTAyXrsDxr+vXtHoOXR8S23fIwc0e1tQYJc=
+MIME-Version: 1.0
+In-Reply-To: <20180420145514.GP3094@brightrain.aerifal.cx>
+References: <87604mhrnb.fsf@xmission.com> <20180420143811.9994-16-ebiederm@xmission.com>
+ <20180420145514.GP3094@brightrain.aerifal.cx>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 May 2018 11:19:55 +0200
+X-Google-Sender-Auth: zU6cjyyyw831x_2CPz2arPhDhJo
+Message-ID: <CAMuHMdXxL+k_SitLXV1LJDHJmCY1HiUnZSk7MM64rcgs75nLiw@mail.gmail.com>
+Subject: Re: [REVIEW][PATCH 16/22] signal/sh: Use force_sig_fault where appropriate
+To: Rich Felker <dalias@libc.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Amir Goldstein <amir73il@gmail.com>
+On Fri, Apr 20, 2018 at 4:55 PM, Rich Felker <dalias@libc.org> wrote:
+> On Fri, Apr 20, 2018 at 09:38:05AM -0500, Eric W. Biederman wrote:
+>> Filling in struct siginfo before calling force_sig_info a tedious and
+>> error prone process, where once in a great while the wrong fields
+>> are filled out, and siginfo has been inconsistently cleared.
+>>
+>> Simplify this process by using the helper force_sig_fault.  Which
+>> takes as a parameters all of the information it needs, ensures
+>> all of the fiddly bits of filling in struct siginfo are done properly
+>> and then calls force_sig_info.
+>>
+>> In short about a 5 line reduction in code for every time force_sig_info
+>> is called, which makes the calling function clearer.
+>>
+>> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+>> Cc: Rich Felker <dalias@libc.org>
+>> Cc: linux-sh@vger.kernel.org
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-It did not prove to be useful.
+>> --- a/arch/sh/kernel/traps_32.c
+>> +++ b/arch/sh/kernel/traps_32.c
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/copy_up.c   |  9 ++++-----
- fs/overlayfs/dir.c       | 20 ++++++++++----------
- fs/overlayfs/overlayfs.h | 42 ++++++++++++++++++------------------------
- fs/overlayfs/super.c     |  2 +-
- 4 files changed, 33 insertions(+), 40 deletions(-)
+>> @@ -599,20 +593,17 @@ int is_dsp_inst(struct pt_regs *regs)
+>>  #ifdef CONFIG_CPU_SH2A
+>>  asmlinkage void do_divide_error(unsigned long r4)
+>>  {
+>> -     siginfo_t info;
+>> +     int code;
+>>
+>> -     clear_siginfo(&info);
+>>       switch (r4) {
+>>       case TRAP_DIVZERO_ERROR:
+>> -             info.si_code = FPE_INTDIV;
+>> +             code = FPE_INTDIV;
+>>               break;
+>>       case TRAP_DIVOVF_ERROR:
+>> -             info.si_code = FPE_INTOVF;
+>> +             code = FPE_INTOVF;
+>>               break;
+>>       }
+>> -
+>> -     info.si_signo = SIGFPE;
+>> -     force_sig_info(info.si_signo, &info, current);
+>> +     force_sig_fault(SIGFPE, code, NULL, current);
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 8bede0742619..a8273dec0fb8 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -369,7 +369,7 @@ static int ovl_create_index(struct dentry *dentry, struct dentry *origin,
- 	if (IS_ERR(temp))
- 		goto temp_err;
- 
--	err = ovl_do_mkdir(dir, temp, S_IFDIR, true);
-+	err = ovl_do_mkdir(dir, temp, S_IFDIR);
- 	if (err)
- 		goto out;
- 
-@@ -439,8 +439,7 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
- 			       c->dentry->d_name.len);
- 	err = PTR_ERR(upper);
- 	if (!IS_ERR(upper)) {
--		err = ovl_do_link(ovl_dentry_upper(c->dentry), udir, upper,
--				  true);
-+		err = ovl_do_link(ovl_dentry_upper(c->dentry), udir, upper);
- 		dput(upper);
- 
- 		if (!err) {
-@@ -470,7 +469,7 @@ static int ovl_install_temp(struct ovl_copy_up_ctx *c, struct dentry *temp,
- 		return PTR_ERR(upper);
- 
- 	if (c->tmpfile)
--		err = ovl_do_link(temp, udir, upper, true);
-+		err = ovl_do_link(temp, udir, upper);
- 	else
- 		err = ovl_do_rename(d_inode(c->workdir), temp, udir, upper, 0);
- 
-@@ -511,7 +510,7 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
- 			goto temp_err;
- 
- 		err = ovl_create_real(d_inode(c->workdir), temp, &cattr,
--				      NULL, true);
-+				      NULL);
- 		if (err) {
- 			dput(temp);
- 			goto out;
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 01902adc7153..4d431a3f7a0a 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -115,7 +115,7 @@ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
- }
- 
- int ovl_create_real(struct inode *dir, struct dentry *newdentry,
--		    struct cattr *attr, struct dentry *hardlink, bool debug)
-+		    struct cattr *attr, struct dentry *hardlink)
- {
- 	int err;
- 
-@@ -123,27 +123,27 @@ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
- 		return -ESTALE;
- 
- 	if (hardlink) {
--		err = ovl_do_link(hardlink, dir, newdentry, debug);
-+		err = ovl_do_link(hardlink, dir, newdentry);
- 	} else {
- 		switch (attr->mode & S_IFMT) {
- 		case S_IFREG:
--			err = ovl_do_create(dir, newdentry, attr->mode, debug);
-+			err = ovl_do_create(dir, newdentry, attr->mode);
- 			break;
- 
- 		case S_IFDIR:
--			err = ovl_do_mkdir(dir, newdentry, attr->mode, debug);
-+			err = ovl_do_mkdir(dir, newdentry, attr->mode);
- 			break;
- 
- 		case S_IFCHR:
- 		case S_IFBLK:
- 		case S_IFIFO:
- 		case S_IFSOCK:
--			err = ovl_do_mknod(dir, newdentry,
--					   attr->mode, attr->rdev, debug);
-+			err = ovl_do_mknod(dir, newdentry, attr->mode,
-+					   attr->rdev);
- 			break;
- 
- 		case S_IFLNK:
--			err = ovl_do_symlink(dir, newdentry, attr->link, debug);
-+			err = ovl_do_symlink(dir, newdentry, attr->link);
- 			break;
- 
- 		default:
-@@ -229,7 +229,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
- 	err = PTR_ERR(newdentry);
- 	if (IS_ERR(newdentry))
- 		goto out_unlock;
--	err = ovl_create_real(udir, newdentry, attr, hardlink, false);
-+	err = ovl_create_real(udir, newdentry, attr, hardlink);
- 	if (err)
- 		goto out_dput;
- 
-@@ -286,7 +286,7 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
- 		goto out_unlock;
- 
- 	err = ovl_create_real(wdir, opaquedir,
--			      &(struct cattr){.mode = stat.mode}, NULL, true);
-+			      &(struct cattr){.mode = stat.mode}, NULL);
- 	if (err)
- 		goto out_dput;
- 
-@@ -391,7 +391,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
- 	if (IS_ERR(upper))
- 		goto out_dput;
- 
--	err = ovl_create_real(wdir, newdentry, cattr, hardlink, true);
-+	err = ovl_create_real(wdir, newdentry, cattr, hardlink);
- 	if (err)
- 		goto out_dput2;
- 
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index e0b7de799f6b..1c30d60cc290 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -86,6 +86,7 @@ struct ovl_fh {
- static inline int ovl_do_rmdir(struct inode *dir, struct dentry *dentry)
- {
- 	int err = vfs_rmdir(dir, dentry);
-+
- 	pr_debug("rmdir(%pd2) = %i\n", dentry, err);
- 	return err;
- }
-@@ -93,56 +94,52 @@ static inline int ovl_do_rmdir(struct inode *dir, struct dentry *dentry)
- static inline int ovl_do_unlink(struct inode *dir, struct dentry *dentry)
- {
- 	int err = vfs_unlink(dir, dentry, NULL);
-+
- 	pr_debug("unlink(%pd2) = %i\n", dentry, err);
- 	return err;
- }
- 
- static inline int ovl_do_link(struct dentry *old_dentry, struct inode *dir,
--			      struct dentry *new_dentry, bool debug)
-+			      struct dentry *new_dentry)
- {
- 	int err = vfs_link(old_dentry, dir, new_dentry, NULL);
--	if (debug) {
--		pr_debug("link(%pd2, %pd2) = %i\n",
--			 old_dentry, new_dentry, err);
--	}
-+
-+	pr_debug("link(%pd2, %pd2) = %i\n", old_dentry, new_dentry, err);
- 	return err;
- }
- 
- static inline int ovl_do_create(struct inode *dir, struct dentry *dentry,
--			     umode_t mode, bool debug)
-+				umode_t mode)
- {
- 	int err = vfs_create(dir, dentry, mode, true);
--	if (debug)
--		pr_debug("create(%pd2, 0%o) = %i\n", dentry, mode, err);
-+
-+	pr_debug("create(%pd2, 0%o) = %i\n", dentry, mode, err);
- 	return err;
- }
- 
- static inline int ovl_do_mkdir(struct inode *dir, struct dentry *dentry,
--			       umode_t mode, bool debug)
-+			       umode_t mode)
- {
- 	int err = vfs_mkdir(dir, dentry, mode);
--	if (debug)
--		pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, err);
-+	pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, err);
- 	return err;
- }
- 
- static inline int ovl_do_mknod(struct inode *dir, struct dentry *dentry,
--			       umode_t mode, dev_t dev, bool debug)
-+			       umode_t mode, dev_t dev)
- {
- 	int err = vfs_mknod(dir, dentry, mode, dev);
--	if (debug) {
--		pr_debug("mknod(%pd2, 0%o, 0%o) = %i\n",
--			 dentry, mode, dev, err);
--	}
-+
-+	pr_debug("mknod(%pd2, 0%o, 0%o) = %i\n", dentry, mode, dev, err);
- 	return err;
- }
- 
- static inline int ovl_do_symlink(struct inode *dir, struct dentry *dentry,
--				 const char *oldname, bool debug)
-+				 const char *oldname)
- {
- 	int err = vfs_symlink(dir, dentry, oldname);
--	if (debug)
--		pr_debug("symlink(\"%s\", %pd2) = %i\n", oldname, dentry, err);
-+
-+	pr_debug("symlink(\"%s\", %pd2) = %i\n", oldname, dentry, err);
- 	return err;
- }
- 
-@@ -168,11 +165,8 @@ static inline int ovl_do_rename(struct inode *olddir, struct dentry *olddentry,
- {
- 	int err;
- 
--	pr_debug("rename(%pd2, %pd2, 0x%x)\n",
--		 olddentry, newdentry, flags);
--
-+	pr_debug("rename(%pd2, %pd2, 0x%x)\n", olddentry, newdentry, flags);
- 	err = vfs_rename(olddir, olddentry, newdir, newdentry, NULL, flags);
--
- 	if (err) {
- 		pr_debug("...rename(%pd2, %pd2, ...) = %i\n",
- 			 olddentry, newdentry, err);
-@@ -362,7 +356,7 @@ struct cattr {
- };
- int ovl_create_real(struct inode *dir, struct dentry *newdentry,
- 		    struct cattr *attr,
--		    struct dentry *hardlink, bool debug);
-+		    struct dentry *hardlink);
- int ovl_cleanup(struct inode *dir, struct dentry *dentry);
- 
- /* copy_up.c */
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index e8551c97de51..94a7a654b0b8 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -613,7 +613,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
- 
- 		err = ovl_create_real(dir, work,
- 				      &(struct cattr){.mode = S_IFDIR | 0},
--				      NULL, true);
-+				      NULL);
- 		if (err)
- 			goto out_dput;
- 
+/kisskb/src/arch/sh/kernel/traps_32.c:606:17: error: 'code' may be
+used uninitialized in this function [-Werror=uninitialized]
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/13366052/
+http://kisskb.ellerman.id.au/kisskb/buildresult/13366048/
+http://kisskb.ellerman.id.au/kisskb/buildresult/13366072/
+
+>>  }
+
+> Acked-by: Rich Felker <dalias@libc.org>
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.14.3
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
