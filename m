@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164549AbeE1MzO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:55:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43806 "EHLO mail.kernel.org"
+        id S1164338AbeE1KzF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:55:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164353AbeE1KzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:09 -0400
+        id S1163941AbeE1Ky6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
-        Riku Voipio <riku.voipio@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        Mark Bloch <markb@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 306/496] builddeb: Fix header package regarding dtc source links
-Date: Mon, 28 May 2018 12:01:31 +0200
-Message-Id: <20180528100332.699722121@linuxfoundation.org>
+Subject: [PATCH 4.14 302/496] net/mlx5: Make eswitch support to depend on switchdev
+Date: Mon, 28 May 2018 12:01:27 +0200
+Message-Id: <20180528100332.544437782@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,31 +30,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Or Gerlitz <ogerlitz@mellanox.com>
 
-[ Upstream commit f8437520704cfd9cc442a99d73ed708a3cdadaf9 ]
+[ Upstream commit f125376b06bcc57dfb0216ac8d6ec6d5dcf81025 ]
 
-Since d5d332d3f7e8, a couple of links in scripts/dtc/include-prefixes
-are additionally required in order to build device trees with the header
-package.
+Add dependancy for switchdev to be congfigured as any user-space control
+plane SW is expected to use the HW switchdev ID to locate the representors
+related to VFs of a certain PF and apply SW/offloaded switching on them.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Riku Voipio <riku.voipio@linaro.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: e80541ecabd5 ('net/mlx5: Add CONFIG_MLX5_ESWITCH Kconfig')
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reviewed-by: Mark Bloch <markb@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/package/builddeb |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/Kconfig   |    2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    4 ++--
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c  |    2 --
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
---- a/scripts/package/builddeb
-+++ b/scripts/package/builddeb
-@@ -313,7 +313,7 @@ fi
+--- a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
+@@ -46,7 +46,7 @@ config MLX5_MPFS
  
- # Build kernel header package
- (cd $srctree; find . -name Makefile\* -o -name Kconfig\* -o -name \*.pl) > "$objtree/debian/hdrsrcfiles"
--(cd $srctree; find arch/*/include include scripts -type f) >> "$objtree/debian/hdrsrcfiles"
-+(cd $srctree; find arch/*/include include scripts -type f -o -type l) >> "$objtree/debian/hdrsrcfiles"
- (cd $srctree; find arch/$SRCARCH -name module.lds -o -name Kbuild.platforms -o -name Platform) >> "$objtree/debian/hdrsrcfiles"
- (cd $srctree; find $(find arch/$SRCARCH -name include -o -name scripts -type d) -type f) >> "$objtree/debian/hdrsrcfiles"
- if grep -q '^CONFIG_STACK_VALIDATION=y' $KCONFIG_CONFIG ; then
+ config MLX5_ESWITCH
+ 	bool "Mellanox Technologies MLX5 SRIOV E-Switch support"
+-	depends on MLX5_CORE_EN
++	depends on MLX5_CORE_EN && NET_SWITCHDEV
+ 	default y
+ 	---help---
+ 	  Mellanox Technologies Ethernet SRIOV E-Switch support in ConnectX NIC.
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -4022,7 +4022,7 @@ static void mlx5e_set_netdev_dev_addr(st
+ 	}
+ }
+ 
+-#if IS_ENABLED(CONFIG_NET_SWITCHDEV) && IS_ENABLED(CONFIG_MLX5_ESWITCH)
++#if IS_ENABLED(CONFIG_MLX5_ESWITCH)
+ static const struct switchdev_ops mlx5e_switchdev_ops = {
+ 	.switchdev_port_attr_get	= mlx5e_attr_get,
+ };
+@@ -4126,7 +4126,7 @@ static void mlx5e_build_nic_netdev(struc
+ 
+ 	mlx5e_set_netdev_dev_addr(netdev);
+ 
+-#if IS_ENABLED(CONFIG_NET_SWITCHDEV) && IS_ENABLED(CONFIG_MLX5_ESWITCH)
++#if IS_ENABLED(CONFIG_MLX5_ESWITCH)
+ 	if (MLX5_VPORT_MANAGER(mdev))
+ 		netdev->switchdev_ops = &mlx5e_switchdev_ops;
+ #endif
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -825,9 +825,7 @@ static void mlx5e_build_rep_netdev(struc
+ 
+ 	netdev->ethtool_ops	  = &mlx5e_rep_ethtool_ops;
+ 
+-#ifdef CONFIG_NET_SWITCHDEV
+ 	netdev->switchdev_ops = &mlx5e_rep_switchdev_ops;
+-#endif
+ 
+ 	netdev->features	 |= NETIF_F_VLAN_CHALLENGED | NETIF_F_HW_TC | NETIF_F_NETNS_LOCAL;
+ 	netdev->hw_features      |= NETIF_F_HW_TC;
