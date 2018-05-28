@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164262AbeE1Kzj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:55:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
+        id S1164431AbeE1Kzp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:55:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164400AbeE1Kzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:33 -0400
+        id S1164416AbeE1Kzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ariel Elior <ariel.elior@cavium.com>,
-        Manish Chopra <manish.chopra@cavium.com>,
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Davide Caratti <dcaratti@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 313/496] qede: Do not drop rx-checksum invalidated packets.
-Date: Mon, 28 May 2018 12:01:38 +0200
-Message-Id: <20180528100333.018569432@linuxfoundation.org>
+Subject: [PATCH 4.14 284/496] net/sched: fix idr leak in the error path of tcf_skbmod_init()
+Date: Mon, 28 May 2018 12:01:09 +0200
+Message-Id: <20180528100331.808800023@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,41 +31,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manish Chopra <manish.chopra@cavium.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 58f101bf87e32753342a6924772c6ebb0fbde24a ]
+[ Upstream commit f29cdfbe33d6915ba8056179b0041279a67e3647 ]
 
-Today, driver drops received packets which are indicated as
-invalid checksum by the device. Instead of dropping such packets,
-pass them to the stack with CHECKSUM_NONE indication in skb.
+tcf_skbmod_init() can fail after the idr has been successfully reserved.
+When this happens, every subsequent attempt to configure skbmod rules
+using the same idr value will systematically fail with -ENOSPC, unless
+the first attempt was done using the 'replace' keyword:
 
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: Manish Chopra <manish.chopra@cavium.com>
+ # tc action add action skbmod swap mac index 100
+ RTNETLINK answers: Cannot allocate memory
+ We have an error talking to the kernel
+ # tc action add action skbmod swap mac index 100
+ RTNETLINK answers: No space left on device
+ We have an error talking to the kernel
+ # tc action add action skbmod swap mac index 100
+ RTNETLINK answers: No space left on device
+ We have an error talking to the kernel
+ ...
+
+Fix this in tcf_skbmod_init(), ensuring that tcf_idr_release() is called
+on the error path when the idr has been reserved, but not yet inserted.
+Also, don't test 'ovr' in the error path, to avoid a 'replace' failure
+implicitly become a 'delete' that leaks refcount in act_skbmod module:
+
+ # rmmod act_skbmod; modprobe act_skbmod
+ # tc action add action skbmod swap mac index 100
+ # tc action add action skbmod swap mac continue index 100
+ RTNETLINK answers: File exists
+ We have an error talking to the kernel
+ # tc action replace action skbmod swap mac continue index 100
+ RTNETLINK answers: Cannot allocate memory
+ We have an error talking to the kernel
+ # tc action list action skbmod
+ #
+ # rmmod  act_skbmod
+ rmmod: ERROR: Module act_skbmod is in use
+
+Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qede/qede_fp.c |   10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ net/sched/act_skbmod.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qede/qede_fp.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_fp.c
-@@ -1245,16 +1245,10 @@ static int qede_rx_process_cqe(struct qe
- 
- 	csum_flag = qede_check_csum(parse_flag);
- 	if (unlikely(csum_flag == QEDE_CSUM_ERROR)) {
--		if (qede_pkt_is_ip_fragmented(fp_cqe, parse_flag)) {
-+		if (qede_pkt_is_ip_fragmented(fp_cqe, parse_flag))
- 			rxq->rx_ip_frags++;
--		} else {
--			DP_NOTICE(edev,
--				  "CQE has error, flags = %x, dropping incoming packet\n",
--				  parse_flag);
-+		else
- 			rxq->rx_hw_errors++;
--			qede_recycle_rx_bd_ring(rxq, fp_cqe->bd_num);
--			return 0;
--		}
+--- a/net/sched/act_skbmod.c
++++ b/net/sched/act_skbmod.c
+@@ -155,7 +155,7 @@ static int tcf_skbmod_init(struct net *n
+ 	ASSERT_RTNL();
+ 	p = kzalloc(sizeof(struct tcf_skbmod_params), GFP_KERNEL);
+ 	if (unlikely(!p)) {
+-		if (ovr)
++		if (ret == ACT_P_CREATED)
+ 			tcf_idr_release(*a, bind);
+ 		return -ENOMEM;
  	}
- 
- 	/* Basic validation passed; Need to prepare an SKB. This would also
