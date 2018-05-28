@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754087AbeE1JC7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:02:59 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:50298 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754160AbeE1I7N (ORCPT
+        id S1754311AbeE1JDX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:03:23 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38830 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754084AbeE1I7D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:59:13 -0400
-X-Google-Smtp-Source: ADUXVKLyFlCu7yUUKdkUaUF+oD8cP149XFVwj/aPN3R98TcwKGeE0XYUmspedl2RtE6EosCHK/GvKw==
+        Mon, 28 May 2018 04:59:03 -0400
+X-Google-Smtp-Source: AB8JxZrGiJQaEQVEivmNzJ26kEGEx8NPSpZUGYnDIBAjJQGV5LcvkBUM/DYb+e+SGv89Vk6Wm7lHeA==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Igor Konopko <igor.j.konopko@intel.com>,
-        Marcin Dziegielewski <marcin.dziegielewski@intel.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 17/20] lightnvm: fix partial read error path
-Date: Mon, 28 May 2018 10:58:38 +0200
-Message-Id: <20180528085841.26684-18-mb@lightnvm.io>
+Subject: [GIT PULL 10/20] lightnvm: pass flag on graceful teardown to targets
+Date: Mon, 28 May 2018 10:58:31 +0200
+Message-Id: <20180528085841.26684-11-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
 References: <20180528085841.26684-1-mb@lightnvm.io>
@@ -27,44 +27,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Konopko <igor.j.konopko@intel.com>
+From: Javier González <javier@javigon.com>
 
-When error occurs during bio_add_page on partial read path, pblk
-tries to free pages twice.
+If the namespace is unregistered before the LightNVM target is removed
+(e.g., on hot unplug) it is too late for the target to store any metadata
+on the device - any attempt to write to the device will fail. In this
+case, pass on a "gracefull teardown" flag to the target to let it know
+when this happens.
 
-Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
-Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+In the case of pblk, we pad the open line (close all open chunks) to
+improve data retention. In the event of an ungraceful shutdown, avoid
+this part and just clean up.
+
+Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-read.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/lightnvm/core.c      | 10 +++++-----
+ drivers/lightnvm/pblk-core.c | 13 ++++++++++++-
+ drivers/lightnvm/pblk-gc.c   | 10 ++++++----
+ drivers/lightnvm/pblk-init.c | 14 ++++++++------
+ drivers/lightnvm/pblk.h      |  4 +++-
+ include/linux/lightnvm.h     |  2 +-
+ 6 files changed, 35 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index a2e678de428f..fa7b60f852d9 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -256,7 +256,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
- 	new_bio = bio_alloc(GFP_KERNEL, nr_holes);
- 
- 	if (pblk_bio_add_pages(pblk, new_bio, GFP_KERNEL, nr_holes))
--		goto err;
-+		goto err_add_pages;
- 
- 	if (nr_holes != new_bio->bi_vcnt) {
- 		pr_err("pblk: malformed bio\n");
-@@ -347,10 +347,10 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
- 	return NVM_IO_OK;
- 
- err:
--	pr_err("pblk: failed to perform partial read\n");
--
- 	/* Free allocated pages in new bio */
--	pblk_bio_free_pages(pblk, bio, 0, new_bio->bi_vcnt);
-+	pblk_bio_free_pages(pblk, new_bio, 0, new_bio->bi_vcnt);
-+err_add_pages:
-+	pr_err("pblk: failed to perform partial read\n");
- 	__pblk_end_io_read(pblk, rqd, false);
- 	return NVM_IO_ERR;
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 63171cdce270..60aa7bc5a630 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -431,7 +431,7 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
+ 	return 0;
+ err_sysfs:
+ 	if (tt->exit)
+-		tt->exit(targetdata);
++		tt->exit(targetdata, true);
+ err_init:
+ 	blk_cleanup_queue(tqueue);
+ 	tdisk->queue = NULL;
+@@ -446,7 +446,7 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
+ 	return ret;
  }
+ 
+-static void __nvm_remove_target(struct nvm_target *t)
++static void __nvm_remove_target(struct nvm_target *t, bool graceful)
+ {
+ 	struct nvm_tgt_type *tt = t->type;
+ 	struct gendisk *tdisk = t->disk;
+@@ -459,7 +459,7 @@ static void __nvm_remove_target(struct nvm_target *t)
+ 		tt->sysfs_exit(tdisk);
+ 
+ 	if (tt->exit)
+-		tt->exit(tdisk->private_data);
++		tt->exit(tdisk->private_data, graceful);
+ 
+ 	nvm_remove_tgt_dev(t->dev, 1);
+ 	put_disk(tdisk);
+@@ -489,7 +489,7 @@ static int nvm_remove_tgt(struct nvm_dev *dev, struct nvm_ioctl_remove *remove)
+ 		mutex_unlock(&dev->mlock);
+ 		return 1;
+ 	}
+-	__nvm_remove_target(t);
++	__nvm_remove_target(t, true);
+ 	mutex_unlock(&dev->mlock);
+ 
+ 	return 0;
+@@ -963,7 +963,7 @@ void nvm_unregister(struct nvm_dev *dev)
+ 	list_for_each_entry_safe(t, tmp, &dev->targets, list) {
+ 		if (t->dev->parent != dev)
+ 			continue;
+-		__nvm_remove_target(t);
++		__nvm_remove_target(t, false);
+ 	}
+ 	mutex_unlock(&dev->mlock);
+ 
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 4b10122aec89..5f1e5b1b3094 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1461,7 +1461,7 @@ static void pblk_line_close_meta_sync(struct pblk *pblk)
+ 	flush_workqueue(pblk->close_wq);
+ }
+ 
+-void pblk_pipeline_stop(struct pblk *pblk)
++void __pblk_pipeline_flush(struct pblk *pblk)
+ {
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+ 	int ret;
+@@ -1486,6 +1486,11 @@ void pblk_pipeline_stop(struct pblk *pblk)
+ 
+ 	flush_workqueue(pblk->bb_wq);
+ 	pblk_line_close_meta_sync(pblk);
++}
++
++void __pblk_pipeline_stop(struct pblk *pblk)
++{
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+ 
+ 	spin_lock(&l_mg->free_lock);
+ 	pblk->state = PBLK_STATE_STOPPED;
+@@ -1494,6 +1499,12 @@ void pblk_pipeline_stop(struct pblk *pblk)
+ 	spin_unlock(&l_mg->free_lock);
+ }
+ 
++void pblk_pipeline_stop(struct pblk *pblk)
++{
++	__pblk_pipeline_flush(pblk);
++	__pblk_pipeline_stop(pblk);
++}
++
+ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
+ {
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+index 6851a5c67189..b0cc277bf972 100644
+--- a/drivers/lightnvm/pblk-gc.c
++++ b/drivers/lightnvm/pblk-gc.c
+@@ -649,7 +649,7 @@ int pblk_gc_init(struct pblk *pblk)
+ 	return ret;
+ }
+ 
+-void pblk_gc_exit(struct pblk *pblk)
++void pblk_gc_exit(struct pblk *pblk, bool graceful)
+ {
+ 	struct pblk_gc *gc = &pblk->gc;
+ 
+@@ -663,10 +663,12 @@ void pblk_gc_exit(struct pblk *pblk)
+ 	if (gc->gc_reader_ts)
+ 		kthread_stop(gc->gc_reader_ts);
+ 
+-	flush_workqueue(gc->gc_reader_wq);
++	if (graceful) {
++		flush_workqueue(gc->gc_reader_wq);
++		flush_workqueue(gc->gc_line_reader_wq);
++	}
++
+ 	destroy_workqueue(gc->gc_reader_wq);
+-
+-	flush_workqueue(gc->gc_line_reader_wq);
+ 	destroy_workqueue(gc->gc_line_reader_wq);
+ 
+ 	if (gc->gc_writer_ts)
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 9e3a43346d4c..bfc488d0dda9 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -1118,23 +1118,25 @@ static void pblk_free(struct pblk *pblk)
+ 	kfree(pblk);
+ }
+ 
+-static void pblk_tear_down(struct pblk *pblk)
++static void pblk_tear_down(struct pblk *pblk, bool graceful)
+ {
+-	pblk_pipeline_stop(pblk);
++	if (graceful)
++		__pblk_pipeline_flush(pblk);
++	__pblk_pipeline_stop(pblk);
+ 	pblk_writer_stop(pblk);
+ 	pblk_rb_sync_l2p(&pblk->rwb);
+ 	pblk_rl_free(&pblk->rl);
+ 
+-	pr_debug("pblk: consistent tear down\n");
++	pr_debug("pblk: consistent tear down (graceful:%d)\n", graceful);
+ }
+ 
+-static void pblk_exit(void *private)
++static void pblk_exit(void *private, bool graceful)
+ {
+ 	struct pblk *pblk = private;
+ 
+ 	down_write(&pblk_lock);
+-	pblk_gc_exit(pblk);
+-	pblk_tear_down(pblk);
++	pblk_gc_exit(pblk, graceful);
++	pblk_tear_down(pblk, graceful);
+ 
+ #ifdef CONFIG_NVM_DEBUG
+ 	pr_info("pblk exit: L2P CRC: %x\n", pblk_l2p_crc(pblk));
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index dfbfe9e9a385..0c69eb880f56 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -771,6 +771,8 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line);
+ void pblk_line_close(struct pblk *pblk, struct pblk_line *line);
+ void pblk_line_close_ws(struct work_struct *work);
+ void pblk_pipeline_stop(struct pblk *pblk);
++void __pblk_pipeline_stop(struct pblk *pblk);
++void __pblk_pipeline_flush(struct pblk *pblk);
+ void pblk_gen_run_ws(struct pblk *pblk, struct pblk_line *line, void *priv,
+ 		     void (*work)(struct work_struct *), gfp_t gfp_mask,
+ 		     struct workqueue_struct *wq);
+@@ -864,7 +866,7 @@ int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+ #define PBLK_GC_RSV_LINE 1	/* Reserved lines for GC */
+ 
+ int pblk_gc_init(struct pblk *pblk);
+-void pblk_gc_exit(struct pblk *pblk);
++void pblk_gc_exit(struct pblk *pblk, bool graceful);
+ void pblk_gc_should_start(struct pblk *pblk);
+ void pblk_gc_should_stop(struct pblk *pblk);
+ void pblk_gc_should_kick(struct pblk *pblk);
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 6e0859b9d4d2..e9e0d1c7eaf5 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -489,7 +489,7 @@ typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bio *);
+ typedef sector_t (nvm_tgt_capacity_fn)(void *);
+ typedef void *(nvm_tgt_init_fn)(struct nvm_tgt_dev *, struct gendisk *,
+ 				int flags);
+-typedef void (nvm_tgt_exit_fn)(void *);
++typedef void (nvm_tgt_exit_fn)(void *, bool);
+ typedef int (nvm_tgt_sysfs_init_fn)(struct gendisk *);
+ typedef void (nvm_tgt_sysfs_exit_fn)(struct gendisk *);
+ 
 -- 
 2.11.0
