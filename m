@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165785AbeE1Odw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:33:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52562 "EHLO mail.kernel.org"
+        id S1161889AbeE1OeI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:34:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161516AbeE1Kcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:33 -0400
+        id S1161559AbeE1Kca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 141/329] kvm: fix warning for CONFIG_HAVE_KVM_EVENTFD builds
-Date: Mon, 28 May 2018 12:01:10 +0200
-Message-Id: <20180528100254.320331925@linuxfoundation.org>
+Subject: [PATCH 4.9 140/329] macvlan: fix use-after-free in macvlan_common_newlink()
+Date: Mon, 28 May 2018 12:01:09 +0200
+Message-Id: <20180528100254.233251402@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,40 +30,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-[ Upstream commit 076467490b8176eb96eddc548a14d4135c7b5852 ]
+[ Upstream commit 4e14bf4236490306004782813b8b4494b18f5e60 ]
 
-Move the kvm_arch_irq_routing_update() prototype outside of
-ifdef CONFIG_HAVE_KVM_EVENTFD guards to fix the following sparse warning:
+The following use-after-free was reported by KASan when running
+LTP macvtap01 test on 4.16-rc2:
 
-arch/s390/kvm/../../../virt/kvm/irqchip.c:171:28: warning: symbol 'kvm_arch_irq_routing_update' was not declared. Should it be static?
+[10642.528443] BUG: KASAN: use-after-free in
+               macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
+[10642.626607] Read of size 8 at addr ffff880ba49f2100 by task ip/18450
+...
+[10642.963873] Call Trace:
+[10642.994352]  dump_stack+0x5c/0x7c
+[10643.035325]  print_address_description+0x75/0x290
+[10643.092938]  kasan_report+0x28d/0x390
+[10643.137971]  ? macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
+[10643.207963]  macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
+[10643.275978]  macvtap_newlink+0x171/0x260 [macvtap]
+[10643.334532]  rtnl_newlink+0xd4f/0x1300
+...
+[10646.256176] Allocated by task 18450:
+[10646.299964]  kasan_kmalloc+0xa6/0xd0
+[10646.343746]  kmem_cache_alloc_trace+0xf1/0x210
+[10646.397826]  macvlan_common_newlink+0x6de/0x14a0 [macvlan]
+[10646.464386]  macvtap_newlink+0x171/0x260 [macvtap]
+[10646.522728]  rtnl_newlink+0xd4f/0x1300
+...
+[10647.022028] Freed by task 18450:
+[10647.061549]  __kasan_slab_free+0x138/0x180
+[10647.111468]  kfree+0x9e/0x1c0
+[10647.147869]  macvlan_port_destroy+0x3db/0x650 [macvlan]
+[10647.211411]  rollback_registered_many+0x5b9/0xb10
+[10647.268715]  rollback_registered+0xd9/0x190
+[10647.319675]  register_netdevice+0x8eb/0xc70
+[10647.370635]  macvlan_common_newlink+0xe58/0x14a0 [macvlan]
+[10647.437195]  macvtap_newlink+0x171/0x260 [macvtap]
 
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Commit d02fd6e7d293 ("macvlan: Fix one possible double free") handles
+the case when register_netdevice() invokes ndo_uninit() on error and
+as a result free the port. But 'macvlan_port_get_rtnl(dev))' check
+(returns dev->rx_handler_data), which was added by this commit in order
+to prevent double free, is not quite correct:
+
+* for macvlan it always returns NULL because 'lowerdev' is the one that
+  was used to register rx handler (port) in macvlan_port_create() as
+  well as to unregister it in macvlan_port_destroy().
+* for macvtap it always returns a valid pointer because macvtap registers
+  its own rx handler before macvlan_common_newlink().
+
+Fixes: d02fd6e7d293 ("macvlan: Fix one possible double free")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/kvm_host.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/macvlan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1070,7 +1070,6 @@ static inline void kvm_irq_routing_updat
- {
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -1384,7 +1384,7 @@ destroy_macvlan_port:
+ 	/* the macvlan port may be freed by macvlan_uninit when fail to register.
+ 	 * so we destroy the macvlan port only when it's valid.
+ 	 */
+-	if (create && macvlan_port_get_rtnl(dev))
++	if (create && macvlan_port_get_rtnl(lowerdev))
+ 		macvlan_port_destroy(port->dev);
+ 	return err;
  }
- #endif
--void kvm_arch_irq_routing_update(struct kvm *kvm);
- 
- static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
- {
-@@ -1079,6 +1078,8 @@ static inline int kvm_ioeventfd(struct k
- 
- #endif /* CONFIG_HAVE_KVM_EVENTFD */
- 
-+void kvm_arch_irq_routing_update(struct kvm *kvm);
-+
- static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
- {
- 	/*
