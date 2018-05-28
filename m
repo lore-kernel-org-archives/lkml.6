@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937150AbeE1PD7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:03:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44980 "EHLO mail.kernel.org"
+        id S939509AbeE1PEW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:04:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033632AbeE1KZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:38 -0400
+        id S1033541AbeE1KZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Dickens <christopher.a.dickens@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 224/268] usb: gadget: composite: fix incorrect handling of OS desc requests
-Date: Mon, 28 May 2018 12:03:18 +0200
-Message-Id: <20180528100227.886691710@linuxfoundation.org>
+Subject: [PATCH 4.4 222/268] gfs2: Fix fallocate chunk size
+Date: Mon, 28 May 2018 12:03:16 +0200
+Message-Id: <20180528100227.541495672@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,156 +30,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Dickens <christopher.a.dickens@gmail.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit 5d6ae4f0da8a64a185074dabb1b2f8c148efa741 ]
+[ Upstream commit 174d1232ebc84fcde8f5889d1171c9c7e74a10a7 ]
 
-When handling an OS descriptor request, one of the first operations is
-to zero out the request buffer using the wLength from the setup packet.
-There is no bounds checking, so a wLength > 4096 would clobber memory
-adjacent to the request buffer. Fix this by taking the min of wLength
-and the request buffer length prior to the memset. While at it, define
-the buffer length in a header file so that magic numbers don't appear
-throughout the code.
+The chunk size of allocations in __gfs2_fallocate is calculated
+incorrectly.  The size can collapse, causing __gfs2_fallocate to
+allocate one block at a time, which is very inefficient.  This needs
+fixing in two places:
 
-When returning data to the host, the data length should be the min of
-the wLength and the valid data we have to return. Currently we are
-returning wLength, thus requests for a wLength greater than the amount
-of data in the OS descriptor buffer would return invalid (albeit zero'd)
-data following the valid descriptor data. Fix this by counting the
-number of bytes when constructing the data and using this when
-determining the length of the request.
+In gfs2_quota_lock_check, always set ap->allowed to UINT_MAX to indicate
+that there is no quota limit.  This fixes callers that rely on
+ap->allowed to be set even when quotas are off.
 
-Signed-off-by: Chris Dickens <christopher.a.dickens@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+In __gfs2_fallocate, reset max_blks to UINT_MAX in each iteration of the
+loop to make sure that allocation limits from one resource group won't
+spill over into another resource group.
+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/composite.c |   40 +++++++++++++++++++---------------------
- include/linux/usb/composite.h  |    3 +++
- 2 files changed, 22 insertions(+), 21 deletions(-)
+ fs/gfs2/file.c  |    5 +++--
+ fs/gfs2/quota.h |    2 ++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -1328,7 +1328,7 @@ static int count_ext_compat(struct usb_c
- 	return res;
- }
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -806,7 +806,7 @@ static long __gfs2_fallocate(struct file
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_alloc_parms ap = { .aflags = 0, };
+ 	unsigned int data_blocks = 0, ind_blocks = 0, rblocks;
+-	loff_t bytes, max_bytes, max_blks = UINT_MAX;
++	loff_t bytes, max_bytes, max_blks;
+ 	int error;
+ 	const loff_t pos = offset;
+ 	const loff_t count = len;
+@@ -858,7 +858,8 @@ static long __gfs2_fallocate(struct file
+ 			return error;
+ 		/* ap.allowed tells us how many blocks quota will allow
+ 		 * us to write. Check if this reduces max_blks */
+-		if (ap.allowed && ap.allowed < max_blks)
++		max_blks = UINT_MAX;
++		if (ap.allowed)
+ 			max_blks = ap.allowed;
  
--static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
-+static int fill_ext_compat(struct usb_configuration *c, u8 *buf)
+ 		error = gfs2_inplace_reserve(ip, &ap);
+--- a/fs/gfs2/quota.h
++++ b/fs/gfs2/quota.h
+@@ -43,6 +43,8 @@ static inline int gfs2_quota_lock_check(
  {
- 	int i, count;
- 
-@@ -1355,10 +1355,12 @@ static void fill_ext_compat(struct usb_c
- 				buf += 23;
- 			}
- 			count += 24;
--			if (count >= 4096)
--				return;
-+			if (count + 24 >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+				return count;
- 		}
- 	}
+ 	struct gfs2_sbd *sdp = GFS2_SB(&ip->i_inode);
+ 	int ret;
 +
-+	return count;
- }
- 
- static int count_ext_prop(struct usb_configuration *c, int interface)
-@@ -1403,25 +1405,20 @@ static int fill_ext_prop(struct usb_conf
- 	struct usb_os_desc *d;
- 	struct usb_os_desc_ext_prop *ext_prop;
- 	int j, count, n, ret;
--	u8 *start = buf;
- 
- 	f = c->interface[interface];
-+	count = 10; /* header length */
- 	for (j = 0; j < f->os_desc_n; ++j) {
- 		if (interface != f->os_desc_table[j].if_id)
- 			continue;
- 		d = f->os_desc_table[j].os_desc;
- 		if (d)
- 			list_for_each_entry(ext_prop, &d->ext_prop, entry) {
--				/* 4kB minus header length */
--				n = buf - start;
--				if (n >= 4086)
--					return 0;
--
--				count = ext_prop->data_len +
-+				n = ext_prop->data_len +
- 					ext_prop->name_len + 14;
--				if (count > 4086 - n)
--					return -EINVAL;
--				usb_ext_prop_put_size(buf, count);
-+				if (count + n >= USB_COMP_EP0_OS_DESC_BUFSIZ)
-+					return count;
-+				usb_ext_prop_put_size(buf, n);
- 				usb_ext_prop_put_type(buf, ext_prop->type);
- 				ret = usb_ext_prop_put_name(buf, ext_prop->name,
- 							    ext_prop->name_len);
-@@ -1447,11 +1444,12 @@ static int fill_ext_prop(struct usb_conf
- 				default:
- 					return -EINVAL;
- 				}
--				buf += count;
-+				buf += n;
-+				count += n;
- 			}
- 	}
- 
--	return 0;
-+	return count;
- }
- 
- /*
-@@ -1720,6 +1718,7 @@ unknown:
- 			req->complete = composite_setup_complete;
- 			buf = req->buf;
- 			os_desc_cfg = cdev->os_desc_config;
-+			w_length = min_t(u16, w_length, USB_COMP_EP0_OS_DESC_BUFSIZ);
- 			memset(buf, 0, w_length);
- 			buf[5] = 0x01;
- 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
-@@ -1743,8 +1742,8 @@ unknown:
- 					count += 16; /* header */
- 					put_unaligned_le32(count, buf);
- 					buf += 16;
--					fill_ext_compat(os_desc_cfg, buf);
--					value = w_length;
-+					value = fill_ext_compat(os_desc_cfg, buf);
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			case USB_RECIP_INTERFACE:
-@@ -1773,8 +1772,7 @@ unknown:
- 							      interface, buf);
- 					if (value < 0)
- 						return value;
--
--					value = w_length;
-+					value = min_t(u16, w_length, value);
- 				}
- 				break;
- 			}
-@@ -2038,8 +2036,8 @@ int composite_os_desc_req_prepare(struct
- 		goto end;
- 	}
- 
--	/* OS feature descriptor length <= 4kB */
--	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
-+	cdev->os_desc_req->buf = kmalloc(USB_COMP_EP0_OS_DESC_BUFSIZ,
-+					 GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
- 		ret = PTR_ERR(cdev->os_desc_req->buf);
- 		kfree(cdev->os_desc_req);
---- a/include/linux/usb/composite.h
-+++ b/include/linux/usb/composite.h
-@@ -53,6 +53,9 @@
- /* big enough to hold our biggest descriptor */
- #define USB_COMP_EP0_BUFSIZ	1024
- 
-+/* OS feature descriptor length <= 4kB */
-+#define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
-+
- #define USB_MS_TO_HS_INTERVAL(x)	(ilog2((x * 1000 / 125)) + 1)
- struct usb_configuration;
- 
++	ap->allowed = UINT_MAX; /* Assume we are permitted a whole lot */
+ 	if (sdp->sd_args.ar_quota == GFS2_QUOTA_OFF)
+ 		return 0;
+ 	ret = gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHANGE);
