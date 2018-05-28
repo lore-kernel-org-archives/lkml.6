@@ -1,20 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162378AbeE1ONy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:13:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57436 "EHLO mail.kernel.org"
+        id S1162246AbeE1Kgs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:36:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161538AbeE1Kgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:53 -0400
+        id S1162205AbeE1Kgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        "David H. Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>, Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Pavel Machek <pavel@ucw.cz>, Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <llong@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        aliguori@amazon.com, daniel.gruss@iaik.tugraz.at, hughd@google.com,
+        keescook@google.com, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 237/329] dp83640: Ensure against premature access to PHY registers after reset
-Date: Mon, 28 May 2018 12:02:46 +0200
-Message-Id: <20180528100301.765037339@linuxfoundation.org>
+Subject: [PATCH 4.9 230/329] x86/pgtable: Dont set huge PUD/PMD on non-leaf entries
+Date: Mon, 28 May 2018 12:02:39 +0200
+Message-Id: <20180528100301.251026410@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,54 +46,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Esben Haabendal <eha@deif.com>
+From: Joerg Roedel <joro@8bytes.org>
 
-[ Upstream commit 76327a35caabd1a932e83d6a42b967aa08584e5d ]
+[ Upstream commit e3e288121408c3abeed5af60b87b95c847143845 ]
 
-The datasheet specifies a 3uS pause after performing a software
-reset. The default implementation of genphy_soft_reset() does not
-provide this, so implement soft_reset with the needed pause.
+The pmd_set_huge() and pud_set_huge() functions are used from
+the generic ioremap() code to establish large mappings where this
+is possible.
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But the generic ioremap() code does not check whether the
+PMD/PUD entries are already populated with a non-leaf entry,
+so that any page-table pages these entries point to will be
+lost.
+
+Further, on x86-32 with SHARED_KERNEL_PMD=0, this causes a
+BUG_ON() in vmalloc_sync_one() when PMD entries are synced
+from swapper_pg_dir to the current page-table. This happens
+because the PMD entry from swapper_pg_dir was promoted to a
+huge-page entry while the current PGD still contains the
+non-leaf entry. Because both entries are present and point
+to a different page, the BUG_ON() triggers.
+
+This was actually triggered with pti-x32 enabled in a KVM
+virtual machine by the graphics driver.
+
+A real and better fix for that would be to improve the
+page-table handling in the generic ioremap() code. But that is
+out-of-scope for this patch-set and left for later work.
+
+Reported-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <llong@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180411152437.GC15462@8bytes.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83640.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/x86/mm/pgtable.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1205,6 +1205,23 @@ static void dp83640_remove(struct phy_de
- 	kfree(dp83640);
- }
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -1,5 +1,6 @@
+ #include <linux/mm.h>
+ #include <linux/gfp.h>
++#include <linux/hugetlb.h>
+ #include <asm/pgalloc.h>
+ #include <asm/pgtable.h>
+ #include <asm/tlb.h>
+@@ -577,6 +578,10 @@ int pud_set_huge(pud_t *pud, phys_addr_t
+ 	    (mtrr != MTRR_TYPE_WRBACK))
+ 		return 0;
  
-+static int dp83640_soft_reset(struct phy_device *phydev)
-+{
-+	int ret;
++	/* Bail out if we are we on a populated non-leaf entry: */
++	if (pud_present(*pud) && !pud_huge(*pud))
++		return 0;
 +
-+	ret = genphy_soft_reset(phydev);
-+	if (ret < 0)
-+		return ret;
+ 	prot = pgprot_4k_2_large(prot);
+ 
+ 	set_pte((pte_t *)pud, pfn_pte(
+@@ -605,6 +610,10 @@ int pmd_set_huge(pmd_t *pmd, phys_addr_t
+ 		return 0;
+ 	}
+ 
++	/* Bail out if we are we on a populated non-leaf entry: */
++	if (pmd_present(*pmd) && !pmd_huge(*pmd))
++		return 0;
 +
-+	/* From DP83640 datasheet: "Software driver code must wait 3 us
-+	 * following a software reset before allowing further serial MII
-+	 * operations with the DP83640."
-+	 */
-+	udelay(10);		/* Taking udelay inaccuracy into account */
-+
-+	return 0;
-+}
-+
- static int dp83640_config_init(struct phy_device *phydev)
- {
- 	struct dp83640_private *dp83640 = phydev->priv;
-@@ -1498,6 +1515,7 @@ static struct phy_driver dp83640_driver
- 	.flags		= PHY_HAS_INTERRUPT,
- 	.probe		= dp83640_probe,
- 	.remove		= dp83640_remove,
-+	.soft_reset	= dp83640_soft_reset,
- 	.config_init	= dp83640_config_init,
- 	.config_aneg	= genphy_config_aneg,
- 	.read_status	= genphy_read_status,
+ 	prot = pgprot_4k_2_large(prot);
+ 
+ 	set_pte((pte_t *)pmd, pfn_pte(
