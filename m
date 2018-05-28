@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162693AbeE1Kjs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:39:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59800 "EHLO mail.kernel.org"
+        id S1162679AbeE1Kjo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:39:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162664AbeE1Kjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:37 -0400
+        id S1162511AbeE1Kjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
+        stable@vger.kernel.org, Ivan Gorinov <ivan.gorinov@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 299/329] gfs2: Fix fallocate chunk size
-Date: Mon, 28 May 2018 12:03:48 +0200
-Message-Id: <20180528100306.257398763@linuxfoundation.org>
+Subject: [PATCH 4.9 300/329] x86/devicetree: Initialize device tree before using it
+Date: Mon, 28 May 2018 12:03:49 +0200
+Message-Id: <20180528100306.305870113@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,61 +31,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Ivan Gorinov <ivan.gorinov@intel.com>
 
-[ Upstream commit 174d1232ebc84fcde8f5889d1171c9c7e74a10a7 ]
+[ Upstream commit 628df9dc5ad886b0a9b33c75a7b09710eb859ca1 ]
 
-The chunk size of allocations in __gfs2_fallocate is calculated
-incorrectly.  The size can collapse, causing __gfs2_fallocate to
-allocate one block at a time, which is very inefficient.  This needs
-fixing in two places:
+Commit 08d53aa58cb1 added CRC32 calculation in early_init_dt_verify() and
+checking in late initcall of_fdt_raw_init(), making early_init_dt_verify()
+mandatory.
 
-In gfs2_quota_lock_check, always set ap->allowed to UINT_MAX to indicate
-that there is no quota limit.  This fixes callers that rely on
-ap->allowed to be set even when quotas are off.
+The required call to early_init_dt_verify() was not added to the
+x86-specific implementation, causing failure to create the sysfs entry in
+of_fdt_raw_init().
 
-In __gfs2_fallocate, reset max_blks to UINT_MAX in each iteration of the
-loop to make sure that allocation limits from one resource group won't
-spill over into another resource group.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Fixes: 08d53aa58cb1 ("of/fdt: export fdt blob as /sys/firmware/fdt")
+Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Link: https://lkml.kernel.org/r/c8c7e941efc63b5d25ebf9b6350b0f3df38f6098.1520450752.git.ivan.gorinov@intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/file.c  |    5 +++--
- fs/gfs2/quota.h |    2 ++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kernel/devicetree.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -801,7 +801,7 @@ static long __gfs2_fallocate(struct file
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_alloc_parms ap = { .aflags = 0, };
- 	unsigned int data_blocks = 0, ind_blocks = 0, rblocks;
--	loff_t bytes, max_bytes, max_blks = UINT_MAX;
-+	loff_t bytes, max_bytes, max_blks;
- 	int error;
- 	const loff_t pos = offset;
- 	const loff_t count = len;
-@@ -853,7 +853,8 @@ static long __gfs2_fallocate(struct file
- 			return error;
- 		/* ap.allowed tells us how many blocks quota will allow
- 		 * us to write. Check if this reduces max_blks */
--		if (ap.allowed && ap.allowed < max_blks)
-+		max_blks = UINT_MAX;
-+		if (ap.allowed)
- 			max_blks = ap.allowed;
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -11,6 +11,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_irq.h>
++#include <linux/libfdt.h>
+ #include <linux/slab.h>
+ #include <linux/pci.h>
+ #include <linux/of_pci.h>
+@@ -276,14 +277,15 @@ static void __init x86_flattree_get_conf
  
- 		error = gfs2_inplace_reserve(ip, &ap);
---- a/fs/gfs2/quota.h
-+++ b/fs/gfs2/quota.h
-@@ -45,6 +45,8 @@ static inline int gfs2_quota_lock_check(
- {
- 	struct gfs2_sbd *sdp = GFS2_SB(&ip->i_inode);
- 	int ret;
-+
-+	ap->allowed = UINT_MAX; /* Assume we are permitted a whole lot */
- 	if (sdp->sd_args.ar_quota == GFS2_QUOTA_OFF)
- 		return 0;
- 	ret = gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHANGE);
+ 	map_len = max(PAGE_SIZE - (initial_dtb & ~PAGE_MASK), (u64)128);
+ 
+-	initial_boot_params = dt = early_memremap(initial_dtb, map_len);
+-	size = of_get_flat_dt_size();
++	dt = early_memremap(initial_dtb, map_len);
++	size = fdt_totalsize(dt);
+ 	if (map_len < size) {
+ 		early_memunmap(dt, map_len);
+-		initial_boot_params = dt = early_memremap(initial_dtb, size);
++		dt = early_memremap(initial_dtb, size);
+ 		map_len = size;
+ 	}
+ 
++	early_init_dt_verify(dt);
+ 	unflatten_and_copy_device_tree();
+ 	early_memunmap(dt, map_len);
+ }
