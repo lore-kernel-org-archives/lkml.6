@@ -1,49 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936817AbeE1QIJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:08:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48419 "EHLO mx2.suse.de"
+        id S1755496AbeE1QIh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:08:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933203AbeE1QIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:08:02 -0400
-Date: Mon, 28 May 2018 08:51:12 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        tgraf@suug.ch, manfred@colorfullife.com,
-        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/6] lib/rhashtable: convert param sanitations to WARN_ON
-Message-ID: <20180528155112.iqsw6x3cdy5piaro@linux-n805>
-References: <20180524211135.27760-1-dave@stgolabs.net>
- <20180524211135.27760-2-dave@stgolabs.net>
- <20180528094048.etqeu2ubc227qrxf@gondor.apana.org.au>
- <20180528131209.mt4ythkapvfvykc7@linux-n805>
- <20180528155414.mbwyldat7mn6ro2j@gondor.apana.org.au>
+        id S936836AbeE1KON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:13 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 178/185] clk: samsung: exynos3250: Fix PLL rates
+Date: Mon, 28 May 2018 12:03:39 +0200
+Message-Id: <20180528100115.587558966@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180528155414.mbwyldat7mn6ro2j@gondor.apana.org.au>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018, Herbert Xu wrote:
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
->On Mon, May 28, 2018 at 06:12:09AM -0700, Davidlohr Bueso wrote:
->>
->> Well, I don't really _want_ them; nor does the ipc code which already
->> does a WARN_ON() (but that goes away in future patches). What I want
->> is to get rid of the return path. So I don't really care if we convert
->> them to WARN or remove them altogether. Would you be happy with the
->> later?
->
->It has nothing to do with the error return path.  Assuming you
->remove the allocation failure path, then this error path can never
->trigger for *your* use-case. 
+------------------
 
-Why would this be triggered by any use case if the developer setup the
-params correctly...? I don't see the point of not getting rid of the
-EINVAL or wrapping around warning around it. Ultimately it would be
-good to just have rhashtable_init() return void.
+From: Andrzej Hajda <a.hajda@samsung.com>
+
+[ Upstream commit a8321e7887410a2b2e80ab89d1ef7b30562658ea ]
+
+Rates declared in PLL rate tables should match exactly rates calculated
+from PLL coefficients. If that is not the case, rate of the PLL's child clock
+might be set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is, the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
+
+To fix this issue declared rates are changed to exactly match rates generated
+by the PLL, as calculated from the P, M, S, K coefficients.
+
+In this patch an erroneous P value for 74176002 output frequency is also
+corrected.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/clk/samsung/clk-exynos3250.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -740,7 +740,7 @@ static struct samsung_pll_rate_table exy
+ 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
+ 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
+ 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
+-	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
++	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
+ 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
+ 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
+ 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
+@@ -776,7 +776,7 @@ static struct samsung_pll_rate_table exy
+ 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
+ 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
+ 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
+-	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
++	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
+ 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
+ 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
+ 	{ /* sentinel */ }
