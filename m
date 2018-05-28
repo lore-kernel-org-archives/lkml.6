@@ -1,80 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939623AbeE1PBd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:01:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39056 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932423AbeE1PB2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:01:28 -0400
-X-Google-Smtp-Source: ADUXVKKk/QHrXseOiPYwKgtK6EZyjxCwIE6w6tIUGZMRvPpC+zBLTC/3kisUrq1W6MuXM9jWTcRS4GGQ+YICetd+uVU=
+        id S939503AbeE1O7o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:59:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1034127AbeE1K0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:10 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Peter Robinson <pbrobinson@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 252/268] crypto: sunxi-ss - Add MODULE_ALIAS to sun4i-ss
+Date: Mon, 28 May 2018 12:03:46 +0200
+Message-Id: <20180528100231.738824774@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <01fca256074b74598608c261a2f956af7308e1db.camel@pengutronix.de>
-References: <20180521171241.GA18441@jordon-HP-15-Notebook-PC> <01fca256074b74598608c261a2f956af7308e1db.camel@pengutronix.de>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Mon, 28 May 2018 20:31:25 +0530
-Message-ID: <CAFqt6zYBbwJMT=DKjsaEg1KKTyBTT4MegvPNLzzSEXu31-Ov6Q@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: etnaviv: Change return type to vm_fault_t
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux+etnaviv@armlinux.org.uk,
-        Christian Gmeiner <christian.gmeiner@gmail.com>, airlied@linux.ie,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 6:20 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> Hi Souptick,
->
-> Am Montag, den 21.05.2018, 22:42 +0530 schrieb Souptick Joarder:
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
->>
->> Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>
->> Previously vm_insert_page() returns err which driver
->> mapped into VM_FAULT_* type. The new function
->> vmf_insert_page() will replace this inefficiency by
->> returning VM_FAULT_* type.
->>
->> A non-fatal signal being delivered to a task which is
->> in the middle of a page fault may well end up in an
->> infinite loop, attempting to handle the page fault and
->> failing forever.
->>
->> On seeing NOPAGE, the fault handler believes the PTE
->> is in the page table, so does nothing before it returns
->> to arch code. It will end up returning to userspace if
->> the signal is non-fatal, at which point it'll go right
->> back into the page fault handler, and mutex_lock_interruptible()
->> will immediately fail.  So we've converted a sleeping lock
->> into the most expensive spinlock.
->>
->> I don't think the graphics drivers really want to be
->> interrupted by any signal.  I think they want to be
->> interruptible by fatal signals and should use the
->> mutex_lock_killable / fatal_signal_pending family of
->> functions. So mutex_lock_interruptible() is replaced
->> by mutex_lock_killable()
->
-> I don't think the other thread discussing this issue has reached a
-> proper conclusion and I would rather not pull in a patch based on thin
-> reasoning. If we want to change this behavior I would really like to
-> see the issue it is solving and it should be a separate patch, not
-> intermixed with some return value change.
->
-> Regards,
-> Lucas
->
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Ok, I will separate the vm_fault_t type return value patch
-and send v2 for it. We would like to get this patch in queue
-for 4.18.
+------------------
 
-The patch consists, mutex_lock_interruptible/killable() can be keep
-on hold until we reached to a proper conclusion.
+From: Peter Robinson <pbrobinson@gmail.com>
+
+[ Upstream commit 7c73cf4cc2ac16465f5102437dc0a12d66671bd6 ]
+
+The MODULE_ALIAS is required to enable the sun4i-ss driver to load
+automatically when built at a module. Tested on a Cubietruck.
+
+Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/crypto/sunxi-ss/sun4i-ss-core.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-core.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
+@@ -422,6 +422,7 @@ static struct platform_driver sun4i_ss_d
+ 
+ module_platform_driver(sun4i_ss_driver);
+ 
++MODULE_ALIAS("platform:sun4i-ss");
+ MODULE_DESCRIPTION("Allwinner Security System cryptographic accelerator");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Corentin LABBE <clabbe.montjoie@gmail.com>");
