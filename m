@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162637AbeE1Kj1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:39:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59568 "EHLO mail.kernel.org"
+        id S1162610AbeE1KjS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:39:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162422AbeE1KjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:21 -0400
+        id S1162574AbeE1KjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 260/329] hwmon: (nct6775) Fix writing pwmX_mode
-Date: Mon, 28 May 2018 12:03:09 +0200
-Message-Id: <20180528100303.585178172@linuxfoundation.org>
+Subject: [PATCH 4.9 256/329] ACPI: acpi_pad: Fix memory leak in power saving threads
+Date: Mon, 28 May 2018 12:03:05 +0200
+Message-Id: <20180528100303.269035752@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,61 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
-[ Upstream commit 415eb2a1aaa4881cf85bd86c683356fdd8094a23 ]
+[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
 
-pwmX_mode is defined in the ABI as 0=DC mode, 1=pwm mode. The chip
-register bit is set to 1 for DC mode. This got mixed up, and writing
-1 into pwmX_mode resulted in DC mode enabled. Fix it up by using
-the ABI definition throughout the driver for consistency.
+Fix once per second (round_robin_time) memory leak of about 1 KB in
+each acpi_pad kernel idling thread that is activated.
 
-Fixes: 77eb5b3703d99 ("hwmon: (nct6775) Add support for pwm, pwm_mode, ... ")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Found by testing with kmemleak.
+
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/nct6775.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/acpi/acpi_pad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -1393,7 +1393,7 @@ static void nct6775_update_pwm(struct de
- 		duty_is_dc = data->REG_PWM_MODE[i] &&
- 		  (nct6775_read_value(data, data->REG_PWM_MODE[i])
- 		   & data->PWM_MODE_MASK[i]);
--		data->pwm_mode[i] = duty_is_dc;
-+		data->pwm_mode[i] = !duty_is_dc;
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -109,6 +109,7 @@ static void round_robin_cpu(unsigned int
+ 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
+ 	if (cpumask_empty(tmp)) {
+ 		mutex_unlock(&round_robin_lock);
++		free_cpumask_var(tmp);
+ 		return;
+ 	}
+ 	for_each_cpu(cpu, tmp) {
+@@ -126,6 +127,8 @@ static void round_robin_cpu(unsigned int
+ 	mutex_unlock(&round_robin_lock);
  
- 		fanmodecfg = nct6775_read_value(data, data->REG_FAN_MODE[i]);
- 		for (j = 0; j < ARRAY_SIZE(data->REG_PWM); j++) {
-@@ -2270,7 +2270,7 @@ show_pwm_mode(struct device *dev, struct
- 	struct nct6775_data *data = nct6775_update_device(dev);
- 	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
- 
--	return sprintf(buf, "%d\n", !data->pwm_mode[sattr->index]);
-+	return sprintf(buf, "%d\n", data->pwm_mode[sattr->index]);
+ 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
++
++	free_cpumask_var(tmp);
  }
  
- static ssize_t
-@@ -2291,9 +2291,9 @@ store_pwm_mode(struct device *dev, struc
- 	if (val > 1)
- 		return -EINVAL;
- 
--	/* Setting DC mode is not supported for all chips/channels */
-+	/* Setting DC mode (0) is not supported for all chips/channels */
- 	if (data->REG_PWM_MODE[nr] == 0) {
--		if (val)
-+		if (!val)
- 			return -EINVAL;
- 		return count;
- 	}
-@@ -2302,7 +2302,7 @@ store_pwm_mode(struct device *dev, struc
- 	data->pwm_mode[nr] = val;
- 	reg = nct6775_read_value(data, data->REG_PWM_MODE[nr]);
- 	reg &= ~data->PWM_MODE_MASK[nr];
--	if (val)
-+	if (!val)
- 		reg |= data->PWM_MODE_MASK[nr];
- 	nct6775_write_value(data, data->REG_PWM_MODE[nr], reg);
- 	mutex_unlock(&data->update_lock);
+ static void exit_round_robin(unsigned int tsk_index)
