@@ -1,91 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425057AbeE1NRN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:17:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39612 "EHLO mail.kernel.org"
+        id S1165264AbeE1NRb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:17:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:5433 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163249AbeE1KuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:04 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 198/496] selftests/powerpc: Skip the subpage_prot tests if the syscall is unavailable
-Date: Mon, 28 May 2018 11:59:43 +0200
-Message-Id: <20180528100328.266320834@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1163597AbeE1KuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:03 -0400
+Message-Id: <3fe04a4484a92754459233ad9cdbc6198e7a33b3.1527503958.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527503958.git.christophe.leroy@c-s.fr>
+References: <cover.1527503958.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v5 1/3] powerpc/lib: move PPC32 specific functions out of
+ string.S
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon, 28 May 2018 10:49:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+In preparation of optimisation patches, move PPC32 specific
+memcmp() and __clear_user() into string_32.S
 
-------------------
-
-From: Michael Ellerman <mpe@ellerman.id.au>
-
-[ Upstream commit cd4a6f3ab4d80cb919d15897eb3cbc85c2009d4b ]
-
-The subpage_prot syscall is only functional when the system is using
-the Hash MMU. Since commit 5b2b80714796 ("powerpc/mm: Invalidate
-subpage_prot() system call on radix platforms") it returns ENOENT when
-the Radix MMU is active. Currently this just makes the test fail.
-
-Additionally the syscall is not available if the kernel is built with
-4K pages, or if CONFIG_PPC_SUBPAGE_PROT=n, in which case it returns
-ENOSYS because the syscall is missing entirely.
-
-So check explicitly for ENOENT and ENOSYS and skip if we see either of
-those.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- tools/testing/selftests/powerpc/mm/subpage_prot.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/powerpc/lib/Makefile    |  5 +--
+ arch/powerpc/lib/string.S    | 61 -------------------------------------
+ arch/powerpc/lib/string_32.S | 72 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 75 insertions(+), 63 deletions(-)
+ create mode 100644 arch/powerpc/lib/string_32.S
 
---- a/tools/testing/selftests/powerpc/mm/subpage_prot.c
-+++ b/tools/testing/selftests/powerpc/mm/subpage_prot.c
-@@ -135,6 +135,16 @@ static int run_test(void *addr, unsigned
- 	return 0;
- }
+diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
+index 653901042ad7..2c9b8c0adf22 100644
+--- a/arch/powerpc/lib/Makefile
++++ b/arch/powerpc/lib/Makefile
+@@ -26,13 +26,14 @@ obj-$(CONFIG_PPC_BOOK3S_64) += copyuser_power7.o copypage_power7.o \
+ 			       memcpy_power7.o
  
-+static int syscall_available(void)
-+{
-+	int rc;
-+
-+	errno = 0;
-+	rc = syscall(__NR_subpage_prot, 0, 0, 0);
-+
-+	return rc == 0 || (errno != ENOENT && errno != ENOSYS);
-+}
-+
- int test_anon(void)
- {
- 	unsigned long align;
-@@ -145,6 +155,8 @@ int test_anon(void)
- 	void *mallocblock;
- 	unsigned long mallocsize;
+ obj64-y	+= copypage_64.o copyuser_64.o mem_64.o hweight_64.o \
+-	   string_64.o memcpy_64.o memcmp_64.o pmem.o
++	   memcpy_64.o memcmp_64.o pmem.o
  
-+	SKIP_IF(!syscall_available());
-+
- 	if (getpagesize() != 0x10000) {
- 		fprintf(stderr, "Kernel page size must be 64K!\n");
- 		return 1;
-@@ -180,6 +192,8 @@ int test_file(void)
- 	off_t filesize;
- 	int fd;
+ obj64-$(CONFIG_SMP)	+= locks.o
+ obj64-$(CONFIG_ALTIVEC)	+= vmx-helper.o
+ obj64-$(CONFIG_KPROBES_SANITY_TEST) += test_emulate_step.o
  
-+	SKIP_IF(!syscall_available());
+-obj-y			+= checksum_$(BITS).o checksum_wrappers.o
++obj-y			+= checksum_$(BITS).o checksum_wrappers.o \
++			   string_$(BITS).o
+ 
+ obj-y			+= sstep.o ldstfp.o quad.o
+ obj64-y			+= quad.o
+diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
+index 0378def28d41..b03c1a6861f4 100644
+--- a/arch/powerpc/lib/string.S
++++ b/arch/powerpc/lib/string.S
+@@ -56,23 +56,6 @@ _GLOBAL(strncmp)
+ 	blr
+ EXPORT_SYMBOL(strncmp)
+ 
+-#ifdef CONFIG_PPC32
+-_GLOBAL(memcmp)
+-	PPC_LCMPI 0,r5,0
+-	beq-	2f
+-	mtctr	r5
+-	addi	r6,r3,-1
+-	addi	r4,r4,-1
+-1:	lbzu	r3,1(r6)
+-	lbzu	r0,1(r4)
+-	subf.	r3,r0,r3
+-	bdnzt	2,1b
+-	blr
+-2:	li	r3,0
+-	blr
+-EXPORT_SYMBOL(memcmp)
+-#endif
+-
+ _GLOBAL(memchr)
+ 	PPC_LCMPI 0,r5,0
+ 	beq-	2f
+@@ -86,47 +69,3 @@ _GLOBAL(memchr)
+ 2:	li	r3,0
+ 	blr
+ EXPORT_SYMBOL(memchr)
+-
+-#ifdef CONFIG_PPC32
+-_GLOBAL(__clear_user)
+-	addi	r6,r3,-4
+-	li	r3,0
+-	li	r5,0
+-	cmplwi	0,r4,4
+-	blt	7f
+-	/* clear a single word */
+-11:	stwu	r5,4(r6)
+-	beqlr
+-	/* clear word sized chunks */
+-	andi.	r0,r6,3
+-	add	r4,r0,r4
+-	subf	r6,r0,r6
+-	srwi	r0,r4,2
+-	andi.	r4,r4,3
+-	mtctr	r0
+-	bdz	7f
+-1:	stwu	r5,4(r6)
+-	bdnz	1b
+-	/* clear byte sized chunks */
+-7:	cmpwi	0,r4,0
+-	beqlr
+-	mtctr	r4
+-	addi	r6,r6,3
+-8:	stbu	r5,1(r6)
+-	bdnz	8b
+-	blr
+-90:	mr	r3,r4
+-	blr
+-91:	mfctr	r3
+-	slwi	r3,r3,2
+-	add	r3,r3,r4
+-	blr
+-92:	mfctr	r3
+-	blr
+-
+-	EX_TABLE(11b, 90b)
+-	EX_TABLE(1b, 91b)
+-	EX_TABLE(8b, 92b)
+-
+-EXPORT_SYMBOL(__clear_user)
+-#endif
+diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+new file mode 100644
+index 000000000000..204db8a834fd
+--- /dev/null
++++ b/arch/powerpc/lib/string_32.S
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- 	fd = open(file_name, O_RDWR);
- 	if (fd == -1) {
- 		perror("failed to open file");
++/*
++ * String handling functions for PowerPC32
++ *
++ * Copyright (C) 1996 Paul Mackerras.
++ *
++ */
++
++#include <asm/processor.h>
++#include <asm/errno.h>
++#include <asm/ppc_asm.h>
++#include <asm/export.h>
++
++	.text
++
++_GLOBAL(memcmp)
++	cmpwi	cr0, r5, 0
++	beq-	2f
++	mtctr	r5
++	addi	r6,r3,-1
++	addi	r4,r4,-1
++1:	lbzu	r3,1(r6)
++	lbzu	r0,1(r4)
++	subf.	r3,r0,r3
++	bdnzt	2,1b
++	blr
++2:	li	r3,0
++	blr
++EXPORT_SYMBOL(memcmp)
++
++_GLOBAL(__clear_user)
++	addi	r6,r3,-4
++	li	r3,0
++	li	r5,0
++	cmplwi	0,r4,4
++	blt	7f
++	/* clear a single word */
++11:	stwu	r5,4(r6)
++	beqlr
++	/* clear word sized chunks */
++	andi.	r0,r6,3
++	add	r4,r0,r4
++	subf	r6,r0,r6
++	srwi	r0,r4,2
++	andi.	r4,r4,3
++	mtctr	r0
++	bdz	7f
++1:	stwu	r5,4(r6)
++	bdnz	1b
++	/* clear byte sized chunks */
++7:	cmpwi	0,r4,0
++	beqlr
++	mtctr	r4
++	addi	r6,r6,3
++8:	stbu	r5,1(r6)
++	bdnz	8b
++	blr
++90:	mr	r3,r4
++	blr
++91:	mfctr	r3
++	slwi	r3,r3,2
++	add	r3,r3,r4
++	blr
++92:	mfctr	r3
++	blr
++
++	EX_TABLE(11b, 90b)
++	EX_TABLE(1b, 91b)
++	EX_TABLE(8b, 92b)
++
++EXPORT_SYMBOL(__clear_user)
+-- 
+2.13.3
