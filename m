@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422990AbeE1MPq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:15:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50704 "EHLO mail.kernel.org"
+        id S1423349AbeE1MQF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:16:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164969AbeE1LDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:30 -0400
+        id S1164952AbeE1LDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Monk Liu <Monk.Liu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 456/496] drm/amdgpu: disable GFX ring and disable PQ wptr in hw_fini
-Date: Mon, 28 May 2018 12:04:01 +0200
-Message-Id: <20180528100339.126537472@linuxfoundation.org>
+Subject: [PATCH 4.14 485/496] drm: rcar-du: lvds: Fix LVDS startup on R-Car Gen3
+Date: Mon, 28 May 2018 12:04:30 +0200
+Message-Id: <20180528100340.318977825@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,42 +31,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Monk Liu <Monk.Liu@amd.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 9f0178fb67699992d38601cb923b434f9986dd68 ]
+[ Upstream commit 796ceb9269626afaed3b4955c40d2c3d7a8c5d01 ]
 
-otherwise there will be DMAR reading error comes out from CP since
-GFX is still alive and CPC's WPTR_POLL is still enabled, which would
-lead to DMAR read error.
+According to the latest revisions of the R-Car Gen3 manual, the LVDS mode
+must be set before the LVDS I/O pins are enabled, not after -- fix the
+Gen3 LVDS startup sequence accordingly.
 
-fix:
-we can hault CPG after hw_fini, but cannot halt CPC becaues KIQ
-stil need to be alive to let RLCV invoke, but its WPTR_POLL could
-be disabled.
-
-Signed-off-by: Monk Liu <Monk.Liu@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: e947eccbeba4 ("drm: rcar-du: Add support for LVDS mode selection")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[Updated comment in rcar_du_lvdsenc_start_gen3()]
+[Moved Gen2 startup comment update to separate commit]
+[Fixed =| typo]
+Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -2889,7 +2889,13 @@ static int gfx_v9_0_hw_fini(void *handle
- 	amdgpu_irq_put(adev, &adev->gfx.priv_reg_irq, 0);
- 	amdgpu_irq_put(adev, &adev->gfx.priv_inst_irq, 0);
- 	if (amdgpu_sriov_vf(adev)) {
--		pr_debug("For SRIOV client, shouldn't do anything.\n");
-+		gfx_v9_0_cp_gfx_enable(adev, false);
-+		/* must disable polling for SRIOV when hw finished, otherwise
-+		 * CPC engine may still keep fetching WB address which is already
-+		 * invalid after sw finished and trigger DMAR reading error in
-+		 * hypervisor side.
-+		 */
-+		WREG32_FIELD15(GC, 0, CP_PQ_WPTR_POLL_CNTL, EN, 0);
- 		return 0;
- 	}
- 	gfx_v9_0_cp_enable(adev, false);
+--- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+@@ -95,7 +95,7 @@ static void rcar_du_lvdsenc_start_gen3(s
+ 	u32 lvdcr0;
+ 	u32 pllcr;
+ 
+-	/* PLL clock configuration */
++	/* Set the PLL clock configuration and LVDS mode. */
+ 	if (freq < 42000)
+ 		pllcr = LVDPLLCR_PLLDIVCNT_42M;
+ 	else if (freq < 85000)
+@@ -107,6 +107,9 @@ static void rcar_du_lvdsenc_start_gen3(s
+ 
+ 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
+ 
++	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
++	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
++
+ 	/* Turn all the channels on. */
+ 	rcar_lvds_write(lvds, LVDCR1,
+ 			LVDCR1_CHSTBY_GEN3(3) | LVDCR1_CHSTBY_GEN3(2) |
+@@ -117,7 +120,7 @@ static void rcar_du_lvdsenc_start_gen3(s
+ 	 * Turn the PLL on, set it to LVDS normal mode, wait for the startup
+ 	 * delay and turn the output on.
+ 	 */
+-	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_PLLON;
++	lvdcr0 |= LVDCR0_PLLON;
+ 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+ 
+ 	lvdcr0 |= LVDCR0_PWD;
