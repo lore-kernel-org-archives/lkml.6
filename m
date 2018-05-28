@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034688AbeE1Pjt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:39:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38144 "EHLO mail.kernel.org"
+        id S1034698AbeE1PkG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:40:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031226AbeE1KSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:01 -0400
+        id S1030444AbeE1KRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 091/268] drm/exynos: fix comparison to bitshift when dealing with a mask
-Date: Mon, 28 May 2018 12:01:05 +0200
-Message-Id: <20180528100212.509024236@linuxfoundation.org>
+Subject: [PATCH 4.4 087/268] ARM: OMAP1: clock: Fix debugfs_create_*() usage
+Date: Mon, 28 May 2018 12:01:01 +0200
+Message-Id: <20180528100212.020711401@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,29 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1293b6191010672c0c9dacae8f71c6f3e4d70cbe ]
+[ Upstream commit 8cbbf1745dcde7ba7e423dc70619d223de90fd43 ]
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+When exposing data access through debugfs, the correct
+debugfs_create_*() functions must be used, depending on data type.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Remove all casts from data pointers passed to debugfs_create_*()
+functions, as such casts prevent the compiler from flagging bugs.
+
+Correct all wrong usage:
+  - clk.rate is unsigned long, not u32,
+  - clk.flags is u8, not u32, which exposed the successive
+    clk.rate_offset and clk.src_offset fields.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/regs-fimc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-omap1/clock.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/exynos/regs-fimc.h
-+++ b/drivers/gpu/drm/exynos/regs-fimc.h
-@@ -569,7 +569,7 @@
- #define EXYNOS_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
- #define EXYNOS_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
- #define EXYNOS_CIIMGEFF_FIN_MASK			(7 << 26)
--#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff < 0))
-+#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff << 13) | (0xff << 0))
+--- a/arch/arm/mach-omap1/clock.c
++++ b/arch/arm/mach-omap1/clock.c
+@@ -1031,17 +1031,17 @@ static int clk_debugfs_register_one(stru
+ 		return -ENOMEM;
+ 	c->dent = d;
  
- /* Real input DMA size register */
- #define EXYNOS_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
+-	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, (u8 *)&c->usecount);
++	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, &c->usecount);
+ 	if (!d) {
+ 		err = -ENOMEM;
+ 		goto err_out;
+ 	}
+-	d = debugfs_create_u32("rate", S_IRUGO, c->dent, (u32 *)&c->rate);
++	d = debugfs_create_ulong("rate", S_IRUGO, c->dent, &c->rate);
+ 	if (!d) {
+ 		err = -ENOMEM;
+ 		goto err_out;
+ 	}
+-	d = debugfs_create_x32("flags", S_IRUGO, c->dent, (u32 *)&c->flags);
++	d = debugfs_create_x8("flags", S_IRUGO, c->dent, &c->flags);
+ 	if (!d) {
+ 		err = -ENOMEM;
+ 		goto err_out;
