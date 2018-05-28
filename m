@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424049AbeE1LLW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:11:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59276 "EHLO mail.kernel.org"
+        id S1424061AbeE1LL2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:11:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423737AbeE1LLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:11:14 -0400
+        id S1424050AbeE1LLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:11:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, John Allen <jallen@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 160/272] IB/core: Honor port_num while resolving GID for IB link layer
-Date: Mon, 28 May 2018 12:03:13 +0200
-Message-Id: <20180528100254.293922432@linuxfoundation.org>
+Subject: [PATCH 4.16 163/272] ibmvnic: Fix reset return from closed state
+Date: Mon, 28 May 2018 12:03:16 +0200
+Message-Id: <20180528100254.523860670@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,59 +30,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: John Allen <jallen@linux.vnet.ibm.com>
 
-[ Upstream commit 563c4ba3bd2b8b0b21c65669ec2226b1cfa1138b ]
+[ Upstream commit e676d81c8990f511d60698a1a8abaa438b3f9d3d ]
 
-ah_attr contains the port number to which cm_id is bound. However, while
-searching for GID table for matching GID entry, the port number is
-ignored.
+The case in which we handle a reset from the state where the device is
+closed seems to be bugged for all types of reset. For most types of reset
+we currently exit the reset routine correctly, but don't set the state to
+indicate that we are back in the "closed" state. For some specific cases,
+we don't exit the reset routine at all and resetting will cause a closed
+device to be opened.
 
-This could cause the wrong GID to be used when the ah_attr is converted to
-an AH.
+This patch fixes the problem by unconditionally checking the reset_state
+and correctly setting the adapter state before returning.
 
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: John Allen <jallen@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/multicast.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/multicast.c
-+++ b/drivers/infiniband/core/multicast.c
-@@ -724,21 +724,19 @@ int ib_init_ah_from_mcmember(struct ib_d
- {
- 	int ret;
- 	u16 gid_index;
--	u8 p;
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1699,12 +1699,14 @@ static int do_reset(struct ibmvnic_adapt
+ 			rc = reset_rx_pools(adapter);
+ 			if (rc)
+ 				return rc;
+-
+-			if (reset_state == VNIC_CLOSED)
+-				return 0;
+ 		}
+ 	}
  
--	if (rdma_protocol_roce(device, port_num)) {
--		ret = ib_find_cached_gid_by_port(device, &rec->port_gid,
--						 gid_type, port_num,
--						 ndev,
--						 &gid_index);
--	} else if (rdma_protocol_ib(device, port_num)) {
--		ret = ib_find_cached_gid(device, &rec->port_gid,
--					 IB_GID_TYPE_IB, NULL, &p,
--					 &gid_index);
--	} else {
--		ret = -EINVAL;
--	}
-+	/* GID table is not based on the netdevice for IB link layer,
-+	 * so ignore ndev during search.
-+	 */
-+	if (rdma_protocol_ib(device, port_num))
-+		ndev = NULL;
-+	else if (!rdma_protocol_roce(device, port_num))
-+		return -EINVAL;
- 
-+	ret = ib_find_cached_gid_by_port(device, &rec->port_gid,
-+					 gid_type, port_num,
-+					 ndev,
-+					 &gid_index);
- 	if (ret)
- 		return ret;
- 
++	adapter->state = VNIC_CLOSED;
++
++	if (reset_state == VNIC_CLOSED)
++		return 0;
++
+ 	rc = __ibmvnic_open(netdev);
+ 	if (rc) {
+ 		if (list_empty(&adapter->rwi_list))
