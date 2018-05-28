@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969080AbeE1Pim (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:38:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38292 "EHLO mail.kernel.org"
+        id S1031711AbeE1KSK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:18:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968528AbeE1KSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:12 -0400
+        id S1031040AbeE1KRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 095/268] md: raid5: avoid string overflow warning
-Date: Mon, 28 May 2018 12:01:09 +0200
-Message-Id: <20180528100212.954282587@linuxfoundation.org>
+Subject: [PATCH 4.4 088/268] NFC: llcp: Limit size of SDP URI
+Date: Mon, 28 May 2018 12:01:02 +0200
+Message-Id: <20180528100212.166588456@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,63 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit 53b8d89ddbdbb0e4625a46d2cdbb6f106c52f801 ]
+[ Upstream commit fe9c842695e26d8116b61b80bfb905356f07834b ]
 
-gcc warns about a possible overflow of the kmem_cache string, when adding
-four characters to a string of the same length:
+The tlv_len is u8, so we need to limit the size of the SDP URI. Enforce
+this both in the NLA policy and in the code that performs the allocation
+and copy, to avoid writing past the end of the allocated buffer.
 
-drivers/md/raid5.c: In function 'setup_conf':
-drivers/md/raid5.c:2207:34: error: '-alt' directive writing 4 bytes into a region of size between 1 and 32 [-Werror=format-overflow=]
-  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-                                  ^~~~
-drivers/md/raid5.c:2207:2: note: 'sprintf' output between 5 and 36 bytes into a destination of size 32
-  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If I'm counting correctly, we need 11 characters for the fixed part
-of the string and 18 characters for a 64-bit pointer (when no gendisk
-is used), so that leaves three characters for conf->level, which should
-always be sufficient.
-
-This makes the code use snprintf() with the correct length, to
-make the code more robust against changes, and to get the compiler
-to shut up.
-
-In commit f4be6b43f1ac ("md/raid5: ensure we create a unique name for
-kmem_cache when mddev has no gendisk") from 2010, Neil said that
-the pointer could be removed "shortly" once devices without gendisk
-are disallowed. I have no idea if that happened, but if it did, that
-should probably be changed as well.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Fixes: d9b8d8e19b073 ("NFC: llcp: Service Name Lookup netlink interface")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid5.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/nfc/llcp_commands.c |    4 ++++
+ net/nfc/netlink.c       |    3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2028,15 +2028,16 @@ static int grow_one_stripe(struct r5conf
- static int grow_stripes(struct r5conf *conf, int num)
- {
- 	struct kmem_cache *sc;
-+	size_t namelen = sizeof(conf->cache_name[0]);
- 	int devs = max(conf->raid_disks, conf->previous_raid_disks);
+--- a/net/nfc/llcp_commands.c
++++ b/net/nfc/llcp_commands.c
+@@ -149,6 +149,10 @@ struct nfc_llcp_sdp_tlv *nfc_llcp_build_
  
- 	if (conf->mddev->gendisk)
--		sprintf(conf->cache_name[0],
-+		snprintf(conf->cache_name[0], namelen,
- 			"raid%d-%s", conf->level, mdname(conf->mddev));
- 	else
--		sprintf(conf->cache_name[0],
-+		snprintf(conf->cache_name[0], namelen,
- 			"raid%d-%p", conf->level, conf->mddev);
--	sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-+	snprintf(conf->cache_name[1], namelen, "%.27s-alt", conf->cache_name[0]);
+ 	pr_debug("uri: %s, len: %zu\n", uri, uri_len);
  
- 	conf->active_name = 0;
- 	sc = kmem_cache_create(conf->cache_name[conf->active_name],
++	/* sdreq->tlv_len is u8, takes uri_len, + 3 for header, + 1 for NULL */
++	if (WARN_ON_ONCE(uri_len > U8_MAX - 4))
++		return NULL;
++
+ 	sdreq = kzalloc(sizeof(struct nfc_llcp_sdp_tlv), GFP_KERNEL);
+ 	if (sdreq == NULL)
+ 		return NULL;
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -68,7 +68,8 @@ static const struct nla_policy nfc_genl_
+ };
+ 
+ static const struct nla_policy nfc_sdp_genl_policy[NFC_SDP_ATTR_MAX + 1] = {
+-	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING },
++	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING,
++			       .len = U8_MAX - 4 },
+ 	[NFC_SDP_ATTR_SAP] = { .type = NLA_U8 },
+ };
+ 
