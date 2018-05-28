@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424651AbeE1LQH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:16:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35060 "EHLO mail.kernel.org"
+        id S1424682AbeE1LQW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:16:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424637AbeE1LQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:01 -0400
+        id S1424670AbeE1LQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 234/272] power: supply: ltc2941-battery-gauge: Fix temperature units
-Date: Mon, 28 May 2018 12:04:27 +0200
-Message-Id: <20180528100300.046537637@linuxfoundation.org>
+Subject: [PATCH 4.16 264/272] soc: amlogic: meson-gx-pwrc-vpu: fix error on shutdown when domain is powered off
+Date: Mon, 28 May 2018 12:04:57 +0200
+Message-Id: <20180528100302.315095207@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,40 +31,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ladislav Michl <ladis@linux-mips.org>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit dde5953f05a89eb63a0d666ffe51d447b2ac3e05 ]
+[ Upstream commit 87f88732d25e6175cb4faa8070658f604660d720 ]
 
-Temperature is measured in tenths of degree Celsius.
+When operating the system headless headless, the domain is never
+powered on, leaving the clocks disabled. The shutdown function then
+tries to disable the already disabled clocks, resulting in errors.
+Therefore call meson_gx_pwrc_vpu_power_off() only if domain is
+powered on.
+This patch fixes the described issue on my system (Odorid-C2).
 
-Fixes: 085bc24d1553 ("Add LTC2941/LTC2943 Battery Gauge Driver")
-Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Fixes: 339cd0ea0822 "soc: amlogic: meson-gx-pwrc-vpu: fix power-off when powered by bootloader"
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/ltc2941-battery-gauge.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/soc/amlogic/meson-gx-pwrc-vpu.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/power/supply/ltc2941-battery-gauge.c
-+++ b/drivers/power/supply/ltc2941-battery-gauge.c
-@@ -317,15 +317,15 @@ static int ltc294x_get_temperature(const
+--- a/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
++++ b/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
+@@ -224,7 +224,11 @@ static int meson_gx_pwrc_vpu_probe(struc
  
- 	if (info->id == LTC2942_ID) {
- 		reg = LTC2942_REG_TEMPERATURE_MSB;
--		value = 60000;	/* Full-scale is 600 Kelvin */
-+		value = 6000;	/* Full-scale is 600 Kelvin */
- 	} else {
- 		reg = LTC2943_REG_TEMPERATURE_MSB;
--		value = 51000;	/* Full-scale is 510 Kelvin */
-+		value = 5100;	/* Full-scale is 510 Kelvin */
- 	}
- 	ret = ltc294x_read_regs(info->client, reg, &datar[0], 2);
- 	value *= (datar[0] << 8) | datar[1];
--	/* Convert to centidegrees  */
--	*val = value / 0xFFFF - 27215;
-+	/* Convert to tenths of degree Celsius */
-+	*val = value / 0xFFFF - 2722;
- 	return ret;
+ static void meson_gx_pwrc_vpu_shutdown(struct platform_device *pdev)
+ {
+-	meson_gx_pwrc_vpu_power_off(&vpu_hdmi_pd.genpd);
++	bool powered_off;
++
++	powered_off = meson_gx_pwrc_vpu_get_power(&vpu_hdmi_pd);
++	if (!powered_off)
++		meson_gx_pwrc_vpu_power_off(&vpu_hdmi_pd.genpd);
  }
  
+ static const struct of_device_id meson_gx_pwrc_vpu_match_table[] = {
