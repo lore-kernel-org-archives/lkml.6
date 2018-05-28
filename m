@@ -1,23 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165452AbeE1Nvw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:51:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33512 "EHLO mail.kernel.org"
+        id S937314AbeE1NwJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:52:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937440AbeE1KmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:07 -0400
+        id S1163054AbeE1Kl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 023/496] Revert "ipc/shm: Fix shmat mmap nil-page protection"
-Date: Mon, 28 May 2018 11:56:48 +0200
-Message-Id: <20180528100320.573273839@linuxfoundation.org>
+        stable@vger.kernel.org, Lidong Chen <lidongchen@tencent.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 020/496] IB/umem: Use the correct mm during ib_umem_release
+Date: Mon, 28 May 2018 11:56:45 +0200
+Message-Id: <20180528100320.432992494@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,67 +29,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: Lidong Chen <jemmy858585@gmail.com>
 
-commit a73ab244f0dad8fffb3291b905f73e2d3eaa7c00 upstream.
+commit 8e907ed4882714fd13cfe670681fc6cb5284c780 upstream.
 
-Patch series "ipc/shm: shmat() fixes around nil-page".
+User-space may invoke ibv_reg_mr and ibv_dereg_mr in different threads.
 
-These patches fix two issues reported[1] a while back by Joe and Andrea
-around how shmat(2) behaves with nil-page.
+If ibv_dereg_mr is called after the thread which invoked ibv_reg_mr has
+exited, get_pid_task will return NULL and ib_umem_release will not
+decrease mm->pinned_vm.
 
-The first reverts a commit that it was incorrectly thought that mapping
-nil-page (address=0) was a no no with MAP_FIXED.  This is not the case,
-with the exception of SHM_REMAP; which is address in the second patch.
+Instead of using threads to locate the mm, use the overall tgid from the
+ib_ucontext struct instead. This matches the behavior of ODP and
+disassociate in handling the mm of the process that called ibv_reg_mr.
 
-I chose two patches because it is easier to backport and it explicitly
-reverts bogus behaviour.  Both patches ought to be in -stable and ltp
-testcases need updated (the added testcase around the cve can be
-modified to just test for SHM_RND|SHM_REMAP).
-
-[1] lkml.kernel.org/r/20180430172152.nfa564pvgpk3ut7p@linux-n805
-
-This patch (of 2):
-
-Commit 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
-worked on the idea that we should not be mapping as root addr=0 and
-MAP_FIXED.  However, it was reported that this scenario is in fact
-valid, thus making the patch both bogus and breaks userspace as well.
-
-For example X11's libint10.so relies on shmat(1, SHM_RND) for lowmem
-initialization[1].
-
-[1] https://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/os-support/linux/int10/linux.c#n347
-Link: http://lkml.kernel.org/r/20180503203243.15045-2-dave@stgolabs.net
-Fixes: 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reported-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 87773dd56d54 ("IB: ib_umem_release() should decrement mm->pinned_vm from ib_umem_get")
+Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/shm.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/infiniband/core/umem.c |    7 +------
+ include/rdma/ib_umem.h         |    1 -
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1309,13 +1309,8 @@ long do_shmat(int shmid, char __user *sh
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -119,7 +119,6 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 	umem->length     = size;
+ 	umem->address    = addr;
+ 	umem->page_shift = PAGE_SHIFT;
+-	umem->pid	 = get_task_pid(current, PIDTYPE_PID);
+ 	/*
+ 	 * We ask for writable memory if any of the following
+ 	 * access flags are set.  "Local write" and "remote write"
+@@ -132,7 +131,6 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
  
- 	if (addr) {
- 		if (addr & (shmlba - 1)) {
--			/*
--			 * Round down to the nearest multiple of shmlba.
--			 * For sane do_mmap_pgoff() parameters, avoid
--			 * round downs that trigger nil-page and MAP_FIXED.
--			 */
--			if ((shmflg & SHM_RND) && addr >= shmlba)
--				addr &= ~(shmlba - 1);
-+			if (shmflg & SHM_RND)
-+				addr &= ~(shmlba - 1);  /* round down */
- 			else
- #ifndef __ARCH_FORCE_SHMLBA
- 				if (addr & ~PAGE_MASK)
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+-		put_pid(umem->pid);
+ 		ret = ib_umem_odp_get(context, umem, access);
+ 		if (ret) {
+ 			kfree(umem);
+@@ -148,7 +146,6 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 
+ 	page_list = (struct page **) __get_free_page(GFP_KERNEL);
+ 	if (!page_list) {
+-		put_pid(umem->pid);
+ 		kfree(umem);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -231,7 +228,6 @@ out:
+ 	if (ret < 0) {
+ 		if (need_release)
+ 			__ib_umem_release(context->device, umem, 0);
+-		put_pid(umem->pid);
+ 		kfree(umem);
+ 	} else
+ 		current->mm->pinned_vm = locked;
+@@ -274,8 +270,7 @@ void ib_umem_release(struct ib_umem *ume
+ 
+ 	__ib_umem_release(umem->context->device, umem, 1);
+ 
+-	task = get_pid_task(umem->pid, PIDTYPE_PID);
+-	put_pid(umem->pid);
++	task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
+ 	if (!task)
+ 		goto out;
+ 	mm = get_task_mm(task);
+--- a/include/rdma/ib_umem.h
++++ b/include/rdma/ib_umem.h
+@@ -48,7 +48,6 @@ struct ib_umem {
+ 	int                     writable;
+ 	int                     hugetlb;
+ 	struct work_struct	work;
+-	struct pid             *pid;
+ 	struct mm_struct       *mm;
+ 	unsigned long		diff;
+ 	struct ib_umem_odp     *odp_data;
