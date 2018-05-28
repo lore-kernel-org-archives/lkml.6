@@ -1,98 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937290AbeE1OtX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:49:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48504 "EHLO mail.kernel.org"
+        id S937367AbeE1Ote (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:49:34 -0400
+Received: from imap.thunk.org ([74.207.234.97]:35458 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932390AbeE1K3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:07 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Alex Chen <alex.chen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>, Gang He <ghe@suse.com>,
-        Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 065/329] ocfs2: return -EROFS to mount.ocfs2 if inode block is invalid
-Date: Mon, 28 May 2018 11:59:54 +0200
-Message-Id: <20180528100248.223301411@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S932390AbeE1Ot2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:49:28 -0400
+Date: Mon, 28 May 2018 10:49:26 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: xin tan <tanxin0725@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Can I use 'signed -off-by' to define maintainers' workload?
+Message-ID: <20180528144926.GH4613@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        xin tan <tanxin0725@gmail.com>, linux-kernel@vger.kernel.org
+References: <CAPt3h3X0MKiNotU7=bQWzd=sxwu4pkuw3YOvFU9qw23xu8v6oA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPt3h3X0MKiNotU7=bQWzd=sxwu4pkuw3YOvFU9qw23xu8v6oA@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 01:31:56PM +0800, xin tan wrote:
+> 
+> 1) Do all the maintainers in the path from the author of the commits
+> to the mainline repository sign their name?
 
-------------------
+No.
 
-From: piaojun <piaojun@huawei.com>
+> 3) If the answer is no, why do some maintainers sign their names, and
+> some do not? Is it because these maintainers trust the lower layer
+> very much and feel that it is not necessary to review it?
 
-[ Upstream commit 025bcbde3634b2c9b316f227fed13ad6ad6817fb ]
+There are two ways a commit can enter git.  One is by having the
+maintainer apply the patch directly, usually the patch has been
+discussed and revised via e-mail.  Git the patch author and patch
+committer separately.  For example:
 
-If metadata is corrupted such as 'invalid inode block', we will get
-failed by calling 'mount()' and then set filesystem readonly as below:
+% git log --pretty=fuller -1 db41ae2c3e4716ceffe212a742d3c963e400fa1e
+commit db41ae2c3e4716ceffe212a742d3c963e400fa1e
+Author:     Chandan Rajendra <chandan@linux.vnet.ibm.com>
+AuthorDate: Wed May 23 08:52:07 2018 +0530
+Commit:     Theodore Ts'o <tytso@mit.edu>
+CommitDate: Thu May 24 17:28:33 2018 -0400
 
-  ocfs2_mount
-    ocfs2_initialize_super
-      ocfs2_init_global_system_inodes
-        ocfs2_iget
-          ocfs2_read_locked_inode
-            ocfs2_validate_inode_block
-	      ocfs2_error
-	        ocfs2_handle_error
-	          ocfs2_set_ro_flag(osb, 0);  // set readonly
+This is an example of a commit in the e2fsprogs repository that was
+sent to me via e-mail, and which was applied using "git am --signoff".
+In this case, git automatically added the --signed-off message.  I
+then used git commit --amend to add the "Reviewed-by" message which
+was sent in a separate message by Andreas:
 
-In this situation we need return -EROFS to 'mount.ocfs2', so that user
-can fix it by fsck.  And then mount again.  In addition, 'mount.ocfs2'
-should be updated correspondingly as it only return 1 for all errno.
-And I will post a patch for 'mount.ocfs2' too.
+    Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+    Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-Link: http://lkml.kernel.org/r/5A4302FA.2010606@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Alex Chen <alex.chen@huawei.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Gang He <ghe@suse.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ocfs2/super.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+There are other ways which a maintainer can apply a change directly;
+this might involve letting the patchwork web application concatente
+the Reviewed-by, thus avoiding the need to use git commit --amend.  Or
+a maintainer could use guilt to manage a patch stack, in which case
+the Author Date and Commit Date will be the same.  But all of these
+methods have in common that the maintainer in question is directly
+adding the patch to git, and thus has the opportunity to
+modify/annotate the commit description before it enters a git
+repository.  (In some cases, where the patch author's native languge
+is not English, I've completely rewritten the patch description to
+make it more intelligible.  Obviously this doesn't scale to the upper
+layer maintainers who might be responsible for hundreds of patches
+entering mainline per release.)
 
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -473,9 +473,8 @@ static int ocfs2_init_global_system_inod
- 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
- 		if (!new) {
- 			ocfs2_release_system_inodes(osb);
--			status = -EINVAL;
-+			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
- 			mlog_errno(status);
--			/* FIXME: Should ERROR_RO_FS */
- 			mlog(ML_ERROR, "Unable to load system inode %d, "
- 			     "possibly corrupt fs?", i);
- 			goto bail;
-@@ -504,7 +503,7 @@ static int ocfs2_init_local_system_inode
- 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
- 		if (!new) {
- 			ocfs2_release_system_inodes(osb);
--			status = -EINVAL;
-+			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
- 			mlog(ML_ERROR, "status=%d, sysfile=%d, slot=%d\n",
- 			     status, i, osb->slot_num);
- 			goto bail;
+
+Commits can also enter the git tree belonging to maintainer (more
+typically an upper-layer maintainer) by being merged (or pulled) into
+the maintainer's git repository.  When a commit is merged, it's not
+changed.  So in that case it's not possible for a signed-off to be
+added.  It's also the case that normally the maintainer will tend to
+assume that commit was fully reviewed when it entered the git tree he
+or she is pulling from.
+
+Of course, that's not necessarily true.  A contributor might have
+their own git tree (this is the case with most github-originated pull
+requests) and so the commit might not have been reviewed, and so the
+responsible maintainer will have to carefully review the commits
+before accepting the pull request and republishing the commits in
+their tree.
+
+> 4) Is there any special situation that leads to signing-off-by not
+> identifying all the maintainers in the path of the commits develiry?
+> For example, the upper maintainer does not trust the lower layer
+> maintainers, and he/she will contribute a new commits by himself
+> instead of passing by, so it will not record the maintainer of the
+> lower layer.
+
+This is not likely.  However, sometimes commits are sent directly to
+the upper-layer maintainer; you should not assume that patches are
+always sent in a strictly hierarchical fashion.  There are always
+exceptions to this rule.
+
+> Or because this commit contains modification to several files and each
+> file has a specific maintainer, only one maintainer merged it to his
+> repository and signed his name.
+
+This is much more common; what will typically happen here is that
+other maintainers will indicated they have reivewed the patch
+modifying code that they maintain via an Acked-by: header:
+
+Acked-by: Theodore Ts'o <tytso@mit.edu>
+
+Regards,
+
+					- Ted
