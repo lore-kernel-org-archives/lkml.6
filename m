@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939696AbeE1PIj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:08:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43866 "EHLO mail.kernel.org"
+        id S1165916AbeE1PJH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:09:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033792AbeE1KYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:32 -0400
+        id S1033816AbeE1KY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:24:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Frank Mori Hess <fmh6jj@gmail.com>,
+        Qi Hou <qi.hou@windriver.com>, Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 233/268] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
-Date: Mon, 28 May 2018 12:03:27 +0200
-Message-Id: <20180528100229.729430836@linuxfoundation.org>
+Subject: [PATCH 4.4 231/268] dmaengine: pl330: fix a race condition in case of threaded irqs
+Date: Mon, 28 May 2018 12:03:25 +0200
+Message-Id: <20180528100229.507487450@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,62 +30,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Qi Hou <qi.hou@windriver.com>
 
-[ Upstream commit 4bf59902b50012b1dddeeaa23b217d9c4956cdda ]
+[ Upstream commit a3ca831249ca8c4c226e4ceafee04e280152e59d ]
 
-The MMC sample and drv clock for rockchip platforms are derived from
-the bus clock output to the MMC/SDIO card. So it should never happens
-that the clk rate is zero given it should inherits the clock rate from
-its parent. If something goes wrong and makes the clock rate to be zero,
-the calculation would be wrong but may still make the mmc tuning process
-work luckily. However it makes people harder to debug when the following
-data transfer is unstable.
+When booting up with "threadirqs" in command line, all irq handlers of the DMA
+controller pl330 will be threaded forcedly. These threads will race for the same
+list, pl330->req_done.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Before the callback, the spinlock was released. And after it, the spinlock was
+taken. This opened an race window where another threaded irq handler could steal
+the spinlock and be permitted to delete entries of the list, pl330->req_done.
+
+If the later deleted an entry that was still referred to by the former, there would
+be a kernel panic when the former was scheduled and tried to get the next sibling
+of the deleted entry.
+
+The scenario could be depicted as below:
+
+  Thread: T1  pl330->req_done  Thread: T2
+      |             |              |
+      |          -A-B-C-D-         |
+    Locked          |              |
+      |             |           Waiting
+    Del A           |              |
+      |          -B-C-D-           |
+    Unlocked        |              |
+      |             |           Locked
+    Waiting         |              |
+      |             |            Del B
+      |             |              |
+      |           -C-D-         Unlocked
+    Waiting         |              |
+      |
+    Locked
+      |
+   get C via B
+      \
+       - Kernel panic
+
+The kernel panic looked like as below:
+
+Unable to handle kernel paging request at virtual address dead000000000108
+pgd = ffffff8008c9e000
+[dead000000000108] *pgd=000000027fffe003, *pud=000000027fffe003, *pmd=0000000000000000
+Internal error: Oops: 96000044 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 85 Comm: irq/59-66330000 Not tainted 4.8.24-WR9.0.0.12_standard #2
+Hardware name: Broadcom NS2 SVK (DT)
+task: ffffffc1f5cc3c00 task.stack: ffffffc1f5ce0000
+PC is at pl330_irq_handler+0x27c/0x390
+LR is at pl330_irq_handler+0x2a8/0x390
+pc : [<ffffff80084cb694>] lr : [<ffffff80084cb6c0>] pstate: 800001c5
+sp : ffffffc1f5ce3d00
+x29: ffffffc1f5ce3d00 x28: 0000000000000140
+x27: ffffffc1f5c530b0 x26: dead000000000100
+x25: dead000000000200 x24: 0000000000418958
+x23: 0000000000000001 x22: ffffffc1f5ccd668
+x21: ffffffc1f5ccd590 x20: ffffffc1f5ccd418
+x19: dead000000000060 x18: 0000000000000001
+x17: 0000000000000007 x16: 0000000000000001
+x15: ffffffffffffffff x14: ffffffffffffffff
+x13: ffffffffffffffff x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000000840
+x9 : ffffffc1f5ce0000 x8 : ffffffc1f5cc3338
+x7 : ffffff8008ce2020 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : dead000000000200 x2 : dead000000000100
+x1 : 0000000000000140 x0 : ffffffc1f5ccd590
+
+Process irq/59-66330000 (pid: 85, stack limit = 0xffffffc1f5ce0020)
+Stack: (0xffffffc1f5ce3d00 to 0xffffffc1f5ce4000)
+3d00: ffffffc1f5ce3d80 ffffff80080f09d0 ffffffc1f5ca0c00 ffffffc1f6f7c600
+3d20: ffffffc1f5ce0000 ffffffc1f6f7c600 ffffffc1f5ca0c00 ffffff80080f0998
+3d40: ffffffc1f5ce0000 ffffff80080f0000 0000000000000000 0000000000000000
+3d60: ffffff8008ce202c ffffff8008ce2020 ffffffc1f5ccd668 ffffffc1f5c530b0
+3d80: ffffffc1f5ce3db0 ffffff80080f0d70 ffffffc1f5ca0c40 0000000000000001
+3da0: ffffffc1f5ce0000 ffffff80080f0cfc ffffffc1f5ce3e20 ffffff80080bf4f8
+3dc0: ffffffc1f5ca0c80 ffffff8008bf3798 ffffff8008955528 ffffffc1f5ca0c00
+3de0: ffffff80080f0c30 0000000000000000 0000000000000000 0000000000000000
+3e00: 0000000000000000 0000000000000000 0000000000000000 ffffff80080f0b68
+3e20: 0000000000000000 ffffff8008083690 ffffff80080bf420 ffffffc1f5ca0c80
+3e40: 0000000000000000 0000000000000000 0000000000000000 ffffff80080cb648
+3e60: ffffff8008b1c780 0000000000000000 0000000000000000 ffffffc1f5ca0c00
+3e80: ffffffc100000000 ffffff8000000000 ffffffc1f5ce3e90 ffffffc1f5ce3e90
+3ea0: 0000000000000000 ffffff8000000000 ffffffc1f5ce3eb0 ffffffc1f5ce3eb0
+3ec0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3ee0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f00: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f40: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f60: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f80: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3fa0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3fc0: 0000000000000000 0000000000000005 0000000000000000 0000000000000000
+3fe0: 0000000000000000 0000000000000000 0000000275ce3ff0 0000000275ce3ff8
+Call trace:
+Exception stack(0xffffffc1f5ce3b30 to 0xffffffc1f5ce3c60)
+3b20:                                   dead000000000060 0000008000000000
+3b40: ffffffc1f5ce3d00 ffffff80084cb694 0000000000000008 0000000000000e88
+3b60: ffffffc1f5ce3bb0 ffffff80080dac68 ffffffc1f5ce3b90 ffffff8008826fe4
+3b80: 00000000000001c0 00000000000001c0 ffffffc1f5ce3bb0 ffffff800848dfcc
+3ba0: 0000000000020000 ffffff8008b15ae4 ffffffc1f5ce3c00 ffffff800808f000
+3bc0: 0000000000000010 ffffff80088377f0 ffffffc1f5ccd590 0000000000000140
+3be0: dead000000000100 dead000000000200 0000000000000001 0000000000000000
+3c00: 0000000000000000 ffffff8008ce2020 ffffffc1f5cc3338 ffffffc1f5ce0000
+3c20: 0000000000000840 0000000000000001 0000000000000000 ffffffffffffffff
+3c40: ffffffffffffffff ffffffffffffffff 0000000000000001 0000000000000007
+[<ffffff80084cb694>] pl330_irq_handler+0x27c/0x390
+[<ffffff80080f09d0>] irq_forced_thread_fn+0x38/0x88
+[<ffffff80080f0d70>] irq_thread+0x140/0x200
+[<ffffff80080bf4f8>] kthread+0xd8/0xf0
+[<ffffff8008083690>] ret_from_fork+0x10/0x40
+Code: f2a00838 f9405763 aa1c03e1 aa1503e0 (f9000443)
+---[ end trace f50005726d31199c ]---
+Kernel panic - not syncing: Fatal exception in interrupt
+SMP: stopping secondary CPUs
+SMP: failed to stop secondary CPUs 0-1
+Kernel Offset: disabled
+Memory Limit: none
+---[ end Kernel panic - not syncing: Fatal exception in interrupt
+
+To fix this, re-start with the list-head after dropping the lock then
+re-takeing it.
+
+Reviewed-by: Frank Mori Hess <fmh6jj@gmail.com>
+Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
+Signed-off-by: Qi Hou <qi.hou@windriver.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/dma/pl330.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -60,6 +60,12 @@ static int rockchip_mmc_get_phase(struct
- 	u16 degrees;
- 	u32 delay_num = 0;
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -1533,7 +1533,7 @@ static void pl330_dotask(unsigned long d
+ /* Returns 1 if state was updated, 0 otherwise */
+ static int pl330_update(struct pl330_dmac *pl330)
+ {
+-	struct dma_pl330_desc *descdone, *tmp;
++	struct dma_pl330_desc *descdone;
+ 	unsigned long flags;
+ 	void __iomem *regs;
+ 	u32 val;
+@@ -1611,7 +1611,9 @@ static int pl330_update(struct pl330_dma
+ 	}
  
-+	/* See the comment for rockchip_mmc_set_phase below */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
- 
- 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
-@@ -86,6 +92,23 @@ static int rockchip_mmc_set_phase(struct
- 	u32 raw_value;
- 	u32 delay;
- 
-+	/*
-+	 * The below calculation is based on the output clock from
-+	 * MMC host to the card, which expects the phase clock inherits
-+	 * the clock rate from its parent, namely the output clock
-+	 * provider of MMC host. However, things may go wrong if
-+	 * (1) It is orphan.
-+	 * (2) It is assigned to the wrong parent.
-+	 *
-+	 * This check help debug the case (1), which seems to be the
-+	 * most likely problem we often face and which makes it difficult
-+	 * for people to debug unstable mmc tuning results.
-+	 */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	nineties = degrees / 90;
- 	remainder = (degrees % 90);
- 
+ 	/* Now that we are in no hurry, do the callbacks */
+-	list_for_each_entry_safe(descdone, tmp, &pl330->req_done, rqd) {
++	while (!list_empty(&pl330->req_done)) {
++		descdone = list_first_entry(&pl330->req_done,
++					    struct dma_pl330_desc, rqd);
+ 		list_del(&descdone->rqd);
+ 		spin_unlock_irqrestore(&pl330->lock, flags);
+ 		dma_pl330_rqcb(descdone, PL330_ERR_NONE);
