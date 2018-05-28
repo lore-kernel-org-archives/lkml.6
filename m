@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033608AbeE1KXE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:23:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42284 "EHLO mail.kernel.org"
+        id S1034101AbeE1PPF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:15:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033562AbeE1KWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:55 -0400
+        id S1033598AbeE1KXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 198/268] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
-Date: Mon, 28 May 2018 12:02:52 +0200
-Message-Id: <20180528100224.741019139@linuxfoundation.org>
+Subject: [PATCH 4.4 183/268] xen/acpi: off by one in read_acpi_id()
+Date: Mon, 28 May 2018 12:02:37 +0200
+Message-Id: <20180528100223.082216841@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,49 +32,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Vosburgh <jay.vosburgh@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
+[ Upstream commit c37a3c94775855567b90f91775b9691e10bd2806 ]
 
-The operstate update logic will leave an interface in the
-default UNKNOWN operstate if the interface carrier state never changes
-from the default carrier up state set at creation.  This includes the
-case of an explicit call to netif_carrier_on, as the carrier on to on
-transition has no effect on operstate.
+If acpi_id is == nr_acpi_bits, then we access one element beyond the end
+of the acpi_psd[] array or we set one bit beyond the end of the bit map
+when we do __set_bit(acpi_id, acpi_id_present);
 
-	This affects virtio-net for the case that the virtio peer does
-not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
-updates).  Without this feature, the virtio specification states that
-"the link should be assumed active," so, logically, the operstate should
-be UP instead of UNKNOWN.  This has impact on user space applications
-that use the operstate to make availability decisions for the interface.
-
-	Resolve this by changing the virtio probe logic slightly to call
-netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
-cases, and then the existing call to netif_carrier_on for the "without"
-case will cause an operstate transition.
-
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/xen-acpi-processor.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1912,8 +1912,8 @@ static int virtnet_probe(struct virtio_d
- 
- 	/* Assume link up if device can't report link status,
- 	   otherwise get link status from config. */
-+	netif_carrier_off(dev);
- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		netif_carrier_off(dev);
- 		schedule_work(&vi->config_work);
- 	} else {
- 		vi->status = VIRTIO_NET_S_LINK_UP;
+--- a/drivers/xen/xen-acpi-processor.c
++++ b/drivers/xen/xen-acpi-processor.c
+@@ -362,9 +362,9 @@ read_acpi_id(acpi_handle handle, u32 lvl
+ 	}
+ 	/* There are more ACPI Processor objects than in x2APIC or MADT.
+ 	 * This can happen with incorrect ACPI SSDT declerations. */
+-	if (acpi_id > nr_acpi_bits) {
+-		pr_debug("We only have %u, trying to set %u\n",
+-			 nr_acpi_bits, acpi_id);
++	if (acpi_id >= nr_acpi_bits) {
++		pr_debug("max acpi id %u, trying to set %u\n",
++			 nr_acpi_bits - 1, acpi_id);
+ 		return AE_OK;
+ 	}
+ 	/* OK, There is a ACPI Processor object */
