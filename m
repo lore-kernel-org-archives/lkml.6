@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161949AbeE1Kix (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:38:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59014 "EHLO mail.kernel.org"
+        id S1162563AbeE1Ki5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:38:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162517AbeE1Kil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:41 -0400
+        id S1162549AbeE1Kiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:38:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 277/329] i2c: mv64xxx: Apply errata delay only in standard mode
-Date: Mon, 28 May 2018 12:03:26 +0200
-Message-Id: <20180528100304.894735211@linuxfoundation.org>
+Subject: [PATCH 4.9 254/329] xen/acpi: off by one in read_acpi_id()
+Date: Mon, 28 May 2018 12:03:03 +0200
+Message-Id: <20180528100303.066417881@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,44 +32,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 31184d8c6ea49ea0676d100cdd7e1f102ad025b5 ]
+[ Upstream commit c37a3c94775855567b90f91775b9691e10bd2806 ]
 
-The errata FE-8471889 description has been updated. There is still a
-timing violation for repeated start. But the errata now states that it
-was only the case for the Standard mode (100 kHz), in Fast mode (400 kHz)
-there is no issue.
+If acpi_id is == nr_acpi_bits, then we access one element beyond the end
+of the acpi_psd[] array or we set one bit beyond the end of the bit map
+when we do __set_bit(acpi_id, acpi_id_present);
 
-This patch limit the errata fix to the Standard mode.
-
-It has been tesed successfully on the clearfog (Aramda 388 based board).
-
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-mv64xxx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/xen/xen-acpi-processor.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/i2c/busses/i2c-mv64xxx.c
-+++ b/drivers/i2c/busses/i2c-mv64xxx.c
-@@ -848,12 +848,16 @@ mv64xxx_of_config(struct mv64xxx_i2c_dat
- 	 */
- 	if (of_device_is_compatible(np, "marvell,mv78230-i2c")) {
- 		drv_data->offload_enabled = true;
--		drv_data->errata_delay = true;
-+		/* The delay is only needed in standard mode (100kHz) */
-+		if (bus_freq <= 100000)
-+			drv_data->errata_delay = true;
+--- a/drivers/xen/xen-acpi-processor.c
++++ b/drivers/xen/xen-acpi-processor.c
+@@ -362,9 +362,9 @@ read_acpi_id(acpi_handle handle, u32 lvl
  	}
- 
- 	if (of_device_is_compatible(np, "marvell,mv78230-a0-i2c")) {
- 		drv_data->offload_enabled = false;
--		drv_data->errata_delay = true;
-+		/* The delay is only needed in standard mode (100kHz) */
-+		if (bus_freq <= 100000)
-+			drv_data->errata_delay = true;
+ 	/* There are more ACPI Processor objects than in x2APIC or MADT.
+ 	 * This can happen with incorrect ACPI SSDT declerations. */
+-	if (acpi_id > nr_acpi_bits) {
+-		pr_debug("We only have %u, trying to set %u\n",
+-			 nr_acpi_bits, acpi_id);
++	if (acpi_id >= nr_acpi_bits) {
++		pr_debug("max acpi id %u, trying to set %u\n",
++			 nr_acpi_bits - 1, acpi_id);
+ 		return AE_OK;
  	}
- 
- 	if (of_device_is_compatible(np, "allwinner,sun6i-a31-i2c"))
+ 	/* OK, There is a ACPI Processor object */
