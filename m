@@ -1,115 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034417AbeE1P3V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:29:21 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44827 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033186AbeE1P3N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:29:13 -0400
-X-Google-Smtp-Source: AB8JxZrOR22um6DoOn7WJLHLNnkgf/FR16ShdqlGDDr6RnvqvpyaECEylaInaNngg75bRb7kBJyUb7FZDRPmm0r6dmA=
+        id S1034428AbeE1P3t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:29:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39474 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936960AbeE1KTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:37 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        Marius Gligor <mgligor@kalray.eu>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 125/268] e1000e: allocate ring descriptors with dma_zalloc_coherent
+Date: Mon, 28 May 2018 12:01:39 +0200
+Message-Id: <20180528100216.270768396@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VcC_cisfVTKU0bVm3+=NFLt3P0EkXh3uC4hWCA7y_7G3w@mail.gmail.com>
-References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
- <5B0BD13D.8000809@broadcom.com> <CAOf5uw=mPOgngZW8UcPfvtxH+5nCR-36ovjYPH7AvO99y1M_xA@mail.gmail.com>
- <CAHp75VcC_cisfVTKU0bVm3+=NFLt3P0EkXh3uC4hWCA7y_7G3w@mail.gmail.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Mon, 28 May 2018 17:29:11 +0200
-Message-ID: <CAOf5uw=G5iYfuoRBCOWU-PkEGpm1_qMwB+1=MjRQgxB+e_0w=g@mail.gmail.com>
-Subject: Re: [PATCH] brcmfmac: stop watchdog before detach and free everything
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Ian Molton <ian@mnementh.co.uk>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER"
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        brcm80211-dev-list@cypress.com, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-On Mon, May 28, 2018 at 5:25 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Mon, May 28, 2018 at 12:54 PM, Michael Nazzareno Trimarchi
-> <michael@amarulasolutions.com> wrote:
->> Hi Arend
->>
->> On Mon, May 28, 2018 at 11:51 AM, Arend van Spriel
->> <arend.vanspriel@broadcom.com> wrote:
->>> On 5/28/2018 9:50 AM, Michael Trimarchi wrote:
->>>>
->>>> Watchdog need to be stopped in brcmf_sdio_remove to avoid
->>>> i
->>>> The system is going down NOW!
->>>> [ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual
->>>> address 000002f8
->>>> Sent SIGTERM to all processes
->>>> [ 1348.121412] Mem abort info:
->>>> [ 1348.126962]   ESR = 0x96000004
->>>> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
->>>> [ 1348.135948]   SET = 0, FnV = 0
->>>> [ 1348.138997]   EA = 0, S1PTW = 0
->>>> [ 1348.142154] Data abort info:
->>>> [ 1348.145045]   ISV = 0, ISS = 0x00000004
->>>> [ 1348.148884]   CM = 0, WnR = 0
->>>> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
->>>> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
->>>> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
->>>> [ 1348.168927] Modules linked in: ipv6
->>>> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted
->>>> 4.17.0-rc5-next-20180517 #18
->>>> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
->>>> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
->>>> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
->>>> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
->>>
->>>
->>> Hi Michael,
->>>
->>> Thanks for the patch. In normal scenario the callstack looks like this:
->>>
->>> brcmf_sdio_remove()
->>>         -> brcmf_detach()
->>>                 -> brcmf_bus_stop()
->>>                         -> brcmf_sdio_bus_stop()
->>>
->>> In brcmf_sdio_bus_stop() the watchdog is terminated. So in what scenario did
->>> you encounter this null pointer deref?
->>
->> Is this happen even when there is not wifi firmware?
->> boot without any firmware in the filesystem and then trigger a reboot
->
-> Something like the above I had noticed for a long (couple of kernel
-> releases?) time, but wasn't a big priority to me.
-> Though, I can test this on my side.
->
-> P.S. I think rmmod or echo > unbind will trigger that as well.
->
+------------------
 
-Right now the module is compiled in the kernel. I can dig down tonight
-on this if needed
+From: Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
 
-Michael
+[ Upstream commit aea3fca005fb45f80869f2e8d56fd4e64c1d1fdb ]
 
-> --
-> With Best Regards,
-> Andy Shevchenko
+Descriptor rings were not initialized at zero when allocated
+When area contained garbage data, it caused skb_over_panic in
+e1000_clean_rx_irq (if data had E1000_RXD_STAT_DD bit set)
 
+This patch makes use of dma_zalloc_coherent to make sure the
+ring is memset at 0 to prevent the area from containing garbage.
 
+Following is the signature of the panic:
+IODDR0@0.0: skbuff: skb_over_panic: text:80407b20 len:64010 put:64010 head:ab46d800 data:ab46d842 tail:0xab47d24c end:0xab46df40 dev:eth0
+IODDR0@0.0: BUG: failure at net/core/skbuff.c:105/skb_panic()!
+IODDR0@0.0: Kernel panic - not syncing: BUG!
+IODDR0@0.0:
+IODDR0@0.0: Process swapper/0 (pid: 0, threadinfo=81728000, task=8173cc00 ,cpu: 0)
+IODDR0@0.0: SP = <815a1c0c>
+IODDR0@0.0: Stack:      00000001
+IODDR0@0.0: b2d89800 815e33ac
+IODDR0@0.0: ea73c040 00000001
+IODDR0@0.0: 60040003 0000fa0a
+IODDR0@0.0: 00000002
+IODDR0@0.0:
+IODDR0@0.0: 804540c0 815a1c70
+IODDR0@0.0: b2744000 602ac070
+IODDR0@0.0: 815a1c44 b2d89800
+IODDR0@0.0: 8173cc00 815a1c08
+IODDR0@0.0:
+IODDR0@0.0:     00000006
+IODDR0@0.0: 815a1b50 00000000
+IODDR0@0.0: 80079434 00000001
+IODDR0@0.0: ab46df40 b2744000
+IODDR0@0.0: b2d89800
+IODDR0@0.0:
+IODDR0@0.0: 0000fa0a 8045745c
+IODDR0@0.0: 815a1c88 0000fa0a
+IODDR0@0.0: 80407b20 b2789f80
+IODDR0@0.0: 00000005 80407b20
+IODDR0@0.0:
+IODDR0@0.0:
+IODDR0@0.0: Call Trace:
+IODDR0@0.0: [<804540bc>] skb_panic+0xa4/0xa8
+IODDR0@0.0: [<80079430>] console_unlock+0x2f8/0x6d0
+IODDR0@0.0: [<80457458>] skb_put+0xa0/0xc0
+IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
+IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
+IODDR0@0.0: [<804079c8>] e1000_clean_rx_irq+0x188/0x3e8
+IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
+IODDR0@0.0: [<80468b48>] __dev_kfree_skb_any+0x88/0xa8
+IODDR0@0.0: [<804101ac>] e1000e_poll+0x94/0x288
+IODDR0@0.0: [<8046e9d4>] net_rx_action+0x19c/0x4e8
+IODDR0@0.0:   ...
+IODDR0@0.0: Maximum depth to print reached. Use kstack=<maximum_depth_to_print> To specify a custom value (where 0 means to display the full backtrace)
+IODDR0@0.0: ---[ end Kernel panic - not syncing: BUG!
 
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+Signed-off-by: Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
+Signed-off-by: Marius Gligor <mgligor@kalray.eu>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -2330,8 +2330,8 @@ static int e1000_alloc_ring_dma(struct e
+ {
+ 	struct pci_dev *pdev = adapter->pdev;
+ 
+-	ring->desc = dma_alloc_coherent(&pdev->dev, ring->size, &ring->dma,
+-					GFP_KERNEL);
++	ring->desc = dma_zalloc_coherent(&pdev->dev, ring->size, &ring->dma,
++					 GFP_KERNEL);
+ 	if (!ring->desc)
+ 		return -ENOMEM;
+ 
