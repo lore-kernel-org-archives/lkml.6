@@ -1,21 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424289AbeE1LNi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32914 "EHLO mail.kernel.org"
+        id S1424315AbeE1LNw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424048AbeE1LNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:13:34 -0400
+        id S1423924AbeE1LNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-efi@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 186/272] drm/panel: simple: Fix the bus format for the Ontat panel
-Date: Mon, 28 May 2018 12:03:39 +0200
-Message-Id: <20180528100256.296326635@linuxfoundation.org>
+Subject: [PATCH 4.16 191/272] efi/arm*: Only register page tables when they exist
+Date: Mon, 28 May 2018 12:03:44 +0200
+Message-Id: <20180528100256.680982724@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,34 +36,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Anholt <eric@anholt.net>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 5651e5e094591f479adad5830ac1bc45196a39b3 ]
+[ Upstream commit 6b31a2fa1e8f7bc6c2a474b4a12dad7a145cf83d ]
 
-This fixes bad color output.  When I was first testing the device I
-had the DPI hardware set to 666 mode, but apparently in the refactor
-to use the bus_format information from the panel driver, I failed to
-actually update the panel.
+Currently the arm/arm64 runtime code registers the runtime servies
+pagetables with ptdump regardless of whether runtime services page
+tables have been created.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: e8b6f561b2ee ("drm/panel: simple: Add the 7" DPI panel from Adafruit")
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180309233332.1769-1-eric@anholt.net
+As efi_mm.pgd is NULL in these cases, attempting to dump the efi page
+tables results in a NULL pointer dereference in the ptdump code:
+
+/sys/kernel/debug# cat efi_page_tables
+[  479.522600] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[  479.522715] Mem abort info:
+[  479.522764]   ESR = 0x96000006
+[  479.522850]   Exception class = DABT (current EL), IL = 32 bits
+[  479.522899]   SET = 0, FnV = 0
+[  479.522937]   EA = 0, S1PTW = 0
+[  479.528200] Data abort info:
+[  479.528230]   ISV = 0, ISS = 0x00000006
+[  479.528317]   CM = 0, WnR = 0
+[  479.528317] user pgtable: 4k pages, 48-bit VAs, pgd = 0000000064ab0cb0
+[  479.528449] [0000000000000000] *pgd=00000000fbbe4003, *pud=00000000fb66e003, *pmd=0000000000000000
+[  479.528600] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[  479.528664] Modules linked in:
+[  479.528699] CPU: 0 PID: 2457 Comm: cat Not tainted 4.15.0-rc3-00065-g2ad2ee7ecb5c-dirty #7
+[  479.528799] Hardware name: FVP Base (DT)
+[  479.528899] pstate: 00400009 (nzcv daif +PAN -UAO)
+[  479.528941] pc : walk_pgd.isra.1+0x20/0x1d0
+[  479.529011] lr : ptdump_walk_pgd+0x30/0x50
+[  479.529105] sp : ffff00000bf4bc20
+[  479.529185] x29: ffff00000bf4bc20 x28: 0000ffff9d22e000
+[  479.529271] x27: 0000000000020000 x26: ffff80007b4c63c0
+[  479.529358] x25: 00000000014000c0 x24: ffff80007c098900
+[  479.529445] x23: ffff00000bf4beb8 x22: 0000000000000000
+[  479.529532] x21: ffff00000bf4bd70 x20: 0000000000000001
+[  479.529618] x19: ffff00000bf4bcb0 x18: 0000000000000000
+[  479.529760] x17: 000000000041a1c8 x16: ffff0000082139d8
+[  479.529800] x15: 0000ffff9d3c6030 x14: 0000ffff9d2527f4
+[  479.529924] x13: 00000000000003f3 x12: 0000000000000038
+[  479.530000] x11: 0000000000000003 x10: 0101010101010101
+[  479.530099] x9 : 0000000017e94050 x8 : 000000000000003f
+[  479.530226] x7 : 0000000000000000 x6 : 0000000000000000
+[  479.530313] x5 : 0000000000000001 x4 : 0000000000000000
+[  479.530416] x3 : ffff000009069fd8 x2 : 0000000000000000
+[  479.530500] x1 : 0000000000000000 x0 : 0000000000000000
+[  479.530599] Process cat (pid: 2457, stack limit = 0x000000005d1b0e6f)
+[  479.530660] Call trace:
+[  479.530746]  walk_pgd.isra.1+0x20/0x1d0
+[  479.530833]  ptdump_walk_pgd+0x30/0x50
+[  479.530907]  ptdump_show+0x10/0x20
+[  479.530920]  seq_read+0xc8/0x470
+[  479.531023]  full_proxy_read+0x60/0x90
+[  479.531100]  __vfs_read+0x18/0x100
+[  479.531180]  vfs_read+0x88/0x160
+[  479.531267]  SyS_read+0x48/0xb0
+[  479.531299]  el0_svc_naked+0x20/0x24
+[  479.531400] Code: 91400420 f90033a0 a90707a2 f9403fa0 (f9400000)
+[  479.531499] ---[ end trace bfe8e28d8acb2b67 ]---
+Segmentation fault
+
+Let's avoid this problem by only registering the tables after their
+successful creation, which is also less confusing when EFI runtime
+services are not in use.
+
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180308080020.22828-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/arm-runtime.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1597,7 +1597,7 @@ static const struct panel_desc ontat_yx7
- 		.width = 154,
- 		.height = 83,
- 	},
--	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-+	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- };
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -54,6 +54,9 @@ static struct ptdump_info efi_ptdump_inf
  
- static const struct drm_display_mode ortustech_com43h4m85ulc_mode  = {
+ static int __init ptdump_init(void)
+ {
++	if (!efi_enabled(EFI_RUNTIME_SERVICES))
++		return 0;
++
+ 	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+ }
+ device_initcall(ptdump_init);
