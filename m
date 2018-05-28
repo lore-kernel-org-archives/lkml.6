@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937007AbeE1K1d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:27:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46758 "EHLO mail.kernel.org"
+        id S939439AbeE1O4g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936905AbeE1K1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:24 -0400
+        id S937004AbeE1K1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 028/329] ALSA: hda - Use IS_REACHABLE() for dependency on input
-Date: Mon, 28 May 2018 11:59:17 +0200
-Message-Id: <20180528100244.767779994@linuxfoundation.org>
+Subject: [PATCH 4.9 030/329] netfilter: ipv6: nf_defrag: Pass on packets to stack per RFC2460
+Date: Mon, 28 May 2018 11:59:19 +0200
+Message-Id: <20180528100244.941895401@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,58 +31,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 
-[ Upstream commit c469652bb5e8fb715db7d152f46d33b3740c9b87 ]
+[ Upstream commit 83f1999caeb14e15df205e80d210699951733287 ]
 
-The commit ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek
-HD-audio codec") introduced the reverse-selection of CONFIG_INPUT for
-Realtek codec in order to avoid the mess with dependency between
-built-in and modules.  Later on, we obtained IS_REACHABLE() macro
-exactly for this kind of problems, and now we can remove th INPUT
-selection in Kconfig and put IS_REACHABLE(INPUT) to the appropriate
-places in the code, so that the driver doesn't need to select other
-subsystem forcibly.
+ipv6_defrag pulls network headers before fragment header. In case of
+an error, the netfilter layer is currently dropping these packets.
+This results in failure of some IPv6 standards tests which passed on
+older kernels due to the netfilter framework using cloning.
 
-Fixes: ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek HD-audio codec")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # and build-tested
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The test case run here is a check for ICMPv6 error message replies
+when some invalid IPv6 fragments are sent. This specific test case is
+listed in https://www.ipv6ready.org/docs/Core_Conformance_Latest.pdf
+in the Extension Header Processing Order section.
+
+A packet with unrecognized option Type 11 is sent and the test expects
+an ICMP error in line with RFC2460 section 4.2 -
+
+11 - discard the packet and, only if the packet's Destination
+     Address was not a multicast address, send an ICMP Parameter
+     Problem, Code 2, message to the packet's Source Address,
+     pointing to the unrecognized Option Type.
+
+Since netfilter layer now drops all invalid IPv6 frag packets, we no
+longer see the ICMP error message and fail the test case.
+
+To fix this, save the transport header. If defrag is unable to process
+the packet due to RFC2460, restore the transport header and allow packet
+to be processed by stack. There is no change for other packet
+processing paths.
+
+Tested by confirming that stack sends an ICMP error when it receives
+these packets. Also tested that fragmented ICMP pings succeed.
+
+v1->v2: Instead of cloning always, save the transport_header and
+restore it in case of this specific error. Update the title and
+commit message accordingly.
+
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/hda/Kconfig         |    1 -
- sound/pci/hda/patch_realtek.c |    5 +++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ net/ipv6/netfilter/nf_conntrack_reasm.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -88,7 +88,6 @@ config SND_HDA_PATCH_LOADER
- config SND_HDA_CODEC_REALTEK
- 	tristate "Build Realtek HD-audio codec support"
- 	select SND_HDA_GENERIC
--	select INPUT
- 	help
- 	  Say Y or M here to include Realtek HD-audio codec support in
- 	  snd-hda-intel driver, such as ALC880.
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -3495,6 +3495,7 @@ static void alc280_fixup_hp_gpio4(struct
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -230,7 +230,7 @@ static int nf_ct_frag6_queue(struct frag
+ 
+ 	if ((unsigned int)end > IPV6_MAXPLEN) {
+ 		pr_debug("offset is too large.\n");
+-		return -1;
++		return -EINVAL;
  	}
+ 
+ 	ecn = ip6_frag_ecn(ipv6_hdr(skb));
+@@ -263,7 +263,7 @@ static int nf_ct_frag6_queue(struct frag
+ 			 * this case. -DaveM
+ 			 */
+ 			pr_debug("end of fragment not rounded to 8 bytes.\n");
+-			return -1;
++			return -EPROTO;
+ 		}
+ 		if (end > fq->q.len) {
+ 			/* Some bits beyond end -> corruption. */
+@@ -357,7 +357,7 @@ found:
+ discard_fq:
+ 	inet_frag_kill(&fq->q, &nf_frags);
+ err:
+-	return -1;
++	return -EINVAL;
  }
  
-+#if IS_REACHABLE(INPUT)
- static void gpio2_mic_hotkey_event(struct hda_codec *codec,
- 				   struct hda_jack_callback *event)
+ /*
+@@ -566,6 +566,7 @@ find_prev_fhdr(struct sk_buff *skb, u8 *
+ 
+ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
  {
-@@ -3627,6 +3628,10 @@ static void alc233_fixup_lenovo_line2_mi
- 		spec->kb_dev = NULL;
- 	}
- }
-+#else /* INPUT */
-+#define alc280_fixup_hp_gpio2_mic_hotkey	NULL
-+#define alc233_fixup_lenovo_line2_mic_hotkey	NULL
-+#endif /* INPUT */
++	u16 savethdr = skb->transport_header;
+ 	struct net_device *dev = skb->dev;
+ 	int fhoff, nhoff, ret;
+ 	struct frag_hdr *fhdr;
+@@ -599,8 +600,12 @@ int nf_ct_frag6_gather(struct net *net,
  
- static void alc269_fixup_hp_line1_mic1_led(struct hda_codec *codec,
- 				const struct hda_fixup *fix, int action)
+ 	spin_lock_bh(&fq->q.lock);
+ 
+-	if (nf_ct_frag6_queue(fq, skb, fhdr, nhoff) < 0) {
+-		ret = -EINVAL;
++	ret = nf_ct_frag6_queue(fq, skb, fhdr, nhoff);
++	if (ret < 0) {
++		if (ret == -EPROTO) {
++			skb->transport_header = savethdr;
++			ret = 0;
++		}
+ 		goto out_unlock;
+ 	}
+ 
