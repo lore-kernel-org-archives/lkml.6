@@ -1,141 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969207AbeE1Ppf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:45:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968603AbeE1KQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:55 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Hannes Reinecke <hare@suse.de>, Michael Lyle <mlyle@lyle.org>,
-        Junhui Tang <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 065/268] bcache: properly set task state in bch_writeback_thread()
-Date: Mon, 28 May 2018 12:00:39 +0200
-Message-Id: <20180528100209.257972470@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S969220AbeE1Ppt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:45:49 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:34186 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968684AbeE1Ppq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:45:46 -0400
+Date: Mon, 28 May 2018 08:45:16 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/2] sched: Make select_task_rq() require cpu_active()
+ for user tasks
+Message-ID: <20180528154516.c54b37ygekcn3p4g@pburton-laptop>
+References: <20180526154648.11635-1-paul.burton@mips.com>
+ <20180526154648.11635-2-paul.burton@mips.com>
+ <20180528144924.GE12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180528144924.GE12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1527522316-321458-31141-136399-1
+X-BESS-VER: 2018.6-r1805181819
+X-BESS-Apparent-Source-IP: 12.201.5.33
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193454
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hi Peter,
 
-------------------
+On Mon, May 28, 2018 at 04:49:24PM +0200, Peter Zijlstra wrote:
+> On Sat, May 26, 2018 at 08:46:47AM -0700, Paul Burton wrote:
+> 
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -1565,7 +1565,8 @@ int select_task_rq(struct task_struct *p, int cpu, int sd_flags, int wake_flags)
+> >  	 *   not worry about this generic constraint ]
+> >  	 */
+> >  	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
+> > -		     !cpu_online(cpu)))
+> > +		     !cpu_online(cpu) ||
+> > +		     (!cpu_active(cpu) && !(p->flags & PF_KTHREAD))))
+> >  		cpu = select_fallback_rq(task_cpu(p), p);
+> 
+> That is not quite right.. and I find that the wrong patch:
+> 
+>   955dbdf4ce87 ("sched: Allow migrating kthreads into online but inactive CPUs")
+> 
+> got merged over my suggested alternative :-(
+> 
+>   http://lkml.kernel.org/r/20170725165821.cejhb7v2s3kecems@hirez.programming.kicks-ass.net
+> 
+> So, lets first fix that
 
-From: Coly Li <colyli@suse.de>
+Thanks for the link - just knowing that the intention is that only
+per-CPU kthreads are allowed on !active CPUs is useful.
 
-[ Upstream commit 99361bbf26337186f02561109c17a4c4b1a7536a ]
+> , and then your patch becomes something like the below I think.
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1562,7 +1562,7 @@ int select_task_rq(struct task_struct *p
+>  	 *   not worry about this generic constraint ]
+>  	 */
+>  	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
+> -		     !cpu_online(cpu)))
+> +		     (is_per_cpu_kthread(p) ? !cpu_online(cpu) : !cpu_active(cpu)))
+>  		cpu = select_fallback_rq(task_cpu(p), p);
+>  
+>  	return cpu;
 
-Kernel thread routine bch_writeback_thread() has the following code block,
+Yes this looks good to me.
 
-447         down_write(&dc->writeback_lock);
-448~450     if (check conditions) {
-451                 up_write(&dc->writeback_lock);
-452                 set_current_state(TASK_INTERRUPTIBLE);
-453
-454                 if (kthread_should_stop())
-455                         return 0;
-456
-457                 schedule();
-458                 continue;
-459         }
+Are you planning to submit your change to introduce
+is_per_cpu_kthread(), or shall I?
 
-If condition check is true, its task state is set to TASK_INTERRUPTIBLE
-and call schedule() to wait for others to wake up it.
-
-There are 2 issues in current code,
-1, Task state is set to TASK_INTERRUPTIBLE after the condition checks, if
-   another process changes the condition and call wake_up_process(dc->
-   writeback_thread), then at line 452 task state is set back to
-   TASK_INTERRUPTIBLE, the writeback kernel thread will lose a chance to be
-   waken up.
-2, At line 454 if kthread_should_stop() is true, writeback kernel thread
-   will return to kernel/kthread.c:kthread() with TASK_INTERRUPTIBLE and
-   call do_exit(). It is not good to enter do_exit() with task state
-   TASK_INTERRUPTIBLE, in following code path might_sleep() is called and a
-   warning message is reported by __might_sleep(): "WARNING: do not call
-   blocking ops when !TASK_RUNNING; state=1 set at [xxxx]".
-
-For the first issue, task state should be set before condition checks.
-Ineed because dc->writeback_lock is required when modifying all the
-conditions, calling set_current_state() inside code block where dc->
-writeback_lock is hold is safe. But this is quite implicit, so I still move
-set_current_state() before all the condition checks.
-
-For the second issue, frankley speaking it does not hurt when kernel thread
-exits with TASK_INTERRUPTIBLE state, but this warning message scares users,
-makes them feel there might be something risky with bcache and hurt their
-data.  Setting task state to TASK_RUNNING before returning fixes this
-problem.
-
-In alloc.c:allocator_wait(), there is also a similar issue, and is also
-fixed in this patch.
-
-Changelog:
-v3: merge two similar fixes into one patch
-v2: fix the race issue in v1 patch.
-v1: initial buggy fix.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Cc: Michael Lyle <mlyle@lyle.org>
-Cc: Junhui Tang <tang.junhui@zte.com.cn>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/md/bcache/alloc.c     |    4 +++-
- drivers/md/bcache/writeback.c |    7 +++++--
- 2 files changed, 8 insertions(+), 3 deletions(-)
-
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -285,8 +285,10 @@ do {									\
- 			break;						\
- 									\
- 		mutex_unlock(&(ca)->set->bucket_lock);			\
--		if (kthread_should_stop())				\
-+		if (kthread_should_stop()) {				\
-+			set_current_state(TASK_RUNNING);		\
- 			return 0;					\
-+		}							\
- 									\
- 		try_to_freeze();					\
- 		schedule();						\
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -425,19 +425,22 @@ static int bch_writeback_thread(void *ar
- 
- 	while (!kthread_should_stop()) {
- 		down_write(&dc->writeback_lock);
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		if (!atomic_read(&dc->has_dirty) ||
- 		    (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
- 		     !dc->writeback_running)) {
- 			up_write(&dc->writeback_lock);
--			set_current_state(TASK_INTERRUPTIBLE);
- 
--			if (kthread_should_stop())
-+			if (kthread_should_stop()) {
-+				set_current_state(TASK_RUNNING);
- 				return 0;
-+			}
- 
- 			try_to_freeze();
- 			schedule();
- 			continue;
- 		}
-+		set_current_state(TASK_RUNNING);
- 
- 		searched_full_index = refill_dirty(dc);
- 
+Thanks,
+    Paul
