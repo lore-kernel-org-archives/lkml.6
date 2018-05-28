@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932826AbeE1L7Z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54922 "EHLO mail.kernel.org"
+        id S938425AbeE1L7j (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:59:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423474AbeE1LHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:48 -0400
+        id S1423424AbeE1LHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
-        Sagi Grimberg <sagi@grimberg.e>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 053/272] nvme: expand nvmf_check_if_ready checks
-Date: Mon, 28 May 2018 12:01:26 +0200
-Message-Id: <20180528100245.314500576@linuxfoundation.org>
+Subject: [PATCH 4.16 052/272] bnxt_en: Ignore src port field in decap filter nodes
+Date: Mon, 28 May 2018 12:01:25 +0200
+Message-Id: <20180528100245.234250676@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,325 +32,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
 
-[ Upstream commit bb06ec31452fb2da1594f88035c2ecea4e0652f4 ]
+[ Upstream commit 479ca3bf91da971fcefc003cf5773e8d7db24794 ]
 
-The nvmf_check_if_ready() checks that were added are very simplistic.
-As such, the routine allows a lot of cases to fail ios during windows
-of reset or re-connection. In cases where there are not multi-path
-options present, the error goes back to the callee - the filesystem
-or application. Not good.
+The driver currently uses src port field (along with other fields) in the
+decap tunnel key, while looking up and adding tunnel nodes. This leads to
+redundant cfa_decap_filter_alloc() requests to the FW and flow-miss in the
+flow engine. Fix this by ignoring the src port field in decap tunnel nodes.
 
-The common routine was rewritten and calling syntax slightly expanded
-so that per-transport is_ready routines don't need to be present.
-The transports now call the routine directly. The routine is now a
-fabrics routine rather than an inline function.
-
-The routine now looks at controller state to decide the action to
-take. Some states mandate io failure. Others define the condition where
-a command can be accepted.  When the decision is unclear, a generic
-queue-or-reject check is made to look for failfast or multipath ios and
-only fails the io if it is so marked. Otherwise, the io will be queued
-and wait for the controller state to resolve.
-
-Admin commands issued via ioctl share a live admin queue with commands
-from the transport for controller init. The ioctls could be intermixed
-with the initialization commands. It's possible for the ioctl cmd to
-be issued prior to the controller being enabled. To block this, the
-ioctl admin commands need to be distinguished from admin commands used
-for controller init. Added a USERCMD nvme_req(req)->rq_flags bit to
-reflect this division and set it on ioctls requests.  As the
-nvmf_check_if_ready() routine is called prior to nvme_setup_cmd(),
-ensure that commands allocated by the ioctl path (actually anything
-in core.c) preps the nvme_req(req) before starting the io. This will
-preserve the USERCMD flag during execution and/or retry.
-
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.e>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: f484f6782e01 ("bnxt_en: add hwrm FW cmds for cfa_encap_record and decap_filter")
+Signed-off-by: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/core.c    |   17 ++++++---
- drivers/nvme/host/fabrics.c |   79 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/fabrics.h |   33 +-----------------
- drivers/nvme/host/fc.c      |   12 +-----
- drivers/nvme/host/nvme.h    |    1 
- drivers/nvme/host/rdma.c    |   14 +------
- drivers/nvme/target/loop.c  |   11 +-----
- 7 files changed, 101 insertions(+), 66 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -379,6 +379,15 @@ static void nvme_put_ns(struct nvme_ns *
- 	kref_put(&ns->kref, nvme_free_ns);
- }
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+@@ -992,8 +992,10 @@ static int bnxt_tc_get_decap_handle(stru
  
-+static inline void nvme_clear_nvme_request(struct request *req)
-+{
-+	if (!(req->rq_flags & RQF_DONTPREP)) {
-+		nvme_req(req)->retries = 0;
-+		nvme_req(req)->flags = 0;
-+		req->rq_flags |= RQF_DONTPREP;
-+	}
-+}
-+
- struct request *nvme_alloc_request(struct request_queue *q,
- 		struct nvme_command *cmd, blk_mq_req_flags_t flags, int qid)
- {
-@@ -395,6 +404,7 @@ struct request *nvme_alloc_request(struc
- 		return req;
- 
- 	req->cmd_flags |= REQ_FAILFAST_DRIVER;
-+	nvme_clear_nvme_request(req);
- 	nvme_req(req)->cmd = cmd;
- 
- 	return req;
-@@ -611,11 +621,7 @@ blk_status_t nvme_setup_cmd(struct nvme_
- {
- 	blk_status_t ret = BLK_STS_OK;
- 
--	if (!(req->rq_flags & RQF_DONTPREP)) {
--		nvme_req(req)->retries = 0;
--		nvme_req(req)->flags = 0;
--		req->rq_flags |= RQF_DONTPREP;
--	}
-+	nvme_clear_nvme_request(req);
- 
- 	switch (req_op(req)) {
- 	case REQ_OP_DRV_IN:
-@@ -745,6 +751,7 @@ static int nvme_submit_user_cmd(struct r
- 		return PTR_ERR(req);
- 
- 	req->timeout = timeout ? timeout : ADMIN_TIMEOUT;
-+	nvme_req(req)->flags |= NVME_REQ_USERCMD;
- 
- 	if (ubuffer && bufflen) {
- 		ret = blk_rq_map_user(q, req, NULL, ubuffer, bufflen,
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -536,6 +536,85 @@ static struct nvmf_transport_ops *nvmf_l
- 	return NULL;
- }
- 
-+blk_status_t nvmf_check_if_ready(struct nvme_ctrl *ctrl, struct request *rq,
-+		bool queue_live, bool is_connected)
-+{
-+	struct nvme_command *cmd = nvme_req(rq)->cmd;
-+
-+	if (likely(ctrl->state == NVME_CTRL_LIVE && is_connected))
-+		return BLK_STS_OK;
-+
-+	switch (ctrl->state) {
-+	case NVME_CTRL_DELETING:
-+		goto reject_io;
-+
-+	case NVME_CTRL_NEW:
-+	case NVME_CTRL_CONNECTING:
-+		if (!is_connected)
-+			/*
-+			 * This is the case of starting a new
-+			 * association but connectivity was lost
-+			 * before it was fully created. We need to
-+			 * error the commands used to initialize the
-+			 * controller so the reconnect can go into a
-+			 * retry attempt. The commands should all be
-+			 * marked REQ_FAILFAST_DRIVER, which will hit
-+			 * the reject path below. Anything else will
-+			 * be queued while the state settles.
-+			 */
-+			goto reject_or_queue_io;
-+
-+		if ((queue_live &&
-+		     !(nvme_req(rq)->flags & NVME_REQ_USERCMD)) ||
-+		    (!queue_live && blk_rq_is_passthrough(rq) &&
-+		     cmd->common.opcode == nvme_fabrics_command &&
-+		     cmd->fabrics.fctype == nvme_fabrics_type_connect))
-+			/*
-+			 * If queue is live, allow only commands that
-+			 * are internally generated pass through. These
-+			 * are commands on the admin queue to initialize
-+			 * the controller. This will reject any ioctl
-+			 * admin cmds received while initializing.
-+			 *
-+			 * If the queue is not live, allow only a
-+			 * connect command. This will reject any ioctl
-+			 * admin cmd as well as initialization commands
-+			 * if the controller reverted the queue to non-live.
-+			 */
-+			return BLK_STS_OK;
-+
-+		/*
-+		 * fall-thru to the reject_or_queue_io clause
-+		 */
-+		break;
-+
-+	/* these cases fall-thru
-+	 * case NVME_CTRL_LIVE:
-+	 * case NVME_CTRL_RESETTING:
-+	 */
-+	default:
-+		break;
-+	}
-+
-+reject_or_queue_io:
-+	/*
-+	 * Any other new io is something we're not in a state to send
-+	 * to the device. Default action is to busy it and retry it
-+	 * after the controller state is recovered. However, anything
-+	 * marked for failfast or nvme multipath is immediately failed.
-+	 * Note: commands used to initialize the controller will be
-+	 *  marked for failfast.
-+	 * Note: nvme cli/ioctl commands are marked for failfast.
-+	 */
-+	if (!blk_noretry_request(rq) && !(rq->cmd_flags & REQ_NVME_MPATH))
-+		return BLK_STS_RESOURCE;
-+
-+reject_io:
-+	nvme_req(rq)->status = NVME_SC_ABORT_REQ;
-+	return BLK_STS_IOERR;
-+}
-+EXPORT_SYMBOL_GPL(nvmf_check_if_ready);
-+
- static const match_table_t opt_tokens = {
- 	{ NVMF_OPT_TRANSPORT,		"transport=%s"		},
- 	{ NVMF_OPT_TRADDR,		"traddr=%s"		},
---- a/drivers/nvme/host/fabrics.h
-+++ b/drivers/nvme/host/fabrics.h
-@@ -157,36 +157,7 @@ void nvmf_unregister_transport(struct nv
- void nvmf_free_options(struct nvmf_ctrl_options *opts);
- int nvmf_get_address(struct nvme_ctrl *ctrl, char *buf, int size);
- bool nvmf_should_reconnect(struct nvme_ctrl *ctrl);
--
--static inline blk_status_t nvmf_check_init_req(struct nvme_ctrl *ctrl,
--		struct request *rq)
--{
--	struct nvme_command *cmd = nvme_req(rq)->cmd;
--
--	/*
--	 * We cannot accept any other command until the connect command has
--	 * completed, so only allow connect to pass.
--	 */
--	if (!blk_rq_is_passthrough(rq) ||
--	    cmd->common.opcode != nvme_fabrics_command ||
--	    cmd->fabrics.fctype != nvme_fabrics_type_connect) {
--		/*
--		 * Connecting state means transport disruption or initial
--		 * establishment, which can take a long time and even might
--		 * fail permanently, fail fast to give upper layers a chance
--		 * to failover.
--		 * Deleting state means that the ctrl will never accept commands
--		 * again, fail it permanently.
--		 */
--		if (ctrl->state == NVME_CTRL_CONNECTING ||
--		    ctrl->state == NVME_CTRL_DELETING) {
--			nvme_req(rq)->status = NVME_SC_ABORT_REQ;
--			return BLK_STS_IOERR;
--		}
--		return BLK_STS_RESOURCE; /* try again later */
--	}
--
--	return BLK_STS_OK;
--}
-+blk_status_t nvmf_check_if_ready(struct nvme_ctrl *ctrl,
-+	struct request *rq, bool queue_live, bool is_connected);
- 
- #endif /* _NVME_FABRICS_H */
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -2284,14 +2284,6 @@ nvme_fc_start_fcp_op(struct nvme_fc_ctrl
- 	return BLK_STS_OK;
- }
- 
--static inline blk_status_t nvme_fc_is_ready(struct nvme_fc_queue *queue,
--		struct request *rq)
--{
--	if (unlikely(!test_bit(NVME_FC_Q_LIVE, &queue->flags)))
--		return nvmf_check_init_req(&queue->ctrl->ctrl, rq);
--	return BLK_STS_OK;
--}
--
- static blk_status_t
- nvme_fc_queue_rq(struct blk_mq_hw_ctx *hctx,
- 			const struct blk_mq_queue_data *bd)
-@@ -2307,7 +2299,9 @@ nvme_fc_queue_rq(struct blk_mq_hw_ctx *h
- 	u32 data_len;
- 	blk_status_t ret;
- 
--	ret = nvme_fc_is_ready(queue, rq);
-+	ret = nvmf_check_if_ready(&queue->ctrl->ctrl, rq,
-+		test_bit(NVME_FC_Q_LIVE, &queue->flags),
-+		ctrl->rport->remoteport.port_state == FC_OBJSTATE_ONLINE);
- 	if (unlikely(ret))
- 		return ret;
- 
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -109,6 +109,7 @@ struct nvme_request {
- 
- enum {
- 	NVME_REQ_CANCELLED		= (1 << 0),
-+	NVME_REQ_USERCMD		= (1 << 1),
- };
- 
- static inline struct nvme_request *nvme_req(struct request *req)
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -1594,17 +1594,6 @@ nvme_rdma_timeout(struct request *rq, bo
- 	return BLK_EH_HANDLED;
- }
- 
--/*
-- * We cannot accept any other command until the Connect command has completed.
-- */
--static inline blk_status_t
--nvme_rdma_is_ready(struct nvme_rdma_queue *queue, struct request *rq)
--{
--	if (unlikely(!test_bit(NVME_RDMA_Q_LIVE, &queue->flags)))
--		return nvmf_check_init_req(&queue->ctrl->ctrl, rq);
--	return BLK_STS_OK;
--}
--
- static blk_status_t nvme_rdma_queue_rq(struct blk_mq_hw_ctx *hctx,
- 		const struct blk_mq_queue_data *bd)
- {
-@@ -1620,7 +1609,8 @@ static blk_status_t nvme_rdma_queue_rq(s
- 
- 	WARN_ON_ONCE(rq->tag < 0);
- 
--	ret = nvme_rdma_is_ready(queue, rq);
-+	ret = nvmf_check_if_ready(&queue->ctrl->ctrl, rq,
-+		test_bit(NVME_RDMA_Q_LIVE, &queue->flags), true);
- 	if (unlikely(ret))
- 		return ret;
- 
---- a/drivers/nvme/target/loop.c
-+++ b/drivers/nvme/target/loop.c
-@@ -149,14 +149,6 @@ nvme_loop_timeout(struct request *rq, bo
- 	return BLK_EH_HANDLED;
- }
- 
--static inline blk_status_t nvme_loop_is_ready(struct nvme_loop_queue *queue,
--		struct request *rq)
--{
--	if (unlikely(!test_bit(NVME_LOOP_Q_LIVE, &queue->flags)))
--		return nvmf_check_init_req(&queue->ctrl->ctrl, rq);
--	return BLK_STS_OK;
--}
--
- static blk_status_t nvme_loop_queue_rq(struct blk_mq_hw_ctx *hctx,
- 		const struct blk_mq_queue_data *bd)
- {
-@@ -166,7 +158,8 @@ static blk_status_t nvme_loop_queue_rq(s
- 	struct nvme_loop_iod *iod = blk_mq_rq_to_pdu(req);
- 	blk_status_t ret;
- 
--	ret = nvme_loop_is_ready(queue, req);
-+	ret = nvmf_check_if_ready(&queue->ctrl->ctrl, req,
-+		test_bit(NVME_LOOP_Q_LIVE, &queue->flags), true);
- 	if (unlikely(ret))
- 		return ret;
- 
+ 	/* Check if there's another flow using the same tunnel decap.
+ 	 * If not, add this tunnel to the table and resolve the other
+-	 * tunnel header fileds
++	 * tunnel header fileds. Ignore src_port in the tunnel_key,
++	 * since it is not required for decap filters.
+ 	 */
++	decap_key->tp_src = 0;
+ 	decap_node = bnxt_tc_get_tunnel_node(bp, &tc_info->decap_table,
+ 					     &tc_info->decap_ht_params,
+ 					     decap_key);
