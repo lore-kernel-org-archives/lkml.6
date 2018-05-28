@@ -1,87 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939204AbeE1NaC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:30:02 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:50912 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S939075AbeE1N36 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:29:58 -0400
-To: "Vinayak Holikatti <vinholikatti@gmail.com>; \"James E.J. Bottomley\"
-        <jejb@linux.vnet.ibm.com>; \"Martin K. Petersen\""
-        <martin.petersen@oracle.com>,
-        <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org; Manjunath M Bettegowda
-        <manjumb@synopsys.com>; Prabu Thangamuthu <prabut@synopsys.com>; Tejas
-        Joglekar <joglekar@synopsys.com>; Joao Pinto"
-        <Joao.Pinto@synopsys.com>
-Subject: [PATCH 3/5] scsi: ufs: Add Kconfig for UFS HC driver crypto support
-From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
-Message-ID: <9baaf314-e9de-a078-1085-9c81b3421d42@synopsys.com>
-Date: Mon, 28 May 2018 14:29:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1163201AbeE1KrG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1034049AbeE1Kq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:59 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-alpha@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 130/496] locking/xchg/alpha: Fix xchg() and cmpxchg() memory ordering bugs
+Date: Mon, 28 May 2018 11:58:35 +0200
+Message-Id: <20180528100325.406902462@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.144.133.104]
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-This patch adds the Kconfig for enabling crypto support for
-UFS Host Controller driver. It also adds Makefile changes
-for building crypto support based on crypto Kconfig selection.
+------------------
 
-Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
+From: Andrea Parri <parri.andrea@gmail.com>
+
+[ Upstream commit 472e8c55cf6622d1c112dc2bc777f68bbd4189db ]
+
+Successful RMW operations are supposed to be fully ordered, but
+Alpha's xchg() and cmpxchg() do not meet this requirement.
+
+Will Deacon noticed the bug:
+
+  > So MP using xchg:
+  >
+  > WRITE_ONCE(x, 1)
+  > xchg(y, 1)
+  >
+  > smp_load_acquire(y) == 1
+  > READ_ONCE(x) == 0
+  >
+  > would be allowed.
+
+... which thus violates the above requirement.
+
+Fix it by adding a leading smp_mb() to the xchg() and cmpxchg() implementations.
+
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-alpha@vger.kernel.org
+Link: http://lkml.kernel.org/r/1519291488-5752-1-git-send-email-parri.andrea@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ufs/Kconfig  | 15 +++++++++++++++
- drivers/scsi/ufs/Makefile |  6 +++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ arch/alpha/include/asm/xchg.h |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index e27b4d4..0134672 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -50,6 +50,21 @@ config SCSI_UFSHCD
- 	  However, do not compile this as a module if your root file system
- 	  (the one containing the directory /) is located on a UFS device.
+--- a/arch/alpha/include/asm/xchg.h
++++ b/arch/alpha/include/asm/xchg.h
+@@ -12,6 +12,10 @@
+  * Atomic exchange.
+  * Since it can be used to implement critical sections
+  * it must clobber "memory" (also for interrupts in UP).
++ *
++ * The leading and the trailing memory barriers guarantee that these
++ * operations are fully ordered.
++ *
+  */
  
-+config SCSI_UFSHCD_INLINE_ENCRYPTION
-+	bool "Universal Flash Storage Controller Driver crypto support"
-+	depends on SCSI_UFSHCD
-+	default n
-+	select BLK_DEV_INLINE_ENCRYPTION if SCSI_UFSHCD_INLINE_ENCRYPTION
-+	help
-+	This enables the Inline Encryption feature of the UFS Host
-+	Controller driver. Once the capability is detected in hardware,
-+	it will be made available for the user through Linux Kernel
-+	Cryptography Framework(LKCF).
-+
-+	  If you have a controller with this capability, say Y.
-+
-+	  If unsure, say N.
-+
- config SCSI_UFSHCD_PCI
- 	tristate "PCI bus based UFS Controller support"
- 	depends on SCSI_UFSHCD && PCI
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..ab84bec 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -4,6 +4,10 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) += tc-dwc-g210-pci.o ufshcd-dwc.o tc-dwc-g210.
- obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-dwc-g210.o
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
--ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
-+        ufshcd-core-objs := ufshcd.o ufs-sysfs.o ufshcd-crypto.o
-+else
-+        ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+endif
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
--- 
-2.7.4
+ static inline unsigned long
+@@ -19,6 +23,7 @@ ____xchg(_u8, volatile char *m, unsigned
+ {
+ 	unsigned long ret, tmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%4,7,%3\n"
+ 	"	insbl	%1,%4,%1\n"
+@@ -43,6 +48,7 @@ ____xchg(_u16, volatile short *m, unsign
+ {
+ 	unsigned long ret, tmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%4,7,%3\n"
+ 	"	inswl	%1,%4,%1\n"
+@@ -67,6 +73,7 @@ ____xchg(_u32, volatile int *m, unsigned
+ {
+ 	unsigned long dummy;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldl_l %0,%4\n"
+ 	"	bis $31,%3,%1\n"
+@@ -87,6 +94,7 @@ ____xchg(_u64, volatile long *m, unsigne
+ {
+ 	unsigned long dummy;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldq_l %0,%4\n"
+ 	"	bis $31,%3,%1\n"
+@@ -128,9 +136,12 @@ ____xchg(, volatile void *ptr, unsigned
+  * store NEW in MEM.  Return the initial value in MEM.  Success is
+  * indicated by comparing RETURN with OLD.
+  *
+- * The memory barrier is placed in SMP unconditionally, in order to
+- * guarantee that dependency ordering is preserved when a dependency
+- * is headed by an unsuccessful operation.
++ * The leading and the trailing memory barriers guarantee that these
++ * operations are fully ordered.
++ *
++ * The trailing memory barrier is placed in SMP unconditionally, in
++ * order to guarantee that dependency ordering is preserved when a
++ * dependency is headed by an unsuccessful operation.
+  */
+ 
+ static inline unsigned long
+@@ -138,6 +149,7 @@ ____cmpxchg(_u8, volatile char *m, unsig
+ {
+ 	unsigned long prev, tmp, cmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%5,7,%4\n"
+ 	"	insbl	%1,%5,%1\n"
+@@ -165,6 +177,7 @@ ____cmpxchg(_u16, volatile short *m, uns
+ {
+ 	unsigned long prev, tmp, cmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%5,7,%4\n"
+ 	"	inswl	%1,%5,%1\n"
+@@ -192,6 +205,7 @@ ____cmpxchg(_u32, volatile int *m, int o
+ {
+ 	unsigned long prev, cmp;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldl_l %0,%5\n"
+ 	"	cmpeq %0,%3,%1\n"
+@@ -215,6 +229,7 @@ ____cmpxchg(_u64, volatile long *m, unsi
+ {
+ 	unsigned long prev, cmp;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldq_l %0,%5\n"
+ 	"	cmpeq %0,%3,%1\n"
