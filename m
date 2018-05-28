@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424907AbeE1LXU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39734 "EHLO mail.kernel.org"
+        id S1424920AbeE1LX0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:23:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423696AbeE1LXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:23:15 -0400
+        id S1423696AbeE1LXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:23:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>,
-        Andreas Dilger <adilger@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 017/268] do d_instantiate/unlock_new_inode combinations safely
-Date: Mon, 28 May 2018 11:59:51 +0200
-Message-Id: <20180528100203.994843437@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 006/329] aio: fix io_destroy(2) vs. lookup_ioctx() race
+Date: Mon, 28 May 2018 11:58:55 +0200
+Message-Id: <20180528100242.536867733@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -25,428 +24,70 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 1e2e547a93a00ebc21582c06ca3c6cfea2a309ee upstream.
+commit baf10564fbb66ea222cae66fbff11c444590ffd9 upstream.
 
-For anything NFS-exported we do _not_ want to unlock new inode
-before it has grown an alias; original set of fixes got the
-ordering right, but missed the nasty complication in case of
-lockdep being enabled - unlock_new_inode() does
-	lockdep_annotate_inode_mutex_key(inode)
-which can only be done before anyone gets a chance to touch
-->i_mutex.  Unfortunately, flipping the order and doing
-unlock_new_inode() before d_instantiate() opens a window when
-mkdir can race with open-by-fhandle on a guessed fhandle, leading
-to multiple aliases for a directory inode and all the breakage
-that follows from that.
+kill_ioctx() used to have an explicit RCU delay between removing the
+reference from ->ioctx_table and percpu_ref_kill() dropping the refcount.
+At some point that delay had been removed, on the theory that
+percpu_ref_kill() itself contained an RCU delay.  Unfortunately, that was
+the wrong kind of RCU delay and it didn't care about rcu_read_lock() used
+by lookup_ioctx().  As the result, we could get ctx freed right under
+lookup_ioctx().  Tejun has fixed that in a6d7cff472e ("fs/aio: Add explicit
+RCU grace period when freeing kioctx"); however, that fix is not enough.
 
-	Correct solution: a new primitive (d_instantiate_new())
-combining these two in the right order - lockdep annotate, then
-d_instantiate(), then the rest of unlock_new_inode().  All
-combinations of d_instantiate() with unlock_new_inode() should
-be converted to that.
+Suppose io_destroy() from one thread races with e.g. io_setup() from another;
+CPU1 removes the reference from current->mm->ioctx_table[...] just as CPU2
+has picked it (under rcu_read_lock()).  Then CPU1 proceeds to drop the
+refcount, getting it to 0 and triggering a call of free_ioctx_users(),
+which proceeds to drop the secondary refcount and once that reaches zero
+calls free_ioctx_reqs().  That does
+        INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
+        queue_rcu_work(system_wq, &ctx->free_rwork);
+and schedules freeing the whole thing after RCU delay.
 
-Cc: stable@kernel.org	# 2.6.29 and later
-Tested-by: Mike Marshall <hubcap@omnibond.com>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+In the meanwhile CPU2 has gotten around to percpu_ref_get(), bumping the
+refcount from 0 to 1 and returned the reference to io_setup().
+
+Tejun's fix (that queue_rcu_work() in there) guarantees that ctx won't get
+freed until after percpu_ref_get().  Sure, we'd increment the counter before
+ctx can be freed.  Now we are out of rcu_read_lock() and there's nothing to
+stop freeing of the whole thing.  Unfortunately, CPU2 assumes that since it
+has grabbed the reference, ctx is *NOT* going away until it gets around to
+dropping that reference.
+
+The fix is obvious - use percpu_ref_tryget_live() and treat failure as miss.
+It's not costlier than what we currently do in normal case, it's safe to
+call since freeing *is* delayed and it closes the race window - either
+lookup_ioctx() comes before percpu_ref_kill() (in which case ctx->users
+won't reach 0 until the caller of lookup_ioctx() drops it) or lookup_ioctx()
+fails, ctx->users is unaffected and caller of lookup_ioctx() doesn't see
+the object in question at all.
+
+Cc: stable@kernel.org
+Fixes: a6d7cff472e "fs/aio: Add explicit RCU grace period when freeing kioctx"
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c       |   16 ++++------------
- fs/dcache.c            |   22 ++++++++++++++++++++++
- fs/ecryptfs/inode.c    |    3 +--
- fs/ext2/namei.c        |    6 ++----
- fs/ext4/namei.c        |    6 ++----
- fs/f2fs/namei.c        |   12 ++++--------
- fs/jffs2/dir.c         |   12 ++++--------
- fs/jfs/namei.c         |   12 ++++--------
- fs/nilfs2/namei.c      |    6 ++----
- fs/reiserfs/namei.c    |   12 ++++--------
- fs/udf/namei.c         |    6 ++----
- fs/ufs/namei.c         |    6 ++----
- include/linux/dcache.h |    1 +
- 13 files changed, 54 insertions(+), 66 deletions(-)
+ fs/aio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6413,8 +6413,7 @@ static int btrfs_mknod(struct inode *dir
- 		goto out_unlock_inode;
- 	} else {
- 		btrfs_update_inode(trans, root, inode);
--		unlock_new_inode(inode);
--		d_instantiate(dentry, inode);
-+		d_instantiate_new(dentry, inode);
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1074,8 +1074,8 @@ static struct kioctx *lookup_ioctx(unsig
+ 
+ 	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+-		percpu_ref_get(&ctx->users);
+-		ret = ctx;
++		if (percpu_ref_tryget_live(&ctx->users))
++			ret = ctx;
  	}
- 
- out_unlock:
-@@ -6489,8 +6488,7 @@ static int btrfs_create(struct inode *di
- 		goto out_unlock_inode;
- 
- 	BTRFS_I(inode)->io_tree.ops = &btrfs_extent_io_ops;
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 
- out_unlock:
- 	btrfs_end_transaction(trans, root);
-@@ -6633,12 +6631,7 @@ static int btrfs_mkdir(struct inode *dir
- 	if (err)
- 		goto out_fail_inode;
- 
--	d_instantiate(dentry, inode);
--	/*
--	 * mkdir is special.  We're unlocking after we call d_instantiate
--	 * to avoid a race with nfsd calling d_instantiate.
--	 */
--	unlock_new_inode(inode);
-+	d_instantiate_new(dentry, inode);
- 	drop_on_err = 0;
- 
- out_fail:
-@@ -9789,8 +9782,7 @@ static int btrfs_symlink(struct inode *d
- 		goto out_unlock_inode;
- 	}
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 
- out_unlock:
- 	btrfs_end_transaction(trans, root);
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1897,6 +1897,28 @@ struct dentry *d_instantiate_unique(stru
- 
- EXPORT_SYMBOL(d_instantiate_unique);
- 
-+/*
-+ * This should be equivalent to d_instantiate() + unlock_new_inode(),
-+ * with lockdep-related part of unlock_new_inode() done before
-+ * anything else.  Use that instead of open-coding d_instantiate()/
-+ * unlock_new_inode() combinations.
-+ */
-+void d_instantiate_new(struct dentry *entry, struct inode *inode)
-+{
-+	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
-+	BUG_ON(!inode);
-+	lockdep_annotate_inode_mutex_key(inode);
-+	security_d_instantiate(entry, inode);
-+	spin_lock(&inode->i_lock);
-+	__d_instantiate(entry, inode);
-+	WARN_ON(!(inode->i_state & I_NEW));
-+	inode->i_state &= ~I_NEW;
-+	smp_mb();
-+	wake_up_bit(&inode->i_state, __I_NEW);
-+	spin_unlock(&inode->i_lock);
-+}
-+EXPORT_SYMBOL(d_instantiate_new);
-+
- /**
-  * d_instantiate_no_diralias - instantiate a non-aliased dentry
-  * @entry: dentry to complete
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -287,8 +287,7 @@ ecryptfs_create(struct inode *directory_
- 		iput(ecryptfs_inode);
- 		goto out;
- 	}
--	unlock_new_inode(ecryptfs_inode);
--	d_instantiate(ecryptfs_dentry, ecryptfs_inode);
-+	d_instantiate_new(ecryptfs_dentry, ecryptfs_inode);
  out:
- 	return rc;
- }
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -40,8 +40,7 @@ static inline int ext2_add_nondir(struct
- {
- 	int err = ext2_add_link(dentry, inode);
- 	if (!err) {
--		unlock_new_inode(inode);
--		d_instantiate(dentry, inode);
-+		d_instantiate_new(dentry, inode);
- 		return 0;
- 	}
- 	inode_dec_link_count(inode);
-@@ -267,8 +266,7 @@ static int ext2_mkdir(struct inode * dir
- 	if (err)
- 		goto out_fail;
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- out:
- 	return err;
- 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2429,8 +2429,7 @@ static int ext4_add_nondir(handle_t *han
- 	int err = ext4_add_entry(handle, dentry, inode);
- 	if (!err) {
- 		ext4_mark_inode_dirty(handle, inode);
--		unlock_new_inode(inode);
--		d_instantiate(dentry, inode);
-+		d_instantiate_new(dentry, inode);
- 		return 0;
- 	}
- 	drop_nlink(inode);
-@@ -2669,8 +2668,7 @@ out_clear_inode:
- 	err = ext4_mark_inode_dirty(handle, dir);
- 	if (err)
- 		goto out_clear_inode;
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	if (IS_DIRSYNC(dir))
- 		ext4_handle_sync(handle);
- 
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -150,8 +150,7 @@ static int f2fs_create(struct inode *dir
- 
- 	alloc_nid_done(sbi, ino);
- 
--	d_instantiate(dentry, inode);
--	unlock_new_inode(inode);
-+	d_instantiate_new(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-@@ -399,8 +398,7 @@ static int f2fs_symlink(struct inode *di
- 	err = page_symlink(inode, p_str, p_len);
- 
- err_out:
--	d_instantiate(dentry, inode);
--	unlock_new_inode(inode);
-+	d_instantiate_new(dentry, inode);
- 
- 	/*
- 	 * Let's flush symlink data in order to avoid broken symlink as much as
-@@ -454,8 +452,7 @@ static int f2fs_mkdir(struct inode *dir,
- 
- 	alloc_nid_done(sbi, inode->i_ino);
- 
--	d_instantiate(dentry, inode);
--	unlock_new_inode(inode);
-+	d_instantiate_new(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-@@ -499,8 +496,7 @@ static int f2fs_mknod(struct inode *dir,
- 
- 	alloc_nid_done(sbi, inode->i_ino);
- 
--	d_instantiate(dentry, inode);
--	unlock_new_inode(inode);
-+	d_instantiate_new(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
---- a/fs/jffs2/dir.c
-+++ b/fs/jffs2/dir.c
-@@ -207,8 +207,7 @@ static int jffs2_create(struct inode *di
- 		  __func__, inode->i_ino, inode->i_mode, inode->i_nlink,
- 		  f->inocache->pino_nlink, inode->i_mapping->nrpages);
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	return 0;
- 
-  fail:
-@@ -428,8 +427,7 @@ static int jffs2_symlink (struct inode *
- 	mutex_unlock(&dir_f->sem);
- 	jffs2_complete_reservation(c);
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	return 0;
- 
-  fail:
-@@ -573,8 +571,7 @@ static int jffs2_mkdir (struct inode *di
- 	mutex_unlock(&dir_f->sem);
- 	jffs2_complete_reservation(c);
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	return 0;
- 
-  fail:
-@@ -745,8 +742,7 @@ static int jffs2_mknod (struct inode *di
- 	mutex_unlock(&dir_f->sem);
- 	jffs2_complete_reservation(c);
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	return 0;
- 
-  fail:
---- a/fs/jfs/namei.c
-+++ b/fs/jfs/namei.c
-@@ -178,8 +178,7 @@ static int jfs_create(struct inode *dip,
- 		unlock_new_inode(ip);
- 		iput(ip);
- 	} else {
--		unlock_new_inode(ip);
--		d_instantiate(dentry, ip);
-+		d_instantiate_new(dentry, ip);
- 	}
- 
-       out2:
-@@ -313,8 +312,7 @@ static int jfs_mkdir(struct inode *dip,
- 		unlock_new_inode(ip);
- 		iput(ip);
- 	} else {
--		unlock_new_inode(ip);
--		d_instantiate(dentry, ip);
-+		d_instantiate_new(dentry, ip);
- 	}
- 
-       out2:
-@@ -1058,8 +1056,7 @@ static int jfs_symlink(struct inode *dip
- 		unlock_new_inode(ip);
- 		iput(ip);
- 	} else {
--		unlock_new_inode(ip);
--		d_instantiate(dentry, ip);
-+		d_instantiate_new(dentry, ip);
- 	}
- 
-       out2:
-@@ -1443,8 +1440,7 @@ static int jfs_mknod(struct inode *dir,
- 		unlock_new_inode(ip);
- 		iput(ip);
- 	} else {
--		unlock_new_inode(ip);
--		d_instantiate(dentry, ip);
-+		d_instantiate_new(dentry, ip);
- 	}
- 
-       out1:
---- a/fs/nilfs2/namei.c
-+++ b/fs/nilfs2/namei.c
-@@ -50,8 +50,7 @@ static inline int nilfs_add_nondir(struc
- {
- 	int err = nilfs_add_link(dentry, inode);
- 	if (!err) {
--		d_instantiate(dentry, inode);
--		unlock_new_inode(inode);
-+		d_instantiate_new(dentry, inode);
- 		return 0;
- 	}
- 	inode_dec_link_count(inode);
-@@ -246,8 +245,7 @@ static int nilfs_mkdir(struct inode *dir
- 		goto out_fail;
- 
- 	nilfs_mark_inode_dirty(inode);
--	d_instantiate(dentry, inode);
--	unlock_new_inode(inode);
-+	d_instantiate_new(dentry, inode);
- out:
- 	if (!err)
- 		err = nilfs_transaction_commit(dir->i_sb);
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -687,8 +687,7 @@ static int reiserfs_create(struct inode
- 	reiserfs_update_inode_transaction(inode);
- 	reiserfs_update_inode_transaction(dir);
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	retval = journal_end(&th);
- 
- out_failed:
-@@ -771,8 +770,7 @@ static int reiserfs_mknod(struct inode *
- 		goto out_failed;
- 	}
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	retval = journal_end(&th);
- 
- out_failed:
-@@ -871,8 +869,7 @@ static int reiserfs_mkdir(struct inode *
- 	/* the above add_entry did not update dir's stat data */
- 	reiserfs_update_sd(&th, dir);
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	retval = journal_end(&th);
- out_failed:
- 	reiserfs_write_unlock(dir->i_sb);
-@@ -1186,8 +1183,7 @@ static int reiserfs_symlink(struct inode
- 		goto out_failed;
- 	}
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	retval = journal_end(&th);
- out_failed:
- 	reiserfs_write_unlock(parent_dir->i_sb);
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -611,8 +611,7 @@ static int udf_add_nondir(struct dentry
- 	if (fibh.sbh != fibh.ebh)
- 		brelse(fibh.ebh);
- 	brelse(fibh.sbh);
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 
- 	return 0;
- }
-@@ -722,8 +721,7 @@ static int udf_mkdir(struct inode *dir,
- 	inc_nlink(dir);
- 	dir->i_ctime = dir->i_mtime = current_fs_time(dir->i_sb);
- 	mark_inode_dirty(dir);
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	if (fibh.sbh != fibh.ebh)
- 		brelse(fibh.ebh);
- 	brelse(fibh.sbh);
---- a/fs/ufs/namei.c
-+++ b/fs/ufs/namei.c
-@@ -38,8 +38,7 @@ static inline int ufs_add_nondir(struct
- {
- 	int err = ufs_add_link(dentry, inode);
- 	if (!err) {
--		unlock_new_inode(inode);
--		d_instantiate(dentry, inode);
-+		d_instantiate_new(dentry, inode);
- 		return 0;
- 	}
- 	inode_dec_link_count(inode);
-@@ -191,8 +190,7 @@ static int ufs_mkdir(struct inode * dir,
- 	if (err)
- 		goto out_fail;
- 
--	unlock_new_inode(inode);
--	d_instantiate(dentry, inode);
-+	d_instantiate_new(dentry, inode);
- 	return 0;
- 
- out_fail:
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -236,6 +236,7 @@ extern seqlock_t rename_lock;
-  * These are the low-level FS interfaces to the dcache..
-  */
- extern void d_instantiate(struct dentry *, struct inode *);
-+extern void d_instantiate_new(struct dentry *, struct inode *);
- extern struct dentry * d_instantiate_unique(struct dentry *, struct inode *);
- extern int d_instantiate_no_diralias(struct dentry *, struct inode *);
- extern void __d_drop(struct dentry *dentry);
+ 	rcu_read_unlock();
