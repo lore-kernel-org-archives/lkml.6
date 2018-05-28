@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938978AbeE1Mia (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:38:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46690 "EHLO mail.kernel.org"
+        id S938876AbeE1Mi4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:38:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938039AbeE1K6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:36 -0400
+        id S938021AbeE1K6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        stable@vger.kernel.org,
+        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 380/496] ath9k: fix crash in spectral scan
-Date: Mon, 28 May 2018 12:02:45 +0200
-Message-Id: <20180528100335.802946100@linuxfoundation.org>
+Subject: [PATCH 4.14 378/496] ath10k: Fix kernel panic while using worker (ath10k_sta_rc_update_wk)
+Date: Mon, 28 May 2018 12:02:43 +0200
+Message-Id: <20180528100335.726958431@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,145 +31,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
 
-[ Upstream commit 221b6ec69ed9c56b6cd9a124a387a9472f14284e ]
+[ Upstream commit 8b2d93dd22615cb7f3046a5a2083a6f8bb8052ed ]
 
-Fixes crash seen on arm smp systems (gateworks ventana imx6):
+When attempt to run worker (ath10k_sta_rc_update_wk) after the station object
+(ieee80211_sta) delete will trigger the kernel panic.
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000014
-pgd = 80004000
-[00000014] *pgd=00000000
-Internal error: Oops - BUG: 17 [#1] PREEMPT SMP ARM
-Modules linked in: ip6table_filter nf_conntrack_ipv6 ip6_tables nf_log_ipv6 nf_defrag_ipv6 shortcut_fe ipcomp6 xfrm_ipcomp xfrm6_tunnel xfrm6_mode_tunnel xfrm6_mode_transport xfrm6_mode_ro xfrm6_mode_beet ip6_tunnel tunnel6 mip6 ah6 esp6 xfrm_algo sit ip_tunnel tunnel4 ipv6 ath10k_pci ath10k_core ath9k ath mac80211 cfg80211 compat ath_pci ath_hal(P) caamalg authencesn authenc caamrng caamhash caam_jr caam cdc_ncm usbnet usbcore sky2 imx2_wdt
-CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: P                4.9.85 #19
-Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-task: bf064980 task.stack: bf07c000
-PC is at relay_buf_full+0xc/0x30
-LR is at _674+0x740/0xf10 [ath9k]
-pc : [<8018bce0>]    lr : [<7f1aa604>]    psr: 80000013
-sp : bf07dbf0  ip : bf07dc00  fp : bf07dbfc
-r10: 0000003f  r9 : bf130e00  r8 : 809044b0
-r7 : 00000000  r6 : be67a9f0  r5 : 00000000  r4 : 809043e4
-r3 : c0864c24  r2 : 00000000  r1 : 00000004  r0 : 00000000
-Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 10c5387d  Table: 4e6a004a  DAC: 00000055
-Process ksoftirqd/0 (pid: 3, stack limit = 0xbf07c210)
-Stack: (0xbf07dbf0 to 0xbf07e000)
-dbe0:                                     bf07dd04 bf07dc00 7f1aa604 8018bce0
-dc00: 00004014 be59e010 bf07dc34 bf07dc18 7f1a7084 7f19c07c be59c010 be6470a0
-dc20: 0000096c be648954 bf07dc6c bf07dc38 7f1c286c bf07dd90 bf07dc5c bf07dc48
-dc40: 8029ea4c 0000003c 00000001 be59c010 00000094 00000000 00000000 00000000
-dc60: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dc80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dca0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dcc0: 00000000 00000000 00000000 00000000 00000000 00000000 8010ef24 00000030
-dce0: be94f5e8 be6485a0 bddf0200 be59c010 be6465a0 be6415a0 bf07ddf4 bf07dd08
-dd00: 7f1cf800 7f1aa55c 1fc38c4c 00000000 bf07dd58 cccccccd 66666667 be640bc0
-dd20: bf07dd54 be6415a0 1fc38c4c 00000000 00000000 be59c038 be67a9c0 be59e010
-dd40: be67a9f0 be647170 8090c904 be59c010 00000000 00000001 1fc38e84 00000000
-dd60: be640bc0 bddf0200 00000200 00000010 0000003f 00000002 20000013 be59c010
-dd80: 8092d940 bf7ca2c0 bf07ddb4 bf07dd98 1fc38c4c 2602003f 0100ff1b 80ff1b00
-dda0: 00808080 00000000 00000000 80808080 80808080 80808080 80808080 00008080
-ddc0: 00000000 00000000 7f1b62b8 00000002 be6470ec be6470f0 00000000 bf07de98
-dde0: 8092d940 be6415a0 bf07de94 bf07ddf8 7f1d1ed8 7f1cf1fc 00000000 00000000
-de00: bf7cc4c0 00000400 be6470f0 bf07de18 8015165c be59c010 8090453c 8090453c
-de20: bf07dec4 be6465a0 8014f614 80148884 0000619a 00000001 bf07c000 00000100
-de40: bf07de78 00000001 7f327850 00000002 afb50401 bf064980 bf07de9c bf07de68
-de60: bf064a00 803cc668 bf064a00 be6470b4 be6470b8 80844180 00000000 bf07de98
-de80: 8092d940 bf07c000 bf07dec4 bf07de98 80124d18 7f1d1c44 80124c94 00000000
-dea0: 00000006 80902098 80902080 40000006 00000100 bf07c000 bf07df24 bf07dec8
-dec0: 8012501c 80124ca0 bf7cc4c0 bf064980 be95e1c0 04208040 80902d00 000061c7
-dee0: 0000000a 80600b54 8092d940 808441f8 80902080 bf07dec8 bf03b200 bf07c000
-df00: bf03b200 8090fe54 00000000 00000000 00000000 00000000 bf07df34 bf07df28
-df20: 80125148 80124f28 bf07df5c bf07df38 8013deb4 8012511c 00000000 bf03b240
-df40: bf03b200 8013dc90 00000000 00000000 bf07dfac bf07df60 8013ad40 8013dc9c
-df60: 70448040 00000001 00000000 bf03b200 00000000 00030003 bf07df78 bf07df78
-df80: 00000000 00000000 bf07df88 bf07df88 bf03b240 8013ac48 00000000 00000000
-dfa0: 00000000 bf07dfb0 80107760 8013ac54 00000000 00000000 00000000 00000000
-dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 8c120004 1190ad04
-Backtrace:
-[<8018bcd4>] (relay_buf_full) from [<7f1aa604>] (_674+0x740/0xf10 [ath9k])
-[<7f1aa550>] (_674 [ath9k]) from [<7f1cf800>] (_582+0x14b4/0x3708 [ath9k])
- r10:be6415a0 r9:be6465a0 r8:be59c010 r7:bddf0200 r6:be6485a0 r5:be94f5e8
- r4:00000030
-[<7f1cf1f0>] (_582 [ath9k]) from [<7f1d1ed8>] (_735+0x2a0/0xec4 [ath9k])
- r10:be6415a0 r9:8092d940 r8:bf07de98 r7:00000000 r6:be6470f0 r5:be6470ec
- r4:00000002
-[<7f1d1c38>] (_735 [ath9k]) from [<80124d18>] (tasklet_action+0x84/0xf8)
- r10:bf07c000 r9:8092d940 r8:bf07de98 r7:00000000 r6:80844180 r5:be6470b8
- r4:be6470b4
-[<80124c94>] (tasklet_action) from [<8012501c>] (__do_softirq+0x100/0x1f4)
- r10:bf07c000 r9:00000100 r8:40000006 r7:80902080 r6:80902098 r5:00000006
- r4:00000000 r3:80124c94
-[<80124f1c>] (__do_softirq) from [<80125148>] (run_ksoftirqd+0x38/0x4c)
- r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:8090fe54 r5:bf03b200
- r4:bf07c000
-[<80125110>] (run_ksoftirqd) from [<8013deb4>] (smpboot_thread_fn+0x224/0x260)
-[<8013dc90>] (smpboot_thread_fn) from [<8013ad40>] (kthread+0xf8/0x100)
- r9:00000000 r8:00000000 r7:8013dc90 r6:bf03b200 r5:bf03b240 r4:00000000
-[<8013ac48>] (kthread) from [<80107760>] (ret_from_fork+0x14/0x34)
- r7:00000000 r6:00000000 r5:8013ac48 r4:bf03b240
-Code: e89da800 e1a0c00d e92dd800 e24cb004 (e5901014)
----[ end trace dddf11ac9111b272 ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-CPU1: stopping
-CPU: 1 PID: 0 Comm: swapper/1 Tainted: P      D         4.9.85 #19
-Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-Backtrace:
-[<8010a708>] (dump_backtrace) from [<8010a99c>] (show_stack+0x18/0x1c)
- r7:bf093f58 r6:20000193 r5:809168e8 r4:00000000
-[<8010a984>] (show_stack) from [<802a09c4>] (dump_stack+0x94/0xa8)
-[<802a0930>] (dump_stack) from [<8010d184>] (handle_IPI+0xe8/0x180)
- r7:bf093f58 r6:00000000 r5:00000001 r4:808478c4
-[<8010d09c>] (handle_IPI) from [<801013e8>] (gic_handle_irq+0x78/0x7c)
- r7:f4000100 r6:bf093f58 r5:f400010c r4:8090467c
-[<80101370>] (gic_handle_irq) from [<8010b378>] (__irq_svc+0x58/0x8c)
-Exception stack(0xbf093f58 to 0xbf093fa0)
-3f40:                                                       bf7d62a0 00000000
-3f60: 0010a5f4 80113460 bf092000 809043e4 00000002 80904434 bf092008 412fc09a
-3f80: 00000000 bf093fb4 bf093fb8 bf093fa8 8010804c 80108050 60000013 ffffffff
- r9:bf092000 r8:bf092008 r7:bf093f8c r6:ffffffff r5:60000013 r4:80108050
-[<80108014>] (arch_cpu_idle) from [<80553c2c>] (default_idle_call+0x30/0x34)
-[<80553bfc>] (default_idle_call) from [<80158394>] (cpu_startup_entry+0xc4/0xfc)
-[<801582d0>] (cpu_startup_entry) from [<8010ce40>] (secondary_start_kernel+0x168/0x174)
- r7:8092d2f8 r4:80913568
-[<8010ccd8>] (secondary_start_kernel) from [<10101488>] (0x10101488)
- r5:00000055 r4:4f07806a
-Rebooting in 10 seconds..
-Reboot failed -- System halted
+This problem arise in AP + Mesh configuration, Where the current node AP VAP
+and neighbor node mesh VAP MAC address are same. When the current mesh node
+try to establish the mesh link with neighbor node, driver peer creation for
+the neighbor mesh node fails due to duplication MAC address. Already the AP
+VAP created with same MAC address.
 
-Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+It is caused by the following scenario steps.
+
+Steps:
+1. In above condition, ath10k driver sta_state callback (ath10k_sta_state)
+   fails to do the state change for a station from IEEE80211_STA_NOTEXIST
+   to IEEE80211_STA_NONE due to peer creation fails. Sta_state callback is
+   called from ieee80211_add_station() to handle the new station
+   (neighbor mesh node) request from the wpa_supplicant.
+2. Concurrently ath10k receive the sta_rc_update callback notification from
+   the mesh_neighbour_update() to handle the beacon frames of the above
+   neighbor mesh node. since its atomic callback, ath10k driver queue the
+   work (ath10k_sta_rc_update_wk) to handle rc update.
+3. Due to driver sta_state callback fails (step 1), mac80211 free the station
+   object.
+4. When the worker (ath10k_sta_rc_update_wk) scheduled to run, it will access
+   the station object which is already deleted. so it will trigger kernel
+   panic.
+
+Added the peer exist check in sta_rc_update callback before queue the work.
+
+Kernel Panic log:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+pgd = c0204000
+[00000000] *pgd=00000000
+Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+CPU: 1 PID: 1833 Comm: kworker/u4:2 Not tainted 3.14.77 #1
+task: dcef0000 ti: d72b6000 task.ti: d72b6000
+PC is at pwq_activate_delayed_work+0x10/0x40
+LR is at pwq_activate_delayed_work+0xc/0x40
+pc : [<c023f988>]    lr : [<c023f984>]    psr: 40000193
+sp : d72b7f18  ip : 0000007a  fp : d72b6000
+r10: 00000000  r9 : dd404414  r8 : d8c31998
+r7 : d72b6038  r6 : 00000004  r5 : d4907ec8  r4 : dcee1300
+r3 : ffffffe0  r2 : 00000000  r1 : 00000001  r0 : 00000000
+Flags: nZcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+Control: 10c5787d  Table: 595bc06a  DAC: 00000015
+...
+Process kworker/u4:2 (pid: 1833, stack limit = 0xd72b6238)
+Stack: (0xd72b7f18 to 0xd72b8000)
+7f00:                                                       00000001 dcee1300
+7f20: 00000001 c02410dc d8c31980 dd404400 dd404400 c0242790 d8c31980 00000089
+7f40: 00000000 d93e1340 00000000 d8c31980 c0242568 00000000 00000000 00000000
+7f60: 00000000 c02474dc 00000000 00000000 000000f8 d8c31980 00000000 00000000
+7f80: d72b7f80 d72b7f80 00000000 00000000 d72b7f90 d72b7f90 d72b7fac d93e1340
+7fa0: c0247404 00000000 00000000 c0208d20 00000000 00000000 00000000 00000000
+7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[<c023f988>] (pwq_activate_delayed_work) from [<c02410dc>] (pwq_dec_nr_in_flight+0x58/0xc4)
+[<c02410dc>] (pwq_dec_nr_in_flight) from [<c0242790>] (worker_thread+0x228/0x360)
+[<c0242790>] (worker_thread) from [<c02474dc>] (kthread+0xd8/0xec)
+[<c02474dc>] (kthread) from [<c0208d20>] (ret_from_fork+0x14/0x34)
+Code: e92d4038 e1a05000 ebffffbc[69210.619376] SMP: failed to stop secondary CPUs
+Rebooting in 3 seconds..
+
+Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath9k/common-spectral.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath10k/mac.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/net/wireless/ath/ath9k/common-spectral.c
-+++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
-@@ -479,14 +479,16 @@ ath_cmn_is_fft_buf_full(struct ath_spec_
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -7059,10 +7059,20 @@ static void ath10k_sta_rc_update(struct
  {
- 	int i = 0;
- 	int ret = 0;
-+	struct rchan_buf *buf;
- 	struct rchan *rc = spec_priv->rfs_chan_spec_scan;
+ 	struct ath10k *ar = hw->priv;
+ 	struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
++	struct ath10k_vif *arvif = (void *)vif->drv_priv;
++	struct ath10k_peer *peer;
+ 	u32 bw, smps;
  
--	for_each_online_cpu(i)
--		ret += relay_buf_full(*per_cpu_ptr(rc->buf, i));
-+	for_each_possible_cpu(i) {
-+		if ((buf = *per_cpu_ptr(rc->buf, i))) {
-+			ret += relay_buf_full(buf);
-+		}
+ 	spin_lock_bh(&ar->data_lock);
+ 
++	peer = ath10k_peer_find(ar, arvif->vdev_id, sta->addr);
++	if (!peer) {
++		spin_unlock_bh(&ar->data_lock);
++		ath10k_warn(ar, "mac sta rc update failed to find peer %pM on vdev %i\n",
++			    sta->addr, arvif->vdev_id);
++		return;
 +	}
- 
--	i = num_online_cpus();
--
--	if (ret == i)
-+	if (ret)
- 		return 1;
- 	else
- 		return 0;
++
+ 	ath10k_dbg(ar, ATH10K_DBG_MAC,
+ 		   "mac sta rc update for %pM changed %08x bw %d nss %d smps %d\n",
+ 		   sta->addr, changed, sta->bandwidth, sta->rx_nss,
