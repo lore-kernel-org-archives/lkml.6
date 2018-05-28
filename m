@@ -1,94 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165430AbeE1NhP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:37:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35880 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937753AbeE1KpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:21 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 095/496] mac80211: Do not disconnect on invalid operating class
-Date: Mon, 28 May 2018 11:58:00 +0200
-Message-Id: <20180528100323.873276378@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1165448AbeE1Nh0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:37:26 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:50950 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163408AbeE1NhV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:37:21 -0400
+To: "Vinayak Holikatti <vinholikatti@gmail.com>; \"James E.J. Bottomley\"
+        <jejb@linux.vnet.ibm.com>; \"Martin K. Petersen\""
+        <martin.petersen@oracle.com>
+Subject: [PATCH 0/5] scsi: ufs: UFS Host Controller crypto changes
+CC: <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org;Manjunath M Bettegowda
+        <manjumb@synopsys.com>; Prabu Thangamuthu <prabut@synopsys.com>; Tejas
+        Joglekar <joglekar@synopsys.com>; Joao Pinto"
+        <Joao.Pinto@synopsys.com>
+From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+Message-ID: <192fedba-4f7d-8230-2152-b618787fd934@synopsys.com>
+Date: Mon, 28 May 2018 14:37:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.144.133.104]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+This patch series enables the inline encryption capability of the
+UFS Host Controller. The Inline Encryption feature got considerable
+performance improvements over the SW algorithms and crypto accelarators
+that the crypto transformation on 512 bytes chunks in the device mapper
+layer can be avoided and bio can be submitted directly to the block device 
+drivers which performs the encryption inline to hardware.
 
-From: Ilan Peer <ilan.peer@intel.com>
+The UFS Host Controller driver detects the crypto capability in the HW
+during the init stage and registers an algorithm to the Linux Kernel
+Cryptography Framework(LKCF). The UFS HC has multiple key slots in
+the hardware  for storing the keys, the crypto support manages these
+key slots in hardware.
 
-[ Upstream commit 191da271ac260700db3e5b4bb982a17ca78769d6 ]
+The Inline Encryption support also requires enhancements in the
+block layer for associating the crypto information to the
+individual block I/O requests. Separate patch is sent to the block layer
+community for the same.
 
-Some APs include a non global operating class in their extended channel
-switch information element. In such a case, as the operating class is not
-known, mac80211 would decide to disconnect.
+Configuration and usage of the Inline Encryption support for the
+Disk Encryption requires minor enhancement in the DM-Crypt 
+subsystem. The I/O requests are submitted directly with the
+crypto information to the block level device drivers without
+actually performing the transformation in this layer. Separate patch is
+sent to the device mapper layer community for the same.
 
-However the specification states that the operating class needs to be
-taken from Annex E, but it does not specify from which table it should be
-taken, so it is valid for an AP to use a non global operating class.
+The feature is tested and performance comparisions are done with
+Synopsys UFS Controller IP on Synopsys HAPS-70 FPGA-based Prototyping
+solution.
 
-To avoid possibly unneeded disconnection, in such a case ignore the
-operating class and assume that the current band is used, and if the
-resulting channel and band configuration is invalid disconnect.
+Ladvine D Almeida (5):
+  scsi: ufs: Add crypto source file for UFS HC driver
+  scsi: ufs: Add crypto header file for UFS HC driver
+  scsi: ufs: Add Kconfig for UFS HC driver crypto support
+  scsi: ufs: Add crypto masks for UFS HC driver
+  scsi: ufs: Add hooks in UFS HC driver for crypto support
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/mac80211/spectmgmt.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/scsi/ufs/Kconfig         |  15 ++
+ drivers/scsi/ufs/Makefile        |   6 +-
+ drivers/scsi/ufs/ufshcd-crypto.c | 520 +++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-crypto.h | 156 ++++++++++++
+ drivers/scsi/ufs/ufshcd.c        |  63 ++++-
+ drivers/scsi/ufs/ufshcd.h        |  29 +++
+ drivers/scsi/ufs/ufshci.h        |   2 +
+ 7 files changed, 784 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
 
---- a/net/mac80211/spectmgmt.c
-+++ b/net/mac80211/spectmgmt.c
-@@ -8,6 +8,7 @@
-  * Copyright 2007, Michael Wu <flamingice@sourmilk.net>
-  * Copyright 2007-2008, Intel Corporation
-  * Copyright 2008, Johannes Berg <johannes@sipsolutions.net>
-+ * Copyright (C) 2018        Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,7 +28,7 @@ int ieee80211_parse_ch_switch_ie(struct
- 				 u32 sta_flags, u8 *bssid,
- 				 struct ieee80211_csa_ie *csa_ie)
- {
--	enum nl80211_band new_band;
-+	enum nl80211_band new_band = current_band;
- 	int new_freq;
- 	u8 new_chan_no;
- 	struct ieee80211_channel *new_chan;
-@@ -55,15 +56,13 @@ int ieee80211_parse_ch_switch_ie(struct
- 				elems->ext_chansw_ie->new_operating_class,
- 				&new_band)) {
- 			sdata_info(sdata,
--				   "cannot understand ECSA IE operating class %d, disconnecting\n",
-+				   "cannot understand ECSA IE operating class, %d, ignoring\n",
- 				   elems->ext_chansw_ie->new_operating_class);
--			return -EINVAL;
- 		}
- 		new_chan_no = elems->ext_chansw_ie->new_ch_num;
- 		csa_ie->count = elems->ext_chansw_ie->count;
- 		csa_ie->mode = elems->ext_chansw_ie->mode;
- 	} else if (elems->ch_switch_ie) {
--		new_band = current_band;
- 		new_chan_no = elems->ch_switch_ie->new_ch_num;
- 		csa_ie->count = elems->ch_switch_ie->count;
- 		csa_ie->mode = elems->ch_switch_ie->mode;
+-- 
+2.7.4
