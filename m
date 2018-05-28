@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424812AbeE1LT2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:19:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35378 "EHLO mail.kernel.org"
+        id S1424820AbeE1LTo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:19:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424686AbeE1LQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:25 -0400
+        id S1424676AbeE1LQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Zhang <henryzhang62@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        stable@vger.kernel.org, Aapo Vienamo <aapo@tuxera.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 236/272] ARM: dts: bcm283x: Fix pin function of JTAG pins
-Date: Mon, 28 May 2018 12:04:29 +0200
-Message-Id: <20180528100300.176717942@linuxfoundation.org>
+Subject: [PATCH 4.16 266/272] ARM: dts: imx7d: cl-som-imx7: fix pinctrl_enet
+Date: Mon, 28 May 2018 12:04:59 +0200
+Message-Id: <20180528100302.507010606@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,32 +30,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Henry Zhang <henryzhang62@gmail.com>
+From: Aapo Vienamo <aapo@tuxera.com>
 
-[ Upstream commit 1a012cb2569f2031b3636232c3ab21c20c92d281 ]
+[ Upstream commit 2bada7ac1fdcbf79a9689bd2ff65fa515ca7a31f ]
 
-BCM2835 ARM Peripherals doc shows gpio pins 4, 5, 6, 12 and 13
-carry altenate function, ALT5 for ARM JTAG
+The missing last digit of the CONFIG values is added. Looks like a typo
+of some sort when comparing to the downstream dt. This fixes
+intermittent behavior behaviour of the ethernet controllers.
 
-Fixes: 21ff843931b2 ("ARM: dts: bcm283x: Define standard pinctrl groups in the gpio node.")
-
-Signed-off-by: Henry Zhang <henryzhang62@gmail.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Aapo Vienamo <aapo@tuxera.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm283x.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts |   52 ++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -252,7 +252,7 @@
+--- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+@@ -213,37 +213,37 @@
+ &iomuxc {
+ 	pinctrl_enet1: enet1grp {
+ 		fsl,pins = <
+-			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x3
+-			MX7D_PAD_SD2_WP__ENET1_MDC			0x3
+-			MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x1
+-			MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x1
+-			MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x1
+-			MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x1
+-			MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x1
+-			MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x1
+-			MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x1
+-			MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x1
+-			MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x1
+-			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x1
+-			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x1
+-			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x1
++			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x30
++			MX7D_PAD_SD2_WP__ENET1_MDC			0x30
++			MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x11
++			MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x11
++			MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x11
++			MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x11
++			MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x11
++			MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x11
++			MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x11
++			MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x11
++			MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x11
++			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x11
++			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x11
++			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x11
+ 		>;
+ 	};
  
- 			jtag_gpio4: jtag_gpio4 {
- 				brcm,pins = <4 5 6 12 13>;
--				brcm,function = <BCM2835_FSEL_ALT4>;
-+				brcm,function = <BCM2835_FSEL_ALT5>;
- 			};
- 			jtag_gpio22: jtag_gpio22 {
- 				brcm,pins = <22 23 24 25 26 27>;
+ 	pinctrl_enet2: enet2grp {
+ 		fsl,pins = <
+-			MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x1
+-			MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x1
+-			MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x1
+-			MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x1
+-			MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x1
+-			MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x1
+-			MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x1
+-			MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x1
+-			MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x1
+-			MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x1
+-			MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x1
+-			MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x1
++			MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x11
++			MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x11
++			MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x11
++			MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x11
++			MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x11
++			MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x11
++			MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x11
++			MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x11
++			MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x11
++			MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x11
++			MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x11
++			MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x11
+ 		>;
+ 	};
+ 
