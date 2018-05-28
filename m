@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166086AbeE1PM7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:12:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42902 "EHLO mail.kernel.org"
+        id S1033986AbeE1PNO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:13:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033687AbeE1KXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:32 -0400
+        id S1033216AbeE1KXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 184/268] ACPI: acpi_pad: Fix memory leak in power saving threads
-Date: Mon, 28 May 2018 12:02:38 +0200
-Message-Id: <20180528100223.217977029@linuxfoundation.org>
+Subject: [PATCH 4.4 210/268] MIPS: ath79: Fix AR724X_PLL_REG_PCIE_CONFIG offset
+Date: Mon, 28 May 2018 12:03:04 +0200
+Message-Id: <20180528100226.000815861@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,39 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lenny Szubowicz <lszubowi@redhat.com>
+From: Mathias Kresin <dev@kresin.me>
 
-[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
+[ Upstream commit 05454c1bde91fb013c0431801001da82947e6b5a ]
 
-Fix once per second (round_robin_time) memory leak of about 1 KB in
-each acpi_pad kernel idling thread that is activated.
+According to the QCA u-boot source the "PCIE Phase Lock Loop
+Configuration (PCIE_PLL_CONFIG)" register is for all SoCs except the
+QCA955X and QCA956X at offset 0x10.
 
-Found by testing with kmemleak.
+Since the PCIE PLL config register is only defined for the AR724x fix
+only this value. The value is wrong since the day it was added and isn't
+used by any driver yet.
 
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/16048/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_pad.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/mips/include/asm/mach-ath79/ar71xx_regs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/acpi_pad.c
-+++ b/drivers/acpi/acpi_pad.c
-@@ -108,6 +108,7 @@ static void round_robin_cpu(unsigned int
- 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
- 	if (cpumask_empty(tmp)) {
- 		mutex_unlock(&round_robin_lock);
-+		free_cpumask_var(tmp);
- 		return;
- 	}
- 	for_each_cpu(cpu, tmp) {
-@@ -125,6 +126,8 @@ static void round_robin_cpu(unsigned int
- 	mutex_unlock(&round_robin_lock);
+--- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+@@ -167,7 +167,7 @@
+ #define AR71XX_AHB_DIV_MASK		0x7
  
- 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
-+
-+	free_cpumask_var(tmp);
- }
+ #define AR724X_PLL_REG_CPU_CONFIG	0x00
+-#define AR724X_PLL_REG_PCIE_CONFIG	0x18
++#define AR724X_PLL_REG_PCIE_CONFIG	0x10
  
- static void exit_round_robin(unsigned int tsk_index)
+ #define AR724X_PLL_FB_SHIFT		0
+ #define AR724X_PLL_FB_MASK		0x3ff
