@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165172AbeE1NFZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41936 "EHLO mail.kernel.org"
+        id S1165178AbeE1NFh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:05:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164005AbeE1Kwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:52:39 -0400
+        id S1163777AbeE1Kwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:52:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Bich Hemon <bich.hemon@st.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 254/496] iwlwifi: mvm: set the correct tid when we flush the MCAST sta
-Date: Mon, 28 May 2018 12:00:39 +0200
-Message-Id: <20180528100330.590090443@linuxfoundation.org>
+Subject: [PATCH 4.14 244/496] can: m_can: select pinctrl state in each suspend/resume function
+Date: Mon, 28 May 2018 12:00:29 +0200
+Message-Id: <20180528100330.187652000@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,57 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Bich HEMON <bich.hemon@st.com>
 
-[ Upstream commit 334167decf98f01a66c91ea84180c278bc4ad290 ]
+[ Upstream commit c9b3bce18da4a0aebc27853052dea39aa64b7d75 ]
 
-The tid being used for the queue (cab_queue) for the MCAST
-station has been changed recently to be 0 (for BE).
-The flush path still flushed only the special tid (15)
-which means that the firmware wasn't flushing the right
-queue and we could get a firmware crash upon remove
-station if we had an MCAST packet on the ring.
+Make sure to apply the correct pin state in suspend/resume callbacks.
+Putting pins in sleep state saves power.
 
-The current code that flushes queues for a station only
-differentiates between internal stations (stations that
-aren't instantiated in mac80211, like the MCAST station)
-and the non-internal ones.
-Internal stations can be either: BCAST (beacons), MCAST
-(for cab_queue), GENERAL_PURPOSE (p2p dev, and sniffer
-injection). The internal stations can use different tids.
-
-To make the code simpler, just flush all the tids always
-and add the special internal tid (15) for internal
-stations. The firmware will know how to handle this even
-if we hadn't any queue mapped that that tid.
-
-Fixes: e340c1a6ef4b ("iwlwifi: mvm: Correctly set the tid for mcast queue")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Bich Hemon <bich.hemon@st.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/net/can/m_can/m_can.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -1879,14 +1879,12 @@ int iwl_mvm_flush_sta(struct iwl_mvm *mv
- 	struct iwl_mvm_int_sta *int_sta = sta;
- 	struct iwl_mvm_sta *mvm_sta = sta;
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -25,6 +25,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/iopoll.h>
+ #include <linux/can/dev.h>
++#include <linux/pinctrl/consumer.h>
  
--	if (iwl_mvm_has_new_tx_api(mvm)) {
--		if (internal)
--			return iwl_mvm_flush_sta_tids(mvm, int_sta->sta_id,
--						      BIT(IWL_MGMT_TID), flags);
-+	BUILD_BUG_ON(offsetof(struct iwl_mvm_int_sta, sta_id) !=
-+		     offsetof(struct iwl_mvm_sta, sta_id));
+ /* napi related */
+ #define M_CAN_NAPI_WEIGHT	64
+@@ -1682,6 +1683,8 @@ static __maybe_unused int m_can_suspend(
+ 		m_can_clk_stop(priv);
+ 	}
  
-+	if (iwl_mvm_has_new_tx_api(mvm))
- 		return iwl_mvm_flush_sta_tids(mvm, mvm_sta->sta_id,
--					      0xFF, flags);
--	}
-+					      0xff | BIT(IWL_MGMT_TID), flags);
++	pinctrl_pm_select_sleep_state(dev);
++
+ 	priv->can.state = CAN_STATE_SLEEPING;
  
- 	if (internal)
- 		return iwl_mvm_flush_tx_path(mvm, int_sta->tfd_queue_msk,
+ 	return 0;
+@@ -1692,6 +1695,8 @@ static __maybe_unused int m_can_resume(s
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct m_can_priv *priv = netdev_priv(ndev);
+ 
++	pinctrl_pm_select_default_state(dev);
++
+ 	m_can_init_ram(priv);
+ 
+ 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
