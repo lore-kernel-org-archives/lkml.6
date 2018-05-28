@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425134AbeE1Obw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:31:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53148 "EHLO mail.kernel.org"
+        id S1161614AbeE1Kcw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:32:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161635AbeE1KdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:00 -0400
+        id S1161292AbeE1Kcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Yufen Yu <yuyufen@huawei.com>, Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 119/329] mac80211: Do not disconnect on invalid operating class
-Date: Mon, 28 May 2018 12:00:48 +0200
-Message-Id: <20180528100252.620607673@linuxfoundation.org>
+Subject: [PATCH 4.9 145/329] md/raid1: fix NULL pointer dereference
+Date: Mon, 28 May 2018 12:01:14 +0200
+Message-Id: <20180528100254.613735216@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,64 +30,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit 191da271ac260700db3e5b4bb982a17ca78769d6 ]
+[ Upstream commit 3de59bb9d551428cbdc76a9ea57883f82e350b4d ]
 
-Some APs include a non global operating class in their extended channel
-switch information element. In such a case, as the operating class is not
-known, mac80211 would decide to disconnect.
+In handle_write_finished(), if r1_bio->bios[m] != NULL, it thinks
+the corresponding conf->mirrors[m].rdev is also not NULL. But, it
+is not always true.
 
-However the specification states that the operating class needs to be
-taken from Annex E, but it does not specify from which table it should be
-taken, so it is valid for an AP to use a non global operating class.
+Even if some io hold replacement rdev(i.e. rdev->nr_pending.count > 0),
+raid1_remove_disk() can also set the rdev as NULL. That means,
+bios[m] != NULL, but mirrors[m].rdev is NULL, resulting in NULL
+pointer dereference in handle_write_finished and sync_request_write.
 
-To avoid possibly unneeded disconnection, in such a case ignore the
-operating class and assume that the current band is used, and if the
-resulting channel and band configuration is invalid disconnect.
+This patch can fix BUGs as follows:
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000140
+ IP: [<ffffffff815bbbbd>] raid1d+0x2bd/0xfc0
+ PGD 12ab52067 PUD 12f587067 PMD 0
+ Oops: 0000 [#1] SMP
+ CPU: 1 PID: 2008 Comm: md3_raid1 Not tainted 4.1.44+ #130
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+ Call Trace:
+  ? schedule+0x37/0x90
+  ? prepare_to_wait_event+0x83/0xf0
+  md_thread+0x144/0x150
+  ? wake_atomic_t_function+0x70/0x70
+  ? md_start_sync+0xf0/0xf0
+  kthread+0xd8/0xf0
+  ? kthread_worker_fn+0x160/0x160
+  ret_from_fork+0x42/0x70
+  ? kthread_worker_fn+0x160/0x160
+
+ BUG: unable to handle kernel NULL pointer dereference at 00000000000000b8
+ IP: sync_request_write+0x9e/0x980
+ PGD 800000007c518067 P4D 800000007c518067 PUD 8002b067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 24 PID: 2549 Comm: md3_raid1 Not tainted 4.15.0+ #118
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+ Call Trace:
+  ? sched_clock+0x5/0x10
+  ? sched_clock_cpu+0xc/0xb0
+  ? flush_pending_writes+0x3a/0xd0
+  ? pick_next_task_fair+0x4d5/0x5f0
+  ? __switch_to+0xa2/0x430
+  raid1d+0x65a/0x870
+  ? find_pers+0x70/0x70
+  ? find_pers+0x70/0x70
+  ? md_thread+0x11c/0x160
+  md_thread+0x11c/0x160
+  ? finish_wait+0x80/0x80
+  kthread+0x111/0x130
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ? do_syscall_64+0x6f/0x190
+  ? SyS_exit_group+0x10/0x10
+  ret_from_fork+0x35/0x40
+
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/spectmgmt.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/md/raid1.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/net/mac80211/spectmgmt.c
-+++ b/net/mac80211/spectmgmt.c
-@@ -8,6 +8,7 @@
-  * Copyright 2007, Michael Wu <flamingice@sourmilk.net>
-  * Copyright 2007-2008, Intel Corporation
-  * Copyright 2008, Johannes Berg <johannes@sipsolutions.net>
-+ * Copyright (C) 2018        Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,7 +28,7 @@ int ieee80211_parse_ch_switch_ie(struct
- 				 u32 sta_flags, u8 *bssid,
- 				 struct ieee80211_csa_ie *csa_ie)
- {
--	enum nl80211_band new_band;
-+	enum nl80211_band new_band = current_band;
- 	int new_freq;
- 	u8 new_chan_no;
- 	struct ieee80211_channel *new_chan;
-@@ -53,15 +54,13 @@ int ieee80211_parse_ch_switch_ie(struct
- 				elems->ext_chansw_ie->new_operating_class,
- 				&new_band)) {
- 			sdata_info(sdata,
--				   "cannot understand ECSA IE operating class %d, disconnecting\n",
-+				   "cannot understand ECSA IE operating class, %d, ignoring\n",
- 				   elems->ext_chansw_ie->new_operating_class);
--			return -EINVAL;
- 		}
- 		new_chan_no = elems->ext_chansw_ie->new_ch_num;
- 		csa_ie->count = elems->ext_chansw_ie->count;
- 		csa_ie->mode = elems->ext_chansw_ie->mode;
- 	} else if (elems->ch_switch_ie) {
--		new_band = current_band;
- 		new_chan_no = elems->ch_switch_ie->new_ch_num;
- 		csa_ie->count = elems->ch_switch_ie->count;
- 		csa_ie->mode = elems->ch_switch_ie->mode;
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1673,6 +1673,17 @@ static int raid1_remove_disk(struct mdde
+ 			struct md_rdev *repl =
+ 				conf->mirrors[conf->raid_disks + number].rdev;
+ 			freeze_array(conf, 0);
++			if (atomic_read(&repl->nr_pending)) {
++				/* It means that some queued IO of retry_list
++				 * hold repl. Thus, we cannot set replacement
++				 * as NULL, avoiding rdev NULL pointer
++				 * dereference in sync_request_write and
++				 * handle_write_finished.
++				 */
++				err = -EBUSY;
++				unfreeze_array(conf);
++				goto abort;
++			}
+ 			clear_bit(Replacement, &repl->flags);
+ 			p->rdev = repl;
+ 			conf->mirrors[conf->raid_disks + number].rdev = NULL;
