@@ -1,21 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165566AbeE1OSq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:18:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55922 "EHLO mail.kernel.org"
+        id S1165527AbeE1OTD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:19:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162078AbeE1Kfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:32 -0400
+        id S1161788AbeE1Kfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Ephraim Park <ephiepark@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, jolsa@redhat.com,
+        kernel-team@fb.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 207/329] brcmfmac: Fix check for ISO3166 code
-Date: Mon, 28 May 2018 12:02:16 +0200
-Message-Id: <20180528100259.451658723@linuxfoundation.org>
+Subject: [PATCH 4.9 206/329] perf/cgroup: Fix child event counting bug
+Date: Mon, 28 May 2018 12:02:15 +0200
+Message-Id: <20180528100259.376465984@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,33 +39,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Song Liu <songliubraving@fb.com>
 
-[ Upstream commit 9b9322db5c5a1917a66c71fe47c3848a9a31227e ]
+[ Upstream commit c917e0f259908e75bd2a65877e25f9d90c22c848 ]
 
-The commit "regulatory: add NUL to request alpha2" increases the length of
-alpha2 to 3. This causes a regression on brcmfmac, because
-brcmf_cfg80211_reg_notifier() expect valid ISO3166 codes in the complete
-array. So fix this accordingly.
+When a perf_event is attached to parent cgroup, it should count events
+for all children cgroups:
 
-Fixes: 657308f73e67 ("regulatory: add NUL to request alpha2")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+   parent_group   <---- perf_event
+     \
+      - child_group  <---- process(es)
+
+However, in our tests, we found this perf_event cannot report reliable
+results. Here is an example case:
+
+  # create cgroups
+  mkdir -p /sys/fs/cgroup/p/c
+  # start perf for parent group
+  perf stat -e instructions -G "p"
+
+  # on another console, run test process in child cgroup:
+  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
+
+  # after the test process is done, stop perf in the first console shows
+
+       <not counted>      instructions              p
+
+The instruction should not be "not counted" as the process runs in the
+child cgroup.
+
+We found this is because perf_event->cgrp and cpuctx->cgrp are not
+identical, thus perf_event->cgrp are not updated properly.
+
+This patch fixes this by updating perf_cgroup properly for ancestor
+cgroup(s).
+
+Reported-by: Ephraim Park <ephiepark@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <jolsa@redhat.com>
+Cc: <kernel-team@fb.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20180312165943.1057894-1-songliubraving@fb.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -6789,7 +6789,7 @@ static void brcmf_cfg80211_reg_notifier(
- 	int i;
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -634,9 +634,15 @@ static inline void __update_cgrp_time(st
  
- 	/* ignore non-ISO3166 country codes */
--	for (i = 0; i < sizeof(req->alpha2); i++)
-+	for (i = 0; i < 2; i++)
- 		if (req->alpha2[i] < 'A' || req->alpha2[i] > 'Z') {
- 			brcmf_err("not a ISO3166 code (0x%02x 0x%02x)\n",
- 				  req->alpha2[0], req->alpha2[1]);
+ static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
+ {
+-	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
+-	if (cgrp_out)
+-		__update_cgrp_time(cgrp_out);
++	struct perf_cgroup *cgrp = cpuctx->cgrp;
++	struct cgroup_subsys_state *css;
++
++	if (cgrp) {
++		for (css = &cgrp->css; css; css = css->parent) {
++			cgrp = container_of(css, struct perf_cgroup, css);
++			__update_cgrp_time(cgrp);
++		}
++	}
+ }
+ 
+ static inline void update_cgrp_time_from_event(struct perf_event *event)
+@@ -664,6 +670,7 @@ perf_cgroup_set_timestamp(struct task_st
+ {
+ 	struct perf_cgroup *cgrp;
+ 	struct perf_cgroup_info *info;
++	struct cgroup_subsys_state *css;
+ 
+ 	/*
+ 	 * ctx->lock held by caller
+@@ -674,8 +681,12 @@ perf_cgroup_set_timestamp(struct task_st
+ 		return;
+ 
+ 	cgrp = perf_cgroup_from_task(task, ctx);
+-	info = this_cpu_ptr(cgrp->info);
+-	info->timestamp = ctx->timestamp;
++
++	for (css = &cgrp->css; css; css = css->parent) {
++		cgrp = container_of(css, struct perf_cgroup, css);
++		info = this_cpu_ptr(cgrp->info);
++		info->timestamp = ctx->timestamp;
++	}
+ }
+ 
+ #define PERF_CGROUP_SWOUT	0x1 /* cgroup switch out every event */
