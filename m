@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161290AbeE1Kb0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:31:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50900 "EHLO mail.kernel.org"
+        id S1165804AbeE1Ojk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:39:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161251AbeE1KbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:10 -0400
+        id S1161283AbeE1Kb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 110/329] ARM: OMAP1: clock: Fix debugfs_create_*() usage
-Date: Mon, 28 May 2018 12:00:39 +0200
-Message-Id: <20180528100251.895029346@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
+        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 085/329] MIPS: TXx9: use IS_BUILTIN() for CONFIG_LEDS_CLASS
+Date: Mon, 28 May 2018 12:00:14 +0200
+Message-Id: <20180528100249.868554165@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,50 +30,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-[ Upstream commit 8cbbf1745dcde7ba7e423dc70619d223de90fd43 ]
+[ Upstream commit 0cde5b44a30f1daaef1c34e08191239dc63271c4 ]
 
-When exposing data access through debugfs, the correct
-debugfs_create_*() functions must be used, depending on data type.
+When commit b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+added board support for the RBTX4939, it added a call to
+led_classdev_register even if the LED class is built as a module.
+Built-in arch code cannot call module code directly like this. Commit
+b33b44073734 ("MIPS: TXX9: use IS_ENABLED() macro") subsequently
+changed the inclusion of this code to a single check that
+CONFIG_LEDS_CLASS is either builtin or a module, but the same issue
+remains.
 
-Remove all casts from data pointers passed to debugfs_create_*()
-functions, as such casts prevent the compiler from flagging bugs.
+This leads to MIPS allmodconfig builds failing when CONFIG_MACH_TX49XX=y
+is set:
 
-Correct all wrong usage:
-  - clk.rate is unsigned long, not u32,
-  - clk.flags is u8, not u32, which exposed the successive
-    clk.rate_offset and clk.src_offset fields.
+arch/mips/txx9/rbtx4939/setup.o: In function `rbtx4939_led_probe':
+setup.c:(.init.text+0xc0): undefined reference to `of_led_classdev_register'
+make: *** [Makefile:999: vmlinux] Error 1
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fix this by using the IS_BUILTIN() macro instead.
+
+Fixes: b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/18544/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap1/clock.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/txx9/rbtx4939/setup.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mach-omap1/clock.c
-+++ b/arch/arm/mach-omap1/clock.c
-@@ -1031,17 +1031,17 @@ static int clk_debugfs_register_one(stru
- 		return -ENOMEM;
- 	c->dent = d;
+--- a/arch/mips/txx9/rbtx4939/setup.c
++++ b/arch/mips/txx9/rbtx4939/setup.c
+@@ -186,7 +186,7 @@ static void __init rbtx4939_update_ioc_p
  
--	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, (u8 *)&c->usecount);
-+	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, &c->usecount);
- 	if (!d) {
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
--	d = debugfs_create_u32("rate", S_IRUGO, c->dent, (u32 *)&c->rate);
-+	d = debugfs_create_ulong("rate", S_IRUGO, c->dent, &c->rate);
- 	if (!d) {
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
--	d = debugfs_create_x32("flags", S_IRUGO, c->dent, (u32 *)&c->flags);
-+	d = debugfs_create_x8("flags", S_IRUGO, c->dent, &c->flags);
- 	if (!d) {
- 		err = -ENOMEM;
- 		goto err_out;
+ #define RBTX4939_MAX_7SEGLEDS	8
+ 
+-#if IS_ENABLED(CONFIG_LEDS_CLASS)
++#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+ static u8 led_val[RBTX4939_MAX_7SEGLEDS];
+ struct rbtx4939_led_data {
+ 	struct led_classdev cdev;
+@@ -261,7 +261,7 @@ static inline void rbtx4939_led_setup(vo
+ 
+ static void __rbtx4939_7segled_putc(unsigned int pos, unsigned char val)
+ {
+-#if IS_ENABLED(CONFIG_LEDS_CLASS)
++#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+ 	unsigned long flags;
+ 	local_irq_save(flags);
+ 	/* bit7: reserved for LED class */
