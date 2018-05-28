@@ -1,80 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034901AbeE1Psc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:48:32 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:50353 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030737AbeE1Ps1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:48:27 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ondrej Mosnacek <omosnacek@gmail.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: morus - Hide Kconfig option for glue code
-Date: Mon, 28 May 2018 17:47:45 +0200
-Message-Id: <20180528154806.2621106-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:TvFRafqsmQixTaQges1esfoXih1GkM4pgZ2SYKNuCewobS8UaXq
- KiMHwAcWDyA6SjZlXfADEBsIv2/2TBomBn3AANiLZvBm72G+pgnavxkgI6R0J+of8sO8h4b
- 70Y/MZUIPi73dwhZUvPXBDTOFvu8E7R7J6vMAfsaxx64/fLpAHhppO1rhovDOZOsF5sShnP
- sHw4xA6rQK47xY0PyMndw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:UTbW7pFYclg=:EdTJmcBCmnoyqt959HxQaL
- mPdwH2zuaqjeRtFf+tQwwlEw1ntIoFtBGO/eMUsMoxJEl2oIztMltwGq1SaVS+KbSplzYk4IU
- OqBqPTUCq6758s+0124TjJo7EZfjItY/32ZnRzjs5YE9ZdRWzYIKd6WSojtNDpJC6LmJUJ6BF
- lHXVsJ5Mi/ZTxZcuFtOdIMIzy4utBCio/+ibMD1ro/OnL+qni9E/mi8FVyaWW4VE44ybQCV1+
- M4L/enP7zndZruNQW1eN4z73hO6oxFzYC4W+jnP7oi53Iv1gHSiOpj0q3LZh4YvQXHzURU3Bf
- 9vw41CjQzdhGfpTKmtIjaKG7F/LuLzKXkTlAbMm2tK5qKxprLmsQNwEPIYw6/rrXx3OcF9CpG
- aUDwCBGGRjautQDMb+5GO7sUpr3+izN6Odk6ipn7al1jwwlV/e07H46bAUFTrgOTJ4XN2GkUf
- rRenboD7n+qrcAgPVKHOvki7QT1uwQyXDIebvbbEUwkEzp66xR6H+/qpE2bcH6MltjhPeHJPQ
- Dq5oTosY9iFKiNS9A3aqXxL4wwvJa265hFdlTvLhn0KcOwuAZFiBC6H0Kd0hJqIUrGFVJ0QdH
- uYdWzvZm6mU4DJu47vNAR/BLcdIuHnkBz4yT41Q3gCUQkIsCM0aM9C2BirhNuIpnjR3diCQ2b
- 2Gf2iqMbPOdv209BXxQz7EEo2MLaw+fcQOo4VTrYEsKm5H4W2V2T0g9/Eg7eE1uLiOYY=
+        id S1034915AbeE1Pst (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:48:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968289AbeE1KQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:25 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Parag Warudkar <parag.warudkar@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 055/268] firmware: dmi_scan: Fix handling of empty DMI strings
+Date: Mon, 28 May 2018 12:00:29 +0200
+Message-Id: <20180528100208.150575457@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling the glue drivers for morus640 and/or morus1280 leads to a build failure
-on all non-x86 architectures:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
-scripts/Makefile.build:311: recipe for target 'crypto/morus1280_glue.o' failed
-crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
-scripts/Makefile.build:311: recipe for target 'crypto/morus640_glue.o' failed
+------------------
 
-There really is no reason to enable these unless we also have a real
-driver using the glue, so the Kconfig option can be hidden and remain
-selected by the x86 specific SIMD drivers or any others getting added
-in the future.
+From: Jean Delvare <jdelvare@suse.de>
 
-Fixes: 56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit a7770ae194569e96a93c48aceb304edded9cc648 ]
+
+The handling of empty DMI strings looks quite broken to me:
+* Strings from 1 to 7 spaces are not considered empty.
+* True empty DMI strings (string index set to 0) are not considered
+  empty, and result in allocating a 0-char string.
+* Strings with invalid index also result in allocating a 0-char
+  string.
+* Strings starting with 8 spaces are all considered empty, even if
+  non-space characters follow (sounds like a weird thing to do, but
+  I have actually seen occurrences of this in DMI tables before.)
+* Strings which are considered empty are reported as 8 spaces,
+  instead of being actually empty.
+
+Some of these issues are the result of an off-by-one error in memcmp,
+the rest is incorrect by design.
+
+So let's get it square: missing strings and strings made of only
+spaces, regardless of their length, should be treated as empty and
+no memory should be allocated for them. All other strings are
+non-empty and should be allocated.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
+Cc: Parag Warudkar <parag.warudkar@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/firmware/dmi_scan.c |   22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 75f5efde9aa3..e11c59d26ac5 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -341,7 +341,7 @@ config CRYPTO_MORUS640
- 	  Support for the MORUS-640 dedicated AEAD algorithm.
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -18,7 +18,7 @@ EXPORT_SYMBOL_GPL(dmi_kobj);
+  * of and an antecedent to, SMBIOS, which stands for System
+  * Management BIOS.  See further: http://www.dmtf.org/standards
+  */
+-static const char dmi_empty_string[] = "        ";
++static const char dmi_empty_string[] = "";
  
- config CRYPTO_MORUS640_GLUE
--	tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
-+	tristate
- 	select CRYPTO_AEAD
- 	select CRYPTO_CRYPTD
- 	help
-@@ -363,7 +363,7 @@ config CRYPTO_MORUS1280
- 	  Support for the MORUS-1280 dedicated AEAD algorithm.
+ static u32 dmi_ver __initdata;
+ static u32 dmi_len;
+@@ -44,25 +44,21 @@ static int dmi_memdev_nr;
+ static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
+ {
+ 	const u8 *bp = ((u8 *) dm) + dm->length;
++	const u8 *nsp;
  
- config CRYPTO_MORUS1280_GLUE
--	tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
-+	tristate
- 	select CRYPTO_AEAD
- 	select CRYPTO_CRYPTD
- 	help
--- 
-2.9.0
+ 	if (s) {
+-		s--;
+-		while (s > 0 && *bp) {
++		while (--s > 0 && *bp)
+ 			bp += strlen(bp) + 1;
+-			s--;
+-		}
+ 
+-		if (*bp != 0) {
+-			size_t len = strlen(bp)+1;
+-			size_t cmp_len = len > 8 ? 8 : len;
+-
+-			if (!memcmp(bp, dmi_empty_string, cmp_len))
+-				return dmi_empty_string;
++		/* Strings containing only spaces are considered empty */
++		nsp = bp;
++		while (*nsp == ' ')
++			nsp++;
++		if (*nsp != '\0')
+ 			return bp;
+-		}
+ 	}
+ 
+-	return "";
++	return dmi_empty_string;
+ }
+ 
+ static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
