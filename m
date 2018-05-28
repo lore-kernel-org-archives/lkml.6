@@ -1,108 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753062AbeE1CuX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 22:50:23 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50655 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752970AbeE1CuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 22:50:21 -0400
-X-UUID: 02f64a154f3f46ba9e8ea63bc03597e4-20180528
-Message-ID: <1527475815.31089.0.camel@mtksdaap41>
-Subject: Re: [PATCH v3 8/8] drm/mediatek: add third ddp path
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 28 May 2018 10:50:15 +0800
-In-Reply-To: <1527474417.11190.21.camel@mtksdccf07>
-References: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527215665-11937-9-git-send-email-stu.hsieh@mediatek.com>
-         <1527224425.27165.27.camel@mtksdaap41>
-         <1527474417.11190.21.camel@mtksdccf07>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1753060AbeE1DIh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 23:08:37 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:46740 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752973AbeE1DIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 23:08:35 -0400
+Date: Mon, 28 May 2018 05:08:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexander Onnasch <alexander.onnasch@landisgyr.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/net/phy/micrel: Fix for PHY KSZ8061 errrata:
+ Potential link-up failure when Ethernet cable is connected slowly
+Message-ID: <20180528030832.GA18029@lunn.ch>
+References: <1527251853-22218-1-git-send-email-alexander.onnasch@landisgyr.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527251853-22218-1-git-send-email-alexander.onnasch@landisgyr.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+> This e-mail (including any attachments) is confidential and may be
+> legally privileged. If you are not an intended recipient or an
+> authorized representative of an intended recipient, you are
+> prohibited from using, copying or distributing the information in
+> this e-mail or its attachments. If you have received this e-mail in
+> error, please notify the sender immediately by return e-mail and
+> delete all copies of this message and any attachments. Thank you.
 
-On Mon, 2018-05-28 at 10:26 +0800, Stu Hsieh wrote:
-> Hi, CK:
-> I've some idea as below.
-> 
-> On Fri, 2018-05-25 at 13:00 +0800, CK Hu wrote:
-> > Hi, Stu:
-> > 
-> > On Fri, 2018-05-25 at 10:34 +0800, stu.hsieh@mediatek.com wrote:
-> > > From: Stu Hsieh <stu.hsieh@mediatek.com>
-> > > 
-> > > This patch create third crtc by third ddp path
-> > > 
-> > 
-> > Apply this patch before the patch 'Add support for mediatek SOC MT2712'
-> > because this patch is necessary for mt2712.
-> > 
-> > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > > ---
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > > index b32c4cc8d051..3a866e1d6af4 100644
-> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > > @@ -267,6 +267,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
-> > >  	if (ret < 0)
-> > >  		goto err_component_unbind;
-> > >  
-> > > +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
-> > > +				  private->data->third_len);
-> > 
-> > I think you should prevent doing this for mt8173 and mt2701 because that
-> > two SoC has only two ddp path.
-> 
-> Now, 8173 and 2701 have only two ddp path, there is a problem on run
-> time. 
-> There are three crtc for drm resource, and there is nothing in third
-> crtc. 
-> Because 8173 and 2701 have no third ddp, and the third ddp_len is zero.
-> So, I want to add the condition like following in mtk_crtc_create()
-> if (path_len == 0)
-> 	return 0;
-> 
-> Then, the valur ret is zero and it would not create the null third crtc.
+Once this has been removed, i will have a comment...
 
-This sounds good to me.
-
-Regards,
-CK
-
-> 
-> 
-> Regards,
-> Stu
-> 
-> > 
-> > Regards,
-> > CK
-> > 
-> > > +	if (ret < 0)
-> > > +		goto err_component_unbind;
-> > > +
-> > >  	/* Use OVL device for all DMA memory allocations */
-> > >  	np = private->comp_node[private->data->main_path[0]] ?:
-> > >  	     private->comp_node[private->data->ext_path[0]];
-> > 
-> > 
-> 
-> 
+     Andrew
