@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164892AbeE1LCJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49468 "EHLO mail.kernel.org"
+        id S1422766AbeE1LBw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:01:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164868AbeE1LCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:02 -0400
+        id S1164238AbeE1LBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pierre Bourdon <delroth@google.com>,
-        Andre Heider <a.heider@gmail.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 424/496] max17042: propagate of_node to power supply device
-Date: Mon, 28 May 2018 12:03:29 +0200
-Message-Id: <20180528100337.614849378@linuxfoundation.org>
+Subject: [PATCH 4.14 448/496] watchdog: asm9260_wdt: fix error handling in asm9260_wdt_probe()
+Date: Mon, 28 May 2018 12:03:53 +0200
+Message-Id: <20180528100338.761233103@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +30,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre Bourdon <delroth@google.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 66ec32fc7cd116dab5c02603ea8ec28ff92da3b5 ]
+[ Upstream commit 3c829f47e33eb0398a9a14e357a05199a7be0277 ]
 
-max17042_get_status uses the core power_supply_am_i_supplied. That
-function relies on DT properties to figure out the power supply
-topology, and will error out without DT.
+If devm_reset_control_get_exclusive() fails, asm9260_wdt_probe()
+returns immediately. But clks has been already enabled at that point,
+so it is required to disable them or to move the code around.
 
-Fixes max17042 battery status being reported as "unknown".
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Pierre Bourdon <delroth@google.com>
-Signed-off-by: Andre Heider <a.heider@gmail.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/max17042_battery.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/watchdog/asm9260_wdt.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/power/supply/max17042_battery.c
-+++ b/drivers/power/supply/max17042_battery.c
-@@ -1021,6 +1021,7 @@ static int max17042_probe(struct i2c_cli
+--- a/drivers/watchdog/asm9260_wdt.c
++++ b/drivers/watchdog/asm9260_wdt.c
+@@ -292,14 +292,14 @@ static int asm9260_wdt_probe(struct plat
+ 	if (IS_ERR(priv->iobase))
+ 		return PTR_ERR(priv->iobase);
  
- 	i2c_set_clientdata(client, chip);
- 	psy_cfg.drv_data = chip;
-+	psy_cfg.of_node = dev->of_node;
+-	ret = asm9260_wdt_get_dt_clks(priv);
+-	if (ret)
+-		return ret;
+-
+ 	priv->rst = devm_reset_control_get_exclusive(&pdev->dev, "wdt_rst");
+ 	if (IS_ERR(priv->rst))
+ 		return PTR_ERR(priv->rst);
  
- 	/* When current is not measured,
- 	 * CURRENT_NOW and CURRENT_AVG properties should be invisible. */
++	ret = asm9260_wdt_get_dt_clks(priv);
++	if (ret)
++		return ret;
++
+ 	wdd = &priv->wdd;
+ 	wdd->info = &asm9260_wdt_ident;
+ 	wdd->ops = &asm9260_wdt_ops;
