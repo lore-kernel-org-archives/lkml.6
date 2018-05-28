@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939013AbeE1M5Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:57:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
+        id S939058AbeE1M5i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:57:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163964AbeE1Ky0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:26 -0400
+        id S1164254AbeE1KyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 292/496] selftests: ftrace: Add a testcase for string type with kprobe_event
-Date: Mon, 28 May 2018 12:01:17 +0200
-Message-Id: <20180528100332.130348779@linuxfoundation.org>
+Subject: [PATCH 4.14 289/496] mm, thp: do not cause memcg oom for thp
+Date: Mon, 28 May 2018 12:01:14 +0200
+Message-Id: <20180528100332.008685088@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,71 +34,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit 5fbdbed797b6d12d043a5121fdbc8d8b49d10e80 ]
+[ Upstream commit 9d3c3354bb85bab4d865fe95039443f09a4c8394 ]
 
-Add a testcase for string type with kprobe event.
-This tests good/bad syntax combinations and also
-the traced data is correct in several way.
+Commit 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+madvised allocations") changed the page allocator to no longer detect
+thp allocations based on __GFP_NORETRY.
 
-Link: http://lkml.kernel.org/r/152129038381.31874.9201387794548737554.stgit@devbox
+It did not, however, modify the mem cgroup try_charge() path to avoid
+oom kill for either khugepaged collapsing or thp faulting.  It is never
+expected to oom kill a process to allocate a hugepage for thp; reclaim
+is governed by the thp defrag mode and MADV_HUGEPAGE, but allocations
+(and charging) should fallback instead of oom killing processes.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com
+Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc |   46 ++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+ mm/huge_memory.c |    5 +++--
+ mm/khugepaged.c  |    8 ++++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -0,0 +1,46 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event string type argument
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+case `uname -m` in
-+x86_64)
-+  ARG2=%si
-+  OFFS=8
-+;;
-+i[3456]86)
-+  ARG2=%cx
-+  OFFS=4
-+;;
-+aarch64)
-+  ARG2=%x1
-+  OFFS=8
-+;;
-+arm*)
-+  ARG2=%r1
-+  OFFS=4
-+;;
-+*)
-+  echo "Please implement other architecture here"
-+  exit_untested
-+esac
-+
-+: "Test get argument (1)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
-+
-+echo 0 > events/kprobes/testprobe/enable
-+: "Test get argument (2)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test1 test2 >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
-+
-+echo 0 > events/enable
-+echo > kprobe_events
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -555,7 +555,8 @@ static int __do_huge_pmd_anonymous_page(
+ 
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
++	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
++				  true)) {
+ 		put_page(page);
+ 		count_vm_event(THP_FAULT_FALLBACK);
+ 		return VM_FAULT_FALLBACK;
+@@ -1304,7 +1305,7 @@ alloc:
+ 	}
+ 
+ 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
+-					huge_gfp, &memcg, true))) {
++				huge_gfp | __GFP_NORETRY, &memcg, true))) {
+ 		put_page(new_page);
+ 		split_huge_pmd(vma, vmf->pmd, vmf->address);
+ 		if (page)
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -965,7 +965,9 @@ static void collapse_huge_page(struct mm
+ 		goto out_nolock;
+ 	}
+ 
+-	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
++	/* Do not oom kill for khugepaged charges */
++	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
++					   &memcg, true))) {
+ 		result = SCAN_CGROUP_CHARGE_FAIL;
+ 		goto out_nolock;
+ 	}
+@@ -1324,7 +1326,9 @@ static void collapse_shmem(struct mm_str
+ 		goto out;
+ 	}
+ 
+-	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
++	/* Do not oom kill for khugepaged charges */
++	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
++					   &memcg, true))) {
+ 		result = SCAN_CGROUP_CHARGE_FAIL;
+ 		goto out;
+ 	}
