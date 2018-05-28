@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165064AbeE1Mk4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:40:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46530 "EHLO mail.kernel.org"
+        id S1165077AbeE1MlT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:41:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937774AbeE1K6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:25 -0400
+        id S937990AbeE1K6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 377/496] watchdog: davinci_wdt: fix error handling in davinci_wdt_probe()
-Date: Mon, 28 May 2018 12:02:42 +0200
-Message-Id: <20180528100335.689648651@linuxfoundation.org>
+Subject: [PATCH 4.14 375/496] selftests: Print the test were running to /dev/kmsg
+Date: Mon, 28 May 2018 12:02:40 +0200
+Message-Id: <20180528100335.609936754@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,52 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit d66e53649c18377edc08d48901e658e4fd491d46 ]
+[ Upstream commit 88893cf787d3062c631cc20b875068eb11756e03 ]
 
-clk_disable_unprepare() was added to one error path,
-but there is another one. The patch makes sure clk is
-disabled at the both of them.
+Some tests cause the kernel to print things to the kernel log
+buffer (ie. printk), in particular oops and warnings etc. However when
+running all the tests in succession it's not always obvious which
+test(s) caused the kernel to print something.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+We can narrow it down by printing which test directory we're running
+in to /dev/kmsg, if it's writable.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Example output:
+
+  [  170.149149] kselftest: Running tests in powerpc
+  [  305.300132] kworker/dying (71) used greatest stack depth: 7776 bytes
+                 left
+  [  808.915456] kselftest: Running tests in pstore
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/davinci_wdt.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ tools/testing/selftests/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/watchdog/davinci_wdt.c
-+++ b/drivers/watchdog/davinci_wdt.c
-@@ -198,15 +198,22 @@ static int davinci_wdt_probe(struct plat
- 
- 	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	davinci_wdt->base = devm_ioremap_resource(dev, wdt_mem);
--	if (IS_ERR(davinci_wdt->base))
--		return PTR_ERR(davinci_wdt->base);
-+	if (IS_ERR(davinci_wdt->base)) {
-+		ret = PTR_ERR(davinci_wdt->base);
-+		goto err_clk_disable;
-+	}
- 
- 	ret = watchdog_register_device(wdd);
--	if (ret < 0) {
--		clk_disable_unprepare(davinci_wdt->clk);
-+	if (ret) {
- 		dev_err(dev, "cannot register watchdog device\n");
-+		goto err_clk_disable;
- 	}
- 
-+	return 0;
-+
-+err_clk_disable:
-+	clk_disable_unprepare(davinci_wdt->clk);
-+
- 	return ret;
- }
- 
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -122,6 +122,7 @@ ifdef INSTALL_PATH
+ 		BUILD_TARGET=$$BUILD/$$TARGET;	\
+ 		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
+ 		echo "echo ========================================" >> $(ALL_SCRIPT); \
++		echo "[ -w /dev/kmsg ] && echo \"kselftest: Running tests in $$TARGET\" >> /dev/kmsg" >> $(ALL_SCRIPT); \
+ 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
+ 		make -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
+ 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
