@@ -1,106 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755737AbeE1TOF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 15:14:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755716AbeE1TOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 15:14:00 -0400
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH v2] Documentation: dt-bindings: Explicitly mark Samsung Exynos SoC bindings as unstable
-Date: Mon, 28 May 2018 21:13:27 +0200
-Message-Id: <20180528191327.23772-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S1755760AbeE1T0R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 15:26:17 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:46191 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755736AbeE1T0Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 15:26:16 -0400
+X-Google-Smtp-Source: AB8JxZqhj2LOzUW38jl+7YxrVHRGrXpOSDmgRCXHYr6Qoiqav0ilHMgOeIUBV2GDXwf4GksPA45y/7XwxIvx5mSrZIE=
+MIME-Version: 1.0
+In-Reply-To: <20180527223403.GT30522@ZenIV.linux.org.uk>
+References: <20180527223403.GT30522@ZenIV.linux.org.uk>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Mon, 28 May 2018 21:25:55 +0200
+X-Google-Sender-Auth: vrBCM9dC2E4YuituK73yNn9pNeM
+Message-ID: <CA+7wUswhpVRQ4yECc-Zh9djHxiT=9-ALuP7_=mfLMtU-NXDnfg@mail.gmail.com>
+Subject: Re: [PATCH][RFC] [powerpc] arch_ptrace() uses of access_ok() are pointless
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4SJQXk9023340
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+On Mon, May 28, 2018 at 12:34 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> make it use copy_{from,to}_user(), rather than access_ok() +
+> __copy_...
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  arch/powerpc/kernel/ptrace.c | 22 +++++++---------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+> index d23cf632edf0..d8b0fd2fa3aa 100644
+> --- a/arch/powerpc/kernel/ptrace.c
+> +++ b/arch/powerpc/kernel/ptrace.c
+> @@ -3081,27 +3081,19 @@ long arch_ptrace(struct task_struct *child, long request,
+>  #endif /* CONFIG_HAVE_HW_BREAKPOINT */
+>  #endif /* CONFIG_PPC_ADV_DEBUG_REGS */
+>
+> -               if (!access_ok(VERIFY_WRITE, datavp,
+> -                              sizeof(struct ppc_debug_info)))
+> +               if (unlikely(copy_to_user(datavp, &dbginfo,
+> +                                    sizeof(struct ppc_debug_info)))
 
-Samsung Exynos SoCs and boards related bindings evolved since the initial
-introduction, but initially the bindings were minimal and a bit incomplete
-(they never described all the hardware modules available in the SoCs).
-Since then some significant (not fully compatible) changes have been
-already committed a few times (like gpio replaced by pinctrl, display ddc,
-mfc reserved memory, some core clocks added to various hardware modules,
-added more required nodes).
 
-On the other side there are no boards which have device tree embedded in
-the bootloader. Device tree blob is always compiled from the kernel tree
-and updated together with the kernel image.
+Maybe this is just an RFC, but:
 
-Thus to avoid further adding a bunch of workarounds for old/missing
-bindings, make development of new platforms easier and allow to make
-cleanup of the existing code and device tree files, lets mark some
-Samsung Exynos SoC platform bindings as unstable. This means that
-bindings can may change at any time and users should use the dtb file
-compiled from the same kernel source tree as the kernel image.
+  CALL    ../arch/powerpc/kernel/systbl_chk.sh
+../arch/powerpc/kernel/ptrace.c: In function ‘arch_ptrace’:
+../arch/powerpc/kernel/ptrace.c:3086:4: error: expected ‘)’ before ‘return’
+    return -EFAULT;
+    ^~~~~~
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Missing closing parenthesis.
 
----
-
-Changes since v1:
-1. Rebase
-2. Add specific compatibles to mark unstable.
-
-v1 is here:
-https://patchwork.kernel.org/patch/9477963/
-
-Previous tags (not applying due to change in contents):
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- .../devicetree/bindings/arm/samsung/exynos.txt     | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos.txt b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
-new file mode 100644
-index 000000000000..7410cb79e4b2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
-@@ -0,0 +1,26 @@
-+Samsung Exynos SoC Family Device Tree Bindings
-+---------------------------------------------------------------
-+
-+Work in progress statement:
-+
-+Following Device Tree files and bindings applying to Samsung Exynos SoCs and
-+boards are considered "unstable":
-+
-+ - samsung,exynos5433* (all compatibles related to Exynos5433)
-+ - samsung,exynos7* (all compatibles related to Exynos7)
-+ - samsung,tm2-audio
-+ - samsung,mfc-v10
-+ - samsung,exynos*-mipi-dsi
-+ - samsung,exynos5-dp
-+ - samsung,exynos*-hdmi
-+ - samsung,exynos*-hdmiddc
-+ - samsung,exynos*-hdmiphy
-+ - samsung,exynos*-mixer
-+ - samsung,exynos*-fimd
-+
-+Any Samsung Exynos device tree binding mentioned may change at any time. Be
-+sure to use a device tree binary and a kernel image generated from the same
-+source tree.
-+
-+Please refer to Documentation/devicetree/bindings/ABI.txt for a definition of a
-+stable binding/ABI.
--- 
-2.14.1
+>                         return -EFAULT;
+> -               ret = __copy_to_user(datavp, &dbginfo,
+> -                                    sizeof(struct ppc_debug_info)) ?
+> -                     -EFAULT : 0;
+> -               break;
+> +               return 0;
+>         }
+>
+>         case PPC_PTRACE_SETHWDEBUG: {
+>                 struct ppc_hw_breakpoint bp_info;
+>
+> -               if (!access_ok(VERIFY_READ, datavp,
+> -                              sizeof(struct ppc_hw_breakpoint)))
+> -                       return -EFAULT;
+> -               ret = __copy_from_user(&bp_info, datavp,
+> -                                      sizeof(struct ppc_hw_breakpoint)) ?
+> -                     -EFAULT : 0;
+> -               if (!ret)
+> -                       ret = ppc_set_hwdebug(child, &bp_info);
+> -               break;
+> +               if (unlikely(copy_from_user(&bp_info, datavp,
+> +                                      sizeof(struct ppc_hw_breakpoint)))
+> +                     return -EFAULT;
+> +               return ppc_set_hwdebug(child, &bp_info);
+>         }
+>
+>         case PPC_PTRACE_DELHWDEBUG: {
+> --
+> 2.11.0
+>
