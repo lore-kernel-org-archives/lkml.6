@@ -1,270 +1,448 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935097AbeE1XiP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 19:38:15 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:49571 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934854AbeE1XiM (ORCPT
+        id S936476AbeE1Xsc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 19:48:32 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51071 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932360AbeE1Xs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 19:38:12 -0400
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-X-Original-SENDERIP: 10.177.226.38
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-From: Hoeun Ryu <hoeun.ryu@lge.com.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Cyril Bur <cyrilbur@gmail.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Neuling <mikey@neuling.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Don Zickus <dzickus@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Liu, Changcheng" <changcheng.liu@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Hoeun Ryu <hoeun.ryu@lge.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: [PATCH] printk: make printk_safe_flush safe in NMI context
-Date: Tue, 29 May 2018 08:34:14 +0900
-Message-Id: <1527550647-3953-1-git-send-email-hoeun.ryu@lge.com.com>
-X-Mailer: git-send-email 2.1.4
+        Mon, 28 May 2018 19:48:26 -0400
+X-Google-Smtp-Source: ADUXVKK6iacJDKy49werXpuQhFkDTmq5m4rEaDG2LV6GLVoKrCTulvH+r4vgQnJvUCL7YYwmgXUiiw==
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com> <20180528131501.GK23723@intel.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
+Date: Tue, 29 May 2018 02:48:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180528131501.GK23723@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hoeun Ryu <hoeun.ryu@lge.com>
+On 28.05.2018 16:15, Ville Syrjälä wrote:
+> On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
+>> Color keying is the action of replacing pixels matching a given color
+>> (or range of colors) with transparent pixels in an overlay when
+>> performing blitting. Depending on the hardware capabilities, the
+>> matching pixel can either become fully transparent or gain adjustment
+>> of the pixels component values.
+>>
+>> Color keying is found in a large number of devices whose capabilities
+>> often differ, but they still have enough common features in range to
+>> standardize color key properties. This commit adds nine generic DRM plane
+>> properties related to the color keying to cover various HW capabilities.
+>>
+>> This patch is based on the initial work done by Laurent Pinchart, most of
+>> credits for this patch goes to him.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/gpu/drm/drm_atomic.c |  36 ++++++
+>>  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
+>>  include/drm/drm_blend.h      |   3 +
+>>  include/drm/drm_plane.h      |  77 ++++++++++++
+>>  4 files changed, 345 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+>> index 895741e9cd7d..5b808cb68654 100644
+>> --- a/drivers/gpu/drm/drm_atomic.c
+>> +++ b/drivers/gpu/drm/drm_atomic.c
+>> @@ -799,6 +799,24 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+>>  		state->rotation = val;
+>>  	} else if (property == plane->zpos_property) {
+>>  		state->zpos = val;
+>> +	} else if (property == plane->colorkey.mode_property) {
+>> +		state->colorkey.mode = val;
+>> +	} else if (property == plane->colorkey.min_property) {
+>> +		state->colorkey.min = val;
+>> +	} else if (property == plane->colorkey.max_property) {
+>> +		state->colorkey.max = val;
+>> +	} else if (property == plane->colorkey.format_property) {
+>> +		state->colorkey.format = val;
+>> +	} else if (property == plane->colorkey.mask_property) {
+>> +		state->colorkey.mask = val;
+>> +	} else if (property == plane->colorkey.inverted_match_property) {
+>> +		state->colorkey.inverted_match = val;
+>> +	} else if (property == plane->colorkey.replacement_mask_property) {
+>> +		state->colorkey.replacement_mask = val;
+>> +	} else if (property == plane->colorkey.replacement_value_property) {
+>> +		state->colorkey.replacement_value = val;
+>> +	} else if (property == plane->colorkey.replacement_format_property) {
+>> +		state->colorkey.replacement_format = val;
+>>  	} else if (property == plane->color_encoding_property) {
+>>  		state->color_encoding = val;
+>>  	} else if (property == plane->color_range_property) {
+>> @@ -864,6 +882,24 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
+>>  		*val = state->rotation;
+>>  	} else if (property == plane->zpos_property) {
+>>  		*val = state->zpos;
+>> +	} else if (property == plane->colorkey.mode_property) {
+>> +		*val = state->colorkey.mode;
+>> +	} else if (property == plane->colorkey.min_property) {
+>> +		*val = state->colorkey.min;
+>> +	} else if (property == plane->colorkey.max_property) {
+>> +		*val = state->colorkey.max;
+>> +	} else if (property == plane->colorkey.format_property) {
+>> +		*val = state->colorkey.format;
+>> +	} else if (property == plane->colorkey.mask_property) {
+>> +		*val = state->colorkey.mask;
+>> +	} else if (property == plane->colorkey.inverted_match_property) {
+>> +		*val = state->colorkey.inverted_match;
+>> +	} else if (property == plane->colorkey.replacement_mask_property) {
+>> +		*val = state->colorkey.replacement_mask;
+>> +	} else if (property == plane->colorkey.replacement_value_property) {
+>> +		*val = state->colorkey.replacement_value;
+>> +	} else if (property == plane->colorkey.replacement_format_property) {
+>> +		*val = state->colorkey.replacement_format;
+>>  	} else if (property == plane->color_encoding_property) {
+>>  		*val = state->color_encoding;
+>>  	} else if (property == plane->color_range_property) {
+>> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+>> index a16a74d7e15e..05e5632ce375 100644
+>> --- a/drivers/gpu/drm/drm_blend.c
+>> +++ b/drivers/gpu/drm/drm_blend.c
+>> @@ -107,6 +107,11 @@
+>>   *	planes. Without this property the primary plane is always below the cursor
+>>   *	plane, and ordering between all other planes is undefined.
+>>   *
+>> + * colorkey:
+>> + *	Color keying is set up with drm_plane_create_colorkey_properties().
+>> + *	It adds support for replacing a range of colors with a transparent
+>> + *	color in the plane.
+>> + *
+>>   * Note that all the property extensions described here apply either to the
+>>   * plane or the CRTC (e.g. for the background color, which currently is not
+>>   * exposed and assumed to be black).
+>> @@ -448,3 +453,227 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+>>  	return 0;
+>>  }
+>>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+>> +
+>> +static const char * const plane_colorkey_mode_name[] = {
+>> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+>> +	[DRM_PLANE_COLORKEY_MODE_SRC] = "src-match-src-replace",
+>> +	[DRM_PLANE_COLORKEY_MODE_DST] = "dst-match-src-replace",
+> 
+> This list seems way more limited than I was expecting, at least when
+> compared to all the different props you're proposing to add.
+> 
 
- Make printk_safe_flush() safe in NMI context. And printk_safe_flush_on_panic() is
-folded into this function. The prototype of printk_safe_flush() is changed to
-"void printk_safe_flush(bool panic)".
+What else are you expecting to see in the list?
 
- nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
-function is called in watchdog_overflow_callback() if the flag of hardlockup
-backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
-watchdog_overflow_callback() function is called in NMI context on some
-architectures.
- Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries to
-lock logbuf_lock in vprintk_emit() but the logbuf_lock can be already locked in
-preempted contexts (task or irq in this case) or by other CPUs and it may cause
-deadlocks.
- By making printk_safe_flush() safe in NMI context, the backtrace triggering CPU
-just skips flushing if the lock is not avaiable in NMI context. The messages in
-per-cpu nmi buffer of the backtrace triggering CPU can be lost if the CPU is in
-hard lockup (because irq is disabled here) but if panic() is not called. The
-flushing can be delayed by the next irq work in normal cases.
+>> +};
+>> +
+>> +/**
+>> + * drm_plane_create_colorkey_properties - create colorkey properties
+>> + * @plane: drm plane
+>> + * @supported_modes: bitmask of supported color keying modes
+>> + *
+>> + * This function creates the generic color keying properties and attach them to
+>> + * the plane to enable color keying control for blending operations.
+>> + *
+>> + * Color keying is controlled through nine properties:
+>> + *
+>> + * colorkey.mode:
+>> + *	The mode is an enumerated property that controls how color keying
+>> + *	operates. The "disabled" mode that disables color keying and is
+>> + *	very likely to exist if color keying is supported, it should be the
+>> + *	default mode.
+>> + *
+>> + * colorkey.min, colorkey.max:
+>> + *	These two properties specify the colors that are treated as the color
+>> + *	key. Pixel whose value is in the [min, max] range is the color key
+>> + *	matching pixel. The minimum and maximum values are expressed as a
+>> + *	64-bit integer in AXYZ16161616 format, where A is the alpha value and
+>> + *	X, Y and Z correspond to the color components of the colorkey.format.
+>> + *	In most cases XYZ will be either RGB or YUV.
+>> + *
+>> + *	When a single color key is desired instead of a range, userspace shall
+>> + *	set the min and max properties to the same value.
+>> + *
+>> + *	Drivers return an error from their plane atomic check if range can't be
+>> + *	handled.
+>> + *
+>> + * colorkey.format:
+>> + *	This property specifies the pixel format for the colorkey.min / max
+>> + *	properties. The format is given in a form of DRM fourcc code.
+> 
+> Umm. Why we do even need this? This seems incompatible with your earlier
+> "min/max are specified in 16bpc format" statement.
+> 
 
-Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
----
- arch/powerpc/kernel/traps.c    |  2 +-
- arch/powerpc/kernel/watchdog.c |  2 +-
- include/linux/printk.h         |  9 ++----
- kernel/kexec_core.c            |  2 +-
- kernel/panic.c                 |  4 +--
- kernel/printk/printk_safe.c    | 62 +++++++++++++++++++++---------------------
- lib/nmi_backtrace.c            |  2 +-
- 7 files changed, 39 insertions(+), 44 deletions(-)
+AXYZ16161616 is just an abstraction of a pixel format, at least that's how I'm
+interpreting the AXYZ16161616.
 
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index 0904492..c50749c 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -160,7 +160,7 @@ extern void panic_flush_kmsg_start(void)
- 
- extern void panic_flush_kmsg_end(void)
- {
--	printk_safe_flush_on_panic();
-+	printk_safe_flush(true);
- 	kmsg_dump(KMSG_DUMP_PANIC);
- 	bust_spinlocks(0);
- 	debug_locks_off();
-diff --git a/arch/powerpc/kernel/watchdog.c b/arch/powerpc/kernel/watchdog.c
-index 6256dc3..3c9138b 100644
---- a/arch/powerpc/kernel/watchdog.c
-+++ b/arch/powerpc/kernel/watchdog.c
-@@ -173,7 +173,7 @@ static void watchdog_smp_panic(int cpu, u64 tb)
- 
- 	wd_smp_unlock(&flags);
- 
--	printk_safe_flush();
-+	printk_safe_flush(false);
- 	/*
- 	 * printk_safe_flush() seems to require another print
- 	 * before anything actually goes out to console.
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 6d7e800..495fe26 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -203,8 +203,7 @@ void dump_stack_print_info(const char *log_lvl);
- void show_regs_print_info(const char *log_lvl);
- extern asmlinkage void dump_stack(void) __cold;
- extern void printk_safe_init(void);
--extern void printk_safe_flush(void);
--extern void printk_safe_flush_on_panic(void);
-+extern void printk_safe_flush(bool panic);
- #else
- static inline __printf(1, 0)
- int vprintk(const char *s, va_list args)
-@@ -273,11 +272,7 @@ static inline void printk_safe_init(void)
- {
- }
- 
--static inline void printk_safe_flush(void)
--{
--}
--
--static inline void printk_safe_flush_on_panic(void)
-+static inline void printk_safe_flush(bool panic)
- {
- }
- #endif
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 20fef1a..1b0876e 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -961,7 +961,7 @@ void crash_kexec(struct pt_regs *regs)
- 	old_cpu = atomic_cmpxchg(&panic_cpu, PANIC_CPU_INVALID, this_cpu);
- 	if (old_cpu == PANIC_CPU_INVALID) {
- 		/* This is the 1st CPU which comes here, so go ahead. */
--		printk_safe_flush_on_panic();
-+		printk_safe_flush(true);
- 		__crash_kexec(regs);
- 
- 		/*
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 42e4874..2f2c86c 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -193,7 +193,7 @@ void panic(const char *fmt, ...)
- 	 * Bypass the panic_cpu check and call __crash_kexec directly.
- 	 */
- 	if (!_crash_kexec_post_notifiers) {
--		printk_safe_flush_on_panic();
-+		printk_safe_flush(true);
- 		__crash_kexec(NULL);
- 
- 		/*
-@@ -218,7 +218,7 @@ void panic(const char *fmt, ...)
- 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
- 
- 	/* Call flush even twice. It tries harder with a single online CPU */
--	printk_safe_flush_on_panic();
-+	printk_safe_flush(true);
- 	kmsg_dump(KMSG_DUMP_PANIC);
- 
- 	/*
-diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-index 3e3c200..35ea941 100644
---- a/kernel/printk/printk_safe.c
-+++ b/kernel/printk/printk_safe.c
-@@ -244,49 +244,49 @@ static void __printk_safe_flush(struct irq_work *work)
- }
- 
- /**
-- * printk_safe_flush - flush all per-cpu nmi buffers.
-+ * printk_safe_flush - flush all per-cpu nmi buffers. it can be called even in NMI
-+ *                     context.
-+ * @panic: true when the system goes down. It does the best effort to get NMI messages
-+ *         into the main ring buffer. Note that it could try harder when there is only
-+ *         one CPU online.
-  *
-- * The buffers are flushed automatically via IRQ work. This function
-+ * The buffers are flushed automatically via IRQ work in normal cases. This function
-  * is useful only when someone wants to be sure that all buffers have
-  * been flushed at some point.
-  */
--void printk_safe_flush(void)
-+void printk_safe_flush(bool panic)
- {
- 	int cpu;
- 
--	for_each_possible_cpu(cpu) {
--#ifdef CONFIG_PRINTK_NMI
--		__printk_safe_flush(&per_cpu(nmi_print_seq, cpu).work);
--#endif
--		__printk_safe_flush(&per_cpu(safe_print_seq, cpu).work);
--	}
--}
--
--/**
-- * printk_safe_flush_on_panic - flush all per-cpu nmi buffers when the system
-- *	goes down.
-- *
-- * Similar to printk_safe_flush() but it can be called even in NMI context when
-- * the system goes down. It does the best effort to get NMI messages into
-- * the main ring buffer.
-- *
-- * Note that it could try harder when there is only one CPU online.
-- */
--void printk_safe_flush_on_panic(void)
--{
- 	/*
- 	 * Make sure that we could access the main ring buffer.
--	 * Do not risk a double release when more CPUs are up.
-+	 * Do not risk a double release when more CPUs are up on panic.
- 	 */
--	if (in_nmi() && raw_spin_is_locked(&logbuf_lock)) {
--		if (num_online_cpus() > 1)
-+	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK) {
-+		if (panic) {
-+			if (num_online_cpus() > 1)
-+				return;
-+
-+			debug_locks_off();
-+			raw_spin_lock_init(&logbuf_lock);
-+		} else {
-+			/*
-+			 * Just avoid deadlocks here, we could loose the messages in
-+			 * per-cpu nmi buffer in the case that hardlockup happens but
-+			 * panic() is not called (irq_work won't work).
-+			 * The flushing can be delayed by the next irq_work if flushing
-+			 * is skiped here in normal cases.
-+			 */
- 			return;
--
--		debug_locks_off();
--		raw_spin_lock_init(&logbuf_lock);
-+		}
- 	}
- 
--	printk_safe_flush();
-+	for_each_possible_cpu(cpu) {
-+#ifdef CONFIG_PRINTK_NMI
-+		__printk_safe_flush(&per_cpu(nmi_print_seq, cpu).work);
-+#endif
-+		__printk_safe_flush(&per_cpu(safe_print_seq, cpu).work);
-+	}
- }
- 
- #ifdef CONFIG_PRINTK_NMI
-@@ -404,5 +404,5 @@ void __init printk_safe_init(void)
- 	printk_safe_irq_ready = 1;
- 
- 	/* Flush pending messages that did not have scheduled IRQ works. */
--	printk_safe_flush();
-+	printk_safe_flush(false);
- }
-diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
-index 61a6b5a..6781698 100644
---- a/lib/nmi_backtrace.c
-+++ b/lib/nmi_backtrace.c
-@@ -79,7 +79,7 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
- 	 * Force flush any remote buffers that might be stuck in IRQ context
- 	 * and therefore could not run their irq_work.
- 	 */
--	printk_safe_flush();
-+	printk_safe_flush(false);
- 
- 	clear_bit_unlock(0, &backtrace_flag);
- 	put_cpu();
--- 
-2.1.4
+Previously Laurent specified that min/max values should be given in the format
+of the planes framebuffer. This doesn't work for a case of setting property for
+a disabled plane because disabled plane doesn't have a framebuffer. This also
+doesn't work for Tegra that can take only XRGB8888 format for a color key, AFAIK
+HW internally converts all pixel formats to ARGB8888 and RGB part participates
+in the color matching (later Tegra's support alpha channel matching as well).
+Hence I added the format property that explicitly tells in what format the color
+key integer value is given.
+
+I'm now thinking that format property should be exposed to userspace in a form
+of a ENUM-list, because otherwise userspace doesn't know what color key formats
+are supported by the DRM driver.
+
+And probably somehow userspace should be informed about that colorkey format
+should match the framebuffers format if that's what driver expects. Maybe a
+read-only property?
+
+>> + *
+>> + *	Drivers return an error from their plane atomic check if pixel format
+>> + *	is unsupported.
+>> + *
+>> + * colorkey.mask:
+>> + *	This property specifies the pixel components mask. Unmasked pixel
+>> + *	components are not participating in the matching. This mask value is
+>> + *	applied to colorkey.min / max values. The mask value is given in a
+>> + *	form of DRM fourcc code corresponding to the colorkey.format property.
+>> + *
+>> + *	For example: userspace shall set the colorkey.mask to 0x0000ff00
+>> + *	to match only the green component if colorkey.format is set to
+>> + *	DRM_FORMAT_XRGB8888.
+>> + *
+>> + *	Drivers return an error from their plane atomic check if mask value
+>> + *	can't be handled.
+>> + *
+>> + * colorkey.inverted-match:
+>> + *	This property specifies whether the matching min-max range should
+>> + *	be inverted, i.e. pixels outside of the given color range become
+>> + *	the color key match.
+>> + *
+>> + *	Drivers return an error from their plane atomic check if inversion
+>> + *	mode can't be handled.
+> 
+> Hmm. I'm trying to figure out what this means for the src vs. dst
+> colorkey modes. Those pretty much already have an inverted meaning when
+> compared to each other. So I can't figure out from these docs whether 
+> you're supposed to use this when you want a normal dst ckey or normal
+> src key semantics.
+> 
+
+I also couldn't understand what initial semantic to src/dst was given by Laurent.
+
+In a case of this patch:
+
+The src/dst-match specifies the "source" plane for which the color matching is
+performed. Src means the plane to which the colorkey properties are applied. Dst
+means planes other than plane X to which the colorkey properties are applied, in
+particular the planes that are Z-positioned under the plane X. Hope that's more
+clear now.
+
+The src-replace part specifies that pixels of the plane to which the colorkey
+properties are applied will be replaced.
+
+I'll try to re-work the doc if the above sounds good.
+
+The inverted-match property controls whether given color-match range shall be
+inverted, like for example: if given color key is a red color, then all colors
+expect the red will be matched as a color key.
+
+Actually maybe inversion could be expressed using the mask solely. Like we could
+add a helper that converts "value+mask" into "value=(value & ~mask),
+inversion=true" if mask has form of 0x11000111, though this could be not
+applicable to all possible pixel formats.. not sure.
+
+>> + *
+>> + * colorkey.replacement-value:
+>> + *	This property specifies the color value that replaces pixels matching
+>> + *	the color key. The value is expressed in AXYZ16161616 format, where A
+>> + *	is the alpha value and X, Y and Z correspond to the color components
+>> + *	of the colorkey.replacement-format.
+>> + *
+>> + *	Drivers return an error from their plane atomic check if replacement
+>> + *	value can't be handled.
+>> + *
+>> + * colorkey.replacement-format:
+>> + *	This property specifies the pixel format for the
+>> + *	colorkey.replacement-value property. The format is given in a form of
+>> + *	DRM fourcc code.
+> 
+> Again this seems at odds with the 16bpc replacement-value.
+> 
+>> + *
+>> + *	Drivers return an error from their plane atomic check if replacement
+>> + *	pixel format is unsupported.
+>> + *
+>> + * colorkey.replacement-mask:
+>> + *	This property specifies the pixel components mask that defines
+>> + *	what components of the colorkey.replacement-value will participate in
+>> + *	replacement of the pixels color. Unmasked pixel components are not
+>> + *	participating in the replacement.
+> 
+> Does that mean that the data for the unmasked bits will be coming
+> from the source?
+> 
+
+Yeah, I see that "source" is vaguely defined.
+
+Yes, the unmasked bits are coming from the source. The "source" is defined by
+the mode.
+
+src-match- -->SRC<-- -replace
+dst-match- -->SRC<-- -replace
+
+Src means the plane to which the colorkey properties are applied, as I stated above.
+
+>> The mask value is given in a form of
+>> + *	DRM fourcc code corresponding to the colorkey.replacement-format
+>> + *	property.
+>> + *
+>> + *	For example: userspace shall set the colorkey.replacement-mask to
+>> + *	0x0000ff00 to replace only the green component if
+>> + *	colorkey.replacement-format is set to DRM_FORMAT_XRGB8888.
+>> + *
+>> + *	Userspace shall set colorkey.replacement-mask to 0 to disable the color
+>> + *	replacement. In this case matching pixels become transparent.
+>> + *
+>> + *	Drivers return an error from their plane atomic check if replacement
+>> + *	mask value can't be handled.
+>> + *
+>> + * Returns:
+>> + * Zero on success, negative errno on failure.
+>> + */
+>> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
+>> +					 u32 supported_modes)
+>> +{
+>> +	struct drm_prop_enum_list modes_list[DRM_PLANE_COLORKEY_MODES_NUM];
+>> +	struct drm_property *replacement_format_prop;
+>> +	struct drm_property *replacement_value_prop;
+>> +	struct drm_property *replacement_mask_prop;
+>> +	struct drm_property *inverted_match_prop;
+>> +	struct drm_property *format_prop;
+>> +	struct drm_property *mask_prop;
+>> +	struct drm_property *mode_prop;
+>> +	struct drm_property *min_prop;
+>> +	struct drm_property *max_prop;
+>> +	unsigned int modes_num = 0;
+>> +	unsigned int i;
+>> +
+>> +	/* at least two modes should be supported */
+>> +	if (!supported_modes)
+>> +		return -EINVAL;
+>> +
+>> +	/* modes are driver-specific, build the list of supported modes */
+>> +	for (i = 0; i < DRM_PLANE_COLORKEY_MODES_NUM; i++) {
+>> +		if (!(supported_modes & BIT(i)))
+>> +			continue;
+>> +
+>> +		modes_list[modes_num].name = plane_colorkey_mode_name[i];
+>> +		modes_list[modes_num].type = i;
+>> +		modes_num++;
+>> +	}
+>> +
+>> +	mode_prop = drm_property_create_enum(plane->dev, 0, "colorkey.mode",
+>> +					     modes_list, modes_num);
+>> +	if (!mode_prop)
+>> +		return -ENOMEM;
+>> +
+>> +	mask_prop = drm_property_create_range(plane->dev, 0, "colorkey.mask",
+>> +					      0, U64_MAX);
+>> +	if (!mask_prop)
+>> +		goto err_destroy_mode_prop;
+>> +
+>> +	min_prop = drm_property_create_range(plane->dev, 0, "colorkey.min",
+>> +					     0, U64_MAX);
+>> +	if (!min_prop)
+>> +		goto err_destroy_mask_prop;
+>> +
+>> +	max_prop = drm_property_create_range(plane->dev, 0, "colorkey.max",
+>> +					     0, U64_MAX);
+>> +	if (!max_prop)
+>> +		goto err_destroy_min_prop;
+>> +
+>> +	format_prop = drm_property_create_range(plane->dev, 0,
+>> +					"colorkey.format",
+>> +					0, U32_MAX);
+>> +	if (!format_prop)
+>> +		goto err_destroy_max_prop;
+>> +
+>> +	inverted_match_prop = drm_property_create_bool(plane->dev, 0,
+>> +					"colorkey.inverted-match");
+>> +	if (!inverted_match_prop)
+>> +		goto err_destroy_format_prop;
+>> +
+>> +	replacement_mask_prop = drm_property_create_range(plane->dev, 0,
+>> +					"colorkey.replacement-mask",
+>> +					0, U64_MAX);
+>> +	if (!replacement_mask_prop)
+>> +		goto err_destroy_inverted_match_prop;
+>> +
+>> +	replacement_value_prop = drm_property_create_range(plane->dev, 0,
+>> +					"colorkey.replacement-value",
+>> +					0, U64_MAX);
+>> +	if (!replacement_value_prop)
+>> +		goto err_destroy_replacement_mask_prop;
+>> +
+>> +	replacement_format_prop = drm_property_create_range(plane->dev, 0,
+>> +					"colorkey.replacement-format",
+>> +					0, U64_MAX);
+>> +	if (!replacement_format_prop)
+>> +		goto err_destroy_replacement_value_prop;
+> 
+> I don't think we want to add all these props for every driver/hardware.
+> IMO the set of props we expose should depend on the supported set of
+> colorkeying modes.
+> 
+
+Probably, I don't mind. This should be documented then, I can address that in
+the next iteration.
+
+/I think/ all of the currently-defined properties are relevant to the defined
+color keying modes. Later, if the list of modes will be extended with new modes,
+the creation of properties could be conditionalized.
+
+Though maybe "color components replacement" and "replacement with a complete
+transparency" could be factored out into a specific color keying modes.
+
+I'm open for suggestions.
+
+[snip]
