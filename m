@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938792AbeE1MXy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:23:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49078 "EHLO mail.kernel.org"
+        id S938808AbeE1MYK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:24:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164539AbeE1LBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:35 -0400
+        id S938034AbeE1LBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Mori Hess <fmh6jj@gmail.com>,
-        Qi Hou <qi.hou@windriver.com>, Vinod Koul <vinod.koul@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 445/496] dmaengine: pl330: fix a race condition in case of threaded irqs
-Date: Mon, 28 May 2018 12:03:50 +0200
-Message-Id: <20180528100338.621103435@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Shaohua Li <shli@kernel.org>,
+        weiping zhang <zhangweiping@didichuxing.com>,
+        Yi Zhang <yi.zhang@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Kyungchan Koh <kkc6196@fb.com>
+Subject: [PATCH 4.14 444/496] block: null_blk: fix Invalid parameters when loading module
+Date: Mon, 28 May 2018 12:03:49 +0200
+Message-Id: <20180528100338.573484285@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,160 +34,165 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qi Hou <qi.hou@windriver.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit a3ca831249ca8c4c226e4ceafee04e280152e59d ]
+[ Upstream commit 66231ad3e2886ba99fbf440cea44cab547e5163f ]
 
-When booting up with "threadirqs" in command line, all irq handlers of the DMA
-controller pl330 will be threaded forcedly. These threads will race for the same
-list, pl330->req_done.
+On ARM64, the default page size has been 64K on some distributions, and
+we should allow ARM64 people to play null_blk.
 
-Before the callback, the spinlock was released. And after it, the spinlock was
-taken. This opened an race window where another threaded irq handler could steal
-the spinlock and be permitted to delete entries of the list, pl330->req_done.
+This patch fixes the issue by extend page bitmap size for supporting
+other non-4KB PAGE_SIZE.
 
-If the later deleted an entry that was still referred to by the former, there would
-be a kernel panic when the former was scheduled and tried to get the next sibling
-of the deleted entry.
-
-The scenario could be depicted as below:
-
-  Thread: T1  pl330->req_done  Thread: T2
-      |             |              |
-      |          -A-B-C-D-         |
-    Locked          |              |
-      |             |           Waiting
-    Del A           |              |
-      |          -B-C-D-           |
-    Unlocked        |              |
-      |             |           Locked
-    Waiting         |              |
-      |             |            Del B
-      |             |              |
-      |           -C-D-         Unlocked
-    Waiting         |              |
-      |
-    Locked
-      |
-   get C via B
-      \
-       - Kernel panic
-
-The kernel panic looked like as below:
-
-Unable to handle kernel paging request at virtual address dead000000000108
-pgd = ffffff8008c9e000
-[dead000000000108] *pgd=000000027fffe003, *pud=000000027fffe003, *pmd=0000000000000000
-Internal error: Oops: 96000044 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 85 Comm: irq/59-66330000 Not tainted 4.8.24-WR9.0.0.12_standard #2
-Hardware name: Broadcom NS2 SVK (DT)
-task: ffffffc1f5cc3c00 task.stack: ffffffc1f5ce0000
-PC is at pl330_irq_handler+0x27c/0x390
-LR is at pl330_irq_handler+0x2a8/0x390
-pc : [<ffffff80084cb694>] lr : [<ffffff80084cb6c0>] pstate: 800001c5
-sp : ffffffc1f5ce3d00
-x29: ffffffc1f5ce3d00 x28: 0000000000000140
-x27: ffffffc1f5c530b0 x26: dead000000000100
-x25: dead000000000200 x24: 0000000000418958
-x23: 0000000000000001 x22: ffffffc1f5ccd668
-x21: ffffffc1f5ccd590 x20: ffffffc1f5ccd418
-x19: dead000000000060 x18: 0000000000000001
-x17: 0000000000000007 x16: 0000000000000001
-x15: ffffffffffffffff x14: ffffffffffffffff
-x13: ffffffffffffffff x12: 0000000000000000
-x11: 0000000000000001 x10: 0000000000000840
-x9 : ffffffc1f5ce0000 x8 : ffffffc1f5cc3338
-x7 : ffffff8008ce2020 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : dead000000000200 x2 : dead000000000100
-x1 : 0000000000000140 x0 : ffffffc1f5ccd590
-
-Process irq/59-66330000 (pid: 85, stack limit = 0xffffffc1f5ce0020)
-Stack: (0xffffffc1f5ce3d00 to 0xffffffc1f5ce4000)
-3d00: ffffffc1f5ce3d80 ffffff80080f09d0 ffffffc1f5ca0c00 ffffffc1f6f7c600
-3d20: ffffffc1f5ce0000 ffffffc1f6f7c600 ffffffc1f5ca0c00 ffffff80080f0998
-3d40: ffffffc1f5ce0000 ffffff80080f0000 0000000000000000 0000000000000000
-3d60: ffffff8008ce202c ffffff8008ce2020 ffffffc1f5ccd668 ffffffc1f5c530b0
-3d80: ffffffc1f5ce3db0 ffffff80080f0d70 ffffffc1f5ca0c40 0000000000000001
-3da0: ffffffc1f5ce0000 ffffff80080f0cfc ffffffc1f5ce3e20 ffffff80080bf4f8
-3dc0: ffffffc1f5ca0c80 ffffff8008bf3798 ffffff8008955528 ffffffc1f5ca0c00
-3de0: ffffff80080f0c30 0000000000000000 0000000000000000 0000000000000000
-3e00: 0000000000000000 0000000000000000 0000000000000000 ffffff80080f0b68
-3e20: 0000000000000000 ffffff8008083690 ffffff80080bf420 ffffffc1f5ca0c80
-3e40: 0000000000000000 0000000000000000 0000000000000000 ffffff80080cb648
-3e60: ffffff8008b1c780 0000000000000000 0000000000000000 ffffffc1f5ca0c00
-3e80: ffffffc100000000 ffffff8000000000 ffffffc1f5ce3e90 ffffffc1f5ce3e90
-3ea0: 0000000000000000 ffffff8000000000 ffffffc1f5ce3eb0 ffffffc1f5ce3eb0
-3ec0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3ee0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f00: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f40: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f60: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f80: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3fa0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3fc0: 0000000000000000 0000000000000005 0000000000000000 0000000000000000
-3fe0: 0000000000000000 0000000000000000 0000000275ce3ff0 0000000275ce3ff8
-Call trace:
-Exception stack(0xffffffc1f5ce3b30 to 0xffffffc1f5ce3c60)
-3b20:                                   dead000000000060 0000008000000000
-3b40: ffffffc1f5ce3d00 ffffff80084cb694 0000000000000008 0000000000000e88
-3b60: ffffffc1f5ce3bb0 ffffff80080dac68 ffffffc1f5ce3b90 ffffff8008826fe4
-3b80: 00000000000001c0 00000000000001c0 ffffffc1f5ce3bb0 ffffff800848dfcc
-3ba0: 0000000000020000 ffffff8008b15ae4 ffffffc1f5ce3c00 ffffff800808f000
-3bc0: 0000000000000010 ffffff80088377f0 ffffffc1f5ccd590 0000000000000140
-3be0: dead000000000100 dead000000000200 0000000000000001 0000000000000000
-3c00: 0000000000000000 ffffff8008ce2020 ffffffc1f5cc3338 ffffffc1f5ce0000
-3c20: 0000000000000840 0000000000000001 0000000000000000 ffffffffffffffff
-3c40: ffffffffffffffff ffffffffffffffff 0000000000000001 0000000000000007
-[<ffffff80084cb694>] pl330_irq_handler+0x27c/0x390
-[<ffffff80080f09d0>] irq_forced_thread_fn+0x38/0x88
-[<ffffff80080f0d70>] irq_thread+0x140/0x200
-[<ffffff80080bf4f8>] kthread+0xd8/0xf0
-[<ffffff8008083690>] ret_from_fork+0x10/0x40
-Code: f2a00838 f9405763 aa1c03e1 aa1503e0 (f9000443)
----[ end trace f50005726d31199c ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-SMP: stopping secondary CPUs
-SMP: failed to stop secondary CPUs 0-1
-Kernel Offset: disabled
-Memory Limit: none
----[ end Kernel panic - not syncing: Fatal exception in interrupt
-
-To fix this, re-start with the list-head after dropping the lock then
-re-takeing it.
-
-Reviewed-by: Frank Mori Hess <fmh6jj@gmail.com>
-Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
-Signed-off-by: Qi Hou <qi.hou@windriver.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Kyungchan Koh <kkc6196@fb.com>,
+Cc: weiping zhang <zhangweiping@didichuxing.com>
+Cc: Yi Zhang <yi.zhang@redhat.com>
+Reported-by: Yi Zhang <yi.zhang@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/pl330.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/block/null_blk.c |   46 +++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -1510,7 +1510,7 @@ static void pl330_dotask(unsigned long d
- /* Returns 1 if state was updated, 0 otherwise */
- static int pl330_update(struct pl330_dmac *pl330)
+--- a/drivers/block/null_blk.c
++++ b/drivers/block/null_blk.c
+@@ -68,6 +68,7 @@ enum nullb_device_flags {
+ 	NULLB_DEV_FL_CACHE	= 3,
+ };
+ 
++#define MAP_SZ		((PAGE_SIZE >> SECTOR_SHIFT) + 2)
+ /*
+  * nullb_page is a page in memory for nullb devices.
+  *
+@@ -82,10 +83,10 @@ enum nullb_device_flags {
+  */
+ struct nullb_page {
+ 	struct page *page;
+-	unsigned long bitmap;
++	DECLARE_BITMAP(bitmap, MAP_SZ);
+ };
+-#define NULLB_PAGE_LOCK (sizeof(unsigned long) * 8 - 1)
+-#define NULLB_PAGE_FREE (sizeof(unsigned long) * 8 - 2)
++#define NULLB_PAGE_LOCK (MAP_SZ - 1)
++#define NULLB_PAGE_FREE (MAP_SZ - 2)
+ 
+ struct nullb_device {
+ 	struct nullb *nullb;
+@@ -725,7 +726,7 @@ static struct nullb_page *null_alloc_pag
+ 	if (!t_page->page)
+ 		goto out_freepage;
+ 
+-	t_page->bitmap = 0;
++	memset(t_page->bitmap, 0, sizeof(t_page->bitmap));
+ 	return t_page;
+ out_freepage:
+ 	kfree(t_page);
+@@ -735,13 +736,20 @@ out:
+ 
+ static void null_free_page(struct nullb_page *t_page)
  {
--	struct dma_pl330_desc *descdone, *tmp;
-+	struct dma_pl330_desc *descdone;
- 	unsigned long flags;
- 	void __iomem *regs;
- 	u32 val;
-@@ -1588,7 +1588,9 @@ static int pl330_update(struct pl330_dma
+-	__set_bit(NULLB_PAGE_FREE, &t_page->bitmap);
+-	if (test_bit(NULLB_PAGE_LOCK, &t_page->bitmap))
++	__set_bit(NULLB_PAGE_FREE, t_page->bitmap);
++	if (test_bit(NULLB_PAGE_LOCK, t_page->bitmap))
+ 		return;
+ 	__free_page(t_page->page);
+ 	kfree(t_page);
+ }
+ 
++static bool null_page_empty(struct nullb_page *page)
++{
++	int size = MAP_SZ - 2;
++
++	return find_first_bit(page->bitmap, size) == size;
++}
++
+ static void null_free_sector(struct nullb *nullb, sector_t sector,
+ 	bool is_cache)
+ {
+@@ -756,9 +764,9 @@ static void null_free_sector(struct null
+ 
+ 	t_page = radix_tree_lookup(root, idx);
+ 	if (t_page) {
+-		__clear_bit(sector_bit, &t_page->bitmap);
++		__clear_bit(sector_bit, t_page->bitmap);
+ 
+-		if (!t_page->bitmap) {
++		if (null_page_empty(t_page)) {
+ 			ret = radix_tree_delete_item(root, idx, t_page);
+ 			WARN_ON(ret != t_page);
+ 			null_free_page(ret);
+@@ -829,7 +837,7 @@ static struct nullb_page *__null_lookup_
+ 	t_page = radix_tree_lookup(root, idx);
+ 	WARN_ON(t_page && t_page->page->index != idx);
+ 
+-	if (t_page && (for_write || test_bit(sector_bit, &t_page->bitmap)))
++	if (t_page && (for_write || test_bit(sector_bit, t_page->bitmap)))
+ 		return t_page;
+ 
+ 	return NULL;
+@@ -892,10 +900,10 @@ static int null_flush_cache_page(struct
+ 
+ 	t_page = null_insert_page(nullb, idx << PAGE_SECTORS_SHIFT, true);
+ 
+-	__clear_bit(NULLB_PAGE_LOCK, &c_page->bitmap);
+-	if (test_bit(NULLB_PAGE_FREE, &c_page->bitmap)) {
++	__clear_bit(NULLB_PAGE_LOCK, c_page->bitmap);
++	if (test_bit(NULLB_PAGE_FREE, c_page->bitmap)) {
+ 		null_free_page(c_page);
+-		if (t_page && t_page->bitmap == 0) {
++		if (t_page && null_page_empty(t_page)) {
+ 			ret = radix_tree_delete_item(&nullb->dev->data,
+ 				idx, t_page);
+ 			null_free_page(t_page);
+@@ -911,11 +919,11 @@ static int null_flush_cache_page(struct
+ 
+ 	for (i = 0; i < PAGE_SECTORS;
+ 			i += (nullb->dev->blocksize >> SECTOR_SHIFT)) {
+-		if (test_bit(i, &c_page->bitmap)) {
++		if (test_bit(i, c_page->bitmap)) {
+ 			offset = (i << SECTOR_SHIFT);
+ 			memcpy(dst + offset, src + offset,
+ 				nullb->dev->blocksize);
+-			__set_bit(i, &t_page->bitmap);
++			__set_bit(i, t_page->bitmap);
+ 		}
  	}
  
- 	/* Now that we are in no hurry, do the callbacks */
--	list_for_each_entry_safe(descdone, tmp, &pl330->req_done, rqd) {
-+	while (!list_empty(&pl330->req_done)) {
-+		descdone = list_first_entry(&pl330->req_done,
-+					    struct dma_pl330_desc, rqd);
- 		list_del(&descdone->rqd);
- 		spin_unlock_irqrestore(&pl330->lock, flags);
- 		dma_pl330_rqcb(descdone, PL330_ERR_NONE);
+@@ -952,10 +960,10 @@ again:
+ 		 * We found the page which is being flushed to disk by other
+ 		 * threads
+ 		 */
+-		if (test_bit(NULLB_PAGE_LOCK, &c_pages[i]->bitmap))
++		if (test_bit(NULLB_PAGE_LOCK, c_pages[i]->bitmap))
+ 			c_pages[i] = NULL;
+ 		else
+-			__set_bit(NULLB_PAGE_LOCK, &c_pages[i]->bitmap);
++			__set_bit(NULLB_PAGE_LOCK, c_pages[i]->bitmap);
+ 	}
+ 
+ 	one_round = 0;
+@@ -1008,7 +1016,7 @@ static int copy_to_nullb(struct nullb *n
+ 		kunmap_atomic(dst);
+ 		kunmap_atomic(src);
+ 
+-		__set_bit(sector & SECTOR_MASK, &t_page->bitmap);
++		__set_bit(sector & SECTOR_MASK, t_page->bitmap);
+ 
+ 		if (is_fua)
+ 			null_free_sector(nullb, sector, true);
+@@ -1922,10 +1930,6 @@ static int __init null_init(void)
+ 	struct nullb *nullb;
+ 	struct nullb_device *dev;
+ 
+-	/* check for nullb_page.bitmap */
+-	if (sizeof(unsigned long) * 8 - 2 < (PAGE_SIZE >> SECTOR_SHIFT))
+-		return -EINVAL;
+-
+ 	if (g_bs > PAGE_SIZE) {
+ 		pr_warn("null_blk: invalid block size\n");
+ 		pr_warn("null_blk: defaults block size to %lu\n", PAGE_SIZE);
