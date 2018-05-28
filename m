@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968951AbeE1Ko2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:44:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35102 "EHLO mail.kernel.org"
+        id S937663AbeE1Kog (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:44:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968907AbeE1KoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:18 -0400
+        id S937335AbeE1Ko3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, greg@kroah.com
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Subject: [PATCH 4.14 039/496] powerpc/rfi-flush: Always enable fallback flush on pseries
-Date: Mon, 28 May 2018 11:57:04 +0200
-Message-Id: <20180528100321.317017045@linuxfoundation.org>
+        stable@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 069/496] ARM: OMAP3: Fix prm wake interrupt for resume
+Date: Mon, 28 May 2018 11:57:34 +0200
+Message-Id: <20180528100322.694996251@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -29,49 +30,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 84749a58b6e382f109abf1e734bc4dd43c2c25bb upstream.
+[ Upstream commit d3be6d2a08bd26580562d9714d3d97ea9ba22c73 ]
 
-This ensures the fallback flush area is always allocated on pseries,
-so in case a LPAR is migrated from a patched to an unpatched system,
-it is possible to enable the fallback flush in the target system.
+For platform_suspend_ops, the finish call is too late to re-enable wake
+irqs and we need re-enable wake irqs on wake call instead.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Otherwise noirq resume for devices has already happened. And then
+dev_pm_disarm_wake_irq() has already disabled the dedicated wake irqs
+when the interrupt triggers and the wake irq is never handled.
+
+For devices that are already in PM runtime suspended state when we
+enter suspend this means that a possible wake irq will never trigger.
+
+And this can lead into a situation where a device has a pending padconf
+wake irq, and the device will stay unresponsive to any further wake
+irqs.
+
+This issue can be easily reproduced by setting serial console log level
+to zero, letting the serial console idle, and suspend the system from
+an ssh terminal. Then try to wake up the system by typing to the serial
+console.
+
+Note that this affects only omap3 PRM interrupt as that's currently
+the only omap variant that does anything in omap_pm_wake().
+
+In general, for the wake irqs to work, the interrupt must have either
+IRQF_NO_SUSPEND or IRQF_EARLY_RESUME set for it to trigger before
+dev_pm_disarm_wake_irq() disables the wake irqs.
+
+Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/setup.c |   10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ arch/arm/mach-omap2/pm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -468,26 +468,18 @@ static void pseries_setup_rfi_flush(void
+--- a/arch/arm/mach-omap2/pm.c
++++ b/arch/arm/mach-omap2/pm.c
+@@ -186,7 +186,7 @@ static void omap_pm_end(void)
+ 	cpu_idle_poll_ctrl(false);
+ }
  
- 	/* Enable by default */
- 	enable = true;
-+	types = L1D_FLUSH_FALLBACK;
+-static void omap_pm_finish(void)
++static void omap_pm_wake(void)
+ {
+ 	if (soc_is_omap34xx())
+ 		omap_prcm_irq_complete();
+@@ -196,7 +196,7 @@ static const struct platform_suspend_ops
+ 	.begin		= omap_pm_begin,
+ 	.end		= omap_pm_end,
+ 	.enter		= omap_pm_enter,
+-	.finish		= omap_pm_finish,
++	.wake		= omap_pm_wake,
+ 	.valid		= suspend_valid_only_mem,
+ };
  
- 	rc = plpar_get_cpu_characteristics(&result);
- 	if (rc == H_SUCCESS) {
--		types = L1D_FLUSH_NONE;
--
- 		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
- 			types |= L1D_FLUSH_MTTRIG;
- 		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
- 			types |= L1D_FLUSH_ORI;
- 
--		/* Use fallback if nothing set in hcall */
--		if (types == L1D_FLUSH_NONE)
--			types = L1D_FLUSH_FALLBACK;
--
- 		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
- 		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
- 			enable = false;
--	} else {
--		/* Default to fallback if case hcall is not available */
--		types = L1D_FLUSH_FALLBACK;
- 	}
- 
- 	setup_rfi_flush(types, enable);
