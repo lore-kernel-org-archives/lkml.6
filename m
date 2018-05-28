@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163468AbeE1KtF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38724 "EHLO mail.kernel.org"
+        id S1165323AbeE1NVZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:21:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163440AbeE1Ksz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:55 -0400
+        id S1163440AbeE1KtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joey Pabalinas <joeypabalinas@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 172/496] net/tcp/illinois: replace broken algorithm reference link
-Date: Mon, 28 May 2018 11:59:17 +0200
-Message-Id: <20180528100327.117010008@linuxfoundation.org>
+Subject: [PATCH 4.14 145/496] netfilter: ipt_CLUSTERIP: put config instead of freeing it
+Date: Mon, 28 May 2018 11:58:50 +0200
+Message-Id: <20180528100326.022704026@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,45 +30,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joey Pabalinas <joeypabalinas@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit ecc832758a654e375924ebf06a4ac971acb5ce60 ]
+[ Upstream commit 1a9da5937386dbe553ffcf6c65d985bd48c347c5 ]
 
-The link to the pdf containing the algorithm description is now a
-dead link; it seems http://www.ifp.illinois.edu/~srikant/ has been
-moved to https://sites.google.com/a/illinois.edu/srikant/ and none of
-the original papers can be found there...
+Once struct is added to per-netns list it becomes visible to other cpus,
+so we cannot use kfree().
 
-I have replaced it with the only working copy I was able to find.
+Also delay setting entries refcount to 1 until after everything is
+initialised so that when we call clusterip_config_put() in this spot
+entries is still zero.
 
-n.b. there is also a copy available at:
-
-http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.296.6350&rep=rep1&type=pdf
-
-However, this seems to only be a *cached* version, so I am unsure
-exactly how reliable that link can be expected to remain over time
-and have decided against using that one.
-
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-
- net/ipv4/tcp_illinois.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_illinois.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/tcp_illinois.c
-+++ b/net/ipv4/tcp_illinois.c
-@@ -6,7 +6,7 @@
-  * The algorithm is described in:
-  * "TCP-Illinois: A Loss and Delay-Based Congestion Control Algorithm
-  *  for High-Speed Networks"
-- * http://www.ifp.illinois.edu/~srikant/Papers/liubassri06perf.pdf
-+ * http://tamerbasar.csl.illinois.edu/LiuBasarSrikantPerfEvalArtJun2008.pdf
-  *
-  * Implemented from description in paper and ns-2 simulation.
-  * Copyright (C) 2007 Stephen Hemminger <shemminger@linux-foundation.org>
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -228,7 +228,6 @@ clusterip_config_init(struct net *net, c
+ 	c->hash_mode = i->hash_mode;
+ 	c->hash_initval = i->hash_initval;
+ 	refcount_set(&c->refcount, 1);
+-	refcount_set(&c->entries, 1);
+ 
+ 	spin_lock_bh(&cn->lock);
+ 	if (__clusterip_config_find(net, ip)) {
+@@ -259,8 +258,10 @@ clusterip_config_init(struct net *net, c
+ 
+ 	c->notifier.notifier_call = clusterip_netdev_event;
+ 	err = register_netdevice_notifier(&c->notifier);
+-	if (!err)
++	if (!err) {
++		refcount_set(&c->entries, 1);
+ 		return c;
++	}
+ 
+ #ifdef CONFIG_PROC_FS
+ 	proc_remove(c->pde);
+@@ -269,7 +270,7 @@ err:
+ 	spin_lock_bh(&cn->lock);
+ 	list_del_rcu(&c->list);
+ 	spin_unlock_bh(&cn->lock);
+-	kfree(c);
++	clusterip_config_put(c);
+ 
+ 	return ERR_PTR(err);
+ }
