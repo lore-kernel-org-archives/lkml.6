@@ -1,108 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939318AbeE1OJv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:09:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162193AbeE1Khp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:45 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vinayak Menon <vinmenon@codeaurora.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 225/329] mm/kmemleak.c: wait for scan completion before disabling free
-Date: Mon, 28 May 2018 12:02:34 +0200
-Message-Id: <20180528100300.846023730@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S939334AbeE1OKE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:10:04 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:49968 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162253AbeE1OHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:07:54 -0400
+Date: Mon, 28 May 2018 15:07:49 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, akpm@linux-foundation.org,
+        oleg@redhat.com
+Subject: Re: [PATCH 2/8] signal: make kill_as_cred_perm() return bool
+Message-ID: <20180528140749.GY30522@ZenIV.linux.org.uk>
+References: <20180528134916.7568-1-christian@brauner.io>
+ <20180528134916.7568-3-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528134916.7568-3-christian@brauner.io>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 03:49:10PM +0200, Christian Brauner wrote:
+> kill_as_cred_perm() already behaves like a boolean function. Let's actually
+> declare it as such too.
+> 
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> ---
+>  kernel/signal.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index c756008d589e..81be01d193f4 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -1349,14 +1349,15 @@ static int kill_proc_info(int sig, struct siginfo *info, pid_t pid)
+>  	return error;
+>  }
+>  
+> -static int kill_as_cred_perm(const struct cred *cred,
+> +static bool kill_as_cred_perm(const struct cred *cred,
+>  			     struct task_struct *target)
+>  {
+>  	const struct cred *pcred = __task_cred(target);
+>  	if (!uid_eq(cred->euid, pcred->suid) && !uid_eq(cred->euid, pcred->uid) &&
+>  	    !uid_eq(cred->uid,  pcred->suid) && !uid_eq(cred->uid,  pcred->uid))
+> -		return 0;
+> -	return 1;
+> +		return false;
+> +
+> +	return true;
 
-------------------
+Ugh...
+	if (!foo && !bar && !baz && !quux)
+		return false;
+	return true;
 
-From: Vinayak Menon <vinmenon@codeaurora.org>
+is a bloody odd way to spell
 
-[ Upstream commit 914b6dfff790544d9b77dfd1723adb3745ec9700 ]
-
-A crash is observed when kmemleak_scan accesses the object->pointer,
-likely due to the following race.
-
-  TASK A             TASK B                     TASK C
-  kmemleak_write
-   (with "scan" and
-   NOT "scan=on")
-  kmemleak_scan()
-                     create_object
-                     kmem_cache_alloc fails
-                     kmemleak_disable
-                     kmemleak_do_cleanup
-                     kmemleak_free_enabled = 0
-                                                kfree
-                                                kmemleak_free bails out
-                                                 (kmemleak_free_enabled is 0)
-                                                slub frees object->pointer
-  update_checksum
-  crash - object->pointer
-   freed (DEBUG_PAGEALLOC)
-
-kmemleak_do_cleanup waits for the scan thread to complete, but not for
-direct call to kmemleak_scan via kmemleak_write.  So add a wait for
-kmemleak_scan completion before disabling kmemleak_free, and while at it
-fix the comment on stop_scan_thread.
-
-[vinmenon@codeaurora.org: fix stop_scan_thread comment]
-  Link: http://lkml.kernel.org/r/1522219972-22809-1-git-send-email-vinmenon@codeaurora.org
-Link: http://lkml.kernel.org/r/1522063429-18992-1-git-send-email-vinmenon@codeaurora.org
-Signed-off-by: Vinayak Menon <vinmenon@codeaurora.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- mm/kmemleak.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -1577,8 +1577,7 @@ static void start_scan_thread(void)
- }
- 
- /*
-- * Stop the automatic memory scanning thread. This function must be called
-- * with the scan_mutex held.
-+ * Stop the automatic memory scanning thread.
-  */
- static void stop_scan_thread(void)
- {
-@@ -1841,12 +1840,15 @@ static void kmemleak_do_cleanup(struct w
- {
- 	stop_scan_thread();
- 
-+	mutex_lock(&scan_mutex);
- 	/*
--	 * Once the scan thread has stopped, it is safe to no longer track
--	 * object freeing. Ordering of the scan thread stopping and the memory
--	 * accesses below is guaranteed by the kthread_stop() function.
-+	 * Once it is made sure that kmemleak_scan has stopped, it is safe to no
-+	 * longer track object freeing. Ordering of the scan thread stopping and
-+	 * the memory accesses below is guaranteed by the kthread_stop()
-+	 * function.
- 	 */
- 	kmemleak_free_enabled = 0;
-+	mutex_unlock(&scan_mutex);
- 
- 	if (!kmemleak_found_leaks)
- 		__kmemleak_do_cleanup();
+	return foo || bar || baz || quux;
