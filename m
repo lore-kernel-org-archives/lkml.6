@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755496AbeE1QIh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:08:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
+        id S935037AbeE1KOL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:14:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936836AbeE1KON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:13 -0400
+        id S965697AbeE1KOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 178/185] clk: samsung: exynos3250: Fix PLL rates
-Date: Mon, 28 May 2018 12:03:39 +0200
-Message-Id: <20180528100115.587558966@linuxfoundation.org>
+Subject: [PATCH 3.18 175/185] clk: samsung: s3c2410: Fix PLL rates
+Date: Mon, 28 May 2018 12:03:36 +0200
+Message-Id: <20180528100114.697711479@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,10 +34,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit a8321e7887410a2b2e80ab89d1ef7b30562658ea ]
+[ Upstream commit 179db533c08431f509a3823077549773d519358b ]
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of the PLL's child clock
+Rates declared in PLL rate tables should match exactly rates calculated from
+the PLL coefficients. If that is not the case, rate of the PLL's child clock
 might be set not as expected. For instance, if in the PLL rates table we have
 a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
 callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
@@ -49,36 +49,50 @@ greater than 196608000.
 To fix this issue declared rates are changed to exactly match rates generated
 by the PLL, as calculated from the P, M, S, K coefficients.
 
-In this patch an erroneous P value for 74176002 output frequency is also
-corrected.
-
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-s3c2410.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -740,7 +740,7 @@ static struct samsung_pll_rate_table exy
- 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
- 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
- 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
--	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
-+	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
- 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
- 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
- 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
-@@ -776,7 +776,7 @@ static struct samsung_pll_rate_table exy
- 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
- 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
- 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
--	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
-+	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
- 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
- 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
- 	{ /* sentinel */ }
+--- a/drivers/clk/samsung/clk-s3c2410.c
++++ b/drivers/clk/samsung/clk-s3c2410.c
+@@ -170,7 +170,7 @@ static struct samsung_pll_rate_table pll
+ 	PLL_35XX_RATE(226000000, 105, 1, 1),
+ 	PLL_35XX_RATE(210000000, 132, 2, 1),
+ 	/* 2410 common */
+-	PLL_35XX_RATE(203000000, 161, 3, 1),
++	PLL_35XX_RATE(202800000, 161, 3, 1),
+ 	PLL_35XX_RATE(192000000, 88, 1, 1),
+ 	PLL_35XX_RATE(186000000, 85, 1, 1),
+ 	PLL_35XX_RATE(180000000, 82, 1, 1),
+@@ -180,18 +180,18 @@ static struct samsung_pll_rate_table pll
+ 	PLL_35XX_RATE(147000000, 90, 2, 1),
+ 	PLL_35XX_RATE(135000000, 82, 2, 1),
+ 	PLL_35XX_RATE(124000000, 116, 1, 2),
+-	PLL_35XX_RATE(118000000, 150, 2, 2),
++	PLL_35XX_RATE(118500000, 150, 2, 2),
+ 	PLL_35XX_RATE(113000000, 105, 1, 2),
+-	PLL_35XX_RATE(101000000, 127, 2, 2),
++	PLL_35XX_RATE(101250000, 127, 2, 2),
+ 	PLL_35XX_RATE(90000000, 112, 2, 2),
+-	PLL_35XX_RATE(85000000, 105, 2, 2),
++	PLL_35XX_RATE(84750000, 105, 2, 2),
+ 	PLL_35XX_RATE(79000000, 71, 1, 2),
+-	PLL_35XX_RATE(68000000, 82, 2, 2),
+-	PLL_35XX_RATE(56000000, 142, 2, 3),
++	PLL_35XX_RATE(67500000, 82, 2, 2),
++	PLL_35XX_RATE(56250000, 142, 2, 3),
+ 	PLL_35XX_RATE(48000000, 120, 2, 3),
+-	PLL_35XX_RATE(51000000, 161, 3, 3),
++	PLL_35XX_RATE(50700000, 161, 3, 3),
+ 	PLL_35XX_RATE(45000000, 82, 1, 3),
+-	PLL_35XX_RATE(34000000, 82, 2, 3),
++	PLL_35XX_RATE(33750000, 82, 2, 3),
+ 	{ /* sentinel */ },
+ };
+ 
