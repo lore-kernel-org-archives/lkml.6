@@ -1,141 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754006AbeE1Irh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:47:37 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53423 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754065AbeE1IrT (ORCPT
+        id S1754076AbeE1Itp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:49:45 -0400
+Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:59167 "EHLO
+        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754022AbeE1Itn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:47:19 -0400
-X-Google-Smtp-Source: ADUXVKJM7scZ6YpcLs5Pf7CCmQEC1asz9Qw4K7UymfIWhrsnL6HYHifDQC8RLh+XpL9qazJ6rd3GKQ==
-Subject: Re: [PATCH v2 11/29] venus: venc,vdec: adds clocks needed for venus
- 4xx
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-12-stanimir.varbanov@linaro.org>
- <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <3a892dd5-0744-c289-e258-099d531d5abd@linaro.org>
-Date: Mon, 28 May 2018 11:47:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 28 May 2018 04:49:43 -0400
+Date: Mon, 28 May 2018 09:49:40 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] mm, page_alloc: do not break __GFP_THISNODE by zonelist
+ reset
+Message-ID: <20180528084940.avqh7unxdghvx7ow@techsingularity.net>
+References: <20180525130853.13915-1-vbabka@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180525130853.13915-1-vbabka@suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+On Fri, May 25, 2018 at 03:08:53PM +0200, Vlastimil Babka wrote:
+> In __alloc_pages_slowpath() we reset zonelist and preferred_zoneref for
+> allocations that can ignore memory policies. The zonelist is obtained from
+> current CPU's node. This is a problem for __GFP_THISNODE allocations that want
+> to allocate on a different node, e.g. because the allocating thread has been
+> migrated to a different CPU.
+> 
+> This has been observed to break SLAB in our 4.4-based kernel, because there it
+> relies on __GFP_THISNODE working as intended. If a slab page is put on wrong
+> node's list, then further list manipulations may corrupt the list because
+> page_to_nid() is used to determine which node's list_lock should be locked and
+> thus we may take a wrong lock and race.
+> 
+> Current SLAB implementation seems to be immune by luck thanks to commit
+> 511e3a058812 ("mm/slab: make cache_grow() handle the page allocated on
+> arbitrary node") but there may be others assuming that __GFP_THISNODE works as
+> promised.
+> 
+> We can fix it by simply removing the zonelist reset completely. There is
+> actually no reason to reset it, because memory policies and cpusets don't
+> affect the zonelist choice in the first place. This was different when commit
+> 183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
+> introduced the code, as mempolicies provided their own restricted zonelists.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> Fixes: 183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
 
-On 05/24/2018 09:11 AM, Tomasz Figa wrote:
-> Hi Stanimir,
-> 
-> On Tue, May 15, 2018 at 5:10 PM Stanimir Varbanov <
-> stanimir.varbanov@linaro.org> wrote:
-> 
->> This extends the clocks number to support suspend and resume
->> on Venus version 4xx.
-> 
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>   drivers/media/platform/qcom/venus/core.h |  4 +--
->>   drivers/media/platform/qcom/venus/vdec.c | 42
-> ++++++++++++++++++++++++++------
->>   drivers/media/platform/qcom/venus/venc.c | 42
-> ++++++++++++++++++++++++++------
->>   3 files changed, 72 insertions(+), 16 deletions(-)
-> 
->> diff --git a/drivers/media/platform/qcom/venus/core.h
-> b/drivers/media/platform/qcom/venus/core.h
->> index 8d3e150800c9..b5b9a84e9155 100644
->> --- a/drivers/media/platform/qcom/venus/core.h
->> +++ b/drivers/media/platform/qcom/venus/core.h
->> @@ -92,8 +92,8 @@ struct venus_core {
->>          void __iomem *base;
->>          int irq;
->>          struct clk *clks[VIDC_CLKS_NUM_MAX];
->> -       struct clk *core0_clk;
->> -       struct clk *core1_clk;
->> +       struct clk *core0_clk, *core0_bus_clk;
->> +       struct clk *core1_clk, *core1_bus_clk;
->>          struct video_device *vdev_dec;
->>          struct video_device *vdev_enc;
->>          struct v4l2_device v4l2_dev;
->> diff --git a/drivers/media/platform/qcom/venus/vdec.c
-> b/drivers/media/platform/qcom/venus/vdec.c
->> index 261a51adeef2..c45452634e7e 100644
->> --- a/drivers/media/platform/qcom/venus/vdec.c
->> +++ b/drivers/media/platform/qcom/venus/vdec.c
->> @@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device
-> *pdev)
->>          if (!core)
->>                  return -EPROBE_DEFER;
-> 
->> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
->> +       if (IS_V3(core) || IS_V4(core)) {
->>                  core->core0_clk = devm_clk_get(dev, "core");
->>                  if (IS_ERR(core->core0_clk))
->>                          return PTR_ERR(core->core0_clk);
->>          }
-> 
->> +       if (IS_V4(core)) {
->> +               core->core0_bus_clk = devm_clk_get(dev, "bus");
->> +               if (IS_ERR(core->core0_bus_clk))
->> +                       return PTR_ERR(core->core0_bus_clk);
->> +       }
->> +
-> 
-> Rather than doing this conditional dance, wouldn't it make more sense to
-> just list all the clocks in variant data struct and use clk_bulk_get()?
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
-Do you mean the same as it is done for venus/core.c ?
-
-> 
->>          platform_set_drvdata(pdev, core);
-> 
->>          vdev = video_device_alloc();
->> @@ -1132,12 +1138,23 @@ static __maybe_unused int
-> vdec_runtime_suspend(struct device *dev)
->>   {
->>          struct venus_core *core = dev_get_drvdata(dev);
-> 
->> -       if (core->res->hfi_version == HFI_VERSION_1XX)
->> +       if (IS_V1(core))
->>                  return 0;
-> 
->> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
->> +       if (IS_V3(core))
->> +               writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
->> +       else if (IS_V4(core))
->> +               writel(0, core->base +
-> WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
->> +
->> +       if (IS_V4(core))
->> +               clk_disable_unprepare(core->core0_bus_clk);
->> +
->>          clk_disable_unprepare(core->core0_clk);
->> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
->> +
->> +       if (IS_V3(core))
->> +               writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
->> +       else if (IS_V4(core))
->> +               writel(1, core->base +
-> WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
-> 
-> Almost every step here differs between version. I'd suggest splitting this
-> into separate functions for both versions.
-
-I think it will be better to squash this patch with 13/29.
-
+Thanks.
 
 -- 
-regards,
-Stan
+Mel Gorman
+SUSE Labs
