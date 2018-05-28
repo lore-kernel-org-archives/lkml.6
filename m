@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162361AbeE1KhV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:37:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57914 "EHLO mail.kernel.org"
+        id S1162374AbeE1Kha (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:37:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162303AbeE1KhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:17 -0400
+        id S1162020AbeE1Kh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 246/329] fscache: Fix hanging wait on page discarded by writeback
-Date: Mon, 28 May 2018 12:02:55 +0200
-Message-Id: <20180528100302.472896593@linuxfoundation.org>
+Subject: [PATCH 4.9 248/329] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
+Date: Mon, 28 May 2018 12:02:57 +0200
+Message-Id: <20180528100302.638012195@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,69 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 2c98425720233ae3e135add0c7e869b32913502f ]
+[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
 
-If the fscache asynchronous write operation elects to discard a page that's
-pending storage to the cache because the page would be over the store limit
-then it needs to wake the page as someone may be waiting on completion of
-the write.
+bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
+32-bit word without using proper accessors, fix this, and because a
+length cannot be negative, use unsigned int while at it.
 
-The problem is that the store limit may be updated by a different
-asynchronous operation - and so may miss the write - and that the store
-limit may not even get updated until later by the netfs.
-
-Fix the kernel hang by making fscache_write_op() mark as written any pages
-that are over the limit.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/fscache/page.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/fscache/page.c
-+++ b/fs/fscache/page.c
-@@ -776,6 +776,7 @@ static void fscache_write_op(struct fsca
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -529,7 +529,8 @@ static void bgmac_dma_tx_ring_free(struc
+ 	int i;
  
- 	_enter("{OP%x,%d}", op->op.debug_id, atomic_read(&op->op.usage));
+ 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
+-		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
++		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
++		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
  
-+again:
- 	spin_lock(&object->lock);
- 	cookie = object->cookie;
- 
-@@ -816,10 +817,6 @@ static void fscache_write_op(struct fsca
- 		goto superseded;
- 	page = results[0];
- 	_debug("gang %d [%lx]", n, page->index);
--	if (page->index >= op->store_limit) {
--		fscache_stat(&fscache_n_store_pages_over_limit);
--		goto superseded;
--	}
- 
- 	radix_tree_tag_set(&cookie->stores, page->index,
- 			   FSCACHE_COOKIE_STORING_TAG);
-@@ -829,6 +826,9 @@ static void fscache_write_op(struct fsca
- 	spin_unlock(&cookie->stores_lock);
- 	spin_unlock(&object->lock);
- 
-+	if (page->index >= op->store_limit)
-+		goto discard_page;
-+
- 	fscache_stat(&fscache_n_store_pages);
- 	fscache_stat(&fscache_n_cop_write_page);
- 	ret = object->cache->ops->write_page(op, page);
-@@ -844,6 +844,11 @@ static void fscache_write_op(struct fsca
- 	_leave("");
- 	return;
- 
-+discard_page:
-+	fscache_stat(&fscache_n_store_pages_over_limit);
-+	fscache_end_page_write(object, page);
-+	goto again;
-+
- superseded:
- 	/* this writer is going away and there aren't any more things to
- 	 * write */
+ 		slot = &ring->slots[i];
+ 		dev_kfree_skb(slot->skb);
