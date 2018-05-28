@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166023AbeE1PK1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:10:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43336 "EHLO mail.kernel.org"
+        id S1033790AbeE1KYR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:24:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033325AbeE1KYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:00 -0400
+        id S1033556AbeE1KYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:24:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Ivan Gorinov <ivan.gorinov@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 190/268] powerpc/perf: Prevent kernel address leak to userspace via BHRB buffer
-Date: Mon, 28 May 2018 12:02:44 +0200
-Message-Id: <20180528100223.874733909@linuxfoundation.org>
+Subject: [PATCH 4.4 226/268] x86/devicetree: Fix device IRQ settings in DT
+Date: Mon, 28 May 2018 12:03:20 +0200
+Message-Id: <20180528100228.509289492@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,40 +31,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+From: Ivan Gorinov <ivan.gorinov@intel.com>
 
-[ Upstream commit bb19af816025d495376bd76bf6fbcf4244f9a06d ]
+[ Upstream commit 0a5169add90e43ab45ab1ba34223b8583fcaf675 ]
 
-The current Branch History Rolling Buffer (BHRB) code does not check
-for any privilege levels before updating the data from BHRB. This
-could leak kernel addresses to userspace even when profiling only with
-userspace privileges. Add proper checks to prevent it.
+IRQ parameters for the SoC devices connected directly to I/O APIC lines
+(without PCI IRQ routing) may be specified in the Device Tree.
 
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Called from DT IRQ parser, irq_create_fwspec_mapping() calls
+irq_domain_alloc_irqs() with a pointer to irq_fwspec structure as @arg.
+
+But x86-specific DT IRQ allocation code casts @arg to of_phandle_args
+structure pointer and crashes trying to read the IRQ parameters. The
+function was not converted when the mapping descriptor was changed to
+irq_fwspec in the generic irqdomain code.
+
+Fixes: 11e4438ee330 ("irqdomain: Introduce a firmware-specific IRQ specifier structure")
+Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Link: https://lkml.kernel.org/r/a234dee27ea60ce76141872da0d6bdb378b2a9ee.1520450752.git.ivan.gorinov@intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/perf/core-book3s.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/kernel/devicetree.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -448,6 +448,16 @@ static void power_pmu_bhrb_read(struct c
- 				/* invalid entry */
- 				continue;
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -200,19 +200,22 @@ static struct of_ioapic_type of_ioapic_t
+ static int dt_irqdomain_alloc(struct irq_domain *domain, unsigned int virq,
+ 			      unsigned int nr_irqs, void *arg)
+ {
+-	struct of_phandle_args *irq_data = (void *)arg;
++	struct irq_fwspec *fwspec = (struct irq_fwspec *)arg;
+ 	struct of_ioapic_type *it;
+ 	struct irq_alloc_info tmp;
++	int type_index;
  
-+			/*
-+			 * BHRB rolling buffer could very much contain the kernel
-+			 * addresses at this point. Check the privileges before
-+			 * exporting it to userspace (avoid exposure of regions
-+			 * where we could have speculative execution)
-+			 */
-+			if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
-+				is_kernel_addr(addr))
-+				continue;
+-	if (WARN_ON(irq_data->args_count < 2))
++	if (WARN_ON(fwspec->param_count < 2))
+ 		return -EINVAL;
+-	if (irq_data->args[1] >= ARRAY_SIZE(of_ioapic_type))
 +
- 			/* Branches are read most recent first (ie. mfbhrb 0 is
- 			 * the most recent branch).
- 			 * There are two types of valid entries:
++	type_index = fwspec->param[1];
++	if (type_index >= ARRAY_SIZE(of_ioapic_type))
+ 		return -EINVAL;
+ 
+-	it = &of_ioapic_type[irq_data->args[1]];
++	it = &of_ioapic_type[type_index];
+ 	ioapic_set_alloc_attr(&tmp, NUMA_NO_NODE, it->trigger, it->polarity);
+ 	tmp.ioapic_id = mpc_ioapic_id(mp_irqdomain_ioapic_idx(domain));
+-	tmp.ioapic_pin = irq_data->args[0];
++	tmp.ioapic_pin = fwspec->param[0];
+ 
+ 	return mp_irqdomain_alloc(domain, virq, nr_irqs, &tmp);
+ }
