@@ -1,81 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755238AbeE1Ntb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:49:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937414AbeE1KmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:10 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S937613AbeE1Ntv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:49:51 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52897 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755257AbeE1Ntg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:49:36 -0400
+X-Google-Smtp-Source: ADUXVKK9RInT72WCKXz3HJEL17bIzGrvGiAmd7dOUq8/i6GhN9ffBX7OJmiFEuqzg7iJRWzAu/PD+A==
+From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 024/496] ipc/shm: fix shmat() nil address after round-down when remapping
-Date: Mon, 28 May 2018 11:56:49 +0200
-Message-Id: <20180528100320.611737952@linuxfoundation.org>
+Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, oleg@redhat.com,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH 3/8] signal: make may_ptrace_stop() return bool
+Date: Mon, 28 May 2018 15:49:11 +0200
+Message-Id: <20180528134916.7568-4-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180528134916.7568-1-christian@brauner.io>
+References: <20180528134916.7568-1-christian@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+may_ptrace_stop() already behaves like a boolean function. Let's actually
+declare it as such too.
 
-------------------
-
-From: Davidlohr Bueso <dave@stgolabs.net>
-
-commit 8f89c007b6dec16a1793cb88de88fcc02117bbbc upstream.
-
-shmat()'s SHM_REMAP option forbids passing a nil address for; this is in
-fact the very first thing we check for.  Andrea reported that for
-SHM_RND|SHM_REMAP cases we can end up bypassing the initial addr check,
-but we need to check again if the address was rounded down to nil.  As
-of this patch, such cases will return -EINVAL.
-
-Link: http://lkml.kernel.org/r/20180503204934.kk63josdu6u53fbd@linux-n805
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reported-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
- ipc/shm.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ kernel/signal.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1309,9 +1309,17 @@ long do_shmat(int shmid, char __user *sh
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 81be01d193f4..6c2e7b45cba1 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1889,10 +1889,10 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
+ 	spin_unlock_irqrestore(&sighand->siglock, flags);
+ }
  
- 	if (addr) {
- 		if (addr & (shmlba - 1)) {
--			if (shmflg & SHM_RND)
-+			if (shmflg & SHM_RND) {
- 				addr &= ~(shmlba - 1);  /* round down */
--			else
-+
-+				/*
-+				 * Ensure that the round-down is non-nil
-+				 * when remapping. This can happen for
-+				 * cases when addr < shmlba.
-+				 */
-+				if (!addr && (shmflg & SHM_REMAP))
-+					goto out;
-+			} else
- #ifndef __ARCH_FORCE_SHMLBA
- 				if (addr & ~PAGE_MASK)
- #endif
+-static inline int may_ptrace_stop(void)
++static inline bool may_ptrace_stop(void)
+ {
+ 	if (!likely(current->ptrace))
+-		return 0;
++		return false;
+ 	/*
+ 	 * Are we in the middle of do_coredump?
+ 	 * If so and our tracer is also part of the coredump stopping
+@@ -1908,9 +1908,9 @@ static inline int may_ptrace_stop(void)
+ 	 */
+ 	if (unlikely(current->mm->core_state) &&
+ 	    unlikely(current->mm == current->parent->mm))
+-		return 0;
++		return false;
+ 
+-	return 1;
++	return true;
+ }
+ 
+ /*
+-- 
+2.17.0
