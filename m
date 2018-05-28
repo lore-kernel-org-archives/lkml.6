@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166005AbeE1PON (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:14:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42570 "EHLO mail.kernel.org"
+        id S1033608AbeE1KXE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:23:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033336AbeE1KXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:11 -0400
+        id S1033562AbeE1KWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 203/268] zorro: Set up z->dev.dma_mask for the DMA API
-Date: Mon, 28 May 2018 12:02:57 +0200
-Message-Id: <20180528100225.257662844@linuxfoundation.org>
+Subject: [PATCH 4.4 198/268] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
+Date: Mon, 28 May 2018 12:02:52 +0200
+Message-Id: <20180528100224.741019139@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,53 +32,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Jay Vosburgh <jay.vosburgh@canonical.com>
 
-[ Upstream commit 55496d3fe2acd1a365c43cbd613a20ecd4d74395 ]
+[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
 
-The generic DMA API uses dev->dma_mask to check the DMA addressable
-memory bitmask, and warns if no mask is set or even allocated.
+The operstate update logic will leave an interface in the
+default UNKNOWN operstate if the interface carrier state never changes
+from the default carrier up state set at creation.  This includes the
+case of an explicit call to netif_carrier_on, as the carrier on to on
+transition has no effect on operstate.
 
-Set z->dev.dma_coherent_mask on Zorro bus scan, and make z->dev.dma_mask
-to point to z->dev.dma_coherent_mask so device drivers that need DMA have
-everything set up to avoid warnings from dma_alloc_coherent(). Drivers can
-still use dma_set_mask_and_coherent() to explicitly set their DMA bit mask.
+	This affects virtio-net for the case that the virtio peer does
+not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
+updates).  Without this feature, the virtio specification states that
+"the link should be assumed active," so, logically, the operstate should
+be UP instead of UNKNOWN.  This has impact on user space applications
+that use the operstate to make availability decisions for the interface.
 
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-[geert: Handle Zorro II with 24-bit address space]
-Acked-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+	Resolve this by changing the virtio probe logic slightly to call
+netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
+cases, and then the existing call to netif_carrier_on for the "without"
+case will cause an operstate transition.
+
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/zorro/zorro.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/zorro/zorro.c
-+++ b/drivers/zorro/zorro.c
-@@ -16,6 +16,7 @@
- #include <linux/bitops.h>
- #include <linux/string.h>
- #include <linux/platform_device.h>
-+#include <linux/dma-mapping.h>
- #include <linux/slab.h>
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1912,8 +1912,8 @@ static int virtnet_probe(struct virtio_d
  
- #include <asm/byteorder.h>
-@@ -185,6 +186,17 @@ static int __init amiga_zorro_probe(stru
- 		z->dev.parent = &bus->dev;
- 		z->dev.bus = &zorro_bus_type;
- 		z->dev.id = i;
-+		switch (z->rom.er_Type & ERT_TYPEMASK) {
-+		case ERT_ZORROIII:
-+			z->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+			break;
-+
-+		case ERT_ZORROII:
-+		default:
-+			z->dev.coherent_dma_mask = DMA_BIT_MASK(24);
-+			break;
-+		}
-+		z->dev.dma_mask = &z->dev.coherent_dma_mask;
- 	}
- 
- 	/* ... then register them */
+ 	/* Assume link up if device can't report link status,
+ 	   otherwise get link status from config. */
++	netif_carrier_off(dev);
+ 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+-		netif_carrier_off(dev);
+ 		schedule_work(&vi->config_work);
+ 	} else {
+ 		vi->status = VIRTIO_NET_S_LINK_UP;
