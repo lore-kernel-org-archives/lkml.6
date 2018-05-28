@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424785AbeE1LTL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:19:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35422 "EHLO mail.kernel.org"
+        id S1424812AbeE1LT2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424692AbeE1LQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:28 -0400
+        id S1424686AbeE1LQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
+        stable@vger.kernel.org, Henry Zhang <henryzhang62@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 237/272] PCMCIA / PM: Avoid noirq suspend aborts during suspend-to-idle
-Date: Mon, 28 May 2018 12:04:30 +0200
-Message-Id: <20180528100300.251583379@linuxfoundation.org>
+Subject: [PATCH 4.16 236/272] ARM: dts: bcm283x: Fix pin function of JTAG pins
+Date: Mon, 28 May 2018 12:04:29 +0200
+Message-Id: <20180528100300.176717942@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,97 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Henry Zhang <henryzhang62@gmail.com>
 
-[ Upstream commit dbdd0f58fd2cdde5cf945c9da67a2d52d32ba550 ]
+[ Upstream commit 1a012cb2569f2031b3636232c3ab21c20c92d281 ]
 
-There is a problem with PCMCIA system resume callbacks with respect
-to suspend-to-idle in which the ->suspend_noirq() callback may be
-invoked after the ->resume_noirq() one without resuming the system
-entirely in some cases.  This doesn't work for PCMCIA because of
-the lack of symmetry between its system suspend and system resume
-"noirq" callbacks.
+BCM2835 ARM Peripherals doc shows gpio pins 4, 5, 6, 12 and 13
+carry altenate function, ALT5 for ARM JTAG
 
-The system resume handling in PCMCIA is split between
-socket_early_resume() and socket_late_resume() which are called in
-different phases of system resume and both need to run for
-socket_suspend() (invoked by the system suspend "noirq" callback)
-to work.  Specifically, socket_suspend() returns an error when
-called after socket_early_resume() without socket_late_resume(),
-so if the suspend-to-idle core detects a spurious wakeup event and
-attempts to put the system back to sleep, that is aborted by the
-error coming from socket_suspend().
+Fixes: 21ff843931b2 ("ARM: dts: bcm283x: Define standard pinctrl groups in the gpio node.")
 
-Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
-to indicate that socket_early_resume() has already run for the
-socket in which case socket_suspend() will do minimum handling
-and return 0.
-
-This change has been tested on my venerable Toshiba Portege R500
-(which is where the problem has been discovered in the first place),
-but admittedly I have no PCMCIA cards to test along with the socket
-itself.
-
-Fixes: 33e4f80ee69b (ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle)
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-[linux@dominikbrodowski.net: follow same codepaths for both suspend variants; call ->suspend()]
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Signed-off-by: Henry Zhang <henryzhang62@gmail.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pcmcia/cs.c          |   10 +++++++---
- drivers/pcmcia/cs_internal.h |    1 +
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/bcm283x.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pcmcia/cs.c
-+++ b/drivers/pcmcia/cs.c
-@@ -452,17 +452,20 @@ static int socket_insert(struct pcmcia_s
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -252,7 +252,7 @@
  
- static int socket_suspend(struct pcmcia_socket *skt)
- {
--	if (skt->state & SOCKET_SUSPEND)
-+	if ((skt->state & SOCKET_SUSPEND) && !(skt->state & SOCKET_IN_RESUME))
- 		return -EBUSY;
- 
- 	mutex_lock(&skt->ops_mutex);
--	skt->suspended_state = skt->state;
-+	/* store state on first suspend, but not after spurious wakeups */
-+	if (!(skt->state & SOCKET_IN_RESUME))
-+		skt->suspended_state = skt->state;
- 
- 	skt->socket = dead_socket;
- 	skt->ops->set_socket(skt, &skt->socket);
- 	if (skt->ops->suspend)
- 		skt->ops->suspend(skt);
- 	skt->state |= SOCKET_SUSPEND;
-+	skt->state &= ~SOCKET_IN_RESUME;
- 	mutex_unlock(&skt->ops_mutex);
- 	return 0;
- }
-@@ -475,6 +478,7 @@ static int socket_early_resume(struct pc
- 	skt->ops->set_socket(skt, &skt->socket);
- 	if (skt->state & SOCKET_PRESENT)
- 		skt->resume_status = socket_setup(skt, resume_delay);
-+	skt->state |= SOCKET_IN_RESUME;
- 	mutex_unlock(&skt->ops_mutex);
- 	return 0;
- }
-@@ -484,7 +488,7 @@ static int socket_late_resume(struct pcm
- 	int ret = 0;
- 
- 	mutex_lock(&skt->ops_mutex);
--	skt->state &= ~SOCKET_SUSPEND;
-+	skt->state &= ~(SOCKET_SUSPEND | SOCKET_IN_RESUME);
- 	mutex_unlock(&skt->ops_mutex);
- 
- 	if (!(skt->state & SOCKET_PRESENT)) {
---- a/drivers/pcmcia/cs_internal.h
-+++ b/drivers/pcmcia/cs_internal.h
-@@ -70,6 +70,7 @@ struct pccard_resource_ops {
- /* Flags in socket state */
- #define SOCKET_PRESENT		0x0008
- #define SOCKET_INUSE		0x0010
-+#define SOCKET_IN_RESUME	0x0040
- #define SOCKET_SUSPEND		0x0080
- #define SOCKET_WIN_REQ(i)	(0x0100<<(i))
- #define SOCKET_CARDBUS		0x8000
+ 			jtag_gpio4: jtag_gpio4 {
+ 				brcm,pins = <4 5 6 12 13>;
+-				brcm,function = <BCM2835_FSEL_ALT4>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
+ 			};
+ 			jtag_gpio22: jtag_gpio22 {
+ 				brcm,pins = <22 23 24 25 26 27>;
