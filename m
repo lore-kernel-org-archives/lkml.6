@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033587AbeE1PRQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:17:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41998 "EHLO mail.kernel.org"
+        id S1033567AbeE1PRl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:17:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033321AbeE1KWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:36 -0400
+        id S1033514AbeE1KW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Giuseppe Lippolis <giu.lippolis@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 191/268] powerpc/perf: Fix kernel address leak via sampling registers
-Date: Mon, 28 May 2018 12:02:45 +0200
-Message-Id: <20180528100223.968701572@linuxfoundation.org>
+Subject: [PATCH 4.4 153/268] net-usb: add qmi_wwan if on lte modem wistron neweb d18q1
+Date: Mon, 28 May 2018 12:02:07 +0200
+Message-Id: <20180528100219.760031821@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,70 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Giuseppe Lippolis <giu.lippolis@gmail.com>
 
-[ Upstream commit e1ebd0e5b9d0a10ba65e63a3514b6da8c6a5a819 ]
+[ Upstream commit d4c4bc11353f3bea6754f7d21e3612c9f32d1d64 ]
 
-Current code in power_pmu_disable() does not clear the sampling
-registers like Sampling Instruction Address Register (SIAR) and
-Sampling Data Address Register (SDAR) after disabling the PMU. Since
-these are userspace readable and could contain kernel addresses, add
-code to explicitly clear the content of these registers.
+This modem is embedded on dlink dwr-921 router.
+    The oem configuration states:
 
-Also add a "context synchronizing instruction" to enforce no further
-updates to these registers as suggested by Power ISA v3.0B. From
-section 9.4, on page 1108:
+    T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480 MxCh= 0
+    D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+    P:  Vendor=1435 ProdID=0918 Rev= 2.32
+    S:  Manufacturer=Android
+    S:  Product=Android
+    S:  SerialNumber=0123456789ABCDEF
+    C:* #Ifs= 7 Cfg#= 1 Atr=80 MxPwr=500mA
+    I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+    E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+    E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+    E:  Ad=84(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+    E:  Ad=86(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+    E:  Ad=88(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+    E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+    E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    I:* If#= 6 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
+    E:  Ad=8b(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+    E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
 
-  "If an mtspr instruction is executed that changes the value of a
-  Performance Monitor register other than SIAR, SDAR, and SIER, the
-  change is not guaranteed to have taken effect until after a
-  subsequent context synchronizing instruction has been executed (see
-  Chapter 11. "Synchronization Requirements for Context Alterations"
-  on page 1133)."
+Tested on openwrt distribution
 
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-[mpe: Massage change log and add ISA reference]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Giuseppe Lippolis <giu.lippolis@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/perf/core-book3s.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/net/usb/qmi_wwan.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -1198,6 +1198,7 @@ static void power_pmu_disable(struct pmu
- 		 */
- 		write_mmcr0(cpuhw, val);
- 		mb();
-+		isync();
- 
- 		/*
- 		 * Disable instruction sampling if it was enabled
-@@ -1206,12 +1207,26 @@ static void power_pmu_disable(struct pmu
- 			mtspr(SPRN_MMCRA,
- 			      cpuhw->mmcr[2] & ~MMCRA_SAMPLE_ENABLE);
- 			mb();
-+			isync();
- 		}
- 
- 		cpuhw->disabled = 1;
- 		cpuhw->n_added = 0;
- 
- 		ebb_switch_out(mmcr0);
-+
-+#ifdef CONFIG_PPC64
-+		/*
-+		 * These are readable by userspace, may contain kernel
-+		 * addresses and are not switched by context switch, so clear
-+		 * them now to avoid leaking anything to userspace in general
-+		 * including to another process.
-+		 */
-+		if (ppmu->flags & PPMU_ARCH_207S) {
-+			mtspr(SPRN_SDAR, 0);
-+			mtspr(SPRN_SIAR, 0);
-+		}
-+#endif
- 	}
- 
- 	local_irq_restore(flags);
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -637,6 +637,9 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x0846, 0x68a2, 8)},
+ 	{QMI_FIXED_INTF(0x12d1, 0x140c, 1)},	/* Huawei E173 */
+ 	{QMI_FIXED_INTF(0x12d1, 0x14ac, 1)},	/* Huawei E1820 */
++	{QMI_FIXED_INTF(0x1435, 0xd181, 3)},	/* Wistron NeWeb D18Q1 */
++	{QMI_FIXED_INTF(0x1435, 0xd181, 4)},	/* Wistron NeWeb D18Q1 */
++	{QMI_FIXED_INTF(0x1435, 0xd181, 5)},	/* Wistron NeWeb D18Q1 */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6003, 0)},	/* CMOTech 6003 */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6007, 0)},	/* CMOTech CHE-628S */
+ 	{QMI_FIXED_INTF(0x16d8, 0x6008, 0)},	/* CMOTech CMU-301 */
