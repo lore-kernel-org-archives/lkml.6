@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936525AbeE1KKk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:10:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58772 "EHLO mail.kernel.org"
+        id S964930AbeE1KKx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933629AbeE1KKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:36 -0400
+        id S935436AbeE1KKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lee Duncan <lduncan@suse.com>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
+        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 112/185] sr: get/drop reference to device in revalidate and check_events
-Date: Mon, 28 May 2018 12:02:33 +0200
-Message-Id: <20180528100101.352209624@linuxfoundation.org>
+Subject: [PATCH 3.18 117/185] mm: fix races between address_space dereference and free in page_evicatable
+Date: Mon, 28 May 2018 12:02:38 +0200
+Message-Id: <20180528100102.034355627@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,117 +34,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Huang Ying <ying.huang@intel.com>
 
-[ Upstream commit 2d097c50212e137e7b53ffe3b37561153eeba87d ]
+[ Upstream commit e92bb4dd9673945179b1fc738c9817dd91bfb629 ]
 
-We can't just use scsi_cd() to get the scsi_cd structure, we have
-to grab a live reference to the device. For both callbacks, we're
-not inside an open where we already hold a reference to the device.
+When page_mapping() is called and the mapping is dereferenced in
+page_evicatable() through shrink_active_list(), it is possible for the
+inode to be truncated and the embedded address space to be freed at the
+same time.  This may lead to the following race.
 
-This fixes device removal/addition under concurrent device access,
-which otherwise could result in the below oops.
+CPU1                                                CPU2
 
-NULL pointer dereference at 0000000000000010
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP
-Modules linked in:
-sr 12:0:0:0: [sr2] scsi-1 drive
- scsi_debug crc_t10dif crct10dif_generic crct10dif_common nvme nvme_core sb_edac xl
-sr 12:0:0:0: Attached scsi CD-ROM sr2
- sr_mod cdrom btrfs xor zstd_decompress zstd_compress xxhash lzo_compress zlib_defc
-sr 12:0:0:0: Attached scsi generic sg7 type 5
- igb ahci libahci i2c_algo_bit libata dca [last unloaded: crc_t10dif]
-CPU: 43 PID: 4629 Comm: systemd-udevd Not tainted 4.16.0+ #650
-Hardware name: Dell Inc. PowerEdge T630/0NT78X, BIOS 2.3.4 11/09/2016
-RIP: 0010:sr_block_revalidate_disk+0x23/0x190 [sr_mod]
-RSP: 0018:ffff883ff357bb58 EFLAGS: 00010292
-RAX: ffffffffa00b07d0 RBX: ffff883ff3058000 RCX: ffff883ff357bb66
-RDX: 0000000000000003 RSI: 0000000000007530 RDI: ffff881fea631000
-RBP: 0000000000000000 R08: ffff881fe4d38400 R09: 0000000000000000
-R10: 0000000000000000 R11: 00000000000001b6 R12: 000000000800005d
-R13: 000000000800005d R14: ffff883ffd9b3790 R15: 0000000000000000
-FS:  00007f7dc8e6d8c0(0000) GS:ffff883fff340000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000010 CR3: 0000003ffda98005 CR4: 00000000003606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ? __invalidate_device+0x48/0x60
- check_disk_change+0x4c/0x60
- sr_block_open+0x16/0xd0 [sr_mod]
- __blkdev_get+0xb9/0x450
- ? iget5_locked+0x1c0/0x1e0
- blkdev_get+0x11e/0x320
- ? bdget+0x11d/0x150
- ? _raw_spin_unlock+0xa/0x20
- ? bd_acquire+0xc0/0xc0
- do_dentry_open+0x1b0/0x320
- ? inode_permission+0x24/0xc0
- path_openat+0x4e6/0x1420
- ? cpumask_any_but+0x1f/0x40
- ? flush_tlb_mm_range+0xa0/0x120
- do_filp_open+0x8c/0xf0
- ? __seccomp_filter+0x28/0x230
- ? _raw_spin_unlock+0xa/0x20
- ? __handle_mm_fault+0x7d6/0x9b0
- ? list_lru_add+0xa8/0xc0
- ? _raw_spin_unlock+0xa/0x20
- ? __alloc_fd+0xaf/0x160
- ? do_sys_open+0x1a6/0x230
- do_sys_open+0x1a6/0x230
- do_syscall_64+0x5a/0x100
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+truncate(inode)                                     shrink_active_list()
+  ...                                                 page_evictable(page)
+  truncate_inode_page(mapping, page);
+    delete_from_page_cache(page)
+      spin_lock_irqsave(&mapping->tree_lock, flags);
+        __delete_from_page_cache(page, NULL)
+          page_cache_tree_delete(..)
+            ...                                         mapping = page_mapping(page);
+            page->mapping = NULL;
+            ...
+      spin_unlock_irqrestore(&mapping->tree_lock, flags);
+      page_cache_free_page(mapping, page)
+        put_page(page)
+          if (put_page_testzero(page)) -> false
+- inode now has no pages and can be freed including embedded address_space
 
-Reviewed-by: Lee Duncan <lduncan@suse.com>
+                                                        mapping_unevictable(mapping)
+							  test_bit(AS_UNEVICTABLE, &mapping->flags);
+- we've dereferenced mapping which is potentially already free.
+
+Similar race exists between swap cache freeing and page_evicatable()
+too.
+
+The address_space in inode and swap cache will be freed after a RCU
+grace period.  So the races are fixed via enclosing the page_mapping()
+and address_space usage in rcu_read_lock/unlock().  Some comments are
+added in code to make it clear what is protected by the RCU read lock.
+
+Link: http://lkml.kernel.org/r/20180212081227.1940-1-ying.huang@intel.com
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/sr.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ mm/vmscan.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -587,18 +587,28 @@ out:
- static unsigned int sr_block_check_events(struct gendisk *disk,
- 					  unsigned int clearing)
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3753,7 +3753,13 @@ int zone_reclaim(struct zone *zone, gfp_
+  */
+ int page_evictable(struct page *page)
  {
--	struct scsi_cd *cd = scsi_cd(disk);
-+	unsigned int ret = 0;
-+	struct scsi_cd *cd;
- 
--	if (atomic_read(&cd->device->disk_events_disable_depth))
-+	cd = scsi_cd_get(disk);
-+	if (!cd)
- 		return 0;
- 
--	return cdrom_check_events(&cd->cdi, clearing);
-+	if (!atomic_read(&cd->device->disk_events_disable_depth))
-+		ret = cdrom_check_events(&cd->cdi, clearing);
+-	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
++	int ret;
 +
-+	scsi_cd_put(cd);
++	/* Prevent address_space of inode and swap cache from being freed */
++	rcu_read_lock();
++	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
++	rcu_read_unlock();
 +	return ret;
  }
  
- static int sr_block_revalidate_disk(struct gendisk *disk)
- {
--	struct scsi_cd *cd = scsi_cd(disk);
- 	struct scsi_sense_hdr sshdr;
-+	struct scsi_cd *cd;
-+
-+	cd = scsi_cd_get(disk);
-+	if (!cd)
-+		return -ENXIO;
- 
- 	/* if the unit is not ready, nothing more to do */
- 	if (scsi_test_unit_ready(cd->device, SR_TIMEOUT, MAX_RETRIES, &sshdr))
-@@ -607,6 +617,7 @@ static int sr_block_revalidate_disk(stru
- 	sr_cd_check(&cd->cdi);
- 	get_sectorsize(cd);
- out:
-+	scsi_cd_put(cd);
- 	return 0;
- }
- 
+ #ifdef CONFIG_SHMEM
