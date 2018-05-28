@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752995AbeE1BrH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 21:47:07 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37879 "EHLO
+        id S1753123AbeE1Brp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 21:47:45 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:32815 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752934AbeE1BrG (ORCPT
+        by vger.kernel.org with ESMTP id S1753009AbeE1BrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 21:47:06 -0400
-X-ME-Proxy: <xmx:mV8LWxumUdYwyBRB0xTwONiqMdgvMjET20124FhglpfZLvP8hylBdQ>
-X-ME-Proxy: <xmx:mV8LW3pSHD01pkz8nXYT5SF0K1KQuDUyo0W7ZDl06wbdoG1Mm-K5ww>
-X-ME-Proxy: <xmx:mV8LW5QyWEMHWe7MnaQNBfgw2rSqRFXPyrdj6QiuNFS60njZGamneg>
-X-ME-Proxy: <xmx:mV8LW0aIN_i0mfH_08yKFI9GD29XNzGq0zN1UxecEFCXs9xkon04tg>
-X-ME-Proxy: <xmx:mV8LWy7PXU9GVwVeIiCrGutI9gUWS6jRbKARmuvvPS-oslG8aEWYlQ>
-X-ME-Proxy: <xmx:mV8LWxeWqjWkFIbYJVIbnSA5gm1MlkjW3zJ1Jxa3eptljAYzb553tQ>
-X-ME-Sender: <xms:mV8LWxMvfgTl1keT3pA-wyphHk6QudDJQFgPaovYsNDXy_i5kkXjBA>
+        Sun, 27 May 2018 21:47:16 -0400
+X-ME-Proxy: <xmx:pF8LW-I0A2wWNCb6QPGhGOJoWdwOiF6bdRf5h_cWUbz5buD3aZ8Ovw>
+X-ME-Proxy: <xmx:pF8LW0HZEsMBgtO_t1nhzGlGH9mopW0FTqfQg7dChfdVaPIrhgtkiQ>
+X-ME-Proxy: <xmx:pF8LW2Rk6Y1dpI0cMno218CG4KKPdnTBVI55wp8V7-6nYfM7b8DRQA>
+X-ME-Proxy: <xmx:pF8LWwGCWf7p2ieRaXvs58Z2lixHHeuES0JLsPj1_RZ8fUJeLdSyZQ>
+X-ME-Proxy: <xmx:pF8LWy_zaUl_o3LNwneHsm-IVY8wKxow2fK6mgN0-d8F-NRXayk_lQ>
+X-ME-Proxy: <xmx:pF8LW1blhTU2jWUo7S7TIDSyB2LUZao6DmhoihnMBVoY2DJ8wD7S9A>
+X-ME-Sender: <xms:pF8LW0Is2a4_0KMCweHsJOXjwsLjPcthD3FuV2LJAng4Lf4zhq8f3w>
 From: "Tobin C. Harding" <me@tobin.cc>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: "Tobin C. Harding" <me@tobin.cc>,
@@ -25,83 +25,50 @@ Cc: "Tobin C. Harding" <me@tobin.cc>,
         "Theodore Ts'o" <tytso@mit.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/4] enable early printing of hashed pointers
-Date: Mon, 28 May 2018 11:46:38 +1000
-Message-Id: <1527472002-11571-1-git-send-email-me@tobin.cc>
+Subject: [PATCH v6 3/4] vsprintf: Use hw RNG for ptr_key
+Date: Mon, 28 May 2018 11:46:41 +1000
+Message-Id: <1527472002-11571-4-git-send-email-me@tobin.cc>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527472002-11571-1-git-send-email-me@tobin.cc>
+References: <1527472002-11571-1-git-send-email-me@tobin.cc>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently printing pointers early in the boot sequence can result in a
-dummy string '(____ptrval____)' being printed.  While resolving this
-issue it was noticed that we can use the hw RNG if available for hashing
-pointers.
+Currently we must wait for enough entropy to become available before
+hashed pointers can be printed.  We can remove this wait by using the
+hw RNG if available.
 
-Patch one and two do the ground work to be able to use hw RNG removing
-from get_random_bytes_arch() the call to get_random_bytes() and
-returning the number of bytes of random material successfully returned. 
+Use hw RNG to get keying material.
 
-Patch three uses the hw RNG to get keying material if it is available.
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ lib/vsprintf.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Patch four further assists debugging early in the boot sequence for
-machines that do not have a hw RNG by adding a command line option
-'debug_boot_weak_hash'.  If enabled, non-cryptographically secure hashing
-is used instead of siphash so we can hash at any time. 
-
-During the versions of this set I have been totally confused about which
-patches go through which tree.  This version again puts all 4 patches
-together in the hope they will go through Andrew's tree.
-
-
-Steve,
-
-Could you please take a quick squiz at the final 2 patches if you get a
-chance.  I assumed we are in preemptible context during early_init based
-on your code (and code comment) and called static_branch_disable()
-directly if hw RNG returned keying material.  It's a pretty simple
-change but I'd love to get someone else to check I've not noob'ed it.
-
-
-thanks,
-Tobin.
-
-v6
- - Rebase on top of Steve's patch (fixing race condition).  Uses static
-   branch instead of memory barrier.
-
-v5
- - Use 'upside-down-xmas-tree' style to declare local variables (Steve)
- - Added Reviewed-by tag from Steve (patch 2 and 3).
-
-v4
- - remove last patch of series (command line option patch)
-
-v3
- - Add __ro_after_init (suggested by Kees).
-
-v2
- - Use min_t() instead of min() (thanks checkpatch).
- - Add __must_check to function declaration (thanks Steve).
- - Use hw RNG by default if available (as originally suggested by Kees).
- - Add command line option to use cryptographically insecure hashing.
-   If debug_early_boot is enabled use hash_long() instead of siphash
-   (as requested by Steve, and solves original problem for Anna-Maria).
- - Added Acked-by tag from Ted (patch 1 and 2)
-
-
-
-Tobin C. Harding (4):
-  random: Fix whitespace pre random-bytes work
-  random: Return nbytes filled from hw RNG
-  vsprintf: Use hw RNG for ptr_key
-  vsprintf: Add command line option debug_boot_weak_hash
-
- Documentation/admin-guide/kernel-parameters.txt |  9 ++++++++
- drivers/char/random.c                           | 19 ++++++++--------
- include/linux/random.h                          |  2 +-
- lib/vsprintf.c                                  | 30 ++++++++++++++++++++++++-
- 4 files changed, 49 insertions(+), 11 deletions(-)
-
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 23920c5ff728..1545a8aa26a9 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1693,8 +1693,16 @@ static struct random_ready_callback random_ready = {
+ 
+ static int __init initialize_ptr_random(void)
+ {
+-	int ret = add_random_ready_callback(&random_ready);
++	int key_size = sizeof(ptr_key);
++	int ret;
++
++	/* Use hw RNG if available */
++	if (get_random_bytes_arch(&ptr_key, key_size) == key_size) {
++		static_branch_disable(&not_filled_random_ptr_key);
++		return 0;
++	}
+ 
++	ret = add_random_ready_callback(&random_ready);
+ 	if (!ret) {
+ 		return 0;
+ 	} else if (ret == -EALREADY) {
 -- 
 2.7.4
