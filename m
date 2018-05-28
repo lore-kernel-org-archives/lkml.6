@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033411AbeE1KVz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:21:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41258 "EHLO mail.kernel.org"
+        id S1033468AbeE1KWE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:22:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033391AbeE1KVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:48 -0400
+        id S1033383AbeE1KVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 172/268] ocfs2/dlm: dont handle migrate lockres if already in shutdown
-Date: Mon, 28 May 2018 12:02:26 +0200
-Message-Id: <20180528100221.879663710@linuxfoundation.org>
+Subject: [PATCH 4.4 171/268] btrfs: Fix possible softlock on single core machines
+Date: Mon, 28 May 2018 12:02:25 +0200
+Message-Id: <20180528100221.790975719@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,131 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jun Piao <piaojun@huawei.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit bb34f24c7d2c98d0c81838a7700e6068325b17a0 ]
+[ Upstream commit 1e1c50a929bc9e49bc3f9935b92450d9e69f8158 ]
 
-We should not handle migrate lockres if we are already in
-'DLM_CTXT_IN_SHUTDOWN', as that will cause lockres remains after leaving
-dlm domain.  At last other nodes will get stuck into infinite loop when
-requsting lock from us.
+do_chunk_alloc implements a loop checking whether there is a pending
+chunk allocation and if so causes the caller do loop. Generally this
+loop is executed only once, however testing with btrfs/072 on a single
+core vm machines uncovered an extreme case where the system could loop
+indefinitely. This is due to a missing cond_resched when loop which
+doesn't give a chance to the previous chunk allocator finish its job.
 
-The problem is caused by concurrency umount between nodes.  Before
-receiveing N1's DLM_BEGIN_EXIT_DOMAIN_MSG, N2 has picked up N1 as the
-migrate target.  So N2 will continue sending lockres to N1 even though
-N1 has left domain.
+The fix is to simply add the missing cond_resched.
 
-        N1                             N2 (owner)
-                                       touch file
-
-    access the file,
-    and get pr lock
-
-                                       begin leave domain and
-                                       pick up N1 as new owner
-
-    begin leave domain and
-    migrate all lockres done
-
-                                       begin migrate lockres to N1
-
-    end leave domain, but
-    the lockres left
-    unexpectedly, because
-    migrate task has passed
-
-[piaojun@huawei.com: v3]
-  Link: http://lkml.kernel.org/r/5A9CBD19.5020107@huawei.com
-Link: http://lkml.kernel.org/r/5A99F028.2090902@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 6d74119f1a3e ("Btrfs: avoid taking the chunk_mutex in do_chunk_alloc")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/dlm/dlmdomain.c   |   14 --------------
- fs/ocfs2/dlm/dlmdomain.h   |   25 ++++++++++++++++++++++++-
- fs/ocfs2/dlm/dlmrecovery.c |    9 +++++++++
- 3 files changed, 33 insertions(+), 15 deletions(-)
+ fs/btrfs/extent-tree.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -674,20 +674,6 @@ static void dlm_leave_domain(struct dlm_
- 	spin_unlock(&dlm->spinlock);
- }
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -4392,6 +4392,7 @@ again:
+ 	if (wait_for_alloc) {
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 		wait_for_alloc = 0;
++		cond_resched();
+ 		goto again;
+ 	}
  
--int dlm_shutting_down(struct dlm_ctxt *dlm)
--{
--	int ret = 0;
--
--	spin_lock(&dlm_domain_lock);
--
--	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
--		ret = 1;
--
--	spin_unlock(&dlm_domain_lock);
--
--	return ret;
--}
--
- void dlm_unregister_domain(struct dlm_ctxt *dlm)
- {
- 	int leave = 0;
---- a/fs/ocfs2/dlm/dlmdomain.h
-+++ b/fs/ocfs2/dlm/dlmdomain.h
-@@ -28,7 +28,30 @@
- extern spinlock_t dlm_domain_lock;
- extern struct list_head dlm_domains;
- 
--int dlm_shutting_down(struct dlm_ctxt *dlm);
-+static inline int dlm_joined(struct dlm_ctxt *dlm)
-+{
-+	int ret = 0;
-+
-+	spin_lock(&dlm_domain_lock);
-+	if (dlm->dlm_state == DLM_CTXT_JOINED)
-+		ret = 1;
-+	spin_unlock(&dlm_domain_lock);
-+
-+	return ret;
-+}
-+
-+static inline int dlm_shutting_down(struct dlm_ctxt *dlm)
-+{
-+	int ret = 0;
-+
-+	spin_lock(&dlm_domain_lock);
-+	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
-+		ret = 1;
-+	spin_unlock(&dlm_domain_lock);
-+
-+	return ret;
-+}
-+
- void dlm_fire_domain_eviction_callbacks(struct dlm_ctxt *dlm,
- 					int node_num);
- 
---- a/fs/ocfs2/dlm/dlmrecovery.c
-+++ b/fs/ocfs2/dlm/dlmrecovery.c
-@@ -1377,6 +1377,15 @@ int dlm_mig_lockres_handler(struct o2net
- 	if (!dlm_grab(dlm))
- 		return -EINVAL;
- 
-+	if (!dlm_joined(dlm)) {
-+		mlog(ML_ERROR, "Domain %s not joined! "
-+			  "lockres %.*s, master %u\n",
-+			  dlm->name, mres->lockname_len,
-+			  mres->lockname, mres->master);
-+		dlm_put(dlm);
-+		return -EINVAL;
-+	}
-+
- 	BUG_ON(!(mres->flags & (DLM_MRES_RECOVERY|DLM_MRES_MIGRATION)));
- 
- 	real_master = mres->master;
