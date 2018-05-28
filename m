@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937887AbeE1K5q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:57:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45910 "EHLO mail.kernel.org"
+        id S937918AbeE1K5z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:57:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932527AbeE1K5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:41 -0400
+        id S937899AbeE1K5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 362/496] powerpc/mpic: Check if cpu_possible() in mpic_physmask()
-Date: Mon, 28 May 2018 12:02:27 +0200
-Message-Id: <20180528100335.040964846@linuxfoundation.org>
+Subject: [PATCH 4.14 366/496] intel_th: Use correct method of finding hub
+Date: Mon, 28 May 2018 12:02:31 +0200
+Message-Id: <20180528100335.215983864@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -29,45 +30,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit 0834d627fbea00c1444075eb3e448e1974da452d ]
+[ Upstream commit 9ad577087165478c9d9be82b15ed9bf2db5835f5 ]
 
-In mpic_physmask() we loop over all CPUs up to 32, then get the hard
-SMP processor id of that CPU.
+Since commit 8edc514b01e9 ("intel_th: Make SOURCE devices children of the
+root device") the hub is not the parent of SOURCE devices any more, so the
+new helper function should be used for that instead of always using the
+parent. The intel_th_set_output() path, however, still uses the old
+logic, leading to the hub driver structure being aliased with something
+else, like struct pci_driver or struct acpi_driver, and an incorrect call
+to an address inferred from that, potentially resulting in a crash.
 
-Currently that's possibly walking off the end of the paca array, but
-in a future patch we will change the paca array to be an array of
-pointers, and in that case we will get a NULL for missing CPUs and
-oops. eg:
-
-  Unable to handle kernel paging request for data at address 0x88888888888888b8
-  Faulting instruction address: 0xc00000000004e380
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  ...
-  NIP .mpic_set_affinity+0x60/0x1a0
-  LR  .irq_do_set_affinity+0x48/0x100
-
-Fix it by checking the CPU is possible, this also fixes the code if
-there are gaps in the CPU numbering which probably never happens on
-mpic systems but who knows.
-
-Debugged-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 8edc514b01e9 ("intel_th: Make SOURCE devices children of the root device")
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/sysdev/mpic.c |    2 +-
+ drivers/hwtracing/intel_th/core.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/sysdev/mpic.c
-+++ b/arch/powerpc/sysdev/mpic.c
-@@ -626,7 +626,7 @@ static inline u32 mpic_physmask(u32 cpum
- 	int i;
- 	u32 mask = 0;
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -935,7 +935,7 @@ EXPORT_SYMBOL_GPL(intel_th_trace_disable
+ int intel_th_set_output(struct intel_th_device *thdev,
+ 			unsigned int master)
+ {
+-	struct intel_th_device *hub = to_intel_th_device(thdev->dev.parent);
++	struct intel_th_device *hub = to_intel_th_hub(thdev);
+ 	struct intel_th_driver *hubdrv = to_intel_th_driver(hub->dev.driver);
  
--	for (i = 0; i < min(32, NR_CPUS); ++i, cpumask >>= 1)
-+	for (i = 0; i < min(32, NR_CPUS) && cpu_possible(i); ++i, cpumask >>= 1)
- 		mask |= (cpumask & 1) << get_hard_smp_processor_id(i);
- 	return mask;
- }
+ 	if (!hubdrv->set_output)
