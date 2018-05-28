@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422817AbeE1LCb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49828 "EHLO mail.kernel.org"
+        id S1422852AbeE1LCs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:02:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164907AbeE1LC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:26 -0400
+        id S1164711AbeE1LCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S. Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 465/496] sh_eth: fix TSU init on SH7734/R8A7740
-Date: Mon, 28 May 2018 12:04:10 +0200
-Message-Id: <20180528100339.503600266@linuxfoundation.org>
+Subject: [PATCH 4.14 453/496] dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
+Date: Mon, 28 May 2018 12:03:58 +0200
+Message-Id: <20180528100338.994216519@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,79 +31,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit a94cf2a614f8bc5b2b33c708626ce695bf71e424 ]
+[ Upstream commit 48d163b1aa6e7f650c0b7a4f9c61c387a6def868 ]
 
-It appears that the single port Ether controllers having TSU (like SH7734/
-R8A7740) need the same kind of treating in sh_eth_tsu_init() as R7S72100
-currently has -- they also don't have the TSU registers related e.g. to
-passing the frames between ports. Add the 'sh_eth_cpu_data::dual_port'
-flag and use it as a new criterion for taking a "short path" in the TSU
-init sequence in order to avoid writing to the non-existent registers...
+When Linux is master of BAM, it can directly read registers to know number
+of supported channels, however when its remotely controlled reading these
+registers would trigger a crash if the BAM is not yet initialized or
+powered up on the remote side.
 
-Fixes: f0e81fecd4f8 ("net: sh_eth: Add support SH7734")
-Fixes: 73a0d907301e ("net: sh_eth: add support R8A7740")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch allows driver to read num-channels and num-ees from Device Tree
+for remotely controlled BAM.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |    6 +++++-
- drivers/net/ethernet/renesas/sh_eth.h |    1 +
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/dma/qcom/bam_dma.c |   27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -753,6 +753,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.rpadir		= 1,
- 	.rpadir_value   = 2 << 16,
- 	.rtrate		= 1,
-+	.dual_port	= 1,
- };
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -388,6 +388,7 @@ struct bam_device {
+ 	struct device_dma_parameters dma_parms;
+ 	struct bam_chan *channels;
+ 	u32 num_channels;
++	u32 num_ees;
  
- #define SH_GIGA_ETH_BASE	0xfee00000UL
-@@ -831,6 +832,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
- 	.tsu		= 1,
-+	.dual_port	= 1,
- };
+ 	/* execution environment ID, from DT */
+ 	u32 ee;
+@@ -1080,15 +1081,19 @@ static int bam_init(struct bam_device *b
+ 	u32 val;
  
- /* SH7734 */
-@@ -901,6 +903,7 @@ static struct sh_eth_cpu_data sh7763_dat
- 	.tsu		= 1,
- 	.irq_flags	= IRQF_SHARED,
- 	.magic		= 1,
-+	.dual_port	= 1,
- };
+ 	/* read revision and configuration information */
+-	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION)) >> NUM_EES_SHIFT;
+-	val &= NUM_EES_MASK;
++	if (!bdev->num_ees) {
++		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
++		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
++	}
  
- static struct sh_eth_cpu_data sh7619_data = {
-@@ -933,6 +936,7 @@ static struct sh_eth_cpu_data sh771x_dat
- 			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
- 	.tsu		= 1,
-+	.dual_port	= 1,
- };
+ 	/* check that configured EE is within range */
+-	if (bdev->ee >= val)
++	if (bdev->ee >= bdev->num_ees)
+ 		return -EINVAL;
  
- static void sh_eth_set_default_cpu_data(struct sh_eth_cpu_data *cd)
-@@ -2911,7 +2915,7 @@ static int sh_eth_vlan_rx_kill_vid(struc
- /* SuperH's TSU register init function */
- static void sh_eth_tsu_init(struct sh_eth_private *mdp)
- {
--	if (sh_eth_is_rz_fast_ether(mdp)) {
-+	if (!mdp->cd->dual_port) {
- 		sh_eth_tsu_write(mdp, 0, TSU_TEN); /* Disable all CAM entry */
- 		sh_eth_tsu_write(mdp, TSU_FWSLC_POSTENU | TSU_FWSLC_POSTENL,
- 				 TSU_FWSLC);	/* Enable POST registers */
---- a/drivers/net/ethernet/renesas/sh_eth.h
-+++ b/drivers/net/ethernet/renesas/sh_eth.h
-@@ -509,6 +509,7 @@ struct sh_eth_cpu_data {
- 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
- 	unsigned rtrate:1;	/* EtherC has RTRATE register */
- 	unsigned magic:1;	/* EtherC has ECMR.MPDE and ECSR.MPD */
-+	unsigned dual_port:1;	/* Dual EtherC/E-DMAC */
- };
+-	val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
+-	bdev->num_channels = val & BAM_NUM_PIPES_MASK;
++	if (!bdev->num_channels) {
++		val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
++		bdev->num_channels = val & BAM_NUM_PIPES_MASK;
++	}
  
- struct sh_eth_private {
+ 	if (bdev->controlled_remotely)
+ 		return 0;
+@@ -1183,6 +1188,18 @@ static int bam_dma_probe(struct platform
+ 	bdev->controlled_remotely = of_property_read_bool(pdev->dev.of_node,
+ 						"qcom,controlled-remotely");
+ 
++	if (bdev->controlled_remotely) {
++		ret = of_property_read_u32(pdev->dev.of_node, "num-channels",
++					   &bdev->num_channels);
++		if (ret)
++			dev_err(bdev->dev, "num-channels unspecified in dt\n");
++
++		ret = of_property_read_u32(pdev->dev.of_node, "qcom,num-ees",
++					   &bdev->num_ees);
++		if (ret)
++			dev_err(bdev->dev, "num-ees unspecified in dt\n");
++	}
++
+ 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
+ 	if (IS_ERR(bdev->bamclk))
+ 		return PTR_ERR(bdev->bamclk);
