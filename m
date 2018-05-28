@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033214AbeE1KUe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:20:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40096 "EHLO mail.kernel.org"
+        id S1033235AbeE1KUm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:20:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033165AbeE1KUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:20:25 -0400
+        id S1033218AbeE1KUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitriy Vyukov <dvyukov@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 140/268] vti4: Dont count header length twice on tunnel setup
-Date: Mon, 28 May 2018 12:01:54 +0200
-Message-Id: <20180528100218.209017020@linuxfoundation.org>
+Subject: [PATCH 4.4 144/268] mm/mempolicy.c: avoid use uninitialized preferred_node
+Date: Mon, 28 May 2018 12:01:58 +0200
+Message-Id: <20180528100218.647890361@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,64 +34,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
-[ Upstream commit dd1df24737727e119c263acf1be2a92763938297 ]
+[ Upstream commit 8970a63e965b43288c4f5f40efbc2bbf80de7f16 ]
 
-This re-introduces the effect of commit a32452366b72 ("vti4:
-Don't count header length twice.") which was accidentally
-reverted by merge commit f895f0cfbb77 ("Merge branch 'master' of
-git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec").
+Alexander reported a use of uninitialized memory in __mpol_equal(),
+which is caused by incorrect use of preferred_node.
 
-The commit message from Steffen Klassert said:
+When mempolicy in mode MPOL_PREFERRED with flags MPOL_F_LOCAL, it uses
+numa_node_id() instead of preferred_node, however, __mpol_equal() uses
+preferred_node without checking whether it is MPOL_F_LOCAL or not.
 
-    We currently count the size of LL_MAX_HEADER and struct iphdr
-    twice for vti4 devices, this leads to a wrong device mtu.
-    The size of LL_MAX_HEADER and struct iphdr is already counted in
-    ip_tunnel_bind_dev(), so don't do it again in vti_tunnel_init().
-
-And this is still the case now: ip_tunnel_bind_dev() already
-accounts for the header length of the link layer (not
-necessarily LL_MAX_HEADER, if the output device is found), plus
-one IP header.
-
-For example, with a vti device on top of veth, with MTU of 1500,
-the existing implementation would set the initial vti MTU to
-1332, accounting once for LL_MAX_HEADER (128, included in
-hard_header_len by vti) and twice for the same IP header (once
-from hard_header_len, once from ip_tunnel_bind_dev()).
-
-It should instead be 1480, because ip_tunnel_bind_dev() is able
-to figure out that the output device is veth, so no additional
-link layer header is attached, and will properly count one
-single IP header.
-
-The existing issue had the side effect of avoiding PMTUD for
-most xfrm policies, by arbitrarily lowering the initial MTU.
-However, the only way to get a consistent PMTU value is to let
-the xfrm PMTU discovery do its course, and commit d6af1a31cc72
-("vti: Add pmtu handling to vti_xmit.") now takes care of local
-delivery cases where the application ignores local socket
-notifications.
-
-Fixes: b9959fd3b0fa ("vti: switch to new ip tunnel code")
-Fixes: f895f0cfbb77 ("Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Acked-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+[akpm@linux-foundation.org: slight comment tweak]
+Link: http://lkml.kernel.org/r/4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com
+Fixes: fc36b8d3d819 ("mempolicy: use MPOL_F_LOCAL to Indicate Preferred Local Policy")
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Reported-by: Alexander Potapenko <glider@google.com>
+Tested-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dmitriy Vyukov <dvyukov@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_vti.c |    1 -
- 1 file changed, 1 deletion(-)
+ mm/mempolicy.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -366,7 +366,6 @@ static int vti_tunnel_init(struct net_de
- 	memcpy(dev->dev_addr, &iph->saddr, 4);
- 	memcpy(dev->broadcast, &iph->daddr, 4);
- 
--	dev->hard_header_len	= LL_MAX_HEADER + sizeof(struct iphdr);
- 	dev->mtu		= ETH_DATA_LEN;
- 	dev->flags		= IFF_NOARP;
- 	dev->addr_len		= 4;
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2142,6 +2142,9 @@ bool __mpol_equal(struct mempolicy *a, s
+ 	case MPOL_INTERLEAVE:
+ 		return !!nodes_equal(a->v.nodes, b->v.nodes);
+ 	case MPOL_PREFERRED:
++		/* a's ->flags is the same as b's */
++		if (a->flags & MPOL_F_LOCAL)
++			return true;
+ 		return a->v.preferred_node == b->v.preferred_node;
+ 	default:
+ 		BUG();
