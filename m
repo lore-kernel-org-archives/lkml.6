@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424860AbeE1LVB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:21:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35112 "EHLO mail.kernel.org"
+        id S1424797AbeE1LVW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:21:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422828AbeE1LQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:04 -0400
+        id S1424837AbeE1LUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:20:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Yufen Yu <yuyufen@huawei.com>, Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 261/272] ARM: dts: at91: nattis: use the correct compatible for the eeprom
-Date: Mon, 28 May 2018 12:04:54 +0200
-Message-Id: <20180528100302.086132492@linuxfoundation.org>
+Subject: [PATCH 3.18 060/185] md raid10: fix NULL deference in handle_write_completed()
+Date: Mon, 28 May 2018 12:01:41 +0200
+Message-Id: <20180528100055.980589061@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -26,35 +26,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit 6b65933008a6bbe5ff79a344b41175826848682d ]
+[ Upstream commit 01a69cab01c184d3786af09e9339311123d63d22 ]
 
-The used part does contain an eeprom compatible with an Atmel 24c02
-chip and it is from NXP, but it is not called 24c02. It's actually a
-se97b chip. Adjust the compatible accordingly.
+In the case of 'recover', an r10bio with R10BIO_WriteError &
+R10BIO_IsRecover will be progressed by handle_write_completed().
+This function traverses all r10bio->devs[copies].
+If devs[m].repl_bio != NULL, it thinks conf->mirrors[dev].replacement
+is also not NULL. However, this is not always true.
 
-Fixes: 0e4323899973 ("ARM: dts: at91: add devicetree for the Axentia Nattis with Natte power")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+When there is an rdev of raid10 has replacement, then each r10bio
+->devs[m].repl_bio != NULL in conf->r10buf_pool. However, in 'recover',
+even if corresponded replacement is NULL, it doesn't clear r10bio
+->devs[m].repl_bio, resulting in replacement NULL deference.
+
+This bug was introduced when replacement support for raid10 was
+added in Linux 3.3.
+
+As NeilBrown suggested:
+	Elsewhere the determination of "is this device part of the
+	resync/recovery" is made by resting bio->bi_end_io.
+	If this is end_sync_write, then we tried to write here.
+	If it is NULL, then we didn't try to write.
+
+Fixes: 9ad1aefc8ae8 ("md/raid10:  Handle replacement devices during resync.")
+Cc: stable (V3.3+)
+Suggested-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/at91-nattis-2-natte-2.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid10.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
-+++ b/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
-@@ -146,7 +146,7 @@
- 	};
- 
- 	eeprom@50 {
--		compatible = "nxp,24c02";
-+		compatible = "nxp,se97b", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -2754,7 +2754,8 @@ static void handle_write_completed(struc
+ 		for (m = 0; m < conf->copies; m++) {
+ 			int dev = r10_bio->devs[m].devnum;
+ 			rdev = conf->mirrors[dev].rdev;
+-			if (r10_bio->devs[m].bio == NULL)
++			if (r10_bio->devs[m].bio == NULL ||
++				r10_bio->devs[m].bio->bi_end_io == NULL)
+ 				continue;
+ 			if (test_bit(BIO_UPTODATE,
+ 				     &r10_bio->devs[m].bio->bi_flags)) {
+@@ -2770,7 +2771,8 @@ static void handle_write_completed(struc
+ 					md_error(conf->mddev, rdev);
+ 			}
+ 			rdev = conf->mirrors[dev].replacement;
+-			if (r10_bio->devs[m].repl_bio == NULL)
++			if (r10_bio->devs[m].repl_bio == NULL ||
++				r10_bio->devs[m].repl_bio->bi_end_io == NULL)
+ 				continue;
+ 			if (test_bit(BIO_UPTODATE,
+ 				     &r10_bio->devs[m].repl_bio->bi_flags)) {
