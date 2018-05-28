@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937576AbeE1KnQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:43:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
+        id S1163061AbeE1Knf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:43:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932350AbeE1KmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:02 -0400
+        id S937594AbeE1Kna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:43:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Piotr Gabriel Kosinski <pg.kosinski@gmail.com>,
-        Daniel Shapira <daniel@twistlock.com>,
-        Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 021/496] sr: pass down correctly sized SCSI sense buffer
-Date: Mon, 28 May 2018 11:56:46 +0200
-Message-Id: <20180528100320.483371030@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 054/496] powerpc/pseries: Restore default security feature flags on setup
+Date: Mon, 28 May 2018 11:57:19 +0200
+Message-Id: <20180528100322.057857561@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,59 +30,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 
-commit f7068114d45ec55996b9040e98111afa56e010fe upstream.
+commit 6232774f1599028a15418179d17f7df47ede770a upstream.
 
-We're casting the CDROM layer request_sense to the SCSI sense
-buffer, but the former is 64 bytes and the latter is 96 bytes.
-As we generally allocate these on the stack, we end up blowing
-up the stack.
+After migration the security feature flags might have changed (e.g.,
+destination system with unpatched firmware), but some flags are not
+set/clear again in init_cpu_char_feature_flags() because it assumes
+the security flags to be the defaults.
 
-Fix this by wrapping the scsi_execute() call with a properly
-sized sense buffer, and copying back the bits for the CDROM
-layer.
+Additionally, if the H_GET_CPU_CHARACTERISTICS hypercall fails then
+init_cpu_char_feature_flags() does not run again, which potentially
+might leave the system in an insecure or sub-optimal configuration.
 
-Cc: stable@vger.kernel.org
-Reported-by: Piotr Gabriel Kosinski <pg.kosinski@gmail.com>
-Reported-by: Daniel Shapira <daniel@twistlock.com>
-Tested-by: Kees Cook <keescook@chromium.org>
-Fixes: 82ed4db499b8 ("block: split scsi_request out of struct request")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+So, just restore the security feature flags to the defaults assumed
+by init_cpu_char_feature_flags() so it can set/clear them correctly,
+and to ensure safe settings are in place in case the hypercall fail.
+
+Fixes: f636c14790ea ("powerpc/pseries: Set or clear security feature flags")
+Depends-on: 19887d6a28e2 ("powerpc: Move default security feature flags")
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/sr_ioctl.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/setup.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/scsi/sr_ioctl.c
-+++ b/drivers/scsi/sr_ioctl.c
-@@ -188,9 +188,13 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
- 	struct scsi_device *SDev;
- 	struct scsi_sense_hdr sshdr;
- 	int result, err = 0, retries = 0;
-+	unsigned char sense_buffer[SCSI_SENSE_BUFFERSIZE], *senseptr = NULL;
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -462,6 +462,10 @@ static void __init find_and_init_phbs(vo
  
- 	SDev = cd->device;
+ static void init_cpu_char_feature_flags(struct h_cpu_char_result *result)
+ {
++	/*
++	 * The features below are disabled by default, so we instead look to see
++	 * if firmware has *enabled* them, and set them if so.
++	 */
+ 	if (result->character & H_CPU_CHAR_SPEC_BAR_ORI31)
+ 		security_ftr_set(SEC_FTR_SPEC_BAR_ORI31);
  
-+	if (cgc->sense)
-+		senseptr = sense_buffer;
+@@ -501,6 +505,13 @@ void pseries_setup_rfi_flush(void)
+ 	bool enable;
+ 	long rc;
+ 
++	/*
++	 * Set features to the defaults assumed by init_cpu_char_feature_flags()
++	 * so it can set/clear again any features that might have changed after
++	 * migration, and in case the hypercall fails and it is not even called.
++	 */
++	powerpc_security_features = SEC_FTR_DEFAULT;
 +
-       retry:
- 	if (!scsi_block_when_processing_errors(SDev)) {
- 		err = -ENODEV;
-@@ -198,10 +202,12 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
- 	}
- 
- 	result = scsi_execute(SDev, cgc->cmd, cgc->data_direction,
--			      cgc->buffer, cgc->buflen,
--			      (unsigned char *)cgc->sense, &sshdr,
-+			      cgc->buffer, cgc->buflen, senseptr, &sshdr,
- 			      cgc->timeout, IOCTL_RETRIES, 0, 0, NULL);
- 
-+	if (cgc->sense)
-+		memcpy(cgc->sense, sense_buffer, sizeof(*cgc->sense));
-+
- 	/* Minimal error checking.  Ignore cases we know about, and report the rest. */
- 	if (driver_byte(result) != 0) {
- 		switch (sshdr.sense_key) {
+ 	rc = plpar_get_cpu_characteristics(&result);
+ 	if (rc == H_SUCCESS)
+ 		init_cpu_char_feature_flags(&result);
