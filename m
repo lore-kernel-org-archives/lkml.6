@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162800AbeE1KkW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:40:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60178 "EHLO mail.kernel.org"
+        id S1162995AbeE1N70 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:59:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162761AbeE1KkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:08 -0400
+        id S1162791AbeE1KkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:40:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 309/329] net: stmmac: ensure that the MSS desc is the last desc to set the own bit
-Date: Mon, 28 May 2018 12:03:58 +0200
-Message-Id: <20180528100306.812824747@linuxfoundation.org>
+Subject: [PATCH 4.9 314/329] audit: return on memory error to avoid null pointer dereference
+Date: Mon, 28 May 2018 12:04:03 +0200
+Message-Id: <20180528100307.101257088@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,55 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: Richard Guy Briggs <rgb@redhat.com>
 
-[ Upstream commit 15d2ee42a3087089e73ad52fd8c1b37ab496b87c ]
+[ Upstream commit 23138ead270045f1b3e912e667967b6094244999 ]
 
-A dma_wmb() is used to guarantee the ordering, with respect to
-other writes, to cache coherent DMA memory.
+If there is a memory allocation error when trying to change an audit
+kernel feature value, the ignored allocation error will trigger a NULL
+pointer dereference oops on subsequent use of that pointer.  Return
+instead.
 
-There is a dma_wmb() in prepare_tx_desc()/prepare_tso_tx_desc() which
-ensures that TDES0/1/2 is written before TDES3 (which contains the own
-bit), for First Desc.
+Passes audit-testsuite.
+See: https://github.com/linux-audit/audit-kernel/issues/76
 
-However, in the rare case that MSS changes, there will be a MSS
-context descriptor in front of the regular DMA descriptors:
-
-<MSS desc> <- DMA Next Descriptor
-<First Desc>
-<desc n>
-<Last Desc>
-
-Thus, for this special case, we need a dma_wmb()
-after prepare_tso_tx_desc()/before writing the own bit to the MSS desc,
-so that we flush the write to TDES3 for First Desc,
-in order to ensure that the MSS descriptor is the last descriptor to
-set the own bit.
-
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+[PM: not necessary (other funcs check for NULL), but a good practice]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ kernel/audit.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2141,8 +2141,15 @@ static netdev_tx_t stmmac_tso_xmit(struc
- 			tcp_hdrlen(skb) / 4, (skb->len - proto_hdr_len));
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -742,6 +742,8 @@ static void audit_log_feature_change(int
+ 		return;
  
- 	/* If context desc is used to change MSS */
--	if (mss_desc)
-+	if (mss_desc) {
-+		/* Make sure that first descriptor has been completely
-+		 * written, including its own bit. This is because MSS is
-+		 * actually before first descriptor, so we need to make
-+		 * sure that MSS's own bit is the last thing written.
-+		 */
-+		dma_wmb();
- 		priv->hw->desc->set_tx_owner(mss_desc);
-+	}
- 
- 	/* The own bit must be the latest setting done when prepare the
- 	 * descriptor and then barrier is needed to make sure that
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	if (!ab)
++		return;
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
