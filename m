@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425224AbeE1QTO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:19:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60410 "EHLO mail.kernel.org"
+        id S1425245AbeE1QTf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:19:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936706AbeE1KMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:12:18 -0400
+        id S932272AbeE1KMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:12:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Grigor Tovmasyan <tovmasya@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Lukas Wunner <lukas@wunner.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 150/185] usb: dwc2: Fix interval type issue
-Date: Mon, 28 May 2018 12:03:11 +0200
-Message-Id: <20180528100109.474425296@linuxfoundation.org>
+Subject: [PATCH 3.18 149/185] PCI: Restore config space on runtime resume despite being unbound
+Date: Mon, 28 May 2018 12:03:10 +0200
+Message-Id: <20180528100109.160167871@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,29 +31,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Grigor Tovmasyan <Grigor.Tovmasyan@synopsys.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-[ Upstream commit 12814a3f8f9b247531d7863170cc82b3fe4218fd ]
+[ Upstream commit 5775b843a619b3c93f946e2b55a208d9f0f48b59 ]
 
-The maximum value that unsigned char can hold is 255, meanwhile
-the maximum value of interval is  2^(bIntervalMax-1)=2^15.
+We leave PCI devices not bound to a driver in D0 during runtime suspend.
+But they may have a parent which is bound and can be transitioned to
+D3cold at runtime.  Once the parent goes to D3cold, the unbound child
+may go to D3cold as well.  When the child goes to D3cold, its internal
+state, including configuration of BARs, MSI, ASPM, MPS, etc., is lost.
 
-Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+One example are recent hybrid graphics laptops which cut power to the
+discrete GPU when the root port above it goes to ACPI power state D3.
+Users may provoke this by unbinding the GPU driver and allowing runtime
+PM on the GPU via sysfs:  The PM core will then treat the GPU as
+"suspended", which in turn allows the root port to runtime suspend,
+causing the power resources listed in its _PR3 object to be powered off.
+The GPU's BARs will be uninitialized when a driver later probes it.
+
+Another example are hybrid graphics laptops where the GPU itself (rather
+than the root port) is capable of runtime suspending to D3cold.  If the
+GPU's integrated HDA controller is not bound and the GPU's driver
+decides to runtime suspend to D3cold, the HDA controller's BARs will be
+uninitialized when a driver later probes it.
+
+Fix by saving and restoring config space over a runtime suspend cycle
+even if the device is not bound.
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Peter Wu <peter@lekensteyn.nl>              # Nvidia Optimus
+Tested-by: Lukas Wunner <lukas@wunner.de>              # MacBook Pro
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[lukas: add commit message, bikeshed code comments for clarity]
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/92fb6e6ae2730915eb733c08e2f76c6a313e3860.1520068884.git.lukas@wunner.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/core.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/pci-driver.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -144,7 +144,7 @@ struct s3c_hsotg_ep {
- 	unsigned char           dir_in;
- 	unsigned char           index;
- 	unsigned char           mc;
--	unsigned char           interval;
-+	u16                     interval;
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1120,11 +1120,14 @@ static int pci_pm_runtime_suspend(struct
+ 	int error;
  
- 	unsigned int            halted:1;
- 	unsigned int            periodic:1;
+ 	/*
+-	 * If pci_dev->driver is not set (unbound), the device should
+-	 * always remain in D0 regardless of the runtime PM status
++	 * If pci_dev->driver is not set (unbound), we leave the device in D0,
++	 * but it may go to D3cold when the bridge above it runtime suspends.
++	 * Save its config space in case that happens.
+ 	 */
+-	if (!pci_dev->driver)
++	if (!pci_dev->driver) {
++		pci_save_state(pci_dev);
+ 		return 0;
++	}
+ 
+ 	if (!pm || !pm->runtime_suspend)
+ 		return -ENOSYS;
+@@ -1163,16 +1166,18 @@ static int pci_pm_runtime_resume(struct
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+ 
+ 	/*
+-	 * If pci_dev->driver is not set (unbound), the device should
+-	 * always remain in D0 regardless of the runtime PM status
++	 * Restoring config space is necessary even if the device is not bound
++	 * to a driver because although we left it in D0, it may have gone to
++	 * D3cold when the bridge above it runtime suspended.
+ 	 */
++	pci_restore_standard_config(pci_dev);
++
+ 	if (!pci_dev->driver)
+ 		return 0;
+ 
+ 	if (!pm || !pm->runtime_resume)
+ 		return -ENOSYS;
+ 
+-	pci_restore_standard_config(pci_dev);
+ 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+ 	__pci_enable_wake(pci_dev, PCI_D0, true, false);
+ 	pci_fixup_device(pci_fixup_resume, pci_dev);
