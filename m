@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939807AbeE1QNB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:13:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33244 "EHLO mail.kernel.org"
+        id S935456AbeE1KNX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:13:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936494AbeE1KNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:25 -0400
+        id S932430AbeE1KNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 141/185] usb: dwc3: Update DWC_usb31 GTXFIFOSIZ reg fields
-Date: Mon, 28 May 2018 12:03:02 +0200
-Message-Id: <20180528100107.396567910@linuxfoundation.org>
+Subject: [PATCH 3.18 139/185] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
+Date: Mon, 28 May 2018 12:03:00 +0200
+Message-Id: <20180528100106.889697486@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,38 +32,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Jay Vosburgh <jay.vosburgh@canonical.com>
 
-[ Upstream commit 0cab8d26d6e5e053b2bed3356992aaa71dc93628 ]
+[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
 
-Update two GTXFIFOSIZ bit fields for the DWC_usb31 controller. TXFDEP
-is a 15-bit value instead of 16-bit value, and bit 15 is TXFRAMNUM.
+The operstate update logic will leave an interface in the
+default UNKNOWN operstate if the interface carrier state never changes
+from the default carrier up state set at creation.  This includes the
+case of an explicit call to netif_carrier_on, as the carrier on to on
+transition has no effect on operstate.
 
-The GTXFIFOSIZ register for DWC_usb31 is as follows:
- +-------+-----------+----------------------------------+
- | BITS  | Name      | Description                      |
- +=======+===========+==================================+
- | 31:16 | TXFSTADDR | Transmit FIFOn RAM Start Address |
- | 15    | TXFRAMNUM | Asynchronous/Periodic TXFIFO     |
- | 14:0  | TXFDEP    | TXFIFO Depth                     |
- +-------+-----------+----------------------------------+
+	This affects virtio-net for the case that the virtio peer does
+not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
+updates).  Without this feature, the virtio specification states that
+"the link should be assumed active," so, logically, the operstate should
+be UP instead of UNKNOWN.  This has impact on user space applications
+that use the operstate to make availability decisions for the interface.
 
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+	Resolve this by changing the virtio probe logic slightly to call
+netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
+cases, and then the existing call to netif_carrier_on for the "without"
+case will cause an operstate transition.
+
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/core.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -178,6 +178,8 @@
- #define DWC3_GUSB3PIPECTL_SUSPHY	(1 << 17)
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1876,8 +1876,8 @@ static int virtnet_probe(struct virtio_d
  
- /* Global TX Fifo Size Register */
-+#define DWC31_GTXFIFOSIZ_TXFRAMNUM	BIT(15)		/* DWC_usb31 only */
-+#define DWC31_GTXFIFOSIZ_TXFDEF(n)	((n) & 0x7fff)	/* DWC_usb31 only */
- #define DWC3_GTXFIFOSIZ_TXFDEF(n)	((n) & 0xffff)
- #define DWC3_GTXFIFOSIZ_TXFSTADDR(n)	((n) & 0xffff0000)
- 
+ 	/* Assume link up if device can't report link status,
+ 	   otherwise get link status from config. */
++	netif_carrier_off(dev);
+ 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+-		netif_carrier_off(dev);
+ 		schedule_work(&vi->config_work);
+ 	} else {
+ 		vi->status = VIRTIO_NET_S_LINK_UP;
