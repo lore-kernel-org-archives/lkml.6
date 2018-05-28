@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936655AbeE1KLp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
+        id S1425261AbeE1QVa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:21:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936625AbeE1KLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:39 -0400
+        id S936658AbeE1KLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 134/185] powerpc/perf: Fix kernel address leak via sampling registers
-Date: Mon, 28 May 2018 12:02:55 +0200
-Message-Id: <20180528100105.421706441@linuxfoundation.org>
+Subject: [PATCH 3.18 106/185] llc: properly handle dev_queue_xmit() return value
+Date: Mon, 28 May 2018 12:02:27 +0200
+Message-Id: <20180528100100.461319739@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,70 +31,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit e1ebd0e5b9d0a10ba65e63a3514b6da8c6a5a819 ]
+[ Upstream commit b85ab56c3f81c5a24b5a5213374f549df06430da ]
 
-Current code in power_pmu_disable() does not clear the sampling
-registers like Sampling Instruction Address Register (SIAR) and
-Sampling Data Address Register (SDAR) after disabling the PMU. Since
-these are userspace readable and could contain kernel addresses, add
-code to explicitly clear the content of these registers.
+llc_conn_send_pdu() pushes the skb into write queue and
+calls llc_conn_send_pdus() to flush them out. However, the
+status of dev_queue_xmit() is not returned to caller,
+in this case, llc_conn_state_process().
 
-Also add a "context synchronizing instruction" to enforce no further
-updates to these registers as suggested by Power ISA v3.0B. From
-section 9.4, on page 1108:
+llc_conn_state_process() needs hold the skb no matter
+success or failure, because it still uses it after that,
+therefore we should hold skb before dev_queue_xmit() when
+that skb is the one being processed by llc_conn_state_process().
 
-  "If an mtspr instruction is executed that changes the value of a
-  Performance Monitor register other than SIAR, SDAR, and SIER, the
-  change is not guaranteed to have taken effect until after a
-  subsequent context synchronizing instruction has been executed (see
-  Chapter 11. "Synchronization Requirements for Context Alterations"
-  on page 1133)."
+For other callers, they can just pass NULL and ignore
+the return value as they are.
 
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-[mpe: Massage change log and add ISA reference]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/perf/core-book3s.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ include/net/llc_conn.h |    2 +-
+ net/llc/llc_c_ac.c     |   15 +++++++++------
+ net/llc/llc_conn.c     |   32 +++++++++++++++++++++++---------
+ 3 files changed, 33 insertions(+), 16 deletions(-)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -1193,6 +1193,7 @@ static void power_pmu_disable(struct pmu
- 		 */
- 		write_mmcr0(cpuhw, val);
- 		mb();
-+		isync();
+--- a/include/net/llc_conn.h
++++ b/include/net/llc_conn.h
+@@ -104,7 +104,7 @@ void llc_sk_reset(struct sock *sk);
  
- 		/*
- 		 * Disable instruction sampling if it was enabled
-@@ -1201,12 +1202,26 @@ static void power_pmu_disable(struct pmu
- 			mtspr(SPRN_MMCRA,
- 			      cpuhw->mmcr[2] & ~MMCRA_SAMPLE_ENABLE);
- 			mb();
-+			isync();
- 		}
- 
- 		cpuhw->disabled = 1;
- 		cpuhw->n_added = 0;
- 
- 		ebb_switch_out(mmcr0);
-+
-+#ifdef CONFIG_PPC64
-+		/*
-+		 * These are readable by userspace, may contain kernel
-+		 * addresses and are not switched by context switch, so clear
-+		 * them now to avoid leaking anything to userspace in general
-+		 * including to another process.
-+		 */
-+		if (ppmu->flags & PPMU_ARCH_207S) {
-+			mtspr(SPRN_SDAR, 0);
-+			mtspr(SPRN_SIAR, 0);
-+		}
-+#endif
+ /* Access to a connection */
+ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb);
+-void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
++int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
+ void llc_conn_rtn_pdu(struct sock *sk, struct sk_buff *skb);
+ void llc_conn_resend_i_pdu_as_cmd(struct sock *sk, u8 nr, u8 first_p_bit);
+ void llc_conn_resend_i_pdu_as_rsp(struct sock *sk, u8 nr, u8 first_f_bit);
+--- a/net/llc/llc_c_ac.c
++++ b/net/llc/llc_c_ac.c
+@@ -389,7 +389,7 @@ static int llc_conn_ac_send_i_cmd_p_set_
+ 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
+ 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
+ 	if (likely(!rc)) {
+-		llc_conn_send_pdu(sk, skb);
++		rc = llc_conn_send_pdu(sk, skb);
+ 		llc_conn_ac_inc_vs_by_1(sk, skb);
  	}
+ 	return rc;
+@@ -916,7 +916,7 @@ static int llc_conn_ac_send_i_rsp_f_set_
+ 	llc_pdu_init_as_i_cmd(skb, llc->ack_pf, llc->vS, llc->vR);
+ 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
+ 	if (likely(!rc)) {
+-		llc_conn_send_pdu(sk, skb);
++		rc = llc_conn_send_pdu(sk, skb);
+ 		llc_conn_ac_inc_vs_by_1(sk, skb);
+ 	}
+ 	return rc;
+@@ -935,14 +935,17 @@ static int llc_conn_ac_send_i_rsp_f_set_
+ int llc_conn_ac_send_i_as_ack(struct sock *sk, struct sk_buff *skb)
+ {
+ 	struct llc_sock *llc = llc_sk(sk);
++	int ret;
  
- 	local_irq_restore(flags);
+ 	if (llc->ack_must_be_send) {
+-		llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
++		ret = llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
+ 		llc->ack_must_be_send = 0 ;
+ 		llc->ack_pf = 0;
+-	} else
+-		llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
+-	return 0;
++	} else {
++		ret = llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
++	}
++
++	return ret;
+ }
+ 
+ /**
+--- a/net/llc/llc_conn.c
++++ b/net/llc/llc_conn.c
+@@ -30,7 +30,7 @@
+ #endif
+ 
+ static int llc_find_offset(int state, int ev_type);
+-static void llc_conn_send_pdus(struct sock *sk);
++static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *skb);
+ static int llc_conn_service(struct sock *sk, struct sk_buff *skb);
+ static int llc_exec_conn_trans_actions(struct sock *sk,
+ 				       struct llc_conn_state_trans *trans,
+@@ -193,11 +193,11 @@ out_skb_put:
+ 	return rc;
+ }
+ 
+-void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
++int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
+ {
+ 	/* queue PDU to send to MAC layer */
+ 	skb_queue_tail(&sk->sk_write_queue, skb);
+-	llc_conn_send_pdus(sk);
++	return llc_conn_send_pdus(sk, skb);
+ }
+ 
+ /**
+@@ -255,7 +255,7 @@ void llc_conn_resend_i_pdu_as_cmd(struct
+ 	if (howmany_resend > 0)
+ 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
+ 	/* any PDUs to re-send are queued up; start sending to MAC */
+-	llc_conn_send_pdus(sk);
++	llc_conn_send_pdus(sk, NULL);
+ out:;
+ }
+ 
+@@ -296,7 +296,7 @@ void llc_conn_resend_i_pdu_as_rsp(struct
+ 	if (howmany_resend > 0)
+ 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
+ 	/* any PDUs to re-send are queued up; start sending to MAC */
+-	llc_conn_send_pdus(sk);
++	llc_conn_send_pdus(sk, NULL);
+ out:;
+ }
+ 
+@@ -340,12 +340,16 @@ out:
+ /**
+  *	llc_conn_send_pdus - Sends queued PDUs
+  *	@sk: active connection
++ *	@hold_skb: the skb held by caller, or NULL if does not care
+  *
+- *	Sends queued pdus to MAC layer for transmission.
++ *	Sends queued pdus to MAC layer for transmission. When @hold_skb is
++ *	NULL, always return 0. Otherwise, return 0 if @hold_skb is sent
++ *	successfully, or 1 for failure.
+  */
+-static void llc_conn_send_pdus(struct sock *sk)
++static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *hold_skb)
+ {
+ 	struct sk_buff *skb;
++	int ret = 0;
+ 
+ 	while ((skb = skb_dequeue(&sk->sk_write_queue)) != NULL) {
+ 		struct llc_pdu_sn *pdu = llc_pdu_sn_hdr(skb);
+@@ -357,10 +361,20 @@ static void llc_conn_send_pdus(struct so
+ 			skb_queue_tail(&llc_sk(sk)->pdu_unack_q, skb);
+ 			if (!skb2)
+ 				break;
+-			skb = skb2;
++			dev_queue_xmit(skb2);
++		} else {
++			bool is_target = skb == hold_skb;
++			int rc;
++
++			if (is_target)
++				skb_get(skb);
++			rc = dev_queue_xmit(skb);
++			if (is_target)
++				ret = rc;
+ 		}
+-		dev_queue_xmit(skb);
+ 	}
++
++	return ret;
+ }
+ 
+ /**
