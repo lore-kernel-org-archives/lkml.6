@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164489AbeE1Mgi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:36:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47022 "EHLO mail.kernel.org"
+        id S938927AbeE1MhF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:37:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938087AbeE1K7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:03 -0400
+        id S938067AbeE1K6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 392/496] zorro: Set up z->dev.dma_mask for the DMA API
-Date: Mon, 28 May 2018 12:02:57 +0200
-Message-Id: <20180528100336.290311082@linuxfoundation.org>
+Subject: [PATCH 4.14 357/496] rxrpc: Fix Tx ring annotation after initial Tx failure
+Date: Mon, 28 May 2018 12:02:22 +0200
+Message-Id: <20180528100334.834435875@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,53 +29,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 55496d3fe2acd1a365c43cbd613a20ecd4d74395 ]
+[ Upstream commit 03877bf6a30cca7d4bc3ffabd3c3e9464a7a1a19 ]
 
-The generic DMA API uses dev->dma_mask to check the DMA addressable
-memory bitmask, and warns if no mask is set or even allocated.
+rxrpc calls have a ring of packets that are awaiting ACK or retransmission
+and a parallel ring of annotations that tracks the state of those packets.
+If the initial transmission of a packet on the underlying UDP socket fails
+then the packet annotation is marked for resend - but the setting of this
+mark accidentally erases the last-packet mark also stored in the same
+annotation slot.  If this happens, a call won't switch out of the Tx phase
+when all the packets have been transmitted.
 
-Set z->dev.dma_coherent_mask on Zorro bus scan, and make z->dev.dma_mask
-to point to z->dev.dma_coherent_mask so device drivers that need DMA have
-everything set up to avoid warnings from dma_alloc_coherent(). Drivers can
-still use dma_set_mask_and_coherent() to explicitly set their DMA bit mask.
+Fix this by retaining the last-packet mark and only altering the packet
+state.
 
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-[geert: Handle Zorro II with 24-bit address space]
-Acked-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/zorro/zorro.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ net/rxrpc/sendmsg.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/zorro/zorro.c
-+++ b/drivers/zorro/zorro.c
-@@ -16,6 +16,7 @@
- #include <linux/bitops.h>
- #include <linux/string.h>
- #include <linux/platform_device.h>
-+#include <linux/dma-mapping.h>
- #include <linux/slab.h>
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -92,7 +92,9 @@ static inline void rxrpc_instant_resend(
+ 	spin_lock_bh(&call->lock);
  
- #include <asm/byteorder.h>
-@@ -185,6 +186,17 @@ static int __init amiga_zorro_probe(stru
- 		z->dev.parent = &bus->dev;
- 		z->dev.bus = &zorro_bus_type;
- 		z->dev.id = i;
-+		switch (z->rom.er_Type & ERT_TYPEMASK) {
-+		case ERT_ZORROIII:
-+			z->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+			break;
-+
-+		case ERT_ZORROII:
-+		default:
-+			z->dev.coherent_dma_mask = DMA_BIT_MASK(24);
-+			break;
-+		}
-+		z->dev.dma_mask = &z->dev.coherent_dma_mask;
+ 	if (call->state < RXRPC_CALL_COMPLETE) {
+-		call->rxtx_annotations[ix] = RXRPC_TX_ANNO_RETRANS;
++		call->rxtx_annotations[ix] =
++			(call->rxtx_annotations[ix] & RXRPC_TX_ANNO_LAST) |
++			RXRPC_TX_ANNO_RETRANS;
+ 		if (!test_and_set_bit(RXRPC_CALL_EV_RESEND, &call->events))
+ 			rxrpc_queue_call(call);
  	}
- 
- 	/* ... then register them */
