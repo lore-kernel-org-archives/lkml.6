@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937370AbeE1Ow6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:52:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937156AbeE1K2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S937155AbeE1K2T (ORCPT <rfc822;w@1wt.eu>);
         Mon, 28 May 2018 06:28:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937121AbeE1K2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 017/329] ipc/shm: fix shmat() nil address after round-down when remapping
-Date: Mon, 28 May 2018 11:59:06 +0200
-Message-Id: <20180528100243.756014906@linuxfoundation.org>
+        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>,
+        Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: [PATCH 4.9 013/329] xen-swiotlb: fix the check condition for xen_swiotlb_free_coherent
+Date: Mon, 28 May 2018 11:59:02 +0200
+Message-Id: <20180528100243.366804351@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,49 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: Joe Jin <joe.jin@oracle.com>
 
-commit 8f89c007b6dec16a1793cb88de88fcc02117bbbc upstream.
+commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
 
-shmat()'s SHM_REMAP option forbids passing a nil address for; this is in
-fact the very first thing we check for.  Andrea reported that for
-SHM_RND|SHM_REMAP cases we can end up bypassing the initial addr check,
-but we need to check again if the address was rounded down to nil.  As
-of this patch, such cases will return -EINVAL.
+When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
+but Dom Heap is increased by the same size. Tracing raidconfig we found
+that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
+to apply memory. If the memory allocated by Dom0 is not in the DMA area,
+it will exchange memory with Xen to meet the requiment. Later drivers
+call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
+the check condition (dev_addr + size - 1 <= dma_mask) is always false,
+it prevents calling xen_destroy_contiguous_region() to return the memory
+to the Xen DMA heap.
 
-Link: http://lkml.kernel.org/r/20180503204934.kk63josdu6u53fbd@linux-n805
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reported-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This issue introduced by commit 6810df88dcfc2 "xen-swiotlb: When doing
+coherent alloc/dealloc check before swizzling the MFNs.".
+
+Signed-off-by: Joe Jin <joe.jin@oracle.com>
+Tested-by: John Sobecki <john.sobecki@oracle.com>
+Reviewed-by: Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/shm.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/xen/swiotlb-xen.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1127,9 +1127,17 @@ long do_shmat(int shmid, char __user *sh
- 		goto out;
- 	else if ((addr = (ulong)shmaddr)) {
- 		if (addr & (shmlba - 1)) {
--			if (shmflg & SHM_RND)
-+			if (shmflg & SHM_RND) {
- 				addr &= ~(shmlba - 1);  /* round down */
--			else
-+
-+				/*
-+				 * Ensure that the round-down is non-nil
-+				 * when remapping. This can happen for
-+				 * cases when addr < shmlba.
-+				 */
-+				if (!addr && (shmflg & SHM_REMAP))
-+					goto out;
-+			} else
- #ifndef __ARCH_FORCE_SHMLBA
- 				if (addr & ~PAGE_MASK)
- #endif
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -359,7 +359,7 @@ xen_swiotlb_free_coherent(struct device
+ 	 * physical address */
+ 	phys = xen_bus_to_phys(dev_addr);
+ 
+-	if (((dev_addr + size - 1 > dma_mask)) ||
++	if (((dev_addr + size - 1 <= dma_mask)) ||
+ 	    range_straddles_page_boundary(phys, size))
+ 		xen_destroy_contiguous_region(phys, order);
+ 
