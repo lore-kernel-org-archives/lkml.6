@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935475AbeE1KJc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57510 "EHLO mail.kernel.org"
+        id S935540AbeE1KJi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:09:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933283AbeE1KJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:09:24 -0400
+        id S935473AbeE1KJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
-        Marius Gligor <mgligor@kalray.eu>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Li Ning <lining916740672@icloud.com>,
+        Jeremy Cline <jeremy@jcline.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 086/185] e1000e: allocate ring descriptors with dma_zalloc_coherent
-Date: Mon, 28 May 2018 12:02:07 +0200
-Message-Id: <20180528100057.914289410@linuxfoundation.org>
+Subject: [PATCH 3.18 088/185] scsi: sd: Keep disk read-only when re-reading partition
+Date: Mon, 28 May 2018 12:02:09 +0200
+Message-Id: <20180528100058.148193658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -33,83 +31,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
+From: Jeremy Cline <jeremy@jcline.org>
 
-[ Upstream commit aea3fca005fb45f80869f2e8d56fd4e64c1d1fdb ]
+[ Upstream commit 20bd1d026aacc5399464f8328f305985c493cde3 ]
 
-Descriptor rings were not initialized at zero when allocated
-When area contained garbage data, it caused skb_over_panic in
-e1000_clean_rx_irq (if data had E1000_RXD_STAT_DD bit set)
+If the read-only flag is true on a SCSI disk, re-reading the partition
+table sets the flag back to false.
 
-This patch makes use of dma_zalloc_coherent to make sure the
-ring is memset at 0 to prevent the area from containing garbage.
+To observe this bug, you can run:
 
-Following is the signature of the panic:
-IODDR0@0.0: skbuff: skb_over_panic: text:80407b20 len:64010 put:64010 head:ab46d800 data:ab46d842 tail:0xab47d24c end:0xab46df40 dev:eth0
-IODDR0@0.0: BUG: failure at net/core/skbuff.c:105/skb_panic()!
-IODDR0@0.0: Kernel panic - not syncing: BUG!
-IODDR0@0.0:
-IODDR0@0.0: Process swapper/0 (pid: 0, threadinfo=81728000, task=8173cc00 ,cpu: 0)
-IODDR0@0.0: SP = <815a1c0c>
-IODDR0@0.0: Stack:      00000001
-IODDR0@0.0: b2d89800 815e33ac
-IODDR0@0.0: ea73c040 00000001
-IODDR0@0.0: 60040003 0000fa0a
-IODDR0@0.0: 00000002
-IODDR0@0.0:
-IODDR0@0.0: 804540c0 815a1c70
-IODDR0@0.0: b2744000 602ac070
-IODDR0@0.0: 815a1c44 b2d89800
-IODDR0@0.0: 8173cc00 815a1c08
-IODDR0@0.0:
-IODDR0@0.0:     00000006
-IODDR0@0.0: 815a1b50 00000000
-IODDR0@0.0: 80079434 00000001
-IODDR0@0.0: ab46df40 b2744000
-IODDR0@0.0: b2d89800
-IODDR0@0.0:
-IODDR0@0.0: 0000fa0a 8045745c
-IODDR0@0.0: 815a1c88 0000fa0a
-IODDR0@0.0: 80407b20 b2789f80
-IODDR0@0.0: 00000005 80407b20
-IODDR0@0.0:
-IODDR0@0.0:
-IODDR0@0.0: Call Trace:
-IODDR0@0.0: [<804540bc>] skb_panic+0xa4/0xa8
-IODDR0@0.0: [<80079430>] console_unlock+0x2f8/0x6d0
-IODDR0@0.0: [<80457458>] skb_put+0xa0/0xc0
-IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
-IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
-IODDR0@0.0: [<804079c8>] e1000_clean_rx_irq+0x188/0x3e8
-IODDR0@0.0: [<80407b1c>] e1000_clean_rx_irq+0x2dc/0x3e8
-IODDR0@0.0: [<80468b48>] __dev_kfree_skb_any+0x88/0xa8
-IODDR0@0.0: [<804101ac>] e1000e_poll+0x94/0x288
-IODDR0@0.0: [<8046e9d4>] net_rx_action+0x19c/0x4e8
-IODDR0@0.0:   ...
-IODDR0@0.0: Maximum depth to print reached. Use kstack=<maximum_depth_to_print> To specify a custom value (where 0 means to display the full backtrace)
-IODDR0@0.0: ---[ end Kernel panic - not syncing: BUG!
+1. blockdev --setro /dev/sda
+2. blockdev --rereadpt /dev/sda
+3. blockdev --getro /dev/sda
 
-Signed-off-by: Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
-Signed-off-by: Marius Gligor <mgligor@kalray.eu>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+This commit reads the disk's old state and combines it with the device
+disk-reported state rather than unconditionally marking it as RW.
+
+Reported-by: Li Ning <lining916740672@icloud.com>
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/sd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -2330,8 +2330,8 @@ static int e1000_alloc_ring_dma(struct e
- {
- 	struct pci_dev *pdev = adapter->pdev;
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2318,6 +2318,7 @@ sd_read_write_protect_flag(struct scsi_d
+ 	int res;
+ 	struct scsi_device *sdp = sdkp->device;
+ 	struct scsi_mode_data data;
++	int disk_ro = get_disk_ro(sdkp->disk);
+ 	int old_wp = sdkp->write_prot;
  
--	ring->desc = dma_alloc_coherent(&pdev->dev, ring->size, &ring->dma,
--					GFP_KERNEL);
-+	ring->desc = dma_zalloc_coherent(&pdev->dev, ring->size, &ring->dma,
-+					 GFP_KERNEL);
- 	if (!ring->desc)
- 		return -ENOMEM;
- 
+ 	set_disk_ro(sdkp->disk, 0);
+@@ -2358,7 +2359,7 @@ sd_read_write_protect_flag(struct scsi_d
+ 			  "Test WP failed, assume Write Enabled\n");
+ 	} else {
+ 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
+-		set_disk_ro(sdkp->disk, sdkp->write_prot);
++		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
+ 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
+ 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
+ 				  sdkp->write_prot ? "on" : "off");
