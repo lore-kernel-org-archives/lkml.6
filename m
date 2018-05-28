@@ -1,86 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938620AbeE1MGa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:06:30 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36656 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938528AbeE1MGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 08:06:23 -0400
-X-Google-Smtp-Source: ADUXVKIiQ3O0g9yZCkPFHnVsAI020xNsaNUrZy80FljJvO6sZ4VqnBbtoDdIy2geZSe6zGg/W7uf31yDLWxGXjk1TOE=
+        id S938635AbeE1MGm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:06:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423114AbeE1LF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:26 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 034/272] mm/kasan: dont vfree() nonexistent vm_area
+Date: Mon, 28 May 2018 12:01:07 +0200
+Message-Id: <20180528100243.587736189@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180528104127.GB1293@localhost.localdomain>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-9-git-send-email-vincent.guittot@linaro.org> <20180528104127.GB1293@localhost.localdomain>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 28 May 2018 14:06:02 +0200
-Message-ID: <CAKfTPtAn6F6J9=KFJrG_fMMeGvTn3abn1sMAdjpQMKLz0p9egA@mail.gmail.com>
-Subject: Re: [PATCH v5 08/10] cpufreq/schedutil: take into account interrupt
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Juri,
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-On 28 May 2018 at 12:41, Juri Lelli <juri.lelli@redhat.com> wrote:
-> Hi Vincent,
->
-> On 25/05/18 15:12, Vincent Guittot wrote:
->> The time spent under interrupt can be significant but it is not reflected
->> in the utilization of CPU when deciding to choose an OPP. Now that we have
->> access to this metric, schedutil can take it into account when selecting
->> the OPP for a CPU.
->> The CPU utilization is :
->>   irq util_avg + (1 - irq util_avg / max capacity ) * /Sum rq util_avg
->
-> IIUC the code below you actually propose that
->
->  util = [(max_cap - util_irq) * util_rq] / max_cap + util_irq
->
-> where
->
->  util_rq  = /Sum rq util_avg
->  util_irq = irq util_avg
->
-> So, which one is what you have in mind? Or am I wrong? :)
+------------------
 
-mmh ... aren't they equal  ?
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-util = [(max_cap - util_irq) * util_rq] / max_cap + util_irq
-util = [(max_cap/max_cap - util_irq/max_cap) * util_rq]  + util_irq
-util = [(1 - util_irq/max_cap) * util_rq]  + util_irq
-util = util_irq +  [(1 - util_irq/max_cap) * util_rq]
+commit 0f901dcbc31f88ae41a2aaa365f7802b5d520a28 upstream.
 
->
-> [...]
->
->>  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->> @@ -190,9 +192,17 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->>       if (rq->rt.rt_nr_running) {
->>               util = sg_cpu->max;
->>       } else {
->> +             /* Sum rq utilization*/
->>               util = sg_cpu->util_dl;
->>               util += sg_cpu->util_cfs;
->>               util += sg_cpu->util_rt;
->> +
->> +             /* Weight rq's utilization to the normal context */
->> +             util *= (sg_cpu->max - sg_cpu->util_irq);
->> +             util /= sg_cpu->max;
->> +
->> +             /* Add interrupt utilization */
->> +             util += sg_cpu->util_irq;
->
-> Thanks,
->
-> - Juri
+KASAN uses different routines to map shadow for hot added memory and
+memory obtained in boot process.  Attempt to offline memory onlined by
+normal boot process leads to this:
+
+    Trying to vfree() nonexistent vm area (000000005d3b34b9)
+    WARNING: CPU: 2 PID: 13215 at mm/vmalloc.c:1525 __vunmap+0x147/0x190
+
+    Call Trace:
+     kasan_mem_notifier+0xad/0xb9
+     notifier_call_chain+0x166/0x260
+     __blocking_notifier_call_chain+0xdb/0x140
+     __offline_pages+0x96a/0xb10
+     memory_subsys_offline+0x76/0xc0
+     device_offline+0xb8/0x120
+     store_mem_state+0xfa/0x120
+     kernfs_fop_write+0x1d5/0x320
+     __vfs_write+0xd4/0x530
+     vfs_write+0x105/0x340
+     SyS_write+0xb0/0x140
+
+Obviously we can't call vfree() to free memory that wasn't allocated via
+vmalloc().  Use find_vm_area() to see if we can call vfree().
+
+Unfortunately it's a bit tricky to properly unmap and free shadow
+allocated during boot, so we'll have to keep it.  If memory will come
+online again that shadow will be reused.
+
+Matthew asked: how can you call vfree() on something that isn't a
+vmalloc address?
+
+  vfree() is able to free any address returned by
+  __vmalloc_node_range().  And __vmalloc_node_range() gives you any
+  address you ask.  It doesn't have to be an address in [VMALLOC_START,
+  VMALLOC_END] range.
+
+  That's also how the module_alloc()/module_memfree() works on
+  architectures that have designated area for modules.
+
+[aryabinin@virtuozzo.com: improve comments]
+  Link: http://lkml.kernel.org/r/dabee6ab-3a7a-51cd-3b86-5468718e0390@virtuozzo.com
+[akpm@linux-foundation.org: fix typos, reflow comment]
+Link: http://lkml.kernel.org/r/20180201163349.8700-1-aryabinin@virtuozzo.com
+Fixes: fa69b5989bb0 ("mm/kasan: add support for memory hotplug")
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reported-by: Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ mm/kasan/kasan.c |   63 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 61 insertions(+), 2 deletions(-)
+
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -791,6 +791,40 @@ DEFINE_ASAN_SET_SHADOW(f5);
+ DEFINE_ASAN_SET_SHADOW(f8);
+ 
+ #ifdef CONFIG_MEMORY_HOTPLUG
++static bool shadow_mapped(unsigned long addr)
++{
++	pgd_t *pgd = pgd_offset_k(addr);
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
++
++	if (pgd_none(*pgd))
++		return false;
++	p4d = p4d_offset(pgd, addr);
++	if (p4d_none(*p4d))
++		return false;
++	pud = pud_offset(p4d, addr);
++	if (pud_none(*pud))
++		return false;
++
++	/*
++	 * We can't use pud_large() or pud_huge(), the first one is
++	 * arch-specific, the last one depends on HUGETLB_PAGE.  So let's abuse
++	 * pud_bad(), if pud is bad then it's bad because it's huge.
++	 */
++	if (pud_bad(*pud))
++		return true;
++	pmd = pmd_offset(pud, addr);
++	if (pmd_none(*pmd))
++		return false;
++
++	if (pmd_bad(*pmd))
++		return true;
++	pte = pte_offset_kernel(pmd, addr);
++	return !pte_none(*pte);
++}
++
+ static int __meminit kasan_mem_notifier(struct notifier_block *nb,
+ 			unsigned long action, void *data)
+ {
+@@ -812,6 +846,14 @@ static int __meminit kasan_mem_notifier(
+ 	case MEM_GOING_ONLINE: {
+ 		void *ret;
+ 
++		/*
++		 * If shadow is mapped already than it must have been mapped
++		 * during the boot. This could happen if we onlining previously
++		 * offlined memory.
++		 */
++		if (shadow_mapped(shadow_start))
++			return NOTIFY_OK;
++
+ 		ret = __vmalloc_node_range(shadow_size, PAGE_SIZE, shadow_start,
+ 					shadow_end, GFP_KERNEL,
+ 					PAGE_KERNEL, VM_NO_GUARD,
+@@ -823,8 +865,25 @@ static int __meminit kasan_mem_notifier(
+ 		kmemleak_ignore(ret);
+ 		return NOTIFY_OK;
+ 	}
+-	case MEM_OFFLINE:
+-		vfree((void *)shadow_start);
++	case MEM_OFFLINE: {
++		struct vm_struct *vm;
++
++		/*
++		 * shadow_start was either mapped during boot by kasan_init()
++		 * or during memory online by __vmalloc_node_range().
++		 * In the latter case we can use vfree() to free shadow.
++		 * Non-NULL result of the find_vm_area() will tell us if
++		 * that was the second case.
++		 *
++		 * Currently it's not possible to free shadow mapped
++		 * during boot by kasan_init(). It's because the code
++		 * to do that hasn't been written yet. So we'll just
++		 * leak the memory.
++		 */
++		vm = find_vm_area((void *)shadow_start);
++		if (vm)
++			vfree((void *)shadow_start);
++	}
+ 	}
+ 
+ 	return NOTIFY_OK;
