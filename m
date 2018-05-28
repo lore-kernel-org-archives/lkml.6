@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423340AbeE1MRt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:17:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50320 "EHLO mail.kernel.org"
+        id S1422877AbeE1LDB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422872AbeE1LDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:04 -0400
+        id S1164738AbeE1LC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 478/496] perf test: Fix test case inet_pton to accept inlines.
-Date: Mon, 28 May 2018 12:04:23 +0200
-Message-Id: <20180528100340.040438373@linuxfoundation.org>
+Subject: [PATCH 4.14 475/496] MIPS: Octeon: Fix logging messages with spurious periods after newlines
+Date: Mon, 28 May 2018 12:04:20 +0200
+Message-Id: <20180528100339.920020213@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,60 +31,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+From: Joe Perches <joe@perches.com>
 
-[ Upstream commit 0f19a038afdc592176c9a302f0d08be6a68ad74a ]
+[ Upstream commit db6775ca6e0353d2618ca7d5e210fc36ad43bbd4 ]
 
-Using Fedora 27 and latest Linux kernel the test case
-trace+probe_libc_inet_pton.sh fails again on s390.  This time is the
-inlining of functions which does not match.  After an update of the
-glibc (from 2.26-16 to 2.26-24) the output is different
+Using a period after a newline causes bad output.
 
-The expected output is:
-
-             __inet_pton (/usr/lib64/libc-2.26.so)
-             gaih_inet (inlined)
-             ....
-
-The actual output is:
-
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.061/0.061/0.061/0.000 ms
-       0.000 probe_libc:inet_pton:(3ffb2140448))
-             __inet_pton (inlined)
-             gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-             ...
-
-Fix this by being less strict on 'inlined' verses library name and
-accept both
-
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180214070303.55757-1-tmricht@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+Signed-off-by: Joe Perches <joe@perches.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/17886/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/shell/trace+probe_libc_inet_pton.sh |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/cavium-octeon/octeon-irq.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-@@ -21,12 +21,12 @@ trace_libc_inet_pton_backtrace() {
- 	expected[3]=".*packets transmitted.*"
- 	expected[4]="rtt min.*"
- 	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
--	expected[6]=".*inet_pton[[:space:]]\($libc\)$"
-+	expected[6]=".*inet_pton[[:space:]]\($libc|inlined\)$"
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf'
--		expected[7]="gaih_inet[[:space:]]\(inlined\)$"
--		expected[8]="__GI_getaddrinfo[[:space:]]\(inlined\)$"
-+		expected[7]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
-+		expected[8]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
- 		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
- 		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
- 		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2271,7 +2271,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	parent_irq = irq_of_parse_and_map(ciu_node, 0);
+ 	if (!parent_irq) {
+-		pr_err("ERROR: Couldn't acquire parent_irq for %s\n.",
++		pr_err("ERROR: Couldn't acquire parent_irq for %s\n",
+ 			ciu_node->name);
+ 		return -EINVAL;
+ 	}
+@@ -2283,7 +2283,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	addr = of_get_address(ciu_node, 0, NULL, NULL);
+ 	if (!addr) {
+-		pr_err("ERROR: Couldn't acquire reg(0) %s\n.", ciu_node->name);
++		pr_err("ERROR: Couldn't acquire reg(0) %s\n", ciu_node->name);
+ 		return -EINVAL;
+ 	}
+ 	host_data->raw_reg = (u64)phys_to_virt(
+@@ -2291,7 +2291,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	addr = of_get_address(ciu_node, 1, NULL, NULL);
+ 	if (!addr) {
+-		pr_err("ERROR: Couldn't acquire reg(1) %s\n.", ciu_node->name);
++		pr_err("ERROR: Couldn't acquire reg(1) %s\n", ciu_node->name);
+ 		return -EINVAL;
+ 	}
+ 	host_data->en_reg = (u64)phys_to_virt(
+@@ -2299,7 +2299,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	r = of_property_read_u32(ciu_node, "cavium,max-bits", &val);
+ 	if (r) {
+-		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n.",
++		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n",
+ 			ciu_node->name);
+ 		return r;
+ 	}
+@@ -2309,7 +2309,7 @@ static int __init octeon_irq_init_cib(st
+ 					   &octeon_irq_domain_cib_ops,
+ 					   host_data);
+ 	if (!cib_domain) {
+-		pr_err("ERROR: Couldn't irq_domain_add_linear()\n.");
++		pr_err("ERROR: Couldn't irq_domain_add_linear()\n");
+ 		return -ENOMEM;
+ 	}
+ 
