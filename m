@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163827AbeE1NNQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:13:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
+        id S1163888AbeE1NNb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:13:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163535AbeE1Kuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:46 -0400
+        id S1163706AbeE1Kuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
-        Julian Anastasov <ja@ssi.bg>, Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 181/496] ipvs: remove IPS_NAT_MASK check to fix passive FTP
-Date: Mon, 28 May 2018 11:59:26 +0200
-Message-Id: <20180528100327.590597623@linuxfoundation.org>
+Subject: [PATCH 4.14 179/496] ARC: mcip: update MCIP debug mask when the new cpu came online
+Date: Mon, 28 May 2018 11:59:24 +0200
+Message-Id: <20180528100327.453478721@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,43 +30,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Anastasov <ja@ssi.bg>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit 8a949fff0302b50063f74bb345a66190015528d0 ]
+[ Upstream commit f3205de98db2fc8083796dd5ad81b191e436fab8 ]
 
-The IPS_NAT_MASK check in 4.12 replaced previous check for nfct_nat()
-which was needed to fix a crash in 2.6.36-rc, see
-commit 7bcbf81a2296 ("ipvs: avoid oops for passive FTP").
-But as IPVS does not set the IPS_SRC_NAT and IPS_DST_NAT bits,
-checking for IPS_NAT_MASK prevents PASV response to be properly
-mangled and blocks the transfer. Remove the check as it is not
-needed after 3.12 commit 41d73ec053d2 ("netfilter: nf_conntrack:
-make sequence number adjustments usuable without NAT") which
-changes nfct_nat() with nfct_seqadj() and especially after 3.13
-commit b25adce16064 ("ipvs: correct usage/allocation of seqadj
-ext in ipvs").
+As of today we use hardcoded MCIP debug mask, so if we launch
+kernel via debugger and kick fever cores than HW has all cpus
+hang at the momemt of setup MCIP debug mask.
 
-Thanks to Li Shuang and Florian Westphal for reporting the problem!
+So update MCIP debug mask when the new cpu came online, instead of
+use hardcoded MCIP debug mask.
 
-Reported-by: Li Shuang <shuali@redhat.com>
-Fixes: be7be6e161a2 ("netfilter: ipvs: fix incorrect conflict resolution")
-Signed-off-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/ipvs/ip_vs_ftp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/kernel/mcip.c |   37 ++++++++++++++++++++++++++++++++-----
+ include/soc/arc/mcip.h |    2 ++
+ 2 files changed, 34 insertions(+), 5 deletions(-)
 
---- a/net/netfilter/ipvs/ip_vs_ftp.c
-+++ b/net/netfilter/ipvs/ip_vs_ftp.c
-@@ -260,7 +260,7 @@ static int ip_vs_ftp_out(struct ip_vs_ap
- 		buf_len = strlen(buf);
+--- a/arch/arc/kernel/mcip.c
++++ b/arch/arc/kernel/mcip.c
+@@ -51,6 +51,34 @@ static void mcip_update_gfrc_halt_mask(i
+ 	raw_spin_unlock_irqrestore(&mcip_lock, flags);
+ }
  
- 		ct = nf_ct_get(skb, &ctinfo);
--		if (ct && (ct->status & IPS_NAT_MASK)) {
-+		if (ct) {
- 			bool mangled;
++static void mcip_update_debug_halt_mask(int cpu)
++{
++	u32 mcip_mask = 0;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&mcip_lock, flags);
++
++	/*
++	 * mcip_mask is same for CMD_DEBUG_SET_SELECT and CMD_DEBUG_SET_MASK
++	 * commands. So read it once instead of reading both CMD_DEBUG_READ_MASK
++	 * and CMD_DEBUG_READ_SELECT.
++	 */
++	__mcip_cmd(CMD_DEBUG_READ_SELECT, 0);
++	mcip_mask = read_aux_reg(ARC_REG_MCIP_READBACK);
++
++	mcip_mask |= BIT(cpu);
++
++	__mcip_cmd_data(CMD_DEBUG_SET_SELECT, 0, mcip_mask);
++	/*
++	 * Parameter specified halt cause:
++	 * STATUS32[H]/actionpoint/breakpoint/self-halt
++	 * We choose all of them (0xF).
++	 */
++	__mcip_cmd_data(CMD_DEBUG_SET_MASK, 0xF, mcip_mask);
++
++	raw_spin_unlock_irqrestore(&mcip_lock, flags);
++}
++
+ static void mcip_setup_per_cpu(int cpu)
+ {
+ 	struct mcip_bcr mp;
+@@ -63,6 +91,10 @@ static void mcip_setup_per_cpu(int cpu)
+ 	/* Update GFRC halt mask as new CPU came online */
+ 	if (mp.gfrc)
+ 		mcip_update_gfrc_halt_mask(cpu);
++
++	/* Update MCIP debug mask as new CPU came online */
++	if (mp.dbg)
++		mcip_update_debug_halt_mask(cpu);
+ }
  
- 			/* If mangling fails this function will return 0
+ static void mcip_ipi_send(int cpu)
+@@ -138,11 +170,6 @@ static void mcip_probe_n_setup(void)
+ 		IS_AVAIL1(mp.gfrc, "GFRC"));
+ 
+ 	cpuinfo_arc700[0].extn.gfrc = mp.gfrc;
+-
+-	if (mp.dbg) {
+-		__mcip_cmd_data(CMD_DEBUG_SET_SELECT, 0, 0xf);
+-		__mcip_cmd_data(CMD_DEBUG_SET_MASK, 0xf, 0xf);
+-	}
+ }
+ 
+ struct plat_smp_ops plat_smp_ops = {
+--- a/include/soc/arc/mcip.h
++++ b/include/soc/arc/mcip.h
+@@ -37,7 +37,9 @@ struct mcip_cmd {
+ #define CMD_SEMA_RELEASE		0x12
+ 
+ #define CMD_DEBUG_SET_MASK		0x34
++#define CMD_DEBUG_READ_MASK		0x35
+ #define CMD_DEBUG_SET_SELECT		0x36
++#define CMD_DEBUG_READ_SELECT		0x37
+ 
+ #define CMD_GFRC_READ_LO		0x42
+ #define CMD_GFRC_READ_HI		0x43
