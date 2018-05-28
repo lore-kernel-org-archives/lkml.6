@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424505AbeE1Ld5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33298 "EHLO mail.kernel.org"
+        id S1424330AbeE1LNz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:13:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424337AbeE1LN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:13:59 -0400
+        id S1424019AbeE1LNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 219/272] dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
-Date: Mon, 28 May 2018 12:04:12 +0200
-Message-Id: <20180528100258.874087650@linuxfoundation.org>
+Subject: [PATCH 4.16 190/272] cdrom: do not call check_disk_change() inside cdrom_open()
+Date: Mon, 28 May 2018 12:03:43 +0200
+Message-Id: <20180528100256.596683550@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,77 +30,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Maurizio Lombardi <mlombard@redhat.com>
 
-[ Upstream commit 48d163b1aa6e7f650c0b7a4f9c61c387a6def868 ]
+[ Upstream commit 2bbea6e117357d17842114c65e9a9cf2d13ae8a3 ]
 
-When Linux is master of BAM, it can directly read registers to know number
-of supported channels, however when its remotely controlled reading these
-registers would trigger a crash if the BAM is not yet initialized or
-powered up on the remote side.
+when mounting an ISO filesystem sometimes (very rarely)
+the system hangs because of a race condition between two tasks.
 
-This patch allows driver to read num-channels and num-ees from Device Tree
-for remotely controlled BAM.
+PID: 6766   TASK: ffff88007b2a6dd0  CPU: 0   COMMAND: "mount"
+ #0 [ffff880078447ae0] __schedule at ffffffff8168d605
+ #1 [ffff880078447b48] schedule_preempt_disabled at ffffffff8168ed49
+ #2 [ffff880078447b58] __mutex_lock_slowpath at ffffffff8168c995
+ #3 [ffff880078447bb8] mutex_lock at ffffffff8168bdef
+ #4 [ffff880078447bd0] sr_block_ioctl at ffffffffa00b6818 [sr_mod]
+ #5 [ffff880078447c10] blkdev_ioctl at ffffffff812fea50
+ #6 [ffff880078447c70] ioctl_by_bdev at ffffffff8123a8b3
+ #7 [ffff880078447c90] isofs_fill_super at ffffffffa04fb1e1 [isofs]
+ #8 [ffff880078447da8] mount_bdev at ffffffff81202570
+ #9 [ffff880078447e18] isofs_mount at ffffffffa04f9828 [isofs]
+#10 [ffff880078447e28] mount_fs at ffffffff81202d09
+#11 [ffff880078447e70] vfs_kern_mount at ffffffff8121ea8f
+#12 [ffff880078447ea8] do_mount at ffffffff81220fee
+#13 [ffff880078447f28] sys_mount at ffffffff812218d6
+#14 [ffff880078447f80] system_call_fastpath at ffffffff81698c49
+    RIP: 00007fd9ea914e9a  RSP: 00007ffd5d9bf648  RFLAGS: 00010246
+    RAX: 00000000000000a5  RBX: ffffffff81698c49  RCX: 0000000000000010
+    RDX: 00007fd9ec2bc210  RSI: 00007fd9ec2bc290  RDI: 00007fd9ec2bcf30
+    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000010
+    R10: 00000000c0ed0001  R11: 0000000000000206  R12: 00007fd9ec2bc040
+    R13: 00007fd9eb6b2380  R14: 00007fd9ec2bc210  R15: 00007fd9ec2bcf30
+    ORIG_RAX: 00000000000000a5  CS: 0033  SS: 002b
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+This task was trying to mount the cdrom.  It allocated and configured a
+super_block struct and owned the write-lock for the super_block->s_umount
+rwsem. While exclusively owning the s_umount lock, it called
+sr_block_ioctl and waited to acquire the global sr_mutex lock.
+
+PID: 6785   TASK: ffff880078720fb0  CPU: 0   COMMAND: "systemd-udevd"
+ #0 [ffff880078417898] __schedule at ffffffff8168d605
+ #1 [ffff880078417900] schedule at ffffffff8168dc59
+ #2 [ffff880078417910] rwsem_down_read_failed at ffffffff8168f605
+ #3 [ffff880078417980] call_rwsem_down_read_failed at ffffffff81328838
+ #4 [ffff8800784179d0] down_read at ffffffff8168cde0
+ #5 [ffff8800784179e8] get_super at ffffffff81201cc7
+ #6 [ffff880078417a10] __invalidate_device at ffffffff8123a8de
+ #7 [ffff880078417a40] flush_disk at ffffffff8123a94b
+ #8 [ffff880078417a88] check_disk_change at ffffffff8123ab50
+ #9 [ffff880078417ab0] cdrom_open at ffffffffa00a29e1 [cdrom]
+#10 [ffff880078417b68] sr_block_open at ffffffffa00b6f9b [sr_mod]
+#11 [ffff880078417b98] __blkdev_get at ffffffff8123ba86
+#12 [ffff880078417bf0] blkdev_get at ffffffff8123bd65
+#13 [ffff880078417c78] blkdev_open at ffffffff8123bf9b
+#14 [ffff880078417c90] do_dentry_open at ffffffff811fc7f7
+#15 [ffff880078417cd8] vfs_open at ffffffff811fc9cf
+#16 [ffff880078417d00] do_last at ffffffff8120d53d
+#17 [ffff880078417db0] path_openat at ffffffff8120e6b2
+#18 [ffff880078417e48] do_filp_open at ffffffff8121082b
+#19 [ffff880078417f18] do_sys_open at ffffffff811fdd33
+#20 [ffff880078417f70] sys_open at ffffffff811fde4e
+#21 [ffff880078417f80] system_call_fastpath at ffffffff81698c49
+    RIP: 00007f29438b0c20  RSP: 00007ffc76624b78  RFLAGS: 00010246
+    RAX: 0000000000000002  RBX: ffffffff81698c49  RCX: 0000000000000000
+    RDX: 00007f2944a5fa70  RSI: 00000000000a0800  RDI: 00007f2944a5fa70
+    RBP: 00007f2944a5f540   R8: 0000000000000000   R9: 0000000000000020
+    R10: 00007f2943614c40  R11: 0000000000000246  R12: ffffffff811fde4e
+    R13: ffff880078417f78  R14: 000000000000000c  R15: 00007f2944a4b010
+    ORIG_RAX: 0000000000000002  CS: 0033  SS: 002b
+
+This task tried to open the cdrom device, the sr_block_open function
+acquired the global sr_mutex lock. The call to check_disk_change()
+then saw an event flag indicating a possible media change and tried
+to flush any cached data for the device.
+As part of the flush, it tried to acquire the super_block->s_umount
+lock associated with the cdrom device.
+This was the same super_block as created and locked by the previous task.
+
+The first task acquires the s_umount lock and then the sr_mutex_lock;
+the second task acquires the sr_mutex_lock and then the s_umount lock.
+
+This patch fixes the issue by moving check_disk_change() out of
+cdrom_open() and let the caller take care of it.
+
+Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/qcom/bam_dma.c |   27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+ drivers/block/paride/pcd.c |    2 ++
+ drivers/cdrom/cdrom.c      |    3 ---
+ drivers/cdrom/gdrom.c      |    3 +++
+ drivers/ide/ide-cd.c       |    2 ++
+ drivers/scsi/sr.c          |    2 ++
+ 5 files changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -393,6 +393,7 @@ struct bam_device {
- 	struct device_dma_parameters dma_parms;
- 	struct bam_chan *channels;
- 	u32 num_channels;
-+	u32 num_ees;
+--- a/drivers/block/paride/pcd.c
++++ b/drivers/block/paride/pcd.c
+@@ -230,6 +230,8 @@ static int pcd_block_open(struct block_d
+ 	struct pcd_unit *cd = bdev->bd_disk->private_data;
+ 	int ret;
  
- 	/* execution environment ID, from DT */
- 	u32 ee;
-@@ -1128,15 +1129,19 @@ static int bam_init(struct bam_device *b
- 	u32 val;
- 
- 	/* read revision and configuration information */
--	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION)) >> NUM_EES_SHIFT;
--	val &= NUM_EES_MASK;
-+	if (!bdev->num_ees) {
-+		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
-+		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
-+	}
- 
- 	/* check that configured EE is within range */
--	if (bdev->ee >= val)
-+	if (bdev->ee >= bdev->num_ees)
- 		return -EINVAL;
- 
--	val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
--	bdev->num_channels = val & BAM_NUM_PIPES_MASK;
-+	if (!bdev->num_channels) {
-+		val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
-+		bdev->num_channels = val & BAM_NUM_PIPES_MASK;
-+	}
- 
- 	if (bdev->controlled_remotely)
- 		return 0;
-@@ -1232,6 +1237,18 @@ static int bam_dma_probe(struct platform
- 	bdev->controlled_remotely = of_property_read_bool(pdev->dev.of_node,
- 						"qcom,controlled-remotely");
- 
-+	if (bdev->controlled_remotely) {
-+		ret = of_property_read_u32(pdev->dev.of_node, "num-channels",
-+					   &bdev->num_channels);
-+		if (ret)
-+			dev_err(bdev->dev, "num-channels unspecified in dt\n");
++	check_disk_change(bdev);
 +
-+		ret = of_property_read_u32(pdev->dev.of_node, "qcom,num-ees",
-+					   &bdev->num_ees);
-+		if (ret)
-+			dev_err(bdev->dev, "num-ees unspecified in dt\n");
-+	}
+ 	mutex_lock(&pcd_mutex);
+ 	ret = cdrom_open(&cd->info, bdev, mode);
+ 	mutex_unlock(&pcd_mutex);
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -1152,9 +1152,6 @@ int cdrom_open(struct cdrom_device_info
+ 
+ 	cd_dbg(CD_OPEN, "entering cdrom_open\n");
+ 
+-	/* open is event synchronization point, check events first */
+-	check_disk_change(bdev);
+-
+ 	/* if this was a O_NONBLOCK open and we should honor the flags,
+ 	 * do a quick open without drive/disc integrity checks. */
+ 	cdi->use_count++;
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -497,6 +497,9 @@ static const struct cdrom_device_ops gdr
+ static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
+ {
+ 	int ret;
 +
- 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
- 	if (IS_ERR(bdev->bamclk))
- 		return PTR_ERR(bdev->bamclk);
++	check_disk_change(bdev);
++
+ 	mutex_lock(&gdrom_mutex);
+ 	ret = cdrom_open(gd.cd_info, bdev, mode);
+ 	mutex_unlock(&gdrom_mutex);
+--- a/drivers/ide/ide-cd.c
++++ b/drivers/ide/ide-cd.c
+@@ -1613,6 +1613,8 @@ static int idecd_open(struct block_devic
+ 	struct cdrom_info *info;
+ 	int rc = -ENXIO;
+ 
++	check_disk_change(bdev);
++
+ 	mutex_lock(&ide_cd_mutex);
+ 	info = ide_cd_get(bdev->bd_disk);
+ 	if (!info)
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -525,6 +525,8 @@ static int sr_block_open(struct block_de
+ 	struct scsi_cd *cd;
+ 	int ret = -ENXIO;
+ 
++	check_disk_change(bdev);
++
+ 	mutex_lock(&sr_mutex);
+ 	cd = scsi_cd_get(bdev->bd_disk);
+ 	if (cd) {
