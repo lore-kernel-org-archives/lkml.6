@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161549AbeE1Kc2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:32:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52198 "EHLO mail.kernel.org"
+        id S1161598AbeE1Kcp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:32:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161494AbeE1KcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:18 -0400
+        id S1161488AbeE1Kci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        James Morris <james.morris@microsoft.com>,
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Naresh Madhusudana <naresh.madhusudana@arm.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 135/329] integrity/security: fix digsig.c build error with header file
-Date: Mon, 28 May 2018 12:01:04 +0200
-Message-Id: <20180528100253.889752821@linuxfoundation.org>
+Subject: [PATCH 4.9 142/329] fs: dcache: Avoid livelock between d_alloc_parallel and __d_add
+Date: Mon, 28 May 2018 12:01:11 +0200
+Message-Id: <20180528100254.388311994@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,34 +33,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 120f3b11ef88fc38ce1d0ff9c9a4b37860ad3140 ]
+[ Upstream commit 015555fd4d2930bc0c86952c46ad88b3392f66e4 ]
 
-security/integrity/digsig.c has build errors on some $ARCH due to a
-missing header file, so add it.
+If d_alloc_parallel runs concurrently with __d_add, it is possible for
+d_alloc_parallel to continuously retry whilst i_dir_seq has been
+incremented to an odd value by __d_add:
 
-  security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+CPU0:
+__d_add
+	n = start_dir_add(dir);
+		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
 
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
-Signed-off-by: James Morris <james.morris@microsoft.com>
+CPU1:
+d_alloc_parallel
+retry:
+	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
+	hlist_bl_lock(b);
+		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
+
+CPU0:
+	__d_lookup_done(dentry)
+		hlist_bl_lock
+			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
+
+CPU1:
+	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+		hlist_bl_unlock(b);
+		goto retry;
+	}
+
+Since the simple bit_spin_lock used to implement hlist_bl_lock does not
+provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
+and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
+exit its retry loop because the sequence number always has the bottom
+bit set.
+
+This patch resolves the livelock by not taking hlist_bl_lock in
+d_alloc_parallel if the sequence counter is odd, since any subsequent
+masked comparison with i_dir_seq will fail anyway.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: Naresh Madhusudana <naresh.madhusudana@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/digsig.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/dcache.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -18,6 +18,7 @@
- #include <linux/cred.h>
- #include <linux/key-type.h>
- #include <linux/digsig.h>
-+#include <linux/vmalloc.h>
- #include <crypto/public_key.h>
- #include <keys/system_keyring.h>
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2474,7 +2474,7 @@ struct dentry *d_alloc_parallel(struct d
  
+ retry:
+ 	rcu_read_lock();
+-	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
++	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
+ 	r_seq = read_seqbegin(&rename_lock);
+ 	dentry = __d_lookup_rcu(parent, name, &d_seq);
+ 	if (unlikely(dentry)) {
+@@ -2495,6 +2495,12 @@ retry:
+ 		rcu_read_unlock();
+ 		goto retry;
+ 	}
++
++	if (unlikely(seq & 1)) {
++		rcu_read_unlock();
++		goto retry;
++	}
++
+ 	hlist_bl_lock(b);
+ 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+ 		hlist_bl_unlock(b);
