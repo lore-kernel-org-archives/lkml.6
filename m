@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165256AbeE1NQf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:16:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39716 "EHLO mail.kernel.org"
+        id S1425057AbeE1NRN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:17:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163598AbeE1KuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:09 -0400
+        id S1163249AbeE1KuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 200/496] net: ethtool: dont ignore return from driver get_fecparam method
-Date: Mon, 28 May 2018 11:59:45 +0200
-Message-Id: <20180528100328.363581006@linuxfoundation.org>
+Subject: [PATCH 4.14 198/496] selftests/powerpc: Skip the subpage_prot tests if the syscall is unavailable
+Date: Mon, 28 May 2018 11:59:43 +0200
+Message-Id: <20180528100328.266320834@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,37 +29,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Edward Cree <ecree@solarflare.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit a6d50512b4d86ecd9f5952525e454583be1c3b14 ]
+[ Upstream commit cd4a6f3ab4d80cb919d15897eb3cbc85c2009d4b ]
 
-If ethtool_ops->get_fecparam returns an error, pass that error on to the
- user, rather than ignoring it.
+The subpage_prot syscall is only functional when the system is using
+the Hash MMU. Since commit 5b2b80714796 ("powerpc/mm: Invalidate
+subpage_prot() system call on radix platforms") it returns ENOENT when
+the Radix MMU is active. Currently this just makes the test fail.
 
-Fixes: 1a5f3da20bd9 ("net: ethtool: add support for forward error correction modes")
-Signed-off-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Additionally the syscall is not available if the kernel is built with
+4K pages, or if CONFIG_PPC_SUBPAGE_PROT=n, in which case it returns
+ENOSYS because the syscall is missing entirely.
+
+So check explicitly for ENOENT and ENOSYS and skip if we see either of
+those.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/ethtool.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/testing/selftests/powerpc/mm/subpage_prot.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -2505,11 +2505,14 @@ static int set_phy_tunable(struct net_de
- static int ethtool_get_fecparam(struct net_device *dev, void __user *useraddr)
- {
- 	struct ethtool_fecparam fecparam = { ETHTOOL_GFECPARAM };
+--- a/tools/testing/selftests/powerpc/mm/subpage_prot.c
++++ b/tools/testing/selftests/powerpc/mm/subpage_prot.c
+@@ -135,6 +135,16 @@ static int run_test(void *addr, unsigned
+ 	return 0;
+ }
+ 
++static int syscall_available(void)
++{
 +	int rc;
++
++	errno = 0;
++	rc = syscall(__NR_subpage_prot, 0, 0, 0);
++
++	return rc == 0 || (errno != ENOENT && errno != ENOSYS);
++}
++
+ int test_anon(void)
+ {
+ 	unsigned long align;
+@@ -145,6 +155,8 @@ int test_anon(void)
+ 	void *mallocblock;
+ 	unsigned long mallocsize;
  
- 	if (!dev->ethtool_ops->get_fecparam)
- 		return -EOPNOTSUPP;
++	SKIP_IF(!syscall_available());
++
+ 	if (getpagesize() != 0x10000) {
+ 		fprintf(stderr, "Kernel page size must be 64K!\n");
+ 		return 1;
+@@ -180,6 +192,8 @@ int test_file(void)
+ 	off_t filesize;
+ 	int fd;
  
--	dev->ethtool_ops->get_fecparam(dev, &fecparam);
-+	rc = dev->ethtool_ops->get_fecparam(dev, &fecparam);
-+	if (rc)
-+		return rc;
- 
- 	if (copy_to_user(useraddr, &fecparam, sizeof(fecparam)))
- 		return -EFAULT;
++	SKIP_IF(!syscall_available());
++
+ 	fd = open(file_name, O_RDWR);
+ 	if (fd == -1) {
+ 		perror("failed to open file");
