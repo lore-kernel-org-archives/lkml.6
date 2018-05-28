@@ -1,88 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164899AbeE1Mka (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:40:30 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46788 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163875AbeE1Mjb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 08:39:31 -0400
-Date: Mon, 28 May 2018 13:15:49 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@fb.com, tj@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [RFC 2/2] perf: Sharing PMU counters across compatible events
-Message-ID: <20180528111549.GA3452@worktop.programming.kicks-ass.net>
-References: <20180504231102.2850679-1-songliubraving@fb.com>
- <20180504231102.2850679-3-songliubraving@fb.com>
+        id S1165064AbeE1Mk4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:40:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937774AbeE1K6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:25 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 377/496] watchdog: davinci_wdt: fix error handling in davinci_wdt_probe()
+Date: Mon, 28 May 2018 12:02:42 +0200
+Message-Id: <20180528100335.689648651@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180504231102.2850679-3-songliubraving@fb.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 04:11:02PM -0700, Song Liu wrote:
-> Connection among perf_event and perf_event_dup are built with function
-> rebuild_event_dup_list(cpuctx). This function is only called when events
-> are added/removed or when a task is scheduled in/out. So it is not on
-> critical path of perf_rotate_context().
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Why is perf_rotate_context() the only critical path? I would say the
-context switch path is rather critical too.
+------------------
 
-> @@ -2919,8 +3014,10 @@ static void ctx_sched_out(struct perf_event_context *ctx,
->  
->  	if (ctx->task) {
->  		WARN_ON_ONCE(cpuctx->task_ctx != ctx);
-> -		if (!ctx->is_active)
-> +		if (!ctx->is_active) {
->  			cpuctx->task_ctx = NULL;
-> +			rebuild_event_dup_list(cpuctx);
-> +		}
->  	}
->  
->  	/*
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-> +static void rebuild_event_dup_list(struct perf_cpu_context *cpuctx)
-> +{
-> +	int dup_count = cpuctx->ctx.nr_events;
-> +	struct perf_event_context *ctx = cpuctx->task_ctx;
-> +	struct sched_in_data sid = {
-> +		.ctx = ctx,
-> +		.cpuctx = cpuctx,
-> +		.can_add_hw = 1,
-> +	};
-> +
-> +	if (ctx)
-> +		dup_count += ctx->nr_events;
-> +
-> +	kfree(cpuctx->dup_event_list);
-> +	cpuctx->dup_event_count = 0;
-> +
-> +	cpuctx->dup_event_list =
-> +		kzalloc(sizeof(struct perf_event_dup) * dup_count, GFP_ATOMIC);
+[ Upstream commit d66e53649c18377edc08d48901e658e4fd491d46 ]
 
+clk_disable_unprepare() was added to one error path,
+but there is another one. The patch makes sure clk is
+disabled at the both of them.
 
-__schedule()
-  local_irq_disable()
-  raw_spin_lock(rq->lock)
-  context_switch()
-    prepare_task_switch()
-      perf_event_task_sched_out()
-        __perf_event_task_sched_out()
-	  perf_event_context_sched_out()
-	    task_ctx_sched_out()
-	      ctx_sched_out()
-	        rebuild_event_dup_list()
-		  kzalloc()
-		    ...
-		      spin_lock()
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Also, as per the above, this nests a regular spin lock inside the
-(raw) rq->lock, which is a no-no.
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/watchdog/davinci_wdt.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Not to mention that whole O(n) crud in the scheduling path...
+--- a/drivers/watchdog/davinci_wdt.c
++++ b/drivers/watchdog/davinci_wdt.c
+@@ -198,15 +198,22 @@ static int davinci_wdt_probe(struct plat
+ 
+ 	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	davinci_wdt->base = devm_ioremap_resource(dev, wdt_mem);
+-	if (IS_ERR(davinci_wdt->base))
+-		return PTR_ERR(davinci_wdt->base);
++	if (IS_ERR(davinci_wdt->base)) {
++		ret = PTR_ERR(davinci_wdt->base);
++		goto err_clk_disable;
++	}
+ 
+ 	ret = watchdog_register_device(wdd);
+-	if (ret < 0) {
+-		clk_disable_unprepare(davinci_wdt->clk);
++	if (ret) {
+ 		dev_err(dev, "cannot register watchdog device\n");
++		goto err_clk_disable;
+ 	}
+ 
++	return 0;
++
++err_clk_disable:
++	clk_disable_unprepare(davinci_wdt->clk);
++
+ 	return ret;
+ }
+ 
