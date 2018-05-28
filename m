@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165331AbeE1NVG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:21:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39000 "EHLO mail.kernel.org"
+        id S1163468AbeE1KtF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:49:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163486AbeE1KtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:13 -0400
+        id S1163440AbeE1Ksz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Naresh Madhusudana <naresh.madhusudana@arm.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Joey Pabalinas <joeypabalinas@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 138/496] fs: dcache: Avoid livelock between d_alloc_parallel and __d_add
-Date: Mon, 28 May 2018 11:58:43 +0200
-Message-Id: <20180528100325.748441454@linuxfoundation.org>
+Subject: [PATCH 4.14 172/496] net/tcp/illinois: replace broken algorithm reference link
+Date: Mon, 28 May 2018 11:59:17 +0200
+Message-Id: <20180528100327.117010008@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,81 +30,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Joey Pabalinas <joeypabalinas@gmail.com>
 
-[ Upstream commit 015555fd4d2930bc0c86952c46ad88b3392f66e4 ]
+[ Upstream commit ecc832758a654e375924ebf06a4ac971acb5ce60 ]
 
-If d_alloc_parallel runs concurrently with __d_add, it is possible for
-d_alloc_parallel to continuously retry whilst i_dir_seq has been
-incremented to an odd value by __d_add:
+The link to the pdf containing the algorithm description is now a
+dead link; it seems http://www.ifp.illinois.edu/~srikant/ has been
+moved to https://sites.google.com/a/illinois.edu/srikant/ and none of
+the original papers can be found there...
 
-CPU0:
-__d_add
-	n = start_dir_add(dir);
-		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
+I have replaced it with the only working copy I was able to find.
 
-CPU1:
-d_alloc_parallel
-retry:
-	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-	hlist_bl_lock(b);
-		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
+n.b. there is also a copy available at:
 
-CPU0:
-	__d_lookup_done(dentry)
-		hlist_bl_lock
-			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.296.6350&rep=rep1&type=pdf
 
-CPU1:
-	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
-		hlist_bl_unlock(b);
-		goto retry;
-	}
+However, this seems to only be a *cached* version, so I am unsure
+exactly how reliable that link can be expected to remain over time
+and have decided against using that one.
 
-Since the simple bit_spin_lock used to implement hlist_bl_lock does not
-provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
-and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
-exit its retry loop because the sequence number always has the bottom
-bit set.
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-This patch resolves the livelock by not taking hlist_bl_lock in
-d_alloc_parallel if the sequence counter is odd, since any subsequent
-masked comparison with i_dir_seq will fail anyway.
+ net/ipv4/tcp_illinois.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Reported-by: Naresh Madhusudana <naresh.madhusudana@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dcache.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/ipv4/tcp_illinois.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2482,7 +2482,7 @@ struct dentry *d_alloc_parallel(struct d
- 
- retry:
- 	rcu_read_lock();
--	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-+	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
- 	r_seq = read_seqbegin(&rename_lock);
- 	dentry = __d_lookup_rcu(parent, name, &d_seq);
- 	if (unlikely(dentry)) {
-@@ -2503,6 +2503,12 @@ retry:
- 		rcu_read_unlock();
- 		goto retry;
- 	}
-+
-+	if (unlikely(seq & 1)) {
-+		rcu_read_unlock();
-+		goto retry;
-+	}
-+
- 	hlist_bl_lock(b);
- 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
- 		hlist_bl_unlock(b);
+--- a/net/ipv4/tcp_illinois.c
++++ b/net/ipv4/tcp_illinois.c
+@@ -6,7 +6,7 @@
+  * The algorithm is described in:
+  * "TCP-Illinois: A Loss and Delay-Based Congestion Control Algorithm
+  *  for High-Speed Networks"
+- * http://www.ifp.illinois.edu/~srikant/Papers/liubassri06perf.pdf
++ * http://tamerbasar.csl.illinois.edu/LiuBasarSrikantPerfEvalArtJun2008.pdf
+  *
+  * Implemented from description in paper and ns-2 simulation.
+  * Copyright (C) 2007 Stephen Hemminger <shemminger@linux-foundation.org>
