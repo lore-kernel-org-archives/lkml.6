@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163835AbeE1Kvf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:51:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40890 "EHLO mail.kernel.org"
+        id S1165200AbeE1NKT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:10:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163823AbeE1Kv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:51:28 -0400
+        id S1163688AbeE1Kve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:51:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hemanth Puranik <hpuranik@codeaurora.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 228/496] net: qcom/emac: Use proper free methods during TX
-Date: Mon, 28 May 2018 12:00:13 +0200
-Message-Id: <20180528100329.511196546@linuxfoundation.org>
+Subject: [PATCH 4.14 230/496] IB/core: Fix possible crash to access NULL netdev
+Date: Mon, 28 May 2018 12:00:15 +0200
+Message-Id: <20180528100329.597217534@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,68 +31,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hemanth Puranik <hpuranik@codeaurora.org>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit cc5db3150e87fe7f7e947bf333b6c1c97f848ecb ]
+[ Upstream commit bb7f8f199c354c4cf155b1d6d55f86eaaed7fa5a ]
 
-This patch fixes the warning messages/call traces seen if DMA debug is
-enabled, In case of fragmented skb's memory was allocated using
-dma_map_page but freed using dma_unmap_single. This patch modifies buffer
-allocations in TX path to use dma_map_page in all the places and
-dma_unmap_page while freeing the buffers.
+resolved_dev returned might be NULL as ifindex is transient number.
+Ignoring NULL check of resolved_dev might crash the kernel.
+Therefore perform NULL check before accessing resolved_dev.
 
-Signed-off-by: Hemanth Puranik <hpuranik@codeaurora.org>
-Acked-by: Timur Tabi <timur@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Additionally rdma_resolve_ip_route() invokes addr_resolve() which
+performs check and address translation for loopback ifindex.
+Therefore, checking it again in rdma_resolve_ip_route() is not helpful.
+Therefore, the code is simplified to avoid IFF_LOOPBACK check.
+
+Fixes: 200298326b27 ("IB/core: Validate route when we init ah")
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qualcomm/emac/emac-mac.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/infiniband/core/sa_query.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-@@ -1204,9 +1204,9 @@ void emac_mac_tx_process(struct emac_ada
- 	while (tx_q->tpd.consume_idx != hw_consume_idx) {
- 		tpbuf = GET_TPD_BUFFER(tx_q, tx_q->tpd.consume_idx);
- 		if (tpbuf->dma_addr) {
--			dma_unmap_single(adpt->netdev->dev.parent,
--					 tpbuf->dma_addr, tpbuf->length,
--					 DMA_TO_DEVICE);
-+			dma_unmap_page(adpt->netdev->dev.parent,
-+				       tpbuf->dma_addr, tpbuf->length,
-+				       DMA_TO_DEVICE);
- 			tpbuf->dma_addr = 0;
+--- a/drivers/infiniband/core/sa_query.c
++++ b/drivers/infiniband/core/sa_query.c
+@@ -1291,10 +1291,9 @@ int ib_init_ah_from_path(struct ib_devic
+ 
+ 		resolved_dev = dev_get_by_index(dev_addr.net,
+ 						dev_addr.bound_dev_if);
+-		if (resolved_dev->flags & IFF_LOOPBACK) {
+-			dev_put(resolved_dev);
+-			resolved_dev = idev;
+-			dev_hold(resolved_dev);
++		if (!resolved_dev) {
++			dev_put(idev);
++			return -ENODEV;
  		}
- 
-@@ -1363,9 +1363,11 @@ static void emac_tx_fill_tpd(struct emac
- 
- 		tpbuf = GET_TPD_BUFFER(tx_q, tx_q->tpd.produce_idx);
- 		tpbuf->length = mapped_len;
--		tpbuf->dma_addr = dma_map_single(adpt->netdev->dev.parent,
--						 skb->data, tpbuf->length,
--						 DMA_TO_DEVICE);
-+		tpbuf->dma_addr = dma_map_page(adpt->netdev->dev.parent,
-+					       virt_to_page(skb->data),
-+					       offset_in_page(skb->data),
-+					       tpbuf->length,
-+					       DMA_TO_DEVICE);
- 		ret = dma_mapping_error(adpt->netdev->dev.parent,
- 					tpbuf->dma_addr);
- 		if (ret)
-@@ -1381,9 +1383,12 @@ static void emac_tx_fill_tpd(struct emac
- 	if (mapped_len < len) {
- 		tpbuf = GET_TPD_BUFFER(tx_q, tx_q->tpd.produce_idx);
- 		tpbuf->length = len - mapped_len;
--		tpbuf->dma_addr = dma_map_single(adpt->netdev->dev.parent,
--						 skb->data + mapped_len,
--						 tpbuf->length, DMA_TO_DEVICE);
-+		tpbuf->dma_addr = dma_map_page(adpt->netdev->dev.parent,
-+					       virt_to_page(skb->data +
-+							    mapped_len),
-+					       offset_in_page(skb->data +
-+							      mapped_len),
-+					       tpbuf->length, DMA_TO_DEVICE);
- 		ret = dma_mapping_error(adpt->netdev->dev.parent,
- 					tpbuf->dma_addr);
- 		if (ret)
+ 		ndev = ib_get_ndev_from_path(rec);
+ 		rcu_read_lock();
