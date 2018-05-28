@@ -1,70 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755432AbeE1QBF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:01:05 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:55191 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754523AbeE1QA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:00:59 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, xen-devel@lists.xenproject.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: xen: ensure nul-terminated device name
-Date: Mon, 28 May 2018 17:59:57 +0200
-Message-Id: <20180528160011.2989632-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:fN5CoebTTlxn96QSe9v4PE89O3YtuNySApcFhbG3nlhmgJiC7cH
- m8tX2/c3Ha24tnjVHFOkDXPh1p7HbP1N153fRbzKzZcD/28PN2IP/SA1QteyuCQzhQtt36U
- D3ey5FsB8Evn6Qejf2r/KQSeZjTIisz8ZEb4kbQtjM7z1ScnW2c2quItwUSm24P9eKK+O6b
- mc61+ru3VOVZybuYAg5Rw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:JHXXZncySW0=:OU1qZKhNGNVUCuzxprmo8V
- l/O2NtAdTYnBL0nuKUZf+tqFFXQ8SQ7ZzA9f5bVjzgoKE5LiSRN36lbdbgTaifdV3MR2N8ZmW
- 1SB9tyQKn4/IOLBmpKNKAQAdw3EKcBjbSDpDcWi3QDrcu5Zv6ENZlt3Gin6RwrZYjlukSGfrC
- GlyJWThPCO6Sj0W6qrYgKFgPoqyuz5Zj5p6UpYqjwUKhFj+AYf49ZwKmWvGPAdLtJVvaibN1m
- Smrpgk99EUJ/AmqWTtKG8AUuQj40D7MEbfC5VO1NsdZfxux0XT4a0sh3aK+xRJyubgAUUXDVD
- lHBWUxWGF9rYAMXUG9UKOuSp9VzcW5WuVVQfba+HTeWFuncftCCQZwx7W6Z5JCGYClpB6eZQy
- icX+Sy9KPx2XmRNcOcy89rjyMDleFBDo/ctvmV6rISh4tX/cUjThwSbt7cSTL7tg6B6k5SV5/
- FqjbMf3UKO8LYtc3nMP9XwO2ARxPLHKx1LSY9BBrEEc9JzAoQR4ASqaX2L0TmXz9zRfRpgODK
- cRHZtZ9sFh/Mc6W44qIZV7HOFVf+eGtwSMBnMcpQZxKRVNybIC4mVlwYR5Nz15yzqy88MGOCv
- aI6hB4clEEIckVGzRlriCXiV3/CRlbEJzRmZTCuKeeuRuo0dd7jhzDd89dUG6QXN7IqI66w6R
- 8iuhkiAY+eBVobTwj687CX/kgzHRc19Fhso4RMBT/tffcNUcCzFpgovOwYDQzstzQlDM=
+        id S932712AbeE1QB3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:01:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936841AbeE1KPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:41 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 037/268] btrfs: Fix out of bounds access in btrfs_search_slot
+Date: Mon, 28 May 2018 12:00:11 +0200
+Message-Id: <20180528100206.271368919@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc-8 warns that pcm_instance->name is not necessarily terminated correctly
-if the input is more than 80 characters long or lacks a termination byte
-itself:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-In function 'strncpy',
-    inlined from 'cfg_device' at sound/xen/xen_snd_front_cfg.c:399:3,
-    inlined from 'xen_snd_front_cfg_card' at sound/xen/xen_snd_front_cfg.c:509:9:
-include/linux/string.h:254:9: error: '__builtin_strncpy' specified bound 80 equals destination size [-Werror=stringop-truncation]
-  return __builtin_strncpy(p, q, size);
+------------------
 
-Using strlcpy() instead of strncpy() makes this a bit safer.
+From: Nikolay Borisov <nborisov@suse.com>
 
-Fixes: fd3b36045c2c ("ALSA: xen-front: Read sound driver configuration from Xen store")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit 9ea2c7c9da13c9073e371c046cbbc45481ecb459 ]
+
+When modifying a tree where the root is at BTRFS_MAX_LEVEL - 1 then
+the level variable is going to be 7 (this is the max height of the
+tree). On the other hand btrfs_cow_block is always called with
+"level + 1" as an index into the nodes and slots arrays. This leads to
+an out of bounds access. Admittdely this will be benign since an OOB
+access of the nodes array will likely read the 0th element from the
+slots array, which in this case is going to be 0 (since we start CoW at
+the top of the tree). The OOB access into the slots array in turn will
+read the 0th and 1st values of the locks array, which would both be 0
+at the time. However, this benign behavior relies on the fact that the
+path being passed hasn't been initialised, if it has already been used to
+query a btree then it could potentially have populated the nodes/slots arrays.
+
+Fix it by explicitly checking if we are at level 7 (the maximum allowed
+index in nodes/slots arrays) and explicitly call the CoW routine with
+NULL for parent's node/slot.
+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Fixes-coverity-id: 711515
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/xen/xen_snd_front_cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/ctree.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/sound/xen/xen_snd_front_cfg.c b/sound/xen/xen_snd_front_cfg.c
-index 38c7e1eefbb9..684b5f1d51ac 100644
---- a/sound/xen/xen_snd_front_cfg.c
-+++ b/sound/xen/xen_snd_front_cfg.c
-@@ -396,7 +396,7 @@ static int cfg_device(struct xen_snd_front_info *front_info,
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2769,6 +2769,8 @@ again:
+ 		 * contention with the cow code
+ 		 */
+ 		if (cow) {
++			bool last_level = (level == (BTRFS_MAX_LEVEL - 1));
++
+ 			/*
+ 			 * if we don't really need to cow this block
+ 			 * then we don't want to set the path blocking,
+@@ -2793,9 +2795,13 @@ again:
+ 			}
  
- 	str = xenbus_read(XBT_NIL, device_path, XENSND_FIELD_DEVICE_NAME, NULL);
- 	if (!IS_ERR(str)) {
--		strncpy(pcm_instance->name, str, sizeof(pcm_instance->name));
-+		strlcpy(pcm_instance->name, str, sizeof(pcm_instance->name));
- 		kfree(str);
- 	}
- 
--- 
-2.9.0
+ 			btrfs_set_path_blocking(p);
+-			err = btrfs_cow_block(trans, root, b,
+-					      p->nodes[level + 1],
+-					      p->slots[level + 1], &b);
++			if (last_level)
++				err = btrfs_cow_block(trans, root, b, NULL, 0,
++						      &b);
++			else
++				err = btrfs_cow_block(trans, root, b,
++						      p->nodes[level + 1],
++						      p->slots[level + 1], &b);
+ 			if (err) {
+ 				ret = err;
+ 				goto done;
