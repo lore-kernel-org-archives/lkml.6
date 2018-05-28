@@ -1,62 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938531AbeE1MCV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:02:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423325AbeE1LGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:53 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 066/272] ibmvnic: Zero used TX descriptor counter on reset
-Date: Mon, 28 May 2018 12:01:39 +0200
-Message-Id: <20180528100246.426555643@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S938423AbeE1MCk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:02:40 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33486 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1423002AbeE1LGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:44 -0400
+Subject: Re: [PATCH V3 rdma-next 3/4] RDMA/uverbs: Hoist the common process of
+ disassociate_ucontext into ib core
+To: Leon Romanovsky <leonro@mellanox.com>
+References: <1527324107-56593-1-git-send-email-xavier.huwei@huawei.com>
+ <1527324107-56593-4-git-send-email-xavier.huwei@huawei.com>
+ <20180527150500.GA3085@mtr-leonro.mtl.com>
+CC: <dledford@redhat.com>, <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <charles.chenxin@huawei.com>, <linux-kernel@vger.kernel.org>
+From: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5B0BE2BB.8000101@huawei.com>
+Date: Mon, 28 May 2018 19:06:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180527150500.GA3085@mtr-leonro.mtl.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
 
-From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-
-[ Upstream commit 41f714672f93608751dbd2fa2291d476a8ff0150 ]
-
-The counter that tracks used TX descriptors pending completion
-needs to be zeroed as part of a device reset. This change fixes
-a bug causing transmit queues to be stopped unnecessarily and in
-some cases a transmit queue stall and timeout reset. If the counter
-is not reset, the remaining descriptors will not be "removed",
-effectively reducing queue capacity. If the queue is over half full,
-it will cause the queue to stall if stopped.
-
-Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/ibm/ibmvnic.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -2266,6 +2266,7 @@ static int reset_one_sub_crq_queue(struc
- 	}
- 
- 	memset(scrq->msgs, 0, 4 * PAGE_SIZE);
-+	atomic_set(&scrq->used, 0);
- 	scrq->cur = 0;
- 
- 	rc = h_reg_sub_crq(adapter->vdev->unit_address, scrq->msg_token,
+On 2018/5/27 23:05, Leon Romanovsky wrote:
+> On Sat, May 26, 2018 at 04:41:46PM +0800, Wei Hu (Xavier) wrote:
+>> This patch hoisted the common process of disassociate_ucontext
+>> callback function into ib core code, and these code are common
+>> to ervery ib_device driver.
+>>
+>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>> ---
+>>  drivers/infiniband/core/uverbs_main.c | 45 ++++++++++++++++++++++++++++++++++-
+>>  drivers/infiniband/hw/mlx4/main.c     | 34 --------------------------
+>>  drivers/infiniband/hw/mlx5/main.c     | 34 --------------------------
+>>  3 files changed, 44 insertions(+), 69 deletions(-)
+>>
+>> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
+>> index 4445d8e..a0a1c70 100644
+>> --- a/drivers/infiniband/core/uverbs_main.c
+>> +++ b/drivers/infiniband/core/uverbs_main.c
+>> @@ -41,6 +41,8 @@
+>>  #include <linux/fs.h>
+>>  #include <linux/poll.h>
+>>  #include <linux/sched.h>
+>> +#include <linux/sched/mm.h>
+>> +#include <linux/sched/task.h>
+>>  #include <linux/file.h>
+>>  #include <linux/cdev.h>
+>>  #include <linux/anon_inodes.h>
+>> @@ -1090,6 +1092,47 @@ static void ib_uverbs_add_one(struct ib_device *device)
+>>  	return;
+>>  }
+>>
+>> +static void ib_uverbs_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>> +{
+>> +	struct ib_device *ib_dev = ibcontext->device;
+>> +	struct task_struct *owning_process  = NULL;
+>> +	struct mm_struct   *owning_mm       = NULL;
+>> +
+>> +	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>> +	if (!owning_process)
+>> +		return;
+>> +
+>> +	owning_mm = get_task_mm(owning_process);
+>> +	if (!owning_mm) {
+>> +		pr_info("no mm, disassociate ucontext is pending task termination\n");
+>> +		while (1) {
+>> +			put_task_struct(owning_process);
+>> +			usleep_range(1000, 2000);
+>> +			owning_process = get_pid_task(ibcontext->tgid,
+>> +						      PIDTYPE_PID);
+>> +			if (!owning_process ||
+>> +			    owning_process->state == TASK_DEAD) {
+>> +				pr_info("disassociate ucontext done, task was terminated\n");
+>> +				/* in case task was dead need to release the
+>> +				 * task struct.
+>> +				 */
+>> +				if (owning_process)
+>> +					put_task_struct(owning_process);
+>> +				return;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	/* need to protect from a race on closing the vma as part of
+>> +	 * mlx5_ib_vma_close.
+> Except this "mlx5_ib_vma_close"
+>
+> Acked-by: Leon Romanovsky <leonro@mellanox.com>
+Hi, Leon
+Thanks, We will fix it in V4.
+    Regards
+Wei Hu
+>> +	 */
+>> +	down_write(&owning_mm->mmap_sem);
+>> +	ib_dev->disassociate_ucontext(ibcontext);
+>> +	up_write(&owning_mm->mmap_sem);
+>> +	mmput(owning_mm);
+>> +	put_task_struct(owning_process);
+>> +}
+>> +
+>>  static void ib_uverbs_free_hw_resources(struct ib_uverbs_device *uverbs_dev,
+>>  					struct ib_device *ib_dev)
+>>  {
+>> @@ -1130,7 +1173,7 @@ static void ib_uverbs_free_hw_resources(struct ib_uverbs_device *uverbs_dev,
+>>  			 * (e.g mmput).
+>>  			 */
+>>  			ib_uverbs_event_handler(&file->event_handler, &event);
+>> -			ib_dev->disassociate_ucontext(ucontext);
+>> +			ib_uverbs_disassociate_ucontext(ucontext);
+>>  			mutex_lock(&file->cleanup_mutex);
+>>  			ib_uverbs_cleanup_ucontext(file, ucontext, true);
+>>  			mutex_unlock(&file->cleanup_mutex);
+>> diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+>> index bf12394..59aed45 100644
+>> --- a/drivers/infiniband/hw/mlx4/main.c
+>> +++ b/drivers/infiniband/hw/mlx4/main.c
+>> @@ -1189,40 +1189,10 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>>  	int ret = 0;
+>>  	struct vm_area_struct *vma;
+>>  	struct mlx4_ib_ucontext *context = to_mucontext(ibcontext);
+>> -	struct task_struct *owning_process  = NULL;
+>> -	struct mm_struct   *owning_mm       = NULL;
+>> -
+>> -	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>> -	if (!owning_process)
+>> -		return;
+>> -
+>> -	owning_mm = get_task_mm(owning_process);
+>> -	if (!owning_mm) {
+>> -		pr_info("no mm, disassociate ucontext is pending task termination\n");
+>> -		while (1) {
+>> -			/* make sure that task is dead before returning, it may
+>> -			 * prevent a rare case of module down in parallel to a
+>> -			 * call to mlx4_ib_vma_close.
+>> -			 */
+>> -			put_task_struct(owning_process);
+>> -			usleep_range(1000, 2000);
+>> -			owning_process = get_pid_task(ibcontext->tgid,
+>> -						      PIDTYPE_PID);
+>> -			if (!owning_process ||
+>> -			    owning_process->state == TASK_DEAD) {
+>> -				pr_info("disassociate ucontext done, task was terminated\n");
+>> -				/* in case task was dead need to release the task struct */
+>> -				if (owning_process)
+>> -					put_task_struct(owning_process);
+>> -				return;
+>> -			}
+>> -		}
+>> -	}
+>>
+>>  	/* need to protect from a race on closing the vma as part of
+>>  	 * mlx4_ib_vma_close().
+>>  	 */
+>> -	down_write(&owning_mm->mmap_sem);
+>>  	for (i = 0; i < HW_BAR_COUNT; i++) {
+>>  		vma = context->hw_bar_info[i].vma;
+>>  		if (!vma)
+>> @@ -1241,10 +1211,6 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>>  		/* context going to be destroyed, should not access ops any more */
+>>  		context->hw_bar_info[i].vma->vm_ops = NULL;
+>>  	}
+>> -
+>> -	up_write(&owning_mm->mmap_sem);
+>> -	mmput(owning_mm);
+>> -	put_task_struct(owning_process);
+>>  }
+>>
+>>  static void mlx4_ib_set_vma_data(struct vm_area_struct *vma,
+>> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+>> index f3e7d7c..136d64f 100644
+>> --- a/drivers/infiniband/hw/mlx5/main.c
+>> +++ b/drivers/infiniband/hw/mlx5/main.c
+>> @@ -1965,38 +1965,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>>  	struct vm_area_struct *vma;
+>>  	struct mlx5_ib_vma_private_data *vma_private, *n;
+>>  	struct mlx5_ib_ucontext *context = to_mucontext(ibcontext);
+>> -	struct task_struct *owning_process  = NULL;
+>> -	struct mm_struct   *owning_mm       = NULL;
+>>
+>> -	owning_process = get_pid_task(ibcontext->tgid, PIDTYPE_PID);
+>> -	if (!owning_process)
+>> -		return;
+>> -
+>> -	owning_mm = get_task_mm(owning_process);
+>> -	if (!owning_mm) {
+>> -		pr_info("no mm, disassociate ucontext is pending task termination\n");
+>> -		while (1) {
+>> -			put_task_struct(owning_process);
+>> -			usleep_range(1000, 2000);
+>> -			owning_process = get_pid_task(ibcontext->tgid,
+>> -						      PIDTYPE_PID);
+>> -			if (!owning_process ||
+>> -			    owning_process->state == TASK_DEAD) {
+>> -				pr_info("disassociate ucontext done, task was terminated\n");
+>> -				/* in case task was dead need to release the
+>> -				 * task struct.
+>> -				 */
+>> -				if (owning_process)
+>> -					put_task_struct(owning_process);
+>> -				return;
+>> -			}
+>> -		}
+>> -	}
+>> -
+>> -	/* need to protect from a race on closing the vma as part of
+>> -	 * mlx5_ib_vma_close.
+>> -	 */
+>> -	down_write(&owning_mm->mmap_sem);
+>>  	mutex_lock(&context->vma_private_list_mutex);
+>>  	list_for_each_entry_safe(vma_private, n, &context->vma_private_list,
+>>  				 list) {
+>> @@ -2013,9 +1982,6 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
+>>  		kfree(vma_private);
+>>  	}
+>>  	mutex_unlock(&context->vma_private_list_mutex);
+>> -	up_write(&owning_mm->mmap_sem);
+>> -	mmput(owning_mm);
+>> -	put_task_struct(owning_process);
+>>  }
+>>
+>>  static inline char *mmap_cmd2str(enum mlx5_ib_mmap_cmd cmd)
+>> --
+>> 1.9.1
+>>
