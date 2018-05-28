@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937381AbeE1KmC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:42:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33374 "EHLO mail.kernel.org"
+        id S937420AbeE1KmN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:42:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163025AbeE1Kl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:57 -0400
+        id S937423AbeE1KmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.14 002/496] MIPS: ptrace: Expose FIR register through FP regset
-Date: Mon, 28 May 2018 11:56:27 +0200
-Message-Id: <20180528100319.614328600@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 022/496] idr: fix invalid ptr dereference on item delete
+Date: Mon, 28 May 2018 11:56:47 +0200
+Message-Id: <20180528100320.536610380@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,94 +32,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit 71e909c0cdad28a1df1fa14442929e68615dee45 upstream.
+commit 7a4deea1aa8bddfed4ef1b35fc2b6732563d8ad5 upstream.
 
-Correct commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-and expose the FIR register using the unused 4 bytes at the end of the
-NT_PRFPREG regset.  Without that register included clients cannot use
-the PTRACE_GETREGSET request to retrieve the complete FPU register set
-and have to resort to one of the older interfaces, either PTRACE_PEEKUSR
-or PTRACE_GETFPREGS, to retrieve the missing piece of data.  Also the
-register is irreversibly missing from core dumps.
+If the radix tree underlying the IDR happens to be full and we attempt
+to remove an id which is larger than any id in the IDR, we will call
+__radix_tree_delete() with an uninitialised 'slot' pointer, at which
+point anything could happen.  This was easiest to hit with a single
+entry at id 0 and attempting to remove a non-0 id, but it could have
+happened with 64 entries and attempting to remove an id >= 64.
 
-This register is architecturally hardwired and read-only so the write
-path does not matter.  Ignore data supplied on writes then.
+Roman said:
 
-Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.13+
-Patchwork: https://patchwork.linux-mips.org/patch/19273/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+  The syzcaller test boils down to opening /dev/kvm, creating an
+  eventfd, and calling a couple of KVM ioctls. None of this requires
+  superuser. And the result is dereferencing an uninitialized pointer
+  which is likely a crash. The specific path caught by syzbot is via
+  KVM_HYPERV_EVENTD ioctl which is new in 4.17. But I guess there are
+  other user-triggerable paths, so cc:stable is probably justified.
+
+Matthew added:
+
+  We have around 250 calls to idr_remove() in the kernel today. Many of
+  them pass an ID which is embedded in the object they're removing, so
+  they're safe. Picking a few likely candidates:
+
+  drivers/firewire/core-cdev.c looks unsafe; the ID comes from an ioctl.
+  drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c is similar
+  drivers/atm/nicstar.c could be taken down by a handcrafted packet
+
+Link: http://lkml.kernel.org/r/20180518175025.GD6361@bombadil.infradead.org
+Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
+Reported-by: <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>
+Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/ptrace.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ lib/radix-tree.c                    |    4 +++-
+ tools/testing/radix-tree/idr-test.c |    7 +++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -454,7 +454,7 @@ static int fpr_get_msa(struct task_struc
- /*
-  * Copy the floating-point context to the supplied NT_PRFPREG buffer.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR and FIR registers separately.
-  */
- static int fpr_get(struct task_struct *target,
- 		   const struct user_regset *regset,
-@@ -462,6 +462,7 @@ static int fpr_get(struct task_struct *t
- 		   void *kbuf, void __user *ubuf)
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -2037,10 +2037,12 @@ void *radix_tree_delete_item(struct radi
+ 			     unsigned long index, void *item)
  {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	int err;
+ 	struct radix_tree_node *node = NULL;
+-	void __rcu **slot;
++	void __rcu **slot = NULL;
+ 	void *entry;
  
- 	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
-@@ -474,6 +475,12 @@ static int fpr_get(struct task_struct *t
- 	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
- 				  &target->thread.fpu.fcr31,
- 				  fcr31_pos, fcr31_pos + sizeof(u32));
-+	if (err)
-+		return err;
+ 	entry = __radix_tree_lookup(root, index, &node, &slot);
++	if (!slot)
++		return NULL;
+ 	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
+ 						get_slot_offset(node, slot))))
+ 		return NULL;
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -202,6 +202,13 @@ void idr_checks(void)
+ 	idr_remove(&idr, 3);
+ 	idr_remove(&idr, 0);
+ 
++	assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == 0);
++	idr_remove(&idr, 1);
++	for (i = 1; i < RADIX_TREE_MAP_SIZE; i++)
++		assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == i);
++	idr_remove(&idr, 1 << 30);
++	idr_destroy(&idr);
 +
-+	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+				  &boot_cpu_data.fpu_id,
-+				  fir_pos, fir_pos + sizeof(u32));
- 
- 	return err;
- }
-@@ -522,7 +529,8 @@ static int fpr_set_msa(struct task_struc
- /*
-  * Copy the supplied NT_PRFPREG buffer to the floating-point context.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR register separately.  Ignore the incoming FIR register
-+ * contents though, as the register is read-only.
-  *
-  * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
-  * which is supposed to have been guaranteed by the kernel before
-@@ -536,6 +544,7 @@ static int fpr_set(struct task_struct *t
- 		   const void *kbuf, const void __user *ubuf)
- {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	u32 fcr31;
- 	int err;
- 
-@@ -563,6 +572,11 @@ static int fpr_set(struct task_struct *t
- 		ptrace_setfcr31(target, fcr31);
- 	}
- 
-+	if (count > 0)
-+		err = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
-+						fir_pos,
-+						fir_pos + sizeof(u32));
-+
- 	return err;
- }
- 
+ 	for (i = INT_MAX - 3UL; i < INT_MAX + 1UL; i++) {
+ 		struct item *item = item_create(i, 0);
+ 		assert(idr_alloc(&idr, item, i, i + 10, GFP_KERNEL) == i);
