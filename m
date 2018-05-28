@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423372AbeE1LNC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:13:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60604 "EHLO mail.kernel.org"
+        id S1424248AbeE1LNP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:13:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423949AbeE1LMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:12:55 -0400
+        id S1424235AbeE1LNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
+        stable@vger.kernel.org, Pierre Bourdon <delroth@google.com>,
+        Andre Heider <a.heider@gmail.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 196/272] gfs2: Fix fallocate chunk size
-Date: Mon, 28 May 2018 12:03:49 +0200
-Message-Id: <20180528100257.076003397@linuxfoundation.org>
+Subject: [PATCH 4.16 184/272] max17042: propagate of_node to power supply device
+Date: Mon, 28 May 2018 12:03:37 +0200
+Message-Id: <20180528100256.120698110@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,61 +31,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Pierre Bourdon <delroth@google.com>
 
-[ Upstream commit 174d1232ebc84fcde8f5889d1171c9c7e74a10a7 ]
+[ Upstream commit 66ec32fc7cd116dab5c02603ea8ec28ff92da3b5 ]
 
-The chunk size of allocations in __gfs2_fallocate is calculated
-incorrectly.  The size can collapse, causing __gfs2_fallocate to
-allocate one block at a time, which is very inefficient.  This needs
-fixing in two places:
+max17042_get_status uses the core power_supply_am_i_supplied. That
+function relies on DT properties to figure out the power supply
+topology, and will error out without DT.
 
-In gfs2_quota_lock_check, always set ap->allowed to UINT_MAX to indicate
-that there is no quota limit.  This fixes callers that rely on
-ap->allowed to be set even when quotas are off.
+Fixes max17042 battery status being reported as "unknown".
 
-In __gfs2_fallocate, reset max_blks to UINT_MAX in each iteration of the
-loop to make sure that allocation limits from one resource group won't
-spill over into another resource group.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Pierre Bourdon <delroth@google.com>
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/file.c  |    5 +++--
- fs/gfs2/quota.h |    2 ++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/power/supply/max17042_battery.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -809,7 +809,7 @@ static long __gfs2_fallocate(struct file
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_alloc_parms ap = { .aflags = 0, };
- 	unsigned int data_blocks = 0, ind_blocks = 0, rblocks;
--	loff_t bytes, max_bytes, max_blks = UINT_MAX;
-+	loff_t bytes, max_bytes, max_blks;
- 	int error;
- 	const loff_t pos = offset;
- 	const loff_t count = len;
-@@ -861,7 +861,8 @@ static long __gfs2_fallocate(struct file
- 			return error;
- 		/* ap.allowed tells us how many blocks quota will allow
- 		 * us to write. Check if this reduces max_blks */
--		if (ap.allowed && ap.allowed < max_blks)
-+		max_blks = UINT_MAX;
-+		if (ap.allowed)
- 			max_blks = ap.allowed;
+--- a/drivers/power/supply/max17042_battery.c
++++ b/drivers/power/supply/max17042_battery.c
+@@ -1053,6 +1053,7 @@ static int max17042_probe(struct i2c_cli
  
- 		error = gfs2_inplace_reserve(ip, &ap);
---- a/fs/gfs2/quota.h
-+++ b/fs/gfs2/quota.h
-@@ -45,6 +45,8 @@ static inline int gfs2_quota_lock_check(
- {
- 	struct gfs2_sbd *sdp = GFS2_SB(&ip->i_inode);
- 	int ret;
-+
-+	ap->allowed = UINT_MAX; /* Assume we are permitted a whole lot */
- 	if (sdp->sd_args.ar_quota == GFS2_QUOTA_OFF)
- 		return 0;
- 	ret = gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHANGE);
+ 	i2c_set_clientdata(client, chip);
+ 	psy_cfg.drv_data = chip;
++	psy_cfg.of_node = dev->of_node;
+ 
+ 	/* When current is not measured,
+ 	 * CURRENT_NOW and CURRENT_AVG properties should be invisible. */
