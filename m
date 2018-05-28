@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936638AbeE1KLl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59806 "EHLO mail.kernel.org"
+        id S936623AbeE1KLj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:11:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936610AbeE1KLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:36 -0400
+        id S936567AbeE1KLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 133/185] powerpc/perf: Prevent kernel address leak to userspace via BHRB buffer
-Date: Mon, 28 May 2018 12:02:54 +0200
-Message-Id: <20180528100105.057226816@linuxfoundation.org>
+Subject: [PATCH 3.18 132/185] hwmon: (nct6775) Fix writing pwmX_mode
+Date: Mon, 28 May 2018 12:02:53 +0200
+Message-Id: <20180528100104.749785175@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,40 +29,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit bb19af816025d495376bd76bf6fbcf4244f9a06d ]
+[ Upstream commit 415eb2a1aaa4881cf85bd86c683356fdd8094a23 ]
 
-The current Branch History Rolling Buffer (BHRB) code does not check
-for any privilege levels before updating the data from BHRB. This
-could leak kernel addresses to userspace even when profiling only with
-userspace privileges. Add proper checks to prevent it.
+pwmX_mode is defined in the ABI as 0=DC mode, 1=pwm mode. The chip
+register bit is set to 1 for DC mode. This got mixed up, and writing
+1 into pwmX_mode resulted in DC mode enabled. Fix it up by using
+the ABI definition throughout the driver for consistency.
 
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 77eb5b3703d99 ("hwmon: (nct6775) Add support for pwm, pwm_mode, ... ")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/perf/core-book3s.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/hwmon/nct6775.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -443,6 +443,16 @@ static void power_pmu_bhrb_read(struct c
- 				/* invalid entry */
- 				continue;
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -1286,7 +1286,7 @@ static void nct6775_update_pwm(struct de
+ 		duty_is_dc = data->REG_PWM_MODE[i] &&
+ 		  (nct6775_read_value(data, data->REG_PWM_MODE[i])
+ 		   & data->PWM_MODE_MASK[i]);
+-		data->pwm_mode[i] = duty_is_dc;
++		data->pwm_mode[i] = !duty_is_dc;
  
-+			/*
-+			 * BHRB rolling buffer could very much contain the kernel
-+			 * addresses at this point. Check the privileges before
-+			 * exporting it to userspace (avoid exposure of regions
-+			 * where we could have speculative execution)
-+			 */
-+			if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
-+				is_kernel_addr(addr))
-+				continue;
-+
- 			/* Branches are read most recent first (ie. mfbhrb 0 is
- 			 * the most recent branch).
- 			 * There are two types of valid entries:
+ 		fanmodecfg = nct6775_read_value(data, data->REG_FAN_MODE[i]);
+ 		for (j = 0; j < ARRAY_SIZE(data->REG_PWM); j++) {
+@@ -2145,7 +2145,7 @@ show_pwm_mode(struct device *dev, struct
+ 	struct nct6775_data *data = nct6775_update_device(dev);
+ 	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+ 
+-	return sprintf(buf, "%d\n", !data->pwm_mode[sattr->index]);
++	return sprintf(buf, "%d\n", data->pwm_mode[sattr->index]);
+ }
+ 
+ static ssize_t
+@@ -2166,9 +2166,9 @@ store_pwm_mode(struct device *dev, struc
+ 	if (val > 1)
+ 		return -EINVAL;
+ 
+-	/* Setting DC mode is not supported for all chips/channels */
++	/* Setting DC mode (0) is not supported for all chips/channels */
+ 	if (data->REG_PWM_MODE[nr] == 0) {
+-		if (val)
++		if (!val)
+ 			return -EINVAL;
+ 		return count;
+ 	}
+@@ -2177,7 +2177,7 @@ store_pwm_mode(struct device *dev, struc
+ 	data->pwm_mode[nr] = val;
+ 	reg = nct6775_read_value(data, data->REG_PWM_MODE[nr]);
+ 	reg &= ~data->PWM_MODE_MASK[nr];
+-	if (val)
++	if (!val)
+ 		reg |= data->PWM_MODE_MASK[nr];
+ 	nct6775_write_value(data, data->REG_PWM_MODE[nr], reg);
+ 	mutex_unlock(&data->update_lock);
