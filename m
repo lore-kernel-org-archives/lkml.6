@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165997AbeE1PKI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43560 "EHLO mail.kernel.org"
+        id S1166023AbeE1PK1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:10:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033758AbeE1KYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:15 -0400
+        id S1033325AbeE1KYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:24:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 227/268] ALSA: vmaster: Propagate slave error
-Date: Mon, 28 May 2018 12:03:21 +0200
-Message-Id: <20180528100228.669965564@linuxfoundation.org>
+Subject: [PATCH 4.4 190/268] powerpc/perf: Prevent kernel address leak to userspace via BHRB buffer
+Date: Mon, 28 May 2018 12:02:44 +0200
+Message-Id: <20180528100223.874733909@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -29,40 +31,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
 
-[ Upstream commit 2e2c177ca84aff092c3c96714b0f6a12900f3946 ]
+[ Upstream commit bb19af816025d495376bd76bf6fbcf4244f9a06d ]
 
-In slave_update() of vmaster code ignores the error from the slave
-get() callback and copies the values.  It's not only about the missing
-error code but also that this may potentially lead to a leak of
-uninitialized variables when the slave get() don't clear them.
+The current Branch History Rolling Buffer (BHRB) code does not check
+for any privilege levels before updating the data from BHRB. This
+could leak kernel addresses to userspace even when profiling only with
+userspace privileges. Add proper checks to prevent it.
 
-This patch fixes slave_update() not to copy the potentially
-uninitialized values when an error is returned from the slave get()
-callback, and to propagate the error value properly.
-
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/core/vmaster.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/perf/core-book3s.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/sound/core/vmaster.c
-+++ b/sound/core/vmaster.c
-@@ -68,10 +68,13 @@ static int slave_update(struct link_slav
- 		return -ENOMEM;
- 	uctl->id = slave->slave.id;
- 	err = slave->slave.get(&slave->slave, uctl);
-+	if (err < 0)
-+		goto error;
- 	for (ch = 0; ch < slave->info.count; ch++)
- 		slave->vals[ch] = uctl->value.integer.value[ch];
-+ error:
- 	kfree(uctl);
--	return 0;
-+	return err < 0 ? err : 0;
- }
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -448,6 +448,16 @@ static void power_pmu_bhrb_read(struct c
+ 				/* invalid entry */
+ 				continue;
  
- /* get the slave ctl info and save the initial values */
++			/*
++			 * BHRB rolling buffer could very much contain the kernel
++			 * addresses at this point. Check the privileges before
++			 * exporting it to userspace (avoid exposure of regions
++			 * where we could have speculative execution)
++			 */
++			if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
++				is_kernel_addr(addr))
++				continue;
++
+ 			/* Branches are read most recent first (ie. mfbhrb 0 is
+ 			 * the most recent branch).
+ 			 * There are two types of valid entries:
