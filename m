@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425355AbeE1Q0x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58618 "EHLO mail.kernel.org"
+        id S940047AbeE1Q1S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:27:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936487AbeE1KK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:27 -0400
+        id S933411AbeE1KKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        kernel-janitors@vger.kernel.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 101/185] selftests: ftrace: Add a testcase for probepoint
-Date: Mon, 28 May 2018 12:02:22 +0200
-Message-Id: <20180528100059.743407127@linuxfoundation.org>
+Subject: [PATCH 3.18 077/185] clocksource/drivers/fsl_ftm_timer: Fix error return checking
+Date: Mon, 28 May 2018 12:01:58 +0200
+Message-Id: <20180528100057.270284399@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,68 +32,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit dfa453bc90eca0febff33c8d292a656e53702158 ]
+[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
 
-Add a testcase for probe point definition. This tests
-symbol, address and symbol+offset syntax. The offset
-must be positive and smaller than UINT_MAX.
+The error checks on freq for a negative error return always fails because
+freq is unsigned and can never be negative. Fix this by making freq a
+signed long.
 
-Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
+Detected with Coccinelle:
+drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc |   43 +++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+ drivers/clocksource/fsl_ftm_timer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-@@ -0,0 +1,43 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe events - probe points
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+TARGET_FUNC=create_trace_kprobe
-+
-+dec_addr() { # hexaddr
-+  printf "%d" "0x"`echo $1 | tail -c 8`
-+}
-+
-+set_offs() { # prev target next
-+  A1=`dec_addr $1`
-+  A2=`dec_addr $2`
-+  A3=`dec_addr $3`
-+  TARGET="0x$2" # an address
-+  PREV=`expr $A1 - $A2` # offset to previous symbol
-+  NEXT=+`expr $A3 - $A2` # offset to next symbol
-+  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
-+}
-+
-+# We have to decode symbol addresses to get correct offsets.
-+# If the offset is not an instruction boundary, it cause -EILSEQ.
-+set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
-+
-+UINT_TEST=no
-+# printf "%x" -1 returns (unsigned long)-1.
-+if [ `printf "%x" -1 | wc -c` != 9 ]; then
-+  UINT_TEST=yes
-+fi
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
-+echo "p:testprobe ${TARGET}" > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
-+! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
-+if [ "${UINT_TEST}" = yes ]; then
-+! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
-+fi
-+echo > kprobe_events
-+clear_trace
+--- a/drivers/clocksource/fsl_ftm_timer.c
++++ b/drivers/clocksource/fsl_ftm_timer.c
+@@ -282,7 +282,7 @@ static int __init __ftm_clk_init(struct
+ 
+ static unsigned long __init ftm_clk_init(struct device_node *np)
+ {
+-	unsigned long freq;
++	long freq;
+ 
+ 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
+ 	if (freq <= 0)
