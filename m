@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937458AbeE1KmU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:42:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33588 "EHLO mail.kernel.org"
+        id S937445AbeE1KmS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:42:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937426AbeE1KmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:15 -0400
+        id S937418AbeE1KmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>,
         Alexander Potapenko <glider@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 026/496] kasan: free allocated shadow memory on MEM_CANCEL_ONLINE
-Date: Mon, 28 May 2018 11:56:51 +0200
-Message-Id: <20180528100320.692311717@linuxfoundation.org>
+Subject: [PATCH 4.14 025/496] mm/kasan: dont vfree() nonexistent vm_area
+Date: Mon, 28 May 2018 11:56:50 +0200
+Message-Id: <20180528100320.650216776@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,35 +34,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit ed1596f9ab958dd156a66c9ff1029d3761c1786a upstream.
+commit 0f901dcbc31f88ae41a2aaa365f7802b5d520a28 upstream.
 
-We have to free memory again when we cancel onlining, otherwise a later
-onlining attempt will fail.
+KASAN uses different routines to map shadow for hot added memory and
+memory obtained in boot process.  Attempt to offline memory onlined by
+normal boot process leads to this:
 
-Link: http://lkml.kernel.org/r/20180522100756.18478-2-david@redhat.com
+    Trying to vfree() nonexistent vm area (000000005d3b34b9)
+    WARNING: CPU: 2 PID: 13215 at mm/vmalloc.c:1525 __vunmap+0x147/0x190
+
+    Call Trace:
+     kasan_mem_notifier+0xad/0xb9
+     notifier_call_chain+0x166/0x260
+     __blocking_notifier_call_chain+0xdb/0x140
+     __offline_pages+0x96a/0xb10
+     memory_subsys_offline+0x76/0xc0
+     device_offline+0xb8/0x120
+     store_mem_state+0xfa/0x120
+     kernfs_fop_write+0x1d5/0x320
+     __vfs_write+0xd4/0x530
+     vfs_write+0x105/0x340
+     SyS_write+0xb0/0x140
+
+Obviously we can't call vfree() to free memory that wasn't allocated via
+vmalloc().  Use find_vm_area() to see if we can call vfree().
+
+Unfortunately it's a bit tricky to properly unmap and free shadow
+allocated during boot, so we'll have to keep it.  If memory will come
+online again that shadow will be reused.
+
+Matthew asked: how can you call vfree() on something that isn't a
+vmalloc address?
+
+  vfree() is able to free any address returned by
+  __vmalloc_node_range().  And __vmalloc_node_range() gives you any
+  address you ask.  It doesn't have to be an address in [VMALLOC_START,
+  VMALLOC_END] range.
+
+  That's also how the module_alloc()/module_memfree() works on
+  architectures that have designated area for modules.
+
+[aryabinin@virtuozzo.com: improve comments]
+  Link: http://lkml.kernel.org/r/dabee6ab-3a7a-51cd-3b86-5468718e0390@virtuozzo.com
+[akpm@linux-foundation.org: fix typos, reflow comment]
+Link: http://lkml.kernel.org/r/20180201163349.8700-1-aryabinin@virtuozzo.com
 Fixes: fa69b5989bb0 ("mm/kasan: add support for memory hotplug")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reported-by: Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>
 Cc: Alexander Potapenko <glider@google.com>
 Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/kasan/kasan.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/kasan/kasan.c |   63 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 61 insertions(+), 2 deletions(-)
 
 --- a/mm/kasan/kasan.c
 +++ b/mm/kasan/kasan.c
-@@ -811,6 +811,7 @@ static int __meminit kasan_mem_notifier(
+@@ -737,6 +737,40 @@ void __asan_unpoison_stack_memory(const
+ EXPORT_SYMBOL(__asan_unpoison_stack_memory);
+ 
+ #ifdef CONFIG_MEMORY_HOTPLUG
++static bool shadow_mapped(unsigned long addr)
++{
++	pgd_t *pgd = pgd_offset_k(addr);
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
++
++	if (pgd_none(*pgd))
++		return false;
++	p4d = p4d_offset(pgd, addr);
++	if (p4d_none(*p4d))
++		return false;
++	pud = pud_offset(p4d, addr);
++	if (pud_none(*pud))
++		return false;
++
++	/*
++	 * We can't use pud_large() or pud_huge(), the first one is
++	 * arch-specific, the last one depends on HUGETLB_PAGE.  So let's abuse
++	 * pud_bad(), if pud is bad then it's bad because it's huge.
++	 */
++	if (pud_bad(*pud))
++		return true;
++	pmd = pmd_offset(pud, addr);
++	if (pmd_none(*pmd))
++		return false;
++
++	if (pmd_bad(*pmd))
++		return true;
++	pte = pte_offset_kernel(pmd, addr);
++	return !pte_none(*pte);
++}
++
+ static int __meminit kasan_mem_notifier(struct notifier_block *nb,
+ 			unsigned long action, void *data)
+ {
+@@ -758,6 +792,14 @@ static int __meminit kasan_mem_notifier(
+ 	case MEM_GOING_ONLINE: {
+ 		void *ret;
+ 
++		/*
++		 * If shadow is mapped already than it must have been mapped
++		 * during the boot. This could happen if we onlining previously
++		 * offlined memory.
++		 */
++		if (shadow_mapped(shadow_start))
++			return NOTIFY_OK;
++
+ 		ret = __vmalloc_node_range(shadow_size, PAGE_SIZE, shadow_start,
+ 					shadow_end, GFP_KERNEL,
+ 					PAGE_KERNEL, VM_NO_GUARD,
+@@ -769,8 +811,25 @@ static int __meminit kasan_mem_notifier(
  		kmemleak_ignore(ret);
  		return NOTIFY_OK;
  	}
-+	case MEM_CANCEL_ONLINE:
- 	case MEM_OFFLINE: {
- 		struct vm_struct *vm;
+-	case MEM_OFFLINE:
+-		vfree((void *)shadow_start);
++	case MEM_OFFLINE: {
++		struct vm_struct *vm;
++
++		/*
++		 * shadow_start was either mapped during boot by kasan_init()
++		 * or during memory online by __vmalloc_node_range().
++		 * In the latter case we can use vfree() to free shadow.
++		 * Non-NULL result of the find_vm_area() will tell us if
++		 * that was the second case.
++		 *
++		 * Currently it's not possible to free shadow mapped
++		 * during boot by kasan_init(). It's because the code
++		 * to do that hasn't been written yet. So we'll just
++		 * leak the memory.
++		 */
++		vm = find_vm_area((void *)shadow_start);
++		if (vm)
++			vfree((void *)shadow_start);
++	}
+ 	}
  
+ 	return NOTIFY_OK;
