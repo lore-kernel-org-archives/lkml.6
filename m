@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938927AbeE1MhF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:37:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46924 "EHLO mail.kernel.org"
+        id S1164604AbeE1MhU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:37:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938067AbeE1K6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:55 -0400
+        id S938059AbeE1K6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Justin Maggard <jmaggard@netgear.com>,
+        Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 357/496] rxrpc: Fix Tx ring annotation after initial Tx failure
-Date: Mon, 28 May 2018 12:02:22 +0200
-Message-Id: <20180528100334.834435875@linuxfoundation.org>
+Subject: [PATCH 4.14 356/496] btrfs: qgroup: Fix root item corruption when multiple same source snapshots are created with quota enabled
+Date: Mon, 28 May 2018 12:02:21 +0200
+Message-Id: <20180528100334.796050429@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -29,39 +31,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit 03877bf6a30cca7d4bc3ffabd3c3e9464a7a1a19 ]
+[ Upstream commit 4d31778aa2fa342f5f92ca4025b293a1729161d1 ]
 
-rxrpc calls have a ring of packets that are awaiting ACK or retransmission
-and a parallel ring of annotations that tracks the state of those packets.
-If the initial transmission of a packet on the underlying UDP socket fails
-then the packet annotation is marked for resend - but the setting of this
-mark accidentally erases the last-packet mark also stored in the same
-annotation slot.  If this happens, a call won't switch out of the Tx phase
-when all the packets have been transmitted.
+When multiple pending snapshots referring to the same source subvolume
+are executed, enabled quota will cause root item corruption, where root
+items are using old bytenr (no backref in extent tree).
 
-Fix this by retaining the last-packet mark and only altering the packet
-state.
+This can be triggered by fstests btrfs/152.
 
-Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
-Signed-off-by: David Howells <dhowells@redhat.com>
+The cause is when source subvolume is still dirty, extra commit
+(simplied transaction commit) of qgroup_account_snapshot() can skip
+dirty roots not recorded in current transaction, making root item of
+source subvolume not updated.
+
+Fix it by forcing recording source subvolume in current transaction
+before qgroup sub-transaction commit.
+
+Reported-by: Justin Maggard <jmaggard@netgear.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/sendmsg.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/transaction.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -92,7 +92,9 @@ static inline void rxrpc_instant_resend(
- 	spin_lock_bh(&call->lock);
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -319,7 +319,7 @@ static int record_root_in_trans(struct b
+ 	if ((test_bit(BTRFS_ROOT_REF_COWS, &root->state) &&
+ 	    root->last_trans < trans->transid) || force) {
+ 		WARN_ON(root == fs_info->extent_root);
+-		WARN_ON(root->commit_root != root->node);
++		WARN_ON(!force && root->commit_root != root->node);
  
- 	if (call->state < RXRPC_CALL_COMPLETE) {
--		call->rxtx_annotations[ix] = RXRPC_TX_ANNO_RETRANS;
-+		call->rxtx_annotations[ix] =
-+			(call->rxtx_annotations[ix] & RXRPC_TX_ANNO_LAST) |
-+			RXRPC_TX_ANNO_RETRANS;
- 		if (!test_and_set_bit(RXRPC_CALL_EV_RESEND, &call->events))
- 			rxrpc_queue_call(call);
- 	}
+ 		/*
+ 		 * see below for IN_TRANS_SETUP usage rules
+@@ -1366,6 +1366,14 @@ static int qgroup_account_snapshot(struc
+ 		return 0;
+ 
+ 	/*
++	 * Ensure dirty @src will be commited.  Or, after comming
++	 * commit_fs_roots() and switch_commit_roots(), any dirty but not
++	 * recorded root will never be updated again, causing an outdated root
++	 * item.
++	 */
++	record_root_in_trans(trans, src, 1);
++
++	/*
+ 	 * We are going to commit transaction, see btrfs_commit_transaction()
+ 	 * comment for reason locking tree_log_mutex
+ 	 */
