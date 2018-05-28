@@ -1,89 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754096AbeE1Iou (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:44:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37780 "EHLO mail.bootlin.com"
+        id S1754107AbeE1IpU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:45:20 -0400
+Received: from anor.bigon.be ([91.121.173.99]:45705 "EHLO anor.bigon.be"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754043AbeE1Ios (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:44:48 -0400
-Date: Mon, 28 May 2018 10:44:46 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/15] arm: dts: sun: Add missing cooling device
- properties for CPUs
-Message-ID: <20180528084446.g24fphqqac2hi3rr@flea>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <eded393f4b508a1f377f9af6859a3b82a6787e1c.1527244201.git.viresh.kumar@linaro.org>
+        id S1754029AbeE1IpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:45:18 -0400
+Subject: Re: [PATCH] tpm_tis: verify locality released before returning from
+ release_locality
+From: Laurent Bigonville <bigon@debian.org>
+To: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+References: <20180505195453.10431-1-jsnitsel@redhat.com>
+ <20180505200315.x7jt33j7psizmfyi@cantor>
+ <bcac4481-108a-4598-6524-041879be7c06@debian.org>
+Message-ID: <06d7794e-125b-85da-72af-c386d999341c@debian.org>
+Date: Mon, 28 May 2018 10:44:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l4dcsg23dumy77y5"
-Content-Disposition: inline
-In-Reply-To: <eded393f4b508a1f377f9af6859a3b82a6787e1c.1527244201.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <bcac4481-108a-4598-6524-041879be7c06@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---l4dcsg23dumy77y5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Top posting, sorry.
 
-Hi,
+I don't know if I did it well to include the "Tested-by" tag because I 
+don't see that the patch has landed in linus branch already.
 
-On Fri, May 25, 2018 at 04:01:52PM +0530, Viresh Kumar wrote:
-> The cooling device properties, like "#cooling-cells" and
-> "dynamic-power-coefficient", should either be present for all the CPUs
-> of a cluster or none. If these are present only for a subset of CPUs of
-> a cluster then things will start falling apart as soon as the CPUs are
-> brought online in a different order. For example, this will happen
-> because the operating system looks for such properties in the CPU node
-> it is trying to bring up, so that it can register a cooling device.
->=20
-> Add such missing properties.
->=20
-> Fix other missing properties (clocks, OPP, clock latency) as well to
-> make it all work.
->=20
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+And as far as I understand, this will not be in the upcoming 4.17 
+release as we are already late in the cycle?
 
-The prefix should be sunxi and not sun, but it looks good to me
-otherwise.
+Kind regards,
 
-Let me know what your preferred merge method is.
+Laurent Bigonville
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---l4dcsg23dumy77y5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsLwX0ACgkQ0rTAlCFN
-r3RTFw/+LvuG8dQ9Ks/IdzZIq1rc1Nx/wOZ/ZXEjoSkAkGSNsZ8ybTgBgxcEbyiS
-mPRsoPKw2tF/nYdZfk31GzDoCTns64e/xuqdH5rKS+Dtu0h3NCsYY/8Nky6pHdfX
-Shbksby8TlVEu/1YYraB/l+xrSzUqGnz5OHVGcYhc5qhzE9jqgvrVyFt8JWRqhPT
-FlDKYHGox+fpqdEannhvPl2maPoT4Ox9b3ZNKihGQv5Ag/uUN2VpXUnjGI7AvSjY
-DLEcyU/4yyFkfX7NGWz5opWurePWAzwI2KRUO3SjDkXlawpmz5Mi1a0nZALcvsaG
-y85hxZypa354XEtWe2bQJQWBDLdeWzvHar9Y3H157BxwthyLuH/ZzCqDt1eThrxN
-b5fGm2uqyr/hHxWNjMtq/6exMvXD3E6zufZ3PhbW5BmqCKEIIPxLapRsu6Jsxb0Q
-G39zc6N9ml0qTPqJ5JDgPDoDxI1+pTN8BBV89mgVNlqcyX6e9xehU+y7Kgx0XrJL
-CMYlBAENIYosOWqdO2ZlxmkC03rRq+A4ZCvMbFhtc93VXT3ZQZxfHnJaX/m2HUK9
-253UeU18vFs4SyUvwgFgU5QicpNqdzei+3/KV5c32frHZVZKgoSyswjjKcf7dnBG
-Bh+f3PvRXXgrE060DyqzNVBjrTEYKm9J3ImdjMlL8kpSivuF6Lw=
-=zAUF
------END PGP SIGNATURE-----
-
---l4dcsg23dumy77y5--
+Le 11/05/18 à 21:02, Laurent Bigonville a écrit :
+> Le 05/05/18 à 22:03, Jerry Snitselaar a écrit :
+>> On Sat May 05 18, Jerry Snitselaar wrote:
+>>> For certain tpm chips releasing locality can take long enough that a
+>>> subsequent call to request_locality will see the locality as being
+>>> active when the access register is read in check_locality. So check
+>>> that the locality has been released before returning from
+>>> release_locality.
+>>>
+>>> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>> Cc: Peter Huewe <peterhuewe@gmx.de>
+>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>>> Reported-by: Laurent Bigonville <bigon@debian.org>
+>>> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Tested-by: Laurent Bigonville <bigon@debian.org>
+>>> ---
+>>> drivers/char/tpm/tpm_tis_core.c | 47 
+>>> ++++++++++++++++++++++++++++++++++++++++-
+>>> 1 file changed, 46 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/char/tpm/tpm_tis_core.c 
+>>> b/drivers/char/tpm/tpm_tis_core.c
+>>> index 5a1f47b43947..d547cd309dbd 100644
+>>> --- a/drivers/char/tpm/tpm_tis_core.c
+>>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>>> @@ -143,13 +143,58 @@ static bool check_locality(struct tpm_chip 
+>>> *chip, int l)
+>>>     return false;
+>>> }
+>>>
+>>> +static bool locality_inactive(struct tpm_chip *chip, int l)
+>>> +{
+>>> +    struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>>> +    int rc;
+>>> +    u8 access;
+>>> +
+>>> +    rc = tpm_tis_read8(priv, TPM_ACCESS(l), &access);
+>>> +    if (rc < 0)
+>>> +        return false;
+>>> +
+>>> +    if ((access & (TPM_ACCESS_VALID | TPM_ACCESS_ACTIVE_LOCALITY))
+>>> +        == TPM_ACCESS_VALID)
+>>> +        return true;
+>>> +
+>>> +    return false;
+>>> +}
+>>> +
+>>> static int release_locality(struct tpm_chip *chip, int l)
+>>> {
+>>>     struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>>> +    unsigned long stop, timeout;
+>>> +    long rc;
+>>>
+>>>     tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
+>>>
+>>> -    return 0;
+>>> +    stop = jiffies + chip->timeout_a;
+>>> +
+>>> +    if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+>>> +again:
+>>> +        timeout = stop - jiffies;
+>>> +        if ((long)timeout <= 0)
+>>> +            return -1;
+>>> +
+>>> +        rc = wait_event_interruptible_timeout(priv->int_queue,
+>>> +                              (locality_inactive(chip, l)),
+>>> +                              timeout);
+>>> +
+>>> +        if (rc > 0)
+>>> +            return 0;
+>>> +
+>>> +        if (rc == -ERESTARTSYS && freezing(current)) {
+>>> +            clear_thread_flag(TIF_SIGPENDING);
+>>> +            goto again;
+>>> +        }
+>>> +    } else {
+>>> +        do {
+>>> +            if (locality_inactive(chip, l))
+>>> +                return 0;
+>>> +            tpm_msleep(TPM_TIMEOUT);
+>>> +        } while (time_before(jiffies, stop));
+>>> +    }
+>>> +    return -1;
+>>> }
+>>>
+>>> static int request_locality(struct tpm_chip *chip, int l)
+>>> -- 
+>>> 2.15.0
+>>>
+>>
+>> Laurent,
+>>
+>> Can you try this patch with your system since it is the one
+>> that has exhibited the problem so far. I've tested on a
+>> tpm2.0 and tpm1.2 system here.
+>>
+>> Regards,
+>> Jerry
+>
