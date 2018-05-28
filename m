@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424772AbeE1LSg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:18:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35652 "EHLO mail.kernel.org"
+        id S1424773AbeE1LSw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:18:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424670AbeE1LQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:43 -0400
+        id S1424700AbeE1LQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 268/272] regulator: of: Add a missing of_node_put() in an error handling path of of_regulator_match()
-Date: Mon, 28 May 2018 12:05:01 +0200
-Message-Id: <20180528100302.656235449@linuxfoundation.org>
+Subject: [PATCH 4.16 239/272] audit: return on memory error to avoid null pointer dereference
+Date: Mon, 28 May 2018 12:04:32 +0200
+Message-Id: <20180528100300.419192495@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,28 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Richard Guy Briggs <rgb@redhat.com>
 
-[ Upstream commit 30966861a7a2051457be8c49466887d78cc47e97 ]
+[ Upstream commit 23138ead270045f1b3e912e667967b6094244999 ]
 
-If an unlikely failure in 'of_get_regulator_init_data()' occurs, we must
-release the reference on the current 'child' node before returning.
+If there is a memory allocation error when trying to change an audit
+kernel feature value, the ignored allocation error will trigger a NULL
+pointer dereference oops on subsequent use of that pointer.  Return
+instead.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Passes audit-testsuite.
+See: https://github.com/linux-audit/audit-kernel/issues/76
+
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+[PM: not necessary (other funcs check for NULL), but a good practice]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/regulator/of_regulator.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/audit.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -321,6 +321,7 @@ int of_regulator_match(struct device *de
- 				dev_err(dev,
- 					"failed to parse DT for regulator %s\n",
- 					child->name);
-+				of_node_put(child);
- 				return -EINVAL;
- 			}
- 			match->of_node = of_node_get(child);
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1058,6 +1058,8 @@ static void audit_log_feature_change(int
+ 		return;
+ 
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	if (!ab)
++		return;
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
