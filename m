@@ -1,121 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164490AbeE1MyO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:54:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164371AbeE1KzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:20 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maninder Singh <maninder1.s@samsung.com>,
-        Vaneet Narang <v.narang@samsung.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        Ayush Mittal <ayush.m@samsung.com>,
-        Prakash Gupta <guptap@codeaurora.org>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Vasyl Gomonovych <gomonovych@gmail.com>,
-        Amit Sahrawat <a.sahrawat@samsung.com>, pankaj.m@samsung.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 309/496] mm/page_owner: fix recursion bug after changing skip entries
-Date: Mon, 28 May 2018 12:01:34 +0200
-Message-Id: <20180528100332.819628897@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1165076AbeE1My2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:54:28 -0400
+Received: from mgwym03.jp.fujitsu.com ([211.128.242.42]:60843 "EHLO
+        mgwym03.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932508AbeE1MyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 08:54:12 -0400
+From: "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>
+To: "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
+        "'tj@kernel.org'" <tj@kernel.org>
+CC: "Okajima, Toshiyuki" <toshi.okajima@jp.fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'ebiederm@aristanetworks.com'" <ebiederm@aristanetworks.com>
+Subject: [RESEND PATCH v2] kernfs: fix dentry unexpected skip
+Thread-Topic: [RESEND PATCH v2] kernfs: fix dentry unexpected skip
+Thread-Index: AdP2gtQcFftKX6rKRguW2o+iRXsAXg==
+Date: Mon, 28 May 2018 12:54:03 +0000
+Message-ID: <33710E6CAA200E4583255F4FB666C4E21B63D491@G01JPEXMBYT03>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: All
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20170217-enc
+x-shieldmailcheckermailid: 8ec5e13069344ac1a10b2c754d90523a
+x-originating-ip: [10.124.136.24]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <609F33E5C543104D8C3B28D054A93B0A@fujitsu.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+kernfs_dir_next_pos() overlooks the situation that the dentry
+corresponding to a given pos object has already been inactive. Hence,
+when kernfs_dir_pos() returns the dentry with a hash value larger than
+the original one, kernfs_dir_next_pos() returns the dentry next to the
+one returned by kernfs_dir_pos(). As a result, the dentry returned by
+kernfs_dir_pos() is skipped.
 
-------------------
+To fix this issue, try to find a next node only when the returned
+object is less than or equal to the original one.
 
-From: Maninder Singh <maninder1.s@samsung.com>
+Note that this implementation focuses on getting guarantee that the
+existing nodes are never skipped, not interested in the other nodes
+that are added or removed during the process.
 
-[ Upstream commit 299815a4fba9f3c7a81434dba0072148f1690608 ]
+We found this issue during a stress test that repeatedly reads
+/sys/module directory to get a list of the currently loaded kernel
+modules while repeatedly loading and unloading kernel modules
+simultaneously.
 
-This patch fixes commit 5f48f0bd4e36 ("mm, page_owner: skip unnecessary
-stack_trace entries").
+v2: Fix the case where nodes with the same hash but with the name
+    larger than the original node could still be skipped. Use
+    kernfs_sd_compare() to compare kernfs_node objects. Imporove patch
+    description.
 
-Because if we skip first two entries then logic of checking count value
-as 2 for recursion is broken and code will go in one depth recursion.
-
-so we need to check only one call of _RET_IP(__set_page_owner) while
-checking for recursion.
-
-Current Backtrace while checking for recursion:-
-
-  (save_stack)             from (__set_page_owner)  // (But recursion returns true here)
-  (__set_page_owner)       from (get_page_from_freelist)
-  (get_page_from_freelist) from (__alloc_pages_nodemask)
-  (__alloc_pages_nodemask) from (depot_save_stack)
-  (depot_save_stack)       from (save_stack)       // recursion should return true here
-  (save_stack)             from (__set_page_owner)
-  (__set_page_owner)       from (get_page_from_freelist)
-  (get_page_from_freelist) from (__alloc_pages_nodemask+)
-  (__alloc_pages_nodemask) from (depot_save_stack)
-  (depot_save_stack)       from (save_stack)
-  (save_stack)             from (__set_page_owner)
-  (__set_page_owner)       from (get_page_from_freelist)
-
-Correct Backtrace with fix:
-
-  (save_stack)             from (__set_page_owner) // recursion returned true here
-  (__set_page_owner)       from (get_page_from_freelist)
-  (get_page_from_freelist) from (__alloc_pages_nodemask+)
-  (__alloc_pages_nodemask) from (depot_save_stack)
-  (depot_save_stack)       from (save_stack)
-  (save_stack)             from (__set_page_owner)
-  (__set_page_owner)       from (get_page_from_freelist)
-
-Link: http://lkml.kernel.org/r/1521607043-34670-1-git-send-email-maninder1.s@samsung.com
-Fixes: 5f48f0bd4e36 ("mm, page_owner: skip unnecessary stack_trace entries")
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-Signed-off-by: Vaneet Narang <v.narang@samsung.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@techadventures.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ayush Mittal <ayush.m@samsung.com>
-Cc: Prakash Gupta <guptap@codeaurora.org>
-Cc: Vinayak Menon <vinmenon@codeaurora.org>
-Cc: Vasyl Gomonovych <gomonovych@gmail.com>
-Cc: Amit Sahrawat <a.sahrawat@samsung.com>
-Cc: <pankaj.m@samsung.com>
-Cc: Vaneet Narang <v.narang@samsung.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: HATAYAMA Daisuke <d.hatayama@jp.fujitsu.com>
+Suggested-by: Toshiyuki Okajima <toshi.okajima@jp.fujitsu.com>
+Cc: Eric W. Biederman <ebiederm@aristanetworks.com>
 ---
- mm/page_owner.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/kernfs/dir.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -123,13 +123,13 @@ void __reset_page_owner(struct page *pag
- static inline bool check_recursive_alloc(struct stack_trace *trace,
- 					unsigned long ip)
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 89d1dc1..3aeeb7a 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -1621,8 +1621,10 @@ static int kernfs_dir_fop_release(struct inode *inode, struct file *filp)
+ static struct kernfs_node *kernfs_dir_next_pos(const void *ns,
+ 	struct kernfs_node *parent, ino_t ino, struct kernfs_node *pos)
  {
--	int i, count;
-+	int i;
- 
- 	if (!trace->nr_entries)
- 		return false;
- 
--	for (i = 0, count = 0; i < trace->nr_entries; i++) {
--		if (trace->entries[i] == ip && ++count == 2)
-+	for (i = 0; i < trace->nr_entries; i++) {
-+		if (trace->entries[i] == ip)
- 			return true;
- 	}
- 
++	struct kernfs_node *orig = pos;
++
+ 	pos = kernfs_dir_pos(ns, parent, ino, pos);
+-	if (pos) {
++	if (pos && kernfs_sd_compare(pos, orig) <= 0) {
+ 		do {
+ 			struct rb_node *node = rb_next(&pos->rb);
+ 			if (!node)
+-- 
+1.7.1
