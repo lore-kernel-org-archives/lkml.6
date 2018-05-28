@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034348AbeE1P2W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39748 "EHLO mail.kernel.org"
+        id S1034394AbeE1P2m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:28:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033034AbeE1KTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:55 -0400
+        id S1032809AbeE1KTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fredrik Noring <noring@nocrew.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 131/268] USB: OHCI: Fix NULL dereference in HCDs using HCD_LOCAL_MEM
-Date: Mon, 28 May 2018 12:01:45 +0200
-Message-Id: <20180528100216.895766434@linuxfoundation.org>
+Subject: [PATCH 4.4 112/268] r8152: fix tx packets accounting
+Date: Mon, 28 May 2018 12:01:26 +0200
+Message-Id: <20180528100214.867027718@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,63 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fredrik Noring <noring@nocrew.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit d6c931ea32dc08ac2665bb5f009f9c40ad1bbdb3 ]
+[ Upstream commit 4c27bf3c5b7434ccb9ab962301da661c26b467a4 ]
 
-Scatter-gather needs to be disabled when using dma_declare_coherent_memory
-and HCD_LOCAL_MEM. Andrea Righi made the equivalent fix for EHCI drivers
-in commit 4307a28eb01284 "USB: EHCI: fix NULL pointer dererence in HCDs
-that use HCD_LOCAL_MEM".
+r8152 driver handles TSO packets (limited to ~16KB) quite well,
+but pretends each TSO logical packet is a single packet on the wire.
 
-The following NULL pointer WARN_ON_ONCE triggered with OHCI drivers:
+There is also some error since headers are accounted once, but
+error rate is small enough that we do not care.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 49 at drivers/usb/core/hcd.c:1379 hcd_alloc_coherent+0x4c/0xc8
-Modules linked in:
-CPU: 0 PID: 49 Comm: usb-storage Not tainted 4.15.0+ #1014
-Stack : 00000000 00000000 805a78d2 0000003a 81f5c2cc 8053d367 804d77fc 00000031
-        805a3a08 00000563 81ee9400 805a0000 00000000 10058c00 81f61b10 805c0000
-        00000000 00000000 805a0000 00d9038e 00000004 803ee818 00000006 312e3420
-        805c0000 00000000 00000073 81f61958 00000000 00000000 802eb380 804fd538
-        00000009 00000563 81ee9400 805a0000 00000002 80056148 00000000 805a0000
-        ...
-Call Trace:
-[<578af360>] show_stack+0x74/0x104
-[<2f3702c6>] __warn+0x118/0x120
-[<ae93fc9e>] warn_slowpath_null+0x44/0x58
-[<a891a517>] hcd_alloc_coherent+0x4c/0xc8
-[<3578fa36>] usb_hcd_map_urb_for_dma+0x4d8/0x534
-[<110bc94c>] usb_hcd_submit_urb+0x82c/0x834
-[<02eb5baf>] usb_sg_wait+0x14c/0x1a0
-[<ccd09e85>] usb_stor_bulk_transfer_sglist.part.1+0xac/0x124
-[<87a5c34c>] usb_stor_bulk_srb+0x40/0x60
-[<ff1792ac>] usb_stor_Bulk_transport+0x160/0x37c
-[<b9e2709c>] usb_stor_invoke_transport+0x3c/0x500
-[<004754f4>] usb_stor_control_thread+0x258/0x28c
-[<22edf42e>] kthread+0x134/0x13c
-[<a419ffd0>] ret_from_kernel_thread+0x14/0x1c
----[ end trace bcdb825805eefdcc ]---
-
-Signed-off-by: Fredrik Noring <noring@nocrew.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
-
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/ohci-hcd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/r8152.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -444,7 +444,8 @@ static int ohci_init (struct ohci_hcd *o
- 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -1610,7 +1610,7 @@ static int r8152_tx_agg_fill(struct r815
  
- 	/* Accept arbitrarily long scatter-gather lists */
--	hcd->self.sg_tablesize = ~0;
-+	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+		hcd->self.sg_tablesize = ~0;
+ 		tx_data += len;
+ 		agg->skb_len += len;
+-		agg->skb_num++;
++		agg->skb_num += skb_shinfo(skb)->gso_segs ?: 1;
  
- 	if (distrust_firmware)
- 		ohci->flags |= OHCI_QUIRK_HUB_POWER;
+ 		dev_kfree_skb_any(skb);
+ 
