@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165269AbeE1NQi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:16:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39680 "EHLO mail.kernel.org"
+        id S1165256AbeE1NQf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:16:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163630AbeE1KuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:07 -0400
+        id S1163598AbeE1KuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 199/496] scsi: core: return BLK_STS_OK for DID_OK in __scsi_error_from_host_byte()
-Date: Mon, 28 May 2018 11:59:44 +0200
-Message-Id: <20180528100328.325324152@linuxfoundation.org>
+Subject: [PATCH 4.14 200/496] net: ethtool: dont ignore return from driver get_fecparam method
+Date: Mon, 28 May 2018 11:59:45 +0200
+Message-Id: <20180528100328.363581006@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +30,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hannes Reinecke <hare@suse.de>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit e39a97353e5378eb46bf01679799c5704d397f32 ]
+[ Upstream commit a6d50512b4d86ecd9f5952525e454583be1c3b14 ]
 
-When converting __scsi_error_from_host_byte() to BLK_STS error codes the
-case DID_OK was forgotten, resulting in it always returning an error.
+If ethtool_ops->get_fecparam returns an error, pass that error on to the
+ user, rather than ignoring it.
 
-Fixes: 2a842acab109 ("block: introduce new block status code type")
-Cc: Doug Gilbert <dgilbert@interlog.com>
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1a5f3da20bd9 ("net: ethtool: add support for forward error correction modes")
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_lib.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/core/ethtool.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -720,6 +720,8 @@ static blk_status_t __scsi_error_from_ho
- 		int result)
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -2505,11 +2505,14 @@ static int set_phy_tunable(struct net_de
+ static int ethtool_get_fecparam(struct net_device *dev, void __user *useraddr)
  {
- 	switch (host_byte(result)) {
-+	case DID_OK:
-+		return BLK_STS_OK;
- 	case DID_TRANSPORT_FAILFAST:
- 		return BLK_STS_TRANSPORT;
- 	case DID_TARGET_FAILURE:
+ 	struct ethtool_fecparam fecparam = { ETHTOOL_GFECPARAM };
++	int rc;
+ 
+ 	if (!dev->ethtool_ops->get_fecparam)
+ 		return -EOPNOTSUPP;
+ 
+-	dev->ethtool_ops->get_fecparam(dev, &fecparam);
++	rc = dev->ethtool_ops->get_fecparam(dev, &fecparam);
++	if (rc)
++		return rc;
+ 
+ 	if (copy_to_user(useraddr, &fecparam, sizeof(fecparam)))
+ 		return -EFAULT;
