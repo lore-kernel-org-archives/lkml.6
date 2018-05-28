@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164866AbeE1LBs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:01:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49180 "EHLO mail.kernel.org"
+        id S1422788AbeE1LB4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:01:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422751AbeE1LBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:43 -0400
+        id S1164868AbeE1LBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Govindarajulu Varadarajan <gvaradar@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Lionel Debieve <lionel.debieve@st.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 447/496] enic: enable rq before updating rq descriptors
-Date: Mon, 28 May 2018 12:03:52 +0200
-Message-Id: <20180528100338.721045997@linuxfoundation.org>
+Subject: [PATCH 4.14 449/496] hwrng: stm32 - add reset during probe
+Date: Mon, 28 May 2018 12:03:54 +0200
+Message-Id: <20180528100338.807420884@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,52 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Govindarajulu Varadarajan <gvaradar@cisco.com>
+From: "lionel.debieve@st.com" <lionel.debieve@st.com>
 
-[ Upstream commit e8588e268509292550634d9a35f2723a207683b2 ]
+[ Upstream commit 326ed382256475aa4b8b7eae8a2f60689fd25e78 ]
 
-rq should be enabled before posting the buffers to rq desc. If not hw sees
-stale value and casuses DMAR errors.
+Avoid issue when probing the RNG without
+reset if bad status has been detected previously
 
-Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cisco/enic/enic_main.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/char/hw_random/stm32-rng.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -1897,6 +1897,8 @@ static int enic_open(struct net_device *
- 	}
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
  
- 	for (i = 0; i < enic->rq_count; i++) {
-+		/* enable rq before updating rq desc */
-+		vnic_rq_enable(&enic->rq[i]);
- 		vnic_rq_fill(&enic->rq[i], enic_rq_alloc_buf);
- 		/* Need at least one buffer on ring to get going */
- 		if (vnic_rq_desc_used(&enic->rq[i]) == 0) {
-@@ -1908,8 +1910,6 @@ static int enic_open(struct net_device *
+ #define RNG_CR 0x00
+@@ -46,6 +47,7 @@ struct stm32_rng_private {
+ 	struct hwrng rng;
+ 	void __iomem *base;
+ 	struct clk *clk;
++	struct reset_control *rst;
+ };
  
- 	for (i = 0; i < enic->wq_count; i++)
- 		vnic_wq_enable(&enic->wq[i]);
--	for (i = 0; i < enic->rq_count; i++)
--		vnic_rq_enable(&enic->rq[i]);
+ static int stm32_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
+@@ -140,6 +142,13 @@ static int stm32_rng_probe(struct platfo
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
  
- 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
- 		enic_dev_add_station_addr(enic);
-@@ -1935,8 +1935,12 @@ static int enic_open(struct net_device *
- 	return 0;
- 
- err_out_free_rq:
--	for (i = 0; i < enic->rq_count; i++)
-+	for (i = 0; i < enic->rq_count; i++) {
-+		err = vnic_rq_disable(&enic->rq[i]);
-+		if (err)
-+			return err;
- 		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
++	priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
++	if (!IS_ERR(priv->rst)) {
++		reset_control_assert(priv->rst);
++		udelay(2);
++		reset_control_deassert(priv->rst);
 +	}
- 	enic_dev_notify_unset(enic);
- err_out_free_intr:
- 	enic_unset_affinity_hint(enic);
++
+ 	dev_set_drvdata(dev, priv);
+ 
+ 	priv->rng.name = dev_driver_string(dev),
