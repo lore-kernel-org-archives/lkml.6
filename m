@@ -1,21 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422852AbeE1LCs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50030 "EHLO mail.kernel.org"
+        id S1422866AbeE1LCy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:02:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164711AbeE1LCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:42 -0400
+        id S1422848AbeE1LCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 453/496] dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
-Date: Mon, 28 May 2018 12:03:58 +0200
-Message-Id: <20180528100338.994216519@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 472/496] rcu: Call touch_nmi_watchdog() while printing stall warnings
+Date: Mon, 28 May 2018 12:04:17 +0200
+Message-Id: <20180528100339.800219768@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,77 +28,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 48d163b1aa6e7f650c0b7a4f9c61c387a6def868 ]
+[ Upstream commit 3caa973b7a260e7a2a69edc94c300ab9c65148c3 ]
 
-When Linux is master of BAM, it can directly read registers to know number
-of supported channels, however when its remotely controlled reading these
-registers would trigger a crash if the BAM is not yet initialized or
-powered up on the remote side.
+When RCU stall warning triggers, it can print out a lot of messages
+while holding spinlocks.  If the console device is slow (e.g. an
+actual or IPMI serial console), it may end up triggering NMI hard
+lockup watchdog like the following.
 
-This patch allows driver to read num-channels and num-ees from Device Tree
-for remotely controlled BAM.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/qcom/bam_dma.c |   27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+ kernel/rcu/tree_plugin.h |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -388,6 +388,7 @@ struct bam_device {
- 	struct device_dma_parameters dma_parms;
- 	struct bam_chan *channels;
- 	u32 num_channels;
-+	u32 num_ees;
- 
- 	/* execution environment ID, from DT */
- 	u32 ee;
-@@ -1080,15 +1081,19 @@ static int bam_init(struct bam_device *b
- 	u32 val;
- 
- 	/* read revision and configuration information */
--	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION)) >> NUM_EES_SHIFT;
--	val &= NUM_EES_MASK;
-+	if (!bdev->num_ees) {
-+		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
-+		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -559,8 +559,14 @@ static void rcu_print_detail_task_stall_
+ 	}
+ 	t = list_entry(rnp->gp_tasks->prev,
+ 		       struct task_struct, rcu_node_entry);
+-	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry)
++	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
++		/*
++		 * We could be printing a lot while holding a spinlock.
++		 * Avoid triggering hard lockup.
++		 */
++		touch_nmi_watchdog();
+ 		sched_show_task(t);
 +	}
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ }
  
- 	/* check that configured EE is within range */
--	if (bdev->ee >= val)
-+	if (bdev->ee >= bdev->num_ees)
- 		return -EINVAL;
+@@ -1677,6 +1683,12 @@ static void print_cpu_stall_info(struct
+ 	char *ticks_title;
+ 	unsigned long ticks_value;
  
--	val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
--	bdev->num_channels = val & BAM_NUM_PIPES_MASK;
-+	if (!bdev->num_channels) {
-+		val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
-+		bdev->num_channels = val & BAM_NUM_PIPES_MASK;
-+	}
- 
- 	if (bdev->controlled_remotely)
- 		return 0;
-@@ -1183,6 +1188,18 @@ static int bam_dma_probe(struct platform
- 	bdev->controlled_remotely = of_property_read_bool(pdev->dev.of_node,
- 						"qcom,controlled-remotely");
- 
-+	if (bdev->controlled_remotely) {
-+		ret = of_property_read_u32(pdev->dev.of_node, "num-channels",
-+					   &bdev->num_channels);
-+		if (ret)
-+			dev_err(bdev->dev, "num-channels unspecified in dt\n");
++	/*
++	 * We could be printing a lot while holding a spinlock.  Avoid
++	 * triggering hard lockup.
++	 */
++	touch_nmi_watchdog();
 +
-+		ret = of_property_read_u32(pdev->dev.of_node, "qcom,num-ees",
-+					   &bdev->num_ees);
-+		if (ret)
-+			dev_err(bdev->dev, "num-ees unspecified in dt\n");
-+	}
-+
- 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
- 	if (IS_ERR(bdev->bamclk))
- 		return PTR_ERR(bdev->bamclk);
+ 	if (rsp->gpnum == rdp->gpnum) {
+ 		ticks_title = "ticks this GP";
+ 		ticks_value = rdp->ticks_this_gp;
