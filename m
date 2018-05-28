@@ -1,96 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034397AbeE1PZx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:25:53 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38138 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034304AbeE1PZs (ORCPT
+        id S1034408AbeE1P0L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:26:11 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:52000 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033355AbeE1P0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:25:48 -0400
-X-Google-Smtp-Source: ADUXVKJ7r1+txHjSTfTCSpgBZFW1x3/ZFQnTUkVOU+068GEgyZ1q6i2GOMMF/J2EY36Tl8FCXkuKMkYJvnufqvasBuo=
-MIME-Version: 1.0
-In-Reply-To: <CAOf5uw=mPOgngZW8UcPfvtxH+5nCR-36ovjYPH7AvO99y1M_xA@mail.gmail.com>
-References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
- <5B0BD13D.8000809@broadcom.com> <CAOf5uw=mPOgngZW8UcPfvtxH+5nCR-36ovjYPH7AvO99y1M_xA@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 28 May 2018 18:25:46 +0300
-Message-ID: <CAHp75VcC_cisfVTKU0bVm3+=NFLt3P0EkXh3uC4hWCA7y_7G3w@mail.gmail.com>
-Subject: Re: [PATCH] brcmfmac: stop watchdog before detach and free everything
-To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Ian Molton <ian@mnementh.co.uk>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER"
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        brcm80211-dev-list@cypress.com, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 May 2018 11:26:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3] vfio: platform: Fix using devices in PM Domains
+Date: Mon, 28 May 2018 17:26:05 +0200
+Message-Id: <1527521165-29345-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 12:54 PM, Michael Nazzareno Trimarchi
-<michael@amarulasolutions.com> wrote:
-> Hi Arend
->
-> On Mon, May 28, 2018 at 11:51 AM, Arend van Spriel
-> <arend.vanspriel@broadcom.com> wrote:
->> On 5/28/2018 9:50 AM, Michael Trimarchi wrote:
->>>
->>> Watchdog need to be stopped in brcmf_sdio_remove to avoid
->>> i
->>> The system is going down NOW!
->>> [ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual
->>> address 000002f8
->>> Sent SIGTERM to all processes
->>> [ 1348.121412] Mem abort info:
->>> [ 1348.126962]   ESR = 0x96000004
->>> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
->>> [ 1348.135948]   SET = 0, FnV = 0
->>> [ 1348.138997]   EA = 0, S1PTW = 0
->>> [ 1348.142154] Data abort info:
->>> [ 1348.145045]   ISV = 0, ISS = 0x00000004
->>> [ 1348.148884]   CM = 0, WnR = 0
->>> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
->>> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
->>> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
->>> [ 1348.168927] Modules linked in: ipv6
->>> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted
->>> 4.17.0-rc5-next-20180517 #18
->>> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
->>> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
->>> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
->>> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
->>
->>
->> Hi Michael,
->>
->> Thanks for the patch. In normal scenario the callstack looks like this:
->>
->> brcmf_sdio_remove()
->>         -> brcmf_detach()
->>                 -> brcmf_bus_stop()
->>                         -> brcmf_sdio_bus_stop()
->>
->> In brcmf_sdio_bus_stop() the watchdog is terminated. So in what scenario did
->> you encounter this null pointer deref?
->
-> Is this happen even when there is not wifi firmware?
-> boot without any firmware in the filesystem and then trigger a reboot
+If a device is part of a PM Domain (e.g. power and/or clock domain), its
+power state is managed using Runtime PM.  Without Runtime PM, the device
+may not be powered up or clocked, causing subtle failures, crashes, or
+system lock-ups when the device is accessed by the guest.
 
-Something like the above I had noticed for a long (couple of kernel
-releases?) time, but wasn't a big priority to me.
-Though, I can test this on my side.
+Fix this by adding Runtime PM support, powering the device when the VFIO
+device is opened by the guest.
 
-P.S. I think rmmod or echo > unbind will trigger that as well.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3:
+  - Drop controversial note about unsafeness of exporting fine-grained
+    power management from host to guest,
 
+v2:
+  - Improve wording,
+  - Add Reviewed-by.
+---
+ drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+index b60bb5326668498c..41f862f055054543 100644
+--- a/drivers/vfio/platform/vfio_platform_common.c
++++ b/drivers/vfio/platform/vfio_platform_common.c
+@@ -17,6 +17,7 @@
+ #include <linux/iommu.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
+@@ -233,6 +234,8 @@ static void vfio_platform_release(void *device_data)
+ 		const char *extra_dbg = NULL;
+ 		int ret;
+ 
++		pm_runtime_put(vdev->device);
++
+ 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
+ 		if (ret && vdev->reset_required) {
+ 			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
+@@ -275,6 +278,10 @@ static int vfio_platform_open(void *device_data)
+ 				 ret, extra_dbg ? extra_dbg : "");
+ 			goto err_rst;
+ 		}
++
++		ret = pm_runtime_get_sync(vdev->device);
++		if (ret < 0)
++			goto err_rst;
+ 	}
+ 
+ 	vdev->refcnt++;
+@@ -690,6 +697,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+ 
+ 	mutex_init(&vdev->igate);
+ 
++	pm_runtime_enable(vdev->device);
+ 	return 0;
+ 
+ put_iommu:
+@@ -707,6 +715,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
+ 	vdev = vfio_del_group_dev(dev);
+ 
+ 	if (vdev) {
++		pm_runtime_disable(vdev->device);
+ 		vfio_platform_put_reset(vdev);
+ 		vfio_iommu_group_put(dev->iommu_group, dev);
+ 	}
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
