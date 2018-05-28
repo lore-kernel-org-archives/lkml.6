@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031480AbeE1KSE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38080 "EHLO mail.kernel.org"
+        id S968740AbeE1KSP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:18:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031192AbeE1KR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:56 -0400
+        id S1031483AbeE1KSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 089/268] mac80211: round IEEE80211_TX_STATUS_HEADROOM up to multiple of 4
-Date: Mon, 28 May 2018 12:01:03 +0200
-Message-Id: <20180528100212.269092817@linuxfoundation.org>
+Subject: [PATCH 4.4 092/268] drm/exynos: g2d: Delete an error message for a failed memory allocation in two functions
+Date: Mon, 28 May 2018 12:01:06 +0200
+Message-Id: <20180528100212.619900234@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,33 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-[ Upstream commit 651b9920d7a694ffb1f885aef2bbb068a25d9d66 ]
+[ Upstream commit 6f0a60298bbbea43ab5e3955913ab19c153076f3 ]
 
-This ensures that mac80211 allocated management frames are properly
-aligned, which makes copying them more efficient.
-For instance, mt76 uses iowrite32_copy to copy beacon frames to beacon
-template memory on the chip.
-Misaligned 32-bit accesses cause CPU exceptions on MIPS and should be
-avoided.
+Omit an extra message for a memory allocation failure in these functions.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/mac80211.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/include/net/mac80211.h
-+++ b/include/net/mac80211.h
-@@ -3898,7 +3898,7 @@ static inline int ieee80211_sta_ps_trans
-  * The TX headroom reserved by mac80211 for its own tx_status functions.
-  * This is enough for the radiotap header.
-  */
--#define IEEE80211_TX_STATUS_HEADROOM	14
-+#define IEEE80211_TX_STATUS_HEADROOM	ALIGN(14, 4)
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -270,7 +270,6 @@ static int g2d_init_cmdlist(struct g2d_d
  
- /**
-  * ieee80211_sta_set_buffered - inform mac80211 about driver-buffered frames
+ 	node = kcalloc(G2D_CMDLIST_NUM, sizeof(*node), GFP_KERNEL);
+ 	if (!node) {
+-		dev_err(dev, "failed to allocate memory\n");
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -1254,10 +1253,9 @@ int exynos_g2d_exec_ioctl(struct drm_dev
+ 		return -EFAULT;
+ 
+ 	runqueue_node = kmem_cache_alloc(g2d->runqueue_slab, GFP_KERNEL);
+-	if (!runqueue_node) {
+-		dev_err(dev, "failed to allocate memory\n");
++	if (!runqueue_node)
+ 		return -ENOMEM;
+-	}
++
+ 	run_cmdlist = &runqueue_node->run_cmdlist;
+ 	event_list = &runqueue_node->event_list;
+ 	INIT_LIST_HEAD(run_cmdlist);
