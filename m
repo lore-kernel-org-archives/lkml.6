@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033449AbeE1PUo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41098 "EHLO mail.kernel.org"
+        id S1033520AbeE1PVA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:21:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033349AbeE1KVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:37 -0400
+        id S1033343AbeE1KVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
+        stable@vger.kernel.org, Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 168/268] mm: fix races between address_space dereference and free in page_evicatable
-Date: Mon, 28 May 2018 12:02:22 +0200
-Message-Id: <20180528100221.430999707@linuxfoundation.org>
+Subject: [PATCH 4.4 167/268] mm/ksm: fix interaction with THP
+Date: Mon, 28 May 2018 12:02:21 +0200
+Message-Id: <20180528100221.317780826@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,76 +36,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huang Ying <ying.huang@intel.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-[ Upstream commit e92bb4dd9673945179b1fc738c9817dd91bfb629 ]
+[ Upstream commit 77da2ba0648a4fd52e5ff97b8b2b8dd312aec4b0 ]
 
-When page_mapping() is called and the mapping is dereferenced in
-page_evicatable() through shrink_active_list(), it is possible for the
-inode to be truncated and the embedded address space to be freed at the
-same time.  This may lead to the following race.
+This patch fixes a corner case for KSM.  When two pages belong or
+belonged to the same transparent hugepage, and they should be merged,
+KSM fails to split the page, and therefore no merging happens.
 
-CPU1                                                CPU2
+This bug can be reproduced by:
+* making sure ksm is running (in case disabling ksmtuned)
+* enabling transparent hugepages
+* allocating a THP-aligned 1-THP-sized buffer
+  e.g. on amd64: posix_memalign(&p, 1<<21, 1<<21)
+* filling it with the same values
+  e.g. memset(p, 42, 1<<21)
+* performing madvise to make it mergeable
+  e.g. madvise(p, 1<<21, MADV_MERGEABLE)
+* waiting for KSM to perform a few scans
 
-truncate(inode)                                     shrink_active_list()
-  ...                                                 page_evictable(page)
-  truncate_inode_page(mapping, page);
-    delete_from_page_cache(page)
-      spin_lock_irqsave(&mapping->tree_lock, flags);
-        __delete_from_page_cache(page, NULL)
-          page_cache_tree_delete(..)
-            ...                                         mapping = page_mapping(page);
-            page->mapping = NULL;
-            ...
-      spin_unlock_irqrestore(&mapping->tree_lock, flags);
-      page_cache_free_page(mapping, page)
-        put_page(page)
-          if (put_page_testzero(page)) -> false
-- inode now has no pages and can be freed including embedded address_space
+The expected outcome is that the all the pages get merged (1 shared and
+the rest sharing); the actual outcome is that no pages get merged (1
+unshared and the rest volatile)
 
-                                                        mapping_unevictable(mapping)
-							  test_bit(AS_UNEVICTABLE, &mapping->flags);
-- we've dereferenced mapping which is potentially already free.
+The reason of this behaviour is that we increase the reference count
+once for both pages we want to merge, but if they belong to the same
+hugepage (or compound page), the reference counter used in both cases is
+the one of the head of the compound page.  This means that
+split_huge_page will find a value of the reference counter too high and
+will fail.
 
-Similar race exists between swap cache freeing and page_evicatable()
-too.
+This patch solves this problem by testing if the two pages to merge
+belong to the same hugepage when attempting to merge them.  If so, the
+hugepage is split safely.  This means that the hugepage is not split if
+not necessary.
 
-The address_space in inode and swap cache will be freed after a RCU
-grace period.  So the races are fixed via enclosing the page_mapping()
-and address_space usage in rcu_read_lock/unlock().  Some comments are
-added in code to make it clear what is protected by the RCU read lock.
-
-Link: http://lkml.kernel.org/r/20180212081227.1940-1-ying.huang@intel.com
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Link: http://lkml.kernel.org/r/1521548069-24758-1-git-send-email-imbrenda@linux.vnet.ibm.com
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Co-authored-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Minchan Kim <minchan@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmscan.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ mm/ksm.c |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3841,7 +3841,13 @@ int zone_reclaim(struct zone *zone, gfp_
-  */
- int page_evictable(struct page *page)
- {
--	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	int ret;
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1494,8 +1494,22 @@ static void cmp_and_merge_page(struct pa
+ 	tree_rmap_item =
+ 		unstable_tree_search_insert(rmap_item, page, &tree_page);
+ 	if (tree_rmap_item) {
++		bool split;
 +
-+	/* Prevent address_space of inode and swap cache from being freed */
-+	rcu_read_lock();
-+	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	rcu_read_unlock();
-+	return ret;
+ 		kpage = try_to_merge_two_pages(rmap_item, page,
+ 						tree_rmap_item, tree_page);
++		/*
++		 * If both pages we tried to merge belong to the same compound
++		 * page, then we actually ended up increasing the reference
++		 * count of the same compound page twice, and split_huge_page
++		 * failed.
++		 * Here we set a flag if that happened, and we use it later to
++		 * try split_huge_page again. Since we call put_page right
++		 * afterwards, the reference count will be correct and
++		 * split_huge_page should succeed.
++		 */
++		split = PageTransCompound(page)
++			&& compound_head(page) == compound_head(tree_page);
+ 		put_page(tree_page);
+ 		if (kpage) {
+ 			/*
+@@ -1520,6 +1534,20 @@ static void cmp_and_merge_page(struct pa
+ 				break_cow(tree_rmap_item);
+ 				break_cow(rmap_item);
+ 			}
++		} else if (split) {
++			/*
++			 * We are here if we tried to merge two pages and
++			 * failed because they both belonged to the same
++			 * compound page. We will split the page now, but no
++			 * merging will take place.
++			 * We do not want to add the cost of a full lock; if
++			 * the page is locked, it is better to skip it and
++			 * perhaps try again later.
++			 */
++			if (!trylock_page(page))
++				return;
++			split_huge_page(page);
++			unlock_page(page);
+ 		}
+ 	}
  }
- 
- #ifdef CONFIG_SHMEM
