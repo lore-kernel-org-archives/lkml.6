@@ -1,21 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162445AbeE1OOT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:14:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
+        id S1162229AbeE1Kgl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:36:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162243AbeE1Kgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:47 -0400
+        id S1161996AbeE1Kge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Hugh Dickins <hughd@google.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nadav Amit <namit@vmware.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 236/329] cpufreq: CPPC: Initialize shared perf capabilities of CPUs
-Date: Mon, 28 May 2018 12:02:45 +0200
-Message-Id: <20180528100301.711742031@linuxfoundation.org>
+Subject: [PATCH 4.9 231/329] x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
+Date: Mon, 28 May 2018 12:02:40 +0200
+Message-Id: <20180528100301.329900202@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,51 +41,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit 8913315e9459b146e5888ab5138e10daa061b885 ]
+[ Upstream commit 639d6aafe437a7464399d2a77d006049053df06f ]
 
-When multiple CPUs are related in one cpufreq policy, the first online
-CPU will be chosen by default to handle cpufreq operations. Let's take
-cpu0 and cpu1 as an example.
+__ro_after_init data gets stuck in the .rodata section.  That's normally
+fine because the kernel itself manages the R/W properties.
 
-When cpu0 is offline, policy->cpu will be shifted to cpu1. cpu1's perf
-capabilities should be initialized. Otherwise, perf capabilities are 0s
-and speed change can not take effect.
+But, if we run __change_page_attr() on an area which is __ro_after_init,
+the .rodata checks will trigger and force the area to be immediately
+read-only, even if it is early-ish in boot.  This caused problems when
+trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
+it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
+to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
+a __ro_after_init data structure.
 
-This patch copies perf capabilities of the first online CPU to other
-shared CPUs when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+To fix this, add the kernel_set_to_readonly check, just like we have
+for kernel text, just a few lines below in this function.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180406205514.8D898241@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/x86/mm/pageattr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -151,9 +151,19 @@ static int cppc_cpufreq_cpu_init(struct
- 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
- 	policy->shared_type = cpu->shared_type;
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -279,9 +279,11 @@ static inline pgprot_t static_protection
  
--	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-+	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-+		int i;
-+
- 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
--	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
-+
-+		for_each_cpu(i, policy->cpus) {
-+			if (unlikely(i == policy->cpu))
-+				continue;
-+
-+			memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
-+			       sizeof(cpu->perf_caps));
-+		}
-+	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
- 		/* Support only SW_ANY for now. */
- 		pr_debug("Unsupported CPU co-ord type\n");
- 		return -EFAULT;
+ 	/*
+ 	 * The .rodata section needs to be read-only. Using the pfn
+-	 * catches all aliases.
++	 * catches all aliases.  This also includes __ro_after_init,
++	 * so do not enforce until kernel_set_to_readonly is true.
+ 	 */
+-	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
++	if (kernel_set_to_readonly &&
++	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
+ 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
+ 		pgprot_val(forbidden) |= _PAGE_RW;
+ 
