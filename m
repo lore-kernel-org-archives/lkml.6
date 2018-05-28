@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968636AbeE1KRH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37142 "EHLO mail.kernel.org"
+        id S968568AbeE1KQq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:16:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966814AbeE1KRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:00 -0400
+        id S966476AbeE1KQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 067/268] bcache: fix for data collapse after re-attaching an attached device
-Date: Mon, 28 May 2018 12:00:41 +0200
-Message-Id: <20180528100209.453131120@linuxfoundation.org>
+Subject: [PATCH 4.4 043/268] powerpc/numa: Ensure nodes initialized for hotplug
+Date: Mon, 28 May 2018 12:00:17 +0200
+Message-Id: <20180528100206.920580418@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,119 +31,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
+[ Upstream commit ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6 ]
 
-back-end device sdm has already attached a cache_set with ID
-f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
-another cache set, and it returns with an error:
-[root]# cd /sys/block/sdm/bcache
-[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
--bash: echo: write error: Invalid argument
+This patch fixes some problems encountered at runtime with
+configurations that support memory-less nodes, or that hot-add CPUs
+into nodes that are memoryless during system execution after boot. The
+problems of interest include:
 
-After that, execute a command to modify the label of bcache
-device:
-[root]# echo data_disk1 > label
+* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
+  them are allowed to be 'possible' and 'online'. Memory allocations
+  for those nodes are taken from another node that does have memory
+  until and if memory is hot-added to the node.
 
-Then we reboot the system, when the system power on, the back-end
-device can not attach to cache_set, a messages show in the log:
-Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
-bch_cached_dev_attach() couldn't find uuid for sdm in set
+* Nodes which have no resources assigned at boot, but which may still
+  be referenced subsequently by affinity or associativity attributes,
+  are kept in the list of 'possible' nodes for powerpc. Hot-add of
+  memory or CPUs to the system can reference these nodes and bring
+  them online instead of redirecting the references to one of the set
+  of nodes known to have memory at boot.
 
-In sysfs_attach(), dc->sb.set_uuid was assigned to the value
-which input through sysfs, no matter whether it is success
-or not in bch_cached_dev_attach(). For example, If the back-end
-device has already attached to an cache set, bch_cached_dev_attach()
-would fail, but dc->sb.set_uuid was changed. Then modify the
-label of bcache device, it will call bch_write_bdev_super(),
-which would write the dc->sb.set_uuid to the super block, so we
-record a wrong cache set ID in the super block, after the system
-reboot, the cache set couldn't find the uuid of the back-end
-device, so the bcache device couldn't exist and use any more.
+Note that this software operates under the context of CPU hotplug. We
+are not doing memory hotplug in this code, but rather updating the
+kernel's CPU topology (i.e. arch_update_cpu_topology /
+numa_update_cpu_topology). We are initializing a node that may be used
+by CPUs or memory before it can be referenced as invalid by a CPU
+hotplug operation. CPU hotplug operations are protected by a range of
+APIs including cpu_maps_update_begin/cpu_maps_update_done,
+cpus_read/write_lock / cpus_read/write_unlock, device locks, and more.
+Memory hotplug operations, including try_online_node, are protected by
+mem_hotplug_begin/mem_hotplug_done, device locks, and more. In the
+case of CPUs being hot-added to a previously memoryless node, the
+try_online_node operation occurs wholly within the CPU locks with no
+overlap. Using HMC hot-add/hot-remove operations, we have been able to
+add and remove CPUs to any possible node without failures. HMC
+operations involve a degree self-serialization, though.
 
-In this patch, we don't assigned cache set ID to dc->sb.set_uuid
-in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
-and assigned dc->sb.set_uuid to the cache set ID after the back-end
-device attached to the cache set successful.
-
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/bcache.h |    2 +-
- drivers/md/bcache/super.c  |   10 ++++++----
- drivers/md/bcache/sysfs.c  |    6 ++++--
- 3 files changed, 11 insertions(+), 7 deletions(-)
+ arch/powerpc/mm/numa.c |   47 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -904,7 +904,7 @@ void bcache_write_super(struct cache_set
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -551,7 +551,7 @@ static int numa_setup_cpu(unsigned long
+ 	nid = of_node_to_nid_single(cpu);
  
- int bch_flash_dev_create(struct cache_set *c, uint64_t size);
+ out_present:
+-	if (nid < 0 || !node_online(nid))
++	if (nid < 0 || !node_possible(nid))
+ 		nid = first_online_node;
  
--int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
-+int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
- void bch_cached_dev_detach(struct cached_dev *);
- void bch_cached_dev_run(struct cached_dev *);
- void bcache_device_stop(struct bcache_device *);
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -936,7 +936,8 @@ void bch_cached_dev_detach(struct cached
- 	cached_dev_put(dc);
- }
+ 	map_cpu_to_node(lcpu, nid);
+@@ -969,10 +969,8 @@ static void __init find_possible_nodes(v
+ 		goto out;
  
--int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
-+int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
-+			  uint8_t *set_uuid)
- {
- 	uint32_t rtime = cpu_to_le32(get_seconds());
- 	struct uuid_entry *u;
-@@ -945,7 +946,8 @@ int bch_cached_dev_attach(struct cached_
- 
- 	bdevname(dc->bdev, buf);
- 
--	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
-+	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
-+	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
- 		return -ENOENT;
- 
- 	if (dc->disk.c) {
-@@ -1189,7 +1191,7 @@ static void register_bdev(struct cache_s
- 
- 	list_add(&dc->list, &uncached_devices);
- 	list_for_each_entry(c, &bch_cache_sets, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
- 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
-@@ -1711,7 +1713,7 @@ static void run_cache_set(struct cache_s
- 	bcache_write_super(c);
- 
- 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	flash_devs_run(c);
- 
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -263,11 +263,13 @@ STORE(__cached_dev)
+ 	for (i = 0; i < numnodes; i++) {
+-		if (!node_possible(i)) {
+-			setup_node_data(i, 0, 0);
++		if (!node_possible(i))
+ 			node_set(i, node_possible_map);
+-		}
  	}
  
- 	if (attr == &sysfs_attach) {
--		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
-+		uint8_t		set_uuid[16];
-+
-+		if (bch_parse_uuid(buf, set_uuid) < 16)
- 			return -EINVAL;
+ out:
+@@ -1335,6 +1333,40 @@ static long vphn_get_associativity(unsig
+ 	return rc;
+ }
  
- 		list_for_each_entry(c, &bch_cache_sets, list) {
--			v = bch_cached_dev_attach(dc, c);
-+			v = bch_cached_dev_attach(dc, c, set_uuid);
- 			if (!v)
- 				return size;
++static inline int find_and_online_cpu_nid(int cpu)
++{
++	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
++	int new_nid;
++
++	/* Use associativity from first thread for all siblings */
++	vphn_get_associativity(cpu, associativity);
++	new_nid = associativity_to_nid(associativity);
++	if (new_nid < 0 || !node_possible(new_nid))
++		new_nid = first_online_node;
++
++	if (NODE_DATA(new_nid) == NULL) {
++#ifdef CONFIG_MEMORY_HOTPLUG
++		/*
++		 * Need to ensure that NODE_DATA is initialized for a node from
++		 * available memory (see memblock_alloc_try_nid). If unable to
++		 * init the node, then default to nearest node that has memory
++		 * installed.
++		 */
++		if (try_online_node(new_nid))
++			new_nid = first_online_node;
++#else
++		/*
++		 * Default to using the nearest node that has memory installed.
++		 * Otherwise, it would be necessary to patch the kernel MM code
++		 * to deal with more memoryless-node error conditions.
++		 */
++		new_nid = first_online_node;
++#endif
++	}
++
++	return new_nid;
++}
++
+ /*
+  * Update the CPU maps and sysfs entries for a single CPU when its NUMA
+  * characteristics change. This function doesn't perform any locking and is
+@@ -1400,7 +1432,6 @@ int arch_update_cpu_topology(void)
+ {
+ 	unsigned int cpu, sibling, changed = 0;
+ 	struct topology_update_data *updates, *ud;
+-	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
+ 	cpumask_t updated_cpus;
+ 	struct device *dev;
+ 	int weight, new_nid, i = 0;
+@@ -1435,11 +1466,7 @@ int arch_update_cpu_topology(void)
+ 			continue;
  		}
+ 
+-		/* Use associativity from first thread for all siblings */
+-		vphn_get_associativity(cpu, associativity);
+-		new_nid = associativity_to_nid(associativity);
+-		if (new_nid < 0 || !node_online(new_nid))
+-			new_nid = first_online_node;
++		new_nid = find_and_online_cpu_nid(cpu);
+ 
+ 		if (new_nid == numa_cpu_lookup_table[cpu]) {
+ 			cpumask_andnot(&cpu_associativity_changes_mask,
