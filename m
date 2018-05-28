@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937648AbeE1KoM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:44:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34944 "EHLO mail.kernel.org"
+        id S968910AbeE1KoT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:44:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937443AbeE1KoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:05 -0400
+        id S932469AbeE1KoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>,
         Shuah Khan <shuahkh@osg.samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/496] selftests: pstore: Adding config fragment CONFIG_PSTORE_RAM=m
-Date: Mon, 28 May 2018 11:57:31 +0200
-Message-Id: <20180528100322.576713645@linuxfoundation.org>
+Subject: [PATCH 4.14 065/496] selftest/vDSO: fix O=
+Date: Mon, 28 May 2018 11:57:30 +0200
+Message-Id: <20180528100322.534702946@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,25 +30,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-[ Upstream commit 9a379e77033f02c4a071891afdf0f0a01eff8ccb ]
+[ Upstream commit 70b574e7d719bdf96d26528cb289f3e782e83979 ]
 
-pstore_tests and pstore_post_reboot_tests need CONFIG_PSTORE_RAM=m
+The vDSO selftests ignored the O= or KBUILD_OUTPUT= parameters. Fix it.
 
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/pstore/config |    1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/vDSO/Makefile |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/tools/testing/selftests/pstore/config
-+++ b/tools/testing/selftests/pstore/config
-@@ -2,3 +2,4 @@ CONFIG_MISC_FILESYSTEMS=y
- CONFIG_PSTORE=y
- CONFIG_PSTORE_PMSG=y
- CONFIG_PSTORE_CONSOLE=y
-+CONFIG_PSTORE_RAM=m
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
++include ../lib.mk
++
+ ifndef CROSS_COMPILE
+ CFLAGS := -std=gnu99
+ CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
+@@ -6,16 +8,14 @@ ifeq ($(CONFIG_X86_32),y)
+ LDLIBS += -lgcc_s
+ endif
+ 
+-TEST_PROGS := vdso_test vdso_standalone_test_x86
++TEST_PROGS := $(OUTPUT)/vdso_test $(OUTPUT)/vdso_standalone_test_x86
+ 
+ all: $(TEST_PROGS)
+-vdso_test: parse_vdso.c vdso_test.c
+-vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
++$(OUTPUT)/vdso_test: parse_vdso.c vdso_test.c
++$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
+ 	$(CC) $(CFLAGS) $(CFLAGS_vdso_standalone_test_x86) \
+ 		vdso_standalone_test_x86.c parse_vdso.c \
+-		-o vdso_standalone_test_x86
++		-o $@
+ 
+-include ../lib.mk
+-clean:
+-	rm -fr $(TEST_PROGS)
++EXTRA_CLEAN := $(TEST_PROGS)
+ endif
