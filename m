@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424877AbeE1Lqz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:46:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58796 "EHLO mail.kernel.org"
+        id S1423943AbeE1LKo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:10:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423950AbeE1LKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:10:47 -0400
+        id S1423904AbeE1LKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org, Chunyu Hu <chuhu@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 148/272] remoteproc: imx_rproc: Fix an error handling path in imx_rproc_probe()
-Date: Mon, 28 May 2018 12:03:01 +0200
-Message-Id: <20180528100253.414354642@linuxfoundation.org>
+Subject: [PATCH 4.16 143/272] cpufreq: cppc_cpufreq: Fix cppc_cpufreq_init() failure path
+Date: Mon, 28 May 2018 12:02:56 +0200
+Message-Id: <20180528100253.032449148@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,34 +31,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Chunyu Hu <chuhu@redhat.com>
 
-[ Upstream commit de6f83f85be94e0b7d0d324c29ccc9d78a6bb4e7 ]
+[ Upstream commit 55b55abc17f238c61921360e61dde90dd9a326d1 ]
 
-If 'of_device_get_match_data()' fails, we must undo the previous
-'rproc_alloc()' call.
+Kmemleak reported the below leak. When cppc_cpufreq_init went into
+failure path, the cpu mask is not freed. After fix, this report is
+gone. And to avaoid potential NULL pointer reference, check the cpu
+value first.
 
-Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+unreferenced object 0xffff800fd5ea4880 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294939510 (age 668.680s)
+  hex dump (first 32 bytes):
+    00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00  .... ...........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffff0000082c4ae4>] __kmalloc_node+0x278/0x634
+    [<ffff0000088f4a74>] alloc_cpumask_var_node+0x28/0x60
+    [<ffff0000088f4af0>] zalloc_cpumask_var+0x14/0x1c
+    [<ffff000008d20254>] cppc_cpufreq_init+0xd0/0x19c
+    [<ffff000008083828>] do_one_initcall+0xec/0x15c
+    [<ffff000008cd1018>] kernel_init_freeable+0x1f4/0x2a4
+    [<ffff0000089099b0>] kernel_init+0x18/0x10c
+    [<ffff000008084d50>] ret_from_fork+0x10/0x18
+    [<ffffffffffffffff>] 0xffffffffffffffff
+
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/remoteproc/imx_rproc.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/cpufreq/cppc_cpufreq.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -339,8 +339,10 @@ static int imx_rproc_probe(struct platfo
- 	}
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -243,8 +243,13 @@ static int __init cppc_cpufreq_init(void
+ 	return ret;
  
- 	dcfg = of_device_get_match_data(dev);
--	if (!dcfg)
--		return -EINVAL;
-+	if (!dcfg) {
-+		ret = -EINVAL;
-+		goto err_put_rproc;
+ out:
+-	for_each_possible_cpu(i)
+-		kfree(all_cpu_data[i]);
++	for_each_possible_cpu(i) {
++		cpu = all_cpu_data[i];
++		if (!cpu)
++			break;
++		free_cpumask_var(cpu->shared_cpu_map);
++		kfree(cpu);
 +	}
  
- 	priv = rproc->priv;
- 	priv->rproc = rproc;
+ 	kfree(all_cpu_data);
+ 	return -ENODEV;
