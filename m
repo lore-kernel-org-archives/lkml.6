@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936594AbeE1KL1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59520 "EHLO mail.kernel.org"
+        id S965021AbeE1KLu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:11:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936567AbeE1KLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:18 -0400
+        id S936610AbeE1KLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org, Pawel Dembicki <paweldembicki@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 127/185] xen/acpi: off by one in read_acpi_id()
-Date: Mon, 28 May 2018 12:02:48 +0200
-Message-Id: <20180528100103.735618261@linuxfoundation.org>
+Subject: [PATCH 3.18 104/185] net: qmi_wwan: add BroadMobi BM806U 2020:2033
+Date: Mon, 28 May 2018 12:02:25 +0200
+Message-Id: <20180528100100.218418028@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,37 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Pawel Dembicki <paweldembicki@gmail.com>
 
-[ Upstream commit c37a3c94775855567b90f91775b9691e10bd2806 ]
+[ Upstream commit 743989254ea9f132517806d8893ca9b6cf9dc86b ]
 
-If acpi_id is == nr_acpi_bits, then we access one element beyond the end
-of the acpi_psd[] array or we set one bit beyond the end of the bit map
-when we do __set_bit(acpi_id, acpi_id_present);
+BroadMobi BM806U is an Qualcomm MDM9225 based 3G/4G modem.
+Tested hardware BM806U is mounted on D-Link DWR-921-C3 router.
+The USB id is added to qmi_wwan.c to allow QMI communication with
+the BM806U.
 
-Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Tested on 4.14 kernel and OpenWRT.
+
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/xen-acpi-processor.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/xen/xen-acpi-processor.c
-+++ b/drivers/xen/xen-acpi-processor.c
-@@ -362,9 +362,9 @@ read_acpi_id(acpi_handle handle, u32 lvl
- 	}
- 	/* There are more ACPI Processor objects than in x2APIC or MADT.
- 	 * This can happen with incorrect ACPI SSDT declerations. */
--	if (acpi_id > nr_acpi_bits) {
--		pr_debug("We only have %u, trying to set %u\n",
--			 nr_acpi_bits, acpi_id);
-+	if (acpi_id >= nr_acpi_bits) {
-+		pr_debug("max acpi id %u, trying to set %u\n",
-+			 nr_acpi_bits - 1, acpi_id);
- 		return AE_OK;
- 	}
- 	/* OK, There is a ACPI Processor object */
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -755,6 +755,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x19d2, 0x2002, 4)},	/* ZTE (Vodafone) K3765-Z */
+ 	{QMI_FIXED_INTF(0x2001, 0x7e19, 4)},	/* D-Link DWM-221 B1 */
+ 	{QMI_FIXED_INTF(0x2001, 0x7e35, 4)},	/* D-Link DWM-222 */
++	{QMI_FIXED_INTF(0x2020, 0x2033, 4)},	/* BroadMobi BM806U */
+ 	{QMI_FIXED_INTF(0x0f3d, 0x68a2, 8)},    /* Sierra Wireless MC7700 */
+ 	{QMI_FIXED_INTF(0x114f, 0x68a2, 8)},    /* Sierra Wireless MC7750 */
+ 	{QMI_FIXED_INTF(0x1199, 0x68a2, 8)},	/* Sierra Wireless MC7710 in QMI mode */
