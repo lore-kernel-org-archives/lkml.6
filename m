@@ -1,74 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752838AbeE1Aq3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 20:46:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44598 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752721AbeE1AqZ (ORCPT
+        id S1752783AbeE1BE2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 21:04:28 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33807 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbeE1BE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 20:46:25 -0400
-From: Stewart Smith <stewart@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: npiggin@gmail.com, ego@linux.vnet.ibm.com,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: Re: [PATCH] cpuidle/powernv : init all present cpus for deep states
-In-Reply-To: <87fu2gqa9o.fsf@concordia.ellerman.id.au>
-References: <1526472134-23757-1-git-send-email-akshay.adiga@linux.vnet.ibm.com> <87fu2gqa9o.fsf@concordia.ellerman.id.au>
-Date: Mon, 28 May 2018 10:46:11 +1000
+        Sun, 27 May 2018 21:04:26 -0400
+X-Google-Smtp-Source: ADUXVKKwyuYV2/fb+PuTXAb9zWwDCqAzh0jqoji9S4ZS199nPrKA/td+sNm6FiiMuFjDsPpsvqD5Aw==
+Date: Sun, 27 May 2018 18:04:25 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: peterz@infradead.org, mingo@redhat.com,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH] kernel/sched/topology: Clarify root domain(s) debug
+ string
+Message-ID: <20180528010425.GA64067@joelaf.mtv.corp.google.com>
+References: <20180524152936.17611-1-juri.lelli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18052800-0056-0000-0000-000004578E4D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009093; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000262; SDB=6.01038644; UDB=6.00530875; IPR=6.00817772;
- MB=3.00021329; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-28 00:46:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052800-0057-0000-0000-0000089BB016
-Message-Id: <87k1ror4j0.fsf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-27_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805280008
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524152936.17611-1-juri.lelli@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
-> Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> writes:
->
->> Init all present cpus for deep states instead of "all possible" cpus.
->> Init fails if the possible cpu is gaurded. Resulting in making only
->> non-deep states available for cpuidle/hotplug.
->
-> This is basically the opposite of what we just did for IMC.
->
-> There we switched from present to possible, to make it work when some
-> CPUs are guarded.
->
-> Which makes me think we need a better way of dealing with guarded CPUs,
-> because working out which code should use present or possible seems to
-> be basically trial-and-error.
->
-> I'm not actually sure why Guarded CPUs are showing up as possible but
-> not present, did we do that on purpose or is it just happening by
-> accident?
+On Thu, May 24, 2018 at 05:29:36PM +0200, Juri Lelli wrote:
+> When scheduler debug is enabled, building scheduling domains outputs
+> information about how the domains are laid out and to which root domain
+> each CPU (or sets of CPUs) belongs, e.g.:
+> 
+>  CPU0 attaching sched-domain(s):
+>   domain-0: span=0-5 level=MC
+>    groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
+>  CPU1 attaching sched-domain(s):
+>   domain-0: span=0-5 level=MC
+>    groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
+> 
+>  [...]
+> 
+>  span: 0-5 (max cpu_capacity = 1024)
+> 
+> The fact that latest line refers to CPUs 0-5 root domain doesn't however look
 
-My guess is that it flows through from firmware putting the guarded out
-CPUs in the device tree with a not "okay" status (which, I just
-realised, we're putting something in 'status' that isn't what the
-current DeviceTree spec says we should... gah -
-https://github.com/open-power/skiboot/issues/178 filed for that one).
+                last line?
 
-The idea behind that is that you can answer "where did all my CPUs go?"
-by looking at the device tree rather than having to know the platform
-specific way of how guards are stored.
+> immediately obvious to me: one might wonder why span 0-5 is reported "again".
+> 
+> Make it more clear by adding "root domain" to it, as to end with the
+> following.
+> 
+>  CPU0 attaching sched-domain(s):
+>   domain-0: span=0-5 level=MC
+>    groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
+>  CPU1 attaching sched-domain(s):
+>   domain-0: span=0-5 level=MC
+>    groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
+> 
+>  [...]
+> 
+>  root domain span: 0-5 (max cpu_capacity = 1024)
+> 
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 
--- 
-Stewart Smith
-OPAL Architect, IBM.
+I played the sched_load_balance flag to trigger this and it makes sense to
+improve the print with 'root domain'.
+
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+One thing I believe is a bit weird is sched_load_balance also can affect the
+wake-up path, because a NULL sd is attached to the rq if sched_load_balance
+is set to 0.
+
+This could turn off the "for_each_domain(cpu, tmp)" loop in
+select_task_rq_fair and hence we would always end up in the
+select_idle_sibling path for those CPUs.
+
+It also means that "XXX always" can/should be removed because sd can very
+well be NULL for other sd_flag types as well, not just sd_flag ==
+SD_BALANCE_WAKE. I'll send a patch to remove that comment as I just tested
+this is true.
+
+thanks,
+
+ - Joel
