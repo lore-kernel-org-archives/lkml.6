@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940476AbeE1Qtc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:49:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54168 "EHLO mail.kernel.org"
+        id S940482AbeE1QuB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:50:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754528AbeE1KGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:14 -0400
+        id S1754279AbeE1KGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gopanapalli Pradeep <prap_hai@yahoo.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 015/185] tools lib traceevent: Fix get_field_str() for dynamic strings
-Date: Mon, 28 May 2018 12:00:56 +0200
-Message-Id: <20180528100051.539174359@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 3.18 002/185] MIPS: Fix ptrace(2) PTRACE_PEEKUSR and PTRACE_POKEUSR accesses to o32 FGRs
+Date: Mon, 28 May 2018 12:00:43 +0200
+Message-Id: <20180528100050.833352031@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -33,53 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Maciej W. Rozycki <macro@mips.com>
 
-[ Upstream commit d777f8de99b05d399c0e4e51cdce016f26bd971b ]
+commit 9a3a92ccfe3620743d4ae57c987dc8e9c5f88996 upstream.
 
-If a field is a dynamic string, get_field_str() returned just the
-offset/size value and not the string. Have it parse the offset/size
-correctly to return the actual string. Otherwise filtering fails when
-trying to filter fields that are dynamic strings.
+Check the TIF_32BIT_FPREGS task setting of the tracee rather than the
+tracer in determining the layout of floating-point general registers in
+the floating-point context, correcting access to odd-numbered registers
+for o32 tracees where the setting disagrees between the two processes.
 
-Reported-by: Gopanapalli Pradeep <prap_hai@yahoo.com>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: http://lkml.kernel.org/r/20180112004823.146333275@goodmis.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 597ce1723e0f ("MIPS: Support for 64-bit FP with O32 binaries")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.14+
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/lib/traceevent/parse-filter.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1867,17 +1867,25 @@ static const char *get_field_str(struct
- 	struct pevent *pevent;
- 	unsigned long long addr;
- 	const char *val = NULL;
-+	unsigned int size;
- 	char hex[64];
+---
+ arch/mips/kernel/ptrace.c   |    4 ++--
+ arch/mips/kernel/ptrace32.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -702,7 +702,7 @@ long arch_ptrace(struct task_struct *chi
+ 			fregs = get_fpu_regs(child);
  
- 	/* If the field is not a string convert it */
- 	if (arg->str.field->flags & FIELD_IS_STRING) {
- 		val = record->data + arg->str.field->offset;
-+		size = arg->str.field->size;
-+
-+		if (arg->str.field->flags & FIELD_IS_DYNAMIC) {
-+			addr = *(unsigned int *)val;
-+			val = record->data + (addr & 0xffff);
-+			size = addr >> 16;
-+		}
- 
- 		/*
- 		 * We need to copy the data since we can't be sure the field
- 		 * is null terminated.
- 		 */
--		if (*(val + arg->str.field->size - 1)) {
-+		if (*(val + size - 1)) {
- 			/* copy it */
- 			memcpy(arg->str.buffer, val, arg->str.field->size);
- 			/* the buffer is already NULL terminated */
+ #ifdef CONFIG_32BIT
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+@@ -796,7 +796,7 @@ long arch_ptrace(struct task_struct *chi
+ 				child->thread.fpu.fcr31 = 0;
+ 			}
+ #ifdef CONFIG_32BIT
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+--- a/arch/mips/kernel/ptrace32.c
++++ b/arch/mips/kernel/ptrace32.c
+@@ -97,7 +97,7 @@ long compat_arch_ptrace(struct task_stru
+ 				break;
+ 			}
+ 			fregs = get_fpu_regs(child);
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+@@ -203,7 +203,7 @@ long compat_arch_ptrace(struct task_stru
+ 				       sizeof(child->thread.fpu));
+ 				child->thread.fpu.fcr31 = 0;
+ 			}
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
