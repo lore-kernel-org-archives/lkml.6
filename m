@@ -1,148 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753927AbeE1HNk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:13:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753599AbeE1HNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:13:37 -0400
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>, linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 27/27] kprobes: Remove jprobe stub API
-Date: Mon, 28 May 2018 16:13:11 +0900
-Message-Id: <152749159104.15132.4654939175905593999.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
-References: <152749074878.15132.16693721906742461289.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1753934AbeE1HNy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:13:54 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:2426 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753800AbeE1HNi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 03:13:38 -0400
+X-UUID: 0062aadd5eaf460eb85f980c3f1685a6-20180528
+Message-ID: <1527491609.24367.7.camel@mtksdaap41>
+Subject: Re: [PATCH v4 7/9] drm/mediatek: add connection from OD1 to RDMA1
+From: CK Hu <ck.hu@mediatek.com>
+To: Stu Hsieh <stu.hsieh@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date: Mon, 28 May 2018 15:13:29 +0800
+In-Reply-To: <1527489507-24453-8-git-send-email-stu.hsieh@mediatek.com>
+References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
+         <1527489507-24453-8-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove jprobe stub APIs from linux/kprobes.h since
-the jprobe implementation was completely gone.
+Hi, Stu:
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- include/linux/kprobes.h |   50 -----------------------------------------------
- 1 file changed, 50 deletions(-)
+On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
+> This patch add the connection from OD1 to RDMA1 for ext path.
+> 
 
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index b520baa65682..e909413e4e38 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -63,7 +63,6 @@ struct pt_regs;
- struct kretprobe;
- struct kretprobe_instance;
- typedef int (*kprobe_pre_handler_t) (struct kprobe *, struct pt_regs *);
--typedef int (*kprobe_break_handler_t) (struct kprobe *, struct pt_regs *);
- typedef void (*kprobe_post_handler_t) (struct kprobe *, struct pt_regs *,
- 				       unsigned long flags);
- typedef int (*kprobe_fault_handler_t) (struct kprobe *, struct pt_regs *,
-@@ -101,12 +100,6 @@ struct kprobe {
- 	 */
- 	kprobe_fault_handler_t fault_handler;
- 
--	/*
--	 * ... called if breakpoint trap occurs in probe handler.
--	 * Return 1 if it handled break, otherwise kernel will see it.
--	 */
--	kprobe_break_handler_t break_handler;
--
- 	/* Saved opcode (which has been replaced with breakpoint) */
- 	kprobe_opcode_t opcode;
- 
-@@ -155,24 +148,6 @@ static inline int kprobe_ftrace(struct kprobe *p)
- }
- 
- /*
-- * Special probe type that uses setjmp-longjmp type tricks to resume
-- * execution at a specified entry with a matching prototype corresponding
-- * to the probed function - a trick to enable arguments to become
-- * accessible seamlessly by probe handling logic.
-- * Note:
-- * Because of the way compilers allocate stack space for local variables
-- * etc upfront, regardless of sub-scopes within a function, this mirroring
-- * principle currently works only for probes placed on function entry points.
-- */
--struct jprobe {
--	struct kprobe kp;
--	void *entry;	/* probe handling code to jump to */
--};
--
--/* For backward compatibility with old code using JPROBE_ENTRY() */
--#define JPROBE_ENTRY(handler)	(handler)
--
--/*
-  * Function-return probe -
-  * Note:
-  * User needs to provide a handler function, and initialize maxactive.
-@@ -436,9 +411,6 @@ static inline void unregister_kprobe(struct kprobe *p)
- static inline void unregister_kprobes(struct kprobe **kps, int num)
- {
- }
--static inline void jprobe_return(void)
--{
--}
- static inline int register_kretprobe(struct kretprobe *rp)
- {
- 	return -ENOSYS;
-@@ -465,20 +437,6 @@ static inline int enable_kprobe(struct kprobe *kp)
- 	return -ENOSYS;
- }
- #endif /* CONFIG_KPROBES */
--static inline int register_jprobe(struct jprobe *p)
--{
--	return -ENOSYS;
--}
--static inline int register_jprobes(struct jprobe **jps, int num)
--{
--	return -ENOSYS;
--}
--static inline void unregister_jprobe(struct jprobe *p)
--{
--}
--static inline void unregister_jprobes(struct jprobe **jps, int num)
--{
--}
- static inline int disable_kretprobe(struct kretprobe *rp)
- {
- 	return disable_kprobe(&rp->kp);
-@@ -487,14 +445,6 @@ static inline int enable_kretprobe(struct kretprobe *rp)
- {
- 	return enable_kprobe(&rp->kp);
- }
--static inline int disable_jprobe(struct jprobe *jp)
--{
--	return -ENOSYS;
--}
--static inline int enable_jprobe(struct jprobe *jp)
--{
--	return -ENOSYS;
--}
- 
- #ifndef CONFIG_KPROBES
- static inline bool is_kprobe_insn_slot(unsigned long addr)
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
+
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 58e44349e315..8bfc0debd2c2 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -75,6 +75,7 @@
+>  
+>  #define OVL0_MOUT_EN_COLOR0		0x1
+>  #define OD_MOUT_EN_RDMA0		0x1
+> +#define OD1_MOUT_EN_RDMA1		BIT(16)
+>  #define UFOE_MOUT_EN_DSI0		0x1
+>  #define COLOR0_SEL_IN_OVL0		0x1
+>  #define OVL1_MOUT_EN_COLOR1		0x1
+> @@ -151,6 +152,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_GAMMA && next == DDP_COMPONENT_RDMA1) {
+>  		*addr = DISP_REG_CONFIG_DISP_GAMMA_MOUT_EN;
+>  		value = GAMMA_MOUT_EN_RDMA1;
+> +	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
+> +		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
+> +		value = OD1_MOUT_EN_RDMA1;
+>  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+>  		value = RDMA1_MOUT_DPI0;
