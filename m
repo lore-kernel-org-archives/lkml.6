@@ -1,117 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932334AbeE1KHV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:07:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932266AbeE1KHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:11 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>, Len Brown <len.brown@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Nicolas Pitre <nico@linaro.org>,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Bart Van Assche <bart.vanassche@wdc.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 034/185] x86/power: Fix swsusp_arch_resume prototype
-Date: Mon, 28 May 2018 12:01:15 +0200
-Message-Id: <20180528100052.803961873@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S940452AbeE1Qof (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:44:35 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40473 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940226AbeE1Qo2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:44:28 -0400
+X-Google-Smtp-Source: AB8JxZp5/dyeSLrJlpMyzZQKAY/foTIglrU0DvRApEsHPqbK9zlFAyLuXoVFhgLHt/slYLCZnHHD/w==
+Date: Mon, 28 May 2018 10:44:17 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Doug Ledford <dledford@redhat.com>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] IB: Revert "remove redundant INFINIBAND kconfig
+ dependencies"
+Message-ID: <20180528164417.GA24505@ziepe.ca>
+References: <20180525213123.2113748-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525213123.2113748-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Fri, May 25, 2018 at 11:29:59PM +0200, Arnd Bergmann wrote:
+> Several subsystems depend on INFINIBAND_ADDR_TRANS, which in turn depends
+> on INFINIBAND. However, when with CONFIG_INIFIBAND=m, this leads to a
+> link error when another driver using it is built-in. The
+> INFINIBAND_ADDR_TRANS dependency is insufficient here as this is
+> a 'bool' symbol that does not force anything to be a module in turn.
+> 
+> fs/cifs/smbdirect.o: In function `smbd_disconnect_rdma_work':
+> smbdirect.c:(.text+0x1e4): undefined reference to `rdma_disconnect'
+> net/9p/trans_rdma.o: In function `rdma_request':
+> trans_rdma.c:(.text+0x7bc): undefined reference to `rdma_disconnect'
+> net/9p/trans_rdma.o: In function `rdma_destroy_trans':
+> trans_rdma.c:(.text+0x830): undefined reference to `ib_destroy_qp'
+> trans_rdma.c:(.text+0x858): undefined reference to `ib_dealloc_pd'
+> 
+> Fixes: 9533b292a7ac ("IB: remove redundant INFINIBAND kconfig dependencies")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Greg Thelen <gthelen@google.com>
+> ---
+> The patch that introduced the problem has been queued in the
+> rdma-fixes/for-rc tree. Please revert the patch before sending
+> the branch to Linus.
+> ---
+>  drivers/infiniband/ulp/srpt/Kconfig | 2 +-
+>  drivers/nvme/host/Kconfig           | 2 +-
+>  drivers/nvme/target/Kconfig         | 2 +-
+>  drivers/staging/lustre/lnet/Kconfig | 2 +-
+>  fs/cifs/Kconfig                     | 2 +-
+>  net/9p/Kconfig                      | 2 +-
+>  net/rds/Kconfig                     | 2 +-
+>  net/sunrpc/Kconfig                  | 2 +-
+>  8 files changed, 8 insertions(+), 8 deletions(-)
 
-------------------
+Applied to for-rc, thanks
 
-From: Arnd Bergmann <arnd@arndb.de>
-
-[ Upstream commit 328008a72d38b5bde6491e463405c34a81a65d3e ]
-
-The declaration for swsusp_arch_resume marks it as 'asmlinkage', but the
-definition in x86-32 does not, and it fails to include the header with the
-declaration. This leads to a warning when building with
-link-time-optimizations:
-
-kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not match original declaration [-Werror=lto-type-mismatch]
- extern asmlinkage int swsusp_arch_resume(void);
-                       ^
-arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previously declared here
- int swsusp_arch_resume(void)
-
-This moves the declaration into a globally visible header file and fixes up
-both x86 definitions to match it.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Nicolas Pitre <nico@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Link: https://lkml.kernel.org/r/20180202145634.200291-2-arnd@arndb.de
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/power/hibernate_32.c |    2 +-
- arch/x86/power/hibernate_64.c |    2 +-
- include/linux/suspend.h       |    2 ++
- kernel/power/power.h          |    3 ---
- 4 files changed, 4 insertions(+), 5 deletions(-)
-
---- a/arch/x86/power/hibernate_32.c
-+++ b/arch/x86/power/hibernate_32.c
-@@ -142,7 +142,7 @@ static inline void resume_init_first_lev
- #endif
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -78,7 +78,7 @@ static int set_up_temporary_mappings(voi
- 	return 0;
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -325,6 +325,8 @@ extern int swsusp_page_is_forbidden(stru
- extern void swsusp_set_page_free(struct page *);
- extern void swsusp_unset_page_free(struct page *);
- extern unsigned long get_safe_page(gfp_t gfp_mask);
-+extern asmlinkage int swsusp_arch_suspend(void);
-+extern asmlinkage int swsusp_arch_resume(void);
- 
- extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
- extern int hibernate(void);
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -85,9 +85,6 @@ extern int in_suspend;
- extern dev_t swsusp_resume_device;
- extern sector_t swsusp_resume_block;
- 
--extern asmlinkage int swsusp_arch_suspend(void);
--extern asmlinkage int swsusp_arch_resume(void);
--
- extern int create_basic_memory_bitmaps(void);
- extern void free_basic_memory_bitmaps(void);
- extern int hibernate_preallocate_memory(void);
+Jason
