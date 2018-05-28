@@ -1,85 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936957AbeE1KQN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967996AbeE1KQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:04 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhongjiang <zhongjiang@huawei.com>,
-        Oleg Nesterov <oleg@redhat.com>, Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Xishi Qiu <qiuxishi@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 015/268] kernel/signal.c: avoid undefined behaviour in kill_something_info
-Date: Mon, 28 May 2018 11:59:49 +0200
-Message-Id: <20180528100203.810521146@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1034990AbeE1PuX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:50:23 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:35589 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034914AbeE1PuR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:50:17 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Fugang Duan <fugang.duan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Troy Kisky <troy.kisky@boundarydevices.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH, net-next] net: ethernet: freescale: fix false-positive string overflow warning
+Date: Mon, 28 May 2018 17:49:46 +0200
+Message-Id: <20180528154958.2684086-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:oiRpTflwG8qWTNHcqsccGwSsouw9oSGsXkiEPP06InkxR7rvH5d
+ Zk8NlzfyPtdFJVaXApXdNSh+eQx2xUECQQo1l93JH31DxpFrcZdOhTCC6xTzhX8XuZTEKRf
+ v/QAIwH2lweJjSdbVgQiKqqrDZdRORDw+3nIzTcEOvzUJmMP9sJuK4UplPquoBOHStxdD8m
+ jaAfqxQffTbaxRo+6RsgQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:UnpHTsyLKj8=:pXkXjAWeCulxe8haz52UxO
+ FZUzwfDBCMQaJn7Atb/C2wy1DTObwGcU9wxvTORIFm9pyN3hVeD0q+OvljuzOaLOgvVIdekVA
+ 0djzEdoPJast2fB9d13wy+Q4mwbI0xEkruaoto0ec7VsCB0mYRQlBaxIKiMRhqLRvFFJNr7Nc
+ TJPBrvjAurmZR1ynxGkXEN68R5iSceWVPi1QeLe9hYy1gopKFDzumrEAl30J+ICVAGwiQcBtd
+ uKK2uTUJ9CYVREfFi0XglGTtO26XZjjQBkEJmZNCON9YHAzCMP6B2HxA/2ZH/ZxyNjD3945yG
+ f6mFsmSZwt+NmFvmeCtOyvPOh795y0iVe7bKwZJ0hCYMX609hzgZZoM/pa5BtwC9sbgP20Qok
+ Z9eqt0mET7eQS50wcI7cxyxKXfq6iNIYmeGK2dllJGgAUbShbQEAKwVRzCDGvpFy6c+x3T5Dm
+ YcftJhelCndtDShQPUWM2VVJ6AeCFxQxrzWKGaruwkbcnwuXxhzJtDlidSyP/DgRCSyBeQkN6
+ l42wIyeInpZpAByD1WDgqCwgbWcWyhsOON3wKZSek0G7T59VfPJm7JrDY+g7s1VUzUc/qFW8+
+ k01kYCX8ImWlxxBsl4l6XgqC0h2A6ntmgbcvcqNnN+W/vSnnzsGBHwmiyvx4sO7frcrOh1QvQ
+ zId4lgs8W5mAzn+NrX4YhzGybZjl8piDyB/s7FkgInQ57fJKMA49qZ0dsg4kKKv0iYwk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+While compile-testing on arm64 with gcc-8.1, I ran into a build diagnostic:
 
-------------------
+drivers/net/ethernet/freescale/fec_main.c: In function 'fec_probe':
+drivers/net/ethernet/freescale/fec_main.c:3517:25: error: '%d' directive writing between 1 and 10 bytes into a region of size 5 [-Werror=format-overflow=]
+   sprintf(irq_name, "int%d", i);
+                         ^~
+drivers/net/ethernet/freescale/fec_main.c:3517:21: note: directive argument in the range [0, 2147483646]
+   sprintf(irq_name, "int%d", i);
+                     ^~~~~~~
+drivers/net/ethernet/freescale/fec_main.c:3517:3: note: 'sprintf' output between 5 and 14 bytes into a destination of size 8
+   sprintf(irq_name, "int%d", i);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-From: zhongjiang <zhongjiang@huawei.com>
+It appears this has never shown on ppc32 or arm32 for an unknown reason, but
+now gcc fails to identify that the 'irq_cnt' loop index has an upper bound
+of 3, and instead uses a bogus range.
 
-commit 4ea77014af0d6205b05503d1c7aac6eace11d473 upstream.
+To work around the warning, this changes the sprintf to snprintf with the
+correct buffer length.
 
-When running kill(72057458746458112, 0) in userspace I hit the following
-issue.
-
-  UBSAN: Undefined behaviour in kernel/signal.c:1462:11
-  negation of -2147483648 cannot be represented in type 'int':
-  CPU: 226 PID: 9849 Comm: test Tainted: G    B          ---- -------   3.10.0-327.53.58.70.x86_64_ubsan+ #116
-  Hardware name: Huawei Technologies Co., Ltd. RH8100 V3/BC61PBIA, BIOS BLHSV028 11/11/2014
-  Call Trace:
-    dump_stack+0x19/0x1b
-    ubsan_epilogue+0xd/0x50
-    __ubsan_handle_negate_overflow+0x109/0x14e
-    SYSC_kill+0x43e/0x4d0
-    SyS_kill+0xe/0x10
-    system_call_fastpath+0x16/0x1b
-
-Add code to avoid the UBSAN detection.
-
-[akpm@linux-foundation.org: tweak comment]
-Link: http://lkml.kernel.org/r/1496670008-59084-1-git-send-email-zhongjiang@huawei.com
-Signed-off-by: zhongjiang <zhongjiang@huawei.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Xishi Qiu <qiuxishi@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 78cc6e7ef957 ("net: ethernet: freescale: Allow FEC with COMPILE_TEST")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/signal.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/freescale/fec_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1392,6 +1392,10 @@ static int kill_something_info(int sig,
- 		return ret;
- 	}
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index ab7521c04eb2..c729665107f5 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3514,7 +3514,7 @@ fec_probe(struct platform_device *pdev)
+ 		goto failed_init;
  
-+	/* -INT_MIN is undefined.  Exclude this case to avoid a UBSAN warning */
-+	if (pid == INT_MIN)
-+		return -ESRCH;
-+
- 	read_lock(&tasklist_lock);
- 	if (pid != -1) {
- 		ret = __kill_pgrp_info(sig, info,
+ 	for (i = 0; i < irq_cnt; i++) {
+-		sprintf(irq_name, "int%d", i);
++		snprintf(irq_name, sizeof(irq_name), "int%d", i);
+ 		irq = platform_get_irq_byname(pdev, irq_name);
+ 		if (irq < 0)
+ 			irq = platform_get_irq(pdev, i);
+-- 
+2.9.0
