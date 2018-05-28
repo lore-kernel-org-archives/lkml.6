@@ -1,21 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939336AbeE1Oe2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:34:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52444 "EHLO mail.kernel.org"
+        id S939375AbeE1OfC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:35:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161542AbeE1Kc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:28 -0400
+        id S1161505AbeE1KcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pratyush Anand <panand@redhat.com>,
-        Jerome Marchand <jmarchan@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-alpha@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 139/329] arm64: fix unwind_frame() for filtered out fn for function graph tracing
-Date: Mon, 28 May 2018 12:01:08 +0200
-Message-Id: <20180528100254.157564490@linuxfoundation.org>
+Subject: [PATCH 4.9 136/329] locking/xchg/alpha: Fix xchg() and cmpxchg() memory ordering bugs
+Date: Mon, 28 May 2018 12:01:05 +0200
+Message-Id: <20180528100253.960186828@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,123 +40,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pratyush Anand <panand@redhat.com>
+From: Andrea Parri <parri.andrea@gmail.com>
 
-[ Upstream commit 9f416319f40cd857d2bb517630e5855a905ef3fb ]
+[ Upstream commit 472e8c55cf6622d1c112dc2bc777f68bbd4189db ]
 
-do_task_stat() calls get_wchan(), which further does unwind_frame().
-unwind_frame() restores frame->pc to original value in case function
-graph tracer has modified a return address (LR) in a stack frame to hook
-a function return. However, if function graph tracer has hit a filtered
-function, then we can't unwind it as ftrace_push_return_trace() has
-biased the index(frame->graph) with a 'huge negative'
-offset(-FTRACE_NOTRACE_DEPTH).
+Successful RMW operations are supposed to be fully ordered, but
+Alpha's xchg() and cmpxchg() do not meet this requirement.
 
-Moreover, arm64 stack walker defines index(frame->graph) as unsigned
-int, which can not compare a -ve number.
+Will Deacon noticed the bug:
 
-Similar problem we can have with calling of walk_stackframe() from
-save_stack_trace_tsk() or dump_backtrace().
+  > So MP using xchg:
+  >
+  > WRITE_ONCE(x, 1)
+  > xchg(y, 1)
+  >
+  > smp_load_acquire(y) == 1
+  > READ_ONCE(x) == 0
+  >
+  > would be allowed.
 
-This patch fixes unwind_frame() to test the index for -ve value and
-restore index accordingly before we can restore frame->pc.
+... which thus violates the above requirement.
 
-Reproducer:
+Fix it by adding a leading smp_mb() to the xchg() and cmpxchg() implementations.
 
-cd /sys/kernel/debug/tracing/
-echo schedule > set_graph_notrace
-echo 1 > options/display-graph
-echo wakeup > current_tracer
-ps -ef | grep -i agent
-
-Above commands result in:
-Unable to handle kernel paging request at virtual address ffff801bd3d1e000
-pgd = ffff8003cbe97c00
-[ffff801bd3d1e000] *pgd=0000000000000000, *pud=0000000000000000
-Internal error: Oops: 96000006 [#1] SMP
-[...]
-CPU: 5 PID: 11696 Comm: ps Not tainted 4.11.0+ #33
-[...]
-task: ffff8003c21ba000 task.stack: ffff8003cc6c0000
-PC is at unwind_frame+0x12c/0x180
-LR is at get_wchan+0xd4/0x134
-pc : [<ffff00000808892c>] lr : [<ffff0000080860b8>] pstate: 60000145
-sp : ffff8003cc6c3ab0
-x29: ffff8003cc6c3ab0 x28: 0000000000000001
-x27: 0000000000000026 x26: 0000000000000026
-x25: 00000000000012d8 x24: 0000000000000000
-x23: ffff8003c1c04000 x22: ffff000008c83000
-x21: ffff8003c1c00000 x20: 000000000000000f
-x19: ffff8003c1bc0000 x18: 0000fffffc593690
-x17: 0000000000000000 x16: 0000000000000001
-x15: 0000b855670e2b60 x14: 0003e97f22cf1d0f
-x13: 0000000000000001 x12: 0000000000000000
-x11: 00000000e8f4883e x10: 0000000154f47ec8
-x9 : 0000000070f367c0 x8 : 0000000000000000
-x7 : 00008003f7290000 x6 : 0000000000000018
-x5 : 0000000000000000 x4 : ffff8003c1c03cb0
-x3 : ffff8003c1c03ca0 x2 : 00000017ffe80000
-x1 : ffff8003cc6c3af8 x0 : ffff8003d3e9e000
-
-Process ps (pid: 11696, stack limit = 0xffff8003cc6c0000)
-Stack: (0xffff8003cc6c3ab0 to 0xffff8003cc6c4000)
-[...]
-[<ffff00000808892c>] unwind_frame+0x12c/0x180
-[<ffff000008305008>] do_task_stat+0x864/0x870
-[<ffff000008305c44>] proc_tgid_stat+0x3c/0x48
-[<ffff0000082fde0c>] proc_single_show+0x5c/0xb8
-[<ffff0000082b27e0>] seq_read+0x160/0x414
-[<ffff000008289e6c>] __vfs_read+0x58/0x164
-[<ffff00000828b164>] vfs_read+0x88/0x144
-[<ffff00000828c2e8>] SyS_read+0x60/0xc0
-[<ffff0000080834a0>] __sys_trace_return+0x0/0x4
-
-Fixes: 20380bb390a4 (arm64: ftrace: fix a stack tracer's output under function graph tracer)
-Signed-off-by: Pratyush Anand <panand@redhat.com>
-Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
-[catalin.marinas@arm.com: replace WARN_ON with WARN_ON_ONCE]
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-alpha@vger.kernel.org
+Link: http://lkml.kernel.org/r/1519291488-5752-1-git-send-email-parri.andrea@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/stacktrace.h |    2 +-
- arch/arm64/kernel/stacktrace.c      |    5 +++++
- arch/arm64/kernel/time.c            |    2 +-
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ arch/alpha/include/asm/xchg.h |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -23,7 +23,7 @@ struct stackframe {
- 	unsigned long sp;
- 	unsigned long pc;
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	unsigned int graph;
-+	int graph;
- #endif
- };
+--- a/arch/alpha/include/asm/xchg.h
++++ b/arch/alpha/include/asm/xchg.h
+@@ -11,6 +11,10 @@
+  * Atomic exchange.
+  * Since it can be used to implement critical sections
+  * it must clobber "memory" (also for interrupts in UP).
++ *
++ * The leading and the trailing memory barriers guarantee that these
++ * operations are fully ordered.
++ *
+  */
  
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -72,6 +72,11 @@ int notrace unwind_frame(struct task_str
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	if (tsk->ret_stack &&
- 			(frame->pc == (unsigned long)return_to_handler)) {
-+		if (WARN_ON_ONCE(frame->graph == -1))
-+			return -EINVAL;
-+		if (frame->graph < -1)
-+			frame->graph += FTRACE_NOTRACE_DEPTH;
-+
- 		/*
- 		 * This is a case where function graph tracer has
- 		 * modified a return address (LR) in a stack frame
---- a/arch/arm64/kernel/time.c
-+++ b/arch/arm64/kernel/time.c
-@@ -53,7 +53,7 @@ unsigned long profile_pc(struct pt_regs
- 	frame.sp = regs->sp;
- 	frame.pc = regs->pc;
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	frame.graph = -1; /* no task info */
-+	frame.graph = current->curr_ret_stack;
- #endif
- 	do {
- 		int ret = unwind_frame(NULL, &frame);
+ static inline unsigned long
+@@ -18,6 +22,7 @@ ____xchg(_u8, volatile char *m, unsigned
+ {
+ 	unsigned long ret, tmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%4,7,%3\n"
+ 	"	insbl	%1,%4,%1\n"
+@@ -42,6 +47,7 @@ ____xchg(_u16, volatile short *m, unsign
+ {
+ 	unsigned long ret, tmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%4,7,%3\n"
+ 	"	inswl	%1,%4,%1\n"
+@@ -66,6 +72,7 @@ ____xchg(_u32, volatile int *m, unsigned
+ {
+ 	unsigned long dummy;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldl_l %0,%4\n"
+ 	"	bis $31,%3,%1\n"
+@@ -86,6 +93,7 @@ ____xchg(_u64, volatile long *m, unsigne
+ {
+ 	unsigned long dummy;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldq_l %0,%4\n"
+ 	"	bis $31,%3,%1\n"
+@@ -127,9 +135,12 @@ ____xchg(, volatile void *ptr, unsigned
+  * store NEW in MEM.  Return the initial value in MEM.  Success is
+  * indicated by comparing RETURN with OLD.
+  *
+- * The memory barrier is placed in SMP unconditionally, in order to
+- * guarantee that dependency ordering is preserved when a dependency
+- * is headed by an unsuccessful operation.
++ * The leading and the trailing memory barriers guarantee that these
++ * operations are fully ordered.
++ *
++ * The trailing memory barrier is placed in SMP unconditionally, in
++ * order to guarantee that dependency ordering is preserved when a
++ * dependency is headed by an unsuccessful operation.
+  */
+ 
+ static inline unsigned long
+@@ -137,6 +148,7 @@ ____cmpxchg(_u8, volatile char *m, unsig
+ {
+ 	unsigned long prev, tmp, cmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%5,7,%4\n"
+ 	"	insbl	%1,%5,%1\n"
+@@ -164,6 +176,7 @@ ____cmpxchg(_u16, volatile short *m, uns
+ {
+ 	unsigned long prev, tmp, cmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%5,7,%4\n"
+ 	"	inswl	%1,%5,%1\n"
+@@ -191,6 +204,7 @@ ____cmpxchg(_u32, volatile int *m, int o
+ {
+ 	unsigned long prev, cmp;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldl_l %0,%5\n"
+ 	"	cmpeq %0,%3,%1\n"
+@@ -214,6 +228,7 @@ ____cmpxchg(_u64, volatile long *m, unsi
+ {
+ 	unsigned long prev, cmp;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldq_l %0,%5\n"
+ 	"	cmpeq %0,%3,%1\n"
