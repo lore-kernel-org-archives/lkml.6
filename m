@@ -1,139 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754217AbeE1JGi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:06:38 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35416 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754161AbeE1I64 (ORCPT
+        id S1754253AbeE1JGx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:06:53 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35937 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754111AbeE1JGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:58:56 -0400
-X-Google-Smtp-Source: ADUXVKJY5TY9NTxmi2rrfQWjh6Lk/1ML7/KVdpsqGDu2yd9kzdvzuY0qZbzWr5wN4c60aYmDN1BOow==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: axboe@fb.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 04/20] lightnvm: pblk: improve error msg on corrupted LBAs
-Date: Mon, 28 May 2018 10:58:25 +0200
-Message-Id: <20180528085841.26684-5-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
-References: <20180528085841.26684-1-mb@lightnvm.io>
+        Mon, 28 May 2018 05:06:47 -0400
+X-Google-Smtp-Source: ADUXVKJHScuIS1zkI079ELk42gWo69FFbG9KEGj+8yN4iX4kK3WJOBVhaURVdPe/fSUgXeYQSfDheY31yhlkHt4ljII=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com> <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 May 2018 11:06:45 +0200
+X-Google-Sender-Auth: 6EmE1lCR3gLFbXMqyPa3qLOntrE
+Message-ID: <CAMuHMdW6HeWMwRDcn6PLnwzgxvYz-h=jx=1qvYEK9okwqY0itg@mail.gmail.com>
+Subject: Re: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU
+ external clocks and HDMI
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+Hi Kieran, Morimoto-san,
 
-In the event of a mismatch between the read LBA and the metadata pointer
-reported by the device, improve the error message to be able to detect
-the offending physical address (PPA) mapped to the corrupted LBA.
+On Fri, Apr 27, 2018 at 6:57 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> The DU1 external dot clock is provided by the fixed frequency clock
+> generator X21, while the DU0 and DU3 clocks are provided by the
+> programmable Versaclock5 clock generator.
+>
+> Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
+> and hook it up to the HDMI connector.
+>
+> Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>
+> ---
+> v2:
+>  - Remove LVDS clocks from DU node
+>  - Merge DU Clocks and HDMI enablement
+> ---
+>  .../boot/dts/renesas/r8a77965-salvator-x.dts  | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> index 75d890d91df9..340a3c72b65a 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> @@ -19,3 +19,31 @@
+>                 reg = <0x0 0x48000000 0x0 0x78000000>;
+>         };
+>  };
+> +
+> +&du {
+> +       clocks = <&cpg CPG_MOD 724>,
+> +                <&cpg CPG_MOD 723>,
+> +                <&cpg CPG_MOD 721>,
+> +                <&versaclock5 1>,
+> +                <&x21_clk>,
+> +                <&versaclock5 2>;
+> +       clock-names = "du.0", "du.1", "du.3",
+> +                     "dclkin.0", "dclkin.1", "dclkin.3";
+> +};
+> +
+> +&hdmi0 {
+> +       status = "okay";
+> +
+> +       ports {
+> +               port@1 {
+> +                       reg = <1>;
+> +                       rcar_dw_hdmi0_out: endpoint {
+> +                               remote-endpoint = <&hdmi0_con>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&hdmi0_con {
+> +       remote-endpoint = <&rcar_dw_hdmi0_out>;
+> +};
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-read.c | 42 ++++++++++++++++++++++++++++++++----------
- 1 file changed, 32 insertions(+), 10 deletions(-)
+I think the hdmi0 and hdmi0_con parts can be moved to salvator-common.dtsi.
+Can we do that now (with stubs?), or does this have to wait until r8a77965 has
+received HDMI sound support?
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 1f699c09e0ea..b201fc486adb 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -113,10 +113,11 @@ static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
- 	return NVM_IO_OK;
- }
- 
--static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
--				sector_t blba, int nr_lbas)
-+static void pblk_read_check_seq(struct pblk *pblk, struct nvm_rq *rqd,
-+				sector_t blba)
- {
--	struct pblk_sec_meta *meta_lba_list = meta_list;
-+	struct pblk_sec_meta *meta_lba_list = rqd->meta_list;
-+	int nr_lbas = rqd->nr_ppas;
- 	int i;
- 
- 	for (i = 0; i < nr_lbas; i++) {
-@@ -125,17 +126,27 @@ static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
- 		if (lba == ADDR_EMPTY)
- 			continue;
- 
--		WARN(lba != blba + i, "pblk: corrupted read LBA\n");
-+		if (lba != blba + i) {
-+#ifdef CONFIG_NVM_DEBUG
-+			struct ppa_addr *p;
-+
-+			p = (nr_lbas == 1) ? &rqd->ppa_list[i] : &rqd->ppa_addr;
-+			print_ppa(&pblk->dev->geo, p, "seq", i);
-+#endif
-+			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
-+							lba, (u64)blba + i);
-+			WARN_ON(1);
-+		}
- 	}
- }
- 
- /*
-  * There can be holes in the lba list.
-  */
--static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
--				u64 *lba_list, int nr_lbas)
-+static void pblk_read_check_rand(struct pblk *pblk, struct nvm_rq *rqd,
-+				 u64 *lba_list, int nr_lbas)
- {
--	struct pblk_sec_meta *meta_lba_list = meta_list;
-+	struct pblk_sec_meta *meta_lba_list = rqd->meta_list;
- 	int i, j;
- 
- 	for (i = 0, j = 0; i < nr_lbas; i++) {
-@@ -145,14 +156,25 @@ static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
- 		if (lba == ADDR_EMPTY)
- 			continue;
- 
--		meta_lba = le64_to_cpu(meta_lba_list[j++].lba);
-+		meta_lba = le64_to_cpu(meta_lba_list[j].lba);
- 
- 		if (lba != meta_lba) {
-+#ifdef CONFIG_NVM_DEBUG
-+			struct ppa_addr *p;
-+			int nr_ppas = rqd->nr_ppas;
-+
-+			p = (nr_ppas == 1) ? &rqd->ppa_list[j] : &rqd->ppa_addr;
-+			print_ppa(&pblk->dev->geo, p, "seq", j);
-+#endif
- 			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
- 								lba, meta_lba);
- 			WARN_ON(1);
- 		}
-+
-+		j++;
- 	}
-+
-+	WARN_ONCE(j != rqd->nr_ppas, "pblk: corrupted random request\n");
- }
- 
- static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
-@@ -197,7 +219,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
- 		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
- #endif
- 
--	pblk_read_check_seq(pblk, rqd->meta_list, r_ctx->lba, rqd->nr_ppas);
-+	pblk_read_check_seq(pblk, rqd, r_ctx->lba);
- 
- 	bio_put(bio);
- 	if (r_ctx->private)
-@@ -610,7 +632,7 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
- 		goto err_free_bio;
- 	}
- 
--	pblk_read_check_rand(pblk, rqd.meta_list, gc_rq->lba_list, rqd.nr_ppas);
-+	pblk_read_check_rand(pblk, &rqd, gc_rq->lba_list, gc_rq->nr_secs);
- 
- 	atomic_dec(&pblk->inflight_io);
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
