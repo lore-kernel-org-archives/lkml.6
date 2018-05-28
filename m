@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937762AbeE1Niy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:38:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35596 "EHLO mail.kernel.org"
+        id S1163099AbeE1Ko5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:44:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163069AbeE1Ko7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:59 -0400
+        id S1163069AbeE1Kov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>, Keerthy <j-keerthy@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 070/496] ARM: OMAP2+: Fix sar_base inititalization for HS omaps
-Date: Mon, 28 May 2018 11:57:35 +0200
-Message-Id: <20180528100322.736842640@linuxfoundation.org>
+Subject: [PATCH 4.14 085/496] NFC: llcp: Limit size of SDP URI
+Date: Mon, 28 May 2018 11:57:50 +0200
+Message-Id: <20180528100323.382539330@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,49 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit fe27f16794f313f5fc16f6d2f42d8c2b2f4d70cc ]
+[ Upstream commit fe9c842695e26d8116b61b80bfb905356f07834b ]
 
-HS omaps use irq_save_secure_context() instead of irq_save_context()
-so sar_base will never get initialized and irq_sar_clear() gets called
-with a wrong address for HS omaps from irq_restore_context().
+The tlv_len is u8, so we need to limit the size of the SDP URI. Enforce
+this both in the NLA policy and in the code that performs the allocation
+and copy, to avoid writing past the end of the allocated buffer.
 
-Starting with commit f4b9f40ae95b ("ARM: OMAP4+: Initialize SAR RAM
-base early for proper CPU1 reset for kexec") we have it available,
-and this ideally would been fixed with that commit already.
-
-Fixes: f4b9f40ae95b ("ARM: OMAP4+: Initialize SAR RAM base early for
-proper CPU1 reset for kexec")
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: Dave Gerlach <d-gerlach@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: d9b8d8e19b073 ("NFC: llcp: Service Name Lookup netlink interface")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/omap-wakeupgen.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/nfc/llcp_commands.c |    4 ++++
+ net/nfc/netlink.c       |    3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/arm/mach-omap2/omap-wakeupgen.c
-+++ b/arch/arm/mach-omap2/omap-wakeupgen.c
-@@ -299,8 +299,6 @@ static void irq_save_context(void)
- 	if (soc_is_dra7xx())
- 		return;
+--- a/net/nfc/llcp_commands.c
++++ b/net/nfc/llcp_commands.c
+@@ -149,6 +149,10 @@ struct nfc_llcp_sdp_tlv *nfc_llcp_build_
  
--	if (!sar_base)
--		sar_base = omap4_get_sar_ram_base();
- 	if (wakeupgen_ops && wakeupgen_ops->save_context)
- 		wakeupgen_ops->save_context();
- }
-@@ -598,6 +596,8 @@ static int __init wakeupgen_init(struct
- 	irq_hotplug_init();
- 	irq_pm_init();
+ 	pr_debug("uri: %s, len: %zu\n", uri, uri_len);
  
-+	sar_base = omap4_get_sar_ram_base();
++	/* sdreq->tlv_len is u8, takes uri_len, + 3 for header, + 1 for NULL */
++	if (WARN_ON_ONCE(uri_len > U8_MAX - 4))
++		return NULL;
 +
- 	return 0;
- }
- IRQCHIP_DECLARE(ti_wakeupgen, "ti,omap4-wugen-mpu", wakeupgen_init);
+ 	sdreq = kzalloc(sizeof(struct nfc_llcp_sdp_tlv), GFP_KERNEL);
+ 	if (sdreq == NULL)
+ 		return NULL;
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -61,7 +61,8 @@ static const struct nla_policy nfc_genl_
+ };
+ 
+ static const struct nla_policy nfc_sdp_genl_policy[NFC_SDP_ATTR_MAX + 1] = {
+-	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING },
++	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING,
++			       .len = U8_MAX - 4 },
+ 	[NFC_SDP_ATTR_SAP] = { .type = NLA_U8 },
+ };
+ 
