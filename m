@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965272AbeE1KPc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:15:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35616 "EHLO mail.kernel.org"
+        id S966352AbeE1KPW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966501AbeE1KP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:27 -0400
+        id S936923AbeE1KPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Jan Chochol <jan@chochol.info>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 033/268] kconfig: Fix expr_free() E_NOT leak
-Date: Mon, 28 May 2018 12:00:07 +0200
-Message-Id: <20180528100205.827852300@linuxfoundation.org>
+Subject: [PATCH 4.4 029/268] nfs: Do not convert nfs_idmap_cache_timeout to jiffies
+Date: Mon, 28 May 2018 12:00:03 +0200
+Message-Id: <20180528100205.373153187@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,53 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: Jan Chochol <jan@chochol.info>
 
-[ Upstream commit 5b1374b3b3c2fc4f63a398adfa446fb8eff791a4 ]
+[ Upstream commit cbebc6ef4fc830f4040d4140bf53484812d5d5d9 ]
 
-Only the E_NOT operand and not the E_NOT node itself was freed, due to
-accidentally returning too early in expr_free(). Outline of leak:
+Since commit 57e62324e469 ("NFS: Store the legacy idmapper result in the
+keyring") nfs_idmap_cache_timeout changed units from jiffies to seconds.
+Unfortunately sysctl interface was not updated accordingly.
 
-	switch (e->type) {
-	...
-	case E_NOT:
-		expr_free(e->left.expr);
-		return;
-	...
-	}
-	*Never reached, 'e' leaked*
-	free(e);
+As a effect updating /proc/sys/fs/nfs/idmap_cache_timeout with some
+value will incorrectly multiply this value by HZ.
+Also reading /proc/sys/fs/nfs/idmap_cache_timeout will show real value
+divided by HZ.
 
-Fix by changing the 'return' to a 'break'.
-
-Summary from Valgrind on 'menuconfig' (ARCH=x86) before the fix:
-
-	LEAK SUMMARY:
-	   definitely lost: 44,448 bytes in 1,852 blocks
-	   ...
-
-Summary after the fix:
-
-	LEAK SUMMARY:
-	   definitely lost: 1,608 bytes in 67 blocks
-	   ...
-
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: 57e62324e469 ("NFS: Store the legacy idmapper result in the keyring")
+Signed-off-by: Jan Chochol <jan@chochol.info>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/kconfig/expr.c |    2 +-
+ fs/nfs/nfs4sysctl.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -113,7 +113,7 @@ void expr_free(struct expr *e)
- 		break;
- 	case E_NOT:
- 		expr_free(e->left.expr);
--		return;
-+		break;
- 	case E_EQUAL:
- 	case E_GEQ:
- 	case E_GTH:
+--- a/fs/nfs/nfs4sysctl.c
++++ b/fs/nfs/nfs4sysctl.c
+@@ -31,7 +31,7 @@ static struct ctl_table nfs4_cb_sysctls[
+ 		.data = &nfs_idmap_cache_timeout,
+ 		.maxlen = sizeof(int),
+ 		.mode = 0644,
+-		.proc_handler = proc_dointvec_jiffies,
++		.proc_handler = proc_dointvec,
+ 	},
+ 	{ }
+ };
