@@ -1,117 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeE1BrX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 21:47:23 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35025 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753049AbeE1BrT (ORCPT
+        id S1752984AbeE1COJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 22:14:09 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:41570 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752950AbeE1COG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 21:47:19 -0400
-X-ME-Proxy: <xmx:p18LW2mHXQMPm5ve2ZzFaEDDWuoct8jTI-6LjuR2dW3tcumjIOKwig>
-X-ME-Proxy: <xmx:p18LW_FxHAX7rEvU1yEhLnZ5BohuZ2quZOtJQQ1eIRIBNlqqW-U-5A>
-X-ME-Proxy: <xmx:p18LWxtnuV6O7lWUQ7NgO7T7hCdUkhkuvD_L_VzzXs4GtDU0mMVgUw>
-X-ME-Proxy: <xmx:p18LW9kqmzHnksxHQ_i1oYH3_bjEUVwaSApWgXirWex7EU7xt4bO4g>
-X-ME-Proxy: <xmx:p18LWyPG3FnxJ74DeWg3S4ZiZaCcmvqRtub8aST9bG5lJCy39zdJxQ>
-X-ME-Proxy: <xmx:p18LWwmWFaC-gAmaxyu9edS3sXBOZpT3Od-kg4ogKgR3kpJN4g9Heg>
-X-ME-Sender: <xms:p18LW8n0WBjiA5PEarOB9Pqmr6aU4AF-xatbNR37boxYSAQL01Hgag>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/4] vsprintf: Add command line option debug_boot_weak_hash
-Date: Mon, 28 May 2018 11:46:42 +1000
-Message-Id: <1527472002-11571-5-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527472002-11571-1-git-send-email-me@tobin.cc>
-References: <1527472002-11571-1-git-send-email-me@tobin.cc>
+        Sun, 27 May 2018 22:14:06 -0400
+X-Google-Smtp-Source: ADUXVKKSy9C/a48fkze6rIy8OJFfqvQvLi5yNOmfqjJ4qEY8ARAnLSUeOxqEMiYJ6QamCoxEqRlPtTTl82AySytQZMo=
+MIME-Version: 1.0
+In-Reply-To: <20180527215411.24701-1-colin.king@canonical.com>
+References: <20180527215411.24701-1-colin.king@canonical.com>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Date: Sun, 27 May 2018 22:14:05 -0400
+X-Google-Sender-Auth: UN-hyhUS61dlWNvgOyuiVg01ebk
+Message-ID: <CAKb7Uvjwid5WSyCm2_+sZ2EPauaG0ef9QS2gm_tSk53hXtkHDA@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH][next] drm/nouveau/disp: avoid potential
+ overflow on shift of int value
+To: Colin King <colin.king@canonical.com>
+Cc: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently printing [hashed] pointers requires enough entropy to be
-available.  Early in the boot sequence this may not be the case
-resulting in a dummy string '(____ptrval____)' being printed.  This
-makes debugging the early boot sequence difficult.  We can relax the
-requirement to use cryptographically secure hashing during debugging.
-This enables debugging while keeping development/production kernel
-behaviour the same.
+On Sun, May 27, 2018 at 5:54 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The constant values being shifted are 32 bit integers and may potentially
+> overflow on the shift.  Avoid this potential overflow by making them
+> unsigned long long values before the shift.
+>
+> Detected by CoverityScan, CID#1469383, 1469400 ("Unintentional
+> integer overflow")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c | 2 +-
+>  drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+> index 29e6dd58ac48..99b94802ed63 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
+> @@ -52,7 +52,7 @@ void
+>  gf119_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
+>  {
+>         struct nvkm_device *device = chan->disp->base.engine.subdev.device;
+> -       const u64 mask = 0x00000001 << chan->chid.user;
+> +       const u64 mask = 0x00000001ULL << chan->chid.user;
 
-If new command line option debug_boot_weak_hash is enabled use
-cryptographically insecure hashing and hash pointer value immediately.
+I'm pretty sure all of these should just be u32 (below as well). The
+registers that this is masking are all 32-bit, more doesn't make
+sense.
 
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
- lib/vsprintf.c                                  | 20 ++++++++++++++++++++
- 2 files changed, 29 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f2040d46f095..8a86d895343e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -753,6 +753,15 @@
- 
- 	debug		[KNL] Enable kernel debugging (events log level).
- 
-+	debug_boot_weak_hash
-+			[KNL] Enable printing pointers early in the boot
-+			sequence.  If enabled, we use a weak hash instead of
-+			siphash to hash pointers.  Use this option if you need
-+			to see pointer values during early boot (i.e you are
-+			seeing instances of '(___ptrval___)').
-+			Cryptographically insecure, please do not use on
-+			production kernels.
-+
- 	debug_locks_verbose=
- 			[KNL] verbose self-tests
- 			Format=<0|1>
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 1545a8aa26a9..369623205e2c 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1670,6 +1670,20 @@ char *pointer_string(char *buf, char *end, const void *ptr,
- }
- 
- static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
-+
-+/* Make pointers available for printing early in the boot sequence. */
-+static int debug_boot_weak_hash __ro_after_init;
-+EXPORT_SYMBOL(debug_boot_weak_hash);
-+
-+static int __init debug_boot_weak_hash_enable(char *str)
-+{
-+	debug_boot_weak_hash = 1;
-+	pr_info("debug_boot_weak_hash enabled\n");
-+	return 0;
-+}
-+early_param("debug_boot_weak_hash", debug_boot_weak_hash_enable);
-+
-+static bool have_filled_random_ptr_key __read_mostly;
- static siphash_key_t ptr_key __read_mostly;
- 
- static void enable_ptr_key_workfn(struct work_struct *work)
-@@ -1721,6 +1735,12 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
- 	unsigned long hashval;
- 	const int default_width = 2 * sizeof(ptr);
- 
-+	/* When debugging early boot use non-cryptographically secure hash */
-+	if (unlikely(debug_boot_weak_hash)) {
-+		hashval = hash_long((unsigned long)ptr, 32);
-+		return pointer_string(buf, end, (const void *)hashval, spec);
-+	}
-+
- 	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
- 		spec.field_width = default_width;
- 		/* string length must be less than default_width */
--- 
-2.7.4
+>         if (!en) {
+>                 nvkm_mask(device, 0x610090, mask, 0x00000000);
+>                 nvkm_mask(device, 0x6100a0, mask, 0x00000000);
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+> index 57719f675eec..43ae3b092e43 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+> @@ -166,7 +166,7 @@ void
+>  nv50_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
+>  {
+>         struct nvkm_device *device = chan->disp->base.engine.subdev.device;
+> -       const u64 mask = 0x00010001 << chan->chid.user;
+> +       const u64 mask = 0x00010001ULL << chan->chid.user;
+>         const u64 data = en ? 0x00010000 : 0x00000000;
+>         nvkm_mask(device, 0x610028, mask, data);
+>  }
+> --
+> 2.17.0
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
