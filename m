@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161527AbeE1KcY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:32:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52150 "EHLO mail.kernel.org"
+        id S1161583AbeE1Kch (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:32:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161488AbeE1KcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:14 -0400
+        id S1161488AbeE1KcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@google.com>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 134/329] regulatory: add NUL to request alpha2
-Date: Mon, 28 May 2018 12:01:03 +0200
-Message-Id: <20180528100253.811002078@linuxfoundation.org>
+Subject: [PATCH 4.9 138/329] mac80211: drop frames with unexpected DS bits from fast-rx to slow path
+Date: Mon, 28 May 2018 12:01:07 +0200
+Message-Id: <20180528100254.094876414@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,31 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 657308f73e674e86b60509a430a46e569bf02846 ]
+[ Upstream commit b323ac19b7734a1c464b2785a082ee50bccd3b91 ]
 
-Similar to the ancient commit a5fe8e7695dc ("regulatory: add NUL
-to alpha2"), add another byte to alpha2 in the request struct so
-that when we use nla_put_string(), we don't overrun anything.
+Fixes rx for 4-addr packets in AP mode. These may be used for setting
+up a 4-addr link for stations that are allowed to do so.
 
-Fixes: 73d54c9e74c4 ("cfg80211: add regulatory netlink multicast group")
-Reported-by: Kees Cook <keescook@google.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/regulatory.h |    2 +-
+ net/mac80211/rx.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/regulatory.h
-+++ b/include/net/regulatory.h
-@@ -78,7 +78,7 @@ struct regulatory_request {
- 	int wiphy_idx;
- 	enum nl80211_reg_initiator initiator;
- 	enum nl80211_user_reg_hint_type user_reg_hint_type;
--	char alpha2[2];
-+	char alpha2[3];
- 	enum nl80211_dfs_regions dfs_region;
- 	bool intersect;
- 	bool processed;
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -3907,7 +3907,7 @@ static bool ieee80211_invoke_fast_rx(str
+ 	if ((hdr->frame_control & cpu_to_le16(IEEE80211_FCTL_FROMDS |
+ 					      IEEE80211_FCTL_TODS)) !=
+ 	    fast_rx->expected_ds_bits)
+-		goto drop;
++		return false;
+ 
+ 	/* assign the key to drop unencrypted frames (later)
+ 	 * and strip the IV/MIC if necessary
