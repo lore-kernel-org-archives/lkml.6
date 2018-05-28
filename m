@@ -1,29 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165527AbeE1OTD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:19:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55860 "EHLO mail.kernel.org"
+        id S1165572AbeE1OTT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:19:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161788AbeE1Kfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:30 -0400
+        id S1162025AbeE1KfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ephraim Park <ephiepark@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>, jolsa@redhat.com,
-        kernel-team@fb.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 206/329] perf/cgroup: Fix child event counting bug
-Date: Mon, 28 May 2018 12:02:15 +0200
-Message-Id: <20180528100259.376465984@linuxfoundation.org>
+Subject: [PATCH 4.9 204/329] vti4: Dont count header length twice on tunnel setup
+Date: Mon, 28 May 2018 12:02:13 +0200
+Message-Id: <20180528100259.213002614@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -39,103 +31,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Song Liu <songliubraving@fb.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit c917e0f259908e75bd2a65877e25f9d90c22c848 ]
+[ Upstream commit dd1df24737727e119c263acf1be2a92763938297 ]
 
-When a perf_event is attached to parent cgroup, it should count events
-for all children cgroups:
+This re-introduces the effect of commit a32452366b72 ("vti4:
+Don't count header length twice.") which was accidentally
+reverted by merge commit f895f0cfbb77 ("Merge branch 'master' of
+git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec").
 
-   parent_group   <---- perf_event
-     \
-      - child_group  <---- process(es)
+The commit message from Steffen Klassert said:
 
-However, in our tests, we found this perf_event cannot report reliable
-results. Here is an example case:
+    We currently count the size of LL_MAX_HEADER and struct iphdr
+    twice for vti4 devices, this leads to a wrong device mtu.
+    The size of LL_MAX_HEADER and struct iphdr is already counted in
+    ip_tunnel_bind_dev(), so don't do it again in vti_tunnel_init().
 
-  # create cgroups
-  mkdir -p /sys/fs/cgroup/p/c
-  # start perf for parent group
-  perf stat -e instructions -G "p"
+And this is still the case now: ip_tunnel_bind_dev() already
+accounts for the header length of the link layer (not
+necessarily LL_MAX_HEADER, if the output device is found), plus
+one IP header.
 
-  # on another console, run test process in child cgroup:
-  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
+For example, with a vti device on top of veth, with MTU of 1500,
+the existing implementation would set the initial vti MTU to
+1332, accounting once for LL_MAX_HEADER (128, included in
+hard_header_len by vti) and twice for the same IP header (once
+from hard_header_len, once from ip_tunnel_bind_dev()).
 
-  # after the test process is done, stop perf in the first console shows
+It should instead be 1480, because ip_tunnel_bind_dev() is able
+to figure out that the output device is veth, so no additional
+link layer header is attached, and will properly count one
+single IP header.
 
-       <not counted>      instructions              p
+The existing issue had the side effect of avoiding PMTUD for
+most xfrm policies, by arbitrarily lowering the initial MTU.
+However, the only way to get a consistent PMTU value is to let
+the xfrm PMTU discovery do its course, and commit d6af1a31cc72
+("vti: Add pmtu handling to vti_xmit.") now takes care of local
+delivery cases where the application ignores local socket
+notifications.
 
-The instruction should not be "not counted" as the process runs in the
-child cgroup.
-
-We found this is because perf_event->cgrp and cpuctx->cgrp are not
-identical, thus perf_event->cgrp are not updated properly.
-
-This patch fixes this by updating perf_cgroup properly for ancestor
-cgroup(s).
-
-Reported-by: Ephraim Park <ephiepark@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <jolsa@redhat.com>
-Cc: <kernel-team@fb.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20180312165943.1057894-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: b9959fd3b0fa ("vti: switch to new ip tunnel code")
+Fixes: f895f0cfbb77 ("Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/core.c |   21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ net/ipv4/ip_vti.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -634,9 +634,15 @@ static inline void __update_cgrp_time(st
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -396,7 +396,6 @@ static int vti_tunnel_init(struct net_de
+ 	memcpy(dev->dev_addr, &iph->saddr, 4);
+ 	memcpy(dev->broadcast, &iph->daddr, 4);
  
- static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
- {
--	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
--	if (cgrp_out)
--		__update_cgrp_time(cgrp_out);
-+	struct perf_cgroup *cgrp = cpuctx->cgrp;
-+	struct cgroup_subsys_state *css;
-+
-+	if (cgrp) {
-+		for (css = &cgrp->css; css; css = css->parent) {
-+			cgrp = container_of(css, struct perf_cgroup, css);
-+			__update_cgrp_time(cgrp);
-+		}
-+	}
- }
- 
- static inline void update_cgrp_time_from_event(struct perf_event *event)
-@@ -664,6 +670,7 @@ perf_cgroup_set_timestamp(struct task_st
- {
- 	struct perf_cgroup *cgrp;
- 	struct perf_cgroup_info *info;
-+	struct cgroup_subsys_state *css;
- 
- 	/*
- 	 * ctx->lock held by caller
-@@ -674,8 +681,12 @@ perf_cgroup_set_timestamp(struct task_st
- 		return;
- 
- 	cgrp = perf_cgroup_from_task(task, ctx);
--	info = this_cpu_ptr(cgrp->info);
--	info->timestamp = ctx->timestamp;
-+
-+	for (css = &cgrp->css; css; css = css->parent) {
-+		cgrp = container_of(css, struct perf_cgroup, css);
-+		info = this_cpu_ptr(cgrp->info);
-+		info->timestamp = ctx->timestamp;
-+	}
- }
- 
- #define PERF_CGROUP_SWOUT	0x1 /* cgroup switch out every event */
+-	dev->hard_header_len	= LL_MAX_HEADER + sizeof(struct iphdr);
+ 	dev->mtu		= ETH_DATA_LEN;
+ 	dev->flags		= IFF_NOARP;
+ 	dev->addr_len		= 4;
