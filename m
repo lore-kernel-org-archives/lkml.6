@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162496AbeE1OIC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:08:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58572 "EHLO mail.kernel.org"
+        id S1163015AbeE1OIR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:08:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162131AbeE1KiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:09 -0400
+        id S1162444AbeE1KiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:38:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 266/329] ath10k: Fix kernel panic while using worker (ath10k_sta_rc_update_wk)
-Date: Mon, 28 May 2018 12:03:15 +0200
-Message-Id: <20180528100304.054813399@linuxfoundation.org>
+Subject: [PATCH 4.9 265/329] net/mlx5: Protect from command bit overflow
+Date: Mon, 28 May 2018 12:03:14 +0200
+Message-Id: <20180528100303.976888686@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,102 +30,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit 8b2d93dd22615cb7f3046a5a2083a6f8bb8052ed ]
+[ Upstream commit 957f6ba8adc7be401a74ccff427e4cfd88d3bfcb ]
 
-When attempt to run worker (ath10k_sta_rc_update_wk) after the station object
-(ieee80211_sta) delete will trigger the kernel panic.
+The system with CONFIG_UBSAN enabled on produces the following error
+during driver initialization. The reason to it that max_reg_cmds can be
+larger enough to cause to "1 << max_reg_cmds" overflow the unsigned long.
 
-This problem arise in AP + Mesh configuration, Where the current node AP VAP
-and neighbor node mesh VAP MAC address are same. When the current mesh node
-try to establish the mesh link with neighbor node, driver peer creation for
-the neighbor mesh node fails due to duplication MAC address. Already the AP
-VAP created with same MAC address.
+================================================================================
+UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlx5/core/cmd.c:1805:42
+signed integer overflow:
+-2147483648 - 1 cannot be represented in type 'int'
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2-00032-g06cda2358d9b-dirty #724
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+Call Trace:
+ dump_stack+0xe9/0x18f
+ ? dma_virt_alloc+0x81/0x81
+ ubsan_epilogue+0xe/0x4e
+ handle_overflow+0x187/0x20c
+ mlx5_cmd_init+0x73a/0x12b0
+ mlx5_load_one+0x1c3d/0x1d30
+ init_one+0xd02/0xf10
+ pci_device_probe+0x26c/0x3b0
+ driver_probe_device+0x622/0xb40
+ __driver_attach+0x175/0x1b0
+ bus_for_each_dev+0xef/0x190
+ bus_add_driver+0x2db/0x490
+ driver_register+0x16b/0x1e0
+ __pci_register_driver+0x177/0x1b0
+ init+0x6d/0x92
+ do_one_initcall+0x15b/0x270
+ kernel_init_freeable+0x2d8/0x3d0
+ kernel_init+0x14/0x190
+ ret_from_fork+0x24/0x30
+================================================================================
 
-It is caused by the following scenario steps.
-
-Steps:
-1. In above condition, ath10k driver sta_state callback (ath10k_sta_state)
-   fails to do the state change for a station from IEEE80211_STA_NOTEXIST
-   to IEEE80211_STA_NONE due to peer creation fails. Sta_state callback is
-   called from ieee80211_add_station() to handle the new station
-   (neighbor mesh node) request from the wpa_supplicant.
-2. Concurrently ath10k receive the sta_rc_update callback notification from
-   the mesh_neighbour_update() to handle the beacon frames of the above
-   neighbor mesh node. since its atomic callback, ath10k driver queue the
-   work (ath10k_sta_rc_update_wk) to handle rc update.
-3. Due to driver sta_state callback fails (step 1), mac80211 free the station
-   object.
-4. When the worker (ath10k_sta_rc_update_wk) scheduled to run, it will access
-   the station object which is already deleted. so it will trigger kernel
-   panic.
-
-Added the peer exist check in sta_rc_update callback before queue the work.
-
-Kernel Panic log:
-
-Unable to handle kernel NULL pointer dereference at virtual address 00000000
-pgd = c0204000
-[00000000] *pgd=00000000
-Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-CPU: 1 PID: 1833 Comm: kworker/u4:2 Not tainted 3.14.77 #1
-task: dcef0000 ti: d72b6000 task.ti: d72b6000
-PC is at pwq_activate_delayed_work+0x10/0x40
-LR is at pwq_activate_delayed_work+0xc/0x40
-pc : [<c023f988>]    lr : [<c023f984>]    psr: 40000193
-sp : d72b7f18  ip : 0000007a  fp : d72b6000
-r10: 00000000  r9 : dd404414  r8 : d8c31998
-r7 : d72b6038  r6 : 00000004  r5 : d4907ec8  r4 : dcee1300
-r3 : ffffffe0  r2 : 00000000  r1 : 00000001  r0 : 00000000
-Flags: nZcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-Control: 10c5787d  Table: 595bc06a  DAC: 00000015
-...
-Process kworker/u4:2 (pid: 1833, stack limit = 0xd72b6238)
-Stack: (0xd72b7f18 to 0xd72b8000)
-7f00:                                                       00000001 dcee1300
-7f20: 00000001 c02410dc d8c31980 dd404400 dd404400 c0242790 d8c31980 00000089
-7f40: 00000000 d93e1340 00000000 d8c31980 c0242568 00000000 00000000 00000000
-7f60: 00000000 c02474dc 00000000 00000000 000000f8 d8c31980 00000000 00000000
-7f80: d72b7f80 d72b7f80 00000000 00000000 d72b7f90 d72b7f90 d72b7fac d93e1340
-7fa0: c0247404 00000000 00000000 c0208d20 00000000 00000000 00000000 00000000
-7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[<c023f988>] (pwq_activate_delayed_work) from [<c02410dc>] (pwq_dec_nr_in_flight+0x58/0xc4)
-[<c02410dc>] (pwq_dec_nr_in_flight) from [<c0242790>] (worker_thread+0x228/0x360)
-[<c0242790>] (worker_thread) from [<c02474dc>] (kthread+0xd8/0xec)
-[<c02474dc>] (kthread) from [<c0208d20>] (ret_from_fork+0x14/0x34)
-Code: e92d4038 e1a05000 ebffffbc[69210.619376] SMP: failed to stop secondary CPUs
-Rebooting in 3 seconds..
-
-Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6928,10 +6928,20 @@ static void ath10k_sta_rc_update(struct
- {
- 	struct ath10k *ar = hw->priv;
- 	struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
-+	struct ath10k_vif *arvif = (void *)vif->drv_priv;
-+	struct ath10k_peer *peer;
- 	u32 bw, smps;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -1765,7 +1765,7 @@ int mlx5_cmd_init(struct mlx5_core_dev *
  
- 	spin_lock_bh(&ar->data_lock);
+ 	cmd->checksum_disabled = 1;
+ 	cmd->max_reg_cmds = (1 << cmd->log_sz) - 1;
+-	cmd->bitmask = (1 << cmd->max_reg_cmds) - 1;
++	cmd->bitmask = (1UL << cmd->max_reg_cmds) - 1;
  
-+	peer = ath10k_peer_find(ar, arvif->vdev_id, sta->addr);
-+	if (!peer) {
-+		spin_unlock_bh(&ar->data_lock);
-+		ath10k_warn(ar, "mac sta rc update failed to find peer %pM on vdev %i\n",
-+			    sta->addr, arvif->vdev_id);
-+		return;
-+	}
-+
- 	ath10k_dbg(ar, ATH10K_DBG_MAC,
- 		   "mac sta rc update for %pM changed %08x bw %d nss %d smps %d\n",
- 		   sta->addr, changed, sta->bandwidth, sta->rx_nss,
+ 	cmd->cmdif_rev = ioread32be(&dev->iseg->cmdif_rev_fw_sub) >> 16;
+ 	if (cmd->cmdif_rev > CMD_IF_REV) {
