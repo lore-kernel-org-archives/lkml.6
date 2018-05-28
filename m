@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936746AbeE1KM1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:12:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60336 "EHLO mail.kernel.org"
+        id S936760AbeE1KMd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:12:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932229AbeE1KMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:12:12 -0400
+        id S936748AbeE1KM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:12:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 148/185] MIPS: ath79: Fix AR724X_PLL_REG_PCIE_CONFIG offset
-Date: Mon, 28 May 2018 12:03:09 +0200
-Message-Id: <20180528100108.904555680@linuxfoundation.org>
+Subject: [PATCH 3.18 154/185] hwmon: (pmbus/max8688) Accept negative page register values
+Date: Mon, 28 May 2018 12:03:15 +0200
+Message-Id: <20180528100110.441122751@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,37 +29,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Kresin <dev@kresin.me>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 05454c1bde91fb013c0431801001da82947e6b5a ]
+[ Upstream commit a46f8cd696624ef757be0311eb28f119c36778e8 ]
 
-According to the QCA u-boot source the "PCIE Phase Lock Loop
-Configuration (PCIE_PLL_CONFIG)" register is for all SoCs except the
-QCA955X and QCA956X at offset 0x10.
+A negative page register value means that no page needs to be
+selected. This is used by status register evaluations and needs
+to be accepted.
 
-Since the PCIE PLL config register is only defined for the AR724x fix
-only this value. The value is wrong since the day it was added and isn't
-used by any driver yet.
-
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/16048/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: da8e48ab483e1 ("hwmon: (pmbus) Always call _pmbus_read_byte in core driver")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/mach-ath79/ar71xx_regs.h |    2 +-
+ drivers/hwmon/pmbus/max8688.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
-+++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
-@@ -167,7 +167,7 @@
- #define AR71XX_AHB_DIV_MASK		0x7
+--- a/drivers/hwmon/pmbus/max8688.c
++++ b/drivers/hwmon/pmbus/max8688.c
+@@ -44,7 +44,7 @@ static int max8688_read_word_data(struct
+ {
+ 	int ret;
  
- #define AR724X_PLL_REG_CPU_CONFIG	0x00
--#define AR724X_PLL_REG_PCIE_CONFIG	0x18
-+#define AR724X_PLL_REG_PCIE_CONFIG	0x10
+-	if (page)
++	if (page > 0)
+ 		return -ENXIO;
  
- #define AR724X_PLL_DIV_SHIFT		0
- #define AR724X_PLL_DIV_MASK		0x3ff
+ 	switch (reg) {
