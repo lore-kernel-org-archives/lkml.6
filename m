@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162333AbeE1KhI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:37:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57536 "EHLO mail.kernel.org"
+        id S1162755AbeE1OMF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:12:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162110AbeE1Kg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:58 -0400
+        id S1162110AbeE1KhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 239/329] mm: fix races between address_space dereference and free in page_evicatable
-Date: Mon, 28 May 2018 12:02:48 +0200
-Message-Id: <20180528100301.923756552@linuxfoundation.org>
+Subject: [PATCH 4.9 243/329] ocfs2/dlm: dont handle migrate lockres if already in shutdown
+Date: Mon, 28 May 2018 12:02:52 +0200
+Message-Id: <20180528100302.215161920@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -34,76 +34,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huang Ying <ying.huang@intel.com>
+From: Jun Piao <piaojun@huawei.com>
 
-[ Upstream commit e92bb4dd9673945179b1fc738c9817dd91bfb629 ]
+[ Upstream commit bb34f24c7d2c98d0c81838a7700e6068325b17a0 ]
 
-When page_mapping() is called and the mapping is dereferenced in
-page_evicatable() through shrink_active_list(), it is possible for the
-inode to be truncated and the embedded address space to be freed at the
-same time.  This may lead to the following race.
+We should not handle migrate lockres if we are already in
+'DLM_CTXT_IN_SHUTDOWN', as that will cause lockres remains after leaving
+dlm domain.  At last other nodes will get stuck into infinite loop when
+requsting lock from us.
 
-CPU1                                                CPU2
+The problem is caused by concurrency umount between nodes.  Before
+receiveing N1's DLM_BEGIN_EXIT_DOMAIN_MSG, N2 has picked up N1 as the
+migrate target.  So N2 will continue sending lockres to N1 even though
+N1 has left domain.
 
-truncate(inode)                                     shrink_active_list()
-  ...                                                 page_evictable(page)
-  truncate_inode_page(mapping, page);
-    delete_from_page_cache(page)
-      spin_lock_irqsave(&mapping->tree_lock, flags);
-        __delete_from_page_cache(page, NULL)
-          page_cache_tree_delete(..)
-            ...                                         mapping = page_mapping(page);
-            page->mapping = NULL;
-            ...
-      spin_unlock_irqrestore(&mapping->tree_lock, flags);
-      page_cache_free_page(mapping, page)
-        put_page(page)
-          if (put_page_testzero(page)) -> false
-- inode now has no pages and can be freed including embedded address_space
+        N1                             N2 (owner)
+                                       touch file
 
-                                                        mapping_unevictable(mapping)
-							  test_bit(AS_UNEVICTABLE, &mapping->flags);
-- we've dereferenced mapping which is potentially already free.
+    access the file,
+    and get pr lock
 
-Similar race exists between swap cache freeing and page_evicatable()
-too.
+                                       begin leave domain and
+                                       pick up N1 as new owner
 
-The address_space in inode and swap cache will be freed after a RCU
-grace period.  So the races are fixed via enclosing the page_mapping()
-and address_space usage in rcu_read_lock/unlock().  Some comments are
-added in code to make it clear what is protected by the RCU read lock.
+    begin leave domain and
+    migrate all lockres done
 
-Link: http://lkml.kernel.org/r/20180212081227.1940-1-ying.huang@intel.com
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
+                                       begin migrate lockres to N1
+
+    end leave domain, but
+    the lockres left
+    unexpectedly, because
+    migrate task has passed
+
+[piaojun@huawei.com: v3]
+  Link: http://lkml.kernel.org/r/5A9CBD19.5020107@huawei.com
+Link: http://lkml.kernel.org/r/5A99F028.2090902@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmscan.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/ocfs2/dlm/dlmdomain.c   |   14 --------------
+ fs/ocfs2/dlm/dlmdomain.h   |   25 ++++++++++++++++++++++++-
+ fs/ocfs2/dlm/dlmrecovery.c |    9 +++++++++
+ 3 files changed, 33 insertions(+), 15 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3857,7 +3857,13 @@ int node_reclaim(struct pglist_data *pgd
-  */
- int page_evictable(struct page *page)
- {
--	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	int ret;
-+
-+	/* Prevent address_space of inode and swap cache from being freed */
-+	rcu_read_lock();
-+	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	rcu_read_unlock();
-+	return ret;
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -675,20 +675,6 @@ static void dlm_leave_domain(struct dlm_
+ 	spin_unlock(&dlm->spinlock);
  }
  
- #ifdef CONFIG_SHMEM
+-int dlm_shutting_down(struct dlm_ctxt *dlm)
+-{
+-	int ret = 0;
+-
+-	spin_lock(&dlm_domain_lock);
+-
+-	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
+-		ret = 1;
+-
+-	spin_unlock(&dlm_domain_lock);
+-
+-	return ret;
+-}
+-
+ void dlm_unregister_domain(struct dlm_ctxt *dlm)
+ {
+ 	int leave = 0;
+--- a/fs/ocfs2/dlm/dlmdomain.h
++++ b/fs/ocfs2/dlm/dlmdomain.h
+@@ -28,7 +28,30 @@
+ extern spinlock_t dlm_domain_lock;
+ extern struct list_head dlm_domains;
+ 
+-int dlm_shutting_down(struct dlm_ctxt *dlm);
++static inline int dlm_joined(struct dlm_ctxt *dlm)
++{
++	int ret = 0;
++
++	spin_lock(&dlm_domain_lock);
++	if (dlm->dlm_state == DLM_CTXT_JOINED)
++		ret = 1;
++	spin_unlock(&dlm_domain_lock);
++
++	return ret;
++}
++
++static inline int dlm_shutting_down(struct dlm_ctxt *dlm)
++{
++	int ret = 0;
++
++	spin_lock(&dlm_domain_lock);
++	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
++		ret = 1;
++	spin_unlock(&dlm_domain_lock);
++
++	return ret;
++}
++
+ void dlm_fire_domain_eviction_callbacks(struct dlm_ctxt *dlm,
+ 					int node_num);
+ 
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -1378,6 +1378,15 @@ int dlm_mig_lockres_handler(struct o2net
+ 	if (!dlm_grab(dlm))
+ 		return -EINVAL;
+ 
++	if (!dlm_joined(dlm)) {
++		mlog(ML_ERROR, "Domain %s not joined! "
++			  "lockres %.*s, master %u\n",
++			  dlm->name, mres->lockname_len,
++			  mres->lockname, mres->master);
++		dlm_put(dlm);
++		return -EINVAL;
++	}
++
+ 	BUG_ON(!(mres->flags & (DLM_MRES_RECOVERY|DLM_MRES_MIGRATION)));
+ 
+ 	real_master = mres->master;
