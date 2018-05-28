@@ -1,94 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754085AbeE1Iit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:38:49 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53264 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753986AbeE1Iil (ORCPT
+        id S1754070AbeE1Ikb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:40:31 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41360 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753986AbeE1Ik1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:38:41 -0400
-X-Google-Smtp-Source: AB8JxZqICmGTz5BovShF0ap0wWgIeAA0DgHavJs6BGl9z6mt0lx1OYLKbK5N+Er7KKp3BGJUDv1Rvw==
-Date: Mon, 28 May 2018 10:38:34 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        davem@davemloft.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>, linux-usb@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] usb: gadget: ccid: add support for USB CCID
- Gadget Device
-Message-ID: <20180528083834.GB4651@gmail.com>
-References: <CGME20180526212048epcas2p1510fd6c92f20e8f6d0059742ab5fb3f7@epcas2p1.samsung.com>
- <20180526211940.25474-1-marcus.folkesson@gmail.com>
- <20180528070453eucas1p294be19abd2cab7d112404d15710edfde~yvQ5mevbz2769227692eucas1p2k@eucas1p2.samsung.com>
+        Mon, 28 May 2018 04:40:27 -0400
+X-Google-Smtp-Source: ADUXVKI/5H5s0qY9hWw2DoMZjf9BqMwGB7oy/rxM6DAMmx40fBo60YUkIW4cGiorN8rkKYbp+2HmvdXSuZIqqLB2284=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180528070453eucas1p294be19abd2cab7d112404d15710edfde~yvQ5mevbz2769227692eucas1p2k@eucas1p2.samsung.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180517094658.18707-1-douly.fnst@cn.fujitsu.com>
+References: <20180517094658.18707-1-douly.fnst@cn.fujitsu.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 28 May 2018 10:40:26 +0200
+X-Google-Sender-Auth: NiOJyOJ7vIJfEMD0WYo0FHgdB4U
+Message-ID: <CAJZ5v0hpEf3gxfAtfufGQVyGEWoszMfEciNKiYf0TrUWNXtiuQ@mail.gmail.com>
+Subject: Re: [PATCH 0/1] Remove the check of duplicate processors
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrzej,
+On Thu, May 17, 2018 at 11:46 AM, Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
+> There is a bug in CPU hotplug code, I have two simple fix method, but I can't
+> ensure which one is better. So sent it out,  seek help.
+>
+> We found some processors which have the same processor ID but in different
+> PXM in ACPI namespace. such as this:
+>
+> proc_id   |    pxm
+> --------------------
+> 0       <->     0
+> 1       <->     0
+> 2       <->     1
+> 3       <->     1
+> ......
+> 89      <->     0
+> 89      <->     1
+> 89      <->     2
+> 89      <->     3
+> ......
+>
+> So we create a mechanism to validate them. make the processor(ID=89)
+> as invalid. And once a processor be hotplugged physically, we check its
+> processor id.
+>
+>     Commit 8e089eaa1999 ("acpi: Provide mechanism to validate processors in the ACPI tables")
+>     Commit a77d6cd96849 ("acpi/processor: Check for duplicate processor ids at hotplug time")
+>
+> Recently, I found the check mechanism has a bug, it didn't use the
+> acpi_processor_ids_walk() right and always gave us a wrong result.
+> First, I fixed it by modifying the value with AE_OK which is the
+> standard acpi_status value.
+>
+>     https://lkml.org/lkml/2018/3/20/273
+>
+> But, now, I even think this check is useless. my reasons are following:
+>
+>     1). Based on the practical effect, It works well, and no bug be reported
+>     2). Based on the code, the duplicate cases can be dealed with by
+>
+>        if (invalid_logical_cpuid(pr->id) || !cpu_present(pr->id))
+>
+> That seems more reasonable, let's see the following case:
+>
+>                           Before the patch,             After the patch
+>
+> the first processor(ID=89)
+> hot-add                        failed                        success
+>
+> the others processor(ID=89)
+> hot-add                        failed                        failed
+>
+>
+> So, What's your idea about it.
+>
+> Dou Liyang (1):
+>   acpi/processor: Remove the check of duplicates processor ids
 
-On Mon, May 28, 2018 at 09:04:51AM +0200, Andrzej Pietrasiewicz wrote:
-> Mi Marcus,
-> 
-> W dniu 26.05.2018 o 23:19, Marcus Folkesson pisze:
-> > Chip Card Interface Device (CCID) protocol is a USB protocol that
-> > allows a smartcard device to be connected to a computer via a card
-> > reader using a standard USB interface, without the need for each manufacturer
-> > of smartcards to provide its own reader or protocol.
-> > 
-> > This gadget driver makes Linux show up as a CCID device to the host and let a
-> > userspace daemon act as the smartcard.
-> > 
-> > This is useful when the Linux gadget itself should act as a cryptographic
-> > device or forward APDUs to an embedded smartcard device.
-> > 
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> 
-> >   
-> > +config USB_CONFIGFS_CCID
-> > +	bool "Chip Card Interface Device (CCID)"
-> > +	depends on USB_CONFIGFS
-> > +	select USB_F_CCID
-> > +	help
-> > +	  The CCID function driver provides generic emulation of a
-> > +	  Chip Card Interface Device (CCID).
-> > +
-> > +	  You will need a user space server talking to /dev/ccidg*,
-> > +	  since the kernel itself does not implement CCID/TPDU/APDU
-> > +	  protocol.
-> 
-> Your function needs a userspace daemon to work.
-> It seems you want to use FunctionFS for such a purpose
-> instead of creating a new function.
-> 
-> Andrzej
+Can you please resend the patch with the above information in the
+changelog of it?
 
-> > +	  since the kernel itself does not implement CCID/TPDU/APDU
-Oops, the driver does handle CCID.
+That would make it easier to review and discuss it.
 
-Well, yes, It needs an application that perform the "smartcard operations", such as
-generate keys or sign data, as this depends on how it should be used.
-
-The actual smartcard operations could for example be in software,
-use a crypto engine in SoC or external HSM (Hardware Security Module).
-
-Without the application, the gadget shows up as a smart card reader
-with an unconnected smartcard.
-
-I guess it could be accomplished with FunctionFS as well.
-
-Best regards
-Marcus Folkesson
+Also I think that we need some sort of a check against duplicate IDs.
