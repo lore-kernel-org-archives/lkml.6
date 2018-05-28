@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034419AbeE1Pb5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:31:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39112 "EHLO mail.kernel.org"
+        id S1034453AbeE1PcW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:32:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032271AbeE1KTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:07 -0400
+        id S1032113AbeE1KS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, John Youn <johnyoun@synopsys.com>,
+        Vardan Mikayelyan <mvardan@synopsys.com>,
+        Grigor Tovmasyan <tovmasya@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 083/268] scsi: aacraid: fix shutdown crash when init fails
-Date: Mon, 28 May 2018 12:00:57 +0200
-Message-Id: <20180528100211.535245984@linuxfoundation.org>
+Subject: [PATCH 4.4 080/268] usb: dwc2: Fix dwc2_hsotg_core_init_disconnected()
+Date: Mon, 28 May 2018 12:00:54 +0200
+Message-Id: <20180528100211.176621780@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,68 +32,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Meelis Roos <mroos@linux.ee>
+From: Vardan Mikayelyan <mvardan@synopsys.com>
 
-[ Upstream commit 00c20cdc79259c6c5bf978b21af96c2d3edb646d ]
+[ Upstream commit 755d739534f998d92e348fba8ffb0478416576e7 ]
 
-When aacraid init fails with "AAC0: adapter self-test failed.", shutdown
-leads to UBSAN warning and then oops:
+We should call dwc2_hsotg_enqueue_setup() after properly
+setting lx_state. Because it may cause error-out from
+dwc2_hsotg_enqueue_setup() due to wrong value in lx_state.
 
-[154316.118423] ================================================================================
-[154316.118508] UBSAN: Undefined behaviour in drivers/scsi/scsi_lib.c:2328:27
-[154316.118566] member access within null pointer of type 'struct Scsi_Host'
-[154316.118631] CPU: 2 PID: 14530 Comm: reboot Tainted: G        W        4.15.0-dirty #89
-[154316.118701] Hardware name: Hewlett Packard HP NetServer/HP System Board, BIOS 4.06.46 PW 06/25/2003
-[154316.118774] Call Trace:
-[154316.118848]  dump_stack+0x48/0x65
-[154316.118916]  ubsan_epilogue+0xe/0x40
-[154316.118976]  __ubsan_handle_type_mismatch+0xfb/0x180
-[154316.119043]  scsi_block_requests+0x20/0x30
-[154316.119135]  aac_shutdown+0x18/0x40 [aacraid]
-[154316.119196]  pci_device_shutdown+0x33/0x50
-[154316.119269]  device_shutdown+0x18a/0x390
-[...]
-[154316.123435] BUG: unable to handle kernel NULL pointer dereference at 000000f4
-[154316.123515] IP: scsi_block_requests+0xa/0x30
+Issue can be reproduced by loading driver while connected
+A-Connector (start in A-HOST mode) then disconnect A-Connector
+to switch to B-DEVICE.
 
-This is because aac_shutdown() does
-
-        struct Scsi_Host *shost = pci_get_drvdata(dev);
-        scsi_block_requests(shost);
-
-and that assumes shost has been assigned with pci_set_drvdata().
-
-However, pci_set_drvdata(pdev, shost) is done in aac_probe_one() far
-after bailing out with error from calling the init function
-((*aac_drivers[index].init)(aac)), and when the init function fails, no
-error is returned from aac_probe_one() so PCI layer assumes there is
-driver attached, and tries to shut it down later.
-
-Fix it by returning error from aac_probe_one() when card-specific init
-function fails.
-
-This fixes reboot on my HP NetRAID-4M with dead battery.
-
-Signed-off-by: Meelis Roos <mroos@linux.ee>
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Acked-by: John Youn <johnyoun@synopsys.com>
+Signed-off-by: Vardan Mikayelyan <mvardan@synopsys.com>
+Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/aacraid/linit.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/dwc2/gadget.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1189,8 +1189,10 @@ static int aac_probe_one(struct pci_dev
- 	 *	Map in the registers from the adapter.
- 	 */
- 	aac->base_size = AAC_MIN_FOOTPRINT_SIZE;
--	if ((*aac_drivers[index].init)(aac))
-+	if ((*aac_drivers[index].init)(aac)) {
-+		error = -ENODEV;
- 		goto out_unmap;
-+	}
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -2424,12 +2424,6 @@ void dwc2_hsotg_core_init_disconnected(s
+ 	dwc2_writel(dwc2_hsotg_ep0_mps(hsotg->eps_out[0]->ep.maxpacket) |
+ 	       DXEPCTL_USBACTEP, hsotg->regs + DIEPCTL0);
  
- 	if (aac->sync_mode) {
- 		if (aac_sync_mode)
+-	dwc2_hsotg_enqueue_setup(hsotg);
+-
+-	dev_dbg(hsotg->dev, "EP0: DIEPCTL0=0x%08x, DOEPCTL0=0x%08x\n",
+-		dwc2_readl(hsotg->regs + DIEPCTL0),
+-		dwc2_readl(hsotg->regs + DOEPCTL0));
+-
+ 	/* clear global NAKs */
+ 	val = DCTL_CGOUTNAK | DCTL_CGNPINNAK;
+ 	if (!is_usb_reset)
+@@ -2440,6 +2434,12 @@ void dwc2_hsotg_core_init_disconnected(s
+ 	mdelay(3);
+ 
+ 	hsotg->lx_state = DWC2_L0;
++
++	dwc2_hsotg_enqueue_setup(hsotg);
++
++	dev_dbg(hsotg->dev, "EP0: DIEPCTL0=0x%08x, DOEPCTL0=0x%08x\n",
++		dwc2_readl(hsotg->regs + DIEPCTL0),
++		dwc2_readl(hsotg->regs + DOEPCTL0));
+ }
+ 
+ static void dwc2_hsotg_core_disconnect(struct dwc2_hsotg *hsotg)
