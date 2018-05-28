@@ -1,90 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165351AbeE1NWJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:22:09 -0400
-Received: from mx.kolabnow.com ([95.128.36.41]:1982 "EHLO mx.kolabnow.com"
+        id S1425063AbeE1NWN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:22:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1165311AbeE1NWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:22:06 -0400
-X-Spam-Flag: NO
-X-Spam-Score: -1
-From: Federico Vaga <federico.vaga@vaga.pv.it>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>
-Subject: Re: doc: Italian translation
-Date: Mon, 28 May 2018 15:22:00 +0200
-Message-ID: <4469233.YSvUztRfSp@pcbe13614>
-In-Reply-To: <20180528070828.3a3c7287@lwn.net>
-References: <20180527145559.16411-1-federico.vaga@vaga.pv.it> <20180528070828.3a3c7287@lwn.net>
+        id S1163327AbeE1KtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:00 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 143/496] batman-adv: invalidate checksum on fragment reassembly
+Date: Mon, 28 May 2018 11:58:48 +0200
+Message-Id: <20180528100325.942750241@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, 28 May 2018 15:08:28 CEST Jonathan Corbet wrote:
-> On Sun, 27 May 2018 16:55:55 +0200
-> 
-> Federico Vaga <federico.vaga@vaga.pv.it> wrote:
-> > here the doc-guide translated in Italian. This set of patches
-> > includes some minor changes to the main one. The idea of this
-> > first set of patches is also to adjust the structure and our
-> > expectations.
-> 
-> I've only done a quick scan so far.  It looks reasonable, but I have
-> a couple of requests:
-> 
->  - Please include a proper changelog with each patch describing what
-> the patch does and why.  Otherwise I'll have to fill them in, and
-> that makes me grumpy...:)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Ok
+------------------
 
->  - You might as well add a MAINTAINERS entry.  The other
-> translations don't have them, but they should.
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-Ok
+[ Upstream commit 3bf2a09da956b43ecfaa630a2ef9a477f991a46a ]
 
->  - For extra credit: it's time to move the translations out of the
->    top-level index into an index.rst in the translations directory. 
-> Then the top-level file can have a single pointer to the
-> translations.
+A more sophisticated implementation could try to combine fragment checksums
+when all fragments have CHECKSUM_COMPLETE and are split at even offsets.
+For now, we just set ip_summed to CHECKSUM_NONE to avoid "hw csum failure"
+warnings in the kernel log when fragmented frames are received. In
+consequence, skb_pull_rcsum() can be replaced with skb_pull().
 
-I completely agree on this point. I can prepare a patch that does it.
+Note that in usual setups, packets don't reach batman-adv with
+CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
+batadv's ethtype?), which is why the log messages do not occur on every
+system using batman-adv. I could reproduce this issue by stacking
+batman-adv on top of a VXLAN interface.
 
-> > We tried to translate everything in **Italian**; which means that
-> > we avoided imported English words wherever there is the
-> > possibility to use the Italian ones. Of course, this is not
-> > always possible, or worst doing the translation make it less
-> > clear, for example the word "file".
-> 
-> "We"?  Is there somebody else's work represented here too?  If so,
-> they should appear in the signoff chain (or as a Co-developed-by
-> credit).
+Fixes: 610bfc6bc99b ("batman-adv: Receive fragmented packets and merge")
+Tested-by: Maximilian Wilhelm <max@sdn.clinic>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/batman-adv/fragmentation.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I did, in patch 3/5 and 4/5 there is Alessia as "signed-off" (in CC 
-here).
-
-> > Another point. I noticed that the disclaimer for other
-> > translations is in English, so I did the same. But actually
-> > shouldn't be in Italian, since that page will be read by Italian
-> > speakers?
-> 
-> Perhaps, though part of the idea is to give the English speakers,
-> too, some vague clue of what they're looking at.
-
-Make sense. I will keep it like this then.
-
-Thanks
-
-> 
-> Thanks,
-> 
-> jon
-
-
--- 
-Federico Vaga
-http://www.federicovaga.it/
+--- a/net/batman-adv/fragmentation.c
++++ b/net/batman-adv/fragmentation.c
+@@ -287,7 +287,8 @@ batadv_frag_merge_packets(struct hlist_h
+ 	/* Move the existing MAC header to just before the payload. (Override
+ 	 * the fragment header.)
+ 	 */
+-	skb_pull_rcsum(skb_out, hdr_size);
++	skb_pull(skb_out, hdr_size);
++	skb_out->ip_summed = CHECKSUM_NONE;
+ 	memmove(skb_out->data - ETH_HLEN, skb_mac_header(skb_out), ETH_HLEN);
+ 	skb_set_mac_header(skb_out, -ETH_HLEN);
+ 	skb_reset_network_header(skb_out);
