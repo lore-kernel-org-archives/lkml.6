@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424674AbeE1LVb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:21:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38584 "EHLO mail.kernel.org"
+        id S1424891AbeE1LWA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:22:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424869AbeE1LVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:21:24 -0400
+        id S1424178AbeE1LP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:15:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.16 010/272] fs: dont scan the inode cache before SB_BORN is set
-Date: Mon, 28 May 2018 12:00:43 +0200
-Message-Id: <20180528100241.116317324@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 260/272] selftests: Add FIB onlink tests
+Date: Mon, 28 May 2018 12:04:53 +0200
+Message-Id: <20180528100302.037719927@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,98 +30,397 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Chinner <dchinner@redhat.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit 79f546a696bff2590169fb5684e23d65f4d9f591 upstream.
+[ Upstream commit 153e1b84f477f716bc3f81e6cfae1a3d941fc7ec ]
 
-We recently had an oops reported on a 4.14 kernel in
-xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
-and so the m_perag_tree lookup walked into lala land.  It produces
-an oops down this path during the failed mount:
+Add test cases verifying FIB onlink commands work as expected in
+various conditions - IPv4, IPv6, main table, and VRF.
 
-  radix_tree_gang_lookup_tag+0xc4/0x130
-  xfs_perag_get_tag+0x37/0xf0
-  xfs_reclaim_inodes_count+0x32/0x40
-  xfs_fs_nr_cached_objects+0x11/0x20
-  super_cache_count+0x35/0xc0
-  shrink_slab.part.66+0xb1/0x370
-  shrink_node+0x7e/0x1a0
-  try_to_free_pages+0x199/0x470
-  __alloc_pages_slowpath+0x3a1/0xd20
-  __alloc_pages_nodemask+0x1c3/0x200
-  cache_grow_begin+0x20b/0x2e0
-  fallback_alloc+0x160/0x200
-  kmem_cache_alloc+0x111/0x4e0
-
-The problem is that the superblock shrinker is running before the
-filesystem structures it depends on have been fully set up. i.e.
-the shrinker is registered in sget(), before ->fill_super() has been
-called, and the shrinker can call into the filesystem before
-fill_super() does it's setup work. Essentially we are exposed to
-both use-after-free and use-before-initialisation bugs here.
-
-To fix this, add a check for the SB_BORN flag in super_cache_count.
-In general, this flag is not set until ->fs_mount() completes
-successfully, so we know that it is set after the filesystem
-setup has completed. This matches the trylock_super() behaviour
-which will not let super_cache_scan() run if SB_BORN is not set, and
-hence will not allow the superblock shrinker from entering the
-filesystem while it is being set up or after it has failed setup
-and is being torn down.
-
-Cc: stable@kernel.org
-Signed-Off-By: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/super.c |   30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ tools/testing/selftests/net/fib-onlink-tests.sh |  375 ++++++++++++++++++++++++
+ 1 file changed, 375 insertions(+)
+ create mode 100644 tools/testing/selftests/net/fib-onlink-tests.sh
 
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -120,13 +120,23 @@ static unsigned long super_cache_count(s
- 	sb = container_of(shrink, struct super_block, s_shrink);
- 
- 	/*
--	 * Don't call trylock_super as it is a potential
--	 * scalability bottleneck. The counts could get updated
--	 * between super_cache_count and super_cache_scan anyway.
--	 * Call to super_cache_count with shrinker_rwsem held
--	 * ensures the safety of call to list_lru_shrink_count() and
--	 * s_op->nr_cached_objects().
-+	 * We don't call trylock_super() here as it is a scalability bottleneck,
-+	 * so we're exposed to partial setup state. The shrinker rwsem does not
-+	 * protect filesystem operations backing list_lru_shrink_count() or
-+	 * s_op->nr_cached_objects(). Counts can change between
-+	 * super_cache_count and super_cache_scan, so we really don't need locks
-+	 * here.
-+	 *
-+	 * However, if we are currently mounting the superblock, the underlying
-+	 * filesystem might be in a state of partial construction and hence it
-+	 * is dangerous to access it.  trylock_super() uses a SB_BORN check to
-+	 * avoid this situation, so do the same here. The memory barrier is
-+	 * matched with the one in mount_fs() as we don't hold locks here.
- 	 */
-+	if (!(sb->s_flags & SB_BORN))
-+		return 0;
-+	smp_rmb();
+--- /dev/null
++++ b/tools/testing/selftests/net/fib-onlink-tests.sh
+@@ -0,0 +1,375 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
 +
- 	if (sb->s_op && sb->s_op->nr_cached_objects)
- 		total_objects = sb->s_op->nr_cached_objects(sb, sc);
- 
-@@ -1226,6 +1236,14 @@ mount_fs(struct file_system_type *type,
- 	sb = root->d_sb;
- 	BUG_ON(!sb);
- 	WARN_ON(!sb->s_bdi);
++# IPv4 and IPv6 onlink tests
 +
-+	/*
-+	 * Write barrier is for super_cache_count(). We place it before setting
-+	 * SB_BORN as the data dependency between the two functions is the
-+	 * superblock structure contents that we just set up, not the SB_BORN
-+	 * flag.
-+	 */
-+	smp_wmb();
- 	sb->s_flags |= SB_BORN;
- 
- 	error = security_sb_kern_mount(sb, flags, secdata);
++PAUSE_ON_FAIL=${PAUSE_ON_FAIL:=no}
++
++# Network interfaces
++# - odd in current namespace; even in peer ns
++declare -A NETIFS
++# default VRF
++NETIFS[p1]=veth1
++NETIFS[p2]=veth2
++NETIFS[p3]=veth3
++NETIFS[p4]=veth4
++# VRF
++NETIFS[p5]=veth5
++NETIFS[p6]=veth6
++NETIFS[p7]=veth7
++NETIFS[p8]=veth8
++
++# /24 network
++declare -A V4ADDRS
++V4ADDRS[p1]=169.254.1.1
++V4ADDRS[p2]=169.254.1.2
++V4ADDRS[p3]=169.254.3.1
++V4ADDRS[p4]=169.254.3.2
++V4ADDRS[p5]=169.254.5.1
++V4ADDRS[p6]=169.254.5.2
++V4ADDRS[p7]=169.254.7.1
++V4ADDRS[p8]=169.254.7.2
++
++# /64 network
++declare -A V6ADDRS
++V6ADDRS[p1]=2001:db8:101::1
++V6ADDRS[p2]=2001:db8:101::2
++V6ADDRS[p3]=2001:db8:301::1
++V6ADDRS[p4]=2001:db8:301::2
++V6ADDRS[p5]=2001:db8:501::1
++V6ADDRS[p6]=2001:db8:501::2
++V6ADDRS[p7]=2001:db8:701::1
++V6ADDRS[p8]=2001:db8:701::2
++
++# Test networks:
++# [1] = default table
++# [2] = VRF
++#
++# /32 host routes
++declare -A TEST_NET4
++TEST_NET4[1]=169.254.101
++TEST_NET4[2]=169.254.102
++# /128 host routes
++declare -A TEST_NET6
++TEST_NET6[1]=2001:db8:101
++TEST_NET6[2]=2001:db8:102
++
++# connected gateway
++CONGW[1]=169.254.1.254
++CONGW[2]=169.254.5.254
++
++# recursive gateway
++RECGW4[1]=169.254.11.254
++RECGW4[2]=169.254.12.254
++RECGW6[1]=2001:db8:11::64
++RECGW6[2]=2001:db8:12::64
++
++# for v4 mapped to v6
++declare -A TEST_NET4IN6IN6
++TEST_NET4IN6[1]=10.1.1.254
++TEST_NET4IN6[2]=10.2.1.254
++
++# mcast address
++MCAST6=ff02::1
++
++
++PEER_NS=bart
++PEER_CMD="ip netns exec ${PEER_NS}"
++VRF=lisa
++VRF_TABLE=1101
++PBR_TABLE=101
++
++################################################################################
++# utilities
++
++log_test()
++{
++	local rc=$1
++	local expected=$2
++	local msg="$3"
++
++	if [ ${rc} -eq ${expected} ]; then
++		nsuccess=$((nsuccess+1))
++		printf "\n    TEST: %-50s  [ OK ]\n" "${msg}"
++	else
++		nfail=$((nfail+1))
++		printf "\n    TEST: %-50s  [FAIL]\n" "${msg}"
++		if [ "${PAUSE_ON_FAIL}" = "yes" ]; then
++			echo
++			echo "hit enter to continue, 'q' to quit"
++			read a
++			[ "$a" = "q" ] && exit 1
++		fi
++	fi
++}
++
++log_section()
++{
++	echo
++	echo "######################################################################"
++	echo "TEST SECTION: $*"
++	echo "######################################################################"
++}
++
++log_subsection()
++{
++	echo
++	echo "#########################################"
++	echo "TEST SUBSECTION: $*"
++}
++
++run_cmd()
++{
++	echo
++	echo "COMMAND: $*"
++	eval $*
++}
++
++get_linklocal()
++{
++	local dev=$1
++	local pfx
++	local addr
++
++	addr=$(${pfx} ip -6 -br addr show dev ${dev} | \
++	awk '{
++		for (i = 3; i <= NF; ++i) {
++			if ($i ~ /^fe80/)
++				print $i
++		}
++	}'
++	)
++	addr=${addr/\/*}
++
++	[ -z "$addr" ] && return 1
++
++	echo $addr
++
++	return 0
++}
++
++################################################################################
++#
++
++setup()
++{
++	echo
++	echo "########################################"
++	echo "Configuring interfaces"
++
++	set -e
++
++	# create namespace
++	ip netns add ${PEER_NS}
++	ip -netns ${PEER_NS} li set lo up
++
++	# add vrf table
++	ip li add ${VRF} type vrf table ${VRF_TABLE}
++	ip li set ${VRF} up
++	ip ro add table ${VRF_TABLE} unreachable default
++	ip -6 ro add table ${VRF_TABLE} unreachable default
++
++	# create test interfaces
++	ip li add ${NETIFS[p1]} type veth peer name ${NETIFS[p2]}
++	ip li add ${NETIFS[p3]} type veth peer name ${NETIFS[p4]}
++	ip li add ${NETIFS[p5]} type veth peer name ${NETIFS[p6]}
++	ip li add ${NETIFS[p7]} type veth peer name ${NETIFS[p8]}
++
++	# enslave vrf interfaces
++	for n in 5 7; do
++		ip li set ${NETIFS[p${n}]} vrf ${VRF}
++	done
++
++	# add addresses
++	for n in 1 3 5 7; do
++		ip li set ${NETIFS[p${n}]} up
++		ip addr add ${V4ADDRS[p${n}]}/24 dev ${NETIFS[p${n}]}
++		ip addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]}
++	done
++
++	# move peer interfaces to namespace and add addresses
++	for n in 2 4 6 8; do
++		ip li set ${NETIFS[p${n}]} netns ${PEER_NS} up
++		ip -netns ${PEER_NS} addr add ${V4ADDRS[p${n}]}/24 dev ${NETIFS[p${n}]}
++		ip -netns ${PEER_NS} addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]}
++	done
++
++	set +e
++
++	# let DAD complete - assume default of 1 probe
++	sleep 1
++}
++
++cleanup()
++{
++	# make sure we start from a clean slate
++	ip netns del ${PEER_NS} 2>/dev/null
++	for n in 1 3 5 7; do
++		ip link del ${NETIFS[p${n}]} 2>/dev/null
++	done
++	ip link del ${VRF} 2>/dev/null
++	ip ro flush table ${VRF_TABLE}
++	ip -6 ro flush table ${VRF_TABLE}
++}
++
++################################################################################
++# IPv4 tests
++#
++
++run_ip()
++{
++	local table="$1"
++	local prefix="$2"
++	local gw="$3"
++	local dev="$4"
++	local exp_rc="$5"
++	local desc="$6"
++
++	# dev arg may be empty
++	[ -n "${dev}" ] && dev="dev ${dev}"
++
++	run_cmd ip ro add table "${table}" "${prefix}"/32 via "${gw}" "${dev}" onlink
++	log_test $? ${exp_rc} "${desc}"
++}
++
++valid_onlink_ipv4()
++{
++	# - unicast connected, unicast recursive
++	#
++	log_subsection "default VRF - main table"
++
++	run_ip 254 ${TEST_NET4[1]}.1 ${CONGW[1]} ${NETIFS[p1]} 0 "unicast connected"
++	run_ip 254 ${TEST_NET4[1]}.2 ${RECGW4[1]} ${NETIFS[p1]} 0 "unicast recursive"
++
++	log_subsection "VRF ${VRF}"
++
++	run_ip ${VRF_TABLE} ${TEST_NET4[2]}.1 ${CONGW[2]} ${NETIFS[p5]} 0 "unicast connected"
++	run_ip ${VRF_TABLE} ${TEST_NET4[2]}.2 ${RECGW4[2]} ${NETIFS[p5]} 0 "unicast recursive"
++
++	log_subsection "VRF device, PBR table"
++
++	run_ip ${PBR_TABLE} ${TEST_NET4[2]}.3 ${CONGW[2]} ${NETIFS[p5]} 0 "unicast connected"
++	run_ip ${PBR_TABLE} ${TEST_NET4[2]}.4 ${RECGW4[2]} ${NETIFS[p5]} 0 "unicast recursive"
++}
++
++invalid_onlink_ipv4()
++{
++	run_ip 254 ${TEST_NET4[1]}.11 ${V4ADDRS[p1]} ${NETIFS[p1]} 2 \
++		"Invalid gw - local unicast address"
++
++	run_ip ${VRF_TABLE} ${TEST_NET4[2]}.11 ${V4ADDRS[p5]} ${NETIFS[p5]} 2 \
++		"Invalid gw - local unicast address, VRF"
++
++	run_ip 254 ${TEST_NET4[1]}.101 ${V4ADDRS[p1]} "" 2 "No nexthop device given"
++
++	run_ip 254 ${TEST_NET4[1]}.102 ${V4ADDRS[p3]} ${NETIFS[p1]} 2 \
++		"Gateway resolves to wrong nexthop device"
++
++	run_ip ${VRF_TABLE} ${TEST_NET4[2]}.103 ${V4ADDRS[p7]} ${NETIFS[p5]} 2 \
++		"Gateway resolves to wrong nexthop device - VRF"
++}
++
++################################################################################
++# IPv6 tests
++#
++
++run_ip6()
++{
++	local table="$1"
++	local prefix="$2"
++	local gw="$3"
++	local dev="$4"
++	local exp_rc="$5"
++	local desc="$6"
++
++	# dev arg may be empty
++	[ -n "${dev}" ] && dev="dev ${dev}"
++
++	run_cmd ip -6 ro add table "${table}" "${prefix}"/128 via "${gw}" "${dev}" onlink
++	log_test $? ${exp_rc} "${desc}"
++}
++
++valid_onlink_ipv6()
++{
++	# - unicast connected, unicast recursive, v4-mapped
++	#
++	log_subsection "default VRF - main table"
++
++	run_ip6 254 ${TEST_NET6[1]}::1 ${V6ADDRS[p1]/::*}::64 ${NETIFS[p1]} 0 "unicast connected"
++	run_ip6 254 ${TEST_NET6[1]}::2 ${RECGW6[1]} ${NETIFS[p1]} 0 "unicast recursive"
++	run_ip6 254 ${TEST_NET6[1]}::3 ::ffff:${TEST_NET4IN6[1]} ${NETIFS[p1]} 0 "v4-mapped"
++
++	log_subsection "VRF ${VRF}"
++
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::1 ${V6ADDRS[p5]/::*}::64 ${NETIFS[p5]} 0 "unicast connected"
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::2 ${RECGW6[2]} ${NETIFS[p5]} 0 "unicast recursive"
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::3 ::ffff:${TEST_NET4IN6[2]} ${NETIFS[p5]} 0 "v4-mapped"
++
++	log_subsection "VRF device, PBR table"
++
++	run_ip6 ${PBR_TABLE} ${TEST_NET6[2]}::4 ${V6ADDRS[p5]/::*}::64 ${NETIFS[p5]} 0 "unicast connected"
++	run_ip6 ${PBR_TABLE} ${TEST_NET6[2]}::5 ${RECGW6[2]} ${NETIFS[p5]} 0 "unicast recursive"
++	run_ip6 ${PBR_TABLE} ${TEST_NET6[2]}::6 ::ffff:${TEST_NET4IN6[2]} ${NETIFS[p5]} 0 "v4-mapped"
++}
++
++invalid_onlink_ipv6()
++{
++	local lladdr
++
++	lladdr=$(get_linklocal ${NETIFS[p1]}) || return 1
++
++	run_ip6 254 ${TEST_NET6[1]}::11 ${V6ADDRS[p1]} ${NETIFS[p1]} 2 \
++		"Invalid gw - local unicast address"
++	run_ip6 254 ${TEST_NET6[1]}::12 ${lladdr} ${NETIFS[p1]} 2 \
++		"Invalid gw - local linklocal address"
++	run_ip6 254 ${TEST_NET6[1]}::12 ${MCAST6} ${NETIFS[p1]} 2 \
++		"Invalid gw - multicast address"
++
++	lladdr=$(get_linklocal ${NETIFS[p5]}) || return 1
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::11 ${V6ADDRS[p5]} ${NETIFS[p5]} 2 \
++		"Invalid gw - local unicast address, VRF"
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::12 ${lladdr} ${NETIFS[p5]} 2 \
++		"Invalid gw - local linklocal address, VRF"
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::12 ${MCAST6} ${NETIFS[p5]} 2 \
++		"Invalid gw - multicast address, VRF"
++
++	run_ip6 254 ${TEST_NET6[1]}::101 ${V6ADDRS[p1]} "" 2 \
++		"No nexthop device given"
++
++	# default VRF validation is done against LOCAL table
++	# run_ip6 254 ${TEST_NET6[1]}::102 ${V6ADDRS[p3]/::[0-9]/::64} ${NETIFS[p1]} 2 \
++	#	"Gateway resolves to wrong nexthop device"
++
++	run_ip6 ${VRF_TABLE} ${TEST_NET6[2]}::103 ${V6ADDRS[p7]/::[0-9]/::64} ${NETIFS[p5]} 2 \
++		"Gateway resolves to wrong nexthop device - VRF"
++}
++
++run_onlink_tests()
++{
++	log_section "IPv4 onlink"
++	log_subsection "Valid onlink commands"
++	valid_onlink_ipv4
++	log_subsection "Invalid onlink commands"
++	invalid_onlink_ipv4
++
++	log_section "IPv6 onlink"
++	log_subsection "Valid onlink commands"
++	valid_onlink_ipv6
++	invalid_onlink_ipv6
++}
++
++################################################################################
++# main
++
++nsuccess=0
++nfail=0
++
++cleanup
++setup
++run_onlink_tests
++cleanup
++
++if [ "$TESTS" != "none" ]; then
++	printf "\nTests passed: %3d\n" ${nsuccess}
++	printf "Tests failed: %3d\n"   ${nfail}
++fi
