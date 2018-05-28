@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033787AbeE1PKv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:10:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43278 "EHLO mail.kernel.org"
+        id S1166064AbeE1PLm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033743AbeE1KX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:57 -0400
+        id S1033728AbeE1KXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Carlo Pisani <carlojpisani@gmail.com>,
+        Kyle McMartin <kyle@mcmartin.ca>,
+        Grant Grundler <grantgrundler@gmail.com>, Helge Deller <deller@gmx.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 189/268] rtc: hctosys: Ensure system time doesnt overflow time_t
-Date: Mon, 28 May 2018 12:02:43 +0200
-Message-Id: <20180528100223.765558420@linuxfoundation.org>
+Subject: [PATCH 4.4 187/268] parisc/pci: Switch LBA PCI bus from Hard Fail to Soft Fail mode
+Date: Mon, 28 May 2018 12:02:41 +0200
+Message-Id: <20180528100223.552277955@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,43 +31,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit b3a5ac42ab18b7d1a8f2f072ca0ee76a3b754a43 ]
+[ Upstream commit b845f66f78bf42a4ce98e5cfe0e94fab41dd0742 ]
 
-On 32bit platforms, time_t is still a signed 32bit long. If it is
-overflowed, userspace and the kernel cant agree on the current system time.
-This causes multiple issues, in particular with systemd:
-https://github.com/systemd/systemd/issues/1143
+Carlo Pisani noticed that his C3600 workstation behaved unstable during heavy
+I/O on the PCI bus with a VIA VT6421 IDE/SATA PCI card.
 
-A good workaround is to simply avoid using hctosys which is something I
-greatly encourage as the time is better set by userspace.
+To avoid such instability, this patch switches the LBA PCI bus from Hard Fail
+mode into Soft Fail mode. In this mode the bus will return -1UL for timed out
+MMIO transactions, which is exactly how the x86 (and most other architectures)
+PCI busses behave.
 
-However, many distribution enable it and use systemd which is rendering the
-system unusable in case the RTC holds a date after 2038 (and more so after
-2106). Many drivers have workaround for this case and they should be
-eliminated so there is only one place left to fix when userspace is able to
-cope with dates after the 31bit overflow.
+This patch is based on a proposal by Grant Grundler and Kyle McMartin 10
+years ago:
+https://www.spinics.net/lists/linux-parisc/msg01027.html
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Carlo Pisani <carlojpisani@gmail.com>
+Cc: Kyle McMartin <kyle@mcmartin.ca>
+Reviewed-by: Grant Grundler <grantgrundler@gmail.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/hctosys.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/parisc/lba_pci.c |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
---- a/drivers/rtc/hctosys.c
-+++ b/drivers/rtc/hctosys.c
-@@ -49,6 +49,11 @@ static int __init rtc_hctosys(void)
+--- a/drivers/parisc/lba_pci.c
++++ b/drivers/parisc/lba_pci.c
+@@ -1365,9 +1365,27 @@ lba_hw_init(struct lba_device *d)
+ 		WRITE_REG32(stat, d->hba.base_addr + LBA_ERROR_CONFIG);
+ 	}
  
- 	tv64.tv_sec = rtc_tm_to_time64(&tm);
- 
-+#if BITS_PER_LONG == 32
-+	if (tv64.tv_sec > INT_MAX)
-+		goto err_read;
-+#endif
+-	/* Set HF mode as the default (vs. -1 mode). */
 +
- 	err = do_settimeofday64(&tv64);
++	/*
++	 * Hard Fail vs. Soft Fail on PCI "Master Abort".
++	 *
++	 * "Master Abort" means the MMIO transaction timed out - usually due to
++	 * the device not responding to an MMIO read. We would like HF to be
++	 * enabled to find driver problems, though it means the system will
++	 * crash with a HPMC.
++	 *
++	 * In SoftFail mode "~0L" is returned as a result of a timeout on the
++	 * pci bus. This is like how PCI busses on x86 and most other
++	 * architectures behave.  In order to increase compatibility with
++	 * existing (x86) PCI hardware and existing Linux drivers we enable
++	 * Soft Faul mode on PA-RISC now too.
++	 */
+         stat = READ_REG32(d->hba.base_addr + LBA_STAT_CTL);
++#if defined(ENABLE_HARDFAIL)
+ 	WRITE_REG32(stat | HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
++#else
++	WRITE_REG32(stat & ~HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
++#endif
  
- 	dev_info(rtc->dev.parent,
+ 	/*
+ 	** Writing a zero to STAT_CTL.rf (bit 0) will clear reset signal
