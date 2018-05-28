@@ -1,130 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939439AbeE1O4g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:56:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937004AbeE1K1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:32 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 030/329] netfilter: ipv6: nf_defrag: Pass on packets to stack per RFC2460
-Date: Mon, 28 May 2018 11:59:19 +0200
-Message-Id: <20180528100244.941895401@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S939499AbeE1O5I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:57:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43570 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S937078AbeE1OzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:55:00 -0400
+Subject: Re: [PATCH v2] vfio: platform: Fix using devices in PM Domains
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1526640912-894-1-git-send-email-geert+renesas@glider.be>
+Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <10a503da-d431-f2c9-3ddc-91b065563a0d@redhat.com>
+Date: Mon, 28 May 2018 16:54:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1526640912-894-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hi Geert,
 
-------------------
+On 05/18/2018 12:55 PM, Geert Uytterhoeven wrote:
+> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+> power state is managed using Runtime PM.  Without Runtime PM, the device
+> may not be powered up or clocked, causing subtle failures, crashes, or
+> system lock-ups when the device is accessed by the guest.
+> 
+> Fix this by adding Runtime PM support, powering the device when the VFIO
+> device is opened by the guest.
 
-From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+I fail to apply this on master branch?
+> 
+> Note that while more fine-grained power management could be implemented
+> on the guest side, if exported by the host, this would be inherently
+> unsafe, as abusing it may take down the whole system.
+I think I would prefer we get rid of the above paragraph.
 
-[ Upstream commit 83f1999caeb14e15df205e80d210699951733287 ]
+Thanks
 
-ipv6_defrag pulls network headers before fragment header. In case of
-an error, the netfilter layer is currently dropping these packets.
-This results in failure of some IPv6 standards tests which passed on
-older kernels due to the netfilter framework using cloning.
-
-The test case run here is a check for ICMPv6 error message replies
-when some invalid IPv6 fragments are sent. This specific test case is
-listed in https://www.ipv6ready.org/docs/Core_Conformance_Latest.pdf
-in the Extension Header Processing Order section.
-
-A packet with unrecognized option Type 11 is sent and the test expects
-an ICMP error in line with RFC2460 section 4.2 -
-
-11 - discard the packet and, only if the packet's Destination
-     Address was not a multicast address, send an ICMP Parameter
-     Problem, Code 2, message to the packet's Source Address,
-     pointing to the unrecognized Option Type.
-
-Since netfilter layer now drops all invalid IPv6 frag packets, we no
-longer see the ICMP error message and fail the test case.
-
-To fix this, save the transport header. If defrag is unable to process
-the packet due to RFC2460, restore the transport header and allow packet
-to be processed by stack. There is no change for other packet
-processing paths.
-
-Tested by confirming that stack sends an ICMP error when it receives
-these packets. Also tested that fragmented ICMP pings succeed.
-
-v1->v2: Instead of cloning always, save the transport_header and
-restore it in case of this specific error. Update the title and
-commit message accordingly.
-
-Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/netfilter/nf_conntrack_reasm.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -230,7 +230,7 @@ static int nf_ct_frag6_queue(struct frag
- 
- 	if ((unsigned int)end > IPV6_MAXPLEN) {
- 		pr_debug("offset is too large.\n");
--		return -1;
-+		return -EINVAL;
- 	}
- 
- 	ecn = ip6_frag_ecn(ipv6_hdr(skb));
-@@ -263,7 +263,7 @@ static int nf_ct_frag6_queue(struct frag
- 			 * this case. -DaveM
- 			 */
- 			pr_debug("end of fragment not rounded to 8 bytes.\n");
--			return -1;
-+			return -EPROTO;
- 		}
- 		if (end > fq->q.len) {
- 			/* Some bits beyond end -> corruption. */
-@@ -357,7 +357,7 @@ found:
- discard_fq:
- 	inet_frag_kill(&fq->q, &nf_frags);
- err:
--	return -1;
-+	return -EINVAL;
- }
- 
- /*
-@@ -566,6 +566,7 @@ find_prev_fhdr(struct sk_buff *skb, u8 *
- 
- int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
- {
-+	u16 savethdr = skb->transport_header;
- 	struct net_device *dev = skb->dev;
- 	int fhoff, nhoff, ret;
- 	struct frag_hdr *fhdr;
-@@ -599,8 +600,12 @@ int nf_ct_frag6_gather(struct net *net,
- 
- 	spin_lock_bh(&fq->q.lock);
- 
--	if (nf_ct_frag6_queue(fq, skb, fhdr, nhoff) < 0) {
--		ret = -EINVAL;
-+	ret = nf_ct_frag6_queue(fq, skb, fhdr, nhoff);
-+	if (ret < 0) {
-+		if (ret == -EPROTO) {
-+			skb->transport_header = savethdr;
-+			ret = 0;
-+		}
- 		goto out_unlock;
- 	}
- 
+Eric
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> v2:
+>   - Improve wording,
+>   - Add Reviewed-by.
+> ---
+>  drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+> index b60bb5326668498c..41f862f055054543 100644
+> --- a/drivers/vfio/platform/vfio_platform_common.c
+> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+> @@ -233,6 +234,8 @@ static void vfio_platform_release(void *device_data)
+>  		const char *extra_dbg = NULL;
+>  		int ret;
+>  
+> +		pm_runtime_put(vdev->device);
+> +
+>  		ret = vfio_platform_call_reset(vdev, &extra_dbg);
+>  		if (ret && vdev->reset_required) {
+>  			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
+> @@ -275,6 +278,10 @@ static int vfio_platform_open(void *device_data)
+>  				 ret, extra_dbg ? extra_dbg : "");
+>  			goto err_rst;
+>  		}
+> +
+> +		ret = pm_runtime_get_sync(vdev->device);
+> +		if (ret < 0)
+> +			goto err_rst;
+>  	}
+>  
+>  	vdev->refcnt++;
+> @@ -690,6 +697,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+>  
+>  	mutex_init(&vdev->igate);
+>  
+> +	pm_runtime_enable(vdev->device);
+>  	return 0;
+>  
+>  put_iommu:
+> @@ -707,6 +715,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
+>  	vdev = vfio_del_group_dev(dev);
+>  
+>  	if (vdev) {
+> +		pm_runtime_disable(vdev->device);
+>  		vfio_platform_put_reset(vdev);
+>  		vfio_iommu_group_put(dev->iommu_group, dev);
+>  	}
+> 
