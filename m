@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161157AbeE1Kal (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:30:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50136 "EHLO mail.kernel.org"
+        id S1165903AbeE1Ome (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:42:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161119AbeE1Kad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:33 -0400
+        id S1161148AbeE1Kal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Parag Warudkar <parag.warudkar@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 080/329] firmware: dmi_scan: Fix handling of empty DMI strings
-Date: Mon, 28 May 2018 12:00:09 +0200
-Message-Id: <20180528100249.487632231@linuxfoundation.org>
+Subject: [PATCH 4.9 100/329] irqchip/gic-v3: Ignore disabled ITS nodes
+Date: Mon, 28 May 2018 12:00:29 +0200
+Message-Id: <20180528100251.144536062@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,83 +33,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-[ Upstream commit a7770ae194569e96a93c48aceb304edded9cc648 ]
+[ Upstream commit 95a2562590c2f64a0398183f978d5cf3db6d0284 ]
 
-The handling of empty DMI strings looks quite broken to me:
-* Strings from 1 to 7 spaces are not considered empty.
-* True empty DMI strings (string index set to 0) are not considered
-  empty, and result in allocating a 0-char string.
-* Strings with invalid index also result in allocating a 0-char
-  string.
-* Strings starting with 8 spaces are all considered empty, even if
-  non-space characters follow (sounds like a weird thing to do, but
-  I have actually seen occurrences of this in DMI tables before.)
-* Strings which are considered empty are reported as 8 spaces,
-  instead of being actually empty.
+On some platforms there's an ITS available but it's not enabled
+because reading or writing the registers is denied by the
+firmware. In fact, reading or writing them will cause the system
+to reset. We could remove the node from DT in such a case, but
+it's better to skip nodes that are marked as "disabled" in DT so
+that we can describe the hardware that exists and use the status
+property to indicate how the firmware has configured things.
 
-Some of these issues are the result of an off-by-one error in memcmp,
-the rest is incorrect by design.
-
-So let's get it square: missing strings and strings made of only
-spaces, regardless of their length, should be treated as empty and
-no memory should be allocated for them. All other strings are
-non-empty and should be allocated.
-
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
-Cc: Parag Warudkar <parag.warudkar@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stuart Yoder <stuyoder@gmail.com>
+Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/dmi_scan.c |   22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c               |    2 ++
+ drivers/irqchip/irq-gic-v3-its-platform-msi.c          |    2 ++
+ drivers/irqchip/irq-gic-v3-its.c                       |    2 ++
+ drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c |    2 ++
+ 4 files changed, 8 insertions(+)
 
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -18,7 +18,7 @@ EXPORT_SYMBOL_GPL(dmi_kobj);
-  * of and an antecedent to, SMBIOS, which stands for System
-  * Management BIOS.  See further: http://www.dmtf.org/standards
-  */
--static const char dmi_empty_string[] = "        ";
-+static const char dmi_empty_string[] = "";
+--- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+@@ -133,6 +133,8 @@ static int __init its_pci_of_msi_init(vo
  
- static u32 dmi_ver __initdata;
- static u32 dmi_len;
-@@ -44,25 +44,21 @@ static int dmi_memdev_nr;
- static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
- {
- 	const u8 *bp = ((u8 *) dm) + dm->length;
-+	const u8 *nsp;
+ 	for (np = of_find_matching_node(NULL, its_device_id); np;
+ 	     np = of_find_matching_node(np, its_device_id)) {
++		if (!of_device_is_available(np))
++			continue;
+ 		if (!of_property_read_bool(np, "msi-controller"))
+ 			continue;
  
- 	if (s) {
--		s--;
--		while (s > 0 && *bp) {
-+		while (--s > 0 && *bp)
- 			bp += strlen(bp) + 1;
--			s--;
--		}
+--- a/drivers/irqchip/irq-gic-v3-its-platform-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-platform-msi.c
+@@ -80,6 +80,8 @@ static int __init its_pmsi_init(void)
  
--		if (*bp != 0) {
--			size_t len = strlen(bp)+1;
--			size_t cmp_len = len > 8 ? 8 : len;
--
--			if (!memcmp(bp, dmi_empty_string, cmp_len))
--				return dmi_empty_string;
-+		/* Strings containing only spaces are considered empty */
-+		nsp = bp;
-+		while (*nsp == ' ')
-+			nsp++;
-+		if (*nsp != '\0')
- 			return bp;
--		}
- 	}
+ 	for (np = of_find_matching_node(NULL, its_device_id); np;
+ 	     np = of_find_matching_node(np, its_device_id)) {
++		if (!of_device_is_available(np))
++			continue;
+ 		if (!of_property_read_bool(np, "msi-controller"))
+ 			continue;
  
--	return "";
-+	return dmi_empty_string;
- }
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1807,6 +1807,8 @@ static int __init its_of_probe(struct de
  
- static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
+ 	for (np = of_find_matching_node(node, its_device_id); np;
+ 	     np = of_find_matching_node(np, its_device_id)) {
++		if (!of_device_is_available(np))
++			continue;
+ 		if (!of_property_read_bool(np, "msi-controller")) {
+ 			pr_warn("%s: no msi-controller property, ITS ignored\n",
+ 				np->full_name);
+--- a/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
++++ b/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
+@@ -75,6 +75,8 @@ int __init its_fsl_mc_msi_init(void)
+ 
+ 	for (np = of_find_matching_node(NULL, its_device_id); np;
+ 	     np = of_find_matching_node(np, its_device_id)) {
++		if (!of_device_is_available(np))
++			continue;
+ 		if (!of_property_read_bool(np, "msi-controller"))
+ 			continue;
+ 
