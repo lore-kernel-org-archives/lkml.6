@@ -1,24 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161568AbeE1Kcb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:32:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
+        id S1165785AbeE1Odw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:33:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161516AbeE1KcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:22 -0400
+        id S1161516AbeE1Kcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, jgross@suse.com, luto@kernel.org,
-        prarit@redhat.com, vkuznets@redhat.com, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 137/329] x86/topology: Update the cpu cores field in /proc/cpuinfo correctly across CPU hotplug operations
-Date: Mon, 28 May 2018 12:01:06 +0200
-Message-Id: <20180528100254.024411431@linuxfoundation.org>
+Subject: [PATCH 4.9 141/329] kvm: fix warning for CONFIG_HAVE_KVM_EVENTFD builds
+Date: Mon, 28 May 2018 12:01:10 +0200
+Message-Id: <20180528100254.320331925@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -34,51 +31,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Samuel Neves <sneves@dei.uc.pt>
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-[ Upstream commit 4596749339e06dc7a424fc08a15eded850ed78b7 ]
+[ Upstream commit 076467490b8176eb96eddc548a14d4135c7b5852 ]
 
-Without this fix, /proc/cpuinfo will display an incorrect amount
-of CPU cores, after bringing them offline and online again, as
-exemplified below:
+Move the kvm_arch_irq_routing_update() prototype outside of
+ifdef CONFIG_HAVE_KVM_EVENTFD guards to fix the following sparse warning:
 
-  $ cat /proc/cpuinfo | grep cores
-  cpu cores	: 4
-  cpu cores	: 8
-  cpu cores	: 8
-  cpu cores	: 20
-  cpu cores	: 4
-  cpu cores	: 3
-  cpu cores	: 2
-  cpu cores	: 2
+arch/s390/kvm/../../../virt/kvm/irqchip.c:171:28: warning: symbol 'kvm_arch_irq_routing_update' was not declared. Should it be static?
 
-This patch fixes this by always zeroing the booted_cores variable
-upon turning off a logical CPU.
-
-Tested-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: jgross@suse.com
-Cc: luto@kernel.org
-Cc: prarit@redhat.com
-Cc: vkuznets@redhat.com
-Link: http://lkml.kernel.org/r/20180221205036.5244-1-sneves@dei.uc.pt
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/smpboot.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/kvm_host.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1497,6 +1497,7 @@ static void remove_siblinginfo(int cpu)
- 	cpumask_clear(topology_core_cpumask(cpu));
- 	c->phys_proc_id = 0;
- 	c->cpu_core_id = 0;
-+	c->booted_cores = 0;
- 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
- 	recompute_smt_state();
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1070,7 +1070,6 @@ static inline void kvm_irq_routing_updat
+ {
  }
+ #endif
+-void kvm_arch_irq_routing_update(struct kvm *kvm);
+ 
+ static inline int kvm_ioeventfd(struct kvm *kvm, struct kvm_ioeventfd *args)
+ {
+@@ -1079,6 +1078,8 @@ static inline int kvm_ioeventfd(struct k
+ 
+ #endif /* CONFIG_HAVE_KVM_EVENTFD */
+ 
++void kvm_arch_irq_routing_update(struct kvm *kvm);
++
+ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+ {
+ 	/*
