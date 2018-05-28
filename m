@@ -1,77 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161880AbeE1Oci (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:32:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52928 "EHLO mail.kernel.org"
+        id S1165760AbeE1Oc7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:32:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54638 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161600AbeE1Kct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:49 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 146/329] batman-adv: fix packet checksum in receive path
-Date: Mon, 28 May 2018 12:01:15 +0200
-Message-Id: <20180528100254.699220107@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1161676AbeE1Ocz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:32:55 -0400
+Date: Mon, 28 May 2018 16:32:43 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 8/8] drm/bridge: cdns: mark PM functions as
+ __maybe_unused
+Message-ID: <20180528163243.538de32f@bbrezillon>
+In-Reply-To: <20180525155030.3667352-8-arnd@arndb.de>
+References: <20180525155030.3667352-1-arnd@arndb.de>
+        <20180525155030.3667352-8-arnd@arndb.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
++Thierry
 
-------------------
+Hi Arnd,
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+On Fri, 25 May 2018 17:50:15 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-[ Upstream commit abd6360591d3f8259f41c34e31ac4826dfe621b8 ]
+> These two functions are unused in some configurations, and using __maybe_unused
+> is the easiest way to shut up the harmless warnings:
+> 
+> drivers/gpu/drm/bridge/cdns-dsi.c:1353:12: error: 'cdns_dsi_suspend' defined but not used [-Werror=unused-function]
+>  static int cdns_dsi_suspend(struct device *dev)
+>             ^~~~~~~~~~~~~~~~
+> drivers/gpu/drm/bridge/cdns-dsi.c:1340:12: error: 'cdns_dsi_resume' defined but not used [-Werror=unused-function]
+>  static int cdns_dsi_resume(struct device *dev)
+> 
+> Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-eth_type_trans() internally calls skb_pull(), which does not adjust the
-skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
-form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
-received.
+Hm, I thought such a patch had already been applied by Thierry [1].
 
-Note that in usual setups, packets don't reach batman-adv with
-CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
-batadv's ethtype?), which is why the log messages do not occur on every
-system using batman-adv. I could reproduce this issue by stacking
-batman-adv on top of a VXLAN interface.
+[1]https://www.spinics.net/lists/dri-devel/msg174363.html
 
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Tested-by: Maximilian Wilhelm <max@sdn.clinic>
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/batman-adv/soft-interface.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -448,13 +448,7 @@ void batadv_interface_rx(struct net_devi
- 
- 	/* skb->dev & skb->pkt_type are set here */
- 	skb->protocol = eth_type_trans(skb, soft_iface);
--
--	/* should not be necessary anymore as we use skb_pull_rcsum()
--	 * TODO: please verify this and remove this TODO
--	 * -- Dec 21st 2009, Simon Wunderlich
--	 */
--
--	/* skb->ip_summed = CHECKSUM_UNNECESSARY; */
-+	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
- 
- 	batadv_inc_counter(bat_priv, BATADV_CNT_RX);
- 	batadv_add_counter(bat_priv, BATADV_CNT_RX_BYTES,
+> ---
+>  drivers/gpu/drm/bridge/cdns-dsi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
+> index c255fc3e1be5..f2d43f24acfb 100644
+> --- a/drivers/gpu/drm/bridge/cdns-dsi.c
+> +++ b/drivers/gpu/drm/bridge/cdns-dsi.c
+> @@ -1337,7 +1337,7 @@ static const struct mipi_dsi_host_ops cdns_dsi_ops = {
+>  	.transfer = cdns_dsi_transfer,
+>  };
+>  
+> -static int cdns_dsi_resume(struct device *dev)
+> +static int __maybe_unused cdns_dsi_resume(struct device *dev)
+>  {
+>  	struct cdns_dsi *dsi = dev_get_drvdata(dev);
+>  
+> @@ -1350,7 +1350,7 @@ static int cdns_dsi_resume(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int cdns_dsi_suspend(struct device *dev)
+> +static int __maybe_unused cdns_dsi_suspend(struct device *dev)
+>  {
+>  	struct cdns_dsi *dsi = dev_get_drvdata(dev);
+>  
