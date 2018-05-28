@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424440AbeE1LOj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33810 "EHLO mail.kernel.org"
+        id S1424454AbeE1LOp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423877AbeE1LOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:35 -0400
+        id S1424442AbeE1LOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Govindarajulu Varadarajan <gvaradar@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 211/272] powerpc/mm/slice: Fix hugepage allocation at hint address on 8xx
-Date: Mon, 28 May 2018 12:04:04 +0200
-Message-Id: <20180528100258.228916050@linuxfoundation.org>
+Subject: [PATCH 4.16 213/272] enic: enable rq before updating rq descriptors
+Date: Mon, 28 May 2018 12:04:06 +0200
+Message-Id: <20180528100258.376432154@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,181 +30,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit aa0ab02ba992eb956934b21373e0138211486ddd ]
+[ Upstream commit e8588e268509292550634d9a35f2723a207683b2 ]
 
-On the 8xx, the page size is set in the PMD entry and applies to
-all pages of the page table pointed by the said PMD entry.
+rq should be enabled before posting the buffers to rq desc. If not hw sees
+stale value and casuses DMAR errors.
 
-When an app has some regular pages allocated (e.g. see below) and tries
-to mmap() a huge page at a hint address covered by the same PMD entry,
-the kernel accepts the hint allthough the 8xx cannot handle different
-page sizes in the same PMD entry.
-
-10000000-10001000 r-xp 00000000 00:0f 2597 /root/malloc
-10010000-10011000 rwxp 00000000 00:0f 2597 /root/malloc
-
-mmap(0x10080000, 524288, PROT_READ|PROT_WRITE,
-     MAP_PRIVATE|MAP_ANONYMOUS|0x40000, -1, 0) = 0x10080000
-
-This results the app remaining forever in do_page_fault()/hugetlb_fault()
-and when interrupting that app, we get the following warning:
-
-[162980.035629] WARNING: CPU: 0 PID: 2777 at arch/powerpc/mm/hugetlbpage.c:354 hugetlb_free_pgd_range+0xc8/0x1e4
-[162980.035699] CPU: 0 PID: 2777 Comm: malloc Tainted: G W       4.14.6 #85
-[162980.035744] task: c67e2c00 task.stack: c668e000
-[162980.035783] NIP:  c000fe18 LR: c00e1eec CTR: c00f90c0
-[162980.035830] REGS: c668fc20 TRAP: 0700   Tainted: G W        (4.14.6)
-[162980.035854] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24044224 XER: 20000000
-[162980.036003]
-[162980.036003] GPR00: c00e1eec c668fcd0 c67e2c00 00000010 c6869410 10080000 00000000 77fb4000
-[162980.036003] GPR08: ffff0001 0683c001 00000000 ffffff80 44028228 10018a34 00004008 418004fc
-[162980.036003] GPR16: c668e000 00040100 c668e000 c06c0000 c668fe78 c668e000 c6835ba0 c668fd48
-[162980.036003] GPR24: 00000000 73ffffff 74000000 00000001 77fb4000 100fffff 10100000 10100000
-[162980.036743] NIP [c000fe18] hugetlb_free_pgd_range+0xc8/0x1e4
-[162980.036839] LR [c00e1eec] free_pgtables+0x12c/0x150
-[162980.036861] Call Trace:
-[162980.036939] [c668fcd0] [c00f0774] unlink_anon_vmas+0x1c4/0x214 (unreliable)
-[162980.037040] [c668fd10] [c00e1eec] free_pgtables+0x12c/0x150
-[162980.037118] [c668fd40] [c00eabac] exit_mmap+0xe8/0x1b4
-[162980.037210] [c668fda0] [c0019710] mmput.part.9+0x20/0xd8
-[162980.037301] [c668fdb0] [c001ecb0] do_exit+0x1f0/0x93c
-[162980.037386] [c668fe00] [c001f478] do_group_exit+0x40/0xcc
-[162980.037479] [c668fe10] [c002a76c] get_signal+0x47c/0x614
-[162980.037570] [c668fe70] [c0007840] do_signal+0x54/0x244
-[162980.037654] [c668ff30] [c0007ae8] do_notify_resume+0x34/0x88
-[162980.037744] [c668ff40] [c000dae8] do_user_signal+0x74/0xc4
-[162980.037781] Instruction dump:
-[162980.037821] 7fdff378 81370000 54a3463a 80890020 7d24182e 7c841a14 712a0004 4082ff94
-[162980.038014] 2f890000 419e0010 712a0ff0 408200e0 <0fe00000> 54a9000a 7f984840 419d0094
-[162980.038216] ---[ end trace c0ceeca8e7a5800a ]---
-[162980.038754] BUG: non-zero nr_ptes on freeing mm: 1
-[162985.363322] BUG: non-zero nr_ptes on freeing mm: -1
-
-In order to fix this, this patch uses the address space "slices"
-implemented for BOOK3S/64 and enhanced to support PPC32 by the
-preceding patch.
-
-This patch modifies the context.id on the 8xx to be in the range
-[1:16] instead of [0:15] in order to identify context.id == 0 as
-not initialised contexts as done on BOOK3S
-
-This patch activates CONFIG_PPC_MM_SLICES when CONFIG_HUGETLB_PAGE is
-selected for the 8xx
-
-Alltough we could in theory have as many slices as PMD entries, the
-current slices implementation limits the number of low slices to 16.
-This limitation is not preventing us to fix the initial issue allthough
-it is suboptimal. It will be cured in a subsequent patch.
-
-Fixes: 4b91428699477 ("powerpc/8xx: Implement support of hugepages")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/mmu-8xx.h     |    6 ++++++
- arch/powerpc/kernel/setup-common.c     |    2 ++
- arch/powerpc/mm/8xx_mmu.c              |    2 +-
- arch/powerpc/mm/hugetlbpage.c          |    2 ++
- arch/powerpc/mm/mmu_context_nohash.c   |   18 ++++++++++++++++--
- arch/powerpc/platforms/Kconfig.cputype |    1 +
- 6 files changed, 28 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/include/asm/mmu-8xx.h
-+++ b/arch/powerpc/include/asm/mmu-8xx.h
-@@ -191,6 +191,12 @@ typedef struct {
- 	unsigned int id;
- 	unsigned int active;
- 	unsigned long vdso_base;
-+#ifdef CONFIG_PPC_MM_SLICES
-+	u16 user_psize;		/* page size index */
-+	u64 low_slices_psize;	/* page size encodings */
-+	unsigned char high_slices_psize[0];
-+	unsigned long slb_addr_limit;
-+#endif
- } mm_context_t;
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1898,6 +1898,8 @@ static int enic_open(struct net_device *
+ 	}
  
- #define PHYS_IMMR_BASE (mfspr(SPRN_IMMR) & 0xfff80000)
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -919,6 +919,8 @@ void __init setup_arch(char **cmdline_p)
- #ifdef CONFIG_PPC64
- 	if (!radix_enabled())
- 		init_mm.context.slb_addr_limit = DEFAULT_MAP_WINDOW_USER64;
-+#elif defined(CONFIG_PPC_8xx)
-+	init_mm.context.slb_addr_limit = DEFAULT_MAP_WINDOW;
- #else
- #error	"context.addr_limit not initialized."
- #endif
---- a/arch/powerpc/mm/8xx_mmu.c
-+++ b/arch/powerpc/mm/8xx_mmu.c
-@@ -192,7 +192,7 @@ void set_context(unsigned long id, pgd_t
- 	mtspr(SPRN_M_TW, __pa(pgd) - offset);
+ 	for (i = 0; i < enic->rq_count; i++) {
++		/* enable rq before updating rq desc */
++		vnic_rq_enable(&enic->rq[i]);
+ 		vnic_rq_fill(&enic->rq[i], enic_rq_alloc_buf);
+ 		/* Need at least one buffer on ring to get going */
+ 		if (vnic_rq_desc_used(&enic->rq[i]) == 0) {
+@@ -1909,8 +1911,6 @@ static int enic_open(struct net_device *
  
- 	/* Update context */
--	mtspr(SPRN_M_CASID, id);
-+	mtspr(SPRN_M_CASID, id - 1);
- 	/* sync */
- 	mb();
- }
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -553,9 +553,11 @@ unsigned long hugetlb_get_unmapped_area(
- 	struct hstate *hstate = hstate_file(file);
- 	int mmu_psize = shift_to_mmu_psize(huge_page_shift(hstate));
+ 	for (i = 0; i < enic->wq_count; i++)
+ 		vnic_wq_enable(&enic->wq[i]);
+-	for (i = 0; i < enic->rq_count; i++)
+-		vnic_rq_enable(&enic->rq[i]);
  
-+#ifdef CONFIG_PPC_RADIX_MMU
- 	if (radix_enabled())
- 		return radix__hugetlb_get_unmapped_area(file, addr, len,
- 						       pgoff, flags);
-+#endif
- 	return slice_get_unmapped_area(addr, len, flags, mmu_psize, 1);
- }
- #endif
---- a/arch/powerpc/mm/mmu_context_nohash.c
-+++ b/arch/powerpc/mm/mmu_context_nohash.c
-@@ -331,6 +331,20 @@ int init_new_context(struct task_struct
- {
- 	pr_hard("initing context for mm @%p\n", mm);
- 
-+#ifdef	CONFIG_PPC_MM_SLICES
-+	if (!mm->context.slb_addr_limit)
-+		mm->context.slb_addr_limit = DEFAULT_MAP_WINDOW;
-+
-+	/*
-+	 * We have MMU_NO_CONTEXT set to be ~0. Hence check
-+	 * explicitly against context.id == 0. This ensures that we properly
-+	 * initialize context slice details for newly allocated mm's (which will
-+	 * have id == 0) and don't alter context slice inherited via fork (which
-+	 * will have id != 0).
-+	 */
-+	if (mm->context.id == 0)
-+		slice_set_user_psize(mm, mmu_virtual_psize);
-+#endif
- 	mm->context.id = MMU_NO_CONTEXT;
- 	mm->context.active = 0;
+ 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
+ 		enic_dev_add_station_addr(enic);
+@@ -1936,8 +1936,12 @@ static int enic_open(struct net_device *
  	return 0;
-@@ -428,8 +442,8 @@ void __init mmu_context_init(void)
- 	 *      -- BenH
- 	 */
- 	if (mmu_has_feature(MMU_FTR_TYPE_8xx)) {
--		first_context = 0;
--		last_context = 15;
-+		first_context = 1;
-+		last_context = 16;
- 		no_selective_tlbil = true;
- 	} else if (mmu_has_feature(MMU_FTR_TYPE_47x)) {
- 		first_context = 1;
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -326,6 +326,7 @@ config PPC_BOOK3E_MMU
- config PPC_MM_SLICES
- 	bool
- 	default y if PPC_BOOK3S_64
-+	default y if PPC_8xx && HUGETLB_PAGE
- 	default n
  
- config PPC_HAVE_PMU_SUPPORT
+ err_out_free_rq:
+-	for (i = 0; i < enic->rq_count; i++)
++	for (i = 0; i < enic->rq_count; i++) {
++		err = vnic_rq_disable(&enic->rq[i]);
++		if (err)
++			return err;
+ 		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
++	}
+ 	enic_dev_notify_unset(enic);
+ err_out_free_intr:
+ 	enic_unset_affinity_hint(enic);
