@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162839AbeE1OG0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:06:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58888 "EHLO mail.kernel.org"
+        id S1163025AbeE1OGu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:06:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162182AbeE1Kia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:30 -0400
+        id S1161220AbeE1KiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:38:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Michael Lyle <mlyle@lyle.org>, Hannes Reinecke <hare@suse.com>,
-        Huijun Tang <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Chunyu Hu <chuhu@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 273/329] bcache: quit dc->writeback_thread when BCACHE_DEV_DETACHING is set
-Date: Mon, 28 May 2018 12:03:22 +0200
-Message-Id: <20180528100304.615982710@linuxfoundation.org>
+Subject: [PATCH 4.9 271/329] cpufreq: cppc_cpufreq: Fix cppc_cpufreq_init() failure path
+Date: Mon, 28 May 2018 12:03:20 +0200
+Message-Id: <20180528100304.437316676@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,130 +31,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Coly Li <colyli@suse.de>
+From: Chunyu Hu <chuhu@redhat.com>
 
-[ Upstream commit fadd94e05c02afec7b70b0b14915624f1782f578 ]
+[ Upstream commit 55b55abc17f238c61921360e61dde90dd9a326d1 ]
 
-In patch "bcache: fix cached_dev->count usage for bch_cache_set_error()",
-cached_dev_get() is called when creating dc->writeback_thread, and
-cached_dev_put() is called when exiting dc->writeback_thread. This
-modification works well unless people detach the bcache device manually by
-    'echo 1 > /sys/block/bcache<N>/bcache/detach'
-Because this sysfs interface only calls bch_cached_dev_detach() which wakes
-up dc->writeback_thread but does not stop it. The reason is, before patch
-"bcache: fix cached_dev->count usage for bch_cache_set_error()", inside
-bch_writeback_thread(), if cache is not dirty after writeback,
-cached_dev_put() will be called here. And in cached_dev_make_request() when
-a new write request makes cache from clean to dirty, cached_dev_get() will
-be called there. Since we don't operate dc->count in these locations,
-refcount d->count cannot be dropped after cache becomes clean, and
-cached_dev_detach_finish() won't be called to detach bcache device.
+Kmemleak reported the below leak. When cppc_cpufreq_init went into
+failure path, the cpu mask is not freed. After fix, this report is
+gone. And to avaoid potential NULL pointer reference, check the cpu
+value first.
 
-This patch fixes the issue by checking whether BCACHE_DEV_DETACHING is
-set inside bch_writeback_thread(). If this bit is set and cache is clean
-(no existing writeback_keys), break the while-loop, call cached_dev_put()
-and quit the writeback thread.
+unreferenced object 0xffff800fd5ea4880 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294939510 (age 668.680s)
+  hex dump (first 32 bytes):
+    00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00  .... ...........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffff0000082c4ae4>] __kmalloc_node+0x278/0x634
+    [<ffff0000088f4a74>] alloc_cpumask_var_node+0x28/0x60
+    [<ffff0000088f4af0>] zalloc_cpumask_var+0x14/0x1c
+    [<ffff000008d20254>] cppc_cpufreq_init+0xd0/0x19c
+    [<ffff000008083828>] do_one_initcall+0xec/0x15c
+    [<ffff000008cd1018>] kernel_init_freeable+0x1f4/0x2a4
+    [<ffff0000089099b0>] kernel_init+0x18/0x10c
+    [<ffff000008084d50>] ret_from_fork+0x10/0x18
+    [<ffffffffffffffff>] 0xffffffffffffffff
 
-Please note if cache is still dirty, even BCACHE_DEV_DETACHING is set the
-writeback thread should continue to perform writeback, this is the original
-design of manually detach.
-
-It is safe to do the following check without locking, let me explain why,
-+	if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
-+	    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
-
-If the kenrel thread does not sleep and continue to run due to conditions
-are not updated in time on the running CPU core, it just consumes more CPU
-cycles and has no hurt. This should-sleep-but-run is safe here. We just
-focus on the should-run-but-sleep condition, which means the writeback
-thread goes to sleep in mistake while it should continue to run.
-1, First of all, no matter the writeback thread is hung or not,
-   kthread_stop() from cached_dev_detach_finish() will wake up it and
-   terminate by making kthread_should_stop() return true. And in normal
-   run time, bit on index BCACHE_DEV_DETACHING is always cleared, the
-   condition
-	!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)
-   is always true and can be ignored as constant value.
-2, If one of the following conditions is true, the writeback thread should
-   go to sleep,
-   "!atomic_read(&dc->has_dirty)" or "!dc->writeback_running)"
-   each of them independently controls the writeback thread should sleep or
-   not, let's analyse them one by one.
-2.1 condition "!atomic_read(&dc->has_dirty)"
-   If dc->has_dirty is set from 0 to 1 on another CPU core, bcache will
-   call bch_writeback_queue() immediately or call bch_writeback_add() which
-   indirectly calls bch_writeback_queue() too. In bch_writeback_queue(),
-   wake_up_process(dc->writeback_thread) is called. It sets writeback
-   thread's task state to TASK_RUNNING and following an implicit memory
-   barrier, then tries to wake up the writeback thread.
-   In writeback thread, its task state is set to TASK_INTERRUPTIBLE before
-   doing the condition check. If other CPU core sets the TASK_RUNNING state
-   after writeback thread setting TASK_INTERRUPTIBLE, the writeback thread
-   will be scheduled to run very soon because its state is not
-   TASK_INTERRUPTIBLE. If other CPU core sets the TASK_RUNNING state before
-   writeback thread setting TASK_INTERRUPTIBLE, the implict memory barrier
-   of wake_up_process() will make sure modification of dc->has_dirty on
-   other CPU core is updated and observed on the CPU core of writeback
-   thread. Therefore the condition check will correctly be false, and
-   continue writeback code without sleeping.
-2.2 condition "!dc->writeback_running)"
-   dc->writeback_running can be changed via sysfs file, every time it is
-   modified, a following bch_writeback_queue() is alwasy called. So the
-   change is always observed on the CPU core of writeback thread. If
-   dc->writeback_running is changed from 0 to 1 on other CPU core, this
-   condition check will observe the modification and allow writeback
-   thread to continue to run without sleeping.
-Now we can see, even without a locking protection, multiple conditions
-check is safe here, no deadlock or process hang up will happen.
-
-I compose a separte patch because that patch "bcache: fix cached_dev->count
-usage for bch_cache_set_error()" already gets a "Reviewed-by:" from Hannes
-Reinecke. Also this fix is not trivial and good for a separate patch.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Huijun Tang <tang.junhui@zte.com.cn>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/writeback.c |   20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ drivers/cpufreq/cppc_cpufreq.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -421,9 +421,15 @@ static int bch_writeback_thread(void *ar
- 	while (!kthread_should_stop()) {
- 		down_write(&dc->writeback_lock);
- 		set_current_state(TASK_INTERRUPTIBLE);
--		if (!atomic_read(&dc->has_dirty) ||
--		    (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
--		     !dc->writeback_running)) {
-+		/*
-+		 * If the bache device is detaching, skip here and continue
-+		 * to perform writeback. Otherwise, if no dirty data on cache,
-+		 * or there is dirty data on cache but writeback is disabled,
-+		 * the writeback thread should sleep here and wait for others
-+		 * to wake up it.
-+		 */
-+		if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
-+		    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
- 			up_write(&dc->writeback_lock);
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -228,8 +228,13 @@ static int __init cppc_cpufreq_init(void
+ 	return ret;
  
- 			if (kthread_should_stop()) {
-@@ -444,6 +450,14 @@ static int bch_writeback_thread(void *ar
- 			cached_dev_put(dc);
- 			SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
- 			bch_write_bdev_super(dc, NULL);
-+			/*
-+			 * If bcache device is detaching via sysfs interface,
-+			 * writeback thread should stop after there is no dirty
-+			 * data on cache. BCACHE_DEV_DETACHING flag is set in
-+			 * bch_cached_dev_detach().
-+			 */
-+			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags))
-+				break;
- 		}
+ out:
+-	for_each_possible_cpu(i)
+-		kfree(all_cpu_data[i]);
++	for_each_possible_cpu(i) {
++		cpu = all_cpu_data[i];
++		if (!cpu)
++			break;
++		free_cpumask_var(cpu->shared_cpu_map);
++		kfree(cpu);
++	}
  
- 		up_write(&dc->writeback_lock);
+ 	kfree(all_cpu_data);
+ 	return -ENODEV;
