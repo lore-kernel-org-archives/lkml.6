@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165473AbeE1Nig (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:38:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35644 "EHLO mail.kernel.org"
+        id S937762AbeE1Niy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:38:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937697AbeE1KpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:02 -0400
+        id S1163069AbeE1Ko7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heinz Mauelshagen <heinzm@redhat.com>,
-        Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>,
+        Dave Gerlach <d-gerlach@ti.com>, Keerthy <j-keerthy@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 088/496] md: fix md_write_start() deadlock w/o metadata devices
-Date: Mon, 28 May 2018 11:57:53 +0200
-Message-Id: <20180528100323.518567561@linuxfoundation.org>
+Subject: [PATCH 4.14 070/496] ARM: OMAP2+: Fix sar_base inititalization for HS omaps
+Date: Mon, 28 May 2018 11:57:35 +0200
+Message-Id: <20180528100322.736842640@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,86 +32,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heinz Mauelshagen <heinzm@redhat.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 4b6c1060eaa6495aa5b0032e8f2d51dd936b1257 ]
+[ Upstream commit fe27f16794f313f5fc16f6d2f42d8c2b2f4d70cc ]
 
-If no metadata devices are configured on raid1/4/5/6/10
-(e.g. via dm-raid), md_write_start() unconditionally waits
-for superblocks to be written thus deadlocking.
+HS omaps use irq_save_secure_context() instead of irq_save_context()
+so sar_base will never get initialized and irq_sar_clear() gets called
+with a wrong address for HS omaps from irq_restore_context().
 
-Fix introduces mddev->has_superblocks bool, defines it in md_run()
-and checks for it in md_write_start() to conditionally avoid waiting.
+Starting with commit f4b9f40ae95b ("ARM: OMAP4+: Initialize SAR RAM
+base early for proper CPU1 reset for kexec") we have it available,
+and this ideally would been fixed with that commit already.
 
-Once on it, check for non-existing superblocks in md_super_write().
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=198647
-Fixes: cc27b0c78c796 ("md: fix deadlock between mddev_suspend() and md_write_start()")
-
-Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Fixes: f4b9f40ae95b ("ARM: OMAP4+: Initialize SAR RAM base early for
+proper CPU1 reset for kexec")
+Cc: Andrew F. Davis <afd@ti.com>
+Cc: Dave Gerlach <d-gerlach@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md.c |   10 ++++++++++
- drivers/md/md.h |    2 ++
- 2 files changed, 12 insertions(+)
+ arch/arm/mach-omap2/omap-wakeupgen.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -779,6 +779,9 @@ void md_super_write(struct mddev *mddev,
- 	struct bio *bio;
- 	int ff = 0;
- 
-+	if (!page)
-+		return;
-+
- 	if (test_bit(Faulty, &rdev->flags))
+--- a/arch/arm/mach-omap2/omap-wakeupgen.c
++++ b/arch/arm/mach-omap2/omap-wakeupgen.c
+@@ -299,8 +299,6 @@ static void irq_save_context(void)
+ 	if (soc_is_dra7xx())
  		return;
  
-@@ -5434,6 +5437,7 @@ int md_run(struct mddev *mddev)
- 	 * the only valid external interface is through the md
- 	 * device.
- 	 */
-+	mddev->has_superblocks = false;
- 	rdev_for_each(rdev, mddev) {
- 		if (test_bit(Faulty, &rdev->flags))
- 			continue;
-@@ -5447,6 +5451,9 @@ int md_run(struct mddev *mddev)
- 				set_disk_ro(mddev->gendisk, 1);
- 		}
+-	if (!sar_base)
+-		sar_base = omap4_get_sar_ram_base();
+ 	if (wakeupgen_ops && wakeupgen_ops->save_context)
+ 		wakeupgen_ops->save_context();
+ }
+@@ -598,6 +596,8 @@ static int __init wakeupgen_init(struct
+ 	irq_hotplug_init();
+ 	irq_pm_init();
  
-+		if (rdev->sb_page)
-+			mddev->has_superblocks = true;
++	sar_base = omap4_get_sar_ram_base();
 +
- 		/* perform some consistency tests on the device.
- 		 * We don't want the data to overlap the metadata,
- 		 * Internal Bitmap issues have been handled elsewhere.
-@@ -8022,6 +8029,7 @@ EXPORT_SYMBOL(md_done_sync);
- bool md_write_start(struct mddev *mddev, struct bio *bi)
- {
- 	int did_change = 0;
-+
- 	if (bio_data_dir(bi) != WRITE)
- 		return true;
- 
-@@ -8054,6 +8062,8 @@ bool md_write_start(struct mddev *mddev,
- 	rcu_read_unlock();
- 	if (did_change)
- 		sysfs_notify_dirent_safe(mddev->sysfs_state);
-+	if (!mddev->has_superblocks)
-+		return true;
- 	wait_event(mddev->sb_wait,
- 		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags) ||
- 		   mddev->suspended);
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -462,6 +462,8 @@ struct mddev {
- 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
- 	struct md_cluster_info		*cluster_info;
- 	unsigned int			good_device_nr;	/* good device num within cluster raid */
-+
-+	bool	has_superblocks:1;
- };
- 
- enum recovery_flags {
+ 	return 0;
+ }
+ IRQCHIP_DECLARE(ti_wakeupgen, "ti,omap4-wugen-mpu", wakeupgen_init);
