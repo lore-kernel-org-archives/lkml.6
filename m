@@ -1,89 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937909AbeE1MqN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:46:13 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34993 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937828AbeE1K53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:29 -0400
-X-Google-Smtp-Source: ADUXVKKPEnzCFXGXOg8qOaNZsO0W3O+6Kr6pGdKZOiHIN2+jCxm29OlEz1qF1DdHoJYjXHb7hNMNbw==
-Date: Mon, 28 May 2018 13:57:24 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Song Liu <songliubraving@fb.com>
-Cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        mhocko@kernel.org, rientjes@google.com, aarcange@redhat.com
-Subject: Re: [PATCH v2] mm/THP: use hugepage_vma_check() in
- khugepaged_enter_vma_merge()
-Message-ID: <20180528105724.okg6c7i72r3v3jno@kshutemo-mobl1>
-References: <20180522194430.426688-1-songliubraving@fb.com>
+        id S937976AbeE1Mq2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:46:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937520AbeE1K5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:25 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 314/496] net: Fix untag for vlan packets without ethernet header
+Date: Mon, 28 May 2018 12:01:39 +0200
+Message-Id: <20180528100333.060906755@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522194430.426688-1-songliubraving@fb.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 12:44:30PM -0700, Song Liu wrote:
-> khugepaged_enter_vma_merge() is using a different approach to check
-> whether a vma is valid for khugepaged_enter():
-> 
->     if (!vma->anon_vma)
->             /*
->              * Not yet faulted in so we will register later in the
->              * page fault if needed.
->              */
->             return 0;
->     if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
->             /* khugepaged not yet working on file or special mappings */
->             return 0;
-> 
-> This check has some problems. One of the obvious problems is that
-> it doesn't check shmem_file(), so that vma backed with shmem files
-> will not call khugepaged_enter(). Here is an example of failed madvise():
-> 
->    /* mount /dev/shm with huge=advise:
->     *     mount -o remount,huge=advise /dev/shm */
->    /* create file /dev/shm/huge */
->    #define HUGE_FILE "/dev/shm/huge"
-> 
->    fd = open(HUGE_FILE, O_RDONLY);
->    ptr = mmap(NULL, FILE_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
->    ret = madvise(ptr, FILE_SIZE, MADV_HUGEPAGE);
-> 
-> madvise() will return 0, but this memory region is never put in huge
-> page (check from /proc/meminfo: ShmemHugePages).
-> 
-> This patch fixes these problems by reusing hugepage_vma_check() in
-> khugepaged_enter_vma_merge().
-> 
-> vma->vm_flags is not yet updated in khugepaged_enter_vma_merge(),
-> so we need to pass the new vm_flags to hugepage_vma_check() through
-> a separate argument.
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
->  mm/khugepaged.c | 26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index d7b2a4b..9f74e51 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -430,18 +430,15 @@ int __khugepaged_enter(struct mm_struct *mm)
->  	return 0;
->  }
->  
-> +static bool hugepage_vma_check(struct vm_area_struct *vma,
-> +			       unsigned long vm_flags);
-> +
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-The patch looks good to me.
+------------------
 
-But can we move hugepage_vma_check() here to avoid forward declaration of
-the function?
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
--- 
- Kirill A. Shutemov
+[ Upstream commit ae4745730cf8e693d354ccd4dbaf59ea440c09a9 ]
+
+In some situation vlan packets do not have ethernet headers. One example
+is packets from tun devices. Users can specify vlan protocol in tun_pi
+field instead of IP protocol, and skb_vlan_untag() attempts to untag such
+packets.
+
+skb_vlan_untag() (more precisely, skb_reorder_vlan_header() called by it)
+however did not expect packets without ethernet headers, so in such a case
+size argument for memmove() underflowed and triggered crash.
+
+====
+BUG: unable to handle kernel paging request at ffff8801cccb8000
+IP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
+PGD 9cee067 P4D 9cee067 PUD 1d9401063 PMD 1cccb7063 PTE 2810100028101
+Oops: 000b [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 17663 Comm: syz-executor2 Not tainted 4.16.0-rc7+ #368
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
+RSP: 0018:ffff8801cc046e28 EFLAGS: 00010287
+RAX: ffff8801ccc244c4 RBX: fffffffffffffffe RCX: fffffffffff6c4c2
+RDX: fffffffffffffffe RSI: ffff8801cccb7ffc RDI: ffff8801cccb8000
+RBP: ffff8801cc046e48 R08: ffff8801ccc244be R09: ffffed0039984899
+R10: 0000000000000001 R11: ffffed0039984898 R12: ffff8801ccc244c4
+R13: ffff8801ccc244c0 R14: ffff8801d96b7c06 R15: ffff8801d96b7b40
+FS:  00007febd562d700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff8801cccb8000 CR3: 00000001ccb2f006 CR4: 00000000001606e0
+DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+ memmove include/linux/string.h:360 [inline]
+ skb_reorder_vlan_header net/core/skbuff.c:5031 [inline]
+ skb_vlan_untag+0x470/0xc40 net/core/skbuff.c:5061
+ __netif_receive_skb_core+0x119c/0x3460 net/core/dev.c:4460
+ __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4627
+ netif_receive_skb_internal+0x10b/0x670 net/core/dev.c:4701
+ netif_receive_skb+0xae/0x390 net/core/dev.c:4725
+ tun_rx_batched.isra.50+0x5ee/0x870 drivers/net/tun.c:1555
+ tun_get_user+0x299e/0x3c20 drivers/net/tun.c:1962
+ tun_chr_write_iter+0xb9/0x160 drivers/net/tun.c:1990
+ call_write_iter include/linux/fs.h:1782 [inline]
+ new_sync_write fs/read_write.c:469 [inline]
+ __vfs_write+0x684/0x970 fs/read_write.c:482
+ vfs_write+0x189/0x510 fs/read_write.c:544
+ SYSC_write fs/read_write.c:589 [inline]
+ SyS_write+0xef/0x220 fs/read_write.c:581
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x454879
+RSP: 002b:00007febd562cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007febd562d6d4 RCX: 0000000000454879
+RDX: 0000000000000157 RSI: 0000000020000180 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000006b0 R14: 00000000006fc120 R15: 0000000000000000
+Code: 90 90 90 90 90 90 90 48 89 f8 48 83 fa 20 0f 82 03 01 00 00 48 39 fe 7d 0f 49 89 f0 49 01 d0 49 39 f8 0f 8f 9f 00 00 00 48 89 d1 <f3> a4 c3 48 81 fa a8 02 00 00 72 05 40 38 fe 74 3b 48 83 ea 20
+RIP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43 RSP: ffff8801cc046e28
+CR2: ffff8801cccb8000
+====
+
+We don't need to copy headers for packets which do not have preceding
+headers of vlan headers, so skip memmove() in that case.
+
+Fixes: 4bbb3e0e8239 ("net: Fix vlan untag for bridge and vlan_dev with reorder_hdr off")
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/core/skbuff.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -4947,8 +4947,10 @@ static struct sk_buff *skb_reorder_vlan_
+ 	}
+ 
+ 	mac_len = skb->data - skb_mac_header(skb);
+-	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
+-		mac_len - VLAN_HLEN - ETH_TLEN);
++	if (likely(mac_len > VLAN_HLEN + ETH_TLEN)) {
++		memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
++			mac_len - VLAN_HLEN - ETH_TLEN);
++	}
+ 	skb->mac_header += VLAN_HLEN;
+ 	return skb;
+ }
