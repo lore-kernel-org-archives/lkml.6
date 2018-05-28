@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934275AbeE1KIM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:08:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56160 "EHLO mail.kernel.org"
+        id S933970AbeE1KIG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:08:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933859AbeE1KIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:07 -0400
+        id S933859AbeE1KIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 056/185] ARM: OMAP3: Fix prm wake interrupt for resume
-Date: Mon, 28 May 2018 12:01:37 +0200
-Message-Id: <20180528100055.619591713@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
+        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 037/185] MIPS: TXx9: use IS_BUILTIN() for CONFIG_LEDS_CLASS
+Date: Mon, 28 May 2018 12:01:18 +0200
+Message-Id: <20180528100053.542387362@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,62 +30,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-[ Upstream commit d3be6d2a08bd26580562d9714d3d97ea9ba22c73 ]
+[ Upstream commit 0cde5b44a30f1daaef1c34e08191239dc63271c4 ]
 
-For platform_suspend_ops, the finish call is too late to re-enable wake
-irqs and we need re-enable wake irqs on wake call instead.
+When commit b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+added board support for the RBTX4939, it added a call to
+led_classdev_register even if the LED class is built as a module.
+Built-in arch code cannot call module code directly like this. Commit
+b33b44073734 ("MIPS: TXX9: use IS_ENABLED() macro") subsequently
+changed the inclusion of this code to a single check that
+CONFIG_LEDS_CLASS is either builtin or a module, but the same issue
+remains.
 
-Otherwise noirq resume for devices has already happened. And then
-dev_pm_disarm_wake_irq() has already disabled the dedicated wake irqs
-when the interrupt triggers and the wake irq is never handled.
+This leads to MIPS allmodconfig builds failing when CONFIG_MACH_TX49XX=y
+is set:
 
-For devices that are already in PM runtime suspended state when we
-enter suspend this means that a possible wake irq will never trigger.
+arch/mips/txx9/rbtx4939/setup.o: In function `rbtx4939_led_probe':
+setup.c:(.init.text+0xc0): undefined reference to `of_led_classdev_register'
+make: *** [Makefile:999: vmlinux] Error 1
 
-And this can lead into a situation where a device has a pending padconf
-wake irq, and the device will stay unresponsive to any further wake
-irqs.
+Fix this by using the IS_BUILTIN() macro instead.
 
-This issue can be easily reproduced by setting serial console log level
-to zero, letting the serial console idle, and suspend the system from
-an ssh terminal. Then try to wake up the system by typing to the serial
-console.
-
-Note that this affects only omap3 PRM interrupt as that's currently
-the only omap variant that does anything in omap_pm_wake().
-
-In general, for the wake irqs to work, the interrupt must have either
-IRQF_NO_SUSPEND or IRQF_EARLY_RESUME set for it to trigger before
-dev_pm_disarm_wake_irq() disables the wake irqs.
-
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/18544/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/pm.c |    4 ++--
+ arch/mips/txx9/rbtx4939/setup.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mach-omap2/pm.c
-+++ b/arch/arm/mach-omap2/pm.c
-@@ -231,7 +231,7 @@ static void omap_pm_end(void)
- 	cpu_idle_poll_ctrl(false);
- }
+--- a/arch/mips/txx9/rbtx4939/setup.c
++++ b/arch/mips/txx9/rbtx4939/setup.c
+@@ -186,7 +186,7 @@ static void __init rbtx4939_update_ioc_p
  
--static void omap_pm_finish(void)
-+static void omap_pm_wake(void)
+ #define RBTX4939_MAX_7SEGLEDS	8
+ 
+-#if IS_ENABLED(CONFIG_LEDS_CLASS)
++#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+ static u8 led_val[RBTX4939_MAX_7SEGLEDS];
+ struct rbtx4939_led_data {
+ 	struct led_classdev cdev;
+@@ -262,7 +262,7 @@ static inline void rbtx4939_led_setup(vo
+ 
+ static void __rbtx4939_7segled_putc(unsigned int pos, unsigned char val)
  {
- 	if (cpu_is_omap34xx())
- 		omap_prcm_irq_complete();
-@@ -241,7 +241,7 @@ static const struct platform_suspend_ops
- 	.begin		= omap_pm_begin,
- 	.end		= omap_pm_end,
- 	.enter		= omap_pm_enter,
--	.finish		= omap_pm_finish,
-+	.wake		= omap_pm_wake,
- 	.valid		= suspend_valid_only_mem,
- };
- 
+-#if IS_ENABLED(CONFIG_LEDS_CLASS)
++#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+ 	unsigned long flags;
+ 	local_irq_save(flags);
+ 	/* bit7: reserved for LED class */
