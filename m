@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932988AbeE1QCE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:02:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35674 "EHLO mail.kernel.org"
+        id S933030AbeE1QCR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:02:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966327AbeE1KPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:30 -0400
+        id S966398AbeE1KPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 034/268] mac80211_hwsim: fix possible memory leak in hwsim_new_radio_nl()
-Date: Mon, 28 May 2018 12:00:08 +0200
-Message-Id: <20180528100205.943769387@linuxfoundation.org>
+Subject: [PATCH 4.4 032/268] kconfig: Fix automatic menu creation mem leak
+Date: Mon, 28 May 2018 12:00:06 +0200
+Message-Id: <20180528100205.725278433@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,35 +30,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
 
-[ Upstream commit 0ddcff49b672239dda94d70d0fcf50317a9f4b51 ]
+[ Upstream commit ae7440ef0c8013d68c00dad6900e7cce5311bb1c ]
 
-'hwname' is malloced in hwsim_new_radio_nl() and should be freed
-before leaving from the error handling cases, otherwise it will cause
-memory leak.
+expr_trans_compare() always allocates and returns a new expression,
+giving the following leak outline:
 
-Fixes: ff4dd73dd2b4 ("mac80211_hwsim: check HWSIM_ATTR_RADIO_NAME length")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+	...
+	*Allocate*
+	basedep = expr_trans_compare(basedep, E_UNEQUAL, &symbol_no);
+	...
+	for (menu = parent->next; menu; menu = menu->next) {
+		...
+		*Copy*
+		dep2 = expr_copy(basedep);
+		...
+		*Free copy*
+		expr_free(dep2);
+	}
+	*basedep lost!*
+
+Fix by freeing 'basedep' after the loop.
+
+Summary from Valgrind on 'menuconfig' (ARCH=x86) before the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 344,376 bytes in 14,349 blocks
+	   ...
+
+Summary after the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 44,448 bytes in 1,852 blocks
+	   ...
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ scripts/kconfig/menu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2925,8 +2925,10 @@ static int hwsim_new_radio_nl(struct sk_
- 	if (info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]) {
- 		u32 idx = nla_get_u32(info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]);
- 
--		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom))
-+		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom)) {
-+			kfree(hwname);
- 			return -EINVAL;
-+		}
- 		param.regd = hwsim_world_regdom_custom[idx];
- 	}
- 
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -364,6 +364,7 @@ void menu_finalize(struct menu *parent)
+ 			menu->parent = parent;
+ 			last_menu = menu;
+ 		}
++		expr_free(basedep);
+ 		if (last_menu) {
+ 			parent->list = parent->next;
+ 			parent->next = last_menu->next;
