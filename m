@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423389AbeE1LHO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:07:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53870 "EHLO mail.kernel.org"
+        id S1423438AbeE1LH3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:07:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423342AbeE1LHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:09 -0400
+        id S1423409AbeE1LHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 071/272] Btrfs: bail out on error during replay_dir_deletes
-Date: Mon, 28 May 2018 12:01:44 +0200
-Message-Id: <20180528100246.895498801@linuxfoundation.org>
+Subject: [PATCH 4.16 048/272] Btrfs: clean up resources during umount after trans is aborted
+Date: Mon, 28 May 2018 12:01:21 +0200
+Message-Id: <20180528100244.888277289@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,33 +32,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Liu Bo <bo.liu@linux.alibaba.com>
 
-[ Upstream commit b98def7ca6e152ee55e36863dddf6f41f12d1dc6 ]
+[ Upstream commit af7227338135d2f1b1552bf9a6d43e02dcba10b9 ]
 
-If errors were returned by btrfs_next_leaf(), replay_dir_deletes needs
-to bail out, otherwise @ret would be forced to be 0 after 'break;' and
-the caller won't be aware of it.
+Currently if some fatal errors occur, like all IO get -EIO, resources
+would be cleaned up when
+a) transaction is being committed or
+b) BTRFS_FS_STATE_ERROR is set
 
-Fixes: e02119d5a7b4 ("Btrfs: Add a write ahead tree log to optimize synchronous operations")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+However, in some rare cases, resources may be left alone after transaction
+gets aborted and umount may run into some ASSERT(), e.g.
+ASSERT(list_empty(&block_group->dirty_list));
+
+For case a), in btrfs_commit_transaciton(), there're several places at the
+beginning where we just call btrfs_end_transaction() without cleaning up
+resources.  For case b), it is possible that the trans handle doesn't have
+any dirty stuff, then only trans hanlde is marked as aborted while
+BTRFS_FS_STATE_ERROR is not set, so resources remain in memory.
+
+This makes btrfs also check BTRFS_FS_STATE_TRANS_ABORTED to make sure that
+all resources won't stay in memory after umount.
+
 Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-log.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/disk-io.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2356,8 +2356,10 @@ again:
- 			nritems = btrfs_header_nritems(path->nodes[0]);
- 			if (path->slots[0] >= nritems) {
- 				ret = btrfs_next_leaf(root, path);
--				if (ret)
-+				if (ret == 1)
- 					break;
-+				else if (ret < 0)
-+					goto out;
- 			}
- 			btrfs_item_key_to_cpu(path->nodes[0], &found_key,
- 					      path->slots[0]);
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -3735,7 +3735,8 @@ void close_ctree(struct btrfs_fs_info *f
+ 			btrfs_err(fs_info, "commit super ret %d", ret);
+ 	}
+ 
+-	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
++	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state) ||
++	    test_bit(BTRFS_FS_STATE_TRANS_ABORTED, &fs_info->fs_state))
+ 		btrfs_error_commit_super(fs_info);
+ 
+ 	kthread_stop(fs_info->transaction_kthread);
