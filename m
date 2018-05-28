@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423166AbeE1LFt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:05:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52694 "EHLO mail.kernel.org"
+        id S1423179AbeE1LFv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:05:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422904AbeE1LFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:05:42 -0400
+        id S1423152AbeE1LFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 013/272] ALSA: timer: Fix pause event notification
-Date: Mon, 28 May 2018 12:00:46 +0200
-Message-Id: <20180528100241.411404303@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: [PATCH 4.16 040/272] KVM: s390: vsie: fix < 8k check for the itdba
+Date: Mon, 28 May 2018 12:01:13 +0200
+Message-Id: <20180528100244.138433291@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,42 +32,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: David Hildenbrand <david@redhat.com>
 
-commit 3ae180972564846e6d794e3615e1ab0a1e6c4ef9 upstream.
+commit f4a551b72358facbbe5714248dff78404272feee upstream.
 
-Commit f65e0d299807 ("ALSA: timer: Call notifier in the same spinlock")
-combined the start/continue and stop/pause functions, and in doing so
-changed the event code for the pause case to SNDRV_TIMER_EVENT_CONTINUE.
-Change it back to SNDRV_TIMER_EVENT_PAUSE.
+By missing an "L", we might detect some addresses to be <8k,
+although they are not.
 
-Fixes: f65e0d299807 ("ALSA: timer: Call notifier in the same spinlock")
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+e.g. for itdba = 100001fff
+!(gpa & ~0x1fffU) -> 1
+!(gpa & ~0x1fffUL) -> 0
+
+So we would report a SIE validity intercept although everything is fine.
+
+Fixes: 166ecb3 ("KVM: s390: vsie: support transactional execution")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Cc: stable@vger.kernel.org # v4.8+
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/timer.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/kvm/vsie.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -592,7 +592,7 @@ static int snd_timer_stop1(struct snd_ti
- 	else
- 		timeri->flags |= SNDRV_TIMER_IFLG_PAUSED;
- 	snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
--			  SNDRV_TIMER_EVENT_CONTINUE);
-+			  SNDRV_TIMER_EVENT_PAUSE);
-  unlock:
- 	spin_unlock_irqrestore(&timer->lock, flags);
- 	return result;
-@@ -614,7 +614,7 @@ static int snd_timer_stop_slave(struct s
- 		list_del_init(&timeri->ack_list);
- 		list_del_init(&timeri->active_list);
- 		snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
--				  SNDRV_TIMER_EVENT_CONTINUE);
-+				  SNDRV_TIMER_EVENT_PAUSE);
- 		spin_unlock(&timeri->timer->lock);
- 	}
- 	spin_unlock_irqrestore(&slave_active_lock, flags);
+--- a/arch/s390/kvm/vsie.c
++++ b/arch/s390/kvm/vsie.c
+@@ -578,7 +578,7 @@ static int pin_blocks(struct kvm_vcpu *v
+ 
+ 	gpa = READ_ONCE(scb_o->itdba) & ~0xffUL;
+ 	if (gpa && (scb_s->ecb & ECB_TE)) {
+-		if (!(gpa & ~0x1fffU)) {
++		if (!(gpa & ~0x1fffUL)) {
+ 			rc = set_validity_icpt(scb_s, 0x0080U);
+ 			goto unpin;
+ 		}
