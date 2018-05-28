@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423330AbeE1MPH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:15:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50852 "EHLO mail.kernel.org"
+        id S1164977AbeE1LDc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422928AbeE1LDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:41 -0400
+        id S1164903AbeE1LDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 460/496] cpufreq: Reorder cpufreq_online() error code path
-Date: Mon, 28 May 2018 12:04:05 +0200
-Message-Id: <20180528100339.300856151@linuxfoundation.org>
+Subject: [PATCH 4.14 484/496] netlabel: If PF_INET6, check sk_buff ip header version
+Date: Mon, 28 May 2018 12:04:29 +0200
+Message-Id: <20180528100340.279520885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,47 +31,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Richard Haines <richard_c_haines@btinternet.com>
 
-[ Upstream commit b24b6478e65f140610ab1ffaadc7bc6bf0be8aad ]
+[ Upstream commit 213d7f94775322ba44e0bbb55ec6946e9de88cea ]
 
-Ideally the de-allocation of resources should happen in the exact
-opposite order in which they were allocated. It helps maintain the code
-in long term, even if nothing really breaks with incorrect ordering.
+When resolving a fallback label, check the sk_buff version as it
+is possible (e.g. SCTP) to have family = PF_INET6 while
+receiving ip_hdr(skb)->version = 4.
 
-That wasn't followed in cpufreq_online() and it has some
-inconsistencies.  For example, the symlinks were created from within
-the locked region while they are removed only after putting the locks.
-Also ->exit() should have been called only after the symlinks are
-removed and the lock is dropped, as that was the case when ->init()
-was first called.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cpufreq.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/netlabel/netlabel_unlabeled.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1315,14 +1315,14 @@ static int cpufreq_online(unsigned int c
- 	return 0;
- 
- out_exit_policy:
-+	for_each_cpu(j, policy->real_cpus)
-+		remove_cpu_dev_symlink(policy, get_cpu_device(j));
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -1472,6 +1472,16 @@ int netlbl_unlabel_getattr(const struct
+ 		iface = rcu_dereference(netlbl_unlhsh_def);
+ 	if (iface == NULL || !iface->valid)
+ 		goto unlabel_getattr_nolabel;
 +
- 	up_write(&policy->rwsem);
- 
- 	if (cpufreq_driver->exit)
- 		cpufreq_driver->exit(policy);
- 
--	for_each_cpu(j, policy->real_cpus)
--		remove_cpu_dev_symlink(policy, get_cpu_device(j));
--
- out_free_policy:
- 	cpufreq_policy_free(policy);
- 	return ret;
++#if IS_ENABLED(CONFIG_IPV6)
++	/* When resolving a fallback label, check the sk_buff version as
++	 * it is possible (e.g. SCTP) to have family = PF_INET6 while
++	 * receiving ip_hdr(skb)->version = 4.
++	 */
++	if (family == PF_INET6 && ip_hdr(skb)->version == 4)
++		family = PF_INET;
++#endif /* IPv6 */
++
+ 	switch (family) {
+ 	case PF_INET: {
+ 		struct iphdr *hdr4;
