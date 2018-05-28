@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163327AbeE1NZx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:25:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38058 "EHLO mail.kernel.org"
+        id S1163291AbeE1Kr7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:47:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163299AbeE1KsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:03 -0400
+        id S1034302AbeE1Krw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Keith Busch <keith.busch@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 155/496] xen/pvcalls: fix null pointer dereference on map->sock
-Date: Mon, 28 May 2018 11:59:00 +0200
-Message-Id: <20180528100326.423718926@linuxfoundation.org>
+Subject: [PATCH 4.14 151/496] nvme-pci: Fix nvme queue cleanup if IRQ setup fails
+Date: Mon, 28 May 2018 11:58:56 +0200
+Message-Id: <20180528100326.259438083@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,33 +30,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit 68d2059be660944152ba667e43c3b4ec225974bc ]
+[ Upstream commit f25a2dfc20e3a3ed8fe6618c331799dd7bd01190 ]
 
-Currently if map is null then a potential null pointer deference
-occurs when calling sock_release on map->sock.  I believe the
-actual intention was to call sock_release on sock instead. Fix
-this.
+This patch fixes nvme queue cleanup if requesting an IRQ handler for
+the queue's vector fails. It does this by resetting the cq_vector to
+the uninitialized value of -1 so it is ignored for a controller reset.
 
-Fixes: 5db4d286a8ef ("xen/pvcalls: implement connect command")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+[changelog updates, removed misc whitespace changes]
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/pvcalls-back.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/pci.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/xen/pvcalls-back.c
-+++ b/drivers/xen/pvcalls-back.c
-@@ -424,7 +424,7 @@ static int pvcalls_back_connect(struct x
- 					sock);
- 	if (!map) {
- 		ret = -EFAULT;
--		sock_release(map->sock);
-+		sock_release(sock);
- 	}
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1322,7 +1322,7 @@ static int nvme_create_queue(struct nvme
+ 	nvmeq->cq_vector = qid - 1;
+ 	result = adapter_alloc_cq(dev, qid, nvmeq);
+ 	if (result < 0)
+-		return result;
++		goto release_vector;
  
- out:
+ 	result = adapter_alloc_sq(dev, qid, nvmeq);
+ 	if (result < 0)
+@@ -1336,9 +1336,12 @@ static int nvme_create_queue(struct nvme
+ 	return result;
+ 
+  release_sq:
++	dev->online_queues--;
+ 	adapter_delete_sq(dev, qid);
+  release_cq:
+ 	adapter_delete_cq(dev, qid);
++ release_vector:
++	nvmeq->cq_vector = -1;
+ 	return result;
+ }
+ 
