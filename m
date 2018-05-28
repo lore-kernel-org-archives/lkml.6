@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939972AbeE1Q0M (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:26:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58828 "EHLO mail.kernel.org"
+        id S940036AbeE1Q0c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:26:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936512AbeE1KKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:38 -0400
+        id S935073AbeE1KKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Thomas Abraham <tabraham@suse.com>,
+        Mark.Landis@Teradata.com, Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 113/185] Force log to disk before reading the AGF during a fstrim
-Date: Mon, 28 May 2018 12:02:34 +0200
-Message-Id: <20180528100101.471049782@linuxfoundation.org>
+Subject: [PATCH 3.18 111/185] swap: divide-by-zero when zero length swap file on ssd
+Date: Mon, 28 May 2018 12:02:32 +0200
+Message-Id: <20180528100101.226333546@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,67 +32,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Carlos Maiolino <cmaiolino@redhat.com>
+From: Tom Abraham <tabraham@suse.com>
 
-[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
+[ Upstream commit a06ad633a37c64a0cd4c229fc605cee8725d376e ]
 
-Forcing the log to disk after reading the agf is wrong, we might be
-calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
+Calling swapon() on a zero length swap file on SSD can lead to a
+divide-by-zero.
 
-This can cause a deadlock when racing a fstrim with a filesystem
-shutdown.
+Although creating such files isn't possible with mkswap and they woud be
+considered invalid, it would be better for the swapon code to be more
+robust and handle this condition gracefully (return -EINVAL).
+Especially since the fix is small and straightforward.
 
-The deadlock has been identified due a miscalculation bug in device-mapper
-dm-thin, which returns lack of space to its users earlier than the device itself
-really runs out of space, changing the device-mapper volume into an error state.
+To help with wear leveling on SSD, the swapon syscall calculates a
+random position in the swap file using modulo p->highest_bit, which is
+set to maxpages - 1 in read_swap_header.
 
-The problem happened while filling the filesystem with a single file,
-triggering the bug in device-mapper, consequently causing an IO error
-and shutting down the filesystem.
+If the swap file is zero length, read_swap_header sets maxpages=1 and
+last_page=0, resulting in p->highest_bit=0 and we divide-by-zero when we
+modulo p->highest_bit in swapon syscall.
 
-If such file is removed, and fstrim executed before the XFS finishes the
-shut down process, the fstrim process will end up holding the buffer
-lock, and going to sleep on the cil wait queue.
+This can be prevented by having read_swap_header return zero if
+last_page is zero.
 
-At this point, the shut down process will try to wake up all the threads
-waiting on the cil wait queue, but for this, it will try to hold the
-same buffer log already held my the fstrim, locking up the filesystem.
-
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Link: http://lkml.kernel.org/r/5AC747C1020000A7001FA82C@prv-mh.provo.novell.com
+Signed-off-by: Thomas Abraham <tabraham@suse.com>
+Reported-by: <Mark.Landis@Teradata.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_discard.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ mm/swapfile.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/xfs/xfs_discard.c
-+++ b/fs/xfs/xfs_discard.c
-@@ -51,19 +51,19 @@ xfs_trim_extents(
- 
- 	pag = xfs_perag_get(mp, agno);
- 
--	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
--	if (error || !agbp)
--		goto out_put_perag;
--
--	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
--
- 	/*
- 	 * Force out the log.  This means any transactions that might have freed
--	 * space before we took the AGF buffer lock are now on disk, and the
-+	 * space before we take the AGF buffer lock are now on disk, and the
- 	 * volatile disk cache is flushed.
- 	 */
- 	xfs_log_force(mp, XFS_LOG_SYNC);
- 
-+	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
-+	if (error || !agbp)
-+		goto out_put_perag;
-+
-+	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
-+
- 	/*
- 	 * Look up the longest btree in the AGF and start with it.
- 	 */
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2217,6 +2217,10 @@ static unsigned long read_swap_header(st
+ 	maxpages = swp_offset(pte_to_swp_entry(
+ 			swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;
+ 	last_page = swap_header->info.last_page;
++	if (!last_page) {
++		pr_warn("Empty swap-file\n");
++		return 0;
++	}
+ 	if (last_page > maxpages) {
+ 		pr_warn("Truncating oversized swap area, only using %luk out of %luk\n",
+ 			maxpages << (PAGE_SHIFT - 10),
