@@ -1,79 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939651AbeE1PHZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:07:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033858AbeE1KYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:40 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lionel Debieve <lionel.debieve@st.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 235/268] hwrng: stm32 - add reset during probe
-Date: Mon, 28 May 2018 12:03:29 +0200
-Message-Id: <20180528100229.973091934@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S939634AbeE1PHW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:07:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56816 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937156AbeE1PHF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:07:05 -0400
+Date: Mon, 28 May 2018 17:06:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Paul Burton <paul.burton@mips.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 2/2] sched: Warn if we fail to migrate a task
+Message-ID: <20180528150656.GF12217@hirez.programming.kicks-ass.net>
+References: <20180526154648.11635-1-paul.burton@mips.com>
+ <20180526154648.11635-3-paul.burton@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180526154648.11635-3-paul.burton@mips.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Sat, May 26, 2018 at 08:46:48AM -0700, Paul Burton wrote:
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 2380bc228dd0..cda3affd45b7 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1127,7 +1127,8 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+>  		struct migration_arg arg = { p, dest_cpu };
+>  		/* Need help from migration thread: drop lock and wait. */
+>  		task_rq_unlock(rq, p, &rf);
+> -		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
+> +		ret = stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
+> +		WARN_ON(ret);
+>  		tlb_migrate_finish(p->mm);
+>  		return 0;
+>  	} else if (task_on_rq_queued(p)) {
 
-------------------
+I think we can trigger this at will.. Set affinity to the CPU you're
+going to take offline and offline concurrently.
 
-From: "lionel.debieve@st.com" <lionel.debieve@st.com>
+It is possible for the offline to happen between task_rq_unlock() and
+stop_one_cpu(), at which point the WARM will then trigger.
 
-[ Upstream commit 326ed382256475aa4b8b7eae8a2f60689fd25e78 ]
+The point is; and maybe this should be a comment somewhere; that if this
+fails, there is nothing we can do about it, and it should be fixed up by
+migrate_tasks()/select_task_rq().
 
-Avoid issue when probing the RNG without
-reset if bad status has been detected previously
-
-Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/char/hw_random/stm32-rng.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- a/drivers/char/hw_random/stm32-rng.c
-+++ b/drivers/char/hw_random/stm32-rng.c
-@@ -21,6 +21,7 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/slab.h>
- 
- #define RNG_CR 0x00
-@@ -46,6 +47,7 @@ struct stm32_rng_private {
- 	struct hwrng rng;
- 	void __iomem *base;
- 	struct clk *clk;
-+	struct reset_control *rst;
- };
- 
- static int stm32_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
-@@ -140,6 +142,13 @@ static int stm32_rng_probe(struct platfo
- 	if (IS_ERR(priv->clk))
- 		return PTR_ERR(priv->clk);
- 
-+	priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
-+	if (!IS_ERR(priv->rst)) {
-+		reset_control_assert(priv->rst);
-+		udelay(2);
-+		reset_control_deassert(priv->rst);
-+	}
-+
- 	dev_set_drvdata(dev, priv);
- 
- 	priv->rng.name = dev_driver_string(dev),
+There is no point in propagating the error to userspace, since if we'd
+have slightly different timing and completed the stop_one_cpu() before
+the hot-un-plug, migrate_tasks()/select_task_rq() would've had to fix up
+anyway.
