@@ -1,227 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940507AbeE1RBP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 13:01:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54104 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940495AbeE1RBJ (ORCPT
+        id S940521AbeE1RBk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:01:40 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39142 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940495AbeE1RBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 13:01:09 -0400
-Date: Mon, 28 May 2018 10:01:08 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: John Johansen <john.johansen@canonical.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use an IDR to allocate apparmor secids
-Message-ID: <20180528170108.GA5448@bombadil.infradead.org>
-References: <20180522093259.GA30182@bombadil.infradead.org>
+        Mon, 28 May 2018 13:01:38 -0400
+X-Google-Smtp-Source: ADUXVKJ3r5tvthKopjAkZw6CnsWUMEA46O4ubjklxCJOefLPtmU6ofz8ba+GgPOx1AyNgweTQJWbgxuDseMD+/G0uTY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522093259.GA30182@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180528033212.bmtxq3zyujsf7x4a@shells.gnugeneration.com>
+References: <20171129183919.GQ692@shells.gnugeneration.com>
+ <20171201213322.GW692@shells.gnugeneration.com> <CAFqH_51LwG=txh_wDHvztWBN1fU_8zgXzdBJDxmzemcnpohKyg@mail.gmail.com>
+ <20180117224852.3cr33lhot3rpahg7@shells.gnugeneration.com>
+ <CAFqH_52Bpy8O6-F5XZm6G8emRY1dtufp8jNJTgjMtfvaOZ3okw@mail.gmail.com>
+ <20180125083321.jmrsqpfszj6ugsay@shells.gnugeneration.com> <20180528033212.bmtxq3zyujsf7x4a@shells.gnugeneration.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Mon, 28 May 2018 19:01:36 +0200
+Message-ID: <CAFqH_535qWYRv4ApFZN5a-g0-MKxqfStG_FBnG5T+5L7sBpLeA@mail.gmail.com>
+Subject: Re: [REGRESSION] (>= v4.12) IO w/dmcrypt causing audio underruns
+To: Vito Caputo <vcaputo@pengaru.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>, tj@kernel.org, dm-devel@redhat.com,
+        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Vito,
 
-ping?
+cc: dm-devel, Alasdair and Mike Snitzer
 
-I have this queued up in my XArray tree.  If I don't hear from you before
--rc1, I'll be submitting it as part of the XArray conversion.
+2018-05-28 5:32 GMT+02:00 Vito Caputo <vcaputo@pengaru.com>:
+> On Thu, Jan 25, 2018 at 12:33:21AM -0800, vcaputo@pengaru.com wrote:
+>> On Fri, Jan 19, 2018 at 11:57:32AM +0100, Enric Balletbo Serra wrote:
+>> > Hi Vito,
+>> >
+>> > 2018-01-17 23:48 GMT+01:00  <vcaputo@pengaru.com>:
+>> > > On Mon, Dec 18, 2017 at 10:25:33AM +0100, Enric Balletbo Serra wrote:
+>> > >> Hi Vito,
+>> > >>
+>> > >> 2017-12-01 22:33 GMT+01:00  <vcaputo@pengaru.com>:
+>> > >> > On Wed, Nov 29, 2017 at 10:39:19AM -0800, vcaputo@pengaru.com wrote:
+>> > >> >> Hello,
+>> > >> >>
+>> > >> >> Recently I noticed substantial audio dropouts when listening to MP3s in
+>> > >> >> `cmus` while doing big and churny `git checkout` commands in my linux git
+>> > >> >> tree.
+>> > >> >>
+>> > >> >> It's not something I've done much of over the last couple months so I
+>> > >> >> hadn't noticed until yesterday, but didn't remember this being a problem in
+>> > >> >> recent history.
+>> > >> >>
+>> > >> >> As there's quite an accumulation of similarly configured and built kernels
+>> > >> >> in my grub menu, it was trivial to determine approximately when this began:
+>> > >> >>
+>> > >> >> 4.11.0: no dropouts
+>> > >> >> 4.12.0-rc7: dropouts
+>> > >> >> 4.14.0-rc6: dropouts (seem more substantial as well, didn't investigate)
+>> > >> >>
+>> > >> >> Watching top while this is going on in the various kernel versions, it's
+>> > >> >> apparent that the kworker behavior changed.  Both the priority and quantity
+>> > >> >> of running kworker threads is elevated in kernels experiencing dropouts.
+>> > >> >>
+>> > >> >> Searching through the commit history for v4.11..v4.12 uncovered:
+>> > >> >>
+>> > >> >> commit a1b89132dc4f61071bdeaab92ea958e0953380a1
+>> > >> >> Author: Tim Murray <timmurray@google.com>
+>> > >> >> Date:   Fri Apr 21 11:11:36 2017 +0200
+>> > >> >>
+>> > >> >>     dm crypt: use WQ_HIGHPRI for the IO and crypt workqueues
+>> > >> >>
+>> > >> >>     Running dm-crypt with workqueues at the standard priority results in IO
+>> > >> >>     competing for CPU time with standard user apps, which can lead to
+>> > >> >>     pipeline bubbles and seriously degraded performance.  Move to using
+>> > >> >>     WQ_HIGHPRI workqueues to protect against that.
+>> > >> >>
+>> > >> >>     Signed-off-by: Tim Murray <timmurray@google.com>
+>> > >> >>     Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> > >> >>     Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+>> > >> >>
+>> > >> >> ---
+>> > >> >>
+>> > >> >> Reverting a1b8913 from 4.14.0-rc6, my current kernel, eliminates the
+>> > >> >> problem completely.
+>> > >> >>
+>> > >> >> Looking at the diff in that commit, it looks like the commit message isn't
+>> > >> >> even accurate; not only is the priority of the dmcrypt workqueues being
+>> > >> >> changed - they're also being made "CPU intensive" workqueues as well.
+>> > >> >>
+>> > >> >> This combination appears to result in both elevated scheduling priority and
+>> > >> >> greater quantity of participant worker threads effectively starving any
+>> > >> >> normal priority user task under periods of heavy IO on dmcrypt volumes.
+>> > >> >>
+>> > >> >> I don't know what the right solution is here.  It seems to me we're lacking
+>> > >> >> the appropriate mechanism for charging CPU resources consumed on behalf of
+>> > >> >> user processes in kworker threads to the work-causing process.
+>> > >> >>
+>> > >> >> What effectively happens is my normal `git` user process is able to
+>> > >> >> greatly amplify what share of CPU it takes from the system by generating IO
+>> > >> >> on what happens to be a high-priority CPU-intensive storage volume.
+>> > >> >>
+>> > >> >> It looks potentially complicated to fix properly, but I suspect at its core
+>> > >> >> this may be a fairly longstanding shortcoming of the page cache and its
+>> > >> >> asynchronous design.  Something that has been exacerbated substantially by
+>> > >> >> the introduction of CPU-intensive storage subsystems like dmcrypt.
+>> > >> >>
+>> > >> >> If we imagine the whole stack simplified, where all the IO was being done
+>> > >> >> synchronously in-band, and the dmcrypt kernel code simply ran in the
+>> > >> >> IO-causing process context, it would be getting charged to the calling
+>> > >> >> process and scheduled accordingly.  The resource accounting and scheduling
+>> > >> >> problems all emerge with the page cache, buffered IO, and async background
+>> > >> >> writeback in a pool of unrelated worker threads, etc.  That's how it
+>> > >> >> appears to me anyways...
+>> > >> >>
+>> > >> >> The system used is a X61s Thinkpad 1.8Ghz with 840 EVO SSD, lvm on dmcrypt.
+>> > >> >> The kernel .config is attached in case it's of interest.
+>> > >> >>
+>> > >> >> Thanks,
+>> > >> >> Vito Caputo
+>> > >> >
+>> > >> >
+>> > >> >
+>> > >> > Ping...
+>> > >> >
+>> > >> > Could somebody please at least ACK receiving this so I'm not left wondering
+>> > >> > if my mails to lkml are somehow winding up flagged as spam, thanks!
+>> > >>
+>> > >> Sorry I did not notice your email before you ping me directly. It's
+>> > >> interesting that issue, though we didn't notice this problem. It's a
+>> > >> bit far since I tested this patch but I'll setup the environment again
+>> > >> and do more tests to understand better what is happening.
+>> > >>
+>> > >
+>> > > Any update on this?
+>> > >
+>> >
+>> > I did not reproduce the issue for now. Can you try what happens if you
+>> > remove the WQ_CPU_INTENSIVE in the kcryptd_io workqueue?
+>> >
+>> > - cc->io_queue = alloc_workqueue("kcryptd_io", WQ_HIGHPRI |
+>> > WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM, 1);
+>> > cc->io_queue = alloc_workqueue("kcryptd_io", WQ_HIGHPRI | WQ_MEM_RECLAIM, 1);
+>> >
+>>
+>> FWIW if I change both "kcryptd" and "kcryptd_io" workqueues to just
+>> WQ_CPU_INTENSIVE, removing WQ_HIGHPRIO, the problem goes away.
+>>
+>> Doing this to "kcryptd_io" alone, as mentioned in my previous email, was
+>> ineffective.
+>>
+>> Perhaps revert just the WQ_HIGHPRIO bit from the dmcrypt workqueues?
+>>
+>
+>
+> Guys... this is still a problem in 4.17-rc6.
+>
+> I don't understand why this is being ignored.  It's pathetic, my laptop
+> can't even do a git checkout of the linux tree while playing mp3s
+> without the music skipping.
+>
 
-On Tue, May 22, 2018 at 02:32:59AM -0700, Matthew Wilcox wrote:
-> Replace the custom usage of the radix tree to store a list of free IDs
-> with the IDR.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> 
->  security/apparmor/secid.c |  114 ++++------------------------------------------
->  1 file changed, 11 insertions(+), 103 deletions(-)
-> 
-> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-> index c2f0c1571156..3ad94b2ffbb2 100644
-> --- a/security/apparmor/secid.c
-> +++ b/security/apparmor/secid.c
-> @@ -18,6 +18,7 @@
->  #include <linux/errno.h>
->  #include <linux/err.h>
->  #include <linux/gfp.h>
-> +#include <linux/idr.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  
-> @@ -30,18 +31,10 @@
->  /*
->   * secids - do not pin labels with a refcount. They rely on the label
->   * properly updating/freeing them
-> - *
-> - * A singly linked free list is used to track secids that have been
-> - * freed and reuse them before allocating new ones
->   */
->  
-> -#define FREE_LIST_HEAD 1
-> -
-> -static RADIX_TREE(aa_secids_map, GFP_ATOMIC);
-> +static DEFINE_IDR(aa_secids);
->  static DEFINE_SPINLOCK(secid_lock);
-> -static u32 alloced_secid = FREE_LIST_HEAD;
-> -static u32 free_list = FREE_LIST_HEAD;
-> -static unsigned long free_count;
->  
->  /*
->   * TODO: allow policy to reserve a secid range?
-> @@ -49,65 +42,6 @@ static unsigned long free_count;
->   * TODO: use secid_update in label replace
->   */
->  
-> -#define SECID_MAX U32_MAX
-> -
-> -/* TODO: mark free list as exceptional */
-> -static void *to_ptr(u32 secid)
-> -{
-> -	return (void *)
-> -		((((unsigned long) secid) << RADIX_TREE_EXCEPTIONAL_SHIFT));
-> -}
-> -
-> -static u32 to_secid(void *ptr)
-> -{
-> -	return (u32) (((unsigned long) ptr) >> RADIX_TREE_EXCEPTIONAL_SHIFT);
-> -}
-> -
-> -
-> -/* TODO: tag free_list entries to mark them as different */
-> -static u32 __pop(struct aa_label *label)
-> -{
-> -	u32 secid = free_list;
-> -	void __rcu **slot;
-> -	void *entry;
-> -
-> -	if (free_list == FREE_LIST_HEAD)
-> -		return AA_SECID_INVALID;
-> -
-> -	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
-> -	AA_BUG(!slot);
-> -	entry = radix_tree_deref_slot_protected(slot, &secid_lock);
-> -	free_list = to_secid(entry);
-> -	radix_tree_replace_slot(&aa_secids_map, slot, label);
-> -	free_count--;
-> -
-> -	return secid;
-> -}
-> -
-> -static void __push(u32 secid)
-> -{
-> -	void __rcu **slot;
-> -
-> -	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
-> -	AA_BUG(!slot);
-> -	radix_tree_replace_slot(&aa_secids_map, slot, to_ptr(free_list));
-> -	free_list = secid;
-> -	free_count++;
-> -}
-> -
-> -static struct aa_label * __secid_update(u32 secid, struct aa_label *label)
-> -{
-> -	struct aa_label *old;
-> -	void __rcu **slot;
-> -
-> -	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
-> -	AA_BUG(!slot);
-> -	old = radix_tree_deref_slot_protected(slot, &secid_lock);
-> -	radix_tree_replace_slot(&aa_secids_map, slot, label);
-> -
-> -	return old;
-> -}
-> -
->  /**
->   * aa_secid_update - update a secid mapping to a new label
->   * @secid: secid to update
-> @@ -115,11 +49,10 @@ static struct aa_label * __secid_update(u32 secid, struct aa_label *label)
->   */
->  void aa_secid_update(u32 secid, struct aa_label *label)
->  {
-> -	struct aa_label *old;
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&secid_lock, flags);
-> -	old = __secid_update(secid, label);
-> +	idr_replace(&aa_secids, label, secid);
->  	spin_unlock_irqrestore(&secid_lock, flags);
->  }
->  
-> @@ -132,7 +65,7 @@ struct aa_label *aa_secid_to_label(u32 secid)
->  	struct aa_label *label;
->  
->  	rcu_read_lock();
-> -	label = radix_tree_lookup(&aa_secids_map, secid);
-> +	label = idr_find(&aa_secids, secid);
->  	rcu_read_unlock();
->  
->  	return label;
-> @@ -167,7 +100,6 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
->  	return 0;
->  }
->  
-> -
->  int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
->  {
->  	struct aa_label *label;
-> @@ -186,7 +118,6 @@ void apparmor_release_secctx(char *secdata, u32 seclen)
->  	kfree(secdata);
->  }
->  
-> -
->  /**
->   * aa_alloc_secid - allocate a new secid for a profile
->   */
-> @@ -195,35 +126,12 @@ u32 aa_alloc_secid(struct aa_label *label, gfp_t gfp)
->  	unsigned long flags;
->  	u32 secid;
->  
-> -	/* racey, but at worst causes new allocation instead of reuse */
-> -	if (free_list == FREE_LIST_HEAD) {
-> -		bool preload = 0;
-> -		int res;
-> -
-> -retry:
-> -		if (gfpflags_allow_blocking(gfp) && !radix_tree_preload(gfp))
-> -			preload = 1;
-> -		spin_lock_irqsave(&secid_lock, flags);
-> -		if (alloced_secid != SECID_MAX) {
-> -			secid = ++alloced_secid;
-> -			res = radix_tree_insert(&aa_secids_map, secid, label);
-> -			AA_BUG(res == -EEXIST);
-> -		} else {
-> -			secid = AA_SECID_INVALID;
-> -		}
-> -		spin_unlock_irqrestore(&secid_lock, flags);
-> -		if (preload)
-> -			radix_tree_preload_end();
-> -	} else {
-> -		spin_lock_irqsave(&secid_lock, flags);
-> -		/* remove entry from free list */
-> -		secid = __pop(label);
-> -		if (secid == AA_SECID_INVALID) {
-> -			spin_unlock_irqrestore(&secid_lock, flags);
-> -			goto retry;
-> -		}
-> -		spin_unlock_irqrestore(&secid_lock, flags);
-> -	}
-> +	idr_preload(gfp);
-> +	spin_lock_irqsave(&secid_lock, flags);
-> +	secid = idr_alloc(&aa_secids, label, 0, 0, GFP_ATOMIC);
-> +	/* XXX: Can return -ENOMEM */
-> +	spin_unlock_irqrestore(&secid_lock, flags);
-> +	idr_preload_end();
->  
->  	return secid;
->  }
-> @@ -237,6 +145,6 @@ void aa_free_secid(u32 secid)
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&secid_lock, flags);
-> -	__push(secid);
-> +	idr_remove(&aa_secids, secid);
->  	spin_unlock_irqrestore(&secid_lock, flags);
->  }
-> 
+Sorry, but it's easy to lost something on lkml, so adding the dm-devel
+ML and the maintainers.
+
+> Reverting a1b8913 completely eliminates the problem.  What gives?
+>
+
+IIRC the patch is there since 4.12 and I tried to reproduce the issue
+on at least two devices, my laptop and a Chromebook Pixel 2 without
+luck. Also, I am a bit surprised that nobody else has complained,
+maybe I missed it, and *of course*, this doesn't mean the issue is not
+there.
+
+So, did anyone experience the same issue?
+
+Regards,
+ Enric
+
+> Regards,
+> Vito Caputo
