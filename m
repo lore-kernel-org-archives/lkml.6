@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969077AbeE1Phl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:37:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38470 "EHLO mail.kernel.org"
+        id S1034674AbeE1PiE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:38:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968769AbeE1KSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:23 -0400
+        id S968745AbeE1KSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Dave Jiang <dave.jiang@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 098/268] s390/cio: fix return code after missing interrupt
-Date: Mon, 28 May 2018 12:01:12 +0200
-Message-Id: <20180528100213.356478526@linuxfoundation.org>
+Subject: [PATCH 4.4 096/268] kernel/relay.c: limit kmalloc size to KMALLOC_MAX_SIZE
+Date: Mon, 28 May 2018 12:01:10 +0200
+Message-Id: <20180528100213.092754885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,69 +34,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit 770b55c995d171f026a9efb85e71e3b1ea47b93d ]
+[ Upstream commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e ]
 
-When a timeout occurs for users of ccw_device_start_timeout
-we will stop the IO and call the drivers int handler with
-the irb pointer set to ERR_PTR(-ETIMEDOUT). Sometimes
-however we'd set the irb pointer to ERR_PTR(-EIO) which is
-not intended. Just set the correct value in all codepaths.
+chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
+of chan->n_subbufs * sizeof(size_t *).
 
-Reported-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+kmalloc_slab() will generate a warning when this fails if
+chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
+
+Limit chan->n_subbufs to the maximum allowed kmalloc() size.
+
+Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
+Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/device_fsm.c |    6 ++++--
- drivers/s390/cio/io_sch.h     |    1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ kernel/relay.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/s390/cio/device_fsm.c
-+++ b/drivers/s390/cio/device_fsm.c
-@@ -822,6 +822,7 @@ ccw_device_online_timeout(struct ccw_dev
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -163,7 +163,7 @@ static struct rchan_buf *relay_create_bu
+ {
+ 	struct rchan_buf *buf;
  
- 	ccw_device_set_timeout(cdev, 0);
- 	cdev->private->iretry = 255;
-+	cdev->private->async_kill_io_rc = -ETIMEDOUT;
- 	ret = ccw_device_cancel_halt_clear(cdev);
- 	if (ret == -EBUSY) {
- 		ccw_device_set_timeout(cdev, 3*HZ);
-@@ -898,7 +899,7 @@ ccw_device_killing_irq(struct ccw_device
- 	/* OK, i/o is dead now. Call interrupt handler. */
- 	if (cdev->handler)
- 		cdev->handler(cdev, cdev->private->intparm,
--			      ERR_PTR(-EIO));
-+			      ERR_PTR(cdev->private->async_kill_io_rc));
- }
+-	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
++	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
+ 		return NULL;
  
- static void
-@@ -915,7 +916,7 @@ ccw_device_killing_timeout(struct ccw_de
- 	ccw_device_online_verify(cdev, 0);
- 	if (cdev->handler)
- 		cdev->handler(cdev, cdev->private->intparm,
--			      ERR_PTR(-EIO));
-+			      ERR_PTR(cdev->private->async_kill_io_rc));
- }
- 
- void ccw_device_kill_io(struct ccw_device *cdev)
-@@ -923,6 +924,7 @@ void ccw_device_kill_io(struct ccw_devic
- 	int ret;
- 
- 	cdev->private->iretry = 255;
-+	cdev->private->async_kill_io_rc = -EIO;
- 	ret = ccw_device_cancel_halt_clear(cdev);
- 	if (ret == -EBUSY) {
- 		ccw_device_set_timeout(cdev, 3*HZ);
---- a/drivers/s390/cio/io_sch.h
-+++ b/drivers/s390/cio/io_sch.h
-@@ -155,6 +155,7 @@ struct ccw_device_private {
- 	unsigned long intparm;	/* user interruption parameter */
- 	struct qdio_irq *qdio_data;
- 	struct irb irb;		/* device status */
-+	int async_kill_io_rc;
- 	struct senseid senseid;	/* SenseID info */
- 	struct pgid pgid[8];	/* path group IDs per chpid*/
- 	struct ccw1 iccws[2];	/* ccws for SNID/SID/SPGID commands */
+ 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
