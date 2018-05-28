@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939926AbeE1QXL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:23:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59556 "EHLO mail.kernel.org"
+        id S939979AbeE1QXa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:23:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935336AbeE1KLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:21 -0400
+        id S936561AbeE1KLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 128/185] ACPI: acpi_pad: Fix memory leak in power saving threads
-Date: Mon, 28 May 2018 12:02:49 +0200
-Message-Id: <20180528100103.927685910@linuxfoundation.org>
+Subject: [PATCH 3.18 125/185] Btrfs: fix copy_items() return value when logging an inode
+Date: Mon, 28 May 2018 12:02:46 +0200
+Message-Id: <20180528100103.386247677@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,39 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lenny Szubowicz <lszubowi@redhat.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
+[ Upstream commit 8434ec46c6e3232cebc25a910363b29f5c617820 ]
 
-Fix once per second (round_robin_time) memory leak of about 1 KB in
-each acpi_pad kernel idling thread that is activated.
+When logging an inode, at tree-log.c:copy_items(), if we call
+btrfs_next_leaf() at the loop which checks for the need to log holes, we
+need to make sure copy_items() returns the value 1 to its caller and
+not 0 (on success). This is because the path the caller passed was
+released and is now different from what is was before, and the caller
+expects a return value of 0 to mean both success and that the path
+has not changed, while a return value of 1 means both success and
+signals the caller that it can not reuse the path, it has to perform
+another tree search.
 
-Found by testing with kmemleak.
+Even though this is a case that should not be triggered on normal
+circumstances or very rare at least, its consequences can be very
+unpredictable (especially when replaying a log tree).
 
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_pad.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/tree-log.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/acpi/acpi_pad.c
-+++ b/drivers/acpi/acpi_pad.c
-@@ -117,6 +117,7 @@ static void round_robin_cpu(unsigned int
- 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
- 	if (cpumask_empty(tmp)) {
- 		mutex_unlock(&round_robin_lock);
-+		free_cpumask_var(tmp);
- 		return;
- 	}
- 	for_each_cpu(cpu, tmp) {
-@@ -134,6 +135,8 @@ static void round_robin_cpu(unsigned int
- 	mutex_unlock(&round_robin_lock);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3539,6 +3539,7 @@ fill_holes:
+ 			ASSERT(ret == 0);
+ 			src = src_path->nodes[0];
+ 			i = 0;
++			need_find_last_extent = true;
+ 		}
  
- 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
-+
-+	free_cpumask_var(tmp);
- }
- 
- static void exit_round_robin(unsigned int tsk_index)
+ 		btrfs_item_key_to_cpu(src, &key, i);
