@@ -1,21 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939460AbeE1Oys (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:54:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47358 "EHLO mail.kernel.org"
+        id S937151AbeE1OzI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937078AbeE1K1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:55 -0400
+        id S937056AbeE1K1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.9 012/329] libata: blacklist Micron 500IT SSD with MU01 firmware
-Date: Mon, 28 May 2018 11:59:01 +0200
-Message-Id: <20180528100243.271838422@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hendrick Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 036/329] perf callchain: Fix attr.sample_max_stack setting
+Date: Mon, 28 May 2018 11:59:25 +0200
+Message-Id: <20180528100245.447439072@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,64 +35,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit 136d769e0b3475d71350aa3648a116a6ee7a8f6c upstream.
+[ Upstream commit 249d98e567e25dd03e015e2d31e1b7b9648f34df ]
 
-While whitelisting Micron M500DC drives, the tweaked blacklist entry
-enabled queued TRIM from M500IT variants also. But these do not support
-queued TRIM. And while using those SSDs with the latest kernel we have
-seen errors and even the partition table getting corrupted.
+When setting the "dwarf" unwinder for a specific event and not
+specifying the max-stack, the attr.sample_max_stack ended up using an
+uninitialized callchain_param.max_stack, fix it by using designated
+initializers for that callchain_param variable, zeroing all non
+explicitely initialized struct members.
 
-Some part from the dmesg:
-[    6.727384] ata1.00: ATA-9: Micron_M500IT_MTFDDAK060MBD, MU01, max UDMA/133
-[    6.727390] ata1.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32), AA
-[    6.741026] ata1.00: supports DRM functions and may not be fully accessible
-[    6.759887] ata1.00: configured for UDMA/133
-[    6.762256] scsi 0:0:0:0: Direct-Access     ATA      Micron_M500IT_MT MU01 PQ: 0 ANSI: 5
+Here is what happened:
 
-and then for the error:
-[  120.860334] ata1.00: exception Emask 0x1 SAct 0x7ffc0007 SErr 0x0 action 0x6 frozen
-[  120.860338] ata1.00: irq_stat 0x40000008
-[  120.860342] ata1.00: failed command: SEND FPDMA QUEUED
-[  120.860351] ata1.00: cmd 64/01:00:00:00:00/00:00:00:00:00/a0 tag 0 ncq dma 512 out
-         res 40/00:00:00:00:00/00:00:00:00:00/00 Emask 0x5 (timeout)
-[  120.860353] ata1.00: status: { DRDY }
-[  120.860543] ata1: hard resetting link
-[  121.166128] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
-[  121.166376] ata1.00: supports DRM functions and may not be fully accessible
-[  121.186238] ata1.00: supports DRM functions and may not be fully accessible
-[  121.204445] ata1.00: configured for UDMA/133
-[  121.204454] ata1.00: device reported invalid CHS sector 0
-[  121.204541] sd 0:0:0:0: [sda] tag#18 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-[  121.204546] sd 0:0:0:0: [sda] tag#18 Sense Key : 0x5 [current]
-[  121.204550] sd 0:0:0:0: [sda] tag#18 ASC=0x21 ASCQ=0x4
-[  121.204555] sd 0:0:0:0: [sda] tag#18 CDB: opcode=0x93 93 08 00 00 00 00 00 04 28 80 00 00 00 30 00 00
-[  121.204559] print_req_error: I/O error, dev sda, sector 272512
+  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+  callchain: type DWARF
+  callchain: stack dump size 8192
+  perf_event_attr:
+    type                             2
+    size                             112
+    config                           0x730
+    { sample_period, sample_freq }   1
+    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
+    exclude_callchain_user           1
+    { wakeup_events, wakeup_watermark } 1
+    sample_regs_user                 0xff0fff
+    sample_stack_user                8192
+    sample_max_stack                 50656
+  sys_perf_event_open failed, error -75
+  Value too large for defined data type
+  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+  callchain: type DWARF
+  callchain: stack dump size 8192
+  perf_event_attr:
+    type                             2
+    size                             112
+    config                           0x730
+    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
+    exclude_callchain_user           1
+    sample_regs_user                 0xff0fff
+    sample_stack_user                8192
+    sample_max_stack                 30448
+  sys_perf_event_open failed, error -75
+  Value too large for defined data type
+  #
 
-After few reboots with these errors, and the SSD is corrupted.
-After blacklisting it, the errors are not seen and the SSD does not get
-corrupted any more.
+Now the attr.sample_max_stack is set to zero and the above works as
+expected:
 
-Fixes: 243918be6393 ("libata: Do not blacklist Micron M500DC")
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+  # perf trace --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+  PING ::1(::1) 56 data bytes
+  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.072 ms
+
+  --- ::1 ping statistics ---
+  1 packets transmitted, 1 received, 0% packet loss, time 0ms
+  rtt min/avg/max/mdev = 0.072/0.072/0.072/0.000 ms
+       0.000 probe_libc:inet_pton:(7feb7a998350))
+                                         __inet_pton (inlined)
+                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+                                         __GI_getaddrinfo (inlined)
+                                         [0xffffaa39b6108f3f] (/usr/bin/ping)
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Hendrick Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-is9tramondqa9jlxxsgcm9iz@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/ata/libata-core.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/evsel.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4430,6 +4430,8 @@ static const struct ata_blacklist_entry
- 	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -681,14 +681,14 @@ static void apply_config_terms(struct pe
+ 	struct perf_evsel_config_term *term;
+ 	struct list_head *config_terms = &evsel->config_terms;
+ 	struct perf_event_attr *attr = &evsel->attr;
+-	struct callchain_param param;
++	/* callgraph default */
++	struct callchain_param param = {
++		.record_mode = callchain_param.record_mode,
++	};
+ 	u32 dump_size = 0;
+ 	int max_stack = 0;
+ 	const char *callgraph_buf = NULL;
  
- 	/* devices that don't properly handle queued TRIM commands */
-+	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "Crucial_CT*M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+-	/* callgraph default */
+-	param.record_mode = callchain_param.record_mode;
+-
+ 	list_for_each_entry(term, config_terms, list) {
+ 		switch (term->type) {
+ 		case PERF_EVSEL__CONFIG_TERM_PERIOD:
