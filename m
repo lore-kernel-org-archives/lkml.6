@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937316AbeE1Ow1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:52:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47808 "EHLO mail.kernel.org"
+        id S937370AbeE1Ow6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:52:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937177AbeE1K20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:26 -0400
+        id S937156AbeE1K2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Srinath Mannam <srinath.mannam@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 009/329] mmc: sdhci-iproc: remove hard coded mmc cap 1.8v
-Date: Mon, 28 May 2018 11:58:58 +0200
-Message-Id: <20180528100242.934474182@linuxfoundation.org>
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 017/329] ipc/shm: fix shmat() nil address after round-down when remapping
+Date: Mon, 28 May 2018 11:59:06 +0200
+Message-Id: <20180528100243.756014906@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,33 +33,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srinath Mannam <srinath.mannam@broadcom.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-commit 4c94238f37af87a2165c3fb491b4a8b50e90649c upstream.
+commit 8f89c007b6dec16a1793cb88de88fcc02117bbbc upstream.
 
-Remove hard coded mmc cap 1.8v from platform data as it is board specific.
-The 1.8v DDR mmc caps can be enabled using DTS property for those
-boards that support it.
+shmat()'s SHM_REMAP option forbids passing a nil address for; this is in
+fact the very first thing we check for.  Andrea reported that for
+SHM_RND|SHM_REMAP cases we can end up bypassing the initial addr check,
+but we need to check again if the address was rounded down to nil.  As
+of this patch, such cases will return -EINVAL.
 
-Fixes: b17b4ab8ce38 ("mmc: sdhci-iproc: define MMC caps in platform data")
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: http://lkml.kernel.org/r/20180503204934.kk63josdu6u53fbd@linux-n805
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reported-by: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-iproc.c |    1 -
- 1 file changed, 1 deletion(-)
+ ipc/shm.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -176,7 +176,6 @@ static const struct sdhci_iproc_data ipr
- 	.caps1 = SDHCI_DRIVER_TYPE_C |
- 		 SDHCI_DRIVER_TYPE_D |
- 		 SDHCI_SUPPORT_DDR50,
--	.mmc_caps = MMC_CAP_1_8V_DDR,
- };
- 
- static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -1127,9 +1127,17 @@ long do_shmat(int shmid, char __user *sh
+ 		goto out;
+ 	else if ((addr = (ulong)shmaddr)) {
+ 		if (addr & (shmlba - 1)) {
+-			if (shmflg & SHM_RND)
++			if (shmflg & SHM_RND) {
+ 				addr &= ~(shmlba - 1);  /* round down */
+-			else
++
++				/*
++				 * Ensure that the round-down is non-nil
++				 * when remapping. This can happen for
++				 * cases when addr < shmlba.
++				 */
++				if (!addr && (shmflg & SHM_REMAP))
++					goto out;
++			} else
+ #ifndef __ARCH_FORCE_SHMLBA
+ 				if (addr & ~PAGE_MASK)
+ #endif
