@@ -1,70 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424439AbeE1LdX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:33:23 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38816 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424344AbeE1LOB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:01 -0400
-X-Google-Smtp-Source: AB8JxZou7+K8XkJoeTJYCHfM++lyFgOX0F02To2KnosfcoT66YARXSEVzgeXg8i0BjDQK+76z0o1tg==
-Date: Mon, 28 May 2018 16:43:58 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] arm64: dts: amlogic: Add missing cooling device
- properties for CPUs
-Message-ID: <20180528111358.meyle364fy6wuruf@vireshk-i7>
-References: <cover.1527225682.git.viresh.kumar@linaro.org>
- <2a2eb28da9fecf129f6bc0ab3d3748d9f4d25a29.1527225682.git.viresh.kumar@linaro.org>
- <20180525211025.c73zdcdtyuvlewng@localhost>
+        id S1424505AbeE1Ld5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:33:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424337AbeE1LN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:59 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 219/272] dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
+Date: Mon, 28 May 2018 12:04:12 +0200
+Message-Id: <20180528100258.874087650@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525211025.c73zdcdtyuvlewng@localhost>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-05-18, 14:10, Olof Johansson wrote:
-> On Fri, May 25, 2018 at 11:10:01AM +0530, Viresh Kumar wrote:
-> > The cooling device properties, like "#cooling-cells" and
-> > "dynamic-power-coefficient", should either be present for all the CPUs
-> > of a cluster or none. If these are present only for a subset of CPUs of
-> > a cluster then things will start falling apart as soon as the CPUs are
-> > brought online in a different order. For example, this will happen
-> > because the operating system looks for such properties in the CPU node
-> > it is trying to bring up, so that it can register a cooling device.
-> > 
-> > Add such missing properties.
-> 
-> This seems awkward compared to just having one cooling-cells in the /cpus node
-> instead.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Well, we don't allow that property to be present in /cpus node right
-now and it is per device. And then we may not want all the CPUs to be
-cooling devices really.
+------------------
 
-> What's it used for? I don't see any properties in the device nodes on meson-gxm
-> that have any cooling-foo cells in them? So why should #cooling-cells be
-> needed?
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-This property is required to declare a device as a cooling-device and
-the device here is CPU. We use it as a cooling device by limiting its
-higher range of frequencies, so that it doesn't generate too much
-heat.
+[ Upstream commit 48d163b1aa6e7f650c0b7a4f9c61c387a6def868 ]
 
-It is already there for CPU0 and CPU4, but it should really be there
-for all the CPUs, like we have clock, supply, caches, etc.
+When Linux is master of BAM, it can directly read registers to know number
+of supported channels, however when its remotely controlled reading these
+registers would trigger a crash if the BAM is not yet initialized or
+powered up on the remote side.
 
--- 
-viresh
+This patch allows driver to read num-channels and num-ees from Device Tree
+for remotely controlled BAM.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/dma/qcom/bam_dma.c |   27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
+
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -393,6 +393,7 @@ struct bam_device {
+ 	struct device_dma_parameters dma_parms;
+ 	struct bam_chan *channels;
+ 	u32 num_channels;
++	u32 num_ees;
+ 
+ 	/* execution environment ID, from DT */
+ 	u32 ee;
+@@ -1128,15 +1129,19 @@ static int bam_init(struct bam_device *b
+ 	u32 val;
+ 
+ 	/* read revision and configuration information */
+-	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION)) >> NUM_EES_SHIFT;
+-	val &= NUM_EES_MASK;
++	if (!bdev->num_ees) {
++		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
++		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
++	}
+ 
+ 	/* check that configured EE is within range */
+-	if (bdev->ee >= val)
++	if (bdev->ee >= bdev->num_ees)
+ 		return -EINVAL;
+ 
+-	val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
+-	bdev->num_channels = val & BAM_NUM_PIPES_MASK;
++	if (!bdev->num_channels) {
++		val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
++		bdev->num_channels = val & BAM_NUM_PIPES_MASK;
++	}
+ 
+ 	if (bdev->controlled_remotely)
+ 		return 0;
+@@ -1232,6 +1237,18 @@ static int bam_dma_probe(struct platform
+ 	bdev->controlled_remotely = of_property_read_bool(pdev->dev.of_node,
+ 						"qcom,controlled-remotely");
+ 
++	if (bdev->controlled_remotely) {
++		ret = of_property_read_u32(pdev->dev.of_node, "num-channels",
++					   &bdev->num_channels);
++		if (ret)
++			dev_err(bdev->dev, "num-channels unspecified in dt\n");
++
++		ret = of_property_read_u32(pdev->dev.of_node, "qcom,num-ees",
++					   &bdev->num_ees);
++		if (ret)
++			dev_err(bdev->dev, "num-ees unspecified in dt\n");
++	}
++
+ 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
+ 	if (IS_ERR(bdev->bamclk))
+ 		return PTR_ERR(bdev->bamclk);
