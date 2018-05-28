@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424875AbeE1LtE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:49:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58370 "EHLO mail.kernel.org"
+        id S1424917AbeE1Lt0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:49:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423885AbeE1LKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:10:18 -0400
+        id S1423557AbeE1LKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Philipp Puschmann <pp@emlix.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 139/272] ima: clear IMA_HASH
-Date: Mon, 28 May 2018 12:02:52 +0200
-Message-Id: <20180528100252.722880471@linuxfoundation.org>
+Subject: [PATCH 4.16 138/272] arm: dts: socfpga: fix GIC PPI warning
+Date: Mon, 28 May 2018 12:02:51 +0200
+Message-Id: <20180528100252.647157245@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,28 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Philipp Puschmann <pp@emlix.com>
 
-[ Upstream commit a9a4935d44b58c858a81393694bc232a96cdcbd4 ]
+[ Upstream commit 6d97d5aba08b26108f95dc9fb7bbe4d9436c769c ]
 
-The IMA_APPRAISE and IMA_HASH policies overlap. Clear IMA_HASH properly.
+Fixes the warning "GIC: PPI13 is secure or misconfigured" by
+changing the interrupt type from level_low to edge_raising
 
-Fixes: da1b0029f527 ("ima: support new "hash" and "dont_hash" policy actions")
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Philipp Puschmann <pp@emlix.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/ima/ima_policy.c |    2 +-
+ arch/arm/boot/dts/socfpga.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -384,7 +384,7 @@ int ima_match_policy(struct inode *inode
- 		action |= entry->action & IMA_DO_MASK;
- 		if (entry->action & IMA_APPRAISE) {
- 			action |= get_subaction(entry, func);
--			action ^= IMA_HASH;
-+			action &= ~IMA_HASH;
- 		}
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -831,7 +831,7 @@
+ 		timer@fffec600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0xfffec600 0x100>;
+-			interrupts = <1 13 0xf04>;
++			interrupts = <1 13 0xf01>;
+ 			clocks = <&mpu_periph_clk>;
+ 		};
  
- 		if (entry->action & IMA_DO_MASK)
