@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937250AbeE1K2y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48196 "EHLO mail.kernel.org"
+        id S937305AbeE1K3X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:29:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937229AbeE1K2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:48 -0400
+        id S936971AbeE1K3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Alex Chen <alex.chen@huawei.com>, Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>, Changwei Ge <ge.changwei@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 059/329] powerpc/numa: Ensure nodes initialized for hotplug
-Date: Mon, 28 May 2018 11:59:48 +0200
-Message-Id: <20180528100247.705009200@linuxfoundation.org>
+Subject: [PATCH 4.9 066/329] ocfs2/acl: use ip_xattr_sem to protect getting extended attribute
+Date: Mon, 28 May 2018 11:59:55 +0200
+Message-Id: <20180528100248.297761350@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,134 +34,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Bringmann <mwb@linux.vnet.ibm.com>
+From: piaojun <piaojun@huawei.com>
 
-[ Upstream commit ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6 ]
+[ Upstream commit 16c8d569f5704a84164f30ff01b29879f3438065 ]
 
-This patch fixes some problems encountered at runtime with
-configurations that support memory-less nodes, or that hot-add CPUs
-into nodes that are memoryless during system execution after boot. The
-problems of interest include:
+The race between *set_acl and *get_acl will cause getting incomplete
+xattr data as below:
 
-* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
-  them are allowed to be 'possible' and 'online'. Memory allocations
-  for those nodes are taken from another node that does have memory
-  until and if memory is hot-added to the node.
+  processA                                    processB
 
-* Nodes which have no resources assigned at boot, but which may still
-  be referenced subsequently by affinity or associativity attributes,
-  are kept in the list of 'possible' nodes for powerpc. Hot-add of
-  memory or CPUs to the system can reference these nodes and bring
-  them online instead of redirecting the references to one of the set
-  of nodes known to have memory at boot.
+  ocfs2_set_acl
+    ocfs2_xattr_set
+      __ocfs2_xattr_set_handle
 
-Note that this software operates under the context of CPU hotplug. We
-are not doing memory hotplug in this code, but rather updating the
-kernel's CPU topology (i.e. arch_update_cpu_topology /
-numa_update_cpu_topology). We are initializing a node that may be used
-by CPUs or memory before it can be referenced as invalid by a CPU
-hotplug operation. CPU hotplug operations are protected by a range of
-APIs including cpu_maps_update_begin/cpu_maps_update_done,
-cpus_read/write_lock / cpus_read/write_unlock, device locks, and more.
-Memory hotplug operations, including try_online_node, are protected by
-mem_hotplug_begin/mem_hotplug_done, device locks, and more. In the
-case of CPUs being hot-added to a previously memoryless node, the
-try_online_node operation occurs wholly within the CPU locks with no
-overlap. Using HMC hot-add/hot-remove operations, we have been able to
-add and remove CPUs to any possible node without failures. HMC
-operations involve a degree self-serialization, though.
+                                              ocfs2_get_acl_nolock
+                                                ocfs2_xattr_get_nolock:
 
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+processB may get incomplete xattr data if processA hasn't set_acl done.
+
+So we should use 'ip_xattr_sem' to protect getting extended attribute in
+ocfs2_get_acl_nolock(), as other processes could be changing it
+concurrently.
+
+Link: http://lkml.kernel.org/r/5A5DDCFF.7030001@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Alex Chen <alex.chen@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/numa.c |   47 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 10 deletions(-)
+ fs/ocfs2/acl.c   |    6 ++++++
+ fs/ocfs2/xattr.c |    2 ++
+ 2 files changed, 8 insertions(+)
 
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -551,7 +551,7 @@ static int numa_setup_cpu(unsigned long
- 	nid = of_node_to_nid_single(cpu);
- 
- out_present:
--	if (nid < 0 || !node_online(nid))
-+	if (nid < 0 || !node_possible(nid))
- 		nid = first_online_node;
- 
- 	map_cpu_to_node(lcpu, nid);
-@@ -922,10 +922,8 @@ static void __init find_possible_nodes(v
- 		goto out;
- 
- 	for (i = 0; i < numnodes; i++) {
--		if (!node_possible(i)) {
--			setup_node_data(i, 0, 0);
-+		if (!node_possible(i))
- 			node_set(i, node_possible_map);
--		}
+--- a/fs/ocfs2/acl.c
++++ b/fs/ocfs2/acl.c
+@@ -314,7 +314,9 @@ struct posix_acl *ocfs2_iop_get_acl(stru
+ 		return ERR_PTR(ret);
  	}
  
- out:
-@@ -1305,6 +1303,40 @@ static long vphn_get_associativity(unsig
- 	return rc;
- }
++	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	acl = ocfs2_get_acl_nolock(inode, type, di_bh);
++	up_read(&OCFS2_I(inode)->ip_xattr_sem);
  
-+static inline int find_and_online_cpu_nid(int cpu)
-+{
-+	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
-+	int new_nid;
-+
-+	/* Use associativity from first thread for all siblings */
-+	vphn_get_associativity(cpu, associativity);
-+	new_nid = associativity_to_nid(associativity);
-+	if (new_nid < 0 || !node_possible(new_nid))
-+		new_nid = first_online_node;
-+
-+	if (NODE_DATA(new_nid) == NULL) {
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+		/*
-+		 * Need to ensure that NODE_DATA is initialized for a node from
-+		 * available memory (see memblock_alloc_try_nid). If unable to
-+		 * init the node, then default to nearest node that has memory
-+		 * installed.
-+		 */
-+		if (try_online_node(new_nid))
-+			new_nid = first_online_node;
-+#else
-+		/*
-+		 * Default to using the nearest node that has memory installed.
-+		 * Otherwise, it would be necessary to patch the kernel MM code
-+		 * to deal with more memoryless-node error conditions.
-+		 */
-+		new_nid = first_online_node;
-+#endif
-+	}
-+
-+	return new_nid;
-+}
-+
- /*
-  * Update the CPU maps and sysfs entries for a single CPU when its NUMA
-  * characteristics change. This function doesn't perform any locking and is
-@@ -1370,7 +1402,6 @@ int arch_update_cpu_topology(void)
- {
- 	unsigned int cpu, sibling, changed = 0;
- 	struct topology_update_data *updates, *ud;
--	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
- 	cpumask_t updated_cpus;
- 	struct device *dev;
- 	int weight, new_nid, i = 0;
-@@ -1405,11 +1436,7 @@ int arch_update_cpu_topology(void)
- 			continue;
+ 	ocfs2_inode_unlock(inode, 0);
+ 	brelse(di_bh);
+@@ -333,7 +335,9 @@ int ocfs2_acl_chmod(struct inode *inode,
+ 	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
+ 		return 0;
+ 
++	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	acl = ocfs2_get_acl_nolock(inode, ACL_TYPE_ACCESS, bh);
++	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	if (IS_ERR(acl) || !acl)
+ 		return PTR_ERR(acl);
+ 	ret = __posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
+@@ -364,8 +368,10 @@ int ocfs2_init_acl(handle_t *handle,
+ 
+ 	if (!S_ISLNK(inode->i_mode)) {
+ 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
++			down_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
+ 						   dir_bh);
++			up_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 			if (IS_ERR(acl))
+ 				return PTR_ERR(acl);
  		}
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -638,9 +638,11 @@ int ocfs2_calc_xattr_init(struct inode *
+ 						     si->value_len);
  
--		/* Use associativity from first thread for all siblings */
--		vphn_get_associativity(cpu, associativity);
--		new_nid = associativity_to_nid(associativity);
--		if (new_nid < 0 || !node_online(new_nid))
--			new_nid = first_online_node;
-+		new_nid = find_and_online_cpu_nid(cpu);
- 
- 		if (new_nid == numa_cpu_lookup_table[cpu]) {
- 			cpumask_andnot(&cpu_associativity_changes_mask,
+ 	if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
++		down_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 		acl_len = ocfs2_xattr_get_nolock(dir, dir_bh,
+ 					OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT,
+ 					"", NULL, 0);
++		up_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 		if (acl_len > 0) {
+ 			a_size = ocfs2_xattr_entry_real_size(0, acl_len);
+ 			if (S_ISDIR(mode))
