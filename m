@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938515AbeE1MAe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:00:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54338 "EHLO mail.kernel.org"
+        id S1423421AbeE1LHZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:07:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423432AbeE1LH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:29 -0400
+        id S1423391AbeE1LHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>,
-        dave@stgolabs.net, rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 077/272] sched/rt: Fix rq->clock_update_flags < RQCF_ACT_SKIP warning
-Date: Mon, 28 May 2018 12:01:50 +0200
-Message-Id: <20180528100247.467844356@linuxfoundation.org>
+Subject: [PATCH 4.16 073/272] btrfs: Fix possible softlock on single core machines
+Date: Mon, 28 May 2018 12:01:46 +0200
+Message-Id: <20180528100247.088236797@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -34,72 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit d29a20645d5e929aa7e8616f28e5d8e1c49263ec ]
+[ Upstream commit 1e1c50a929bc9e49bc3f9935b92450d9e69f8158 ]
 
-While running rt-tests' pi_stress program I got the following splat:
+do_chunk_alloc implements a loop checking whether there is a pending
+chunk allocation and if so causes the caller do loop. Generally this
+loop is executed only once, however testing with btrfs/072 on a single
+core vm machines uncovered an extreme case where the system could loop
+indefinitely. This is due to a missing cond_resched when loop which
+doesn't give a chance to the previous chunk allocator finish its job.
 
-  rq->clock_update_flags < RQCF_ACT_SKIP
-  WARNING: CPU: 27 PID: 0 at kernel/sched/sched.h:960 assert_clock_updated.isra.38.part.39+0x13/0x20
+The fix is to simply add the missing cond_resched.
 
-  [...]
-
-  <IRQ>
-  enqueue_top_rt_rq+0xf4/0x150
-  ? cpufreq_dbs_governor_start+0x170/0x170
-  sched_rt_rq_enqueue+0x65/0x80
-  sched_rt_period_timer+0x156/0x360
-  ? sched_rt_rq_enqueue+0x80/0x80
-  __hrtimer_run_queues+0xfa/0x260
-  hrtimer_interrupt+0xcb/0x220
-  smp_apic_timer_interrupt+0x62/0x120
-  apic_timer_interrupt+0xf/0x20
-  </IRQ>
-
-  [...]
-
-  do_idle+0x183/0x1e0
-  cpu_startup_entry+0x5f/0x70
-  start_secondary+0x192/0x1d0
-  secondary_startup_64+0xa5/0xb0
-
-We can get rid of it be the "traditional" means of adding an
-update_rq_clock() call after acquiring the rq->lock in
-do_sched_rt_period_timer().
-
-The case for the RT task throttling (which this workload also hits)
-can be ignored in that the skip_update call is actually bogus and
-quite the contrary (the request bits are removed/reverted).
-
-By setting RQCF_UPDATED we really don't care if the skip is happening
-or not and will therefore make the assert_clock_updated() check happy.
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave@stgolabs.net
-Cc: linux-kernel@vger.kernel.org
-Cc: rostedt@goodmis.org
-Link: http://lkml.kernel.org/r/20180402164954.16255-1-dave@stgolabs.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 6d74119f1a3e ("Btrfs: avoid taking the chunk_mutex in do_chunk_alloc")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/rt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/extent-tree.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -843,6 +843,8 @@ static int do_sched_rt_period_timer(stru
- 			continue;
- 
- 		raw_spin_lock(&rq->lock);
-+		update_rq_clock(rq);
-+
- 		if (rt_rq->rt_time) {
- 			u64 runtime;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -4657,6 +4657,7 @@ again:
+ 	if (wait_for_alloc) {
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 		wait_for_alloc = 0;
++		cond_resched();
+ 		goto again;
+ 	}
  
