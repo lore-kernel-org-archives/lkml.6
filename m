@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423191AbeE1LF7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:05:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52864 "EHLO mail.kernel.org"
+        id S1423224AbeE1LGM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423036AbeE1LFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:05:55 -0400
+        id S1423204AbeE1LGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pascal Roeleven <dev@pascalroeleven.nl>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 4.16 044/272] ARM: dts: sun4i: Fix incorrect clocks for displays
-Date: Mon, 28 May 2018 12:01:17 +0200
-Message-Id: <20180528100244.546738296@linuxfoundation.org>
+        stable@vger.kernel.org, Corneliu Doban <corneliu.doban@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.16 018/272] mmc: sdhci-iproc: add SDHCI_QUIRK2_HOST_OFF_CARD_ON for cygnus
+Date: Mon, 28 May 2018 12:00:51 +0200
+Message-Id: <20180528100241.944423728@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,50 +32,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pascal Roeleven <dev@pascalroeleven.nl>
+From: Corneliu Doban <corneliu.doban@broadcom.com>
 
-commit 590b0c0cfc6162aeebbf43eaafb9753b56df1532 upstream.
+commit 3de06d5a1f05c11c94cbb68af14dbfa7fb81d78b upstream.
 
-Some displays on sun4i devices wouldn't properly stay on unless
-'clk_ignore_unused' is used.
+The SDHCI_QUIRK2_HOST_OFF_CARD_ON is needed for the driver to
+properly reset the host controller (reset all) on initialization
+after exiting deep sleep.
 
-Change the duplicate clocks to the probably intended ones.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Corneliu Doban <corneliu.doban@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Fixes: c833e92bbb60 ("mmc: sdhci-iproc: support standard byte register accesses")
+Cc: stable@vger.kernel.org # v4.10+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/sun4i-a10.dtsi |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-iproc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -76,7 +76,7 @@
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0-hdmi";
- 			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_HDMI0>,
- 				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
--				 <&ccu CLK_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
-+				 <&ccu CLK_DE_BE0>, <&ccu CLK_DE_FE0>,
- 				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_HDMI>,
- 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
- 			status = "disabled";
-@@ -88,7 +88,7 @@
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0";
- 			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_DE_BE0>,
- 				 <&ccu CLK_AHB_DE_FE0>, <&ccu CLK_DE_BE0>,
--				 <&ccu CLK_AHB_DE_FE0>, <&ccu CLK_TCON0_CH0>,
-+				 <&ccu CLK_DE_FE0>, <&ccu CLK_TCON0_CH0>,
- 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
- 			status = "disabled";
- 		};
-@@ -99,7 +99,7 @@
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0-tve0";
- 			clocks = <&ccu CLK_AHB_TVE0>, <&ccu CLK_AHB_LCD0>,
- 				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
--				 <&ccu CLK_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
-+				 <&ccu CLK_DE_BE0>, <&ccu CLK_DE_FE0>,
- 				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_DRAM_TVE0>,
- 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
- 			status = "disabled";
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -186,7 +186,7 @@ static const struct sdhci_ops sdhci_ipro
+ 
+ static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
+ 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
+-	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN,
++	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+ 	.ops = &sdhci_iproc_32only_ops,
+ };
+ 
