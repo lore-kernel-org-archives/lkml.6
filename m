@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935602AbeE1KJl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57712 "EHLO mail.kernel.org"
+        id S936430AbeE1KJ5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:09:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933283AbeE1KJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:09:35 -0400
+        id S936400AbeE1KJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Malone <peter.malone@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 089/185] fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
-Date: Mon, 28 May 2018 12:02:10 +0200
-Message-Id: <20180528100058.298836991@linuxfoundation.org>
+Subject: [PATCH 3.18 095/185] batman-adv: fix header size check in batadv_dbg_arp()
+Date: Mon, 28 May 2018 12:02:16 +0200
+Message-Id: <20180528100059.012095486@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,61 +32,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Malone <peter.malone@gmail.com>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-[ Upstream commit 250c6c49e3b68756b14983c076183568636e2bde ]
+[ Upstream commit 6f27d2c2a8c236d296201c19abb8533ec20d212b ]
 
-Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
-sbusfb_ioctl_helper().
+Checking for 0 is insufficient: when an SKB without a batadv header, but
+with a VLAN header is received, hdr_size will be 4, making the following
+code interpret the Ethernet header as a batadv header.
 
-'index' is defined as an int in sbusfb_ioctl_helper().
-We retrieve this from the user:
-if (get_user(index, &c->index) ||
-    __get_user(count, &c->count) ||
-    __get_user(ured, &c->red) ||
-    __get_user(ugreen, &c->green) ||
-    __get_user(ublue, &c->blue))
-       return -EFAULT;
-
-and then we use 'index' in the following way:
-red = cmap->red[index + i] >> 8;
-green = cmap->green[index + i] >> 8;
-blue = cmap->blue[index + i] >> 8;
-
-This is a classic information leak vulnerability. 'index' should be
-an unsigned int, given its usage above.
-
-This patch is straight-forward; it changes 'index' to unsigned int
-in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
-
-This patch fixes CVE-2018-6412.
-
-Signed-off-by: Peter Malone <peter.malone@gmail.com>
-Acked-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: be1db4f6615b ("batman-adv: make the Distributed ARP Table vlan aware")
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/sbuslib.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/batman-adv/distributed-arp-table.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -121,7 +121,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ured;
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
--		int index, count, i;
-+		unsigned int index, count, i;
+--- a/net/batman-adv/distributed-arp-table.c
++++ b/net/batman-adv/distributed-arp-table.c
+@@ -343,7 +343,7 @@ static void batadv_dbg_arp(struct batadv
+ 		   batadv_arp_hw_src(skb, hdr_size), &ip_src,
+ 		   batadv_arp_hw_dst(skb, hdr_size), &ip_dst);
  
- 		if (get_user(index, &c->index) ||
- 		    __get_user(count, &c->count) ||
-@@ -160,7 +160,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
- 		struct fb_cmap *cmap = &info->cmap;
--		int index, count, i;
-+		unsigned int index, count, i;
- 		u8 red, green, blue;
+-	if (hdr_size == 0)
++	if (hdr_size < sizeof(struct batadv_unicast_packet))
+ 		return;
  
- 		if (get_user(index, &c->index) ||
+ 	unicast_4addr_packet = (struct batadv_unicast_4addr_packet *)skb->data;
