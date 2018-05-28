@@ -1,94 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753025AbeE1CbF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 22:31:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752952AbeE1CbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 22:31:04 -0400
-Date: Mon, 28 May 2018 10:30:43 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>
-Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
-Message-ID: <20180528023042.GC26790@ming.t460p>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
- <20180525045306.GB8740@kmo-pixel>
- <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
- <20180527072332.GA18240@ming.t460p>
- <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
+        id S1753062AbeE1CuX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 22:50:23 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:50655 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752970AbeE1CuV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 22:50:21 -0400
+X-UUID: 02f64a154f3f46ba9e8ea63bc03597e4-20180528
+Message-ID: <1527475815.31089.0.camel@mtksdaap41>
+Subject: Re: [PATCH v3 8/8] drm/mediatek: add third ddp path
+From: CK Hu <ck.hu@mediatek.com>
+To: Stu Hsieh <stu.hsieh@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date: Mon, 28 May 2018 10:50:15 +0800
+In-Reply-To: <1527474417.11190.21.camel@mtksdccf07>
+References: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
+         <1527215665-11937-9-git-send-email-stu.hsieh@mediatek.com>
+         <1527224425.27165.27.camel@mtksdaap41>
+         <1527474417.11190.21.camel@mtksdccf07>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 07:44:52PM -0600, Jens Axboe wrote:
-> On 5/27/18 1:23 AM, Ming Lei wrote:
-> > On Fri, May 25, 2018 at 10:30:46AM -0600, Jens Axboe wrote:
-> >> On 5/24/18 10:53 PM, Kent Overstreet wrote:
-> >>> On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
-> >>>> Hi,
-> >>>>
-> >>>> This patchset brings multipage bvec into block layer:
-> >>>
-> >>> patch series looks sane to me. goddamn that's a lot of renaming.
-> >>
-> >> Indeed... I actually objected to some of the segment -> page
-> >> renaming, but it's still in there. The foo2() temporary functions
-> >> also concern me, we all know there's nothing more permanent than a
-> >> temporary fixup.
+Hi, Stu:
+
+On Mon, 2018-05-28 at 10:26 +0800, Stu Hsieh wrote:
+> Hi, CK:
+> I've some idea as below.
+> 
+> On Fri, 2018-05-25 at 13:00 +0800, CK Hu wrote:
+> > Hi, Stu:
 > > 
-> > Jens, I remember I explained the renaming story to you in lsfmm a bit:
+> > On Fri, 2018-05-25 at 10:34 +0800, stu.hsieh@mediatek.com wrote:
+> > > From: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > 
+> > > This patch create third crtc by third ddp path
+> > > 
 > > 
-> > 1) the current naming of segment is actually wrong, since every segment
-> > only stores one single-page vector
+> > Apply this patch before the patch 'Add support for mediatek SOC MT2712'
+> > because this patch is necessary for mt2712.
 > > 
-> > 2) the most important part is that once multipage bvec is introduced,
-> > if the old _segment naming is still kept, it can be very confusing,
-> > especially no good name is left for the helpers of dealing with real
-> > segment.
+> > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > ---
+> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > index b32c4cc8d051..3a866e1d6af4 100644
+> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > @@ -267,6 +267,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+> > >  	if (ret < 0)
+> > >  		goto err_component_unbind;
+> > >  
+> > > +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
+> > > +				  private->data->third_len);
+> > 
+> > I think you should prevent doing this for mt8173 and mt2701 because that
+> > two SoC has only two ddp path.
 > 
-> Yes, we discussed exactly this, which is why I'm surprised you went
-> ahead with the same approach. I told you I don't like tree wide renames,
-
-Maybe I misunderstood your point, that isn't strange given my poor
-english, :-)
-
-> if they can be avoided. I'd rather suffer some pain wrt page vs segments
-> naming, and then later do a rename (if it bothers us) once the dust has
-> settled on the interesting part of the changes.
+> Now, 8173 and 2701 have only two ddp path, there is a problem on run
+> time. 
+> There are three crtc for drm resource, and there is nothing in third
+> crtc. 
+> Because 8173 and 2701 have no third ddp, and the third ddp_len is zero.
+> So, I want to add the condition like following in mtk_crtc_create()
+> if (path_len == 0)
+> 	return 0;
 > 
-> I'm very well away of our current naming and what it signifies.  With
-> #1, you are really splitting hairs, imho. Find a decent name for
-> multiple segment. Chunk?
+> Then, the valur ret is zero and it would not create the null third crtc.
 
-OK, will try _chunk in next post.
+This sounds good to me.
+
+Regards,
+CK
 
 > 
-> > For the foo2() temporary change, that is only for avoiding tree-wide
-> > change in one single tree, with this way, we can change sub-system one
-> > by one, but if you think it is good to do tree-wide conversion in one
-> > patch, I am fine to do it in next version.
 > 
-> It's still a painful middle step.
-
-I hate the conversion too, but looks it can't be avoided since
-bio_for_each_segment_all() has to be changed.
-
-Could you share us what your favorite approach is for this conversion?
-
-
-Thanks,
-Ming
+> Regards,
+> Stu
+> 
+> > 
+> > Regards,
+> > CK
+> > 
+> > > +	if (ret < 0)
+> > > +		goto err_component_unbind;
+> > > +
+> > >  	/* Use OVL device for all DMA memory allocations */
+> > >  	np = private->comp_node[private->data->main_path[0]] ?:
+> > >  	     private->comp_node[private->data->ext_path[0]];
+> > 
+> > 
+> 
+> 
