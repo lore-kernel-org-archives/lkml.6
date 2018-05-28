@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425143AbeE1PRB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42034 "EHLO mail.kernel.org"
+        id S1033587AbeE1PRQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:17:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033537AbeE1KWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:39 -0400
+        id S1033321AbeE1KWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Asseg <frank.asseg@objecthunter.net>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 192/268] tools/thermal: tmon: fix for segfault
-Date: Mon, 28 May 2018 12:02:46 +0200
-Message-Id: <20180528100224.066119451@linuxfoundation.org>
+Subject: [PATCH 4.4 191/268] powerpc/perf: Fix kernel address leak via sampling registers
+Date: Mon, 28 May 2018 12:02:45 +0200
+Message-Id: <20180528100223.968701572@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,79 +30,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Asseg <frank.asseg@objecthunter.net>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 6c59f64b7ecf2bccbe73931d7d573d66ed13b537 ]
+[ Upstream commit e1ebd0e5b9d0a10ba65e63a3514b6da8c6a5a819 ]
 
-Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in the
-ncurses tmon application. The segfault is caused by incrementing
-cur_thermal_record in the main function without checking if it's value reached
-NR_THERMAL_RECORD immediately. Since the boundary check only occurred in
-update_thermal_data a race condition existed, which lead to an attempted read
-beyond the last element of the trec array.
+Current code in power_pmu_disable() does not clear the sampling
+registers like Sampling Instruction Address Register (SIAR) and
+Sampling Data Address Register (SDAR) after disabling the PMU. Since
+these are userspace readable and could contain kernel addresses, add
+code to explicitly clear the content of these registers.
 
-The fix was implemented by moving the cur_thermal_record incrementation to the
-update_thermal_data function using a temporary variable on which the boundary
-condition is checked before updating cur_thread_record, so that the variable is
-never incremented beyond the trec array's boundary.
+Also add a "context synchronizing instruction" to enforce no further
+updates to these registers as suggested by Power ISA v3.0B. From
+section 9.4, on page 1108:
 
-It seems the segfault does not occur on every machine: On a HP EliteBook G4 the
-segfault happens, while it does not happen on a Thinkpad T540p.
+  "If an mtspr instruction is executed that changes the value of a
+  Performance Monitor register other than SIAR, SDAR, and SIER, the
+  change is not guaranteed to have taken effect until after a
+  subsequent context synchronizing instruction has been executed (see
+  Chapter 11. "Synchronization Requirements for Context Alterations"
+  on page 1133)."
 
-Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+[mpe: Massage change log and add ISA reference]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/thermal/tmon/sysfs.c |   12 +++++++-----
- tools/thermal/tmon/tmon.c  |    1 -
- 2 files changed, 7 insertions(+), 6 deletions(-)
+ arch/powerpc/perf/core-book3s.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/tools/thermal/tmon/sysfs.c
-+++ b/tools/thermal/tmon/sysfs.c
-@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst
- int update_thermal_data()
- {
- 	int i;
-+	int next_thermal_record = cur_thermal_record + 1;
- 	char tz_name[256];
- 	static unsigned long samples;
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1198,6 +1198,7 @@ static void power_pmu_disable(struct pmu
+ 		 */
+ 		write_mmcr0(cpuhw, val);
+ 		mb();
++		isync();
  
-@@ -495,9 +496,9 @@ int update_thermal_data()
- 	}
- 
- 	/* circular buffer for keeping historic data */
--	if (cur_thermal_record >= NR_THERMAL_RECORDS)
--		cur_thermal_record = 0;
--	gettimeofday(&trec[cur_thermal_record].tv, NULL);
-+	if (next_thermal_record >= NR_THERMAL_RECORDS)
-+		next_thermal_record = 0;
-+	gettimeofday(&trec[next_thermal_record].tv, NULL);
- 	if (tmon_log) {
- 		fprintf(tmon_log, "%lu ", ++samples);
- 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
-@@ -507,11 +508,12 @@ int update_thermal_data()
- 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
- 			ptdata.tzi[i].instance);
- 		sysfs_get_ulong(tz_name, "temp",
--				&trec[cur_thermal_record].temp[i]);
-+				&trec[next_thermal_record].temp[i]);
- 		if (tmon_log)
- 			fprintf(tmon_log, "%lu ",
--				trec[cur_thermal_record].temp[i]/1000);
-+				trec[next_thermal_record].temp[i] / 1000);
- 	}
-+	cur_thermal_record = next_thermal_record;
- 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
- 		char cdev_name[256];
- 		unsigned long val;
---- a/tools/thermal/tmon/tmon.c
-+++ b/tools/thermal/tmon/tmon.c
-@@ -336,7 +336,6 @@ int main(int argc, char **argv)
- 			show_data_w();
- 			show_cooling_device();
+ 		/*
+ 		 * Disable instruction sampling if it was enabled
+@@ -1206,12 +1207,26 @@ static void power_pmu_disable(struct pmu
+ 			mtspr(SPRN_MMCRA,
+ 			      cpuhw->mmcr[2] & ~MMCRA_SAMPLE_ENABLE);
+ 			mb();
++			isync();
  		}
--		cur_thermal_record++;
- 		time_elapsed += ticktime;
- 		controller_handler(trec[0].temp[target_tz_index] / 1000,
- 				&yk);
+ 
+ 		cpuhw->disabled = 1;
+ 		cpuhw->n_added = 0;
+ 
+ 		ebb_switch_out(mmcr0);
++
++#ifdef CONFIG_PPC64
++		/*
++		 * These are readable by userspace, may contain kernel
++		 * addresses and are not switched by context switch, so clear
++		 * them now to avoid leaking anything to userspace in general
++		 * including to another process.
++		 */
++		if (ppmu->flags & PPMU_ARCH_207S) {
++			mtspr(SPRN_SDAR, 0);
++			mtspr(SPRN_SIAR, 0);
++		}
++#endif
+ 	}
+ 
+ 	local_irq_restore(flags);
