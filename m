@@ -1,85 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753963AbeE1HLg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:11:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753858AbeE1HLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:11:33 -0400
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>, linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 23/27] sparc64: kprobes: Don't call the ->break_handler() in sparc64 kprobes code
-Date: Mon, 28 May 2018 16:11:07 +0900
-Message-Id: <152749146708.15132.8507553815561806162.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
-References: <152749074878.15132.16693721906742461289.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1753980AbeE1HMP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:12:15 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33926 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753786AbeE1HMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 03:12:08 -0400
+Subject: Re: [PATCH v2] f2fs-tools: fix to match with the start_sector
+To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1525425645-127945-1-git-send-email-yunlong.song@huawei.com>
+ <1525659336-145433-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <bf595a86-700e-9225-6a5e-a245dbc027ad@huawei.com>
+Date: Mon, 28 May 2018 15:11:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1525659336-145433-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't call the ->break_handler() from the sparc64 kprobes code,
-because it was only used by jprobes which got removed.
+On 2018/5/7 10:15, Yunlong Song wrote:
+> f2fs-tools uses ioctl BLKSSZGET to get sector_size, however, this ioctl
+> will return a value which may be larger than 512 (according to the value
+> of q->limits.logical_block_size), then this will be inconsistent with
+> the start_sector, since start_sector is got from ioctl HDIO_GETGEO and
+> is always in 512 size unit for a sector. To fix this problem, just
+> change the sector_size to the default value when computing with
+> start_sector. And fix sectors_per_blk as well.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/sparc/kernel/kprobes.c |   11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/arch/sparc/kernel/kprobes.c b/arch/sparc/kernel/kprobes.c
-index f555711da8f1..c684c96ef2e9 100644
---- a/arch/sparc/kernel/kprobes.c
-+++ b/arch/sparc/kernel/kprobes.c
-@@ -147,18 +147,12 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 			kcb->kprobe_status = KPROBE_REENTER;
- 			prepare_singlestep(p, regs, kcb);
- 			return 1;
--		} else {
--			if (*(u32 *)addr != BREAKPOINT_INSTRUCTION) {
-+		} else if (*(u32 *)addr != BREAKPOINT_INSTRUCTION) {
- 			/* The breakpoint instruction was removed by
- 			 * another cpu right after we hit, no further
- 			 * handling of this interrupt is appropriate
- 			 */
--				ret = 1;
--				goto no_kprobe;
--			}
--			p = __this_cpu_read(current_kprobe);
--			if (p->break_handler && p->break_handler(p, regs))
--				goto ss_probe;
-+			ret = 1;
- 		}
- 		goto no_kprobe;
- 	}
-@@ -184,7 +178,6 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 	if (p->pre_handler && p->pre_handler(p, regs))
- 		return 1;
- 
--ss_probe:
- 	prepare_singlestep(p, regs, kcb);
- 	kcb->kprobe_status = KPROBE_HIT_SS;
- 	return 1;
+Thanks,
