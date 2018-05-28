@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425222AbeE1QVK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:21:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60028 "EHLO mail.kernel.org"
+        id S936655AbeE1KLp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:11:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965019AbeE1KLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:50 -0400
+        id S936625AbeE1KLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 107/185] net: Fix untag for vlan packets without ethernet header
-Date: Mon, 28 May 2018 12:02:28 +0200
-Message-Id: <20180528100100.574795974@linuxfoundation.org>
+Subject: [PATCH 3.18 134/185] powerpc/perf: Fix kernel address leak via sampling registers
+Date: Mon, 28 May 2018 12:02:55 +0200
+Message-Id: <20180528100105.421706441@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,97 +30,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit ae4745730cf8e693d354ccd4dbaf59ea440c09a9 ]
+[ Upstream commit e1ebd0e5b9d0a10ba65e63a3514b6da8c6a5a819 ]
 
-In some situation vlan packets do not have ethernet headers. One example
-is packets from tun devices. Users can specify vlan protocol in tun_pi
-field instead of IP protocol, and skb_vlan_untag() attempts to untag such
-packets.
+Current code in power_pmu_disable() does not clear the sampling
+registers like Sampling Instruction Address Register (SIAR) and
+Sampling Data Address Register (SDAR) after disabling the PMU. Since
+these are userspace readable and could contain kernel addresses, add
+code to explicitly clear the content of these registers.
 
-skb_vlan_untag() (more precisely, skb_reorder_vlan_header() called by it)
-however did not expect packets without ethernet headers, so in such a case
-size argument for memmove() underflowed and triggered crash.
+Also add a "context synchronizing instruction" to enforce no further
+updates to these registers as suggested by Power ISA v3.0B. From
+section 9.4, on page 1108:
 
-====
-BUG: unable to handle kernel paging request at ffff8801cccb8000
-IP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
-PGD 9cee067 P4D 9cee067 PUD 1d9401063 PMD 1cccb7063 PTE 2810100028101
-Oops: 000b [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 17663 Comm: syz-executor2 Not tainted 4.16.0-rc7+ #368
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
-RSP: 0018:ffff8801cc046e28 EFLAGS: 00010287
-RAX: ffff8801ccc244c4 RBX: fffffffffffffffe RCX: fffffffffff6c4c2
-RDX: fffffffffffffffe RSI: ffff8801cccb7ffc RDI: ffff8801cccb8000
-RBP: ffff8801cc046e48 R08: ffff8801ccc244be R09: ffffed0039984899
-R10: 0000000000000001 R11: ffffed0039984898 R12: ffff8801ccc244c4
-R13: ffff8801ccc244c0 R14: ffff8801d96b7c06 R15: ffff8801d96b7b40
-FS:  00007febd562d700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8801cccb8000 CR3: 00000001ccb2f006 CR4: 00000000001606e0
-DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
- memmove include/linux/string.h:360 [inline]
- skb_reorder_vlan_header net/core/skbuff.c:5031 [inline]
- skb_vlan_untag+0x470/0xc40 net/core/skbuff.c:5061
- __netif_receive_skb_core+0x119c/0x3460 net/core/dev.c:4460
- __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4627
- netif_receive_skb_internal+0x10b/0x670 net/core/dev.c:4701
- netif_receive_skb+0xae/0x390 net/core/dev.c:4725
- tun_rx_batched.isra.50+0x5ee/0x870 drivers/net/tun.c:1555
- tun_get_user+0x299e/0x3c20 drivers/net/tun.c:1962
- tun_chr_write_iter+0xb9/0x160 drivers/net/tun.c:1990
- call_write_iter include/linux/fs.h:1782 [inline]
- new_sync_write fs/read_write.c:469 [inline]
- __vfs_write+0x684/0x970 fs/read_write.c:482
- vfs_write+0x189/0x510 fs/read_write.c:544
- SYSC_write fs/read_write.c:589 [inline]
- SyS_write+0xef/0x220 fs/read_write.c:581
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454879
-RSP: 002b:00007febd562cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007febd562d6d4 RCX: 0000000000454879
-RDX: 0000000000000157 RSI: 0000000020000180 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000006b0 R14: 00000000006fc120 R15: 0000000000000000
-Code: 90 90 90 90 90 90 90 48 89 f8 48 83 fa 20 0f 82 03 01 00 00 48 39 fe 7d 0f 49 89 f0 49 01 d0 49 39 f8 0f 8f 9f 00 00 00 48 89 d1 <f3> a4 c3 48 81 fa a8 02 00 00 72 05 40 38 fe 74 3b 48 83 ea 20
-RIP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43 RSP: ffff8801cc046e28
-CR2: ffff8801cccb8000
-====
+  "If an mtspr instruction is executed that changes the value of a
+  Performance Monitor register other than SIAR, SDAR, and SIER, the
+  change is not guaranteed to have taken effect until after a
+  subsequent context synchronizing instruction has been executed (see
+  Chapter 11. "Synchronization Requirements for Context Alterations"
+  on page 1133)."
 
-We don't need to copy headers for packets which do not have preceding
-headers of vlan headers, so skip memmove() in that case.
-
-Fixes: 4bbb3e0e8239 ("net: Fix vlan untag for bridge and vlan_dev with reorder_hdr off")
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+[mpe: Massage change log and add ISA reference]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/perf/core-book3s.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4137,8 +4137,10 @@ static struct sk_buff *skb_reorder_vlan_
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1193,6 +1193,7 @@ static void power_pmu_disable(struct pmu
+ 		 */
+ 		write_mmcr0(cpuhw, val);
+ 		mb();
++		isync();
+ 
+ 		/*
+ 		 * Disable instruction sampling if it was enabled
+@@ -1201,12 +1202,26 @@ static void power_pmu_disable(struct pmu
+ 			mtspr(SPRN_MMCRA,
+ 			      cpuhw->mmcr[2] & ~MMCRA_SAMPLE_ENABLE);
+ 			mb();
++			isync();
+ 		}
+ 
+ 		cpuhw->disabled = 1;
+ 		cpuhw->n_added = 0;
+ 
+ 		ebb_switch_out(mmcr0);
++
++#ifdef CONFIG_PPC64
++		/*
++		 * These are readable by userspace, may contain kernel
++		 * addresses and are not switched by context switch, so clear
++		 * them now to avoid leaking anything to userspace in general
++		 * including to another process.
++		 */
++		if (ppmu->flags & PPMU_ARCH_207S) {
++			mtspr(SPRN_SDAR, 0);
++			mtspr(SPRN_SIAR, 0);
++		}
++#endif
  	}
  
- 	mac_len = skb->data - skb_mac_header(skb);
--	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
--		mac_len - VLAN_HLEN - ETH_TLEN);
-+	if (likely(mac_len > VLAN_HLEN + ETH_TLEN)) {
-+		memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
-+			mac_len - VLAN_HLEN - ETH_TLEN);
-+	}
- 	skb->mac_header += VLAN_HLEN;
- 	return skb;
- }
+ 	local_irq_restore(flags);
