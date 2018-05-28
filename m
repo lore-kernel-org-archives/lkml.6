@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422909AbeE1LDJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50298 "EHLO mail.kernel.org"
+        id S1164947AbeE1LDS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422873AbeE1LDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:01 -0400
+        id S1422907AbeE1LDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, douly.fnst@cn.fujitsu.com,
-        joro@8bytes.org, prarit@redhat.com, uobergfe@redhat.com,
-        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 477/496] x86/apic: Set up through-local-APIC mode on the boot CPU if noapic specified
-Date: Mon, 28 May 2018 12:04:22 +0200
-Message-Id: <20180528100340.002614291@linuxfoundation.org>
+Subject: [PATCH 4.14 480/496] perf tests: Use arch__compare_symbol_names to compare symbols
+Date: Mon, 28 May 2018 12:04:25 +0200
+Message-Id: <20180528100340.120974924@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -35,56 +34,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baoquan He <bhe@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit bee3204ec3c49f6f53add9c3962c9012a5c036fa ]
+[ Upstream commit ab6e9a99345131cd8e54268d1d0dc04a33f7ed11 ]
 
-Currently the kdump kernel becomes very slow if 'noapic' is specified.
-Normal kernel doesn't have this bug.
+The symbol search called by machine__find_kernel_symbol_by_name is using
+internally arch__compare_symbol_names function to compare 2 symbol
+names, because different archs have different ways of comparing symbols.
+Mostly for skipping '.' prefixes and similar.
 
-Kernel parameter 'noapic' is used to disable IO-APIC in system for
-testing or special purpose. Here the root cause is that in kdump
-kernel LAPIC is disabled since commit:
+In test 1 when we try to find matching symbols in kallsyms and vmlinux,
+by address and by symbol name. When either is found we compare the pair
+symbol names  by simple strcmp, which is not good enough for reasons
+explained in previous paragraph.
 
-  522e664644 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+On powerpc this can cause lockup, because even thought we found the
+pair, the compared names are different and don't match simple strcmp.
+Following code path is executed, that leads to lockup:
 
-In this case we need set up through-local-APIC on boot CPU in
-setup_local_APIC().
+   - we find the pair in kallsyms by sym->start
+next_pair:
+   - we compare the names and it fails
+   - we find the pair by sym->name
+   - the pair addresses match so we call goto next_pair
+     because we assume the names match in this case
 
-In normal kernel the legacy irq mode is enabled by the BIOS. If
-it is virtual wire mode, the local-APIC has been enabled and set as
-through-local-APIC.
-
-Though we fixed the regression introduced by commit 522e664644,
-to further improve robustness set up the through-local-APIC mode
-explicitly, do not rely on the default boot IRQ mode.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: douly.fnst@cn.fujitsu.com
-Cc: joro@8bytes.org
-Cc: prarit@redhat.com
-Cc: uobergfe@redhat.com
-Link: http://lkml.kernel.org/r/20180214054656.3780-7-bhe@redhat.com
-[ Rewrote the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 031b84c407c3 ("perf probe ppc: Enable matching against dot symbols automatically")
+Link: http://lkml.kernel.org/r/20180215122635.24029-10-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/apic/apic.c |    2 +-
+ tools/perf/tests/vmlinux-kallsyms.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1481,7 +1481,7 @@ void setup_local_APIC(void)
- 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
- 	 */
- 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
--	if (!cpu && (pic_mode || !value)) {
-+	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
- 		value = APIC_DM_EXTINT;
- 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
- 	} else {
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -125,7 +125,7 @@ int test__vmlinux_matches_kallsyms(struc
+ 
+ 		if (pair && UM(pair->start) == mem_start) {
+ next_pair:
+-			if (strcmp(sym->name, pair->name) == 0) {
++			if (arch__compare_symbol_names(sym->name, pair->name) == 0) {
+ 				/*
+ 				 * kallsyms don't have the symbol end, so we
+ 				 * set that by using the next symbol start - 1,
