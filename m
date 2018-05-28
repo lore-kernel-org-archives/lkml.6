@@ -1,109 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939638AbeE1PAY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:00:24 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36012 "EHLO pegase1.c-s.fr"
+        id S939620AbeE1PAU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:00:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937092AbeE1O4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 10:56:24 -0400
-Subject: Re: [PATCH] powerpc/Makefile: fix build failure by disabling
- attribute-alias warning
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <0adce33cf1c70ac7203f8ebd987a912451aabd45.1527517001.git.christophe.leroy@c-s.fr>
- <20180528143719.GB17342@gate.crashing.org>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <63367b72-85a9-fc1f-763f-eaa5e6027ae4@c-s.fr>
-Date: Mon, 28 May 2018 16:56:22 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932367AbeE1K1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:19 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, len.brown@intel.com,
+        rui.zhang@intel.com, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 026/329] x86/tsc: Allow TSC calibration without PIT
+Date: Mon, 28 May 2018 11:59:15 +0200
+Message-Id: <20180528100244.574645066@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180528143719.GB17342@gate.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-Le 28/05/2018 à 16:37, Segher Boessenkool a écrit :
-> On Mon, May 28, 2018 at 02:17:49PM +0000, Christophe Leroy wrote:
->> Latest GCC version emit many warnings similar to the following one.
-> 
-> You didn't actually show an example?
+From: Peter Zijlstra <peterz@infradead.org>
 
-Yes I forgot:
+[ Upstream commit 30c7e5b123673d5e570e238dbada2fb68a87212c ]
 
-In file included from arch/powerpc/kernel/syscalls.c:24:
-./include/linux/syscalls.h:233:18: warning: 'sys_mmap2' alias between 
-functions of incompatible types 'long int(long unsigned int,  size_t, 
-long unsigned int,  long unsigned int,  long unsigned int,  long 
-unsigned int)' {aka 'long int(long unsigned int,  unsigned int,  long 
-unsigned int,  long unsigned int,  long unsigned int,  long unsigned 
-int)'} and 'long int(long int,  long int,  long int,  long int,  long 
-int,  long int)' [-Wattribute-alias]
-   asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                   ^~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro 
-'__SYSCALL_DEFINEx'
-   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-   ^~~~~~~~~~~~~~~~~
-./include/linux/syscalls.h:216:36: note: in expansion of macro 
-'SYSCALL_DEFINEx'
-  #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, 
-__VA_ARGS__)
-                                     ^~~~~~~~~~~~~~~
-arch/powerpc/kernel/syscalls.c:65:1: note: in expansion of macro 
-'SYSCALL_DEFINE6'
-  SYSCALL_DEFINE6(mmap2, unsigned long, addr, size_t, len,
-  ^~~~~~~~~~~~~~~
-./include/linux/syscalls.h:238:18: note: aliased declaration here
-   asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-                   ^~~~~~~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro 
-'__SYSCALL_DEFINEx'
-   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-   ^~~~~~~~~~~~~~~~~
-./include/linux/syscalls.h:216:36: note: in expansion of macro 
-'SYSCALL_DEFINEx'
-  #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, 
-__VA_ARGS__)
-                                     ^~~~~~~~~~~~~~~
-arch/powerpc/kernel/syscalls.c:65:1: note: in expansion of macro 
-'SYSCALL_DEFINE6'
-  SYSCALL_DEFINE6(mmap2, unsigned long, addr, size_t, len,
-  ^~~~~~~~~~~~~~~
+Zhang Rui reported that a Surface Pro 4 will fail to boot with
+lapic=notscdeadline. Part of the problem is that that machine doesn't have
+a PIT.
 
-> 
-> This warning should detect serious problems, so don't disable it without
-> first investigating please.
+If, for some reason, the TSC init has to fall back to TSC calibration, it
+relies on the PIT to be present.
 
-It's been a discussion on this topic, ref 
-https://lkml.org/lkml/2017/12/5/581
+Allow TSC calibration to reliably fall back to HPET.
 
-It says "The new warning seems reasonable in principle, but it doesn't
-help us here, since we rely on the type mismatch to sanitize the
-system call arguments. After I reported this as GCC PR82435, a new
--Wno-attribute-alias option was added that could be used to turn the
-warning off globally on the command line, but I'd prefer to do it a
-little more fine-grained"
+The below results in an accurate TSC measurement when forced on a IVB:
 
+  tsc: Unable to calibrate against PIT
+  tsc: No reference (HPET/PMTIMER) available
+  tsc: Unable to calibrate against PIT
+  tsc: using HPET reference calibration
+  tsc: Detected 2792.451 MHz processor
 
-> 
-> What do you call "latest version", btw?  Trunk, aka 9.0?  Or the most
-> advanced release, 8.1?  Or the latest release (which also is 8.1 :-) )
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: len.brown@intel.com
+Cc: rui.zhang@intel.com
+Link: https://lkml.kernel.org/r/20171222092243.333145937@infradead.org
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/include/asm/i8259.h |    5 +++++
+ arch/x86/kernel/tsc.c        |   18 ++++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-I encounter it with 8.1
-According the refered discusion, it linked to GCC 8
-
-Christophe
-
-> 
-> 
-> Segher
-> 
+--- a/arch/x86/include/asm/i8259.h
++++ b/arch/x86/include/asm/i8259.h
+@@ -68,6 +68,11 @@ struct legacy_pic {
+ extern struct legacy_pic *legacy_pic;
+ extern struct legacy_pic null_legacy_pic;
+ 
++static inline bool has_legacy_pic(void)
++{
++	return legacy_pic != &null_legacy_pic;
++}
++
+ static inline int nr_legacy_irqs(void)
+ {
+ 	return legacy_pic->nr_legacy_irqs;
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -24,6 +24,7 @@
+ #include <asm/geode.h>
+ #include <asm/apic.h>
+ #include <asm/intel-family.h>
++#include <asm/i8259.h>
+ 
+ unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
+ EXPORT_SYMBOL(cpu_khz);
+@@ -456,6 +457,20 @@ static unsigned long pit_calibrate_tsc(u
+ 	unsigned long tscmin, tscmax;
+ 	int pitcnt;
+ 
++	if (!has_legacy_pic()) {
++		/*
++		 * Relies on tsc_early_delay_calibrate() to have given us semi
++		 * usable udelay(), wait for the same 50ms we would have with
++		 * the PIT loop below.
++		 */
++		udelay(10 * USEC_PER_MSEC);
++		udelay(10 * USEC_PER_MSEC);
++		udelay(10 * USEC_PER_MSEC);
++		udelay(10 * USEC_PER_MSEC);
++		udelay(10 * USEC_PER_MSEC);
++		return ULONG_MAX;
++	}
++
+ 	/* Set the Gate high, disable speaker */
+ 	outb((inb(0x61) & ~0x02) | 0x01, 0x61);
+ 
+@@ -580,6 +595,9 @@ static unsigned long quick_pit_calibrate
+ 	u64 tsc, delta;
+ 	unsigned long d1, d2;
+ 
++	if (!has_legacy_pic())
++		return 0;
++
+ 	/* Set the Gate high, disable speaker */
+ 	outb((inb(0x61) & ~0x02) | 0x01, 0x61);
+ 
