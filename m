@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165323AbeE1NVZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:21:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38878 "EHLO mail.kernel.org"
+        id S1163451AbeE1KtB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:49:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163440AbeE1KtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:05 -0400
+        id S1033757AbeE1Ks5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 145/496] netfilter: ipt_CLUSTERIP: put config instead of freeing it
-Date: Mon, 28 May 2018 11:58:50 +0200
-Message-Id: <20180528100326.022704026@linuxfoundation.org>
+Subject: [PATCH 4.14 142/496] batman-adv: fix packet checksum in receive path
+Date: Mon, 28 May 2018 11:58:47 +0200
+Message-Id: <20180528100325.901109684@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,53 +32,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-[ Upstream commit 1a9da5937386dbe553ffcf6c65d985bd48c347c5 ]
+[ Upstream commit abd6360591d3f8259f41c34e31ac4826dfe621b8 ]
 
-Once struct is added to per-netns list it becomes visible to other cpus,
-so we cannot use kfree().
+eth_type_trans() internally calls skb_pull(), which does not adjust the
+skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
+form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
+received.
 
-Also delay setting entries refcount to 1 until after everything is
-initialised so that when we call clusterip_config_put() in this spot
-entries is still zero.
+Note that in usual setups, packets don't reach batman-adv with
+CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
+batadv's ethtype?), which is why the log messages do not occur on every
+system using batman-adv. I could reproduce this issue by stacking
+batman-adv on top of a VXLAN interface.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Tested-by: Maximilian Wilhelm <max@sdn.clinic>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/batman-adv/soft-interface.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -228,7 +228,6 @@ clusterip_config_init(struct net *net, c
- 	c->hash_mode = i->hash_mode;
- 	c->hash_initval = i->hash_initval;
- 	refcount_set(&c->refcount, 1);
--	refcount_set(&c->entries, 1);
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@ -451,13 +451,7 @@ void batadv_interface_rx(struct net_devi
  
- 	spin_lock_bh(&cn->lock);
- 	if (__clusterip_config_find(net, ip)) {
-@@ -259,8 +258,10 @@ clusterip_config_init(struct net *net, c
+ 	/* skb->dev & skb->pkt_type are set here */
+ 	skb->protocol = eth_type_trans(skb, soft_iface);
+-
+-	/* should not be necessary anymore as we use skb_pull_rcsum()
+-	 * TODO: please verify this and remove this TODO
+-	 * -- Dec 21st 2009, Simon Wunderlich
+-	 */
+-
+-	/* skb->ip_summed = CHECKSUM_UNNECESSARY; */
++	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
  
- 	c->notifier.notifier_call = clusterip_netdev_event;
- 	err = register_netdevice_notifier(&c->notifier);
--	if (!err)
-+	if (!err) {
-+		refcount_set(&c->entries, 1);
- 		return c;
-+	}
- 
- #ifdef CONFIG_PROC_FS
- 	proc_remove(c->pde);
-@@ -269,7 +270,7 @@ err:
- 	spin_lock_bh(&cn->lock);
- 	list_del_rcu(&c->list);
- 	spin_unlock_bh(&cn->lock);
--	kfree(c);
-+	clusterip_config_put(c);
- 
- 	return ERR_PTR(err);
- }
+ 	batadv_inc_counter(bat_priv, BATADV_CNT_RX);
+ 	batadv_add_counter(bat_priv, BATADV_CNT_RX_BYTES,
