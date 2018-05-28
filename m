@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162853AbeE1OA2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:00:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60126 "EHLO mail.kernel.org"
+        id S1425124AbeE1OAp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:00:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162540AbeE1KkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:05 -0400
+        id S1162719AbeE1KkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:40:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Lionel Debieve <lionel.debieve@st.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 308/329] net: stmmac: ensure that the device has released ownership before reading data
-Date: Mon, 28 May 2018 12:03:57 +0200
-Message-Id: <20180528100306.735353119@linuxfoundation.org>
+Subject: [PATCH 4.9 306/329] hwrng: stm32 - add reset during probe
+Date: Mon, 28 May 2018 12:03:55 +0200
+Message-Id: <20180528100306.624388335@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,37 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: "lionel.debieve@st.com" <lionel.debieve@st.com>
 
-[ Upstream commit a6b25da5e7ba212af5826a662e6a035a79bffabd ]
+[ Upstream commit 326ed382256475aa4b8b7eae8a2f60689fd25e78 ]
 
-According to Documentation/memory-barriers.txt, we need to use a
-dma_rmb() after reading the status/own bit, to ensure that all
-descriptor fields are read after reading the own bit.
+Avoid issue when probing the RNG without
+reset if bad status has been detected previously
 
-This way, we ensure that the DMA engine is done with the DMA
-descriptor before we read the other descriptor fields, e.g. reading
-the tx hardware timestamp (if PTP is enabled).
-
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/char/hw_random/stm32-rng.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1343,6 +1343,11 @@ static void stmmac_tx_clean(struct stmma
- 		if (unlikely(status & tx_dma_own))
- 			break;
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
  
-+		/* Make sure descriptor fields are read after reading
-+		 * the own bit.
-+		 */
-+		dma_rmb();
+ #define RNG_CR 0x00
+@@ -46,6 +47,7 @@ struct stm32_rng_private {
+ 	struct hwrng rng;
+ 	void __iomem *base;
+ 	struct clk *clk;
++	struct reset_control *rst;
+ };
+ 
+ static int stm32_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
+@@ -140,6 +142,13 @@ static int stm32_rng_probe(struct platfo
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
+ 
++	priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
++	if (!IS_ERR(priv->rst)) {
++		reset_control_assert(priv->rst);
++		udelay(2);
++		reset_control_deassert(priv->rst);
++	}
 +
- 		/* Just consider the last segment and ...*/
- 		if (likely(!(status & tx_not_ls))) {
- 			/* ... verify the status error condition */
+ 	dev_set_drvdata(dev, priv);
+ 
+ 	priv->rng.name = dev_driver_string(dev),
