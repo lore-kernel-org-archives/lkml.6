@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753321AbeE1Flt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 01:41:49 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34939 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753292AbeE1Flp (ORCPT
+        id S1753399AbeE1Fl4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 01:41:56 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38797 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753327AbeE1Flv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 01:41:45 -0400
-X-Google-Smtp-Source: ADUXVKK8SGTDTqMlOEoOPAEG6CHU+J1CmpBEJLJRK+lPxZUi4AmdG5orMsoUYqXHqD5WfUSr46XSWw==
+        Mon, 28 May 2018 01:41:51 -0400
+X-Google-Smtp-Source: ADUXVKIEYE4mKCA7x2FT79YGcfKPzGBhFLmXV4GNGhPHu797oCyqiykW/ZH+K4IFuUK/Teen4Rrdvw==
 From: Srinath Mannam <srinath.mannam@broadcom.com>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -15,9 +15,9 @@ To: Zhang Rui <rui.zhang@intel.com>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         Pramod Kumar <pramod.kumar@broadcom.com>
-Subject: [PATCH 1/3] dt-bindings: thermal: Add binding document for SR thermal
-Date: Mon, 28 May 2018 11:11:22 +0530
-Message-Id: <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com>
+Subject: [PATCH 2/3] arm64: dts: stingray: Add Stingray Thermal DT support.
+Date: Mon, 28 May 2018 11:11:23 +0530
+Message-Id: <1527486084-4636-3-git-send-email-srinath.mannam@broadcom.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
 References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
@@ -27,68 +27,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Add binding document for supported thermal implementation
-in Stingray.
+Add DT nodes for thermal zones memory base address
+to read temperature.
 
 Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
 Reviewed-by: Ray Jui <ray.jui@broadcom.com>
 Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
 ---
- .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-new file mode 100644
-index 0000000..33f9e11
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-@@ -0,0 +1,45 @@
-+* Broadcom Stingray Thermal
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 99aaff0..db1cc67 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -593,4 +593,41 @@
+ 			status = "disabled";
+ 		};
+ 	};
 +
-+This binding describes thermal sensors that is part of Stingray SoCs.
-+
-+Required properties:
-+- compatible : Must be "brcm,sr-thermal"
-+- reg : memory where tmon data will be available.
-+
-+Example:
 +	tmons {
 +		compatible = "simple-bus";
 +		#address-cells = <1>;
 +		#size-cells = <1>;
-+		ranges;
++		ranges = <0x0 0x0 0x8f100000 0x100>;
 +
-+		tmon_ihost0: thermal@8f100000 {
++		tmon_ihost0: thermal@0 {
 +			compatible = "brcm,sr-thermal";
-+			reg = <0x8f100000 0x4>;
++			reg = <0x0 0x4>;
 +		};
 +
-+		tmon_ihost1: thermal@8f100004 {
++		tmon_ihost1: thermal@4 {
 +			compatible = "brcm,sr-thermal";
-+			reg = <0x8f100004 0x4>;
++			reg = <0x4 0x4>;
 +		};
 +
-+		tmon_ihost2: thermal@8f100008 {
++		tmon_ihost2: thermal@8 {
 +			compatible = "brcm,sr-thermal";
-+			reg = <0x8f100008 0x4>;
++			reg = <0x8 0x4>;
 +		};
 +
-+		tmon_ihost3: thermal@8f10000c {
++		tmon_ihost3: thermal@c {
 +			compatible = "brcm,sr-thermal";
-+			reg = <0x8f10000c 0x4>;
++			reg = <0xc 0x4>;
 +		};
 +
-+		tmon_crmu: thermal@8f100010 {
++		tmon_crmu: thermal@10 {
 +			compatible = "brcm,sr-thermal";
-+			reg = <0x8f100010 0x4>;
++			reg = <0x10 0x4>;
 +		};
 +
-+		tmon_nitro: thermal@8f100014 {
++		tmon_nitro: thermal@14 {
 +			compatible = "brcm,sr-thermal";
-+			reg = <0x8f100014 0x4>;
++			reg = <0x14 0x4>;
 +		};
 +	};
+ };
 -- 
 2.7.4
