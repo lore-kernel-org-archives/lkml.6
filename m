@@ -1,110 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933985AbeE1U1q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 16:27:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54468 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932451AbeE1U1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 16:27:44 -0400
-Subject: Re: [PATCH v3] vfio: platform: Fix using devices in PM Domains
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <1527521165-29345-1-git-send-email-geert+renesas@glider.be>
-Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <ff3992c7-1d59-1fec-1393-47e2d278d8c9@redhat.com>
-Date: Mon, 28 May 2018 22:27:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S933940AbeE1UaI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 16:30:08 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:32788 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932451AbeE1UaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 16:30:07 -0400
+Date: Mon, 28 May 2018 21:30:03 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][RFC] [powerpc] arch_ptrace() uses of access_ok() are
+ pointless
+Message-ID: <20180528203002.GD30522@ZenIV.linux.org.uk>
+References: <20180527223403.GT30522@ZenIV.linux.org.uk>
+ <CA+7wUswhpVRQ4yECc-Zh9djHxiT=9-ALuP7_=mfLMtU-NXDnfg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1527521165-29345-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+7wUswhpVRQ4yECc-Zh9djHxiT=9-ALuP7_=mfLMtU-NXDnfg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
 
-On 05/28/2018 05:26 PM, Geert Uytterhoeven wrote:
-> If a device is part of a PM Domain (e.g. power and/or clock domain), its
-> power state is managed using Runtime PM.  Without Runtime PM, the device
-> may not be powered up or clocked, causing subtle failures, crashes, or
-> system lock-ups when the device is accessed by the guest.
+> Maybe this is just an RFC, but:
 > 
-> Fix this by adding Runtime PM support, powering the device when the VFIO
-> device is opened by the guest.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> v3:
->   - Drop controversial note about unsafeness of exporting fine-grained
->     power management from host to guest,
-thanks ;-)
+>   CALL    ../arch/powerpc/kernel/systbl_chk.sh
+> ../arch/powerpc/kernel/ptrace.c: In function ‘arch_ptrace’:
+> ../arch/powerpc/kernel/ptrace.c:3086:4: error: expected ‘)’ before ‘return’
+>     return -EFAULT;
+>     ^~~~~~
 
-> 
-> v2:
->   - Improve wording,
->   - Add Reviewed-by.
-> ---
->  drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> index b60bb5326668498c..41f862f055054543 100644
-> --- a/drivers/vfio/platform/vfio_platform_common.c
-> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> @@ -17,6 +17,7 @@
->  #include <linux/iommu.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
->  #include <linux/uaccess.h>
-> @@ -233,6 +234,8 @@ static void vfio_platform_release(void *device_data)
->  		const char *extra_dbg = NULL;
->  		int ret;
->  
-> +		pm_runtime_put(vdev->device);
+and the same a few lines later.  What's more, those 'unlikely' are pointless
+there.  Fixed variant follows; only build-tested, though.
 
-> +
->  		ret = vfio_platform_call_reset(vdev, &extra_dbg);
-While reading the code again, the reset is using the HW. Don't you want
-to call the get() before.
+make it use copy_{from,to}_user(), rather than access_ok() +
+__copy_...
 
-Thanks
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ arch/powerpc/kernel/ptrace.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-Eric
->  		if (ret && vdev->reset_required) {
->  			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
-> @@ -275,6 +278,10 @@ static int vfio_platform_open(void *device_data)
->  				 ret, extra_dbg ? extra_dbg : "");
->  			goto err_rst;
->  		}
-> +
-> +		ret = pm_runtime_get_sync(vdev->device);
-> +		if (ret < 0)
-> +			goto err_rst;
->  	}
->  
->  	vdev->refcnt++;
-> @@ -690,6 +697,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
->  
->  	mutex_init(&vdev->igate);
->  
-> +	pm_runtime_enable(vdev->device);
->  	return 0;
->  
->  put_iommu:
-> @@ -707,6 +715,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
->  	vdev = vfio_del_group_dev(dev);
->  
->  	if (vdev) {
-> +		pm_runtime_disable(vdev->device);
->  		vfio_platform_put_reset(vdev);
->  		vfio_iommu_group_put(dev->iommu_group, dev);
->  	}
-> 
+diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+index d23cf632edf0..f557322621e0 100644
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -3081,27 +3081,19 @@ long arch_ptrace(struct task_struct *child, long request,
+ #endif /* CONFIG_HAVE_HW_BREAKPOINT */
+ #endif /* CONFIG_PPC_ADV_DEBUG_REGS */
+ 
+-		if (!access_ok(VERIFY_WRITE, datavp,
+-			       sizeof(struct ppc_debug_info)))
++		if (copy_to_user(datavp, &dbginfo,
++				     sizeof(struct ppc_debug_info)))
+ 			return -EFAULT;
+-		ret = __copy_to_user(datavp, &dbginfo,
+-				     sizeof(struct ppc_debug_info)) ?
+-		      -EFAULT : 0;
+-		break;
++		return 0;
+ 	}
+ 
+ 	case PPC_PTRACE_SETHWDEBUG: {
+ 		struct ppc_hw_breakpoint bp_info;
+ 
+-		if (!access_ok(VERIFY_READ, datavp,
+-			       sizeof(struct ppc_hw_breakpoint)))
+-			return -EFAULT;
+-		ret = __copy_from_user(&bp_info, datavp,
+-				       sizeof(struct ppc_hw_breakpoint)) ?
+-		      -EFAULT : 0;
+-		if (!ret)
+-			ret = ppc_set_hwdebug(child, &bp_info);
+-		break;
++		if (copy_from_user(&bp_info, datavp,
++				       sizeof(struct ppc_hw_breakpoint)))
++		      return -EFAULT;
++		return ppc_set_hwdebug(child, &bp_info);
+ 	}
+ 
+ 	case PPC_PTRACE_DELHWDEBUG: {
+-- 
+2.11.0
