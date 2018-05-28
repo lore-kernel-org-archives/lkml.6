@@ -1,22 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968676AbeE1KRS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37338 "EHLO mail.kernel.org"
+        id S1030313AbeE1KRf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968655AbeE1KRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:11 -0400
+        id S968655AbeE1KRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Alex Chen <alex.chen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>, Gang He <ghe@suse.com>,
+        Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 044/268] RDMA/mlx5: Avoid memory leak in case of XRCD dealloc failure
-Date: Mon, 28 May 2018 12:00:18 +0200
-Message-Id: <20180528100207.064350989@linuxfoundation.org>
+Subject: [PATCH 4.4 046/268] ocfs2: return -EROFS to mount.ocfs2 if inode block is invalid
+Date: Mon, 28 May 2018 12:00:20 +0200
+Message-Id: <20180528100207.280931981@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,40 +35,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: piaojun <piaojun@huawei.com>
 
-[ Upstream commit b081808a66345ba725b77ecd8d759bee874cd937 ]
+[ Upstream commit 025bcbde3634b2c9b316f227fed13ad6ad6817fb ]
 
-Failure in XRCD FW deallocation command leaves memory leaked and
-returns error to the user which he can't do anything about it.
+If metadata is corrupted such as 'invalid inode block', we will get
+failed by calling 'mount()' and then set filesystem readonly as below:
 
-This patch changes behavior to always free memory and always return
-success to the user.
+  ocfs2_mount
+    ocfs2_initialize_super
+      ocfs2_init_global_system_inodes
+        ocfs2_iget
+          ocfs2_read_locked_inode
+            ocfs2_validate_inode_block
+	      ocfs2_error
+	        ocfs2_handle_error
+	          ocfs2_set_ro_flag(osb, 0);  // set readonly
 
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+In this situation we need return -EROFS to 'mount.ocfs2', so that user
+can fix it by fsck.  And then mount again.  In addition, 'mount.ocfs2'
+should be updated correspondingly as it only return 1 for all errno.
+And I will post a patch for 'mount.ocfs2' too.
+
+Link: http://lkml.kernel.org/r/5A4302FA.2010606@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Alex Chen <alex.chen@huawei.com>
+Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Gang He <ghe@suse.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/qp.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/ocfs2/super.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -3161,12 +3161,9 @@ int mlx5_ib_dealloc_xrcd(struct ib_xrcd
- 	int err;
- 
- 	err = mlx5_core_xrcd_dealloc(dev->mdev, xrcdn);
--	if (err) {
-+	if (err)
- 		mlx5_ib_warn(dev, "failed to dealloc xrcdn 0x%x\n", xrcdn);
--		return err;
--	}
- 
- 	kfree(xrcd);
--
- 	return 0;
- }
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -477,9 +477,8 @@ static int ocfs2_init_global_system_inod
+ 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
+ 		if (!new) {
+ 			ocfs2_release_system_inodes(osb);
+-			status = -EINVAL;
++			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
+ 			mlog_errno(status);
+-			/* FIXME: Should ERROR_RO_FS */
+ 			mlog(ML_ERROR, "Unable to load system inode %d, "
+ 			     "possibly corrupt fs?", i);
+ 			goto bail;
+@@ -508,7 +507,7 @@ static int ocfs2_init_local_system_inode
+ 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
+ 		if (!new) {
+ 			ocfs2_release_system_inodes(osb);
+-			status = -EINVAL;
++			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
+ 			mlog(ML_ERROR, "status=%d, sysfile=%d, slot=%d\n",
+ 			     status, i, osb->slot_num);
+ 			goto bail;
