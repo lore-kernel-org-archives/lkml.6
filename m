@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031207AbeE1KR5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37928 "EHLO mail.kernel.org"
+        id S968780AbeE1KSZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:18:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030751AbeE1KRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:46 -0400
+        id S968738AbeE1KSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Krzysztof Opasiak <k.opasiak@samsung.com>,
+        John Keeping <john@metanate.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 077/268] ARC: Fix malformed ARC_EMUL_UNALIGNED default
-Date: Mon, 28 May 2018 12:00:51 +0200
-Message-Id: <20180528100210.615335486@linuxfoundation.org>
+Subject: [PATCH 4.4 078/268] usb: gadget: f_uac2: fix bFirstInterface in composite gadget
+Date: Mon, 28 May 2018 12:00:52 +0200
+Message-Id: <20180528100210.841671610@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,36 +31,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: John Keeping <john@metanate.com>
 
-[ Upstream commit 827cc2fa024dd6517d62de7a44c7b42f32af371b ]
+[ Upstream commit 8813a59ed892305b5ac1b5b901740b1ad4b5fefa ]
 
-'default N' should be 'default n', though they happen to have the same
-effect here, due to undefined symbols (N in this case) evaluating to n
-in a tristate sense.
+If there are multiple functions associated with a configuration, then
+the UAC2 interfaces may not start at zero.  Set the correct first
+interface number in the association descriptor so that the audio
+interfaces are enumerated correctly in this case.
 
-Remove the default from ARC_EMUL_UNALIGNED instead of changing it. bool
-and tristate symbols implicitly default to n.
-
-Discovered with the
-https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_ulfalizer_Kconfiglib_blob_master_examples_list-5Fundefined.py&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=c14YS-cH-kdhTOW89KozFhBtBJgs1zXscZojEZQ0THs&m=WxxD8ozR7QQUVzNCBksiznaisBGO_crN7PBOvAoju8s&s=1LmxsNqxwT-7wcInVpZ6Z1J27duZKSoyKxHIJclXU_M&e=
-script.
-
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
+Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/gadget/function/f_uac2.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -479,7 +479,6 @@ config ARC_CURR_IN_REG
- 
- config ARC_EMUL_UNALIGNED
- 	bool "Emulate unaligned memory access (userspace only)"
--	default N
- 	select SYSCTL_ARCH_UNALIGN_NO_WARN
- 	select SYSCTL_ARCH_UNALIGN_ALLOW
- 	depends on ISA_ARCOMPACT
+--- a/drivers/usb/gadget/function/f_uac2.c
++++ b/drivers/usb/gadget/function/f_uac2.c
+@@ -1052,6 +1052,8 @@ afunc_bind(struct usb_configuration *cfg
+ 		dev_err(dev, "%s:%d Error!\n", __func__, __LINE__);
+ 		return ret;
+ 	}
++	iad_desc.bFirstInterface = ret;
++
+ 	std_ac_if_desc.bInterfaceNumber = ret;
+ 	agdev->ac_intf = ret;
+ 	agdev->ac_alt = 0;
