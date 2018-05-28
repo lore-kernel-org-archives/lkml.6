@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937573AbeE1Kpw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:45:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36186 "EHLO mail.kernel.org"
+        id S1161873AbeE1Kpr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:45:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937438AbeE1Kpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:44 -0400
+        id S937573AbeE1Kpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:45:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 072/496] ibmvnic: Wait until reset is complete to set carrier on
-Date: Mon, 28 May 2018 11:57:37 +0200
-Message-Id: <20180528100322.817536135@linuxfoundation.org>
+Subject: [PATCH 4.14 102/496] drm/exynos: g2d: Delete an error message for a failed memory allocation in two functions
+Date: Mon, 28 May 2018 11:58:07 +0200
+Message-Id: <20180528100324.148603249@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,39 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-[ Upstream commit cc85c02edfe48a34865ae00f7d22298a3fdd17aa ]
+[ Upstream commit 6f0a60298bbbea43ab5e3955913ab19c153076f3 ]
 
-Pushes back setting the carrier on until the end of the reset
-code. This resolves a bug where a watchdog timer was detecting
-that a TX queue had stalled before the adapter reset was complete.
+Omit an extra message for a memory allocation failure in these functions.
 
-Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1460,8 +1460,6 @@ static int do_reset(struct ibmvnic_adapt
- 		return 0;
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -286,7 +286,6 @@ static int g2d_init_cmdlist(struct g2d_d
+ 
+ 	node = kcalloc(G2D_CMDLIST_NUM, sizeof(*node), GFP_KERNEL);
+ 	if (!node) {
+-		dev_err(dev, "failed to allocate memory\n");
+ 		ret = -ENOMEM;
+ 		goto err;
  	}
+@@ -1358,10 +1357,9 @@ int exynos_g2d_exec_ioctl(struct drm_dev
+ 		return -EFAULT;
  
--	netif_carrier_on(netdev);
--
- 	/* kick napi */
- 	for (i = 0; i < adapter->req_rx_queues; i++)
- 		napi_schedule(&adapter->napi[i]);
-@@ -1469,6 +1467,8 @@ static int do_reset(struct ibmvnic_adapt
- 	if (adapter->reset_reason != VNIC_RESET_FAILOVER)
- 		netdev_notify_peers(netdev);
- 
-+	netif_carrier_on(netdev);
+ 	runqueue_node = kmem_cache_alloc(g2d->runqueue_slab, GFP_KERNEL);
+-	if (!runqueue_node) {
+-		dev_err(dev, "failed to allocate memory\n");
++	if (!runqueue_node)
+ 		return -ENOMEM;
+-	}
 +
- 	return 0;
- }
- 
+ 	run_cmdlist = &runqueue_node->run_cmdlist;
+ 	event_list = &runqueue_node->event_list;
+ 	INIT_LIST_HEAD(run_cmdlist);
