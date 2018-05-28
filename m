@@ -1,21 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937976AbeE1Mq2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:46:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45640 "EHLO mail.kernel.org"
+        id S938855AbeE1Mqs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:46:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937520AbeE1K5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:25 -0400
+        id S937702AbeE1K5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Hugh Dickins <hughd@google.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nadav Amit <namit@vmware.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 314/496] net: Fix untag for vlan packets without ethernet header
-Date: Mon, 28 May 2018 12:01:39 +0200
-Message-Id: <20180528100333.060906755@linuxfoundation.org>
+Subject: [PATCH 4.14 323/496] x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
+Date: Mon, 28 May 2018 12:01:48 +0200
+Message-Id: <20180528100333.440482048@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,97 +41,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit ae4745730cf8e693d354ccd4dbaf59ea440c09a9 ]
+[ Upstream commit 639d6aafe437a7464399d2a77d006049053df06f ]
 
-In some situation vlan packets do not have ethernet headers. One example
-is packets from tun devices. Users can specify vlan protocol in tun_pi
-field instead of IP protocol, and skb_vlan_untag() attempts to untag such
-packets.
+__ro_after_init data gets stuck in the .rodata section.  That's normally
+fine because the kernel itself manages the R/W properties.
 
-skb_vlan_untag() (more precisely, skb_reorder_vlan_header() called by it)
-however did not expect packets without ethernet headers, so in such a case
-size argument for memmove() underflowed and triggered crash.
+But, if we run __change_page_attr() on an area which is __ro_after_init,
+the .rodata checks will trigger and force the area to be immediately
+read-only, even if it is early-ish in boot.  This caused problems when
+trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
+it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
+to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
+a __ro_after_init data structure.
 
-====
-BUG: unable to handle kernel paging request at ffff8801cccb8000
-IP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
-PGD 9cee067 P4D 9cee067 PUD 1d9401063 PMD 1cccb7063 PTE 2810100028101
-Oops: 000b [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 17663 Comm: syz-executor2 Not tainted 4.16.0-rc7+ #368
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
-RSP: 0018:ffff8801cc046e28 EFLAGS: 00010287
-RAX: ffff8801ccc244c4 RBX: fffffffffffffffe RCX: fffffffffff6c4c2
-RDX: fffffffffffffffe RSI: ffff8801cccb7ffc RDI: ffff8801cccb8000
-RBP: ffff8801cc046e48 R08: ffff8801ccc244be R09: ffffed0039984899
-R10: 0000000000000001 R11: ffffed0039984898 R12: ffff8801ccc244c4
-R13: ffff8801ccc244c0 R14: ffff8801d96b7c06 R15: ffff8801d96b7b40
-FS:  00007febd562d700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8801cccb8000 CR3: 00000001ccb2f006 CR4: 00000000001606e0
-DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
- memmove include/linux/string.h:360 [inline]
- skb_reorder_vlan_header net/core/skbuff.c:5031 [inline]
- skb_vlan_untag+0x470/0xc40 net/core/skbuff.c:5061
- __netif_receive_skb_core+0x119c/0x3460 net/core/dev.c:4460
- __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4627
- netif_receive_skb_internal+0x10b/0x670 net/core/dev.c:4701
- netif_receive_skb+0xae/0x390 net/core/dev.c:4725
- tun_rx_batched.isra.50+0x5ee/0x870 drivers/net/tun.c:1555
- tun_get_user+0x299e/0x3c20 drivers/net/tun.c:1962
- tun_chr_write_iter+0xb9/0x160 drivers/net/tun.c:1990
- call_write_iter include/linux/fs.h:1782 [inline]
- new_sync_write fs/read_write.c:469 [inline]
- __vfs_write+0x684/0x970 fs/read_write.c:482
- vfs_write+0x189/0x510 fs/read_write.c:544
- SYSC_write fs/read_write.c:589 [inline]
- SyS_write+0xef/0x220 fs/read_write.c:581
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454879
-RSP: 002b:00007febd562cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007febd562d6d4 RCX: 0000000000454879
-RDX: 0000000000000157 RSI: 0000000020000180 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000006b0 R14: 00000000006fc120 R15: 0000000000000000
-Code: 90 90 90 90 90 90 90 48 89 f8 48 83 fa 20 0f 82 03 01 00 00 48 39 fe 7d 0f 49 89 f0 49 01 d0 49 39 f8 0f 8f 9f 00 00 00 48 89 d1 <f3> a4 c3 48 81 fa a8 02 00 00 72 05 40 38 fe 74 3b 48 83 ea 20
-RIP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43 RSP: ffff8801cc046e28
-CR2: ffff8801cccb8000
-====
+To fix this, add the kernel_set_to_readonly check, just like we have
+for kernel text, just a few lines below in this function.
 
-We don't need to copy headers for packets which do not have preceding
-headers of vlan headers, so skip memmove() in that case.
-
-Fixes: 4bbb3e0e8239 ("net: Fix vlan untag for bridge and vlan_dev with reorder_hdr off")
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180406205514.8D898241@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    6 ++++--
+ arch/x86/mm/pageattr.c |    6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4947,8 +4947,10 @@ static struct sk_buff *skb_reorder_vlan_
- 	}
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -298,9 +298,11 @@ static inline pgprot_t static_protection
  
- 	mac_len = skb->data - skb_mac_header(skb);
--	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
--		mac_len - VLAN_HLEN - ETH_TLEN);
-+	if (likely(mac_len > VLAN_HLEN + ETH_TLEN)) {
-+		memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
-+			mac_len - VLAN_HLEN - ETH_TLEN);
-+	}
- 	skb->mac_header += VLAN_HLEN;
- 	return skb;
- }
+ 	/*
+ 	 * The .rodata section needs to be read-only. Using the pfn
+-	 * catches all aliases.
++	 * catches all aliases.  This also includes __ro_after_init,
++	 * so do not enforce until kernel_set_to_readonly is true.
+ 	 */
+-	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
++	if (kernel_set_to_readonly &&
++	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
+ 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
+ 		pgprot_val(forbidden) |= _PAGE_RW;
+ 
