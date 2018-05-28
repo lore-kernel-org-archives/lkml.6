@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965232AbeE1QUC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:20:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60282 "EHLO mail.kernel.org"
+        id S965719AbeE1QUc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:20:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936709AbeE1KMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:12:07 -0400
+        id S936681AbeE1KL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 146/185] i2c: mv64xxx: Apply errata delay only in standard mode
-Date: Mon, 28 May 2018 12:03:07 +0200
-Message-Id: <20180528100108.504419041@linuxfoundation.org>
+Subject: [PATCH 3.18 100/185] selftests: ftrace: Add a testcase for string type with kprobe_event
+Date: Mon, 28 May 2018 12:02:21 +0200
+Message-Id: <20180528100059.634163039@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -29,44 +30,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 31184d8c6ea49ea0676d100cdd7e1f102ad025b5 ]
+[ Upstream commit 5fbdbed797b6d12d043a5121fdbc8d8b49d10e80 ]
 
-The errata FE-8471889 description has been updated. There is still a
-timing violation for repeated start. But the errata now states that it
-was only the case for the Standard mode (100 kHz), in Fast mode (400 kHz)
-there is no issue.
+Add a testcase for string type with kprobe event.
+This tests good/bad syntax combinations and also
+the traced data is correct in several way.
 
-This patch limit the errata fix to the Standard mode.
+Link: http://lkml.kernel.org/r/152129038381.31874.9201387794548737554.stgit@devbox
 
-It has been tesed successfully on the clearfog (Aramda 388 based board).
-
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-mv64xxx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc |   46 ++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
 
---- a/drivers/i2c/busses/i2c-mv64xxx.c
-+++ b/drivers/i2c/busses/i2c-mv64xxx.c
-@@ -783,12 +783,16 @@ mv64xxx_of_config(struct mv64xxx_i2c_dat
- 	 */
- 	if (of_device_is_compatible(np, "marvell,mv78230-i2c")) {
- 		drv_data->offload_enabled = true;
--		drv_data->errata_delay = true;
-+		/* The delay is only needed in standard mode (100kHz) */
-+		if (bus_freq <= 100000)
-+			drv_data->errata_delay = true;
- 	}
- 
- 	if (of_device_is_compatible(np, "marvell,mv78230-a0-i2c")) {
- 		drv_data->offload_enabled = false;
--		drv_data->errata_delay = true;
-+		/* The delay is only needed in standard mode (100kHz) */
-+		if (bus_freq <= 100000)
-+			drv_data->errata_delay = true;
- 	}
- 
- 	if (of_device_is_compatible(np, "allwinner,sun6i-a31-i2c"))
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -0,0 +1,46 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe event string type argument
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++echo 0 > events/enable
++echo > kprobe_events
++
++case `uname -m` in
++x86_64)
++  ARG2=%si
++  OFFS=8
++;;
++i[3456]86)
++  ARG2=%cx
++  OFFS=4
++;;
++aarch64)
++  ARG2=%x1
++  OFFS=8
++;;
++arm*)
++  ARG2=%r1
++  OFFS=4
++;;
++*)
++  echo "Please implement other architecture here"
++  exit_untested
++esac
++
++: "Test get argument (1)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
++
++echo 0 > events/kprobes/testprobe/enable
++: "Test get argument (2)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test1 test2 >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
++
++echo 0 > events/enable
++echo > kprobe_events
