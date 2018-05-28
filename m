@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939302AbeE1OJf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:09:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58312 "EHLO mail.kernel.org"
+        id S939318AbeE1OJv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:09:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161921AbeE1Khs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:48 -0400
+        id S1162193AbeE1Khp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Vinayak Menon <vinmenon@codeaurora.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 226/329] net: Fix untag for vlan packets without ethernet header
-Date: Mon, 28 May 2018 12:02:35 +0200
-Message-Id: <20180528100300.925652844@linuxfoundation.org>
+Subject: [PATCH 4.9 225/329] mm/kmemleak.c: wait for scan completion before disabling free
+Date: Mon, 28 May 2018 12:02:34 +0200
+Message-Id: <20180528100300.846023730@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,97 +32,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Vinayak Menon <vinmenon@codeaurora.org>
 
-[ Upstream commit ae4745730cf8e693d354ccd4dbaf59ea440c09a9 ]
+[ Upstream commit 914b6dfff790544d9b77dfd1723adb3745ec9700 ]
 
-In some situation vlan packets do not have ethernet headers. One example
-is packets from tun devices. Users can specify vlan protocol in tun_pi
-field instead of IP protocol, and skb_vlan_untag() attempts to untag such
-packets.
+A crash is observed when kmemleak_scan accesses the object->pointer,
+likely due to the following race.
 
-skb_vlan_untag() (more precisely, skb_reorder_vlan_header() called by it)
-however did not expect packets without ethernet headers, so in such a case
-size argument for memmove() underflowed and triggered crash.
+  TASK A             TASK B                     TASK C
+  kmemleak_write
+   (with "scan" and
+   NOT "scan=on")
+  kmemleak_scan()
+                     create_object
+                     kmem_cache_alloc fails
+                     kmemleak_disable
+                     kmemleak_do_cleanup
+                     kmemleak_free_enabled = 0
+                                                kfree
+                                                kmemleak_free bails out
+                                                 (kmemleak_free_enabled is 0)
+                                                slub frees object->pointer
+  update_checksum
+  crash - object->pointer
+   freed (DEBUG_PAGEALLOC)
 
-====
-BUG: unable to handle kernel paging request at ffff8801cccb8000
-IP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
-PGD 9cee067 P4D 9cee067 PUD 1d9401063 PMD 1cccb7063 PTE 2810100028101
-Oops: 000b [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 17663 Comm: syz-executor2 Not tainted 4.16.0-rc7+ #368
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43
-RSP: 0018:ffff8801cc046e28 EFLAGS: 00010287
-RAX: ffff8801ccc244c4 RBX: fffffffffffffffe RCX: fffffffffff6c4c2
-RDX: fffffffffffffffe RSI: ffff8801cccb7ffc RDI: ffff8801cccb8000
-RBP: ffff8801cc046e48 R08: ffff8801ccc244be R09: ffffed0039984899
-R10: 0000000000000001 R11: ffffed0039984898 R12: ffff8801ccc244c4
-R13: ffff8801ccc244c0 R14: ffff8801d96b7c06 R15: ffff8801d96b7b40
-FS:  00007febd562d700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8801cccb8000 CR3: 00000001ccb2f006 CR4: 00000000001606e0
-DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
- memmove include/linux/string.h:360 [inline]
- skb_reorder_vlan_header net/core/skbuff.c:5031 [inline]
- skb_vlan_untag+0x470/0xc40 net/core/skbuff.c:5061
- __netif_receive_skb_core+0x119c/0x3460 net/core/dev.c:4460
- __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4627
- netif_receive_skb_internal+0x10b/0x670 net/core/dev.c:4701
- netif_receive_skb+0xae/0x390 net/core/dev.c:4725
- tun_rx_batched.isra.50+0x5ee/0x870 drivers/net/tun.c:1555
- tun_get_user+0x299e/0x3c20 drivers/net/tun.c:1962
- tun_chr_write_iter+0xb9/0x160 drivers/net/tun.c:1990
- call_write_iter include/linux/fs.h:1782 [inline]
- new_sync_write fs/read_write.c:469 [inline]
- __vfs_write+0x684/0x970 fs/read_write.c:482
- vfs_write+0x189/0x510 fs/read_write.c:544
- SYSC_write fs/read_write.c:589 [inline]
- SyS_write+0xef/0x220 fs/read_write.c:581
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454879
-RSP: 002b:00007febd562cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007febd562d6d4 RCX: 0000000000454879
-RDX: 0000000000000157 RSI: 0000000020000180 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000006b0 R14: 00000000006fc120 R15: 0000000000000000
-Code: 90 90 90 90 90 90 90 48 89 f8 48 83 fa 20 0f 82 03 01 00 00 48 39 fe 7d 0f 49 89 f0 49 01 d0 49 39 f8 0f 8f 9f 00 00 00 48 89 d1 <f3> a4 c3 48 81 fa a8 02 00 00 72 05 40 38 fe 74 3b 48 83 ea 20
-RIP: __memmove+0x24/0x1a0 arch/x86/lib/memmove_64.S:43 RSP: ffff8801cc046e28
-CR2: ffff8801cccb8000
-====
+kmemleak_do_cleanup waits for the scan thread to complete, but not for
+direct call to kmemleak_scan via kmemleak_write.  So add a wait for
+kmemleak_scan completion before disabling kmemleak_free, and while at it
+fix the comment on stop_scan_thread.
 
-We don't need to copy headers for packets which do not have preceding
-headers of vlan headers, so skip memmove() in that case.
-
-Fixes: 4bbb3e0e8239 ("net: Fix vlan untag for bridge and vlan_dev with reorder_hdr off")
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[vinmenon@codeaurora.org: fix stop_scan_thread comment]
+  Link: http://lkml.kernel.org/r/1522219972-22809-1-git-send-email-vinmenon@codeaurora.org
+Link: http://lkml.kernel.org/r/1522063429-18992-1-git-send-email-vinmenon@codeaurora.org
+Signed-off-by: Vinayak Menon <vinmenon@codeaurora.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ mm/kmemleak.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4483,8 +4483,10 @@ static struct sk_buff *skb_reorder_vlan_
- 	}
- 
- 	mac_len = skb->data - skb_mac_header(skb);
--	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
--		mac_len - VLAN_HLEN - ETH_TLEN);
-+	if (likely(mac_len > VLAN_HLEN + ETH_TLEN)) {
-+		memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
-+			mac_len - VLAN_HLEN - ETH_TLEN);
-+	}
- 	skb->mac_header += VLAN_HLEN;
- 	return skb;
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1577,8 +1577,7 @@ static void start_scan_thread(void)
  }
+ 
+ /*
+- * Stop the automatic memory scanning thread. This function must be called
+- * with the scan_mutex held.
++ * Stop the automatic memory scanning thread.
+  */
+ static void stop_scan_thread(void)
+ {
+@@ -1841,12 +1840,15 @@ static void kmemleak_do_cleanup(struct w
+ {
+ 	stop_scan_thread();
+ 
++	mutex_lock(&scan_mutex);
+ 	/*
+-	 * Once the scan thread has stopped, it is safe to no longer track
+-	 * object freeing. Ordering of the scan thread stopping and the memory
+-	 * accesses below is guaranteed by the kthread_stop() function.
++	 * Once it is made sure that kmemleak_scan has stopped, it is safe to no
++	 * longer track object freeing. Ordering of the scan thread stopping and
++	 * the memory accesses below is guaranteed by the kthread_stop()
++	 * function.
+ 	 */
+ 	kmemleak_free_enabled = 0;
++	mutex_unlock(&scan_mutex);
+ 
+ 	if (!kmemleak_found_leaks)
+ 		__kmemleak_do_cleanup();
