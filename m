@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965476AbeE1KN7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:13:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33794 "EHLO mail.kernel.org"
+        id S936837AbeE1QKU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:10:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965423AbeE1KNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:55 -0400
+        id S934263AbeE1KN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
+        stable@vger.kernel.org, Thomas Vincent-Cross <me@tvc.id.au>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 185/185] kdb: make "mdr" command repeat
-Date: Mon, 28 May 2018 12:03:46 +0200
-Message-Id: <20180528100117.109880413@linuxfoundation.org>
+Subject: [PATCH 3.18 172/185] PCI: Add function 1 DMA alias quirk for Marvell 88SE9220
+Date: Mon, 28 May 2018 12:03:33 +0200
+Message-Id: <20180528100113.952987599@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,86 +30,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Thomas Vincent-Cross <me@tvc.id.au>
 
-[ Upstream commit 1e0ce03bf142454f38a5fc050bf4fd698d2d36d8 ]
+[ Upstream commit 832e4e1f76b8a84991e9db56fdcef1ebce839b8b ]
 
-The "mdr" command should repeat (continue) when only Enter/Return
-is pressed, so make it do so.
+Add Marvell 88SE9220 DMA quirk as found and tested on bug 42679.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: kgdb-bugreport@lists.sourceforge.net
-Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
+Signed-off-by: Thomas Vincent-Cross <me@tvc.id.au>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/debug/kdb/kdb_main.c |   27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1524,6 +1524,7 @@ static int kdb_md(int argc, const char *
- 	int symbolic = 0;
- 	int valid = 0;
- 	int phys = 0;
-+	int raw = 0;
- 
- 	kdbgetintenv("MDCOUNT", &mdcount);
- 	kdbgetintenv("RADIX", &radix);
-@@ -1533,9 +1534,10 @@ static int kdb_md(int argc, const char *
- 	repeat = mdcount * 16 / bytesperword;
- 
- 	if (strcmp(argv[0], "mdr") == 0) {
--		if (argc != 2)
-+		if (argc == 2 || (argc == 0 && last_addr != 0))
-+			valid = raw = 1;
-+		else
- 			return KDB_ARGCOUNT;
--		valid = 1;
- 	} else if (isdigit(argv[0][2])) {
- 		bytesperword = (int)(argv[0][2] - '0');
- 		if (bytesperword == 0) {
-@@ -1571,7 +1573,10 @@ static int kdb_md(int argc, const char *
- 		radix = last_radix;
- 		bytesperword = last_bytesperword;
- 		repeat = last_repeat;
--		mdcount = ((repeat * bytesperword) + 15) / 16;
-+		if (raw)
-+			mdcount = repeat;
-+		else
-+			mdcount = ((repeat * bytesperword) + 15) / 16;
- 	}
- 
- 	if (argc) {
-@@ -1588,7 +1593,10 @@ static int kdb_md(int argc, const char *
- 			diag = kdbgetularg(argv[nextarg], &val);
- 			if (!diag) {
- 				mdcount = (int) val;
--				repeat = mdcount * 16 / bytesperword;
-+				if (raw)
-+					repeat = mdcount;
-+				else
-+					repeat = mdcount * 16 / bytesperword;
- 			}
- 		}
- 		if (argc >= nextarg+1) {
-@@ -1598,8 +1606,15 @@ static int kdb_md(int argc, const char *
- 		}
- 	}
- 
--	if (strcmp(argv[0], "mdr") == 0)
--		return kdb_mdr(addr, mdcount);
-+	if (strcmp(argv[0], "mdr") == 0) {
-+		int ret;
-+		last_addr = addr;
-+		ret = kdb_mdr(addr, mdcount);
-+		last_addr += mdcount;
-+		last_repeat = mdcount;
-+		last_bytesperword = bytesperword; // to make REPEAT happy
-+		return ret;
-+	}
- 
- 	switch (radix) {
- 	case 10:
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3573,6 +3573,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c46 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x91a0,
+ 			 quirk_dma_func1_alias);
++/* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c127 */
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9220,
++			 quirk_dma_func1_alias);
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c49 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9230,
+ 			 quirk_dma_func1_alias);
