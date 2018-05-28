@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162966AbeE1KlW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:41:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
+        id S1162979AbeE1Kl2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:41:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162936AbeE1KlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:14 -0400
+        id S1162961AbeE1KlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 326/329] ARM: dts: porter: Fix HDMI output routing
-Date: Mon, 28 May 2018 12:04:15 +0200
-Message-Id: <20180528100308.177954556@linuxfoundation.org>
+Subject: [PATCH 4.9 329/329] kdb: make "mdr" command repeat
+Date: Mon, 28 May 2018 12:04:18 +0200
+Message-Id: <20180528100308.365040048@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,30 +32,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit d4b78db6ac3e084e2bdc57d5518bd247c727f396 ]
+[ Upstream commit 1e0ce03bf142454f38a5fc050bf4fd698d2d36d8 ]
 
-The HDMI encoder is connected to the RGB output of the DU, which is
-port@0, not port@1. Fix the incorrect DT description.
+The "mdr" command should repeat (continue) when only Enter/Return
+is pressed, so make it do so.
 
-Fixes: c5af8a4248d3 ("ARM: dts: porter: add DU DT support")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: kgdb-bugreport@lists.sourceforge.net
+Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/debug/kdb/kdb_main.c |   27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -428,7 +428,7 @@
- 		      "dclkin.0", "dclkin.1";
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1564,6 +1564,7 @@ static int kdb_md(int argc, const char *
+ 	int symbolic = 0;
+ 	int valid = 0;
+ 	int phys = 0;
++	int raw = 0;
  
- 	ports {
--		port@1 {
-+		port@0 {
- 			endpoint {
- 				remote-endpoint = <&adv7511_in>;
- 			};
+ 	kdbgetintenv("MDCOUNT", &mdcount);
+ 	kdbgetintenv("RADIX", &radix);
+@@ -1573,9 +1574,10 @@ static int kdb_md(int argc, const char *
+ 	repeat = mdcount * 16 / bytesperword;
+ 
+ 	if (strcmp(argv[0], "mdr") == 0) {
+-		if (argc != 2)
++		if (argc == 2 || (argc == 0 && last_addr != 0))
++			valid = raw = 1;
++		else
+ 			return KDB_ARGCOUNT;
+-		valid = 1;
+ 	} else if (isdigit(argv[0][2])) {
+ 		bytesperword = (int)(argv[0][2] - '0');
+ 		if (bytesperword == 0) {
+@@ -1611,7 +1613,10 @@ static int kdb_md(int argc, const char *
+ 		radix = last_radix;
+ 		bytesperword = last_bytesperword;
+ 		repeat = last_repeat;
+-		mdcount = ((repeat * bytesperword) + 15) / 16;
++		if (raw)
++			mdcount = repeat;
++		else
++			mdcount = ((repeat * bytesperword) + 15) / 16;
+ 	}
+ 
+ 	if (argc) {
+@@ -1628,7 +1633,10 @@ static int kdb_md(int argc, const char *
+ 			diag = kdbgetularg(argv[nextarg], &val);
+ 			if (!diag) {
+ 				mdcount = (int) val;
+-				repeat = mdcount * 16 / bytesperword;
++				if (raw)
++					repeat = mdcount;
++				else
++					repeat = mdcount * 16 / bytesperword;
+ 			}
+ 		}
+ 		if (argc >= nextarg+1) {
+@@ -1638,8 +1646,15 @@ static int kdb_md(int argc, const char *
+ 		}
+ 	}
+ 
+-	if (strcmp(argv[0], "mdr") == 0)
+-		return kdb_mdr(addr, mdcount);
++	if (strcmp(argv[0], "mdr") == 0) {
++		int ret;
++		last_addr = addr;
++		ret = kdb_mdr(addr, mdcount);
++		last_addr += mdcount;
++		last_repeat = mdcount;
++		last_bytesperword = bytesperword; // to make REPEAT happy
++		return ret;
++	}
+ 
+ 	switch (radix) {
+ 	case 10:
