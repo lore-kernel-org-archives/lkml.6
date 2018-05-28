@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161261AbeE1KbL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:31:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50864 "EHLO mail.kernel.org"
+        id S1161274AbeE1KbV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161245AbeE1KbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:08 -0400
+        id S1161265AbeE1KbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 109/329] ARM: OMAP3: Fix prm wake interrupt for resume
-Date: Mon, 28 May 2018 12:00:38 +0200
-Message-Id: <20180528100251.826489063@linuxfoundation.org>
+Subject: [PATCH 4.9 111/329] ibmvnic: Free RX socket buffer in case of adapter error
+Date: Mon, 28 May 2018 12:00:40 +0200
+Message-Id: <20180528100251.979657076@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,62 +30,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
 
-[ Upstream commit d3be6d2a08bd26580562d9714d3d97ea9ba22c73 ]
+[ Upstream commit 4b9b0f01350500173f17e2b2e65beb4df4ef99c7 ]
 
-For platform_suspend_ops, the finish call is too late to re-enable wake
-irqs and we need re-enable wake irqs on wake call instead.
+If a RX buffer is returned to the client driver with an error, free the
+corresponding socket buffer before continuing.
 
-Otherwise noirq resume for devices has already happened. And then
-dev_pm_disarm_wake_irq() has already disabled the dedicated wake irqs
-when the interrupt triggers and the wake irq is never handled.
-
-For devices that are already in PM runtime suspended state when we
-enter suspend this means that a possible wake irq will never trigger.
-
-And this can lead into a situation where a device has a pending padconf
-wake irq, and the device will stay unresponsive to any further wake
-irqs.
-
-This issue can be easily reproduced by setting serial console log level
-to zero, letting the serial console idle, and suspend the system from
-an ssh terminal. Then try to wake up the system by typing to the serial
-console.
-
-Note that this affects only omap3 PRM interrupt as that's currently
-the only omap variant that does anything in omap_pm_wake().
-
-In general, for the wake irqs to work, the interrupt must have either
-IRQF_NO_SUSPEND or IRQF_EARLY_RESUME set for it to trigger before
-dev_pm_disarm_wake_irq() disables the wake irqs.
-
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/pm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-omap2/pm.c
-+++ b/arch/arm/mach-omap2/pm.c
-@@ -225,7 +225,7 @@ static void omap_pm_end(void)
- 	cpu_idle_poll_ctrl(false);
- }
- 
--static void omap_pm_finish(void)
-+static void omap_pm_wake(void)
- {
- 	if (cpu_is_omap34xx())
- 		omap_prcm_irq_complete();
-@@ -235,7 +235,7 @@ static const struct platform_suspend_ops
- 	.begin		= omap_pm_begin,
- 	.end		= omap_pm_end,
- 	.enter		= omap_pm_enter,
--	.finish		= omap_pm_finish,
-+	.wake		= omap_pm_wake,
- 	.valid		= suspend_valid_only_mem,
- };
- 
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -994,6 +994,7 @@ restart_poll:
+ 			netdev_err(netdev, "rx error %x\n", next->rx_comp.rc);
+ 			/* free the entry */
+ 			next->rx_comp.first = 0;
++			dev_kfree_skb_any(rx_buff->skb);
+ 			remove_buff_from_pool(adapter, rx_buff);
+ 			break;
+ 		}
