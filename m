@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938538AbeE1MC6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:02:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53460 "EHLO mail.kernel.org"
+        id S1423293AbeE1LGh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:06:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423295AbeE1LGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:39 -0400
+        id S1423248AbeE1LG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Xidong Wang <wangxidong_97@163.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vitaly Wool <vitalywool@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 062/272] powerpc/fscr: Enable interrupts earlier before calling get_user()
-Date: Mon, 28 May 2018 12:01:35 +0200
-Message-Id: <20180528100246.089485193@linuxfoundation.org>
+Subject: [PATCH 4.16 058/272] z3fold: fix memory leak
+Date: Mon, 28 May 2018 12:01:31 +0200
+Message-Id: <20180528100245.778235103@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,79 +33,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+From: Xidong Wang <wangxidong_97@163.com>
 
-[ Upstream commit 709b973c844c0b4d115ac3a227a2e5a68722c912 ]
+[ Upstream commit 1ec6995d1290bfb87cc3a51f0836c889e857cef9 ]
 
-The function get_user() can sleep while trying to fetch instruction
-from user address space and causes the following warning from the
-scheduler.
+In z3fold_create_pool(), the memory allocated by __alloc_percpu() is not
+released on the error path that pool->compact_wq , which holds the
+return value of create_singlethread_workqueue(), is NULL.  This will
+result in a memory leak bug.
 
-BUG: sleeping function called from invalid context
-
-Though interrupts get enabled back but it happens bit later after
-get_user() is called. This change moves enabling these interrupts
-earlier covering the function get_user(). While at this, lets check
-for kernel mode and crash as this interrupt should not have been
-triggered from the kernel context.
-
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[akpm@linux-foundation.org: fix oops on kzalloc() failure, check __alloc_percpu() retval]
+Link: http://lkml.kernel.org/r/1522803111-29209-1-git-send-email-wangxidong_97@163.com
+Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vitaly Wool <vitalywool@gmail.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/traps.c |   32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ mm/z3fold.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -1612,6 +1612,22 @@ void facility_unavailable_exception(stru
- 		value = mfspr(SPRN_FSCR);
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -469,6 +469,8 @@ static struct z3fold_pool *z3fold_create
+ 	spin_lock_init(&pool->lock);
+ 	spin_lock_init(&pool->stale_lock);
+ 	pool->unbuddied = __alloc_percpu(sizeof(struct list_head)*NCHUNKS, 2);
++	if (!pool->unbuddied)
++		goto out_pool;
+ 	for_each_possible_cpu(cpu) {
+ 		struct list_head *unbuddied =
+ 				per_cpu_ptr(pool->unbuddied, cpu);
+@@ -481,7 +483,7 @@ static struct z3fold_pool *z3fold_create
+ 	pool->name = name;
+ 	pool->compact_wq = create_singlethread_workqueue(pool->name);
+ 	if (!pool->compact_wq)
+-		goto out;
++		goto out_unbuddied;
+ 	pool->release_wq = create_singlethread_workqueue(pool->name);
+ 	if (!pool->release_wq)
+ 		goto out_wq;
+@@ -491,8 +493,11 @@ static struct z3fold_pool *z3fold_create
  
- 	status = value >> 56;
-+	if ((hv || status >= 2) &&
-+	    (status < ARRAY_SIZE(facility_strings)) &&
-+	    facility_strings[status])
-+		facility = facility_strings[status];
-+
-+	/* We should not have taken this interrupt in kernel */
-+	if (!user_mode(regs)) {
-+		pr_emerg("Facility '%s' unavailable (%d) exception in kernel mode at %lx\n",
-+			 facility, status, regs->nip);
-+		die("Unexpected facility unavailable exception", regs, SIGABRT);
-+	}
-+
-+	/* We restore the interrupt state now */
-+	if (!arch_irq_disabled_regs(regs))
-+		local_irq_enable();
-+
- 	if (status == FSCR_DSCR_LG) {
- 		/*
- 		 * User is accessing the DSCR register using the problem
-@@ -1678,25 +1694,11 @@ void facility_unavailable_exception(stru
- 		return;
- 	}
- 
--	if ((hv || status >= 2) &&
--	    (status < ARRAY_SIZE(facility_strings)) &&
--	    facility_strings[status])
--		facility = facility_strings[status];
--
--	/* We restore the interrupt state now */
--	if (!arch_irq_disabled_regs(regs))
--		local_irq_enable();
--
- 	pr_err_ratelimited("%sFacility '%s' unavailable (%d), exception at 0x%lx, MSR=%lx\n",
- 		hv ? "Hypervisor " : "", facility, status, regs->nip, regs->msr);
- 
- out:
--	if (user_mode(regs)) {
--		_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
--		return;
--	}
--
--	die("Unexpected facility unavailable exception", regs, SIGABRT);
-+	_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
+ out_wq:
+ 	destroy_workqueue(pool->compact_wq);
+-out:
++out_unbuddied:
++	free_percpu(pool->unbuddied);
++out_pool:
+ 	kfree(pool);
++out:
+ 	return NULL;
  }
- #endif
  
