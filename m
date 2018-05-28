@@ -1,131 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753449AbeE1GRu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 02:17:50 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52409 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753197AbeE1GRs (ORCPT
+        id S1753476AbeE1GSz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 02:18:55 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36438 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753197AbeE1GSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 02:17:48 -0400
-X-Google-Smtp-Source: ADUXVKKCg1WhHEtAOmtwT7ts0XihDMPijKhNREwIdWSjOxr/35wD7Kk6XHuRaDnQNWZu/Al8Bpo3dg==
-From: Ivan Safonov <insafonov@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Santha Meena Ramamoorthy <santhameena13@gmail.com>,
-        Janani Sankara Babu <jananis37@gmail.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Ivan Safonov <insafonov@gmail.com>
-Subject: [PATCH] staging:r8188eu: Use lib80211 to encrypt (WEP) tx frames
-Date: Mon, 28 May 2018 09:18:21 +0300
-Message-Id: <20180528061821.26948-1-insafonov@gmail.com>
-X-Mailer: git-send-email 2.16.1
+        Mon, 28 May 2018 02:18:53 -0400
+Date: Mon, 28 May 2018 08:18:46 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Christoph Hellwig <hch@lst.de>
+cc: Ingo Molnar <mingo@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 7/7] x86: switch the VIA 32-bit DMA quirk to use the
+ struct device flag
+In-Reply-To: <20180528061859.GA4145@lst.de>
+Message-ID: <alpine.DEB.2.21.1805280817310.1585@nanos.tec.linutronix.de>
+References: <20180525143512.1466-1-hch@lst.de> <20180525143512.1466-8-hch@lst.de> <alpine.DEB.2.21.1805280808280.1585@nanos.tec.linutronix.de> <20180528061859.GA4145@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Put data to skb, decrypt with lib80211_crypt_wep, and place back to tx buffer.
+On Mon, 28 May 2018, Christoph Hellwig wrote:
 
-Signed-off-by: Ivan Safonov <insafonov@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_security.c | 72 ++++++++++++++++-----------
- 1 file changed, 43 insertions(+), 29 deletions(-)
+> On Mon, May 28, 2018 at 08:10:40AM +0200, Thomas Gleixner wrote:
+> > n Fri, 25 May 2018, Christoph Hellwig wrote:
+> > 
+> > x86/pci-dma: ...
+> > 
+> > Please
+> > 
+> > > Instead of globally disabling > 32bit DMA using the arch_dma_supported
+> > > hook walk the PCI bus under the actually affected bridge and mark every
+> > > device with the dma_32bit_limit flag.  This also gets rid of the
+> > > arch_dma_supported hook entirely.
+> > 
+> > Shouldn't this go before the other two? 
+> 
+> Which other two?  The boot optional removal patches?  They just remove
+> the visible interface, but keep the implementation which is converted
+> to the better mechanism here, so I think the order makes sense.
+> But I might be missing something..
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
-index bfe0b217e679..80d7569a3108 100644
---- a/drivers/staging/rtl8188eu/core/rtw_security.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_security.c
-@@ -139,17 +139,11 @@ static __le32 getcrc32(u8 *buf, int len)
- 	Need to consider the fragment  situation
- */
- void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
--{	/*  exclude ICV */
--
--	unsigned char	crc[4];
--	struct arc4context	 mycontext;
--
-+{
- 	int	curfragnum, length;
--	u32	keylength;
- 
--	u8	*pframe, *payload, *iv;    /* wepkey */
--	u8	wepkey[16];
--	u8   hw_hdr_offset = 0;
-+	u8 *pframe;
-+	u8 hw_hdr_offset = 0;
- 	struct	pkt_attrib	 *pattrib = &((struct xmit_frame *)pxmitframe)->attrib;
- 	struct	security_priv	*psecuritypriv = &padapter->securitypriv;
- 	struct	xmit_priv		*pxmitpriv = &padapter->xmitpriv;
-@@ -165,33 +159,53 @@ void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
- 
- 	/* start to encrypt each fragment */
- 	if ((pattrib->encrypt == _WEP40_) || (pattrib->encrypt == _WEP104_)) {
--		keylength = psecuritypriv->dot11DefKeylen[psecuritypriv->dot11PrivacyKeyIndex];
-+		const int keyindex = psecuritypriv->dot11PrivacyKeyIndex;
-+		void *crypto_private;
-+		struct sk_buff *skb;
-+		struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
-+
-+		if (!crypto_ops)
-+			goto exit;
-+
-+		crypto_private = crypto_ops->init(keyindex);
-+		if (!crypto_private)
-+			goto exit;
-+
-+		if (crypto_ops->set_key(psecuritypriv->dot11DefKey[keyindex].skey,
-+					psecuritypriv->dot11DefKeylen[keyindex], NULL, crypto_private) < 0)
-+			goto exit;
- 
- 		for (curfragnum = 0; curfragnum < pattrib->nr_frags; curfragnum++) {
--			iv = pframe+pattrib->hdrlen;
--			memcpy(&wepkey[0], iv, 3);
--			memcpy(&wepkey[3], &psecuritypriv->dot11DefKey[psecuritypriv->dot11PrivacyKeyIndex].skey[0], keylength);
--			payload = pframe+pattrib->iv_len+pattrib->hdrlen;
-+			if (curfragnum + 1 == pattrib->nr_frags)
-+				length = pattrib->last_txcmdsz;
-+			else
-+				length = pxmitpriv->frag_len;
-+			skb = dev_alloc_skb(length);
-+			if (!skb)
-+				goto exit;
- 
--			if ((curfragnum+1) == pattrib->nr_frags) {	/* the last fragment */
--				length = pattrib->last_txcmdsz-pattrib->hdrlen-pattrib->iv_len-pattrib->icv_len;
-+			skb_put_data(skb, pframe, length);
- 
--				*((__le32 *)crc) = getcrc32(payload, length);
-+			memmove(skb->data + 4, skb->data, pattrib->hdrlen);
-+			skb_pull(skb, 4);
-+			skb_trim(skb, skb->len - 4);
- 
--				arcfour_init(&mycontext, wepkey, 3+keylength);
--				arcfour_encrypt(&mycontext, payload, payload, length);
--				arcfour_encrypt(&mycontext, payload+length, crc, 4);
--			} else {
--				length = pxmitpriv->frag_len-pattrib->hdrlen-pattrib->iv_len-pattrib->icv_len;
--				*((__le32 *)crc) = getcrc32(payload, length);
--				arcfour_init(&mycontext, wepkey, 3+keylength);
--				arcfour_encrypt(&mycontext, payload, payload, length);
--				arcfour_encrypt(&mycontext, payload+length, crc, 4);
--
--				pframe += pxmitpriv->frag_len;
--				pframe = (u8 *)round_up((size_t)(pframe), 4);
-+			if (crypto_ops->encrypt_mpdu(skb, pattrib->hdrlen, crypto_private)) {
-+				kfree_skb(skb);
-+				goto exit;
- 			}
-+
-+			memcpy(pframe, skb->data, skb->len);
-+
-+			pframe += skb->len;
-+			pframe = (u8 *)round_up((size_t)(pframe), 4);
-+
-+			kfree_skb(skb);
- 		}
-+
-+exit:
-+		if (crypto_ops && crypto_private)
-+			crypto_ops->deinit(crypto_private);
- 	}
- 
- }
--- 
-2.16.1
+They remove the commandline switch before having the replacement in place
+unless I'm misreading something.
+
+Thanks,
+
+	tglx
