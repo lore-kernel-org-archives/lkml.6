@@ -1,44 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425256AbeE1PyO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:54:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43835 "EHLO mx2.suse.de"
+        id S1425302AbeE1Pyf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:54:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44268 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1425224AbeE1PyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:54:05 -0400
-Date: Mon, 28 May 2018 14:03:18 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: kernel test robot <xiaolong.ye@intel.com>
-Cc: Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [lkp-robot] [mm, memcontrol]  309fe96bfc:
- vm-scalability.throughput +23.0% improvement
-Message-ID: <20180528120318.GB27180@dhcp22.suse.cz>
-References: <20180528114019.GF9904@yexl-desktop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528114019.GF9904@yexl-desktop>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1425224AbeE1PyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:54:15 -0400
+From: Michal Suchanek <msuchanek@suse.de>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Suchanek <msuchanek@suse.de>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/64s: Enhance the information in cpu_show_spectre_v1()
+Date: Mon, 28 May 2018 15:19:14 +0200
+Message-Id: <20180528131914.32231-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180424041559.32410-1-mpe@ellerman.id.au>
+References: <20180424041559.32410-1-mpe@ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 28-05-18 19:40:19, kernel test robot wrote:
-> 
-> Greeting,
-> 
-> FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
-> 
-> 
-> commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
-This doesn't make any sense to me. The patch merely adds an accounting.
-It doesn't optimize anything. So I strongly suspect the result is just
-misleading or the test (environment) misconfigured. Not the first time
-I am seeing something like that I am afraid.
+We now have barrier_nospec as mitigation so print it in
+cpu_show_spectre_v1 when enabled.
 
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ arch/powerpc/kernel/security.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
+index 0239383c7e4d..a0c32d53980b 100644
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -120,7 +120,10 @@ ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, c
+ 	if (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR))
+ 		return sprintf(buf, "Not affected\n");
+ 
+-	return sprintf(buf, "Vulnerable\n");
++	if (barrier_nospec_enabled)
++		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++	else
++		return sprintf(buf, "Vulnerable\n");
+ }
+ 
+ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
 -- 
-Michal Hocko
-SUSE Labs
+2.13.6
