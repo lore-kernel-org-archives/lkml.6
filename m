@@ -1,72 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966006AbeE1KPG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:15:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34996 "EHLO mail.kernel.org"
+        id S1755487AbeE1QEJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:04:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47975 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936897AbeE1KOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:54 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 021/268] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
-Date: Mon, 28 May 2018 11:59:55 +0200
-Message-Id: <20180528100204.475849094@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S933293AbeE1QED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:04:03 -0400
+Date: Mon, 28 May 2018 11:19:23 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+Message-ID: <20180528091923.GH1517@dhcp22.suse.cz>
+References: <20180424183536.GF30619@thunk.org>
+ <20180524114341.1101-1-mhocko@kernel.org>
+ <20180524221715.GY10363@dastard>
+ <20180525081624.GH11881@dhcp22.suse.cz>
+ <20180527234854.GF23861@dastard>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180527234854.GF23861@dastard>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon 28-05-18 09:48:54, Dave Chinner wrote:
+> On Fri, May 25, 2018 at 10:16:24AM +0200, Michal Hocko wrote:
+> > On Fri 25-05-18 08:17:15, Dave Chinner wrote:
+> > > On Thu, May 24, 2018 at 01:43:41PM +0200, Michal Hocko wrote:
+> > [...]
+> > > > +FS/IO code then simply calls the appropriate save function right at the
+> > > > +layer where a lock taken from the reclaim context (e.g. shrinker) and
+> > > > +the corresponding restore function when the lock is released. All that
+> > > > +ideally along with an explanation what is the reclaim context for easier
+> > > > +maintenance.
+> > > 
+> > > This paragraph doesn't make much sense to me. I think you're trying
+> > > to say that we should call the appropriate save function "before
+> > > locks are taken that a reclaim context (e.g a shrinker) might
+> > > require access to."
+> > > 
+> > > I think it's also worth making a note about recursive/nested
+> > > save/restore stacking, because it's not clear from this description
+> > > that this is allowed and will work as long as inner save/restore
+> > > calls are fully nested inside outer save/restore contexts.
+> > 
+> > Any better?
+> > 
+> > -FS/IO code then simply calls the appropriate save function right at the
+> > -layer where a lock taken from the reclaim context (e.g. shrinker) and
+> > -the corresponding restore function when the lock is released. All that
+> > -ideally along with an explanation what is the reclaim context for easier
+> > -maintenance.
+> > +FS/IO code then simply calls the appropriate save function before any
+> > +lock shared with the reclaim context is taken.  The corresponding
+> > +restore function when the lock is released. All that ideally along with
+> > +an explanation what is the reclaim context for easier maintenance.
+> > +
+> > +Please note that the proper pairing of save/restore function allows nesting
+> > +so memalloc_noio_save is safe to be called from an existing NOIO or NOFS scope.
+> 
+> It's better, but the talk of this being necessary for locking makes
+> me cringe. XFS doesn't do it for locking reasons - it does it
+> largely for preventing transaction context nesting, which has all
+> sorts of problems that cause hangs (e.g. log space reservations
+> can't be filled) that aren't directly locking related.
 
-------------------
-
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-[ Upstream commit 123af9043e93cb6f235207d260d50f832cdb5439 ]
-
-The loop timeout doesn't work because it's a post op and ends with "tmo"
-set to -1.  I changed it from a post-op to a pre-op and I changed the
-initial the starting value from 5 to 6 so we still iterate 5 times.  I
-left the other as it was because it's a large number.
-
-Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/soc/au1x/ac97c.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/sound/soc/au1x/ac97c.c
-+++ b/sound/soc/au1x/ac97c.c
-@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
- 	do {
- 		mutex_lock(&ctx->lock);
+Yeah, I wanted to not mention locks as much as possible.
  
--		tmo = 5;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		tmo = 6;
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			udelay(21);	/* wait an ac97 frame time */
- 		if (!tmo) {
- 			pr_debug("ac97rd timeout #1\n");
-@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
- 		 * poll, Forrest, poll...
- 		 */
- 		tmo = 0x10000;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			asm volatile ("nop");
- 		data = RD(ctx, AC97_CMDRESP);
+> i.e we should be talking about using these functions around contexts
+> where recursion back into the filesystem through reclaim is
+> problematic, not that "holding locks" is problematic. Locks can be
+> used as an example of a problematic context, but locks are not the
+> only recursion issue that require GFP_NOFS allocation contexts to
+> avoid.
+
+agreed. Do you have any suggestion how to add a more abstract wording
+that would not make head spinning?
+
+I've tried the following. Any better?
+
+diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+index c0ec212d6773..adac362b2875 100644
+--- a/Documentation/core-api/gfp_mask-from-fs-io.rst
++++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+@@ -34,9 +34,11 @@ scope will inherently drop __GFP_FS respectively __GFP_IO from the given
+ mask so no memory allocation can recurse back in the FS/IO.
  
+ FS/IO code then simply calls the appropriate save function before any
+-lock shared with the reclaim context is taken.  The corresponding
+-restore function when the lock is released. All that ideally along with
+-an explanation what is the reclaim context for easier maintenance.
++critical section wrt. the reclaim is started - e.g. lock shared with the
++reclaim context or when a transaction context nesting would be possible
++via reclaim. The corresponding restore function when the critical
++section ends. All that ideally along with an explanation what is
++the reclaim context for easier maintenance.
+ 
+ Please note that the proper pairing of save/restore function allows nesting
+ so memalloc_noio_save is safe to be called from an existing NOIO or NOFS scope.
+-- 
+Michal Hocko
+SUSE Labs
