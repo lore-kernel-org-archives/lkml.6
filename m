@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938295AbeE1Lfv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:35:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32788 "EHLO mail.kernel.org"
+        id S938316AbeE1Lg0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:36:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938124AbeE1LNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:13:25 -0400
+        id S1424220AbeE1LNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Mori Hess <fmh6jj@gmail.com>,
-        Qi Hou <qi.hou@windriver.com>, Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 206/272] dmaengine: pl330: fix a race condition in case of threaded irqs
-Date: Mon, 28 May 2018 12:03:59 +0200
-Message-Id: <20180528100257.819428881@linuxfoundation.org>
+Subject: [PATCH 4.16 201/272] phy: qcom-qmp: Fix phy pipe clock gating
+Date: Mon, 28 May 2018 12:03:54 +0200
+Message-Id: <20180528100257.428919683@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,160 +31,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qi Hou <qi.hou@windriver.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-[ Upstream commit a3ca831249ca8c4c226e4ceafee04e280152e59d ]
+[ Upstream commit f8ba22a39e985c93e278709b1d5f20857a26b49b ]
 
-When booting up with "threadirqs" in command line, all irq handlers of the DMA
-controller pl330 will be threaded forcedly. These threads will race for the same
-list, pl330->req_done.
+Pipe clock comes out of the phy and is available as long as
+the phy is turned on. Clock controller fails to gate this
+clock after the phy is turned off and generates a warning.
 
-Before the callback, the spinlock was released. And after it, the spinlock was
-taken. This opened an race window where another threaded irq handler could steal
-the spinlock and be permitted to delete entries of the list, pl330->req_done.
+/ # [   33.048561] gcc_usb3_phy_pipe_clk status stuck at 'on'
+[   33.048585] ------------[ cut here ]------------
+[   33.052621] WARNING: CPU: 1 PID: 18 at ../drivers/clk/qcom/clk-branch.c:97 clk_branch_wait+0xf0/0x108
+[   33.057384] Modules linked in:
+[   33.066497] CPU: 1 PID: 18 Comm: kworker/1:0 Tainted: G        W       4.12.0-rc7-00024-gfe926e34c36d-dirty #96
+[   33.069451] Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
+...
+[   33.278565] [<ffff00000849b27c>] clk_branch_wait+0xf0/0x108
+[   33.286375] [<ffff00000849b2f4>] clk_branch2_disable+0x28/0x34
+[   33.291761] [<ffff0000084868dc>] clk_core_disable+0x5c/0x88
+[   33.297660] [<ffff000008487d68>] clk_core_disable_lock+0x20/0x34
+[   33.303129] [<ffff000008487d98>] clk_disable+0x1c/0x24
+[   33.309384] [<ffff0000083ccd78>] qcom_qmp_phy_poweroff+0x20/0x48
+[   33.314328] [<ffff0000083c53f4>] phy_power_off+0x80/0xdc
+[   33.320492] [<ffff00000875c950>] dwc3_core_exit+0x94/0xa0
+[   33.325784] [<ffff00000875c9ac>] dwc3_suspend_common+0x50/0x60
+[   33.331080] [<ffff00000875ca04>] dwc3_runtime_suspend+0x48/0x6c
+[   33.336810] [<ffff0000085b82f4>] pm_generic_runtime_suspend+0x28/0x38
+[   33.342627] [<ffff0000085bace0>] __rpm_callback+0x150/0x254
+[   33.349222] [<ffff0000085bae08>] rpm_callback+0x24/0x78
+[   33.354604] [<ffff0000085b9fd8>] rpm_suspend+0xe0/0x4e4
+[   33.359813] [<ffff0000085bb784>] pm_runtime_work+0xdc/0xf0
+[   33.365028] [<ffff0000080d7b30>] process_one_work+0x12c/0x28c
+[   33.370576] [<ffff0000080d7ce8>] worker_thread+0x58/0x3b8
+[   33.376393] [<ffff0000080dd4a8>] kthread+0x100/0x12c
+[   33.381776] [<ffff0000080836c0>] ret_from_fork+0x10/0x50
 
-If the later deleted an entry that was still referred to by the former, there would
-be a kernel panic when the former was scheduled and tried to get the next sibling
-of the deleted entry.
+Fix this by disabling it as the first thing in phy_exit().
 
-The scenario could be depicted as below:
-
-  Thread: T1  pl330->req_done  Thread: T2
-      |             |              |
-      |          -A-B-C-D-         |
-    Locked          |              |
-      |             |           Waiting
-    Del A           |              |
-      |          -B-C-D-           |
-    Unlocked        |              |
-      |             |           Locked
-    Waiting         |              |
-      |             |            Del B
-      |             |              |
-      |           -C-D-         Unlocked
-    Waiting         |              |
-      |
-    Locked
-      |
-   get C via B
-      \
-       - Kernel panic
-
-The kernel panic looked like as below:
-
-Unable to handle kernel paging request at virtual address dead000000000108
-pgd = ffffff8008c9e000
-[dead000000000108] *pgd=000000027fffe003, *pud=000000027fffe003, *pmd=0000000000000000
-Internal error: Oops: 96000044 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 85 Comm: irq/59-66330000 Not tainted 4.8.24-WR9.0.0.12_standard #2
-Hardware name: Broadcom NS2 SVK (DT)
-task: ffffffc1f5cc3c00 task.stack: ffffffc1f5ce0000
-PC is at pl330_irq_handler+0x27c/0x390
-LR is at pl330_irq_handler+0x2a8/0x390
-pc : [<ffffff80084cb694>] lr : [<ffffff80084cb6c0>] pstate: 800001c5
-sp : ffffffc1f5ce3d00
-x29: ffffffc1f5ce3d00 x28: 0000000000000140
-x27: ffffffc1f5c530b0 x26: dead000000000100
-x25: dead000000000200 x24: 0000000000418958
-x23: 0000000000000001 x22: ffffffc1f5ccd668
-x21: ffffffc1f5ccd590 x20: ffffffc1f5ccd418
-x19: dead000000000060 x18: 0000000000000001
-x17: 0000000000000007 x16: 0000000000000001
-x15: ffffffffffffffff x14: ffffffffffffffff
-x13: ffffffffffffffff x12: 0000000000000000
-x11: 0000000000000001 x10: 0000000000000840
-x9 : ffffffc1f5ce0000 x8 : ffffffc1f5cc3338
-x7 : ffffff8008ce2020 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : dead000000000200 x2 : dead000000000100
-x1 : 0000000000000140 x0 : ffffffc1f5ccd590
-
-Process irq/59-66330000 (pid: 85, stack limit = 0xffffffc1f5ce0020)
-Stack: (0xffffffc1f5ce3d00 to 0xffffffc1f5ce4000)
-3d00: ffffffc1f5ce3d80 ffffff80080f09d0 ffffffc1f5ca0c00 ffffffc1f6f7c600
-3d20: ffffffc1f5ce0000 ffffffc1f6f7c600 ffffffc1f5ca0c00 ffffff80080f0998
-3d40: ffffffc1f5ce0000 ffffff80080f0000 0000000000000000 0000000000000000
-3d60: ffffff8008ce202c ffffff8008ce2020 ffffffc1f5ccd668 ffffffc1f5c530b0
-3d80: ffffffc1f5ce3db0 ffffff80080f0d70 ffffffc1f5ca0c40 0000000000000001
-3da0: ffffffc1f5ce0000 ffffff80080f0cfc ffffffc1f5ce3e20 ffffff80080bf4f8
-3dc0: ffffffc1f5ca0c80 ffffff8008bf3798 ffffff8008955528 ffffffc1f5ca0c00
-3de0: ffffff80080f0c30 0000000000000000 0000000000000000 0000000000000000
-3e00: 0000000000000000 0000000000000000 0000000000000000 ffffff80080f0b68
-3e20: 0000000000000000 ffffff8008083690 ffffff80080bf420 ffffffc1f5ca0c80
-3e40: 0000000000000000 0000000000000000 0000000000000000 ffffff80080cb648
-3e60: ffffff8008b1c780 0000000000000000 0000000000000000 ffffffc1f5ca0c00
-3e80: ffffffc100000000 ffffff8000000000 ffffffc1f5ce3e90 ffffffc1f5ce3e90
-3ea0: 0000000000000000 ffffff8000000000 ffffffc1f5ce3eb0 ffffffc1f5ce3eb0
-3ec0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3ee0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f00: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f40: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f60: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f80: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3fa0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3fc0: 0000000000000000 0000000000000005 0000000000000000 0000000000000000
-3fe0: 0000000000000000 0000000000000000 0000000275ce3ff0 0000000275ce3ff8
-Call trace:
-Exception stack(0xffffffc1f5ce3b30 to 0xffffffc1f5ce3c60)
-3b20:                                   dead000000000060 0000008000000000
-3b40: ffffffc1f5ce3d00 ffffff80084cb694 0000000000000008 0000000000000e88
-3b60: ffffffc1f5ce3bb0 ffffff80080dac68 ffffffc1f5ce3b90 ffffff8008826fe4
-3b80: 00000000000001c0 00000000000001c0 ffffffc1f5ce3bb0 ffffff800848dfcc
-3ba0: 0000000000020000 ffffff8008b15ae4 ffffffc1f5ce3c00 ffffff800808f000
-3bc0: 0000000000000010 ffffff80088377f0 ffffffc1f5ccd590 0000000000000140
-3be0: dead000000000100 dead000000000200 0000000000000001 0000000000000000
-3c00: 0000000000000000 ffffff8008ce2020 ffffffc1f5cc3338 ffffffc1f5ce0000
-3c20: 0000000000000840 0000000000000001 0000000000000000 ffffffffffffffff
-3c40: ffffffffffffffff ffffffffffffffff 0000000000000001 0000000000000007
-[<ffffff80084cb694>] pl330_irq_handler+0x27c/0x390
-[<ffffff80080f09d0>] irq_forced_thread_fn+0x38/0x88
-[<ffffff80080f0d70>] irq_thread+0x140/0x200
-[<ffffff80080bf4f8>] kthread+0xd8/0xf0
-[<ffffff8008083690>] ret_from_fork+0x10/0x40
-Code: f2a00838 f9405763 aa1c03e1 aa1503e0 (f9000443)
----[ end trace f50005726d31199c ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-SMP: stopping secondary CPUs
-SMP: failed to stop secondary CPUs 0-1
-Kernel Offset: disabled
-Memory Limit: none
----[ end Kernel panic - not syncing: Fatal exception in interrupt
-
-To fix this, re-start with the list-head after dropping the lock then
-re-takeing it.
-
-Reviewed-by: Frank Mori Hess <fmh6jj@gmail.com>
-Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
-Signed-off-by: Qi Hou <qi.hou@windriver.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-
+Fixes: e78f3d15e115 ("phy: qcom-qmp: new qmp phy driver for qcom-chipsets")
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/pl330.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qmp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -1510,7 +1510,7 @@ static void pl330_dotask(unsigned long d
- /* Returns 1 if state was updated, 0 otherwise */
- static int pl330_update(struct pl330_dmac *pl330)
- {
--	struct dma_pl330_desc *descdone, *tmp;
-+	struct dma_pl330_desc *descdone;
- 	unsigned long flags;
- 	void __iomem *regs;
- 	u32 val;
-@@ -1588,7 +1588,9 @@ static int pl330_update(struct pl330_dma
- 	}
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -751,8 +751,6 @@ static int qcom_qmp_phy_poweroff(struct
+ 	struct qmp_phy *qphy = phy_get_drvdata(phy);
+ 	struct qcom_qmp *qmp = qphy->qmp;
  
- 	/* Now that we are in no hurry, do the callbacks */
--	list_for_each_entry_safe(descdone, tmp, &pl330->req_done, rqd) {
-+	while (!list_empty(&pl330->req_done)) {
-+		descdone = list_first_entry(&pl330->req_done,
-+					    struct dma_pl330_desc, rqd);
- 		list_del(&descdone->rqd);
- 		spin_unlock_irqrestore(&pl330->lock, flags);
- 		dma_pl330_rqcb(descdone, PL330_ERR_NONE);
+-	clk_disable_unprepare(qphy->pipe_clk);
+-
+ 	regulator_bulk_disable(qmp->cfg->num_vregs, qmp->vregs);
+ 
+ 	return 0;
+@@ -936,6 +934,8 @@ static int qcom_qmp_phy_exit(struct phy
+ 	const struct qmp_phy_cfg *cfg = qmp->cfg;
+ 	int i = cfg->num_clks;
+ 
++	clk_disable_unprepare(qphy->pipe_clk);
++
+ 	/* PHY reset */
+ 	qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+ 
