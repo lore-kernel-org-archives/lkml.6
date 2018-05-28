@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163070AbeE1Kox (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:44:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35486 "EHLO mail.kernel.org"
+        id S1163067AbeE1Kou (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:44:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163048AbeE1Kot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:49 -0400
+        id S937393AbeE1Kon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naftali Goldstein <naftali.goldstein@intel.com>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 084/496] iwlwifi: mvm: always init rs with 20mhz bandwidth rates
-Date: Mon, 28 May 2018 11:57:49 +0200
-Message-Id: <20180528100323.335987345@linuxfoundation.org>
+Subject: [PATCH 4.14 082/496] iwlwifi: mvm: fix security bug in PN checking
+Date: Mon, 28 May 2018 11:57:47 +0200
+Message-Id: <20180528100323.238939701@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,98 +30,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naftali Goldstein <naftali.goldstein@intel.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 6b7a5aea71b342ec0593d23b08383e1f33da4c9a ]
+[ Upstream commit 5ab2ba931255d8bf03009c06d58dce97de32797c ]
 
-In AP mode, when a new station associates, rs is initialized immediately
-upon association completion, before the phy context is updated with the
-association parameters, so the sta bandwidth might be wider than the phy
-context allows.
-To avoid this issue, always initialize rs with 20mhz bandwidth rate, and
-after authorization, when the phy context is already up-to-date, re-init
-rs with the correct bw.
+A previous patch allowed the same PN for packets originating from the
+same AMSDU by copying PN only for the last packet in the series.
 
-Signed-off-by: Naftali Goldstein <naftali.goldstein@intel.com>
+This however is bogus since we cannot assume the last frame will be
+received on the same queue, and if it is received on a different ueue
+we will end up not incrementing the PN and possibly let the next
+packet to have the same PN and pass through.
+
+Change the logic instead to driver explicitly indicate for the second
+sub frame and on to be allowed to have the same PN as the first
+subframe. Indicate it to mac80211 as well for the fallback queue.
+
+Fixes: f1ae02b186d9 ("iwlwifi: mvm: allow same PN for de-aggregated AMSDU")
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    4 +++
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c       |   28 +++++++++++++++-------
- 2 files changed, 24 insertions(+), 8 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c |   39 +++++++++++++-------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -2703,6 +2703,10 @@ static int iwl_mvm_mac_sta_state(struct
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
+@@ -71,6 +71,7 @@ static inline int iwl_mvm_check_pn(struc
+ 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+ 	struct ieee80211_rx_status *stats = IEEE80211_SKB_RXCB(skb);
+ 	struct iwl_mvm_key_pn *ptk_pn;
++	int res;
+ 	u8 tid, keyidx;
+ 	u8 pn[IEEE80211_CCMP_PN_LEN];
+ 	u8 *extiv;
+@@ -127,12 +128,13 @@ static inline int iwl_mvm_check_pn(struc
+ 	pn[4] = extiv[1];
+ 	pn[5] = extiv[0];
  
- 		/* enable beacon filtering */
- 		WARN_ON(iwl_mvm_enable_beacon_filter(mvm, vif, 0));
-+
-+		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band,
-+				     false);
-+
- 		ret = 0;
- 	} else if (old_state == IEEE80211_STA_AUTHORIZED &&
- 		   new_state == IEEE80211_STA_ASSOC) {
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -2690,7 +2690,8 @@ static void rs_get_initial_rate(struct i
- 				struct ieee80211_sta *sta,
- 				struct iwl_lq_sta *lq_sta,
- 				enum nl80211_band band,
--				struct rs_rate *rate)
-+				struct rs_rate *rate,
-+				bool init)
+-	if (memcmp(pn, ptk_pn->q[queue].pn[tid],
+-		   IEEE80211_CCMP_PN_LEN) <= 0)
++	res = memcmp(pn, ptk_pn->q[queue].pn[tid], IEEE80211_CCMP_PN_LEN);
++	if (res < 0)
++		return -1;
++	if (!res && !(stats->flag & RX_FLAG_ALLOW_SAME_PN))
+ 		return -1;
+ 
+-	if (!(stats->flag & RX_FLAG_AMSDU_MORE))
+-		memcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);
++	memcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);
+ 	stats->flag |= RX_FLAG_PN_VALIDATED;
+ 
+ 	return 0;
+@@ -310,28 +312,21 @@ static void iwl_mvm_rx_csum(struct ieee8
+ }
+ 
+ /*
+- * returns true if a packet outside BA session is a duplicate and
+- * should be dropped
++ * returns true if a packet is a duplicate and should be dropped.
++ * Updates AMSDU PN tracking info
+  */
+-static bool iwl_mvm_is_nonagg_dup(struct ieee80211_sta *sta, int queue,
+-				  struct ieee80211_rx_status *rx_status,
+-				  struct ieee80211_hdr *hdr,
+-				  struct iwl_rx_mpdu_desc *desc)
++static bool iwl_mvm_is_dup(struct ieee80211_sta *sta, int queue,
++			   struct ieee80211_rx_status *rx_status,
++			   struct ieee80211_hdr *hdr,
++			   struct iwl_rx_mpdu_desc *desc)
  {
- 	int i, nentries;
- 	unsigned long active_rate;
-@@ -2744,14 +2745,25 @@ static void rs_get_initial_rate(struct i
- 	 */
- 	if (sta->vht_cap.vht_supported &&
- 	    best_rssi > IWL_RS_LOW_RSSI_THRESHOLD) {
--		switch (sta->bandwidth) {
--		case IEEE80211_STA_RX_BW_160:
--		case IEEE80211_STA_RX_BW_80:
--		case IEEE80211_STA_RX_BW_40:
-+		/*
-+		 * In AP mode, when a new station associates, rs is initialized
-+		 * immediately upon association completion, before the phy
-+		 * context is updated with the association parameters, so the
-+		 * sta bandwidth might be wider than the phy context allows.
-+		 * To avoid this issue, always initialize rs with 20mhz
-+		 * bandwidth rate, and after authorization, when the phy context
-+		 * is already up-to-date, re-init rs with the correct bw.
-+		 */
-+		u32 bw = init ? RATE_MCS_CHAN_WIDTH_20 : rs_bw_from_sta_bw(sta);
+ 	struct iwl_mvm_sta *mvm_sta;
+ 	struct iwl_mvm_rxq_dup_data *dup_data;
+-	u8 baid, tid, sub_frame_idx;
++	u8 tid, sub_frame_idx;
+ 
+ 	if (WARN_ON(IS_ERR_OR_NULL(sta)))
+ 		return false;
+ 
+-	baid = (le32_to_cpu(desc->reorder_data) &
+-		IWL_RX_MPDU_REORDER_BAID_MASK) >>
+-		IWL_RX_MPDU_REORDER_BAID_SHIFT;
+-
+-	if (baid != IWL_RX_REORDER_DATA_INVALID_BAID)
+-		return false;
+-
+ 	mvm_sta = iwl_mvm_sta_from_mac80211(sta);
+ 	dup_data = &mvm_sta->dup_data[queue];
+ 
+@@ -361,6 +356,12 @@ static bool iwl_mvm_is_nonagg_dup(struct
+ 		     dup_data->last_sub_frame[tid] >= sub_frame_idx))
+ 		return true;
+ 
++	/* Allow same PN as the first subframe for following sub frames */
++	if (dup_data->last_seq[tid] == hdr->seq_ctrl &&
++	    sub_frame_idx > dup_data->last_sub_frame[tid] &&
++	    desc->mac_flags2 & IWL_RX_MPDU_MFLG2_AMSDU)
++		rx_status->flag |= RX_FLAG_ALLOW_SAME_PN;
 +
-+		switch (bw) {
-+		case RATE_MCS_CHAN_WIDTH_40:
-+		case RATE_MCS_CHAN_WIDTH_80:
-+		case RATE_MCS_CHAN_WIDTH_160:
- 			initial_rates = rs_optimal_rates_vht;
- 			nentries = ARRAY_SIZE(rs_optimal_rates_vht);
- 			break;
--		case IEEE80211_STA_RX_BW_20:
-+		case RATE_MCS_CHAN_WIDTH_20:
- 			initial_rates = rs_optimal_rates_vht_20mhz;
- 			nentries = ARRAY_SIZE(rs_optimal_rates_vht_20mhz);
- 			break;
-@@ -2762,7 +2774,7 @@ static void rs_get_initial_rate(struct i
+ 	dup_data->last_seq[tid] = hdr->seq_ctrl;
+ 	dup_data->last_sub_frame[tid] = sub_frame_idx;
  
- 		active_rate = lq_sta->active_siso_rate;
- 		rate->type = LQ_VHT_SISO;
--		rate->bw = rs_bw_from_sta_bw(sta);
-+		rate->bw = bw;
- 	} else if (sta->ht_cap.ht_supported &&
- 		   best_rssi > IWL_RS_LOW_RSSI_THRESHOLD) {
- 		initial_rates = rs_optimal_rates_ht;
-@@ -2844,7 +2856,7 @@ static void rs_initialize_lq(struct iwl_
- 	tbl = &(lq_sta->lq_info[active_tbl]);
- 	rate = &tbl->rate;
+@@ -929,7 +930,7 @@ void iwl_mvm_rx_mpdu_mq(struct iwl_mvm *
+ 		if (ieee80211_is_data(hdr->frame_control))
+ 			iwl_mvm_rx_csum(sta, skb, desc);
  
--	rs_get_initial_rate(mvm, sta, lq_sta, band, rate);
-+	rs_get_initial_rate(mvm, sta, lq_sta, band, rate, init);
- 	rs_init_optimal_rate(mvm, sta, lq_sta);
- 
- 	WARN_ONCE(rate->ant != ANT_A && rate->ant != ANT_B,
+-		if (iwl_mvm_is_nonagg_dup(sta, queue, rx_status, hdr, desc)) {
++		if (iwl_mvm_is_dup(sta, queue, rx_status, hdr, desc)) {
+ 			kfree_skb(skb);
+ 			goto out;
+ 		}
