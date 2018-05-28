@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164964AbeE1NHf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:07:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41486 "EHLO mail.kernel.org"
+        id S1164000AbeE1NID (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:08:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163923AbeE1KwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:52:08 -0400
+        id S1163910AbeE1Kv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:51:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 241/496] dmaengine: mv_xor_v2: Fix clock resource by adding a register clock
-Date: Mon, 28 May 2018 12:00:26 +0200
-Message-Id: <20180528100330.058046222@linuxfoundation.org>
+Subject: [PATCH 4.14 238/496] arm64: Relax ARM_SMCCC_ARCH_WORKAROUND_1 discovery
+Date: Mon, 28 May 2018 12:00:23 +0200
+Message-Id: <20180528100329.934895415@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,91 +30,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit 3cd2c313f1d618f92d1294addc6c685c17065761 ]
+[ Upstream commit e21da1c992007594d391e7b301779cf30f438691 ]
 
-On the CP110 components which are present on the Armada 7K/8K SoC we need
-to explicitly enable the clock for the registers. However it is not
-needed for the AP8xx component, that's why this clock is optional.
+A recent update to the ARM SMCCC ARCH_WORKAROUND_1 specification
+allows firmware to return a non zero, positive value to describe
+that although the mitigation is implemented at the higher exception
+level, the CPU on which the call is made is not affected.
 
-With this patch both clock have now a name, but in order to be backward
-compatible, the name of the first clock is not used. It allows to still
-use this clock with a device tree using the old binding.
+Let's relax the check on the return value from ARCH_WORKAROUND_1
+so that we only error out if the returned value is negative.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Fixes: b092201e0020 ("arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/dma/mv-xor-v2.txt |    6 ++++
- drivers/dma/mv_xor_v2.c                             |   25 ++++++++++++++++----
- 2 files changed, 25 insertions(+), 6 deletions(-)
+ arch/arm64/kernel/cpu_errata.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-+++ b/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-@@ -11,7 +11,11 @@ Required properties:
-   interrupts.
- 
- Optional properties:
--- clocks: Optional reference to the clock used by the XOR engine.
-+- clocks: Optional reference to the clocks used by the XOR engine.
-+- clock-names: mandatory if there is a second clock, in this case the
-+   name must be "core" for the first clock and "reg" for the second
-+   one
-+
- 
- Example:
- 
---- a/drivers/dma/mv_xor_v2.c
-+++ b/drivers/dma/mv_xor_v2.c
-@@ -163,6 +163,7 @@ struct mv_xor_v2_device {
- 	void __iomem *dma_base;
- 	void __iomem *glob_base;
- 	struct clk *clk;
-+	struct clk *reg_clk;
- 	struct tasklet_struct irq_tasklet;
- 	struct list_head free_sw_desc;
- 	struct dma_device dmadev;
-@@ -749,13 +750,26 @@ static int mv_xor_v2_probe(struct platfo
- 	if (ret)
- 		return ret;
- 
-+	xor_dev->reg_clk = devm_clk_get(&pdev->dev, "reg");
-+	if (PTR_ERR(xor_dev->reg_clk) != -ENOENT) {
-+		if (!IS_ERR(xor_dev->reg_clk)) {
-+			ret = clk_prepare_enable(xor_dev->reg_clk);
-+			if (ret)
-+				return ret;
-+		} else {
-+			return PTR_ERR(xor_dev->reg_clk);
-+		}
-+	}
-+
- 	xor_dev->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(xor_dev->clk) && PTR_ERR(xor_dev->clk) == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (IS_ERR(xor_dev->clk) && PTR_ERR(xor_dev->clk) == -EPROBE_DEFER) {
-+		ret = EPROBE_DEFER;
-+		goto disable_reg_clk;
-+	}
- 	if (!IS_ERR(xor_dev->clk)) {
- 		ret = clk_prepare_enable(xor_dev->clk);
- 		if (ret)
--			return ret;
-+			goto disable_reg_clk;
- 	}
- 
- 	ret = platform_msi_domain_alloc_irqs(&pdev->dev, 1,
-@@ -866,8 +880,9 @@ free_hw_desq:
- free_msi_irqs:
- 	platform_msi_domain_free_irqs(&pdev->dev);
- disable_clk:
--	if (!IS_ERR(xor_dev->clk))
--		clk_disable_unprepare(xor_dev->clk);
-+	clk_disable_unprepare(xor_dev->clk);
-+disable_reg_clk:
-+	clk_disable_unprepare(xor_dev->reg_clk);
- 	return ret;
- }
- 
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -178,7 +178,7 @@ static int enable_smccc_arch_workaround_
+ 	case PSCI_CONDUIT_HVC:
+ 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+-		if (res.a0)
++		if ((int)res.a0 < 0)
+ 			return 0;
+ 		cb = call_hvc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_hvc_start;
+@@ -188,7 +188,7 @@ static int enable_smccc_arch_workaround_
+ 	case PSCI_CONDUIT_SMC:
+ 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+-		if (res.a0)
++		if ((int)res.a0 < 0)
+ 			return 0;
+ 		cb = call_smc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_smc_start;
