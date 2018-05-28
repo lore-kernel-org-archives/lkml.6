@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968965AbeE1NpT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:45:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34320 "EHLO mail.kernel.org"
+        id S937603AbeE1Nqs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:46:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932333AbeE1KnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:43:13 -0400
+        id S937431AbeE1Km5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 049/496] powerpc/pseries: Use the security flags in pseries_setup_rfi_flush()
-Date: Mon, 28 May 2018 11:57:14 +0200
-Message-Id: <20180528100321.820399165@linuxfoundation.org>
+Subject: [PATCH 4.14 043/496] powerpc: Add security feature flags for Spectre/Meltdown
+Date: Mon, 28 May 2018 11:57:08 +0200
+Message-Id: <20180528100321.511531817@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,60 +30,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 2e4a16161fcd324b1f9bf6cb6856529f7eaf0689 upstream.
+commit 9a868f634349e62922c226834aa23e3d1329ae7f upstream.
 
-Now that we have the security flags we can simplify the code in
-pseries_setup_rfi_flush() because the security flags have pessimistic
-defaults.
+This commit adds security feature flags to reflect the settings we
+receive from firmware regarding Spectre/Meltdown mitigations.
+
+The feature names reflect the names we are given by firmware on bare
+metal machines. See the hostboot source for details.
+
+Arguably these could be firmware features, but that then requires them
+to be read early in boot so they're available prior to asm feature
+patching, but we don't actually want to use them for patching. We may
+also want to dynamically update them in future, which would be
+incompatible with the way firmware features work (at the moment at
+least). So for now just make them separate flags.
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/setup.c |   27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ arch/powerpc/include/asm/security_features.h |   65 +++++++++++++++++++++++++++
+ arch/powerpc/kernel/Makefile                 |    2 
+ arch/powerpc/kernel/security.c               |   15 ++++++
+ 3 files changed, 81 insertions(+), 1 deletion(-)
+ create mode 100644 arch/powerpc/include/asm/security_features.h
+ create mode 100644 arch/powerpc/kernel/security.c
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -501,30 +501,27 @@ void pseries_setup_rfi_flush(void)
- 	bool enable;
- 	long rc;
- 
--	/* Enable by default */
--	enable = true;
--	types = L1D_FLUSH_FALLBACK;
--
- 	rc = plpar_get_cpu_characteristics(&result);
--	if (rc == H_SUCCESS) {
-+	if (rc == H_SUCCESS)
- 		init_cpu_char_feature_flags(&result);
- 
--		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
--			types |= L1D_FLUSH_MTTRIG;
--		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
--			types |= L1D_FLUSH_ORI;
--
--		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
--		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
--			enable = false;
--	}
--
- 	/*
- 	 * We're the guest so this doesn't apply to us, clear it to simplify
- 	 * handling of it elsewhere.
- 	 */
- 	security_ftr_clear(SEC_FTR_L1D_FLUSH_HV);
- 
-+	types = L1D_FLUSH_FALLBACK;
+--- /dev/null
++++ b/arch/powerpc/include/asm/security_features.h
+@@ -0,0 +1,65 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Security related feature bit definitions.
++ *
++ * Copyright 2018, Michael Ellerman, IBM Corporation.
++ */
 +
-+	if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_TRIG2))
-+		types |= L1D_FLUSH_MTTRIG;
++#ifndef _ASM_POWERPC_SECURITY_FEATURES_H
++#define _ASM_POWERPC_SECURITY_FEATURES_H
 +
-+	if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_ORI30))
-+		types |= L1D_FLUSH_ORI;
 +
-+	enable = security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) && \
-+		 security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR);
++extern unsigned long powerpc_security_features;
 +
- 	setup_rfi_flush(types, enable);
- }
- 
++static inline void security_ftr_set(unsigned long feature)
++{
++	powerpc_security_features |= feature;
++}
++
++static inline void security_ftr_clear(unsigned long feature)
++{
++	powerpc_security_features &= ~feature;
++}
++
++static inline bool security_ftr_enabled(unsigned long feature)
++{
++	return !!(powerpc_security_features & feature);
++}
++
++
++// Features indicating support for Spectre/Meltdown mitigations
++
++// The L1-D cache can be flushed with ori r30,r30,0
++#define SEC_FTR_L1D_FLUSH_ORI30		0x0000000000000001ull
++
++// The L1-D cache can be flushed with mtspr 882,r0 (aka SPRN_TRIG2)
++#define SEC_FTR_L1D_FLUSH_TRIG2		0x0000000000000002ull
++
++// ori r31,r31,0 acts as a speculation barrier
++#define SEC_FTR_SPEC_BAR_ORI31		0x0000000000000004ull
++
++// Speculation past bctr is disabled
++#define SEC_FTR_BCCTRL_SERIALISED	0x0000000000000008ull
++
++// Entries in L1-D are private to a SMT thread
++#define SEC_FTR_L1D_THREAD_PRIV		0x0000000000000010ull
++
++// Indirect branch prediction cache disabled
++#define SEC_FTR_COUNT_CACHE_DISABLED	0x0000000000000020ull
++
++
++// Features indicating need for Spectre/Meltdown mitigations
++
++// The L1-D cache should be flushed on MSR[HV] 1->0 transition (hypervisor to guest)
++#define SEC_FTR_L1D_FLUSH_HV		0x0000000000000040ull
++
++// The L1-D cache should be flushed on MSR[PR] 0->1 transition (kernel to userspace)
++#define SEC_FTR_L1D_FLUSH_PR		0x0000000000000080ull
++
++// A speculation barrier should be used for bounds checks (Spectre variant 1)
++#define SEC_FTR_BNDS_CHK_SPEC_BAR	0x0000000000000100ull
++
++// Firmware configuration indicates user favours security over performance
++#define SEC_FTR_FAVOUR_SECURITY		0x0000000000000200ull
++
++#endif /* _ASM_POWERPC_SECURITY_FEATURES_H */
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -42,7 +42,7 @@ obj-$(CONFIG_VDSO32)		+= vdso32/
+ obj-$(CONFIG_PPC_WATCHDOG)	+= watchdog.o
+ obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
+ obj-$(CONFIG_PPC_BOOK3S_64)	+= cpu_setup_ppc970.o cpu_setup_pa6t.o
+-obj-$(CONFIG_PPC_BOOK3S_64)	+= cpu_setup_power.o
++obj-$(CONFIG_PPC_BOOK3S_64)	+= cpu_setup_power.o security.o
+ obj-$(CONFIG_PPC_BOOK3S_64)	+= mce.o mce_power.o
+ obj-$(CONFIG_PPC_BOOK3E_64)	+= exceptions-64e.o idle_book3e.o
+ obj-$(CONFIG_PPC64)		+= vdso64/
+--- /dev/null
++++ b/arch/powerpc/kernel/security.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Security related flags and so on.
++//
++// Copyright 2018, Michael Ellerman, IBM Corporation.
++
++#include <linux/kernel.h>
++#include <asm/security_features.h>
++
++
++unsigned long powerpc_security_features __read_mostly = \
++	SEC_FTR_L1D_FLUSH_HV | \
++	SEC_FTR_L1D_FLUSH_PR | \
++	SEC_FTR_BNDS_CHK_SPEC_BAR | \
++	SEC_FTR_FAVOUR_SECURITY;
