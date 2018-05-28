@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423245AbeE1LGU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:06:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53082 "EHLO mail.kernel.org"
+        id S1423306AbeE1LGl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:06:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423219AbeE1LGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:11 -0400
+        id S1423219AbeE1LGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.16 019/272] ahci: Add PCI ID for Cannon Lake PCH-LP AHCI
-Date: Mon, 28 May 2018 12:00:52 +0200
-Message-Id: <20180528100242.047094687@linuxfoundation.org>
+        stable@vger.kernel.org, Lee Duncan <lduncan@suse.com>,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 059/272] sr: get/drop reference to device in revalidate and check_events
+Date: Mon, 28 May 2018 12:01:32 +0200
+Message-Id: <20180528100245.857689139@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,29 +30,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit 4544e403eb25552aed7f0ee181a7a506b8800403 upstream.
+[ Upstream commit 2d097c50212e137e7b53ffe3b37561153eeba87d ]
 
-This one should be using the default LPM policy for mobile chipsets so
-add the PCI ID to the driver list of supported revices.
+We can't just use scsi_cd() to get the scsi_cd structure, we have
+to grab a live reference to the device. For both callbacks, we're
+not inside an open where we already hold a reference to the device.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: stable@vger.kernel.org
+This fixes device removal/addition under concurrent device access,
+which otherwise could result in the below oops.
+
+NULL pointer dereference at 0000000000000010
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP
+Modules linked in:
+sr 12:0:0:0: [sr2] scsi-1 drive
+ scsi_debug crc_t10dif crct10dif_generic crct10dif_common nvme nvme_core sb_edac xl
+sr 12:0:0:0: Attached scsi CD-ROM sr2
+ sr_mod cdrom btrfs xor zstd_decompress zstd_compress xxhash lzo_compress zlib_defc
+sr 12:0:0:0: Attached scsi generic sg7 type 5
+ igb ahci libahci i2c_algo_bit libata dca [last unloaded: crc_t10dif]
+CPU: 43 PID: 4629 Comm: systemd-udevd Not tainted 4.16.0+ #650
+Hardware name: Dell Inc. PowerEdge T630/0NT78X, BIOS 2.3.4 11/09/2016
+RIP: 0010:sr_block_revalidate_disk+0x23/0x190 [sr_mod]
+RSP: 0018:ffff883ff357bb58 EFLAGS: 00010292
+RAX: ffffffffa00b07d0 RBX: ffff883ff3058000 RCX: ffff883ff357bb66
+RDX: 0000000000000003 RSI: 0000000000007530 RDI: ffff881fea631000
+RBP: 0000000000000000 R08: ffff881fe4d38400 R09: 0000000000000000
+R10: 0000000000000000 R11: 00000000000001b6 R12: 000000000800005d
+R13: 000000000800005d R14: ffff883ffd9b3790 R15: 0000000000000000
+FS:  00007f7dc8e6d8c0(0000) GS:ffff883fff340000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000010 CR3: 0000003ffda98005 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ? __invalidate_device+0x48/0x60
+ check_disk_change+0x4c/0x60
+ sr_block_open+0x16/0xd0 [sr_mod]
+ __blkdev_get+0xb9/0x450
+ ? iget5_locked+0x1c0/0x1e0
+ blkdev_get+0x11e/0x320
+ ? bdget+0x11d/0x150
+ ? _raw_spin_unlock+0xa/0x20
+ ? bd_acquire+0xc0/0xc0
+ do_dentry_open+0x1b0/0x320
+ ? inode_permission+0x24/0xc0
+ path_openat+0x4e6/0x1420
+ ? cpumask_any_but+0x1f/0x40
+ ? flush_tlb_mm_range+0xa0/0x120
+ do_filp_open+0x8c/0xf0
+ ? __seccomp_filter+0x28/0x230
+ ? _raw_spin_unlock+0xa/0x20
+ ? __handle_mm_fault+0x7d6/0x9b0
+ ? list_lru_add+0xa8/0xc0
+ ? _raw_spin_unlock+0xa/0x20
+ ? __alloc_fd+0xaf/0x160
+ ? do_sys_open+0x1a6/0x230
+ do_sys_open+0x1a6/0x230
+ do_syscall_64+0x5a/0x100
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/ata/ahci.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/sr.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -334,6 +334,7 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x9c07), board_ahci_mobile }, /* Lynx LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9c0e), board_ahci_mobile }, /* Lynx LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9c0f), board_ahci_mobile }, /* Lynx LP RAID */
-+	{ PCI_VDEVICE(INTEL, 0x9dd3), board_ahci_mobile }, /* Cannon Lake PCH-LP AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1f22), board_ahci }, /* Avoton AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1f23), board_ahci }, /* Avoton AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1f24), board_ahci }, /* Avoton RAID */
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -585,18 +585,28 @@ out:
+ static unsigned int sr_block_check_events(struct gendisk *disk,
+ 					  unsigned int clearing)
+ {
+-	struct scsi_cd *cd = scsi_cd(disk);
++	unsigned int ret = 0;
++	struct scsi_cd *cd;
+ 
+-	if (atomic_read(&cd->device->disk_events_disable_depth))
++	cd = scsi_cd_get(disk);
++	if (!cd)
+ 		return 0;
+ 
+-	return cdrom_check_events(&cd->cdi, clearing);
++	if (!atomic_read(&cd->device->disk_events_disable_depth))
++		ret = cdrom_check_events(&cd->cdi, clearing);
++
++	scsi_cd_put(cd);
++	return ret;
+ }
+ 
+ static int sr_block_revalidate_disk(struct gendisk *disk)
+ {
+-	struct scsi_cd *cd = scsi_cd(disk);
+ 	struct scsi_sense_hdr sshdr;
++	struct scsi_cd *cd;
++
++	cd = scsi_cd_get(disk);
++	if (!cd)
++		return -ENXIO;
+ 
+ 	/* if the unit is not ready, nothing more to do */
+ 	if (scsi_test_unit_ready(cd->device, SR_TIMEOUT, MAX_RETRIES, &sshdr))
+@@ -605,6 +615,7 @@ static int sr_block_revalidate_disk(stru
+ 	sr_cd_check(&cd->cdi);
+ 	get_sectorsize(cd);
+ out:
++	scsi_cd_put(cd);
+ 	return 0;
+ }
+ 
