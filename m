@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423897AbeE1LKb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:10:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58390 "EHLO mail.kernel.org"
+        id S1423929AbeE1LKi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:10:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422749AbeE1LKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:10:20 -0400
+        id S1423896AbeE1LKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Eric Sandeen <sandeen@redhat.com>, Theodore Tso <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 140/272] ext4: dont complain about incorrect features when probing
-Date: Mon, 28 May 2018 12:02:53 +0200
-Message-Id: <20180528100252.805459949@linuxfoundation.org>
+        stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>,
+        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 142/272] iommu/mediatek: Fix protect memory setting
+Date: Mon, 28 May 2018 12:02:55 +0200
+Message-Id: <20180528100252.943994546@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,57 +30,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Sandeen <sandeen@redhat.com>
+From: Yong Wu <yong.wu@mediatek.com>
 
-[ Upstream commit 0d9366d67bcf066b028e57d09c9a86ce879bcc28 ]
+[ Upstream commit 70ca608b2ec6dafa6bb1c2b0691852fc78f8f717 ]
 
-If mount is auto-probing for filesystem type, it will try various
-filesystems in order, with the MS_SILENT flag set.  We get
-that flag as the silent arg to ext4_fill_super.
+In MediaTek's IOMMU design, When a iommu translation fault occurs
+(HW can NOT translate the destination address to a valid physical
+address), the IOMMU HW output the dirty data into a special memory
+to avoid corrupting the main memory, this is called "protect memory".
+the register(0x114) for protect memory is a little different between
+mt8173 and mt2712.
 
-If we're probing (silent==1) then don't complain about feature
-incompatibilities that are found if it looks like it's actually
-a different valid extN type - failed probes should be silent
-in this case.
+In the mt8173, bit[30:6] in the register represents [31:7] of the
+physical address. In the 4GB mode, the register bit[31] should be 1.
+While in the mt2712, the bits don't shift. bit[31:7] in the register
+represents [31:7] in the physical address, and bit[1:0] in the
+register represents bit[33:32] of the physical address if it has.
 
-If the on-disk features are unknown even to ext4, then complain.
-
-Reported-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Tested-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Fixes: e6dec9230862 ("iommu/mediatek: Add mt2712 IOMMU support")
+Reported-by: Honghui Zhang <honghui.zhang@mediatek.com>
+Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/super.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/iommu/mtk_iommu.c |   15 ++++++++++-----
+ drivers/iommu/mtk_iommu.h |    1 +
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3663,6 +3663,12 @@ static int ext4_fill_super(struct super_
- 			ext4_msg(sb, KERN_INFO, "mounting ext2 file system "
- 				 "using the ext4 subsystem");
- 		else {
-+			/*
-+			 * If we're probing be silent, if this looks like
-+			 * it's actually an ext[34] filesystem.
-+			 */
-+			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
-+				goto failed_mount;
- 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext2 due "
- 				 "to feature incompatibilities");
- 			goto failed_mount;
-@@ -3674,6 +3680,12 @@ static int ext4_fill_super(struct super_
- 			ext4_msg(sb, KERN_INFO, "mounting ext3 file system "
- 				 "using the ext4 subsystem");
- 		else {
-+			/*
-+			 * If we're probing be silent, if this looks like
-+			 * it's actually an ext4 filesystem.
-+			 */
-+			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
-+				goto failed_mount;
- 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext3 due "
- 				 "to feature incompatibilities");
- 			goto failed_mount;
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -60,7 +60,7 @@
+ 	(((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
+ 
+ #define REG_MMU_IVRP_PADDR			0x114
+-#define F_MMU_IVRP_PA_SET(pa, ext)		(((pa) >> 1) | ((!!(ext)) << 31))
++
+ #define REG_MMU_VLD_PA_RNG			0x118
+ #define F_MMU_VLD_PA_RNG(EA, SA)		(((EA) << 8) | (SA))
+ 
+@@ -539,8 +539,13 @@ static int mtk_iommu_hw_init(const struc
+ 		F_INT_PRETETCH_TRANSATION_FIFO_FAULT;
+ 	writel_relaxed(regval, data->base + REG_MMU_INT_MAIN_CONTROL);
+ 
+-	writel_relaxed(F_MMU_IVRP_PA_SET(data->protect_base, data->enable_4GB),
+-		       data->base + REG_MMU_IVRP_PADDR);
++	if (data->m4u_plat == M4U_MT8173)
++		regval = (data->protect_base >> 1) | (data->enable_4GB << 31);
++	else
++		regval = lower_32_bits(data->protect_base) |
++			 upper_32_bits(data->protect_base);
++	writel_relaxed(regval, data->base + REG_MMU_IVRP_PADDR);
++
+ 	if (data->enable_4GB && data->m4u_plat != M4U_MT8173) {
+ 		/*
+ 		 * If 4GB mode is enabled, the validate PA range is from
+@@ -695,6 +700,7 @@ static int __maybe_unused mtk_iommu_susp
+ 	reg->ctrl_reg = readl_relaxed(base + REG_MMU_CTRL_REG);
+ 	reg->int_control0 = readl_relaxed(base + REG_MMU_INT_CONTROL0);
+ 	reg->int_main_control = readl_relaxed(base + REG_MMU_INT_MAIN_CONTROL);
++	reg->ivrp_paddr = readl_relaxed(base + REG_MMU_IVRP_PADDR);
+ 	clk_disable_unprepare(data->bclk);
+ 	return 0;
+ }
+@@ -717,8 +723,7 @@ static int __maybe_unused mtk_iommu_resu
+ 	writel_relaxed(reg->ctrl_reg, base + REG_MMU_CTRL_REG);
+ 	writel_relaxed(reg->int_control0, base + REG_MMU_INT_CONTROL0);
+ 	writel_relaxed(reg->int_main_control, base + REG_MMU_INT_MAIN_CONTROL);
+-	writel_relaxed(F_MMU_IVRP_PA_SET(data->protect_base, data->enable_4GB),
+-		       base + REG_MMU_IVRP_PADDR);
++	writel_relaxed(reg->ivrp_paddr, base + REG_MMU_IVRP_PADDR);
+ 	if (data->m4u_dom)
+ 		writel(data->m4u_dom->cfg.arm_v7s_cfg.ttbr[0],
+ 		       base + REG_MMU_PT_BASE_ADDR);
+--- a/drivers/iommu/mtk_iommu.h
++++ b/drivers/iommu/mtk_iommu.h
+@@ -32,6 +32,7 @@ struct mtk_iommu_suspend_reg {
+ 	u32				ctrl_reg;
+ 	u32				int_control0;
+ 	u32				int_main_control;
++	u32				ivrp_paddr;
+ };
+ 
+ enum mtk_iommu_plat {
