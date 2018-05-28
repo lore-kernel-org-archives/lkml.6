@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938972AbeE1MuT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:50:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44756 "EHLO mail.kernel.org"
+        id S938987AbeE1Muh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163968AbeE1K4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:22 -0400
+        id S1164480AbeE1K4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 333/496] dp83640: Ensure against premature access to PHY registers after reset
-Date: Mon, 28 May 2018 12:01:58 +0200
-Message-Id: <20180528100333.848248827@linuxfoundation.org>
+Subject: [PATCH 4.14 330/496] powerpc/fscr: Enable interrupts earlier before calling get_user()
+Date: Mon, 28 May 2018 12:01:55 +0200
+Message-Id: <20180528100333.722729839@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,54 +31,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Esben Haabendal <eha@deif.com>
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 
-[ Upstream commit 76327a35caabd1a932e83d6a42b967aa08584e5d ]
+[ Upstream commit 709b973c844c0b4d115ac3a227a2e5a68722c912 ]
 
-The datasheet specifies a 3uS pause after performing a software
-reset. The default implementation of genphy_soft_reset() does not
-provide this, so implement soft_reset with the needed pause.
+The function get_user() can sleep while trying to fetch instruction
+from user address space and causes the following warning from the
+scheduler.
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+BUG: sleeping function called from invalid context
+
+Though interrupts get enabled back but it happens bit later after
+get_user() is called. This change moves enabling these interrupts
+earlier covering the function get_user(). While at this, lets check
+for kernel mode and crash as this interrupt should not have been
+triggered from the kernel context.
+
+Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83640.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/powerpc/kernel/traps.c |   32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1207,6 +1207,23 @@ static void dp83640_remove(struct phy_de
- 	kfree(dp83640);
- }
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -1379,6 +1379,22 @@ void facility_unavailable_exception(stru
+ 		value = mfspr(SPRN_FSCR);
  
-+static int dp83640_soft_reset(struct phy_device *phydev)
-+{
-+	int ret;
+ 	status = value >> 56;
++	if ((hv || status >= 2) &&
++	    (status < ARRAY_SIZE(facility_strings)) &&
++	    facility_strings[status])
++		facility = facility_strings[status];
 +
-+	ret = genphy_soft_reset(phydev);
-+	if (ret < 0)
-+		return ret;
++	/* We should not have taken this interrupt in kernel */
++	if (!user_mode(regs)) {
++		pr_emerg("Facility '%s' unavailable (%d) exception in kernel mode at %lx\n",
++			 facility, status, regs->nip);
++		die("Unexpected facility unavailable exception", regs, SIGABRT);
++	}
 +
-+	/* From DP83640 datasheet: "Software driver code must wait 3 us
-+	 * following a software reset before allowing further serial MII
-+	 * operations with the DP83640."
-+	 */
-+	udelay(10);		/* Taking udelay inaccuracy into account */
++	/* We restore the interrupt state now */
++	if (!arch_irq_disabled_regs(regs))
++		local_irq_enable();
 +
-+	return 0;
-+}
-+
- static int dp83640_config_init(struct phy_device *phydev)
- {
- 	struct dp83640_private *dp83640 = phydev->priv;
-@@ -1501,6 +1518,7 @@ static struct phy_driver dp83640_driver
- 	.flags		= PHY_HAS_INTERRUPT,
- 	.probe		= dp83640_probe,
- 	.remove		= dp83640_remove,
-+	.soft_reset	= dp83640_soft_reset,
- 	.config_init	= dp83640_config_init,
- 	.config_aneg	= genphy_config_aneg,
- 	.read_status	= genphy_read_status,
+ 	if (status == FSCR_DSCR_LG) {
+ 		/*
+ 		 * User is accessing the DSCR register using the problem
+@@ -1445,25 +1461,11 @@ void facility_unavailable_exception(stru
+ 		return;
+ 	}
+ 
+-	if ((hv || status >= 2) &&
+-	    (status < ARRAY_SIZE(facility_strings)) &&
+-	    facility_strings[status])
+-		facility = facility_strings[status];
+-
+-	/* We restore the interrupt state now */
+-	if (!arch_irq_disabled_regs(regs))
+-		local_irq_enable();
+-
+ 	pr_err_ratelimited("%sFacility '%s' unavailable (%d), exception at 0x%lx, MSR=%lx\n",
+ 		hv ? "Hypervisor " : "", facility, status, regs->nip, regs->msr);
+ 
+ out:
+-	if (user_mode(regs)) {
+-		_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
+-		return;
+-	}
+-
+-	die("Unexpected facility unavailable exception", regs, SIGABRT);
++	_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
+ }
+ #endif
+ 
