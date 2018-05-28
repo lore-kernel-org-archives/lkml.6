@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937420AbeE1KmN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:42:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33468 "EHLO mail.kernel.org"
+        id S937506AbeE1Kmc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:42:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937423AbeE1KmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:05 -0400
+        id S937431AbeE1Km0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 022/496] idr: fix invalid ptr dereference on item delete
-Date: Mon, 28 May 2018 11:56:47 +0200
-Message-Id: <20180528100320.536610380@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.14 003/496] MIPS: Fix ptrace(2) PTRACE_PEEKUSR and PTRACE_POKEUSR accesses to o32 FGRs
+Date: Mon, 28 May 2018 11:56:28 +0200
+Message-Id: <20180528100319.661411607@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,80 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Maciej W. Rozycki <macro@mips.com>
 
-commit 7a4deea1aa8bddfed4ef1b35fc2b6732563d8ad5 upstream.
+commit 9a3a92ccfe3620743d4ae57c987dc8e9c5f88996 upstream.
 
-If the radix tree underlying the IDR happens to be full and we attempt
-to remove an id which is larger than any id in the IDR, we will call
-__radix_tree_delete() with an uninitialised 'slot' pointer, at which
-point anything could happen.  This was easiest to hit with a single
-entry at id 0 and attempting to remove a non-0 id, but it could have
-happened with 64 entries and attempting to remove an id >= 64.
+Check the TIF_32BIT_FPREGS task setting of the tracee rather than the
+tracer in determining the layout of floating-point general registers in
+the floating-point context, correcting access to odd-numbered registers
+for o32 tracees where the setting disagrees between the two processes.
 
-Roman said:
-
-  The syzcaller test boils down to opening /dev/kvm, creating an
-  eventfd, and calling a couple of KVM ioctls. None of this requires
-  superuser. And the result is dereferencing an uninitialized pointer
-  which is likely a crash. The specific path caught by syzbot is via
-  KVM_HYPERV_EVENTD ioctl which is new in 4.17. But I guess there are
-  other user-triggerable paths, so cc:stable is probably justified.
-
-Matthew added:
-
-  We have around 250 calls to idr_remove() in the kernel today. Many of
-  them pass an ID which is embedded in the object they're removing, so
-  they're safe. Picking a few likely candidates:
-
-  drivers/firewire/core-cdev.c looks unsafe; the ID comes from an ioctl.
-  drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c is similar
-  drivers/atm/nicstar.c could be taken down by a handcrafted packet
-
-Link: http://lkml.kernel.org/r/20180518175025.GD6361@bombadil.infradead.org
-Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
-Reported-by: <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>
-Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 597ce1723e0f ("MIPS: Support for 64-bit FP with O32 binaries")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.14+
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/radix-tree.c                    |    4 +++-
- tools/testing/radix-tree/idr-test.c |    7 +++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ arch/mips/kernel/ptrace.c   |    4 ++--
+ arch/mips/kernel/ptrace32.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -2037,10 +2037,12 @@ void *radix_tree_delete_item(struct radi
- 			     unsigned long index, void *item)
- {
- 	struct radix_tree_node *node = NULL;
--	void __rcu **slot;
-+	void __rcu **slot = NULL;
- 	void *entry;
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -798,7 +798,7 @@ long arch_ptrace(struct task_struct *chi
+ 			fregs = get_fpu_regs(child);
  
- 	entry = __radix_tree_lookup(root, index, &node, &slot);
-+	if (!slot)
-+		return NULL;
- 	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
- 						get_slot_offset(node, slot))))
- 		return NULL;
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -202,6 +202,13 @@ void idr_checks(void)
- 	idr_remove(&idr, 3);
- 	idr_remove(&idr, 0);
+ #ifdef CONFIG_32BIT
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+@@ -887,7 +887,7 @@ long arch_ptrace(struct task_struct *chi
  
-+	assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == 0);
-+	idr_remove(&idr, 1);
-+	for (i = 1; i < RADIX_TREE_MAP_SIZE; i++)
-+		assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == i);
-+	idr_remove(&idr, 1 << 30);
-+	idr_destroy(&idr);
-+
- 	for (i = INT_MAX - 3UL; i < INT_MAX + 1UL; i++) {
- 		struct item *item = item_create(i, 0);
- 		assert(idr_alloc(&idr, item, i, i + 10, GFP_KERNEL) == i);
+ 			init_fp_ctx(child);
+ #ifdef CONFIG_32BIT
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+--- a/arch/mips/kernel/ptrace32.c
++++ b/arch/mips/kernel/ptrace32.c
+@@ -98,7 +98,7 @@ long compat_arch_ptrace(struct task_stru
+ 				break;
+ 			}
+ 			fregs = get_fpu_regs(child);
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+@@ -205,7 +205,7 @@ long compat_arch_ptrace(struct task_stru
+ 				       sizeof(child->thread.fpu));
+ 				child->thread.fpu.fcr31 = 0;
+ 			}
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
