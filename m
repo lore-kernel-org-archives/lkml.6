@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161861AbeE1KeI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:34:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54208 "EHLO mail.kernel.org"
+        id S1161874AbeE1KeN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:34:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161834AbeE1KeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:01 -0400
+        id S1161834AbeE1KeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 174/329] iwlwifi: mvm: fix TX of CCMP 256
-Date: Mon, 28 May 2018 12:01:43 +0200
-Message-Id: <20180528100256.858677661@linuxfoundation.org>
+Subject: [PATCH 4.9 150/329] batman-adv: Ignore invalid batadv_v_gw during netlink send
+Date: Mon, 28 May 2018 12:01:19 +0200
+Message-Id: <20180528100255.028405597@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,52 +30,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit de04d4fbf87b769ab18c480e4f020c53e74bbdd2 ]
+[ Upstream commit 011c935fceae5252619ef730baa610c655281dda ]
 
-We don't have enough room in the TX command for a CCMP 256
-key, and need to use key from table.
+The function batadv_v_gw_dump stops the processing loop when
+batadv_v_gw_dump_entry returns a non-0 return code. This should only
+happen when the buffer is full. Otherwise, an empty message may be
+returned by batadv_gw_dump. This empty message will then stop the netlink
+dumping of gateway entries. At worst, not a single entry is returned to
+userspace even when plenty of possible gateways exist.
 
-Fixes: 3264bf032bd9 ("[BUGFIX] iwlwifi: mvm: Fix CCMP IV setting")
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: b71bb6f924fe ("batman-adv: add B.A.T.M.A.N. V bat_gw_dump implementations")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/batman-adv/bat_v.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -406,11 +406,11 @@ static void iwl_mvm_set_tx_cmd_crypto(st
- {
- 	struct ieee80211_key_conf *keyconf = info->control.hw_key;
- 	u8 *crypto_hdr = skb_frag->data + hdrlen;
-+	enum iwl_tx_cmd_sec_ctrl type = TX_CMD_SEC_CCM;
- 	u64 pn;
+--- a/net/batman-adv/bat_v.c
++++ b/net/batman-adv/bat_v.c
+@@ -920,7 +920,7 @@ static int batadv_v_gw_dump_entry(struct
+ 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
+ 	struct batadv_neigh_node *router;
+ 	struct batadv_gw_node *curr_gw;
+-	int ret = -EINVAL;
++	int ret = 0;
+ 	void *hdr;
  
- 	switch (keyconf->cipher) {
- 	case WLAN_CIPHER_SUITE_CCMP:
--	case WLAN_CIPHER_SUITE_CCMP_256:
- 		iwl_mvm_set_tx_cmd_ccmp(info, tx_cmd);
- 		iwl_mvm_set_tx_cmd_pn(info, crypto_hdr);
- 		break;
-@@ -434,13 +434,16 @@ static void iwl_mvm_set_tx_cmd_crypto(st
- 		break;
- 	case WLAN_CIPHER_SUITE_GCMP:
- 	case WLAN_CIPHER_SUITE_GCMP_256:
-+		type = TX_CMD_SEC_GCMP;
-+		/* Fall through */
-+	case WLAN_CIPHER_SUITE_CCMP_256:
- 		/* TODO: Taking the key from the table might introduce a race
- 		 * when PTK rekeying is done, having an old packets with a PN
- 		 * based on the old key but the message encrypted with a new
- 		 * one.
- 		 * Need to handle this.
- 		 */
--		tx_cmd->sec_ctl |= TX_CMD_SEC_GCMP | TX_CMD_SEC_KEY_FROM_TABLE;
-+		tx_cmd->sec_ctl |= type | TX_CMD_SEC_KEY_FROM_TABLE;
- 		tx_cmd->key[0] = keyconf->hw_key_idx;
- 		iwl_mvm_set_tx_cmd_pn(info, crypto_hdr);
- 		break;
+ 	router = batadv_orig_router_get(gw_node->orig_node, BATADV_IF_DEFAULT);
