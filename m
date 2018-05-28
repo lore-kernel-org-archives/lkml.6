@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424349AbeE1LOC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:14:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33164 "EHLO mail.kernel.org"
+        id S1424487AbeE1Ld0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:33:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423937AbeE1LNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:13:50 -0400
+        id S1424341AbeE1LOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 182/272] f2fs: fix to check extent cache in f2fs_drop_extent_tree
-Date: Mon, 28 May 2018 12:03:35 +0200
-Message-Id: <20180528100255.979417715@linuxfoundation.org>
+Subject: [PATCH 4.16 220/272] drm: omapdrm: dss: Move initialization code from component bind to probe
+Date: Mon, 28 May 2018 12:04:13 +0200
+Message-Id: <20180528100258.933438210@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,46 +32,309 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[ Upstream commit bf617f7a92edc6bb2909db2bfa4576f50b280ee5 ]
+[ Upstream commit 215003b4ae1d47035092fef73b6a22aa82037091 ]
 
-If noextent_cache mount option is on, we will never initialize extent tree
-in inode, but still we're going to access it in f2fs_drop_extent_tree,
-result in kernel panic as below:
+There's no reason to delay initialization of most of the driver (such as
+mapping memory I/O, getting clocks or enabling runtime PM) to the
+component master bind handler.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
- IP: _raw_write_lock+0xc/0x30
- Call Trace:
-  ? f2fs_drop_extent_tree+0x41/0x70 [f2fs]
-  f2fs_fallocate+0x5a0/0xdd0 [f2fs]
-  ? common_file_perm+0x47/0xc0
-  ? apparmor_file_permission+0x1a/0x20
-  vfs_fallocate+0x15b/0x290
-  SyS_fallocate+0x44/0x70
-  do_syscall_64+0x6e/0x160
-  entry_SYSCALL64_slow_path+0x25/0x25
+This additionally fixes a real PM issue caused enabling runtime PM in
+the bind handler.
 
-This patch fixes to check extent cache status before using in
-f2fs_drop_extent_tree.
+The bind handler performs the following sequence of PM operations:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+	pm_runtime_enable(dev);
+	pm_runtime_get_sync(dev);
+
+	... (access the hardware to read the device revision) ...
+
+	pm_runtime_put_sync(dev);
+
+If a failure occurs at this point, the error path calls
+pm_runtime_disable() to balance the pm_runtime_enable() call.
+
+To understand the problem, it should be noted that the bind handler is
+called when one of the component registers itself, which happens in the
+component's probe handler. Furthermore, as the components are children
+of the DSS, the device core calls pm_runtime_get_sync() on the DSS
+platform device before calling the component's probe handler. This
+increases the DSS power usage count but doesn't runtime resume the
+device, as runtime PM is disabled at that point.
+
+The bind handler is thus called with runtime PM disabled, with the
+device runtime suspended, but with the power usage count larger than 0.
+The pm_runtime_get_sync() call will thus further increase the power
+usage count and runtime resume the device. The pm_runtime_put_sync()
+handler will decrease the power usage count to a non-zero value and will
+thus not suspend the device. Finally, the pm_runtime_disable() call will
+disable runtime PM, preventing the pm_runtime_put() call in the device
+core from runtime suspending the device. The DSS device is thus left
+powered on.
+
+To fix this, move the initialization code from the bind handler to the
+probe handler.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/extent_cache.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/omapdrm/dss/dss.c |  193 ++++++++++++++++++++------------------
+ 1 file changed, 104 insertions(+), 89 deletions(-)
 
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -706,6 +706,9 @@ void f2fs_drop_extent_tree(struct inode
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+--- a/drivers/gpu/drm/omapdrm/dss/dss.c
++++ b/drivers/gpu/drm/omapdrm/dss/dss.c
+@@ -1300,88 +1300,18 @@ static const struct soc_device_attribute
  
-+	if (!f2fs_may_extent_tree(inode))
-+		return;
+ static int dss_bind(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct resource *dss_mem;
+-	u32 rev;
+ 	int r;
+ 
+-	dss_mem = platform_get_resource(dss.pdev, IORESOURCE_MEM, 0);
+-	dss.base = devm_ioremap_resource(&pdev->dev, dss_mem);
+-	if (IS_ERR(dss.base))
+-		return PTR_ERR(dss.base);
+-
+-	r = dss_get_clocks();
++	r = component_bind_all(dev, NULL);
+ 	if (r)
+ 		return r;
+ 
+-	r = dss_setup_default_clock();
+-	if (r)
+-		goto err_setup_clocks;
+-
+-	r = dss_video_pll_probe(pdev);
+-	if (r)
+-		goto err_pll_init;
+-
+-	r = dss_init_ports(pdev);
+-	if (r)
+-		goto err_init_ports;
+-
+-	pm_runtime_enable(&pdev->dev);
+-
+-	r = dss_runtime_get();
+-	if (r)
+-		goto err_runtime_get;
+-
+-	dss.dss_clk_rate = clk_get_rate(dss.dss_clk);
+-
+-	/* Select DPLL */
+-	REG_FLD_MOD(DSS_CONTROL, 0, 0, 0);
+-
+-	dss_select_dispc_clk_source(DSS_CLK_SRC_FCK);
+-
+-#ifdef CONFIG_OMAP2_DSS_VENC
+-	REG_FLD_MOD(DSS_CONTROL, 1, 4, 4);	/* venc dac demen */
+-	REG_FLD_MOD(DSS_CONTROL, 1, 3, 3);	/* venc clock 4x enable */
+-	REG_FLD_MOD(DSS_CONTROL, 0, 2, 2);	/* venc clock mode = normal */
+-#endif
+-	dss.dsi_clk_source[0] = DSS_CLK_SRC_FCK;
+-	dss.dsi_clk_source[1] = DSS_CLK_SRC_FCK;
+-	dss.dispc_clk_source = DSS_CLK_SRC_FCK;
+-	dss.lcd_clk_source[0] = DSS_CLK_SRC_FCK;
+-	dss.lcd_clk_source[1] = DSS_CLK_SRC_FCK;
+-
+-	rev = dss_read_reg(DSS_REVISION);
+-	pr_info("OMAP DSS rev %d.%d\n", FLD_GET(rev, 7, 4), FLD_GET(rev, 3, 0));
+-
+-	dss_runtime_put();
+-
+-	r = component_bind_all(&pdev->dev, NULL);
+-	if (r)
+-		goto err_component;
+-
+-	dss_debugfs_create_file("dss", dss_dump_regs);
+-
+ 	pm_set_vt_switch(0);
+ 
+ 	omapdss_gather_components(dev);
+ 	omapdss_set_is_initialized(true);
+ 
+ 	return 0;
+-
+-err_component:
+-err_runtime_get:
+-	pm_runtime_disable(&pdev->dev);
+-	dss_uninit_ports(pdev);
+-err_init_ports:
+-	if (dss.video1_pll)
+-		dss_video_pll_uninit(dss.video1_pll);
+-
+-	if (dss.video2_pll)
+-		dss_video_pll_uninit(dss.video2_pll);
+-err_pll_init:
+-err_setup_clocks:
+-	dss_put_clocks();
+-	return r;
+ }
+ 
+ static void dss_unbind(struct device *dev)
+@@ -1391,18 +1321,6 @@ static void dss_unbind(struct device *de
+ 	omapdss_set_is_initialized(false);
+ 
+ 	component_unbind_all(&pdev->dev, NULL);
+-
+-	if (dss.video1_pll)
+-		dss_video_pll_uninit(dss.video1_pll);
+-
+-	if (dss.video2_pll)
+-		dss_video_pll_uninit(dss.video2_pll);
+-
+-	dss_uninit_ports(pdev);
+-
+-	pm_runtime_disable(&pdev->dev);
+-
+-	dss_put_clocks();
+ }
+ 
+ static const struct component_master_ops dss_component_ops = {
+@@ -1434,10 +1352,46 @@ static int dss_add_child_component(struc
+ 	return 0;
+ }
+ 
++static int dss_probe_hardware(void)
++{
++	u32 rev;
++	int r;
 +
- 	set_inode_flag(inode, FI_NO_EXTENT);
++	r = dss_runtime_get();
++	if (r)
++		return r;
++
++	dss.dss_clk_rate = clk_get_rate(dss.dss_clk);
++
++	/* Select DPLL */
++	REG_FLD_MOD(DSS_CONTROL, 0, 0, 0);
++
++	dss_select_dispc_clk_source(DSS_CLK_SRC_FCK);
++
++#ifdef CONFIG_OMAP2_DSS_VENC
++	REG_FLD_MOD(DSS_CONTROL, 1, 4, 4);	/* venc dac demen */
++	REG_FLD_MOD(DSS_CONTROL, 1, 3, 3);	/* venc clock 4x enable */
++	REG_FLD_MOD(DSS_CONTROL, 0, 2, 2);	/* venc clock mode = normal */
++#endif
++	dss.dsi_clk_source[0] = DSS_CLK_SRC_FCK;
++	dss.dsi_clk_source[1] = DSS_CLK_SRC_FCK;
++	dss.dispc_clk_source = DSS_CLK_SRC_FCK;
++	dss.lcd_clk_source[0] = DSS_CLK_SRC_FCK;
++	dss.lcd_clk_source[1] = DSS_CLK_SRC_FCK;
++
++	rev = dss_read_reg(DSS_REVISION);
++	pr_info("OMAP DSS rev %d.%d\n", FLD_GET(rev, 7, 4), FLD_GET(rev, 3, 0));
++
++	dss_runtime_put();
++
++	return 0;
++}
++
+ static int dss_probe(struct platform_device *pdev)
+ {
+ 	const struct soc_device_attribute *soc;
+ 	struct component_match *match = NULL;
++	struct resource *dss_mem;
+ 	int r;
  
- 	write_lock(&et->lock);
+ 	dss.pdev = pdev;
+@@ -1458,20 +1412,69 @@ static int dss_probe(struct platform_dev
+ 	else
+ 		dss.feat = of_match_device(dss_of_match, &pdev->dev)->data;
+ 
+-	r = dss_initialize_debugfs();
++	/* Map I/O registers, get and setup clocks. */
++	dss_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	dss.base = devm_ioremap_resource(&pdev->dev, dss_mem);
++	if (IS_ERR(dss.base))
++		return PTR_ERR(dss.base);
++
++	r = dss_get_clocks();
+ 	if (r)
+ 		return r;
+ 
+-	/* add all the child devices as components */
++	r = dss_setup_default_clock();
++	if (r)
++		goto err_put_clocks;
++
++	/* Setup the video PLLs and the DPI and SDI ports. */
++	r = dss_video_pll_probe(pdev);
++	if (r)
++		goto err_put_clocks;
++
++	r = dss_init_ports(pdev);
++	if (r)
++		goto err_uninit_plls;
++
++	/* Enable runtime PM and probe the hardware. */
++	pm_runtime_enable(&pdev->dev);
++
++	r = dss_probe_hardware();
++	if (r)
++		goto err_pm_runtime_disable;
++
++	/* Initialize debugfs. */
++	r = dss_initialize_debugfs();
++	if (r)
++		goto err_pm_runtime_disable;
++
++	dss_debugfs_create_file("dss", dss_dump_regs);
++
++	/* Add all the child devices as components. */
+ 	device_for_each_child(&pdev->dev, &match, dss_add_child_component);
+ 
+ 	r = component_master_add_with_match(&pdev->dev, &dss_component_ops, match);
+-	if (r) {
+-		dss_uninitialize_debugfs();
+-		return r;
+-	}
++	if (r)
++		goto err_uninit_debugfs;
+ 
+ 	return 0;
++
++err_uninit_debugfs:
++	dss_uninitialize_debugfs();
++
++err_pm_runtime_disable:
++	pm_runtime_disable(&pdev->dev);
++	dss_uninit_ports(pdev);
++
++err_uninit_plls:
++	if (dss.video1_pll)
++		dss_video_pll_uninit(dss.video1_pll);
++	if (dss.video2_pll)
++		dss_video_pll_uninit(dss.video2_pll);
++
++err_put_clocks:
++	dss_put_clocks();
++
++	return r;
+ }
+ 
+ static int dss_remove(struct platform_device *pdev)
+@@ -1480,6 +1483,18 @@ static int dss_remove(struct platform_de
+ 
+ 	dss_uninitialize_debugfs();
+ 
++	pm_runtime_disable(&pdev->dev);
++
++	dss_uninit_ports(pdev);
++
++	if (dss.video1_pll)
++		dss_video_pll_uninit(dss.video1_pll);
++
++	if (dss.video2_pll)
++		dss_video_pll_uninit(dss.video2_pll);
++
++	dss_put_clocks();
++
+ 	return 0;
+ }
+ 
