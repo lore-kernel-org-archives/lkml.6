@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934929AbeE1KIt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:08:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56750 "EHLO mail.kernel.org"
+        id S940189AbeE1Qek (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:34:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934804AbeE1KIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:41 -0400
+        id S934820AbeE1KIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-        Pavel Emelyanov <xemul@openvz.org>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Steve French <smfrench@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 039/185] proc: fix /proc/*/map_files lookup
-Date: Mon, 28 May 2018 12:01:20 +0200
-Message-Id: <20180528100054.088559083@linuxfoundation.org>
+Subject: [PATCH 3.18 040/185] cifs: silence compiler warnings showing up with gcc-8.0.0
+Date: Mon, 28 May 2018 12:01:21 +0200
+Message-Id: <20180528100054.227867745@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -33,103 +30,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
+[ Upstream commit ade7db991b47ab3016a414468164f4966bd08202 ]
 
-Current code does:
+This bug was fixed before, but came up again with the latest
+compiler in another function:
 
-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
+fs/cifs/cifssmb.c: In function 'CIFSSMBSetEA':
+fs/cifs/cifssmb.c:6362:3: error: 'strncpy' offset 8 is out of the bounds [0, 4] [-Werror=array-bounds]
+   strncpy(parm_data->list[0].name, ea_name, name_len);
 
-However sscanf() is broken garbage.
+Let's apply the same fix that was used for the other instances.
 
-It silently accepts whitespace between format specifiers
-(did you know that?).
-
-It silently accepts valid strings which result in integer overflow.
-
-Do not use sscanf() for any even remotely reliable parsing code.
-
-	OK
-	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-	broken
-	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-	broken
-	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
-	/lib/systemd/systemd
-
-	very broken
-	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-Andrei said:
-
-: This patch breaks criu.  It was a bug in criu.  And this bug is on a minor
-: path, which works when memfd_create() isn't available.  It is a reason why
-: I ask to not backport this patch to stable kernels.
-:
-: In CRIU this bug can be triggered, only if this patch will be backported
-: to a kernel which version is lower than v3.16.
-
-Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Pavel Emelyanov <xemul@openvz.org>
-Cc: Andrei Vagin <avagin@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: b2a3ad9ca502 ("cifs: silence compiler warnings showing up with gcc-4.7.0")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/base.c |   29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ fs/cifs/cifssmb.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -94,6 +94,8 @@
- #include "internal.h"
- #include "fd.h"
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -6413,9 +6413,7 @@ SetEARetry:
+ 	pSMB->InformationLevel =
+ 		cpu_to_le16(SMB_SET_FILE_EA);
  
-+#include "../../lib/kstrtox.h"
-+
- /* NOTE:
-  *	Implementing inode permission operations in /proc is almost
-  *	certainly an error.  Permission checks need to happen during
-@@ -1642,8 +1644,33 @@ end_instantiate:
- static int dname_to_vma_addr(struct dentry *dentry,
- 			     unsigned long *start, unsigned long *end)
- {
--	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
-+	const char *str = dentry->d_name.name;
-+	unsigned long long sval, eval;
-+	unsigned int len;
-+
-+	len = _parse_integer(str, 16, &sval);
-+	if (len & KSTRTOX_OVERFLOW)
-+		return -EINVAL;
-+	if (sval != (unsigned long)sval)
- 		return -EINVAL;
-+	str += len;
-+
-+	if (*str != '-')
-+		return -EINVAL;
-+	str++;
-+
-+	len = _parse_integer(str, 16, &eval);
-+	if (len & KSTRTOX_OVERFLOW)
-+		return -EINVAL;
-+	if (eval != (unsigned long)eval)
-+		return -EINVAL;
-+	str += len;
-+
-+	if (*str != '\0')
-+		return -EINVAL;
-+
-+	*start = sval;
-+	*end = eval;
- 
- 	return 0;
- }
+-	parm_data =
+-		(struct fealist *) (((char *) &pSMB->hdr.Protocol) +
+-				       offset);
++	parm_data = (void *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
+ 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
+ 	pSMB->DataOffset = cpu_to_le16(offset);
+ 	pSMB->SetupCount = 1;
