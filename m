@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937273AbeE1Nkr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:40:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
+        id S968929AbeE1KoY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:44:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937552AbeE1Kof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:35 -0400
+        id S937443AbeE1KoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 079/496] IB/uverbs: Fix unbalanced unlock on error path for rdma_explicit_destroy
-Date: Mon, 28 May 2018 11:57:44 +0200
-Message-Id: <20180528100323.106627523@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Subject: [PATCH 4.14 037/496] powerpc/rfi-flush: Move the logic to avoid a redo into the debugfs code
+Date: Mon, 28 May 2018 11:57:02 +0200
+Message-Id: <20180528100321.207562099@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,44 +29,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit ec6f8401c48a86809237e86878a6fac6b281118f ]
+commit 1e2a9fc7496955faacbbed49461d611b704a7505 upstream.
 
-If remove_commit fails then the lock is left locked while the uobj still
-exists. Eventually the kernel will deadlock.
+rfi_flush_enable() includes a check to see if we're already
+enabled (or disabled), and in that case does nothing.
 
-lockdep detects this and says:
+But that means calling setup_rfi_flush() a 2nd time doesn't actually
+work, which is a bit confusing.
 
- test/4221 is leaving the kernel with locks still held!
- 1 lock held by test/4221:
-  #0:  (&ucontext->cleanup_rwsem){.+.+}, at: [<000000001e5c7523>] rdma_explicit_destroy+0x37/0x120 [ib_uverbs]
+Move that check into the debugfs code, where it really belongs.
 
-Fixes: 4da70da23e9b ("IB/core: Explicitly destroy an object while keeping uobject")
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/rdma_core.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/setup_64.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/core/rdma_core.c
-+++ b/drivers/infiniband/core/rdma_core.c
-@@ -486,12 +486,13 @@ int rdma_explicit_destroy(struct ib_uobj
- 	ret = uobject->type->type_class->remove_commit(uobject,
- 						       RDMA_REMOVE_DESTROY);
- 	if (ret)
--		return ret;
-+		goto out;
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -822,9 +822,6 @@ static void do_nothing(void *unused)
  
- 	uobject->type = &null_obj_type;
+ void rfi_flush_enable(bool enable)
+ {
+-	if (rfi_flush == enable)
+-		return;
+-
+ 	if (enable) {
+ 		do_rfi_flush_fixups(enabled_flush_types);
+ 		on_each_cpu(do_nothing, NULL, 1);
+@@ -878,13 +875,19 @@ void __init setup_rfi_flush(enum l1d_flu
+ #ifdef CONFIG_DEBUG_FS
+ static int rfi_flush_set(void *data, u64 val)
+ {
++	bool enable;
++
+ 	if (val == 1)
+-		rfi_flush_enable(true);
++		enable = true;
+ 	else if (val == 0)
+-		rfi_flush_enable(false);
++		enable = false;
+ 	else
+ 		return -EINVAL;
  
-+out:
- 	up_read(&ucontext->cleanup_rwsem);
--	return 0;
-+	return ret;
++	/* Only do anything if we're changing state */
++	if (enable != rfi_flush)
++		rfi_flush_enable(enable);
++
+ 	return 0;
  }
  
- static void alloc_commit_idr_uobject(struct ib_uobject *uobj)
