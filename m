@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163358AbeE1N1C (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:27:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37738 "EHLO mail.kernel.org"
+        id S1163344AbeE1N1X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:27:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163119AbeE1Krl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:41 -0400
+        id S1163106AbeE1Krg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Dave Jiang <dave.jiang@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 139/496] fs: dcache: Use READ_ONCE when accessing i_dir_seq
-Date: Mon, 28 May 2018 11:58:44 +0200
-Message-Id: <20180528100325.786426928@linuxfoundation.org>
+Subject: [PATCH 4.14 112/496] kernel/relay.c: limit kmalloc size to KMALLOC_MAX_SIZE
+Date: Mon, 28 May 2018 11:58:17 +0200
+Message-Id: <20180528100324.632123087@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,31 +34,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit 8cc07c808c9d595e81cbe5aad419b7769eb2e5c9 ]
+[ Upstream commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e ]
 
-i_dir_seq is subject to concurrent modification by a cmpxchg or
-store-release operation, so ensure that the relaxed access in
-d_alloc_parallel uses READ_ONCE.
+chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
+of chan->n_subbufs * sizeof(size_t *).
 
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+kmalloc_slab() will generate a warning when this fails if
+chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
+
+Limit chan->n_subbufs to the maximum allowed kmalloc() size.
+
+Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
+Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dcache.c |    2 +-
+ kernel/relay.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2510,7 +2510,7 @@ retry:
- 	}
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -163,7 +163,7 @@ static struct rchan_buf *relay_create_bu
+ {
+ 	struct rchan_buf *buf;
  
- 	hlist_bl_lock(b);
--	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
-+	if (unlikely(READ_ONCE(parent->d_inode->i_dir_seq) != seq)) {
- 		hlist_bl_unlock(b);
- 		rcu_read_unlock();
- 		goto retry;
+-	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
++	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
+ 		return NULL;
+ 
+ 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
