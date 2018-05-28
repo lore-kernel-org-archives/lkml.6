@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033024AbeE1KTv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:19:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39630 "EHLO mail.kernel.org"
+        id S1033077AbeE1KUC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:20:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032988AbeE1KTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:47 -0400
+        id S1032988AbeE1KT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Malone <peter.malone@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 129/268] fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
-Date: Mon, 28 May 2018 12:01:43 +0200
-Message-Id: <20180528100216.702176008@linuxfoundation.org>
+Subject: [PATCH 4.4 132/268] netfilter: ebtables: fix erroneous reject of last rule
+Date: Mon, 28 May 2018 12:01:46 +0200
+Message-Id: <20180528100217.043986393@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,61 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Malone <peter.malone@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 250c6c49e3b68756b14983c076183568636e2bde ]
+[ Upstream commit 932909d9b28d27e807ff8eecb68c7748f6701628 ]
 
-Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
-sbusfb_ioctl_helper().
+The last rule in the blob has next_entry offset that is same as total size.
+This made "ebtables32 -A OUTPUT -d de:ad:be:ef:01:02" fail on 64 bit kernel.
 
-'index' is defined as an int in sbusfb_ioctl_helper().
-We retrieve this from the user:
-if (get_user(index, &c->index) ||
-    __get_user(count, &c->count) ||
-    __get_user(ured, &c->red) ||
-    __get_user(ugreen, &c->green) ||
-    __get_user(ublue, &c->blue))
-       return -EFAULT;
-
-and then we use 'index' in the following way:
-red = cmap->red[index + i] >> 8;
-green = cmap->green[index + i] >> 8;
-blue = cmap->blue[index + i] >> 8;
-
-This is a classic information leak vulnerability. 'index' should be
-an unsigned int, given its usage above.
-
-This patch is straight-forward; it changes 'index' to unsigned int
-in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
-
-This patch fixes CVE-2018-6412.
-
-Signed-off-by: Peter Malone <peter.malone@gmail.com>
-Acked-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: b71812168571fa ("netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/sbuslib.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bridge/netfilter/ebtables.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -121,7 +121,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ured;
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
--		int index, count, i;
-+		unsigned int index, count, i;
- 
- 		if (get_user(index, &c->index) ||
- 		    __get_user(count, &c->count) ||
-@@ -160,7 +160,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
- 		struct fb_cmap *cmap = &info->cmap;
--		int index, count, i;
-+		unsigned int index, count, i;
- 		u8 red, green, blue;
- 
- 		if (get_user(index, &c->index) ||
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2088,8 +2088,12 @@ static int size_entry_mwt(struct ebt_ent
+ 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
+ 	 */
+ 	for (i = 0; i < 4 ; ++i) {
+-		if (offsets[i] >= *total)
++		if (offsets[i] > *total)
+ 			return -EINVAL;
++
++		if (i < 3 && offsets[i] == *total)
++			return -EINVAL;
++
+ 		if (i == 0)
+ 			continue;
+ 		if (offsets[i-1] > offsets[i])
