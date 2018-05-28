@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164010AbeE1Kwe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:52:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
+        id S1164025AbeE1Kwo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:52:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163542AbeE1Kw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:52:28 -0400
+        id S1163817AbeE1Kwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:52:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
-        Sasha Neftin <sasha.neftin@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 217/496] e1000e: Fix check_for_link return value with autoneg off
-Date: Mon, 28 May 2018 12:00:02 +0200
-Message-Id: <20180528100329.069837869@linuxfoundation.org>
+Subject: [PATCH 4.14 253/496] xfrm: fix rcu_read_unlock usage in xfrm_local_error
+Date: Mon, 28 May 2018 12:00:38 +0200
+Message-Id: <20180528100330.553051491@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,46 +30,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 ]
+[ Upstream commit 46c0ef6e1eb95f619d9f62da4332749153db92f7 ]
 
-When autoneg is off, the .check_for_link callback functions clear the
-get_link_status flag and systematically return a "pseudo-error". This means
-that the link is not detected as up until the next execution of the
-e1000_watchdog_task() 2 seconds later.
+In the xfrm_local_error, rcu_read_unlock should be called when afinfo
+is not NULL. because xfrm_state_get_afinfo calls rcu_read_unlock
+if afinfo is NULL.
 
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: af5d27c4e12b ("xfrm: remove xfrm_state_put_afinfo")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/ich8lan.c |    2 +-
- drivers/net/ethernet/intel/e1000e/mac.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/xfrm/xfrm_output.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1602,7 +1602,7 @@ static s32 e1000_check_for_copper_link_i
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
+--- a/net/xfrm/xfrm_output.c
++++ b/net/xfrm/xfrm_output.c
+@@ -285,8 +285,9 @@ void xfrm_local_error(struct sk_buff *sk
+ 		return;
  
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
+ 	afinfo = xfrm_state_get_afinfo(proto);
+-	if (afinfo)
++	if (afinfo) {
+ 		afinfo->local_error(skb, mtu);
+-	rcu_read_unlock();
++		rcu_read_unlock();
++	}
+ }
+ EXPORT_SYMBOL_GPL(xfrm_local_error);
