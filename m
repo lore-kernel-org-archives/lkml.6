@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937269AbeE1K3C (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:29:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48222 "EHLO mail.kernel.org"
+        id S936970AbeE1K3J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:29:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932390AbeE1K2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:50 -0400
+        id S937229AbeE1K24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Andy Spencer <aspencer@spacex.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 060/329] RDMA/mlx5: Avoid memory leak in case of XRCD dealloc failure
-Date: Mon, 28 May 2018 11:59:49 +0200
-Message-Id: <20180528100247.793644018@linuxfoundation.org>
+Subject: [PATCH 4.9 062/329] gianfar: prevent integer wrapping in the rx handler
+Date: Mon, 28 May 2018 11:59:51 +0200
+Message-Id: <20180528100247.966660810@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,41 +30,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Andy Spencer <aspencer@spacex.com>
 
-[ Upstream commit b081808a66345ba725b77ecd8d759bee874cd937 ]
+[ Upstream commit 202a0a70e445caee1d0ec7aae814e64b1189fa4d ]
 
-Failure in XRCD FW deallocation command leaves memory leaked and
-returns error to the user which he can't do anything about it.
+When the frame check sequence (FCS) is split across the last two frames
+of a fragmented packet, part of the FCS gets counted twice, once when
+subtracting the FCS, and again when subtracting the previously received
+data.
 
-This patch changes behavior to always free memory and always return
-success to the user.
+For example, if 1602 bytes are received, and the first fragment contains
+the first 1600 bytes (including the first two bytes of the FCS), and the
+second fragment contains the last two bytes of the FCS:
 
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+  'skb->len == 1600' from the first fragment
+
+  size  = lstatus & BD_LENGTH_MASK; # 1602
+  size -= ETH_FCS_LEN;              # 1598
+  size -= skb->len;                 # -2
+
+Since the size is unsigned, it wraps around and causes a BUG later in
+the packet handling, as shown below:
+
+  kernel BUG at ./include/linux/skbuff.h:2068!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  ...
+  NIP [c021ec60] skb_pull+0x24/0x44
+  LR [c01e2fbc] gfar_clean_rx_ring+0x498/0x690
+  Call Trace:
+  [df7edeb0] [c01e2c1c] gfar_clean_rx_ring+0xf8/0x690 (unreliable)
+  [df7edf20] [c01e33a8] gfar_poll_rx_sq+0x3c/0x9c
+  [df7edf40] [c023352c] net_rx_action+0x21c/0x274
+  [df7edf90] [c0329000] __do_softirq+0xd8/0x240
+  [df7edff0] [c000c108] call_do_irq+0x24/0x3c
+  [c0597e90] [c00041dc] do_IRQ+0x64/0xc4
+  [c0597eb0] [c000d920] ret_from_except+0x0/0x18
+  --- interrupt: 501 at arch_cpu_idle+0x24/0x5c
+
+Change the size to a signed integer and then trim off any part of the
+FCS that was received prior to the last fragment.
+
+Fixes: 6c389fc931bc ("gianfar: fix size of scatter-gathered frames")
+Signed-off-by: Andy Spencer <aspencer@spacex.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/qp.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/freescale/gianfar.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -4610,13 +4610,10 @@ int mlx5_ib_dealloc_xrcd(struct ib_xrcd
- 	int err;
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -2935,7 +2935,7 @@ static irqreturn_t gfar_transmit(int irq
+ static bool gfar_add_rx_frag(struct gfar_rx_buff *rxb, u32 lstatus,
+ 			     struct sk_buff *skb, bool first)
+ {
+-	unsigned int size = lstatus & BD_LENGTH_MASK;
++	int size = lstatus & BD_LENGTH_MASK;
+ 	struct page *page = rxb->page;
+ 	bool last = !!(lstatus & BD_LFLAG(RXBD_LAST));
  
- 	err = mlx5_core_xrcd_dealloc(dev->mdev, xrcdn);
--	if (err) {
-+	if (err)
- 		mlx5_ib_warn(dev, "failed to dealloc xrcdn 0x%x\n", xrcdn);
--		return err;
--	}
+@@ -2950,11 +2950,16 @@ static bool gfar_add_rx_frag(struct gfar
+ 		if (last)
+ 			size -= skb->len;
  
- 	kfree(xrcd);
--
- 	return 0;
- }
+-		/* in case the last fragment consisted only of the FCS */
++		/* Add the last fragment if it contains something other than
++		 * the FCS, otherwise drop it and trim off any part of the FCS
++		 * that was already received.
++		 */
+ 		if (size > 0)
+ 			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page,
+ 					rxb->page_offset + RXBUF_ALIGNMENT,
+ 					size, GFAR_RXB_TRUESIZE);
++		else if (size < 0)
++			pskb_trim(skb, skb->len + size);
+ 	}
  
+ 	/* try reuse page */
