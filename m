@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968701AbeE1KRY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37466 "EHLO mail.kernel.org"
+        id S968676AbeE1KRS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968655AbeE1KRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:19 -0400
+        id S968655AbeE1KRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chad Dupuis <chad.dupuis@cavium.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 073/268] scsi: bnx2fc: Fix check in SCSI completion handler for timed out request
-Date: Mon, 28 May 2018 12:00:47 +0200
-Message-Id: <20180528100210.092578879@linuxfoundation.org>
+Subject: [PATCH 4.4 044/268] RDMA/mlx5: Avoid memory leak in case of XRCD dealloc failure
+Date: Mon, 28 May 2018 12:00:18 +0200
+Message-Id: <20180528100207.064350989@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,38 +32,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chad Dupuis <chad.dupuis@cavium.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit ecf7ff49945f5741fa1da112f994939f942031d3 ]
+[ Upstream commit b081808a66345ba725b77ecd8d759bee874cd937 ]
 
-When a request times out we set the io_req flag BNX2FC_FLAG_IO_COMPL so
-that if a subsequent completion comes in on that task ID we will ignore
-it.  The issue is that in the check for this flag there is a missing
-return so we will continue to process a request which may have already
-been returned to the ownership of the SCSI layer.  This can cause
-unpredictable results.
+Failure in XRCD FW deallocation command leaves memory leaked and
+returns error to the user which he can't do anything about it.
 
-Solution is to add in the missing return.
+This patch changes behavior to always free memory and always return
+success to the user.
 
-[mkp: typo plus title shortening]
-
-Signed-off-by: Chad Dupuis <chad.dupuis@cavium.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Tested-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_io.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx5/qp.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-@@ -1858,6 +1858,7 @@ void bnx2fc_process_scsi_cmd_compl(struc
- 		/* we will not receive ABTS response for this IO */
- 		BNX2FC_IO_DBG(io_req, "Timer context finished processing "
- 			   "this scsi cmd\n");
-+		return;
- 	}
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -3161,12 +3161,9 @@ int mlx5_ib_dealloc_xrcd(struct ib_xrcd
+ 	int err;
  
- 	/* Cancel the timeout_work, as we received IO completion */
+ 	err = mlx5_core_xrcd_dealloc(dev->mdev, xrcdn);
+-	if (err) {
++	if (err)
+ 		mlx5_ib_warn(dev, "failed to dealloc xrcdn 0x%x\n", xrcdn);
+-		return err;
+-	}
+ 
+ 	kfree(xrcd);
+-
+ 	return 0;
+ }
