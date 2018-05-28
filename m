@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938562AbeE1MDQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:03:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53414 "EHLO mail.kernel.org"
+        id S938575AbeE1MDf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:03:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423291AbeE1LGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:36 -0400
+        id S1423280AbeE1LGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 061/272] cpufreq: CPPC: Initialize shared perf capabilities of CPUs
-Date: Mon, 28 May 2018 12:01:34 +0200
-Message-Id: <20180528100246.001444607@linuxfoundation.org>
+Subject: [PATCH 4.16 060/272] Force log to disk before reading the AGF during a fstrim
+Date: Mon, 28 May 2018 12:01:33 +0200
+Message-Id: <20180528100245.937025017@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,51 +30,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+From: Carlos Maiolino <cmaiolino@redhat.com>
 
-[ Upstream commit 8913315e9459b146e5888ab5138e10daa061b885 ]
+[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
 
-When multiple CPUs are related in one cpufreq policy, the first online
-CPU will be chosen by default to handle cpufreq operations. Let's take
-cpu0 and cpu1 as an example.
+Forcing the log to disk after reading the agf is wrong, we might be
+calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
 
-When cpu0 is offline, policy->cpu will be shifted to cpu1. cpu1's perf
-capabilities should be initialized. Otherwise, perf capabilities are 0s
-and speed change can not take effect.
+This can cause a deadlock when racing a fstrim with a filesystem
+shutdown.
 
-This patch copies perf capabilities of the first online CPU to other
-shared CPUs when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+The deadlock has been identified due a miscalculation bug in device-mapper
+dm-thin, which returns lack of space to its users earlier than the device itself
+really runs out of space, changing the device-mapper volume into an error state.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The problem happened while filling the filesystem with a single file,
+triggering the bug in device-mapper, consequently causing an IO error
+and shutting down the filesystem.
+
+If such file is removed, and fstrim executed before the XFS finishes the
+shut down process, the fstrim process will end up holding the buffer
+lock, and going to sleep on the cil wait queue.
+
+At this point, the shut down process will try to wake up all the threads
+waiting on the cil wait queue, but for this, it will try to hold the
+same buffer log already held my the fstrim, locking up the filesystem.
+
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/xfs/xfs_discard.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -167,9 +167,19 @@ static int cppc_cpufreq_cpu_init(struct
- 		NSEC_PER_USEC;
- 	policy->shared_type = cpu->shared_type;
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -50,19 +50,19 @@ xfs_trim_extents(
  
--	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-+	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-+		int i;
+ 	pag = xfs_perag_get(mp, agno);
+ 
+-	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
+-	if (error || !agbp)
+-		goto out_put_perag;
+-
+-	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
+-
+ 	/*
+ 	 * Force out the log.  This means any transactions that might have freed
+-	 * space before we took the AGF buffer lock are now on disk, and the
++	 * space before we take the AGF buffer lock are now on disk, and the
+ 	 * volatile disk cache is flushed.
+ 	 */
+ 	xfs_log_force(mp, XFS_LOG_SYNC);
+ 
++	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
++	if (error || !agbp)
++		goto out_put_perag;
 +
- 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
--	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
++	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
 +
-+		for_each_cpu(i, policy->cpus) {
-+			if (unlikely(i == policy->cpu))
-+				continue;
-+
-+			memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
-+			       sizeof(cpu->perf_caps));
-+		}
-+	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
- 		/* Support only SW_ANY for now. */
- 		pr_debug("Unsupported CPU co-ord type\n");
- 		return -EFAULT;
+ 	/*
+ 	 * Look up the longest btree in the AGF and start with it.
+ 	 */
