@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162081AbeE1Kie (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:38:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58842 "EHLO mail.kernel.org"
+        id S1161949AbeE1Kix (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:38:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162359AbeE1Ki2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:28 -0400
+        id S1162517AbeE1Kil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:38:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 272/329] zorro: Set up z->dev.dma_mask for the DMA API
-Date: Mon, 28 May 2018 12:03:21 +0200
-Message-Id: <20180528100304.546438921@linuxfoundation.org>
+Subject: [PATCH 4.9 277/329] i2c: mv64xxx: Apply errata delay only in standard mode
+Date: Mon, 28 May 2018 12:03:26 +0200
+Message-Id: <20180528100304.894735211@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,53 +29,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-[ Upstream commit 55496d3fe2acd1a365c43cbd613a20ecd4d74395 ]
+[ Upstream commit 31184d8c6ea49ea0676d100cdd7e1f102ad025b5 ]
 
-The generic DMA API uses dev->dma_mask to check the DMA addressable
-memory bitmask, and warns if no mask is set or even allocated.
+The errata FE-8471889 description has been updated. There is still a
+timing violation for repeated start. But the errata now states that it
+was only the case for the Standard mode (100 kHz), in Fast mode (400 kHz)
+there is no issue.
 
-Set z->dev.dma_coherent_mask on Zorro bus scan, and make z->dev.dma_mask
-to point to z->dev.dma_coherent_mask so device drivers that need DMA have
-everything set up to avoid warnings from dma_alloc_coherent(). Drivers can
-still use dma_set_mask_and_coherent() to explicitly set their DMA bit mask.
+This patch limit the errata fix to the Standard mode.
 
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-[geert: Handle Zorro II with 24-bit address space]
-Acked-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+It has been tesed successfully on the clearfog (Aramda 388 based board).
+
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/zorro/zorro.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/i2c/busses/i2c-mv64xxx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/zorro/zorro.c
-+++ b/drivers/zorro/zorro.c
-@@ -16,6 +16,7 @@
- #include <linux/bitops.h>
- #include <linux/string.h>
- #include <linux/platform_device.h>
-+#include <linux/dma-mapping.h>
- #include <linux/slab.h>
- 
- #include <asm/byteorder.h>
-@@ -185,6 +186,17 @@ static int __init amiga_zorro_probe(stru
- 		z->dev.parent = &bus->dev;
- 		z->dev.bus = &zorro_bus_type;
- 		z->dev.id = i;
-+		switch (z->rom.er_Type & ERT_TYPEMASK) {
-+		case ERT_ZORROIII:
-+			z->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+			break;
-+
-+		case ERT_ZORROII:
-+		default:
-+			z->dev.coherent_dma_mask = DMA_BIT_MASK(24);
-+			break;
-+		}
-+		z->dev.dma_mask = &z->dev.coherent_dma_mask;
+--- a/drivers/i2c/busses/i2c-mv64xxx.c
++++ b/drivers/i2c/busses/i2c-mv64xxx.c
+@@ -848,12 +848,16 @@ mv64xxx_of_config(struct mv64xxx_i2c_dat
+ 	 */
+ 	if (of_device_is_compatible(np, "marvell,mv78230-i2c")) {
+ 		drv_data->offload_enabled = true;
+-		drv_data->errata_delay = true;
++		/* The delay is only needed in standard mode (100kHz) */
++		if (bus_freq <= 100000)
++			drv_data->errata_delay = true;
  	}
  
- 	/* ... then register them */
+ 	if (of_device_is_compatible(np, "marvell,mv78230-a0-i2c")) {
+ 		drv_data->offload_enabled = false;
+-		drv_data->errata_delay = true;
++		/* The delay is only needed in standard mode (100kHz) */
++		if (bus_freq <= 100000)
++			drv_data->errata_delay = true;
+ 	}
+ 
+ 	if (of_device_is_compatible(np, "allwinner,sun6i-a31-i2c"))
