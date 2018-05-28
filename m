@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937796AbeE1KqE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:46:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36332 "EHLO mail.kernel.org"
+        id S1162812AbeE1KqL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:46:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937780AbeE1Kp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:58 -0400
+        id S937798AbeE1KqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matan Barak <matanb@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/496] IB/uverbs: Fix method merging in uverbs_ioctl_merge
-Date: Mon, 28 May 2018 11:57:42 +0200
-Message-Id: <20180528100323.017231933@linuxfoundation.org>
+Subject: [PATCH 4.14 104/496] arm64: perf: correct PMUVer probing
+Date: Mon, 28 May 2018 11:58:09 +0200
+Message-Id: <20180528100324.224472328@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,80 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matan Barak <matanb@mellanox.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 3d89459e2ef92cc0e5a50dde868780ccda9786c1 ]
+[ Upstream commit 0331365edb1d6ccd6ae68b1038111da85d4c68d1 ]
 
-Fix a bug in uverbs_ioctl_merge that looked at the object's iterator
-number instead of the method's iterator number when merging methods.
+The ID_AA64DFR0_EL1.PMUVer field doesn't follow the usual ID registers
+scheme. While value 0xf indicates a non-architected PMU is implemented,
+values 0x1 to 0xe indicate an increasingly featureful architected PMU,
+as if the field were unsigned.
 
-While we're at it, make the uverbs_ioctl_merge code a bit more clear
-and faster.
+For more details, see ARM DDI 0487C.a, D10.1.4, "Alternative ID scheme
+used for the Performance Monitors Extension version".
 
-Fixes: 118620d3686b ('IB/core: Add uverbs merge trees functionality')
-Signed-off-by: Matan Barak <matanb@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Currently, we treat the field as signed, and erroneously bail out for
+values 0x8 to 0xe. Let's correct that.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_ioctl_merge.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm64/kernel/perf_event.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/uverbs_ioctl_merge.c
-+++ b/drivers/infiniband/core/uverbs_ioctl_merge.c
-@@ -114,6 +114,7 @@ static size_t get_elements_above_id(cons
- 	short min = SHRT_MAX;
- 	const void *elem;
- 	int i, j, last_stored = -1;
-+	unsigned int equal_min = 0;
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -914,9 +914,9 @@ static void __armv8pmu_probe_pmu(void *i
+ 	int pmuver;
  
- 	for_each_element(elem, i, j, elements, num_elements, num_offset,
- 			 data_offset) {
-@@ -136,6 +137,10 @@ static size_t get_elements_above_id(cons
- 		 */
- 		iters[last_stored == i ? num_iters - 1 : num_iters++] = elem;
- 		last_stored = i;
-+		if (min == GET_ID(id))
-+			equal_min++;
-+		else
-+			equal_min = 1;
- 		min = GET_ID(id);
- 	}
+ 	dfr0 = read_sysreg(id_aa64dfr0_el1);
+-	pmuver = cpuid_feature_extract_signed_field(dfr0,
++	pmuver = cpuid_feature_extract_unsigned_field(dfr0,
+ 			ID_AA64DFR0_PMUVER_SHIFT);
+-	if (pmuver < 1)
++	if (pmuver == 0xf || pmuver == 0)
+ 		return;
  
-@@ -146,15 +151,10 @@ static size_t get_elements_above_id(cons
- 	 * Therefore, we need to clean the beginning of the array to make sure
- 	 * all ids of final elements are equal to min.
- 	 */
--	for (i = num_iters - 1; i >= 0 &&
--	     GET_ID(*(u16 *)(iters[i] + id_offset)) == min; i--)
--		;
--
--	num_iters -= i + 1;
--	memmove(iters, iters + i + 1, sizeof(*iters) * num_iters);
-+	memmove(iters, iters + num_iters - equal_min, sizeof(*iters) * equal_min);
- 
- 	*min_id = min;
--	return num_iters;
-+	return equal_min;
- }
- 
- #define find_max_element_entry_id(num_elements, elements, num_objects_fld, \
-@@ -322,7 +322,7 @@ static struct uverbs_method_spec *build_
- 		hash = kzalloc(sizeof(*hash) +
- 			       ALIGN(sizeof(*hash->attrs) * (attr_max_bucket + 1),
- 				     sizeof(long)) +
--			       BITS_TO_LONGS(attr_max_bucket) * sizeof(long),
-+			       BITS_TO_LONGS(attr_max_bucket + 1) * sizeof(long),
- 			       GFP_KERNEL);
- 		if (!hash) {
- 			res = -ENOMEM;
-@@ -509,7 +509,7 @@ static struct uverbs_object_spec *build_
- 			 * first handler which != NULL. This also defines the
- 			 * set of flags used for this handler.
- 			 */
--			for (i = num_object_defs - 1;
-+			for (i = num_method_defs - 1;
- 			     i >= 0 && !method_defs[i]->handler; i--)
- 				;
- 			hash->methods[min_id++] = method;
+ 	probe->present = true;
