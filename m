@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937871AbeE1K5k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:57:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45446 "EHLO mail.kernel.org"
+        id S937887AbeE1K5q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:57:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932527AbeE1K5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:17 -0400
+        id S932527AbeE1K5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 321/496] Btrfs: fix loss of prealloc extents past i_size after fsync log replay
-Date: Mon, 28 May 2018 12:01:46 +0200
-Message-Id: <20180528100333.358407308@linuxfoundation.org>
+Subject: [PATCH 4.14 362/496] powerpc/mpic: Check if cpu_possible() in mpic_physmask()
+Date: Mon, 28 May 2018 12:02:27 +0200
+Message-Id: <20180528100335.040964846@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,145 +29,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 471d557afed155b85da237ec46c549f443eeb5de ]
+[ Upstream commit 0834d627fbea00c1444075eb3e448e1974da452d ]
 
-Currently if we allocate extents beyond an inode's i_size (through the
-fallocate system call) and then fsync the file, we log the extents but
-after a power failure we replay them and then immediately drop them.
-This behaviour happens since about 2009, commit c71bf099abdd ("Btrfs:
-Avoid orphan inodes cleanup while replaying log"), because it marks
-the inode as an orphan instead of dropping any extents beyond i_size
-before replaying logged extents, so after the log replay, and while
-the mount operation is still ongoing, we find the inode marked as an
-orphan and then perform a truncation (drop extents beyond the inode's
-i_size). Because the processing of orphan inodes is still done
-right after replaying the log and before the mount operation finishes,
-the intention of that commit does not make any sense (at least as
-of today). However reverting that behaviour is not enough, because
-we can not simply discard all extents beyond i_size and then replay
-logged extents, because we risk dropping extents beyond i_size created
-in past transactions, for example:
+In mpic_physmask() we loop over all CPUs up to 32, then get the hard
+SMP processor id of that CPU.
 
-  add prealloc extent beyond i_size
-  fsync - clears the flag BTRFS_INODE_NEEDS_FULL_SYNC from the inode
-  transaction commit
-  add another prealloc extent beyond i_size
-  fsync - triggers the fast fsync path
-  power failure
+Currently that's possibly walking off the end of the paca array, but
+in a future patch we will change the paca array to be an array of
+pointers, and in that case we will get a NULL for missing CPUs and
+oops. eg:
 
-In that scenario, we would drop the first extent and then replay the
-second one. To fix this just make sure that all prealloc extents
-beyond i_size are logged, and if we find too many (which is far from
-a common case), fallback to a full transaction commit (like we do when
-logging regular extents in the fast fsync path).
+  Unable to handle kernel paging request for data at address 0x88888888888888b8
+  Faulting instruction address: 0xc00000000004e380
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  ...
+  NIP .mpic_set_affinity+0x60/0x1a0
+  LR  .irq_do_set_affinity+0x48/0x100
 
-Trivial reproducer:
+Fix it by checking the CPU is possible, this also fixes the code if
+there are gaps in the CPU numbering which probably never happens on
+mpic systems but who knows.
 
- $ mkfs.btrfs -f /dev/sdb
- $ mount /dev/sdb /mnt
- $ xfs_io -f -c "pwrite -S 0xab 0 256K" /mnt/foo
- $ sync
- $ xfs_io -c "falloc -k 256K 1M" /mnt/foo
- $ xfs_io -c "fsync" /mnt/foo
- <power failure>
-
- # mount to replay log
- $ mount /dev/sdb /mnt
- # at this point the file only has one extent, at offset 0, size 256K
-
-A test case for fstests follows soon, covering multiple scenarios that
-involve adding prealloc extents with previous shrinking truncates and
-without such truncates.
-
-Fixes: c71bf099abdd ("Btrfs: Avoid orphan inodes cleanup while replaying log")
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Debugged-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-log.c |   63 +++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 58 insertions(+), 5 deletions(-)
+ arch/powerpc/sysdev/mpic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2377,13 +2377,41 @@ static int replay_one_buffer(struct btrf
- 			if (ret)
- 				break;
+--- a/arch/powerpc/sysdev/mpic.c
++++ b/arch/powerpc/sysdev/mpic.c
+@@ -626,7 +626,7 @@ static inline u32 mpic_physmask(u32 cpum
+ 	int i;
+ 	u32 mask = 0;
  
--			/* for regular files, make sure corresponding
--			 * orphan item exist. extents past the new EOF
--			 * will be truncated later by orphan cleanup.
-+			/*
-+			 * Before replaying extents, truncate the inode to its
-+			 * size. We need to do it now and not after log replay
-+			 * because before an fsync we can have prealloc extents
-+			 * added beyond the inode's i_size. If we did it after,
-+			 * through orphan cleanup for example, we would drop
-+			 * those prealloc extents just after replaying them.
- 			 */
- 			if (S_ISREG(mode)) {
--				ret = insert_orphan_item(wc->trans, root,
--							 key.objectid);
-+				struct inode *inode;
-+				u64 from;
-+
-+				inode = read_one_inode(root, key.objectid);
-+				if (!inode) {
-+					ret = -EIO;
-+					break;
-+				}
-+				from = ALIGN(i_size_read(inode),
-+					     root->fs_info->sectorsize);
-+				ret = btrfs_drop_extents(wc->trans, root, inode,
-+							 from, (u64)-1, 1);
-+				/*
-+				 * If the nlink count is zero here, the iput
-+				 * will free the inode.  We bump it to make
-+				 * sure it doesn't get freed until the link
-+				 * count fixup is done.
-+				 */
-+				if (!ret) {
-+					if (inode->i_nlink == 0)
-+						inc_nlink(inode);
-+					/* Update link count and nbytes. */
-+					ret = btrfs_update_inode(wc->trans,
-+								 root, inode);
-+				}
-+				iput(inode);
- 				if (ret)
- 					break;
- 			}
-@@ -4234,6 +4262,31 @@ static int btrfs_log_changed_extents(str
- 		num++;
- 	}
- 
-+	/*
-+	 * Add all prealloc extents beyond the inode's i_size to make sure we
-+	 * don't lose them after doing a fast fsync and replaying the log.
-+	 */
-+	if (inode->flags & BTRFS_INODE_PREALLOC) {
-+		struct rb_node *node;
-+
-+		for (node = rb_last(&tree->map); node; node = rb_prev(node)) {
-+			em = rb_entry(node, struct extent_map, rb_node);
-+			if (em->start < i_size_read(&inode->vfs_inode))
-+				break;
-+			if (!list_empty(&em->list))
-+				continue;
-+			/* Same as above loop. */
-+			if (++num > 32768) {
-+				list_del_init(&tree->modified_extents);
-+				ret = -EFBIG;
-+				goto process;
-+			}
-+			refcount_inc(&em->refs);
-+			set_bit(EXTENT_FLAG_LOGGING, &em->flags);
-+			list_add_tail(&em->list, &extents);
-+		}
-+	}
-+
- 	list_sort(NULL, &extents, extent_cmp);
- 	btrfs_get_logged_extents(inode, logged_list, logged_start, logged_end);
- 	/*
+-	for (i = 0; i < min(32, NR_CPUS); ++i, cpumask >>= 1)
++	for (i = 0; i < min(32, NR_CPUS) && cpu_possible(i); ++i, cpumask >>= 1)
+ 		mask |= (cpumask & 1) << get_hard_smp_processor_id(i);
+ 	return mask;
+ }
