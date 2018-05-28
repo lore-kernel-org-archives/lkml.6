@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937155AbeE1K2T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
+        id S937143AbeE1K2Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:28:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937121AbeE1K2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:09 -0400
+        id S937098AbeE1K2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        John Sobecki <john.sobecki@oracle.com>,
-        Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.9 013/329] xen-swiotlb: fix the check condition for xen_swiotlb_free_coherent
-Date: Mon, 28 May 2018 11:59:02 +0200
-Message-Id: <20180528100243.366804351@linuxfoundation.org>
+        stable@vger.kernel.org, mulhern <amulhern@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 040/329] dm thin: fix documentation relative to low water mark threshold
+Date: Mon, 28 May 2018 11:59:29 +0200
+Message-Id: <20180528100245.797727320@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,42 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: mulhern <amulhern@redhat.com>
 
-commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
+[ Upstream commit 9b28a1102efc75d81298198166ead87d643a29ce ]
 
-When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
-but Dom Heap is increased by the same size. Tracing raidconfig we found
-that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
-to apply memory. If the memory allocated by Dom0 is not in the DMA area,
-it will exchange memory with Xen to meet the requiment. Later drivers
-call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
-the check condition (dev_addr + size - 1 <= dma_mask) is always false,
-it prevents calling xen_destroy_contiguous_region() to return the memory
-to the Xen DMA heap.
+Fixes:
+1. The use of "exceeds" when the opposite of exceeds, falls below,
+was meant.
+2. Properly speaking, a table can not exceed a threshold.
 
-This issue introduced by commit 6810df88dcfc2 "xen-swiotlb: When doing
-coherent alloc/dealloc check before swizzling the MFNs.".
+It emphasizes the important point, which is that it is the userspace
+daemon's responsibility to check for low free space when a device
+is resumed, since it won't get a special event indicating low free
+space in that situation.
 
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Tested-by: John Sobecki <john.sobecki@oracle.com>
-Reviewed-by: Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: mulhern <amulhern@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/xen/swiotlb-xen.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/device-mapper/thin-provisioning.txt |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -359,7 +359,7 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
+--- a/Documentation/device-mapper/thin-provisioning.txt
++++ b/Documentation/device-mapper/thin-provisioning.txt
+@@ -112,9 +112,11 @@ $low_water_mark is expressed in blocks o
+ free space on the data device drops below this level then a dm event
+ will be triggered which a userspace daemon should catch allowing it to
+ extend the pool device.  Only one such event will be sent.
+-Resuming a device with a new table itself triggers an event so the
+-userspace daemon can use this to detect a situation where a new table
+-already exceeds the threshold.
++
++No special event is triggered if a just resumed device's free space is below
++the low water mark. However, resuming a device always triggers an
++event; a userspace daemon should verify that free space exceeds the low
++water mark when handling this event.
  
--	if (((dev_addr + size - 1 > dma_mask)) ||
-+	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
- 
+ A low water mark for the metadata device is maintained in the kernel and
+ will trigger a dm event if free space on the metadata device drops below
