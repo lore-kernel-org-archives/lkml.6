@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422983AbeE1LD7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51004 "EHLO mail.kernel.org"
+        id S1423010AbeE1LEH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:04:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422964AbeE1LDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:52 -0400
+        id S1422964AbeE1LEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:04:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 488/496] regmap: Correct comparison in regmap_cached
-Date: Mon, 28 May 2018 12:04:33 +0200
-Message-Id: <20180528100340.445185628@linuxfoundation.org>
+Subject: [PATCH 4.14 491/496] ARM: dts: porter: Fix HDMI output routing
+Date: Mon, 28 May 2018 12:04:36 +0200
+Message-Id: <20180528100340.575465351@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,31 +31,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 71df179363a5a733a8932e9afb869760d7559383 ]
+[ Upstream commit d4b78db6ac3e084e2bdc57d5518bd247c727f396 ]
 
-The cache pointer points to the actual memory used by the cache, as the
-comparison here is looking for the type of the cache it should check
-against cache_type.
+The HDMI encoder is connected to the RGB output of the DU, which is
+port@0, not port@1. Fix the incorrect DT description.
 
-Fixes: 1ea975cf1ef5 ("regmap: Add a function to check if a regmap register is cached")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: c5af8a4248d3 ("ARM: dts: porter: add DU DT support")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/regmap/regmap.c |    2 +-
+ arch/arm/boot/dts/r8a7791-porter.dts |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -98,7 +98,7 @@ bool regmap_cached(struct regmap *map, u
- 	int ret;
- 	unsigned int val;
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -427,7 +427,7 @@
+ 		      "dclkin.0", "dclkin.1";
  
--	if (map->cache == REGCACHE_NONE)
-+	if (map->cache_type == REGCACHE_NONE)
- 		return false;
- 
- 	if (!map->cache_ops)
+ 	ports {
+-		port@1 {
++		port@0 {
+ 			endpoint {
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
