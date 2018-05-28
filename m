@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165313AbeE1NUS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:20:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39140 "EHLO mail.kernel.org"
+        id S1165320AbeE1NUe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:20:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163516AbeE1KtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:25 -0400
+        id S1163362AbeE1KtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Selvin Xavier <selvin.xavier@broadcom.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Karsten Graul <kgraul@linux.vnet.ibm.com>,
+        Ursula Braun <ubraun@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 185/496] RDMA/bnxt_re: Fix the ib_reg failure cleanup
-Date: Mon, 28 May 2018 11:59:30 +0200
-Message-Id: <20180528100327.744743881@linuxfoundation.org>
+Subject: [PATCH 4.14 174/496] net/smc: use link_id of server in confirm link reply
+Date: Mon, 28 May 2018 11:59:19 +0200
+Message-Id: <20180528100327.212059258@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,34 +31,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Selvin Xavier <selvin.xavier@broadcom.com>
+From: Karsten Graul <kgraul@linux.vnet.ibm.com>
 
-[ Upstream commit 497158aa5f520db50452ef928c0f955cb42f2e77 ]
+[ Upstream commit 2be922f31606f114119f48de3207d122a90e7357 ]
 
-Release the netdev references in the cleanup path.  Invokes the cleanup
-routines if bnxt_re_ib_reg fails.
+The CONFIRM LINK reply message must contain the link_id sent
+by the server. And set the link_id explicitly when
+initializing the link.
 
-Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Karsten Graul <kgraul@linux.vnet.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/bnxt_re/main.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/smc/smc_core.c |    1 +
+ net/smc/smc_llc.c  |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/bnxt_re/main.c
-+++ b/drivers/infiniband/hw/bnxt_re/main.c
-@@ -1240,9 +1240,12 @@ static void bnxt_re_task(struct work_str
- 	switch (re_work->event) {
- 	case NETDEV_REGISTER:
- 		rc = bnxt_re_ib_reg(rdev);
--		if (rc)
-+		if (rc) {
- 			dev_err(rdev_to_dev(rdev),
- 				"Failed to register with IB: %#x", rc);
-+			bnxt_re_remove_one(rdev);
-+			bnxt_re_dev_unreg(rdev);
-+		}
- 		break;
- 	case NETDEV_UP:
- 		bnxt_re_dispatch_event(&rdev->ibdev, NULL, 1,
+--- a/net/smc/smc_core.c
++++ b/net/smc/smc_core.c
+@@ -174,6 +174,7 @@ static int smc_lgr_create(struct smc_soc
+ 
+ 	lnk = &lgr->lnk[SMC_SINGLE_LINK];
+ 	/* initialize link */
++	lnk->link_id = SMC_SINGLE_LINK;
+ 	lnk->smcibdev = smcibdev;
+ 	lnk->ibport = ibport;
+ 	lnk->path_mtu = smcibdev->pattr[ibport - 1].active_mtu;
+--- a/net/smc/smc_llc.c
++++ b/net/smc/smc_llc.c
+@@ -92,7 +92,7 @@ int smc_llc_send_confirm_link(struct smc
+ 	memcpy(confllc->sender_mac, mac, ETH_ALEN);
+ 	memcpy(confllc->sender_gid, gid, SMC_GID_SIZE);
+ 	hton24(confllc->sender_qp_num, link->roce_qp->qp_num);
+-	/* confllc->link_num = SMC_SINGLE_LINK; already done by memset above */
++	confllc->link_num = link->link_id;
+ 	memcpy(confllc->link_uid, lgr->id, SMC_LGR_ID_SIZE);
+ 	confllc->max_links = SMC_LINKS_PER_LGR_MAX;
+ 	/* send llc message */
