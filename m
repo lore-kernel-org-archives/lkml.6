@@ -1,88 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423480AbeE1MRK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:17:10 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50348 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422783AbeE1MRA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 08:17:00 -0400
-Date: Mon, 28 May 2018 15:16:45 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
+        id S1423396AbeE1MQk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:16:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1164428AbeE1LDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:14 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.14 286/496] macsec: missing dev_put() on error in
- macsec_newlink()
-Message-ID: <20180528121644.4wftwxql43eoug5h@mwanda>
+Subject: [PATCH 4.14 481/496] perf report: Fix memory corruption in --branch-history mode --branch-history
+Date: Mon, 28 May 2018 12:04:26 +0200
+Message-Id: <20180528100340.160067548@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
- <20180528100331.887783491@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528100331.887783491@linuxfoundation.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8906 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805280150
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-I'm sorryt.  This one was buggy.  We did a revert of it in commit
-bd28899dd34f ("Revert "macsec: missing dev_put() on error in
-macsec_newlink()"").
+------------------
 
-You have queued for 4.8 as well.
+From: Jiri Olsa <jolsa@redhat.com>
 
-regards,
-dan carpenter
+[ Upstream commit e3ebaa465136ecfedf9c6f4671df02bf625f8125 ]
 
-On Mon, May 28, 2018 at 12:01:11PM +0200, Greg Kroah-Hartman wrote:
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> [ Upstream commit 5dcd8400884cc4a043a6d4617e042489e5d566a9 ]
-> 
-> We moved the dev_hold(real_dev); call earlier in the function but forgot
-> to update the error paths.
-> 
-> Fixes: 0759e552bce7 ("macsec: fix negative refcnt on parent link")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/net/macsec.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> --- a/drivers/net/macsec.c
-> +++ b/drivers/net/macsec.c
-> @@ -3248,7 +3248,7 @@ static int macsec_newlink(struct net *ne
->  
->  	err = netdev_upper_dev_link(real_dev, dev);
->  	if (err < 0)
-> -		goto unregister;
-> +		goto put_dev;
->  
->  	/* need to be already registered so that ->init has run and
->  	 * the MAC addr is set
-> @@ -3284,7 +3284,8 @@ del_dev:
->  	macsec_del_dev(macsec);
->  unlink:
->  	netdev_upper_dev_unlink(real_dev, dev);
-> -unregister:
-> +put_dev:
-> +	dev_put(real_dev);
->  	unregister_netdevice(dev);
->  	return err;
->  }
-> 
+Jin Yao reported memory corrupton in perf report with
+branch info used for stack trace:
+
+  > Following command lines will cause perf crash.
+
+  > perf record -j call -g -a <application>
+  > perf report --branch-history
+  >
+  > *** Error in `perf': double free or corruption (!prev): 0x00000000104aa040 ***
+  > ======= Backtrace: =========
+  > /lib/x86_64-linux-gnu/libc.so.6(+0x77725)[0x7f6b37254725]
+  > /lib/x86_64-linux-gnu/libc.so.6(+0x7ff4a)[0x7f6b3725cf4a]
+  > /lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f6b37260abc]
+  > perf[0x51b914]
+  > perf(hist_entry_iter__add+0x1e5)[0x51f305]
+  > perf[0x43cf01]
+  > perf[0x4fa3bf]
+  > perf[0x4fa923]
+  > perf[0x4fd396]
+  > perf[0x4f9614]
+  > perf(perf_session__process_events+0x89e)[0x4fc38e]
+  > perf(cmd_report+0x15d2)[0x43f202]
+  > perf[0x4a059f]
+  > perf(main+0x631)[0x427b71]
+  > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f6b371fd830]
+  > perf(_start+0x29)[0x427d89]
+
+For the cumulative output, we allocate the he_cache array based on the
+--max-stack option value and populate it with data from 'callchain_cursor'.
+
+The --max-stack option value does not ensure now the limit for number of
+callchain_cursor nodes, so the cumulative iter code will allocate smaller array
+than it's actually needed and cause above corruption.
+
+I think the --max-stack limit does not apply here anyway, because we add
+callchain data as normal hist entries, while the --max-stack control the limit
+of single entry callchain depth.
+
+Using the callchain_cursor.nr as he_cache array count to fix this. Also
+removing struct hist_entry_iter::max_stack, because there's no longer any use
+for it.
+
+We need more fixes to ensure that the branch stack code follows properly the
+logic of --max-stack, which is not the case at the moment.
+
+Original-patch-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180216123619.GA9945@krava
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ tools/perf/util/hist.c |    4 +---
+ tools/perf/util/hist.h |    1 -
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -878,7 +878,7 @@ iter_prepare_cumulative_entry(struct his
+ 	 * cumulated only one time to prevent entries more than 100%
+ 	 * overhead.
+ 	 */
+-	he_cache = malloc(sizeof(*he_cache) * (iter->max_stack + 1));
++	he_cache = malloc(sizeof(*he_cache) * (callchain_cursor.nr + 1));
+ 	if (he_cache == NULL)
+ 		return -ENOMEM;
+ 
+@@ -1043,8 +1043,6 @@ int hist_entry_iter__add(struct hist_ent
+ 	if (err)
+ 		return err;
+ 
+-	iter->max_stack = max_stack_depth;
+-
+ 	err = iter->ops->prepare_entry(iter, al);
+ 	if (err)
+ 		goto out;
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -107,7 +107,6 @@ struct hist_entry_iter {
+ 	int curr;
+ 
+ 	bool hide_unresolved;
+-	int max_stack;
+ 
+ 	struct perf_evsel *evsel;
+ 	struct perf_sample *sample;
