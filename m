@@ -1,21 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424942AbeE1Lya (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:54:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56346 "EHLO mail.kernel.org"
+        id S1424959AbeE1Lyq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:54:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423309AbeE1LIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:08:47 -0400
+        id S1423652AbeE1LIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:08:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Paul Menzel <pmenzel+linux-wireless@molgen.mpg.de>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 106/272] iwlwifi: mvm: check if mac80211_queue is valid in iwl_mvm_disable_txq
-Date: Mon, 28 May 2018 12:02:19 +0200
-Message-Id: <20180528100250.008518285@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 105/272] m68k: set dma and coherent masks for platform FEC ethernets
+Date: Mon, 28 May 2018 12:02:18 +0200
+Message-Id: <20180528100249.925894046@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,53 +28,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Greg Ungerer <gerg@linux-m68k.org>
 
-[ Upstream commit 9a233bb8025105db9a60b5d761005cc5a6c77f3d ]
+[ Upstream commit f61e64310b75733d782e930d1fb404b84699eed6 ]
 
-Sometimes iwl_mvm_disable_txq() may be called with mac80211_queue ==
-IEEE80211_INVAL_HW_QUEUE, and this would cause us to use BIT(0xFF)
-which is way too large for the u16 we used to store it in
-hw_queue_to_mac820211.  If this happens the following UBSAN warning
-will be generated:
+As of commit 205e1b7f51e4 ("dma-mapping: warn when there is no
+coherent_dma_mask") the Freescale FEC driver is issuing the following
+warning on driver initialization on ColdFire systems:
 
-[  167.185167] UBSAN: Undefined behaviour in drivers/net/wireless/intel/iwlwifi/mvm/utils.c:838:5
-[  167.185171] shift exponent 255 is too large for 64-bit type 'long unsigned int'
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 0x40159e20
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc7-dirty #4
+Stack from 41833dd8:
+        41833dd8 40259c53 40025534 40279e26 00000003 00000000 4004e514 41827000
+        400255de 40244e42 00000204 40159e20 00000009 00000000 00000000 4024531d
+        40159e20 40244e42 00000204 00000000 00000000 00000000 00000007 00000000
+        00000000 40279e26 4028d040 40226576 4003ae88 40279e26 418273f6 41833ef8
+        7fffffff 418273f2 41867028 4003c9a2 4180ac6c 00000004 41833f8c 4013e71c
+        40279e1c 40279e26 40226c16 4013ced2 40279e26 40279e58 4028d040 00000000
+Call Trace:
+        [<40025534>] 0x40025534
+ [<4004e514>] 0x4004e514
+ [<400255de>] 0x400255de
+ [<40159e20>] 0x40159e20
+ [<40159e20>] 0x40159e20
 
-Fix that by checking that it is not IEEE80211_INVAL_HW_QUEUE and,
-while at it, add a warning if the queue number is larger than
-IEEE80211_MAX_QUEUES.
+It is not fatal, the driver and the system continue to function normally.
 
-Fixes: 34e10860ae8d ("iwlwifi: mvm: remove references to queue_info in new TX path")
-Reported-by: Paul Menzel <pmenzel+linux-wireless@molgen.mpg.de>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+As per the warning the coherent_dma_mask is not set on this device.
+There is nothing special about the DMA memory coherency on this hardware
+so we can just set the mask to 32bits in the platform data for the FEC
+ethernet devices.
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/utils.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/m68k/coldfire/device.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-@@ -800,12 +800,19 @@ int iwl_mvm_disable_txq(struct iwl_mvm *
- 		.scd_queue = queue,
- 		.action = SCD_CFG_DISABLE_QUEUE,
- 	};
--	bool remove_mac_queue = true;
-+	bool remove_mac_queue = mac80211_queue != IEEE80211_INVAL_HW_QUEUE;
- 	int ret;
+--- a/arch/m68k/coldfire/device.c
++++ b/arch/m68k/coldfire/device.c
+@@ -135,7 +135,11 @@ static struct platform_device mcf_fec0 =
+ 	.id			= 0,
+ 	.num_resources		= ARRAY_SIZE(mcf_fec0_resources),
+ 	.resource		= mcf_fec0_resources,
+-	.dev.platform_data	= FEC_PDATA,
++	.dev = {
++		.dma_mask		= &mcf_fec0.dev.coherent_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++		.platform_data		= FEC_PDATA,
++	}
+ };
  
-+	if (WARN_ON(remove_mac_queue && mac80211_queue >= IEEE80211_MAX_QUEUES))
-+		return -EINVAL;
-+
- 	if (iwl_mvm_has_new_tx_api(mvm)) {
- 		spin_lock_bh(&mvm->queue_info_lock);
--		mvm->hw_queue_to_mac80211[queue] &= ~BIT(mac80211_queue);
-+
-+		if (remove_mac_queue)
-+			mvm->hw_queue_to_mac80211[queue] &=
-+				~BIT(mac80211_queue);
-+
- 		spin_unlock_bh(&mvm->queue_info_lock);
- 
- 		iwl_trans_txq_free(mvm->trans, queue);
+ #ifdef MCFFEC_BASE1
+@@ -167,7 +171,11 @@ static struct platform_device mcf_fec1 =
+ 	.id			= 1,
+ 	.num_resources		= ARRAY_SIZE(mcf_fec1_resources),
+ 	.resource		= mcf_fec1_resources,
+-	.dev.platform_data	= FEC_PDATA,
++	.dev = {
++		.dma_mask		= &mcf_fec1.dev.coherent_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++		.platform_data		= FEC_PDATA,
++	}
+ };
+ #endif /* MCFFEC_BASE1 */
+ #endif /* CONFIG_FEC */
