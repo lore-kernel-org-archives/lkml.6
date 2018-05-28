@@ -1,65 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425058AbeE1Mok (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:44:40 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38780 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937857AbeE1K5i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1425044AbeE1Mog (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:44:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937859AbeE1K5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 06:57:38 -0400
-X-Google-Smtp-Source: AB8JxZpRrjZaHCZVJ9paOUHoM3QAARxFgqetThSF2zAky2X0A1/I0LUhzdaq+C+M6LN3cxtvyuRceA==
-Date: Mon, 28 May 2018 16:27:34 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/15] arm: dts: sun: Add missing cooling device
- properties for CPUs
-Message-ID: <20180528105734.bkplm7tfaqsurdrn@vireshk-i7>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <eded393f4b508a1f377f9af6859a3b82a6787e1c.1527244201.git.viresh.kumar@linaro.org>
- <20180528084446.g24fphqqac2hi3rr@flea>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 361/496] ACPI: acpi_pad: Fix memory leak in power saving threads
+Date: Mon, 28 May 2018 12:02:26 +0200
+Message-Id: <20180528100335.000546108@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528084446.g24fphqqac2hi3rr@flea>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-05-18, 10:44, Maxime Ripard wrote:
-> Hi,
-> 
-> On Fri, May 25, 2018 at 04:01:52PM +0530, Viresh Kumar wrote:
-> > The cooling device properties, like "#cooling-cells" and
-> > "dynamic-power-coefficient", should either be present for all the CPUs
-> > of a cluster or none. If these are present only for a subset of CPUs of
-> > a cluster then things will start falling apart as soon as the CPUs are
-> > brought online in a different order. For example, this will happen
-> > because the operating system looks for such properties in the CPU node
-> > it is trying to bring up, so that it can register a cooling device.
-> > 
-> > Add such missing properties.
-> > 
-> > Fix other missing properties (clocks, OPP, clock latency) as well to
-> > make it all work.
-> > 
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> The prefix should be sunxi and not sun, but it looks good to me
-> otherwise.
-> 
-> Let me know what your preferred merge method is.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Please pick it up directly and send it as part of your pull request.
-Do you want me to resend or can you fix the $subject ?
+------------------
 
-Thanks.
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
--- 
-viresh
+[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
+
+Fix once per second (round_robin_time) memory leak of about 1 KB in
+each acpi_pad kernel idling thread that is activated.
+
+Found by testing with kmemleak.
+
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/acpi/acpi_pad.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -110,6 +110,7 @@ static void round_robin_cpu(unsigned int
+ 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
+ 	if (cpumask_empty(tmp)) {
+ 		mutex_unlock(&round_robin_lock);
++		free_cpumask_var(tmp);
+ 		return;
+ 	}
+ 	for_each_cpu(cpu, tmp) {
+@@ -127,6 +128,8 @@ static void round_robin_cpu(unsigned int
+ 	mutex_unlock(&round_robin_lock);
+ 
+ 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
++
++	free_cpumask_var(tmp);
+ }
+ 
+ static void exit_round_robin(unsigned int tsk_index)
