@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162825AbeE1Kk2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:40:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60308 "EHLO mail.kernel.org"
+        id S1162813AbeE1Kk0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162779AbeE1KkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:18 -0400
+        id S1162767AbeE1KkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:40:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>, Matthias Reichl <hias@horus.com>,
+        stable@vger.kernel.org, Thomas Vincent-Cross <me@tvc.id.au>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 313/329] ARM: dts: bcm283x: Fix probing of bcm2835-i2s
-Date: Mon, 28 May 2018 12:04:02 +0200
-Message-Id: <20180528100307.043175354@linuxfoundation.org>
+Subject: [PATCH 4.9 311/329] PCI: Add function 1 DMA alias quirk for Marvell 88SE9220
+Date: Mon, 28 May 2018 12:04:00 +0200
+Message-Id: <20180528100306.899976138@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,36 +30,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Thomas Vincent-Cross <me@tvc.id.au>
 
-[ Upstream commit 79c81facdc0b43b1cef37b8d5689a8c8b78f8be0 ]
+[ Upstream commit 832e4e1f76b8a84991e9db56fdcef1ebce839b8b ]
 
-Since 517e7a1537a ("ASoC: bcm2835: move to use the clock framework")
-the bcm2835-i2s requires a clock as DT property. Unfortunately
-the necessary DT change has never been applied. While we are at it
-also fix the first PCM register range to cover the PCM_GRAY register.
+Add Marvell 88SE9220 DMA quirk as found and tested on bug 42679.
 
-Fixes: 517e7a1537a ("ASoC: bcm2835: move to use the clock framework")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Tested-by: Matthias Reichl <hias@horus.com>
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
+Signed-off-by: Thomas Vincent-Cross <me@tvc.id.au>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm283x.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -146,8 +146,8 @@
- 
- 		i2s: i2s@7e203000 {
- 			compatible = "brcm,bcm2835-i2s";
--			reg = <0x7e203000 0x20>,
--			      <0x7e101098 0x02>;
-+			reg = <0x7e203000 0x24>;
-+			clocks = <&clocks BCM2835_CLOCK_PCM>;
- 
- 			dmas = <&dma 2>,
- 			       <&dma 3>;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3874,6 +3874,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c46 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x91a0,
+ 			 quirk_dma_func1_alias);
++/* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c127 */
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9220,
++			 quirk_dma_func1_alias);
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c49 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9230,
+ 			 quirk_dma_func1_alias);
