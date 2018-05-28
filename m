@@ -1,112 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754253AbeE1JGx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:06:53 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:35937 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754111AbeE1JGr (ORCPT
+        id S1754356AbeE1JHE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:07:04 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34636 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754291AbeE1JHA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:06:47 -0400
-X-Google-Smtp-Source: ADUXVKJHScuIS1zkI079ELk42gWo69FFbG9KEGj+8yN4iX4kK3WJOBVhaURVdPe/fSUgXeYQSfDheY31yhlkHt4ljII=
+        Mon, 28 May 2018 05:07:00 -0400
+X-Google-Smtp-Source: ADUXVKLKx8PCIla71MF8Rfmn/GdZnY470ZpD/m6Xi2L/vTbUvMeHfynNByphxlMkXdBriQaU21ll8+MTtPpSZNWKHCQ=
 MIME-Version: 1.0
-In-Reply-To: <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com> <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 28 May 2018 11:06:45 +0200
-X-Google-Sender-Auth: 6EmE1lCR3gLFbXMqyPa3qLOntrE
-Message-ID: <CAMuHMdW6HeWMwRDcn6PLnwzgxvYz-h=jx=1qvYEK9okwqY0itg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU
- external clocks and HDMI
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 28 May 2018 11:06:38 +0200
+Message-ID: <CAG48ez2N8tjyjGbdh+927uf2A_Xtsie=+DL+GZbvBniiO8jNHw@mail.gmail.com>
+Subject: Re: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Davidlohr Bueso <dave@stgolabs.net>, Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran, Morimoto-san,
-
-On Fri, Apr 27, 2018 at 6:57 PM, Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> The DU1 external dot clock is provided by the fixed frequency clock
-> generator X21, while the DU0 and DU3 clocks are provided by the
-> programmable Versaclock5 clock generator.
+On Sat, May 26, 2018 at 4:50 PM, Salvatore Mesoraca
+<s.mesoraca16@gmail.com> wrote:
+> Prevent a task from opening, in "write" mode, any /proc/*/mem
+> file that operates on the task's mm.
+> /proc/*/mem is mainly a debugging means and, as such, it shouldn't
+> be used by the inspected process itself.
+> Current implementation always allow a task to access its own
+> /proc/*/mem file.
+> A process can use it to overwrite read-only memory, making
+> pointless the use of security_file_mprotect() or other ways to
+> enforce RO memory.
 >
-> Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
-> and hook it up to the HDMI connector.
->
-> Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 > ---
-> v2:
->  - Remove LVDS clocks from DU node
->  - Merge DU Clocks and HDMI enablement
-> ---
->  .../boot/dts/renesas/r8a77965-salvator-x.dts  | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  fs/proc/base.c       | 25 ++++++++++++++++++-------
+>  fs/proc/internal.h   |  3 ++-
+>  fs/proc/task_mmu.c   |  4 ++--
+>  fs/proc/task_nommu.c |  2 +-
+>  4 files changed, 23 insertions(+), 11 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-> index 75d890d91df9..340a3c72b65a 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-> @@ -19,3 +19,31 @@
->                 reg = <0x0 0x48000000 0x0 0x78000000>;
->         };
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 1a76d75..01ecfec 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -762,8 +762,9 @@ static int proc_single_open(struct inode *inode, struct file *filp)
+>         .release        = single_release,
 >  };
-> +
-> +&du {
-> +       clocks = <&cpg CPG_MOD 724>,
-> +                <&cpg CPG_MOD 723>,
-> +                <&cpg CPG_MOD 721>,
-> +                <&versaclock5 1>,
-> +                <&x21_clk>,
-> +                <&versaclock5 2>;
-> +       clock-names = "du.0", "du.1", "du.3",
-> +                     "dclkin.0", "dclkin.1", "dclkin.3";
-> +};
-> +
-> +&hdmi0 {
-> +       status = "okay";
-> +
-> +       ports {
-> +               port@1 {
-> +                       reg = <1>;
-> +                       rcar_dw_hdmi0_out: endpoint {
-> +                               remote-endpoint = <&hdmi0_con>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&hdmi0_con {
-> +       remote-endpoint = <&rcar_dw_hdmi0_out>;
-> +};
+>
+> -
+> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+> +struct mm_struct *proc_mem_open(struct inode *inode,
+> +                               unsigned int mode,
+> +                               fmode_t f_mode)
+>  {
+>         struct task_struct *task = get_proc_task(inode);
+>         struct mm_struct *mm = ERR_PTR(-ESRCH);
+> @@ -773,10 +774,20 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+>                 put_task_struct(task);
+>
+>                 if (!IS_ERR_OR_NULL(mm)) {
+> -                       /* ensure this mm_struct can't be freed */
+> -                       mmgrab(mm);
+> -                       /* but do not pin its memory */
+> -                       mmput(mm);
+> +                       /*
+> +                        * Prevent this interface from being used as a mean
+> +                        * to bypass memory restrictions, including those
+> +                        * imposed by LSMs.
+> +                        */
+> +                       if (mm == current->mm &&
+> +                           f_mode & FMODE_WRITE)
+> +                               mm = ERR_PTR(-EACCES);
+> +                       else {
+> +                               /* ensure this mm_struct can't be freed */
+> +                               mmgrab(mm);
+> +                               /* but do not pin its memory */
+> +                               mmput(mm);
+> +                       }
+>                 }
+>         }
 
-I think the hdmi0 and hdmi0_con parts can be moved to salvator-common.dtsi.
-Can we do that now (with stubs?), or does this have to wait until r8a77965 has
-received HDMI sound support?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I don't have an opinion on the overall patch, but this part looks
+buggy: In the error path, you set `mm` to an error pointer, but you
+still own the reference that mm_access() took on the old `mm`. The
+error path needs to call `mmput(mm)`.
