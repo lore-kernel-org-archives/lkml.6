@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163015AbeE1OIR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:08:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58544 "EHLO mail.kernel.org"
+        id S1163057AbeE1OIq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162444AbeE1KiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:06 -0400
+        id S1162199AbeE1Kh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 265/329] net/mlx5: Protect from command bit overflow
-Date: Mon, 28 May 2018 12:03:14 +0200
-Message-Id: <20180528100303.976888686@linuxfoundation.org>
+Subject: [PATCH 4.9 262/329] powerpc/perf: Fix kernel address leak via sampling registers
+Date: Mon, 28 May 2018 12:03:11 +0200
+Message-Id: <20180528100303.725807416@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,58 +30,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 957f6ba8adc7be401a74ccff427e4cfd88d3bfcb ]
+[ Upstream commit e1ebd0e5b9d0a10ba65e63a3514b6da8c6a5a819 ]
 
-The system with CONFIG_UBSAN enabled on produces the following error
-during driver initialization. The reason to it that max_reg_cmds can be
-larger enough to cause to "1 << max_reg_cmds" overflow the unsigned long.
+Current code in power_pmu_disable() does not clear the sampling
+registers like Sampling Instruction Address Register (SIAR) and
+Sampling Data Address Register (SDAR) after disabling the PMU. Since
+these are userspace readable and could contain kernel addresses, add
+code to explicitly clear the content of these registers.
 
-================================================================================
-UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlx5/core/cmd.c:1805:42
-signed integer overflow:
--2147483648 - 1 cannot be represented in type 'int'
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2-00032-g06cda2358d9b-dirty #724
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-Call Trace:
- dump_stack+0xe9/0x18f
- ? dma_virt_alloc+0x81/0x81
- ubsan_epilogue+0xe/0x4e
- handle_overflow+0x187/0x20c
- mlx5_cmd_init+0x73a/0x12b0
- mlx5_load_one+0x1c3d/0x1d30
- init_one+0xd02/0xf10
- pci_device_probe+0x26c/0x3b0
- driver_probe_device+0x622/0xb40
- __driver_attach+0x175/0x1b0
- bus_for_each_dev+0xef/0x190
- bus_add_driver+0x2db/0x490
- driver_register+0x16b/0x1e0
- __pci_register_driver+0x177/0x1b0
- init+0x6d/0x92
- do_one_initcall+0x15b/0x270
- kernel_init_freeable+0x2d8/0x3d0
- kernel_init+0x14/0x190
- ret_from_fork+0x24/0x30
-================================================================================
+Also add a "context synchronizing instruction" to enforce no further
+updates to these registers as suggested by Power ISA v3.0B. From
+section 9.4, on page 1108:
 
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+  "If an mtspr instruction is executed that changes the value of a
+  Performance Monitor register other than SIAR, SDAR, and SIER, the
+  change is not guaranteed to have taken effect until after a
+  subsequent context synchronizing instruction has been executed (see
+  Chapter 11. "Synchronization Requirements for Context Alterations"
+  on page 1133)."
+
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+[mpe: Massage change log and add ISA reference]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/perf/core-book3s.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -1765,7 +1765,7 @@ int mlx5_cmd_init(struct mlx5_core_dev *
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1198,6 +1198,7 @@ static void power_pmu_disable(struct pmu
+ 		 */
+ 		write_mmcr0(cpuhw, val);
+ 		mb();
++		isync();
  
- 	cmd->checksum_disabled = 1;
- 	cmd->max_reg_cmds = (1 << cmd->log_sz) - 1;
--	cmd->bitmask = (1 << cmd->max_reg_cmds) - 1;
-+	cmd->bitmask = (1UL << cmd->max_reg_cmds) - 1;
+ 		/*
+ 		 * Disable instruction sampling if it was enabled
+@@ -1206,12 +1207,26 @@ static void power_pmu_disable(struct pmu
+ 			mtspr(SPRN_MMCRA,
+ 			      cpuhw->mmcr[2] & ~MMCRA_SAMPLE_ENABLE);
+ 			mb();
++			isync();
+ 		}
  
- 	cmd->cmdif_rev = ioread32be(&dev->iseg->cmdif_rev_fw_sub) >> 16;
- 	if (cmd->cmdif_rev > CMD_IF_REV) {
+ 		cpuhw->disabled = 1;
+ 		cpuhw->n_added = 0;
+ 
+ 		ebb_switch_out(mmcr0);
++
++#ifdef CONFIG_PPC64
++		/*
++		 * These are readable by userspace, may contain kernel
++		 * addresses and are not switched by context switch, so clear
++		 * them now to avoid leaking anything to userspace in general
++		 * including to another process.
++		 */
++		if (ppmu->flags & PPMU_ARCH_207S) {
++			mtspr(SPRN_SDAR, 0);
++			mtspr(SPRN_SIAR, 0);
++		}
++#endif
+ 	}
+ 
+ 	local_irq_restore(flags);
