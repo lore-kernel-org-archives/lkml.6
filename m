@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165809AbeE1Oh0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:37:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51772 "EHLO mail.kernel.org"
+        id S1161637AbeE1Ohq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:37:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161398AbeE1Kbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:55 -0400
+        id S1161390AbeE1Kbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Mark Lord <mlord@pobox.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 128/329] s390/cio: fix ccw_device_start_timeout API
-Date: Mon, 28 May 2018 12:00:57 +0200
-Message-Id: <20180528100253.340933511@linuxfoundation.org>
+Subject: [PATCH 4.9 127/329] powerpc/bpf/jit: Fix 32-bit JIT for seccomp_data access
+Date: Mon, 28 May 2018 12:00:56 +0200
+Message-Id: <20180528100253.229221434@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,196 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: Mark Lord <mlord@pobox.com>
 
-[ Upstream commit f97a6b6c47d2f329a24f92cc0ca3c6df5727ba73 ]
+[ Upstream commit 083b20907185b076f21c265b30fe5b5f24c03d8c ]
 
-There are cases a device driver can't start IO because the device is
-currently in use by cio. In this case the device driver is notified
-when the device is usable again.
+I am using SECCOMP to filter syscalls on a ppc32 platform, and noticed
+that the JIT compiler was failing on the BPF even though the
+interpreter was working fine.
 
-Using ccw_device_start_timeout we would set the timeout (and change
-an existing timeout) before we test for internal usage. Worst case
-this could lead to an unexpected timer deletion.
+The issue was that the compiler was missing one of the instructions
+used by SECCOMP, so here is a patch to enable JIT for that
+instruction.
 
-Fix this by setting the timeout after we test for internal usage.
-
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: eb84bab0fb38 ("ppc: Kconfig: Enable BPF JIT on ppc32")
+Signed-off-by: Mark Lord <mlord@pobox.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/device_ops.c |   72 ++++++++++++++++++------------------------
- 1 file changed, 32 insertions(+), 40 deletions(-)
+ arch/powerpc/net/bpf_jit_comp.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/s390/cio/device_ops.c
-+++ b/drivers/s390/cio/device_ops.c
-@@ -158,7 +158,7 @@ int ccw_device_clear(struct ccw_device *
- }
- 
- /**
-- * ccw_device_start_key() - start a s390 channel program with key
-+ * ccw_device_start_timeout_key() - start a s390 channel program with timeout and key
-  * @cdev: target ccw device
-  * @cpa: logical start address of channel program
-  * @intparm: user specific interruption parameter; will be presented back to
-@@ -169,10 +169,15 @@ int ccw_device_clear(struct ccw_device *
-  * @key: storage key to be used for the I/O
-  * @flags: additional flags; defines the action to be performed for I/O
-  *	   processing.
-+ * @expires: timeout value in jiffies
-  *
-  * Start a S/390 channel program. When the interrupt arrives, the
-  * IRQ handler is called, either immediately, delayed (dev-end missing,
-  * or sense required) or never (no IRQ handler registered).
-+ * This function notifies the device driver if the channel program has not
-+ * completed during the time specified by @expires. If a timeout occurs, the
-+ * channel program is terminated via xsch, hsch or csch, and the device's
-+ * interrupt handler will be called with an irb containing ERR_PTR(-%ETIMEDOUT).
-  * Returns:
-  *  %0, if the operation was successful;
-  *  -%EBUSY, if the device is busy, or status pending;
-@@ -181,9 +186,9 @@ int ccw_device_clear(struct ccw_device *
-  * Context:
-  *  Interrupts disabled, ccw device lock held
-  */
--int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
--			 unsigned long intparm, __u8 lpm, __u8 key,
--			 unsigned long flags)
-+int ccw_device_start_timeout_key(struct ccw_device *cdev, struct ccw1 *cpa,
-+				 unsigned long intparm, __u8 lpm, __u8 key,
-+				 unsigned long flags, int expires)
- {
- 	struct subchannel *sch;
- 	int ret;
-@@ -223,6 +228,8 @@ int ccw_device_start_key(struct ccw_devi
- 	switch (ret) {
- 	case 0:
- 		cdev->private->intparm = intparm;
-+		if (expires)
-+			ccw_device_set_timeout(cdev, expires);
- 		break;
- 	case -EACCES:
- 	case -ENODEV:
-@@ -233,7 +240,7 @@ int ccw_device_start_key(struct ccw_devi
- }
- 
- /**
-- * ccw_device_start_timeout_key() - start a s390 channel program with timeout and key
-+ * ccw_device_start_key() - start a s390 channel program with key
-  * @cdev: target ccw device
-  * @cpa: logical start address of channel program
-  * @intparm: user specific interruption parameter; will be presented back to
-@@ -244,15 +251,10 @@ int ccw_device_start_key(struct ccw_devi
-  * @key: storage key to be used for the I/O
-  * @flags: additional flags; defines the action to be performed for I/O
-  *	   processing.
-- * @expires: timeout value in jiffies
-  *
-  * Start a S/390 channel program. When the interrupt arrives, the
-  * IRQ handler is called, either immediately, delayed (dev-end missing,
-  * or sense required) or never (no IRQ handler registered).
-- * This function notifies the device driver if the channel program has not
-- * completed during the time specified by @expires. If a timeout occurs, the
-- * channel program is terminated via xsch, hsch or csch, and the device's
-- * interrupt handler will be called with an irb containing ERR_PTR(-%ETIMEDOUT).
-  * Returns:
-  *  %0, if the operation was successful;
-  *  -%EBUSY, if the device is busy, or status pending;
-@@ -261,19 +263,12 @@ int ccw_device_start_key(struct ccw_devi
-  * Context:
-  *  Interrupts disabled, ccw device lock held
-  */
--int ccw_device_start_timeout_key(struct ccw_device *cdev, struct ccw1 *cpa,
--				 unsigned long intparm, __u8 lpm, __u8 key,
--				 unsigned long flags, int expires)
-+int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
-+			 unsigned long intparm, __u8 lpm, __u8 key,
-+			 unsigned long flags)
- {
--	int ret;
--
--	if (!cdev)
--		return -ENODEV;
--	ccw_device_set_timeout(cdev, expires);
--	ret = ccw_device_start_key(cdev, cpa, intparm, lpm, key, flags);
--	if (ret != 0)
--		ccw_device_set_timeout(cdev, 0);
--	return ret;
-+	return ccw_device_start_timeout_key(cdev, cpa, intparm, lpm, key,
-+					    flags, 0);
- }
- 
- /**
-@@ -488,18 +483,20 @@ void ccw_device_get_id(struct ccw_device
- EXPORT_SYMBOL(ccw_device_get_id);
- 
- /**
-- * ccw_device_tm_start_key() - perform start function
-+ * ccw_device_tm_start_timeout_key() - perform start function
-  * @cdev: ccw device on which to perform the start function
-  * @tcw: transport-command word to be started
-  * @intparm: user defined parameter to be passed to the interrupt handler
-  * @lpm: mask of paths to use
-  * @key: storage key to use for storage access
-+ * @expires: time span in jiffies after which to abort request
-  *
-  * Start the tcw on the given ccw device. Return zero on success, non-zero
-  * otherwise.
-  */
--int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
--			    unsigned long intparm, u8 lpm, u8 key)
-+int ccw_device_tm_start_timeout_key(struct ccw_device *cdev, struct tcw *tcw,
-+				    unsigned long intparm, u8 lpm, u8 key,
-+				    int expires)
- {
- 	struct subchannel *sch;
- 	int rc;
-@@ -526,37 +523,32 @@ int ccw_device_tm_start_key(struct ccw_d
- 			return -EACCES;
- 	}
- 	rc = cio_tm_start_key(sch, tcw, lpm, key);
--	if (rc == 0)
-+	if (rc == 0) {
- 		cdev->private->intparm = intparm;
-+		if (expires)
-+			ccw_device_set_timeout(cdev, expires);
-+	}
- 	return rc;
- }
--EXPORT_SYMBOL(ccw_device_tm_start_key);
-+EXPORT_SYMBOL(ccw_device_tm_start_timeout_key);
- 
- /**
-- * ccw_device_tm_start_timeout_key() - perform start function
-+ * ccw_device_tm_start_key() - perform start function
-  * @cdev: ccw device on which to perform the start function
-  * @tcw: transport-command word to be started
-  * @intparm: user defined parameter to be passed to the interrupt handler
-  * @lpm: mask of paths to use
-  * @key: storage key to use for storage access
-- * @expires: time span in jiffies after which to abort request
-  *
-  * Start the tcw on the given ccw device. Return zero on success, non-zero
-  * otherwise.
-  */
--int ccw_device_tm_start_timeout_key(struct ccw_device *cdev, struct tcw *tcw,
--				    unsigned long intparm, u8 lpm, u8 key,
--				    int expires)
-+int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
-+			    unsigned long intparm, u8 lpm, u8 key)
- {
--	int ret;
--
--	ccw_device_set_timeout(cdev, expires);
--	ret = ccw_device_tm_start_key(cdev, tcw, intparm, lpm, key);
--	if (ret != 0)
--		ccw_device_set_timeout(cdev, 0);
--	return ret;
-+	return ccw_device_tm_start_timeout_key(cdev, tcw, intparm, lpm, key, 0);
- }
--EXPORT_SYMBOL(ccw_device_tm_start_timeout_key);
-+EXPORT_SYMBOL(ccw_device_tm_start_key);
- 
- /**
-  * ccw_device_tm_start() - perform start function
+--- a/arch/powerpc/net/bpf_jit_comp.c
++++ b/arch/powerpc/net/bpf_jit_comp.c
+@@ -329,6 +329,9 @@ static int bpf_jit_build_body(struct bpf
+ 			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, len) != 4);
+ 			PPC_LWZ_OFFS(r_A, r_skb, offsetof(struct sk_buff, len));
+ 			break;
++		case BPF_LDX | BPF_W | BPF_ABS: /* A = *((u32 *)(seccomp_data + K)); */
++			PPC_LWZ_OFFS(r_A, r_skb, K);
++			break;
+ 		case BPF_LDX | BPF_W | BPF_LEN: /* X = skb->len; */
+ 			PPC_LWZ_OFFS(r_X, r_skb, offsetof(struct sk_buff, len));
+ 			break;
