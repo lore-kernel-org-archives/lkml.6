@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163508AbeE1NeV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:34:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36376 "EHLO mail.kernel.org"
+        id S937764AbeE1Kpz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:45:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937784AbeE1KqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:01 -0400
+        id S1162158AbeE1Kpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:45:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qi Hou <qi.hou@windriver.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/496] ARM: OMAP2+: timer: fix a kmemleak caused in omap_get_timer_dt
-Date: Mon, 28 May 2018 11:57:33 +0200
-Message-Id: <20180528100322.653465979@linuxfoundation.org>
+Subject: [PATCH 4.14 073/496] ibmvnic: Free RX socket buffer in case of adapter error
+Date: Mon, 28 May 2018 11:57:38 +0200
+Message-Id: <20180528100322.856725660@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,67 +30,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qi Hou <qi.hou@windriver.com>
+From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
 
-[ Upstream commit db35340c536f1af0108ec9a0b2126a05d358d14a ]
+[ Upstream commit 4b9b0f01350500173f17e2b2e65beb4df4ef99c7 ]
 
-When more than one GP timers are used as kernel system timers and the
-corresponding nodes in device-tree are marked with the same "disabled"
-property, then the "attr" field of the property will be initialized
-more than once as the property being added to sys file system via
-__of_add_property_sysfs().
+If a RX buffer is returned to the client driver with an error, free the
+corresponding socket buffer before continuing.
 
-In __of_add_property_sysfs(), the "name" field of pp->attr.attr is set
-directly to the return value of safe_name(), without taking care of
-whether it's already a valid pointer to a memory block. If it is, its
-old value will always be overwritten by the new one and the memory block
-allocated before will a "ghost", then a kmemleak happened.
-
-That the same "disabled" property being added to different nodes of device
-tree would cause that kind of kmemleak overhead, at least once.
-
-To fix it, allocate the property dynamically, and delete static one.
-
-Signed-off-by: Qi Hou <qi.hou@windriver.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/timer.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -156,12 +156,6 @@ static struct clock_event_device clockev
- 	.tick_resume		= omap2_gp_timer_shutdown,
- };
- 
--static struct property device_disabled = {
--	.name = "status",
--	.length = sizeof("disabled"),
--	.value = "disabled",
--};
--
- static const struct of_device_id omap_timer_match[] __initconst = {
- 	{ .compatible = "ti,omap2420-timer", },
- 	{ .compatible = "ti,omap3430-timer", },
-@@ -203,8 +197,17 @@ static struct device_node * __init omap_
- 				  of_get_property(np, "ti,timer-secure", NULL)))
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1636,6 +1636,7 @@ restart_poll:
+ 				   be16_to_cpu(next->rx_comp.rc));
+ 			/* free the entry */
+ 			next->rx_comp.first = 0;
++			dev_kfree_skb_any(rx_buff->skb);
+ 			remove_buff_from_pool(adapter, rx_buff);
  			continue;
- 
--		if (!of_device_is_compatible(np, "ti,omap-counter32k"))
--			of_add_property(np, &device_disabled);
-+		if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
-+			struct property *prop;
-+
-+			prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+			if (!prop)
-+				return NULL;
-+			prop->name = "status";
-+			prop->value = "disabled";
-+			prop->length = strlen(prop->value);
-+			of_add_property(np, prop);
-+		}
- 		return np;
- 	}
- 
+ 		}
