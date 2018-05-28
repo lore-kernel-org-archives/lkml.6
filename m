@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164102AbeE1KzH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:55:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43618 "EHLO mail.kernel.org"
+        id S1165105AbeE1MzR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:55:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164320AbeE1Kyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:55 -0400
+        id S1163997AbeE1KzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 301/496] net: dsa: mt7530: fix module autoloading for OF platform drivers
-Date: Mon, 28 May 2018 12:01:26 +0200
-Message-Id: <20180528100332.503087576@linuxfoundation.org>
+Subject: [PATCH 4.14 305/496] llc: properly handle dev_queue_xmit() return value
+Date: Mon, 28 May 2018 12:01:30 +0200
+Message-Id: <20180528100332.661961671@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,29 +31,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 3c82b372a9f44aa224b8d5106ff6f1ad516fa8a8 ]
+[ Upstream commit b85ab56c3f81c5a24b5a5213374f549df06430da ]
 
-It's required to create a modules.alias via MODULE_DEVICE_TABLE helper
-for the OF platform driver. Otherwise, module autoloading cannot work.
+llc_conn_send_pdu() pushes the skb into write queue and
+calls llc_conn_send_pdus() to flush them out. However, the
+status of dev_queue_xmit() is not returned to caller,
+in this case, llc_conn_state_process().
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+llc_conn_state_process() needs hold the skb no matter
+success or failure, because it still uses it after that,
+therefore we should hold skb before dev_queue_xmit() when
+that skb is the one being processed by llc_conn_state_process().
+
+For other callers, they can just pass NULL and ignore
+the return value as they are.
+
+Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/mt7530.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/net/llc_conn.h |    2 +-
+ net/llc/llc_c_ac.c     |   15 +++++++++------
+ net/llc/llc_conn.c     |   32 +++++++++++++++++++++++---------
+ 3 files changed, 33 insertions(+), 16 deletions(-)
 
---- a/drivers/net/dsa/mt7530.c
-+++ b/drivers/net/dsa/mt7530.c
-@@ -1122,6 +1122,7 @@ static const struct of_device_id mt7530_
- 	{ .compatible = "mediatek,mt7530" },
- 	{ /* sentinel */ },
- };
-+MODULE_DEVICE_TABLE(of, mt7530_of_match);
+--- a/include/net/llc_conn.h
++++ b/include/net/llc_conn.h
+@@ -104,7 +104,7 @@ void llc_sk_reset(struct sock *sk);
  
- static struct mdio_driver mt7530_mdio_driver = {
- 	.probe  = mt7530_probe,
+ /* Access to a connection */
+ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb);
+-void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
++int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
+ void llc_conn_rtn_pdu(struct sock *sk, struct sk_buff *skb);
+ void llc_conn_resend_i_pdu_as_cmd(struct sock *sk, u8 nr, u8 first_p_bit);
+ void llc_conn_resend_i_pdu_as_rsp(struct sock *sk, u8 nr, u8 first_f_bit);
+--- a/net/llc/llc_c_ac.c
++++ b/net/llc/llc_c_ac.c
+@@ -389,7 +389,7 @@ static int llc_conn_ac_send_i_cmd_p_set_
+ 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
+ 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
+ 	if (likely(!rc)) {
+-		llc_conn_send_pdu(sk, skb);
++		rc = llc_conn_send_pdu(sk, skb);
+ 		llc_conn_ac_inc_vs_by_1(sk, skb);
+ 	}
+ 	return rc;
+@@ -916,7 +916,7 @@ static int llc_conn_ac_send_i_rsp_f_set_
+ 	llc_pdu_init_as_i_cmd(skb, llc->ack_pf, llc->vS, llc->vR);
+ 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
+ 	if (likely(!rc)) {
+-		llc_conn_send_pdu(sk, skb);
++		rc = llc_conn_send_pdu(sk, skb);
+ 		llc_conn_ac_inc_vs_by_1(sk, skb);
+ 	}
+ 	return rc;
+@@ -935,14 +935,17 @@ static int llc_conn_ac_send_i_rsp_f_set_
+ int llc_conn_ac_send_i_as_ack(struct sock *sk, struct sk_buff *skb)
+ {
+ 	struct llc_sock *llc = llc_sk(sk);
++	int ret;
+ 
+ 	if (llc->ack_must_be_send) {
+-		llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
++		ret = llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
+ 		llc->ack_must_be_send = 0 ;
+ 		llc->ack_pf = 0;
+-	} else
+-		llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
+-	return 0;
++	} else {
++		ret = llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
++	}
++
++	return ret;
+ }
+ 
+ /**
+--- a/net/llc/llc_conn.c
++++ b/net/llc/llc_conn.c
+@@ -30,7 +30,7 @@
+ #endif
+ 
+ static int llc_find_offset(int state, int ev_type);
+-static void llc_conn_send_pdus(struct sock *sk);
++static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *skb);
+ static int llc_conn_service(struct sock *sk, struct sk_buff *skb);
+ static int llc_exec_conn_trans_actions(struct sock *sk,
+ 				       struct llc_conn_state_trans *trans,
+@@ -193,11 +193,11 @@ out_skb_put:
+ 	return rc;
+ }
+ 
+-void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
++int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
+ {
+ 	/* queue PDU to send to MAC layer */
+ 	skb_queue_tail(&sk->sk_write_queue, skb);
+-	llc_conn_send_pdus(sk);
++	return llc_conn_send_pdus(sk, skb);
+ }
+ 
+ /**
+@@ -255,7 +255,7 @@ void llc_conn_resend_i_pdu_as_cmd(struct
+ 	if (howmany_resend > 0)
+ 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
+ 	/* any PDUs to re-send are queued up; start sending to MAC */
+-	llc_conn_send_pdus(sk);
++	llc_conn_send_pdus(sk, NULL);
+ out:;
+ }
+ 
+@@ -296,7 +296,7 @@ void llc_conn_resend_i_pdu_as_rsp(struct
+ 	if (howmany_resend > 0)
+ 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
+ 	/* any PDUs to re-send are queued up; start sending to MAC */
+-	llc_conn_send_pdus(sk);
++	llc_conn_send_pdus(sk, NULL);
+ out:;
+ }
+ 
+@@ -340,12 +340,16 @@ out:
+ /**
+  *	llc_conn_send_pdus - Sends queued PDUs
+  *	@sk: active connection
++ *	@hold_skb: the skb held by caller, or NULL if does not care
+  *
+- *	Sends queued pdus to MAC layer for transmission.
++ *	Sends queued pdus to MAC layer for transmission. When @hold_skb is
++ *	NULL, always return 0. Otherwise, return 0 if @hold_skb is sent
++ *	successfully, or 1 for failure.
+  */
+-static void llc_conn_send_pdus(struct sock *sk)
++static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *hold_skb)
+ {
+ 	struct sk_buff *skb;
++	int ret = 0;
+ 
+ 	while ((skb = skb_dequeue(&sk->sk_write_queue)) != NULL) {
+ 		struct llc_pdu_sn *pdu = llc_pdu_sn_hdr(skb);
+@@ -357,10 +361,20 @@ static void llc_conn_send_pdus(struct so
+ 			skb_queue_tail(&llc_sk(sk)->pdu_unack_q, skb);
+ 			if (!skb2)
+ 				break;
+-			skb = skb2;
++			dev_queue_xmit(skb2);
++		} else {
++			bool is_target = skb == hold_skb;
++			int rc;
++
++			if (is_target)
++				skb_get(skb);
++			rc = dev_queue_xmit(skb);
++			if (is_target)
++				ret = rc;
+ 		}
+-		dev_queue_xmit(skb);
+ 	}
++
++	return ret;
+ }
+ 
+ /**
