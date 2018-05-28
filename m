@@ -1,25 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932222AbeE1KHD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:07:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54738 "EHLO mail.kernel.org"
+        id S932280AbeE1KHN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:07:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754830AbeE1KGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:49 -0400
+        id S932192AbeE1KG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Alex Chen <alex.chen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>, Gang He <ghe@suse.com>,
-        Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 027/185] ocfs2: return -EROFS to mount.ocfs2 if inode block is invalid
-Date: Mon, 28 May 2018 12:01:08 +0200
-Message-Id: <20180528100052.199681072@linuxfoundation.org>
+        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 3.18 004/185] affs_lookup(): close a race with affs_remove_link()
+Date: Mon, 28 May 2018 12:00:45 +0200
+Message-Id: <20180528100050.960579859@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -35,64 +29,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: piaojun <piaojun@huawei.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 025bcbde3634b2c9b316f227fed13ad6ad6817fb ]
+commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
 
-If metadata is corrupted such as 'invalid inode block', we will get
-failed by calling 'mount()' and then set filesystem readonly as below:
+we unlock the directory hash too early - if we are looking at secondary
+link and primary (in another directory) gets removed just as we unlock,
+we could have the old primary moved in place of the secondary, leaving
+us to look into freed entry (and leaving our dentry with ->d_fsdata
+pointing to a freed entry).
 
-  ocfs2_mount
-    ocfs2_initialize_super
-      ocfs2_init_global_system_inodes
-        ocfs2_iget
-          ocfs2_read_locked_inode
-            ocfs2_validate_inode_block
-	      ocfs2_error
-	        ocfs2_handle_error
-	          ocfs2_set_ro_flag(osb, 0);  // set readonly
-
-In this situation we need return -EROFS to 'mount.ocfs2', so that user
-can fix it by fsck.  And then mount again.  In addition, 'mount.ocfs2'
-should be updated correspondingly as it only return 1 for all errno.
-And I will post a patch for 'mount.ocfs2' too.
-
-Link: http://lkml.kernel.org/r/5A4302FA.2010606@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Alex Chen <alex.chen@huawei.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Gang He <ghe@suse.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org # 2.4.4+
+Acked-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ocfs2/super.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -467,9 +467,8 @@ static int ocfs2_init_global_system_inod
- 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
- 		if (!new) {
- 			ocfs2_release_system_inodes(osb);
--			status = -EINVAL;
-+			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
- 			mlog_errno(status);
--			/* FIXME: Should ERROR_RO_FS */
- 			mlog(ML_ERROR, "Unable to load system inode %d, "
- 			     "possibly corrupt fs?", i);
- 			goto bail;
-@@ -498,7 +497,7 @@ static int ocfs2_init_local_system_inode
- 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
- 		if (!new) {
- 			ocfs2_release_system_inodes(osb);
--			status = -EINVAL;
-+			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
- 			mlog(ML_ERROR, "status=%d, sysfile=%d, slot=%d\n",
- 			     status, i, osb->slot_num);
- 			goto bail;
+---
+ fs/affs/namei.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -224,9 +224,10 @@ affs_lookup(struct inode *dir, struct de
+ 
+ 	affs_lock_dir(dir);
+ 	bh = affs_find_entry(dir, dentry);
+-	affs_unlock_dir(dir);
+-	if (IS_ERR(bh))
++	if (IS_ERR(bh)) {
++		affs_unlock_dir(dir);
+ 		return ERR_CAST(bh);
++	}
+ 	if (bh) {
+ 		u32 ino = bh->b_blocknr;
+ 
+@@ -240,10 +241,13 @@ affs_lookup(struct inode *dir, struct de
+ 		}
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+-		if (IS_ERR(inode))
++		if (IS_ERR(inode)) {
++			affs_unlock_dir(dir);
+ 			return ERR_CAST(inode);
++		}
+ 	}
+ 	d_add(dentry, inode);
++	affs_unlock_dir(dir);
+ 	return NULL;
+ }
+ 
