@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935799AbeE1KJt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:09:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57860 "EHLO mail.kernel.org"
+        id S1425435AbeE1QaK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:30:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933283AbeE1KJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:09:43 -0400
+        id S935748AbeE1KJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Brandon Carpenter <brandon.carpenter@cypherpath.com>,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 092/185] netfilter: ebtables: fix erroneous reject of last rule
-Date: Mon, 28 May 2018 12:02:13 +0200
-Message-Id: <20180528100058.592636911@linuxfoundation.org>
+Subject: [PATCH 3.18 094/185] net: Fix vlan untag for bridge and vlan_dev with reorder_hdr off
+Date: Mon, 28 May 2018 12:02:15 +0200
+Message-Id: <20180528100058.908715810@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,35 +32,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-[ Upstream commit 932909d9b28d27e807ff8eecb68c7748f6701628 ]
+[ Upstream commit 4bbb3e0e8239f9079bf1fe20b3c0cb598714ae61 ]
 
-The last rule in the blob has next_entry offset that is same as total size.
-This made "ebtables32 -A OUTPUT -d de:ad:be:ef:01:02" fail on 64 bit kernel.
+When we have a bridge with vlan_filtering on and a vlan device on top of
+it, packets would be corrupted in skb_vlan_untag() called from
+br_dev_xmit().
 
-Fixes: b71812168571fa ("netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+The problem sits in skb_reorder_vlan_header() used in skb_vlan_untag(),
+which makes use of skb->mac_len. In this function mac_len is meant for
+handling rx path with vlan devices with reorder_header disabled, but in
+tx path mac_len is typically 0 and cannot be used, which is the problem
+in this case.
+
+The current code even does not properly handle rx path (skb_vlan_untag()
+called from __netif_receive_skb_core()) with reorder_header off actually.
+
+In rx path single tag case, it works as follows:
+
+- Before skb_reorder_vlan_header()
+
+ mac_header                                data
+   v                                        v
+   +-------------------+-------------+------+----
+   |        ETH        |    VLAN     | ETH  |
+   |       ADDRS       | TPID | TCI  | TYPE |
+   +-------------------+-------------+------+----
+   <-------- mac_len --------->
+                       <------------->
+                        to be removed
+
+- After skb_reorder_vlan_header()
+
+            mac_header                     data
+                 v                          v
+                 +-------------------+------+----
+                 |        ETH        | ETH  |
+                 |       ADDRS       | TYPE |
+                 +-------------------+------+----
+                 <-------- mac_len --------->
+
+This is ok, but in rx double tag case, it corrupts packets:
+
+- Before skb_reorder_vlan_header()
+
+ mac_header                                              data
+   v                                                      v
+   +-------------------+-------------+-------------+------+----
+   |        ETH        |    VLAN     |    VLAN     | ETH  |
+   |       ADDRS       | TPID | TCI  | TPID | TCI  | TYPE |
+   +-------------------+-------------+-------------+------+----
+   <--------------- mac_len ---------------->
+                                     <------------->
+                                    should be removed
+                       <--------------------------->
+                         actually will be removed
+
+- After skb_reorder_vlan_header()
+
+            mac_header                                   data
+                 v                                        v
+                               +-------------------+------+----
+                               |        ETH        | ETH  |
+                               |       ADDRS       | TYPE |
+                               +-------------------+------+----
+                 <--------------- mac_len ---------------->
+
+So, two of vlan tags are both removed while only inner one should be
+removed and mac_header (and mac_len) is broken.
+
+skb_vlan_untag() is meant for removing the vlan header at (skb->data - 2),
+so use skb->data and skb->mac_header to calculate the right offset.
+
+Reported-by: Brandon Carpenter <brandon.carpenter@cypherpath.com>
+Fixes: a6e18ff11170 ("vlan: Fix untag operations of stacked vlans with REORDER_HEADER off")
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/netfilter/ebtables.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/uapi/linux/if_ether.h |    1 +
+ net/core/skbuff.c             |    7 +++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2086,8 +2086,12 @@ static int size_entry_mwt(struct ebt_ent
- 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
- 	 */
- 	for (i = 0; i < 4 ; ++i) {
--		if (offsets[i] >= *total)
-+		if (offsets[i] > *total)
- 			return -EINVAL;
+--- a/include/uapi/linux/if_ether.h
++++ b/include/uapi/linux/if_ether.h
+@@ -29,6 +29,7 @@
+  */
+ 
+ #define ETH_ALEN	6		/* Octets in one ethernet addr	 */
++#define ETH_TLEN	2		/* Octets in ethernet type field */
+ #define ETH_HLEN	14		/* Total octets in header.	 */
+ #define ETH_ZLEN	60		/* Min. octets in frame sans FCS */
+ #define ETH_DATA_LEN	1500		/* Max. octets in payload	 */
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -4129,13 +4129,16 @@ EXPORT_SYMBOL_GPL(skb_gso_transport_segl
+ 
+ static struct sk_buff *skb_reorder_vlan_header(struct sk_buff *skb)
+ {
++	int mac_len;
 +
-+		if (i < 3 && offsets[i] == *total)
-+			return -EINVAL;
-+
- 		if (i == 0)
- 			continue;
- 		if (offsets[i-1] > offsets[i])
+ 	if (skb_cow(skb, skb_headroom(skb)) < 0) {
+ 		kfree_skb(skb);
+ 		return NULL;
+ 	}
+ 
+-	memmove(skb->data - ETH_HLEN, skb->data - skb->mac_len - VLAN_HLEN,
+-		2 * ETH_ALEN);
++	mac_len = skb->data - skb_mac_header(skb);
++	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
++		mac_len - VLAN_HLEN - ETH_TLEN);
+ 	skb->mac_header += VLAN_HLEN;
+ 	return skb;
+ }
