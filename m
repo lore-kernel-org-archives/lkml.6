@@ -1,20 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164156AbeE1Kxd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:53:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42580 "EHLO mail.kernel.org"
+        id S1164174AbeE1Kxl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:53:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164144AbeE1Kx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:26 -0400
+        id S1163766AbeE1Kxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Avraham Stern <avraham.stern@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Ephraim Park <ephiepark@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, jolsa@redhat.com,
+        kernel-team@fb.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 270/496] iwlwifi: mvm: fix array out of bounds reference
-Date: Mon, 28 May 2018 12:00:55 +0200
-Message-Id: <20180528100331.236720365@linuxfoundation.org>
+Subject: [PATCH 4.14 272/496] perf/cgroup: Fix child event counting bug
+Date: Mon, 28 May 2018 12:00:57 +0200
+Message-Id: <20180528100331.312543282@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,84 +39,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Avraham Stern <avraham.stern@intel.com>
+From: Song Liu <songliubraving@fb.com>
 
-[ Upstream commit 4a6d2e525b43eba5870ea7e360f59aa65de00705 ]
+[ Upstream commit c917e0f259908e75bd2a65877e25f9d90c22c848 ]
 
-When starting aggregation, the code checks the status of the queue
-allocated to the aggregation tid, which might not yet be allocated
-and thus the queue index may be invalid.
-Fix this by reserving a new queue in case the queue id is invalid.
+When a perf_event is attached to parent cgroup, it should count events
+for all children cgroups:
 
-While at it, clean up some unreachable code (a condition that is
-already handled earlier) and remove all the non-DQA comments since
-non-DQA mode is no longer supported.
+   parent_group   <---- perf_event
+     \
+      - child_group  <---- process(es)
 
-Fixes: cf961e16620f ("iwlwifi: mvm: support dqa-mode agg on non-shared queue")
-Signed-off-by: Avraham Stern <avraham.stern@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+However, in our tests, we found this perf_event cannot report reliable
+results. Here is an example case:
+
+  # create cgroups
+  mkdir -p /sys/fs/cgroup/p/c
+  # start perf for parent group
+  perf stat -e instructions -G "p"
+
+  # on another console, run test process in child cgroup:
+  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
+
+  # after the test process is done, stop perf in the first console shows
+
+       <not counted>      instructions              p
+
+The instruction should not be "not counted" as the process runs in the
+child cgroup.
+
+We found this is because perf_event->cgrp and cpuctx->cgrp are not
+identical, thus perf_event->cgrp are not updated properly.
+
+This patch fixes this by updating perf_cgroup properly for ancestor
+cgroup(s).
+
+Reported-by: Ephraim Park <ephiepark@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <jolsa@redhat.com>
+Cc: <kernel-team@fb.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20180312165943.1057894-1-songliubraving@fb.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c |   38 +++++++--------------------
- 1 file changed, 11 insertions(+), 27 deletions(-)
+ kernel/events/core.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -2436,28 +2436,12 @@ int iwl_mvm_sta_tx_agg_start(struct iwl_
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -642,9 +642,15 @@ static inline void __update_cgrp_time(st
+ 
+ static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
+ {
+-	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
+-	if (cgrp_out)
+-		__update_cgrp_time(cgrp_out);
++	struct perf_cgroup *cgrp = cpuctx->cgrp;
++	struct cgroup_subsys_state *css;
++
++	if (cgrp) {
++		for (css = &cgrp->css; css; css = css->parent) {
++			cgrp = container_of(css, struct perf_cgroup, css);
++			__update_cgrp_time(cgrp);
++		}
++	}
+ }
+ 
+ static inline void update_cgrp_time_from_event(struct perf_event *event)
+@@ -672,6 +678,7 @@ perf_cgroup_set_timestamp(struct task_st
+ {
+ 	struct perf_cgroup *cgrp;
+ 	struct perf_cgroup_info *info;
++	struct cgroup_subsys_state *css;
  
  	/*
- 	 * Note the possible cases:
--	 *  1. In DQA mode with an enabled TXQ - TXQ needs to become agg'ed
--	 *  2. Non-DQA mode: the TXQ hasn't yet been enabled, so find a free
--	 *	one and mark it as reserved
--	 *  3. In DQA mode, but no traffic yet on this TID: same treatment as in
--	 *	non-DQA mode, since the TXQ hasn't yet been allocated
--	 * Don't support case 3 for new TX path as it is not expected to happen
--	 * and aggregation will be offloaded soon anyway
-+	 *  1. An enabled TXQ - TXQ needs to become agg'ed
-+	 *  2. The TXQ hasn't yet been enabled, so find a free one and mark
-+	 *	it as reserved
- 	 */
- 	txq_id = mvmsta->tid_data[tid].txq_id;
--	if (iwl_mvm_has_new_tx_api(mvm)) {
--		if (txq_id == IWL_MVM_INVALID_QUEUE) {
--			ret = -ENXIO;
--			goto release_locks;
--		}
--	} else if (unlikely(mvm->queue_info[txq_id].status ==
--			    IWL_MVM_QUEUE_SHARED)) {
--		ret = -ENXIO;
--		IWL_DEBUG_TX_QUEUES(mvm,
--				    "Can't start tid %d agg on shared queue!\n",
--				    tid);
--		goto release_locks;
--	} else if (mvm->queue_info[txq_id].status != IWL_MVM_QUEUE_READY) {
-+	if (txq_id == IWL_MVM_INVALID_QUEUE) {
- 		txq_id = iwl_mvm_find_free_queue(mvm, mvmsta->sta_id,
- 						 IWL_MVM_DQA_MIN_DATA_QUEUE,
- 						 IWL_MVM_DQA_MAX_DATA_QUEUE);
-@@ -2466,16 +2450,16 @@ int iwl_mvm_sta_tx_agg_start(struct iwl_
- 			IWL_ERR(mvm, "Failed to allocate agg queue\n");
- 			goto release_locks;
- 		}
--		/*
--		 * TXQ shouldn't be in inactive mode for non-DQA, so getting
--		 * an inactive queue from iwl_mvm_find_free_queue() is
--		 * certainly a bug
--		 */
--		WARN_ON(mvm->queue_info[txq_id].status ==
--			IWL_MVM_QUEUE_INACTIVE);
+ 	 * ctx->lock held by caller
+@@ -682,8 +689,12 @@ perf_cgroup_set_timestamp(struct task_st
+ 		return;
  
- 		/* TXQ hasn't yet been enabled, so mark it only as reserved */
- 		mvm->queue_info[txq_id].status = IWL_MVM_QUEUE_RESERVED;
-+	} else if (unlikely(mvm->queue_info[txq_id].status ==
-+			    IWL_MVM_QUEUE_SHARED)) {
-+		ret = -ENXIO;
-+		IWL_DEBUG_TX_QUEUES(mvm,
-+				    "Can't start tid %d agg on shared queue!\n",
-+				    tid);
-+		goto release_locks;
- 	}
+ 	cgrp = perf_cgroup_from_task(task, ctx);
+-	info = this_cpu_ptr(cgrp->info);
+-	info->timestamp = ctx->timestamp;
++
++	for (css = &cgrp->css; css; css = css->parent) {
++		cgrp = container_of(css, struct perf_cgroup, css);
++		info = this_cpu_ptr(cgrp->info);
++		info->timestamp = ctx->timestamp;
++	}
+ }
  
- 	spin_unlock(&mvm->queue_info_lock);
+ static DEFINE_PER_CPU(struct list_head, cgrp_cpuctx_list);
