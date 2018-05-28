@@ -1,138 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932142AbeE1J4C (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:56:02 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43340 "EHLO
+        id S932164AbeE1J6L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:58:11 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43965 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754173AbeE1Jz7 (ORCPT
+        with ESMTP id S1754229AbeE1J6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:55:59 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180528095557euoutp029eaf52a9a56b61998e52ddd42d5c8e2b~yxmRECyFr1886818868euoutp02i
-X-AuditID: cbfec7f2-1c1ff70000011644-97-5b0bd22cae38
-From: Maciej Purski <m.purski@samsung.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 12/12] ARM: dts: exynos5250-arndale: add dsi and panel nodes
-Date: Mon, 28 May 2018 11:55:47 +0200
-Message-id: <1527501347-16521-1-git-send-email-m.purski@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-reply-to: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbUhTYRTHfXbv3b0ur1ym4aOFHxaSSJpCH5600sjghn2IUAJNbeVliq9t
-        amqkJs3mzJdm0jJTC5WaZjZ1lqWBWirSpi7KDJuwsPka5EtNIvM2/fY////vnOc5cChMXEx4
-        UUlpmZw8TZoiEYpwwzu70f/AxK6YQF0bjabajAQqM44IUJFqiUDPtc8IVD+45X1Y+yFEGksl
-        jmxfx3FUYV3AkMnUTqL3RYskKrndSCK99SOBzD21QqQ19QlQw9wUjp4OTpOo6dO4ACl7B0mk
-        rZoTIntPHR62m22tawWsubxMwL6smSbZ+6p7BKvXlQjZ7vUZgrWUDgnYjsYCtrxTB9gVvfcZ
-        UbToSAKXkpTNyQ8euyBKHP5txzO66ByVsQMvBBaRGjhTkDkEH6g1mBqIKDHzGMDymjWBo1gB
-        sGV6U7BDjXW+xR1BM4Dmb4uAD8TMJoCznZQaUJSQ8YOtN+N5xp3RAdgxuQT4AmOqCThWv0Dw
-        DW7Mabg8MEPyDTjjAye+R/E2zYTDX7bu7ce84WdjCcZrZ+YkNPcWC/k5kKki4XKXBndA4bB8
-        2QYc2g3OD3WSDr0XmqtKt5l0qJy1bvs5sK9slHDoEDgwNP5fY4wr1BjuYvx/IENDVbHYgbDw
-        1oZB6FhYu7XwqhWrBJ4NwEkHPLgsRaqMUwSlcVcCFNJURVaaLOBSeqoebF3H6N+hny/A2sTF
-        fsBQQOJC+9pFMWJCmq3ITe0HkMIk7rTIf8uiE6S5eZw8PV6elcIp+sEeCpd40HG++dFiRibN
-        5JI5LoOT76QCytmrEHj6N6v8KueDZ7r1wYYQf1PbiZprqsslrSF0QaT9y0pkWH3t8qST0i8/
-        JuL1kwq21+fGpJchzutOcsTG6tVQE/2maViT0RU6ezi9dt/xQJvbq5YoRh1bnd14NK6iSLv+
-        aNFytsL9T7WrS9z19pFzS3myJp9TsVNK9vzD/aTHnGVKgisSpUF+mFwh/QdzVg9bGQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsVy+t/xq7ral7ijDSY3yFrcWneO1aL33Ekm
-        i6aOt6wWG2esZ7WYfwQoduXrezaLSfcnsFi8uHeRxaL/8Wtmi/PnN7BbnG16w27ROXEJu8Wm
-        x9dYLS7vmsNmMeP8PiaLBS9vsVisPXKX3WLp9YtMFq17j7BbzJj8ks3i5655LA6iHmvmrWH0
-        uNzXy+Sxc9Zddo/ZHTNZPTat6mTz2P7tAavH/e7jTB6bl9R79G1ZxejxeZNcAFcUl01Kak5m
-        WWqRvl0CV8aJHz9ZCrbyVnSc28zSwHifq4uRk0NCwETiwpajLF2MXBxCAksYJbr/rWeHcBqZ
-        JE4+ecfWxcjBwSagJbGmPR4kLiKwilFi6t87YEXMArNZJV49msAIMkpYwEfi3eEH7CANLAKq
-        Epeeh4KEeQVcJL6/2M4EsU1O4ua5TmYQm1PAVeLy3jY2EFsIqGZ74yyWCYw8CxgZVjGKpJYW
-        56bnFhvpFSfmFpfmpesl5+duYgQG/rZjP7fsYOx6F3yIUYCDUYmHV+MnV7QQa2JZcWXuIUYJ
-        DmYlEV4uXaAQb0piZVVqUX58UWlOavEhRmkOFiVx3vMGlVFCAumJJanZqakFqUUwWSYOTqkG
-        xhNB4g/1rOe7nyrp/OCqMfuLy6XXe/ZOLEsIDvzNs+tl3QGdhZOf9i/ka6gJFbhyIclbsK5h
-        W6LNZxmXOsPVU+ICejr4HFemxL7WM17FKRsUkKo0zbXlztEjHxY0JPpffvbj7puvu1//m77W
-        8NdEZqt331/lq3ybW7rQYHnJilVrxSY/vib4oV+JpTgj0VCLuag4EQApDQNueAIAAA==
-X-CMS-MailID: 20180528095555eucas1p2fb61f362a3aa2d0082b8c4001b17f176
+        Mon, 28 May 2018 05:58:08 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180528095806euoutp024e8a4cb18b6c4dbd7093dced2c10dede~yxoI18qCG1886818868euoutp02k
+X-AuditID: cbfec7f4-6f9ff700000043e4-ba-5b0bd2ac701b
+Subject: Re: [PATCH v2 1/3] usb: gadget: ccid: add support for USB CCID
+ Gadget Device
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
+        davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>, linux-usb@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Date: Mon, 28 May 2018 11:58:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180528093254.GC4651@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3YuO043T1PxbUXRpChBy24c6IJBwYkgI4hCo5ztpJFO2fGS
+        BjVc6jIz07ytaeW1ZKRuJilpaqSrSMtAvJVWMyhylVbYxcrjMfK/3/u8z/t+3/PxUZhylFBR
+        x3XxnF6niVaTMryx83tPgLXXPWzt3VQPxlJrJZnOdKeUcbZlIMbScxZnjOW1JJNlSUXM9fQK
+        nHnebCGZsqo0jLlU+5JgPk6ckzDjw4U4k9XkQIzdlo8FK9iGmwMStsn8Qsrab/iztppzJOvq
+        7payjqKfOHuvxCply7PzCHbStnSvW6hsi5aLPp7I6ddsC5dFFXW2EXFfvU6aHBmkAY15ZiI3
+        CugNcKs8F8tEMkpJ30BQeLFvrviCoPh1GSEWkwiM4xelmYiaHXlXt0fUqxFcHp6WiMVnBHVl
+        eYSw14s+AAZHIxIGvOkgsI8ECx6MdmFwwWrEBQ9Jr4eWdhMSGKdXQPXQoFRgH/og1OdMYALL
+        6YXwsNg563ejA6HbkE0KjNG+MOi8KhF5GRhvX5m9NtBpFLT3WJE4nAhTA2+lYtAdUO6qmmMv
+        eN/VMMdL4E+TuAjoJMi395HioiwE1Z/GCbGxGe53PSOENBi9Gmqb14jydug3jc29igL6xxeK
+        91FAbmMhJspyMKUrRbcfNHx9hIm8CNI+VKEcpDbPS2mel8w8L5n5/7nXEF6DfLkEPiaS49fp
+        uKRAXhPDJ+giA4/GxtjQzL97/Lvryx3U/CuiA9EUUnvIDT9lYUpCk8gnx3QgoDC1t1wWMCPJ
+        tZrkFE4fe0SfEM3xHWgxhat95YdXnQ5V0pGaeO4Ex8Vx+n9dCeWmMiDfUc/WGp9+3nNjqa2n
+        ovJJhOuUbHBXfUoImxPOmgq899X1HlBh2oqRqObd0JozGfJ06wKVwiPSpep9s9zPPWzUZm87
+        ZlTWFbc446YK6hUrK4un90+uclwIK/mx3S+4d1+NtlWn+uZ35sHQr+mR36XZKaX+56mWsUM7
+        m8ruvZJsUuN8lCbIH9Pzmr9rOsEpcwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsVy+t/xe7qrL3FHG+y8yWkxZ/0aNotjbU/Y
+        LZ4caGe0mHO+hcWiefF6NoueOU2MFgvblrBYXN41h81i0bJWZouJ6++xWrz/1Mlk8fbOdBaL
+        np0nGC02b5rK7MDnsWXlTSaPnbPusntsXqHlsWlVJ5vHu3Pn2D1OzPjN4rF/7hp2j8V9k1k9
+        Pm+SC+CM0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL
+        0MuYcewAa8FX4YqOE+1sDYxP+bsYOTgkBEwkXm7w62Lk4hASWMoocWzmbdYuRk6guKRE78MD
+        7BC2sMSfa11sEEXvGSWun5/KApIQFgiX+LDpDzPIIBEBQ4nN9x1AapgFPjFLLPwzjwmiYSuz
+        xJIjK8AmsQkYS+w92MEIYvMK2Elcm34KbBCLgKrE8tu3wGpEBSIkmuatYYeoEZQ4OfMJWA2n
+        gJ7EuYY+NhCbWcBMYt7mh8wQtrjErSfzmSBseYnmrbOZJzAKzULSPgtJyywkLbOQtCxgZFnF
+        KJJaWpybnltsqFecmFtcmpeul5yfu4kRGOHbjv3cvIPx0sbgQ4wCHIxKPLwNv7mihVgTy4or
+        cw8xSnAwK4nwcukChXhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfmHzySuINTQ3NLSwNzY3N
+        jc0slMR5zxtURgkJpCeWpGanphakFsH0MXFwSjUwJgdtOjf/Rav/vQtfvBUyezpknmtXrJrg
+        fjFI/u+KFHNurkMXkguLmtyenvy1yCp2W2xwmm7rzg191dskfwVJHXb9XLMine3gjrcdFoKi
+        y55Zf0/QfTSJQWEJ5/dNSixhi4pKXkSfOlPEG2x78e38WTfXJqjcmbHzvUS1OVeD+Wz9Y84S
+        DXUpSizFGYmGWsxFxYkAVAfBAwYDAAA=
+Message-Id: <20180528095803eucas1p17d5816834311bfaa79dd10237a71f93d~yxoGS2jAg1338013380eucas1p1l@eucas1p1.samsung.com>
+X-CMS-MailID: 20180528095803eucas1p17d5816834311bfaa79dd10237a71f93d
 X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180526212048epcas2p1510fd6c92f20e8f6d0059742ab5fb3f7
+X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180528095555eucas1p2fb61f362a3aa2d0082b8c4001b17f176
-References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
-        <CGME20180528095555eucas1p2fb61f362a3aa2d0082b8c4001b17f176@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20180526212048epcas2p1510fd6c92f20e8f6d0059742ab5fb3f7
+References: <CGME20180526212048epcas2p1510fd6c92f20e8f6d0059742ab5fb3f7@epcas2p1.samsung.com>
+        <20180526211940.25474-1-marcus.folkesson@gmail.com>
+        <20180528070453eucas1p294be19abd2cab7d112404d15710edfde~yvQ5mevbz2769227692eucas1p2k@eucas1p2.samsung.com>
+        <20180528083834.GB4651@gmail.com>
+        <20180528091229eucas1p20cfbb68cdfaa6de2cf5b5a7e2bdac72c~yxAUSF7e61070710707eucas1p2j@eucas1p2.samsung.com>
+        <20180528093254.GC4651@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds bridge and panel nodes.
-It adds also DSI properties specific for arndale board.
+W dniu 28.05.2018 o 11:32, Marcus Folkesson pisze:
+> Hi Andrzej,
+> 
+> Thank you for reviewing.
+> 
+> On Mon, May 28, 2018 at 11:12:27AM +0200, Andrzej Pietrasiewicz wrote:
+>> W dniu 28.05.2018 o 10:38, Marcus Folkesson pisze:
+>>> Hi Andrzej,
+>>>
+>>> On Mon, May 28, 2018 at 09:04:51AM +0200, Andrzej Pietrasiewicz wrote:
+>>>> Mi Marcus,
+>>>>
+>>>> W dniu 26.05.2018 o 23:19, Marcus Folkesson pisze:
+>>>>> Chip Card Interface Device (CCID) protocol is a USB protocol that
+>>>>> allows a smartcard device to be connected to a computer via a card
+>>>>> reader using a standard USB interface, without the need for each manufacturer
+>>>>> of smartcards to provide its own reader or protocol.
+>>>>>
+>>>>> This gadget driver makes Linux show up as a CCID device to the host and let a
+>>>>> userspace daemon act as the smartcard.
+>>>>>
+>>>>> This is useful when the Linux gadget itself should act as a cryptographic
+>>>>> device or forward APDUs to an embedded smartcard device.
+>>>>>
+>>>>> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+>>>>> ---
+>>>>
+>>>>>     
+>>>>> +config USB_CONFIGFS_CCID
+>>>>> +	bool "Chip Card Interface Device (CCID)"
+>>>>> +	depends on USB_CONFIGFS
+>>>>> +	select USB_F_CCID
+>>>>> +	help
+>>>>> +	  The CCID function driver provides generic emulation of a
+>>>>> +	  Chip Card Interface Device (CCID).
+>>>>> +
+>>>>> +	  You will need a user space server talking to /dev/ccidg*,
+>>>>> +	  since the kernel itself does not implement CCID/TPDU/APDU
+>>>>> +	  protocol.
+>>>>
+>>>> Your function needs a userspace daemon to work.
+>>>> It seems you want to use FunctionFS for such a purpose
+>>>> instead of creating a new function.
+>>>>
+>>>> Andrzej
+>>>
+>>>>> +	  since the kernel itself does not implement CCID/TPDU/APDU
+>>> Oops, the driver does handle CCID.
+>>
+>> Which parts of code do this handling?
+> 
+> My bad, I was thinking about the USB descriptors and endpoints setup.
+> That is of cause not part of the CCID protocol.
+> 
+>>
+>> Is there any kind of state machine usual for protocols?
+>> If the protocol is stateless then isn't it just a data format then?
+> 
+> The protocol is stateless.
+> 
+>>
+>> Which part of this handling must be done in kernel and why?
+>>
+>> Does the said handling do anything other than forwarding the
+>> traffic between USB and a character device?
+> 
+> No, it forward the CCID messages to the character device to be handled
+> by the application.
+> 
+>>
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- arch/arm/boot/dts/exynos5250-arndale.dts | 39 ++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+My opinion is: this wants to be done with FunctionFS.
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 80221fa..6f0b1c4 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -71,6 +71,17 @@
- 		};
- 	};
- 
-+	panel: panel {
-+		compatible = "boe,hv070wsa-100";
-+		power-supply = <&vcc_3v3_reg>;
-+		enable-gpios = <&gpd1 3 GPIO_ACTIVE_HIGH>;
-+		port {
-+			panel_ep: endpoint {
-+				remote-endpoint = <&bridge_out_ep>;
-+			};
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -476,6 +487,34 @@
- 	};
- };
- 
-+&dsi_0 {
-+	vddcore-supply = <&ldo8_reg>;
-+	vddio-supply = <&ldo10_reg>;
-+	samsung,pll-clock-frequency = <24000000>;
-+	samsung,burst-clock-frequency = <320000000>;
-+	samsung,esc-clock-frequency = <10000000>;
-+	status = "okay";
-+
-+	bridge@0 {
-+		reg = <0>;
-+		compatible = "toshiba,tc358764";
-+		vddc-supply = <&vcc_1v2_reg>;
-+		vddio-supply = <&vcc_1v8_reg>;
-+		vddmipi-supply = <&vcc_1v2_reg>;
-+		vddlvds133-supply = <&vcc_3v3_reg>;
-+		vddlvds112-supply = <&vcc_1v2_reg>;
-+		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@1 {
-+			reg = <1>;
-+			bridge_out_ep: endpoint {
-+				remote-endpoint = <&panel_ep>;
-+			};
-+		};
-+	};
-+};
-+
- &i2c_2 {
- 	status = "okay";
- 	/* used by HDMI DDC */
--- 
-2.7.4
+Andrzej
