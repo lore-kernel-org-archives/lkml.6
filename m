@@ -1,83 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752984AbeE1COJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 22:14:09 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:41570 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752950AbeE1COG (ORCPT
+        id S1753138AbeE1CTK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 22:19:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35912 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753115AbeE1CTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 22:14:06 -0400
-X-Google-Smtp-Source: ADUXVKKSy9C/a48fkze6rIy8OJFfqvQvLi5yNOmfqjJ4qEY8ARAnLSUeOxqEMiYJ6QamCoxEqRlPtTTl82AySytQZMo=
+        Sun, 27 May 2018 22:19:07 -0400
+From: Stewart Smith <stewart@linux.ibm.com>
+To: Colin King <colin.king@canonical.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc-opal: fix spelling mistake "Uniterrupted" -> "Uninterrupted"
+In-Reply-To: <20180526151531.10920-1-colin.king@canonical.com>
+References: <20180526151531.10920-1-colin.king@canonical.com>
+Date: Mon, 28 May 2018 12:18:55 +1000
 MIME-Version: 1.0
-In-Reply-To: <20180527215411.24701-1-colin.king@canonical.com>
-References: <20180527215411.24701-1-colin.king@canonical.com>
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Date: Sun, 27 May 2018 22:14:05 -0400
-X-Google-Sender-Auth: UN-hyhUS61dlWNvgOyuiVg01ebk
-Message-ID: <CAKb7Uvjwid5WSyCm2_+sZ2EPauaG0ef9QS2gm_tSk53hXtkHDA@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH][next] drm/nouveau/disp: avoid potential
- overflow on shift of int value
-To: Colin King <colin.king@canonical.com>
-Cc: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18052802-0056-0000-0000-000004579C1F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009094; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000262; SDB=6.01038674; UDB=6.00530875; IPR=6.00817803;
+ MB=3.00021330; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-28 02:19:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052802-0057-0000-0000-0000089BBDFE
+Message-Id: <8736ycr08g.fsf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805280025
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 5:54 PM, Colin King <colin.king@canonical.com> wrote:
+Colin King <colin.king@canonical.com> writes:
 > From: Colin Ian King <colin.king@canonical.com>
 >
-> The constant values being shifted are 32 bit integers and may potentially
-> overflow on the shift.  Avoid this potential overflow by making them
-> unsigned long long values before the shift.
->
-> Detected by CoverityScan, CID#1469383, 1469400 ("Unintentional
-> integer overflow")
+> Trivial fix to spelling mistake in hmi_error_types text
 >
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c | 2 +-
->  drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
-> index 29e6dd58ac48..99b94802ed63 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/changf119.c
-> @@ -52,7 +52,7 @@ void
->  gf119_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
->  {
->         struct nvkm_device *device = chan->disp->base.engine.subdev.device;
-> -       const u64 mask = 0x00000001 << chan->chid.user;
-> +       const u64 mask = 0x00000001ULL << chan->chid.user;
 
-I'm pretty sure all of these should just be u32 (below as well). The
-registers that this is masking are all 32-bit, more doesn't make
-sense.
+Reviewed-by: Stewart Smith <stewart@linux.ibm.com>
 
->         if (!en) {
->                 nvkm_mask(device, 0x610090, mask, 0x00000000);
->                 nvkm_mask(device, 0x6100a0, mask, 0x00000000);
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-> index 57719f675eec..43ae3b092e43 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
-> @@ -166,7 +166,7 @@ void
->  nv50_disp_chan_intr(struct nv50_disp_chan *chan, bool en)
->  {
->         struct nvkm_device *device = chan->disp->base.engine.subdev.device;
-> -       const u64 mask = 0x00010001 << chan->chid.user;
-> +       const u64 mask = 0x00010001ULL << chan->chid.user;
->         const u64 data = en ? 0x00010000 : 0x00000000;
->         nvkm_mask(device, 0x610028, mask, data);
->  }
-> --
-> 2.17.0
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+-- 
+Stewart Smith
+OPAL Architect, IBM.
