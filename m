@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164847AbeE1LBN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:01:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48726 "EHLO mail.kernel.org"
+        id S1423523AbeE1MZb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:25:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164833AbeE1LBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:08 -0400
+        id S1164835AbeE1LBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Ivan Gorinov <ivan.gorinov@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 419/496] cxl: Check if PSL data-cache is available before issue flush request
-Date: Mon, 28 May 2018 12:03:24 +0200
-Message-Id: <20180528100337.410672129@linuxfoundation.org>
+Subject: [PATCH 4.14 437/496] x86/devicetree: Initialize device tree before using it
+Date: Mon, 28 May 2018 12:03:42 +0200
+Message-Id: <20180528100338.242904608@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,125 +31,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+From: Ivan Gorinov <ivan.gorinov@intel.com>
 
-[ Upstream commit 94322ed8e857e3b2a33cf75118051af9baaa110f ]
+[ Upstream commit 628df9dc5ad886b0a9b33c75a7b09710eb859ca1 ]
 
-PSL9D doesn't have a data-cache that needs to be flushed before
-resetting the card. However when cxl tries to flush data-cache on such
-a card, it times-out as PSL_Control register never indicates flush
-operation complete due to missing data-cache. This is usually
-indicated in the kernel logs with this message:
+Commit 08d53aa58cb1 added CRC32 calculation in early_init_dt_verify() and
+checking in late initcall of_fdt_raw_init(), making early_init_dt_verify()
+mandatory.
 
-"WARNING: cache flush timed out"
+The required call to early_init_dt_verify() was not added to the
+x86-specific implementation, causing failure to create the sysfs entry in
+of_fdt_raw_init().
 
-To fix this the patch checks PSL_Debug register CDC-Field(BIT:27)
-which indicates the absence of a data-cache and sets a flag
-'no_data_cache' in 'struct cxl_native' to indicate this. When
-cxl_data_cache_flush() is called it checks the flag and if set bails
-out early without requesting a data-cache flush operation to the PSL.
-
-Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 08d53aa58cb1 ("of/fdt: export fdt blob as /sys/firmware/fdt")
+Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Link: https://lkml.kernel.org/r/c8c7e941efc63b5d25ebf9b6350b0f3df38f6098.1520450752.git.ivan.gorinov@intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/cxl/cxl.h    |    4 ++++
- drivers/misc/cxl/native.c |   11 ++++++++++-
- drivers/misc/cxl/pci.c    |   19 +++++++++++++------
- 3 files changed, 27 insertions(+), 7 deletions(-)
+ arch/x86/kernel/devicetree.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/misc/cxl/cxl.h
-+++ b/drivers/misc/cxl/cxl.h
-@@ -365,6 +365,9 @@ static const cxl_p2n_reg_t CXL_PSL_WED_A
- #define CXL_PSL_TFC_An_AE (1ull << (63-30)) /* Restart PSL with address error */
- #define CXL_PSL_TFC_An_R  (1ull << (63-31)) /* Restart PSL transaction */
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -12,6 +12,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_irq.h>
++#include <linux/libfdt.h>
+ #include <linux/slab.h>
+ #include <linux/pci.h>
+ #include <linux/of_pci.h>
+@@ -276,14 +277,15 @@ static void __init x86_flattree_get_conf
  
-+/****** CXL_PSL_DEBUG *****************************************************/
-+#define CXL_PSL_DEBUG_CDC  (1ull << (63-27)) /* Coherent Data cache support */
-+
- /****** CXL_XSL9_IERAT_ERAT - CAIA 2 **********************************/
- #define CXL_XSL9_IERAT_MLPID    (1ull << (63-0))  /* Match LPID */
- #define CXL_XSL9_IERAT_MPID     (1ull << (63-1))  /* Match PID */
-@@ -659,6 +662,7 @@ struct cxl_native {
- 	irq_hw_number_t err_hwirq;
- 	unsigned int err_virq;
- 	u64 ps_off;
-+	bool no_data_cache; /* set if no data cache on the card */
- 	const struct cxl_service_layer_ops *sl_ops;
- };
+ 	map_len = max(PAGE_SIZE - (initial_dtb & ~PAGE_MASK), (u64)128);
  
---- a/drivers/misc/cxl/native.c
-+++ b/drivers/misc/cxl/native.c
-@@ -352,8 +352,17 @@ int cxl_data_cache_flush(struct cxl *ada
- 	u64 reg;
- 	unsigned long timeout = jiffies + (HZ * CXL_TIMEOUT);
+-	initial_boot_params = dt = early_memremap(initial_dtb, map_len);
+-	size = of_get_flat_dt_size();
++	dt = early_memremap(initial_dtb, map_len);
++	size = fdt_totalsize(dt);
+ 	if (map_len < size) {
+ 		early_memunmap(dt, map_len);
+-		initial_boot_params = dt = early_memremap(initial_dtb, size);
++		dt = early_memremap(initial_dtb, size);
+ 		map_len = size;
+ 	}
  
--	pr_devel("Flushing data cache\n");
-+	/*
-+	 * Do a datacache flush only if datacache is available.
-+	 * In case of PSL9D datacache absent hence flush operation.
-+	 * would timeout.
-+	 */
-+	if (adapter->native->no_data_cache) {
-+		pr_devel("No PSL data cache. Ignoring cache flush req.\n");
-+		return 0;
-+	}
- 
-+	pr_devel("Flushing data cache\n");
- 	reg = cxl_p1_read(adapter, CXL_PSL_Control);
- 	reg |= CXL_PSL_Control_Fr;
- 	cxl_p1_write(adapter, CXL_PSL_Control, reg);
---- a/drivers/misc/cxl/pci.c
-+++ b/drivers/misc/cxl/pci.c
-@@ -457,6 +457,7 @@ static int init_implementation_adapter_r
- 	u64 chipid;
- 	u32 phb_index;
- 	u64 capp_unit_id;
-+	u64 psl_debug;
- 	int rc;
- 
- 	rc = cxl_calc_capp_routing(dev, &chipid, &phb_index, &capp_unit_id);
-@@ -507,6 +508,16 @@ static int init_implementation_adapter_r
- 	if (cxl_is_power9_dd1())
- 		cxl_p1_write(adapter, CXL_PSL9_GP_CT, 0x0400000000000001ULL);
- 
-+	/*
-+	 * Check if PSL has data-cache. We need to flush adapter datacache
-+	 * when as its about to be removed.
-+	 */
-+	psl_debug = cxl_p1_read(adapter, CXL_PSL9_DEBUG);
-+	if (psl_debug & CXL_PSL_DEBUG_CDC) {
-+		dev_dbg(&dev->dev, "No data-cache present\n");
-+		adapter->native->no_data_cache = true;
-+	}
-+
- 	return 0;
++	early_init_dt_verify(dt);
+ 	unflatten_and_copy_device_tree();
+ 	early_memunmap(dt, map_len);
  }
- 
-@@ -1450,10 +1461,8 @@ int cxl_pci_reset(struct cxl *adapter)
- 
- 	/*
- 	 * The adapter is about to be reset, so ignore errors.
--	 * Not supported on P9 DD1
- 	 */
--	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
--		cxl_data_cache_flush(adapter);
-+	cxl_data_cache_flush(adapter);
- 
- 	/* pcie_warm_reset requests a fundamental pci reset which includes a
- 	 * PERST assert/deassert.  PERST triggers a loading of the image
-@@ -1898,10 +1907,8 @@ static void cxl_pci_remove_adapter(struc
- 
- 	/*
- 	 * Flush adapter datacache as its about to be removed.
--	 * Not supported on P9 DD1.
- 	 */
--	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
--		cxl_data_cache_flush(adapter);
-+	cxl_data_cache_flush(adapter);
- 
- 	cxl_deconfigure_adapter(adapter);
- 
