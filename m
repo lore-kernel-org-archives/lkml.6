@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968717AbeE1KR3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
+        id S968701AbeE1KRY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968655AbeE1KRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:25 -0400
+        id S968655AbeE1KRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
+        stable@vger.kernel.org, Chad Dupuis <chad.dupuis@cavium.com>,
+        Laurence Oberman <loberman@redhat.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 075/268] scsi: mptfusion: Add bounds check in mptctl_hp_targetinfo()
-Date: Mon, 28 May 2018 12:00:49 +0200
-Message-Id: <20180528100210.332285143@linuxfoundation.org>
+Subject: [PATCH 4.4 073/268] scsi: bnx2fc: Fix check in SCSI completion handler for timed out request
+Date: Mon, 28 May 2018 12:00:47 +0200
+Message-Id: <20180528100210.092578879@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,34 +31,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Chad Dupuis <chad.dupuis@cavium.com>
 
-[ Upstream commit a7043e9529f3c367cc4d82997e00be034cbe57ca ]
+[ Upstream commit ecf7ff49945f5741fa1da112f994939f942031d3 ]
 
-My static checker complains about an out of bounds read:
+When a request times out we set the io_req flag BNX2FC_FLAG_IO_COMPL so
+that if a subsequent completion comes in on that task ID we will ignore
+it.  The issue is that in the check for this flag there is a missing
+return so we will continue to process a request which may have already
+been returned to the ownership of the SCSI layer.  This can cause
+unpredictable results.
 
-    drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
-    error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
+Solution is to add in the missing return.
 
-It's true that we probably should have a bounds check here.
+[mkp: typo plus title shortening]
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Chad Dupuis <chad.dupuis@cavium.com>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/message/fusion/mptctl.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/bnx2fc/bnx2fc_io.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -2698,6 +2698,8 @@ mptctl_hp_targetinfo(unsigned long arg)
- 				__FILE__, __LINE__, iocnum);
- 		return -ENODEV;
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -1858,6 +1858,7 @@ void bnx2fc_process_scsi_cmd_compl(struc
+ 		/* we will not receive ABTS response for this IO */
+ 		BNX2FC_IO_DBG(io_req, "Timer context finished processing "
+ 			   "this scsi cmd\n");
++		return;
  	}
-+	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
-+		return -EINVAL;
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
- 	    ioc->name));
  
+ 	/* Cancel the timeout_work, as we received IO completion */
