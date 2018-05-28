@@ -1,80 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034932AbeE1PtC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:49:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49298 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034841AbeE1Ps6 (ORCPT
+        id S1034947AbeE1PtU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:49:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:36335 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034934AbeE1PtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:48:58 -0400
-Subject: Re: [PATCH 3/5] scsi: ufs: Add Kconfig for UFS HC driver crypto
- support
-To: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
-        Vinayak Holikatti "<vinholikatti@gmail.com>;" "\"James" "E.J."
-         "Bottomley\"" "<jejb@linux.vnet.ibm.com>;" "\"Martin" "K."
-         "Petersen\"" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        "linux-scsi@vger.kernel.org;" Manjunath M Bettegowda
-         "<manjumb@synopsys.com>;" Prabu Thangamuthu
-         "<prabut@synopsys.com>;" Tejas Joglekar
-         "<joglekar@synopsys.com>;" Joao Pinto <Joao.Pinto@synopsys.com>
-References: <9baaf314-e9de-a078-1085-9c81b3421d42@synopsys.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <394042f2-2231-37c9-f875-979415dbdf58@infradead.org>
-Date: Mon, 28 May 2018 08:48:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <9baaf314-e9de-a078-1085-9c81b3421d42@synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 28 May 2018 11:49:15 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Rob Herring <robh@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jan Kiszka <jan.kiszka@siemens.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: versatile: include pci.h
+Date: Mon, 28 May 2018 17:48:39 +0200
+Message-Id: <20180528154850.2647019-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:2NFFx52rilNFoShuK3Xv7WX/vDmXoLi0tmd3BsUAQ9IfL8opXIo
+ 87hlYGNCSQ8Mi/UyR7bIadfeInokg9p2YvWDcb1GpKQHsVApiq1kj6R/UJHNppckS7Jctqd
+ a0Ae1f3aDQNTFTQeUdilxQbI9t/zZN/Y+tmx3KeOdL21Dj7Mh1vhs7LgIoZTcOrNoAJzIs7
+ AnobjB9ncCx4rySPor5uw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ASY1+DLFZeY=:6vCDnhnHtKlqsiiHDwzcK8
+ 3UUt341VUTnYi7z73x50JczsIdIE51lNxMkIVtWrGV9Ocd5uHlMPKlwtTcwaOpq1ShXyrdkgb
+ mv14/wKANFOeBtULLYqg8l9LqsqM5Hs7UVKp8Ac4lHC5thlpPhXM3KX5DvS6icQctC1VRu7Yr
+ gTFGju0BNLerLlwsZRCAipfZz8c/qXM6gw6/ErtVQdYWH6+D3aNzn9eGl/DhauHWrHX+9yehm
+ +8uEnIfDRiEG9CA6KGNRczXDvhwY6kJMP1YbhjiwDru7IGLFlwvakKhi5HWfcqHLeGclO3n5a
+ z+mMIXkFMR4EPPmvn7oE+ildgOu7ZYFU43GnpydQVxHKOKgFVGO4OKmE1LT9FrxJPN7sVCOF0
+ SbiXKxIr4VtDAdo0R7MnuqoP6Qb7dXGSJIEO/lCHKDEzt7iAqAE+tMfDaJ99z96tBSKRMNvqo
+ ZRuhPL+w4KJN2sAkkFPVfKxc9aVW3UC0UGRGY96T4hY0D7ahLyTV7AwexI1CYRpy9ZAq8KH1c
+ tuDVvSDZL0Ifkeujvew8AhZ9vJ+d9AZiSf5Ej++1d0Kr184+37Z1Ogp4o3T+nssvMAVpdZByN
+ oXpd5ydqzacJf1hYPZbZ71uAk1lAMNbx20OOk8/niJztwgwlv1NilmdOUpkgwhresr4vVURYh
+ iIUXFo3is31hM+z5RiAGxfSobOx62QA6PugXGqXLVkEa0fiN0XtqLJRY+gUhM/T3omL0=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 06:29 AM, Ladvine D Almeida wrote:
-> 
-> This patch adds the Kconfig for enabling crypto support for
-> UFS Host Controller driver. It also adds Makefile changes
-> for building crypto support based on crypto Kconfig selection.
-> 
-> Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
-> ---
->  drivers/scsi/ufs/Kconfig  | 15 +++++++++++++++
->  drivers/scsi/ufs/Makefile |  6 +++++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-> index e27b4d4..0134672 100644
-> --- a/drivers/scsi/ufs/Kconfig
-> +++ b/drivers/scsi/ufs/Kconfig
-> @@ -50,6 +50,21 @@ config SCSI_UFSHCD
->  	  However, do not compile this as a module if your root file system
->  	  (the one containing the directory /) is located on a UFS device.
->  
-> +config SCSI_UFSHCD_INLINE_ENCRYPTION
-> +	bool "Universal Flash Storage Controller Driver crypto support"
-> +	depends on SCSI_UFSHCD
-> +	default n
-> +	select BLK_DEV_INLINE_ENCRYPTION if SCSI_UFSHCD_INLINE_ENCRYPTION
-> +	help
-> +	This enables the Inline Encryption feature of the UFS Host
-> +	Controller driver. Once the capability is detected in hardware,
-> +	it will be made available for the user through Linux Kernel
-> +	Cryptography Framework(LKCF).
+Two patches for PCI host drivers clashed recently, leading to a broken
+build for versatile-pci:
 
-The help text above should be indented (as below), with one tab + 2 spaces.
+drivers/pci/host/pci-versatile.c: In function 'versatile_pci_parse_request_of_pci_ranges':
+drivers/pci/host/pci-versatile.c:70:8: error: implicit declaration of function 'devm_of_pci_get_host_bridge_resources'; did you mean 'pci_get_host_bridge_device'? [-Werror=implicit-function-declaration]
 
-> +
-> +	  If you have a controller with this capability, say Y.
-> +
-> +	  If unsure, say N.
-> +
->  config SCSI_UFSHCD_PCI
->  	tristate "PCI bus based UFS Controller support"
->  	depends on SCSI_UFSHCD && PCI
+This adds the missing header inclusion that became necessary now.
 
+Fixes: 9e2aee80c78d ("PCI: Move private DT related functions into private header")
+Fixes: 64720fd1f630 ("PCI: Rework of_pci_get_host_bridge_resources() to devm_of_pci_get_host_bridge_resources()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pci/host/pci-versatile.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
+index ff2cd12b3978..994f32061b32 100644
+--- a/drivers/pci/host/pci-versatile.c
++++ b/drivers/pci/host/pci-versatile.c
+@@ -15,6 +15,8 @@
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+ 
++#include "../pci.h"
++
+ static void __iomem *versatile_pci_base;
+ static void __iomem *versatile_cfg_base[2];
+ 
 -- 
-~Randy
+2.9.0
