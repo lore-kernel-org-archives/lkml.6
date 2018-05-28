@@ -1,104 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933245AbeE1S1s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 14:27:48 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55554 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755686AbeE1S1m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 14:27:42 -0400
-X-Google-Smtp-Source: AB8JxZrNoUyReFDq+P2n8ImUmQlEqBcRz2BKz+RkPufVXPF/4TtRMXaclUCDM1U9XZsxNVGHTknqbw==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH v2] kbuild: add endianness flag to CHEKCFLAGS
-Date: Mon, 28 May 2018 20:27:35 +0200
-Message-Id: <20180528182735.18257-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S933287AbeE1SaU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 14:30:20 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:46016 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933078AbeE1SaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 14:30:19 -0400
+Date: Mon, 28 May 2018 20:30:12 +0200
+From: Christian Brauner <christian@brauner.io>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, akpm@linux-foundation.org,
+        oleg@redhat.com
+Subject: Re: [PATCH 3/8] signal: make may_ptrace_stop() return bool
+Message-ID: <20180528183012.GA22333@mailbox.org>
+References: <20180528134916.7568-1-christian@brauner.io>
+ <20180528134916.7568-4-christian@brauner.io>
+ <20180528141219.GZ30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180528141219.GZ30522@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel depends on macros like __BYTE_ORDER__,
-__BIG_ENDIAN__ or __LITTLE_ENDIAN__.
+On Mon, May 28, 2018 at 03:12:19PM +0100, Al Viro wrote:
+> On Mon, May 28, 2018 at 03:49:11PM +0200, Christian Brauner wrote:
+> > may_ptrace_stop() already behaves like a boolean function. Let's actually
+> > declare it as such too.
+> > 
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> >  kernel/signal.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 81be01d193f4..6c2e7b45cba1 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -1889,10 +1889,10 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
+> >  	spin_unlock_irqrestore(&sighand->siglock, flags);
+> >  }
+> >  
+> > -static inline int may_ptrace_stop(void)
+> > +static inline bool may_ptrace_stop(void)
+> >  {
+> >  	if (!likely(current->ptrace))
+> > -		return 0;
+> > +		return false;
+> >  	/*
+> >  	 * Are we in the middle of do_coredump?
+> >  	 * If so and our tracer is also part of the coredump stopping
+> > @@ -1908,9 +1908,9 @@ static inline int may_ptrace_stop(void)
+> >  	 */
+> >  	if (unlikely(current->mm->core_state) &&
+> >  	    unlikely(current->mm == current->parent->mm))
+> > -		return 0;
+> > +		return false;
+> >  
+> > -	return 1;
+> > +	return true;
+> 
+> 	return !current->mm->core_state || current->mm != current->parent->mm;
+> 
+> or, if it gives any measurably better code generation,
+> 
+> 	return likely(!current->mm->core_state ||
+> 			current->mm != current->parent->mm);
 
-OTOH, sparse doesn't know about the endianness of the kernel and
-by default uses the same as the machine on which sparse was built.
+Makes sense. I put this in v1.
 
-Ensure that sparse can predefine the macros corresponding to
-how the kernel was configured by adding -m{big,little}-endian
-to CHECKFLAGS in the main Makefile (and so for all archs).
-Also, remove the equivalent done in arch specific Makefiles.
-
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- Makefile               | 3 +++
- arch/openrisc/Makefile | 1 -
- arch/parisc/Makefile   | 2 +-
- arch/s390/Makefile     | 2 +-
- 4 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 56ba070df..6c6610913 100644
---- a/Makefile
-+++ b/Makefile
-@@ -878,6 +878,9 @@ ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
- LDFLAGS_vmlinux	+= $(call ld-option, -X,)
- endif
- 
-+# insure the checker run with the right endianness
-+CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig-endian,-mlittle-endian)
-+
- # Default kernel image to build when no specific target is given.
- # KBUILD_IMAGE may be overruled on the command line or
- # set in the environment
-diff --git a/arch/openrisc/Makefile b/arch/openrisc/Makefile
-index cf8802962..89076a66e 100644
---- a/arch/openrisc/Makefile
-+++ b/arch/openrisc/Makefile
-@@ -25,7 +25,6 @@ LDFLAGS_vmlinux :=
- LIBGCC 		:= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
- 
- KBUILD_CFLAGS	+= -pipe -ffixed-r10 -D__linux__
--CHECKFLAGS	+= -mbig-endian
- 
- ifeq ($(CONFIG_OPENRISC_HAVE_INST_MUL),y)
- 	KBUILD_CFLAGS += $(call cc-option,-mhard-mul)
-diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
-index 34ac503e2..348ae4779 100644
---- a/arch/parisc/Makefile
-+++ b/arch/parisc/Makefile
-@@ -22,7 +22,7 @@ KBUILD_IMAGE := vmlinuz
- KBUILD_DEFCONFIG := default_defconfig
- 
- NM		= sh $(srctree)/arch/parisc/nm
--CHECKFLAGS	+= -D__hppa__=1 -mbig-endian
-+CHECKFLAGS	+= -D__hppa__=1
- LIBGCC		= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
- export LIBGCC
- 
-diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-index c79936d02..68a690442 100644
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@ -18,7 +18,7 @@ KBUILD_CFLAGS	+= -m64
- KBUILD_AFLAGS	+= -m64
- UTS_MACHINE	:= s390x
- STACK_SIZE	:= 16384
--CHECKFLAGS	+= -D__s390__ -D__s390x__ -mbig-endian
-+CHECKFLAGS	+= -D__s390__ -D__s390x__
- 
- export LD_BFD
- 
--- 
-2.17.0
+Thanks!
+Christian
