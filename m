@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163115AbeE1KqY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:46:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
+        id S1163213AbeE1Ncz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:32:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163049AbeE1KqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:18 -0400
+        id S1163049AbeE1KqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Lord <mlord@pobox.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 117/496] powerpc/bpf/jit: Fix 32-bit JIT for seccomp_data access
-Date: Mon, 28 May 2018 11:58:22 +0200
-Message-Id: <20180528100324.865556860@linuxfoundation.org>
+Subject: [PATCH 4.14 119/496] s390/cio: fix return code after missing interrupt
+Date: Mon, 28 May 2018 11:58:24 +0200
+Message-Id: <20180528100324.942261024@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,37 +31,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Lord <mlord@pobox.com>
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-[ Upstream commit 083b20907185b076f21c265b30fe5b5f24c03d8c ]
+[ Upstream commit 770b55c995d171f026a9efb85e71e3b1ea47b93d ]
 
-I am using SECCOMP to filter syscalls on a ppc32 platform, and noticed
-that the JIT compiler was failing on the BPF even though the
-interpreter was working fine.
+When a timeout occurs for users of ccw_device_start_timeout
+we will stop the IO and call the drivers int handler with
+the irb pointer set to ERR_PTR(-ETIMEDOUT). Sometimes
+however we'd set the irb pointer to ERR_PTR(-EIO) which is
+not intended. Just set the correct value in all codepaths.
 
-The issue was that the compiler was missing one of the instructions
-used by SECCOMP, so here is a patch to enable JIT for that
-instruction.
-
-Fixes: eb84bab0fb38 ("ppc: Kconfig: Enable BPF JIT on ppc32")
-Signed-off-by: Mark Lord <mlord@pobox.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/net/bpf_jit_comp.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/s390/cio/device_fsm.c |    6 ++++--
+ drivers/s390/cio/io_sch.h     |    1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/net/bpf_jit_comp.c
-+++ b/arch/powerpc/net/bpf_jit_comp.c
-@@ -329,6 +329,9 @@ static int bpf_jit_build_body(struct bpf
- 			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, len) != 4);
- 			PPC_LWZ_OFFS(r_A, r_skb, offsetof(struct sk_buff, len));
- 			break;
-+		case BPF_LDX | BPF_W | BPF_ABS: /* A = *((u32 *)(seccomp_data + K)); */
-+			PPC_LWZ_OFFS(r_A, r_skb, K);
-+			break;
- 		case BPF_LDX | BPF_W | BPF_LEN: /* X = skb->len; */
- 			PPC_LWZ_OFFS(r_X, r_skb, offsetof(struct sk_buff, len));
- 			break;
+--- a/drivers/s390/cio/device_fsm.c
++++ b/drivers/s390/cio/device_fsm.c
+@@ -796,6 +796,7 @@ ccw_device_online_timeout(struct ccw_dev
+ 
+ 	ccw_device_set_timeout(cdev, 0);
+ 	cdev->private->iretry = 255;
++	cdev->private->async_kill_io_rc = -ETIMEDOUT;
+ 	ret = ccw_device_cancel_halt_clear(cdev);
+ 	if (ret == -EBUSY) {
+ 		ccw_device_set_timeout(cdev, 3*HZ);
+@@ -872,7 +873,7 @@ ccw_device_killing_irq(struct ccw_device
+ 	/* OK, i/o is dead now. Call interrupt handler. */
+ 	if (cdev->handler)
+ 		cdev->handler(cdev, cdev->private->intparm,
+-			      ERR_PTR(-EIO));
++			      ERR_PTR(cdev->private->async_kill_io_rc));
+ }
+ 
+ static void
+@@ -889,7 +890,7 @@ ccw_device_killing_timeout(struct ccw_de
+ 	ccw_device_online_verify(cdev, 0);
+ 	if (cdev->handler)
+ 		cdev->handler(cdev, cdev->private->intparm,
+-			      ERR_PTR(-EIO));
++			      ERR_PTR(cdev->private->async_kill_io_rc));
+ }
+ 
+ void ccw_device_kill_io(struct ccw_device *cdev)
+@@ -897,6 +898,7 @@ void ccw_device_kill_io(struct ccw_devic
+ 	int ret;
+ 
+ 	cdev->private->iretry = 255;
++	cdev->private->async_kill_io_rc = -EIO;
+ 	ret = ccw_device_cancel_halt_clear(cdev);
+ 	if (ret == -EBUSY) {
+ 		ccw_device_set_timeout(cdev, 3*HZ);
+--- a/drivers/s390/cio/io_sch.h
++++ b/drivers/s390/cio/io_sch.h
+@@ -157,6 +157,7 @@ struct ccw_device_private {
+ 	unsigned long intparm;	/* user interruption parameter */
+ 	struct qdio_irq *qdio_data;
+ 	struct irb irb;		/* device status */
++	int async_kill_io_rc;
+ 	struct senseid senseid;	/* SenseID info */
+ 	struct pgid pgid[8];	/* path group IDs per chpid*/
+ 	struct ccw1 iccws[2];	/* ccws for SNID/SID/SPGID commands */
