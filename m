@@ -1,95 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754122AbeE1Ipj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:45:39 -0400
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35453 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754029AbeE1Ipg (ORCPT
+        id S1754006AbeE1Irh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:47:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53423 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754065AbeE1IrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:45:36 -0400
-X-Google-Smtp-Source: ADUXVKKJKeCP0NVDBuNK3Q8dDfkiCnp4ck7XPSIkjpqFQ2mUW8/RmwD5O/TqLdE0OJUGvDIrWSyFlA==
-From: Leo Yan <leo.yan@linaro.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Robert Walker <Robert.Walker@arm.com>, mike.leach@linaro.org,
-        kim.phillips@arm.co, Tor Jeremiassen <tor@ti.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        Leo Yan <leo.yan@linaro.org>
-Subject: [RFT v3 0/4] Perf script: Add python script for CoreSight trace disassembler
-Date: Mon, 28 May 2018 16:44:59 +0800
-Message-Id: <1527497103-3593-1-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Mon, 28 May 2018 04:47:19 -0400
+X-Google-Smtp-Source: ADUXVKJM7scZ6YpcLs5Pf7CCmQEC1asz9Qw4K7UymfIWhrsnL6HYHifDQC8RLh+XpL9qazJ6rd3GKQ==
+Subject: Re: [PATCH v2 11/29] venus: venc,vdec: adds clocks needed for venus
+ 4xx
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+ <20180515075859.17217-12-stanimir.varbanov@linaro.org>
+ <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <3a892dd5-0744-c289-e258-099d531d5abd@linaro.org>
+Date: Mon, 28 May 2018 11:47:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is to support for using 'perf script' for CoreSight
-trace disassembler, for this purpose this patch series adds a new
-python script to parse CoreSight tracing event and use command 'objdump'
-for disassembled lines, finally this can generate readable program
-execution flow for reviewing tracing data.
+Hi Tomasz,
 
-Patch 0001 is one fixing patch to generate samples for the start packet
-and exception packets.
+On 05/24/2018 09:11 AM, Tomasz Figa wrote:
+> Hi Stanimir,
+> 
+> On Tue, May 15, 2018 at 5:10 PM Stanimir Varbanov <
+> stanimir.varbanov@linaro.org> wrote:
+> 
+>> This extends the clocks number to support suspend and resume
+>> on Venus version 4xx.
+> 
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>   drivers/media/platform/qcom/venus/core.h |  4 +--
+>>   drivers/media/platform/qcom/venus/vdec.c | 42
+> ++++++++++++++++++++++++++------
+>>   drivers/media/platform/qcom/venus/venc.c | 42
+> ++++++++++++++++++++++++++------
+>>   3 files changed, 72 insertions(+), 16 deletions(-)
+> 
+>> diff --git a/drivers/media/platform/qcom/venus/core.h
+> b/drivers/media/platform/qcom/venus/core.h
+>> index 8d3e150800c9..b5b9a84e9155 100644
+>> --- a/drivers/media/platform/qcom/venus/core.h
+>> +++ b/drivers/media/platform/qcom/venus/core.h
+>> @@ -92,8 +92,8 @@ struct venus_core {
+>>          void __iomem *base;
+>>          int irq;
+>>          struct clk *clks[VIDC_CLKS_NUM_MAX];
+>> -       struct clk *core0_clk;
+>> -       struct clk *core1_clk;
+>> +       struct clk *core0_clk, *core0_bus_clk;
+>> +       struct clk *core1_clk, *core1_bus_clk;
+>>          struct video_device *vdev_dec;
+>>          struct video_device *vdev_enc;
+>>          struct v4l2_device v4l2_dev;
+>> diff --git a/drivers/media/platform/qcom/venus/vdec.c
+> b/drivers/media/platform/qcom/venus/vdec.c
+>> index 261a51adeef2..c45452634e7e 100644
+>> --- a/drivers/media/platform/qcom/venus/vdec.c
+>> +++ b/drivers/media/platform/qcom/venus/vdec.c
+>> @@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device
+> *pdev)
+>>          if (!core)
+>>                  return -EPROBE_DEFER;
+> 
+>> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+>> +       if (IS_V3(core) || IS_V4(core)) {
+>>                  core->core0_clk = devm_clk_get(dev, "core");
+>>                  if (IS_ERR(core->core0_clk))
+>>                          return PTR_ERR(core->core0_clk);
+>>          }
+> 
+>> +       if (IS_V4(core)) {
+>> +               core->core0_bus_clk = devm_clk_get(dev, "bus");
+>> +               if (IS_ERR(core->core0_bus_clk))
+>> +                       return PTR_ERR(core->core0_bus_clk);
+>> +       }
+>> +
+> 
+> Rather than doing this conditional dance, wouldn't it make more sense to
+> just list all the clocks in variant data struct and use clk_bulk_get()?
 
-Patch 0002 is the prerequisite to add addr into sample dict, so this
-value can be used by python script to analyze instruction range.
+Do you mean the same as it is done for venus/core.c ?
 
-Patch 0003 is to add python script for trace disassembler.
+> 
+>>          platform_set_drvdata(pdev, core);
+> 
+>>          vdev = video_device_alloc();
+>> @@ -1132,12 +1138,23 @@ static __maybe_unused int
+> vdec_runtime_suspend(struct device *dev)
+>>   {
+>>          struct venus_core *core = dev_get_drvdata(dev);
+> 
+>> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+>> +       if (IS_V1(core))
+>>                  return 0;
+> 
+>> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+>> +       if (IS_V3(core))
+>> +               writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+>> +       else if (IS_V4(core))
+>> +               writel(0, core->base +
+> WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+>> +
+>> +       if (IS_V4(core))
+>> +               clk_disable_unprepare(core->core0_bus_clk);
+>> +
+>>          clk_disable_unprepare(core->core0_clk);
+>> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+>> +
+>> +       if (IS_V3(core))
+>> +               writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+>> +       else if (IS_V4(core))
+>> +               writel(1, core->base +
+> WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+> 
+> Almost every step here differs between version. I'd suggest splitting this
+> into separate functions for both versions.
 
-Patch 0004 is to add doc to explain python script usage and give
-example for it.
+I think it will be better to squash this patch with 13/29.
 
-This patch series has been rebased on acme git tree [1] with the commit
-19422a9f2a3b ("perf tools: Fix kernel_start for PTI on x86") and tested
-on Hikey (ARM64 octa CA53 cores).
-
-In this version the script has no dependency on ARM64 platform and is
-expected to support ARM32 platform, but I am lacking ARM32 platform for
-testing on it, so firstly upstream to support ARM64 platform.
-
-This patch series is firstly to support 'per-thread' recording tracing
-data, but we also need to verify the script can dump trace disassembler
-CPU wide tracing and kernel panic kdump tracing data.  I also verified
-this patch series which can work with kernel panic kdump tracing data,
-because Mathieu is working on CPU wide tracing related work, so after
-this we need to retest for CPU wide tracing and kdump tracing to ensure
-the python script can handle well for all cases.
-
-You are very welcome to test the script in this patch series, your
-testing result and suggestion are very valuable to perfect this script
-to cover more cases.
-
-Changes from v2:
-* Synced with Rob for handling CS_ETM_TRACE_ON packet, so refined 0001
-  patch according to dicussion;
-* Minor cleanup and fixes in 0003 patch for python script: remove 'svc'
-  checking.
-
-Changes from v1:
-* According to Mike and Rob suggestion, add the fixing to generate samples
-  for the start packet and exception packets.
-* Simplify the python script to remove the exception prediction algorithm,
-  we can rely on the sane exception packets for disassembler.
-
-
-Leo Yan (4):
-  perf cs-etm: Generate branch sample for missed packets
-  perf script python: Add addr into perf sample dict
-  perf script python: Add script for CoreSight trace disassembler
-  coresight: Document for CoreSight trace disassembler
-
- Documentation/trace/coresight.txt                  |  52 +++++
- tools/perf/scripts/python/arm-cs-trace-disasm.py   | 235 +++++++++++++++++++++
- tools/perf/util/cs-etm.c                           |  93 ++++++--
- .../util/scripting-engines/trace-event-python.c    |   2 +
- 4 files changed, 362 insertions(+), 20 deletions(-)
- create mode 100644 tools/perf/scripts/python/arm-cs-trace-disasm.py
 
 -- 
-2.7.4
+regards,
+Stan
