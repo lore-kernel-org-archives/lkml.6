@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033054AbeE1KT5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:19:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39704 "EHLO mail.kernel.org"
+        id S1033094AbeE1KUJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:20:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032988AbeE1KTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:52 -0400
+        id S1032988AbeE1KUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 130/268] xen: xenbus: use put_device() instead of kfree()
-Date: Mon, 28 May 2018 12:01:44 +0200
-Message-Id: <20180528100216.805623814@linuxfoundation.org>
+        Tejun Heo <tj@kernel.org>, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 134/268] workqueue: use put_device() instead of kfree()
+Date: Mon, 28 May 2018 12:01:48 +0200
+Message-Id: <20180528100217.367975646@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,33 +31,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-[ Upstream commit 351b2bccede1cb673ec7957b35ea997ea24c8884 ]
+[ Upstream commit 537f4146c53c95aac977852b371bafb9c6755ee1 ]
 
 Never directly free @dev after calling device_register(), even
 if it returned an error! Always use put_device() to give up the
-reference initialized.
+reference initialized in this function instead.
 
 Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/xenbus/xenbus_probe.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/workqueue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/xen/xenbus/xenbus_probe.c
-+++ b/drivers/xen/xenbus/xenbus_probe.c
-@@ -470,8 +470,11 @@ int xenbus_probe_node(struct xen_bus_typ
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5199,7 +5199,7 @@ int workqueue_sysfs_register(struct work
  
- 	/* Register with generic device framework. */
- 	err = device_register(&xendev->dev);
--	if (err)
-+	if (err) {
-+		put_device(&xendev->dev);
-+		xendev = NULL;
- 		goto fail;
-+	}
- 
- 	return 0;
- fail:
+ 	ret = device_register(&wq_dev->dev);
+ 	if (ret) {
+-		kfree(wq_dev);
++		put_device(&wq_dev->dev);
+ 		wq->wq_dev = NULL;
+ 		return ret;
+ 	}
