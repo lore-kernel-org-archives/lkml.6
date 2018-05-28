@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939620AbeE1PAU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:00:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46696 "EHLO mail.kernel.org"
+        id S939586AbeE1PAJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:00:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932367AbeE1K1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:19 -0400
+        id S1034000AbeE1K0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, len.brown@intel.com,
-        rui.zhang@intel.com, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 026/329] x86/tsc: Allow TSC calibration without PIT
-Date: Mon, 28 May 2018 11:59:15 +0200
-Message-Id: <20180528100244.574645066@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.9 003/329] MIPS: Fix ptrace(2) PTRACE_PEEKUSR and PTRACE_POKEUSR accesses to o32 FGRs
+Date: Mon, 28 May 2018 11:58:52 +0200
+Message-Id: <20180528100242.269146555@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,91 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Maciej W. Rozycki <macro@mips.com>
 
-[ Upstream commit 30c7e5b123673d5e570e238dbada2fb68a87212c ]
+commit 9a3a92ccfe3620743d4ae57c987dc8e9c5f88996 upstream.
 
-Zhang Rui reported that a Surface Pro 4 will fail to boot with
-lapic=notscdeadline. Part of the problem is that that machine doesn't have
-a PIT.
+Check the TIF_32BIT_FPREGS task setting of the tracee rather than the
+tracer in determining the layout of floating-point general registers in
+the floating-point context, correcting access to odd-numbered registers
+for o32 tracees where the setting disagrees between the two processes.
 
-If, for some reason, the TSC init has to fall back to TSC calibration, it
-relies on the PIT to be present.
-
-Allow TSC calibration to reliably fall back to HPET.
-
-The below results in an accurate TSC measurement when forced on a IVB:
-
-  tsc: Unable to calibrate against PIT
-  tsc: No reference (HPET/PMTIMER) available
-  tsc: Unable to calibrate against PIT
-  tsc: using HPET reference calibration
-  tsc: Detected 2792.451 MHz processor
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: len.brown@intel.com
-Cc: rui.zhang@intel.com
-Link: https://lkml.kernel.org/r/20171222092243.333145937@infradead.org
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 597ce1723e0f ("MIPS: Support for 64-bit FP with O32 binaries")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.14+
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/i8259.h |    5 +++++
- arch/x86/kernel/tsc.c        |   18 ++++++++++++++++++
- 2 files changed, 23 insertions(+)
 
---- a/arch/x86/include/asm/i8259.h
-+++ b/arch/x86/include/asm/i8259.h
-@@ -68,6 +68,11 @@ struct legacy_pic {
- extern struct legacy_pic *legacy_pic;
- extern struct legacy_pic null_legacy_pic;
+---
+ arch/mips/kernel/ptrace.c   |    4 ++--
+ arch/mips/kernel/ptrace32.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -827,7 +827,7 @@ long arch_ptrace(struct task_struct *chi
+ 			fregs = get_fpu_regs(child);
  
-+static inline bool has_legacy_pic(void)
-+{
-+	return legacy_pic != &null_legacy_pic;
-+}
-+
- static inline int nr_legacy_irqs(void)
- {
- 	return legacy_pic->nr_legacy_irqs;
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -24,6 +24,7 @@
- #include <asm/geode.h>
- #include <asm/apic.h>
- #include <asm/intel-family.h>
-+#include <asm/i8259.h>
+ #ifdef CONFIG_32BIT
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+@@ -916,7 +916,7 @@ long arch_ptrace(struct task_struct *chi
  
- unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
- EXPORT_SYMBOL(cpu_khz);
-@@ -456,6 +457,20 @@ static unsigned long pit_calibrate_tsc(u
- 	unsigned long tscmin, tscmax;
- 	int pitcnt;
- 
-+	if (!has_legacy_pic()) {
-+		/*
-+		 * Relies on tsc_early_delay_calibrate() to have given us semi
-+		 * usable udelay(), wait for the same 50ms we would have with
-+		 * the PIT loop below.
-+		 */
-+		udelay(10 * USEC_PER_MSEC);
-+		udelay(10 * USEC_PER_MSEC);
-+		udelay(10 * USEC_PER_MSEC);
-+		udelay(10 * USEC_PER_MSEC);
-+		udelay(10 * USEC_PER_MSEC);
-+		return ULONG_MAX;
-+	}
-+
- 	/* Set the Gate high, disable speaker */
- 	outb((inb(0x61) & ~0x02) | 0x01, 0x61);
- 
-@@ -580,6 +595,9 @@ static unsigned long quick_pit_calibrate
- 	u64 tsc, delta;
- 	unsigned long d1, d2;
- 
-+	if (!has_legacy_pic())
-+		return 0;
-+
- 	/* Set the Gate high, disable speaker */
- 	outb((inb(0x61) & ~0x02) | 0x01, 0x61);
- 
+ 			init_fp_ctx(child);
+ #ifdef CONFIG_32BIT
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+--- a/arch/mips/kernel/ptrace32.c
++++ b/arch/mips/kernel/ptrace32.c
+@@ -97,7 +97,7 @@ long compat_arch_ptrace(struct task_stru
+ 				break;
+ 			}
+ 			fregs = get_fpu_regs(child);
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
+@@ -204,7 +204,7 @@ long compat_arch_ptrace(struct task_stru
+ 				       sizeof(child->thread.fpu));
+ 				child->thread.fpu.fcr31 = 0;
+ 			}
+-			if (test_thread_flag(TIF_32BIT_FPREGS)) {
++			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
+ 				/*
+ 				 * The odd registers are actually the high
+ 				 * order bits of the values stored in the even
