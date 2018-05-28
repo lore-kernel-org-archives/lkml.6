@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937697AbeE1NxG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:53:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33208 "EHLO mail.kernel.org"
+        id S1163008AbeE1Kll (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:41:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163015AbeE1Kln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:43 -0400
+        id S1162987AbeE1Klf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        John Sobecki <john.sobecki@oracle.com>,
-        Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH 4.14 015/496] xen-swiotlb: fix the check condition for xen_swiotlb_free_coherent
-Date: Mon, 28 May 2018 11:56:40 +0200
-Message-Id: <20180528100320.211722874@linuxfoundation.org>
+        stable@vger.kernel.org, Corneliu Doban <corneliu.doban@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 012/496] mmc: sdhci-iproc: add SDHCI_QUIRK2_HOST_OFF_CARD_ON for cygnus
+Date: Mon, 28 May 2018 11:56:37 +0200
+Message-Id: <20180528100320.069601225@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,42 +32,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: Corneliu Doban <corneliu.doban@broadcom.com>
 
-commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
+commit 3de06d5a1f05c11c94cbb68af14dbfa7fb81d78b upstream.
 
-When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
-but Dom Heap is increased by the same size. Tracing raidconfig we found
-that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
-to apply memory. If the memory allocated by Dom0 is not in the DMA area,
-it will exchange memory with Xen to meet the requiment. Later drivers
-call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
-the check condition (dev_addr + size - 1 <= dma_mask) is always false,
-it prevents calling xen_destroy_contiguous_region() to return the memory
-to the Xen DMA heap.
+The SDHCI_QUIRK2_HOST_OFF_CARD_ON is needed for the driver to
+properly reset the host controller (reset all) on initialization
+after exiting deep sleep.
 
-This issue introduced by commit 6810df88dcfc2 "xen-swiotlb: When doing
-coherent alloc/dealloc check before swizzling the MFNs.".
-
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Tested-by: John Sobecki <john.sobecki@oracle.com>
-Reviewed-by: Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Corneliu Doban <corneliu.doban@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Fixes: c833e92bbb60 ("mmc: sdhci-iproc: support standard byte register accesses")
+Cc: stable@vger.kernel.org # v4.10+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/swiotlb-xen.c |    2 +-
+ drivers/mmc/host/sdhci-iproc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -365,7 +365,7 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -186,7 +186,7 @@ static const struct sdhci_ops sdhci_ipro
  
--	if (((dev_addr + size - 1 > dma_mask)) ||
-+	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
+ static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
+ 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
+-	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN,
++	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+ 	.ops = &sdhci_iproc_32only_ops,
+ };
  
