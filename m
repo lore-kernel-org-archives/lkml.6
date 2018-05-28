@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164571AbeE1K4p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:56:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
+        id S937997AbeE1MtT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:49:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164372AbeE1K4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:36 -0400
+        id S1164354AbeE1K4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang Shi <yang.shi@linux.alibaba.com>,
-        Gang Deng <gavin.dg@linux.alibaba.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 337/496] mm: thp: fix potential clearing to referenced flag in page_idle_clear_pte_refs_one()
-Date: Mon, 28 May 2018 12:02:02 +0200
-Message-Id: <20180528100334.025579547@linuxfoundation.org>
+Subject: [PATCH 4.14 339/496] Btrfs: fix NULL pointer dereference in log_dir_items
+Date: Mon, 28 May 2018 12:02:04 +0200
+Message-Id: <20180528100334.107708868@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,54 +30,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yang Shi <yang.shi@linux.alibaba.com>
+From: Liu Bo <bo.liu@linux.alibaba.com>
 
-[ Upstream commit f0849ac0b8e072073ec5fcc7fadd05a77434364e ]
+[ Upstream commit 80c0b4210a963e31529e15bf90519708ec947596 ]
 
-For PTE-mapped THP, the compound THP has not been split to normal 4K
-pages yet, the whole THP is considered referenced if any one of sub page
-is referenced.
+0, 1 and <0 can be returned by btrfs_next_leaf(), and when <0 is
+returned, path->nodes[0] could be NULL, log_dir_items lacks such a
+check for <0 and we may run into a null pointer dereference panic.
 
-When walking PTE-mapped THP by pvmw, all relevant PTEs will be checked
-to retrieve referenced bit.  But, the current code just returns the
-result of the last PTE.  If the last PTE has not referenced, the
-referenced flag will be cleared.
-
-Just set referenced when ptep{pmdp}_clear_young_notify() returns true.
-
-Link: http://lkml.kernel.org/r/1518212451-87134-1-git-send-email-yang.shi@linux.alibaba.com
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Reported-by: Gang Deng <gavin.dg@linux.alibaba.com>
-Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: e02119d5a7b4 ("Btrfs: Add a write ahead tree log to optimize synchronous operations")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/page_idle.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/btrfs/tree-log.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -65,11 +65,15 @@ static bool page_idle_clear_pte_refs_one
- 	while (page_vma_mapped_walk(&pvmw)) {
- 		addr = pvmw.address;
- 		if (pvmw.pte) {
--			referenced = ptep_clear_young_notify(vma, addr,
--					pvmw.pte);
-+			/*
-+			 * For PTE-mapped THP, one sub page is referenced,
-+			 * the whole THP is referenced.
-+			 */
-+			if (ptep_clear_young_notify(vma, addr, pvmw.pte))
-+				referenced = true;
- 		} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
--			referenced = pmdp_clear_young_notify(vma, addr,
--					pvmw.pmd);
-+			if (pmdp_clear_young_notify(vma, addr, pvmw.pmd))
-+				referenced = true;
- 		} else {
- 			/* unexpected pmd-mapped page? */
- 			WARN_ON_ONCE(1);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3462,8 +3462,11 @@ static noinline int log_dir_items(struct
+ 		 * from this directory and from this transaction
+ 		 */
+ 		ret = btrfs_next_leaf(root, path);
+-		if (ret == 1) {
+-			last_offset = (u64)-1;
++		if (ret) {
++			if (ret == 1)
++				last_offset = (u64)-1;
++			else
++				err = ret;
+ 			goto done;
+ 		}
+ 		btrfs_item_key_to_cpu(path->nodes[0], &tmp, path->slots[0]);
