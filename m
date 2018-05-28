@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164605AbeE1K73 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:59:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47154 "EHLO mail.kernel.org"
+        id S1164619AbeE1K7d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:59:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164281AbeE1K7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:11 -0400
+        id S1164559AbeE1K7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 395/496] dt-bindings: add device tree binding for Allwinner H6 main CCU
-Date: Mon, 28 May 2018 12:03:00 +0200
-Message-Id: <20180528100336.411823403@linuxfoundation.org>
+Subject: [PATCH 4.14 400/496] i2c: mv64xxx: Apply errata delay only in standard mode
+Date: Mon, 28 May 2018 12:03:05 +0200
+Message-Id: <20180528100336.620823807@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,40 +29,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-[ Upstream commit 2e08e4d2ff488424919d69dd211ac860a019ac1d ]
+[ Upstream commit 31184d8c6ea49ea0676d100cdd7e1f102ad025b5 ]
 
-The Allwinner H6 main CCU uses the internal oscillator of the SoC, which
-is different with old SoCs' main CCU.
+The errata FE-8471889 description has been updated. There is still a
+timing violation for repeated start. But the errata now states that it
+was only the case for the Standard mode (100 kHz), in Fast mode (400 kHz)
+there is no issue.
 
-Add device tree binding for the Allwinner H6 main CCU.
+This patch limit the errata fix to the Standard mode.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+It has been tesed successfully on the clearfog (Aramda 388 based board).
+
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/i2c/busses/i2c-mv64xxx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -20,6 +20,7 @@ Required properties :
- 		- "allwinner,sun50i-a64-ccu"
- 		- "allwinner,sun50i-a64-r-ccu"
- 		- "allwinner,sun50i-h5-ccu"
-+		- "allwinner,sun50i-h6-ccu"
- 		- "nextthing,gr8-ccu"
+--- a/drivers/i2c/busses/i2c-mv64xxx.c
++++ b/drivers/i2c/busses/i2c-mv64xxx.c
+@@ -844,12 +844,16 @@ mv64xxx_of_config(struct mv64xxx_i2c_dat
+ 	 */
+ 	if (of_device_is_compatible(np, "marvell,mv78230-i2c")) {
+ 		drv_data->offload_enabled = true;
+-		drv_data->errata_delay = true;
++		/* The delay is only needed in standard mode (100kHz) */
++		if (bus_freq <= 100000)
++			drv_data->errata_delay = true;
+ 	}
  
- - reg: Must contain the registers base address and length
-@@ -31,6 +32,9 @@ Required properties :
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
+ 	if (of_device_is_compatible(np, "marvell,mv78230-a0-i2c")) {
+ 		drv_data->offload_enabled = false;
+-		drv_data->errata_delay = true;
++		/* The delay is only needed in standard mode (100kHz) */
++		if (bus_freq <= 100000)
++			drv_data->errata_delay = true;
+ 	}
  
-+For the main CCU on H6, one more clock is needed:
-+- "iosc": the SoC's internal frequency oscillator
-+
- For the PRCM CCUs on A83T/H3/A64, two more clocks are needed:
- - "pll-periph": the SoC's peripheral PLL from the main CCU
- - "iosc": the SoC's internal frequency oscillator
+ 	if (of_device_is_compatible(np, "allwinner,sun6i-a31-i2c"))
