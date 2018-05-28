@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033933AbeE1KZJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:25:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44304 "EHLO mail.kernel.org"
+        id S1033978AbeE1KZT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:25:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033906AbeE1KY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:59 -0400
+        id S1033957AbeE1KZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 242/268] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-Date: Mon, 28 May 2018 12:03:36 +0200
-Message-Id: <20180528100230.681027799@linuxfoundation.org>
+Subject: [PATCH 4.4 246/268] media: cx25821: prevent out-of-bounds read on array card
+Date: Mon, 28 May 2018 12:03:40 +0200
+Message-Id: <20180528100231.196118373@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -29,33 +31,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit ffab87fdecc655cc676f8be8dd1a2c5e22bd6d47 ]
+[ Upstream commit 67300abdbe9f1717532aaf4e037222762716d0f6 ]
 
-The lpuart_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+Currently an out of range dev->nr is detected by just reporting the
+issue and later on an out-of-bounds read on array card occurs because
+of this. Fix this by checking the upper range of dev->nr with the size
+of array card (removes the hard coded size), move this check earlier
+and also exit with the error -ENOSYS to avoid the later out-of-bounds
+array read.
 
-Fix this by adding a range check.
+Detected by CoverityScan, CID#711191 ("Out-of-bounds-read")
 
-Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: commit 02b20b0b4cde ("V4L/DVB (12730): Add conexant cx25821 driver")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+[hans.verkuil@cisco.com: %ld -> %zd]
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/fsl_lpuart.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/pci/cx25821/cx25821-core.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1818,6 +1818,10 @@ static int lpuart_probe(struct platform_
- 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
- 		return ret;
- 	}
-+	if (ret >= ARRAY_SIZE(lpuart_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", ret);
-+		return -EINVAL;
-+	}
- 	sport->port.line = ret;
- 	sport->lpuart32 = of_device_is_compatible(np, "fsl,ls1021a-lpuart");
+--- a/drivers/media/pci/cx25821/cx25821-core.c
++++ b/drivers/media/pci/cx25821/cx25821-core.c
+@@ -871,6 +871,10 @@ static int cx25821_dev_setup(struct cx25
+ 	dev->nr = ++cx25821_devcount;
+ 	sprintf(dev->name, "cx25821[%d]", dev->nr);
  
++	if (dev->nr >= ARRAY_SIZE(card)) {
++		CX25821_INFO("dev->nr >= %zd", ARRAY_SIZE(card));
++		return -ENODEV;
++	}
+ 	if (dev->pci->device != 0x8210) {
+ 		pr_info("%s(): Exiting. Incorrect Hardware device = 0x%02x\n",
+ 			__func__, dev->pci->device);
+@@ -886,9 +890,6 @@ static int cx25821_dev_setup(struct cx25
+ 		dev->channels[i].sram_channels = &cx25821_sram_channels[i];
+ 	}
+ 
+-	if (dev->nr > 1)
+-		CX25821_INFO("dev->nr > 1!");
+-
+ 	/* board config */
+ 	dev->board = 1;		/* card[dev->nr]; */
+ 	dev->_max_num_decoders = MAX_DECODERS;
