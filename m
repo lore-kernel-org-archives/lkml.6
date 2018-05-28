@@ -1,172 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034870AbeE1Prg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:47:36 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:60355 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034853AbeE1Prb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:47:31 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Imre Deak <imre.deak@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-fbdev@vger.kernel.org,
-        linux-omap@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] video/omap: add module license tags
-Date: Mon, 28 May 2018 17:46:19 +0200
-Message-Id: <20180528154704.2568184-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:emLEjunhlkmBtHPXofX3v/IYYpuVZPW22tr7up4mTI5vbnGRpxX
- g/FJGeSnaVXqxQSgvhd1KUTiIcO2ITHO4feg+1ghrS5rhdzZrxoWk67FPkCshtfT+hSDT+H
- TnY5SLjwtqer/BrP5hQxcTaVzl831JLCVOBtNrjksmnPWQANeqbjHYL1r2vmu1wDuSQv59K
- os6SceEnDi/Gdr+sQHetg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ydpTkEcjamo=:dBgMAzMYAW6Uba5xMBGyrF
- BnWFCpY09fEGDXui2M6i587GXYE2NkvfrCVA8xzuRTyYmU6vr+ZjqhqK8KjwYuvgEWrLJ2Lo9
- EDtkciAG2WBevxYQgRhB/ugzH7y94tJeMTYlZ5Ur4otXVhZo0WqHubzf0W3vlmPFahxvi1KOL
- 6nwtUQn1dlQ7iyFTWWtdo+rNODM5L4wGpScyUoosvbnk/etEQ6a0byUMf4w3LXdIFveGLBcDJ
- J+rEGDpO1mWcyhLAGBE804pJJsXFB0j5pwK8dTQwSIiOF3lRCL+UASGkW5RvBht6KTPO/2y5Y
- 2ASUN/njeRZ/ZHlX6skivpeTYxp69egv8ik6e0T433DVdAjap/S8JG5hgf6GGLdrP5+a/4nEj
- 9T2Nzj382Cc9a4h9rE/j8kw/DfR0CzgZ7vqwRZGUiB1ag3EBSDUnVavo21Jy6hTo4TggirTpe
- s3A3qc3YzEMJS3LYQaQ34fOFN7/4toMKmkgozJ5h0CupeAjnnw9zSf1Z92ANjHuPvu0zIFomd
- PjSe4nh4dlhBCSCMe/MBDgVjIf9q3TpUki6hpbIO101Wm3fQ9zxDY/0HKI2N42oruJMwEgwj9
- TmnUQjymz/70yQ/6Hss3tebeZKsXHS74jN9YxkUM5zZhqVUAJnvHFK8GA1eNyQOBCpbunRPZ9
- Kn/vWDxf9hQQDqxC5PxrtoHMP1AMxC4OXMbKyiWCUKDhsCuuZWWvQ6z2llEQU3bRPTEM=
+        id S968345AbeE1KQ0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:16:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936745AbeE1KQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:21 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Len Brown <len.brown@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Nicolas Pitre <nico@linaro.org>,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Bart Van Assche <bart.vanassche@wdc.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 054/268] x86/power: Fix swsusp_arch_resume prototype
+Date: Mon, 28 May 2018 12:00:28 +0200
+Message-Id: <20180528100208.059887729@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I got a bunch of warnings in a randconfig build:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_ams_delta.o
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_inn1510.o
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_palmte.o
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_palmtt.o
+------------------
 
-These come from an earlier patch of mine that turned all display drivers
-into separate modules. The fix is to add a MODULE_LICENSE tag. Since I'm
-doing that, adding a description and author field also makes sense. I
-went by the authors listed in the comment at the top of each file, but
-removed Imre's Nokia email address that I assume is not valid any more,
-since Imre is working at Intel these days.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Fixes: 81c44c2b2ce3 ("video/omap: fix modular build")
-Cc: Imre Deak <imre.deak@intel.com>
+[ Upstream commit 328008a72d38b5bde6491e463405c34a81a65d3e ]
+
+The declaration for swsusp_arch_resume marks it as 'asmlinkage', but the
+definition in x86-32 does not, and it fails to include the header with the
+declaration. This leads to a warning when building with
+link-time-optimizations:
+
+kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not match original declaration [-Werror=lto-type-mismatch]
+ extern asmlinkage int swsusp_arch_resume(void);
+                       ^
+arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previously declared here
+ int swsusp_arch_resume(void)
+
+This moves the declaration into a globally visible header file and fixes up
+both x86 definitions to match it.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: linux-pm@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Link: https://lkml.kernel.org/r/20180202145634.200291-2-arnd@arndb.de
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/omap/lcd_ams_delta.c | 3 +++
- drivers/video/fbdev/omap/lcd_h3.c        | 3 +++
- drivers/video/fbdev/omap/lcd_htcherald.c | 4 ++++
- drivers/video/fbdev/omap/lcd_inn1510.c   | 3 +++
- drivers/video/fbdev/omap/lcd_inn1610.c   | 3 +++
- drivers/video/fbdev/omap/lcd_osk.c       | 4 ++++
- drivers/video/fbdev/omap/lcd_palmte.c    | 3 +++
- drivers/video/fbdev/omap/lcd_palmtt.c    | 3 +++
- drivers/video/fbdev/omap/lcd_palmz71.c   | 3 +++
- 9 files changed, 29 insertions(+)
+ arch/x86/power/hibernate_32.c |    2 +-
+ arch/x86/power/hibernate_64.c |    2 +-
+ include/linux/suspend.h       |    2 ++
+ kernel/power/power.h          |    3 ---
+ 4 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
-index a4ee947006c7..488b3e9a2646 100644
---- a/drivers/video/fbdev/omap/lcd_ams_delta.c
-+++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
-@@ -197,3 +197,6 @@ static struct platform_driver ams_delta_panel_driver = {
- };
+--- a/arch/x86/power/hibernate_32.c
++++ b/arch/x86/power/hibernate_32.c
+@@ -142,7 +142,7 @@ static inline void resume_init_first_lev
+ #endif
+ }
  
- module_platform_driver(ams_delta_panel_driver);
-+MODULE_AUTHOR("Jonathan McDowell <noodles@earth.li>");
-+MODULE_DESCRIPTION("LCD panel support for the Amstrad E3 (Delta) videophone");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/omap/lcd_h3.c b/drivers/video/fbdev/omap/lcd_h3.c
-index 796f4634c4c6..146dd962c69e 100644
---- a/drivers/video/fbdev/omap/lcd_h3.c
-+++ b/drivers/video/fbdev/omap/lcd_h3.c
-@@ -89,3 +89,6 @@ static struct platform_driver h3_panel_driver = {
- };
+-int swsusp_arch_resume(void)
++asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
  
- module_platform_driver(h3_panel_driver);
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP H3 board");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/omap/lcd_htcherald.c b/drivers/video/fbdev/omap/lcd_htcherald.c
-index 9d692f5b8025..db4ff1c6add9 100644
---- a/drivers/video/fbdev/omap/lcd_htcherald.c
-+++ b/drivers/video/fbdev/omap/lcd_htcherald.c
-@@ -66,3 +66,7 @@ static struct platform_driver htcherald_panel_driver = {
- };
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -78,7 +78,7 @@ static int set_up_temporary_mappings(voi
+ 	return 0;
+ }
  
- module_platform_driver(htcherald_panel_driver);
-+
-+MODULE_AUTHOR("Cory Maccarrone");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("LCD panel support for the HTC Herald");
-diff --git a/drivers/video/fbdev/omap/lcd_inn1510.c b/drivers/video/fbdev/omap/lcd_inn1510.c
-index b284050f5471..8c334858f441 100644
---- a/drivers/video/fbdev/omap/lcd_inn1510.c
-+++ b/drivers/video/fbdev/omap/lcd_inn1510.c
-@@ -73,3 +73,6 @@ static struct platform_driver innovator1510_panel_driver = {
- };
+-int swsusp_arch_resume(void)
++asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
  
- module_platform_driver(innovator1510_panel_driver);
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP1510 Innovator board");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/omap/lcd_inn1610.c b/drivers/video/fbdev/omap/lcd_inn1610.c
-index 1841710e796f..9ca17b33d382 100644
---- a/drivers/video/fbdev/omap/lcd_inn1610.c
-+++ b/drivers/video/fbdev/omap/lcd_inn1610.c
-@@ -106,3 +106,6 @@ static struct platform_driver innovator1610_panel_driver = {
- };
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -377,6 +377,8 @@ extern int swsusp_page_is_forbidden(stru
+ extern void swsusp_set_page_free(struct page *);
+ extern void swsusp_unset_page_free(struct page *);
+ extern unsigned long get_safe_page(gfp_t gfp_mask);
++extern asmlinkage int swsusp_arch_suspend(void);
++extern asmlinkage int swsusp_arch_resume(void);
  
- module_platform_driver(innovator1610_panel_driver);
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP1610 Innovator board");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/omap/lcd_osk.c b/drivers/video/fbdev/omap/lcd_osk.c
-index b0be5771fe90..6545de8f6390 100644
---- a/drivers/video/fbdev/omap/lcd_osk.c
-+++ b/drivers/video/fbdev/omap/lcd_osk.c
-@@ -93,3 +93,7 @@ static struct platform_driver osk_panel_driver = {
- };
+ extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
+ extern int hibernate(void);
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -85,9 +85,6 @@ extern int in_suspend;
+ extern dev_t swsusp_resume_device;
+ extern sector_t swsusp_resume_block;
  
- module_platform_driver(osk_panel_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP OSK board");
-diff --git a/drivers/video/fbdev/omap/lcd_palmte.c b/drivers/video/fbdev/omap/lcd_palmte.c
-index cef96386cf80..1d442c19799c 100644
---- a/drivers/video/fbdev/omap/lcd_palmte.c
-+++ b/drivers/video/fbdev/omap/lcd_palmte.c
-@@ -59,3 +59,6 @@ static struct platform_driver palmte_panel_driver = {
- };
- 
- module_platform_driver(palmte_panel_driver);
-+MODULE_AUTHOR("Romain Goyet <r.goyet@gmail.com>");
-+MODULE_DESCRIPTION("LCD panel support for the Palm Tungsten E");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/omap/lcd_palmtt.c b/drivers/video/fbdev/omap/lcd_palmtt.c
-index 627f13dae5ad..0b9f17a0fafe 100644
---- a/drivers/video/fbdev/omap/lcd_palmtt.c
-+++ b/drivers/video/fbdev/omap/lcd_palmtt.c
-@@ -72,3 +72,6 @@ static struct platform_driver palmtt_panel_driver = {
- };
- 
- module_platform_driver(palmtt_panel_driver);
-+MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
-+MODULE_DESCRIPTION("LCD panel support for Palm Tungsten|T");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/omap/lcd_palmz71.c b/drivers/video/fbdev/omap/lcd_palmz71.c
-index c46d4db1f839..d7071578d70e 100644
---- a/drivers/video/fbdev/omap/lcd_palmz71.c
-+++ b/drivers/video/fbdev/omap/lcd_palmz71.c
-@@ -66,3 +66,6 @@ static struct platform_driver palmz71_panel_driver = {
- };
- 
- module_platform_driver(palmz71_panel_driver);
-+MODULE_AUTHOR("Marek Vasut");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("LCD panel support for the Palm Zire71");
--- 
-2.9.0
+-extern asmlinkage int swsusp_arch_suspend(void);
+-extern asmlinkage int swsusp_arch_resume(void);
+-
+ extern int create_basic_memory_bitmaps(void);
+ extern void free_basic_memory_bitmaps(void);
+ extern int hibernate_preallocate_memory(void);
