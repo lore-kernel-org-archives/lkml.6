@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034275AbeE1K0y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:26:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46170 "EHLO mail.kernel.org"
+        id S1034257AbeE1K0t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:26:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034236AbeE1K0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:26:45 -0400
+        id S1033986AbeE1K0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 005/329] affs_lookup(): close a race with affs_remove_link()
-Date: Mon, 28 May 2018 11:58:54 +0200
-Message-Id: <20180528100242.438204734@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.9 004/329] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
+Date: Mon, 28 May 2018 11:58:53 +0200
+Message-Id: <20180528100242.363386059@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,52 +30,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
+commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
 
-we unlock the directory hash too early - if we are looking at secondary
-link and primary (in another directory) gets removed just as we unlock,
-we could have the old primary moved in place of the secondary, leaving
-us to look into freed entry (and leaving our dentry with ->d_fsdata
-pointing to a freed entry).
+Trivial fix to spelling mistake in debugfs_entries text.
 
-Cc: stable@vger.kernel.org # 2.4.4+
-Acked-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org
+Cc: <stable@vger.kernel.org> # 3.10+
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/affs/namei.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/mips/kvm/mips.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/affs/namei.c
-+++ b/fs/affs/namei.c
-@@ -224,9 +224,10 @@ affs_lookup(struct inode *dir, struct de
- 
- 	affs_lock_dir(dir);
- 	bh = affs_find_entry(dir, dentry);
--	affs_unlock_dir(dir);
--	if (IS_ERR(bh))
-+	if (IS_ERR(bh)) {
-+		affs_unlock_dir(dir);
- 		return ERR_CAST(bh);
-+	}
- 	if (bh) {
- 		u32 ino = bh->b_blocknr;
- 
-@@ -240,10 +241,13 @@ affs_lookup(struct inode *dir, struct de
- 		}
- 		affs_brelse(bh);
- 		inode = affs_iget(sb, ino);
--		if (IS_ERR(inode))
-+		if (IS_ERR(inode)) {
-+			affs_unlock_dir(dir);
- 			return ERR_CAST(inode);
-+		}
- 	}
- 	d_add(dentry, inode);
-+	affs_unlock_dir(dir);
- 	return NULL;
- }
- 
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -42,7 +42,7 @@ struct kvm_stats_debugfs_item debugfs_en
+ 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
+ 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
+ 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
+-	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
++	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
+ 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
+ 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
