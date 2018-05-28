@@ -1,86 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163632AbeE1KuH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39546 "EHLO mail.kernel.org"
+        id S1163657AbeE1KuR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:50:17 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9789 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163598AbeE1Kt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:59 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 196/496] nvme-pci: Fix EEH failure on ppc
-Date: Mon, 28 May 2018 11:59:41 +0200
-Message-Id: <20180528100328.186085304@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1163605AbeE1KuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:06 -0400
+Message-Id: <88c8cc033b4ea364d62d1d8ba811a8f8d56c297d.1527503958.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527503958.git.christophe.leroy@c-s.fr>
+References: <cover.1527503958.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v5 3/3] powerpc/lib: optimise PPC32 memcmp
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon, 28 May 2018 10:49:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+At the time being, memcmp() compares two chunks of memory
+byte per byte.
 
-------------------
+This patch optimises the comparison by comparing word by word.
 
-From: Wen Xiong <wenxiong@linux.vnet.ibm.com>
+A small benchmark performed on an 8xx comparing two chuncks
+of 512 bytes performed 100000 times gives:
 
-[ Upstream commit 651438bb0af5213f1f70d66e75bf11d08cb5537a ]
+Before : 5852274 TB ticks
+After:   1488638 TB ticks
 
-Triggering PPC EEH detection and handling requires a memory mapped read
-failure. The NVMe driver removed the periodic health check MMIO, so
-there's no early detection mechanism to trigger the recovery. Instead,
-the detection now happens when the nvme driver handles an IO timeout
-event. This takes the pci channel offline, so we do not want the driver
-to proceed with escalating its own recovery efforts that may conflict
-with the EEH handler.
+This is almost 4 times faster
 
-This patch ensures the driver will observe the channel was set to offline
-after a failed MMIO read and resets the IO timer so the EEH handler has
-a chance to recover the device.
-
-Signed-off-by: Wen Xiong <wenxiong@linux.vnet.ibm.com>
-[updated change log]
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- drivers/nvme/host/pci.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/powerpc/lib/string_32.S | 37 +++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
 
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1013,12 +1013,6 @@ static bool nvme_should_reset(struct nvm
- 	if (!(csts & NVME_CSTS_CFS) && !nssro)
- 		return false;
+diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+index 40a576d56ac7..4fbaa046aa84 100644
+--- a/arch/powerpc/lib/string_32.S
++++ b/arch/powerpc/lib/string_32.S
+@@ -16,17 +16,34 @@
+ 	.text
  
--	/* If PCI error recovery process is happening, we cannot reset or
--	 * the recovery mechanism will surely fail.
--	 */
--	if (pci_channel_offline(to_pci_dev(dev->dev)))
--		return false;
--
- 	return true;
- }
+ _GLOBAL(memcmp)
+-	cmpwi	cr0, r5, 0
+-	beq-	2f
+-	mtctr	r5
+-	addi	r6,r3,-1
+-	addi	r4,r4,-1
+-1:	lbzu	r3,1(r6)
+-	lbzu	r0,1(r4)
+-	subf.	r3,r0,r3
+-	bdnzt	2,1b
++	srawi.	r7, r5, 2		/* Divide len by 4 */
++	mr	r6, r3
++	beq-	3f
++	mtctr	r7
++	li	r7, 0
++1:	lwzx	r3, r6, r7
++	lwzx	r0, r4, r7
++	addi	r7, r7, 4
++	cmplw	cr0, r3, r0
++	bdnzt	eq, 1b
++	bne	5f
++3:	andi.	r3, r5, 3
++	beqlr
++	cmplwi	cr1, r3, 2
++	blt-	cr1, 4f
++	lhzx	r3, r6, r7
++	lhzx	r0, r4, r7
++	addi	r7, r7, 2
++	subf.	r3, r0, r3
++	beqlr	cr1
++	bnelr
++4:	lbzx	r3, r6, r7
++	lbzx	r0, r4, r7
++	subf.	r3, r0, r3
+ 	blr
+-2:	li	r3,0
++5:	li	r3, 1
++	bgtlr
++	li	r3, -1
+ 	blr
+ EXPORT_SYMBOL(memcmp)
  
-@@ -1049,6 +1043,13 @@ static enum blk_eh_timer_return nvme_tim
- 	struct nvme_command cmd;
- 	u32 csts = readl(dev->bar + NVME_REG_CSTS);
- 
-+	/* If PCI error recovery process is happening, we cannot reset or
-+	 * the recovery mechanism will surely fail.
-+	 */
-+	mb();
-+	if (pci_channel_offline(to_pci_dev(dev->dev)))
-+		return BLK_EH_RESET_TIMER;
-+
- 	/*
- 	 * Reset immediately if the controller is failed
- 	 */
+-- 
+2.13.3
