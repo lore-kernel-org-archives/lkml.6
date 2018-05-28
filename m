@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755034AbeE1KHa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:07:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
+        id S933450AbeE1KHl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932358AbeE1KHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:24 -0400
+        id S932078AbeE1KHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:07:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhongjiang <zhongjiang@huawei.com>,
-        Oleg Nesterov <oleg@redhat.com>, Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Xishi Qiu <qiuxishi@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3.18 009/185] kernel/signal.c: avoid undefined behaviour in kill_something_info
-Date: Mon, 28 May 2018 12:00:50 +0200
-Message-Id: <20180528100051.242209298@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Salter <msalter@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 045/185] irqchip/gic-v3: Change pr_debug message to pr_devel
+Date: Mon, 28 May 2018 12:01:26 +0200
+Message-Id: <20180528100054.731892963@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -33,53 +30,159 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: zhongjiang <zhongjiang@huawei.com>
+From: Mark Salter <msalter@redhat.com>
 
-commit 4ea77014af0d6205b05503d1c7aac6eace11d473 upstream.
+[ Upstream commit b6dd4d83dc2f78cebc9a7e6e7e4bc2be4d29b94d ]
 
-When running kill(72057458746458112, 0) in userspace I hit the following
-issue.
+The pr_debug() in gic-v3 gic_send_sgi() can trigger a circular locking
+warning:
 
-  UBSAN: Undefined behaviour in kernel/signal.c:1462:11
-  negation of -2147483648 cannot be represented in type 'int':
-  CPU: 226 PID: 9849 Comm: test Tainted: G    B          ---- -------   3.10.0-327.53.58.70.x86_64_ubsan+ #116
-  Hardware name: Huawei Technologies Co., Ltd. RH8100 V3/BC61PBIA, BIOS BLHSV028 11/11/2014
-  Call Trace:
-    dump_stack+0x19/0x1b
-    ubsan_epilogue+0xd/0x50
-    __ubsan_handle_negate_overflow+0x109/0x14e
-    SYSC_kill+0x43e/0x4d0
-    SyS_kill+0xe/0x10
-    system_call_fastpath+0x16/0x1b
+ GICv3: CPU10: ICC_SGI1R_EL1 5000400
+ ======================================================
+ WARNING: possible circular locking dependency detected
+ 4.15.0+ #1 Tainted: G        W
+ ------------------------------------------------------
+ dynamic_debug01/1873 is trying to acquire lock:
+  ((console_sem).lock){-...}, at: [<0000000099c891ec>] down_trylock+0x20/0x4c
 
-Add code to avoid the UBSAN detection.
+ but task is already holding lock:
+  (&rq->lock){-.-.}, at: [<00000000842e1587>] __task_rq_lock+0x54/0xdc
 
-[akpm@linux-foundation.org: tweak comment]
-Link: http://lkml.kernel.org/r/1496670008-59084-1-git-send-email-zhongjiang@huawei.com
-Signed-off-by: zhongjiang <zhongjiang@huawei.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Xishi Qiu <qiuxishi@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+ which lock already depends on the new lock.
+
+ the existing dependency chain (in reverse order) is:
+
+ -> #2 (&rq->lock){-.-.}:
+        __lock_acquire+0x3b4/0x6e0
+        lock_acquire+0xf4/0x2a8
+        _raw_spin_lock+0x4c/0x60
+        task_fork_fair+0x3c/0x148
+        sched_fork+0x10c/0x214
+        copy_process.isra.32.part.33+0x4e8/0x14f0
+        _do_fork+0xe8/0x78c
+        kernel_thread+0x48/0x54
+        rest_init+0x34/0x2a4
+        start_kernel+0x45c/0x488
+
+ -> #1 (&p->pi_lock){-.-.}:
+        __lock_acquire+0x3b4/0x6e0
+        lock_acquire+0xf4/0x2a8
+        _raw_spin_lock_irqsave+0x58/0x70
+        try_to_wake_up+0x48/0x600
+        wake_up_process+0x28/0x34
+        __up.isra.0+0x60/0x6c
+        up+0x60/0x68
+        __up_console_sem+0x4c/0x7c
+        console_unlock+0x328/0x634
+        vprintk_emit+0x25c/0x390
+        dev_vprintk_emit+0xc4/0x1fc
+        dev_printk_emit+0x88/0xa8
+        __dev_printk+0x58/0x9c
+        _dev_info+0x84/0xa8
+        usb_new_device+0x100/0x474
+        hub_port_connect+0x280/0x92c
+        hub_event+0x740/0xa84
+        process_one_work+0x240/0x70c
+        worker_thread+0x60/0x400
+        kthread+0x110/0x13c
+        ret_from_fork+0x10/0x18
+
+ -> #0 ((console_sem).lock){-...}:
+        validate_chain.isra.34+0x6e4/0xa20
+        __lock_acquire+0x3b4/0x6e0
+        lock_acquire+0xf4/0x2a8
+        _raw_spin_lock_irqsave+0x58/0x70
+        down_trylock+0x20/0x4c
+        __down_trylock_console_sem+0x3c/0x9c
+        console_trylock+0x20/0xb0
+        vprintk_emit+0x254/0x390
+        vprintk_default+0x58/0x90
+        vprintk_func+0xbc/0x164
+        printk+0x80/0xa0
+        __dynamic_pr_debug+0x84/0xac
+        gic_raise_softirq+0x184/0x18c
+        smp_cross_call+0xac/0x218
+        smp_send_reschedule+0x3c/0x48
+        resched_curr+0x60/0x9c
+        check_preempt_curr+0x70/0xdc
+        wake_up_new_task+0x310/0x470
+        _do_fork+0x188/0x78c
+        SyS_clone+0x44/0x50
+        __sys_trace_return+0x0/0x4
+
+ other info that might help us debug this:
+
+ Chain exists of:
+   (console_sem).lock --> &p->pi_lock --> &rq->lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&rq->lock);
+                                lock(&p->pi_lock);
+                                lock(&rq->lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+ 2 locks held by dynamic_debug01/1873:
+  #0:  (&p->pi_lock){-.-.}, at: [<000000001366df53>] wake_up_new_task+0x40/0x470
+  #1:  (&rq->lock){-.-.}, at: [<00000000842e1587>] __task_rq_lock+0x54/0xdc
+
+ stack backtrace:
+ CPU: 10 PID: 1873 Comm: dynamic_debug01 Tainted: G        W        4.15.0+ #1
+ Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS T48 10/02/2017
+ Call trace:
+  dump_backtrace+0x0/0x188
+  show_stack+0x24/0x2c
+  dump_stack+0xa4/0xe0
+  print_circular_bug.isra.31+0x29c/0x2b8
+  check_prev_add.constprop.39+0x6c8/0x6dc
+  validate_chain.isra.34+0x6e4/0xa20
+  __lock_acquire+0x3b4/0x6e0
+  lock_acquire+0xf4/0x2a8
+  _raw_spin_lock_irqsave+0x58/0x70
+  down_trylock+0x20/0x4c
+  __down_trylock_console_sem+0x3c/0x9c
+  console_trylock+0x20/0xb0
+  vprintk_emit+0x254/0x390
+  vprintk_default+0x58/0x90
+  vprintk_func+0xbc/0x164
+  printk+0x80/0xa0
+  __dynamic_pr_debug+0x84/0xac
+  gic_raise_softirq+0x184/0x18c
+  smp_cross_call+0xac/0x218
+  smp_send_reschedule+0x3c/0x48
+  resched_curr+0x60/0x9c
+  check_preempt_curr+0x70/0xdc
+  wake_up_new_task+0x310/0x470
+  _do_fork+0x188/0x78c
+  SyS_clone+0x44/0x50
+  __sys_trace_return+0x0/0x4
+ GICv3: CPU0: ICC_SGI1R_EL1 12000
+
+This could be fixed with printk_deferred() but that might lessen its
+usefulness for debugging. So change it to pr_devel to keep it out of
+production kernels. Developers working on gic-v3 can enable it as
+needed in their kernels.
+
+Signed-off-by: Mark Salter <msalter@redhat.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/signal.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/irqchip/irq-gic-v3.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1435,6 +1435,10 @@ static int kill_something_info(int sig,
- 		return ret;
- 	}
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -488,7 +488,7 @@ static void gic_send_sgi(u64 cluster_id,
+ 	       MPIDR_TO_SGI_AFFINITY(cluster_id, 1)	|
+ 	       tlist << ICC_SGI1R_TARGET_LIST_SHIFT);
  
-+	/* -INT_MIN is undefined.  Exclude this case to avoid a UBSAN warning */
-+	if (pid == INT_MIN)
-+		return -ESRCH;
-+
- 	read_lock(&tasklist_lock);
- 	if (pid != -1) {
- 		ret = __kill_pgrp_info(sig, info,
+-	pr_debug("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
++	pr_devel("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
+ 	gic_write_sgi1r(val);
+ }
+ 
