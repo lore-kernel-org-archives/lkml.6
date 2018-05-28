@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939316AbeE1OM3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57702 "EHLO mail.kernel.org"
+        id S1162306AbeE1KhE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:37:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162321AbeE1KhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:06 -0400
+        id S1162236AbeE1Kgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 242/329] btrfs: Fix possible softlock on single core machines
-Date: Mon, 28 May 2018 12:02:51 +0200
-Message-Id: <20180528100302.142760498@linuxfoundation.org>
+Subject: [PATCH 4.9 235/329] Force log to disk before reading the AGF during a fstrim
+Date: Mon, 28 May 2018 12:02:44 +0200
+Message-Id: <20180528100301.624330241@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,36 +30,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Carlos Maiolino <cmaiolino@redhat.com>
 
-[ Upstream commit 1e1c50a929bc9e49bc3f9935b92450d9e69f8158 ]
+[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
 
-do_chunk_alloc implements a loop checking whether there is a pending
-chunk allocation and if so causes the caller do loop. Generally this
-loop is executed only once, however testing with btrfs/072 on a single
-core vm machines uncovered an extreme case where the system could loop
-indefinitely. This is due to a missing cond_resched when loop which
-doesn't give a chance to the previous chunk allocator finish its job.
+Forcing the log to disk after reading the agf is wrong, we might be
+calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
 
-The fix is to simply add the missing cond_resched.
+This can cause a deadlock when racing a fstrim with a filesystem
+shutdown.
 
-Fixes: 6d74119f1a3e ("Btrfs: avoid taking the chunk_mutex in do_chunk_alloc")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+The deadlock has been identified due a miscalculation bug in device-mapper
+dm-thin, which returns lack of space to its users earlier than the device itself
+really runs out of space, changing the device-mapper volume into an error state.
+
+The problem happened while filling the filesystem with a single file,
+triggering the bug in device-mapper, consequently causing an IO error
+and shutting down the filesystem.
+
+If such file is removed, and fstrim executed before the XFS finishes the
+shut down process, the fstrim process will end up holding the buffer
+lock, and going to sleep on the cil wait queue.
+
+At this point, the shut down process will try to wake up all the threads
+waiting on the cil wait queue, but for this, it will try to hold the
+same buffer log already held my the fstrim, locking up the filesystem.
+
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent-tree.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/xfs/xfs_discard.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4527,6 +4527,7 @@ again:
- 	if (wait_for_alloc) {
- 		mutex_unlock(&fs_info->chunk_mutex);
- 		wait_for_alloc = 0;
-+		cond_resched();
- 		goto again;
- 	}
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -50,19 +50,19 @@ xfs_trim_extents(
  
+ 	pag = xfs_perag_get(mp, agno);
+ 
+-	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
+-	if (error || !agbp)
+-		goto out_put_perag;
+-
+-	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
+-
+ 	/*
+ 	 * Force out the log.  This means any transactions that might have freed
+-	 * space before we took the AGF buffer lock are now on disk, and the
++	 * space before we take the AGF buffer lock are now on disk, and the
+ 	 * volatile disk cache is flushed.
+ 	 */
+ 	xfs_log_force(mp, XFS_LOG_SYNC);
+ 
++	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
++	if (error || !agbp)
++		goto out_put_perag;
++
++	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
++
+ 	/*
+ 	 * Look up the longest btree in the AGF and start with it.
+ 	 */
