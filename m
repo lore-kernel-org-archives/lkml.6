@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423099AbeE1LFP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:05:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52116 "EHLO mail.kernel.org"
+        id S1423204AbeE1MHi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:07:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1165050AbeE1LFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:05:01 -0400
+        id S1423097AbeE1LFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 026/272] powerpc/64s: Clear PCR on boot
-Date: Mon, 28 May 2018 12:00:59 +0200
-Message-Id: <20180528100242.815290603@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 031/272] idr: fix invalid ptr dereference on item delete
+Date: Mon, 28 May 2018 12:01:04 +0200
+Message-Id: <20180528100243.344810743@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,86 +32,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit faf37c44a105f3608115785f17cbbf3500f8bc71 upstream.
+commit 7a4deea1aa8bddfed4ef1b35fc2b6732563d8ad5 upstream.
 
-Clear the PCR (Processor Compatibility Register) on boot to ensure we
-are not running in a compatibility mode.
+If the radix tree underlying the IDR happens to be full and we attempt
+to remove an id which is larger than any id in the IDR, we will call
+__radix_tree_delete() with an uninitialised 'slot' pointer, at which
+point anything could happen.  This was easiest to hit with a single
+entry at id 0 and attempting to remove a non-0 id, but it could have
+happened with 64 entries and attempting to remove an id >= 64.
 
-We've seen this cause problems when a crash (and kdump) occurs while
-running compat mode guests. The kdump kernel then runs with the PCR
-set and causes problems. The symptom in the kdump kernel (also seen in
-petitboot after fast-reboot) is early userspace programs taking
-sigills on newer instructions (seen in libc).
+Roman said:
 
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+  The syzcaller test boils down to opening /dev/kvm, creating an
+  eventfd, and calling a couple of KVM ioctls. None of this requires
+  superuser. And the result is dereferencing an uninitialized pointer
+  which is likely a crash. The specific path caught by syzbot is via
+  KVM_HYPERV_EVENTD ioctl which is new in 4.17. But I guess there are
+  other user-triggerable paths, so cc:stable is probably justified.
+
+Matthew added:
+
+  We have around 250 calls to idr_remove() in the kernel today. Many of
+  them pass an ID which is embedded in the object they're removing, so
+  they're safe. Picking a few likely candidates:
+
+  drivers/firewire/core-cdev.c looks unsafe; the ID comes from an ioctl.
+  drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c is similar
+  drivers/atm/nicstar.c could be taken down by a handcrafted packet
+
+Link: http://lkml.kernel.org/r/20180518175025.GD6361@bombadil.infradead.org
+Fixes: 0a835c4f090a ("Reimplement IDR and IDA using the radix tree")
+Reported-by: <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>
+Debugged-by: Roman Kagan <rkagan@virtuozzo.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/cpu_setup_power.S |    6 ++++++
- arch/powerpc/kernel/dt_cpu_ftrs.c     |    1 +
- 2 files changed, 7 insertions(+)
+ lib/radix-tree.c                    |    4 +++-
+ tools/testing/radix-tree/idr-test.c |    7 +++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/cpu_setup_power.S
-+++ b/arch/powerpc/kernel/cpu_setup_power.S
-@@ -28,6 +28,7 @@ _GLOBAL(__setup_cpu_power7)
- 	beqlr
- 	li	r0,0
- 	mtspr	SPRN_LPID,r0
-+	mtspr	SPRN_PCR,r0
- 	mfspr	r3,SPRN_LPCR
- 	li	r4,(LPCR_LPES1 >> LPCR_LPES_SH)
- 	bl	__init_LPCR_ISA206
-@@ -41,6 +42,7 @@ _GLOBAL(__restore_cpu_power7)
- 	beqlr
- 	li	r0,0
- 	mtspr	SPRN_LPID,r0
-+	mtspr	SPRN_PCR,r0
- 	mfspr	r3,SPRN_LPCR
- 	li	r4,(LPCR_LPES1 >> LPCR_LPES_SH)
- 	bl	__init_LPCR_ISA206
-@@ -57,6 +59,7 @@ _GLOBAL(__setup_cpu_power8)
- 	beqlr
- 	li	r0,0
- 	mtspr	SPRN_LPID,r0
-+	mtspr	SPRN_PCR,r0
- 	mfspr	r3,SPRN_LPCR
- 	ori	r3, r3, LPCR_PECEDH
- 	li	r4,0 /* LPES = 0 */
-@@ -78,6 +81,7 @@ _GLOBAL(__restore_cpu_power8)
- 	beqlr
- 	li	r0,0
- 	mtspr	SPRN_LPID,r0
-+	mtspr	SPRN_PCR,r0
- 	mfspr   r3,SPRN_LPCR
- 	ori	r3, r3, LPCR_PECEDH
- 	li	r4,0 /* LPES = 0 */
-@@ -99,6 +103,7 @@ _GLOBAL(__setup_cpu_power9)
- 	mtspr	SPRN_PSSCR,r0
- 	mtspr	SPRN_LPID,r0
- 	mtspr	SPRN_PID,r0
-+	mtspr	SPRN_PCR,r0
- 	mfspr	r3,SPRN_LPCR
- 	LOAD_REG_IMMEDIATE(r4, LPCR_PECEDH | LPCR_PECE_HVEE | LPCR_HVICE  | LPCR_HEIC)
- 	or	r3, r3, r4
-@@ -123,6 +128,7 @@ _GLOBAL(__restore_cpu_power9)
- 	mtspr	SPRN_PSSCR,r0
- 	mtspr	SPRN_LPID,r0
- 	mtspr	SPRN_PID,r0
-+	mtspr	SPRN_PCR,r0
- 	mfspr   r3,SPRN_LPCR
- 	LOAD_REG_IMMEDIATE(r4, LPCR_PECEDH | LPCR_PECE_HVEE | LPCR_HVICE | LPCR_HEIC)
- 	or	r3, r3, r4
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -114,6 +114,7 @@ static void __restore_cpu_cpufeatures(vo
- 	if (hv_mode) {
- 		mtspr(SPRN_LPID, 0);
- 		mtspr(SPRN_HFSCR, system_registers.hfscr);
-+		mtspr(SPRN_PCR, 0);
- 	}
- 	mtspr(SPRN_FSCR, system_registers.fscr);
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -2034,10 +2034,12 @@ void *radix_tree_delete_item(struct radi
+ 			     unsigned long index, void *item)
+ {
+ 	struct radix_tree_node *node = NULL;
+-	void __rcu **slot;
++	void __rcu **slot = NULL;
+ 	void *entry;
  
+ 	entry = __radix_tree_lookup(root, index, &node, &slot);
++	if (!slot)
++		return NULL;
+ 	if (!entry && (!is_idr(root) || node_tag_get(root, node, IDR_FREE,
+ 						get_slot_offset(node, slot))))
+ 		return NULL;
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -252,6 +252,13 @@ void idr_checks(void)
+ 	idr_remove(&idr, 3);
+ 	idr_remove(&idr, 0);
+ 
++	assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == 0);
++	idr_remove(&idr, 1);
++	for (i = 1; i < RADIX_TREE_MAP_SIZE; i++)
++		assert(idr_alloc(&idr, DUMMY_PTR, 0, 0, GFP_KERNEL) == i);
++	idr_remove(&idr, 1 << 30);
++	idr_destroy(&idr);
++
+ 	for (i = INT_MAX - 3UL; i < INT_MAX + 1UL; i++) {
+ 		struct item *item = item_create(i, 0);
+ 		assert(idr_alloc(&idr, item, i, i + 10, GFP_KERNEL) == i);
