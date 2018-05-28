@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034550AbeE1Pe1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:34:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38950 "EHLO mail.kernel.org"
+        id S1034566AbeE1Peo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:34:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030563AbeE1KS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:56 -0400
+        id S1031841AbeE1KSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Yufen Yu <yuyufen@huawei.com>, Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 109/268] netfilter: ebtables: convert BUG_ONs to WARN_ONs
-Date: Mon, 28 May 2018 12:01:23 +0200
-Message-Id: <20180528100214.564530333@linuxfoundation.org>
+Subject: [PATCH 4.4 106/268] md/raid1: fix NULL pointer dereference
+Date: Mon, 28 May 2018 12:01:20 +0200
+Message-Id: <20180528100214.188956331@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,105 +30,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit fc6a5d0601c5ac1d02f283a46f60b87b2033e5ca ]
+[ Upstream commit 3de59bb9d551428cbdc76a9ea57883f82e350b4d ]
 
-All of these conditions are not fatal and should have
-been WARN_ONs from the get-go.
+In handle_write_finished(), if r1_bio->bios[m] != NULL, it thinks
+the corresponding conf->mirrors[m].rdev is also not NULL. But, it
+is not always true.
 
-Convert them to WARN_ONs and bail out.
+Even if some io hold replacement rdev(i.e. rdev->nr_pending.count > 0),
+raid1_remove_disk() can also set the rdev as NULL. That means,
+bios[m] != NULL, but mirrors[m].rdev is NULL, resulting in NULL
+pointer dereference in handle_write_finished and sync_request_write.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This patch can fix BUGs as follows:
+
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000140
+ IP: [<ffffffff815bbbbd>] raid1d+0x2bd/0xfc0
+ PGD 12ab52067 PUD 12f587067 PMD 0
+ Oops: 0000 [#1] SMP
+ CPU: 1 PID: 2008 Comm: md3_raid1 Not tainted 4.1.44+ #130
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+ Call Trace:
+  ? schedule+0x37/0x90
+  ? prepare_to_wait_event+0x83/0xf0
+  md_thread+0x144/0x150
+  ? wake_atomic_t_function+0x70/0x70
+  ? md_start_sync+0xf0/0xf0
+  kthread+0xd8/0xf0
+  ? kthread_worker_fn+0x160/0x160
+  ret_from_fork+0x42/0x70
+  ? kthread_worker_fn+0x160/0x160
+
+ BUG: unable to handle kernel NULL pointer dereference at 00000000000000b8
+ IP: sync_request_write+0x9e/0x980
+ PGD 800000007c518067 P4D 800000007c518067 PUD 8002b067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 24 PID: 2549 Comm: md3_raid1 Not tainted 4.15.0+ #118
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+ Call Trace:
+  ? sched_clock+0x5/0x10
+  ? sched_clock_cpu+0xc/0xb0
+  ? flush_pending_writes+0x3a/0xd0
+  ? pick_next_task_fair+0x4d5/0x5f0
+  ? __switch_to+0xa2/0x430
+  raid1d+0x65a/0x870
+  ? find_pers+0x70/0x70
+  ? find_pers+0x70/0x70
+  ? md_thread+0x11c/0x160
+  md_thread+0x11c/0x160
+  ? finish_wait+0x80/0x80
+  kthread+0x111/0x130
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ? do_syscall_64+0x6f/0x190
+  ? SyS_exit_group+0x10/0x10
+  ret_from_fork+0x35/0x40
+
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/netfilter/ebtables.c |   27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ drivers/md/raid1.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1614,7 +1614,8 @@ static int compat_match_to_user(struct e
- 	int off = ebt_compat_match_offset(match, m->match_size);
- 	compat_uint_t msize = m->match_size - off;
- 
--	BUG_ON(off >= m->match_size);
-+	if (WARN_ON(off >= m->match_size))
-+		return -EINVAL;
- 
- 	if (copy_to_user(cm->u.name, match->name,
- 	    strlen(match->name) + 1) || put_user(msize, &cm->match_size))
-@@ -1641,7 +1642,8 @@ static int compat_target_to_user(struct
- 	int off = xt_compat_target_offset(target);
- 	compat_uint_t tsize = t->target_size - off;
- 
--	BUG_ON(off >= t->target_size);
-+	if (WARN_ON(off >= t->target_size))
-+		return -EINVAL;
- 
- 	if (copy_to_user(cm->u.name, target->name,
- 	    strlen(target->name) + 1) || put_user(tsize, &cm->match_size))
-@@ -1869,7 +1871,8 @@ static int ebt_buf_add(struct ebt_entrie
- 	if (state->buf_kern_start == NULL)
- 		goto count_only;
- 
--	BUG_ON(state->buf_kern_offset + sz > state->buf_kern_len);
-+	if (WARN_ON(state->buf_kern_offset + sz > state->buf_kern_len))
-+		return -EINVAL;
- 
- 	memcpy(state->buf_kern_start + state->buf_kern_offset, data, sz);
- 
-@@ -1882,7 +1885,8 @@ static int ebt_buf_add_pad(struct ebt_en
- {
- 	char *b = state->buf_kern_start;
- 
--	BUG_ON(b && state->buf_kern_offset > state->buf_kern_len);
-+	if (WARN_ON(b && state->buf_kern_offset > state->buf_kern_len))
-+		return -EINVAL;
- 
- 	if (b != NULL && sz > 0)
- 		memset(b + state->buf_kern_offset, 0, sz);
-@@ -1959,8 +1963,10 @@ static int compat_mtw_from_user(struct c
- 	pad = XT_ALIGN(size_kern) - size_kern;
- 
- 	if (pad > 0 && dst) {
--		BUG_ON(state->buf_kern_len <= pad);
--		BUG_ON(state->buf_kern_offset - (match_size + off) + size_kern > state->buf_kern_len - pad);
-+		if (WARN_ON(state->buf_kern_len <= pad))
-+			return -EINVAL;
-+		if (WARN_ON(state->buf_kern_offset - (match_size + off) + size_kern > state->buf_kern_len - pad))
-+			return -EINVAL;
- 		memset(dst + size_kern, 0, pad);
- 	}
- 	return off + match_size;
-@@ -2011,7 +2017,8 @@ static int ebt_size_mwt(struct compat_eb
- 		if (ret < 0)
- 			return ret;
- 
--		BUG_ON(ret < match32->match_size);
-+		if (WARN_ON(ret < match32->match_size))
-+			return -EINVAL;
- 		growth += ret - match32->match_size;
- 		growth += ebt_compat_entry_padsize();
- 
-@@ -2121,7 +2128,8 @@ static int size_entry_mwt(struct ebt_ent
- 
- 	startoff = state->buf_user_offset - startoff;
- 
--	BUG_ON(*total < startoff);
-+	if (WARN_ON(*total < startoff))
-+		return -EINVAL;
- 	*total -= startoff;
- 	return 0;
- }
-@@ -2249,7 +2257,8 @@ static int compat_do_replace(struct net
- 	state.buf_kern_len = size64;
- 
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
--	BUG_ON(ret < 0);	/* parses same data again */
-+	if (WARN_ON(ret < 0))
-+		goto out_unlock;
- 
- 	vfree(entries_tmp);
- 	tmp.entries_size = size64;
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1686,6 +1686,17 @@ static int raid1_remove_disk(struct mdde
+ 			struct md_rdev *repl =
+ 				conf->mirrors[conf->raid_disks + number].rdev;
+ 			freeze_array(conf, 0);
++			if (atomic_read(&repl->nr_pending)) {
++				/* It means that some queued IO of retry_list
++				 * hold repl. Thus, we cannot set replacement
++				 * as NULL, avoiding rdev NULL pointer
++				 * dereference in sync_request_write and
++				 * handle_write_finished.
++				 */
++				err = -EBUSY;
++				unfreeze_array(conf);
++				goto abort;
++			}
+ 			clear_bit(Replacement, &repl->flags);
+ 			p->rdev = repl;
+ 			conf->mirrors[conf->raid_disks + number].rdev = NULL;
