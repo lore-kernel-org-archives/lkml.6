@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968568AbeE1KQq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36828 "EHLO mail.kernel.org"
+        id S968656AbeE1KRL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966476AbeE1KQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:41 -0400
+        id S966943AbeE1KRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 043/268] powerpc/numa: Ensure nodes initialized for hotplug
-Date: Mon, 28 May 2018 12:00:17 +0200
-Message-Id: <20180528100206.920580418@linuxfoundation.org>
+Subject: [PATCH 4.4 068/268] bcache: return attach error when no cache set exist
+Date: Mon, 28 May 2018 12:00:42 +0200
+Message-Id: <20180528100209.580998816@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,134 +30,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Bringmann <mwb@linux.vnet.ibm.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-[ Upstream commit ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6 ]
+[ Upstream commit 7f4fc93d4713394ee8f1cd44c238e046e11b4f15 ]
 
-This patch fixes some problems encountered at runtime with
-configurations that support memory-less nodes, or that hot-add CPUs
-into nodes that are memoryless during system execution after boot. The
-problems of interest include:
+I attach a back-end device to a cache set, and the cache set is not
+registered yet, this back-end device did not attach successfully, and no
+error returned:
+[root]# echo 87859280-fec6-4bcc-20df7ca8f86b > /sys/block/sde/bcache/attach
+[root]#
 
-* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
-  them are allowed to be 'possible' and 'online'. Memory allocations
-  for those nodes are taken from another node that does have memory
-  until and if memory is hot-added to the node.
+In sysfs_attach(), the return value "v" is initialized to "size" in
+the beginning, and if no cache set exist in bch_cache_sets, the "v" value
+would not change any more, and return to sysfs, sysfs regard it as success
+since the "size" is a positive number.
 
-* Nodes which have no resources assigned at boot, but which may still
-  be referenced subsequently by affinity or associativity attributes,
-  are kept in the list of 'possible' nodes for powerpc. Hot-add of
-  memory or CPUs to the system can reference these nodes and bring
-  them online instead of redirecting the references to one of the set
-  of nodes known to have memory at boot.
+This patch fixes this issue by assigning "v" with "-ENOENT" in the
+initialization.
 
-Note that this software operates under the context of CPU hotplug. We
-are not doing memory hotplug in this code, but rather updating the
-kernel's CPU topology (i.e. arch_update_cpu_topology /
-numa_update_cpu_topology). We are initializing a node that may be used
-by CPUs or memory before it can be referenced as invalid by a CPU
-hotplug operation. CPU hotplug operations are protected by a range of
-APIs including cpu_maps_update_begin/cpu_maps_update_done,
-cpus_read/write_lock / cpus_read/write_unlock, device locks, and more.
-Memory hotplug operations, including try_online_node, are protected by
-mem_hotplug_begin/mem_hotplug_done, device locks, and more. In the
-case of CPUs being hot-added to a previously memoryless node, the
-try_online_node operation occurs wholly within the CPU locks with no
-overlap. Using HMC hot-add/hot-remove operations, we have been able to
-add and remove CPUs to any possible node without failures. HMC
-operations involve a degree self-serialization, though.
-
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/numa.c |   47 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 10 deletions(-)
+ drivers/md/bcache/sysfs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -551,7 +551,7 @@ static int numa_setup_cpu(unsigned long
- 	nid = of_node_to_nid_single(cpu);
- 
- out_present:
--	if (nid < 0 || !node_online(nid))
-+	if (nid < 0 || !node_possible(nid))
- 		nid = first_online_node;
- 
- 	map_cpu_to_node(lcpu, nid);
-@@ -969,10 +969,8 @@ static void __init find_possible_nodes(v
- 		goto out;
- 
- 	for (i = 0; i < numnodes; i++) {
--		if (!node_possible(i)) {
--			setup_node_data(i, 0, 0);
-+		if (!node_possible(i))
- 			node_set(i, node_possible_map);
--		}
- 	}
- 
- out:
-@@ -1335,6 +1333,40 @@ static long vphn_get_associativity(unsig
- 	return rc;
- }
- 
-+static inline int find_and_online_cpu_nid(int cpu)
-+{
-+	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
-+	int new_nid;
-+
-+	/* Use associativity from first thread for all siblings */
-+	vphn_get_associativity(cpu, associativity);
-+	new_nid = associativity_to_nid(associativity);
-+	if (new_nid < 0 || !node_possible(new_nid))
-+		new_nid = first_online_node;
-+
-+	if (NODE_DATA(new_nid) == NULL) {
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+		/*
-+		 * Need to ensure that NODE_DATA is initialized for a node from
-+		 * available memory (see memblock_alloc_try_nid). If unable to
-+		 * init the node, then default to nearest node that has memory
-+		 * installed.
-+		 */
-+		if (try_online_node(new_nid))
-+			new_nid = first_online_node;
-+#else
-+		/*
-+		 * Default to using the nearest node that has memory installed.
-+		 * Otherwise, it would be necessary to patch the kernel MM code
-+		 * to deal with more memoryless-node error conditions.
-+		 */
-+		new_nid = first_online_node;
-+#endif
-+	}
-+
-+	return new_nid;
-+}
-+
- /*
-  * Update the CPU maps and sysfs entries for a single CPU when its NUMA
-  * characteristics change. This function doesn't perform any locking and is
-@@ -1400,7 +1432,6 @@ int arch_update_cpu_topology(void)
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -191,7 +191,7 @@ STORE(__cached_dev)
  {
- 	unsigned int cpu, sibling, changed = 0;
- 	struct topology_update_data *updates, *ud;
--	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
- 	cpumask_t updated_cpus;
- 	struct device *dev;
- 	int weight, new_nid, i = 0;
-@@ -1435,11 +1466,7 @@ int arch_update_cpu_topology(void)
- 			continue;
+ 	struct cached_dev *dc = container_of(kobj, struct cached_dev,
+ 					     disk.kobj);
+-	ssize_t v = size;
++	ssize_t v;
+ 	struct cache_set *c;
+ 	struct kobj_uevent_env *env;
+ 
+@@ -268,6 +268,7 @@ STORE(__cached_dev)
+ 		if (bch_parse_uuid(buf, set_uuid) < 16)
+ 			return -EINVAL;
+ 
++		v = -ENOENT;
+ 		list_for_each_entry(c, &bch_cache_sets, list) {
+ 			v = bch_cached_dev_attach(dc, c, set_uuid);
+ 			if (!v)
+@@ -275,7 +276,7 @@ STORE(__cached_dev)
  		}
  
--		/* Use associativity from first thread for all siblings */
--		vphn_get_associativity(cpu, associativity);
--		new_nid = associativity_to_nid(associativity);
--		if (new_nid < 0 || !node_online(new_nid))
--			new_nid = first_online_node;
-+		new_nid = find_and_online_cpu_nid(cpu);
+ 		pr_err("Can't attach %s: cache set not found", buf);
+-		size = v;
++		return v;
+ 	}
  
- 		if (new_nid == numa_cpu_lookup_table[cpu]) {
- 			cpumask_andnot(&cpu_associativity_changes_mask,
+ 	if (attr == &sysfs_detach && dc->disk.c)
