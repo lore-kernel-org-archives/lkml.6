@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938365AbeE1LcW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:32:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33632 "EHLO mail.kernel.org"
+        id S1424363AbeE1LOG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:14:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424396AbeE1LOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:20 -0400
+        id S1423924AbeE1LNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 227/272] cpufreq: Reorder cpufreq_online() error code path
-Date: Mon, 28 May 2018 12:04:20 +0200
-Message-Id: <20180528100259.512640011@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.16 209/272] powerpc/mm/slice: create header files dedicated to slices
+Date: Mon, 28 May 2018 12:04:02 +0200
+Message-Id: <20180528100258.044868521@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,47 +30,193 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit b24b6478e65f140610ab1ffaadc7bc6bf0be8aad ]
+commit a3286f05bc5a5bc7fc73a9783ec89de78fcd07f8 upstream.
 
-Ideally the de-allocation of resources should happen in the exact
-opposite order in which they were allocated. It helps maintain the code
-in long term, even if nothing really breaks with incorrect ordering.
+In preparation for the following patch which will enhance 'slices'
+for supporting PPC32 in order to fix an issue on hugepages on 8xx,
+this patch takes out of page*.h all bits related to 'slices' and put
+them into newly created slice.h header files.
+While common parts go into asm/slice.h, subarch specific
+parts go into respective books3s/64/slice.c and nohash/64/slice.c
+'slices'
 
-That wasn't followed in cpufreq_online() and it has some
-inconsistencies.  For example, the symlinks were created from within
-the locked region while they are removed only after putting the locks.
-Also ->exit() should have been called only after the symlinks are
-removed and the lock is dropped, as that was the case when ->init()
-was first called.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/cpufreq/cpufreq.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1327,14 +1327,14 @@ static int cpufreq_online(unsigned int c
- 	return 0;
- 
- out_exit_policy:
-+	for_each_cpu(j, policy->real_cpus)
-+		remove_cpu_dev_symlink(policy, get_cpu_device(j));
+---
+ arch/powerpc/include/asm/book3s/64/slice.h |   27 +++++++++++++
+ arch/powerpc/include/asm/nohash/64/slice.h |   12 +++++
+ arch/powerpc/include/asm/page.h            |    1 
+ arch/powerpc/include/asm/page_64.h         |   59 -----------------------------
+ arch/powerpc/include/asm/slice.h           |   40 +++++++++++++++++++
+ 5 files changed, 80 insertions(+), 59 deletions(-)
+
+--- /dev/null
++++ b/arch/powerpc/include/asm/book3s/64/slice.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_POWERPC_BOOK3S_64_SLICE_H
++#define _ASM_POWERPC_BOOK3S_64_SLICE_H
 +
- 	up_write(&policy->rwsem);
++#ifdef CONFIG_PPC_MM_SLICES
++
++#define SLICE_LOW_SHIFT		28
++#define SLICE_LOW_TOP		(0x100000000ul)
++#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
++#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
++
++#define SLICE_HIGH_SHIFT	40
++#define SLICE_NUM_HIGH		(H_PGTABLE_RANGE >> SLICE_HIGH_SHIFT)
++#define GET_HIGH_SLICE_INDEX(addr)	((addr) >> SLICE_HIGH_SHIFT)
++
++#else /* CONFIG_PPC_MM_SLICES */
++
++#define get_slice_psize(mm, addr)	((mm)->context.user_psize)
++#define slice_set_user_psize(mm, psize)		\
++do {						\
++	(mm)->context.user_psize = (psize);	\
++	(mm)->context.sllp = SLB_VSID_USER | mmu_psize_defs[(psize)].sllp; \
++} while (0)
++
++#endif /* CONFIG_PPC_MM_SLICES */
++
++#endif /* _ASM_POWERPC_BOOK3S_64_SLICE_H */
+--- /dev/null
++++ b/arch/powerpc/include/asm/nohash/64/slice.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_POWERPC_NOHASH_64_SLICE_H
++#define _ASM_POWERPC_NOHASH_64_SLICE_H
++
++#ifdef CONFIG_PPC_64K_PAGES
++#define get_slice_psize(mm, addr)	MMU_PAGE_64K
++#else /* CONFIG_PPC_64K_PAGES */
++#define get_slice_psize(mm, addr)	MMU_PAGE_4K
++#endif /* !CONFIG_PPC_64K_PAGES */
++#define slice_set_user_psize(mm, psize)	do { BUG(); } while (0)
++
++#endif /* _ASM_POWERPC_NOHASH_64_SLICE_H */
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -344,5 +344,6 @@ typedef struct page *pgtable_t;
  
- 	if (cpufreq_driver->exit)
- 		cpufreq_driver->exit(policy);
+ #include <asm-generic/memory_model.h>
+ #endif /* __ASSEMBLY__ */
++#include <asm/slice.h>
  
--	for_each_cpu(j, policy->real_cpus)
--		remove_cpu_dev_symlink(policy, get_cpu_device(j));
+ #endif /* _ASM_POWERPC_PAGE_H */
+--- a/arch/powerpc/include/asm/page_64.h
++++ b/arch/powerpc/include/asm/page_64.h
+@@ -86,65 +86,6 @@ extern u64 ppc64_pft_size;
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+-#ifdef CONFIG_PPC_MM_SLICES
 -
- out_free_policy:
- 	cpufreq_policy_free(policy);
- 	return ret;
+-#define SLICE_LOW_SHIFT		28
+-#define SLICE_HIGH_SHIFT	40
+-
+-#define SLICE_LOW_TOP		(0x100000000ul)
+-#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
+-#define SLICE_NUM_HIGH		(H_PGTABLE_RANGE >> SLICE_HIGH_SHIFT)
+-
+-#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
+-#define GET_HIGH_SLICE_INDEX(addr)	((addr) >> SLICE_HIGH_SHIFT)
+-
+-#ifndef __ASSEMBLY__
+-struct mm_struct;
+-
+-extern unsigned long slice_get_unmapped_area(unsigned long addr,
+-					     unsigned long len,
+-					     unsigned long flags,
+-					     unsigned int psize,
+-					     int topdown);
+-
+-extern unsigned int get_slice_psize(struct mm_struct *mm,
+-				    unsigned long addr);
+-
+-extern void slice_set_user_psize(struct mm_struct *mm, unsigned int psize);
+-extern void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
+-				  unsigned long len, unsigned int psize);
+-
+-#endif /* __ASSEMBLY__ */
+-#else
+-#define slice_init()
+-#ifdef CONFIG_PPC_BOOK3S_64
+-#define get_slice_psize(mm, addr)	((mm)->context.user_psize)
+-#define slice_set_user_psize(mm, psize)		\
+-do {						\
+-	(mm)->context.user_psize = (psize);	\
+-	(mm)->context.sllp = SLB_VSID_USER | mmu_psize_defs[(psize)].sllp; \
+-} while (0)
+-#else /* !CONFIG_PPC_BOOK3S_64 */
+-#ifdef CONFIG_PPC_64K_PAGES
+-#define get_slice_psize(mm, addr)	MMU_PAGE_64K
+-#else /* CONFIG_PPC_64K_PAGES */
+-#define get_slice_psize(mm, addr)	MMU_PAGE_4K
+-#endif /* !CONFIG_PPC_64K_PAGES */
+-#define slice_set_user_psize(mm, psize)	do { BUG(); } while(0)
+-#endif /* CONFIG_PPC_BOOK3S_64 */
+-
+-#define slice_set_range_psize(mm, start, len, psize)	\
+-	slice_set_user_psize((mm), (psize))
+-#endif /* CONFIG_PPC_MM_SLICES */
+-
+-#ifdef CONFIG_HUGETLB_PAGE
+-
+-#ifdef CONFIG_PPC_MM_SLICES
+-#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+-#endif
+-
+-#endif /* !CONFIG_HUGETLB_PAGE */
+-
+ #define VM_DATA_DEFAULT_FLAGS \
+ 	(is_32bit_task() ? \
+ 	 VM_DATA_DEFAULT_FLAGS32 : VM_DATA_DEFAULT_FLAGS64)
+--- /dev/null
++++ b/arch/powerpc/include/asm/slice.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_POWERPC_SLICE_H
++#define _ASM_POWERPC_SLICE_H
++
++#ifdef CONFIG_PPC_BOOK3S_64
++#include <asm/book3s/64/slice.h>
++#else
++#include <asm/nohash/64/slice.h>
++#endif
++
++#ifdef CONFIG_PPC_MM_SLICES
++
++#ifdef CONFIG_HUGETLB_PAGE
++#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
++#endif
++#define HAVE_ARCH_UNMAPPED_AREA
++#define HAVE_ARCH_UNMAPPED_AREA_TOPDOWN
++
++#ifndef __ASSEMBLY__
++
++struct mm_struct;
++
++unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
++				      unsigned long flags, unsigned int psize,
++				      int topdown);
++
++unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr);
++
++void slice_set_user_psize(struct mm_struct *mm, unsigned int psize);
++void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
++			   unsigned long len, unsigned int psize);
++#endif /* __ASSEMBLY__ */
++
++#else /* CONFIG_PPC_MM_SLICES */
++
++#define slice_set_range_psize(mm, start, len, psize)	\
++	slice_set_user_psize((mm), (psize))
++#endif /* CONFIG_PPC_MM_SLICES */
++
++#endif /* _ASM_POWERPC_SLICE_H */
