@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165879AbeE1Ola (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:41:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50598 "EHLO mail.kernel.org"
+        id S1161201AbeE1Kaw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:30:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161204AbeE1Kay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:54 -0400
+        id S1161117AbeE1Kaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dong Bo <dongbo4@huawei.com>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 105/329] libata: Fix compile warning with ATA_DEBUG enabled
-Date: Mon, 28 May 2018 12:00:34 +0200
-Message-Id: <20180528100251.524868358@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Salter <msalter@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 102/329] irqchip/gic-v3: Change pr_debug message to pr_devel
+Date: Mon, 28 May 2018 12:00:31 +0200
+Message-Id: <20180528100251.287419517@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,36 +30,159 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dong Bo <dongbo4@huawei.com>
+From: Mark Salter <msalter@redhat.com>
 
-[ Upstream commit 0d3e45bc6507bd1f8728bf586ebd16c2d9e40613 ]
+[ Upstream commit b6dd4d83dc2f78cebc9a7e6e7e4bc2be4d29b94d ]
 
-This fixs the following comile warnings with ATA_DEBUG enabled,
-which detected by Linaro GCC 5.2-2015.11:
+The pr_debug() in gic-v3 gic_send_sgi() can trigger a circular locking
+warning:
 
-  drivers/ata/libata-scsi.c: In function 'ata_scsi_dump_cdb':
-  ./include/linux/kern_levels.h:5:18: warning: format '%d' expects
-  argument of type 'int', but argument 6 has type 'u64 {aka long
-   long unsigned int}' [-Wformat=]
+ GICv3: CPU10: ICC_SGI1R_EL1 5000400
+ ======================================================
+ WARNING: possible circular locking dependency detected
+ 4.15.0+ #1 Tainted: G        W
+ ------------------------------------------------------
+ dynamic_debug01/1873 is trying to acquire lock:
+  ((console_sem).lock){-...}, at: [<0000000099c891ec>] down_trylock+0x20/0x4c
 
-tj: Patch hand-applied and description trimmed.
+ but task is already holding lock:
+  (&rq->lock){-.-.}, at: [<00000000842e1587>] __task_rq_lock+0x54/0xdc
 
-Signed-off-by: Dong Bo <dongbo4@huawei.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+ which lock already depends on the new lock.
+
+ the existing dependency chain (in reverse order) is:
+
+ -> #2 (&rq->lock){-.-.}:
+        __lock_acquire+0x3b4/0x6e0
+        lock_acquire+0xf4/0x2a8
+        _raw_spin_lock+0x4c/0x60
+        task_fork_fair+0x3c/0x148
+        sched_fork+0x10c/0x214
+        copy_process.isra.32.part.33+0x4e8/0x14f0
+        _do_fork+0xe8/0x78c
+        kernel_thread+0x48/0x54
+        rest_init+0x34/0x2a4
+        start_kernel+0x45c/0x488
+
+ -> #1 (&p->pi_lock){-.-.}:
+        __lock_acquire+0x3b4/0x6e0
+        lock_acquire+0xf4/0x2a8
+        _raw_spin_lock_irqsave+0x58/0x70
+        try_to_wake_up+0x48/0x600
+        wake_up_process+0x28/0x34
+        __up.isra.0+0x60/0x6c
+        up+0x60/0x68
+        __up_console_sem+0x4c/0x7c
+        console_unlock+0x328/0x634
+        vprintk_emit+0x25c/0x390
+        dev_vprintk_emit+0xc4/0x1fc
+        dev_printk_emit+0x88/0xa8
+        __dev_printk+0x58/0x9c
+        _dev_info+0x84/0xa8
+        usb_new_device+0x100/0x474
+        hub_port_connect+0x280/0x92c
+        hub_event+0x740/0xa84
+        process_one_work+0x240/0x70c
+        worker_thread+0x60/0x400
+        kthread+0x110/0x13c
+        ret_from_fork+0x10/0x18
+
+ -> #0 ((console_sem).lock){-...}:
+        validate_chain.isra.34+0x6e4/0xa20
+        __lock_acquire+0x3b4/0x6e0
+        lock_acquire+0xf4/0x2a8
+        _raw_spin_lock_irqsave+0x58/0x70
+        down_trylock+0x20/0x4c
+        __down_trylock_console_sem+0x3c/0x9c
+        console_trylock+0x20/0xb0
+        vprintk_emit+0x254/0x390
+        vprintk_default+0x58/0x90
+        vprintk_func+0xbc/0x164
+        printk+0x80/0xa0
+        __dynamic_pr_debug+0x84/0xac
+        gic_raise_softirq+0x184/0x18c
+        smp_cross_call+0xac/0x218
+        smp_send_reschedule+0x3c/0x48
+        resched_curr+0x60/0x9c
+        check_preempt_curr+0x70/0xdc
+        wake_up_new_task+0x310/0x470
+        _do_fork+0x188/0x78c
+        SyS_clone+0x44/0x50
+        __sys_trace_return+0x0/0x4
+
+ other info that might help us debug this:
+
+ Chain exists of:
+   (console_sem).lock --> &p->pi_lock --> &rq->lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&rq->lock);
+                                lock(&p->pi_lock);
+                                lock(&rq->lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+ 2 locks held by dynamic_debug01/1873:
+  #0:  (&p->pi_lock){-.-.}, at: [<000000001366df53>] wake_up_new_task+0x40/0x470
+  #1:  (&rq->lock){-.-.}, at: [<00000000842e1587>] __task_rq_lock+0x54/0xdc
+
+ stack backtrace:
+ CPU: 10 PID: 1873 Comm: dynamic_debug01 Tainted: G        W        4.15.0+ #1
+ Hardware name: GIGABYTE R120-T34-00/MT30-GS2-00, BIOS T48 10/02/2017
+ Call trace:
+  dump_backtrace+0x0/0x188
+  show_stack+0x24/0x2c
+  dump_stack+0xa4/0xe0
+  print_circular_bug.isra.31+0x29c/0x2b8
+  check_prev_add.constprop.39+0x6c8/0x6dc
+  validate_chain.isra.34+0x6e4/0xa20
+  __lock_acquire+0x3b4/0x6e0
+  lock_acquire+0xf4/0x2a8
+  _raw_spin_lock_irqsave+0x58/0x70
+  down_trylock+0x20/0x4c
+  __down_trylock_console_sem+0x3c/0x9c
+  console_trylock+0x20/0xb0
+  vprintk_emit+0x254/0x390
+  vprintk_default+0x58/0x90
+  vprintk_func+0xbc/0x164
+  printk+0x80/0xa0
+  __dynamic_pr_debug+0x84/0xac
+  gic_raise_softirq+0x184/0x18c
+  smp_cross_call+0xac/0x218
+  smp_send_reschedule+0x3c/0x48
+  resched_curr+0x60/0x9c
+  check_preempt_curr+0x70/0xdc
+  wake_up_new_task+0x310/0x470
+  _do_fork+0x188/0x78c
+  SyS_clone+0x44/0x50
+  __sys_trace_return+0x0/0x4
+ GICv3: CPU0: ICC_SGI1R_EL1 12000
+
+This could be fixed with printk_deferred() but that might lessen its
+usefulness for debugging. So change it to pr_devel to keep it out of
+production kernels. Developers working on gic-v3 can enable it as
+needed in their kernels.
+
+Signed-off-by: Mark Salter <msalter@redhat.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/libata-scsi.c |    2 +-
+ drivers/irqchip/irq-gic-v3.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -4156,7 +4156,7 @@ static inline void ata_scsi_dump_cdb(str
- #ifdef ATA_DEBUG
- 	struct scsi_device *scsidev = cmd->device;
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -601,7 +601,7 @@ static void gic_send_sgi(u64 cluster_id,
+ 	       MPIDR_TO_SGI_AFFINITY(cluster_id, 1)	|
+ 	       tlist << ICC_SGI1R_TARGET_LIST_SHIFT);
  
--	DPRINTK("CDB (%u:%d,%d,%d) %9ph\n",
-+	DPRINTK("CDB (%u:%d,%d,%lld) %9ph\n",
- 		ap->print_id,
- 		scsidev->channel, scsidev->id, scsidev->lun,
- 		cmd->cmnd);
+-	pr_debug("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
++	pr_devel("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
+ 	gic_write_sgi1r(val);
+ }
+ 
