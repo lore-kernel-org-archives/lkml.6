@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033529AbeE1PVg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:21:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40894 "EHLO mail.kernel.org"
+        id S969048AbeE1PVv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:21:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968503AbeE1KVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:21 -0400
+        id S966754AbeE1KVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Lee Duncan <lduncan@suse.com>,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 163/268] Force log to disk before reading the AGF during a fstrim
-Date: Mon, 28 May 2018 12:02:17 +0200
-Message-Id: <20180528100220.851002530@linuxfoundation.org>
+Subject: [PATCH 4.4 162/268] sr: get/drop reference to device in revalidate and check_events
+Date: Mon, 28 May 2018 12:02:16 +0200
+Message-Id: <20180528100220.760947039@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,67 +30,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Carlos Maiolino <cmaiolino@redhat.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
+[ Upstream commit 2d097c50212e137e7b53ffe3b37561153eeba87d ]
 
-Forcing the log to disk after reading the agf is wrong, we might be
-calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
+We can't just use scsi_cd() to get the scsi_cd structure, we have
+to grab a live reference to the device. For both callbacks, we're
+not inside an open where we already hold a reference to the device.
 
-This can cause a deadlock when racing a fstrim with a filesystem
-shutdown.
+This fixes device removal/addition under concurrent device access,
+which otherwise could result in the below oops.
 
-The deadlock has been identified due a miscalculation bug in device-mapper
-dm-thin, which returns lack of space to its users earlier than the device itself
-really runs out of space, changing the device-mapper volume into an error state.
+NULL pointer dereference at 0000000000000010
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP
+Modules linked in:
+sr 12:0:0:0: [sr2] scsi-1 drive
+ scsi_debug crc_t10dif crct10dif_generic crct10dif_common nvme nvme_core sb_edac xl
+sr 12:0:0:0: Attached scsi CD-ROM sr2
+ sr_mod cdrom btrfs xor zstd_decompress zstd_compress xxhash lzo_compress zlib_defc
+sr 12:0:0:0: Attached scsi generic sg7 type 5
+ igb ahci libahci i2c_algo_bit libata dca [last unloaded: crc_t10dif]
+CPU: 43 PID: 4629 Comm: systemd-udevd Not tainted 4.16.0+ #650
+Hardware name: Dell Inc. PowerEdge T630/0NT78X, BIOS 2.3.4 11/09/2016
+RIP: 0010:sr_block_revalidate_disk+0x23/0x190 [sr_mod]
+RSP: 0018:ffff883ff357bb58 EFLAGS: 00010292
+RAX: ffffffffa00b07d0 RBX: ffff883ff3058000 RCX: ffff883ff357bb66
+RDX: 0000000000000003 RSI: 0000000000007530 RDI: ffff881fea631000
+RBP: 0000000000000000 R08: ffff881fe4d38400 R09: 0000000000000000
+R10: 0000000000000000 R11: 00000000000001b6 R12: 000000000800005d
+R13: 000000000800005d R14: ffff883ffd9b3790 R15: 0000000000000000
+FS:  00007f7dc8e6d8c0(0000) GS:ffff883fff340000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000010 CR3: 0000003ffda98005 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ? __invalidate_device+0x48/0x60
+ check_disk_change+0x4c/0x60
+ sr_block_open+0x16/0xd0 [sr_mod]
+ __blkdev_get+0xb9/0x450
+ ? iget5_locked+0x1c0/0x1e0
+ blkdev_get+0x11e/0x320
+ ? bdget+0x11d/0x150
+ ? _raw_spin_unlock+0xa/0x20
+ ? bd_acquire+0xc0/0xc0
+ do_dentry_open+0x1b0/0x320
+ ? inode_permission+0x24/0xc0
+ path_openat+0x4e6/0x1420
+ ? cpumask_any_but+0x1f/0x40
+ ? flush_tlb_mm_range+0xa0/0x120
+ do_filp_open+0x8c/0xf0
+ ? __seccomp_filter+0x28/0x230
+ ? _raw_spin_unlock+0xa/0x20
+ ? __handle_mm_fault+0x7d6/0x9b0
+ ? list_lru_add+0xa8/0xc0
+ ? _raw_spin_unlock+0xa/0x20
+ ? __alloc_fd+0xaf/0x160
+ ? do_sys_open+0x1a6/0x230
+ do_sys_open+0x1a6/0x230
+ do_syscall_64+0x5a/0x100
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-The problem happened while filling the filesystem with a single file,
-triggering the bug in device-mapper, consequently causing an IO error
-and shutting down the filesystem.
-
-If such file is removed, and fstrim executed before the XFS finishes the
-shut down process, the fstrim process will end up holding the buffer
-lock, and going to sleep on the cil wait queue.
-
-At this point, the shut down process will try to wake up all the threads
-waiting on the cil wait queue, but for this, it will try to hold the
-same buffer log already held my the fstrim, locking up the filesystem.
-
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_discard.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/scsi/sr.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/fs/xfs/xfs_discard.c
-+++ b/fs/xfs/xfs_discard.c
-@@ -50,19 +50,19 @@ xfs_trim_extents(
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -582,18 +582,28 @@ out:
+ static unsigned int sr_block_check_events(struct gendisk *disk,
+ 					  unsigned int clearing)
+ {
+-	struct scsi_cd *cd = scsi_cd(disk);
++	unsigned int ret = 0;
++	struct scsi_cd *cd;
  
- 	pag = xfs_perag_get(mp, agno);
+-	if (atomic_read(&cd->device->disk_events_disable_depth))
++	cd = scsi_cd_get(disk);
++	if (!cd)
+ 		return 0;
  
--	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
--	if (error || !agbp)
--		goto out_put_perag;
--
--	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
--
- 	/*
- 	 * Force out the log.  This means any transactions that might have freed
--	 * space before we took the AGF buffer lock are now on disk, and the
-+	 * space before we take the AGF buffer lock are now on disk, and the
- 	 * volatile disk cache is flushed.
- 	 */
- 	xfs_log_force(mp, XFS_LOG_SYNC);
- 
-+	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
-+	if (error || !agbp)
-+		goto out_put_perag;
+-	return cdrom_check_events(&cd->cdi, clearing);
++	if (!atomic_read(&cd->device->disk_events_disable_depth))
++		ret = cdrom_check_events(&cd->cdi, clearing);
 +
-+	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
++	scsi_cd_put(cd);
++	return ret;
+ }
+ 
+ static int sr_block_revalidate_disk(struct gendisk *disk)
+ {
+-	struct scsi_cd *cd = scsi_cd(disk);
+ 	struct scsi_sense_hdr sshdr;
++	struct scsi_cd *cd;
 +
- 	/*
- 	 * Look up the longest btree in the AGF and start with it.
- 	 */
++	cd = scsi_cd_get(disk);
++	if (!cd)
++		return -ENXIO;
+ 
+ 	/* if the unit is not ready, nothing more to do */
+ 	if (scsi_test_unit_ready(cd->device, SR_TIMEOUT, MAX_RETRIES, &sshdr))
+@@ -602,6 +612,7 @@ static int sr_block_revalidate_disk(stru
+ 	sr_cd_check(&cd->cdi);
+ 	get_sectorsize(cd);
+ out:
++	scsi_cd_put(cd);
+ 	return 0;
+ }
+ 
