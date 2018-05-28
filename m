@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938952AbeE1MiE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:38:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46782 "EHLO mail.kernel.org"
+        id S938966AbeE1Mi0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:38:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937983AbeE1K6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:41 -0400
+        id S937815AbeE1K6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
+        Casey Leedom <leedom@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 352/496] powerpc/64s: sreset panic if there is no debugger or crash dump handlers
-Date: Mon, 28 May 2018 12:02:17 +0200
-Message-Id: <20180528100334.640552008@linuxfoundation.org>
+Subject: [PATCH 4.14 381/496] cxgb4: Setup FW queues before registering netdev
+Date: Mon, 28 May 2018 12:02:46 +0200
+Message-Id: <20180528100335.840612163@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,65 +32,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
-[ Upstream commit d40b6768e45bd9213139b2d91d30c7692b6007b1 ]
+[ Upstream commit 843bd7db79c861b49e2912d723625f5fa8e94502 ]
 
-system_reset_exception does most of its own crash handling now,
-invoking the debugger or crash dumps if they are registered. If not,
-then it goes through to die() to print stack traces, and then is
-supposed to panic (according to comments).
+When NetworkManager is enabled, there are chances that interface up
+is called even before probe completes. This means we have not yet
+allocated the FW sge queues, hence rest of ingress queue allocation
+wont be proper. Fix this by calling setup_fw_sge_queues() before
+register_netdev().
 
-However after die() prints oopses, it does its own handling which
-doesn't allow system_reset_exception to panic (e.g., it may just
-kill the current process). This patch causes sreset exceptions to
-return from die after it prints messages but before acting.
-
-This also stops die from invoking the debugger on 0x100 crashes.
-system_reset_exception similarly calls the debugger. It had been
-thought this was harmless (because if the debugger was disabled,
-neither call would fire, and if it was enabled the first call
-would return). However in some cases like xmon 'X' command, the
-debugger returns 0, which currently causes it to be entered
-again (first in system_reset_exception, then in die), which is
-confusing.
-
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 0fbc81b3ad51 ('chcr/cxgb4i/cxgbit/RDMA/cxgb4: Allocate resources dynamically for all cxgb4 ULD's')
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/traps.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -182,6 +182,12 @@ static void oops_end(unsigned long flags
- 	}
- 	raw_local_irq_restore(flags);
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -815,8 +815,6 @@ static int setup_fw_sge_queues(struct ad
  
-+	/*
-+	 * system_reset_excption handles debugger, crash dump, panic, for 0x100
-+	 */
-+	if (TRAP(regs) == 0x100)
-+		return;
-+
- 	crash_fadump(regs, "die oops");
+ 	err = t4_sge_alloc_rxq(adap, &s->fw_evtq, true, adap->port[0],
+ 			       adap->msi_idx, NULL, fwevtq_handler, NULL, -1);
+-	if (err)
+-		t4_free_sge_resources(adap);
+ 	return err;
+ }
  
- 	if (kexec_should_crash(current))
-@@ -246,8 +252,13 @@ void die(const char *str, struct pt_regs
- {
- 	unsigned long flags;
+@@ -5116,6 +5114,13 @@ static int init_one(struct pci_dev *pdev
+ 	if (err)
+ 		goto out_free_dev;
  
--	if (debugger(regs))
--		return;
-+	/*
-+	 * system_reset_excption handles debugger, crash dump, panic, for 0x100
-+	 */
-+	if (TRAP(regs) != 0x100) {
-+		if (debugger(regs))
-+			return;
++	err = setup_fw_sge_queues(adapter);
++	if (err) {
++		dev_err(adapter->pdev_dev,
++			"FW sge queue allocation failed, err %d", err);
++		goto out_free_dev;
 +	}
++
+ 	/*
+ 	 * The card is now ready to go.  If any errors occur during device
+ 	 * registration we do not fail the whole card but rather proceed only
+@@ -5164,7 +5169,6 @@ static int init_one(struct pci_dev *pdev
+ 		cxgb4_ptp_init(adapter);
  
- 	flags = oops_begin(regs);
- 	if (__die(str, regs, err))
+ 	print_adapter_info(adapter);
+-	setup_fw_sge_queues(adapter);
+ 	return 0;
+ 
+ sriov:
+@@ -5220,6 +5224,7 @@ free_mbox_log:
+ #endif
+ 
+  out_free_dev:
++	t4_free_sge_resources(adapter);
+ 	free_some_resources(adapter);
+ 	if (adapter->flags & USING_MSIX)
+ 		free_msix_info(adapter);
