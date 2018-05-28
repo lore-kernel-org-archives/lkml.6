@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936911AbeE1KOv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:14:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34822 "EHLO mail.kernel.org"
+        id S966116AbeE1KPK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936897AbeE1KOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:44 -0400
+        id S936741AbeE1KO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hector Martin <marcan@marcan.st>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        stable@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 018/268] firewire-ohci: work around oversized DMA reads on JMicron controllers
-Date: Mon, 28 May 2018 11:59:52 +0200
-Message-Id: <20180528100204.086394334@linuxfoundation.org>
+Subject: [PATCH 4.4 023/268] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
+Date: Mon, 28 May 2018 11:59:57 +0200
+Message-Id: <20180528100204.715331358@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,45 +34,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hector Martin <marcan@marcan.st>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-[ Upstream commit 188775181bc05f29372b305ef96485840e351fde ]
+[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
 
-At least some JMicron controllers issue buggy oversized DMA reads when
-fetching context descriptors, always fetching 0x20 bytes at once for
-descriptors which are only 0x10 bytes long. This is often harmless, but
-can cause page faults on modern systems with IOMMUs:
+So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
+well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
+detecting the ABS or REL timer modes is not valid anymore, it got broken
+by the introduction of HRTIMER_MODE_PINNED.
 
-DMAR: [DMA Read] Request device [05:00.0] fault addr fff56000 [fault reason 06] PTE Read access is not set
-firewire_ohci 0000:05:00.0: DMA context IT0 has stopped, error code: evt_descriptor_read
+HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
+sake of completeness print all given modes.
 
-This works around the problem by always leaving 0x10 padding bytes at
-the end of descriptor buffer pages, which should be harmless to do
-unconditionally for controllers in case others have the same behavior.
-
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Clemens Ladisch <clemens@ladisch.de>
-Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org
+Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firewire/ohci.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/trace/events/timer.h |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -1130,7 +1130,13 @@ static int context_add_buffer(struct con
- 		return -ENOMEM;
+--- a/include/trace/events/timer.h
++++ b/include/trace/events/timer.h
+@@ -125,6 +125,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
+ 	TP_ARGS(timer)
+ );
  
- 	offset = (void *)&desc->buffer - (void *)desc;
--	desc->buffer_size = PAGE_SIZE - offset;
-+	/*
-+	 * Some controllers, like JMicron ones, always issue 0x20-byte DMA reads
-+	 * for descriptors, even 0x10-byte ones. This can cause page faults when
-+	 * an IOMMU is in use and the oversized read crosses a page boundary.
-+	 * Work around this by always leaving at least 0x10 bytes of padding.
-+	 */
-+	desc->buffer_size = PAGE_SIZE - offset - 0x10;
- 	desc->buffer_bus = bus_addr + offset;
- 	desc->used = 0;
++#define decode_clockid(type)						\
++	__print_symbolic(type,						\
++		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
++		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
++		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
++		{ CLOCK_TAI,		"CLOCK_TAI"		})
++
++#define decode_hrtimer_mode(mode)					\
++	__print_symbolic(mode,						\
++		{ HRTIMER_MODE_ABS,		"ABS"		},	\
++		{ HRTIMER_MODE_REL,		"REL"		},	\
++		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
++		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
++
+ /**
+  * hrtimer_init - called when the hrtimer is initialized
+  * @hrtimer:	pointer to struct hrtimer
+@@ -151,10 +165,8 @@ TRACE_EVENT(hrtimer_init,
+ 	),
  
+ 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
+-		  __entry->clockid == CLOCK_REALTIME ?
+-			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
+-		  __entry->mode == HRTIMER_MODE_ABS ?
+-			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
++		  decode_clockid(__entry->clockid),
++		  decode_hrtimer_mode(__entry->mode))
+ );
+ 
+ /**
