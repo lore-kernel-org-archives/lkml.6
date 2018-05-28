@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033691AbeE1KXf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:23:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42812 "EHLO mail.kernel.org"
+        id S1033726AbeE1KXt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:23:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032835AbeE1KX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:27 -0400
+        id S1033704AbeE1KXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 209/268] xhci: zero usb device slot_id member when disabling and freeing a xhci slot
-Date: Mon, 28 May 2018 12:03:03 +0200
-Message-Id: <20180528100225.917433568@linuxfoundation.org>
+Subject: [PATCH 4.4 214/268] usb: gadget: ffs: Let setup() return USB_GADGET_DELAYED_STATUS
+Date: Mon, 28 May 2018 12:03:08 +0200
+Message-Id: <20180528100226.493260733@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -29,35 +30,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit a400efe455f7b61ac9a801ac8d0d01f8c8d82dd5 ]
+[ Upstream commit 946ef68ad4e45aa048a5fb41ce8823ed29da866a ]
 
-set udev->slot_id to zero when disabling and freeing the xhci slot.
-Prevents usb core from calling xhci with a stale slot id.
+Some UDC drivers (like the DWC3) expect that the response to a setup()
+request is queued from within the setup function itself so that it is
+available as soon as setup() has completed.
 
-xHC controller may be reset during resume to recover from some error.
-All slots are unusable as they are disabled and freed.
-xhci driver starts slot enumeration again from 1 in the order they are
-enabled. In the worst case a stale udev->slot_id for one device matches
-a newly enabled slot_id for a different device, causing us to
-perform a action on the wrong device.
+Upon receiving a setup request the function fs driver creates an event that
+is made available to userspace. And only once userspace has acknowledged
+that event the response to the setup request is queued.
 
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+So it violates the requirement of those UDC drivers and random failures can
+be observed. This is basically a race condition and if userspace is able to
+read the event and queue the response fast enough all is good. But if it is
+not, for example because other processes are currently scheduled to run,
+the USB host that sent the setup request will observe an error.
+
+To avoid this the gadget framework provides the USB_GADGET_DELAYED_STATUS
+return code. If a setup() callback returns this value the UDC driver is
+aware that response is not yet available and can uses the appropriate
+methods to handle this case.
+
+Since in the case of function fs the response will never be available when
+the setup() function returns make sure that this status code is used.
+
+This fixed random occasional failures that were previously observed on a
+DWC3 based system under high system load.
+
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/xhci-mem.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/gadget/function/f_fs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -960,6 +960,8 @@ void xhci_free_virt_device(struct xhci_h
- 	if (dev->out_ctx)
- 		xhci_free_container_ctx(xhci, dev->out_ctx);
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -3033,7 +3033,7 @@ static int ffs_func_setup(struct usb_fun
+ 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
+ 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
  
-+	if (dev->udev && dev->udev->slot_id)
-+		dev->udev->slot_id = 0;
- 	kfree(xhci->devs[slot_id]);
- 	xhci->devs[slot_id] = NULL;
+-	return 0;
++	return USB_GADGET_DELAYED_STATUS;
  }
+ 
+ static void ffs_func_suspend(struct usb_function *f)
