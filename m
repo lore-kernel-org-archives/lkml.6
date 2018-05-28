@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936890AbeE1KOf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:14:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34504 "EHLO mail.kernel.org"
+        id S965812AbeE1KOW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:14:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936516AbeE1KOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:30 -0400
+        id S934993AbeE1KOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 004/268] affs_lookup(): close a race with affs_remove_link()
-Date: Mon, 28 May 2018 11:59:38 +0200
-Message-Id: <20180528100202.593711854@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 179/185] audit: return on memory error to avoid null pointer dereference
+Date: Mon, 28 May 2018 12:03:40 +0200
+Message-Id: <20180528100115.895475498@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -25,56 +26,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Richard Guy Briggs <rgb@redhat.com>
 
-commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
+[ Upstream commit 23138ead270045f1b3e912e667967b6094244999 ]
 
-we unlock the directory hash too early - if we are looking at secondary
-link and primary (in another directory) gets removed just as we unlock,
-we could have the old primary moved in place of the secondary, leaving
-us to look into freed entry (and leaving our dentry with ->d_fsdata
-pointing to a freed entry).
+If there is a memory allocation error when trying to change an audit
+kernel feature value, the ignored allocation error will trigger a NULL
+pointer dereference oops on subsequent use of that pointer.  Return
+instead.
 
-Cc: stable@vger.kernel.org # 2.4.4+
-Acked-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Passes audit-testsuite.
+See: https://github.com/linux-audit/audit-kernel/issues/76
+
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+[PM: not necessary (other funcs check for NULL), but a good practice]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/affs/namei.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ kernel/audit.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/affs/namei.c
-+++ b/fs/affs/namei.c
-@@ -224,9 +224,10 @@ affs_lookup(struct inode *dir, struct de
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -738,6 +738,8 @@ static void audit_log_feature_change(int
+ 		return;
  
- 	affs_lock_dir(dir);
- 	bh = affs_find_entry(dir, dentry);
--	affs_unlock_dir(dir);
--	if (IS_ERR(bh))
-+	if (IS_ERR(bh)) {
-+		affs_unlock_dir(dir);
- 		return ERR_CAST(bh);
-+	}
- 	if (bh) {
- 		u32 ino = bh->b_blocknr;
- 
-@@ -240,10 +241,13 @@ affs_lookup(struct inode *dir, struct de
- 		}
- 		affs_brelse(bh);
- 		inode = affs_iget(sb, ino);
--		if (IS_ERR(inode))
-+		if (IS_ERR(inode)) {
-+			affs_unlock_dir(dir);
- 			return ERR_CAST(inode);
-+		}
- 	}
- 	d_add(dentry, inode);
-+	affs_unlock_dir(dir);
- 	return NULL;
- }
- 
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	if (!ab)
++		return;
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
