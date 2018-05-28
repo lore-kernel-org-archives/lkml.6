@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162448AbeE1KiH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:38:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58476 "EHLO mail.kernel.org"
+        id S1162472AbeE1KiS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:38:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162404AbeE1KiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:01 -0400
+        id S1162454AbeE1KiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:38:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Asseg <frank.asseg@objecthunter.net>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
+        Casey Leedom <leedom@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 263/329] tools/thermal: tmon: fix for segfault
-Date: Mon, 28 May 2018 12:03:12 +0200
-Message-Id: <20180528100303.831633396@linuxfoundation.org>
+Subject: [PATCH 4.9 267/329] cxgb4: Setup FW queues before registering netdev
+Date: Mon, 28 May 2018 12:03:16 +0200
+Message-Id: <20180528100304.131701650@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,79 +32,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Asseg <frank.asseg@objecthunter.net>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
-[ Upstream commit 6c59f64b7ecf2bccbe73931d7d573d66ed13b537 ]
+[ Upstream commit 843bd7db79c861b49e2912d723625f5fa8e94502 ]
 
-Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in the
-ncurses tmon application. The segfault is caused by incrementing
-cur_thermal_record in the main function without checking if it's value reached
-NR_THERMAL_RECORD immediately. Since the boundary check only occurred in
-update_thermal_data a race condition existed, which lead to an attempted read
-beyond the last element of the trec array.
+When NetworkManager is enabled, there are chances that interface up
+is called even before probe completes. This means we have not yet
+allocated the FW sge queues, hence rest of ingress queue allocation
+wont be proper. Fix this by calling setup_fw_sge_queues() before
+register_netdev().
 
-The fix was implemented by moving the cur_thermal_record incrementation to the
-update_thermal_data function using a temporary variable on which the boundary
-condition is checked before updating cur_thread_record, so that the variable is
-never incremented beyond the trec array's boundary.
-
-It seems the segfault does not occur on every machine: On a HP EliteBook G4 the
-segfault happens, while it does not happen on a Thinkpad T540p.
-
-Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 0fbc81b3ad51 ('chcr/cxgb4i/cxgbit/RDMA/cxgb4: Allocate resources dynamically for all cxgb4 ULD's')
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/thermal/tmon/sysfs.c |   12 +++++++-----
- tools/thermal/tmon/tmon.c  |    1 -
- 2 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/tools/thermal/tmon/sysfs.c
-+++ b/tools/thermal/tmon/sysfs.c
-@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst
- int update_thermal_data()
- {
- 	int i;
-+	int next_thermal_record = cur_thermal_record + 1;
- 	char tz_name[256];
- 	static unsigned long samples;
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -836,8 +836,6 @@ static int setup_fw_sge_queues(struct ad
  
-@@ -495,9 +496,9 @@ int update_thermal_data()
+ 	err = t4_sge_alloc_rxq(adap, &s->fw_evtq, true, adap->port[0],
+ 			       adap->msi_idx, NULL, fwevtq_handler, NULL, -1);
+-	if (err)
+-		t4_free_sge_resources(adap);
+ 	return err;
+ }
+ 
+@@ -4940,6 +4938,13 @@ static int init_one(struct pci_dev *pdev
+ 	if (err)
+ 		goto out_free_dev;
+ 
++	err = setup_fw_sge_queues(adapter);
++	if (err) {
++		dev_err(adapter->pdev_dev,
++			"FW sge queue allocation failed, err %d", err);
++		goto out_free_dev;
++	}
++
+ 	/*
+ 	 * The card is now ready to go.  If any errors occur during device
+ 	 * registration we do not fail the whole card but rather proceed only
+@@ -4983,7 +4988,6 @@ static int init_one(struct pci_dev *pdev
  	}
  
- 	/* circular buffer for keeping historic data */
--	if (cur_thermal_record >= NR_THERMAL_RECORDS)
--		cur_thermal_record = 0;
--	gettimeofday(&trec[cur_thermal_record].tv, NULL);
-+	if (next_thermal_record >= NR_THERMAL_RECORDS)
-+		next_thermal_record = 0;
-+	gettimeofday(&trec[next_thermal_record].tv, NULL);
- 	if (tmon_log) {
- 		fprintf(tmon_log, "%lu ", ++samples);
- 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
-@@ -507,11 +508,12 @@ int update_thermal_data()
- 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
- 			ptdata.tzi[i].instance);
- 		sysfs_get_ulong(tz_name, "temp",
--				&trec[cur_thermal_record].temp[i]);
-+				&trec[next_thermal_record].temp[i]);
- 		if (tmon_log)
- 			fprintf(tmon_log, "%lu ",
--				trec[cur_thermal_record].temp[i]/1000);
-+				trec[next_thermal_record].temp[i] / 1000);
- 	}
-+	cur_thermal_record = next_thermal_record;
- 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
- 		char cdev_name[256];
- 		unsigned long val;
---- a/tools/thermal/tmon/tmon.c
-+++ b/tools/thermal/tmon/tmon.c
-@@ -336,7 +336,6 @@ int main(int argc, char **argv)
- 			show_data_w();
- 			show_cooling_device();
- 		}
--		cur_thermal_record++;
- 		time_elapsed += ticktime;
- 		controller_handler(trec[0].temp[target_tz_index] / 1000,
- 				&yk);
+ 	print_adapter_info(adapter);
+-	setup_fw_sge_queues(adapter);
+ 	return 0;
+ 
+ sriov:
+@@ -5035,6 +5039,7 @@ sriov:
+ #endif
+ 
+  out_free_dev:
++	t4_free_sge_resources(adapter);
+ 	free_some_resources(adapter);
+ 	if (adapter->flags & USING_MSIX)
+ 		free_msix_info(adapter);
