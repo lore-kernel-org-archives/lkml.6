@@ -1,21 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754156AbeE1I6v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:58:51 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39078 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753493AbeE1I6u (ORCPT
+        id S1754183AbeE1I66 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:58:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56315 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754120AbeE1I6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:58:50 -0400
-X-Google-Smtp-Source: ADUXVKI0Hsp64BreaADubno33JhKNlo26rbyNPoYuNP4xnb3s6KDeJPkA0xExo46wEkv4NoIW7nj8A==
+        Mon, 28 May 2018 04:58:51 -0400
+X-Google-Smtp-Source: ADUXVKKhew4jovh4tSfZ5Y0gAbQwLFuQnWzdKXpj7d4cJ58aNb3nnWTeeZTyU8OXROwyqReAUtWdSw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 00/20] lightnvm updates for 4.18
-Date: Mon, 28 May 2018 10:58:21 +0200
-Message-Id: <20180528085841.26684-1-mb@lightnvm.io>
+Subject: [GIT PULL 01/20] lightnvm: pblk: fail gracefully on line alloc. failure
+Date: Mon, 28 May 2018 10:58:22 +0200
+Message-Id: <20180528085841.26684-2-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
+References: <20180528085841.26684-1-mb@lightnvm.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -23,66 +27,107 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens,
+From: Javier González <javier@javigon.com>
 
-Please pick up the following patches.
+In the event of a line failing to allocate, fail gracefully and stop the
+pipeline to avoid more write failing in the same place.
 
- - Hans reworked the write error recovery path in pblk.
- - Igor added extra error handling for lines, and fixed a bug in the
-   pblk ringbuffer during GC.
- - Javier refactored the pblk code a bit, added extra error
-   handling, and added checks to verify that data returned from drive
-   is appropriate.
- - Marcin added some extra logic to manage the write buffer. Now
-   MW_CUNITS can be zero and the size of write buffer can be changed
-   at module load time.
+Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/pblk-init.c |  5 +++++
+ drivers/lightnvm/pblk-map.c  | 33 ++++++++++++++++++++++++---------
+ 2 files changed, 29 insertions(+), 9 deletions(-)
 
-Thanks,
-Matias
-
-Hans Holmberg (3):
-  lightnvm: pblk: rework write error recovery path
-  lightnvm: pblk: garbage collect lines with failed writes
-  lightnvm: pblk: fix smeta write error path
-
-Igor Konopko (4):
-  lightnvm: proper error handling for pblk_bio_add_pages
-  lightnvm: error handling when whole line is bad
-  lightnvm: fix partial read error path
-  lightnvm: pblk: sync RB and RL states during GC
-
-Javier González (11):
-  lightnvm: pblk: fail gracefully on line alloc. failure
-  lightnvm: pblk: recheck for bad lines at runtime
-  lightnvm: pblk: check read lba on gc path
-  lightnvn: pblk: improve error msg on corrupted LBAs
-  lightnvm: pblk: warn in case of corrupted write buffer
-  lightnvm: pblk: return NVM_ error on failed submission
-  lightnvm: pblk: remove unnecessary indirection
-  lightnvm: pblk: remove unnecessary argument
-  lightnvm: pblk: check for chunk size before allocating it
-  lightnvn: pass flag on graceful teardown to targets
-  lightnvm: pblk: remove dead function
-
-Marcin Dziegielewski (2):
-  lightnvm: pblk: handle case when mw_cunits equals to 0
-  lightnvm: pblk: add possibility to set write buffer size manually
-
- drivers/lightnvm/core.c          |  10 +-
- drivers/lightnvm/pblk-core.c     | 149 +++++++++++++++------
- drivers/lightnvm/pblk-gc.c       | 112 ++++++++++------
- drivers/lightnvm/pblk-init.c     | 112 +++++++++++-----
- drivers/lightnvm/pblk-map.c      |  33 +++--
- drivers/lightnvm/pblk-rb.c       |  51 +------
- drivers/lightnvm/pblk-read.c     |  83 +++++++++---
- drivers/lightnvm/pblk-recovery.c |  91 -------------
- drivers/lightnvm/pblk-rl.c       |  29 +++-
- drivers/lightnvm/pblk-sysfs.c    |  15 ++-
- drivers/lightnvm/pblk-write.c    | 281 +++++++++++++++++++++++++--------------
- drivers/lightnvm/pblk.h          |  43 +++---
- drivers/nvme/host/lightnvm.c     |   1 -
- include/linux/lightnvm.h         |   2 +-
- 14 files changed, 604 insertions(+), 408 deletions(-)
-
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 91a5bc2556a3..dee64f91227d 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -1047,6 +1047,11 @@ static int pblk_lines_init(struct pblk *pblk)
+ 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
+ 	}
+ 
++	if (!nr_free_chks) {
++		pr_err("pblk: too many bad blocks prevent for sane instance\n");
++		return -EINTR;
++	}
++
+ 	pblk_set_provision(pblk, nr_free_chks);
+ 
+ 	kfree(chunk_meta);
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index 20dbaa89c9df..953ca31dda68 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -18,11 +18,11 @@
+ 
+ #include "pblk.h"
+ 
+-static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+-			       struct ppa_addr *ppa_list,
+-			       unsigned long *lun_bitmap,
+-			       struct pblk_sec_meta *meta_list,
+-			       unsigned int valid_secs)
++static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
++			      struct ppa_addr *ppa_list,
++			      unsigned long *lun_bitmap,
++			      struct pblk_sec_meta *meta_list,
++			      unsigned int valid_secs)
+ {
+ 	struct pblk_line *line = pblk_line_get_data(pblk);
+ 	struct pblk_emeta *emeta;
+@@ -35,8 +35,14 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 	if (pblk_line_is_full(line)) {
+ 		struct pblk_line *prev_line = line;
+ 
++		/* If we cannot allocate a new line, make sure to store metadata
++		 * on current line and then fail
++		 */
+ 		line = pblk_line_replace_data(pblk);
+ 		pblk_line_close_meta(pblk, prev_line);
++
++		if (!line)
++			return -EINTR;
+ 	}
+ 
+ 	emeta = line->emeta;
+@@ -74,6 +80,7 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 	}
+ 
+ 	pblk_down_rq(pblk, ppa_list, nr_secs, lun_bitmap);
++	return 0;
+ }
+ 
+ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+@@ -87,8 +94,12 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+ 
+ 	for (i = off; i < rqd->nr_ppas; i += min) {
+ 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
+-		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
+-					lun_bitmap, &meta_list[i], map_secs);
++		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
++					lun_bitmap, &meta_list[i], map_secs)) {
++			bio_put(rqd->bio);
++			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
++			pblk_pipeline_stop(pblk);
++		}
+ 	}
+ }
+ 
+@@ -108,8 +119,12 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 
+ 	for (i = 0; i < rqd->nr_ppas; i += min) {
+ 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
+-		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
+-					lun_bitmap, &meta_list[i], map_secs);
++		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
++					lun_bitmap, &meta_list[i], map_secs)) {
++			bio_put(rqd->bio);
++			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
++			pblk_pipeline_stop(pblk);
++		}
+ 
+ 		erase_lun = pblk_ppa_to_pos(geo, rqd->ppa_list[i]);
+ 
 -- 
 2.11.0
