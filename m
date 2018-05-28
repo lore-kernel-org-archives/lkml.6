@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165500AbeE1Nnn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:43:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34530 "EHLO mail.kernel.org"
+        id S1162882AbeE1Kn3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:43:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162962AbeE1Knd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:43:33 -0400
+        id S937565AbeE1KnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:43:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 055/496] powerpc/64s: Fix section mismatch warnings from setup_rfi_flush()
-Date: Mon, 28 May 2018 11:57:20 +0200
-Message-Id: <20180528100322.103711113@linuxfoundation.org>
+Subject: [PATCH 4.14 050/496] powerpc/64s: Wire up cpu_show_spectre_v1()
+Date: Mon, 28 May 2018 11:57:15 +0200
+Message-Id: <20180528100321.870531258@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,49 +30,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 501a78cbc17c329fabf8e9750a1e9ab810c88a0e upstream.
+commit 56986016cb8cd9050e601831fe89f332b4e3c46e upstream.
 
-The recent LPM changes to setup_rfi_flush() are causing some section
-mismatch warnings because we removed the __init annotation on
-setup_rfi_flush():
+Add a definition for cpu_show_spectre_v1() to override the generic
+version. Currently this just prints "Not affected" or "Vulnerable"
+based on the firmware flag.
 
-  The function setup_rfi_flush() references
-  the function __init ppc64_bolted_size().
-  the function __init memblock_alloc_base().
+Although the kernel does have array_index_nospec() in a few places, we
+haven't yet audited all the powerpc code to see where it's necessary,
+so for now we don't list that as a mitigation.
 
-The references are actually in init_fallback_flush(), but that is
-inlined into setup_rfi_flush().
-
-These references are safe because:
- - only pseries calls setup_rfi_flush() at runtime
- - pseries always passes L1D_FLUSH_FALLBACK at boot
- - so the fallback flush area will always be allocated
- - so the check in init_fallback_flush() will always return early:
-   /* Only allocate the fallback flush area once (at boot time). */
-   if (l1d_flush_fallback_area)
-   	return;
-
- - and therefore we won't actually call the freed init routines.
-
-We should rework the code to make it safer by default rather than
-relying on the above, but for now as a quick-fix just add a __ref
-annotation to squash the warning.
-
-Fixes: abf110f3e1ce ("powerpc/rfi-flush: Make it possible to call setup_rfi_flush() again")
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/setup_64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/security.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -831,7 +831,7 @@ void rfi_flush_enable(bool enable)
- 	rfi_flush = enable;
- }
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -50,3 +50,11 @@ ssize_t cpu_show_meltdown(struct device
  
--static void init_fallback_flush(void)
-+static void __ref init_fallback_flush(void)
- {
- 	u64 l1d_size, limit;
- 	int cpu;
+ 	return sprintf(buf, "Vulnerable\n");
+ }
++
++ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	if (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR))
++		return sprintf(buf, "Not affected\n");
++
++	return sprintf(buf, "Vulnerable\n");
++}
