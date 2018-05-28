@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940178AbeE1QeH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:34:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56966 "EHLO mail.kernel.org"
+        id S934929AbeE1KIt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:08:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934959AbeE1KIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:52 -0400
+        id S934804AbeE1KIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Pavel Emelyanov <xemul@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 043/185] bcache: fix for data collapse after re-attaching an attached device
-Date: Mon, 28 May 2018 12:01:24 +0200
-Message-Id: <20180528100054.475546018@linuxfoundation.org>
+Subject: [PATCH 3.18 039/185] proc: fix /proc/*/map_files lookup
+Date: Mon, 28 May 2018 12:01:20 +0200
+Message-Id: <20180528100054.088559083@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,119 +33,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
+[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
 
-back-end device sdm has already attached a cache_set with ID
-f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
-another cache set, and it returns with an error:
-[root]# cd /sys/block/sdm/bcache
-[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
--bash: echo: write error: Invalid argument
+Current code does:
 
-After that, execute a command to modify the label of bcache
-device:
-[root]# echo data_disk1 > label
+	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
 
-Then we reboot the system, when the system power on, the back-end
-device can not attach to cache_set, a messages show in the log:
-Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
-bch_cached_dev_attach() couldn't find uuid for sdm in set
+However sscanf() is broken garbage.
 
-In sysfs_attach(), dc->sb.set_uuid was assigned to the value
-which input through sysfs, no matter whether it is success
-or not in bch_cached_dev_attach(). For example, If the back-end
-device has already attached to an cache set, bch_cached_dev_attach()
-would fail, but dc->sb.set_uuid was changed. Then modify the
-label of bcache device, it will call bch_write_bdev_super(),
-which would write the dc->sb.set_uuid to the super block, so we
-record a wrong cache set ID in the super block, after the system
-reboot, the cache set couldn't find the uuid of the back-end
-device, so the bcache device couldn't exist and use any more.
+It silently accepts whitespace between format specifiers
+(did you know that?).
 
-In this patch, we don't assigned cache set ID to dc->sb.set_uuid
-in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
-and assigned dc->sb.set_uuid to the cache set ID after the back-end
-device attached to the cache set successful.
+It silently accepts valid strings which result in integer overflow.
 
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Do not use sscanf() for any even remotely reliable parsing code.
+
+	OK
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+	broken
+	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+	broken
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
+	/lib/systemd/systemd
+
+	very broken
+	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+Andrei said:
+
+: This patch breaks criu.  It was a bug in criu.  And this bug is on a minor
+: path, which works when memfd_create() isn't available.  It is a reason why
+: I ask to not backport this patch to stable kernels.
+:
+: In CRIU this bug can be triggered, only if this patch will be backported
+: to a kernel which version is lower than v3.16.
+
+Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Pavel Emelyanov <xemul@openvz.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/bcache.h |    2 +-
- drivers/md/bcache/super.c  |   10 ++++++----
- drivers/md/bcache/sysfs.c  |    6 ++++--
- 3 files changed, 11 insertions(+), 7 deletions(-)
+ fs/proc/base.c |   29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -922,7 +922,7 @@ void bcache_write_super(struct cache_set
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,8 @@
+ #include "internal.h"
+ #include "fd.h"
  
- int bch_flash_dev_create(struct cache_set *c, uint64_t size);
- 
--int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
-+int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
- void bch_cached_dev_detach(struct cached_dev *);
- void bch_cached_dev_run(struct cached_dev *);
- void bcache_device_stop(struct bcache_device *);
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -967,7 +967,8 @@ void bch_cached_dev_detach(struct cached
- 	cached_dev_put(dc);
- }
- 
--int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
-+int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
-+			  uint8_t *set_uuid)
- {
- 	uint32_t rtime = cpu_to_le32(get_seconds());
- 	struct uuid_entry *u;
-@@ -975,7 +976,8 @@ int bch_cached_dev_attach(struct cached_
- 
- 	bdevname(dc->bdev, buf);
- 
--	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
-+	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
-+	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
- 		return -ENOENT;
- 
- 	if (dc->disk.c) {
-@@ -1209,7 +1211,7 @@ static void register_bdev(struct cache_s
- 
- 	list_add(&dc->list, &uncached_devices);
- 	list_for_each_entry(c, &bch_cache_sets, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
- 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
-@@ -1729,7 +1731,7 @@ static void run_cache_set(struct cache_s
- 	bcache_write_super(c);
- 
- 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	flash_devs_run(c);
- 
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -263,11 +263,13 @@ STORE(__cached_dev)
- 	}
- 
- 	if (attr == &sysfs_attach) {
--		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
-+		uint8_t		set_uuid[16];
++#include "../../lib/kstrtox.h"
 +
-+		if (bch_parse_uuid(buf, set_uuid) < 16)
- 			return -EINVAL;
+ /* NOTE:
+  *	Implementing inode permission operations in /proc is almost
+  *	certainly an error.  Permission checks need to happen during
+@@ -1642,8 +1644,33 @@ end_instantiate:
+ static int dname_to_vma_addr(struct dentry *dentry,
+ 			     unsigned long *start, unsigned long *end)
+ {
+-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
++	const char *str = dentry->d_name.name;
++	unsigned long long sval, eval;
++	unsigned int len;
++
++	len = _parse_integer(str, 16, &sval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (sval != (unsigned long)sval)
+ 		return -EINVAL;
++	str += len;
++
++	if (*str != '-')
++		return -EINVAL;
++	str++;
++
++	len = _parse_integer(str, 16, &eval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (eval != (unsigned long)eval)
++		return -EINVAL;
++	str += len;
++
++	if (*str != '\0')
++		return -EINVAL;
++
++	*start = sval;
++	*end = eval;
  
- 		list_for_each_entry(c, &bch_cache_sets, list) {
--			v = bch_cached_dev_attach(dc, c);
-+			v = bch_cached_dev_attach(dc, c, set_uuid);
- 			if (!v)
- 				return size;
- 		}
+ 	return 0;
+ }
