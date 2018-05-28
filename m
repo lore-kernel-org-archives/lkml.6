@@ -1,105 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936577AbeE1XxG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 19:53:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:38411 "EHLO ozlabs.org"
+        id S936580AbeE1X5V (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 19:57:21 -0400
+Received: from gate.crashing.org ([63.228.1.57]:42357 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936541AbeE1XxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 19:53:04 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 09:52:50 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miklos Szeredi <miklos@szeredi.hu>, David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Timofey Titovets <nefelim4ag@gmail.com>
-Subject: linux-next: manual merge of the overlayfs tree with the btrfs-kdave
- tree
-Message-ID: <20180529095250.097524cf@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XlVtWaiTkhi=Q4vmBquEQMt"; protocol="application/pgp-signature"
+        id S935087AbeE1X5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 19:57:20 -0400
+Message-ID: <2f1d48cf029c1f0903f3cffea946ae5b85f60ec0.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
+Date: Tue, 29 May 2018 09:56:24 +1000
+In-Reply-To: <6fff9f5d67361653e6072570a857cf0d1009a123.camel@kernel.crashing.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+         <20180525202300-mutt-send-email-mst@kernel.org>
+         <6fff9f5d67361653e6072570a857cf0d1009a123.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XlVtWaiTkhi=Q4vmBquEQMt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2018-05-29 at 09:48 +1000, Benjamin Herrenschmidt wrote:
+> > Well it's not supposed to be much slower for the static case.
+> > 
+> > vhost has a cache so should be fine.
+> > 
+> > A while ago Paolo implemented a translation cache which should be
+> > perfect for this case - most of the code got merged but
+> > never enabled because of stability issues.
+> > 
+> > If all else fails, we could teach QEMU to handle the no-iommu case
+> > as if VIRTIO_F_IOMMU_PLATFORM was off.
+> 
+> Any serious reason why not just getting that 2 line patch allowing our
+> arch code to force virtio to use the DMA API ?
+> 
+> It's not particularly invasive and solves our problem rather nicely
+> without adding overhead or additional knowledge to qemu/libvirt/mgmnt
+> tools etc... that it doesn't need etc....
+> 
+> The guest knows it's going secure so the guest arch code can do the
+> right thing rather trivially.
+> 
+> Long term we should probably make virtio always use the DMA API anyway,
+> and interpose "1:1" dma_ops for the traditional virtio case, that would
+> reduce code clutter significantly. In that case, it would become just a
+> matter of having a platform hook to override the dma_ops used.
 
-Hi Miklos,
+To elaborate a bit ....
 
-Today's linux-next merge of the overlayfs tree got a conflict in:
+What we are trying to solve here is entirely a guest problem, I don't
+think involving qemu in the solution is the right thing to do.
 
-  fs/btrfs/ioctl.c
+The guest can only allow external parties (qemu, potentially PCI
+devices, etc...) access to some restricted portions of memory (insecure
+memory). Thus the guest need to do some bounce buffering/swiotlb type
+tricks.
 
-between commit:
+This is completely orthogonal to whether there is an actual iommu
+between the guest and the device (or emulated device/virtio).
 
-  0b4dc087e29a ("Btrfs: dedupe_file_range ioctl: remove 16MiB restriction")
+This is why I think the solution should reside in the guest kernel, by
+proper manipulation (by the arch code) of the dma ops.
 
-from the btrfs-kdave tree and commits:
+I don't think forcing the addition of an emulated iommu in the middle
+just to work around the fact that virtio "cheats" and doesn't use the
+dma API unless there is one, is the right "fix".
 
-  83d499febfac ("vfs: dedpue: return loff_t")
-  7765f19ed5f9 ("vfs: dedupe: rationalize args")
+The right long term fix is to always use the DMA API, reducing code
+path etc... and just have a single point where virtio can "chose"
+alternate DMA ops (via an arch hook to deal with our case).
 
-from the overlayfs tree.
+In the meantime, having the hook we propose gets us going, but if you
+agree with the approach, we should also work on the long term approach.
 
-[I note the typo in the subject of commit 83d499febfac]
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
 Cheers,
-Stephen Rothwell
-
-diff --cc fs/btrfs/ioctl.c
-index 4d88d54d042d,70eac76804df..000000000000
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@@ -3637,14 -3192,20 +3637,15 @@@ out_free
-  	return ret;
-  }
- =20
-- ssize_t btrfs_dedupe_file_range(struct file *src_file, u64 loff, u64 olen,
-- 				struct file *dst_file, u64 dst_loff)
- -#define BTRFS_MAX_DEDUPE_LEN	SZ_16M
- -
-+ loff_t btrfs_dedupe_file_range(struct file *src_file, loff_t loff,
-+ 			       struct file *dst_file, loff_t dst_loff,
-+ 			       loff_t olen)
-  {
-  	struct inode *src =3D file_inode(src_file);
-  	struct inode *dst =3D file_inode(dst_file);
-  	u64 bs =3D BTRFS_I(src)->root->fs_info->sb->s_blocksize;
-- 	ssize_t res;
-+ 	int res;
- =20
- -	if (olen > BTRFS_MAX_DEDUPE_LEN)
- -		olen =3D BTRFS_MAX_DEDUPE_LEN;
- -
-  	if (WARN_ON_ONCE(bs < PAGE_SIZE)) {
-  		/*
-  		 * Btrfs does not support blocksize < page_size. As a
-
---Sig_/XlVtWaiTkhi=Q4vmBquEQMt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMllIACgkQAVBC80lX
-0GzHYQf/bTxDXA8buRp/5DNnq73+rUwPtK5SYt5CCCR1NFlI5uOhHzWeHNd7AvE+
-DjVVqI+3KVD/ArZpt/xqH2NWpYx9FvQZw68p4nuRA/gPdnrbROJX9jCRNtBQybuF
-Nx0gOMuafnDlLS2/R0/zvVoCdudkQ5GwFvkcajpz5Qy+rI53Qagv914AA3f8O5S4
-eMYtF564mf6wZBlFOWUOa2dkzRflVze0gVCZ20F9MW8CxPyGJUSTiJOSNFlE+mtD
-U4yp0ehcY00AMDQkPhtL2QzHNamEtKFUf29cHfoXObtJRS8U7pOkG4hG7wnLxdso
-RptAMTM3m4k3msX620BVa6I/cYHLyw==
-=mKvG
------END PGP SIGNATURE-----
-
---Sig_/XlVtWaiTkhi=Q4vmBquEQMt--
+Ben.
