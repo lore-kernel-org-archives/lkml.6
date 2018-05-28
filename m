@@ -1,87 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752776AbeE1BY5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 21:24:57 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42990 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751760AbeE1BY4 (ORCPT
+        id S1752960AbeE1BpE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 21:45:04 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:39849 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752934AbeE1BpB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 21:24:56 -0400
-X-Google-Smtp-Source: AB8JxZqTtxXihfoTD/hd74JLua3JCBggsoCEUjcv6piU9Bq4RPojDnp87xIConfrlTjK874w2RY8RQ==
-From: "Joel Fernandes (Google)" <joelaf@google.com>
-X-Google-Original-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Ramussen <morten.rasmussen@arm.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Rohit Jain <rohit.k.jain@oracle.com>, kernel-team@android.com
-Subject: [PATCH v2] sched: Remove obscure comment from select_task_rq_fair
-Date: Sun, 27 May 2018 18:24:47 -0700
-Message-Id: <20180528012447.115411-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+        Sun, 27 May 2018 21:45:01 -0400
+X-Google-Smtp-Source: ADUXVKJFGxuEyrSDBUOjPhQsTmQdhb5t+SEAHlMDGoER+c6jcqmVn1xTHUYH1XguYrWGiFOz9alurg==
+Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
+        Filipe Manana <fdmanana@gmail.com>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
+ <20180525045306.GB8740@kmo-pixel>
+ <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
+ <20180527072332.GA18240@ming.t460p>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
+Date: Sun, 27 May 2018 19:44:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180527072332.GA18240@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I was playing with cpusets and sched_load_balance flag and notice that
-the fast-path (select_idle_sibling) can also be attempted for
-exec-balance, not just wake-balance if the waker cpu's cpuset has
-sched_load_balance = 0. This patch removes the obscure comment which was
-saying this path can be entered only for wake-balance.
+On 5/27/18 1:23 AM, Ming Lei wrote:
+> On Fri, May 25, 2018 at 10:30:46AM -0600, Jens Axboe wrote:
+>> On 5/24/18 10:53 PM, Kent Overstreet wrote:
+>>> On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
+>>>> Hi,
+>>>>
+>>>> This patchset brings multipage bvec into block layer:
+>>>
+>>> patch series looks sane to me. goddamn that's a lot of renaming.
+>>
+>> Indeed... I actually objected to some of the segment -> page
+>> renaming, but it's still in there. The foo2() temporary functions
+>> also concern me, we all know there's nothing more permanent than a
+>> temporary fixup.
+> 
+> Jens, I remember I explained the renaming story to you in lsfmm a bit:
+> 
+> 1) the current naming of segment is actually wrong, since every segment
+> only stores one single-page vector
+> 
+> 2) the most important part is that once multipage bvec is introduced,
+> if the old _segment naming is still kept, it can be very confusing,
+> especially no good name is left for the helpers of dealing with real
+> segment.
 
-To trigger this, I just do:
-mkdir /cpuset
-mount -t cpuset none /cpuset
-echo 0 > sched_load_balance
+Yes, we discussed exactly this, which is why I'm surprised you went
+ahead with the same approach. I told you I don't like tree wide renames,
+if they can be avoided. I'd rather suffer some pain wrt page vs segments
+naming, and then later do a rename (if it bothers us) once the dust has
+settled on the interesting part of the changes.
 
-Then did some random activity and dumped the stack from 'if (!sd)' for
-the non wake-balance cases.
+I'm very well away of our current naming and what it signifies.  With
+#1, you are really splitting hairs, imho. Find a decent name for
+multiple segment. Chunk?
 
-Following is one of the stacks:
-dump_stack+0x46/0x5b
-select_task_rq_fair+0x101d/0x1030
-sched_exec+0x4f/0xc0
-do_execveat_common.isra.41+0x1e3/0x7c0
-__x64_sys_execve+0x2d/0x40
-do_syscall_64+0x43/0xf0
-entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> For the foo2() temporary change, that is only for avoiding tree-wide
+> change in one single tree, with this way, we can change sub-system one
+> by one, but if you think it is good to do tree-wide conversion in one
+> patch, I am fine to do it in next version.
 
-Turns out the same case occurs also during boot up when kthreadd tries
-to create threads before domains are attached so lets fix the comment.
+It's still a painful middle step.
 
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Morten Ramussen <morten.rasmussen@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Rohit Jain <rohit.k.jain@oracle.com>
-Cc: kernel-team@android.com
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
-v1->v2: Resending without "XXX" in subject since otherwise LKML thinks
-its junk.
+>>> Things are going to get interesting when we start sticking compound
+>>> pages in the page cache, there'll be some interesting questions of
+>>> semantics to deal with then but I think getting this will only help
+>>> w.r.t. plumbing that through and not dealing with 4k pages
+>>> unnecessarily - but I think even if we were to decide that merging
+>>> in bio_add_page() is not the way to go when the upper layers are
+>>> passing compound pages around already, this patch series helps
+>>> because regardless at some point everything under
+>>> generic_make_request() is going to have to deal with segments that
+>>> are more than one page, and this patch series makes that happen. So
+>>> incremental progress.
+>>>
+>>> Jens, any objections to getting this in?
+>>
+>> I like most of it, but I'd much rather get this way earlier in the
+>> series.  We're basically just one week away from the merge window, it
+>> needs more simmer and testing time than that. On top of that, it
+>> hasn't received much review yet.
+>>
+>> So as far as I'm concerned, we can kick off the 4.19 block branch
+>> with iterated versions of this patchset.
+> 
+> OK, I will post out again once v4.19 is started.
 
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sounds good.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 54dc31e7ab9b..dd07794141d0 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6665,7 +6665,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 
- 	if (!sd) {
- pick_cpu:
--		if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
-+		if (sd_flag & SD_BALANCE_WAKE) {
- 			new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
- 
- 			if (want_affine)
 -- 
-2.17.0.921.gf22659ad46-goog
+Jens Axboe
