@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968546AbeE1KQj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36690 "EHLO mail.kernel.org"
+        id S968591AbeE1KQw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:16:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968516AbeE1KQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:33 -0400
+        id S966741AbeE1KQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
-        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        linux-mips@linux-mips.org, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 058/268] MIPS: TXx9: use IS_BUILTIN() for CONFIG_LEDS_CLASS
-Date: Mon, 28 May 2018 12:00:32 +0200
-Message-Id: <20180528100208.545896683@linuxfoundation.org>
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 062/268] arm64: spinlock: Fix theoretical trylock() A-B-A with LSE atomics
+Date: Mon, 28 May 2018 12:00:36 +0200
+Message-Id: <20180528100208.956172970@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,58 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 0cde5b44a30f1daaef1c34e08191239dc63271c4 ]
+[ Upstream commit 202fb4ef81e3ec765c23bd1e6746a5c25b797d0e ]
 
-When commit b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
-added board support for the RBTX4939, it added a call to
-led_classdev_register even if the LED class is built as a module.
-Built-in arch code cannot call module code directly like this. Commit
-b33b44073734 ("MIPS: TXX9: use IS_ENABLED() macro") subsequently
-changed the inclusion of this code to a single check that
-CONFIG_LEDS_CLASS is either builtin or a module, but the same issue
-remains.
+If the spinlock "next" ticket wraps around between the initial LDR
+and the cmpxchg in the LSE version of spin_trylock, then we can erroneously
+think that we have successfuly acquired the lock because we only check
+whether the next ticket return by the cmpxchg is equal to the owner ticket
+in our updated lock word.
 
-This leads to MIPS allmodconfig builds failing when CONFIG_MACH_TX49XX=y
-is set:
+This patch fixes the issue by performing a full 32-bit check of the lock
+word when trying to determine whether or not the CASA instruction updated
+memory.
 
-arch/mips/txx9/rbtx4939/setup.o: In function `rbtx4939_led_probe':
-setup.c:(.init.text+0xc0): undefined reference to `of_led_classdev_register'
-make: *** [Makefile:999: vmlinux] Error 1
-
-Fix this by using the IS_BUILTIN() macro instead.
-
-Fixes: b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Reviewed-by: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/18544/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Reported-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/txx9/rbtx4939/setup.c |    4 ++--
+ arch/arm64/include/asm/spinlock.h |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/mips/txx9/rbtx4939/setup.c
-+++ b/arch/mips/txx9/rbtx4939/setup.c
-@@ -186,7 +186,7 @@ static void __init rbtx4939_update_ioc_p
- 
- #define RBTX4939_MAX_7SEGLEDS	8
- 
--#if IS_ENABLED(CONFIG_LEDS_CLASS)
-+#if IS_BUILTIN(CONFIG_LEDS_CLASS)
- static u8 led_val[RBTX4939_MAX_7SEGLEDS];
- struct rbtx4939_led_data {
- 	struct led_classdev cdev;
-@@ -261,7 +261,7 @@ static inline void rbtx4939_led_setup(vo
- 
- static void __rbtx4939_7segled_putc(unsigned int pos, unsigned char val)
- {
--#if IS_ENABLED(CONFIG_LEDS_CLASS)
-+#if IS_BUILTIN(CONFIG_LEDS_CLASS)
- 	unsigned long flags;
- 	local_irq_save(flags);
- 	/* bit7: reserved for LED class */
+--- a/arch/arm64/include/asm/spinlock.h
++++ b/arch/arm64/include/asm/spinlock.h
+@@ -94,8 +94,8 @@ static inline int arch_spin_trylock(arch
+ 	"	cbnz	%w1, 1f\n"
+ 	"	add	%w1, %w0, %3\n"
+ 	"	casa	%w0, %w1, %2\n"
+-	"	and	%w1, %w1, #0xffff\n"
+-	"	eor	%w1, %w1, %w0, lsr #16\n"
++	"	sub	%w1, %w1, %3\n"
++	"	eor	%w1, %w1, %w0\n"
+ 	"1:")
+ 	: "=&r" (lockval), "=&r" (tmp), "+Q" (*lock)
+ 	: "I" (1 << TICKET_SHIFT)
