@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162933AbeE1KlM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:41:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
+        id S1755419AbeE1N4E (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:56:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162892AbeE1KlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:05 -0400
+        id S1162319AbeE1KlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 323/329] netlabel: If PF_INET6, check sk_buff ip header version
-Date: Mon, 28 May 2018 12:04:12 +0200
-Message-Id: <20180528100307.873464497@linuxfoundation.org>
+Subject: [PATCH 4.9 324/329] regmap: Correct comparison in regmap_cached
+Date: Mon, 28 May 2018 12:04:13 +0200
+Message-Id: <20180528100307.985452786@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,39 +30,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Haines <richard_c_haines@btinternet.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit 213d7f94775322ba44e0bbb55ec6946e9de88cea ]
+[ Upstream commit 71df179363a5a733a8932e9afb869760d7559383 ]
 
-When resolving a fallback label, check the sk_buff version as it
-is possible (e.g. SCTP) to have family = PF_INET6 while
-receiving ip_hdr(skb)->version = 4.
+The cache pointer points to the actual memory used by the cache, as the
+comparison here is looking for the type of the cache it should check
+against cache_type.
 
-Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Fixes: 1ea975cf1ef5 ("regmap: Add a function to check if a regmap register is cached")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlabel/netlabel_unlabeled.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/base/regmap/regmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -1469,6 +1469,16 @@ int netlbl_unlabel_getattr(const struct
- 		iface = rcu_dereference(netlbl_unlhsh_def);
- 	if (iface == NULL || !iface->valid)
- 		goto unlabel_getattr_nolabel;
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+	/* When resolving a fallback label, check the sk_buff version as
-+	 * it is possible (e.g. SCTP) to have family = PF_INET6 while
-+	 * receiving ip_hdr(skb)->version = 4.
-+	 */
-+	if (family == PF_INET6 && ip_hdr(skb)->version == 4)
-+		family = PF_INET;
-+#endif /* IPv6 */
-+
- 	switch (family) {
- 	case PF_INET: {
- 		struct iphdr *hdr4;
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -98,7 +98,7 @@ bool regmap_cached(struct regmap *map, u
+ 	int ret;
+ 	unsigned int val;
+ 
+-	if (map->cache == REGCACHE_NONE)
++	if (map->cache_type == REGCACHE_NONE)
+ 		return false;
+ 
+ 	if (!map->cache_ops)
