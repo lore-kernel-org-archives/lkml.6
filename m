@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165924AbeE1Ood (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:44:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49772 "EHLO mail.kernel.org"
+        id S1161084AbeE1KaL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:30:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161094AbeE1KaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:14 -0400
+        id S937386AbeE1K3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Steve French <smfrench@gmail.com>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 091/329] cifs: silence compiler warnings showing up with gcc-8.0.0
-Date: Mon, 28 May 2018 12:00:20 +0200
-Message-Id: <20180528100250.352438353@linuxfoundation.org>
+Subject: [PATCH 4.9 048/329] mac80211_hwsim: fix possible memory leak in hwsim_new_radio_nl()
+Date: Mon, 28 May 2018 11:59:37 +0200
+Message-Id: <20180528100246.473211419@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,38 +31,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
 
-[ Upstream commit ade7db991b47ab3016a414468164f4966bd08202 ]
+[ Upstream commit 0ddcff49b672239dda94d70d0fcf50317a9f4b51 ]
 
-This bug was fixed before, but came up again with the latest
-compiler in another function:
+'hwname' is malloced in hwsim_new_radio_nl() and should be freed
+before leaving from the error handling cases, otherwise it will cause
+memory leak.
 
-fs/cifs/cifssmb.c: In function 'CIFSSMBSetEA':
-fs/cifs/cifssmb.c:6362:3: error: 'strncpy' offset 8 is out of the bounds [0, 4] [-Werror=array-bounds]
-   strncpy(parm_data->list[0].name, ea_name, name_len);
-
-Let's apply the same fix that was used for the other instances.
-
-Fixes: b2a3ad9ca502 ("cifs: silence compiler warnings showing up with gcc-4.7.0")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Fixes: ff4dd73dd2b4 ("mac80211_hwsim: check HWSIM_ATTR_RADIO_NAME length")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/cifssmb.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -6413,9 +6413,7 @@ SetEARetry:
- 	pSMB->InformationLevel =
- 		cpu_to_le16(SMB_SET_FILE_EA);
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3084,8 +3084,10 @@ static int hwsim_new_radio_nl(struct sk_
+ 	if (info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]) {
+ 		u32 idx = nla_get_u32(info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]);
  
--	parm_data =
--		(struct fealist *) (((char *) &pSMB->hdr.Protocol) +
--				       offset);
-+	parm_data = (void *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
- 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
- 	pSMB->DataOffset = cpu_to_le16(offset);
- 	pSMB->SetupCount = 1;
+-		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom))
++		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom)) {
++			kfree(hwname);
+ 			return -EINVAL;
++		}
+ 		param.regd = hwsim_world_regdom_custom[idx];
+ 	}
+ 
