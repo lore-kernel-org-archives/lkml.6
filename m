@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165972AbeE1Oq0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:46:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49400 "EHLO mail.kernel.org"
+        id S1165979AbeE1Oqt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:46:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937164AbeE1K3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:53 -0400
+        id S936976AbeE1K3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Alex Estrin <alex.estrin@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 050/329] Btrfs: set plug for fsync
-Date: Mon, 28 May 2018 11:59:39 +0200
-Message-Id: <20180528100246.671024036@linuxfoundation.org>
+Subject: [PATCH 4.9 076/329] IB/ipoib: Fix for potential no-carrier state
+Date: Mon, 28 May 2018 12:00:05 +0200
+Message-Id: <20180528100249.170986682@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,49 +32,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Alex Estrin <alex.estrin@intel.com>
 
-[ Upstream commit 343e4fc1c60971b0734de26dbbd475d433950982 ]
+[ Upstream commit 1029361084d18cc270f64dfd39529fafa10cfe01 ]
 
-Setting plug can merge adjacent IOs before dispatching IOs to the disk
-driver.
+On reboot SM can program port pkey table before ipoib registered its
+event handler, which could result in missing pkey event and leave root
+interface with initial pkey value from index 0.
 
-Without plug, it'd not be a problem for single disk usecases, but for
-multiple disks using raid profile, a large IO can be split to several
-IOs of stripe length, and plug can be helpful to bring them together
-for each disk so that we can save several disk access.
+Since OPA port starts with invalid pkey in index 0, root interface will
+fail to initialize and stay down with no-carrier flag.
 
-Moreover, fsync issues synchronous writes, so plug can really take
-effect.
+For IB ipoib interface may end up with pkey different from value
+opensm put in pkey table idx 0, resulting in connectivity issues
+(different mcast groups, for example).
 
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Close the window by calling event handler after registration
+to make sure ipoib pkey is in sync with port pkey table.
+
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/file.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1912,10 +1912,19 @@ int btrfs_release_file(struct inode *ino
- static int start_ordered_ops(struct inode *inode, loff_t start, loff_t end)
- {
- 	int ret;
-+	struct blk_plug plug;
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -2119,6 +2119,9 @@ static struct net_device *ipoib_add_port
+ 		goto event_failed;
+ 	}
  
-+	/*
-+	 * This is only called in fsync, which would do synchronous writes, so
-+	 * a plug can merge adjacent IOs as much as possible.  Esp. in case of
-+	 * multiple disks using raid profile, a large IO can be split to
-+	 * several segments of stripe length (currently 64K).
-+	 */
-+	blk_start_plug(&plug);
- 	atomic_inc(&BTRFS_I(inode)->sync_writers);
- 	ret = btrfs_fdatawrite_range(inode, start, end);
- 	atomic_dec(&BTRFS_I(inode)->sync_writers);
-+	blk_finish_plug(&plug);
- 
- 	return ret;
- }
++	/* call event handler to ensure pkey in sync */
++	queue_work(ipoib_workqueue, &priv->flush_heavy);
++
+ 	result = register_netdev(priv->dev);
+ 	if (result) {
+ 		printk(KERN_WARNING "%s: couldn't register ipoib port %d; error %d\n",
