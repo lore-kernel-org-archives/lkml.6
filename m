@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165630AbeE1OWZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:22:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55176 "EHLO mail.kernel.org"
+        id S1165636AbeE1OWq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:22:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161970AbeE1Kex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:53 -0400
+        id S1161944AbeE1Kem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 193/329] dmaengine: mv_xor_v2: Fix clock resource by adding a register clock
-Date: Mon, 28 May 2018 12:02:02 +0200
-Message-Id: <20180528100258.391061404@linuxfoundation.org>
+Subject: [PATCH 4.9 156/329] ARM: orion5x: Revert commit 4904dbda41c8.
+Date: Mon, 28 May 2018 12:01:25 +0200
+Message-Id: <20180528100255.488433907@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,91 +29,199 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 3cd2c313f1d618f92d1294addc6c685c17065761 ]
+[ Upstream commit 13a55372b64e00e564a08d785ca87bd9d454ba30 ]
 
-On the CP110 components which are present on the Armada 7K/8K SoC we need
-to explicitly enable the clock for the registers. However it is not
-needed for the AP8xx component, that's why this clock is optional.
+It is not valid for orion5x to use mac_pton().
 
-With this patch both clock have now a name, but in order to be backward
-compatible, the name of the first clock is not used. It allows to still
-use this clock with a device tree using the old binding.
+First of all, the orion5x buffer is not NULL terminated.  mac_pton()
+has no business operating on non-NULL terminated buffers because
+only the caller can know that this is valid and in what manner it
+is ok to parse this NULL'less buffer.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Second of all, orion5x operates on an __iomem pointer, which cannot
+be dereferenced using normal C pointer operations.  Accesses to
+such areas much be performed with the proper iomem accessors.
+
+Fixes: 4904dbda41c8 ("ARM: orion5x: use mac_pton() helper")
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/dma/mv-xor-v2.txt |    6 ++++
- drivers/dma/mv_xor_v2.c                             |   25 ++++++++++++++++----
- 2 files changed, 25 insertions(+), 6 deletions(-)
+ arch/arm/mach-orion5x/Kconfig        |    3 -
+ arch/arm/mach-orion5x/dns323-setup.c |   53 +++++++++++++++++++++++++++++++++--
+ arch/arm/mach-orion5x/tsx09-common.c |   49 +++++++++++++++++++++++++++++---
+ 3 files changed, 95 insertions(+), 10 deletions(-)
 
---- a/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-+++ b/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-@@ -11,7 +11,11 @@ Required properties:
-   interrupts.
+--- a/arch/arm/mach-orion5x/Kconfig
++++ b/arch/arm/mach-orion5x/Kconfig
+@@ -57,7 +57,6 @@ config MACH_KUROBOX_PRO
  
- Optional properties:
--- clocks: Optional reference to the clock used by the XOR engine.
-+- clocks: Optional reference to the clocks used by the XOR engine.
-+- clock-names: mandatory if there is a second clock, in this case the
-+   name must be "core" for the first clock and "reg" for the second
-+   one
+ config MACH_DNS323
+ 	bool "D-Link DNS-323"
+-	select GENERIC_NET_UTILS
+ 	select I2C_BOARDINFO if I2C
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+@@ -65,7 +64,6 @@ config MACH_DNS323
+ 
+ config MACH_TS209
+ 	bool "QNAP TS-109/TS-209"
+-	select GENERIC_NET_UTILS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  QNAP TS-109/TS-209 platform.
+@@ -107,7 +105,6 @@ config MACH_LINKSTATION_LS_HGL
+ 
+ config MACH_TS409
+ 	bool "QNAP TS-409"
+-	select GENERIC_NET_UTILS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  QNAP TS-409 platform.
+--- a/arch/arm/mach-orion5x/dns323-setup.c
++++ b/arch/arm/mach-orion5x/dns323-setup.c
+@@ -173,10 +173,42 @@ static struct mv643xx_eth_platform_data
+ 	.phy_addr = MV643XX_ETH_PHY_ADDR(8),
+ };
+ 
++/* dns323_parse_hex_*() taken from tsx09-common.c; should a common copy of these
++ * functions be kept somewhere?
++ */
++static int __init dns323_parse_hex_nibble(char n)
++{
++	if (n >= '0' && n <= '9')
++		return n - '0';
 +
++	if (n >= 'A' && n <= 'F')
++		return n - 'A' + 10;
++
++	if (n >= 'a' && n <= 'f')
++		return n - 'a' + 10;
++
++	return -1;
++}
++
++static int __init dns323_parse_hex_byte(const char *b)
++{
++	int hi;
++	int lo;
++
++	hi = dns323_parse_hex_nibble(b[0]);
++	lo = dns323_parse_hex_nibble(b[1]);
++
++	if (hi < 0 || lo < 0)
++		return -1;
++
++	return (hi << 4) | lo;
++}
++
+ static int __init dns323_read_mac_addr(void)
+ {
+ 	u_int8_t addr[6];
+-	void __iomem *mac_page;
++	int i;
++	char *mac_page;
  
- Example:
+ 	/* MAC address is stored as a regular ol' string in /dev/mtdblock4
+ 	 * (0x007d0000-0x00800000) starting at offset 196480 (0x2ff80).
+@@ -185,8 +217,23 @@ static int __init dns323_read_mac_addr(v
+ 	if (!mac_page)
+ 		return -ENOMEM;
  
---- a/drivers/dma/mv_xor_v2.c
-+++ b/drivers/dma/mv_xor_v2.c
-@@ -152,6 +152,7 @@ struct mv_xor_v2_device {
- 	void __iomem *dma_base;
- 	void __iomem *glob_base;
- 	struct clk *clk;
-+	struct clk *reg_clk;
- 	struct tasklet_struct irq_tasklet;
- 	struct list_head free_sw_desc;
- 	struct dma_device dmadev;
-@@ -697,13 +698,26 @@ static int mv_xor_v2_probe(struct platfo
- 	if (ret)
- 		return ret;
- 
-+	xor_dev->reg_clk = devm_clk_get(&pdev->dev, "reg");
-+	if (PTR_ERR(xor_dev->reg_clk) != -ENOENT) {
-+		if (!IS_ERR(xor_dev->reg_clk)) {
-+			ret = clk_prepare_enable(xor_dev->reg_clk);
-+			if (ret)
-+				return ret;
-+		} else {
-+			return PTR_ERR(xor_dev->reg_clk);
+-	if (!mac_pton((__force const char *) mac_page, addr))
+-		goto error_fail;
++	/* Sanity check the string we're looking at */
++	for (i = 0; i < 5; i++) {
++		if (*(mac_page + (i * 3) + 2) != ':') {
++			goto error_fail;
 +		}
 +	}
 +
- 	xor_dev->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(xor_dev->clk) && PTR_ERR(xor_dev->clk) == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (IS_ERR(xor_dev->clk) && PTR_ERR(xor_dev->clk) == -EPROBE_DEFER) {
-+		ret = EPROBE_DEFER;
-+		goto disable_reg_clk;
++	for (i = 0; i < 6; i++)	{
++		int byte;
++
++		byte = dns323_parse_hex_byte(mac_page + (i * 3));
++		if (byte < 0) {
++			goto error_fail;
++		}
++
++		addr[i] = byte;
 +	}
- 	if (!IS_ERR(xor_dev->clk)) {
- 		ret = clk_prepare_enable(xor_dev->clk);
- 		if (ret)
--			return ret;
-+			goto disable_reg_clk;
- 	}
  
- 	ret = platform_msi_domain_alloc_irqs(&pdev->dev, 1,
-@@ -812,8 +826,9 @@ free_hw_desq:
- free_msi_irqs:
- 	platform_msi_domain_free_irqs(&pdev->dev);
- disable_clk:
--	if (!IS_ERR(xor_dev->clk))
--		clk_disable_unprepare(xor_dev->clk);
-+	clk_disable_unprepare(xor_dev->clk);
-+disable_reg_clk:
-+	clk_disable_unprepare(xor_dev->reg_clk);
- 	return ret;
- }
+ 	iounmap(mac_page);
+ 	printk("DNS-323: Found ethernet MAC address: %pM\n", addr);
+--- a/arch/arm/mach-orion5x/tsx09-common.c
++++ b/arch/arm/mach-orion5x/tsx09-common.c
+@@ -53,12 +53,53 @@ struct mv643xx_eth_platform_data qnap_ts
+ 	.phy_addr	= MV643XX_ETH_PHY_ADDR(8),
+ };
+ 
++static int __init qnap_tsx09_parse_hex_nibble(char n)
++{
++	if (n >= '0' && n <= '9')
++		return n - '0';
++
++	if (n >= 'A' && n <= 'F')
++		return n - 'A' + 10;
++
++	if (n >= 'a' && n <= 'f')
++		return n - 'a' + 10;
++
++	return -1;
++}
++
++static int __init qnap_tsx09_parse_hex_byte(const char *b)
++{
++	int hi;
++	int lo;
++
++	hi = qnap_tsx09_parse_hex_nibble(b[0]);
++	lo = qnap_tsx09_parse_hex_nibble(b[1]);
++
++	if (hi < 0 || lo < 0)
++		return -1;
++
++	return (hi << 4) | lo;
++}
++
+ static int __init qnap_tsx09_check_mac_addr(const char *addr_str)
+ {
+ 	u_int8_t addr[6];
++	int i;
+ 
+-	if (!mac_pton(addr_str, addr))
+-		return -1;
++	for (i = 0; i < 6; i++) {
++		int byte;
++
++		/*
++		 * Enforce "xx:xx:xx:xx:xx:xx\n" format.
++		 */
++		if (addr_str[(i * 3) + 2] != ((i < 5) ? ':' : '\n'))
++			return -1;
++
++		byte = qnap_tsx09_parse_hex_byte(addr_str + (i * 3));
++		if (byte < 0)
++			return -1;
++		addr[i] = byte;
++	}
+ 
+ 	printk(KERN_INFO "tsx09: found ethernet mac address %pM\n", addr);
+ 
+@@ -77,12 +118,12 @@ void __init qnap_tsx09_find_mac_addr(u32
+ 	unsigned long addr;
+ 
+ 	for (addr = mem_base; addr < (mem_base + size); addr += 1024) {
+-		void __iomem *nor_page;
++		char *nor_page;
+ 		int ret = 0;
+ 
+ 		nor_page = ioremap(addr, 1024);
+ 		if (nor_page != NULL) {
+-			ret = qnap_tsx09_check_mac_addr((__force const char *)nor_page);
++			ret = qnap_tsx09_check_mac_addr(nor_page);
+ 			iounmap(nor_page);
+ 		}
  
