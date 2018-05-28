@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163819AbeE1Kv0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:51:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40696 "EHLO mail.kernel.org"
+        id S1163876AbeE1Kvq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:51:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163688AbeE1KvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:51:14 -0400
+        id S1163823AbeE1Kvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:51:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 224/496] IB/mlx5: Fix an error code in __mlx5_ib_modify_qp()
-Date: Mon, 28 May 2018 12:00:09 +0200
-Message-Id: <20180528100329.357197310@linuxfoundation.org>
+Subject: [PATCH 4.14 231/496] cxgb4: do not set needs_free_netdev for mgmt devs
+Date: Mon, 28 May 2018 12:00:16 +0200
+Message-Id: <20180528100329.635379207@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,34 +30,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ganesh Goudar <ganeshgr@chelsio.com>
 
-[ Upstream commit 5d414b178e950ce9685c253994cc730893d5d887 ]
+[ Upstream commit b06ef18a4c255609388ed6e068a1c69c797545e0 ]
 
-"err" is either zero or possibly uninitialized here.  It should be
--EINVAL.
+Do not set 'needs_free_netdev' as we do call free_netdev
+for mgmt net devices, doing both hits BUG_ON.
 
-Fixes: 427c1e7bcd7e ("{IB, net}/mlx5: Move the modify QP operation table to mlx5_ib")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/qp.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -2881,8 +2881,10 @@ static int __mlx5_ib_modify_qp(struct ib
- 		goto out;
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -4679,7 +4679,6 @@ static void dummy_setup(struct net_devic
+ 	/* Initialize the device structure. */
+ 	dev->netdev_ops = &cxgb4_mgmt_netdev_ops;
+ 	dev->ethtool_ops = &cxgb4_mgmt_ethtool_ops;
+-	dev->needs_free_netdev = true;
+ }
  
- 	if (mlx5_cur >= MLX5_QP_NUM_STATE || mlx5_new >= MLX5_QP_NUM_STATE ||
--	    !optab[mlx5_cur][mlx5_new])
-+	    !optab[mlx5_cur][mlx5_new]) {
-+		err = -EINVAL;
- 		goto out;
-+	}
- 
- 	op = optab[mlx5_cur][mlx5_new];
- 	optpar = ib_mask_to_mlx5_opt(attr_mask);
+ static int config_mgmt_dev(struct pci_dev *pdev)
