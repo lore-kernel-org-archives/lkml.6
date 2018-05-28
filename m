@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163903AbeE1Kvy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:51:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41124 "EHLO mail.kernel.org"
+        id S1163932AbeE1KwA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:52:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163869AbeE1Kvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:51:45 -0400
+        id S1163894AbeE1Kvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:51:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 234/496] hv_netvsc: fix filter flags
-Date: Mon, 28 May 2018 12:00:19 +0200
-Message-Id: <20180528100329.769235339@linuxfoundation.org>
+Subject: [PATCH 4.14 237/496] ARM: davinci: fix the GPIO lookup for omapl138-hawk
+Date: Mon, 28 May 2018 12:00:22 +0200
+Message-Id: <20180528100329.889014424@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,33 +31,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-[ Upstream commit de3d50aadd40bf68614db9fd157b275ce9c2d467 ]
+[ Upstream commit c4dc56be7e26040bfc60ce73425353516a356955 ]
 
-The recent change to not always enable all multicast and broadcast
-was broken; meant to set filter, not change flags.
+The GPIO chip is called davinci_gpio.0 in legacy mode. Fix it, so that
+mmc can correctly lookup the wp and cp gpios.
 
-Fixes: 009f766ca238 ("hv_netvsc: filter multicast/broadcast")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Note that it is the gpio-davinci driver that sets the gpiochip label to
+davinci_gpio.0.
+
+Fixes: c69f43fb4f26 ("ARM: davinci: hawk: use gpio descriptor for mmc pins")
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+[nsekhar@ti.com: add a note on where the chip label is set]
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/rndis_filter.c |    4 ++--
+ arch/arm/mach-davinci/board-omapl138-hawk.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -857,9 +857,9 @@ static void rndis_set_multicast(struct w
- 		filter = NDIS_PACKET_TYPE_PROMISCUOUS;
- 	} else {
- 		if (flags & IFF_ALLMULTI)
--			flags |= NDIS_PACKET_TYPE_ALL_MULTICAST;
-+			filter |= NDIS_PACKET_TYPE_ALL_MULTICAST;
- 		if (flags & IFF_BROADCAST)
--			flags |= NDIS_PACKET_TYPE_BROADCAST;
-+			filter |= NDIS_PACKET_TYPE_BROADCAST;
- 	}
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -127,8 +127,8 @@ static struct gpiod_lookup_table mmc_gpi
+ 	.dev_id = "da830-mmc.0",
+ 	.table = {
+ 		/* CD: gpio3_12: gpio60: chip 1 contains gpio range 32-63*/
+-		GPIO_LOOKUP("davinci_gpio.1", 28, "cd", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("davinci_gpio.1", 29, "wp", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("davinci_gpio.0", 28, "cd", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("davinci_gpio.0", 29, "wp", GPIO_ACTIVE_LOW),
+ 	},
+ };
  
- 	rndis_filter_set_packet_filter(rdev, filter);
