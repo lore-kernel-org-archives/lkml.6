@@ -1,65 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939330AbeE1Otr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:49:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48514 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932390AbeE1Otm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 10:49:42 -0400
-Date: Mon, 28 May 2018 16:49:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Paul Burton <paul.burton@mips.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] sched: Make select_task_rq() require cpu_active()
- for user tasks
-Message-ID: <20180528144924.GE12217@hirez.programming.kicks-ass.net>
-References: <20180526154648.11635-1-paul.burton@mips.com>
- <20180526154648.11635-2-paul.burton@mips.com>
+        id S939387AbeE1OuD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:50:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937260AbeE1K3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:01 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 063/329] tcp_nv: fix potential integer overflow in tcpnv_acked
+Date: Mon, 28 May 2018 11:59:52 +0200
+Message-Id: <20180528100248.054015929@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180526154648.11635-2-paul.burton@mips.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 08:46:47AM -0700, Paul Burton wrote:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1565,7 +1565,8 @@ int select_task_rq(struct task_struct *p, int cpu, int sd_flags, int wake_flags)
->  	 *   not worry about this generic constraint ]
->  	 */
->  	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
-> -		     !cpu_online(cpu)))
-> +		     !cpu_online(cpu) ||
-> +		     (!cpu_active(cpu) && !(p->flags & PF_KTHREAD))))
->  		cpu = select_fallback_rq(task_cpu(p), p);
+------------------
 
-That is not quite right.. and I find that the wrong patch:
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-  955dbdf4ce87 ("sched: Allow migrating kthreads into online but inactive CPUs")
+[ Upstream commit e4823fbd229bfbba368b40cdadb8f4eeb20604cc ]
 
-got merged over my suggested alternative :-(
+Add suffix ULL to constant 80000 in order to avoid a potential integer
+overflow and give the compiler complete information about the proper
+arithmetic to use. Notice that this constant is used in a context that
+expects an expression of type u64.
 
-  http://lkml.kernel.org/r/20170725165821.cejhb7v2s3kecems@hirez.programming.kicks-ass.net
+The current cast to u64 effectively applies to the whole expression
+as an argument of type u64 to be passed to div64_u64, but it does
+not prevent it from being evaluated using 32-bit arithmetic instead
+of 64-bit arithmetic.
 
-So, lets first fix that, and then your patch becomes something like the
-below I think.
+Also, once the expression is properly evaluated using 64-bit arithmentic,
+there is no need for the parentheses and the external cast to u64.
 
+Addresses-Coverity-ID: 1357588 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/tcp_nv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1562,7 +1562,7 @@ int select_task_rq(struct task_struct *p
- 	 *   not worry about this generic constraint ]
- 	 */
- 	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
--		     !cpu_online(cpu)))
-+		     (is_per_cpu_kthread(p) ? !cpu_online(cpu) : !cpu_active(cpu)))
- 		cpu = select_fallback_rq(task_cpu(p), p);
+--- a/net/ipv4/tcp_nv.c
++++ b/net/ipv4/tcp_nv.c
+@@ -338,7 +338,7 @@ static void tcpnv_acked(struct sock *sk,
+ 		 */
+ 		cwnd_by_slope = (u32)
+ 			div64_u64(((u64)ca->nv_rtt_max_rate) * ca->nv_min_rtt,
+-				  (u64)(80000 * tp->mss_cache));
++				  80000ULL * tp->mss_cache);
+ 		max_win = cwnd_by_slope + nv_pad;
  
- 	return cpu;
+ 		/* If cwnd > max_win, decrease cwnd
