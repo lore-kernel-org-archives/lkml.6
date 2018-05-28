@@ -1,26 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938834AbeE1M20 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:28:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48462 "EHLO mail.kernel.org"
+        id S1422686AbeE1LAt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422701AbeE1LAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:52 -0400
+        id S1164583AbeE1LAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-efi@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 431/496] efi/arm*: Only register page tables when they exist
-Date: Mon, 28 May 2018 12:03:36 +0200
-Message-Id: <20180528100337.902593455@linuxfoundation.org>
+Subject: [PATCH 4.14 427/496] hwmon: (pmbus/max8688) Accept negative page register values
+Date: Mon, 28 May 2018 12:03:32 +0200
+Message-Id: <20180528100337.735378631@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -36,97 +29,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 6b31a2fa1e8f7bc6c2a474b4a12dad7a145cf83d ]
+[ Upstream commit a46f8cd696624ef757be0311eb28f119c36778e8 ]
 
-Currently the arm/arm64 runtime code registers the runtime servies
-pagetables with ptdump regardless of whether runtime services page
-tables have been created.
+A negative page register value means that no page needs to be
+selected. This is used by status register evaluations and needs
+to be accepted.
 
-As efi_mm.pgd is NULL in these cases, attempting to dump the efi page
-tables results in a NULL pointer dereference in the ptdump code:
-
-/sys/kernel/debug# cat efi_page_tables
-[  479.522600] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-[  479.522715] Mem abort info:
-[  479.522764]   ESR = 0x96000006
-[  479.522850]   Exception class = DABT (current EL), IL = 32 bits
-[  479.522899]   SET = 0, FnV = 0
-[  479.522937]   EA = 0, S1PTW = 0
-[  479.528200] Data abort info:
-[  479.528230]   ISV = 0, ISS = 0x00000006
-[  479.528317]   CM = 0, WnR = 0
-[  479.528317] user pgtable: 4k pages, 48-bit VAs, pgd = 0000000064ab0cb0
-[  479.528449] [0000000000000000] *pgd=00000000fbbe4003, *pud=00000000fb66e003, *pmd=0000000000000000
-[  479.528600] Internal error: Oops: 96000006 [#1] PREEMPT SMP
-[  479.528664] Modules linked in:
-[  479.528699] CPU: 0 PID: 2457 Comm: cat Not tainted 4.15.0-rc3-00065-g2ad2ee7ecb5c-dirty #7
-[  479.528799] Hardware name: FVP Base (DT)
-[  479.528899] pstate: 00400009 (nzcv daif +PAN -UAO)
-[  479.528941] pc : walk_pgd.isra.1+0x20/0x1d0
-[  479.529011] lr : ptdump_walk_pgd+0x30/0x50
-[  479.529105] sp : ffff00000bf4bc20
-[  479.529185] x29: ffff00000bf4bc20 x28: 0000ffff9d22e000
-[  479.529271] x27: 0000000000020000 x26: ffff80007b4c63c0
-[  479.529358] x25: 00000000014000c0 x24: ffff80007c098900
-[  479.529445] x23: ffff00000bf4beb8 x22: 0000000000000000
-[  479.529532] x21: ffff00000bf4bd70 x20: 0000000000000001
-[  479.529618] x19: ffff00000bf4bcb0 x18: 0000000000000000
-[  479.529760] x17: 000000000041a1c8 x16: ffff0000082139d8
-[  479.529800] x15: 0000ffff9d3c6030 x14: 0000ffff9d2527f4
-[  479.529924] x13: 00000000000003f3 x12: 0000000000000038
-[  479.530000] x11: 0000000000000003 x10: 0101010101010101
-[  479.530099] x9 : 0000000017e94050 x8 : 000000000000003f
-[  479.530226] x7 : 0000000000000000 x6 : 0000000000000000
-[  479.530313] x5 : 0000000000000001 x4 : 0000000000000000
-[  479.530416] x3 : ffff000009069fd8 x2 : 0000000000000000
-[  479.530500] x1 : 0000000000000000 x0 : 0000000000000000
-[  479.530599] Process cat (pid: 2457, stack limit = 0x000000005d1b0e6f)
-[  479.530660] Call trace:
-[  479.530746]  walk_pgd.isra.1+0x20/0x1d0
-[  479.530833]  ptdump_walk_pgd+0x30/0x50
-[  479.530907]  ptdump_show+0x10/0x20
-[  479.530920]  seq_read+0xc8/0x470
-[  479.531023]  full_proxy_read+0x60/0x90
-[  479.531100]  __vfs_read+0x18/0x100
-[  479.531180]  vfs_read+0x88/0x160
-[  479.531267]  SyS_read+0x48/0xb0
-[  479.531299]  el0_svc_naked+0x20/0x24
-[  479.531400] Code: 91400420 f90033a0 a90707a2 f9403fa0 (f9400000)
-[  479.531499] ---[ end trace bfe8e28d8acb2b67 ]---
-Segmentation fault
-
-Let's avoid this problem by only registering the tables after their
-successful creation, which is also less confusing when EFI runtime
-services are not in use.
-
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180308080020.22828-2-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: da8e48ab483e1 ("hwmon: (pmbus) Always call _pmbus_read_byte in core driver")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/efi/arm-runtime.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hwmon/pmbus/max8688.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -54,6 +54,9 @@ static struct ptdump_info efi_ptdump_inf
- 
- static int __init ptdump_init(void)
+--- a/drivers/hwmon/pmbus/max8688.c
++++ b/drivers/hwmon/pmbus/max8688.c
+@@ -45,7 +45,7 @@ static int max8688_read_word_data(struct
  {
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES))
-+		return 0;
-+
- 	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
- }
- device_initcall(ptdump_init);
+ 	int ret;
+ 
+-	if (page)
++	if (page > 0)
+ 		return -ENXIO;
+ 
+ 	switch (reg) {
