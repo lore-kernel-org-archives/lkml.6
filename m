@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162578AbeE1KjD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:39:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59236 "EHLO mail.kernel.org"
+        id S1162594AbeE1KjJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:39:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162549AbeE1Ki5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:38:57 -0400
+        id S1162574AbeE1KjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 282/329] regulator: gpio: Fix some error handling paths in gpio_regulator_probe()
-Date: Mon, 28 May 2018 12:03:31 +0200
-Message-Id: <20180528100305.264751751@linuxfoundation.org>
+Subject: [PATCH 4.9 284/329] MIPS: ath79: Fix AR724X_PLL_REG_PCIE_CONFIG offset
+Date: Mon, 28 May 2018 12:03:33 +0200
+Message-Id: <20180528100305.404513408@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,84 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Mathias Kresin <dev@kresin.me>
 
-[ Upstream commit ed8cffda27dea6fd3dafb3ee881c5a786edac9ca ]
+[ Upstream commit 05454c1bde91fb013c0431801001da82947e6b5a ]
 
-Re-order error handling code and gotos to avoid leaks in error handling
-paths.
+According to the QCA u-boot source the "PCIE Phase Lock Loop
+Configuration (PCIE_PLL_CONFIG)" register is for all SoCs except the
+QCA955X and QCA956X at offset 0x10.
 
-Fixes: 9f946099fe19 ("regulator: gpio: fix parsing of gpio list")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Since the PCIE PLL config register is only defined for the AR724x fix
+only this value. The value is wrong since the day it was added and isn't
+used by any driver yet.
+
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/16048/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/regulator/gpio-regulator.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ arch/mips/include/asm/mach-ath79/ar71xx_regs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/regulator/gpio-regulator.c
-+++ b/drivers/regulator/gpio-regulator.c
-@@ -268,8 +268,7 @@ static int gpio_regulator_probe(struct p
- 	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
- 	if (drvdata->desc.name == NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
--		ret = -ENOMEM;
--		goto err;
-+		return -ENOMEM;
- 	}
+--- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+@@ -167,7 +167,7 @@
+ #define AR71XX_AHB_DIV_MASK		0x7
  
- 	if (config->nr_gpios != 0) {
-@@ -289,7 +288,7 @@ static int gpio_regulator_probe(struct p
- 				dev_err(&pdev->dev,
- 					"Could not obtain regulator setting GPIOs: %d\n",
- 					ret);
--			goto err_memstate;
-+			goto err_memgpio;
- 		}
- 	}
+ #define AR724X_PLL_REG_CPU_CONFIG	0x00
+-#define AR724X_PLL_REG_PCIE_CONFIG	0x18
++#define AR724X_PLL_REG_PCIE_CONFIG	0x10
  
-@@ -300,7 +299,7 @@ static int gpio_regulator_probe(struct p
- 	if (drvdata->states == NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate state data\n");
- 		ret = -ENOMEM;
--		goto err_memgpio;
-+		goto err_stategpio;
- 	}
- 	drvdata->nr_states = config->nr_states;
- 
-@@ -321,7 +320,7 @@ static int gpio_regulator_probe(struct p
- 	default:
- 		dev_err(&pdev->dev, "No regulator type set\n");
- 		ret = -EINVAL;
--		goto err_memgpio;
-+		goto err_memstate;
- 	}
- 
- 	/* build initial state from gpio init data. */
-@@ -358,22 +357,21 @@ static int gpio_regulator_probe(struct p
- 	if (IS_ERR(drvdata->dev)) {
- 		ret = PTR_ERR(drvdata->dev);
- 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
--		goto err_stategpio;
-+		goto err_memstate;
- 	}
- 
- 	platform_set_drvdata(pdev, drvdata);
- 
- 	return 0;
- 
--err_stategpio:
--	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
- err_memstate:
- 	kfree(drvdata->states);
-+err_stategpio:
-+	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
- err_memgpio:
- 	kfree(drvdata->gpios);
- err_name:
- 	kfree(drvdata->desc.name);
--err:
- 	return ret;
- }
- 
+ #define AR724X_PLL_FB_SHIFT		0
+ #define AR724X_PLL_FB_MASK		0x3ff
