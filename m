@@ -1,80 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034498AbeE1Pc5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:32:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35803 "EHLO mx2.suse.de"
+        id S1034496AbeE1Pcv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:32:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35788 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033099AbeE1PcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1032737AbeE1PcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 11:32:17 -0400
-Date: Mon, 28 May 2018 16:10:00 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: ufo19890607 <ufo19890607@gmail.com>
-Cc: akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] Refactor part of the oom report in dump_header
-Message-ID: <20180528141000.GG27180@dhcp22.suse.cz>
-References: <1527413551-5982-1-git-send-email-ufo19890607@gmail.com>
+Subject: Re: [PATCH] mm, page_alloc: do not break __GFP_THISNODE by zonelist
+ reset
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, stable@vger.kernel.org
+References: <20180525130853.13915-1-vbabka@suse.cz>
+ <20180525124300.964a1a15d953e8972625bb0f@linux-foundation.org>
+ <4cd73f77-e6ab-bdd1-69a2-bd0f8413d189@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ A3XDrKOXTZil3g8D
+Message-ID: <26adcbc0-7741-4f39-9fac-fc7f387bdbe6@suse.cz>
+Date: Mon, 28 May 2018 11:55:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527413551-5982-1-git-send-email-ufo19890607@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <4cd73f77-e6ab-bdd1-69a2-bd0f8413d189@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 27-05-18 10:32:31, ufo19890607 wrote:
-> The dump_header does not print the memcg's name when the system
-> oom happened, so users cannot locate the certain container which
-> contains the task that has been killed by the oom killer.
+On 05/25/2018 10:48 PM, Vlastimil Babka wrote:
+> On 05/25/2018 09:43 PM, Andrew Morton wrote:
+>> On Fri, 25 May 2018 15:08:53 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>>> we might consider this for 4.17 although I don't know if there's anything
+>>> currently broken. Stable backports should be more important, but will have to
+>>> be reviewed carefully, as the code went through many changes.
+>>> BTW I think that also the ac->preferred_zoneref reset is currently useless if
+>>> we don't also reset ac->nodemask from a mempolicy to NULL first (which we
+>>> probably should for the OOM victims etc?), but I would leave that for a
+>>> separate patch.
+>>
+>> Confused.  If nothing is currently broken then why is a backport
+>> needed?  Presumably because we expect breakage in the future?  Can you
+>> expand on this?
 > 
-> I follow the advices of David Rientjes and Michal Hocko, and refactor
-> part of the oom report in a backwards compatible way. After this patch,
-> users can get the memcg's path from the oom report and check the certain
-> container more quickly.
-> 
-> Below is the part of the oom report in the dmesg
-> ...
-> [  142.158316] panic cpuset=/ mems_allowed=0-1
-> [  142.158983] CPU: 15 PID: 8682 Comm: panic Not tainted 4.17.0-rc6+ #13
-> [  142.159659] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
-> [  142.160342] Call Trace:
-> [  142.161037]  dump_stack+0x78/0xb3
-> [  142.161734]  dump_header+0x7d/0x334
-> [  142.162433]  oom_kill_process+0x228/0x490
-> [  142.163126]  ? oom_badness+0x2a/0x130
-> [  142.163821]  out_of_memory+0xf0/0x280
-> [  142.164532]  __alloc_pages_slowpath+0x711/0xa07
-> [  142.165241]  __alloc_pages_nodemask+0x23f/0x260
-> [  142.165947]  alloc_pages_vma+0x73/0x180
-> [  142.166665]  do_anonymous_page+0xed/0x4e0
-> [  142.167388]  __handle_mm_fault+0xbd2/0xe00
-> [  142.168114]  handle_mm_fault+0x116/0x250
-> [  142.168841]  __do_page_fault+0x233/0x4d0
-> [  142.169567]  do_page_fault+0x32/0x130
-> [  142.170303]  ? page_fault+0x8/0x30
-> [  142.171036]  page_fault+0x1e/0x30
-> [  142.171764] RIP: 0033:0x7f403000a860
-> [  142.172517] RSP: 002b:00007ffc9f745c28 EFLAGS: 00010206
-> [  142.173268] RAX: 00007f3f6fd7d000 RBX: 0000000000000000 RCX: 00007f3f7f5cd000
-> [  142.174040] RDX: 00007f3fafd7d000 RSI: 0000000000000000 RDI: 00007f3f6fd7d000
-> [  142.174806] RBP: 00007ffc9f745c50 R08: ffffffffffffffff R09: 0000000000000000
-> [  142.175623] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000400490
-> [  142.176542] R13: 00007ffc9f745d30 R14: 0000000000000000 R15: 0000000000000000
-> [  142.177709] oom-kill: constrain=CONSTRAINT_NONE nodemask=(null) origin_memcg= kill_memcg=/test/test1/test2 task=panic pid= 8622 uid=    0
+> I mean that SLAB is currently not affected, but in older kernels than
+> 4.7 that don't yet have 511e3a058812 ("mm/slab: make cache_grow() handle
+> the page allocated on arbitrary node") it is. That's at least 4.4 LTS.
+> Older ones I'll have to check.
 
-Is it really helpful to dump the nodemask here again? We already have it
-as a part of the "%s invoked oom-killer:" message.
+So I've checked the non-EOL LTS's at kernel.org and:
 
-Also I am worried that you are trying to do too many thing in a single
-patch. One part is to provide an additional information. The other is
-to guarantee a single line output. While the later is nice to have is
-2*PATH_MAX static buffer justified for something that shouldn't really
-occure? Also how often is the OOM report unreadable due to interleaving
-messages?
--- 
-Michal Hocko
-SUSE Labs
+4.16, 4.14, 4.9 - same as mainline (__GFP_THISNODE broken, but SLAB is OK)
+4.4, 4.1, 3.16 - SLAB potentially broken if it makes an
+ALLOC_NO_WATERMARKS allocation (our 4.4 kernel has backports that extend
+it to also !ALLOC_CPUSET so it's more likely).
