@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423786AbeE1LMX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:12:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59988 "EHLO mail.kernel.org"
+        id S1424181AbeE1LMh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:12:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938038AbeE1LMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:12:13 -0400
+        id S1424166AbeE1LM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:12:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 179/272] cxl: Check if PSL data-cache is available before issue flush request
-Date: Mon, 28 May 2018 12:03:32 +0200
-Message-Id: <20180528100255.757970401@linuxfoundation.org>
+Subject: [PATCH 4.16 156/272] i2c: mv64xxx: Apply errata delay only in standard mode
+Date: Mon, 28 May 2018 12:03:09 +0200
+Message-Id: <20180528100254.001480848@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,125 +29,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-[ Upstream commit 94322ed8e857e3b2a33cf75118051af9baaa110f ]
+[ Upstream commit 31184d8c6ea49ea0676d100cdd7e1f102ad025b5 ]
 
-PSL9D doesn't have a data-cache that needs to be flushed before
-resetting the card. However when cxl tries to flush data-cache on such
-a card, it times-out as PSL_Control register never indicates flush
-operation complete due to missing data-cache. This is usually
-indicated in the kernel logs with this message:
+The errata FE-8471889 description has been updated. There is still a
+timing violation for repeated start. But the errata now states that it
+was only the case for the Standard mode (100 kHz), in Fast mode (400 kHz)
+there is no issue.
 
-"WARNING: cache flush timed out"
+This patch limit the errata fix to the Standard mode.
 
-To fix this the patch checks PSL_Debug register CDC-Field(BIT:27)
-which indicates the absence of a data-cache and sets a flag
-'no_data_cache' in 'struct cxl_native' to indicate this. When
-cxl_data_cache_flush() is called it checks the flag and if set bails
-out early without requesting a data-cache flush operation to the PSL.
+It has been tesed successfully on the clearfog (Aramda 388 based board).
 
-Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/cxl/cxl.h    |    4 ++++
- drivers/misc/cxl/native.c |   11 ++++++++++-
- drivers/misc/cxl/pci.c    |   19 +++++++++++++------
- 3 files changed, 27 insertions(+), 7 deletions(-)
+ drivers/i2c/busses/i2c-mv64xxx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/misc/cxl/cxl.h
-+++ b/drivers/misc/cxl/cxl.h
-@@ -369,6 +369,9 @@ static const cxl_p2n_reg_t CXL_PSL_WED_A
- #define CXL_PSL_TFC_An_AE (1ull << (63-30)) /* Restart PSL with address error */
- #define CXL_PSL_TFC_An_R  (1ull << (63-31)) /* Restart PSL transaction */
- 
-+/****** CXL_PSL_DEBUG *****************************************************/
-+#define CXL_PSL_DEBUG_CDC  (1ull << (63-27)) /* Coherent Data cache support */
-+
- /****** CXL_XSL9_IERAT_ERAT - CAIA 2 **********************************/
- #define CXL_XSL9_IERAT_MLPID    (1ull << (63-0))  /* Match LPID */
- #define CXL_XSL9_IERAT_MPID     (1ull << (63-1))  /* Match PID */
-@@ -669,6 +672,7 @@ struct cxl_native {
- 	irq_hw_number_t err_hwirq;
- 	unsigned int err_virq;
- 	u64 ps_off;
-+	bool no_data_cache; /* set if no data cache on the card */
- 	const struct cxl_service_layer_ops *sl_ops;
- };
- 
---- a/drivers/misc/cxl/native.c
-+++ b/drivers/misc/cxl/native.c
-@@ -353,8 +353,17 @@ int cxl_data_cache_flush(struct cxl *ada
- 	u64 reg;
- 	unsigned long timeout = jiffies + (HZ * CXL_TIMEOUT);
- 
--	pr_devel("Flushing data cache\n");
-+	/*
-+	 * Do a datacache flush only if datacache is available.
-+	 * In case of PSL9D datacache absent hence flush operation.
-+	 * would timeout.
-+	 */
-+	if (adapter->native->no_data_cache) {
-+		pr_devel("No PSL data cache. Ignoring cache flush req.\n");
-+		return 0;
-+	}
- 
-+	pr_devel("Flushing data cache\n");
- 	reg = cxl_p1_read(adapter, CXL_PSL_Control);
- 	reg |= CXL_PSL_Control_Fr;
- 	cxl_p1_write(adapter, CXL_PSL_Control, reg);
---- a/drivers/misc/cxl/pci.c
-+++ b/drivers/misc/cxl/pci.c
-@@ -456,6 +456,7 @@ static int init_implementation_adapter_r
- 	u64 chipid;
- 	u32 phb_index;
- 	u64 capp_unit_id;
-+	u64 psl_debug;
- 	int rc;
- 
- 	rc = cxl_calc_capp_routing(dev, &chipid, &phb_index, &capp_unit_id);
-@@ -506,6 +507,16 @@ static int init_implementation_adapter_r
- 	} else
- 		cxl_p1_write(adapter, CXL_PSL9_DEBUG, 0x4000000000000000ULL);
- 
-+	/*
-+	 * Check if PSL has data-cache. We need to flush adapter datacache
-+	 * when as its about to be removed.
-+	 */
-+	psl_debug = cxl_p1_read(adapter, CXL_PSL9_DEBUG);
-+	if (psl_debug & CXL_PSL_DEBUG_CDC) {
-+		dev_dbg(&dev->dev, "No data-cache present\n");
-+		adapter->native->no_data_cache = true;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1449,10 +1460,8 @@ int cxl_pci_reset(struct cxl *adapter)
- 
- 	/*
- 	 * The adapter is about to be reset, so ignore errors.
--	 * Not supported on P9 DD1
+--- a/drivers/i2c/busses/i2c-mv64xxx.c
++++ b/drivers/i2c/busses/i2c-mv64xxx.c
+@@ -845,12 +845,16 @@ mv64xxx_of_config(struct mv64xxx_i2c_dat
  	 */
--	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
--		cxl_data_cache_flush(adapter);
-+	cxl_data_cache_flush(adapter);
+ 	if (of_device_is_compatible(np, "marvell,mv78230-i2c")) {
+ 		drv_data->offload_enabled = true;
+-		drv_data->errata_delay = true;
++		/* The delay is only needed in standard mode (100kHz) */
++		if (bus_freq <= 100000)
++			drv_data->errata_delay = true;
+ 	}
  
- 	/* pcie_warm_reset requests a fundamental pci reset which includes a
- 	 * PERST assert/deassert.  PERST triggers a loading of the image
-@@ -1936,10 +1945,8 @@ static void cxl_pci_remove_adapter(struc
+ 	if (of_device_is_compatible(np, "marvell,mv78230-a0-i2c")) {
+ 		drv_data->offload_enabled = false;
+-		drv_data->errata_delay = true;
++		/* The delay is only needed in standard mode (100kHz) */
++		if (bus_freq <= 100000)
++			drv_data->errata_delay = true;
+ 	}
  
- 	/*
- 	 * Flush adapter datacache as its about to be removed.
--	 * Not supported on P9 DD1.
- 	 */
--	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
--		cxl_data_cache_flush(adapter);
-+	cxl_data_cache_flush(adapter);
- 
- 	cxl_deconfigure_adapter(adapter);
- 
+ 	if (of_device_is_compatible(np, "allwinner,sun6i-a31-i2c"))
