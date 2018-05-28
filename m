@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163750AbeE1Ku4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163737AbeE1Kut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1163738AbeE1Kut (ORCPT <rfc822;w@1wt.eu>);
         Mon, 28 May 2018 06:50:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163473AbeE1Kun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 182/496] IB/mlx: Set slid to zero in Ethernet completion struct
-Date: Mon, 28 May 2018 11:59:27 +0200
-Message-Id: <20180528100327.628551595@linuxfoundation.org>
+Subject: [PATCH 4.14 180/496] ARC: setup cpu possible mask according to possible-cpus dts property
+Date: Mon, 28 May 2018 11:59:25 +0200
+Message-Id: <20180528100327.528488760@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,82 +30,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Moni Shoua <monis@mellanox.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit 65389322b28f81cc137b60a41044c2d958a7b950 ]
+[ Upstream commit a29a25275452c97fe35815f1eb9564f2a07a1965 ]
 
-IB spec says that a lid should be ignored when link layer is Ethernet,
-for example when building or parsing a CM request message (CA17-34).
-However, since ib_lid_be16() and ib_lid_cpu16()  validates the slid,
-not only when link layer is IB, we set the slid to zero to prevent
-false warnings in the kernel log.
+As we have option in u-boot to set CPU mask for running linux,
+we want to pass information to kernel about CPU cores should
+be brought up. So we patch kernel dtb in u-boot to set
+possible-cpus property.
 
-Fixes: 62ede7779904 ("Add OPA extended LID support")
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This also allows us to have correctly setuped MCIP debug mask.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/cq.c |    4 +++-
- drivers/infiniband/hw/mlx5/cq.c |    3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ arch/arc/kernel/smp.c |   50 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 40 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/cq.c
-+++ b/drivers/infiniband/hw/mlx4/cq.c
-@@ -597,6 +597,7 @@ static void use_tunnel_data(struct mlx4_
- 	wc->dlid_path_bits = 0;
+--- a/arch/arc/kernel/smp.c
++++ b/arch/arc/kernel/smp.c
+@@ -24,6 +24,7 @@
+ #include <linux/reboot.h>
+ #include <linux/irqdomain.h>
+ #include <linux/export.h>
++#include <linux/of_fdt.h>
  
- 	if (is_eth) {
-+		wc->slid = 0;
- 		wc->vlan_id = be16_to_cpu(hdr->tun.sl_vid);
- 		memcpy(&(wc->smac[0]), (char *)&hdr->tun.mac_31_0, 4);
- 		memcpy(&(wc->smac[4]), (char *)&hdr->tun.slid_mac_47_32, 2);
-@@ -845,7 +846,6 @@ repoll:
- 			}
- 		}
+ #include <asm/processor.h>
+ #include <asm/setup.h>
+@@ -47,6 +48,42 @@ void __init smp_prepare_boot_cpu(void)
+ {
+ }
  
--		wc->slid	   = be16_to_cpu(cqe->rlid);
- 		g_mlpath_rqpn	   = be32_to_cpu(cqe->g_mlpath_rqpn);
- 		wc->src_qp	   = g_mlpath_rqpn & 0xffffff;
- 		wc->dlid_path_bits = (g_mlpath_rqpn >> 24) & 0x7f;
-@@ -854,6 +854,7 @@ repoll:
- 		wc->wc_flags	  |= mlx4_ib_ipoib_csum_ok(cqe->status,
- 					cqe->checksum) ? IB_WC_IP_CSUM_OK : 0;
- 		if (is_eth) {
-+			wc->slid = 0;
- 			wc->sl  = be16_to_cpu(cqe->sl_vid) >> 13;
- 			if (be32_to_cpu(cqe->vlan_my_qpn) &
- 					MLX4_CQE_CVLAN_PRESENT_MASK) {
-@@ -865,6 +866,7 @@ repoll:
- 			memcpy(wc->smac, cqe->smac, ETH_ALEN);
- 			wc->wc_flags |= (IB_WC_WITH_VLAN | IB_WC_WITH_SMAC);
- 		} else {
-+			wc->slid = be16_to_cpu(cqe->rlid);
- 			wc->sl  = be16_to_cpu(cqe->sl_vid) >> 12;
- 			wc->vlan_id = 0xffff;
- 		}
---- a/drivers/infiniband/hw/mlx5/cq.c
-+++ b/drivers/infiniband/hw/mlx5/cq.c
-@@ -224,7 +224,6 @@ static void handle_responder(struct ib_w
- 		wc->ex.invalidate_rkey = be32_to_cpu(cqe->imm_inval_pkey);
- 		break;
- 	}
--	wc->slid	   = be16_to_cpu(cqe->slid);
- 	wc->src_qp	   = be32_to_cpu(cqe->flags_rqpn) & 0xffffff;
- 	wc->dlid_path_bits = cqe->ml_path;
- 	g = (be32_to_cpu(cqe->flags_rqpn) >> 28) & 3;
-@@ -239,10 +238,12 @@ static void handle_responder(struct ib_w
- 	}
++static int __init arc_get_cpu_map(const char *name, struct cpumask *cpumask)
++{
++	unsigned long dt_root = of_get_flat_dt_root();
++	const char *buf;
++
++	buf = of_get_flat_dt_prop(dt_root, name, NULL);
++	if (!buf)
++		return -EINVAL;
++
++	if (cpulist_parse(buf, cpumask))
++		return -EINVAL;
++
++	return 0;
++}
++
++/*
++ * Read from DeviceTree and setup cpu possible mask. If there is no
++ * "possible-cpus" property in DeviceTree pretend all [0..NR_CPUS-1] exist.
++ */
++static void __init arc_init_cpu_possible(void)
++{
++	struct cpumask cpumask;
++
++	if (arc_get_cpu_map("possible-cpus", &cpumask)) {
++		pr_warn("Failed to get possible-cpus from dtb, pretending all %u cpus exist\n",
++			NR_CPUS);
++
++		cpumask_setall(&cpumask);
++	}
++
++	if (!cpumask_test_cpu(0, &cpumask))
++		panic("Master cpu (cpu[0]) is missed in cpu possible mask!");
++
++	init_cpu_possible(&cpumask);
++}
++
+ /*
+  * Called from setup_arch() before calling setup_processor()
+  *
+@@ -58,10 +95,7 @@ void __init smp_prepare_boot_cpu(void)
+  */
+ void __init smp_init_cpus(void)
+ {
+-	unsigned int i;
+-
+-	for (i = 0; i < NR_CPUS; i++)
+-		set_cpu_possible(i, true);
++	arc_init_cpu_possible();
  
- 	if (ll != IB_LINK_LAYER_ETHERNET) {
-+		wc->slid = be16_to_cpu(cqe->slid);
- 		wc->sl = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0xf;
- 		return;
- 	}
+ 	if (plat_smp_ops.init_early_smp)
+ 		plat_smp_ops.init_early_smp();
+@@ -70,16 +104,12 @@ void __init smp_init_cpus(void)
+ /* called from init ( ) =>  process 1 */
+ void __init smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * if platform didn't set the present map already, do it now
+ 	 * boot cpu is set to present already by init/main.c
+ 	 */
+-	if (num_present_cpus() <= 1) {
+-		for (i = 0; i < max_cpus; i++)
+-			set_cpu_present(i, true);
+-	}
++	if (num_present_cpus() <= 1)
++		init_cpu_present(cpu_possible_mask);
+ }
  
-+	wc->slid = 0;
- 	vlan_present = cqe->l4_l3_hdr_type & 0x1;
- 	roce_packet_type   = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0x3;
- 	if (vlan_present) {
+ void __init smp_cpus_done(unsigned int max_cpus)
