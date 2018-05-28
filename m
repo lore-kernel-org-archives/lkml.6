@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938085AbeE1K7A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:59:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46848 "EHLO mail.kernel.org"
+        id S1164023AbeE1K7E (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:59:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938058AbeE1K6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:47 -0400
+        id S938038AbeE1K65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 354/496] Btrfs: fix copy_items() return value when logging an inode
-Date: Mon, 28 May 2018 12:02:19 +0200
-Message-Id: <20180528100334.718425651@linuxfoundation.org>
+Subject: [PATCH 4.14 348/496] fscache: Fix hanging wait on page discarded by writeback
+Date: Mon, 28 May 2018 12:02:13 +0200
+Message-Id: <20180528100334.471042227@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,40 +29,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 8434ec46c6e3232cebc25a910363b29f5c617820 ]
+[ Upstream commit 2c98425720233ae3e135add0c7e869b32913502f ]
 
-When logging an inode, at tree-log.c:copy_items(), if we call
-btrfs_next_leaf() at the loop which checks for the need to log holes, we
-need to make sure copy_items() returns the value 1 to its caller and
-not 0 (on success). This is because the path the caller passed was
-released and is now different from what is was before, and the caller
-expects a return value of 0 to mean both success and that the path
-has not changed, while a return value of 1 means both success and
-signals the caller that it can not reuse the path, it has to perform
-another tree search.
+If the fscache asynchronous write operation elects to discard a page that's
+pending storage to the cache because the page would be over the store limit
+then it needs to wake the page as someone may be waiting on completion of
+the write.
 
-Even though this is a case that should not be triggered on normal
-circumstances or very rare at least, its consequences can be very
-unpredictable (especially when replaying a log tree).
+The problem is that the store limit may be updated by a different
+asynchronous operation - and so may miss the write - and that the store
+limit may not even get updated until later by the netfs.
 
-Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fix the kernel hang by making fscache_write_op() mark as written any pages
+that are over the limit.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-log.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/fscache/page.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3918,6 +3918,7 @@ fill_holes:
- 			ASSERT(ret == 0);
- 			src = src_path->nodes[0];
- 			i = 0;
-+			need_find_last_extent = true;
- 		}
+--- a/fs/fscache/page.c
++++ b/fs/fscache/page.c
+@@ -776,6 +776,7 @@ static void fscache_write_op(struct fsca
  
- 		btrfs_item_key_to_cpu(src, &key, i);
+ 	_enter("{OP%x,%d}", op->op.debug_id, atomic_read(&op->op.usage));
+ 
++again:
+ 	spin_lock(&object->lock);
+ 	cookie = object->cookie;
+ 
+@@ -816,10 +817,6 @@ static void fscache_write_op(struct fsca
+ 		goto superseded;
+ 	page = results[0];
+ 	_debug("gang %d [%lx]", n, page->index);
+-	if (page->index >= op->store_limit) {
+-		fscache_stat(&fscache_n_store_pages_over_limit);
+-		goto superseded;
+-	}
+ 
+ 	radix_tree_tag_set(&cookie->stores, page->index,
+ 			   FSCACHE_COOKIE_STORING_TAG);
+@@ -829,6 +826,9 @@ static void fscache_write_op(struct fsca
+ 	spin_unlock(&cookie->stores_lock);
+ 	spin_unlock(&object->lock);
+ 
++	if (page->index >= op->store_limit)
++		goto discard_page;
++
+ 	fscache_stat(&fscache_n_store_pages);
+ 	fscache_stat(&fscache_n_cop_write_page);
+ 	ret = object->cache->ops->write_page(op, page);
+@@ -844,6 +844,11 @@ static void fscache_write_op(struct fsca
+ 	_leave("");
+ 	return;
+ 
++discard_page:
++	fscache_stat(&fscache_n_store_pages_over_limit);
++	fscache_end_page_write(object, page);
++	goto again;
++
+ superseded:
+ 	/* this writer is going away and there aren't any more things to
+ 	 * write */
