@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423724AbeE1LJO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:09:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
+        id S1423845AbeE1Lx0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:53:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423710AbeE1LJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:09:09 -0400
+        id S1423208AbeE1LJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:09:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 086/272] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
-Date: Mon, 28 May 2018 12:01:59 +0200
-Message-Id: <20180528100248.333468228@linuxfoundation.org>
+Subject: [PATCH 4.16 085/272] platform/x86: dell-smbios: Fix memory leaks in build_tokens_sysfs()
+Date: Mon, 28 May 2018 12:01:58 +0200
+Message-Id: <20180528100248.273075692@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,32 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
+[ Upstream commit 0e5b09b165510e2ea5c526e962c4edadd849ef4c ]
 
-bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
-32-bit word without using proper accessors, fix this, and because a
-length cannot be negative, use unsigned int while at it.
+We're freeing "value_name" which is NULL, so that's a no-op, but we
+intended to free "location_name" instead.  And then we don't free the
+names in token_location_attrs[0] and token_value_attrs[0].
 
-Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 33b9ca1e53b4 ("platform/x86: dell-smbios: Add a sysfs interface for SMBIOS tokens")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/platform/x86/dell-smbios-base.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bgmac.c
-+++ b/drivers/net/ethernet/broadcom/bgmac.c
-@@ -533,7 +533,8 @@ static void bgmac_dma_tx_ring_free(struc
- 	int i;
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -514,7 +514,7 @@ static int build_tokens_sysfs(struct pla
+ 		continue;
  
- 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
--		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
-+		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
-+		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
+ loop_fail_create_value:
+-		kfree(value_name);
++		kfree(location_name);
+ 		goto out_unwind_strings;
+ 	}
+ 	smbios_attribute_group.attrs = token_attrs;
+@@ -525,7 +525,7 @@ loop_fail_create_value:
+ 	return 0;
  
- 		slot = &ring->slots[i];
- 		dev_kfree_skb(slot->skb);
+ out_unwind_strings:
+-	for (i = i-1; i > 0; i--) {
++	while (i--) {
+ 		kfree(token_location_attrs[i].attr.name);
+ 		kfree(token_value_attrs[i].attr.name);
+ 	}
