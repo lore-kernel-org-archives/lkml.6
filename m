@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424020AbeE1LLM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:11:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59132 "EHLO mail.kernel.org"
+        id S1424049AbeE1LLW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:11:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424000AbeE1LLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:11:06 -0400
+        id S1423737AbeE1LLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:11:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 111/272] hwmon: (nct6775) Fix writing pwmX_mode
-Date: Mon, 28 May 2018 12:02:24 +0200
-Message-Id: <20180528100250.512755822@linuxfoundation.org>
+Subject: [PATCH 4.16 160/272] IB/core: Honor port_num while resolving GID for IB link layer
+Date: Mon, 28 May 2018 12:03:13 +0200
+Message-Id: <20180528100254.293922432@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,61 +31,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 415eb2a1aaa4881cf85bd86c683356fdd8094a23 ]
+[ Upstream commit 563c4ba3bd2b8b0b21c65669ec2226b1cfa1138b ]
 
-pwmX_mode is defined in the ABI as 0=DC mode, 1=pwm mode. The chip
-register bit is set to 1 for DC mode. This got mixed up, and writing
-1 into pwmX_mode resulted in DC mode enabled. Fix it up by using
-the ABI definition throughout the driver for consistency.
+ah_attr contains the port number to which cm_id is bound. However, while
+searching for GID table for matching GID entry, the port number is
+ignored.
 
-Fixes: 77eb5b3703d99 ("hwmon: (nct6775) Add support for pwm, pwm_mode, ... ")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+This could cause the wrong GID to be used when the ah_attr is converted to
+an AH.
+
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/nct6775.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/multicast.c |   24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -1469,7 +1469,7 @@ static void nct6775_update_pwm(struct de
- 		duty_is_dc = data->REG_PWM_MODE[i] &&
- 		  (nct6775_read_value(data, data->REG_PWM_MODE[i])
- 		   & data->PWM_MODE_MASK[i]);
--		data->pwm_mode[i] = duty_is_dc;
-+		data->pwm_mode[i] = !duty_is_dc;
+--- a/drivers/infiniband/core/multicast.c
++++ b/drivers/infiniband/core/multicast.c
+@@ -724,21 +724,19 @@ int ib_init_ah_from_mcmember(struct ib_d
+ {
+ 	int ret;
+ 	u16 gid_index;
+-	u8 p;
  
- 		fanmodecfg = nct6775_read_value(data, data->REG_FAN_MODE[i]);
- 		for (j = 0; j < ARRAY_SIZE(data->REG_PWM); j++) {
-@@ -2350,7 +2350,7 @@ show_pwm_mode(struct device *dev, struct
- 	struct nct6775_data *data = nct6775_update_device(dev);
- 	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+-	if (rdma_protocol_roce(device, port_num)) {
+-		ret = ib_find_cached_gid_by_port(device, &rec->port_gid,
+-						 gid_type, port_num,
+-						 ndev,
+-						 &gid_index);
+-	} else if (rdma_protocol_ib(device, port_num)) {
+-		ret = ib_find_cached_gid(device, &rec->port_gid,
+-					 IB_GID_TYPE_IB, NULL, &p,
+-					 &gid_index);
+-	} else {
+-		ret = -EINVAL;
+-	}
++	/* GID table is not based on the netdevice for IB link layer,
++	 * so ignore ndev during search.
++	 */
++	if (rdma_protocol_ib(device, port_num))
++		ndev = NULL;
++	else if (!rdma_protocol_roce(device, port_num))
++		return -EINVAL;
  
--	return sprintf(buf, "%d\n", !data->pwm_mode[sattr->index]);
-+	return sprintf(buf, "%d\n", data->pwm_mode[sattr->index]);
- }
++	ret = ib_find_cached_gid_by_port(device, &rec->port_gid,
++					 gid_type, port_num,
++					 ndev,
++					 &gid_index);
+ 	if (ret)
+ 		return ret;
  
- static ssize_t
-@@ -2371,9 +2371,9 @@ store_pwm_mode(struct device *dev, struc
- 	if (val > 1)
- 		return -EINVAL;
- 
--	/* Setting DC mode is not supported for all chips/channels */
-+	/* Setting DC mode (0) is not supported for all chips/channels */
- 	if (data->REG_PWM_MODE[nr] == 0) {
--		if (val)
-+		if (!val)
- 			return -EINVAL;
- 		return count;
- 	}
-@@ -2382,7 +2382,7 @@ store_pwm_mode(struct device *dev, struc
- 	data->pwm_mode[nr] = val;
- 	reg = nct6775_read_value(data, data->REG_PWM_MODE[nr]);
- 	reg &= ~data->PWM_MODE_MASK[nr];
--	if (val)
-+	if (!val)
- 		reg |= data->PWM_MODE_MASK[nr];
- 	nct6775_write_value(data, data->REG_PWM_MODE[nr], reg);
- 	mutex_unlock(&data->update_lock);
