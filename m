@@ -1,86 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754117AbeE1I5m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:57:42 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46089 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753493AbeE1I5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:57:41 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v3] f2fs: fix to avoid race during access gc_thread pointer
-Date: Mon, 28 May 2018 16:57:32 +0800
-Message-ID: <20180528085732.91308-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
+        id S1754156AbeE1I6v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:58:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39078 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753493AbeE1I6u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:58:50 -0400
+X-Google-Smtp-Source: ADUXVKI0Hsp64BreaADubno33JhKNlo26rbyNPoYuNP4xnb3s6KDeJPkA0xExo46wEkv4NoIW7nj8A==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 00/20] lightnvm updates for 4.18
+Date: Mon, 28 May 2018 10:58:21 +0200
+Message-Id: <20180528085841.26684-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thread A			Thread B
-- f2fs_remount
- - stop_gc_thread
-				- f2fs_sbi_store
-   sbi->gc_thread = NULL;
-				  access sbi->gc_thread->gc_*
+Hi Jens,
 
-Previously, we allocate memory for sbi->gc_thread based on background
-gc thread mount option, the memory can be released if we turn off
-that mount option, but still there are several places access gc_thread
-pointer without considering race condition, result in NULL point
-dereference.
+Please pick up the following patches.
 
-In order to fix this issue, use sb->s_umount to exclude those operations.
+ - Hans reworked the write error recovery path in pblk.
+ - Igor added extra error handling for lines, and fixed a bug in the
+   pblk ringbuffer during GC.
+ - Javier refactored the pblk code a bit, added extra error
+   handling, and added checks to verify that data returned from drive
+   is appropriate.
+ - Marcin added some extra logic to manage the write buffer. Now
+   MW_CUNITS can be zero and the size of write buffer can be changed
+   at module load time.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v3:
-- fix missing 'gc_urgent' case
- fs/f2fs/sysfs.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Thanks,
+Matias
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index dd940d156af6..ac3ea6044936 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -165,7 +165,7 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
- }
- 
--static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
-+static ssize_t __f2fs_sbi_store(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi,
- 			const char *buf, size_t count)
- {
-@@ -278,6 +278,23 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 	return count;
- }
- 
-+static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
-+			struct f2fs_sb_info *sbi,
-+			const char *buf, size_t count)
-+{
-+	ssize_t ret;
-+	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
-+					a->struct_type == GC_THREAD);
-+
-+	if (gc_entry)
-+		down_read(&sbi->sb->s_umount);
-+	ret = __f2fs_sbi_store(a, sbi, buf, count);
-+	if (gc_entry)
-+		up_read(&sbi->sb->s_umount);
-+
-+	return ret;
-+}
-+
- static ssize_t f2fs_attr_show(struct kobject *kobj,
- 				struct attribute *attr, char *buf)
- {
+Hans Holmberg (3):
+  lightnvm: pblk: rework write error recovery path
+  lightnvm: pblk: garbage collect lines with failed writes
+  lightnvm: pblk: fix smeta write error path
+
+Igor Konopko (4):
+  lightnvm: proper error handling for pblk_bio_add_pages
+  lightnvm: error handling when whole line is bad
+  lightnvm: fix partial read error path
+  lightnvm: pblk: sync RB and RL states during GC
+
+Javier González (11):
+  lightnvm: pblk: fail gracefully on line alloc. failure
+  lightnvm: pblk: recheck for bad lines at runtime
+  lightnvm: pblk: check read lba on gc path
+  lightnvn: pblk: improve error msg on corrupted LBAs
+  lightnvm: pblk: warn in case of corrupted write buffer
+  lightnvm: pblk: return NVM_ error on failed submission
+  lightnvm: pblk: remove unnecessary indirection
+  lightnvm: pblk: remove unnecessary argument
+  lightnvm: pblk: check for chunk size before allocating it
+  lightnvn: pass flag on graceful teardown to targets
+  lightnvm: pblk: remove dead function
+
+Marcin Dziegielewski (2):
+  lightnvm: pblk: handle case when mw_cunits equals to 0
+  lightnvm: pblk: add possibility to set write buffer size manually
+
+ drivers/lightnvm/core.c          |  10 +-
+ drivers/lightnvm/pblk-core.c     | 149 +++++++++++++++------
+ drivers/lightnvm/pblk-gc.c       | 112 ++++++++++------
+ drivers/lightnvm/pblk-init.c     | 112 +++++++++++-----
+ drivers/lightnvm/pblk-map.c      |  33 +++--
+ drivers/lightnvm/pblk-rb.c       |  51 +------
+ drivers/lightnvm/pblk-read.c     |  83 +++++++++---
+ drivers/lightnvm/pblk-recovery.c |  91 -------------
+ drivers/lightnvm/pblk-rl.c       |  29 +++-
+ drivers/lightnvm/pblk-sysfs.c    |  15 ++-
+ drivers/lightnvm/pblk-write.c    | 281 +++++++++++++++++++++++++--------------
+ drivers/lightnvm/pblk.h          |  43 +++---
+ drivers/nvme/host/lightnvm.c     |   1 -
+ include/linux/lightnvm.h         |   2 +-
+ 14 files changed, 604 insertions(+), 408 deletions(-)
+
 -- 
-2.17.0.391.g1f1cddd558b5
+2.11.0
