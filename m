@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163306AbeE1KsF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:48:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37910 "EHLO mail.kernel.org"
+        id S1034322AbeE1Kry (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:47:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034317AbeE1Krz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:55 -0400
+        id S1034279AbeE1Kro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        kernel-janitors@vger.kernel.org,
+        stable@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 152/496] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Date: Mon, 28 May 2018 11:58:57 +0200
-Message-Id: <20180528100326.308294732@linuxfoundation.org>
+Subject: [PATCH 4.14 148/496] batman-adv: Ignore invalid batadv_v_gw during netlink send
+Date: Mon, 28 May 2018 11:58:53 +0200
+Message-Id: <20180528100326.137060246@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,40 +30,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
+[ Upstream commit 011c935fceae5252619ef730baa610c655281dda ]
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
+The function batadv_v_gw_dump stops the processing loop when
+batadv_v_gw_dump_entry returns a non-0 return code. This should only
+happen when the buffer is full. Otherwise, an empty message may be
+returned by batadv_gw_dump. This empty message will then stop the netlink
+dumping of gateway entries. At worst, not a single entry is returned to
+userspace even when plenty of possible gateways exist.
 
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
+Fixes: b71bb6f924fe ("batman-adv: add B.A.T.M.A.N. V bat_gw_dump implementations")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clocksource/fsl_ftm_timer.c |    2 +-
+ net/batman-adv/bat_v.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct
+--- a/net/batman-adv/bat_v.c
++++ b/net/batman-adv/bat_v.c
+@@ -930,7 +930,7 @@ static int batadv_v_gw_dump_entry(struct
+ 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
+ 	struct batadv_neigh_node *router;
+ 	struct batadv_gw_node *curr_gw;
+-	int ret = -EINVAL;
++	int ret = 0;
+ 	void *hdr;
  
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
- 
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
+ 	router = batadv_orig_router_get(gw_node->orig_node, BATADV_IF_DEFAULT);
