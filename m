@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938522AbeE1MB6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:01:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53790 "EHLO mail.kernel.org"
+        id S938531AbeE1MCV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:02:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423350AbeE1LHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:03 -0400
+        id S1423325AbeE1LGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 069/272] mm: fix races between address_space dereference and free in page_evicatable
-Date: Mon, 28 May 2018 12:01:42 +0200
-Message-Id: <20180528100246.715840845@linuxfoundation.org>
+Subject: [PATCH 4.16 066/272] ibmvnic: Zero used TX descriptor counter on reset
+Date: Mon, 28 May 2018 12:01:39 +0200
+Message-Id: <20180528100246.426555643@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -34,76 +30,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huang Ying <ying.huang@intel.com>
+From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
 
-[ Upstream commit e92bb4dd9673945179b1fc738c9817dd91bfb629 ]
+[ Upstream commit 41f714672f93608751dbd2fa2291d476a8ff0150 ]
 
-When page_mapping() is called and the mapping is dereferenced in
-page_evicatable() through shrink_active_list(), it is possible for the
-inode to be truncated and the embedded address space to be freed at the
-same time.  This may lead to the following race.
+The counter that tracks used TX descriptors pending completion
+needs to be zeroed as part of a device reset. This change fixes
+a bug causing transmit queues to be stopped unnecessarily and in
+some cases a transmit queue stall and timeout reset. If the counter
+is not reset, the remaining descriptors will not be "removed",
+effectively reducing queue capacity. If the queue is over half full,
+it will cause the queue to stall if stopped.
 
-CPU1                                                CPU2
-
-truncate(inode)                                     shrink_active_list()
-  ...                                                 page_evictable(page)
-  truncate_inode_page(mapping, page);
-    delete_from_page_cache(page)
-      spin_lock_irqsave(&mapping->tree_lock, flags);
-        __delete_from_page_cache(page, NULL)
-          page_cache_tree_delete(..)
-            ...                                         mapping = page_mapping(page);
-            page->mapping = NULL;
-            ...
-      spin_unlock_irqrestore(&mapping->tree_lock, flags);
-      page_cache_free_page(mapping, page)
-        put_page(page)
-          if (put_page_testzero(page)) -> false
-- inode now has no pages and can be freed including embedded address_space
-
-                                                        mapping_unevictable(mapping)
-							  test_bit(AS_UNEVICTABLE, &mapping->flags);
-- we've dereferenced mapping which is potentially already free.
-
-Similar race exists between swap cache freeing and page_evicatable()
-too.
-
-The address_space in inode and swap cache will be freed after a RCU
-grace period.  So the races are fixed via enclosing the page_mapping()
-and address_space usage in rcu_read_lock/unlock().  Some comments are
-added in code to make it clear what is protected by the RCU read lock.
-
-Link: http://lkml.kernel.org/r/20180212081227.1940-1-ying.huang@intel.com
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmscan.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3896,7 +3896,13 @@ int node_reclaim(struct pglist_data *pgd
-  */
- int page_evictable(struct page *page)
- {
--	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	int ret;
-+
-+	/* Prevent address_space of inode and swap cache from being freed */
-+	rcu_read_lock();
-+	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	rcu_read_unlock();
-+	return ret;
- }
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -2266,6 +2266,7 @@ static int reset_one_sub_crq_queue(struc
+ 	}
  
- #ifdef CONFIG_SHMEM
+ 	memset(scrq->msgs, 0, 4 * PAGE_SIZE);
++	atomic_set(&scrq->used, 0);
+ 	scrq->cur = 0;
+ 
+ 	rc = h_reg_sub_crq(adapter->vdev->unit_address, scrq->msg_token,
