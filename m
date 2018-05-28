@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423988AbeE1LLA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:11:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423968AbeE1LKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1423973AbeE1LKx (ORCPT <rfc822;w@1wt.eu>);
         Mon, 28 May 2018 07:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423945AbeE1LKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Michael Lyle <mlyle@lyle.org>, Hannes Reinecke <hare@suse.com>,
+        Huijun Tang <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 116/272] rsi: fix kernel panic observed on 64bit machine
-Date: Mon, 28 May 2018 12:02:29 +0200
-Message-Id: <20180528100250.909349505@linuxfoundation.org>
+Subject: [PATCH 4.16 147/272] bcache: quit dc->writeback_thread when BCACHE_DEV_DETACHING is set
+Date: Mon, 28 May 2018 12:03:00 +0200
+Message-Id: <20180528100253.359068093@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,152 +31,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amitkumar Karwar <amit.karwar@redpinesignals.com>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit 864db4d5085349fcfa1f260b5bcd2adde3d7f2ed ]
+[ Upstream commit fadd94e05c02afec7b70b0b14915624f1782f578 ]
 
-Following kernel panic is observed on 64bit machine while loading
-the driver. It is fixed if we pass dynamically allocated memory to
-SDIO for DMA.
+In patch "bcache: fix cached_dev->count usage for bch_cache_set_error()",
+cached_dev_get() is called when creating dc->writeback_thread, and
+cached_dev_put() is called when exiting dc->writeback_thread. This
+modification works well unless people detach the bcache device manually by
+    'echo 1 > /sys/block/bcache<N>/bcache/detach'
+Because this sysfs interface only calls bch_cached_dev_detach() which wakes
+up dc->writeback_thread but does not stop it. The reason is, before patch
+"bcache: fix cached_dev->count usage for bch_cache_set_error()", inside
+bch_writeback_thread(), if cache is not dirty after writeback,
+cached_dev_put() will be called here. And in cached_dev_make_request() when
+a new write request makes cache from clean to dirty, cached_dev_get() will
+be called there. Since we don't operate dc->count in these locations,
+refcount d->count cannot be dropped after cache becomes clean, and
+cached_dev_detach_finish() won't be called to detach bcache device.
 
-BUG: unable to handle kernel paging request at ffffeb04000172e0
-IP: sg_miter_stop+0x56/0x70
-PGD 0 P4D 0
-Oops: 0000 [#1] SMP PTI
-Modules linked in: rsi_sdio(OE+) rsi_91x(OE) btrsi(OE) rfcomm bluetooth
-ecdh_generic mac80211 mmc_block fuse xt_CHECKSUM iptable_mangle
-drm_kms_helper mmc_core serio_raw drm firewire_ohci tg3
-CPU: 0 PID: 4003 Comm: insmod Tainted: G           OE    4.16.0-rc1+ #27
-Hardware name: Dell Inc. Latitude E5500                  /0DW634, BIOS
-A19 06/13/2013
-RIP: 0010:sg_miter_stop+0x56/0x70
-RSP: 0018:ffff88007d003e78 EFLAGS: 00010002
-RAX: 0000000000000003 RBX: 0000000000000004 RCX: 0000000000000000
-RDX: ffffeb04000172c0 RSI: ffff88002f58002c RDI: ffff88007d003e80
-RBP: 0000000000000004 R08: ffff88007d003e80 R09: 0000000000000008
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000004
-R13: ffff88002f580028 R14: 0000000000000000 R15: 0000000000000004
-FS:  00007f35c29db700(0000) GS:ffff88007d000000(0000)
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffeb04000172e0 CR3: 000000007038e000 CR4: 00000000000406f0
-Call Trace:
-<IRQ>
-sg_copy_buffer+0xc6/0xf0
-sdhci_tasklet_finish+0x170/0x260 [sdhci]
-tasklet_action+0xf4/0x100
-__do_softirq+0xef/0x26e
-irq_exit+0xbe/0xd0
-do_IRQ+0x4a/0xc0
-common_interrupt+0xa2/0xa2
-</IRQ>
+This patch fixes the issue by checking whether BCACHE_DEV_DETACHING is
+set inside bch_writeback_thread(). If this bit is set and cache is clean
+(no existing writeback_keys), break the while-loop, call cached_dev_put()
+and quit the writeback thread.
 
-Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Please note if cache is still dirty, even BCACHE_DEV_DETACHING is set the
+writeback thread should continue to perform writeback, this is the original
+design of manually detach.
+
+It is safe to do the following check without locking, let me explain why,
++	if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
++	    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
+
+If the kenrel thread does not sleep and continue to run due to conditions
+are not updated in time on the running CPU core, it just consumes more CPU
+cycles and has no hurt. This should-sleep-but-run is safe here. We just
+focus on the should-run-but-sleep condition, which means the writeback
+thread goes to sleep in mistake while it should continue to run.
+1, First of all, no matter the writeback thread is hung or not,
+   kthread_stop() from cached_dev_detach_finish() will wake up it and
+   terminate by making kthread_should_stop() return true. And in normal
+   run time, bit on index BCACHE_DEV_DETACHING is always cleared, the
+   condition
+	!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)
+   is always true and can be ignored as constant value.
+2, If one of the following conditions is true, the writeback thread should
+   go to sleep,
+   "!atomic_read(&dc->has_dirty)" or "!dc->writeback_running)"
+   each of them independently controls the writeback thread should sleep or
+   not, let's analyse them one by one.
+2.1 condition "!atomic_read(&dc->has_dirty)"
+   If dc->has_dirty is set from 0 to 1 on another CPU core, bcache will
+   call bch_writeback_queue() immediately or call bch_writeback_add() which
+   indirectly calls bch_writeback_queue() too. In bch_writeback_queue(),
+   wake_up_process(dc->writeback_thread) is called. It sets writeback
+   thread's task state to TASK_RUNNING and following an implicit memory
+   barrier, then tries to wake up the writeback thread.
+   In writeback thread, its task state is set to TASK_INTERRUPTIBLE before
+   doing the condition check. If other CPU core sets the TASK_RUNNING state
+   after writeback thread setting TASK_INTERRUPTIBLE, the writeback thread
+   will be scheduled to run very soon because its state is not
+   TASK_INTERRUPTIBLE. If other CPU core sets the TASK_RUNNING state before
+   writeback thread setting TASK_INTERRUPTIBLE, the implict memory barrier
+   of wake_up_process() will make sure modification of dc->has_dirty on
+   other CPU core is updated and observed on the CPU core of writeback
+   thread. Therefore the condition check will correctly be false, and
+   continue writeback code without sleeping.
+2.2 condition "!dc->writeback_running)"
+   dc->writeback_running can be changed via sysfs file, every time it is
+   modified, a following bch_writeback_queue() is alwasy called. So the
+   change is always observed on the CPU core of writeback thread. If
+   dc->writeback_running is changed from 0 to 1 on other CPU core, this
+   condition check will observe the modification and allow writeback
+   thread to continue to run without sleeping.
+Now we can see, even without a locking protection, multiple conditions
+check is safe here, no deadlock or process hang up will happen.
+
+I compose a separte patch because that patch "bcache: fix cached_dev->count
+usage for bch_cache_set_error()" already gets a "Reviewed-by:" from Hannes
+Reinecke. Also this fix is not trivial and good for a separate patch.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Huijun Tang <tang.junhui@zte.com.cn>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_sdio.c |   32 +++++++++++++++++++++-----------
- drivers/net/wireless/rsi/rsi_sdio.h     |    2 ++
- 2 files changed, 23 insertions(+), 11 deletions(-)
+ drivers/md/bcache/writeback.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-@@ -636,11 +636,14 @@ static int rsi_sdio_master_reg_read(stru
- 				    u32 *read_buf, u16 size)
- {
- 	u32 addr_on_bus, *data;
--	u32 align[2] = {};
- 	u16 ms_addr;
- 	int status;
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -565,9 +565,15 @@ static int bch_writeback_thread(void *ar
+ 	while (!kthread_should_stop()) {
+ 		down_write(&dc->writeback_lock);
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		if (!atomic_read(&dc->has_dirty) ||
+-		    (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
+-		     !dc->writeback_running)) {
++		/*
++		 * If the bache device is detaching, skip here and continue
++		 * to perform writeback. Otherwise, if no dirty data on cache,
++		 * or there is dirty data on cache but writeback is disabled,
++		 * the writeback thread should sleep here and wait for others
++		 * to wake up it.
++		 */
++		if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
++		    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
+ 			up_write(&dc->writeback_lock);
  
--	data = PTR_ALIGN(&align[0], 8);
-+	data = kzalloc(RSI_MASTER_REG_BUF_SIZE, GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data = PTR_ALIGN(data, 8);
+ 			if (kthread_should_stop()) {
+@@ -588,6 +594,14 @@ static int bch_writeback_thread(void *ar
+ 			cached_dev_put(dc);
+ 			SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
+ 			bch_write_bdev_super(dc, NULL);
++			/*
++			 * If bcache device is detaching via sysfs interface,
++			 * writeback thread should stop after there is no dirty
++			 * data on cache. BCACHE_DEV_DETACHING flag is set in
++			 * bch_cached_dev_detach().
++			 */
++			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags))
++				break;
+ 		}
  
- 	ms_addr = (addr >> 16);
- 	status = rsi_sdio_master_access_msword(adapter, ms_addr);
-@@ -648,7 +651,7 @@ static int rsi_sdio_master_reg_read(stru
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to set ms word to common reg\n",
- 			__func__);
--		return status;
-+		goto err;
- 	}
- 	addr &= 0xFFFF;
- 
-@@ -666,7 +669,7 @@ static int rsi_sdio_master_reg_read(stru
- 					 (u8 *)data, 4);
- 	if (status < 0) {
- 		rsi_dbg(ERR_ZONE, "%s: AHB register read failed\n", __func__);
--		return status;
-+		goto err;
- 	}
- 	if (size == 2) {
- 		if ((addr & 0x3) == 0)
-@@ -688,17 +691,23 @@ static int rsi_sdio_master_reg_read(stru
- 		*read_buf = *data;
- 	}
- 
--	return 0;
-+err:
-+	kfree(data);
-+	return status;
- }
- 
- static int rsi_sdio_master_reg_write(struct rsi_hw *adapter,
- 				     unsigned long addr,
- 				     unsigned long data, u16 size)
- {
--	unsigned long data1[2], *data_aligned;
-+	unsigned long *data_aligned;
- 	int status;
- 
--	data_aligned = PTR_ALIGN(&data1[0], 8);
-+	data_aligned = kzalloc(RSI_MASTER_REG_BUF_SIZE, GFP_KERNEL);
-+	if (!data_aligned)
-+		return -ENOMEM;
-+
-+	data_aligned = PTR_ALIGN(data_aligned, 8);
- 
- 	if (size == 2) {
- 		*data_aligned = ((data << 16) | (data & 0xFFFF));
-@@ -717,6 +726,7 @@ static int rsi_sdio_master_reg_write(str
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to set ms word to common reg\n",
- 			__func__);
-+		kfree(data_aligned);
- 		return -EIO;
- 	}
- 	addr = addr & 0xFFFF;
-@@ -726,12 +736,12 @@ static int rsi_sdio_master_reg_write(str
- 					(adapter,
- 					 (addr | RSI_SD_REQUEST_MASTER),
- 					 (u8 *)data_aligned, size);
--	if (status < 0) {
-+	if (status < 0)
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to do AHB reg write\n", __func__);
--		return status;
--	}
--	return 0;
-+
-+	kfree(data_aligned);
-+	return status;
- }
- 
- /**
---- a/drivers/net/wireless/rsi/rsi_sdio.h
-+++ b/drivers/net/wireless/rsi/rsi_sdio.h
-@@ -46,6 +46,8 @@ enum sdio_interrupt_type {
- #define PKT_BUFF_AVAILABLE                      1
- #define FW_ASSERT_IND                           2
- 
-+#define RSI_MASTER_REG_BUF_SIZE			12
-+
- #define RSI_DEVICE_BUFFER_STATUS_REGISTER       0xf3
- #define RSI_FN1_INT_REGISTER                    0xf9
- #define RSI_INT_ENABLE_REGISTER			0x04
+ 		up_write(&dc->writeback_lock);
