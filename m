@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165487AbeE1NnM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:43:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
+        id S1162950AbeE1Knd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:43:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937413AbeE1Kno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:43:44 -0400
+        id S1161950AbeE1KnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:43:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 059/496] ARC: Fix malformed ARC_EMUL_UNALIGNED default
-Date: Mon, 28 May 2018 11:57:24 +0200
-Message-Id: <20180528100322.285219779@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 052/496] powerpc/pseries: Fix clearing of security feature flags
+Date: Mon, 28 May 2018 11:57:17 +0200
+Message-Id: <20180528100321.967583953@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,36 +30,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 
-[ Upstream commit 827cc2fa024dd6517d62de7a44c7b42f32af371b ]
+commit 0f9bdfe3c77091e8704d2e510eb7c2c2c6cde524 upstream.
 
-'default N' should be 'default n', though they happen to have the same
-effect here, due to undefined symbols (N in this case) evaluating to n
-in a tristate sense.
+The H_CPU_BEHAV_* flags should be checked for in the 'behaviour' field
+of 'struct h_cpu_char_result' -- 'character' is for H_CPU_CHAR_*
+flags.
 
-Remove the default from ARC_EMUL_UNALIGNED instead of changing it. bool
-and tristate symbols implicitly default to n.
+Found by playing around with QEMU's implementation of the hypercall:
 
-Discovered with the
-https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_ulfalizer_Kconfiglib_blob_master_examples_list-5Fundefined.py&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=c14YS-cH-kdhTOW89KozFhBtBJgs1zXscZojEZQ0THs&m=WxxD8ozR7QQUVzNCBksiznaisBGO_crN7PBOvAoju8s&s=1LmxsNqxwT-7wcInVpZ6Z1J27duZKSoyKxHIJclXU_M&e=
-script.
+  H_CPU_CHAR=0xf000000000000000
+  H_CPU_BEHAV=0x0000000000000000
 
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+  This clears H_CPU_BEHAV_FAVOUR_SECURITY and H_CPU_BEHAV_L1D_FLUSH_PR
+  so pseries_setup_rfi_flush() disables 'rfi_flush'; and it also
+  clears H_CPU_CHAR_L1D_THREAD_PRIV flag. So there is no RFI flush
+  mitigation at all for cpu_show_meltdown() to report; but currently
+  it does:
+
+  Original kernel:
+
+    # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+    Mitigation: RFI Flush
+
+  Patched kernel:
+
+    # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+    Not affected
+
+  H_CPU_CHAR=0x0000000000000000
+  H_CPU_BEHAV=0xf000000000000000
+
+  This sets H_CPU_BEHAV_BNDS_CHK_SPEC_BAR so cpu_show_spectre_v1() should
+  report vulnerable; but currently it doesn't:
+
+  Original kernel:
+
+    # cat /sys/devices/system/cpu/vulnerabilities/spectre_v1
+    Not affected
+
+  Patched kernel:
+
+    # cat /sys/devices/system/cpu/vulnerabilities/spectre_v1
+    Vulnerable
+
+Brown-paper-bag-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: f636c14790ea ("powerpc/pseries: Set or clear security feature flags")
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/platforms/pseries/setup.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -487,7 +487,6 @@ config ARC_CURR_IN_REG
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -484,13 +484,13 @@ static void init_cpu_char_feature_flags(
+ 	 * The features below are enabled by default, so we instead look to see
+ 	 * if firmware has *disabled* them, and clear them if so.
+ 	 */
+-	if (!(result->character & H_CPU_BEHAV_FAVOUR_SECURITY))
++	if (!(result->behaviour & H_CPU_BEHAV_FAVOUR_SECURITY))
+ 		security_ftr_clear(SEC_FTR_FAVOUR_SECURITY);
  
- config ARC_EMUL_UNALIGNED
- 	bool "Emulate unaligned memory access (userspace only)"
--	default N
- 	select SYSCTL_ARCH_UNALIGN_NO_WARN
- 	select SYSCTL_ARCH_UNALIGN_ALLOW
- 	depends on ISA_ARCOMPACT
+-	if (!(result->character & H_CPU_BEHAV_L1D_FLUSH_PR))
++	if (!(result->behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
+ 		security_ftr_clear(SEC_FTR_L1D_FLUSH_PR);
+ 
+-	if (!(result->character & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
++	if (!(result->behaviour & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
+ 		security_ftr_clear(SEC_FTR_BNDS_CHK_SPEC_BAR);
+ }
+ 
