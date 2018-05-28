@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422842AbeE1LCo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49930 "EHLO mail.kernel.org"
+        id S1423513AbeE1MSl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:18:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164678AbeE1LCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:35 -0400
+        id S1164926AbeE1LCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Zhang <henryzhang62@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 468/496] ARM: dts: bcm283x: Fix pin function of JTAG pins
-Date: Mon, 28 May 2018 12:04:13 +0200
-Message-Id: <20180528100339.631650173@linuxfoundation.org>
+Subject: [PATCH 4.14 471/496] net: stmmac: call correct function in stmmac_mac_config_rx_queues_routing()
+Date: Mon, 28 May 2018 12:04:16 +0200
+Message-Id: <20180528100339.748480573@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,32 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Henry Zhang <henryzhang62@gmail.com>
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-[ Upstream commit 1a012cb2569f2031b3636232c3ab21c20c92d281 ]
+[ Upstream commit 13138de01400762f706c5e956e70660770d61962 ]
 
-BCM2835 ARM Peripherals doc shows gpio pins 4, 5, 6, 12 and 13
-carry altenate function, ALT5 for ARM JTAG
+stmmac_mac_config_rx_queues_routing() incorrectly calls rx_queue_prio()
+instead of rx_queue_routing().
 
-Fixes: 21ff843931b2 ("ARM: dts: bcm283x: Define standard pinctrl groups in the gpio node.")
+This looks like a copy paste issue, since
+stmmac_mac_config_rx_queues_prio() already calls rx_queue_prio(),
+and both stmmac_mac_config_rx_queues_routing() and
+stmmac_mac_config_rx_queues_prio() are very similar in structure.
 
-Signed-off-by: Henry Zhang <henryzhang62@gmail.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Fixes: abe80fdc6ee6 ("net: stmmac: RX queue routing configuration")
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm283x.dtsi |    2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -251,7 +251,7 @@
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2373,7 +2373,7 @@ static void stmmac_mac_config_rx_queues_
+ 			continue;
  
- 			jtag_gpio4: jtag_gpio4 {
- 				brcm,pins = <4 5 6 12 13>;
--				brcm,function = <BCM2835_FSEL_ALT4>;
-+				brcm,function = <BCM2835_FSEL_ALT5>;
- 			};
- 			jtag_gpio22: jtag_gpio22 {
- 				brcm,pins = <22 23 24 25 26 27>;
+ 		packet = priv->plat->rx_queues_cfg[queue].pkt_route;
+-		priv->hw->mac->rx_queue_prio(priv->hw, packet, queue);
++		priv->hw->mac->rx_queue_routing(priv->hw, packet, queue);
+ 	}
+ }
+ 
