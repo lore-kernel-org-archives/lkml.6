@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425083AbeE1NXU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38636 "EHLO mail.kernel.org"
+        id S1163502AbeE1NXl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:23:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163418AbeE1Ksr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:47 -0400
+        id S1163158AbeE1Ksj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Jon Mason <jon.mason@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 169/496] powerpc/boot: Fix random libfdt related build errors
-Date: Mon, 28 May 2018 11:59:14 +0200
-Message-Id: <20180528100326.986614748@linuxfoundation.org>
+Subject: [PATCH 4.14 167/496] ARM: dts: NSP: Fix amount of RAM on BCM958625HR
+Date: Mon, 28 May 2018 11:59:12 +0200
+Message-Id: <20180528100326.901056919@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,50 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 64c3f648c25d108f346fdc96c15180c6b7d250e9 ]
+[ Upstream commit 0a5aff64f20d92c5a6e9aeed7b5950b0b817bcd9 ]
 
-Once in a while I see build errors similar to the following
-when building images from a clean tree.
+Jon attempted to fix the amount of RAM on the BCM958625HR in commit
+c53beb47f621 ("ARM: dts: NSP: Correct RAM amount for BCM958625HR board")
+but it seems like we tripped over some poorly documented schematics.
 
-  Building powerpc:virtex-ml507:44x/virtex5_defconfig ... failed
-  ------------
-  Error log:
-  arch/powerpc/boot/treeboot-akebono.c:37:20: fatal error:
-  	libfdt.h: No such file or directory
+The top-level page of the schematics says the board has 2GB, but when
+you end-up scrolling to page 6, you see two chips of 4GBit (512MB) but
+what the bootloader really initializes only 512MB, any attempt to use
+more than that results in data aborts. Fix this again back to 512MB.
 
-  Building powerpc:bamboo:smpdev:44x/bamboo_defconfig ... failed
-  ------------
-  Error log:
-  arch/powerpc/boot/treeboot-akebono.c:37:20: fatal error:
-  	libfdt.h: No such file or directory
-
-  arch/powerpc/boot/treeboot-currituck.c:35:20: fatal error:
-       libfdt.h: No such file or directory
-
-Rebuilds will succeed.
-
-Turns out that several source files in arch/powerpc/boot/ include
-libfdt.h, but Makefile dependencies are incomplete. Let's fix that.
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: c53beb47f621 ("ARM: dts: NSP: Correct RAM amount for BCM958625HR board")
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/boot/Makefile |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/bcm958625hr.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/boot/Makefile
-+++ b/arch/powerpc/boot/Makefile
-@@ -101,7 +101,8 @@ $(addprefix $(obj)/,$(zlib-y)): \
- libfdt       := fdt.c fdt_ro.c fdt_wip.c fdt_sw.c fdt_rw.c fdt_strerror.c
- libfdtheader := fdt.h libfdt.h libfdt_internal.h
+--- a/arch/arm/boot/dts/bcm958625hr.dts
++++ b/arch/arm/boot/dts/bcm958625hr.dts
+@@ -49,7 +49,7 @@
  
--$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o opal.o): \
-+$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o opal.o \
-+	treeboot-akebono.o treeboot-currituck.o treeboot-iss4xx.o): \
- 	$(addprefix $(obj)/,$(libfdtheader))
+ 	memory {
+ 		device_type = "memory";
+-		reg = <0x60000000 0x80000000>;
++		reg = <0x60000000 0x20000000>;
+ 	};
  
- src-wlib-y := string.S crt0.S stdio.c decompress.c main.c \
+ 	gpio-restart {
