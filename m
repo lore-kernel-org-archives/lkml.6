@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937021AbeE1K1g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:27:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46818 "EHLO mail.kernel.org"
+        id S937053AbeE1K1o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:27:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936926AbeE1K10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:26 -0400
+        id S937024AbeE1K1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dave Jones <davej@codemonkey.org.uk>
-Subject: [PATCH 4.9 011/329] libata: Blacklist some Sandisk SSDs for NCQ
-Date: Mon, 28 May 2018 11:59:00 +0200
-Message-Id: <20180528100243.191812855@linuxfoundation.org>
+        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 033/329] Input: psmouse - fix Synaptics detection when protocol is disabled
+Date: Mon, 28 May 2018 11:59:22 +0200
+Message-Id: <20180528100245.187673827@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,33 +30,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 322579dcc865b94b47345ad1b6002ad167f85405 upstream.
+[ Upstream commit 2bc4298f59d2f15175bb568e2d356b5912d0cdd9 ]
 
-Sandisk SSDs SD7SN6S256G and SD8SN8U256G are regularly locking up
-regularly under sustained moderate load with NCQ enabled.  Blacklist
-for now.
+When Synaptics protocol is disabled, we still need to try and detect the
+hardware, so we can switch to SMBus device if SMbus is detected, or we know
+that it is Synaptics device and reset it properly for the bare PS/2
+protocol.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Dave Jones <davej@codemonkey.org.uk>
-Cc: stable@vger.kernel.org
+Fixes: c378b5119eb0 ("Input: psmouse - factor out common protocol probing code")
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/ata/libata-core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/input/mouse/psmouse-base.c |   34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4366,6 +4366,10 @@ static const struct ata_blacklist_entry
- 	/* https://bugzilla.kernel.org/show_bug.cgi?id=15573 */
- 	{ "C300-CTFDDAC128MAG",	"0001",		ATA_HORKAGE_NONCQ, },
+--- a/drivers/input/mouse/psmouse-base.c
++++ b/drivers/input/mouse/psmouse-base.c
+@@ -937,6 +937,21 @@ static void psmouse_apply_defaults(struc
+ 	psmouse->pt_deactivate = NULL;
+ }
  
-+	/* Some Sandisk SSDs lock up hard with NCQ enabled.  Reported on
-+	   SD7SN6S256G and SD8SN8U256G */
-+	{ "SanDisk SD[78]SN*G",	NULL,		ATA_HORKAGE_NONCQ, },
++static bool psmouse_do_detect(int (*detect)(struct psmouse *, bool),
++			      struct psmouse *psmouse, bool allow_passthrough,
++			      bool set_properties)
++{
++	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
++	    !allow_passthrough) {
++		return false;
++	}
 +
- 	/* devices which puke on READ_NATIVE_MAX */
- 	{ "HDS724040KLSA80",	"KFAOA20N",	ATA_HORKAGE_BROKEN_HPA, },
- 	{ "WDC WD3200JD-00KLB0", "WD-WCAMR1130137", ATA_HORKAGE_BROKEN_HPA },
++	if (set_properties)
++		psmouse_apply_defaults(psmouse);
++
++	return detect(psmouse, set_properties) == 0;
++}
++
+ static bool psmouse_try_protocol(struct psmouse *psmouse,
+ 				 enum psmouse_type type,
+ 				 unsigned int *max_proto,
+@@ -948,15 +963,8 @@ static bool psmouse_try_protocol(struct
+ 	if (!proto)
+ 		return false;
+ 
+-	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
+-	    !proto->try_passthru) {
+-		return false;
+-	}
+-
+-	if (set_properties)
+-		psmouse_apply_defaults(psmouse);
+-
+-	if (proto->detect(psmouse, set_properties) != 0)
++	if (!psmouse_do_detect(proto->detect, psmouse, proto->try_passthru,
++			       set_properties))
+ 		return false;
+ 
+ 	if (set_properties && proto->init && init_allowed) {
+@@ -988,8 +996,8 @@ static int psmouse_extensions(struct psm
+ 	 * Always check for focaltech, this is safe as it uses pnp-id
+ 	 * matching.
+ 	 */
+-	if (psmouse_try_protocol(psmouse, PSMOUSE_FOCALTECH,
+-				 &max_proto, set_properties, false)) {
++	if (psmouse_do_detect(focaltech_detect,
++			      psmouse, false, set_properties)) {
+ 		if (max_proto > PSMOUSE_IMEX &&
+ 		    IS_ENABLED(CONFIG_MOUSE_PS2_FOCALTECH) &&
+ 		    (!set_properties || focaltech_init(psmouse) == 0)) {
+@@ -1035,8 +1043,8 @@ static int psmouse_extensions(struct psm
+ 	 * probing for IntelliMouse.
+ 	 */
+ 	if (max_proto > PSMOUSE_PS2 &&
+-	    psmouse_try_protocol(psmouse, PSMOUSE_SYNAPTICS, &max_proto,
+-				 set_properties, false)) {
++	    psmouse_do_detect(synaptics_detect,
++			      psmouse, false, set_properties)) {
+ 		synaptics_hardware = true;
+ 
+ 		if (max_proto > PSMOUSE_IMEX) {
