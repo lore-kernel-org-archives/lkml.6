@@ -1,22 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935041AbeE1XQF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 19:16:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:56164 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934544AbeE1XQD (ORCPT
+        id S935473AbeE1X0G (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 19:26:06 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:34509 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935206AbeE1X0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 19:16:03 -0400
-X-Google-Smtp-Source: ADUXVKIKFsObNjLZy4XtHhQ2hq/1ZhXk3L778SGhcfXJMmatszp3yCVB88mOuy99vXrZo9MbpBuVuk8oSRqvF8u6WzRI57cGE+78
+        Mon, 28 May 2018 19:26:03 -0400
+X-Google-Smtp-Source: ADUXVKLr+PfbykR3dq5R1UFdbVXoLwxKly7z6EcMM5kP3TnyaKICXyp8RTuHYOsSm0Og/AKgX3GXyBCEur1HfkWG+b4OAm24Qv9X
 MIME-Version: 1.0
-Date: Mon, 28 May 2018 16:16:02 -0700
+Date: Mon, 28 May 2018 16:26:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000222dd6056d4c4dfc@google.com>
-Subject: possible deadlock in sock_hash_free
-From: syzbot <syzbot+83bdee62c80cc044cb1a@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000e46d0a056d4c70ce@google.com>
+Subject: BUG: unable to handle kernel (3)
+From: syzbot <syzbot+adfeaaee641dd4fdac43@syzkaller.appspotmail.com>
+To: bridge@lists.linux-foundation.org, coreteam@netfilter.org,
+        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -26,125 +29,62 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    7a1a98c171ea Merge branch 'bpf-sendmsg-hook'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=131f4067800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
-dashboard link: https://syzkaller.appspot.com/bug?extid=83bdee62c80cc044cb1a
+HEAD commit:    861d9dd37526 Merge tag 'kbuild-fixes-v4.17-2' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bffd0f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+dashboard link: https://syzkaller.appspot.com/bug?extid=adfeaaee641dd4fdac43
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17a0be2f800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164cf10f800000
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1156a92f800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+83bdee62c80cc044cb1a@syzkaller.appspotmail.com
+Reported-by: syzbot+adfeaaee641dd4fdac43@syzkaller.appspotmail.com
 
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.17.0-rc6+ #25 Not tainted
-------------------------------------------------------
-kworker/1:0/18 is trying to acquire lock:
-00000000ef3a7ff3 (clock-AF_INET6){++..}, at: sock_hash_free+0x377/0x700  
-kernel/bpf/sockmap.c:2089
-
-but task is already holding lock:
-00000000989798b8 (&htab->buckets[i].lock){+...}, at:  
-sock_hash_free+0x1d4/0x700 kernel/bpf/sockmap.c:2083
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&htab->buckets[i].lock){+...}:
-        __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-        _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
-        bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
-        inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-        inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-        sock_release+0x96/0x1b0 net/socket.c:594
-        sock_close+0x16/0x20 net/socket.c:1149
-        __fput+0x34d/0x890 fs/file_table.c:209
-        ____fput+0x15/0x20 fs/file_table.c:243
-        task_work_run+0x1e4/0x290 kernel/task_work.c:113
-        exit_task_work include/linux/task_work.h:22 [inline]
-        do_exit+0x1aee/0x2730 kernel/exit.c:865
-        do_group_exit+0x16f/0x430 kernel/exit.c:968
-        __do_sys_exit_group kernel/exit.c:979 [inline]
-        __se_sys_exit_group kernel/exit.c:977 [inline]
-        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
-        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (clock-AF_INET6){++..}:
-        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-        __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
-        _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
-        sock_hash_free+0x377/0x700 kernel/bpf/sockmap.c:2089
-        bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:261
-        process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-        worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
-        kthread+0x345/0x410 kernel/kthread.c:240
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-other info that might help us debug this:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&htab->buckets[i].lock);
-                                lock(clock-AF_INET6);
-                                lock(&htab->buckets[i].lock);
-   lock(clock-AF_INET6);
-
-  *** DEADLOCK ***
-
-4 locks held by kworker/1:0/18:
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:215 [inline]
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at: atomic_long_set  
-include/asm-generic/atomic-long.h:57 [inline]
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
-process_one_work+0xaef/0x1b50 kernel/workqueue.c:2116
-  #1: 0000000041d1b332 ((work_completion)(&map->work)){+.+.}, at:  
-process_one_work+0xb46/0x1b50 kernel/workqueue.c:2120
-  #2: 00000000da1a504c (rcu_read_lock){....}, at: sock_hash_free+0x0/0x700  
-include/net/sock.h:2178
-  #3: 00000000989798b8 (&htab->buckets[i].lock){+...}, at:  
-sock_hash_free+0x1d4/0x700 kernel/bpf/sockmap.c:2083
-
-stack backtrace:
-CPU: 1 PID: 18 Comm: kworker/1:0 Not tainted 4.17.0-rc6+ #25
+IPv6: ADDRCONF(NETDEV_CHANGE): bridge0: link becomes ready
+BUG: unable to handle kernel
+IPVS: ftp: loaded support on port[0] = 21
+paging request at ffffc90001f30003
+PGD 1da946067 P4D 1da946067 PUD 1da947067 PMD 1afa9e067 PTE 80000001b7d3e163
+Oops: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 8 Comm: ksoftirqd/0 Not tainted 4.17.0-rc6+ #95
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: events bpf_map_free_deferred
+RIP: 0010:ebt_do_table+0x1983/0x2140 net/bridge/netfilter/ebtables.c:283
+RSP: 0018:ffff8801d9aaeb68 EFLAGS: 00010246
+RAX: ffffc90001f30003 RBX: ffffc90001f30003 RCX: ffffc90001f24000
+RDX: 0000000000000000 RSI: ffffffff86a8513c RDI: 0000000000000000
+RBP: ffff8801d9aaed38 R08: ffff8801d9a9c200 R09: ffffed003b5c46d2
+R10: ffffed003b5c46d2 R11: ffff8801dae23693 R12: ffffc90001f24000
+R13: ffffc90001f201a0 R14: ffffc90001f200d0 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90001f30003 CR3: 00000001ad782000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_circular_bug.isra.36.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-  __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
-  _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
-  sock_hash_free+0x377/0x700 kernel/bpf/sockmap.c:2089
-  bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:261
-  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  ebt_broute+0x1f8/0x320 net/bridge/netfilter/ebtable_broute.c:60
+  br_handle_frame+0x6b6/0x19f0 net/bridge/br_input.c:291
+  __netif_receive_skb_core+0xc6e/0x3630 net/core/dev.c:4546
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
+  process_backlog+0x219/0x760 net/core/dev.c:5337
+  napi_poll net/core/dev.c:5735 [inline]
+  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+  run_ksoftirqd+0x86/0x100 kernel/softirq.c:646
+  smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
   kthread+0x345/0x410 kernel/kthread.c:240
   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Code: 6c 24 08 48 89 d8 48 89 9d d0 fe ff ff 48 c1 e8 03 42 0f b6 04 38 84  
+c0 74 08 3c 03 0f 8e 3b 06 00 00 48 8b 85 d0 fe ff ff 31 ff <8b> 18 89 de  
+e8 54 f1 d0 fa 85 db 0f 85 a0 02 00 00 e8 37 f0 d0
+RIP: ebt_do_table+0x1983/0x2140 net/bridge/netfilter/ebtables.c:283 RSP:  
+ffff8801d9aaeb68
+CR2: ffffc90001f30003
+---[ end trace d121cd1897af50a4 ]---
 
 
 ---
