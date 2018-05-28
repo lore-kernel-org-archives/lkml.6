@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937409AbeE1KaZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:30:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49572 "EHLO mail.kernel.org"
+        id S1165917AbeE1Onm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:43:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161066AbeE1KaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:04 -0400
+        id S937410AbeE1KaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>, Len Brown <len.brown@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Nicolas Pitre <nico@linaro.org>,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Bart Van Assche <bart.vanassche@wdc.com>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 079/329] x86/power: Fix swsusp_arch_resume prototype
-Date: Mon, 28 May 2018 12:00:08 +0200
-Message-Id: <20180528100249.405566287@linuxfoundation.org>
+Subject: [PATCH 4.9 095/329] bcache: return attach error when no cache set exist
+Date: Mon, 28 May 2018 12:00:24 +0200
+Message-Id: <20180528100250.737478266@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,85 +30,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-[ Upstream commit 328008a72d38b5bde6491e463405c34a81a65d3e ]
+[ Upstream commit 7f4fc93d4713394ee8f1cd44c238e046e11b4f15 ]
 
-The declaration for swsusp_arch_resume marks it as 'asmlinkage', but the
-definition in x86-32 does not, and it fails to include the header with the
-declaration. This leads to a warning when building with
-link-time-optimizations:
+I attach a back-end device to a cache set, and the cache set is not
+registered yet, this back-end device did not attach successfully, and no
+error returned:
+[root]# echo 87859280-fec6-4bcc-20df7ca8f86b > /sys/block/sde/bcache/attach
+[root]#
 
-kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not match original declaration [-Werror=lto-type-mismatch]
- extern asmlinkage int swsusp_arch_resume(void);
-                       ^
-arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previously declared here
- int swsusp_arch_resume(void)
+In sysfs_attach(), the return value "v" is initialized to "size" in
+the beginning, and if no cache set exist in bch_cache_sets, the "v" value
+would not change any more, and return to sysfs, sysfs regard it as success
+since the "size" is a positive number.
 
-This moves the declaration into a globally visible header file and fixes up
-both x86 definitions to match it.
+This patch fixes this issue by assigning "v" with "-ENOENT" in the
+initialization.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Nicolas Pitre <nico@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Link: https://lkml.kernel.org/r/20180202145634.200291-2-arnd@arndb.de
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/power/hibernate_32.c |    2 +-
- arch/x86/power/hibernate_64.c |    2 +-
- include/linux/suspend.h       |    2 ++
- kernel/power/power.h          |    3 ---
- 4 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/md/bcache/sysfs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/power/hibernate_32.c
-+++ b/arch/x86/power/hibernate_32.c
-@@ -142,7 +142,7 @@ static inline void resume_init_first_lev
- #endif
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -191,7 +191,7 @@ STORE(__cached_dev)
  {
- 	int error;
+ 	struct cached_dev *dc = container_of(kobj, struct cached_dev,
+ 					     disk.kobj);
+-	ssize_t v = size;
++	ssize_t v;
+ 	struct cache_set *c;
+ 	struct kobj_uevent_env *env;
  
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -149,7 +149,7 @@ static int relocate_restore_code(void)
- 	return 0;
- }
+@@ -268,6 +268,7 @@ STORE(__cached_dev)
+ 		if (bch_parse_uuid(buf, set_uuid) < 16)
+ 			return -EINVAL;
  
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
++		v = -ENOENT;
+ 		list_for_each_entry(c, &bch_cache_sets, list) {
+ 			v = bch_cached_dev_attach(dc, c, set_uuid);
+ 			if (!v)
+@@ -275,7 +276,7 @@ STORE(__cached_dev)
+ 		}
  
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -378,6 +378,8 @@ extern int swsusp_page_is_forbidden(stru
- extern void swsusp_set_page_free(struct page *);
- extern void swsusp_unset_page_free(struct page *);
- extern unsigned long get_safe_page(gfp_t gfp_mask);
-+extern asmlinkage int swsusp_arch_suspend(void);
-+extern asmlinkage int swsusp_arch_resume(void);
+ 		pr_err("Can't attach %s: cache set not found", buf);
+-		size = v;
++		return v;
+ 	}
  
- extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
- extern int hibernate(void);
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -103,9 +103,6 @@ extern int in_suspend;
- extern dev_t swsusp_resume_device;
- extern sector_t swsusp_resume_block;
- 
--extern asmlinkage int swsusp_arch_suspend(void);
--extern asmlinkage int swsusp_arch_resume(void);
--
- extern int create_basic_memory_bitmaps(void);
- extern void free_basic_memory_bitmaps(void);
- extern int hibernate_preallocate_memory(void);
+ 	if (attr == &sysfs_detach && dc->disk.c)
