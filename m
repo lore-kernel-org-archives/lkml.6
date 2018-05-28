@@ -1,91 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939186AbeE1N3n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:29:43 -0400
-Received: from gate.crashing.org ([63.228.1.57]:51018 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S939173AbeE1N3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:29:37 -0400
-Message-ID: <7e6878a1b6c16ea0e18ce0bd9cc7ae5d2de17359.camel@kernel.crashing.org>
-Subject: Re: [PATCH] powerpc/64s: Clear PCR on boot
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Michael Ellerman <michael@ellerman.id.au>
-Cc: Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 28 May 2018 23:28:34 +1000
-In-Reply-To: <20180527034503.GA31985@roeck-us.net>
-References: <20180525133308.GA17443@roeck-us.net>
-         <31148B04-5AA9-4F4F-BD34-CD9665F7F6D6@ellerman.id.au>
-         <20180527034503.GA31985@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
+        id S939204AbeE1NaC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:30:02 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:50912 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S939075AbeE1N36 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:29:58 -0400
+To: "Vinayak Holikatti <vinholikatti@gmail.com>; \"James E.J. Bottomley\"
+        <jejb@linux.vnet.ibm.com>; \"Martin K. Petersen\""
+        <martin.petersen@oracle.com>,
+        <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org; Manjunath M Bettegowda
+        <manjumb@synopsys.com>; Prabu Thangamuthu <prabut@synopsys.com>; Tejas
+        Joglekar <joglekar@synopsys.com>; Joao Pinto"
+        <Joao.Pinto@synopsys.com>
+Subject: [PATCH 3/5] scsi: ufs: Add Kconfig for UFS HC driver crypto support
+From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+Message-ID: <9baaf314-e9de-a078-1085-9c81b3421d42@synopsys.com>
+Date: Mon, 28 May 2018 14:29:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.144.133.104]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-05-26 at 20:45 -0700, Guenter Roeck wrote:
-> 
-> I already have a patch, or at least one that does the trick for me.
-> Getting qemu patched was not the problem. I just want to be sure that
-> the problem is indeed a qemu problem.
 
-Hey Guenter !
+This patch adds the Kconfig for enabling crypto support for
+UFS Host Controller driver. It also adds Makefile changes
+for building crypto support based on crypto Kconfig selection.
 
-It's not quite the right patch though. The PCR is a hypervisor
-priviledged register, your patch makes it supervisor accessible.
+Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
+---
+ drivers/scsi/ufs/Kconfig  | 15 +++++++++++++++
+ drivers/scsi/ufs/Makefile |  6 +++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-I don't have all my stuff at hand to provide a "proper" or tested patch
-but it should look like
-
-    spr_register_hv(env, SPR_PCR, "PCR",
-                    SPR_NOACCESS, SPR_NOACCESS,
-                    SPR_NOACCESS, SPR_NOACCESS,
-                    &spr_read_generic, &spr_write_generic, 0);
-
-Additionally the TCG ppc instruction decoder should be made to check
-the PCR for varous instructions (that or use a specific write callback
-that affects the CPU flags) but that's less urgent.
-
-Cheers,
-Ben.
-
-> Thanks,
-> Guenter
-> 
-> ---
-> > From 1617bac264b4c49d817b6947611affa9b73318f6 Mon Sep 17 00:00:00 2001
-> 
-> From: Guenter Roeck <linux@roeck-us.net>
-> Date: Fri, 25 May 2018 06:38:40 -0700
-> Subject: [PATCH] PowerPC: Permit privileged access to SPR_PCR for POWER7+
-> 
-> Without this access, Linux mainline bails out.
-> 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  target/ppc/translate_init.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/target/ppc/translate_init.c b/target/ppc/translate_init.c
-> index 391b94b..3b09c49 100644
-> --- a/target/ppc/translate_init.c
-> +++ b/target/ppc/translate_init.c
-> @@ -7953,11 +7953,12 @@ static void gen_spr_power6_common(CPUPPCState *env)
->  #endif
->      /*
->       * Register PCR to report POWERPC_EXCP_PRIV_REG instead of
-> -     * POWERPC_EXCP_INVAL_SPR.
-> +     * POWERPC_EXCP_INVAL_SPR in userspace. Permit privileged
-> +     * access.
->       */
->      spr_register(env, SPR_PCR, "PCR",
->                   SPR_NOACCESS, SPR_NOACCESS,
-> -                 SPR_NOACCESS, SPR_NOACCESS,
-> +                 &spr_read_generic, &spr_write_generic,
->                   0x00000000);
->  }
->  
+diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+index e27b4d4..0134672 100644
+--- a/drivers/scsi/ufs/Kconfig
++++ b/drivers/scsi/ufs/Kconfig
+@@ -50,6 +50,21 @@ config SCSI_UFSHCD
+ 	  However, do not compile this as a module if your root file system
+ 	  (the one containing the directory /) is located on a UFS device.
+ 
++config SCSI_UFSHCD_INLINE_ENCRYPTION
++	bool "Universal Flash Storage Controller Driver crypto support"
++	depends on SCSI_UFSHCD
++	default n
++	select BLK_DEV_INLINE_ENCRYPTION if SCSI_UFSHCD_INLINE_ENCRYPTION
++	help
++	This enables the Inline Encryption feature of the UFS Host
++	Controller driver. Once the capability is detected in hardware,
++	it will be made available for the user through Linux Kernel
++	Cryptography Framework(LKCF).
++
++	  If you have a controller with this capability, say Y.
++
++	  If unsure, say N.
++
+ config SCSI_UFSHCD_PCI
+ 	tristate "PCI bus based UFS Controller support"
+ 	depends on SCSI_UFSHCD && PCI
+diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+index 918f579..ab84bec 100644
+--- a/drivers/scsi/ufs/Makefile
++++ b/drivers/scsi/ufs/Makefile
+@@ -4,6 +4,10 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) += tc-dwc-g210-pci.o ufshcd-dwc.o tc-dwc-g210.
+ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-dwc-g210.o
+ obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+ obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+-ufshcd-core-objs := ufshcd.o ufs-sysfs.o
++ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
++        ufshcd-core-objs := ufshcd.o ufs-sysfs.o ufshcd-crypto.o
++else
++        ufshcd-core-objs := ufshcd.o ufs-sysfs.o
++endif
+ obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+ obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+-- 
+2.7.4
