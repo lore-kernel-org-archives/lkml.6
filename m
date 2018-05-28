@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938016AbeE1K61 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:58:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937983AbeE1K6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S938002AbeE1K6W (ORCPT <rfc822;w@1wt.eu>);
         Mon, 28 May 2018 06:58:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46422 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937983AbeE1K6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Frank Asseg <frank.asseg@objecthunter.net>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 376/496] net/mlx5: Protect from command bit overflow
-Date: Mon, 28 May 2018 12:02:41 +0200
-Message-Id: <20180528100335.651670360@linuxfoundation.org>
+Subject: [PATCH 4.14 374/496] tools/thermal: tmon: fix for segfault
+Date: Mon, 28 May 2018 12:02:39 +0200
+Message-Id: <20180528100335.572184987@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,58 +30,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Frank Asseg <frank.asseg@objecthunter.net>
 
-[ Upstream commit 957f6ba8adc7be401a74ccff427e4cfd88d3bfcb ]
+[ Upstream commit 6c59f64b7ecf2bccbe73931d7d573d66ed13b537 ]
 
-The system with CONFIG_UBSAN enabled on produces the following error
-during driver initialization. The reason to it that max_reg_cmds can be
-larger enough to cause to "1 << max_reg_cmds" overflow the unsigned long.
+Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in the
+ncurses tmon application. The segfault is caused by incrementing
+cur_thermal_record in the main function without checking if it's value reached
+NR_THERMAL_RECORD immediately. Since the boundary check only occurred in
+update_thermal_data a race condition existed, which lead to an attempted read
+beyond the last element of the trec array.
 
-================================================================================
-UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlx5/core/cmd.c:1805:42
-signed integer overflow:
--2147483648 - 1 cannot be represented in type 'int'
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2-00032-g06cda2358d9b-dirty #724
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-Call Trace:
- dump_stack+0xe9/0x18f
- ? dma_virt_alloc+0x81/0x81
- ubsan_epilogue+0xe/0x4e
- handle_overflow+0x187/0x20c
- mlx5_cmd_init+0x73a/0x12b0
- mlx5_load_one+0x1c3d/0x1d30
- init_one+0xd02/0xf10
- pci_device_probe+0x26c/0x3b0
- driver_probe_device+0x622/0xb40
- __driver_attach+0x175/0x1b0
- bus_for_each_dev+0xef/0x190
- bus_add_driver+0x2db/0x490
- driver_register+0x16b/0x1e0
- __pci_register_driver+0x177/0x1b0
- init+0x6d/0x92
- do_one_initcall+0x15b/0x270
- kernel_init_freeable+0x2d8/0x3d0
- kernel_init+0x14/0x190
- ret_from_fork+0x24/0x30
-================================================================================
+The fix was implemented by moving the cur_thermal_record incrementation to the
+update_thermal_data function using a temporary variable on which the boundary
+condition is checked before updating cur_thread_record, so that the variable is
+never incremented beyond the trec array's boundary.
 
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+It seems the segfault does not occur on every machine: On a HP EliteBook G4 the
+segfault happens, while it does not happen on a Thinkpad T540p.
+
+Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/thermal/tmon/sysfs.c |   12 +++++++-----
+ tools/thermal/tmon/tmon.c  |    1 -
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -1802,7 +1802,7 @@ int mlx5_cmd_init(struct mlx5_core_dev *
+--- a/tools/thermal/tmon/sysfs.c
++++ b/tools/thermal/tmon/sysfs.c
+@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst
+ int update_thermal_data()
+ {
+ 	int i;
++	int next_thermal_record = cur_thermal_record + 1;
+ 	char tz_name[256];
+ 	static unsigned long samples;
  
- 	cmd->checksum_disabled = 1;
- 	cmd->max_reg_cmds = (1 << cmd->log_sz) - 1;
--	cmd->bitmask = (1 << cmd->max_reg_cmds) - 1;
-+	cmd->bitmask = (1UL << cmd->max_reg_cmds) - 1;
+@@ -495,9 +496,9 @@ int update_thermal_data()
+ 	}
  
- 	cmd->cmdif_rev = ioread32be(&dev->iseg->cmdif_rev_fw_sub) >> 16;
- 	if (cmd->cmdif_rev > CMD_IF_REV) {
+ 	/* circular buffer for keeping historic data */
+-	if (cur_thermal_record >= NR_THERMAL_RECORDS)
+-		cur_thermal_record = 0;
+-	gettimeofday(&trec[cur_thermal_record].tv, NULL);
++	if (next_thermal_record >= NR_THERMAL_RECORDS)
++		next_thermal_record = 0;
++	gettimeofday(&trec[next_thermal_record].tv, NULL);
+ 	if (tmon_log) {
+ 		fprintf(tmon_log, "%lu ", ++samples);
+ 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
+@@ -507,11 +508,12 @@ int update_thermal_data()
+ 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
+ 			ptdata.tzi[i].instance);
+ 		sysfs_get_ulong(tz_name, "temp",
+-				&trec[cur_thermal_record].temp[i]);
++				&trec[next_thermal_record].temp[i]);
+ 		if (tmon_log)
+ 			fprintf(tmon_log, "%lu ",
+-				trec[cur_thermal_record].temp[i]/1000);
++				trec[next_thermal_record].temp[i] / 1000);
+ 	}
++	cur_thermal_record = next_thermal_record;
+ 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
+ 		char cdev_name[256];
+ 		unsigned long val;
+--- a/tools/thermal/tmon/tmon.c
++++ b/tools/thermal/tmon/tmon.c
+@@ -336,7 +336,6 @@ int main(int argc, char **argv)
+ 			show_data_w();
+ 			show_cooling_device();
+ 		}
+-		cur_thermal_record++;
+ 		time_elapsed += ticktime;
+ 		controller_handler(trec[0].temp[target_tz_index] / 1000,
+ 				&yk);
