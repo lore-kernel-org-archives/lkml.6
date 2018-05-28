@@ -1,84 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753537AbeE1GuV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 02:50:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42450 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753330AbeE1GuS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 02:50:18 -0400
-Subject: Re: [PATCH] perf test 39 (Session topology) dumps core on s390
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <20180524135600.77128-1-tmricht@linux.ibm.com>
- <610eac04-1e34-9032-0a95-2f9818a31a9b@linux.ibm.com>
-From: Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM LTC
-Date: Mon, 28 May 2018 08:50:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753558AbeE1Gus (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 02:50:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34443 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753330AbeE1Gup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 02:50:45 -0400
+Date: Mon, 28 May 2018 08:50:43 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: sunxi: mark PM functions as __maybe_unused
+Message-ID: <20180528065043.yewyrrat2eqlm2sa@flea>
+References: <20180525210752.1794502-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <610eac04-1e34-9032-0a95-2f9818a31a9b@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052806-0040-0000-0000-0000043E73BE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052806-0041-0000-0000-00002643BC9F
-Message-Id: <9042034b-0d46-0bfb-7737-717e7d5803d6@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805280084
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jops65ydd4glphpe"
+Content-Disposition: inline
+In-Reply-To: <20180525210752.1794502-1-arnd@arndb.de>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 05:49 AM, Ravi Bangoria wrote:
-> Hi Thomas,
-> 
-> On 05/24/2018 07:26 PM, Thomas Richter wrote:
->> @@ -95,7 +98,7 @@ int test__session_topology(struct test *test __maybe_unused, int subtest __maybe
->>  {
->>  	char path[PATH_MAX];
->>  	struct cpu_map *map;
->> -	int ret = -1;
->> +	int ret;
-> 
-> This is failing for me:
-> 
-> tests/topology.c: In function ‘test__session_topology’:
-> tests/topology.c:101:6: error: ‘ret’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   int ret;
->       ^
-> cc1: all warnings being treated as errors
->   CC       util/intlist.o
-> mv: cannot stat 'tests/.topology.o.tmp': No such file or directory
-> /home/ravi/Workspace/linux/tools/build/Makefile.build:96: recipe for target 'tests/topology.o' failed
-> make[4]: *** [tests/topology.o] Error 1
-> make[4]: *** Waiting for unfinished jobs....
-> 
-> 
-> Thanks,
-> Ravi
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-perf-users" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
 
-Thanks for the pointer, will provide V2.
+--jops65ydd4glphpe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+On Fri, May 25, 2018 at 11:07:42PM +0200, Arnd Bergmann wrote:
+> The newly added runtime-pm functions cause a harmless warning
+> when CONFIG_PM is disabled:
+>=20
+> drivers/mmc/host/sunxi-mmc.c:1452:12: error: 'sunxi_mmc_runtime_suspend' =
+defined but not used [-Werror=3Dunused-function]
+>  static int sunxi_mmc_runtime_suspend(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/mmc/host/sunxi-mmc.c:1435:12: error: 'sunxi_mmc_runtime_resume' d=
+efined but not used [-Werror=3Dunused-function]
+>  static int sunxi_mmc_runtime_resume(struct device *dev)
+>=20
+> This marks them as __maybe_unused to shut up the warning.
+>=20
+> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--jops65ydd4glphpe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsLprIACgkQ0rTAlCFN
+r3Sk4g/4ztmk2MGwc/nBZIQCIaoS0xaVrifTM4UPyYUg0uG7leJ9mB9O1bgazsxd
+ROUGsyRZ1i1Syrl5QkIpWTQNZ+y6vced1s2/cGFaRuIohuiU/ouyfYV9U/qdXWJk
+lrMb1yGajD9klfmh1xhChOWZlqhd/7Z3IYt49Fc/B2A6QqcVB6aiUKYR2kd5ZUjc
+Sw+nZrUBUzZScfiTxOUr95M0MuO+EqJA1ayA080BvrboZD8k0svq+wLXx5W42QYA
+c0ayrBZRp+LwwtjuwkLkaCHVFEqh9Qda1ACXG2GohFFFo5xb6bps9yEOwaDo+EjU
+NkzjgHA0i0Gj8+gUVv9qWKmHM8D5yKOynSfP/LzVjC5ToXSCX3AcTc3ZPFVa8gpm
+PC6w/1Rm1hwrVHbYzzEM/a2bNGDAFhH7HAFgSrLfpsWPwnk8i6sj2ZfcZhIoNWrK
+8ElCCGosmGK//2cAGJvnqX6Dl9onu0aho+RBDEdEXThwYPaQAOOPlwTV0WZmxp9e
+u8/hCjV0kJtIYAtlId6GYrhpLymwtnjCzJRwInLDT+7HE1XS/XIWbwj0Hr9aJ6NF
+hbNcEkQTH8+GRkEMLMYc/HnK4gMaD6Mt6bp+e7q/M4AwBKOttOp400noHbLUVsFy
+AR0Yprwkq4zcb/WpqiMep6wUU5AkeosK5XcgTUxc5r9V6Htn2w==
+=bNNd
+-----END PGP SIGNATURE-----
+
+--jops65ydd4glphpe--
