@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938046AbeE1LML (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:12:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59896 "EHLO mail.kernel.org"
+        id S1423786AbeE1LMX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:12:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938090AbeE1LME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:12:04 -0400
+        id S938038AbeE1LMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:12:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
+        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 177/272] powerpc/powernv/npu: Fix deadlock in mmio_invalidate()
-Date: Mon, 28 May 2018 12:03:30 +0200
-Message-Id: <20180528100255.615047899@linuxfoundation.org>
+Subject: [PATCH 4.16 179/272] cxl: Check if PSL data-cache is available before issue flush request
+Date: Mon, 28 May 2018 12:03:32 +0200
+Message-Id: <20180528100255.757970401@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,368 +32,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alistair Popple <alistair@popple.id.au>
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
 
-[ Upstream commit 2b74e2a9b39df40a2b489af2d24079617c61ee0e ]
+[ Upstream commit 94322ed8e857e3b2a33cf75118051af9baaa110f ]
 
-When sending TLB invalidates to the NPU we need to send extra flushes due
-to a hardware issue. The original implementation would lock the all the
-ATSD MMIO registers sequentially before unlocking and relocking each of
-them sequentially to do the extra flush.
+PSL9D doesn't have a data-cache that needs to be flushed before
+resetting the card. However when cxl tries to flush data-cache on such
+a card, it times-out as PSL_Control register never indicates flush
+operation complete due to missing data-cache. This is usually
+indicated in the kernel logs with this message:
 
-This introduced a deadlock as it is possible for one thread to hold one
-ATSD register whilst waiting for another register to be freed while the
-other thread is holding that register waiting for the one in the first
-thread to be freed.
+"WARNING: cache flush timed out"
 
-For example if there are two threads and two ATSD registers:
+To fix this the patch checks PSL_Debug register CDC-Field(BIT:27)
+which indicates the absence of a data-cache and sets a flag
+'no_data_cache' in 'struct cxl_native' to indicate this. When
+cxl_data_cache_flush() is called it checks the flag and if set bails
+out early without requesting a data-cache flush operation to the PSL.
 
-  Thread A	Thread B
-  ----------------------
-  Acquire 1
-  Acquire 2
-  Release 1	Acquire 1
-  Wait 1	Wait 2
-
-Both threads will be stuck waiting to acquire a register resulting in an
-RCU stall warning or soft lockup.
-
-This patch solves the deadlock by refactoring the code to ensure registers
-are not released between flushes and to ensure all registers are either
-acquired or released together and in order.
-
-Fixes: bbd5ff50afff ("powerpc/powernv/npu-dma: Add explicit flush when sending an ATSD")
-Signed-off-by: Alistair Popple <alistair@popple.id.au>
+Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/npu-dma.c |  227 +++++++++++++++++++------------
- 1 file changed, 140 insertions(+), 87 deletions(-)
+ drivers/misc/cxl/cxl.h    |    4 ++++
+ drivers/misc/cxl/native.c |   11 ++++++++++-
+ drivers/misc/cxl/pci.c    |   19 +++++++++++++------
+ 3 files changed, 27 insertions(+), 7 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/npu-dma.c
-+++ b/arch/powerpc/platforms/powernv/npu-dma.c
-@@ -417,6 +417,11 @@ struct npu_context {
- 	void *priv;
+--- a/drivers/misc/cxl/cxl.h
++++ b/drivers/misc/cxl/cxl.h
+@@ -369,6 +369,9 @@ static const cxl_p2n_reg_t CXL_PSL_WED_A
+ #define CXL_PSL_TFC_An_AE (1ull << (63-30)) /* Restart PSL with address error */
+ #define CXL_PSL_TFC_An_R  (1ull << (63-31)) /* Restart PSL transaction */
+ 
++/****** CXL_PSL_DEBUG *****************************************************/
++#define CXL_PSL_DEBUG_CDC  (1ull << (63-27)) /* Coherent Data cache support */
++
+ /****** CXL_XSL9_IERAT_ERAT - CAIA 2 **********************************/
+ #define CXL_XSL9_IERAT_MLPID    (1ull << (63-0))  /* Match LPID */
+ #define CXL_XSL9_IERAT_MPID     (1ull << (63-1))  /* Match PID */
+@@ -669,6 +672,7 @@ struct cxl_native {
+ 	irq_hw_number_t err_hwirq;
+ 	unsigned int err_virq;
+ 	u64 ps_off;
++	bool no_data_cache; /* set if no data cache on the card */
+ 	const struct cxl_service_layer_ops *sl_ops;
  };
  
-+struct mmio_atsd_reg {
-+	struct npu *npu;
-+	int reg;
-+};
-+
- /*
-  * Find a free MMIO ATSD register and mark it in use. Return -ENOSPC
-  * if none are available.
-@@ -426,7 +431,7 @@ static int get_mmio_atsd_reg(struct npu
- 	int i;
+--- a/drivers/misc/cxl/native.c
++++ b/drivers/misc/cxl/native.c
+@@ -353,8 +353,17 @@ int cxl_data_cache_flush(struct cxl *ada
+ 	u64 reg;
+ 	unsigned long timeout = jiffies + (HZ * CXL_TIMEOUT);
  
- 	for (i = 0; i < npu->mmio_atsd_count; i++) {
--		if (!test_and_set_bit(i, &npu->mmio_atsd_usage))
-+		if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
- 			return i;
- 	}
- 
-@@ -435,86 +440,90 @@ static int get_mmio_atsd_reg(struct npu
- 
- static void put_mmio_atsd_reg(struct npu *npu, int reg)
- {
--	clear_bit(reg, &npu->mmio_atsd_usage);
-+	clear_bit_unlock(reg, &npu->mmio_atsd_usage);
- }
- 
- /* MMIO ATSD register offsets */
- #define XTS_ATSD_AVA  1
- #define XTS_ATSD_STAT 2
- 
--static int mmio_launch_invalidate(struct npu *npu, unsigned long launch,
--				unsigned long va)
-+static void mmio_launch_invalidate(struct mmio_atsd_reg *mmio_atsd_reg,
-+				unsigned long launch, unsigned long va)
- {
--	int mmio_atsd_reg;
--
--	do {
--		mmio_atsd_reg = get_mmio_atsd_reg(npu);
--		cpu_relax();
--	} while (mmio_atsd_reg < 0);
-+	struct npu *npu = mmio_atsd_reg->npu;
-+	int reg = mmio_atsd_reg->reg;
- 
- 	__raw_writeq(cpu_to_be64(va),
--		npu->mmio_atsd_regs[mmio_atsd_reg] + XTS_ATSD_AVA);
-+		npu->mmio_atsd_regs[reg] + XTS_ATSD_AVA);
- 	eieio();
--	__raw_writeq(cpu_to_be64(launch), npu->mmio_atsd_regs[mmio_atsd_reg]);
--
--	return mmio_atsd_reg;
-+	__raw_writeq(cpu_to_be64(launch), npu->mmio_atsd_regs[reg]);
- }
- 
--static int mmio_invalidate_pid(struct npu *npu, unsigned long pid, bool flush)
-+static void mmio_invalidate_pid(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
-+				unsigned long pid, bool flush)
- {
-+	int i;
- 	unsigned long launch;
- 
--	/* IS set to invalidate matching PID */
--	launch = PPC_BIT(12);
-+	for (i = 0; i <= max_npu2_index; i++) {
-+		if (mmio_atsd_reg[i].reg < 0)
-+			continue;
-+
-+		/* IS set to invalidate matching PID */
-+		launch = PPC_BIT(12);
- 
--	/* PRS set to process-scoped */
--	launch |= PPC_BIT(13);
-+		/* PRS set to process-scoped */
-+		launch |= PPC_BIT(13);
- 
--	/* AP */
--	launch |= (u64) mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
-+		/* AP */
-+		launch |= (u64)
-+			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
- 
--	/* PID */
--	launch |= pid << PPC_BITLSHIFT(38);
-+		/* PID */
-+		launch |= pid << PPC_BITLSHIFT(38);
- 
--	/* No flush */
--	launch |= !flush << PPC_BITLSHIFT(39);
-+		/* No flush */
-+		launch |= !flush << PPC_BITLSHIFT(39);
- 
--	/* Invalidating the entire process doesn't use a va */
--	return mmio_launch_invalidate(npu, launch, 0);
-+		/* Invalidating the entire process doesn't use a va */
-+		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, 0);
-+	}
- }
- 
--static int mmio_invalidate_va(struct npu *npu, unsigned long va,
--			unsigned long pid, bool flush)
-+static void mmio_invalidate_va(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
-+			unsigned long va, unsigned long pid, bool flush)
- {
-+	int i;
- 	unsigned long launch;
- 
--	/* IS set to invalidate target VA */
--	launch = 0;
-+	for (i = 0; i <= max_npu2_index; i++) {
-+		if (mmio_atsd_reg[i].reg < 0)
-+			continue;
- 
--	/* PRS set to process scoped */
--	launch |= PPC_BIT(13);
-+		/* IS set to invalidate target VA */
-+		launch = 0;
- 
--	/* AP */
--	launch |= (u64) mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
-+		/* PRS set to process scoped */
-+		launch |= PPC_BIT(13);
- 
--	/* PID */
--	launch |= pid << PPC_BITLSHIFT(38);
-+		/* AP */
-+		launch |= (u64)
-+			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
- 
--	/* No flush */
--	launch |= !flush << PPC_BITLSHIFT(39);
-+		/* PID */
-+		launch |= pid << PPC_BITLSHIFT(38);
- 
--	return mmio_launch_invalidate(npu, launch, va);
-+		/* No flush */
-+		launch |= !flush << PPC_BITLSHIFT(39);
-+
-+		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, va);
-+	}
- }
- 
- #define mn_to_npu_context(x) container_of(x, struct npu_context, mn)
- 
--struct mmio_atsd_reg {
--	struct npu *npu;
--	int reg;
--};
--
- static void mmio_invalidate_wait(
--	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS], bool flush)
-+	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
- {
- 	struct npu *npu;
- 	int i, reg;
-@@ -529,16 +538,67 @@ static void mmio_invalidate_wait(
- 		reg = mmio_atsd_reg[i].reg;
- 		while (__raw_readq(npu->mmio_atsd_regs[reg] + XTS_ATSD_STAT))
- 			cpu_relax();
-+	}
-+}
-+
-+/*
-+ * Acquires all the address translation shootdown (ATSD) registers required to
-+ * launch an ATSD on all links this npu_context is active on.
-+ */
-+static void acquire_atsd_reg(struct npu_context *npu_context,
-+			struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
-+{
-+	int i, j;
-+	struct npu *npu;
-+	struct pci_dev *npdev;
-+	struct pnv_phb *nphb;
-+
-+	for (i = 0; i <= max_npu2_index; i++) {
-+		mmio_atsd_reg[i].reg = -1;
-+		for (j = 0; j < NV_MAX_LINKS; j++) {
-+			/*
-+			 * There are no ordering requirements with respect to
-+			 * the setup of struct npu_context, but to ensure
-+			 * consistent behaviour we need to ensure npdev[][] is
-+			 * only read once.
-+			 */
-+			npdev = READ_ONCE(npu_context->npdev[i][j]);
-+			if (!npdev)
-+				continue;
-+
-+			nphb = pci_bus_to_host(npdev->bus)->private_data;
-+			npu = &nphb->npu;
-+			mmio_atsd_reg[i].npu = npu;
-+			mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
-+			while (mmio_atsd_reg[i].reg < 0) {
-+				mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
-+				cpu_relax();
-+			}
-+			break;
-+		}
-+	}
-+}
- 
--		put_mmio_atsd_reg(npu, reg);
-+/*
-+ * Release previously acquired ATSD registers. To avoid deadlocks the registers
-+ * must be released in the same order they were acquired above in
-+ * acquire_atsd_reg.
-+ */
-+static void release_atsd_reg(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
-+{
-+	int i;
- 
-+	for (i = 0; i <= max_npu2_index; i++) {
- 		/*
--		 * The GPU requires two flush ATSDs to ensure all entries have
--		 * been flushed. We use PID 0 as it will never be used for a
--		 * process on the GPU.
-+		 * We can't rely on npu_context->npdev[][] being the same here
-+		 * as when acquire_atsd_reg() was called, hence we use the
-+		 * values stored in mmio_atsd_reg during the acquire phase
-+		 * rather than re-reading npdev[][].
- 		 */
--		if (flush)
--			mmio_invalidate_pid(npu, 0, true);
-+		if (mmio_atsd_reg[i].reg < 0)
-+			continue;
-+
-+		put_mmio_atsd_reg(mmio_atsd_reg[i].npu, mmio_atsd_reg[i].reg);
- 	}
- }
- 
-@@ -549,10 +609,6 @@ static void mmio_invalidate_wait(
- static void mmio_invalidate(struct npu_context *npu_context, int va,
- 			unsigned long address, bool flush)
- {
--	int i, j;
--	struct npu *npu;
--	struct pnv_phb *nphb;
--	struct pci_dev *npdev;
- 	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS];
- 	unsigned long pid = npu_context->mm->context.id;
- 
-@@ -568,37 +624,25 @@ static void mmio_invalidate(struct npu_c
- 	 * Loop over all the NPUs this process is active on and launch
- 	 * an invalidate.
- 	 */
--	for (i = 0; i <= max_npu2_index; i++) {
--		mmio_atsd_reg[i].reg = -1;
--		for (j = 0; j < NV_MAX_LINKS; j++) {
--			npdev = npu_context->npdev[i][j];
--			if (!npdev)
--				continue;
-+	acquire_atsd_reg(npu_context, mmio_atsd_reg);
-+	if (va)
-+		mmio_invalidate_va(mmio_atsd_reg, address, pid, flush);
-+	else
-+		mmio_invalidate_pid(mmio_atsd_reg, pid, flush);
- 
--			nphb = pci_bus_to_host(npdev->bus)->private_data;
--			npu = &nphb->npu;
--			mmio_atsd_reg[i].npu = npu;
--
--			if (va)
--				mmio_atsd_reg[i].reg =
--					mmio_invalidate_va(npu, address, pid,
--							flush);
--			else
--				mmio_atsd_reg[i].reg =
--					mmio_invalidate_pid(npu, pid, flush);
--
--			/*
--			 * The NPU hardware forwards the shootdown to all GPUs
--			 * so we only have to launch one shootdown per NPU.
--			 */
--			break;
--		}
-+	mmio_invalidate_wait(mmio_atsd_reg);
-+	if (flush) {
-+		/*
-+		 * The GPU requires two flush ATSDs to ensure all entries have
-+		 * been flushed. We use PID 0 as it will never be used for a
-+		 * process on the GPU.
-+		 */
-+		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
-+		mmio_invalidate_wait(mmio_atsd_reg);
-+		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
-+		mmio_invalidate_wait(mmio_atsd_reg);
- 	}
--
--	mmio_invalidate_wait(mmio_atsd_reg, flush);
--	if (flush)
--		/* Wait for the flush to complete */
--		mmio_invalidate_wait(mmio_atsd_reg, false);
-+	release_atsd_reg(mmio_atsd_reg);
- }
- 
- static void pnv_npu2_mn_release(struct mmu_notifier *mn,
-@@ -741,7 +785,16 @@ struct npu_context *pnv_npu2_init_contex
- 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
- 							&nvlink_index)))
- 		return ERR_PTR(-ENODEV);
--	npu_context->npdev[npu->index][nvlink_index] = npdev;
-+
+-	pr_devel("Flushing data cache\n");
 +	/*
-+	 * npdev is a pci_dev pointer setup by the PCI code. We assign it to
-+	 * npdev[][] to indicate to the mmu notifiers that an invalidation
-+	 * should also be sent over this nvlink. The notifiers don't use any
-+	 * other fields in npu_context, so we just need to ensure that when they
-+	 * deference npu_context->npdev[][] it is either a valid pointer or
-+	 * NULL.
++	 * Do a datacache flush only if datacache is available.
++	 * In case of PSL9D datacache absent hence flush operation.
++	 * would timeout.
 +	 */
-+	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], npdev);
++	if (adapter->native->no_data_cache) {
++		pr_devel("No PSL data cache. Ignoring cache flush req.\n");
++		return 0;
++	}
  
- 	if (!nphb->npu.nmmu_flush) {
- 		/*
-@@ -793,7 +846,7 @@ void pnv_npu2_destroy_context(struct npu
- 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
- 							&nvlink_index)))
- 		return;
--	npu_context->npdev[npu->index][nvlink_index] = NULL;
-+	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], NULL);
- 	opal_npu_destroy_context(nphb->opal_id, npu_context->mm->context.id,
- 				PCI_DEVID(gpdev->bus->number, gpdev->devfn));
- 	kref_put(&npu_context->kref, pnv_npu2_release_context);
++	pr_devel("Flushing data cache\n");
+ 	reg = cxl_p1_read(adapter, CXL_PSL_Control);
+ 	reg |= CXL_PSL_Control_Fr;
+ 	cxl_p1_write(adapter, CXL_PSL_Control, reg);
+--- a/drivers/misc/cxl/pci.c
++++ b/drivers/misc/cxl/pci.c
+@@ -456,6 +456,7 @@ static int init_implementation_adapter_r
+ 	u64 chipid;
+ 	u32 phb_index;
+ 	u64 capp_unit_id;
++	u64 psl_debug;
+ 	int rc;
+ 
+ 	rc = cxl_calc_capp_routing(dev, &chipid, &phb_index, &capp_unit_id);
+@@ -506,6 +507,16 @@ static int init_implementation_adapter_r
+ 	} else
+ 		cxl_p1_write(adapter, CXL_PSL9_DEBUG, 0x4000000000000000ULL);
+ 
++	/*
++	 * Check if PSL has data-cache. We need to flush adapter datacache
++	 * when as its about to be removed.
++	 */
++	psl_debug = cxl_p1_read(adapter, CXL_PSL9_DEBUG);
++	if (psl_debug & CXL_PSL_DEBUG_CDC) {
++		dev_dbg(&dev->dev, "No data-cache present\n");
++		adapter->native->no_data_cache = true;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1449,10 +1460,8 @@ int cxl_pci_reset(struct cxl *adapter)
+ 
+ 	/*
+ 	 * The adapter is about to be reset, so ignore errors.
+-	 * Not supported on P9 DD1
+ 	 */
+-	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
+-		cxl_data_cache_flush(adapter);
++	cxl_data_cache_flush(adapter);
+ 
+ 	/* pcie_warm_reset requests a fundamental pci reset which includes a
+ 	 * PERST assert/deassert.  PERST triggers a loading of the image
+@@ -1936,10 +1945,8 @@ static void cxl_pci_remove_adapter(struc
+ 
+ 	/*
+ 	 * Flush adapter datacache as its about to be removed.
+-	 * Not supported on P9 DD1.
+ 	 */
+-	if ((cxl_is_power8()) || (!(cxl_is_power9_dd1())))
+-		cxl_data_cache_flush(adapter);
++	cxl_data_cache_flush(adapter);
+ 
+ 	cxl_deconfigure_adapter(adapter);
+ 
