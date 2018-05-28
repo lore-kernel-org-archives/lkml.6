@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966116AbeE1KPK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:15:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35138 "EHLO mail.kernel.org"
+        id S936927AbeE1KPR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936741AbeE1KO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:59 -0400
+        id S936913AbeE1KPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>, John Stultz <john.stultz@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 023/268] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
-Date: Mon, 28 May 2018 11:59:57 +0200
-Message-Id: <20180528100204.715331358@linuxfoundation.org>
+Subject: [PATCH 4.4 025/268] tools lib traceevent: Simplify pointer print logic and fix %pF
+Date: Mon, 28 May 2018 11:59:59 +0200
+Message-Id: <20180528100204.933706663@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,66 +32,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
+[ Upstream commit 38d70b7ca1769f26c0b79f3c08ff2cc949712b59 ]
 
-So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
-well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
-detecting the ABS or REL timer modes is not valid anymore, it got broken
-by the introduction of HRTIMER_MODE_PINNED.
+When processing %pX in pretty_print(), simplify the logic slightly by
+incrementing the ptr to the format string if isalnum(ptr[1]) is true.
+This follows the logic a bit more closely to what is in the kernel.
 
-HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
-sake of completeness print all given modes.
+Also, this fixes a small bug where %pF was not giving the offset of the
+function.
 
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: keescook@chromium.org
-Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: http://lkml.kernel.org/r/20180112004822.260262257@goodmis.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/trace/events/timer.h |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ tools/lib/traceevent/event-parse.c |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---- a/include/trace/events/timer.h
-+++ b/include/trace/events/timer.h
-@@ -125,6 +125,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
- 	TP_ARGS(timer)
- );
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -4905,21 +4905,22 @@ static void pretty_print(struct trace_se
+ 				else
+ 					ls = 2;
  
-+#define decode_clockid(type)						\
-+	__print_symbolic(type,						\
-+		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
-+		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
-+		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
-+		{ CLOCK_TAI,		"CLOCK_TAI"		})
+-				if (*(ptr+1) == 'F' || *(ptr+1) == 'f' ||
+-				    *(ptr+1) == 'S' || *(ptr+1) == 's') {
++				if (isalnum(ptr[1]))
+ 					ptr++;
 +
-+#define decode_hrtimer_mode(mode)					\
-+	__print_symbolic(mode,						\
-+		{ HRTIMER_MODE_ABS,		"ABS"		},	\
-+		{ HRTIMER_MODE_REL,		"REL"		},	\
-+		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
-+		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
-+
- /**
-  * hrtimer_init - called when the hrtimer is initialized
-  * @hrtimer:	pointer to struct hrtimer
-@@ -151,10 +165,8 @@ TRACE_EVENT(hrtimer_init,
- 	),
++				if (*ptr == 'F' || *ptr == 'f' ||
++				    *ptr == 'S' || *ptr == 's') {
+ 					show_func = *ptr;
+-				} else if (*(ptr+1) == 'M' || *(ptr+1) == 'm') {
+-					print_mac_arg(s, *(ptr+1), data, size, event, arg);
+-					ptr++;
++				} else if (*ptr == 'M' || *ptr == 'm') {
++					print_mac_arg(s, *ptr, data, size, event, arg);
+ 					arg = arg->next;
+ 					break;
+-				} else if (*(ptr+1) == 'I' || *(ptr+1) == 'i') {
++				} else if (*ptr == 'I' || *ptr == 'i') {
+ 					int n;
  
- 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
--		  __entry->clockid == CLOCK_REALTIME ?
--			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
--		  __entry->mode == HRTIMER_MODE_ABS ?
--			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
-+		  decode_clockid(__entry->clockid),
-+		  decode_hrtimer_mode(__entry->mode))
- );
- 
- /**
+-					n = print_ip_arg(s, ptr+1, data, size, event, arg);
++					n = print_ip_arg(s, ptr, data, size, event, arg);
+ 					if (n > 0) {
+-						ptr += n;
++						ptr += n - 1;
+ 						arg = arg->next;
+ 						break;
+ 					}
