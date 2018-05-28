@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754733AbeE1Ree (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 13:34:34 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55938 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754680AbeE1Re1 (ORCPT
+        id S1754792AbeE1RfD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:35:03 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36874 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754650AbeE1ReY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 13:34:27 -0400
-X-Google-Smtp-Source: ADUXVKITmH/LeCo43pvfMcAwzSR5y051ARK+dHVqNE+Y+X/nwdLZWKVzzHSrjeKiEoxtK3lWfxn1tA==
+        Mon, 28 May 2018 13:34:24 -0400
+X-Google-Smtp-Source: AB8JxZpf9zkzLg7wEVzYV3+iSaRc39hNknpLBXF74lIsopksIX9tlIpTXKxNTQkizEwiA8eXMlr7DA==
 From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To: Colin Didier <colin.dider@devialet.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -15,11 +15,11 @@ To: Colin Didier <colin.dider@devialet.com>,
 Cc: Shawn Guo <shawnguo@kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Colin Didier <colin.didier@devialet.com>,
+        linux-kernel@vger.kernel.org,
         =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH 5/5] ARM: dts: imx6qdl: add missing compatible and clock properties for EPIT
-Date: Mon, 28 May 2018 19:34:12 +0200
-Message-Id: <20180528173412.10000-6-peron.clem@gmail.com>
+Subject: [PATCH 3/5] Documentation: DT: add i.MX EPIT timer binding
+Date: Mon, 28 May 2018 19:34:10 +0200
+Message-Id: <20180528173412.10000-4-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
 References: <20180528173412.10000-1-peron.clem@gmail.com>
@@ -30,45 +30,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Didier <colin.didier@devialet.com>
+From: Clément Peron <clement.peron@devialet.com>
 
-Add missing compatible and clock properties for EPIT node.
+Add devicetree binding document for NXP's i.MX SoC specific
+EPIT timer driver.
 
-Signed-off-by: Colin Didier <colin.didier@devialet.com>
 Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../devicetree/bindings/clock/imx6q,epit.txt  | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index c003e62bf290..16fec147dcb8 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -844,13 +844,25 @@
- 			};
- 
- 			epit1: epit@20d0000 { /* EPIT1 */
-+				compatible = "fsl,imx6q-epit";
- 				reg = <0x020d0000 0x4000>;
- 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6QDL_CLK_EPIT1>,
-+					<&clks IMX6QDL_CLK_IPG_PER>,
-+					<&clks IMX6QDL_CLK_CKIL>;
-+				clock-names = "ipg", "per", "ckil";
-+				status = "disabled";
- 			};
- 
- 			epit2: epit@20d4000 { /* EPIT2 */
-+				compatible = "fsl,imx6q-epit";
- 				reg = <0x020d4000 0x4000>;
- 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6QDL_CLK_EPIT2>,
-+					<&clks IMX6QDL_CLK_IPG_PER>,
-+					<&clks IMX6QDL_CLK_CKIL>;
-+				clock-names = "ipg", "per", "ckil";
-+				status = "disabled";
- 			};
- 
- 			src: src@20d8000 {
+diff --git a/Documentation/devicetree/bindings/clock/imx6q,epit.txt b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+new file mode 100644
+index 000000000000..d54d455cebdc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+@@ -0,0 +1,25 @@
++Binding for the i.MX6 EPIT timer
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: should be "fsl,imx6q-epit"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- interrupts: Should contain EPIT controller interrupt
++- clocks: list of clock specifiers, must contain an entry for each required
++  entry in clock-names
++- clock-names : as described in the clock bindings
++
++Example:
++	epit1: epit@20d0000 {
++		compatible = "fsl,imx6q-epit";
++		reg = <0x020d0000 0x4000>;
++		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6QDL_CLK_EPIT1>,
++			<&clks IMX6QDL_CLK_IPG_PER>,
++			<&clks IMX6QDL_CLK_CKIL>;
++		clock-names = "ipg", "per", "ckil";
++	};
 -- 
 2.17.0
