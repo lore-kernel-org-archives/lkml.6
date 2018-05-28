@@ -1,24 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034674AbeE1PiE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:38:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38364 "EHLO mail.kernel.org"
+        id S1034652AbeE1Ph7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:37:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968745AbeE1KSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:18 -0400
+        id S968594AbeE1KSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Dave Jiang <dave.jiang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Mark Lord <mlord@pobox.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 096/268] kernel/relay.c: limit kmalloc size to KMALLOC_MAX_SIZE
-Date: Mon, 28 May 2018 12:01:10 +0200
-Message-Id: <20180528100213.092754885@linuxfoundation.org>
+Subject: [PATCH 4.4 097/268] powerpc/bpf/jit: Fix 32-bit JIT for seccomp_data access
+Date: Mon, 28 May 2018 12:01:11 +0200
+Message-Id: <20180528100213.252430510@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,42 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Mark Lord <mlord@pobox.com>
 
-[ Upstream commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e ]
+[ Upstream commit 083b20907185b076f21c265b30fe5b5f24c03d8c ]
 
-chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
-of chan->n_subbufs * sizeof(size_t *).
+I am using SECCOMP to filter syscalls on a ppc32 platform, and noticed
+that the JIT compiler was failing on the BPF even though the
+interpreter was working fine.
 
-kmalloc_slab() will generate a warning when this fails if
-chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
+The issue was that the compiler was missing one of the instructions
+used by SECCOMP, so here is a patch to enable JIT for that
+instruction.
 
-Limit chan->n_subbufs to the maximum allowed kmalloc() size.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
-Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: eb84bab0fb38 ("ppc: Kconfig: Enable BPF JIT on ppc32")
+Signed-off-by: Mark Lord <mlord@pobox.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/relay.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/net/bpf_jit_comp.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -163,7 +163,7 @@ static struct rchan_buf *relay_create_bu
- {
- 	struct rchan_buf *buf;
- 
--	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
-+	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
- 		return NULL;
- 
- 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
+--- a/arch/powerpc/net/bpf_jit_comp.c
++++ b/arch/powerpc/net/bpf_jit_comp.c
+@@ -329,6 +329,9 @@ static int bpf_jit_build_body(struct bpf
+ 			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, len) != 4);
+ 			PPC_LWZ_OFFS(r_A, r_skb, offsetof(struct sk_buff, len));
+ 			break;
++		case BPF_LDX | BPF_W | BPF_ABS: /* A = *((u32 *)(seccomp_data + K)); */
++			PPC_LWZ_OFFS(r_A, r_skb, K);
++			break;
+ 		case BPF_LDX | BPF_W | BPF_LEN: /* X = skb->len; */
+ 			PPC_LWZ_OFFS(r_X, r_skb, offsetof(struct sk_buff, len));
+ 			break;
