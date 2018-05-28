@@ -1,51 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753532AbeE1GiZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 02:38:25 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34362 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751085AbeE1GiY (ORCPT
+        id S1753642AbeE1Gix (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 02:38:53 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:41906 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753563AbeE1Gim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 02:38:24 -0400
-X-Google-Smtp-Source: AB8JxZo7L7RX+4DUzuIgNIjW/045pgvhXJHvQEGtZTSAVC9sfHtxYeRwKzNF/k6+/kQ5LolYe6RsFA==
-Subject: Re: [alsa-devel] [PATCH v2 1/3] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-To: Vinod <vkoul@kernel.org>, Shreyas NC <shreyas.nc@intel.com>
-Cc: Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Chintan Patel <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-References: <1527191363-21021-1-git-send-email-linux@roeck-us.net>
- <20180525133323.GI3116@snc-desk> <20180528060347.GA5666@vkoul-mobl>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <a5444567-2577-f65b-fc16-b234fa5486ec@roeck-us.net>
-Date: Sun, 27 May 2018 23:38:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 28 May 2018 02:38:42 -0400
+X-UUID: bd665909805c4d738bccadd50572addb-20180528
+From: Stu Hsieh <stu.hsieh@mediatek.com>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>,
+        Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH v4 8/9] drm/mediatek: add third ddp path
+Date: Mon, 28 May 2018 14:38:26 +0800
+Message-ID: <1527489507-24453-9-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20180528060347.GA5666@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/27/2018 11:03 PM, Vinod wrote:
-[ ... ]
->>> diff --git a/sound/soc/intel/skylake/skl-tplg-interface.h b/sound/soc/intel/skylake/skl-tplg-interface.h
->>> index f8d1749a2e0c..b0e3d376594c 100644
->>> --- a/sound/soc/intel/skylake/skl-tplg-interface.h
->>> +++ b/sound/soc/intel/skylake/skl-tplg-interface.h
-> 
-> Don't we want to move these to upai/ as that is right place and use that in
-> alsa-lib.
-> 
+This patch create third crtc by third ddp path
 
-I did that in patch 3 of the series [1].
-
-Guenter
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
-[1] https://patchwork.kernel.org/patch/10425387/
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 3 +++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 5 +++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h  | 7 +++++--
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 658b8dd45b83..2d6aa150a9ff 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -539,6 +539,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 	int ret;
+ 	int i;
+ 
++	if (!path)
++		return 0;
++
+ 	for (i = 0; i < path_len; i++) {
+ 		enum mtk_ddp_comp_id comp_id = path[i];
+ 		struct device_node *node;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 08d5d0b47bfe..3d279a299383 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -232,6 +232,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 	if (ret < 0)
+ 		goto err_component_unbind;
+ 
++	ret = mtk_drm_crtc_create(drm, private->data->third_path,
++				  private->data->third_len);
++	if (ret < 0)
++		goto err_component_unbind;
++
+ 	/* Use OVL device for all DMA memory allocations */
+ 	np = private->comp_node[private->data->main_path[0]] ?:
+ 	     private->comp_node[private->data->ext_path[0]];
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index c3378c452c0a..d867e2683923 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -17,8 +17,8 @@
+ #include <linux/io.h>
+ #include "mtk_drm_ddp_comp.h"
+ 
+-#define MAX_CRTC	2
+-#define MAX_CONNECTOR	2
++#define MAX_CRTC	3
++#define MAX_CONNECTOR	3
+ 
+ struct device;
+ struct device_node;
+@@ -33,6 +33,9 @@ struct mtk_mmsys_driver_data {
+ 	unsigned int main_len;
+ 	const enum mtk_ddp_comp_id *ext_path;
+ 	unsigned int ext_len;
++	const enum mtk_ddp_comp_id *third_path;
++	unsigned int third_len;
++
+ 	bool shadow_register;
+ };
+ 
+-- 
+2.12.5
