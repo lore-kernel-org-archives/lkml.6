@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164513AbeE1K4R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44632 "EHLO mail.kernel.org"
+        id S1164540AbeE1K4b (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:56:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164489AbeE1K4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:11 -0400
+        id S1164524AbeE1K4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 329/496] cpufreq: CPPC: Initialize shared perf capabilities of CPUs
-Date: Mon, 28 May 2018 12:01:54 +0200
-Message-Id: <20180528100333.685407324@linuxfoundation.org>
+Subject: [PATCH 4.14 316/496] net: mvneta: fix enable of all initialized RXQs
+Date: Mon, 28 May 2018 12:01:41 +0200
+Message-Id: <20180528100333.141466909@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,51 +31,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-[ Upstream commit 8913315e9459b146e5888ab5138e10daa061b885 ]
+[ Upstream commit e81b5e01c14add8395dfba7130f8829206bb507d ]
 
-When multiple CPUs are related in one cpufreq policy, the first online
-CPU will be chosen by default to handle cpufreq operations. Let's take
-cpu0 and cpu1 as an example.
+In mvneta_port_up() we enable relevant RX and TX port queues by write
+queues bit map to an appropriate register.
 
-When cpu0 is offline, policy->cpu will be shifted to cpu1. cpu1's perf
-capabilities should be initialized. Otherwise, perf capabilities are 0s
-and speed change can not take effect.
+q_map must be ZERO in the beginning of this process.
 
-This patch copies perf capabilities of the first online CPU to other
-shared CPUs when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -167,9 +167,19 @@ static int cppc_cpufreq_cpu_init(struct
- 		NSEC_PER_USEC;
- 	policy->shared_type = cpu->shared_type;
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -1112,6 +1112,7 @@ static void mvneta_port_up(struct mvneta
+ 	}
+ 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
  
--	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-+	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-+		int i;
-+
- 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
--	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
-+
-+		for_each_cpu(i, policy->cpus) {
-+			if (unlikely(i == policy->cpu))
-+				continue;
-+
-+			memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
-+			       sizeof(cpu->perf_caps));
-+		}
-+	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
- 		/* Support only SW_ANY for now. */
- 		pr_debug("Unsupported CPU co-ord type\n");
- 		return -EFAULT;
++	q_map = 0;
+ 	/* Enable all initialized RXQs. */
+ 	for (queue = 0; queue < rxq_number; queue++) {
+ 		struct mvneta_rx_queue *rxq = &pp->rxqs[queue];
