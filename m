@@ -1,132 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938876AbeE1Mi4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:38:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938021AbeE1K6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:30 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 378/496] ath10k: Fix kernel panic while using worker (ath10k_sta_rc_update_wk)
-Date: Mon, 28 May 2018 12:02:43 +0200
-Message-Id: <20180528100335.726958431@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1164767AbeE1MjM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:39:12 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:35049 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938032AbeE1MjG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 08:39:06 -0400
+X-Google-Smtp-Source: ADUXVKImuXc4x9LDgTur+Rnl9MKHVqoaVIKs/s3R4G3NKQu0nzn9lLEgbecCEwDxDtXwZiO7TxxguymhkVillejeGo0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180528100259.797799079@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org> <20180528100259.797799079@linuxfoundation.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 28 May 2018 15:39:04 +0300
+Message-ID: <CAOQ4uxi9emdAqr1JPYgC_T52SjCtpAbac4pSzfZ7vqtmg6nFMg@mail.gmail.com>
+Subject: Re: [PATCH 4.16 231/272] fanotify: Avoid lost events due to ENOMEM
+ for unlimited queues
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 1:04 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> 4.16-stable review patch.  If anyone has any objections, please let me know.
+>
 
-------------------
+I do not have objections for applying this patch to stable, but AFAIK
+it is a correctness patch that doesn't fix any bug and it was mainly added
+as a prerequisite to memcg accounting of event allocations, which is not
+yet merged and not destined for stable.
 
-From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
+Jan? do you agree with my statements above?
 
-[ Upstream commit 8b2d93dd22615cb7f3046a5a2083a6f8bb8052ed ]
+Thanks,
+Amir.
 
-When attempt to run worker (ath10k_sta_rc_update_wk) after the station object
-(ieee80211_sta) delete will trigger the kernel panic.
-
-This problem arise in AP + Mesh configuration, Where the current node AP VAP
-and neighbor node mesh VAP MAC address are same. When the current mesh node
-try to establish the mesh link with neighbor node, driver peer creation for
-the neighbor mesh node fails due to duplication MAC address. Already the AP
-VAP created with same MAC address.
-
-It is caused by the following scenario steps.
-
-Steps:
-1. In above condition, ath10k driver sta_state callback (ath10k_sta_state)
-   fails to do the state change for a station from IEEE80211_STA_NOTEXIST
-   to IEEE80211_STA_NONE due to peer creation fails. Sta_state callback is
-   called from ieee80211_add_station() to handle the new station
-   (neighbor mesh node) request from the wpa_supplicant.
-2. Concurrently ath10k receive the sta_rc_update callback notification from
-   the mesh_neighbour_update() to handle the beacon frames of the above
-   neighbor mesh node. since its atomic callback, ath10k driver queue the
-   work (ath10k_sta_rc_update_wk) to handle rc update.
-3. Due to driver sta_state callback fails (step 1), mac80211 free the station
-   object.
-4. When the worker (ath10k_sta_rc_update_wk) scheduled to run, it will access
-   the station object which is already deleted. so it will trigger kernel
-   panic.
-
-Added the peer exist check in sta_rc_update callback before queue the work.
-
-Kernel Panic log:
-
-Unable to handle kernel NULL pointer dereference at virtual address 00000000
-pgd = c0204000
-[00000000] *pgd=00000000
-Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-CPU: 1 PID: 1833 Comm: kworker/u4:2 Not tainted 3.14.77 #1
-task: dcef0000 ti: d72b6000 task.ti: d72b6000
-PC is at pwq_activate_delayed_work+0x10/0x40
-LR is at pwq_activate_delayed_work+0xc/0x40
-pc : [<c023f988>]    lr : [<c023f984>]    psr: 40000193
-sp : d72b7f18  ip : 0000007a  fp : d72b6000
-r10: 00000000  r9 : dd404414  r8 : d8c31998
-r7 : d72b6038  r6 : 00000004  r5 : d4907ec8  r4 : dcee1300
-r3 : ffffffe0  r2 : 00000000  r1 : 00000001  r0 : 00000000
-Flags: nZcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-Control: 10c5787d  Table: 595bc06a  DAC: 00000015
-...
-Process kworker/u4:2 (pid: 1833, stack limit = 0xd72b6238)
-Stack: (0xd72b7f18 to 0xd72b8000)
-7f00:                                                       00000001 dcee1300
-7f20: 00000001 c02410dc d8c31980 dd404400 dd404400 c0242790 d8c31980 00000089
-7f40: 00000000 d93e1340 00000000 d8c31980 c0242568 00000000 00000000 00000000
-7f60: 00000000 c02474dc 00000000 00000000 000000f8 d8c31980 00000000 00000000
-7f80: d72b7f80 d72b7f80 00000000 00000000 d72b7f90 d72b7f90 d72b7fac d93e1340
-7fa0: c0247404 00000000 00000000 c0208d20 00000000 00000000 00000000 00000000
-7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[<c023f988>] (pwq_activate_delayed_work) from [<c02410dc>] (pwq_dec_nr_in_flight+0x58/0xc4)
-[<c02410dc>] (pwq_dec_nr_in_flight) from [<c0242790>] (worker_thread+0x228/0x360)
-[<c0242790>] (worker_thread) from [<c02474dc>] (kthread+0xd8/0xec)
-[<c02474dc>] (kthread) from [<c0208d20>] (ret_from_fork+0x14/0x34)
-Code: e92d4038 e1a05000 ebffffbc[69210.619376] SMP: failed to stop secondary CPUs
-Rebooting in 3 seconds..
-
-Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ath/ath10k/mac.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -7059,10 +7059,20 @@ static void ath10k_sta_rc_update(struct
- {
- 	struct ath10k *ar = hw->priv;
- 	struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
-+	struct ath10k_vif *arvif = (void *)vif->drv_priv;
-+	struct ath10k_peer *peer;
- 	u32 bw, smps;
- 
- 	spin_lock_bh(&ar->data_lock);
- 
-+	peer = ath10k_peer_find(ar, arvif->vdev_id, sta->addr);
-+	if (!peer) {
-+		spin_unlock_bh(&ar->data_lock);
-+		ath10k_warn(ar, "mac sta rc update failed to find peer %pM on vdev %i\n",
-+			    sta->addr, arvif->vdev_id);
-+		return;
-+	}
-+
- 	ath10k_dbg(ar, ATH10K_DBG_MAC,
- 		   "mac sta rc update for %pM changed %08x bw %d nss %d smps %d\n",
- 		   sta->addr, changed, sta->bandwidth, sta->rx_nss,
+> ------------------
+>
+> From: Jan Kara <jack@suse.cz>
+>
+> [ Upstream commit 1f5eaa90010ed7cf0ae90a526c48657d02c6086f ]
+>
+> Fanotify queues of unlimited length do not expect events can be lost.
+> Since these queues are used for system auditing and other security
+> related tasks, loosing events can even have security implications.
+> Currently, since the allocation is small (32-bytes), it cannot fail
+> however when we start accounting events in memcgs, allocation can start
+> failing. So avoid loosing events due to failure to allocate memory by
+> making event allocation use __GFP_NOFAIL.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  fs/notify/fanotify/fanotify.c      |   19 ++++++++++++++-----
+>  fs/notify/fanotify/fanotify.h      |    3 ++-
+>  fs/notify/fanotify/fanotify_user.c |    2 +-
+>  3 files changed, 17 insertions(+), 7 deletions(-)
+>
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -135,23 +135,32 @@ static bool fanotify_should_send_event(s
+>         return false;
+>  }
+>
+> -struct fanotify_event_info *fanotify_alloc_event(struct inode *inode, u32 mask,
+> +struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+> +                                                struct inode *inode, u32 mask,
+>                                                  const struct path *path)
+>  {
+>         struct fanotify_event_info *event;
+> +       gfp_t gfp = GFP_KERNEL;
+> +
+> +       /*
+> +        * For queues with unlimited length lost events are not expected and
+> +        * can possibly have security implications. Avoid losing events when
+> +        * memory is short.
+> +        */
+> +       if (group->max_events == UINT_MAX)
+> +               gfp |= __GFP_NOFAIL;
+>
+>         if (fanotify_is_perm_event(mask)) {
+>                 struct fanotify_perm_event_info *pevent;
+>
+> -               pevent = kmem_cache_alloc(fanotify_perm_event_cachep,
+> -                                         GFP_KERNEL);
+> +               pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
+>                 if (!pevent)
+>                         return NULL;
+>                 event = &pevent->fae;
+>                 pevent->response = 0;
+>                 goto init;
+>         }
+> -       event = kmem_cache_alloc(fanotify_event_cachep, GFP_KERNEL);
+> +       event = kmem_cache_alloc(fanotify_event_cachep, gfp);
+>         if (!event)
+>                 return NULL;
+>  init: __maybe_unused
+> @@ -206,7 +215,7 @@ static int fanotify_handle_event(struct
+>                         return 0;
+>         }
+>
+> -       event = fanotify_alloc_event(inode, mask, data);
+> +       event = fanotify_alloc_event(group, inode, mask, data);
+>         ret = -ENOMEM;
+>         if (unlikely(!event))
+>                 goto finish;
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -52,5 +52,6 @@ static inline struct fanotify_event_info
+>         return container_of(fse, struct fanotify_event_info, fse);
+>  }
+>
+> -struct fanotify_event_info *fanotify_alloc_event(struct inode *inode, u32 mask,
+> +struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+> +                                                struct inode *inode, u32 mask,
+>                                                  const struct path *path);
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -757,7 +757,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned
+>         group->fanotify_data.user = user;
+>         atomic_inc(&user->fanotify_listeners);
+>
+> -       oevent = fanotify_alloc_event(NULL, FS_Q_OVERFLOW, NULL);
+> +       oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL);
+>         if (unlikely(!oevent)) {
+>                 fd = -ENOMEM;
+>                 goto out_destroy_group;
+>
+>
