@@ -1,102 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939650AbeE1Pym (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:54:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44245 "EHLO mx2.suse.de"
+        id S939778AbeE1P4B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:56:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43737 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1425252AbeE1PyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:54:15 -0400
-Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
-To: Michal Hocko <mhocko@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Sterba <dsterba@suse.cz>
-References: <20180424183536.GF30619@thunk.org>
- <20180524114341.1101-1-mhocko@kernel.org>
- <6c9df175-df6c-2531-b90c-318e4fff72bb@infradead.org>
- <20180525075217.GF11881@dhcp22.suse.cz>
-From: Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7c5d8afb-563f-43fd-50ef-d532550983c7@suse.com>
-Date: Mon, 28 May 2018 10:21:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1425289AbeE1Py2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:54:28 -0400
+Date: Mon, 28 May 2018 15:33:22 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Huaisheng Ye <yehs2007@gmail.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, vbabka@suse.cz, mgorman@techsingularity.net,
+        kstewart@linuxfoundation.org, alexander.levin@verizon.com,
+        gregkh@linuxfoundation.org, colyli@suse.de, chengnt@lenovo.com,
+        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, xen-devel@lists.xenproject.org,
+        linux-btrfs@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
+Subject: Re: [RFC PATCH v2 00/12] get rid of GFP_ZONE_TABLE/BAD
+Message-ID: <20180528133322.GE27180@dhcp22.suse.cz>
+References: <1526916033-4877-1-git-send-email-yehs2007@gmail.com>
+ <20180522183728.GB20441@dhcp22.suse.cz>
+ <20180524051919.GA9819@bombadil.infradead.org>
+ <20180524122323.GH20441@dhcp22.suse.cz>
+ <20180524151818.GA21245@bombadil.infradead.org>
+ <20180524152943.GA11881@dhcp22.suse.cz>
+ <20180525120044.GA4649@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180525075217.GF11881@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525120044.GA4649@bombadil.infradead.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 25.05.2018 10:52, Michal Hocko wrote:
-> On Thu 24-05-18 09:37:18, Randy Dunlap wrote:
->> On 05/24/2018 04:43 AM, Michal Hocko wrote:
-> [...]
->>> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
->>> +resp. __GFP_IO (note the later implies clearing the first as well) in
->>
->>                             latter
+On Fri 25-05-18 05:00:44, Matthew Wilcox wrote:
+> On Thu, May 24, 2018 at 05:29:43PM +0200, Michal Hocko wrote:
+> > > ie if we had more,
+> > > could we solve our pain by making them more generic?
+> > 
+> > Well, if you have more you will consume more bits in the struct pages,
+> > right?
 > 
-> ?
-> No I really meant that clearing __GFP_IO implies __GFP_FS clearing
-Sorry to barge in like that, but Randy is right.
+> Not necessarily ... the zone number is stored in the struct page
+> currently, so either two or three bits are used right now.  In my
+> proposal, one can infer the zone of a page from its PFN, except for
+> ZONE_MOVABLE.  So we could trim down to just one bit per struct page
+> for 32-bit machines while using 3 bits on 64-bit machines, where there
+> is plenty of space.
 
-<NIT WARNING>
+Just be warned that page_zone is called from many hot paths. I am not
+sure adding something more complex there is going to fly.
 
-
-https://www.merriam-webster.com/dictionary/latter
-
-" of, relating to, or being the second of two groups or things or the
-last of several groups or things referred to
-
-</NIT WARNING>
-
-
+> > > it more-or-less sucks that the devices with 28-bit DMA limits are forced
+> > > to allocate from the low 16MB when they're perfectly capable of using the
+> > > low 256MB.
+> > 
+> > Do we actually care all that much about those? If yes then we should
+> > probably follow the ZONE_DMA (x86) path and use a CMA region for them.
+> > I mean most devices should be good with very limited addressability or
+> > below 4G, no?
 > 
+> Sure.  One other thing I meant to mention was the media devices
+> (TV capture cards and so on) which want a vmalloc_32() allocation.
+> On 32-bit machines right now, we allocate from LOWMEM, when we really
+> should be allocating from the 1GB-4GB region.  32-bit machines generally
+> don't have a ZONE_DMA32 today.
+
+Well, _I_ think that vmalloc on 32b is just lost case...
+
+-- 
+Michal Hocko
+SUSE Labs
