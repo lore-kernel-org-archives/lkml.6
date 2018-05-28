@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163451AbeE1KtB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:49:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38746 "EHLO mail.kernel.org"
+        id S1165336AbeE1NVt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:21:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033757AbeE1Ks5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:57 -0400
+        id S1163454AbeE1KtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 142/496] batman-adv: fix packet checksum in receive path
-Date: Mon, 28 May 2018 11:58:47 +0200
-Message-Id: <20180528100325.901109684@linuxfoundation.org>
+Subject: [PATCH 4.14 144/496] netfilter: ipt_CLUSTERIP: put config struct if we cant increment ct refcount
+Date: Mon, 28 May 2018 11:58:49 +0200
+Message-Id: <20180528100325.980698105@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,46 +30,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit abd6360591d3f8259f41c34e31ac4826dfe621b8 ]
+[ Upstream commit 8ae56822812ddedc26a152ab1916eb30120b4748 ]
 
-eth_type_trans() internally calls skb_pull(), which does not adjust the
-skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
-form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
-received.
+This needs to put() the entry to avoid a resource leak in error path.
 
-Note that in usual setups, packets don't reach batman-adv with
-CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
-batadv's ethtype?), which is why the log messages do not occur on every
-system using batman-adv. I could reproduce this issue by stacking
-batman-adv on top of a VXLAN interface.
-
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Tested-by: Maximilian Wilhelm <max@sdn.clinic>
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/soft-interface.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -451,13 +451,7 @@ void batadv_interface_rx(struct net_devi
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -492,12 +492,15 @@ static int clusterip_tg_check(const stru
+ 				return PTR_ERR(config);
+ 		}
+ 	}
+-	cipinfo->config = config;
  
- 	/* skb->dev & skb->pkt_type are set here */
- 	skb->protocol = eth_type_trans(skb, soft_iface);
--
--	/* should not be necessary anymore as we use skb_pull_rcsum()
--	 * TODO: please verify this and remove this TODO
--	 * -- Dec 21st 2009, Simon Wunderlich
--	 */
--
--	/* skb->ip_summed = CHECKSUM_UNNECESSARY; */
-+	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
+ 	ret = nf_ct_netns_get(par->net, par->family);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		pr_info("cannot load conntrack support for proto=%u\n",
+ 			par->family);
++		clusterip_config_entry_put(par->net, config);
++		clusterip_config_put(config);
++		return ret;
++	}
  
- 	batadv_inc_counter(bat_priv, BATADV_CNT_RX);
- 	batadv_add_counter(bat_priv, BATADV_CNT_RX_BYTES,
+ 	if (!par->net->xt.clusterip_deprecated_warning) {
+ 		pr_info("ipt_CLUSTERIP is deprecated and it will removed soon, "
+@@ -505,6 +508,7 @@ static int clusterip_tg_check(const stru
+ 		par->net->xt.clusterip_deprecated_warning = true;
+ 	}
+ 
++	cipinfo->config = config;
+ 	return ret;
+ }
+ 
