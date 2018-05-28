@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161770AbeE1Kdd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:33:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53566 "EHLO mail.kernel.org"
+        id S1161785AbeE1Kdl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:33:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161730AbeE1Kd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:26 -0400
+        id S1161320AbeE1Kde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 162/329] ip6_tunnel: fix IFLA_MTU ignored on NEWLINK
-Date: Mon, 28 May 2018 12:01:31 +0200
-Message-Id: <20180528100255.931796376@linuxfoundation.org>
+Subject: [PATCH 4.9 165/329] powerpc/boot: Fix random libfdt related build errors
+Date: Mon, 28 May 2018 12:01:34 +0200
+Message-Id: <20180528100256.161938680@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,56 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit a6aa80446234ec0ad38eecdb8efc59e91daae565 ]
+[ Upstream commit 64c3f648c25d108f346fdc96c15180c6b7d250e9 ]
 
-Commit 128bb975dc3c ("ip6_gre: init dev->mtu and dev->hard_header_len
-correctly") fixed IFLA_MTU ignored on NEWLINK for ip6_gre. The same
-mtu fix is also needed for ip6_tunnel.
+Once in a while I see build errors similar to the following
+when building images from a clean tree.
 
-Note that dev->hard_header_len setting for ip6_tunnel works fine,
-no need to fix it.
+  Building powerpc:virtex-ml507:44x/virtex5_defconfig ... failed
+  ------------
+  Error log:
+  arch/powerpc/boot/treeboot-akebono.c:37:20: fatal error:
+  	libfdt.h: No such file or directory
 
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  Building powerpc:bamboo:smpdev:44x/bamboo_defconfig ... failed
+  ------------
+  Error log:
+  arch/powerpc/boot/treeboot-akebono.c:37:20: fatal error:
+  	libfdt.h: No such file or directory
+
+  arch/powerpc/boot/treeboot-currituck.c:35:20: fatal error:
+       libfdt.h: No such file or directory
+
+Rebuilds will succeed.
+
+Turns out that several source files in arch/powerpc/boot/ include
+libfdt.h, but Makefile dependencies are incomplete. Let's fix that.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_tunnel.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/powerpc/boot/Makefile |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1972,14 +1972,14 @@ static int ip6_tnl_newlink(struct net *s
- {
- 	struct net *net = dev_net(dev);
- 	struct ip6_tnl_net *ip6n = net_generic(net, ip6_tnl_net_id);
--	struct ip6_tnl *nt, *t;
- 	struct ip_tunnel_encap ipencap;
-+	struct ip6_tnl *nt, *t;
-+	int err;
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -92,7 +92,8 @@ $(addprefix $(obj)/,$(zlib-y)): \
+ libfdt       := fdt.c fdt_ro.c fdt_wip.c fdt_sw.c fdt_rw.c fdt_strerror.c
+ libfdtheader := fdt.h libfdt.h libfdt_internal.h
  
- 	nt = netdev_priv(dev);
+-$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o opal.o): \
++$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o opal.o \
++	treeboot-akebono.o treeboot-currituck.o treeboot-iss4xx.o): \
+ 	$(addprefix $(obj)/,$(libfdtheader))
  
- 	if (ip6_tnl_netlink_encap_parms(data, &ipencap)) {
--		int err = ip6_tnl_encap_setup(nt, &ipencap);
--
-+		err = ip6_tnl_encap_setup(nt, &ipencap);
- 		if (err < 0)
- 			return err;
- 	}
-@@ -1995,7 +1995,11 @@ static int ip6_tnl_newlink(struct net *s
- 			return -EEXIST;
- 	}
- 
--	return ip6_tnl_create2(dev);
-+	err = ip6_tnl_create2(dev);
-+	if (!err && tb[IFLA_MTU])
-+		ip6_tnl_change_mtu(dev, nla_get_u32(tb[IFLA_MTU]));
-+
-+	return err;
- }
- 
- static int ip6_tnl_changelink(struct net_device *dev, struct nlattr *tb[],
+ src-wlib-y := string.S crt0.S crtsavres.S stdio.c decompress.c main.c \
