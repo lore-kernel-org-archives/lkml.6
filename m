@@ -1,64 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162995AbeE1N70 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60332 "EHLO mail.kernel.org"
+        id S1163028AbeE1N7q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:59:46 -0400
+Received: from imap.thunk.org ([74.207.234.97]:34992 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162791AbeE1KkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:21 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 314/329] audit: return on memory error to avoid null pointer dereference
-Date: Mon, 28 May 2018 12:04:03 +0200
-Message-Id: <20180528100307.101257088@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1163002AbeE1N7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:59:40 -0400
+Date: Mon, 28 May 2018 09:59:15 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] enable early printing of hashed pointers
+Message-ID: <20180528135915.GG4613@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+References: <1527472002-11571-1-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527472002-11571-1-git-send-email-me@tobin.cc>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 11:46:38AM +1000, Tobin C. Harding wrote:
+> 
+> During the versions of this set I have been totally confused about which
+> patches go through which tree.  This version again puts all 4 patches
+> together in the hope they will go through Andrew's tree.
 
-------------------
+I'm also happy to take the whole patch series through the random tree
+if everyone else is OK with it.
 
-From: Richard Guy Briggs <rgb@redhat.com>
+Thoughts?
 
-[ Upstream commit 23138ead270045f1b3e912e667967b6094244999 ]
-
-If there is a memory allocation error when trying to change an audit
-kernel feature value, the ignored allocation error will trigger a NULL
-pointer dereference oops on subsequent use of that pointer.  Return
-instead.
-
-Passes audit-testsuite.
-See: https://github.com/linux-audit/audit-kernel/issues/76
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-[PM: not necessary (other funcs check for NULL), but a good practice]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/audit.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -742,6 +742,8 @@ static void audit_log_feature_change(int
- 		return;
- 
- 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-+	if (!ab)
-+		return;
- 	audit_log_task_info(ab, current);
- 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
- 			 audit_feature_names[which], !!old_feature, !!new_feature,
+					- Ted
