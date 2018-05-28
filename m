@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133372-1527491559-2-13100123493762816253
+X-Cyrus-Session-Id: sloti22d1t05-133372-1527491464-2-1248493623687040513
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,26 +7,26 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527491559; b=d6Cr/U4ZyWEqh+fwNggHvaXB4M2yViJaDqJQaK2qrVhlZQhKAA
-    CNnUBIbnUyNW7/VSQ9xatlPQNOHLx759ko5DrKO47eaG8hMfwXpmUAUw87NMljfB
-    c9ez2jSTGcT9iY8QezSWibX/u3kFFtRIl4qRQUMUxE4dxWAZoyju3sKjFIYEbRnn
-    1HUoE7JpErWAwIkV0SNyDgz1T4w+o6eYnS60GGeCMeyiOumZxR46VAW7aQCIvZh1
-    fpgsyZCS8KUMby1PfEQZX7jZvNL0bwmLEi0AS//F11VYoSBN3KJrfQLwc7+vAETY
-    gYoPC1Ye1s4tgIPcyXZVL9cmKK+pdKiHYLNg==
+    1527491464; b=QHunE59jdODzZfgIAoGFDk536SNvDoHxYUO4bPaYu6a0a9gl1b
+    9EqOkcegpzkQzOBRxIqy0ZHhz8/EV+dLkUc/r1VPcDLap8+RqkmxpIyCSuYl4LOn
+    j3V+MF2VGvLQGUSQZDYurhw29S1sc8a3dKtPgujYHdceVYdwEyEn2kFd8pI5f/DZ
+    cZtjhJwN7sTAjqJJXO11WCBzzCkxRaQ4JF8g58DGWlwlvXSnD7RDFn/UoGkRQbOD
+    74sNR2748qvBjtuuOsSnFOunZz1zgC6w1ie/E6DexgIYZaQk3LPUCm3xRrOBtIof
+    /wLk41yujx1OKtfFM7Bn5wNux5hO4HS2Khjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491559;
-    bh=nCVehLb0u0vum+qAJG8klHvjZMZzwJUwP17aAzobzsQ=; b=PVRhwuYdRV7/
-    ztTtUNGrRyxCzF0/MiSq4y7EwPgYimZC/g2vn9DtSN01H9GTyPiT4wJx/qs0OBJ8
-    NhbdiPTUDUDjENvPzNTvbTCBQTlBtqy1nt/QsD+iXSpdHrE6Gl8uIpOY5aghMNZg
-    bNIYd5oEf1yJiOii4jihtAgCxXCrBVwvTwwcK68zx9UE9FgPBuiguUsg96LXjmVq
-    MiasgB2nnOeihLm+xiRrI+tttGxwLorPTaDuYi/oQW3cYvRE5u94SbpefZizdc+W
-    kmQawi1lmsyw2rNgrM9xzCIXT6pAO1DgofzsPGpd5ah/mav4CUgEBxMVzJpX8uvj
-    uEOXTEXIdQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491464;
+    bh=RHAJdhbk46cKHr78TeL2FiY0Ta1Rdqgbmm6YjTQzaQY=; b=fvUOXsO4mGuK
+    pspeWAIUCHyE9hoDbjjm/kdAoQYJDMZGzf1jUKkMvAmxENh6DAdVj/HizucyjAMJ
+    4zT1pvHcQslwAxhrsDvG1aaCWZyUJC14Z4L3haNsG5teb9drjVehhIjnZNm6ehY+
+    0m3YWA6P2J+3XTt8trBPRV83LyNXmoeMyqEtVNpY7w/XPxs0LcMqyomZRbOYJcbz
+    sa0XWlUPQ2+SVSJ8b5EH5LF7S5KxEEi1Rne7+plaBbrPbpUqF37zpHScwpIBHlQJ
+    9WUyPWKNkJ7mOMzzT4qTr2QdPxi6Mm4Xf9yzy06hPyb2A0er8BMaZ7fB9z2qfk7T
+    S3kyjb025Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=d5vcue23 header.a=rsa-sha256
+    header.i=@kernel.org header.b=XhEMu2cb header.a=rsa-sha256
     header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=d5vcue23 header.a=rsa-sha256
+      header.i=@kernel.org header.b=XhEMu2cb header.a=rsa-sha256
       header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -56,21 +56,21 @@ Authentication-Results: mx5.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJLKFKEE5Pu3LKKZguBKeYEonURsW2EWoDel8myZobywEC49Ke+VMwghyjlbc0gVHnOjQp1P1QI/Q10Q9dpzu1Qg6FecPtVUJ7Ux8ZHsczgVQgH3Htl7
-    ilA1C58z25pEfChhi21z0o2d+cY19eFCol/o3NLCze8JS++YmajVs4oFU9+rqHPRIIN457p2iNZBDt4K9LtAoPxfuWSetGZKkhPKBOukxDbJlU/ldKNVkn55
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBHS3easmgrS1uYUV0mXXrVhcG8miyLlUYLeN5iTUnoKE9Hk0lpeTxPwzxL1eru5rF+GLWMmNrsEW8BHXzN1dKrITvw6lPjn5ecIMYbOFkd2v2k4wm4r
+    j43YxJJob63hep/Gz8STRsnuZKXE7i5873bLSx4RqD9VJtFOc6rTMX9W8GuslMjjWha02BN3PrnbIApydu9JqdaHpfBTJH+HG5KX0xdbp+w1Xyp5hSA2AL2R
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=-hBiZIJ-AFPZEXo8xSIA:9 a=arirgmxYCIbmtYuz:21
-    a=nhjtAAH3ILW8Er3Q:21 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=fsWX9E5i64TX0yKf0BUA:9 a=kP1bVHu8wsDASddq:21
+    a=Al1hW8igzTq-ASAm:21 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753867AbeE1HMg (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 03:12:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47018 "EHLO mail.kernel.org"
+        id S1753845AbeE1HLC (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 03:11:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753839AbeE1HMf (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 28 May 2018 03:12:35 -0400
+        id S1753756AbeE1HLC (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 28 May 2018 03:11:02 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
@@ -98,9 +98,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Rich Felker <dalias@libc.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 25/27] x86: kprobes: Do not disable preempt on int3 path
-Date: Mon, 28 May 2018 16:12:09 +0900
-Message-Id: <152749152918.15132.3522241227611599185.stgit@devbox>
+Subject: [PATCH -tip v4 22/27] sh: kprobes: Don't call the ->break_handler() in SH kprobes code
+Date: Mon, 28 May 2018 16:10:36 +0900
+Message-Id: <152749143600.15132.3715538903929976134.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
 References: <152749074878.15132.16693721906742461289.stgit@devbox>
@@ -114,124 +114,51 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since int3 and debug exception(for singlestep) are run with
-IRQ disabled and while running single stepping we drop IF
-from regs->flags, that path must not be preemptible. So we
-can remove the preempt disable/enable calls from that path.
+Don't call the ->break_handler() from the SH kprobes code,
+because it was only used by jprobes which got removed.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
 ---
- Changes in v3:
-  - Split user-side changes to another patch
- Changes in v2:
-  - Include user-side changes.
----
- Documentation/kprobes.txt      |   11 +++++------
- arch/x86/kernel/kprobes/core.c |   18 ++++--------------
- arch/x86/kernel/kprobes/opt.c  |    1 -
- 3 files changed, 9 insertions(+), 21 deletions(-)
+ arch/sh/kernel/kprobes.c |   14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-index 907a3017c0f2..3e9e99ea751b 100644
---- a/Documentation/kprobes.txt
-+++ b/Documentation/kprobes.txt
-@@ -566,12 +566,11 @@ the same handler) may run concurrently on different CPUs.
- Kprobes does not use mutexes or allocate memory except during
- registration and unregistration.
- 
--Probe handlers are run with preemption disabled.  Depending on the
--architecture and optimization state, handlers may also run with
--interrupts disabled (e.g., kretprobe handlers and optimized kprobe
--handlers run without interrupt disabled on x86/x86-64).  In any case,
--your handler should not yield the CPU (e.g., by attempting to acquire
--a semaphore).
-+Probe handlers are run with preemption disabled or interrupt disabled,
-+which depends on the architecture and optimization state.  (e.g.,
-+kretprobe handlers and optimized kprobe handlers run without interrupt
-+disabled on x86/x86-64).  In any case, your handler should not yield
-+the CPU (e.g., by attempting to acquire a semaphore, or waiting I/O).
- 
- Since a return probe is implemented by replacing the return
- address with the trampoline's address, stack backtraces and calls
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 814e26b7c8a2..f7104b256de7 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -594,7 +594,6 @@ static void setup_singlestep(struct kprobe *p, struct pt_regs *regs,
- 		 * stepping.
- 		 */
- 		regs->ip = (unsigned long)p->ainsn.insn;
--		preempt_enable_no_resched();
- 		return;
- 	}
- #endif
-@@ -667,12 +666,10 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 
- 	addr = (kprobe_opcode_t *)(regs->ip - sizeof(kprobe_opcode_t));
- 	/*
--	 * We don't want to be preempted for the entire
--	 * duration of kprobe processing. We conditionally
--	 * re-enable preemption at the end of this function,
--	 * and also in reenter_kprobe() and setup_singlestep().
-+	 * We don't want to be preempted for the entire duration of kprobe
-+	 * processing. Since int3 and debug trap disables irqs and we clear
-+	 * IF while singlestepping, it must be no preemptible.
- 	 */
--	preempt_disable();
- 
- 	kcb = get_kprobe_ctlblk();
- 	p = get_kprobe(addr);
-@@ -694,10 +691,8 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 			 */
- 			if (!p->pre_handler || !p->pre_handler(p, regs))
- 				setup_singlestep(p, regs, kcb, 0);
--			else {
-+			else
- 				reset_current_kprobe();
--				preempt_enable_no_resched();
--			}
+diff --git a/arch/sh/kernel/kprobes.c b/arch/sh/kernel/kprobes.c
+index 2b5e58873b96..4fafe0cd12c6 100644
+--- a/arch/sh/kernel/kprobes.c
++++ b/arch/sh/kernel/kprobes.c
+@@ -248,11 +248,6 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
+ 			prepare_singlestep(p, regs);
+ 			kcb->kprobe_status = KPROBE_REENTER;
  			return 1;
+-		} else {
+-			p = __this_cpu_read(current_kprobe);
+-			if (p->break_handler && p->break_handler(p, regs)) {
+-				goto ss_probe;
+-			}
  		}
- 	} else if (*addr != BREAKPOINT_INSTRUCTION) {
-@@ -711,11 +706,9 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 		 * the original instruction.
- 		 */
- 		regs->ip = (unsigned long)addr;
--		preempt_enable_no_resched();
+ 		goto no_kprobe;
+ 	}
+@@ -281,7 +276,6 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
+ 		/* handler has already set things up, so skip ss setup */
  		return 1;
- 	} /* else: not a kprobe fault; let the kernel handle it */
  
--	preempt_enable_no_resched();
- 	return 0;
- }
- NOKPROBE_SYMBOL(kprobe_int3_handler);
-@@ -966,8 +959,6 @@ int kprobe_debug_handler(struct pt_regs *regs)
+-ss_probe:
+ 	prepare_singlestep(p, regs);
+ 	kcb->kprobe_status = KPROBE_HIT_SS;
+ 	return 1;
+@@ -508,14 +502,8 @@ int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
+ 				if (post_kprobe_handler(args->regs))
+ 					ret = NOTIFY_STOP;
+ 			} else {
+-				if (kprobe_handler(args->regs)) {
++				if (kprobe_handler(args->regs))
+ 					ret = NOTIFY_STOP;
+-				} else {
+-					p = __this_cpu_read(current_kprobe);
+-					if (p->break_handler &&
+-					    p->break_handler(p, args->regs))
+-						ret = NOTIFY_STOP;
+-				}
+ 			}
+ 		}
  	}
- 	reset_current_kprobe();
- out:
--	preempt_enable_no_resched();
--
- 	/*
- 	 * if somebody else is singlestepping across a probe point, flags
- 	 * will have TF set, in which case, continue the remaining processing
-@@ -1014,7 +1005,6 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
- 			restore_previous_kprobe(kcb);
- 		else
- 			reset_current_kprobe();
--		preempt_enable_no_resched();
- 	} else if (kcb->kprobe_status == KPROBE_HIT_ACTIVE ||
- 		   kcb->kprobe_status == KPROBE_HIT_SSDONE) {
- 		/*
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 203d398802a3..eaf02f2e7300 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -491,7 +491,6 @@ int setup_detour_execution(struct kprobe *p, struct pt_regs *regs, int reenter)
- 		regs->ip = (unsigned long)op->optinsn.insn + TMPL_END_IDX;
- 		if (!reenter)
- 			reset_current_kprobe();
--		preempt_enable_no_resched();
- 		return 1;
- 	}
- 	return 0;
