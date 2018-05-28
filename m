@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161873AbeE1Kpr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:45:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36140 "EHLO mail.kernel.org"
+        id S937782AbeE1Kp6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:45:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937573AbeE1Kpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:43 -0400
+        id S1162593AbeE1Kpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:45:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Boris Pismenny <borisp@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 102/496] drm/exynos: g2d: Delete an error message for a failed memory allocation in two functions
-Date: Mon, 28 May 2018 11:58:07 +0200
-Message-Id: <20180528100324.148603249@linuxfoundation.org>
+Subject: [PATCH 4.14 075/496] tls: retrun the correct IV in getsockopt
+Date: Mon, 28 May 2018 11:57:40 +0200
+Message-Id: <20180528100322.933116268@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,42 +30,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+From: Boris Pismenny <borisp@mellanox.com>
 
-[ Upstream commit 6f0a60298bbbea43ab5e3955913ab19c153076f3 ]
+[ Upstream commit a1dfa6812b682eef750412dd5a90e7d38d7af068 ]
 
-Omit an extra message for a memory allocation failure in these functions.
+Current code returns four bytes of salt followed by four bytes of IV.
+This patch returns all eight bytes of IV.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+fixes: 3c4d7559159b ("tls: kernel TLS support")
+Signed-off-by: Boris Pismenny <borisp@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_g2d.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/tls/tls_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -286,7 +286,6 @@ static int g2d_init_cmdlist(struct g2d_d
- 
- 	node = kcalloc(G2D_CMDLIST_NUM, sizeof(*node), GFP_KERNEL);
- 	if (!node) {
--		dev_err(dev, "failed to allocate memory\n");
- 		ret = -ENOMEM;
- 		goto err;
- 	}
-@@ -1358,10 +1357,9 @@ int exynos_g2d_exec_ioctl(struct drm_dev
- 		return -EFAULT;
- 
- 	runqueue_node = kmem_cache_alloc(g2d->runqueue_slab, GFP_KERNEL);
--	if (!runqueue_node) {
--		dev_err(dev, "failed to allocate memory\n");
-+	if (!runqueue_node)
- 		return -ENOMEM;
--	}
-+
- 	run_cmdlist = &runqueue_node->run_cmdlist;
- 	event_list = &runqueue_node->event_list;
- 	INIT_LIST_HEAD(run_cmdlist);
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -299,7 +299,8 @@ static int do_tls_getsockopt_tx(struct s
+ 			goto out;
+ 		}
+ 		lock_sock(sk);
+-		memcpy(crypto_info_aes_gcm_128->iv, ctx->iv,
++		memcpy(crypto_info_aes_gcm_128->iv,
++		       ctx->iv + TLS_CIPHER_AES_GCM_128_SALT_SIZE,
+ 		       TLS_CIPHER_AES_GCM_128_IV_SIZE);
+ 		release_sock(sk);
+ 		if (copy_to_user(optval,
