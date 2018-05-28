@@ -1,20 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422778AbeE1LCB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
+        id S1164905AbeE1LCM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:02:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164868AbeE1LB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:57 -0400
+        id S1164881AbeE1LCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 422/496] f2fs: fix to check extent cache in f2fs_drop_extent_tree
-Date: Mon, 28 May 2018 12:03:27 +0200
-Message-Id: <20180528100337.536676765@linuxfoundation.org>
+Subject: [PATCH 4.14 425/496] perf/core: Fix perf_output_read_group()
+Date: Mon, 28 May 2018 12:03:30 +0200
+Message-Id: <20180528100337.656676567@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,46 +38,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit bf617f7a92edc6bb2909db2bfa4576f50b280ee5 ]
+[ Upstream commit 9e5b127d6f33468143d90c8a45ca12410e4c3fa7 ]
 
-If noextent_cache mount option is on, we will never initialize extent tree
-in inode, but still we're going to access it in f2fs_drop_extent_tree,
-result in kernel panic as below:
+Mark reported his arm64 perf fuzzer runs sometimes splat like:
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
- IP: _raw_write_lock+0xc/0x30
- Call Trace:
-  ? f2fs_drop_extent_tree+0x41/0x70 [f2fs]
-  f2fs_fallocate+0x5a0/0xdd0 [f2fs]
-  ? common_file_perm+0x47/0xc0
-  ? apparmor_file_permission+0x1a/0x20
-  vfs_fallocate+0x15b/0x290
-  SyS_fallocate+0x44/0x70
-  do_syscall_64+0x6e/0x160
-  entry_SYSCALL64_slow_path+0x25/0x25
+  armv8pmu_read_counter+0x1e8/0x2d8
+  armpmu_event_update+0x8c/0x188
+  armpmu_read+0xc/0x18
+  perf_output_read+0x550/0x11e8
+  perf_event_read_event+0x1d0/0x248
+  perf_event_exit_task+0x468/0xbb8
+  do_exit+0x690/0x1310
+  do_group_exit+0xd0/0x2b0
+  get_signal+0x2e8/0x17a8
+  do_signal+0x144/0x4f8
+  do_notify_resume+0x148/0x1e8
+  work_pending+0x8/0x14
 
-This patch fixes to check extent cache status before using in
-f2fs_drop_extent_tree.
+which asserts that we only call pmu::read() on ACTIVE events.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+The above callchain does:
+
+  perf_event_exit_task()
+    perf_event_exit_task_context()
+      task_ctx_sched_out() // INACTIVE
+      perf_event_exit_event()
+        perf_event_set_state(EXIT) // EXIT
+        sync_child_event()
+          perf_event_read_event()
+            perf_output_read()
+              perf_output_read_group()
+                leader->pmu->read()
+
+Which results in doing a pmu::read() on an !ACTIVE event.
+
+I _think_ this is 'new' since we added attr.inherit_stat, which added
+the perf_event_read_event() to the exit path, without that
+perf_event_read_output() would only trigger from samples and for
+@event to trigger a sample, it's leader _must_ be ACTIVE too.
+
+Still, adding this check makes it consistent with the @sub case for
+the siblings.
+
+Reported-and-Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/extent_cache.c |    3 +++
- 1 file changed, 3 insertions(+)
+ kernel/events/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -706,6 +706,9 @@ void f2fs_drop_extent_tree(struct inode
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5837,7 +5837,8 @@ static void perf_output_read_group(struc
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
+ 		values[n++] = running;
  
-+	if (!f2fs_may_extent_tree(inode))
-+		return;
-+
- 	set_inode_flag(inode, FI_NO_EXTENT);
+-	if (leader != event)
++	if ((leader != event) &&
++	    (leader->state == PERF_EVENT_STATE_ACTIVE))
+ 		leader->pmu->read(leader);
  
- 	write_lock(&et->lock);
+ 	values[n++] = perf_event_count(leader);
