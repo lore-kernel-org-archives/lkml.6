@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163584AbeE1Ktv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:49:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39390 "EHLO mail.kernel.org"
+        id S1165308AbeE1NSs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:18:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163570AbeE1Ktq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:46 -0400
+        id S1163574AbeE1Ktu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 192/496] Btrfs: send, fix issuing write op when processing hole in no data mode
-Date: Mon, 28 May 2018 11:59:37 +0200
-Message-Id: <20180528100328.031076035@linuxfoundation.org>
+Subject: [PATCH 4.14 193/496] Btrfs: fix log replay failure after linking special file and fsync
+Date: Mon, 28 May 2018 11:59:38 +0200
+Message-Id: <20180528100328.068476411@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,63 +32,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit d4dfc0f4d39475ccbbac947880b5464a74c30b99 ]
+[ Upstream commit 9a6509c4daa91400b52a5fd541a5521c649a8fea ]
 
-When doing an incremental send of a filesystem with the no-holes feature
-enabled, we end up issuing a write operation when using the no data mode
-send flag, instead of issuing an update extent operation. Fix this by
-issuing the update extent operation instead.
+If in the same transaction we rename a special file (fifo, character/block
+device or symbolic link), create a hard link for it having its old name
+then sync the log, we will end up with a log that can not be replayed and
+at when attempting to replay it, an EEXIST error is returned and mounting
+the filesystem fails. Example scenario:
 
-Trivial reproducer:
+  $ mkfs.btrfs -f /dev/sdc
+  $ mount /dev/sdc /mnt
+  $ mkdir /mnt/testdir
+  $ mkfifo /mnt/testdir/foo
+  # Make sure everything done so far is durably persisted.
+  $ sync
 
-  $ mkfs.btrfs -f -O no-holes /dev/sdc
-  $ mkfs.btrfs -f /dev/sdd
-  $ mount /dev/sdc /mnt/sdc
-  $ mount /dev/sdd /mnt/sdd
+  # Create some unrelated file and fsync it, this is just to create a log
+  # tree. The file must be in the same directory as our special file.
+  $ touch /mnt/testdir/f1
+  $ xfs_io -c "fsync" /mnt/testdir/f1
 
-  $ xfs_io -f -c "pwrite -S 0xab 0 32K" /mnt/sdc/foobar
-  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap1
+  # Rename our special file and then create a hard link with its old name.
+  $ mv /mnt/testdir/foo /mnt/testdir/bar
+  $ ln /mnt/testdir/bar /mnt/testdir/foo
 
-  $ xfs_io -c "fpunch 8K 8K" /mnt/sdc/foobar
-  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap2
+  # Create some other unrelated file and fsync it, this is just to persist
+  # the log tree which was modified by the previous rename and link
+  # operations. Alternatively we could have modified file f1 and fsync it.
+  $ touch /mnt/f2
+  $ xfs_io -c "fsync" /mnt/f2
 
-  $ btrfs send /mnt/sdc/snap1 | btrfs receive /mnt/sdd
-  $ btrfs send --no-data -p /mnt/sdc/snap1 /mnt/sdc/snap2 \
-       | btrfs receive -vv /mnt/sdd
+  <power failure>
 
-Before this change the output of the second receive command is:
+  $ mount /dev/sdc /mnt
+  mount: mount /dev/sdc on /mnt failed: File exists
 
-  receiving snapshot snap2 uuid=f6922049-8c22-e544-9ff9-fc6755918447...
-  utimes
-  write foobar, offset 8192, len 8192
-  utimes foobar
-  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=f6922049-8c22-e544-9ff9-...
+This happens because when both the log tree and the subvolume's tree have
+an entry in the directory "testdir" with the same name, that is, there
+is one key (258 INODE_REF 257) in the subvolume tree and another one in
+the log tree (where 258 is the inode number of our special file and 257
+is the inode for directory "testdir"). Only the data of those two keys
+differs, in the subvolume tree the index field for inode reference has
+a value of 3 while the log tree it has a value of 5. Because the same key
+exists in both trees, but have different index, the log replay fails with
+an -EEXIST error when attempting to replay the inode reference from the
+log tree.
 
-After this change it is:
+Fix this by setting the last_unlink_trans field of the inode (our special
+file) to the current transaction id when a hard link is created, as this
+forces logging the parent directory inode, solving the conflict at log
+replay time.
 
-  receiving snapshot snap2 uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
-  utimes
-  update_extent foobar: offset=8192, len=8192
-  utimes foobar
-  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+A new generic test case for fstests was also submitted.
 
 Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/send.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/tree-log.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -5008,6 +5008,9 @@ static int send_hole(struct send_ctx *sc
- 	u64 len;
- 	int ret = 0;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -5888,7 +5888,7 @@ int btrfs_log_new_name(struct btrfs_tran
+ 	 * this will force the logging code to walk the dentry chain
+ 	 * up for the file
+ 	 */
+-	if (S_ISREG(inode->vfs_inode.i_mode))
++	if (!S_ISDIR(inode->vfs_inode.i_mode))
+ 		inode->last_unlink_trans = trans->transid;
  
-+	if (sctx->flags & BTRFS_SEND_FLAG_NO_FILE_DATA)
-+		return send_update_extent(sctx, offset, end - offset);
-+
- 	p = fs_path_alloc();
- 	if (!p)
- 		return -ENOMEM;
+ 	/*
