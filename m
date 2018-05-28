@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163013AbeE1OCB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:02:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59872 "EHLO mail.kernel.org"
+        id S1162898AbeE1OC0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:02:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162669AbeE1Kjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:43 -0400
+        id S1162652AbeE1Kje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Gorinov <ivan.gorinov@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        stable@vger.kernel.org, Will Newton <will.newton@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 301/329] x86/devicetree: Fix device IRQ settings in DT
-Date: Mon, 28 May 2018 12:03:50 +0200
-Message-Id: <20180528100306.365554018@linuxfoundation.org>
+Subject: [PATCH 4.9 298/329] soc: qcom: wcnss_ctrl: Fix increment in NV upload
+Date: Mon, 28 May 2018 12:03:47 +0200
+Message-Id: <20180528100306.203643588@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,60 +31,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Gorinov <ivan.gorinov@intel.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 0a5169add90e43ab45ab1ba34223b8583fcaf675 ]
+[ Upstream commit 90c29ed7627b6b4aeb603ee197650173c8434512 ]
 
-IRQ parameters for the SoC devices connected directly to I/O APIC lines
-(without PCI IRQ routing) may be specified in the Device Tree.
+hdr.len includes both the size of the header and the fragment, so using
+this when stepping through the firmware causes us to skip 16 bytes every
+chunk of 3072 bytes; causing only the first fragment to actually be
+valid data.
 
-Called from DT IRQ parser, irq_create_fwspec_mapping() calls
-irq_domain_alloc_irqs() with a pointer to irq_fwspec structure as @arg.
+Instead use fragment size steps through the firmware blob.
 
-But x86-specific DT IRQ allocation code casts @arg to of_phandle_args
-structure pointer and crashes trying to read the IRQ parameters. The
-function was not converted when the mapping descriptor was changed to
-irq_fwspec in the generic irqdomain code.
-
-Fixes: 11e4438ee330 ("irqdomain: Introduce a firmware-specific IRQ specifier structure")
-Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Link: https://lkml.kernel.org/r/a234dee27ea60ce76141872da0d6bdb378b2a9ee.1520450752.git.ivan.gorinov@intel.com
+Fixes: ea7a1f275cf0 ("soc: qcom: Introduce WCNSS_CTRL SMD client")
+Reported-by: Will Newton <will.newton@gmail.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/devicetree.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/soc/qcom/wcnss_ctrl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/devicetree.c
-+++ b/arch/x86/kernel/devicetree.c
-@@ -200,19 +200,22 @@ static struct of_ioapic_type of_ioapic_t
- static int dt_irqdomain_alloc(struct irq_domain *domain, unsigned int virq,
- 			      unsigned int nr_irqs, void *arg)
- {
--	struct of_phandle_args *irq_data = (void *)arg;
-+	struct irq_fwspec *fwspec = (struct irq_fwspec *)arg;
- 	struct of_ioapic_type *it;
- 	struct irq_alloc_info tmp;
-+	int type_index;
+--- a/drivers/soc/qcom/wcnss_ctrl.c
++++ b/drivers/soc/qcom/wcnss_ctrl.c
+@@ -247,7 +247,7 @@ static int wcnss_download_nv(struct wcns
+ 		/* Increment for next fragment */
+ 		req->seq++;
  
--	if (WARN_ON(irq_data->args_count < 2))
-+	if (WARN_ON(fwspec->param_count < 2))
- 		return -EINVAL;
--	if (irq_data->args[1] >= ARRAY_SIZE(of_ioapic_type))
-+
-+	type_index = fwspec->param[1];
-+	if (type_index >= ARRAY_SIZE(of_ioapic_type))
- 		return -EINVAL;
+-		data += req->hdr.len;
++		data += NV_FRAGMENT_SIZE;
+ 		left -= NV_FRAGMENT_SIZE;
+ 	} while (left > 0);
  
--	it = &of_ioapic_type[irq_data->args[1]];
-+	it = &of_ioapic_type[type_index];
- 	ioapic_set_alloc_attr(&tmp, NUMA_NO_NODE, it->trigger, it->polarity);
- 	tmp.ioapic_id = mpc_ioapic_id(mp_irqdomain_ioapic_idx(domain));
--	tmp.ioapic_pin = irq_data->args[0];
-+	tmp.ioapic_pin = fwspec->param[0];
- 
- 	return mp_irqdomain_alloc(domain, virq, nr_irqs, &tmp);
- }
