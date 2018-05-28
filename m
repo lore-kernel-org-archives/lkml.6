@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164966AbeE1LD2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50584 "EHLO mail.kernel.org"
+        id S1422920AbeE1LDf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164949AbeE1LDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:19 -0400
+        id S1164957AbeE1LD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Ravikumar Kattekola <rk@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 483/496] selftests/net: fixes psock_fanout eBPF test case
-Date: Mon, 28 May 2018 12:04:28 +0200
-Message-Id: <20180528100340.240809097@linuxfoundation.org>
+Subject: [PATCH 4.14 455/496] ARM: dts: dra71-evm: Correct evm_sd regulator max voltage
+Date: Mon, 28 May 2018 12:04:00 +0200
+Message-Id: <20180528100339.082054284@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,38 +31,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+From: Ravikumar Kattekola <rk@ti.com>
 
-[ Upstream commit ddd0010392d9cbcb95b53d11b7cafc67b373ab56 ]
+[ Upstream commit f4aa1bd5b4fc80f5f4ecd184caad832fd62c25f7 ]
 
-eBPF test fails due to verifier failure because log_buf is too small.
-Fixed by increasing log_buf size
+Correct vpo_sd_1v8_3v3 regulator max voltage to 3.3V
 
-Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Acked-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 9868bc585ae2 ("ARM: dts: Add support for dra718-evm")
+Signed-off-by: Ravikumar Kattekola <rk@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/net/psock_fanout.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/dra71-evm.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/testing/selftests/net/psock_fanout.c
-+++ b/tools/testing/selftests/net/psock_fanout.c
-@@ -128,6 +128,8 @@ static void sock_fanout_getopts(int fd,
+--- a/arch/arm/boot/dts/dra71-evm.dts
++++ b/arch/arm/boot/dts/dra71-evm.dts
+@@ -24,13 +24,13 @@
  
- static void sock_fanout_set_ebpf(int fd)
- {
-+	static char log_buf[65536];
-+
- 	const int len_off = __builtin_offsetof(struct __sk_buff, len);
- 	struct bpf_insn prog[] = {
- 		{ BPF_ALU64 | BPF_MOV | BPF_X,   6, 1, 0, 0 },
-@@ -140,7 +142,6 @@ static void sock_fanout_set_ebpf(int fd)
- 		{ BPF_ALU   | BPF_MOV | BPF_K,   0, 0, 0, 0 },
- 		{ BPF_JMP   | BPF_EXIT,          0, 0, 0, 0 }
+ 		regulator-name = "vddshv8";
+ 		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <3000000>;
++		regulator-max-microvolt = <3300000>;
+ 		regulator-boot-on;
+ 		vin-supply = <&evm_5v0>;
+ 
+ 		gpios = <&gpio7 11 GPIO_ACTIVE_HIGH>;
+ 		states = <1800000 0x0
+-			  3000000 0x1>;
++			  3300000 0x1>;
  	};
--	char log_buf[512];
- 	union bpf_attr attr;
- 	int pfd;
  
+ 	evm_1v8_sw: fixedregulator-evm_1v8 {
