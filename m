@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164576AbeE1Mwt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:52:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44316 "EHLO mail.kernel.org"
+        id S1164400AbeE1MxI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:53:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164260AbeE1Kzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:50 -0400
+        id S1164242AbeE1Kzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitriy Vyukov <dvyukov@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 288/496] mm/mempolicy.c: avoid use uninitialized preferred_node
-Date: Mon, 28 May 2018 12:01:13 +0200
-Message-Id: <20180528100331.969878072@linuxfoundation.org>
+Subject: [PATCH 4.14 285/496] net: dsa: Fix functional dsa-loop dependency on FIXED_PHY
+Date: Mon, 28 May 2018 12:01:10 +0200
+Message-Id: <20180528100331.846867840@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -34,44 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yisheng Xie <xieyisheng1@huawei.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 8970a63e965b43288c4f5f40efbc2bbf80de7f16 ]
+[ Upstream commit 40013ff20b1beed31184935fc0aea6a859d4d4ef ]
 
-Alexander reported a use of uninitialized memory in __mpol_equal(),
-which is caused by incorrect use of preferred_node.
+We have a functional dependency on the FIXED_PHY MDIO bus because we register
+fixed PHY devices "the old way" which only works if the code that does this has
+had a chance to run before the fixed MDIO bus is probed. Make sure we account
+for that and have dsa_loop_bdinfo.o be either built-in or modular depending on
+whether CONFIG_FIXED_PHY reflects that too.
 
-When mempolicy in mode MPOL_PREFERRED with flags MPOL_F_LOCAL, it uses
-numa_node_id() instead of preferred_node, however, __mpol_equal() uses
-preferred_node without checking whether it is MPOL_F_LOCAL or not.
-
-[akpm@linux-foundation.org: slight comment tweak]
-Link: http://lkml.kernel.org/r/4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com
-Fixes: fc36b8d3d819 ("mempolicy: use MPOL_F_LOCAL to Indicate Preferred Local Policy")
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-Reported-by: Alexander Potapenko <glider@google.com>
-Tested-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dmitriy Vyukov <dvyukov@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 98cd1552ea27 ("net: dsa: Mock-up driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/mempolicy.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/dsa/Makefile |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2128,6 +2128,9 @@ bool __mpol_equal(struct mempolicy *a, s
- 	case MPOL_INTERLEAVE:
- 		return !!nodes_equal(a->v.nodes, b->v.nodes);
- 	case MPOL_PREFERRED:
-+		/* a's ->flags is the same as b's */
-+		if (a->flags & MPOL_F_LOCAL)
-+			return true;
- 		return a->v.preferred_node == b->v.preferred_node;
- 	default:
- 		BUG();
+--- a/drivers/net/dsa/Makefile
++++ b/drivers/net/dsa/Makefile
+@@ -1,7 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_NET_DSA_BCM_SF2)	+= bcm-sf2.o
+ bcm-sf2-objs			:= bcm_sf2.o bcm_sf2_cfp.o
+-obj-$(CONFIG_NET_DSA_LOOP)	+= dsa_loop.o dsa_loop_bdinfo.o
++obj-$(CONFIG_NET_DSA_LOOP)	+= dsa_loop.o
++ifdef CONFIG_NET_DSA_LOOP
++obj-$(CONFIG_FIXED_PHY)		+= dsa_loop_bdinfo.o
++endif
+ obj-$(CONFIG_NET_DSA_MT7530)	+= mt7530.o
+ obj-$(CONFIG_NET_DSA_MV88E6060) += mv88e6060.o
+ obj-$(CONFIG_NET_DSA_QCA8K)	+= qca8k.o
