@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164246AbeE1M6X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:58:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
+        id S932991AbeE1M6y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:58:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164048AbeE1KyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:11 -0400
+        id S1164121AbeE1Kyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 243/496] can: m_can: change comparison to bitshift when dealing with a mask
-Date: Mon, 28 May 2018 12:00:28 +0200
-Message-Id: <20180528100330.148779668@linuxfoundation.org>
+Subject: [PATCH 4.14 281/496] net/sched: fix idr leak in the error path of tcf_act_police_init()
+Date: Mon, 28 May 2018 12:01:06 +0200
+Message-Id: <20180528100331.689710709@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,30 +31,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit b7db978ac283b237835129ac87f26cbac94d04e7 ]
+[ Upstream commit 5bf7f8185f7c7112decdfe3d3e5c5d5e67f099a1 ]
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+tcf_act_police_init() can fail after the idr has been successfully
+reserved (e.g., qdisc_get_rtab() may return NULL). When this happens,
+subsequent attempts to configure a police rule using the same idr value
+systematiclly fail with -ENOSPC:
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+ # tc action add action police rate 1000 burst 1000 drop index 100
+ RTNETLINK answers: Cannot allocate memory
+ We have an error talking to the kernel
+ # tc action add action police rate 1000 burst 1000 drop index 100
+ RTNETLINK answers: No space left on device
+ We have an error talking to the kernel
+ # tc action add action police rate 1000 burst 1000 drop index 100
+ RTNETLINK answers: No space left on device
+ ...
+
+Fix this in the error path of tcf_act_police_init(), calling
+tcf_idr_release() in place of tcf_idr_cleanup().
+
+Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/m_can/m_can.c |    2 +-
+ net/sched/act_police.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -246,7 +246,7 @@ enum m_can_mram_cfg {
- 
- /* Rx FIFO 0/1 Configuration (RXF0C/RXF1C) */
- #define RXFC_FWM_SHIFT	24
--#define RXFC_FWM_MASK	(0x7f < RXFC_FWM_SHIFT)
-+#define RXFC_FWM_MASK	(0x7f << RXFC_FWM_SHIFT)
- #define RXFC_FS_SHIFT	16
- #define RXFC_FS_MASK	(0x7f << RXFC_FS_SHIFT)
+--- a/net/sched/act_police.c
++++ b/net/sched/act_police.c
+@@ -194,7 +194,7 @@ failure:
+ 	qdisc_put_rtab(P_tab);
+ 	qdisc_put_rtab(R_tab);
+ 	if (ret == ACT_P_CREATED)
+-		tcf_idr_cleanup(*a, est);
++		tcf_idr_release(*a, bind);
+ 	return err;
+ }
  
