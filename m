@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939119AbeE1NMH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:12:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40508 "EHLO mail.kernel.org"
+        id S939150AbeE1NM1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:12:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163193AbeE1KvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:51:01 -0400
+        id S1163592AbeE1Kuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
+        stable@vger.kernel.org, Igor Pylypiv <igor.pylypiv@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 219/496] ia64/err-inject: Use get_user_pages_fast()
-Date: Mon, 28 May 2018 12:00:04 +0200
-Message-Id: <20180528100329.144911866@linuxfoundation.org>
+Subject: [PATCH 4.14 209/496] watchdog: f71808e_wdt: Fix magic close handling
+Date: Mon, 28 May 2018 11:59:54 +0200
+Message-Id: <20180528100328.739683452@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,31 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: Igor Pylypiv <igor.pylypiv@gmail.com>
 
-[ Upstream commit 69c907022a7d9325cdc5c9dd064571e445df9a47 ]
+[ Upstream commit 7bd3e7b743956afbec30fb525bc3c5e22e3d475c ]
 
-At the point of sysfs callback, the call to gup is
-done without mmap_sem (or any lock for that matter).
-This is racy. As such, use the get_user_pages_fast()
-alternative and safely avoid taking the lock, if possible.
+Watchdog close is "expected" when any byte is 'V' not just the last one.
+Writing "V" to the device fails because the last byte is the end of string.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
+$ echo V > /dev/watchdog
+f71808e_wdt: Unexpected close, not stopping watchdog!
+
+Signed-off-by: Igor Pylypiv <igor.pylypiv@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/ia64/kernel/err_inject.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/f71808e_wdt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/ia64/kernel/err_inject.c
-+++ b/arch/ia64/kernel/err_inject.c
-@@ -142,7 +142,7 @@ store_virtual_to_phys(struct device *dev
- 	u64 virt_addr=simple_strtoull(buf, NULL, 16);
- 	int ret;
+--- a/drivers/watchdog/f71808e_wdt.c
++++ b/drivers/watchdog/f71808e_wdt.c
+@@ -566,7 +566,8 @@ static ssize_t watchdog_write(struct fil
+ 				char c;
+ 				if (get_user(c, buf + i))
+ 					return -EFAULT;
+-				expect_close = (c == 'V');
++				if (c == 'V')
++					expect_close = true;
+ 			}
  
--	ret = get_user_pages(virt_addr, 1, FOLL_WRITE, NULL, NULL);
-+	ret = get_user_pages_fast(virt_addr, 1, FOLL_WRITE, NULL);
- 	if (ret<=0) {
- #ifdef ERR_INJ_DEBUG
- 		printk("Virtual address %lx is not existing.\n",virt_addr);
+ 			/* Properly order writes across fork()ed processes */
