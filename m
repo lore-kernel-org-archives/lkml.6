@@ -1,61 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939246AbeE1Nxv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:53:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162696AbeE1Kli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:38 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dave Jones <davej@codemonkey.org.uk>
-Subject: [PATCH 4.14 013/496] libata: Blacklist some Sandisk SSDs for NCQ
-Date: Mon, 28 May 2018 11:56:38 +0200
-Message-Id: <20180528100320.115750136@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S939269AbeE1NyL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:54:11 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37384 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162961AbeE1Klb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:31 -0400
+X-Google-Smtp-Source: ADUXVKJFWO3tYGbija4z9L9gN8vCUORKePIV0BhIMyiZBkxfiheH34nPTHRbxMGf6DipwK8xkXdVsw==
+Date: Mon, 28 May 2018 12:41:27 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com,
+        quentin.perret@arm.com
+Subject: Re: [PATCH v5 08/10] cpufreq/schedutil: take into account interrupt
+Message-ID: <20180528104127.GB1293@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-9-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527253951-22709-9-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Vincent,
 
-------------------
+On 25/05/18 15:12, Vincent Guittot wrote:
+> The time spent under interrupt can be significant but it is not reflected
+> in the utilization of CPU when deciding to choose an OPP. Now that we have
+> access to this metric, schedutil can take it into account when selecting
+> the OPP for a CPU.
+> The CPU utilization is :
+>   irq util_avg + (1 - irq util_avg / max capacity ) * /Sum rq util_avg
 
-From: Tejun Heo <tj@kernel.org>
+IIUC the code below you actually propose that
 
-commit 322579dcc865b94b47345ad1b6002ad167f85405 upstream.
+ util = [(max_cap - util_irq) * util_rq] / max_cap + util_irq
 
-Sandisk SSDs SD7SN6S256G and SD8SN8U256G are regularly locking up
-regularly under sustained moderate load with NCQ enabled.  Blacklist
-for now.
+where
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Dave Jones <davej@codemonkey.org.uk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ util_rq  = /Sum rq util_avg
+ util_irq = irq util_avg
 
----
- drivers/ata/libata-core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+So, which one is what you have in mind? Or am I wrong? :)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4483,6 +4483,10 @@ static const struct ata_blacklist_entry
- 	/* https://bugzilla.kernel.org/show_bug.cgi?id=15573 */
- 	{ "C300-CTFDDAC128MAG",	"0001",		ATA_HORKAGE_NONCQ, },
- 
-+	/* Some Sandisk SSDs lock up hard with NCQ enabled.  Reported on
-+	   SD7SN6S256G and SD8SN8U256G */
-+	{ "SanDisk SD[78]SN*G",	NULL,		ATA_HORKAGE_NONCQ, },
-+
- 	/* devices which puke on READ_NATIVE_MAX */
- 	{ "HDS724040KLSA80",	"KFAOA20N",	ATA_HORKAGE_BROKEN_HPA, },
- 	{ "WDC WD3200JD-00KLB0", "WD-WCAMR1130137", ATA_HORKAGE_BROKEN_HPA },
+[...]
+
+>  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> @@ -190,9 +192,17 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  	if (rq->rt.rt_nr_running) {
+>  		util = sg_cpu->max;
+>  	} else {
+> +		/* Sum rq utilization*/
+>  		util = sg_cpu->util_dl;
+>  		util += sg_cpu->util_cfs;
+>  		util += sg_cpu->util_rt;
+> +
+> +		/* Weight rq's utilization to the normal context */
+> +		util *= (sg_cpu->max - sg_cpu->util_irq);
+> +		util /= sg_cpu->max;
+> +
+> +		/* Add interrupt utilization */
+> +		util += sg_cpu->util_irq;
+
+Thanks,
+
+- Juri
