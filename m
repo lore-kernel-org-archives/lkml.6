@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165278AbeE1NRt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:17:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39572 "EHLO mail.kernel.org"
+        id S1165302AbeE1NSb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:18:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163596AbeE1KuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:01 -0400
+        id S1163480AbeE1Ktx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@icloud.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 197/496] nvme: pci: pass max vectors as num_possible_cpus() to pci_alloc_irq_vectors
-Date: Mon, 28 May 2018 11:59:42 +0200
-Message-Id: <20180528100328.228187488@linuxfoundation.org>
+Subject: [PATCH 4.14 194/496] ceph: fix potential memory leak in init_caches()
+Date: Mon, 28 May 2018 11:59:39 +0200
+Message-Id: <20180528100328.106815693@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,69 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Chengguang Xu <cgxu519@icloud.com>
 
-[ Upstream commit 16ccfff2897613007b5eda9e29d65303c6280026 ]
+[ Upstream commit 1c789249578895bb14ab62b4327306439b754857 ]
 
-84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-has switched to do irq vectors spread among all possible CPUs, so
-pass num_possible_cpus() as max vecotrs to be assigned.
+There is lack of cache destroy operation for ceph_file_cachep
+when failing from fscache register.
 
-For example, in a 8 cores system, 0~3 online, 4~8 offline/not present,
-see 'lscpu':
-
-        [ming@box]$lscpu
-        Architecture:          x86_64
-        CPU op-mode(s):        32-bit, 64-bit
-        Byte Order:            Little Endian
-        CPU(s):                4
-        On-line CPU(s) list:   0-3
-        Thread(s) per core:    1
-        Core(s) per socket:    2
-        Socket(s):             2
-        NUMA node(s):          2
-        ...
-        NUMA node0 CPU(s):     0-3
-        NUMA node1 CPU(s):
-        ...
-
-1) before this patch, follows the allocated vectors and their affinity:
-	irq 47, cpu list 0,4
-	irq 48, cpu list 1,6
-	irq 49, cpu list 2,5
-	irq 50, cpu list 3,7
-
-2) after this patch, follows the allocated vectors and their affinity:
-	irq 43, cpu list 0
-	irq 44, cpu list 1
-	irq 45, cpu list 2
-	irq 46, cpu list 3
-	irq 47, cpu list 4
-	irq 48, cpu list 6
-	irq 49, cpu list 5
-	irq 50, cpu list 7
-
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/pci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/super.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1770,7 +1770,7 @@ static int nvme_setup_io_queues(struct n
- 	int result, nr_io_queues;
- 	unsigned long size;
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -712,14 +712,17 @@ static int __init init_caches(void)
+ 		goto bad_dentry;
  
--	nr_io_queues = num_present_cpus();
-+	nr_io_queues = num_possible_cpus();
- 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
- 	if (result < 0)
- 		return result;
+ 	ceph_file_cachep = KMEM_CACHE(ceph_file_info, SLAB_MEM_SPREAD);
+-
+ 	if (!ceph_file_cachep)
+ 		goto bad_file;
+ 
+-	if ((error = ceph_fscache_register()))
+-		goto bad_file;
++	error = ceph_fscache_register();
++	if (error)
++		goto bad_fscache;
+ 
+ 	return 0;
++
++bad_fscache:
++	kmem_cache_destroy(ceph_file_cachep);
+ bad_file:
+ 	kmem_cache_destroy(ceph_dentry_cachep);
+ bad_dentry:
