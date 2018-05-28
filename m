@@ -1,24 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030193AbeE1KQJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36166 "EHLO mail.kernel.org"
+        id S1035016AbeE1PvG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:51:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967624AbeE1KQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:02 -0400
+        id S965345AbeE1KQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 014/268] kernel/sys.c: fix potential Spectre v1 issue
-Date: Mon, 28 May 2018 11:59:48 +0200
-Message-Id: <20180528100203.711487090@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 042/268] powerpc/numa: Use ibm,max-associativity-domains to discover possible nodes
+Date: Mon, 28 May 2018 12:00:16 +0200
+Message-Id: <20180528100206.791672570@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,59 +31,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-commit 23d6aef74da86a33fa6bb75f79565e0a16ee97c2 upstream.
+[ Upstream commit a346137e9142b039fd13af2e59696e3d40c487ef ]
 
-`resource' can be controlled by user-space, hence leading to a potential
-exploitation of the Spectre variant 1 vulnerability.
+On powerpc systems which allow 'hot-add' of CPU or memory resources,
+it may occur that the new resources are to be inserted into nodes that
+were not used for these resources at bootup. In the kernel, any node
+that is used must be defined and initialized. These empty nodes may
+occur when,
 
-This issue was detected with the help of Smatch:
+* Dedicated vs. shared resources. Shared resources require information
+  such as the VPHN hcall for CPU assignment to nodes. Associativity
+  decisions made based on dedicated resource rules, such as
+  associativity properties in the device tree, may vary from decisions
+  made using the values returned by the VPHN hcall.
 
-  kernel/sys.c:1474 __do_compat_sys_old_getrlimit() warn: potential spectre issue 'get_current()->signal->rlim' (local cap)
-  kernel/sys.c:1455 __do_sys_old_getrlimit() warn: potential spectre issue 'get_current()->signal->rlim' (local cap)
+* memoryless nodes at boot. Nodes need to be defined as 'possible' at
+  boot for operation with other code modules. Previously, the powerpc
+  code would limit the set of possible nodes to those which have
+  memory assigned at boot, and were thus online. Subsequent add/remove
+  of CPUs or memory would only work with this subset of possible
+  nodes.
 
-Fix this by sanitizing *resource* before using it to index
-current->signal->rlim
+* memoryless nodes with CPUs at boot. Due to the previous restriction
+  on nodes, nodes that had CPUs but no memory were being collapsed
+  into other nodes that did have memory at boot. In practice this
+  meant that the node assignment presented by the runtime kernel
+  differed from the affinity and associativity attributes presented by
+  the device tree or VPHN hcalls. Nodes that might be known to the
+  pHyp were not 'possible' in the runtime kernel because they did not
+  have memory at boot.
 
-Notice that given that speculation windows are large, the policy is to
-kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+This patch ensures that sufficient nodes are defined to support
+configuration requirements after boot, as well as at boot. This patch
+set fixes a couple of problems.
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
+  them are allowed to be 'possible' and 'online'. Memory allocations
+  for those nodes are taken from another node that does have memory
+  until and if memory is hot-added to the node. * Nodes which have no
+  resources assigned at boot, but which may still be referenced
+  subsequently by affinity or associativity attributes, are kept in
+  the list of 'possible' nodes for powerpc. Hot-add of memory or CPUs
+  to the system can reference these nodes and bring them online
+  instead of redirecting to one of the set of nodes that were known to
+  have memory at boot.
 
-Link: http://lkml.kernel.org/r/20180515030038.GA11822@embeddedor.com
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This patch extracts the value of the lowest domain level (number of
+allocable resources) from the device tree property
+"ibm,max-associativity-domains" to use as the maximum number of nodes
+to setup as possibly available in the system. This new setting will
+override the instruction:
+
+    nodes_and(node_possible_map, node_possible_map, node_online_map);
+
+presently seen in the function arch/powerpc/mm/numa.c:initmem_init().
+
+If the "ibm,max-associativity-domains" property is not present at
+boot, no operation will be performed to define or enable additional
+nodes, or enable the above 'nodes_and()'.
+
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sys.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/mm/numa.c |   37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -53,6 +53,8 @@
- #include <linux/uidgid.h>
- #include <linux/cred.h>
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -951,6 +951,34 @@ static void __init setup_node_data(int n
+ 	NODE_DATA(nid)->node_spanned_pages = spanned_pages;
+ }
  
-+#include <linux/nospec.h>
++static void __init find_possible_nodes(void)
++{
++	struct device_node *rtas;
++	u32 numnodes, i;
 +
- #include <linux/kmsg_dump.h>
- /* Move somewhere else to avoid recompiling? */
- #include <generated/utsrelease.h>
-@@ -1311,6 +1313,7 @@ SYSCALL_DEFINE2(old_getrlimit, unsigned
- 	if (resource >= RLIM_NLIMITS)
- 		return -EINVAL;
++	if (min_common_depth <= 0)
++		return;
++
++	rtas = of_find_node_by_path("/rtas");
++	if (!rtas)
++		return;
++
++	if (of_property_read_u32_index(rtas,
++				"ibm,max-associativity-domains",
++				min_common_depth, &numnodes))
++		goto out;
++
++	for (i = 0; i < numnodes; i++) {
++		if (!node_possible(i)) {
++			setup_node_data(i, 0, 0);
++			node_set(i, node_possible_map);
++		}
++	}
++
++out:
++	of_node_put(rtas);
++}
++
+ void __init initmem_init(void)
+ {
+ 	int nid, cpu;
+@@ -966,12 +994,15 @@ void __init initmem_init(void)
+ 	memblock_dump_all();
  
-+	resource = array_index_nospec(resource, RLIM_NLIMITS);
- 	task_lock(current->group_leader);
- 	x = current->signal->rlim[resource];
- 	task_unlock(current->group_leader);
+ 	/*
+-	 * Reduce the possible NUMA nodes to the online NUMA nodes,
+-	 * since we do not support node hotplug. This ensures that  we
+-	 * lower the maximum NUMA node ID to what is actually present.
++	 * Modify the set of possible NUMA nodes to reflect information
++	 * available about the set of online nodes, and the set of nodes
++	 * that we expect to make use of for this platform's affinity
++	 * calculations.
+ 	 */
+ 	nodes_and(node_possible_map, node_possible_map, node_online_map);
+ 
++	find_possible_nodes();
++
+ 	for_each_online_node(nid) {
+ 		unsigned long start_pfn, end_pfn;
+ 
