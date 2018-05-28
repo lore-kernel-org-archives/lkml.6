@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424419AbeE1LO0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:14:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33566 "EHLO mail.kernel.org"
+        id S1424427AbeE1LOb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:14:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424383AbeE1LOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:15 -0400
+        id S1424383AbeE1LO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
+        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 225/272] net: stmmac: ensure that the device has released ownership before reading data
-Date: Mon, 28 May 2018 12:04:18 +0200
-Message-Id: <20180528100259.327672167@linuxfoundation.org>
+Subject: [PATCH 4.16 228/272] dpaa_eth: fix SG mapping
+Date: Mon, 28 May 2018 12:04:21 +0200
+Message-Id: <20180528100259.576470668@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,37 +30,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: Madalin Bucur <madalin.bucur@nxp.com>
 
-[ Upstream commit a6b25da5e7ba212af5826a662e6a035a79bffabd ]
+[ Upstream commit 120d75ecf043044554abbba8507f6d22e4715beb ]
 
-According to Documentation/memory-barriers.txt, we need to use a
-dma_rmb() after reading the status/own bit, to ensure that all
-descriptor fields are read after reading the own bit.
+An issue in the code mapping the skb fragments into
+scatter-gather frames was evidentiated by netperf
+TCP_SENDFILE tests. The size was set wrong for all
+fragments but the first, affecting the transmission
+of any skb with more than one fragment.
 
-This way, we ensure that the DMA engine is done with the DMA
-descriptor before we read the other descriptor fields, e.g. reading
-the tx hardware timestamp (if PTP is enabled).
-
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |   23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1843,6 +1843,11 @@ static void stmmac_tx_clean(struct stmma
- 		if (unlikely(status & tx_dma_own))
- 			break;
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -1916,8 +1916,10 @@ static int skb_to_sg_fd(struct dpaa_priv
+ 		goto csum_failed;
+ 	}
  
-+		/* Make sure descriptor fields are read after reading
-+		 * the own bit.
-+		 */
-+		dma_rmb();
++	/* SGT[0] is used by the linear part */
+ 	sgt = (struct qm_sg_entry *)(sgt_buf + priv->tx_headroom);
+-	qm_sg_entry_set_len(&sgt[0], skb_headlen(skb));
++	frag_len = skb_headlen(skb);
++	qm_sg_entry_set_len(&sgt[0], frag_len);
+ 	sgt[0].bpid = FSL_DPAA_BPID_INV;
+ 	sgt[0].offset = 0;
+ 	addr = dma_map_single(dev, skb->data,
+@@ -1930,9 +1932,9 @@ static int skb_to_sg_fd(struct dpaa_priv
+ 	qm_sg_entry_set64(&sgt[0], addr);
+ 
+ 	/* populate the rest of SGT entries */
+-	frag = &skb_shinfo(skb)->frags[0];
+-	frag_len = frag->size;
+-	for (i = 1; i <= nr_frags; i++, frag++) {
++	for (i = 0; i < nr_frags; i++) {
++		frag = &skb_shinfo(skb)->frags[i];
++		frag_len = frag->size;
+ 		WARN_ON(!skb_frag_page(frag));
+ 		addr = skb_frag_dma_map(dev, frag, 0,
+ 					frag_len, dma_dir);
+@@ -1942,15 +1944,16 @@ static int skb_to_sg_fd(struct dpaa_priv
+ 			goto sg_map_failed;
+ 		}
+ 
+-		qm_sg_entry_set_len(&sgt[i], frag_len);
+-		sgt[i].bpid = FSL_DPAA_BPID_INV;
+-		sgt[i].offset = 0;
++		qm_sg_entry_set_len(&sgt[i + 1], frag_len);
++		sgt[i + 1].bpid = FSL_DPAA_BPID_INV;
++		sgt[i + 1].offset = 0;
+ 
+ 		/* keep the offset in the address */
+-		qm_sg_entry_set64(&sgt[i], addr);
+-		frag_len = frag->size;
++		qm_sg_entry_set64(&sgt[i + 1], addr);
+ 	}
+-	qm_sg_entry_set_f(&sgt[i - 1], frag_len);
 +
- 		/* Just consider the last segment and ...*/
- 		if (likely(!(status & tx_not_ls))) {
- 			/* ... verify the status error condition */
++	/* Set the final bit in the last used entry of the SGT */
++	qm_sg_entry_set_f(&sgt[nr_frags], frag_len);
+ 
+ 	qm_fd_set_sg(fd, priv->tx_headroom, skb->len);
+ 
