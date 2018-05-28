@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422920AbeE1LDf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50674 "EHLO mail.kernel.org"
+        id S1422947AbeE1LDp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164957AbeE1LD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:28 -0400
+        id S1164664AbeE1LDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ravikumar Kattekola <rk@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 455/496] ARM: dts: dra71-evm: Correct evm_sd regulator max voltage
-Date: Mon, 28 May 2018 12:04:00 +0200
-Message-Id: <20180528100339.082054284@linuxfoundation.org>
+Subject: [PATCH 4.14 459/496] net: stmmac: ensure that the MSS desc is the last desc to set the own bit
+Date: Mon, 28 May 2018 12:04:04 +0200
+Message-Id: <20180528100339.262992649@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,38 +30,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ravikumar Kattekola <rk@ti.com>
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-[ Upstream commit f4aa1bd5b4fc80f5f4ecd184caad832fd62c25f7 ]
+[ Upstream commit 15d2ee42a3087089e73ad52fd8c1b37ab496b87c ]
 
-Correct vpo_sd_1v8_3v3 regulator max voltage to 3.3V
+A dma_wmb() is used to guarantee the ordering, with respect to
+other writes, to cache coherent DMA memory.
 
-Fixes: 9868bc585ae2 ("ARM: dts: Add support for dra718-evm")
-Signed-off-by: Ravikumar Kattekola <rk@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+There is a dma_wmb() in prepare_tx_desc()/prepare_tso_tx_desc() which
+ensures that TDES0/1/2 is written before TDES3 (which contains the own
+bit), for First Desc.
+
+However, in the rare case that MSS changes, there will be a MSS
+context descriptor in front of the regular DMA descriptors:
+
+<MSS desc> <- DMA Next Descriptor
+<First Desc>
+<desc n>
+<Last Desc>
+
+Thus, for this special case, we need a dma_wmb()
+after prepare_tso_tx_desc()/before writing the own bit to the MSS desc,
+so that we flush the write to TDES3 for First Desc,
+in order to ensure that the MSS descriptor is the last descriptor to
+set the own bit.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/dra71-evm.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/dra71-evm.dts
-+++ b/arch/arm/boot/dts/dra71-evm.dts
-@@ -24,13 +24,13 @@
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2923,8 +2923,15 @@ static netdev_tx_t stmmac_tso_xmit(struc
+ 			tcp_hdrlen(skb) / 4, (skb->len - proto_hdr_len));
  
- 		regulator-name = "vddshv8";
- 		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
- 		regulator-boot-on;
- 		vin-supply = <&evm_5v0>;
+ 	/* If context desc is used to change MSS */
+-	if (mss_desc)
++	if (mss_desc) {
++		/* Make sure that first descriptor has been completely
++		 * written, including its own bit. This is because MSS is
++		 * actually before first descriptor, so we need to make
++		 * sure that MSS's own bit is the last thing written.
++		 */
++		dma_wmb();
+ 		priv->hw->desc->set_tx_owner(mss_desc);
++	}
  
- 		gpios = <&gpio7 11 GPIO_ACTIVE_HIGH>;
- 		states = <1800000 0x0
--			  3000000 0x1>;
-+			  3300000 0x1>;
- 	};
- 
- 	evm_1v8_sw: fixedregulator-evm_1v8 {
+ 	/* The own bit must be the latest setting done when prepare the
+ 	 * descriptor and then barrier is needed to make sure that
