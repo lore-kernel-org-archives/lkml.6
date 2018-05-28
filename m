@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423438AbeE1LH3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:07:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54076 "EHLO mail.kernel.org"
+        id S1423472AbeE1LHn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:07:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423409AbeE1LHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:20 -0400
+        id S1423424AbeE1LH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 048/272] Btrfs: clean up resources during umount after trans is aborted
-Date: Mon, 28 May 2018 12:01:21 +0200
-Message-Id: <20180528100244.888277289@linuxfoundation.org>
+Subject: [PATCH 4.16 076/272] powerpc/64s/idle: Fix restore of AMOR on POWER9 after deep sleep
+Date: Mon, 28 May 2018 12:01:49 +0200
+Message-Id: <20180528100247.397737253@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,45 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit af7227338135d2f1b1552bf9a6d43e02dcba10b9 ]
+[ Upstream commit c1b25a17d24925b0961c319cfc3fd7e1dc778914 ]
 
-Currently if some fatal errors occur, like all IO get -EIO, resources
-would be cleaned up when
-a) transaction is being committed or
-b) BTRFS_FS_STATE_ERROR is set
+POWER8 restores AMOR when waking from deep sleep, but POWER9 does not,
+because it does not go through the subcore restore.
 
-However, in some rare cases, resources may be left alone after transaction
-gets aborted and umount may run into some ASSERT(), e.g.
-ASSERT(list_empty(&block_group->dirty_list));
+Have POWER9 restore it in core restore.
 
-For case a), in btrfs_commit_transaciton(), there're several places at the
-beginning where we just call btrfs_end_transaction() without cleaning up
-resources.  For case b), it is possible that the trans handle doesn't have
-any dirty stuff, then only trans hanlde is marked as aborted while
-BTRFS_FS_STATE_ERROR is not set, so resources remain in memory.
-
-This makes btrfs also check BTRFS_FS_STATE_TRANS_ABORTED to make sure that
-all resources won't stay in memory after umount.
-
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: ee97b6b99f42 ("powerpc/mm/radix: Setup AMOR in HV mode to allow key 0")
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/disk-io.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/idle_book3s.S |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3735,7 +3735,8 @@ void close_ctree(struct btrfs_fs_info *f
- 			btrfs_err(fs_info, "commit super ret %d", ret);
- 	}
+--- a/arch/powerpc/kernel/idle_book3s.S
++++ b/arch/powerpc/kernel/idle_book3s.S
+@@ -834,6 +834,8 @@ BEGIN_FTR_SECTION
+ 	mtspr	SPRN_PTCR,r4
+ 	ld	r4,_RPR(r1)
+ 	mtspr	SPRN_RPR,r4
++	ld	r4,_AMOR(r1)
++	mtspr	SPRN_AMOR,r4
+ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
  
--	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
-+	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state) ||
-+	    test_bit(BTRFS_FS_STATE_TRANS_ABORTED, &fs_info->fs_state))
- 		btrfs_error_commit_super(fs_info);
- 
- 	kthread_stop(fs_info->transaction_kthread);
+ 	ld	r4,_TSCR(r1)
