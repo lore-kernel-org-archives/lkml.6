@@ -1,113 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164492AbeE1NGg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:06:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163974AbeE1KwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:52:19 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 214/496] hv_netvsc: propagate rx filters to VF
-Date: Mon, 28 May 2018 11:59:59 +0200
-Message-Id: <20180528100328.938061334@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1165158AbeE1NG5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:06:57 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:53603 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164069AbeE1NGr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:06:47 -0400
+X-Google-Smtp-Source: AB8JxZoSKDvJqnayjvdZD9csL5gk664QTR7uYpCs0kb9GQU+Wx6HFgpeBhqD3cT9whK36ZCFveUCiYsTVR06sEihfg0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1526544259-27891-1-git-send-email-samarth.parikh@arm.com>
+References: <1526544259-27891-1-git-send-email-samarth.parikh@arm.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Mon, 28 May 2018 18:36:45 +0530
+Message-ID: <CABb+yY03QuwktEAOk6Qzr+-h8Z9iJJQAYo_tgdt9iiD3Ud9GYA@mail.gmail.com>
+Subject: Re: [PATCH v2] mailbox: arm_mhu: add support for mhuv2
+To: Samarth Parikh <samarth.parikh@arm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sudipto.Paul@arm.com, Arvind Chauhan <Arvind.Chauhan@arm.com>,
+        Deepak.Pandey@arm.com, samarthp@ymail.com,
+        Sudeep Holla <Sudeep.Holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, May 17, 2018 at 1:34 PM, Samarth Parikh <samarth.parikh@arm.com> wrote:
+> ARM has launched a next version of MHU i.e. MHUv2 with its latest
+> subsystems. The main change is that the MHUv2 is now a distributed IP
+> with different peripheral views (registers) for the sender and receiver.
+>
+> Another main difference is that MHUv1 duplex channels are now split into
+> simplex/half duplex in MHUv2.
+>
+Not sure what you mean. v1 too had separate rx, tx channels.
+Is the MHUv2 spec available somewhere for me to have a look? If not,
+please share the register map.
 
-------------------
+ MHUv2 has a configurable number of
+> communication channels. There is a capability register (MSG_NO_CAP) to
+> find out how many channels are available in a system.
+>
+> The register offsets have also changed for STAT, SET & CLEAR registers
+> from 0x0, 0x8 & 0x10 in MHUv1 to 0x0, 0xC & 0x8 in MHUv2 respectively.
+>
+> 0x0    0x4  0x8  0xC             0x1F
+> ------------------------....-----
+> | STAT |    |    | SET |    |   |
+> ------------------------....-----
+>       Transmit Channel
+>
+> 0x0    0x4  0x8   0xC            0x1F
+> ------------------------....-----
+> | STAT |    | CLR |    |    |   |
+> ------------------------....-----
+>         Receive Channel
+>
+> The MHU controller can request the receiver to wake-up and once the
+> request is removed, the receiver may go back to sleep, but the MHU
+> itself does not actively puts a receiver to sleep.
+>
+> So, in order to wake-up the receiver when the sender wants to send data,
+> the sender has to set ACCESS_REQUEST register first in order to wake-up
+> receiver, state of which can be detected using ACCESS_READY register.
+> ACCESS_REQUEST has an offset of 0xF88 & ACCESS_READY has an offset
+> of 0xF8C and are accessible only on any sender channel.
+>
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+> This patch adds necessary changes in a new file required to support the
+> latest MHUv2 controller. This patch also need an update in DT binding for
+> ARM MHUv2 as we need a second register base (tx base) which would be used
+> as the send channel base.
+>
+Please submit the dt-bindings as well.
 
-[ Upstream commit bee9d41b37ea6b1f860e5bc0989cf1cf1d7e6ab3 ]
+......
 
-The netvsc device should propagate filters to the SR-IOV VF
-device (if present). The flags also need to be propagated to the
-VF device as well. This only really matters on local Hyper-V
-since Azure does not support multiple addresses.
+> +
+> +#define MHU_V2_REG_STAT_OFS            0x0
+> +#define MHU_V2_REG_CLR_OFS             0x8
+> +#define MHU_V2_REG_SET_OFS             0xC
+> +#define MHU_V2_REG_MSG_NO_CAP_OFS      0xF80
+> +#define MHU_V2_REG_ACC_REQ_OFS         0xF88
+> +#define MHU_V2_REG_ACC_RDY_OFS         0xF8C
+> +
+> +#define MHU_V2_LP_OFFSET               0x20
+> +#define MHU_V2_HP_OFFSET               0x0
+> +
+ and the third channel please.
 
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/hyperv/netvsc_drv.c |   40 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
+> +#define MHU_V2_CHANS                   3
+> +
+> +#define mbox_to_mhuv2_drv_data(c) container_of(c, struct mhuv2_drv_data, mbox)
+> +
+> +enum mhuv2_regs {
+> +       MHU_V2_REG_STAT,
+> +       MHU_V2_REG_SET,
+> +       MHU_V2_REG_CLR,
+> +       MHU_V2_REG_END
+> +};
+> +
+> +enum mhuv2_access_regs {
+> +       MHU_V2_REG_MSG_NO_CAP,
+> +       MHU_V2_REG_ACC_REQ,
+> +       MHU_V2_REG_ACC_RDY,
+> +       MHU_V2_REG_ACC_END
+> +};
+> +
+> +enum mhuv2_channels {
+> +       MHU_V2_CHAN_LOW,
+> +       MHU_V2_CHAN_HIGH,
+> +       MHU_V2_CHAN_SEC,
+> +       MHU_V2_CHAN_END
+> +};
+> +
+These three are unused.
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -66,10 +66,36 @@ static int debug = -1;
- module_param(debug, int, S_IRUGO);
- MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
- 
--static void netvsc_set_multicast_list(struct net_device *net)
-+static void netvsc_change_rx_flags(struct net_device *net, int change)
- {
--	struct net_device_context *net_device_ctx = netdev_priv(net);
--	struct netvsc_device *nvdev = rtnl_dereference(net_device_ctx->nvdev);
-+	struct net_device_context *ndev_ctx = netdev_priv(net);
-+	struct net_device *vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
-+	int inc;
-+
-+	if (!vf_netdev)
-+		return;
-+
-+	if (change & IFF_PROMISC) {
-+		inc = (net->flags & IFF_PROMISC) ? 1 : -1;
-+		dev_set_promiscuity(vf_netdev, inc);
-+	}
-+
-+	if (change & IFF_ALLMULTI) {
-+		inc = (net->flags & IFF_ALLMULTI) ? 1 : -1;
-+		dev_set_allmulti(vf_netdev, inc);
-+	}
-+}
-+
-+static void netvsc_set_rx_mode(struct net_device *net)
-+{
-+	struct net_device_context *ndev_ctx = netdev_priv(net);
-+	struct net_device *vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
-+	struct netvsc_device *nvdev = rtnl_dereference(ndev_ctx->nvdev);
-+
-+	if (vf_netdev) {
-+		dev_uc_sync(vf_netdev, net);
-+		dev_mc_sync(vf_netdev, net);
-+	}
- 
- 	rndis_filter_update(nvdev);
- }
-@@ -1582,7 +1608,8 @@ static const struct net_device_ops devic
- 	.ndo_open =			netvsc_open,
- 	.ndo_stop =			netvsc_close,
- 	.ndo_start_xmit =		netvsc_start_xmit,
--	.ndo_set_rx_mode =		netvsc_set_multicast_list,
-+	.ndo_change_rx_flags =		netvsc_change_rx_flags,
-+	.ndo_set_rx_mode =		netvsc_set_rx_mode,
- 	.ndo_change_mtu =		netvsc_change_mtu,
- 	.ndo_validate_addr =		eth_validate_addr,
- 	.ndo_set_mac_address =		netvsc_set_mac_addr,
-@@ -1814,6 +1841,11 @@ static void __netvsc_vf_setup(struct net
- 		netdev_warn(vf_netdev,
- 			    "unable to change mtu to %u\n", ndev->mtu);
- 
-+	/* set multicast etc flags on VF */
-+	dev_change_flags(vf_netdev, ndev->flags | IFF_SLAVE);
-+	dev_uc_sync(vf_netdev, ndev);
-+	dev_mc_sync(vf_netdev, ndev);
-+
- 	if (netif_running(ndev)) {
- 		ret = dev_open(vf_netdev);
- 		if (ret)
+
+> +struct mhuv2_dev_data {
+> +       int regs[MHU_V2_REG_END]; /* STAT, SET, CLEAR */
+> +       int chans[MHU_V2_CHAN_END]; /* LP, HP, Sec */
+> +       int acc_regs[MHU_V2_REG_ACC_END];
+> +};
+> +
+This looks ugly and was the main reason I suggested separating out the
+mhu-v2 from v1.
+Please use MHU_V2_REG_xxx directly.
+
+Thanks
