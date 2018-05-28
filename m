@@ -1,86 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164922AbeE1Mp5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:45:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937833AbeE1K5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:30 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 358/496] rxrpc: Dont treat call aborts as conn aborts
-Date: Mon, 28 May 2018 12:02:23 +0200
-Message-Id: <20180528100334.872353368@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S937909AbeE1MqN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:46:13 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34993 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937828AbeE1K53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:29 -0400
+X-Google-Smtp-Source: ADUXVKKPEnzCFXGXOg8qOaNZsO0W3O+6Kr6pGdKZOiHIN2+jCxm29OlEz1qF1DdHoJYjXHb7hNMNbw==
+Date: Mon, 28 May 2018 13:57:24 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Song Liu <songliubraving@fb.com>
+Cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        mhocko@kernel.org, rientjes@google.com, aarcange@redhat.com
+Subject: Re: [PATCH v2] mm/THP: use hugepage_vma_check() in
+ khugepaged_enter_vma_merge()
+Message-ID: <20180528105724.okg6c7i72r3v3jno@kshutemo-mobl1>
+References: <20180522194430.426688-1-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522194430.426688-1-songliubraving@fb.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, May 22, 2018 at 12:44:30PM -0700, Song Liu wrote:
+> khugepaged_enter_vma_merge() is using a different approach to check
+> whether a vma is valid for khugepaged_enter():
+> 
+>     if (!vma->anon_vma)
+>             /*
+>              * Not yet faulted in so we will register later in the
+>              * page fault if needed.
+>              */
+>             return 0;
+>     if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+>             /* khugepaged not yet working on file or special mappings */
+>             return 0;
+> 
+> This check has some problems. One of the obvious problems is that
+> it doesn't check shmem_file(), so that vma backed with shmem files
+> will not call khugepaged_enter(). Here is an example of failed madvise():
+> 
+>    /* mount /dev/shm with huge=advise:
+>     *     mount -o remount,huge=advise /dev/shm */
+>    /* create file /dev/shm/huge */
+>    #define HUGE_FILE "/dev/shm/huge"
+> 
+>    fd = open(HUGE_FILE, O_RDONLY);
+>    ptr = mmap(NULL, FILE_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
+>    ret = madvise(ptr, FILE_SIZE, MADV_HUGEPAGE);
+> 
+> madvise() will return 0, but this memory region is never put in huge
+> page (check from /proc/meminfo: ShmemHugePages).
+> 
+> This patch fixes these problems by reusing hugepage_vma_check() in
+> khugepaged_enter_vma_merge().
+> 
+> vma->vm_flags is not yet updated in khugepaged_enter_vma_merge(),
+> so we need to pass the new vm_flags to hugepage_vma_check() through
+> a separate argument.
+> 
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  mm/khugepaged.c | 26 ++++++++++++--------------
+>  1 file changed, 12 insertions(+), 14 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index d7b2a4b..9f74e51 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -430,18 +430,15 @@ int __khugepaged_enter(struct mm_struct *mm)
+>  	return 0;
+>  }
+>  
+> +static bool hugepage_vma_check(struct vm_area_struct *vma,
+> +			       unsigned long vm_flags);
+> +
 
-------------------
+The patch looks good to me.
 
-From: David Howells <dhowells@redhat.com>
+But can we move hugepage_vma_check() here to avoid forward declaration of
+the function?
 
-[ Upstream commit 57b0c9d49b94bbeb53649b7fbd264603c1ebd585 ]
-
-If a call-level abort is received for the previous call to complete on a
-connection channel, then that abort is queued for the connection processor
-to handle.  Unfortunately, the connection processor then assumes without
-checking that the abort is connection-level (ie. callNumber is 0) and
-distributes it over all active calls on that connection, thereby
-incorrectly aborting them.
-
-Fix this by discarding aborts aimed at a completed call.
-
-Further, discard all packets aimed at a call that's complete if there's
-currently an active call on a channel, since the DATA packets associated
-with the new call automatically terminate the old call.
-
-Fixes: 18bfeba50dfd ("rxrpc: Perform terminal call ACK/ABORT retransmission from conn processor")
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/rxrpc/input.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1175,16 +1175,19 @@ void rxrpc_data_ready(struct sock *udp_s
- 			goto discard_unlock;
- 
- 		if (sp->hdr.callNumber == chan->last_call) {
--			/* For the previous service call, if completed successfully, we
--			 * discard all further packets.
-+			if (chan->call ||
-+			    sp->hdr.type == RXRPC_PACKET_TYPE_ABORT)
-+				goto discard_unlock;
-+
-+			/* For the previous service call, if completed
-+			 * successfully, we discard all further packets.
- 			 */
- 			if (rxrpc_conn_is_service(conn) &&
--			    (chan->last_type == RXRPC_PACKET_TYPE_ACK ||
--			     sp->hdr.type == RXRPC_PACKET_TYPE_ABORT))
-+			    chan->last_type == RXRPC_PACKET_TYPE_ACK)
- 				goto discard_unlock;
- 
--			/* But otherwise we need to retransmit the final packet from
--			 * data cached in the connection record.
-+			/* But otherwise we need to retransmit the final packet
-+			 * from data cached in the connection record.
- 			 */
- 			rxrpc_post_packet_to_conn(conn, skb);
- 			goto out_unlock;
+-- 
+ Kirill A. Shutemov
