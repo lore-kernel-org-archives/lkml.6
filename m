@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423606AbeE1LI2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:08:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55694 "EHLO mail.kernel.org"
+        id S1424011AbeE1Lzp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:55:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423570AbeE1LIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:08:19 -0400
+        id S1423600AbeE1LI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:08:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org,
+        RVC test team via Yoshihiro Shimoda
+        <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 097/272] xen/acpi: off by one in read_acpi_id()
-Date: Mon, 28 May 2018 12:02:10 +0200
-Message-Id: <20180528100249.280970649@linuxfoundation.org>
+Subject: [PATCH 4.16 082/272] dmaengine: rcar-dmac: Fix too early/late system suspend/resume callbacks
+Date: Mon, 28 May 2018 12:01:55 +0200
+Message-Id: <20180528100248.038168313@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,37 +33,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit c37a3c94775855567b90f91775b9691e10bd2806 ]
+[ Upstream commit 73dcc666d6bd0db56cd556010f93d8f04c1cc70c ]
 
-If acpi_id is == nr_acpi_bits, then we access one element beyond the end
-of the acpi_psd[] array or we set one bit beyond the end of the bit map
-when we do __set_bit(acpi_id, acpi_id_present);
+If serial console wake-up is enabled ("echo enabled >
+/sys/.../ttySC0/power/wakeup"), and any serial input is received while
+the system is suspended, serial port input no longer works after system
+resume.
 
-Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Note that:
+  1) The system can still be woken up using the serial console,
+  2) Serial port input keeps working if the system is woken up in some
+     other way (e.g. Wake-on-LAN or gpio-keys), and no serial input was
+     received while suspended.
+
+To fix this, replace SET_LATE_SYSTEM_SLEEP_PM_OPS() by
+SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(), as the callbacks installed by the
+former happen too early resp. late in the suspend resp. resume process.
+
+Reported-by: RVC test team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 1131b0a4af911de5 ("dmaengine: rcar-dmac: Make DMAC reinit during system resume explicit")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/xen-acpi-processor.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/dma/sh/rcar-dmac.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/xen/xen-acpi-processor.c
-+++ b/drivers/xen/xen-acpi-processor.c
-@@ -362,9 +362,9 @@ read_acpi_id(acpi_handle handle, u32 lvl
- 	}
- 	/* There are more ACPI Processor objects than in x2APIC or MADT.
- 	 * This can happen with incorrect ACPI SSDT declerations. */
--	if (acpi_id > nr_acpi_bits) {
--		pr_debug("We only have %u, trying to set %u\n",
--			 nr_acpi_bits, acpi_id);
-+	if (acpi_id >= nr_acpi_bits) {
-+		pr_debug("max acpi id %u, trying to set %u\n",
-+			 nr_acpi_bits - 1, acpi_id);
- 		return AE_OK;
- 	}
- 	/* OK, There is a ACPI Processor object */
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1677,8 +1677,8 @@ static const struct dev_pm_ops rcar_dmac
+ 	 *   - Wait for the current transfer to complete and stop the device,
+ 	 *   - Resume transfers, if any.
+ 	 */
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+-				     pm_runtime_force_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				      pm_runtime_force_resume)
+ 	SET_RUNTIME_PM_OPS(rcar_dmac_runtime_suspend, rcar_dmac_runtime_resume,
+ 			   NULL)
+ };
