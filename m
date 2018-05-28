@@ -1,88 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940360AbeE1QjY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:39:24 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48089 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940289AbeE1QhZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S940368AbeE1Qjb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:39:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:40083 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S940291AbeE1QhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 12:37:25 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
-        sakari.ailus@iki.fi, mchehab@kernel.org, ysato@users.sourceforge.jp,
-        dalias@libc.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
-Date: Mon, 28 May 2018 18:37:06 +0200
-Message-Id: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
+Message-Id: <1d3fd6a6c35e41d3e25ebe5256adf021369ada7c.1527525305.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/64: Fix build failure with GCC 8.1
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Mon, 28 May 2018 16:37:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-    this series removes dependencies on the soc_camera based
-sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
-sensor driver used by one of those boards.
+  CC      arch/powerpc/kernel/nvram_64.o
+arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
+arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound 12 equals destination size [-Werror=stringop-truncation]
+  strncpy(new_part->header.name, name, 12);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Hans, this means there are no more user of the soc_camera framework that I know
-of in Linux, and I guess we can now plan of to remove that framework.
+  CC      arch/powerpc/kernel/trace/ftrace.o
+In function 'make_field',
+    inlined from 'ps3_repository_read_boot_dat_address' at arch/powerpc/platforms/ps3/repository.c:900:9:
+arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output truncated before terminating nul copying 8 bytes from a string of the same length [-Werror=stringop-truncation]
+  strncpy((char *)&n, text, 8);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A note on the sensor driver: I haven't been able to find any documentation
-for the SHARP RJ54N1CB0C sensor and so I inferred as much as possible from the
-existing code. It seems to me that the sensor needs to power-up/enable gpios
-(both active high) and I have registered them from the kfr2r09 board file,
-assuming this was not a platform-specific design, but something the sensor
-requires. As per the previous drivers ported away from soc_camera, I'm in
-favour of moving them to staging if they do not match the quality expected
-from a modern V4L2 sensor driver. Ie. framerate control is missing, and I
-know this has been a blocker for other drivers in the past.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/nvram_64.c          | 2 +-
+ arch/powerpc/platforms/ps3/repository.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-What I've done to three board files closely resembles what I done already for
-Migo-R and Ecovec, and it listed in the single commit messages.
-
-The only tough one is probably ap325rxa, which had an additional sensor
-registered but controlled from i2c transaction of magic blobs from the board
-file. I dare to remove that sensor registration completely as it seems to me
-there is no diver for that at all in mainline.
-
-Last, this patch is based on the media tree master branch, with Akinobu Mita's
-patches on ov772x driver on top, which I strangely see only partially applied
-to the media master tree [1]
-
-Hans, as this is mostly media-related work, but mostly on SH architecture, I
-would like to ask if these should go through you or SH tree.
-
-All of that has only been compile tested. It's pretty hard to find this
-platforms around and testing would be awesome if somebody happens to have
-one of these.
-
-Thanks
-   j
-
-[1] https://patchwork.linuxtv.org/patch/49318/
-    https://patchwork.linuxtv.org/patch/49317/
-    https://patchwork.linuxtv.org/patch/49312/
-
-Jacopo Mondi (5):
-  media: i2c: Copy rj54n1cb0c soc_camera sensor driver
-  media: i2c: rj54n1: Remove soc_camera dependencies
-  arch: sh: kfr2r09: Use new renesas-ceu camera driver
-  arch: sh: ms7724se: Use new renesas-ceu camera driver
-  arch: sh: ap325rxa: Use new renesas-ceu camera driver
-
- arch/sh/boards/mach-ap325rxa/setup.c   |  282 ++-----
- arch/sh/boards/mach-kfr2r09/setup.c    |  216 +++--
- arch/sh/boards/mach-se/7724/setup.c    |  120 ++-
- arch/sh/kernel/cpu/sh4a/clock-sh7723.c |    2 +-
- drivers/media/i2c/Kconfig              |   11 +
- drivers/media/i2c/Makefile             |    1 +
- drivers/media/i2c/rj54n1cb0c.c         | 1437 ++++++++++++++++++++++++++++++++
- 7 files changed, 1710 insertions(+), 359 deletions(-)
- create mode 100644 drivers/media/i2c/rj54n1cb0c.c
-
---
-2.7.4
+diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+index ba681dac7b46..7507448cd904 100644
+--- a/arch/powerpc/kernel/nvram_64.c
++++ b/arch/powerpc/kernel/nvram_64.c
+@@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
+ 	new_part->index = free_part->index;
+ 	new_part->header.signature = sig;
+ 	new_part->header.length = size;
+-	strncpy(new_part->header.name, name, 12);
++	strncpy(new_part->header.name, name, sizeof(new_part->header.name) - 1);
+ 	new_part->header.checksum = nvram_checksum(&new_part->header);
+ 
+ 	rc = nvram_write_header(new_part);
+diff --git a/arch/powerpc/platforms/ps3/repository.c b/arch/powerpc/platforms/ps3/repository.c
+index 50dbaf24b1ee..b4d6628eec5e 100644
+--- a/arch/powerpc/platforms/ps3/repository.c
++++ b/arch/powerpc/platforms/ps3/repository.c
+@@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64 index)
+ 
+ static u64 make_field(const char *text, u64 index)
+ {
+-	u64 n;
++	u64 n = 0;
+ 
+-	strncpy((char *)&n, text, 8);
++	memcpy((char *)&n, text, min(sizeof(n), strlen(text)));
+ 	return n + index;
+ }
+ 
+-- 
+2.13.3
