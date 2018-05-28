@@ -1,55 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753035AbeE1FDo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 01:03:44 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44831 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbeE1FDm (ORCPT
+        id S1753177AbeE1FEx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 01:04:53 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:27918 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753140AbeE1FEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 01:03:42 -0400
-X-Google-Smtp-Source: AB8JxZr7VDumfkZMWvKZZt0gYmkIOqmO5CO8TkXdMGKa2LGVkrkadwDEM+2N2+/ndKmbkIFmTmUnBA==
-Date: Mon, 28 May 2018 10:33:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: ilia.lin@gmail.com, vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, rjw@rjwysocki.net,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 1/2] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180528050338.p4zg6a2v5fu3oxwe@vireshk-i7>
-References: <1527252112-7015-1-git-send-email-ilialin@codeaurora.org>
- <1527252112-7015-2-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527252112-7015-2-git-send-email-ilialin@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Mon, 28 May 2018 01:04:49 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180528050447epoutp02dad93d45f4dec79fdb4dc92e774643d2~ytoDNKam50727407274epoutp028
+X-AuditID: b6c32a36-bd1ff70000000fe4-fa-5b0b8dec8f46
+To: undisclosed-recipients:;
+Mime-Version: 1.0
+Subject: RE: [PATCH 05/11] PM / devfreq: governors: Return device frequency
+ limits instead of user limits
+Reply-To: myungjoo.ham@samsung.com
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+CC: Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180525203043.249193-6-mka@chromium.org>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180528050444epcms1p8e6552d55231a099ec89304dfb1f819b9@epcms1p8>
+Date: Mon, 28 May 2018 14:04:44 +0900
+X-CMS-MailID: 20180528050444epcms1p8e6552d55231a099ec89304dfb1f819b9
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29nOjtbiuKzelqSdsFLY9GxNT5ERZHUoi0E/DEXsoB+b6C7s
+        bF2JZmGZZTeIQs110YxlWLPMLAuX9acsy8qC7lZGZFLrgpnZbl1+fQ/P+7zf8z4vL0Uo60kV
+        VWRxYLtFKGHIaGnLtSS1+kPlmNzU3oZp3Mj+G3LO+2lQxvV+6Zdx7s7bMq7rRAfJbT3eRHJd
+        Wz7IuZ62GpLzV3Yirr73roTzn+lDXFl7p3zBWL6xthHxwz/2I77adVfKez07SP7q4UY5v/uc
+        B/F+71SDPAfPM2GhENsTsKXAWlhkMWYwy1bmL8zXp6WyanYOl84kWAQzzmAyswzqxUUlgUmZ
+        hDVCiTNAGQRRZFLmz7NbnQ6cYLKKjgwml2W1GjY1XaPVBl5d3lytPiBZjU3Xq3zIdjJqXf3x
+        ExIXei6vQFEU0LPhdO3ZAI6mlHQrgocVbZJgIZaOg8PVfbIKRFEKOgZGWscH6fF0MZR/3oOC
+        WEkz4Hp8hQjzKVD+oiXEk7Qazp95Kg3+SdB1Uqg7O4rCZgo4tP2NNIynwIWG8yE+ik4Hr7s9
+        MtAEeHxq4C8evOGO9MZC2bMuIoxj4MXQpQivgtcDRyP6zdDrPyYJGgO9F8Hwo9FIIQVe3a8m
+        w2GWw7V3oV4pnQjfPGURSSY87KgNZSfoeLgwUEME5QSdBE1tKWF6HHz8ukv2J0pr7WtJGM8A
+        36W6yDdxcPPg0VAr0Dy8bJkZXu0pBP3fa8i9KL7q30ar/jOr+md2BBEeNBHbRLMRi6xNqxEF
+        s+i0GDUFVrMXhU40Oa0VHbud5UM0hZixCtdwdK5SJqwR15t9CCiCiVVEqwOUolBYvwHbrfl2
+        ZwkWfUgfyLyPUE0osAYO3uLIZ/VanU7HzWbT9CzLTFJsS/+Vo6SNggMXY2zD9j99EipK5UKV
+        X4zubXv6FQbPqDvm/WBOdRvf3PRt0dpRZ0Op9fmPbNPSGQsu6oylaRWbbPXNTz7eOTmiWnzP
+        3wOls7b8FG6x6gerp29MytoxtGpZuzPbkOh1LsnYKY2XdWu2dpfnDGTnFTl1cc0rMl1HFJMT
+        56+VN/cMNWGNsm847+1lW7b+ACMVTQKbTNhF4TfAdUXKuAMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180525203125epcas3p46c7cac352ede4b0ba5d2b36bc32ad566
+References: <20180525203043.249193-6-mka@chromium.org>
+        <20180525203043.249193-1-mka@chromium.org>
+        <CGME20180525203125epcas3p46c7cac352ede4b0ba5d2b36bc32ad566@epcms1p8>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-05-18, 15:41, Ilia Lin wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU frequency subset and voltage value of each OPP varies
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  MAINTAINERS                          |   7 ++
->  drivers/cpufreq/Kconfig.arm          |  10 ++
->  drivers/cpufreq/Makefile             |   1 +
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
->  drivers/cpufreq/qcom-cpufreq-kryo.c  | 212 +++++++++++++++++++++++++++++++++++
->  5 files changed, 233 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+>The performance, powersave and simpleondemand governors can return
+>df->min/max_freq, which are the user defined frequency limits.
+>update_devfreq() already takes care of adjusting the target frequency
+>with the user limits if necessary, therefore we can return
+>df->scaling_min/max_freq instead, which is the min/max frequency
+>supported by the device at a given time (depending on the
+>enabled/disabled OPPs)
+>
+>Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>---
+> drivers/devfreq/governor_performance.c    | 2 +-
+> drivers/devfreq/governor_powersave.c      | 2 +-
+> drivers/devfreq/governor_simpleondemand.c | 6 +++---
+> 3 files changed, 5 insertions(+), 5 deletions(-)
+>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Actually, even scaling_max_freq and scaling_min_freq are
+covered centerally at devfreq.c:update_devfreq();
 
--- 
-viresh
+Wouldn't it be sufficient to return UINT_MAX for performance
+and return UINT_MIN (0) for powersave, if the purpose is to
+remove redundancy?
+
+In the same sense, we may return UINT_MAX for freq-increasing
+case for simpleondemand as well, because they are filtered
+centrally anyway.
+
+(This commit might be better merged to 4/11 in that case as well.)
+
+
+Cheers,
+MyungJoo
