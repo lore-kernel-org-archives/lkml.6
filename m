@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162752AbeE1KkC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:40:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60046 "EHLO mail.kernel.org"
+        id S1162765AbeE1KkI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:40:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162689AbeE1Kj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:57 -0400
+        id S1162749AbeE1KkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:40:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 288/329] f2fs: fix to check extent cache in f2fs_drop_extent_tree
-Date: Mon, 28 May 2018 12:03:37 +0200
-Message-Id: <20180528100305.694320191@linuxfoundation.org>
+Subject: [PATCH 4.9 307/329] dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
+Date: Mon, 28 May 2018 12:03:56 +0200
+Message-Id: <20180528100306.691010996@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,46 +31,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit bf617f7a92edc6bb2909db2bfa4576f50b280ee5 ]
+[ Upstream commit 48d163b1aa6e7f650c0b7a4f9c61c387a6def868 ]
 
-If noextent_cache mount option is on, we will never initialize extent tree
-in inode, but still we're going to access it in f2fs_drop_extent_tree,
-result in kernel panic as below:
+When Linux is master of BAM, it can directly read registers to know number
+of supported channels, however when its remotely controlled reading these
+registers would trigger a crash if the BAM is not yet initialized or
+powered up on the remote side.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
- IP: _raw_write_lock+0xc/0x30
- Call Trace:
-  ? f2fs_drop_extent_tree+0x41/0x70 [f2fs]
-  f2fs_fallocate+0x5a0/0xdd0 [f2fs]
-  ? common_file_perm+0x47/0xc0
-  ? apparmor_file_permission+0x1a/0x20
-  vfs_fallocate+0x15b/0x290
-  SyS_fallocate+0x44/0x70
-  do_syscall_64+0x6e/0x160
-  entry_SYSCALL64_slow_path+0x25/0x25
+This patch allows driver to read num-channels and num-ees from Device Tree
+for remotely controlled BAM.
 
-This patch fixes to check extent cache status before using in
-f2fs_drop_extent_tree.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/extent_cache.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/dma/qcom/bam_dma.c |   27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -647,6 +647,9 @@ void f2fs_drop_extent_tree(struct inode
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -387,6 +387,7 @@ struct bam_device {
+ 	struct device_dma_parameters dma_parms;
+ 	struct bam_chan *channels;
+ 	u32 num_channels;
++	u32 num_ees;
  
-+	if (!f2fs_may_extent_tree(inode))
-+		return;
+ 	/* execution environment ID, from DT */
+ 	u32 ee;
+@@ -1076,15 +1077,19 @@ static int bam_init(struct bam_device *b
+ 	u32 val;
+ 
+ 	/* read revision and configuration information */
+-	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION)) >> NUM_EES_SHIFT;
+-	val &= NUM_EES_MASK;
++	if (!bdev->num_ees) {
++		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
++		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
++	}
+ 
+ 	/* check that configured EE is within range */
+-	if (bdev->ee >= val)
++	if (bdev->ee >= bdev->num_ees)
+ 		return -EINVAL;
+ 
+-	val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
+-	bdev->num_channels = val & BAM_NUM_PIPES_MASK;
++	if (!bdev->num_channels) {
++		val = readl_relaxed(bam_addr(bdev, 0, BAM_NUM_PIPES));
++		bdev->num_channels = val & BAM_NUM_PIPES_MASK;
++	}
+ 
+ 	if (bdev->controlled_remotely)
+ 		return 0;
+@@ -1179,6 +1184,18 @@ static int bam_dma_probe(struct platform
+ 	bdev->controlled_remotely = of_property_read_bool(pdev->dev.of_node,
+ 						"qcom,controlled-remotely");
+ 
++	if (bdev->controlled_remotely) {
++		ret = of_property_read_u32(pdev->dev.of_node, "num-channels",
++					   &bdev->num_channels);
++		if (ret)
++			dev_err(bdev->dev, "num-channels unspecified in dt\n");
 +
- 	set_inode_flag(inode, FI_NO_EXTENT);
- 
- 	write_lock(&et->lock);
++		ret = of_property_read_u32(pdev->dev.of_node, "qcom,num-ees",
++					   &bdev->num_ees);
++		if (ret)
++			dev_err(bdev->dev, "num-ees unspecified in dt\n");
++	}
++
+ 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
+ 	if (IS_ERR(bdev->bamclk))
+ 		return PTR_ERR(bdev->bamclk);
