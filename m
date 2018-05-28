@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162008AbeE1O0T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:26:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54146 "EHLO mail.kernel.org"
+        id S1161815AbeE1Kd5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:33:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161818AbeE1Kd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:59 -0400
+        id S1161296AbeE1Kdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 173/329] KVM: PPC: Book3S HV: Fix VRMA initialization with 2MB or 1GB memory backing
-Date: Mon, 28 May 2018 12:01:42 +0200
-Message-Id: <20180528100256.794300978@linuxfoundation.org>
+Subject: [PATCH 4.9 170/329] drm/sun4i: Fix dclk_set_phase
+Date: Mon, 28 May 2018 12:01:39 +0200
+Message-Id: <20180528100256.561341894@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,52 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
-[ Upstream commit debd574f4195e205ba505b25e19b2b797f4bcd94 ]
+[ Upstream commit e64b6afa98f3629d0c0c46233bbdbe8acdb56f06 ]
 
-The current code for initializing the VRMA (virtual real memory area)
-for HPT guests requires the page size of the backing memory to be one
-of 4kB, 64kB or 16MB.  With a radix host we have the possibility that
-the backing memory page size can be 2MB or 1GB.  In these cases, if the
-guest switches to HPT mode, KVM will not initialize the VRMA and the
-guest will fail to run.
+Phase value is not shifted before writing.
 
-In fact it is not necessary that the VRMA page size is the same as the
-backing memory page size; any VRMA page size less than or equal to the
-backing memory page size is acceptable.  Therefore we now choose the
-largest page size out of the set {4k, 64k, 16M} which is not larger
-than the backing memory page size.
+Shift left of 28 bits to fit right bits
 
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1519836413-35023-1-git-send-email-giulio.benetti@micronovasrl.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kvm/book3s_hv.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_dotclock.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -3107,15 +3107,17 @@ static int kvmppc_hv_setup_htab_rma(stru
- 		goto up_out;
+--- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
++++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+@@ -129,10 +129,13 @@ static int sun4i_dclk_get_phase(struct c
+ static int sun4i_dclk_set_phase(struct clk_hw *hw, int degrees)
+ {
+ 	struct sun4i_dclk *dclk = hw_to_dclk(hw);
++	u32 val = degrees / 120;
++
++	val <<= 28;
  
- 	psize = vma_kernel_pagesize(vma);
--	porder = __ilog2(psize);
+ 	regmap_update_bits(dclk->regmap, SUN4I_TCON0_IO_POL_REG,
+ 			   GENMASK(29, 28),
+-			   degrees / 120);
++			   val);
  
- 	up_read(&current->mm->mmap_sem);
- 
- 	/* We can handle 4k, 64k or 16M pages in the VRMA */
--	err = -EINVAL;
--	if (!(psize == 0x1000 || psize == 0x10000 ||
--	      psize == 0x1000000))
--		goto out_srcu;
-+	if (psize >= 0x1000000)
-+		psize = 0x1000000;
-+	else if (psize >= 0x10000)
-+		psize = 0x10000;
-+	else
-+		psize = 0x1000;
-+	porder = __ilog2(psize);
- 
- 	/* Update VRMASD field in the LPCR */
- 	senc = slb_pgsize_encoding(psize);
+ 	return 0;
+ }
