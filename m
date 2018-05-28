@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161756AbeE1Kda (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:33:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
+        id S1165773AbeE1O3h (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:29:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161713AbeE1KdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:24 -0400
+        id S1161713AbeE1Kdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Ferdinand <bcache@mfedv.net>,
-        Tang Junhui <tang.junhui@zte.com.cn>, Michael Lyle <mlyle@lyle.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Jon Mason <jon.mason@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 161/329] bcache: fix kcrashes with fio in RAID5 backend dev
-Date: Mon, 28 May 2018 12:01:30 +0200
-Message-Id: <20180528100255.881440506@linuxfoundation.org>
+Subject: [PATCH 4.9 164/329] ARM: dts: NSP: Fix amount of RAM on BCM958625HR
+Date: Mon, 28 May 2018 12:01:33 +0200
+Message-Id: <20180528100256.098282959@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,97 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 60eb34ec5526e264c2bbaea4f7512d714d791caf ]
+[ Upstream commit 0a5aff64f20d92c5a6e9aeed7b5950b0b817bcd9 ]
 
-Kernel crashed when run fio in a RAID5 backend bcache device, the call
-trace is bellow:
-[  440.012034] kernel BUG at block/blk-ioc.c:146!
-[  440.012696] invalid opcode: 0000 [#1] SMP NOPTI
-[  440.026537] CPU: 2 PID: 2205 Comm: md127_raid5 Not tainted 4.15.0 #8
-[  440.027441] Hardware name: HP ProLiant MicroServer Gen8, BIOS J06 07/16
-/2015
-[  440.028615] RIP: 0010:put_io_context+0x8b/0x90
-[  440.029246] RSP: 0018:ffffa8c882b43af8 EFLAGS: 00010246
-[  440.029990] RAX: 0000000000000000 RBX: ffffa8c88294fca0 RCX: 0000000000
-0f4240
-[  440.031006] RDX: 0000000000000004 RSI: 0000000000000286 RDI: ffffa8c882
-94fca0
-[  440.032030] RBP: ffffa8c882b43b10 R08: 0000000000000003 R09: ffff949cb8
-0c1700
-[  440.033206] R10: 0000000000000104 R11: 000000000000b71c R12: 00000000000
-01000
-[  440.034222] R13: 0000000000000000 R14: ffff949cad84db70 R15: ffff949cb11
-bd1e0
-[  440.035239] FS:  0000000000000000(0000) GS:ffff949cba280000(0000) knlGS:
-0000000000000000
-[  440.060190] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  440.084967] CR2: 00007ff0493ef000 CR3: 00000002f1e0a002 CR4: 00000000001
-606e0
-[  440.110498] Call Trace:
-[  440.135443]  bio_disassociate_task+0x1b/0x60
-[  440.160355]  bio_free+0x1b/0x60
-[  440.184666]  bio_put+0x23/0x30
-[  440.208272]  search_free+0x23/0x40 [bcache]
-[  440.231448]  cached_dev_write_complete+0x31/0x70 [bcache]
-[  440.254468]  closure_put+0xb6/0xd0 [bcache]
-[  440.277087]  request_endio+0x30/0x40 [bcache]
-[  440.298703]  bio_endio+0xa1/0x120
-[  440.319644]  handle_stripe+0x418/0x2270 [raid456]
-[  440.340614]  ? load_balance+0x17b/0x9c0
-[  440.360506]  handle_active_stripes.isra.58+0x387/0x5a0 [raid456]
-[  440.380675]  ? __release_stripe+0x15/0x20 [raid456]
-[  440.400132]  raid5d+0x3ed/0x5d0 [raid456]
-[  440.419193]  ? schedule+0x36/0x80
-[  440.437932]  ? schedule_timeout+0x1d2/0x2f0
-[  440.456136]  md_thread+0x122/0x150
-[  440.473687]  ? wait_woken+0x80/0x80
-[  440.491411]  kthread+0x102/0x140
-[  440.508636]  ? find_pers+0x70/0x70
-[  440.524927]  ? kthread_associate_blkcg+0xa0/0xa0
-[  440.541791]  ret_from_fork+0x35/0x40
-[  440.558020] Code: c2 48 00 5b 41 5c 41 5d 5d c3 48 89 c6 4c 89 e7 e8 bb c2
-48 00 48 8b 3d bc 36 4b 01 48 89 de e8 7c f7 e0 ff 5b 41 5c 41 5d 5d c3 <0f> 0b
-0f 1f 00 0f 1f 44 00 00 55 48 8d 47 b8 48 89 e5 41 57 41
-[  440.610020] RIP: put_io_context+0x8b/0x90 RSP: ffffa8c882b43af8
-[  440.628575] ---[ end trace a1fd79d85643a73e ]--
+Jon attempted to fix the amount of RAM on the BCM958625HR in commit
+c53beb47f621 ("ARM: dts: NSP: Correct RAM amount for BCM958625HR board")
+but it seems like we tripped over some poorly documented schematics.
 
-All the crash issue happened when a bypass IO coming, in such scenario
-s->iop.bio is pointed to the s->orig_bio. In search_free(), it finishes the
-s->orig_bio by calling bio_complete(), and after that, s->iop.bio became
-invalid, then kernel would crash when calling bio_put(). Maybe its upper
-layer's faulty, since bio should not be freed before we calling bio_put(),
-but we'd better calling bio_put() first before calling bio_complete() to
-notify upper layer ending this bio.
+The top-level page of the schematics says the board has 2GB, but when
+you end-up scrolling to page 6, you see two chips of 4GBit (512MB) but
+what the bootloader really initializes only 512MB, any attempt to use
+more than that results in data aborts. Fix this again back to 512MB.
 
-This patch moves bio_complete() under bio_put() to avoid kernel crash.
-
-[mlyle: fixed commit subject for character limits]
-
-Reported-by: Matthias Ferdinand <bcache@mfedv.net>
-Tested-by: Matthias Ferdinand <bcache@mfedv.net>
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: c53beb47f621 ("ARM: dts: NSP: Correct RAM amount for BCM958625HR board")
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/request.c |    2 +-
+ arch/arm/boot/dts/bcm958625hr.dts |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -633,11 +633,11 @@ static void do_bio_hook(struct search *s
- static void search_free(struct closure *cl)
- {
- 	struct search *s = container_of(cl, struct search, cl);
--	bio_complete(s);
+--- a/arch/arm/boot/dts/bcm958625hr.dts
++++ b/arch/arm/boot/dts/bcm958625hr.dts
+@@ -49,7 +49,7 @@
  
- 	if (s->iop.bio)
- 		bio_put(s->iop.bio);
+ 	memory {
+ 		device_type = "memory";
+-		reg = <0x60000000 0x80000000>;
++		reg = <0x60000000 0x20000000>;
+ 	};
  
-+	bio_complete(s);
- 	closure_debug_destroy(cl);
- 	mempool_free(s, s->d->c->search);
- }
+ 	gpio-restart {
