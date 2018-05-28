@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424968AbeE1LzH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:55:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56242 "EHLO mail.kernel.org"
+        id S1423621AbeE1LIc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:08:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423641AbeE1LIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:08:41 -0400
+        id S1423522AbeE1LIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:08:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 104/272] intel_th: Use correct method of finding hub
-Date: Mon, 28 May 2018 12:02:17 +0200
-Message-Id: <20180528100249.852867420@linuxfoundation.org>
+Subject: [PATCH 4.16 099/272] ACPI: acpi_pad: Fix memory leak in power saving threads
+Date: Mon, 28 May 2018 12:02:12 +0200
+Message-Id: <20180528100249.436741026@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,34 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
-[ Upstream commit 9ad577087165478c9d9be82b15ed9bf2db5835f5 ]
+[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
 
-Since commit 8edc514b01e9 ("intel_th: Make SOURCE devices children of the
-root device") the hub is not the parent of SOURCE devices any more, so the
-new helper function should be used for that instead of always using the
-parent. The intel_th_set_output() path, however, still uses the old
-logic, leading to the hub driver structure being aliased with something
-else, like struct pci_driver or struct acpi_driver, and an incorrect call
-to an address inferred from that, potentially resulting in a crash.
+Fix once per second (round_robin_time) memory leak of about 1 KB in
+each acpi_pad kernel idling thread that is activated.
 
-Fixes: 8edc514b01e9 ("intel_th: Make SOURCE devices children of the root device")
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Found by testing with kmemleak.
+
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/intel_th/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_pad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -935,7 +935,7 @@ EXPORT_SYMBOL_GPL(intel_th_trace_disable
- int intel_th_set_output(struct intel_th_device *thdev,
- 			unsigned int master)
- {
--	struct intel_th_device *hub = to_intel_th_device(thdev->dev.parent);
-+	struct intel_th_device *hub = to_intel_th_hub(thdev);
- 	struct intel_th_driver *hubdrv = to_intel_th_driver(hub->dev.driver);
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -110,6 +110,7 @@ static void round_robin_cpu(unsigned int
+ 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
+ 	if (cpumask_empty(tmp)) {
+ 		mutex_unlock(&round_robin_lock);
++		free_cpumask_var(tmp);
+ 		return;
+ 	}
+ 	for_each_cpu(cpu, tmp) {
+@@ -127,6 +128,8 @@ static void round_robin_cpu(unsigned int
+ 	mutex_unlock(&round_robin_lock);
  
- 	if (!hubdrv->set_output)
+ 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
++
++	free_cpumask_var(tmp);
+ }
+ 
+ static void exit_round_robin(unsigned int tsk_index)
