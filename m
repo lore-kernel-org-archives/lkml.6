@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933058AbeE1M7T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:59:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43048 "EHLO mail.kernel.org"
+        id S1164209AbeE1Kxw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:53:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164211AbeE1KyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:00 -0400
+        id S1163766AbeE1Kxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 249/496] KVM: arm/arm64: vgic: Add missing irq_lock to vgic_mmio_read_pending
-Date: Mon, 28 May 2018 12:00:34 +0200
-Message-Id: <20180528100330.382811591@linuxfoundation.org>
+Subject: [PATCH 4.14 275/496] RDMA/ucma: Correct option size check using optlen
+Date: Mon, 28 May 2018 12:01:00 +0200
+Message-Id: <20180528100331.435301840@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,48 +32,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andre Przywara <andre.przywara@arm.com>
+From: Chien Tin Tung <chien.tin.tung@intel.com>
 
-[ Upstream commit 62b06f8f429cd233e4e2e7bbd21081ad60c9018f ]
+[ Upstream commit 5f3e3b85cc0a5eae1c46d72e47d3de7bf208d9e2 ]
 
-Our irq_is_pending() helper function accesses multiple members of the
-vgic_irq struct, so we need to hold the lock when calling it.
-Add that requirement as a comment to the definition and take the lock
-around the call in vgic_mmio_read_pending(), where we were missing it
-before.
+The option size check is using optval instead of optlen
+causing the set option call to fail. Use the correct
+field, optlen, for size check.
 
-Fixes: 96b298000db4 ("KVM: arm/arm64: vgic-new: Add PENDING registers handlers")
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 6a21dfc0d0db ("RDMA/ucma: Limit possible option size")
+Signed-off-by: Chien Tin Tung <chien.tin.tung@intel.com>
+Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- virt/kvm/arm/vgic/vgic-mmio.c |    3 +++
- virt/kvm/arm/vgic/vgic.h      |    1 +
- 2 files changed, 4 insertions(+)
+ drivers/infiniband/core/ucma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/virt/kvm/arm/vgic/vgic-mmio.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio.c
-@@ -110,9 +110,12 @@ unsigned long vgic_mmio_read_pending(str
- 	/* Loop over all IRQs affected by this read */
- 	for (i = 0; i < len * 8; i++) {
- 		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
-+		unsigned long flags;
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1315,7 +1315,7 @@ static ssize_t ucma_set_option(struct uc
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
  
-+		spin_lock_irqsave(&irq->irq_lock, flags);
- 		if (irq_is_pending(irq))
- 			value |= (1U << i);
-+		spin_unlock_irqrestore(&irq->irq_lock, flags);
+-	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
++	if (unlikely(cmd.optlen > KMALLOC_MAX_SIZE))
+ 		return -EINVAL;
  
- 		vgic_put_irq(vcpu->kvm, irq);
- 	}
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -96,6 +96,7 @@
- /* we only support 64 kB translation table page size */
- #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
- 
-+/* Requires the irq_lock to be held by the caller. */
- static inline bool irq_is_pending(struct vgic_irq *irq)
- {
- 	if (irq->config == VGIC_CONFIG_EDGE)
+ 	optval = memdup_user((void __user *) (unsigned long) cmd.optval,
