@@ -1,95 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161953AbeE1Ken (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:34:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161940AbeE1Kej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:39 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@icloud.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 155/329] ceph: fix dentry leak when failing to init debugfs
-Date: Mon, 28 May 2018 12:01:24 +0200
-Message-Id: <20180528100255.411283035@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1161923AbeE1KeY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:34:24 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:51262 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1161880AbeE1KeQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:16 -0400
+From: Oleksandr Shamray <oleksandrs@mellanox.com>
+To: gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
+        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
+        vadimp@mellanox.com, system-sw-low-level@mellanox.com,
+        robh+dt@kernel.org, openocd-devel-owner@lists.sourceforge.net,
+        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+        Oleksandr Shamray <oleksandrs@mellanox.com>
+Subject: [patch v22 4/4] Documentation: jtag: Add ABI documentation
+Date: Mon, 28 May 2018 13:34:12 +0300
+Message-Id: <1527503652-21975-5-git-send-email-oleksandrs@mellanox.com>
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1527503652-21975-1-git-send-email-oleksandrs@mellanox.com>
+References: <1527503652-21975-1-git-send-email-oleksandrs@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Added document that describe the ABI for JTAG class drivrer
 
-------------------
-
-From: Chengguang Xu <cgxu519@icloud.com>
-
-[ Upstream commit 18106734b512664a8541026519ce4b862498b6c3 ]
-
-When failing from ceph_fs_debugfs_init() in ceph_real_mount(),
-there is lack of dput of root_dentry and it causes slab errors,
-so change the calling order of ceph_fs_debugfs_init() and
-open_root_dentry() and do some cleanups to avoid this issue.
-
-Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/ceph/super.c |   16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+v21->v22
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- fix spell in ABI doccumentation
 
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -816,7 +816,6 @@ static struct dentry *ceph_real_mount(st
- 	int err;
- 	unsigned long started = jiffies;  /* note the start time */
- 	struct dentry *root;
--	int first = 0;   /* first vfsmount for this super_block */
- 
- 	dout("mount start %p\n", fsc);
- 	mutex_lock(&fsc->client->mount_mutex);
-@@ -834,17 +833,17 @@ static struct dentry *ceph_real_mount(st
- 			path = fsc->mount_options->server_path + 1;
- 			dout("mount opening path %s\n", path);
- 		}
+v20->v21
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- Fix JTAG dirver help in Kconfig
+
+v19->v20
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- Fix JTAG doccumentation
+
+v18->v19
+Pavel Machek <pavel@ucw.cz>
+- Added JTAG doccumentation to Documentation/jtag
+
+v17->v18
+v16->v17
+v15->v16
+v14->v15
+v13->v14
+v12->v13
+v11->v12 Tobias Klauser <tklauser@distanz.ch>
+Comments pointed by
+- rename /Documentation/ABI/testing/jatg-dev -> jtag-dev
+- Typo: s/interfase/interface
+v10->v11
+v9->v10
+Fixes added by Oleksandr:
+- change jtag-cdev to jtag-dev in documentation
+- update KernelVersion and Date in jtag-dev documentation;
+v8->v9
+v7->v8
+v6->v7
+Comments pointed by Pavel Machek <pavel@ucw.cz>
+- Added jtag-cdev documentation to Documentation/ABI/testing folder
+---
+ Documentation/ABI/testing/jtag-dev |   27 +++++++++
+ Documentation/jtag/overview        |   28 +++++++++
+ Documentation/jtag/transactions    |  109 ++++++++++++++++++++++++++++++++++++
+ MAINTAINERS                        |    1 +
+ 4 files changed, 165 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/ABI/testing/jtag-dev
+ create mode 100644 Documentation/jtag/overview
+ create mode 100644 Documentation/jtag/transactions
+
+diff --git a/Documentation/ABI/testing/jtag-dev b/Documentation/ABI/testing/jtag-dev
+new file mode 100644
+index 0000000..4325316
+--- /dev/null
++++ b/Documentation/ABI/testing/jtag-dev
+@@ -0,0 +1,27 @@
++What:		/dev/jtag[0-9]+
++Date:		May 2018
++KernelVersion:	4.18
++Contact:	oleksandrs@mellanox.com
++Description:
++		The misc device files /dev/jtag* are the interface
++		between JTAG master interface and userspace.
 +
-+		err = ceph_fs_debugfs_init(fsc);
-+		if (err < 0)
-+			goto out;
++		The ioctl(2)-based ABI is defined and documented in
++		[include/uapi]<linux/jtag.h>.
 +
- 		root = open_root_dentry(fsc, path, started);
- 		if (IS_ERR(root)) {
- 			err = PTR_ERR(root);
- 			goto out;
- 		}
- 		fsc->sb->s_root = dget(root);
--		first = 1;
--
--		err = ceph_fs_debugfs_init(fsc);
--		if (err < 0)
--			goto fail;
- 	} else {
- 		root = dget(fsc->sb->s_root);
- 	}
-@@ -854,11 +853,6 @@ static struct dentry *ceph_real_mount(st
- 	mutex_unlock(&fsc->client->mount_mutex);
- 	return root;
++		The following file operations are supported:
++
++		open(2)
++		The argument flag currently support only one access
++		mode O_RDWR.
++
++		ioctl(2)
++		Initiate various actions.
++		See the inline documentation in [include/uapi]<linux/jtag.h>
++		for descriptions of all ioctls.
++
++		close(2)
++		Stops and free up the I/O contexts that was associated
++		with the file descriptor.
++
++Users:		TBD
+diff --git a/Documentation/jtag/overview b/Documentation/jtag/overview
+new file mode 100644
+index 0000000..42b487a
+--- /dev/null
++++ b/Documentation/jtag/overview
+@@ -0,0 +1,28 @@
++Linux kernel JTAG support
++=========================
++
++The JTAG is an industry standard for verifying hardware.
++JTAG provides access to many logic signals of a complex integrated circuit,
++including the device pins.
++
++A JTAG interface is a special interface added to a chip.
++Depending on the version of JTAG, two, four, or five pins are added.
++
++The connector pins are:
++	TDI (Test Data In)
++	TDO (Test Data Out)
++	TCK (Test Clock)
++	TMS (Test Mode Select)
++	TRST (Test Reset) optional
++
++JTAG interface is designed to have two parts - basic core driver and
++hardware specific driver. The basic driver introduces a general interface
++which is not dependent of specific hardware. It provides communication
++between user space and hardware specific driver.
++Each JTAG device is represented as a char device from (jtag0, jtag1, ...).
++Access to a JTAG device is performed through IOCTL calls.
++
++Call flow example:
++User: open  -> /dev/jatgX
++User: ioctl -> /dev/jtagX -> JTAG core driver -> JTAG hardware specific driver
++User: close -> /dev/jatgX
+diff --git a/Documentation/jtag/transactions b/Documentation/jtag/transactions
+new file mode 100644
+index 0000000..2abf833
+--- /dev/null
++++ b/Documentation/jtag/transactions
+@@ -0,0 +1,109 @@
++The JTAG API
++=============
++
++JTAG master devices can be accessed through a character misc-device.
++Each JTAG master interface can be accessed by using /dev/jtagN.
++
++JTAG system calls set:
++- SIR (Scan Instruction Register, IEEE 1149.1 Instruction Register scan);
++- SDR (Scan Data Register, IEEE 1149.1 Data Register scan);
++- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
++number of clocks.
++
++open(), close()
++-------
++open() opens JTAG device. Only one open operation per JTAG device
++can be performed. Two or more open for one device will return error.
++
++Open/Close  device:
++- jtag_fd = open("/dev/jtag0", O_RDWR);
++- close(jtag_fd);
++
++ioctl()
++-------
++All access operations to JTAG devices performed through ioctl interface.
++The IOCTL interface supports these requests:
++	JTAG_IOCRUNTEST - Force JTAG state machine to RUN_TEST/IDLE state
++	JTAG_SIOCFREQ - Set JTAG TCK frequency
++	JTAG_GIOCFREQ - Get JTAG TCK frequency
++	JTAG_IOCXFER - send JTAG data Xfer
++	JTAG_GIOCSTATUS - get current JTAG TAP status
++	JTAG_SIOCMODE - set JTAG mode flags.
++
++JTAG_SIOCFREQ, JTAG_GIOCFREQ
++------
++Set/Get JTAG clock speed:
++
++	unsigned int jtag_fd;
++	ioctl(jtag_fd, JTAG_SIOCFREQ, &frq);
++	ioctl(jtag_fd, JTAG_GIOCFREQ, &frq);
++
++JTAG_IOCRUNTEST
++------
++Force JTAG state machine to RUN_TEST/IDLE state
++
++struct jtag_run_test_idle {
++	__u8	reset;
++	__u8	endstate;
++	__u8	tck;
++};
++
++reset: 0 - run IDLE/PAUSE from current state
++	   1 - go through TEST_LOGIC/RESET state before  IDLE/PAUSE
++endstate: completion flag
++tck: clock counter
++
++Example:
++	struct jtag_run_test_idle runtest;
++
++	runtest.endstate = JTAG_STATE_IDLE;
++	runtest.reset = 0;
++	runtest.tck = data_p->tck;
++	usleep(25 * 1000);
++	ioctl(jtag_fd, JTAG_IOCRUNTEST, &runtest);
++
++JTAG_IOCXFER
++------
++Send SDR/SIR transaction
++
++struct jtag_xfer {
++	__u8	type;
++	__u8	direction;
++	__u8	endstate;
++	__u8	padding;
++	__u32	length;
++	__u64	tdio;
++};
++
++type: transfer type - JTAG_SIR_XFER/JTAG_SDR_XFER
++direction: xfer direction - JTAG_SIR_XFER/JTAG_SDR_XFER,
++length: xfer data len in bits
++tdio : xfer data array
++endstate: xfer end state after transaction finish
++	   can be: JTAG_STATE_IDLE/JTAG_STATE_PAUSEIR/JTAG_STATE_PAUSEDR
++
++Example:
++	struct jtag_xfer xfer;
++	static char buf[64];
++	static unsigned int buf_len = 0;
++	[...]
++	xfer.type = JTAG_SDR_XFER;
++	xfer.tdio = (__u64)buf;
++	xfer.length = buf_len;
++	xfer.endstate = JTAG_STATE_IDLE;
++
++	if (is_read)
++		xfer.direction = JTAG_READ_XFER;
++	else
++		xfer.direction = JTAG_WRITE_XFER;
++
++	ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
++
++JTAG_SIOCMODE
++------
++If hardware driver can support different running modes you can change it.
++
++Example:
++	unsigned int mode;
++	mode = JTAG_XFER_HW_MODE;
++	ioctl(jtag_fd, JTAG_SIOCMODE, &mode);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5e5f75..e067eda 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7618,6 +7618,7 @@ F:	include/linux/jtag.h
+ F:	include/uapi/linux/jtag.h
+ F:	drivers/jtag/
+ F:	Documentation/devicetree/bindings/jtag/
++F:	Documentation/ABI/testing/jtag-dev
  
--fail:
--	if (first) {
--		dput(fsc->sb->s_root);
--		fsc->sb->s_root = NULL;
--	}
- out:
- 	mutex_unlock(&fsc->client->mount_mutex);
- 	return ERR_PTR(err);
+ K10TEMP HARDWARE MONITORING DRIVER
+ M:	Clemens Ladisch <clemens@ladisch.de>
+-- 
+1.7.1
