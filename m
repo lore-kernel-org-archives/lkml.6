@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033114AbeE1KUN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:20:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39880 "EHLO mail.kernel.org"
+        id S1034344AbeE1P2C (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:28:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968654AbeE1KUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:20:06 -0400
+        id S1031532AbeE1KUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 135/268] ipv4: lock mtu in fnhe when received PMTU < net.ipv4.route.min_pmtu
-Date: Mon, 28 May 2018 12:01:49 +0200
-Message-Id: <20180528100217.467079786@linuxfoundation.org>
+Subject: [PATCH 4.4 133/268] bnxt_en: Check valid VNIC ID in bnxt_hwrm_vnic_set_tpa().
+Date: Mon, 28 May 2018 12:01:47 +0200
+Message-Id: <20180528100217.218655835@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,219 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit d52e5a7e7ca49457dd31fc8b42fb7c0d58a31221 ]
+[ Upstream commit 3c4fe80b32c685bdc02b280814d0cfe80d441c72 ]
 
-Prior to the rework of PMTU information storage in commit
-2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer."),
-when a PMTU event advertising a PMTU smaller than
-net.ipv4.route.min_pmtu was received, we would disable setting the DF
-flag on packets by locking the MTU metric, and set the PMTU to
-net.ipv4.route.min_pmtu.
+During initialization, if we encounter errors, there is a code path that
+calls bnxt_hwrm_vnic_set_tpa() with invalid VNIC ID.  This may cause a
+warning in firmware logs.
 
-Since then, we don't disable DF, and set PMTU to
-net.ipv4.route.min_pmtu, so the intermediate router that has this link
-with a small MTU will have to drop the packets.
-
-This patch reestablishes pre-2.6.39 behavior by splitting
-rtable->rt_pmtu into a bitfield with rt_mtu_locked and rt_pmtu.
-rt_mtu_locked indicates that we shouldn't set the DF bit on that path,
-and is checked in ip_dont_fragment().
-
-One possible workaround is to set net.ipv4.route.min_pmtu to a value low
-enough to accommodate the lowest MTU encountered.
-
-Fixes: 2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer.")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/ip.h        |   11 +++++++++--
- include/net/ip_fib.h    |    1 +
- include/net/route.h     |    3 ++-
- net/ipv4/route.c        |   26 +++++++++++++++++++-------
- net/ipv4/xfrm4_policy.c |    1 +
- 5 files changed, 32 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/net/ip.h
-+++ b/include/net/ip.h
-@@ -279,6 +279,13 @@ int ip_decrease_ttl(struct iphdr *iph)
- 	return --iph->ttl;
- }
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -2925,6 +2925,9 @@ static int bnxt_hwrm_vnic_set_tpa(struct
+ 	struct bnxt_vnic_info *vnic = &bp->vnic_info[vnic_id];
+ 	struct hwrm_vnic_tpa_cfg_input req = {0};
  
-+static inline int ip_mtu_locked(const struct dst_entry *dst)
-+{
-+	const struct rtable *rt = (const struct rtable *)dst;
++	if (vnic->fw_vnic_id == INVALID_HW_RING_ID)
++		return 0;
 +
-+	return rt->rt_mtu_locked || dst_metric_locked(dst, RTAX_MTU);
-+}
-+
- static inline
- int ip_dont_fragment(const struct sock *sk, const struct dst_entry *dst)
- {
-@@ -286,7 +293,7 @@ int ip_dont_fragment(const struct sock *
+ 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_VNIC_TPA_CFG, -1, -1);
  
- 	return  pmtudisc == IP_PMTUDISC_DO ||
- 		(pmtudisc == IP_PMTUDISC_WANT &&
--		 !(dst_metric_locked(dst, RTAX_MTU)));
-+		 !ip_mtu_locked(dst));
- }
- 
- static inline bool ip_sk_accept_pmtu(const struct sock *sk)
-@@ -312,7 +319,7 @@ static inline unsigned int ip_dst_mtu_ma
- 	struct net *net = dev_net(dst->dev);
- 
- 	if (net->ipv4.sysctl_ip_fwd_use_pmtu ||
--	    dst_metric_locked(dst, RTAX_MTU) ||
-+	    ip_mtu_locked(dst) ||
- 	    !forwarding)
- 		return dst_mtu(dst);
- 
---- a/include/net/ip_fib.h
-+++ b/include/net/ip_fib.h
-@@ -56,6 +56,7 @@ struct fib_nh_exception {
- 	int				fnhe_genid;
- 	__be32				fnhe_daddr;
- 	u32				fnhe_pmtu;
-+	bool				fnhe_mtu_locked;
- 	__be32				fnhe_gw;
- 	unsigned long			fnhe_expires;
- 	struct rtable __rcu		*fnhe_rth_input;
---- a/include/net/route.h
-+++ b/include/net/route.h
-@@ -64,7 +64,8 @@ struct rtable {
- 	__be32			rt_gateway;
- 
- 	/* Miscellaneous cached information */
--	u32			rt_pmtu;
-+	u32			rt_mtu_locked:1,
-+				rt_pmtu:31;
- 
- 	u32			rt_table_id;
- 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -612,6 +612,7 @@ static inline u32 fnhe_hashfun(__be32 da
- static void fill_route_from_fnhe(struct rtable *rt, struct fib_nh_exception *fnhe)
- {
- 	rt->rt_pmtu = fnhe->fnhe_pmtu;
-+	rt->rt_mtu_locked = fnhe->fnhe_mtu_locked;
- 	rt->dst.expires = fnhe->fnhe_expires;
- 
- 	if (fnhe->fnhe_gw) {
-@@ -622,7 +623,7 @@ static void fill_route_from_fnhe(struct
- }
- 
- static void update_or_create_fnhe(struct fib_nh *nh, __be32 daddr, __be32 gw,
--				  u32 pmtu, unsigned long expires)
-+				  u32 pmtu, bool lock, unsigned long expires)
- {
- 	struct fnhe_hash_bucket *hash;
- 	struct fib_nh_exception *fnhe;
-@@ -659,8 +660,10 @@ static void update_or_create_fnhe(struct
- 			fnhe->fnhe_genid = genid;
- 		if (gw)
- 			fnhe->fnhe_gw = gw;
--		if (pmtu)
-+		if (pmtu) {
- 			fnhe->fnhe_pmtu = pmtu;
-+			fnhe->fnhe_mtu_locked = lock;
-+		}
- 		fnhe->fnhe_expires = max(1UL, expires);
- 		/* Update all cached dsts too */
- 		rt = rcu_dereference(fnhe->fnhe_rth_input);
-@@ -684,6 +687,7 @@ static void update_or_create_fnhe(struct
- 		fnhe->fnhe_daddr = daddr;
- 		fnhe->fnhe_gw = gw;
- 		fnhe->fnhe_pmtu = pmtu;
-+		fnhe->fnhe_mtu_locked = lock;
- 		fnhe->fnhe_expires = expires;
- 
- 		/* Exception created; mark the cached routes for the nexthop
-@@ -765,7 +769,8 @@ static void __ip_do_redirect(struct rtab
- 				struct fib_nh *nh = &FIB_RES_NH(res);
- 
- 				update_or_create_fnhe(nh, fl4->daddr, new_gw,
--						0, jiffies + ip_rt_gc_timeout);
-+						0, false,
-+						jiffies + ip_rt_gc_timeout);
- 			}
- 			if (kill_route)
- 				rt->dst.obsolete = DST_OBSOLETE_KILL;
-@@ -977,15 +982,18 @@ static void __ip_rt_update_pmtu(struct r
- {
- 	struct dst_entry *dst = &rt->dst;
- 	struct fib_result res;
-+	bool lock = false;
- 
--	if (dst_metric_locked(dst, RTAX_MTU))
-+	if (ip_mtu_locked(dst))
- 		return;
- 
- 	if (ipv4_mtu(dst) < mtu)
- 		return;
- 
--	if (mtu < ip_rt_min_pmtu)
-+	if (mtu < ip_rt_min_pmtu) {
-+		lock = true;
- 		mtu = ip_rt_min_pmtu;
-+	}
- 
- 	if (rt->rt_pmtu == mtu &&
- 	    time_before(jiffies, dst->expires - ip_rt_mtu_expires / 2))
-@@ -995,7 +1003,7 @@ static void __ip_rt_update_pmtu(struct r
- 	if (fib_lookup(dev_net(dst->dev), fl4, &res, 0) == 0) {
- 		struct fib_nh *nh = &FIB_RES_NH(res);
- 
--		update_or_create_fnhe(nh, fl4->daddr, 0, mtu,
-+		update_or_create_fnhe(nh, fl4->daddr, 0, mtu, lock,
- 				      jiffies + ip_rt_mtu_expires);
- 	}
- 	rcu_read_unlock();
-@@ -1250,7 +1258,7 @@ static unsigned int ipv4_mtu(const struc
- 
- 	mtu = READ_ONCE(dst->dev->mtu);
- 
--	if (unlikely(dst_metric_locked(dst, RTAX_MTU))) {
-+	if (unlikely(ip_mtu_locked(dst))) {
- 		if (rt->rt_uses_gateway && mtu > 576)
- 			mtu = 576;
- 	}
-@@ -1473,6 +1481,7 @@ static struct rtable *rt_dst_alloc(struc
- 		rt->rt_is_input = 0;
- 		rt->rt_iif = 0;
- 		rt->rt_pmtu = 0;
-+		rt->rt_mtu_locked = 0;
- 		rt->rt_gateway = 0;
- 		rt->rt_uses_gateway = 0;
- 		rt->rt_table_id = 0;
-@@ -2393,6 +2402,7 @@ struct dst_entry *ipv4_blackhole_route(s
- 		rt->rt_is_input = ort->rt_is_input;
- 		rt->rt_iif = ort->rt_iif;
- 		rt->rt_pmtu = ort->rt_pmtu;
-+		rt->rt_mtu_locked = ort->rt_mtu_locked;
- 
- 		rt->rt_genid = rt_genid_ipv4(net);
- 		rt->rt_flags = ort->rt_flags;
-@@ -2495,6 +2505,8 @@ static int rt_fill_info(struct net *net,
- 	memcpy(metrics, dst_metrics_ptr(&rt->dst), sizeof(metrics));
- 	if (rt->rt_pmtu && expires)
- 		metrics[RTAX_MTU - 1] = rt->rt_pmtu;
-+	if (rt->rt_mtu_locked && expires)
-+		metrics[RTAX_LOCK - 1] |= BIT(RTAX_MTU);
- 	if (rtnetlink_put_metrics(skb, metrics) < 0)
- 		goto nla_put_failure;
- 
---- a/net/ipv4/xfrm4_policy.c
-+++ b/net/ipv4/xfrm4_policy.c
-@@ -97,6 +97,7 @@ static int xfrm4_fill_dst(struct xfrm_ds
- 	xdst->u.rt.rt_gateway = rt->rt_gateway;
- 	xdst->u.rt.rt_uses_gateway = rt->rt_uses_gateway;
- 	xdst->u.rt.rt_pmtu = rt->rt_pmtu;
-+	xdst->u.rt.rt_mtu_locked = rt->rt_mtu_locked;
- 	xdst->u.rt.rt_table_id = rt->rt_table_id;
- 	INIT_LIST_HEAD(&xdst->u.rt.rt_uncached);
- 
+ 	if (tpa_flags) {
