@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422947AbeE1LDp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50804 "EHLO mail.kernel.org"
+        id S1422967AbeE1LDw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164664AbeE1LDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:39 -0400
+        id S1422940AbeE1LDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 459/496] net: stmmac: ensure that the MSS desc is the last desc to set the own bit
-Date: Mon, 28 May 2018 12:04:04 +0200
-Message-Id: <20180528100339.262992649@linuxfoundation.org>
+Subject: [PATCH 4.14 451/496] pinctrl: artpec6: dt: add missing pin group uart5nocts
+Date: Mon, 28 May 2018 12:03:56 +0200
+Message-Id: <20180528100338.904174825@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,53 +33,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Niklas Cassel <niklas.cassel@axis.com>
 
-[ Upstream commit 15d2ee42a3087089e73ad52fd8c1b37ab496b87c ]
+[ Upstream commit 7e065fb9ccce89fe667fdbd9a177eaec59a359fc ]
 
-A dma_wmb() is used to guarantee the ordering, with respect to
-other writes, to cache coherent DMA memory.
+Add missing pin group uart5nocts (all pins except cts), which has been
+supported by the artpec6 pinctrl driver since its initial submission.
 
-There is a dma_wmb() in prepare_tx_desc()/prepare_tso_tx_desc() which
-ensures that TDES0/1/2 is written before TDES3 (which contains the own
-bit), for First Desc.
-
-However, in the rare case that MSS changes, there will be a MSS
-context descriptor in front of the regular DMA descriptors:
-
-<MSS desc> <- DMA Next Descriptor
-<First Desc>
-<desc n>
-<Last Desc>
-
-Thus, for this special case, we need a dma_wmb()
-after prepare_tso_tx_desc()/before writing the own bit to the MSS desc,
-so that we flush the write to TDES3 for First Desc,
-in order to ensure that the MSS descriptor is the last descriptor to
-set the own bit.
-
+Fixes: 00df0582eab1 ("pinctrl: Add pincontrol driver for ARTPEC-6 SoC")
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2923,8 +2923,15 @@ static netdev_tx_t stmmac_tso_xmit(struc
- 			tcp_hdrlen(skb) / 4, (skb->len - proto_hdr_len));
- 
- 	/* If context desc is used to change MSS */
--	if (mss_desc)
-+	if (mss_desc) {
-+		/* Make sure that first descriptor has been completely
-+		 * written, including its own bit. This is because MSS is
-+		 * actually before first descriptor, so we need to make
-+		 * sure that MSS's own bit is the last thing written.
-+		 */
-+		dma_wmb();
- 		priv->hw->desc->set_tx_owner(mss_desc);
-+	}
- 
- 	/* The own bit must be the latest setting done when prepare the
- 	 * descriptor and then barrier is needed to make sure that
+--- a/Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
+@@ -20,7 +20,8 @@ Required subnode-properties:
+ 		gpio: cpuclkoutgrp0, udlclkoutgrp0, i2c1grp0, i2c2grp0,
+ 		      i2c3grp0, i2s0grp0, i2s1grp0, i2srefclkgrp0, spi0grp0,
+ 		      spi1grp0, pciedebuggrp0, uart0grp0, uart0grp1, uart1grp0,
+-		      uart2grp0, uart2grp1, uart3grp0, uart4grp0, uart5grp0
++		      uart2grp0, uart2grp1, uart3grp0, uart4grp0, uart5grp0,
++		      uart5nocts
+ 		cpuclkout: cpuclkoutgrp0
+ 		udlclkout: udlclkoutgrp0
+ 		i2c1: i2c1grp0
+@@ -37,7 +38,7 @@ Required subnode-properties:
+ 		uart2: uart2grp0, uart2grp1
+ 		uart3: uart3grp0
+ 		uart4: uart4grp0
+-		uart5: uart5grp0
++		uart5: uart5grp0, uart5nocts
+ 		nand: nandgrp0
+ 		sdio0: sdio0grp0
+ 		sdio1: sdio1grp0
