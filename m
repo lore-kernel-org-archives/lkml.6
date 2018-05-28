@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939115AbeE1NLg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:11:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40664 "EHLO mail.kernel.org"
+        id S939119AbeE1NMH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:12:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163768AbeE1KvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:51:11 -0400
+        id S1163193AbeE1KvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:51:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Moni Shoua <monis@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 223/496] IB/mlx4: Include GID type when deleting GIDs from HW table under RoCE
-Date: Mon, 28 May 2018 12:00:08 +0200
-Message-Id: <20180528100329.318282576@linuxfoundation.org>
+Subject: [PATCH 4.14 219/496] ia64/err-inject: Use get_user_pages_fast()
+Date: Mon, 28 May 2018 12:00:04 +0200
+Message-Id: <20180528100329.144911866@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,53 +30,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack M <jackm@dev.mellanox.co.il>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit a18177925c252da7801149abe217c05b80884798 ]
+[ Upstream commit 69c907022a7d9325cdc5c9dd064571e445df9a47 ]
 
-The commit cited below added a gid_type field (RoCEv1 or RoCEv2)
-to GID properties.
+At the point of sysfs callback, the call to gup is
+done without mmap_sem (or any lock for that matter).
+This is racy. As such, use the get_user_pages_fast()
+alternative and safely avoid taking the lock, if possible.
 
-When adding GIDs, this gid_type field was copied over to the
-hardware gid table. However, when deleting GIDs, the gid_type field
-was not copied over to the hardware gid table.
-
-As a result, when running RoCEv2, all RoCEv2 gids in the
-hardware gid table were set to type RoCEv1 when any gid was deleted.
-
-This problem would persist until the next gid was added (which would again
-restore the gid_type field for all the gids in the hardware gid table).
-
-Fix this by copying over the gid_type field to the hardware gid table
-when deleting gids, so that the gid_type of all remaining gids is
-preserved when a gid is deleted.
-
-Fixes: b699a859d17b ("IB/mlx4: Add gid_type to GID properties")
-Reviewed-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/main.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/ia64/kernel/err_inject.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -364,8 +364,13 @@ static int mlx4_ib_del_gid(struct ib_dev
- 		if (!gids) {
- 			ret = -ENOMEM;
- 		} else {
--			for (i = 0; i < MLX4_MAX_PORT_GIDS; i++)
--				memcpy(&gids[i].gid, &port_gid_table->gids[i].gid, sizeof(union ib_gid));
-+			for (i = 0; i < MLX4_MAX_PORT_GIDS; i++) {
-+				memcpy(&gids[i].gid,
-+				       &port_gid_table->gids[i].gid,
-+				       sizeof(union ib_gid));
-+				gids[i].gid_type =
-+				    port_gid_table->gids[i].gid_type;
-+			}
- 		}
- 	}
- 	spin_unlock_bh(&iboe->lock);
+--- a/arch/ia64/kernel/err_inject.c
++++ b/arch/ia64/kernel/err_inject.c
+@@ -142,7 +142,7 @@ store_virtual_to_phys(struct device *dev
+ 	u64 virt_addr=simple_strtoull(buf, NULL, 16);
+ 	int ret;
+ 
+-	ret = get_user_pages(virt_addr, 1, FOLL_WRITE, NULL, NULL);
++	ret = get_user_pages_fast(virt_addr, 1, FOLL_WRITE, NULL);
+ 	if (ret<=0) {
+ #ifdef ERR_INJ_DEBUG
+ 		printk("Virtual address %lx is not existing.\n",virt_addr);
