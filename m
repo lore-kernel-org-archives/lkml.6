@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162087AbeE1Kff (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:35:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55820 "EHLO mail.kernel.org"
+        id S1162101AbeE1Kfk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:35:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162072AbeE1Kf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:27 -0400
+        id S1162072AbeE1Kff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Thomas Lindroth <thomas.lindroth@gmail.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 205/329] vti4: Dont override MTU passed on link creation via IFLA_MTU
-Date: Mon, 28 May 2018 12:02:14 +0200
-Message-Id: <20180528100259.308605780@linuxfoundation.org>
+Subject: [PATCH 4.9 208/329] kbuild: make scripts/adjust_autoksyms.sh robust against timestamp races
+Date: Mon, 28 May 2018 12:02:17 +0200
+Message-Id: <20180528100259.529679175@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,31 +31,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 
-[ Upstream commit 03080e5ec72740c1a62e6730f2a5f3f114f11b19 ]
+[ Upstream commit 825d487583089f9a33d31650c9c41f6474aab7fc ]
 
-Don't hardcode a MTU value on vti tunnel initialization,
-ip_tunnel_newlink() is able to deal with this already. See also
-commit ffc2b6ee4174 ("ip_gre: fix IFLA_MTU ignored on NEWLINK").
+Some filesystems have timestamps with coarse precision that may allow
+for a recently built object file to have the same timestamp as the
+updated time on one of its dependency files. When that happens, the
+object file doesn't get rebuilt as it should.
 
-Fixes: 1181412c1a67 ("net/ipv4: VTI support new module for ip_vti.")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Acked-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This is especially the case on filesystems that don't have sub-second
+time precision, such as ext3 or Ext4 with 128B inodes.
+
+Let's prevent that by making sure updated dependency files have a newer
+timestamp than the first file we created (i.e. autoksyms.h.tmpnew).
+
+Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Tested-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_vti.c |    1 -
- 1 file changed, 1 deletion(-)
+ scripts/adjust_autoksyms.sh |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -396,7 +396,6 @@ static int vti_tunnel_init(struct net_de
- 	memcpy(dev->dev_addr, &iph->saddr, 4);
- 	memcpy(dev->broadcast, &iph->daddr, 4);
- 
--	dev->mtu		= ETH_DATA_LEN;
- 	dev->flags		= IFF_NOARP;
- 	dev->addr_len		= 4;
- 	dev->features		|= NETIF_F_LLTX;
+--- a/scripts/adjust_autoksyms.sh
++++ b/scripts/adjust_autoksyms.sh
+@@ -83,6 +83,13 @@ while read sympath; do
+ 	depfile="include/config/ksym/${sympath}.h"
+ 	mkdir -p "$(dirname "$depfile")"
+ 	touch "$depfile"
++	# Filesystems with coarse time precision may create timestamps
++	# equal to the one from a file that was very recently built and that
++	# needs to be rebuild. Let's guard against that by making sure our
++	# dep files are always newer than the first file we created here.
++	while [ ! "$depfile" -nt "$new_ksyms_file" ]; do
++		touch "$depfile"
++	done
+ 	echo $((count += 1))
+ done | tail -1 )
+ changed=${changed:-0}
