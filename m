@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166082AbeE1PMf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:12:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42992 "EHLO mail.kernel.org"
+        id S1166086AbeE1PM7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:12:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033291AbeE1KXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:38 -0400
+        id S1033687AbeE1KXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kamlakant Patel <kamlakant.patel@cavium.com>,
-        Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 212/268] ipmi_ssif: Fix kernel panic at msg_done_handler
-Date: Mon, 28 May 2018 12:03:06 +0200
-Message-Id: <20180528100226.166139233@linuxfoundation.org>
+Subject: [PATCH 4.4 184/268] ACPI: acpi_pad: Fix memory leak in power saving threads
+Date: Mon, 28 May 2018 12:02:38 +0200
+Message-Id: <20180528100223.217977029@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,54 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kamlakant Patel <kamlakant.patel@cavium.com>
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
-[ Upstream commit f002612b9d86613bc6fde0a444e0095225f6053e ]
+[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
 
-This happens when BMC doesn't return any data and the code is trying
-to print the value of data[2].
+Fix once per second (round_robin_time) memory leak of about 1 KB in
+each acpi_pad kernel idling thread that is activated.
 
-Getting following crash:
-[  484.728410] Unable to handle kernel NULL pointer dereference at virtual address 00000002
-[  484.736496] pgd = ffff0000094a2000
-[  484.739885] [00000002] *pgd=00000047fcffe003, *pud=00000047fcffd003, *pmd=0000000000000000
-[  484.748158] Internal error: Oops: 96000005 [#1] SMP
-[...]
-[  485.101451] Call trace:
-[...]
-[  485.188473] [<ffff000000a46e68>] msg_done_handler+0x668/0x700 [ipmi_ssif]
-[  485.195249] [<ffff000000a456b8>] ipmi_ssif_thread+0x110/0x128 [ipmi_ssif]
-[  485.202038] [<ffff0000080f1430>] kthread+0x108/0x138
-[  485.206994] [<ffff0000080838e0>] ret_from_fork+0x10/0x30
-[  485.212294] Code: aa1903e1 aa1803e0 b900227f 95fef6a5 (39400aa3)
+Found by testing with kmemleak.
 
-Adding a check to validate the data len before printing data[2] to fix this issue.
-
-Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/acpi/acpi_pad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -757,7 +757,7 @@ static void msg_done_handler(struct ssif
- 			ssif_info->ssif_state = SSIF_NORMAL;
- 			ipmi_ssif_unlock_cond(ssif_info, flags);
- 			pr_warn(PFX "Error getting flags: %d %d, %x\n",
--			       result, len, data[2]);
-+			       result, len, (len >= 3) ? data[2] : 0);
- 		} else if (data[0] != (IPMI_NETFN_APP_REQUEST | 1) << 2
- 			   || data[1] != IPMI_GET_MSG_FLAGS_CMD) {
- 			/*
-@@ -779,7 +779,7 @@ static void msg_done_handler(struct ssif
- 		if ((result < 0) || (len < 3) || (data[2] != 0)) {
- 			/* Error clearing flags */
- 			pr_warn(PFX "Error clearing flags: %d %d, %x\n",
--			       result, len, data[2]);
-+			       result, len, (len >= 3) ? data[2] : 0);
- 		} else if (data[0] != (IPMI_NETFN_APP_REQUEST | 1) << 2
- 			   || data[1] != IPMI_CLEAR_MSG_FLAGS_CMD) {
- 			pr_warn(PFX "Invalid response clearing flags: %x %x\n",
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -108,6 +108,7 @@ static void round_robin_cpu(unsigned int
+ 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
+ 	if (cpumask_empty(tmp)) {
+ 		mutex_unlock(&round_robin_lock);
++		free_cpumask_var(tmp);
+ 		return;
+ 	}
+ 	for_each_cpu(cpu, tmp) {
+@@ -125,6 +126,8 @@ static void round_robin_cpu(unsigned int
+ 	mutex_unlock(&round_robin_lock);
+ 
+ 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
++
++	free_cpumask_var(tmp);
+ }
+ 
+ static void exit_round_robin(unsigned int tsk_index)
