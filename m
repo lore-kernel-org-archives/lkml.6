@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938331AbeE1Lap (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:30:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33860 "EHLO mail.kernel.org"
+        id S938342AbeE1LbG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:31:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424002AbeE1LOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:38 -0400
+        id S937985AbeE1LO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, Thomas Vincent-Cross <me@tvc.id.au>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 212/272] dmaengine: rcar-dmac: Check the done lists in rcar_dmac_chan_get_residue()
-Date: Mon, 28 May 2018 12:04:05 +0200
-Message-Id: <20180528100258.317133820@linuxfoundation.org>
+Subject: [PATCH 4.16 229/272] PCI: Add function 1 DMA alias quirk for Marvell 88SE9220
+Date: Mon, 28 May 2018 12:04:22 +0200
+Message-Id: <20180528100259.650510163@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,52 +30,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Thomas Vincent-Cross <me@tvc.id.au>
 
-[ Upstream commit 3e081628d510b2ddbe493371d9c574d9275da17e ]
+[ Upstream commit 832e4e1f76b8a84991e9db56fdcef1ebce839b8b ]
 
-This patch fixes an issue that a race condition happens between a client
-driver and the rcar-dmac driver:
+Add Marvell 88SE9220 DMA quirk as found and tested on bug 42679.
 
-- The rcar_dmac_isr_transfer_end() is called.
- - The done list appears, and desc.running is the next active list.
-- rcar_dmac_chan_get_residue() is called by a client driver before
-  rcar_dmac_isr_channel_thread() is called.
- - The rcar_dmac_chan_get_residue() will not find any descriptors.
- - And, the following WARNING happens:
-	WARN(1, "No descriptor for cookie!");
-
-The sh-sci driver with HSCIF (921,600bps) on R-Car H3 can cause this
-situation.
-So, this patch checks the done lists in rcar_dmac_chan_get_residue()
-and returns zero if the done lists has the argument cookie.
-
-Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
+Signed-off-by: Thomas Vincent-Cross <me@tvc.id.au>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/sh/rcar-dmac.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1301,8 +1301,17 @@ static unsigned int rcar_dmac_chan_get_r
- 	 * If the cookie doesn't correspond to the currently running transfer
- 	 * then the descriptor hasn't been processed yet, and the residue is
- 	 * equal to the full descriptor size.
-+	 * Also, a client driver is possible to call this function before
-+	 * rcar_dmac_isr_channel_thread() runs. In this case, the "desc.running"
-+	 * will be the next descriptor, and the done list will appear. So, if
-+	 * the argument cookie matches the done list's cookie, we can assume
-+	 * the residue is zero.
- 	 */
- 	if (cookie != desc->async_tx.cookie) {
-+		list_for_each_entry(desc, &chan->desc.done, node) {
-+			if (cookie == desc->async_tx.cookie)
-+				return 0;
-+		}
- 		list_for_each_entry(desc, &chan->desc.pending, node) {
- 			if (cookie == desc->async_tx.cookie)
- 				return desc->size;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3903,6 +3903,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c46 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x91a0,
+ 			 quirk_dma_func1_alias);
++/* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c127 */
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9220,
++			 quirk_dma_func1_alias);
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c49 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9230,
+ 			 quirk_dma_func1_alias);
