@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932132AbeE1KGR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:06:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54086 "EHLO mail.kernel.org"
+        id S1754556AbeE1KG0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:06:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754481AbeE1KGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:09 -0400
+        id S932118AbeE1KGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>, John Stultz <john.stultz@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, mulhern <amulhern@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 013/185] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
-Date: Mon, 28 May 2018 12:00:54 +0200
-Message-Id: <20180528100051.432439052@linuxfoundation.org>
+Subject: [PATCH 3.18 016/185] dm thin: fix documentation relative to low water mark threshold
+Date: Mon, 28 May 2018 12:00:57 +0200
+Message-Id: <20180528100051.583307137@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,66 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: mulhern <amulhern@redhat.com>
 
-[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
+[ Upstream commit 9b28a1102efc75d81298198166ead87d643a29ce ]
 
-So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
-well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
-detecting the ABS or REL timer modes is not valid anymore, it got broken
-by the introduction of HRTIMER_MODE_PINNED.
+Fixes:
+1. The use of "exceeds" when the opposite of exceeds, falls below,
+was meant.
+2. Properly speaking, a table can not exceed a threshold.
 
-HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
-sake of completeness print all given modes.
+It emphasizes the important point, which is that it is the userspace
+daemon's responsibility to check for low free space when a device
+is resumed, since it won't get a special event indicating low free
+space in that situation.
 
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: keescook@chromium.org
-Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: mulhern <amulhern@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/trace/events/timer.h |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ Documentation/device-mapper/thin-provisioning.txt |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/include/trace/events/timer.h
-+++ b/include/trace/events/timer.h
-@@ -121,6 +121,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
- 	TP_ARGS(timer)
- );
- 
-+#define decode_clockid(type)						\
-+	__print_symbolic(type,						\
-+		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
-+		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
-+		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
-+		{ CLOCK_TAI,		"CLOCK_TAI"		})
+--- a/Documentation/device-mapper/thin-provisioning.txt
++++ b/Documentation/device-mapper/thin-provisioning.txt
+@@ -112,9 +112,11 @@ $low_water_mark is expressed in blocks o
+ free space on the data device drops below this level then a dm event
+ will be triggered which a userspace daemon should catch allowing it to
+ extend the pool device.  Only one such event will be sent.
+-Resuming a device with a new table itself triggers an event so the
+-userspace daemon can use this to detect a situation where a new table
+-already exceeds the threshold.
 +
-+#define decode_hrtimer_mode(mode)					\
-+	__print_symbolic(mode,						\
-+		{ HRTIMER_MODE_ABS,		"ABS"		},	\
-+		{ HRTIMER_MODE_REL,		"REL"		},	\
-+		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
-+		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
-+
- /**
-  * hrtimer_init - called when the hrtimer is initialized
-  * @hrtimer:	pointer to struct hrtimer
-@@ -147,10 +161,8 @@ TRACE_EVENT(hrtimer_init,
- 	),
++No special event is triggered if a just resumed device's free space is below
++the low water mark. However, resuming a device always triggers an
++event; a userspace daemon should verify that free space exceeds the low
++water mark when handling this event.
  
- 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
--		  __entry->clockid == CLOCK_REALTIME ?
--			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
--		  __entry->mode == HRTIMER_MODE_ABS ?
--			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
-+		  decode_clockid(__entry->clockid),
-+		  decode_hrtimer_mode(__entry->mode))
- );
- 
- /**
+ A low water mark for the metadata device is maintained in the kernel and
+ will trigger a dm event if free space on the metadata device drops below
