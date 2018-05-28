@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161662AbeE1KdD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:33:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53088 "EHLO mail.kernel.org"
+        id S1161693AbeE1KdO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:33:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161632AbeE1Kc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:57 -0400
+        id S1161129AbeE1KdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 118/329] mac80211: fix calling sleeping function in atomic context
-Date: Mon, 28 May 2018 12:00:47 +0200
-Message-Id: <20180528100252.549016771@linuxfoundation.org>
+Subject: [PATCH 4.9 112/329] iwlwifi: mvm: fix security bug in PN checking
+Date: Mon, 28 May 2018 12:00:41 +0200
+Message-Id: <20180528100252.054422770@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,29 +32,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 95f3ce6a77893ac828ba841df44421620de4314b ]
+[ Upstream commit 5ab2ba931255d8bf03009c06d58dce97de32797c ]
 
-sta_info_alloc can be called from atomic paths (such as RX path)
-so we need to call pcpu_alloc with the correct gfp.
+A previous patch allowed the same PN for packets originating from the
+same AMSDU by copying PN only for the last packet in the series.
 
-Fixes: c9c5962b56c1 ("mac80211: enable collecting station statistics per-CPU")
+This however is bogus since we cannot assume the last frame will be
+received on the same queue, and if it is received on a different ueue
+we will end up not incrementing the PN and possibly let the next
+packet to have the same PN and pass through.
+
+Change the logic instead to driver explicitly indicate for the second
+sub frame and on to be allowed to have the same PN as the first
+subframe. Indicate it to mac80211 as well for the fallback queue.
+
+Fixes: f1ae02b186d9 ("iwlwifi: mvm: allow same PN for de-aggregated AMSDU")
 Signed-off-by: Sara Sharon <sara.sharon@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/sta_info.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c |   39 +++++++++++++-------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
---- a/net/mac80211/sta_info.c
-+++ b/net/mac80211/sta_info.c
-@@ -313,7 +313,7 @@ struct sta_info *sta_info_alloc(struct i
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
+@@ -72,6 +72,7 @@ static inline int iwl_mvm_check_pn(struc
+ 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+ 	struct ieee80211_rx_status *stats = IEEE80211_SKB_RXCB(skb);
+ 	struct iwl_mvm_key_pn *ptk_pn;
++	int res;
+ 	u8 tid, keyidx;
+ 	u8 pn[IEEE80211_CCMP_PN_LEN];
+ 	u8 *extiv;
+@@ -128,12 +129,13 @@ static inline int iwl_mvm_check_pn(struc
+ 	pn[4] = extiv[1];
+ 	pn[5] = extiv[0];
  
- 	if (ieee80211_hw_check(hw, USES_RSS)) {
- 		sta->pcpu_rx_stats =
--			alloc_percpu(struct ieee80211_sta_rx_stats);
-+			alloc_percpu_gfp(struct ieee80211_sta_rx_stats, gfp);
- 		if (!sta->pcpu_rx_stats)
- 			goto free;
- 	}
+-	if (memcmp(pn, ptk_pn->q[queue].pn[tid],
+-		   IEEE80211_CCMP_PN_LEN) <= 0)
++	res = memcmp(pn, ptk_pn->q[queue].pn[tid], IEEE80211_CCMP_PN_LEN);
++	if (res < 0)
++		return -1;
++	if (!res && !(stats->flag & RX_FLAG_ALLOW_SAME_PN))
+ 		return -1;
+ 
+-	if (!(stats->flag & RX_FLAG_AMSDU_MORE))
+-		memcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);
++	memcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);
+ 	stats->flag |= RX_FLAG_PN_VALIDATED;
+ 
+ 	return 0;
+@@ -295,28 +297,21 @@ static void iwl_mvm_rx_csum(struct ieee8
+ }
+ 
+ /*
+- * returns true if a packet outside BA session is a duplicate and
+- * should be dropped
++ * returns true if a packet is a duplicate and should be dropped.
++ * Updates AMSDU PN tracking info
+  */
+-static bool iwl_mvm_is_nonagg_dup(struct ieee80211_sta *sta, int queue,
+-				  struct ieee80211_rx_status *rx_status,
+-				  struct ieee80211_hdr *hdr,
+-				  struct iwl_rx_mpdu_desc *desc)
++static bool iwl_mvm_is_dup(struct ieee80211_sta *sta, int queue,
++			   struct ieee80211_rx_status *rx_status,
++			   struct ieee80211_hdr *hdr,
++			   struct iwl_rx_mpdu_desc *desc)
+ {
+ 	struct iwl_mvm_sta *mvm_sta;
+ 	struct iwl_mvm_rxq_dup_data *dup_data;
+-	u8 baid, tid, sub_frame_idx;
++	u8 tid, sub_frame_idx;
+ 
+ 	if (WARN_ON(IS_ERR_OR_NULL(sta)))
+ 		return false;
+ 
+-	baid = (le32_to_cpu(desc->reorder_data) &
+-		IWL_RX_MPDU_REORDER_BAID_MASK) >>
+-		IWL_RX_MPDU_REORDER_BAID_SHIFT;
+-
+-	if (baid != IWL_RX_REORDER_DATA_INVALID_BAID)
+-		return false;
+-
+ 	mvm_sta = iwl_mvm_sta_from_mac80211(sta);
+ 	dup_data = &mvm_sta->dup_data[queue];
+ 
+@@ -346,6 +341,12 @@ static bool iwl_mvm_is_nonagg_dup(struct
+ 		     dup_data->last_sub_frame[tid] >= sub_frame_idx))
+ 		return true;
+ 
++	/* Allow same PN as the first subframe for following sub frames */
++	if (dup_data->last_seq[tid] == hdr->seq_ctrl &&
++	    sub_frame_idx > dup_data->last_sub_frame[tid] &&
++	    desc->mac_flags2 & IWL_RX_MPDU_MFLG2_AMSDU)
++		rx_status->flag |= RX_FLAG_ALLOW_SAME_PN;
++
+ 	dup_data->last_seq[tid] = hdr->seq_ctrl;
+ 	dup_data->last_sub_frame[tid] = sub_frame_idx;
+ 
+@@ -882,7 +883,7 @@ void iwl_mvm_rx_mpdu_mq(struct iwl_mvm *
+ 		if (ieee80211_is_data(hdr->frame_control))
+ 			iwl_mvm_rx_csum(sta, skb, desc);
+ 
+-		if (iwl_mvm_is_nonagg_dup(sta, queue, rx_status, hdr, desc)) {
++		if (iwl_mvm_is_dup(sta, queue, rx_status, hdr, desc)) {
+ 			kfree_skb(skb);
+ 			rcu_read_unlock();
+ 			return;
