@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161910AbeE1KeV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:34:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54488 "EHLO mail.kernel.org"
+        id S939341AbeE1OXm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:23:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161883AbeE1KeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:15 -0400
+        id S1161901AbeE1KeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
-        Sasha Neftin <sasha.neftin@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 178/329] e1000e: Fix check_for_link return value with autoneg off
-Date: Mon, 28 May 2018 12:01:47 +0200
-Message-Id: <20180528100257.185402752@linuxfoundation.org>
+Subject: [PATCH 4.9 180/329] ia64/err-inject: Use get_user_pages_fast()
+Date: Mon, 28 May 2018 12:01:49 +0200
+Message-Id: <20180528100257.326176426@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,46 +30,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 ]
+[ Upstream commit 69c907022a7d9325cdc5c9dd064571e445df9a47 ]
 
-When autoneg is off, the .check_for_link callback functions clear the
-get_link_status flag and systematically return a "pseudo-error". This means
-that the link is not detected as up until the next execution of the
-e1000_watchdog_task() 2 seconds later.
+At the point of sysfs callback, the call to gup is
+done without mmap_sem (or any lock for that matter).
+This is racy. As such, use the get_user_pages_fast()
+alternative and safely avoid taking the lock, if possible.
 
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/ich8lan.c |    2 +-
- drivers/net/ethernet/intel/e1000e/mac.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/ia64/kernel/err_inject.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1600,7 +1600,7 @@ static s32 e1000_check_for_copper_link_i
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
+--- a/arch/ia64/kernel/err_inject.c
++++ b/arch/ia64/kernel/err_inject.c
+@@ -142,7 +142,7 @@ store_virtual_to_phys(struct device *dev
+ 	u64 virt_addr=simple_strtoull(buf, NULL, 16);
+ 	int ret;
  
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
+-	ret = get_user_pages(virt_addr, 1, FOLL_WRITE, NULL, NULL);
++	ret = get_user_pages_fast(virt_addr, 1, FOLL_WRITE, NULL);
+ 	if (ret<=0) {
+ #ifdef ERR_INJ_DEBUG
+ 		printk("Virtual address %lx is not existing.\n",virt_addr);
