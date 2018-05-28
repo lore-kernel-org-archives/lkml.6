@@ -1,31 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938855AbeE1Mqs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:46:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45562 "EHLO mail.kernel.org"
+        id S938968AbeE1MrJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:47:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937702AbeE1K5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:22 -0400
+        id S937615AbeE1K5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org,
+        "David H. Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Hugh Dickins <hughd@google.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>, Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Nadav Amit <namit@vmware.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Pavel Machek <pavel@ucw.cz>, Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <llong@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        aliguori@amazon.com, daniel.gruss@iaik.tugraz.at, hughd@google.com,
+        keescook@google.com, linux-mm@kvack.org,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 323/496] x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
-Date: Mon, 28 May 2018 12:01:48 +0200
-Message-Id: <20180528100333.440482048@linuxfoundation.org>
+Subject: [PATCH 4.14 322/496] x86/pgtable: Dont set huge PUD/PMD on non-leaf entries
+Date: Mon, 28 May 2018 12:01:47 +0200
+Message-Id: <20180528100333.398599532@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -41,62 +46,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Joerg Roedel <joro@8bytes.org>
 
-[ Upstream commit 639d6aafe437a7464399d2a77d006049053df06f ]
+[ Upstream commit e3e288121408c3abeed5af60b87b95c847143845 ]
 
-__ro_after_init data gets stuck in the .rodata section.  That's normally
-fine because the kernel itself manages the R/W properties.
+The pmd_set_huge() and pud_set_huge() functions are used from
+the generic ioremap() code to establish large mappings where this
+is possible.
 
-But, if we run __change_page_attr() on an area which is __ro_after_init,
-the .rodata checks will trigger and force the area to be immediately
-read-only, even if it is early-ish in boot.  This caused problems when
-trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
-it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
-to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
-a __ro_after_init data structure.
+But the generic ioremap() code does not check whether the
+PMD/PUD entries are already populated with a non-leaf entry,
+so that any page-table pages these entries point to will be
+lost.
 
-To fix this, add the kernel_set_to_readonly check, just like we have
-for kernel text, just a few lines below in this function.
+Further, on x86-32 with SHARED_KERNEL_PMD=0, this causes a
+BUG_ON() in vmalloc_sync_one() when PMD entries are synced
+from swapper_pg_dir to the current page-table. This happens
+because the PMD entry from swapper_pg_dir was promoted to a
+huge-page entry while the current PGD still contains the
+non-leaf entry. Because both entries are present and point
+to a different page, the BUG_ON() triggers.
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Kees Cook <keescook@chromium.org>
+This was actually triggered with pti-x32 enabled in a KVM
+virtual machine by the graphics driver.
+
+A real and better fix for that would be to improve the
+page-table handling in the generic ioremap() code. But that is
+out-of-scope for this patch-set and left for later work.
+
+Reported-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Hugh Dickins <hughd@google.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nadav Amit <namit@vmware.com>
+Cc: Pavel Machek <pavel@ucw.cz>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <llong@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180406205514.8D898241@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180411152437.GC15462@8bytes.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pageattr.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/mm/pgtable.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -298,9 +298,11 @@ static inline pgprot_t static_protection
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/mm.h>
+ #include <linux/gfp.h>
++#include <linux/hugetlb.h>
+ #include <asm/pgalloc.h>
+ #include <asm/pgtable.h>
+ #include <asm/tlb.h>
+@@ -636,6 +637,10 @@ int pud_set_huge(pud_t *pud, phys_addr_t
+ 	    (mtrr != MTRR_TYPE_WRBACK))
+ 		return 0;
  
- 	/*
- 	 * The .rodata section needs to be read-only. Using the pfn
--	 * catches all aliases.
-+	 * catches all aliases.  This also includes __ro_after_init,
-+	 * so do not enforce until kernel_set_to_readonly is true.
- 	 */
--	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
-+	if (kernel_set_to_readonly &&
-+	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
- 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
- 		pgprot_val(forbidden) |= _PAGE_RW;
++	/* Bail out if we are we on a populated non-leaf entry: */
++	if (pud_present(*pud) && !pud_huge(*pud))
++		return 0;
++
+ 	prot = pgprot_4k_2_large(prot);
  
+ 	set_pte((pte_t *)pud, pfn_pte(
+@@ -664,6 +669,10 @@ int pmd_set_huge(pmd_t *pmd, phys_addr_t
+ 		return 0;
+ 	}
+ 
++	/* Bail out if we are we on a populated non-leaf entry: */
++	if (pmd_present(*pmd) && !pmd_huge(*pmd))
++		return 0;
++
+ 	prot = pgprot_4k_2_large(prot);
+ 
+ 	set_pte((pte_t *)pmd, pfn_pte(
