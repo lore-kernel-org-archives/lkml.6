@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162013AbeE1KfF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:35:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161978AbeE1Kez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1161982AbeE1Kez (ORCPT <rfc822;w@1wt.eu>);
         Mon, 28 May 2018 06:34:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161940AbeE1Kep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Maximilian Wilhelm <max@sdn.clinic>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 194/329] netfilter: ebtables: fix erroneous reject of last rule
-Date: Mon, 28 May 2018 12:02:03 +0200
-Message-Id: <20180528100258.461626511@linuxfoundation.org>
+Subject: [PATCH 4.9 147/329] batman-adv: invalidate checksum on fragment reassembly
+Date: Mon, 28 May 2018 12:01:16 +0200
+Message-Id: <20180528100254.784429848@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,35 +32,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-[ Upstream commit 932909d9b28d27e807ff8eecb68c7748f6701628 ]
+[ Upstream commit 3bf2a09da956b43ecfaa630a2ef9a477f991a46a ]
 
-The last rule in the blob has next_entry offset that is same as total size.
-This made "ebtables32 -A OUTPUT -d de:ad:be:ef:01:02" fail on 64 bit kernel.
+A more sophisticated implementation could try to combine fragment checksums
+when all fragments have CHECKSUM_COMPLETE and are split at even offsets.
+For now, we just set ip_summed to CHECKSUM_NONE to avoid "hw csum failure"
+warnings in the kernel log when fragmented frames are received. In
+consequence, skb_pull_rcsum() can be replaced with skb_pull().
 
-Fixes: b71812168571fa ("netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Note that in usual setups, packets don't reach batman-adv with
+CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
+batadv's ethtype?), which is why the log messages do not occur on every
+system using batman-adv. I could reproduce this issue by stacking
+batman-adv on top of a VXLAN interface.
+
+Fixes: 610bfc6bc99b ("batman-adv: Receive fragmented packets and merge")
+Tested-by: Maximilian Wilhelm <max@sdn.clinic>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/netfilter/ebtables.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/batman-adv/fragmentation.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2097,8 +2097,12 @@ static int size_entry_mwt(struct ebt_ent
- 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
+--- a/net/batman-adv/fragmentation.c
++++ b/net/batman-adv/fragmentation.c
+@@ -276,7 +276,8 @@ batadv_frag_merge_packets(struct hlist_h
+ 	/* Move the existing MAC header to just before the payload. (Override
+ 	 * the fragment header.)
  	 */
- 	for (i = 0; i < 4 ; ++i) {
--		if (offsets[i] >= *total)
-+		if (offsets[i] > *total)
- 			return -EINVAL;
-+
-+		if (i < 3 && offsets[i] == *total)
-+			return -EINVAL;
-+
- 		if (i == 0)
- 			continue;
- 		if (offsets[i-1] > offsets[i])
+-	skb_pull_rcsum(skb_out, hdr_size);
++	skb_pull(skb_out, hdr_size);
++	skb_out->ip_summed = CHECKSUM_NONE;
+ 	memmove(skb_out->data - ETH_HLEN, skb_mac_header(skb_out), ETH_HLEN);
+ 	skb_set_mac_header(skb_out, -ETH_HLEN);
+ 	skb_reset_network_header(skb_out);
