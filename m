@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754634AbeE1KGe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:06:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
+        id S1754755AbeE1KGm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:06:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754549AbeE1KGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:25 -0400
+        id S1754549AbeE1KGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 019/185] kconfig: Dont leak main menus during parsing
-Date: Mon, 28 May 2018 12:01:00 +0200
-Message-Id: <20180528100051.726703318@linuxfoundation.org>
+Subject: [PATCH 3.18 022/185] btrfs: Fix out of bounds access in btrfs_search_slot
+Date: Mon, 28 May 2018 12:01:03 +0200
+Message-Id: <20180528100051.874462233@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,113 +30,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit 0724a7c32a54e3e50d28e19e30c59014f61d4e2c ]
+[ Upstream commit 9ea2c7c9da13c9073e371c046cbbc45481ecb459 ]
 
-If a 'mainmenu' entry appeared in the Kconfig files, two things would
-leak:
+When modifying a tree where the root is at BTRFS_MAX_LEVEL - 1 then
+the level variable is going to be 7 (this is the max height of the
+tree). On the other hand btrfs_cow_block is always called with
+"level + 1" as an index into the nodes and slots arrays. This leads to
+an out of bounds access. Admittdely this will be benign since an OOB
+access of the nodes array will likely read the 0th element from the
+slots array, which in this case is going to be 0 (since we start CoW at
+the top of the tree). The OOB access into the slots array in turn will
+read the 0th and 1st values of the locks array, which would both be 0
+at the time. However, this benign behavior relies on the fact that the
+path being passed hasn't been initialised, if it has already been used to
+query a btree then it could potentially have populated the nodes/slots arrays.
 
-	- The 'struct property' allocated for the default "Linux Kernel
-	  Configuration" prompt.
+Fix it by explicitly checking if we are at level 7 (the maximum allowed
+index in nodes/slots arrays) and explicitly call the CoW routine with
+NULL for parent's node/slot.
 
-	- The string for the T_WORD/T_WORD_QUOTE prompt after the
-	  T_MAINMENU token, allocated on the heap in zconf.l.
-
-To fix it, introduce a new 'no_mainmenu_stmt' nonterminal that matches
-if there's no 'mainmenu' and adds the default prompt. That means the
-prompt only gets allocated once regardless of whether there's a
-'mainmenu' statement or not, and managing it becomes simple.
-
-Summary from Valgrind on 'menuconfig' (ARCH=x86) before the fix:
-
-	LEAK SUMMARY:
-	   definitely lost: 344,568 bytes in 14,352 blocks
-	   ...
-
-Summary after the fix:
-
-	LEAK SUMMARY:
-	   definitely lost: 344,440 bytes in 14,350 blocks
-	   ...
-
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Fixes-coverity-id: 711515
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/kconfig/zconf.y |   33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ fs/btrfs/ctree.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/scripts/kconfig/zconf.y
-+++ b/scripts/kconfig/zconf.y
-@@ -102,7 +102,27 @@ static struct menu *current_menu, *curre
- %%
- input: nl start | start;
- 
--start: mainmenu_stmt stmt_list | stmt_list;
-+start: mainmenu_stmt stmt_list | no_mainmenu_stmt stmt_list;
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2758,6 +2758,8 @@ again:
+ 		 * contention with the cow code
+ 		 */
+ 		if (cow) {
++			bool last_level = (level == (BTRFS_MAX_LEVEL - 1));
 +
-+/* mainmenu entry */
-+
-+mainmenu_stmt: T_MAINMENU prompt nl
-+{
-+	menu_add_prompt(P_MENU, $2, NULL);
-+};
-+
-+/* Default main menu, if there's no mainmenu entry */
-+
-+no_mainmenu_stmt: /* empty */
-+{
-+	/*
-+	 * Hack: Keep the main menu title on the heap so we can safely free it
-+	 * later regardless of whether it comes from the 'prompt' in
-+	 * mainmenu_stmt or here
-+	 */
-+	menu_add_prompt(P_MENU, strdup("Linux Kernel Configuration"), NULL);
-+};
-+
+ 			/*
+ 			 * if we don't really need to cow this block
+ 			 * then we don't want to set the path blocking,
+@@ -2782,9 +2784,13 @@ again:
+ 			}
  
- stmt_list:
- 	  /* empty */
-@@ -339,13 +359,6 @@ if_block:
- 	| if_block choice_stmt
- ;
- 
--/* mainmenu entry */
--
--mainmenu_stmt: T_MAINMENU prompt nl
--{
--	menu_add_prompt(P_MENU, $2, NULL);
--};
--
- /* menu entry */
- 
- menu: T_MENU prompt T_EOL
-@@ -486,6 +499,7 @@ word_opt: /* empty */			{ $$ = NULL; }
- 
- void conf_parse(const char *name)
- {
-+	const char *tmp;
- 	struct symbol *sym;
- 	int i;
- 
-@@ -493,7 +507,6 @@ void conf_parse(const char *name)
- 
- 	sym_init();
- 	_menu_init();
--	rootmenu.prompt = menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
- 
- 	if (getenv("ZCONF_DEBUG"))
- 		zconfdebug = 1;
-@@ -503,8 +516,10 @@ void conf_parse(const char *name)
- 	if (!modules_sym)
- 		modules_sym = sym_find( "n" );
- 
-+	tmp = rootmenu.prompt->text;
- 	rootmenu.prompt->text = _(rootmenu.prompt->text);
- 	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
-+	free((char*)tmp);
- 
- 	menu_finalize(&rootmenu);
- 	for_all_symbols(i, sym) {
+ 			btrfs_set_path_blocking(p);
+-			err = btrfs_cow_block(trans, root, b,
+-					      p->nodes[level + 1],
+-					      p->slots[level + 1], &b);
++			if (last_level)
++				err = btrfs_cow_block(trans, root, b, NULL, 0,
++						      &b);
++			else
++				err = btrfs_cow_block(trans, root, b,
++						      p->nodes[level + 1],
++						      p->slots[level + 1], &b);
+ 			if (err) {
+ 				ret = err;
+ 				goto done;
