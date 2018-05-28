@@ -1,53 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424601AbeE1Lp4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:45:56 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36565 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423977AbeE1Lpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:45:53 -0400
-X-Google-Smtp-Source: AB8JxZpRsgBm5MuXgOYKhXc25IOTdFJBX+0cG5kXvtVSf0u/TIKbcXNZSP2LpIa0hmWmkA/paxj3Uw==
-From: dylanchu <chdy.uuid@gmail.com>
-To: ike.pan@canonical.com, dvhart@infradead.org, andy@infradead.org
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dylanchu <chdy.uuid@gmail.com>
-Subject: [PATCH] ideapad-laptop: Add E42-80 to no_hw_rfkill
-Date: Mon, 28 May 2018 19:44:48 +0800
-Message-Id: <20180528114448.11710-1-chdy.uuid@gmail.com>
+        id S1424801AbeE1LqR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:46:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423260AbeE1LK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:56 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Frank Asseg <frank.asseg@objecthunter.net>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 117/272] tools/thermal: tmon: fix for segfault
+Date: Mon, 28 May 2018 12:02:30 +0200
+Message-Id: <20180528100250.979378409@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lenovo Zhaoyang E42-80 is another Lenovo model without
-a hw rfkill switch, resulting in wifi always reported
-as hard blocked.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Add the model to the list of models without rfkill switch.
+------------------
 
-Signed-off-by: dylanchu <chdy.uuid@gmail.com>
+From: Frank Asseg <frank.asseg@objecthunter.net>
+
+[ Upstream commit 6c59f64b7ecf2bccbe73931d7d573d66ed13b537 ]
+
+Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in the
+ncurses tmon application. The segfault is caused by incrementing
+cur_thermal_record in the main function without checking if it's value reached
+NR_THERMAL_RECORD immediately. Since the boundary check only occurred in
+update_thermal_data a race condition existed, which lead to an attempted read
+beyond the last element of the trec array.
+
+The fix was implemented by moving the cur_thermal_record incrementation to the
+update_thermal_data function using a temporary variable on which the boundary
+condition is checked before updating cur_thread_record, so that the variable is
+never incremented beyond the trec array's boundary.
+
+It seems the segfault does not occur on every machine: On a HP EliteBook G4 the
+segfault happens, while it does not happen on a Thinkpad T540p.
+
+Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/ideapad-laptop.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/thermal/tmon/sysfs.c |   12 +++++++-----
+ tools/thermal/tmon/tmon.c  |    1 -
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 535199c9e6bc..6fdd70373ed3 100644
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -1163,6 +1163,13 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
- 			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo YOGA 920-13IKB"),
- 		},
- 	},
-+	{
-+		.ident = "Lenovo Zhaoyang E42-80",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ZHAOYANG E42-80"),
-+		},
-+	},
- 	{}
- };
-
---
-2.17.0
+--- a/tools/thermal/tmon/sysfs.c
++++ b/tools/thermal/tmon/sysfs.c
+@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst
+ int update_thermal_data()
+ {
+ 	int i;
++	int next_thermal_record = cur_thermal_record + 1;
+ 	char tz_name[256];
+ 	static unsigned long samples;
+ 
+@@ -495,9 +496,9 @@ int update_thermal_data()
+ 	}
+ 
+ 	/* circular buffer for keeping historic data */
+-	if (cur_thermal_record >= NR_THERMAL_RECORDS)
+-		cur_thermal_record = 0;
+-	gettimeofday(&trec[cur_thermal_record].tv, NULL);
++	if (next_thermal_record >= NR_THERMAL_RECORDS)
++		next_thermal_record = 0;
++	gettimeofday(&trec[next_thermal_record].tv, NULL);
+ 	if (tmon_log) {
+ 		fprintf(tmon_log, "%lu ", ++samples);
+ 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
+@@ -507,11 +508,12 @@ int update_thermal_data()
+ 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
+ 			ptdata.tzi[i].instance);
+ 		sysfs_get_ulong(tz_name, "temp",
+-				&trec[cur_thermal_record].temp[i]);
++				&trec[next_thermal_record].temp[i]);
+ 		if (tmon_log)
+ 			fprintf(tmon_log, "%lu ",
+-				trec[cur_thermal_record].temp[i]/1000);
++				trec[next_thermal_record].temp[i] / 1000);
+ 	}
++	cur_thermal_record = next_thermal_record;
+ 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
+ 		char cdev_name[256];
+ 		unsigned long val;
+--- a/tools/thermal/tmon/tmon.c
++++ b/tools/thermal/tmon/tmon.c
+@@ -336,7 +336,6 @@ int main(int argc, char **argv)
+ 			show_data_w();
+ 			show_cooling_device();
+ 		}
+-		cur_thermal_record++;
+ 		time_elapsed += ticktime;
+ 		controller_handler(trec[0].temp[target_tz_index] / 1000,
+ 				&yk);
