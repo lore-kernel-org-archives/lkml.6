@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164243AbeE1KyD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:54:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42938 "EHLO mail.kernel.org"
+        id S1164265AbeE1KyQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:54:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164165AbeE1Kxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:55 -0400
+        id S1164244AbeE1KyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 247/496] ipv4: lock mtu in fnhe when received PMTU < net.ipv4.route.min_pmtu
-Date: Mon, 28 May 2018 12:00:32 +0200
-Message-Id: <20180528100330.302458730@linuxfoundation.org>
+Subject: [PATCH 4.14 250/496] gpu: ipu-v3: prg: avoid possible array underflow
+Date: Mon, 28 May 2018 12:00:35 +0200
+Message-Id: <20180528100330.420599863@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,219 +30,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit d52e5a7e7ca49457dd31fc8b42fb7c0d58a31221 ]
+[ Upstream commit 746d024c3211813946b319411aeb2b47767f8fb0 ]
 
-Prior to the rework of PMTU information storage in commit
-2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer."),
-when a PMTU event advertising a PMTU smaller than
-net.ipv4.route.min_pmtu was received, we would disable setting the DF
-flag on packets by locking the MTU metric, and set the PMTU to
-net.ipv4.route.min_pmtu.
+gcc-8 reports that we access an array with a negative index
+in an error case:
 
-Since then, we don't disable DF, and set PMTU to
-net.ipv4.route.min_pmtu, so the intermediate router that has this link
-with a small MTU will have to drop the packets.
+drivers/gpu/ipu-v3/ipu-prg.c: In function 'ipu_prg_channel_disable':
+drivers/gpu/ipu-v3/ipu-prg.c:252:43: error: array subscript -22 is below array bounds of 'struct ipu_prg_channel[3]' [-Werror=array-bounds]
 
-This patch reestablishes pre-2.6.39 behavior by splitting
-rtable->rt_pmtu into a bitfield with rt_mtu_locked and rt_pmtu.
-rt_mtu_locked indicates that we shouldn't set the DF bit on that path,
-and is checked in ip_dont_fragment().
+This moves the range check in front of the first time that
+variable gets used.
 
-One possible workaround is to set net.ipv4.route.min_pmtu to a value low
-enough to accommodate the lowest MTU encountered.
-
-Fixes: 2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer.")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/ip.h        |   11 +++++++++--
- include/net/ip_fib.h    |    1 +
- include/net/route.h     |    3 ++-
- net/ipv4/route.c        |   26 +++++++++++++++++++-------
- net/ipv4/xfrm4_policy.c |    1 +
- 5 files changed, 32 insertions(+), 10 deletions(-)
+ drivers/gpu/ipu-v3/ipu-prg.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/include/net/ip.h
-+++ b/include/net/ip.h
-@@ -326,6 +326,13 @@ int ip_decrease_ttl(struct iphdr *iph)
- 	return --iph->ttl;
- }
+--- a/drivers/gpu/ipu-v3/ipu-prg.c
++++ b/drivers/gpu/ipu-v3/ipu-prg.c
+@@ -252,10 +252,14 @@ void ipu_prg_channel_disable(struct ipuv
+ {
+ 	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
+ 	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
+-	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
++	struct ipu_prg_channel *chan;
+ 	u32 val;
  
-+static inline int ip_mtu_locked(const struct dst_entry *dst)
-+{
-+	const struct rtable *rt = (const struct rtable *)dst;
+-	if (!chan->enabled || prg_chan < 0)
++	if (prg_chan < 0)
++		return;
 +
-+	return rt->rt_mtu_locked || dst_metric_locked(dst, RTAX_MTU);
-+}
-+
- static inline
- int ip_dont_fragment(const struct sock *sk, const struct dst_entry *dst)
- {
-@@ -333,7 +340,7 @@ int ip_dont_fragment(const struct sock *
- 
- 	return  pmtudisc == IP_PMTUDISC_DO ||
- 		(pmtudisc == IP_PMTUDISC_WANT &&
--		 !(dst_metric_locked(dst, RTAX_MTU)));
-+		 !ip_mtu_locked(dst));
- }
- 
- static inline bool ip_sk_accept_pmtu(const struct sock *sk)
-@@ -359,7 +366,7 @@ static inline unsigned int ip_dst_mtu_ma
- 	struct net *net = dev_net(dst->dev);
- 
- 	if (net->ipv4.sysctl_ip_fwd_use_pmtu ||
--	    dst_metric_locked(dst, RTAX_MTU) ||
-+	    ip_mtu_locked(dst) ||
- 	    !forwarding)
- 		return dst_mtu(dst);
- 
---- a/include/net/ip_fib.h
-+++ b/include/net/ip_fib.h
-@@ -59,6 +59,7 @@ struct fib_nh_exception {
- 	int				fnhe_genid;
- 	__be32				fnhe_daddr;
- 	u32				fnhe_pmtu;
-+	bool				fnhe_mtu_locked;
- 	__be32				fnhe_gw;
- 	unsigned long			fnhe_expires;
- 	struct rtable __rcu		*fnhe_rth_input;
---- a/include/net/route.h
-+++ b/include/net/route.h
-@@ -63,7 +63,8 @@ struct rtable {
- 	__be32			rt_gateway;
- 
- 	/* Miscellaneous cached information */
--	u32			rt_pmtu;
-+	u32			rt_mtu_locked:1,
-+				rt_pmtu:31;
- 
- 	u32			rt_table_id;
- 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -639,6 +639,7 @@ static inline u32 fnhe_hashfun(__be32 da
- static void fill_route_from_fnhe(struct rtable *rt, struct fib_nh_exception *fnhe)
- {
- 	rt->rt_pmtu = fnhe->fnhe_pmtu;
-+	rt->rt_mtu_locked = fnhe->fnhe_mtu_locked;
- 	rt->dst.expires = fnhe->fnhe_expires;
- 
- 	if (fnhe->fnhe_gw) {
-@@ -649,7 +650,7 @@ static void fill_route_from_fnhe(struct
- }
- 
- static void update_or_create_fnhe(struct fib_nh *nh, __be32 daddr, __be32 gw,
--				  u32 pmtu, unsigned long expires)
-+				  u32 pmtu, bool lock, unsigned long expires)
- {
- 	struct fnhe_hash_bucket *hash;
- 	struct fib_nh_exception *fnhe;
-@@ -686,8 +687,10 @@ static void update_or_create_fnhe(struct
- 			fnhe->fnhe_genid = genid;
- 		if (gw)
- 			fnhe->fnhe_gw = gw;
--		if (pmtu)
-+		if (pmtu) {
- 			fnhe->fnhe_pmtu = pmtu;
-+			fnhe->fnhe_mtu_locked = lock;
-+		}
- 		fnhe->fnhe_expires = max(1UL, expires);
- 		/* Update all cached dsts too */
- 		rt = rcu_dereference(fnhe->fnhe_rth_input);
-@@ -711,6 +714,7 @@ static void update_or_create_fnhe(struct
- 		fnhe->fnhe_daddr = daddr;
- 		fnhe->fnhe_gw = gw;
- 		fnhe->fnhe_pmtu = pmtu;
-+		fnhe->fnhe_mtu_locked = lock;
- 		fnhe->fnhe_expires = max(1UL, expires);
- 
- 		/* Exception created; mark the cached routes for the nexthop
-@@ -792,7 +796,8 @@ static void __ip_do_redirect(struct rtab
- 				struct fib_nh *nh = &FIB_RES_NH(res);
- 
- 				update_or_create_fnhe(nh, fl4->daddr, new_gw,
--						0, jiffies + ip_rt_gc_timeout);
-+						0, false,
-+						jiffies + ip_rt_gc_timeout);
- 			}
- 			if (kill_route)
- 				rt->dst.obsolete = DST_OBSOLETE_KILL;
-@@ -1005,15 +1010,18 @@ static void __ip_rt_update_pmtu(struct r
- {
- 	struct dst_entry *dst = &rt->dst;
- 	struct fib_result res;
-+	bool lock = false;
- 
--	if (dst_metric_locked(dst, RTAX_MTU))
-+	if (ip_mtu_locked(dst))
++	chan = &prg->chan[prg_chan];
++	if (!chan->enabled)
  		return;
  
- 	if (ipv4_mtu(dst) < mtu)
- 		return;
+ 	clk_prepare_enable(prg->clk_ipg);
+@@ -282,13 +286,15 @@ int ipu_prg_channel_configure(struct ipu
+ {
+ 	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
+ 	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
+-	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
++	struct ipu_prg_channel *chan;
+ 	u32 val;
+ 	int ret;
  
--	if (mtu < ip_rt_min_pmtu)
-+	if (mtu < ip_rt_min_pmtu) {
-+		lock = true;
- 		mtu = ip_rt_min_pmtu;
-+	}
+ 	if (prg_chan < 0)
+ 		return prg_chan;
  
- 	if (rt->rt_pmtu == mtu &&
- 	    time_before(jiffies, dst->expires - ip_rt_mtu_expires / 2))
-@@ -1023,7 +1031,7 @@ static void __ip_rt_update_pmtu(struct r
- 	if (fib_lookup(dev_net(dst->dev), fl4, &res, 0) == 0) {
- 		struct fib_nh *nh = &FIB_RES_NH(res);
- 
--		update_or_create_fnhe(nh, fl4->daddr, 0, mtu,
-+		update_or_create_fnhe(nh, fl4->daddr, 0, mtu, lock,
- 				      jiffies + ip_rt_mtu_expires);
- 	}
- 	rcu_read_unlock();
-@@ -1276,7 +1284,7 @@ static unsigned int ipv4_mtu(const struc
- 
- 	mtu = READ_ONCE(dst->dev->mtu);
- 
--	if (unlikely(dst_metric_locked(dst, RTAX_MTU))) {
-+	if (unlikely(ip_mtu_locked(dst))) {
- 		if (rt->rt_uses_gateway && mtu > 576)
- 			mtu = 576;
- 	}
-@@ -1548,6 +1556,7 @@ struct rtable *rt_dst_alloc(struct net_d
- 		rt->rt_is_input = 0;
- 		rt->rt_iif = 0;
- 		rt->rt_pmtu = 0;
-+		rt->rt_mtu_locked = 0;
- 		rt->rt_gateway = 0;
- 		rt->rt_uses_gateway = 0;
- 		rt->rt_table_id = 0;
-@@ -2526,6 +2535,7 @@ struct dst_entry *ipv4_blackhole_route(s
- 		rt->rt_is_input = ort->rt_is_input;
- 		rt->rt_iif = ort->rt_iif;
- 		rt->rt_pmtu = ort->rt_pmtu;
-+		rt->rt_mtu_locked = ort->rt_mtu_locked;
- 
- 		rt->rt_genid = rt_genid_ipv4(net);
- 		rt->rt_flags = ort->rt_flags;
-@@ -2628,6 +2638,8 @@ static int rt_fill_info(struct net *net,
- 	memcpy(metrics, dst_metrics_ptr(&rt->dst), sizeof(metrics));
- 	if (rt->rt_pmtu && expires)
- 		metrics[RTAX_MTU - 1] = rt->rt_pmtu;
-+	if (rt->rt_mtu_locked && expires)
-+		metrics[RTAX_LOCK - 1] |= BIT(RTAX_MTU);
- 	if (rtnetlink_put_metrics(skb, metrics) < 0)
- 		goto nla_put_failure;
- 
---- a/net/ipv4/xfrm4_policy.c
-+++ b/net/ipv4/xfrm4_policy.c
-@@ -100,6 +100,7 @@ static int xfrm4_fill_dst(struct xfrm_ds
- 	xdst->u.rt.rt_gateway = rt->rt_gateway;
- 	xdst->u.rt.rt_uses_gateway = rt->rt_uses_gateway;
- 	xdst->u.rt.rt_pmtu = rt->rt_pmtu;
-+	xdst->u.rt.rt_mtu_locked = rt->rt_mtu_locked;
- 	xdst->u.rt.rt_table_id = rt->rt_table_id;
- 	INIT_LIST_HEAD(&xdst->u.rt.rt_uncached);
- 
++	chan = &prg->chan[prg_chan];
++
+ 	if (chan->enabled) {
+ 		ipu_pre_update(prg->pres[chan->used_pre], *eba);
+ 		return 0;
