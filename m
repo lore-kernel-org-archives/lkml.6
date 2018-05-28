@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163344AbeE1N1X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37662 "EHLO mail.kernel.org"
+        id S1165315AbeE1N1l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:27:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163106AbeE1Krg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:36 -0400
+        id S1163246AbeE1Krb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Dave Jiang <dave.jiang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 112/496] kernel/relay.c: limit kmalloc size to KMALLOC_MAX_SIZE
-Date: Mon, 28 May 2018 11:58:17 +0200
-Message-Id: <20180528100324.632123087@linuxfoundation.org>
+Subject: [PATCH 4.14 110/496] md: raid5: avoid string overflow warning
+Date: Mon, 28 May 2018 11:58:15 +0200
+Message-Id: <20180528100324.540683730@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -34,42 +30,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e ]
+[ Upstream commit 53b8d89ddbdbb0e4625a46d2cdbb6f106c52f801 ]
 
-chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
-of chan->n_subbufs * sizeof(size_t *).
+gcc warns about a possible overflow of the kmem_cache string, when adding
+four characters to a string of the same length:
 
-kmalloc_slab() will generate a warning when this fails if
-chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
+drivers/md/raid5.c: In function 'setup_conf':
+drivers/md/raid5.c:2207:34: error: '-alt' directive writing 4 bytes into a region of size between 1 and 32 [-Werror=format-overflow=]
+  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
+                                  ^~~~
+drivers/md/raid5.c:2207:2: note: 'sprintf' output between 5 and 36 bytes into a destination of size 32
+  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Limit chan->n_subbufs to the maximum allowed kmalloc() size.
+If I'm counting correctly, we need 11 characters for the fixed part
+of the string and 18 characters for a 64-bit pointer (when no gendisk
+is used), so that leaves three characters for conf->level, which should
+always be sufficient.
 
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
-Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This makes the code use snprintf() with the correct length, to
+make the code more robust against changes, and to get the compiler
+to shut up.
+
+In commit f4be6b43f1ac ("md/raid5: ensure we create a unique name for
+kmem_cache when mddev has no gendisk") from 2010, Neil said that
+the pointer could be removed "shortly" once devices without gendisk
+are disallowed. I have no idea if that happened, but if it did, that
+should probably be changed as well.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/relay.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid5.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -163,7 +163,7 @@ static struct rchan_buf *relay_create_bu
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -2197,15 +2197,16 @@ static int grow_one_stripe(struct r5conf
+ static int grow_stripes(struct r5conf *conf, int num)
  {
- 	struct rchan_buf *buf;
+ 	struct kmem_cache *sc;
++	size_t namelen = sizeof(conf->cache_name[0]);
+ 	int devs = max(conf->raid_disks, conf->previous_raid_disks);
  
--	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
-+	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
- 		return NULL;
+ 	if (conf->mddev->gendisk)
+-		sprintf(conf->cache_name[0],
++		snprintf(conf->cache_name[0], namelen,
+ 			"raid%d-%s", conf->level, mdname(conf->mddev));
+ 	else
+-		sprintf(conf->cache_name[0],
++		snprintf(conf->cache_name[0], namelen,
+ 			"raid%d-%p", conf->level, conf->mddev);
+-	sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
++	snprintf(conf->cache_name[1], namelen, "%.27s-alt", conf->cache_name[0]);
  
- 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
+ 	conf->active_name = 0;
+ 	sc = kmem_cache_create(conf->cache_name[conf->active_name],
