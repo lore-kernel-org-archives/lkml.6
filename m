@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939077AbeE1NkP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:40:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35368 "EHLO mail.kernel.org"
+        id S937273AbeE1Nkr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:40:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937511AbeE1Kol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:41 -0400
+        id S937552AbeE1Kof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 081/496] ARM: dts: rockchip: Fix DWMMC clocks
-Date: Mon, 28 May 2018 11:57:46 +0200
-Message-Id: <20180528100323.186877882@linuxfoundation.org>
+Subject: [PATCH 4.14 079/496] IB/uverbs: Fix unbalanced unlock on error path for rdma_explicit_destroy
+Date: Mon, 28 May 2018 11:57:44 +0200
+Message-Id: <20180528100323.106627523@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,77 +31,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-[ Upstream commit e78c637127ee7683d606737f2e62b5da6fd7b1c3 ]
+[ Upstream commit ec6f8401c48a86809237e86878a6fac6b281118f ]
 
-Trying to boot an RK3328 box with an HS200-capable eMMC, I see said eMMC
-fail to initialise as it can't run its tuning procedure, because the
-sample clock is missing. Upon closer inspection, whilst the clock is
-present in the DT, its name is subtly incorrect per the binding, so
-__of_clk_get_by_name() never finds it. By inspection, the drive clock
-suffers from a similar problem, so has never worked properly either.
+If remove_commit fails then the lock is left locked while the uobj still
+exists. Eventually the kernel will deadlock.
 
-This error has propagated across the 32-bit DTs too, so fix those up.
+lockdep detects this and says:
 
-Fixes: 187d7967a5ee ("ARM: dts: rockchip: add the sdio/sdmmc node for rk3036")
-Fixes: faea098e1808 ("ARM: dts: rockchip: add core rk3036 dtsi")
-Fixes: 9848ebeb952d ("ARM: dts: rockchip: add core rk3228 dtsi")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+ test/4221 is leaving the kernel with locks still held!
+ 1 lock held by test/4221:
+  #0:  (&ucontext->cleanup_rwsem){.+.+}, at: [<000000001e5c7523>] rdma_explicit_destroy+0x37/0x120 [ib_uverbs]
+
+Fixes: 4da70da23e9b ("IB/core: Explicitly destroy an object while keeping uobject")
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/rk3036.dtsi |    4 ++--
- arch/arm/boot/dts/rk322x.dtsi |    6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/rdma_core.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -261,7 +261,7 @@
- 		max-frequency = <37500000>;
- 		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
- 			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
--		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
- 		resets = <&cru SRST_SDIO>;
-@@ -279,7 +279,7 @@
- 		max-frequency = <37500000>;
- 		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
- 			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
--		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		default-sample-phase = <158>;
- 		disable-wp;
- 		dmas = <&pdma 12>;
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -600,7 +600,7 @@
- 		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
- 			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
--		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
-@@ -613,7 +613,7 @@
- 		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
- 			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
--		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&sdio_clk &sdio_cmd &sdio_bus4>;
-@@ -628,7 +628,7 @@
- 		max-frequency = <37500000>;
- 		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
- 			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
--		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		bus-width = <8>;
- 		default-sample-phase = <158>;
- 		fifo-depth = <0x100>;
+--- a/drivers/infiniband/core/rdma_core.c
++++ b/drivers/infiniband/core/rdma_core.c
+@@ -486,12 +486,13 @@ int rdma_explicit_destroy(struct ib_uobj
+ 	ret = uobject->type->type_class->remove_commit(uobject,
+ 						       RDMA_REMOVE_DESTROY);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	uobject->type = &null_obj_type;
+ 
++out:
+ 	up_read(&ucontext->cleanup_rwsem);
+-	return 0;
++	return ret;
+ }
+ 
+ static void alloc_commit_idr_uobject(struct ib_uobject *uobj)
