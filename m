@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-99051-1527491374-2-10744627130581731882
+X-Cyrus-Session-Id: sloti22d1t05-99051-1527491322-2-17630323976155922924
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,26 +7,26 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527491374; b=T/Z2ZY62Xdf2xyDcfqVYVVYEtSbNqgDXAChytQQIy8xyyoyr9f
-    pJwmFevnU4wAHkCQ+RHQY6Up4kUlXhEN40DF8hIt1bmvfEb7ea4QNsG85emVuywq
-    6VUJzHpMCjUKo+R2Du/J/iaxZ8vKrqcsjVZloU4eNLXsRCOfpq0qZoXLOY71PdTh
-    ldsjc5YgEcIJUTpC0KT+2dF4hGJFzRqVIREjlVVCFyZpztyWjLtw/ryztyUdaylb
-    S2ggX8q0yxe8HNmGcRcQpDWgLTM8I+CSHi9+XOSLUjimnbXLdTYNU0O9F8o/Dhyc
-    usaG2yyhnKMV6r00OqJW7nlE+he0Y4pYKWVw==
+    1527491321; b=lpXHEC5qGjGKNjqPOihuHLUdw6eyzEm8Zl5/jAXsajCLIbGm3c
+    djzZRrZZ//rDNoKN5EtyaK8cfflwtndXWNRgAm6+7Jk6WWJ8EpQb3dGs6V+qQWdD
+    XIoaasQQ3H4H6f/x1mM7ZgSaxq7kshJuUMh1XL6eub9lM3eQmmKFQ2VKelWIeh5k
+    +xmrMWHlx7cDdBAt0rY61zZvUbLnFvgYMsrUwwmfnEqbtzueYgSX4FLcXwxMk+/d
+    Y8cbweeVasxFCvrpImJ7vU1qnS2D5kgtvZax2YMM+Tbd0OiynMDX6cwwaIAdBJrV
+    Mv67c0PXIgsODlBktBah5a19nxLuO97hBykw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491374;
-    bh=8AJI9LawfqgW7mcEgUzLn/Rfd1+28MRcbH8ZeLEq2S0=; b=hY/1CM8U23sk
-    2KYjVv5zPb44/Mfg1up5tyt+EDu3pw4ZQ7tKykmWflzZ2dJPvHs1mc5yvCHG5Dvi
-    tTSFYpZvHZdoIaQ03JmITO9eszqvPHlUNk2LtQSlwSw/GkNdHXo3fEnIDxY76Noc
-    arton4oq7d96Rqexc9WeSczBr75x55136obEl7apGds4vZxAxvQQwDPnMzu5pvw2
-    yva46azObpb5HbsZiRQZrdSgXHvJr22q4ENkWT9fgP/+9wV0GdSc9Rex27VujXXR
-    AIb9GkmcVZnYwwhWQStpKow1Sq1IqpB6Y5M8RVBsflKPD4AfgIzZsVjnXd1T4rdT
-    x0x7OX+Qbg==
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491321;
+    bh=bOSiJlEymdmFB1LwybizxY3sBFvLaE1r1uhVDg2kOfU=; b=UAoR7DPWmOkF
+    U1QgkE4yvhHHtrJGpIObLm0UMF/wPjHrwbfcLZtVAeR3WG95prjgtdxXzwqO1TAL
+    lo1A9ed4J7aJZ4OkPhG5XWtT35FUr0xD2OpWr90wbi+VEInIGG5F7ISNPQ4Kbbsd
+    7iizKrsi7YXKx80VFu9/Bx43Ho4m3guSXG6Fz/zvEBr12Im4Ou6bOjWE+pqjFs8y
+    9OefO6I5UMWUUxQ7x5doyQcOkqPucvI0nKd5gejBJZYCXjOxt8hny32Kx0X09+t8
+    iMOUar7yFwfqdFujOqW3KhSl5WqTSbD5E4tjl9Gu9ItCnxWOknqjoByPNJXzWj1I
+    dvWioCVb2A==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=fSC20RjZ header.a=rsa-sha256
+    header.i=@kernel.org header.b=Vs8ocMA7 header.a=rsa-sha256
     header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -42,7 +42,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=fSC20RjZ header.a=rsa-sha256
+      header.i=@kernel.org header.b=Vs8ocMA7 header.a=rsa-sha256
       header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -56,21 +56,21 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCfaChCHXm2RalQdwfXwmGMDYU+pgj9WbMIskyt2UNEOmH0JYZpqGy1ECV3SLc9zxQho+ELR/MxAux72aAQ9hTPlBmYKBMmHwSMHDMEJAo6SguoTAWmP
-    i91dYUAMPMy5OLdbXO+8aVB83ducQy+/tTJxyavOsM07ODKQDOsvXsFJkC4YcKWnYlUfeO28yVhaGmAWLIVV4kAjLgXtjYl/T8jI4xDux4qBPCl/V+bdvJGe
+X-CM-Envelope: MS4wfMFnaJDeorkxsDD0idBUTREkP9Ig4EQCgJNenMPOfyzKD50FPbItPCvE+YDiNzBLupcr1VSQzMBngWbsQOBUsmim6fSl4CcaIqT2o002DRclDbzh7aUA
+    ahgAptfCJnNEk+DOu4dJEUj6NUmJtwF9V6OaUh9ldMUUkyKmO96cQ3mVvC6muVhz6qUpLsqHJXvLkG+9Zk69I9uEKHio21hYwvOcPU0+ZS7Ya/J31sHLhmeJ
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=vQqmB3E4GQfW7Bs5r6wA:9 a=tJgELwuPVEwycBlX:21
-    a=PxT3qhjPceE5B1qf:21 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=I0i2l-to6hpxGGMJ4sMA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753682AbeE1HJb (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 03:09:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43130 "EHLO mail.kernel.org"
+        id S1753743AbeE1HIj (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 03:08:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753654AbeE1HJ3 (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 28 May 2018 03:09:29 -0400
+        id S1753639AbeE1HI0 (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 28 May 2018 03:08:26 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
@@ -98,9 +98,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Rich Felker <dalias@libc.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 19/27] ia64: kprobes: Don't call the ->break_handler() in ia64 kprobes code
-Date: Mon, 28 May 2018 16:09:02 +0900
-Message-Id: <152749134269.15132.4248763357482446430.stgit@devbox>
+Subject: [PATCH -tip v4 17/27] arm64: kprobes: Don't call the ->break_handler() in arm kprobes code
+Date: Mon, 28 May 2018 16:08:00 +0900
+Message-Id: <152749128042.15132.2835369804724511290.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
 References: <152749074878.15132.16693721906742461289.stgit@devbox>
@@ -114,59 +114,30 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Don't call the ->break_handler() from the ia64 kprobes code,
+Don't call the ->break_handler() from the arm kprobes code,
 because it was only used by jprobes which got removed.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/ia64/include/uapi/asm/break.h |    1 -
- arch/ia64/kernel/kprobes.c         |   10 ----------
- 2 files changed, 11 deletions(-)
+ arch/arm64/kernel/probes/kprobes.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/ia64/include/uapi/asm/break.h b/arch/ia64/include/uapi/asm/break.h
-index 5d742bcb0018..4ca110f0a94b 100644
---- a/arch/ia64/include/uapi/asm/break.h
-+++ b/arch/ia64/include/uapi/asm/break.h
-@@ -14,7 +14,6 @@
-  */
- #define __IA64_BREAK_KDB		0x80100
- #define __IA64_BREAK_KPROBE		0x81000 /* .. 0x81fff */
--#define __IA64_BREAK_JPROBE		0x82000
- 
- /*
-  * OS-specific break numbers:
-diff --git a/arch/ia64/kernel/kprobes.c b/arch/ia64/kernel/kprobes.c
-index 823e4bd03a18..74c8524e6309 100644
---- a/arch/ia64/kernel/kprobes.c
-+++ b/arch/ia64/kernel/kprobes.c
-@@ -817,14 +817,6 @@ static int __kprobes pre_kprobes_handler(struct die_args *args)
- 			prepare_ss(p, regs);
- 			kcb->kprobe_status = KPROBE_REENTER;
- 			return 1;
--		} else if (args->err == __IA64_BREAK_JPROBE) {
--			/*
--			 * jprobe instrumented function just completed
--			 */
--			p = __this_cpu_read(current_kprobe);
--			if (p->break_handler && p->break_handler(p, regs)) {
--				goto ss_probe;
--			}
- 		} else if (!is_ia64_break_inst(regs)) {
- 			/* The breakpoint instruction was removed by
- 			 * another cpu right after we hit, no further
-@@ -867,7 +859,6 @@ static int __kprobes pre_kprobes_handler(struct die_args *args)
- 		 */
- 		return 1;
- 
--ss_probe:
- #if !defined(CONFIG_PREEMPT)
- 	if (p->ainsn.inst_flag == INST_FLAG_BOOSTABLE && !p->post_handler) {
- 		/* Boost up -- we can execute copied instructions directly */
-@@ -990,7 +981,6 @@ int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
- 	case DIE_BREAK:
- 		/* err is break number from ia64_bad_break() */
- 		if ((args->err >> 12) == (__IA64_BREAK_KPROBE >> 12)
--			|| args->err == __IA64_BREAK_JPROBE
- 			|| args->err == 0)
- 			if (pre_kprobes_handler(args))
- 				ret = NOTIFY_STOP;
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index 3ca2351109a6..076c3c0775a6 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -408,14 +408,6 @@ static void __kprobes kprobe_handler(struct pt_regs *regs)
+ 				return;
+ 			}
+ 		}
+-	} else if ((le32_to_cpu(*(kprobe_opcode_t *) addr) ==
+-	    BRK64_OPCODE_KPROBES) && cur_kprobe) {
+-		/* We probably hit a jprobe.  Call its break handler. */
+-		if (cur_kprobe->break_handler  &&
+-		     cur_kprobe->break_handler(cur_kprobe, regs)) {
+-			setup_singlestep(cur_kprobe, regs, kcb, 0);
+-			return;
+-		}
+ 	}
+ 	/*
+ 	 * The breakpoint instruction was removed right
