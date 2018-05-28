@@ -1,239 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423367AbeE1MQX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:16:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164538AbeE1LDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:17 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 482/496] perf tests: Fix dwarf unwind for stripped binaries
-Date: Mon, 28 May 2018 12:04:27 +0200
-Message-Id: <20180528100340.203087562@linuxfoundation.org>
+        id S1423445AbeE1MQr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:16:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57028 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1422783AbeE1LDL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:11 -0400
+From: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+To: shuah@kernel.org, trenn@suse.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: s1seetee@linux.vnet.ibm.com,
+        Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Subject: [PATCH] cpupower : Fix header name to read idle state name
+Date: Mon, 28 May 2018 06:03:03 -0500
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+x-cbid: 18052811-0040-0000-0000-0000045E285B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052811-0041-0000-0000-000021029487
+Message-Id: <20180528110303.12860-1-huntbag@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805280135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+The names of the idle states in the output of cpupower monitor command are
+truncated to 4 characters. On POWER9, this creates ambiguity as the states
+are named "stop0", "stop1", etc.
 
-------------------
+root:~# cpupower monitor
+              |Idle_Stats
+PKG |CORE|CPU | snoo | stop | stop | stop | stop | stop | stop
+   0|   0|   0|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  1.90
+   0|   0|   1|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
+   0|   0|   2|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
+   0|   0|   3|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
 
-From: Jiri Olsa <jolsa@kernel.org>
+This patch modifies the output to print the state name that results in a
+legible output. The names will be printed with atmost 1 padding in left.
 
-[ Upstream commit fdf7c49c200d1b9909e2204cec5bd68b48605c71 ]
+root:~# cpupower monitor
+              | Idle_Stats
+ PKG|CORE| CPU|snooze|stop0L| stop0|stop1L| stop1|stop2L| stop2
+   0|   0|   0|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.72
+   0|   0|   1|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
+   0|   0|   2|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
+   0|   0|   3|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
 
-When we strip the perf binary, dwarf unwind test stop
-to work. The reason is that strip will remove static
-function symbols, which we need to check for unwind.
+This patch does not affect the output for intel.
+Output for intel before applying the patch:
 
-This change will keep this test working in cases where
-the global symbols are put into dynamic symbol table,
-which is the case on x86. It still won't work on powerpc.
+root:~# cpupower monitor
+    |Idle_Stats
+CPU | POLL | C1-S | C1E- | C3-S | C6-S | C7s- | C8-S | C9-S | C10-
+   0|  0.00|  0.14|  0.39|  0.35|  7.41|  0.00| 17.67|  1.01| 70.03
+   2|  0.00|  0.19|  0.47|  0.10|  6.50|  0.00| 29.66|  2.17| 58.07
+   1|  0.00|  0.11|  0.50|  1.50|  9.11|  0.18| 18.19|  0.40| 66.63
+   3|  0.00|  0.67|  0.42|  0.03|  5.84|  0.00| 12.58|  0.77| 77.14
 
-Making those 5 local functions global, and adding
-'test_dwarf_unwind__' to their names.
+Output for intel after applying the patch:
 
-Committer testing:
+root:~# cpupower monitor
+    | Idle_Stats
+ CPU| POLL | C1-S | C1E- | C3-S | C6-S | C7s- | C8-S | C9-S | C10-
+   0|  0.03|  0.33|  1.01|  0.27|  3.03|  0.00| 19.18|  0.00| 71.24
+   2|  0.00|  1.58|  0.58|  0.42|  8.55|  0.09| 21.11|  0.99| 63.32
+   1|  0.00|  1.26|  0.88|  0.43|  9.00|  0.02|  7.78|  4.65| 71.91
+   3|  0.00|  0.30|  0.42|  0.06| 13.62|  0.21| 30.29|  0.00| 52.45
 
-Before:
-
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  # strip ~/bin/perf
-  # perf test dwarf
-  58: DWARF unwind                               : FAILED!
-  # perf test -v dwarf
-  58: DWARF unwind                               :
-  --- start ---
-  test child forked, pid 6590
-  unwind: thread map already set, dso=/home/acme/bin/perf
-  <SNIP>
-  unwind: access_mem addr 0x7ffce6c48098 val 48563f, offset 1144
-  unwind: test__dwarf_unwind:ip = 0x4a54e5 (0xa54e5)
-  got: test__dwarf_unwind 0xa54e5, expecting test__dwarf_unwind
-  unwind: '':ip = 0x4a50bb (0xa50bb)
-  failed: got unresolved address 0xa50bb
-  unwind failed
-  test child finished with -1
-  ---- end ----
-  DWARF unwind: FAILED!
-  #
-
-After:
-
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  # strip ~/bin/perf
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  #
-  # perf test -v dwarf
-  58: DWARF unwind                               :
-  --- start ---
-  test child forked, pid 7219
-  unwind: thread map already set, dso=/home/acme/bin/perf
-  <SNIP>
-  unwind: access_mem addr 0x7fff007da2c8 val 48575f, offset 1144
-  unwind: test__arch_unwind_sample:ip = 0x589044 (0x189044)
-  got: test__arch_unwind_sample 0x189044, expecting test__arch_unwind_sample
-  unwind: test_dwarf_unwind__thread:ip = 0x4a52f7 (0xa52f7)
-  got: test_dwarf_unwind__thread 0xa52f7, expecting test_dwarf_unwind__thread
-  unwind: test_dwarf_unwind__compare:ip = 0x4a5468 (0xa5468)
-  got: test_dwarf_unwind__compare 0xa5468, expecting test_dwarf_unwind__compare
-  unwind: bsearch:ip = 0x7f6608ae94d8 (0x394d8)
-  got: bsearch 0x394d8, expecting bsearch
-  unwind: test_dwarf_unwind__krava_3:ip = 0x4a54d1 (0xa54d1)
-  got: test_dwarf_unwind__krava_3 0xa54d1, expecting test_dwarf_unwind__krava_3
-  unwind: test_dwarf_unwind__krava_2:ip = 0x4a550b (0xa550b)
-  got: test_dwarf_unwind__krava_2 0xa550b, expecting test_dwarf_unwind__krava_2
-  unwind: test_dwarf_unwind__krava_1:ip = 0x4a554b (0xa554b)
-  got: test_dwarf_unwind__krava_1 0xa554b, expecting test_dwarf_unwind__krava_1
-  unwind: test__dwarf_unwind:ip = 0x4a5605 (0xa5605)
-  got: test__dwarf_unwind 0xa5605, expecting test__dwarf_unwind
-  test child finished with 0
-  ---- end ----
-  DWARF unwind: Ok
-  #
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180206181813.10943-17-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
 ---
- tools/perf/tests/dwarf-unwind.c |   46 ++++++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
 
---- a/tools/perf/tests/dwarf-unwind.c
-+++ b/tools/perf/tests/dwarf-unwind.c
-@@ -37,6 +37,19 @@ static int init_live_machine(struct mach
- 						  mmap_handler, machine, true, 500);
+Previous attempt was made by Seeteena Thoufeek. This is the patch list
+link: https://patchwork.kernel.org/project/linux-pm/list/?submitter=
+172041&state=*&archive=both
+
+ .../utils/idle_monitor/cpuidle_sysfs.c        | 15 ++++++++
+ .../utils/idle_monitor/cpupower-monitor.c     | 35 +++++++++++--------
+ .../utils/idle_monitor/cpupower-monitor.h     |  9 +++++
+ 3 files changed, 44 insertions(+), 15 deletions(-)
+
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+index 5b3205f16217..5b8c4956ff9a 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+@@ -126,6 +126,20 @@ void fix_up_intel_idle_driver_name(char *tmp, int num)
+ 	}
  }
  
-+/*
-+ * We need to keep these functions global, despite the
-+ * fact that they are used only locally in this object,
-+ * in order to keep them around even if the binary is
-+ * stripped. If they are gone, the unwind check for
-+ * symbol fails.
-+ */
-+int test_dwarf_unwind__thread(struct thread *thread);
-+int test_dwarf_unwind__compare(void *p1, void *p2);
-+int test_dwarf_unwind__krava_3(struct thread *thread);
-+int test_dwarf_unwind__krava_2(struct thread *thread);
-+int test_dwarf_unwind__krava_1(struct thread *thread);
++#ifdef __powerpc__
++void map_power_idle_state_name(char *tmp)
++{
++	if (!strncmp(tmp, "stop0_lite", CSTATE_NAME_LEN))
++		strcpy(tmp, "stop0L");
++	else if (!strncmp(tmp, "stop1_lite", CSTATE_NAME_LEN))
++		strcpy(tmp, "stop1L");
++	else if (!strncmp(tmp, "stop2_lite", CSTATE_NAME_LEN))
++		strcpy(tmp, "stop2L");
++}
++#else
++void map_power_idle_state_name(char *tmp) { }
++#endif
 +
- #define MAX_STACK 8
+ static struct cpuidle_monitor *cpuidle_register(void)
+ {
+ 	int num;
+@@ -145,6 +159,7 @@ static struct cpuidle_monitor *cpuidle_register(void)
+ 		if (tmp == NULL)
+ 			continue;
  
- static int unwind_entry(struct unwind_entry *entry, void *arg)
-@@ -45,12 +58,12 @@ static int unwind_entry(struct unwind_en
- 	char *symbol = entry->sym ? entry->sym->name : NULL;
- 	static const char *funcs[MAX_STACK] = {
- 		"test__arch_unwind_sample",
--		"unwind_thread",
--		"compare",
-+		"test_dwarf_unwind__thread",
-+		"test_dwarf_unwind__compare",
- 		"bsearch",
--		"krava_3",
--		"krava_2",
--		"krava_1",
-+		"test_dwarf_unwind__krava_3",
-+		"test_dwarf_unwind__krava_2",
-+		"test_dwarf_unwind__krava_1",
- 		"test__dwarf_unwind"
- 	};
- 	/*
-@@ -77,7 +90,7 @@ static int unwind_entry(struct unwind_en
- 	return strcmp((const char *) symbol, funcs[idx]);
++		map_power_idle_state_name(tmp);
+ 		fix_up_intel_idle_driver_name(tmp, num);
+ 		strncpy(cpuidle_cstates[num].name, tmp, CSTATE_NAME_LEN - 1);
+ 		free(tmp);
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+index 05f953f0f0a0..051da0a7c454 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+@@ -70,36 +70,43 @@ void print_n_spaces(int n)
+ 		printf(" ");
  }
  
--static noinline int unwind_thread(struct thread *thread)
-+noinline int test_dwarf_unwind__thread(struct thread *thread)
+-/* size of s must be at least n + 1 */
++/*s is filled with left and right spaces
++ *to make its length atleast n+1
++ */
+ int fill_string_with_spaces(char *s, int n)
  {
- 	struct perf_sample sample;
- 	unsigned long cnt = 0;
-@@ -108,7 +121,7 @@ static noinline int unwind_thread(struct
++	char *temp;
+ 	int len = strlen(s);
+-	if (len > n)
++
++	if (len >= n)
+ 		return -1;
++
++	temp = malloc(sizeof(char) * (n+1));
+ 	for (; len < n; len++)
+ 		s[len] = ' ';
+ 	s[len] = '\0';
++	snprintf(temp, n+1, " %s", s);
++	strcpy(s, temp);
++	free(temp);
+ 	return 0;
+ }
  
- static int global_unwind_retval = -INT_MAX;
- 
--static noinline int compare(void *p1, void *p2)
-+noinline int test_dwarf_unwind__compare(void *p1, void *p2)
++#define MAX_COL_WIDTH 6
+ void print_header(int topology_depth)
  {
- 	/* Any possible value should be 'thread' */
- 	struct thread *thread = *(struct thread **)p1;
-@@ -117,17 +130,17 @@ static noinline int compare(void *p1, vo
- 		/* Call unwinder twice for both callchain orders. */
- 		callchain_param.order = ORDER_CALLER;
+ 	int unsigned mon;
+ 	int state, need_len;
+ 	cstate_t s;
+ 	char buf[128] = "";
+-	int percent_width = 4;
  
--		global_unwind_retval = unwind_thread(thread);
-+		global_unwind_retval = test_dwarf_unwind__thread(thread);
- 		if (!global_unwind_retval) {
- 			callchain_param.order = ORDER_CALLEE;
--			global_unwind_retval = unwind_thread(thread);
-+			global_unwind_retval = test_dwarf_unwind__thread(thread);
+ 	fill_string_with_spaces(buf, topology_depth * 5 - 1);
+ 	printf("%s|", buf);
+ 
+ 	for (mon = 0; mon < avail_monitors; mon++) {
+-		need_len = monitors[mon]->hw_states_num * (percent_width + 3)
++		need_len = monitors[mon]->hw_states_num * (MAX_COL_WIDTH + 1)
+ 			- 1;
+-		if (mon != 0) {
+-			printf("|| ");
+-			need_len--;
+-		}
++		if (mon != 0)
++			printf("||");
+ 		sprintf(buf, "%s", monitors[mon]->name);
+ 		fill_string_with_spaces(buf, need_len);
+ 		printf("%s", buf);
+@@ -107,23 +114,21 @@ void print_header(int topology_depth)
+ 	printf("\n");
+ 
+ 	if (topology_depth > 2)
+-		printf("PKG |");
++		printf(" PKG|");
+ 	if (topology_depth > 1)
+ 		printf("CORE|");
+ 	if (topology_depth > 0)
+-		printf("CPU |");
++		printf(" CPU|");
+ 
+ 	for (mon = 0; mon < avail_monitors; mon++) {
+ 		if (mon != 0)
+-			printf("|| ");
+-		else
+-			printf(" ");
++			printf("||");
+ 		for (state = 0; state < monitors[mon]->hw_states_num; state++) {
+ 			if (state != 0)
+-				printf(" | ");
++				printf("|");
+ 			s = monitors[mon]->hw_states[state];
+ 			sprintf(buf, "%s", s.name);
+-			fill_string_with_spaces(buf, percent_width);
++			fill_string_with_spaces(buf, MAX_COL_WIDTH);
+ 			printf("%s", buf);
  		}
- 	}
+ 		printf(" ");
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+index 9e43f3371fbc..2ae50b499e0a 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+@@ -15,7 +15,16 @@
  
- 	return p1 - p2;
- }
+ #define MONITORS_MAX 20
+ #define MONITOR_NAME_LEN 20
++
++/* CSTATE_NAME_LEN is limited by header field width defined
++ * in cpupower-monitor.c. Header field width is defined to be
++ * sum of percent width and two spaces for padding.
++ */
++#ifdef __powerpc__
++#define CSTATE_NAME_LEN 7
++#else
+ #define CSTATE_NAME_LEN 5
++#endif
+ #define CSTATE_DESC_LEN 60
  
--static noinline int krava_3(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_3(struct thread *thread)
- {
- 	struct thread *array[2] = {thread, thread};
- 	void *fp = &bsearch;
-@@ -141,18 +154,19 @@ static noinline int krava_3(struct threa
- 			size_t, int (*)(void *, void *));
- 
- 	_bsearch = fp;
--	_bsearch(array, &thread, 2, sizeof(struct thread **), compare);
-+	_bsearch(array, &thread, 2, sizeof(struct thread **),
-+		 test_dwarf_unwind__compare);
- 	return global_unwind_retval;
- }
- 
--static noinline int krava_2(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_2(struct thread *thread)
- {
--	return krava_3(thread);
-+	return test_dwarf_unwind__krava_3(thread);
- }
- 
--static noinline int krava_1(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_1(struct thread *thread)
- {
--	return krava_2(thread);
-+	return test_dwarf_unwind__krava_2(thread);
- }
- 
- int test__dwarf_unwind(struct test *test __maybe_unused, int subtest __maybe_unused)
-@@ -189,7 +203,7 @@ int test__dwarf_unwind(struct test *test
- 		goto out;
- 	}
- 
--	err = krava_1(thread);
-+	err = test_dwarf_unwind__krava_1(thread);
- 	thread__put(thread);
- 
-  out:
+ int cpu_count;
+-- 
+2.17.0
