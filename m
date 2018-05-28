@@ -1,18 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422866AbeE1LCy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
+        id S1422909AbeE1LDJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422848AbeE1LCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:48 -0400
+        id S1422873AbeE1LDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 472/496] rcu: Call touch_nmi_watchdog() while printing stall warnings
-Date: Mon, 28 May 2018 12:04:17 +0200
-Message-Id: <20180528100339.800219768@linuxfoundation.org>
+        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, douly.fnst@cn.fujitsu.com,
+        joro@8bytes.org, prarit@redhat.com, uobergfe@redhat.com,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 477/496] x86/apic: Set up through-local-APIC mode on the boot CPU if noapic specified
+Date: Mon, 28 May 2018 12:04:22 +0200
+Message-Id: <20180528100340.002614291@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -28,47 +35,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Baoquan He <bhe@redhat.com>
 
-[ Upstream commit 3caa973b7a260e7a2a69edc94c300ab9c65148c3 ]
+[ Upstream commit bee3204ec3c49f6f53add9c3962c9012a5c036fa ]
 
-When RCU stall warning triggers, it can print out a lot of messages
-while holding spinlocks.  If the console device is slow (e.g. an
-actual or IPMI serial console), it may end up triggering NMI hard
-lockup watchdog like the following.
+Currently the kdump kernel becomes very slow if 'noapic' is specified.
+Normal kernel doesn't have this bug.
 
+Kernel parameter 'noapic' is used to disable IO-APIC in system for
+testing or special purpose. Here the root cause is that in kdump
+kernel LAPIC is disabled since commit:
+
+  522e664644 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+
+In this case we need set up through-local-APIC on boot CPU in
+setup_local_APIC().
+
+In normal kernel the legacy irq mode is enabled by the BIOS. If
+it is virtual wire mode, the local-APIC has been enabled and set as
+through-local-APIC.
+
+Though we fixed the regression introduced by commit 522e664644,
+to further improve robustness set up the through-local-APIC mode
+explicitly, do not rely on the default boot IRQ mode.
+
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: douly.fnst@cn.fujitsu.com
+Cc: joro@8bytes.org
+Cc: prarit@redhat.com
+Cc: uobergfe@redhat.com
+Link: http://lkml.kernel.org/r/20180214054656.3780-7-bhe@redhat.com
+[ Rewrote the changelog. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/rcu/tree_plugin.h |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/x86/kernel/apic/apic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -559,8 +559,14 @@ static void rcu_print_detail_task_stall_
- 	}
- 	t = list_entry(rnp->gp_tasks->prev,
- 		       struct task_struct, rcu_node_entry);
--	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry)
-+	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
-+		/*
-+		 * We could be printing a lot while holding a spinlock.
-+		 * Avoid triggering hard lockup.
-+		 */
-+		touch_nmi_watchdog();
- 		sched_show_task(t);
-+	}
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- }
- 
-@@ -1677,6 +1683,12 @@ static void print_cpu_stall_info(struct
- 	char *ticks_title;
- 	unsigned long ticks_value;
- 
-+	/*
-+	 * We could be printing a lot while holding a spinlock.  Avoid
-+	 * triggering hard lockup.
-+	 */
-+	touch_nmi_watchdog();
-+
- 	if (rsp->gpnum == rdp->gpnum) {
- 		ticks_title = "ticks this GP";
- 		ticks_value = rdp->ticks_this_gp;
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1481,7 +1481,7 @@ void setup_local_APIC(void)
+ 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
+ 	 */
+ 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
+-	if (!cpu && (pic_mode || !value)) {
++	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
+ 		value = APIC_DM_EXTINT;
+ 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
+ 	} else {
