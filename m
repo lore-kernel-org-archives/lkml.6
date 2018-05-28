@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161460AbeE1Kf5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:35:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56236 "EHLO mail.kernel.org"
+        id S1162958AbeE1ORA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162134AbeE1Kfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:51 -0400
+        id S1162125AbeE1Kf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitriy Vyukov <dvyukov@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 213/329] mm/mempolicy.c: avoid use uninitialized preferred_node
-Date: Mon, 28 May 2018 12:02:22 +0200
-Message-Id: <20180528100259.907452657@linuxfoundation.org>
+Subject: [PATCH 4.9 215/329] selftests: ftrace: Add probe event argument syntax testcase
+Date: Mon, 28 May 2018 12:02:24 +0200
+Message-Id: <20180528100300.064028640@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -34,44 +30,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yisheng Xie <xieyisheng1@huawei.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 8970a63e965b43288c4f5f40efbc2bbf80de7f16 ]
+[ Upstream commit 871bef2000968c312a4000b2f56d370dcedbc93c ]
 
-Alexander reported a use of uninitialized memory in __mpol_equal(),
-which is caused by incorrect use of preferred_node.
+Add a testcase for probe event argument syntax which
+ensures the kprobe_events interface correctly parses
+given event arguments.
 
-When mempolicy in mode MPOL_PREFERRED with flags MPOL_F_LOCAL, it uses
-numa_node_id() instead of preferred_node, however, __mpol_equal() uses
-preferred_node without checking whether it is MPOL_F_LOCAL or not.
+Link: http://lkml.kernel.org/r/152129033679.31874.12705519603869152799.stgit@devbox
 
-[akpm@linux-foundation.org: slight comment tweak]
-Link: http://lkml.kernel.org/r/4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com
-Fixes: fc36b8d3d819 ("mempolicy: use MPOL_F_LOCAL to Indicate Preferred Local Policy")
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-Reported-by: Alexander Potapenko <glider@google.com>
-Tested-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dmitriy Vyukov <dvyukov@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/mempolicy.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc |   97 ++++++++++
+ 1 file changed, 97 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
 
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2159,6 +2159,9 @@ bool __mpol_equal(struct mempolicy *a, s
- 	case MPOL_INTERLEAVE:
- 		return !!nodes_equal(a->v.nodes, b->v.nodes);
- 	case MPOL_PREFERRED:
-+		/* a's ->flags is the same as b's */
-+		if (a->flags & MPOL_F_LOCAL)
-+			return true;
- 		return a->v.preferred_node == b->v.preferred_node;
- 	default:
- 		BUG();
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+@@ -0,0 +1,97 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe event argument syntax
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++grep "x8/16/32/64" README > /dev/null || exit_unsupported # version issue
++
++echo 0 > events/enable
++echo > kprobe_events
++
++PROBEFUNC="vfs_read"
++GOODREG=
++BADREG=
++GOODSYM="_sdata"
++if ! grep -qw ${GOODSYM} /proc/kallsyms ; then
++  GOODSYM=$PROBEFUNC
++fi
++BADSYM="deaqswdefr"
++SYMADDR=0x`grep -w ${GOODSYM} /proc/kallsyms | cut -f 1 -d " "`
++GOODTYPE="x16"
++BADTYPE="y16"
++
++case `uname -m` in
++x86_64|i[3456]86)
++  GOODREG=%ax
++  BADREG=%ex
++;;
++aarch64)
++  GOODREG=%x0
++  BADREG=%ax
++;;
++arm*)
++  GOODREG=%r0
++  BADREG=%ax
++;;
++esac
++
++test_goodarg() # Good-args
++{
++  while [ "$1" ]; do
++    echo "p ${PROBEFUNC} $1" > kprobe_events
++    shift 1
++  done;
++}
++
++test_badarg() # Bad-args
++{
++  while [ "$1" ]; do
++    ! echo "p ${PROBEFUNC} $1" > kprobe_events
++    shift 1
++  done;
++}
++
++echo > kprobe_events
++
++: "Register access"
++test_goodarg ${GOODREG}
++test_badarg ${BADREG}
++
++: "Symbol access"
++test_goodarg "@${GOODSYM}" "@${SYMADDR}" "@${GOODSYM}+10" "@${GOODSYM}-10"
++test_badarg "@" "@${BADSYM}" "@${GOODSYM}*10" "@${GOODSYM}/10" \
++	    "@${GOODSYM}%10" "@${GOODSYM}&10" "@${GOODSYM}|10"
++
++: "Stack access"
++test_goodarg "\$stack" "\$stack0" "\$stack1"
++test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
++
++: "Retval access"
++echo "r ${PROBEFUNC} \$retval" > kprobe_events
++! echo "p ${PROBEFUNC} \$retval" > kprobe_events
++
++: "Comm access"
++test_goodarg "\$comm"
++
++: "Indirect memory access"
++test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
++	"+0(\$stack1)" "+10(@${GOODSYM}-10)" "+0(+10(+20(\$stack)))"
++test_badarg "+(${GOODREG})" "(${GOODREG}+10)" "-(${GOODREG})" "(${GOODREG})" \
++	"+10(\$comm)" "+0(${GOODREG})+10"
++
++: "Name assignment"
++test_goodarg "varname=${GOODREG}"
++test_badarg "varname=varname2=${GOODREG}"
++
++: "Type syntax"
++test_goodarg "${GOODREG}:${GOODTYPE}"
++test_badarg "${GOODREG}::${GOODTYPE}" "${GOODREG}:${BADTYPE}" \
++	"${GOODTYPE}:${GOODREG}"
++
++: "Combination check"
++
++test_goodarg "\$comm:string" "+0(\$stack):string"
++test_badarg "\$comm:x64" "\$stack:string" "${GOODREG}:string"
++
++echo > kprobe_events
