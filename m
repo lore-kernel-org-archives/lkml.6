@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968619AbeE1KQ5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37014 "EHLO mail.kernel.org"
+        id S968636AbeE1KRH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968567AbeE1KQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:52 -0400
+        id S966814AbeE1KRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Steve French <smfrench@gmail.com>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 064/268] cifs: silence compiler warnings showing up with gcc-8.0.0
-Date: Mon, 28 May 2018 12:00:38 +0200
-Message-Id: <20180528100209.167819785@linuxfoundation.org>
+Subject: [PATCH 4.4 067/268] bcache: fix for data collapse after re-attaching an attached device
+Date: Mon, 28 May 2018 12:00:41 +0200
+Message-Id: <20180528100209.453131120@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,38 +30,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-[ Upstream commit ade7db991b47ab3016a414468164f4966bd08202 ]
+[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
 
-This bug was fixed before, but came up again with the latest
-compiler in another function:
+back-end device sdm has already attached a cache_set with ID
+f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
+another cache set, and it returns with an error:
+[root]# cd /sys/block/sdm/bcache
+[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
+-bash: echo: write error: Invalid argument
 
-fs/cifs/cifssmb.c: In function 'CIFSSMBSetEA':
-fs/cifs/cifssmb.c:6362:3: error: 'strncpy' offset 8 is out of the bounds [0, 4] [-Werror=array-bounds]
-   strncpy(parm_data->list[0].name, ea_name, name_len);
+After that, execute a command to modify the label of bcache
+device:
+[root]# echo data_disk1 > label
 
-Let's apply the same fix that was used for the other instances.
+Then we reboot the system, when the system power on, the back-end
+device can not attach to cache_set, a messages show in the log:
+Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
+bch_cached_dev_attach() couldn't find uuid for sdm in set
 
-Fixes: b2a3ad9ca502 ("cifs: silence compiler warnings showing up with gcc-4.7.0")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Steve French <smfrench@gmail.com>
+In sysfs_attach(), dc->sb.set_uuid was assigned to the value
+which input through sysfs, no matter whether it is success
+or not in bch_cached_dev_attach(). For example, If the back-end
+device has already attached to an cache set, bch_cached_dev_attach()
+would fail, but dc->sb.set_uuid was changed. Then modify the
+label of bcache device, it will call bch_write_bdev_super(),
+which would write the dc->sb.set_uuid to the super block, so we
+record a wrong cache set ID in the super block, after the system
+reboot, the cache set couldn't find the uuid of the back-end
+device, so the bcache device couldn't exist and use any more.
+
+In this patch, we don't assigned cache set ID to dc->sb.set_uuid
+in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
+and assigned dc->sb.set_uuid to the cache set ID after the back-end
+device attached to the cache set successful.
+
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/cifssmb.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/md/bcache/bcache.h |    2 +-
+ drivers/md/bcache/super.c  |   10 ++++++----
+ drivers/md/bcache/sysfs.c  |    6 ++++--
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -6421,9 +6421,7 @@ SetEARetry:
- 	pSMB->InformationLevel =
- 		cpu_to_le16(SMB_SET_FILE_EA);
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -904,7 +904,7 @@ void bcache_write_super(struct cache_set
  
--	parm_data =
--		(struct fealist *) (((char *) &pSMB->hdr.Protocol) +
--				       offset);
-+	parm_data = (void *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
- 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
- 	pSMB->DataOffset = cpu_to_le16(offset);
- 	pSMB->SetupCount = 1;
+ int bch_flash_dev_create(struct cache_set *c, uint64_t size);
+ 
+-int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
++int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
+ void bch_cached_dev_detach(struct cached_dev *);
+ void bch_cached_dev_run(struct cached_dev *);
+ void bcache_device_stop(struct bcache_device *);
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -936,7 +936,8 @@ void bch_cached_dev_detach(struct cached
+ 	cached_dev_put(dc);
+ }
+ 
+-int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
++int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
++			  uint8_t *set_uuid)
+ {
+ 	uint32_t rtime = cpu_to_le32(get_seconds());
+ 	struct uuid_entry *u;
+@@ -945,7 +946,8 @@ int bch_cached_dev_attach(struct cached_
+ 
+ 	bdevname(dc->bdev, buf);
+ 
+-	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
++	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
++	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
+ 		return -ENOENT;
+ 
+ 	if (dc->disk.c) {
+@@ -1189,7 +1191,7 @@ static void register_bdev(struct cache_s
+ 
+ 	list_add(&dc->list, &uncached_devices);
+ 	list_for_each_entry(c, &bch_cache_sets, list)
+-		bch_cached_dev_attach(dc, c);
++		bch_cached_dev_attach(dc, c, NULL);
+ 
+ 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
+ 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
+@@ -1711,7 +1713,7 @@ static void run_cache_set(struct cache_s
+ 	bcache_write_super(c);
+ 
+ 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
+-		bch_cached_dev_attach(dc, c);
++		bch_cached_dev_attach(dc, c, NULL);
+ 
+ 	flash_devs_run(c);
+ 
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -263,11 +263,13 @@ STORE(__cached_dev)
+ 	}
+ 
+ 	if (attr == &sysfs_attach) {
+-		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
++		uint8_t		set_uuid[16];
++
++		if (bch_parse_uuid(buf, set_uuid) < 16)
+ 			return -EINVAL;
+ 
+ 		list_for_each_entry(c, &bch_cache_sets, list) {
+-			v = bch_cached_dev_attach(dc, c);
++			v = bch_cached_dev_attach(dc, c, set_uuid);
+ 			if (!v)
+ 				return size;
+ 		}
