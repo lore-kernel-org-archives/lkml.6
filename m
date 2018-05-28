@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163805AbeE1KvW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:51:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40746 "EHLO mail.kernel.org"
+        id S1163686AbeE1Kvn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:51:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163763AbeE1KvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:51:16 -0400
+        id S1163714AbeE1Kvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:51:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Malone <peter.malone@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Matt Sealey <matt.sealey@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 225/496] fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
-Date: Mon, 28 May 2018 12:00:10 +0200
-Message-Id: <20180528100329.395969027@linuxfoundation.org>
+Subject: [PATCH 4.14 229/496] net: smsc911x: Fix unload crash when link is up
+Date: Mon, 28 May 2018 12:00:14 +0200
+Message-Id: <20180528100329.557355173@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,61 +31,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Malone <peter.malone@gmail.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
 
-[ Upstream commit 250c6c49e3b68756b14983c076183568636e2bde ]
+[ Upstream commit e06513d78d54e6c7026c9043a39e2c01ee25bdbe ]
 
-Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
-sbusfb_ioctl_helper().
+The smsc911x driver will crash if it is rmmod'ed while the netdev
+is up like:
 
-'index' is defined as an int in sbusfb_ioctl_helper().
-We retrieve this from the user:
-if (get_user(index, &c->index) ||
-    __get_user(count, &c->count) ||
-    __get_user(ured, &c->red) ||
-    __get_user(ugreen, &c->green) ||
-    __get_user(ublue, &c->blue))
-       return -EFAULT;
+Call trace:
+  phy_detach+0x94/0x150
+  phy_disconnect+0x40/0x50
+  smsc911x_stop+0x104/0x128 [smsc911x]
+  __dev_close_many+0xb4/0x138
+  dev_close_many+0xbc/0x190
+  rollback_registered_many+0x140/0x460
+  rollback_registered+0x68/0xb0
+  unregister_netdevice_queue+0x100/0x118
+  unregister_netdev+0x28/0x38
+  smsc911x_drv_remove+0x58/0x130 [smsc911x]
+  platform_drv_remove+0x30/0x50
+  device_release_driver_internal+0x15c/0x1f8
+  driver_detach+0x54/0x98
+  bus_remove_driver+0x64/0xe8
+  driver_unregister+0x34/0x60
+  platform_driver_unregister+0x20/0x30
+  smsc911x_cleanup_module+0x14/0xbca8 [smsc911x]
+  SyS_delete_module+0x1e8/0x238
+  __sys_trace_return+0x0/0x4
 
-and then we use 'index' in the following way:
-red = cmap->red[index + i] >> 8;
-green = cmap->green[index + i] >> 8;
-blue = cmap->blue[index + i] >> 8;
+This is caused by the mdiobus being unregistered/free'd
+and the code in phy_detach() attempting to manipulate mdio
+related structures from unregister_netdev() calling close()
 
-This is a classic information leak vulnerability. 'index' should be
-an unsigned int, given its usage above.
+To fix this, we delay the mdiobus teardown until after
+the netdev is deregistered.
 
-This patch is straight-forward; it changes 'index' to unsigned int
-in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
-
-This patch fixes CVE-2018-6412.
-
-Signed-off-by: Peter Malone <peter.malone@gmail.com>
-Acked-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Reported-by: Matt Sealey <matt.sealey@arm.com>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/sbuslib.c |    4 ++--
+ drivers/net/ethernet/smsc/smsc911x.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -122,7 +122,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ured;
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
--		int index, count, i;
-+		unsigned int index, count, i;
+--- a/drivers/net/ethernet/smsc/smsc911x.c
++++ b/drivers/net/ethernet/smsc/smsc911x.c
+@@ -2335,14 +2335,14 @@ static int smsc911x_drv_remove(struct pl
+ 	pdata = netdev_priv(dev);
+ 	BUG_ON(!pdata);
+ 	BUG_ON(!pdata->ioaddr);
+-	WARN_ON(dev->phydev);
  
- 		if (get_user(index, &c->index) ||
- 		    __get_user(count, &c->count) ||
-@@ -161,7 +161,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
- 		struct fb_cmap *cmap = &info->cmap;
--		int index, count, i;
-+		unsigned int index, count, i;
- 		u8 red, green, blue;
+ 	SMSC_TRACE(pdata, ifdown, "Stopping driver");
  
- 		if (get_user(index, &c->index) ||
++	unregister_netdev(dev);
++
+ 	mdiobus_unregister(pdata->mii_bus);
+ 	mdiobus_free(pdata->mii_bus);
+ 
+-	unregister_netdev(dev);
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+ 					   "smsc911x-memory");
+ 	if (!res)
