@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424518AbeE1LPJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:15:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34072 "EHLO mail.kernel.org"
+        id S1424467AbeE1LOw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:14:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424474AbeE1LO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:56 -0400
+        id S1424149AbeE1LOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 208/272] powerpc/mm/slice: Remove intermediate bitmap copy
-Date: Mon, 28 May 2018 12:04:01 +0200
-Message-Id: <20180528100257.976501019@linuxfoundation.org>
+        stable@vger.kernel.org, Lionel Debieve <lionel.debieve@st.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 215/272] hwrng: stm32 - add reset during probe
+Date: Mon, 28 May 2018 12:04:08 +0200
+Message-Id: <20180528100258.551053994@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,49 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: "lionel.debieve@st.com" <lionel.debieve@st.com>
 
-commit 326691ad4f179e6edc7eb1271e618dd673e4736d upstream.
+[ Upstream commit 326ed382256475aa4b8b7eae8a2f60689fd25e78 ]
 
-bitmap_or() and bitmap_andnot() can work properly with dst identical
-to src1 or src2. There is no need of an intermediate result bitmap
-that is copied back to dst in a second step.
+Avoid issue when probing the RNG without
+reset if bad status has been detected previously
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/mm/slice.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/char/hw_random/stm32-rng.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -388,21 +388,17 @@ static unsigned long slice_find_area(str
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
  
- static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
- {
--	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
--
- 	dst->low_slices |= src->low_slices;
--	bitmap_or(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
--	bitmap_copy(dst->high_slices, result, SLICE_NUM_HIGH);
-+	bitmap_or(dst->high_slices, dst->high_slices, src->high_slices,
-+		  SLICE_NUM_HIGH);
- }
+ #define RNG_CR 0x00
+@@ -46,6 +47,7 @@ struct stm32_rng_private {
+ 	struct hwrng rng;
+ 	void __iomem *base;
+ 	struct clk *clk;
++	struct reset_control *rst;
+ };
  
- static inline void slice_andnot_mask(struct slice_mask *dst, struct slice_mask *src)
- {
--	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
--
- 	dst->low_slices &= ~src->low_slices;
+ static int stm32_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
+@@ -140,6 +142,13 @@ static int stm32_rng_probe(struct platfo
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
  
--	bitmap_andnot(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
--	bitmap_copy(dst->high_slices, result, SLICE_NUM_HIGH);
-+	bitmap_andnot(dst->high_slices, dst->high_slices, src->high_slices,
-+		      SLICE_NUM_HIGH);
- }
++	priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
++	if (!IS_ERR(priv->rst)) {
++		reset_control_assert(priv->rst);
++		udelay(2);
++		reset_control_deassert(priv->rst);
++	}
++
+ 	dev_set_drvdata(dev, priv);
  
- #ifdef CONFIG_PPC_64K_PAGES
+ 	priv->rng.name = dev_driver_string(dev),
