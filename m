@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423735AbeE1MfE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:35:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47222 "EHLO mail.kernel.org"
+        id S1424897AbeE1MfX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:35:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164376AbeE1K7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:16 -0400
+        id S1164207AbeE1K7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
+        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 397/496] ACPICA: Fix memory leak on unusual memory leak
-Date: Mon, 28 May 2018 12:03:02 +0200
-Message-Id: <20180528100336.493196496@linuxfoundation.org>
+Subject: [PATCH 4.14 396/496] ACPICA: Events: add a return on failure from acpi_hw_register_read
+Date: Mon, 28 May 2018 12:03:01 +0200
+Message-Id: <20180528100336.450848434@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +30,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Moore <robert.moore@intel.com>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-[ Upstream commit 1c29c372b2d1d2415601041532745ce859f24126 ]
+[ Upstream commit b4c0de312613ca676db5bd7e696a44b56795612a ]
 
-Fixes a single-object memory leak on a store-to-reference method
-invocation. ACPICA BZ 1439.
+This ensures that acpi_ev_fixed_event_detect() does not use fixed_status
+and and fixed_enable as uninitialized variables.
 
-Signed-off-by: Bob Moore <robert.moore@intel.com>
 Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpica/psargs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/acpi/acpica/evevent.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/acpica/psargs.c
-+++ b/drivers/acpi/acpica/psargs.c
-@@ -890,6 +890,10 @@ acpi_ps_get_next_arg(struct acpi_walk_st
- 						      ACPI_POSSIBLE_METHOD_CALL);
+--- a/drivers/acpi/acpica/evevent.c
++++ b/drivers/acpi/acpica/evevent.c
+@@ -204,6 +204,7 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	u32 fixed_status;
+ 	u32 fixed_enable;
+ 	u32 i;
++	acpi_status status;
  
- 			if (arg->common.aml_opcode == AML_INT_METHODCALL_OP) {
-+
-+				/* Free method call op and corresponding namestring sub-ob */
-+
-+				acpi_ps_free_op(arg->common.value.arg);
- 				acpi_ps_free_op(arg);
- 				arg = NULL;
- 				walk_state->arg_count = 1;
+ 	ACPI_FUNCTION_NAME(ev_fixed_event_detect);
+ 
+@@ -211,8 +212,12 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	 * Read the fixed feature status and enable registers, as all the cases
+ 	 * depend on their values. Ignore errors here.
+ 	 */
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
++	status |=
++	    acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	if (ACPI_FAILURE(status)) {
++		return (int_status);
++	}
+ 
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INTERRUPTS,
+ 			  "Fixed Event Block: Enable %08X Status %08X\n",
