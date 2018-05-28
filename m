@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161712AbeE1KdX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:33:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53356 "EHLO mail.kernel.org"
+        id S1161770AbeE1Kdd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:33:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161687AbeE1KdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:13 -0400
+        id S1161730AbeE1Kd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ramon Fried <rfried@codeaurora.org>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 157/329] qrtr: add MODULE_ALIAS macro to smd
-Date: Mon, 28 May 2018 12:01:26 +0200
-Message-Id: <20180528100255.563140743@linuxfoundation.org>
+Subject: [PATCH 4.9 162/329] ip6_tunnel: fix IFLA_MTU ignored on NEWLINK
+Date: Mon, 28 May 2018 12:01:31 +0200
+Message-Id: <20180528100255.931796376@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,27 +31,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ramon Fried <rfried@codeaurora.org>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit c77f5fbbefc04612755117775e8555c2a7006cac ]
+[ Upstream commit a6aa80446234ec0ad38eecdb8efc59e91daae565 ]
 
-Added MODULE_ALIAS("rpmsg:IPCRTR") to ensure qrtr-smd and qrtr will load
-when IPCRTR channel is detected.
+Commit 128bb975dc3c ("ip6_gre: init dev->mtu and dev->hard_header_len
+correctly") fixed IFLA_MTU ignored on NEWLINK for ip6_gre. The same
+mtu fix is also needed for ip6_tunnel.
 
-Signed-off-by: Ramon Fried <rfried@codeaurora.org>
+Note that dev->hard_header_len setting for ip6_tunnel works fine,
+no need to fix it.
+
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/qrtr/smd.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv6/ip6_tunnel.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/qrtr/smd.c
-+++ b/net/qrtr/smd.c
-@@ -116,5 +116,6 @@ static struct qcom_smd_driver qcom_smd_q
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1972,14 +1972,14 @@ static int ip6_tnl_newlink(struct net *s
+ {
+ 	struct net *net = dev_net(dev);
+ 	struct ip6_tnl_net *ip6n = net_generic(net, ip6_tnl_net_id);
+-	struct ip6_tnl *nt, *t;
+ 	struct ip_tunnel_encap ipencap;
++	struct ip6_tnl *nt, *t;
++	int err;
  
- module_qcom_smd_driver(qcom_smd_qrtr_driver);
+ 	nt = netdev_priv(dev);
  
-+MODULE_ALIAS("rpmsg:IPCRTR");
- MODULE_DESCRIPTION("Qualcomm IPC-Router SMD interface driver");
- MODULE_LICENSE("GPL v2");
+ 	if (ip6_tnl_netlink_encap_parms(data, &ipencap)) {
+-		int err = ip6_tnl_encap_setup(nt, &ipencap);
+-
++		err = ip6_tnl_encap_setup(nt, &ipencap);
+ 		if (err < 0)
+ 			return err;
+ 	}
+@@ -1995,7 +1995,11 @@ static int ip6_tnl_newlink(struct net *s
+ 			return -EEXIST;
+ 	}
+ 
+-	return ip6_tnl_create2(dev);
++	err = ip6_tnl_create2(dev);
++	if (!err && tb[IFLA_MTU])
++		ip6_tnl_change_mtu(dev, nla_get_u32(tb[IFLA_MTU]));
++
++	return err;
+ }
+ 
+ static int ip6_tnl_changelink(struct net_device *dev, struct nlattr *tb[],
