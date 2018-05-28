@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939484AbeE1Ozq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:55:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47106 "EHLO mail.kernel.org"
+        id S939433AbeE1O4Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:56:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936926AbeE1K1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:42 -0400
+        id S936905AbeE1K1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shiraz Saleem <shiraz.saleem@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 034/329] i40iw: Zero-out consumer key on allocate stag for FMR
-Date: Mon, 28 May 2018 11:59:23 +0200
-Message-Id: <20180528100245.278270126@linuxfoundation.org>
+Subject: [PATCH 4.9 031/329] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
+Date: Mon, 28 May 2018 11:59:20 +0200
+Message-Id: <20180528100245.006157220@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,33 +34,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shiraz Saleem <shiraz.saleem@intel.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-[ Upstream commit 6376e926af1a8661dd1b2e6d0896e07f84a35844 ]
+[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
 
-If the application invalidates the MR before the FMR WR, HW parses the
-consumer key portion of the stag and returns an invalid stag key
-Asynchronous Event (AE) that tears down the QP.
+So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
+well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
+detecting the ABS or REL timer modes is not valid anymore, it got broken
+by the introduction of HRTIMER_MODE_PINNED.
 
-Fix this by zeroing-out the consumer key portion of the allocated stag
-returned to application for FMR.
+HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
+sake of completeness print all given modes.
 
-Fixes: ee855d3b93f3 ("RDMA/i40iw: Add base memory management extensions")
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org
+Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_verbs.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/trace/events/timer.h |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-@@ -1515,6 +1515,7 @@ static struct ib_mr *i40iw_alloc_mr(stru
- 		err_code = -EOVERFLOW;
- 		goto err;
- 	}
-+	stag &= ~I40IW_CQPSQ_STAG_KEY_MASK;
- 	iwmr->stag = stag;
- 	iwmr->ibmr.rkey = stag;
- 	iwmr->ibmr.lkey = stag;
+--- a/include/trace/events/timer.h
++++ b/include/trace/events/timer.h
+@@ -125,6 +125,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
+ 	TP_ARGS(timer)
+ );
+ 
++#define decode_clockid(type)						\
++	__print_symbolic(type,						\
++		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
++		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
++		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
++		{ CLOCK_TAI,		"CLOCK_TAI"		})
++
++#define decode_hrtimer_mode(mode)					\
++	__print_symbolic(mode,						\
++		{ HRTIMER_MODE_ABS,		"ABS"		},	\
++		{ HRTIMER_MODE_REL,		"REL"		},	\
++		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
++		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
++
+ /**
+  * hrtimer_init - called when the hrtimer is initialized
+  * @hrtimer:	pointer to struct hrtimer
+@@ -151,10 +165,8 @@ TRACE_EVENT(hrtimer_init,
+ 	),
+ 
+ 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
+-		  __entry->clockid == CLOCK_REALTIME ?
+-			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
+-		  __entry->mode == HRTIMER_MODE_ABS ?
+-			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
++		  decode_clockid(__entry->clockid),
++		  decode_hrtimer_mode(__entry->mode))
+ );
+ 
+ /**
