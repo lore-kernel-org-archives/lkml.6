@@ -1,20 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938495AbeE1L75 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:59:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54556 "EHLO mail.kernel.org"
+        id S938506AbeE1MAS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:00:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423414AbeE1LHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:37 -0400
+        id S1423441AbeE1LHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
+        Lee Chun-Yi <jlee@suse.com>, Matt Fleming <matt@codeblueprint.co.uk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 049/272] Btrfs: fix loss of prealloc extents past i_size after fsync log replay
-Date: Mon, 28 May 2018 12:01:22 +0200
-Message-Id: <20180528100244.974562540@linuxfoundation.org>
+Subject: [PATCH 4.16 078/272] x86/mm: Fix bogus warning during EFI bootup, use boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
+Date: Mon, 28 May 2018 12:01:51 +0200
+Message-Id: <20180528100247.645864018@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,145 +42,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-[ Upstream commit 471d557afed155b85da237ec46c549f443eeb5de ]
+[ Upstream commit 162ee5a8ab49be40d253f90e94aef712470a3a24 ]
 
-Currently if we allocate extents beyond an inode's i_size (through the
-fallocate system call) and then fsync the file, we log the extents but
-after a power failure we replay them and then immediately drop them.
-This behaviour happens since about 2009, commit c71bf099abdd ("Btrfs:
-Avoid orphan inodes cleanup while replaying log"), because it marks
-the inode as an orphan instead of dropping any extents beyond i_size
-before replaying logged extents, so after the log replay, and while
-the mount operation is still ongoing, we find the inode marked as an
-orphan and then perform a truncation (drop extents beyond the inode's
-i_size). Because the processing of orphan inodes is still done
-right after replaying the log and before the mount operation finishes,
-the intention of that commit does not make any sense (at least as
-of today). However reverting that behaviour is not enough, because
-we can not simply discard all extents beyond i_size and then replay
-logged extents, because we risk dropping extents beyond i_size created
-in past transactions, for example:
+Linus reported the following boot warning:
 
-  add prealloc extent beyond i_size
-  fsync - clears the flag BTRFS_INODE_NEEDS_FULL_SYNC from the inode
-  transaction commit
-  add another prealloc extent beyond i_size
-  fsync - triggers the fast fsync path
-  power failure
+  WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134 load_new_mm_cr3+0x114/0x170
+  [...]
+  Call Trace:
+  switch_mm_irqs_off+0x267/0x590
+  switch_mm+0xe/0x20
+  efi_switch_mm+0x3e/0x50
+  efi_enter_virtual_mode+0x43f/0x4da
+  start_kernel+0x3bf/0x458
+  secondary_startup_64+0xa5/0xb0
 
-In that scenario, we would drop the first extent and then replay the
-second one. To fix this just make sure that all prealloc extents
-beyond i_size are logged, and if we find too many (which is far from
-a common case), fallback to a full transaction commit (like we do when
-logging regular extents in the fast fsync path).
+... after merging:
 
-Trivial reproducer:
+  03781e40890c: x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
 
- $ mkfs.btrfs -f /dev/sdb
- $ mount /dev/sdb /mnt
- $ xfs_io -f -c "pwrite -S 0xab 0 256K" /mnt/foo
- $ sync
- $ xfs_io -c "falloc -k 256K 1M" /mnt/foo
- $ xfs_io -c "fsync" /mnt/foo
- <power failure>
+When the platform supports PCID and if CONFIG_DEBUG_VM=y is enabled,
+build_cr3_noflush() (called via switch_mm()) does a sanity check to see
+if X86_FEATURE_PCID is set.
 
- # mount to replay log
- $ mount /dev/sdb /mnt
- # at this point the file only has one extent, at offset 0, size 256K
+Presently, build_cr3_noflush() uses "this_cpu_has(X86_FEATURE_PCID)" to
+perform the check but this_cpu_has() works only after SMP is initialized
+(i.e. per cpu cpu_info's should be populated) and this happens to be very
+late in the boot process (during rest_init()).
 
-A test case for fstests follows soon, covering multiple scenarios that
-involve adding prealloc extents with previous shrinking truncates and
-without such truncates.
+As efi_runtime_services() are called during (early) kernel boot time
+and run time, modify build_cr3_noflush() to use boot_cpu_has() all the
+time. As suggested by Dave Hansen, this should be OK because all CPU's have
+same capabilities on x86.
 
-Fixes: c71bf099abdd ("Btrfs: Avoid orphan inodes cleanup while replaying log")
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+With this change the warning is fixed.
+
+( Dave also suggested that we put a warning in this_cpu_has() if it's used
+  early in the boot process. This is still work in progress as it affects
+  MCE. )
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Ricardo Neri <ricardo.neri@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-log.c |   63 +++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 58 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/tlbflush.h |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2461,13 +2461,41 @@ static int replay_one_buffer(struct btrf
- 			if (ret)
- 				break;
- 
--			/* for regular files, make sure corresponding
--			 * orphan item exist. extents past the new EOF
--			 * will be truncated later by orphan cleanup.
-+			/*
-+			 * Before replaying extents, truncate the inode to its
-+			 * size. We need to do it now and not after log replay
-+			 * because before an fsync we can have prealloc extents
-+			 * added beyond the inode's i_size. If we did it after,
-+			 * through orphan cleanup for example, we would drop
-+			 * those prealloc extents just after replaying them.
- 			 */
- 			if (S_ISREG(mode)) {
--				ret = insert_orphan_item(wc->trans, root,
--							 key.objectid);
-+				struct inode *inode;
-+				u64 from;
-+
-+				inode = read_one_inode(root, key.objectid);
-+				if (!inode) {
-+					ret = -EIO;
-+					break;
-+				}
-+				from = ALIGN(i_size_read(inode),
-+					     root->fs_info->sectorsize);
-+				ret = btrfs_drop_extents(wc->trans, root, inode,
-+							 from, (u64)-1, 1);
-+				/*
-+				 * If the nlink count is zero here, the iput
-+				 * will free the inode.  We bump it to make
-+				 * sure it doesn't get freed until the link
-+				 * count fixup is done.
-+				 */
-+				if (!ret) {
-+					if (inode->i_nlink == 0)
-+						inc_nlink(inode);
-+					/* Update link count and nbytes. */
-+					ret = btrfs_update_inode(wc->trans,
-+								 root, inode);
-+				}
-+				iput(inode);
- 				if (ret)
- 					break;
- 			}
-@@ -4321,6 +4349,31 @@ static int btrfs_log_changed_extents(str
- 		num++;
- 	}
- 
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -131,7 +131,12 @@ static inline unsigned long build_cr3(pg
+ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ {
+ 	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
+-	VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
 +	/*
-+	 * Add all prealloc extents beyond the inode's i_size to make sure we
-+	 * don't lose them after doing a fast fsync and replaying the log.
++	 * Use boot_cpu_has() instead of this_cpu_has() as this function
++	 * might be called during early boot. This should work even after
++	 * boot because all CPU's the have same capabilities:
 +	 */
-+	if (inode->flags & BTRFS_INODE_PREALLOC) {
-+		struct rb_node *node;
-+
-+		for (node = rb_last(&tree->map); node; node = rb_prev(node)) {
-+			em = rb_entry(node, struct extent_map, rb_node);
-+			if (em->start < i_size_read(&inode->vfs_inode))
-+				break;
-+			if (!list_empty(&em->list))
-+				continue;
-+			/* Same as above loop. */
-+			if (++num > 32768) {
-+				list_del_init(&tree->modified_extents);
-+				ret = -EFBIG;
-+				goto process;
-+			}
-+			refcount_inc(&em->refs);
-+			set_bit(EXTENT_FLAG_LOGGING, &em->flags);
-+			list_add_tail(&em->list, &extents);
-+		}
-+	}
-+
- 	list_sort(NULL, &extents, extent_cmp);
- 	btrfs_get_logged_extents(inode, logged_list, logged_start, logged_end);
- 	/*
++	VM_WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_PCID));
+ 	return __sme_pa(pgd) | kern_pcid(asid) | CR3_NOFLUSH;
+ }
+ 
