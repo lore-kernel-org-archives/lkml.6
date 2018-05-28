@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423349AbeE1MQF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:16:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50652 "EHLO mail.kernel.org"
+        id S1423367AbeE1MQX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:16:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164952AbeE1LDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:25 -0400
+        id S1164538AbeE1LDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 485/496] drm: rcar-du: lvds: Fix LVDS startup on R-Car Gen3
-Date: Mon, 28 May 2018 12:04:30 +0200
-Message-Id: <20180528100340.318977825@linuxfoundation.org>
+Subject: [PATCH 4.14 482/496] perf tests: Fix dwarf unwind for stripped binaries
+Date: Mon, 28 May 2018 12:04:27 +0200
+Message-Id: <20180528100340.203087562@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,55 +33,207 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 796ceb9269626afaed3b4955c40d2c3d7a8c5d01 ]
+[ Upstream commit fdf7c49c200d1b9909e2204cec5bd68b48605c71 ]
 
-According to the latest revisions of the R-Car Gen3 manual, the LVDS mode
-must be set before the LVDS I/O pins are enabled, not after -- fix the
-Gen3 LVDS startup sequence accordingly.
+When we strip the perf binary, dwarf unwind test stop
+to work. The reason is that strip will remove static
+function symbols, which we need to check for unwind.
 
-Fixes: e947eccbeba4 ("drm: rcar-du: Add support for LVDS mode selection")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[Updated comment in rcar_du_lvdsenc_start_gen3()]
-[Moved Gen2 startup comment update to separate commit]
-[Fixed =| typo]
-Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This change will keep this test working in cases where
+the global symbols are put into dynamic symbol table,
+which is the case on x86. It still won't work on powerpc.
+
+Making those 5 local functions global, and adding
+'test_dwarf_unwind__' to their names.
+
+Committer testing:
+
+Before:
+
+  # perf test dwarf
+  58: DWARF unwind                               : Ok
+  # strip ~/bin/perf
+  # perf test dwarf
+  58: DWARF unwind                               : FAILED!
+  # perf test -v dwarf
+  58: DWARF unwind                               :
+  --- start ---
+  test child forked, pid 6590
+  unwind: thread map already set, dso=/home/acme/bin/perf
+  <SNIP>
+  unwind: access_mem addr 0x7ffce6c48098 val 48563f, offset 1144
+  unwind: test__dwarf_unwind:ip = 0x4a54e5 (0xa54e5)
+  got: test__dwarf_unwind 0xa54e5, expecting test__dwarf_unwind
+  unwind: '':ip = 0x4a50bb (0xa50bb)
+  failed: got unresolved address 0xa50bb
+  unwind failed
+  test child finished with -1
+  ---- end ----
+  DWARF unwind: FAILED!
+  #
+
+After:
+
+  # perf test dwarf
+  58: DWARF unwind                               : Ok
+  # strip ~/bin/perf
+  # perf test dwarf
+  58: DWARF unwind                               : Ok
+  #
+  # perf test -v dwarf
+  58: DWARF unwind                               :
+  --- start ---
+  test child forked, pid 7219
+  unwind: thread map already set, dso=/home/acme/bin/perf
+  <SNIP>
+  unwind: access_mem addr 0x7fff007da2c8 val 48575f, offset 1144
+  unwind: test__arch_unwind_sample:ip = 0x589044 (0x189044)
+  got: test__arch_unwind_sample 0x189044, expecting test__arch_unwind_sample
+  unwind: test_dwarf_unwind__thread:ip = 0x4a52f7 (0xa52f7)
+  got: test_dwarf_unwind__thread 0xa52f7, expecting test_dwarf_unwind__thread
+  unwind: test_dwarf_unwind__compare:ip = 0x4a5468 (0xa5468)
+  got: test_dwarf_unwind__compare 0xa5468, expecting test_dwarf_unwind__compare
+  unwind: bsearch:ip = 0x7f6608ae94d8 (0x394d8)
+  got: bsearch 0x394d8, expecting bsearch
+  unwind: test_dwarf_unwind__krava_3:ip = 0x4a54d1 (0xa54d1)
+  got: test_dwarf_unwind__krava_3 0xa54d1, expecting test_dwarf_unwind__krava_3
+  unwind: test_dwarf_unwind__krava_2:ip = 0x4a550b (0xa550b)
+  got: test_dwarf_unwind__krava_2 0xa550b, expecting test_dwarf_unwind__krava_2
+  unwind: test_dwarf_unwind__krava_1:ip = 0x4a554b (0xa554b)
+  got: test_dwarf_unwind__krava_1 0xa554b, expecting test_dwarf_unwind__krava_1
+  unwind: test__dwarf_unwind:ip = 0x4a5605 (0xa5605)
+  got: test__dwarf_unwind 0xa5605, expecting test__dwarf_unwind
+  test child finished with 0
+  ---- end ----
+  DWARF unwind: Ok
+  #
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180206181813.10943-17-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/perf/tests/dwarf-unwind.c |   46 ++++++++++++++++++++++++++--------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -95,7 +95,7 @@ static void rcar_du_lvdsenc_start_gen3(s
- 	u32 lvdcr0;
- 	u32 pllcr;
+--- a/tools/perf/tests/dwarf-unwind.c
++++ b/tools/perf/tests/dwarf-unwind.c
+@@ -37,6 +37,19 @@ static int init_live_machine(struct mach
+ 						  mmap_handler, machine, true, 500);
+ }
  
--	/* PLL clock configuration */
-+	/* Set the PLL clock configuration and LVDS mode. */
- 	if (freq < 42000)
- 		pllcr = LVDPLLCR_PLLDIVCNT_42M;
- 	else if (freq < 85000)
-@@ -107,6 +107,9 @@ static void rcar_du_lvdsenc_start_gen3(s
- 
- 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
- 
-+	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
-+	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
++/*
++ * We need to keep these functions global, despite the
++ * fact that they are used only locally in this object,
++ * in order to keep them around even if the binary is
++ * stripped. If they are gone, the unwind check for
++ * symbol fails.
++ */
++int test_dwarf_unwind__thread(struct thread *thread);
++int test_dwarf_unwind__compare(void *p1, void *p2);
++int test_dwarf_unwind__krava_3(struct thread *thread);
++int test_dwarf_unwind__krava_2(struct thread *thread);
++int test_dwarf_unwind__krava_1(struct thread *thread);
 +
- 	/* Turn all the channels on. */
- 	rcar_lvds_write(lvds, LVDCR1,
- 			LVDCR1_CHSTBY_GEN3(3) | LVDCR1_CHSTBY_GEN3(2) |
-@@ -117,7 +120,7 @@ static void rcar_du_lvdsenc_start_gen3(s
- 	 * Turn the PLL on, set it to LVDS normal mode, wait for the startup
- 	 * delay and turn the output on.
- 	 */
--	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_PLLON;
-+	lvdcr0 |= LVDCR0_PLLON;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+ #define MAX_STACK 8
  
- 	lvdcr0 |= LVDCR0_PWD;
+ static int unwind_entry(struct unwind_entry *entry, void *arg)
+@@ -45,12 +58,12 @@ static int unwind_entry(struct unwind_en
+ 	char *symbol = entry->sym ? entry->sym->name : NULL;
+ 	static const char *funcs[MAX_STACK] = {
+ 		"test__arch_unwind_sample",
+-		"unwind_thread",
+-		"compare",
++		"test_dwarf_unwind__thread",
++		"test_dwarf_unwind__compare",
+ 		"bsearch",
+-		"krava_3",
+-		"krava_2",
+-		"krava_1",
++		"test_dwarf_unwind__krava_3",
++		"test_dwarf_unwind__krava_2",
++		"test_dwarf_unwind__krava_1",
+ 		"test__dwarf_unwind"
+ 	};
+ 	/*
+@@ -77,7 +90,7 @@ static int unwind_entry(struct unwind_en
+ 	return strcmp((const char *) symbol, funcs[idx]);
+ }
+ 
+-static noinline int unwind_thread(struct thread *thread)
++noinline int test_dwarf_unwind__thread(struct thread *thread)
+ {
+ 	struct perf_sample sample;
+ 	unsigned long cnt = 0;
+@@ -108,7 +121,7 @@ static noinline int unwind_thread(struct
+ 
+ static int global_unwind_retval = -INT_MAX;
+ 
+-static noinline int compare(void *p1, void *p2)
++noinline int test_dwarf_unwind__compare(void *p1, void *p2)
+ {
+ 	/* Any possible value should be 'thread' */
+ 	struct thread *thread = *(struct thread **)p1;
+@@ -117,17 +130,17 @@ static noinline int compare(void *p1, vo
+ 		/* Call unwinder twice for both callchain orders. */
+ 		callchain_param.order = ORDER_CALLER;
+ 
+-		global_unwind_retval = unwind_thread(thread);
++		global_unwind_retval = test_dwarf_unwind__thread(thread);
+ 		if (!global_unwind_retval) {
+ 			callchain_param.order = ORDER_CALLEE;
+-			global_unwind_retval = unwind_thread(thread);
++			global_unwind_retval = test_dwarf_unwind__thread(thread);
+ 		}
+ 	}
+ 
+ 	return p1 - p2;
+ }
+ 
+-static noinline int krava_3(struct thread *thread)
++noinline int test_dwarf_unwind__krava_3(struct thread *thread)
+ {
+ 	struct thread *array[2] = {thread, thread};
+ 	void *fp = &bsearch;
+@@ -141,18 +154,19 @@ static noinline int krava_3(struct threa
+ 			size_t, int (*)(void *, void *));
+ 
+ 	_bsearch = fp;
+-	_bsearch(array, &thread, 2, sizeof(struct thread **), compare);
++	_bsearch(array, &thread, 2, sizeof(struct thread **),
++		 test_dwarf_unwind__compare);
+ 	return global_unwind_retval;
+ }
+ 
+-static noinline int krava_2(struct thread *thread)
++noinline int test_dwarf_unwind__krava_2(struct thread *thread)
+ {
+-	return krava_3(thread);
++	return test_dwarf_unwind__krava_3(thread);
+ }
+ 
+-static noinline int krava_1(struct thread *thread)
++noinline int test_dwarf_unwind__krava_1(struct thread *thread)
+ {
+-	return krava_2(thread);
++	return test_dwarf_unwind__krava_2(thread);
+ }
+ 
+ int test__dwarf_unwind(struct test *test __maybe_unused, int subtest __maybe_unused)
+@@ -189,7 +203,7 @@ int test__dwarf_unwind(struct test *test
+ 		goto out;
+ 	}
+ 
+-	err = krava_1(thread);
++	err = test_dwarf_unwind__krava_1(thread);
+ 	thread__put(thread);
+ 
+  out:
