@@ -1,25 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755501AbeE1QE2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:04:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47976 "EHLO mx2.suse.de"
+        id S933346AbeE1QEt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:04:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47810 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933294AbeE1QED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:04:03 -0400
-Subject: Re: [RFC PATCH 1/5] mm, slab/slub: introduce kmalloc-reclaimable
- caches
-To: Christopher Lameter <cl@linux.com>
-Cc: linux-mm@kvack.org, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vijayanand Jitta <vjitta@codeaurora.org>
-References: <20180524110011.1940-1-vbabka@suse.cz>
- <20180524110011.1940-2-vbabka@suse.cz>
- <0100016397ffdbf2-dc8a305f-efa8-4771-9f2a-3a7568693db4-000000@email.amazonses.com>
+        id S933209AbeE1QDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:03:48 -0400
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+To: Michal Hocko <mhocko@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+References: <20180424183536.GF30619@thunk.org>
+ <20180524114341.1101-1-mhocko@kernel.org>
+ <6c9df175-df6c-2531-b90c-318e4fff72bb@infradead.org>
+ <20180525075217.GF11881@dhcp22.suse.cz>
 From: Vlastimil Babka <vbabka@suse.cz>
 Openpgp: preference=signencrypt
 Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
@@ -76,12 +72,12 @@ Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
  FPbL9fuTVKAXvkmKzuY0ye5tmJAsyYqgV5l+jaGt6oFEGFj5XZQvO6ic5lmjTHz9b6lUg8at
  uInmlw5eLxByeMA81R3sJvNbtGfCcqQfVkJAn2S4RYpDtAKI7QM+ydrdH3STBRaC1IuD0YWr
  A3XDrKOXTZil3g8D
-Message-ID: <99bb1e0c-15e2-7f8a-19ea-7cf9f49551b1@suse.cz>
-Date: Mon, 28 May 2018 10:03:48 +0200
+Message-ID: <1f870f27-2ef9-fced-30d9-20cae52789b2@suse.cz>
+Date: Mon, 28 May 2018 13:32:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <0100016397ffdbf2-dc8a305f-efa8-4771-9f2a-3a7568693db4-000000@email.amazonses.com>
+In-Reply-To: <20180525075217.GF11881@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,55 +85,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/25/2018 05:51 PM, Christopher Lameter wrote:
-> On Thu, 24 May 2018, Vlastimil Babka wrote:
-> 
->> diff --git a/include/linux/slab.h b/include/linux/slab.h
->> index 9ebe659bd4a5..5bff0571b360 100644
->> --- a/include/linux/slab.h
->> +++ b/include/linux/slab.h
->> @@ -296,11 +296,16 @@ static inline void __check_heap_object(const void *ptr, unsigned long n,
->>                                 (KMALLOC_MIN_SIZE) : 16)
+On 05/25/2018 09:52 AM, Michal Hocko wrote:
+> On Thu 24-05-18 09:37:18, Randy Dunlap wrote:
+>> On 05/24/2018 04:43 AM, Michal Hocko wrote:
+> [...]
+>>> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
+>>> +resp. __GFP_IO (note the later implies clearing the first as well) in
 >>
->>  #ifndef CONFIG_SLOB
->> -extern struct kmem_cache *kmalloc_caches[KMALLOC_SHIFT_HIGH + 1];
->> +extern struct kmem_cache *kmalloc_caches[2][KMALLOC_SHIFT_HIGH + 1];
->>  #ifdef CONFIG_ZONE_DMA
->>  extern struct kmem_cache *kmalloc_dma_caches[KMALLOC_SHIFT_HIGH + 1];
->>  #endif
+>>                             latter
 > 
-> In the existing code we used a different array name for the DMA caches.
-> This is a similar situation.
-> 
-> I would suggest to use
-> 
-> kmalloc_reclaimable_caches[]
-> 
-> or make it consistent by folding the DMA caches into the array too (but
-> then note the issues below).
-> 
->> @@ -536,12 +541,13 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
->>  #ifndef CONFIG_SLOB
->>  		if (!(flags & GFP_DMA)) {
->>  			unsigned int index = kmalloc_index(size);
->> +			unsigned int recl = kmalloc_reclaimable(flags);
-> 
-> This is a hotpath reserved for regular allocations. The reclaimable slabs
-> need to be handled like the DMA slabs.  So check for GFP_DMA plus the
-> reclaimable flags.
+> ?
+> No I really meant that clearing __GFP_IO implies __GFP_FS clearing
 
-Yeah I thought that by doing reclaimable via array index manipulation
-and not a branch, there would be no noticeable overhead. And GFP_DMA
-should go away eventually. I will see if I can convert GFP_DMA to
-another index, and completely remove the branch quoted above.
-
->> @@ -588,12 +594,13 @@ static __always_inline void *kmalloc_node(size_t size, gfp_t flags, int node)
->>  	if (__builtin_constant_p(size) &&
->>  		size <= KMALLOC_MAX_CACHE_SIZE && !(flags & GFP_DMA)) {
->>  		unsigned int i = kmalloc_index(size);
->> +		unsigned int recl = kmalloc_reclaimable(flags);
->>
-> 
-> 
-> Same situation here and additional times below.
-> 
+In that case "latter" is the proper word AFAIK. You could also use
+"former" instead of "first". Or maybe just repeat the flag names to
+avoid confusion...
