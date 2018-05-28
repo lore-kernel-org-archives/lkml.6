@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936559AbeE1KLH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
+        id S965000AbeE1KLO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:11:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935505AbeE1KLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:02 -0400
+        id S935505AbeE1KLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>,
-        dave@stgolabs.net, rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 121/185] sched/rt: Fix rq->clock_update_flags < RQCF_ACT_SKIP warning
-Date: Mon, 28 May 2018 12:02:42 +0200
-Message-Id: <20180528100102.631341415@linuxfoundation.org>
+Subject: [PATCH 3.18 124/185] btrfs: tests/qgroup: Fix wrong tree backref level
+Date: Mon, 28 May 2018 12:02:45 +0200
+Message-Id: <20180528100103.194335733@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,72 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit d29a20645d5e929aa7e8616f28e5d8e1c49263ec ]
+[ Upstream commit 3c0efdf03b2d127f0e40e30db4e7aa0429b1b79a ]
 
-While running rt-tests' pi_stress program I got the following splat:
+The extent tree of the test fs is like the following:
 
-  rq->clock_update_flags < RQCF_ACT_SKIP
-  WARNING: CPU: 27 PID: 0 at kernel/sched/sched.h:960 assert_clock_updated.isra.38.part.39+0x13/0x20
+ BTRFS info (device (null)): leaf 16327509003777336587 total ptrs 1 free space 3919
+  item 0 key (4096 168 4096) itemoff 3944 itemsize 51
+          extent refs 1 gen 1 flags 2
+          tree block key (68719476736 0 0) level 1
+                                           ^^^^^^^
+          ref#0: tree block backref root 5
 
-  [...]
+And it's using an empty tree for fs tree, so there is no way that its
+level can be 1.
 
-  <IRQ>
-  enqueue_top_rt_rq+0xf4/0x150
-  ? cpufreq_dbs_governor_start+0x170/0x170
-  sched_rt_rq_enqueue+0x65/0x80
-  sched_rt_period_timer+0x156/0x360
-  ? sched_rt_rq_enqueue+0x80/0x80
-  __hrtimer_run_queues+0xfa/0x260
-  hrtimer_interrupt+0xcb/0x220
-  smp_apic_timer_interrupt+0x62/0x120
-  apic_timer_interrupt+0xf/0x20
-  </IRQ>
+For REAL (created by mkfs) fs tree backref with no skinny metadata, the
+result should look like:
 
-  [...]
+ item 3 key (30408704 EXTENT_ITEM 4096) itemoff 3845 itemsize 51
+         refs 1 gen 4 flags TREE_BLOCK
+         tree block key (256 INODE_ITEM 0) level 0
+                                           ^^^^^^^
+         tree block backref root 5
 
-  do_idle+0x183/0x1e0
-  cpu_startup_entry+0x5f/0x70
-  start_secondary+0x192/0x1d0
-  secondary_startup_64+0xa5/0xb0
+Fix the level to 0, so it won't break later tree level checker.
 
-We can get rid of it be the "traditional" means of adding an
-update_rq_clock() call after acquiring the rq->lock in
-do_sched_rt_period_timer().
-
-The case for the RT task throttling (which this workload also hits)
-can be ignored in that the skip_update call is actually bogus and
-quite the contrary (the request bits are removed/reverted).
-
-By setting RQCF_UPDATED we really don't care if the skip is happening
-or not and will therefore make the assert_clock_updated() check happy.
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave@stgolabs.net
-Cc: linux-kernel@vger.kernel.org
-Cc: rostedt@goodmis.org
-Link: http://lkml.kernel.org/r/20180402164954.16255-1-dave@stgolabs.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/rt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/tests/qgroup-tests.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -818,6 +818,8 @@ static int do_sched_rt_period_timer(stru
- 		struct rq *rq = rq_of_rt_rq(rt_rq);
- 
- 		raw_spin_lock(&rq->lock);
-+		update_rq_clock(rq);
-+
- 		if (rt_rq->rt_time) {
- 			u64 runtime;
- 
+--- a/fs/btrfs/tests/qgroup-tests.c
++++ b/fs/btrfs/tests/qgroup-tests.c
+@@ -69,7 +69,7 @@ static int insert_normal_tree_ref(struct
+ 	btrfs_set_extent_generation(leaf, item, 1);
+ 	btrfs_set_extent_flags(leaf, item, BTRFS_EXTENT_FLAG_TREE_BLOCK);
+ 	block_info = (struct btrfs_tree_block_info *)(item + 1);
+-	btrfs_set_tree_block_level(leaf, block_info, 1);
++	btrfs_set_tree_block_level(leaf, block_info, 0);
+ 	iref = (struct btrfs_extent_inline_ref *)(block_info + 1);
+ 	if (parent > 0) {
+ 		btrfs_set_extent_inline_ref_type(leaf, iref,
