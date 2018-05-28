@@ -1,79 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933104AbeE1SVu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 14:21:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50488 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932268AbeE1SVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 14:21:46 -0400
-Subject: Re: [PATCH] KVM: irqfd: fix race between EPOLLHUP and
- irq_bypass_register_consumer
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: dvyukov@google.com, stable@vger.kernel.org
-References: <20180528113113.30941-1-pbonzini@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <0014b068-897d-bcb4-beb2-e5b2a5d2219b@redhat.com>
-Date: Mon, 28 May 2018 20:21:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933131AbeE1SWh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 14:22:37 -0400
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:34653 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932268AbeE1SWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 14:22:35 -0400
+X-Google-Smtp-Source: ADUXVKK1OY5NLEwI/NhBEU6lZkm15y8Pctf7dJf/Gsvoeabxb5KpjT0XNHHJW644AQ6CePizqNio2g==
+Date: Mon, 28 May 2018 15:22:31 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Xin Long <lucien.xin@gmail.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com>,
+        ast@kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: INFO: rcu detected stall in is_bpf_text_address
+Message-ID: <20180528182230.GE3787@localhost.localdomain>
+References: <0000000000006d7517056c911740@google.com>
+ <4b65142a-cf3b-05d7-d66b-018ff8da7ccc@gmail.com>
+ <CADvbK_e7LXc7minSmaPw6iZvjWo215wG-pPAS0gr58+-VxUO7Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180528113113.30941-1-pbonzini@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_e7LXc7minSmaPw6iZvjWo215wG-pPAS0gr58+-VxUO7Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.05.2018 13:31, Paolo Bonzini wrote:
-> A comment warning against this bug is there, but the code is not doing what
-> the comment says.  Therefore it is possible that an EPOLLHUP races against
-> irq_bypass_register_consumer.  The EPOLLHUP handler schedules irqfd_shutdown,
-> and if that runs soon enough, you get a use-after-free.
-> 
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  virt/kvm/eventfd.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-> index 6e865e8b5b10..44dda5dad0ee 100644
-> --- a/virt/kvm/eventfd.c
-> +++ b/virt/kvm/eventfd.c
-> @@ -402,11 +402,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
->  	if (events & EPOLLIN)
->  		schedule_work(&irqfd->inject);
->  
-> -	/*
-> -	 * do not drop the file until the irqfd is fully initialized, otherwise
-> -	 * we might race against the EPOLLHUP
-> -	 */
-> -	fdput(f);
->  #ifdef CONFIG_HAVE_KVM_IRQ_BYPASS
->  	if (kvm_arch_has_irq_bypass()) {
->  		irqfd->consumer.token = (void *)irqfd->eventfd;
-> @@ -421,6 +416,11 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
->  	}
->  #endif
->  
-> +	/*
-> +	 * do not drop the file until the irqfd is fully initialized, otherwise
-> +	 * we might race against the EPOLLHUP
-> +	 */
-> +	fdput(f);
->  	return 0;
->  
->  fail:
-> 
+On Sun, May 20, 2018 at 04:26:03PM +0800, Xin Long wrote:
+> On Sat, May 19, 2018 at 11:57 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> > SCTP experts, please take a look.
+> >
+> > On 05/19/2018 08:55 AM, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    73fcb1a370c7 Merge branch 'akpm' (patches from Andrew)
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1462ec0f800000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3dcd59a1f907245f891f
+> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1079cf8f800000
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+The reproducer has:
+r0 = socket$inet6(0xa, 0x1, 0x8010000000000084)
 
--- 
+Considering socket() prototype uses an int for the 3rd argument, how
+should I interpret this 64b value?
 
-Thanks,
-
-David / dhildenb
+0x84 is IPPROTO_SCTP, but don't know about the 0x8010000000000000 in
+there.
