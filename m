@@ -1,70 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161725AbeE1Of6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:35:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161431AbeE1KcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:03 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 131/329] PKCS#7: fix direct verification of SignerInfo signature
-Date: Mon, 28 May 2018 12:01:00 +0200
-Message-Id: <20180528100253.592296823@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1165767AbeE1OgH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:36:07 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38269 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161431AbeE1OgC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:36:02 -0400
+Date: Mon, 28 May 2018 16:35:18 +0200
+From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "daniel@bristot.me" <daniel@bristot.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
+        "williams@redhat.com" <williams@redhat.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "lclaudio@redhat.com" <lclaudio@redhat.com>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
+ combo checks
+Message-ID: <20180528143518.f46hyhi5r5jd3oxe@linutronix.de>
+References: <20180322093745.GC4229@kernel.org>
+ <20180323155513.dwbgvblenlji33as@linutronix.de>
+ <1521822325.2535.5.camel@wdc.com>
+ <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
+ <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
+ <20180326111359.180f1604@gandalf.local.home>
+ <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
+ <c9f5df1e54bb2bd8f3f0aef86a55deb11888a6a4.camel@wdc.com>
+ <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
+ <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 2018-03-28 08:31:38 [-0700], Bart Van Assche wrote:
+> On 03/28/18 08:14, bigeasy@linutronix.de wrote:
+> > On 2018-03-28 15:05:41 [+0000], Bart Van Assche wrote:
+> > > The names of the two functions touched by patch 1/2 start with a double
+> > > underscore. That by itself is already a hint that these should be called with
+> > > a lock held (I know that this is not a universal convention in the Linux
+> > > kernel). I'm fine either way - either with patch 1/2 as posted or patch 1/2
+> > > with the above comment added.
+> > 
+> > Okay. In that case let me update 1/2.
+> > But 2/2 with the comment as Steven suggested is still a no no for you?
+> 
+> Although I'm not enthusiast about patch 2/2, if others agree with that patch
+> I'm fine with that patch being sent upstream.
 
-------------------
+I've been waiting for something to happen but nobody replied.
+Bart, you were fine with 1/2 as posted but not too happy about 2/2.
+Assuming we keep 1/2 as is and I remove just the
+"WARN_ON_ONCE(!irqs_disabled());" from 2/2 (keeping the
+assert_spin_locked()), would that improve your mood? Lockdep would still
+perform full validation, yell if __transport_check_aborted_status() was
+invoked without locking and also yell abut missing IRQ-save at locking
+time of ->t_state_lock).
 
-From: Eric Biggers <ebiggers@google.com>
+> Thanks,
+> 
+> Bart.
 
-[ Upstream commit 6459ae386699a5fe0dc52cf30255f75274fa43a4 ]
-
-If none of the certificates in a SignerInfo's certificate chain match a
-trusted key, nor is the last certificate signed by a trusted key, then
-pkcs7_validate_trust_one() tries to check whether the SignerInfo's
-signature was made directly by a trusted key.  But, it actually fails to
-set the 'sig' variable correctly, so it actually verifies the last
-signature seen.  That will only be the SignerInfo's signature if the
-certificate chain is empty; otherwise it will actually be the last
-certificate's signature.
-
-This is not by itself a security problem, since verifying any of the
-certificates in the chain should be sufficient to verify the SignerInfo.
-Still, it's not working as intended so it should be fixed.
-
-Fix it by setting 'sig' correctly for the direct verification case.
-
-Fixes: 757932e6da6d ("PKCS#7: Handle PKCS#7 messages that contain no X.509 certs")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- crypto/asymmetric_keys/pkcs7_trust.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/crypto/asymmetric_keys/pkcs7_trust.c
-+++ b/crypto/asymmetric_keys/pkcs7_trust.c
-@@ -106,6 +106,7 @@ static int pkcs7_validate_trust_one(stru
- 		pr_devel("sinfo %u: Direct signer is key %x\n",
- 			 sinfo->index, key_serial(key));
- 		x509 = NULL;
-+		sig = sinfo->sig;
- 		goto matched;
- 	}
- 	if (PTR_ERR(key) != -ENOKEY)
+Sebastian
