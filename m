@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164852AbeE1LBS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:01:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        id S1423483AbeE1MZC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:25:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164830AbeE1LBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:06 -0400
+        id S1422724AbeE1LBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
+        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        Ziyuan Xu <xzy.xu@rock-chips.com>, Caesar Wang <wxt@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 436/496] gfs2: Fix fallocate chunk size
-Date: Mon, 28 May 2018 12:03:41 +0200
-Message-Id: <20180528100338.094884074@linuxfoundation.org>
+Subject: [PATCH 4.14 439/496] phy: rockchip-emmc: retry calpad busy trimming
+Date: Mon, 28 May 2018 12:03:44 +0200
+Message-Id: <20180528100338.342507955@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,61 +32,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit 174d1232ebc84fcde8f5889d1171c9c7e74a10a7 ]
+[ Upstream commit a4781c2a74b249cad814ceea7272997bbd20051e ]
 
-The chunk size of allocations in __gfs2_fallocate is calculated
-incorrectly.  The size can collapse, causing __gfs2_fallocate to
-allocate one block at a time, which is very inefficient.  This needs
-fixing in two places:
+It turns out that 5us isn't enough for all cases, so let's
+retry some more times to wait for caldone.
 
-In gfs2_quota_lock_check, always set ap->allowed to UINT_MAX to indicate
-that there is no quota limit.  This fixes callers that rely on
-ap->allowed to be set even when quotas are off.
-
-In __gfs2_fallocate, reset max_blks to UINT_MAX in each iteration of the
-loop to make sure that allocation limits from one resource group won't
-spill over into another resource group.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Tested-by: Ziyuan Xu <xzy.xu@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/file.c  |    5 +++--
- fs/gfs2/quota.h |    2 ++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-emmc.c |   27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -803,7 +803,7 @@ static long __gfs2_fallocate(struct file
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_alloc_parms ap = { .aflags = 0, };
- 	unsigned int data_blocks = 0, ind_blocks = 0, rblocks;
--	loff_t bytes, max_bytes, max_blks = UINT_MAX;
-+	loff_t bytes, max_bytes, max_blks;
- 	int error;
- 	const loff_t pos = offset;
- 	const loff_t count = len;
-@@ -855,7 +855,8 @@ static long __gfs2_fallocate(struct file
- 			return error;
- 		/* ap.allowed tells us how many blocks quota will allow
- 		 * us to write. Check if this reduces max_blks */
--		if (ap.allowed && ap.allowed < max_blks)
-+		max_blks = UINT_MAX;
-+		if (ap.allowed)
- 			max_blks = ap.allowed;
+--- a/drivers/phy/rockchip/phy-rockchip-emmc.c
++++ b/drivers/phy/rockchip/phy-rockchip-emmc.c
+@@ -76,6 +76,10 @@
+ #define PHYCTRL_OTAPDLYSEL_MASK		0xf
+ #define PHYCTRL_OTAPDLYSEL_SHIFT	0x7
  
- 		error = gfs2_inplace_reserve(ip, &ap);
---- a/fs/gfs2/quota.h
-+++ b/fs/gfs2/quota.h
-@@ -45,6 +45,8 @@ static inline int gfs2_quota_lock_check(
- {
- 	struct gfs2_sbd *sdp = GFS2_SB(&ip->i_inode);
- 	int ret;
++#define PHYCTRL_IS_CALDONE(x) \
++	((((x) >> PHYCTRL_CALDONE_SHIFT) & \
++	  PHYCTRL_CALDONE_MASK) == PHYCTRL_CALDONE_DONE)
 +
-+	ap->allowed = UINT_MAX; /* Assume we are permitted a whole lot */
- 	if (sdp->sd_args.ar_quota == GFS2_QUOTA_OFF)
- 		return 0;
- 	ret = gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHANGE);
+ struct rockchip_emmc_phy {
+ 	unsigned int	reg_offset;
+ 	struct regmap	*reg_base;
+@@ -90,6 +94,7 @@ static int rockchip_emmc_phy_power(struc
+ 	unsigned int freqsel = PHYCTRL_FREQSEL_200M;
+ 	unsigned long rate;
+ 	unsigned long timeout;
++	int ret;
+ 
+ 	/*
+ 	 * Keep phyctrl_pdb and phyctrl_endll low to allow
+@@ -160,17 +165,19 @@ static int rockchip_emmc_phy_power(struc
+ 				   PHYCTRL_PDB_SHIFT));
+ 
+ 	/*
+-	 * According to the user manual, it asks driver to
+-	 * wait 5us for calpad busy trimming
++	 * According to the user manual, it asks driver to wait 5us for
++	 * calpad busy trimming. However it is documented that this value is
++	 * PVT(A.K.A process,voltage and temperature) relevant, so some
++	 * failure cases are found which indicates we should be more tolerant
++	 * to calpad busy trimming.
+ 	 */
+-	udelay(5);
+-	regmap_read(rk_phy->reg_base,
+-		    rk_phy->reg_offset + GRF_EMMCPHY_STATUS,
+-		    &caldone);
+-	caldone = (caldone >> PHYCTRL_CALDONE_SHIFT) & PHYCTRL_CALDONE_MASK;
+-	if (caldone != PHYCTRL_CALDONE_DONE) {
+-		pr_err("rockchip_emmc_phy_power: caldone timeout.\n");
+-		return -ETIMEDOUT;
++	ret = regmap_read_poll_timeout(rk_phy->reg_base,
++				       rk_phy->reg_offset + GRF_EMMCPHY_STATUS,
++				       caldone, PHYCTRL_IS_CALDONE(caldone),
++				       0, 50);
++	if (ret) {
++		pr_err("%s: caldone failed, ret=%d\n", __func__, ret);
++		return ret;
+ 	}
+ 
+ 	/* Set the frequency of the DLL operation */
