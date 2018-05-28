@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424738AbeE1LQt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:16:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35614 "EHLO mail.kernel.org"
+        id S1424798AbeE1LRJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:17:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424517AbeE1LQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:40 -0400
+        id S1424387AbeE1LQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 231/272] fanotify: Avoid lost events due to ENOMEM for unlimited queues
-Date: Mon, 28 May 2018 12:04:24 +0200
-Message-Id: <20180528100259.797799079@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 271/272] kdb: make "mdr" command repeat
+Date: Mon, 28 May 2018 12:05:04 +0200
+Message-Id: <20180528100302.876438077@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -29,94 +32,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 1f5eaa90010ed7cf0ae90a526c48657d02c6086f ]
+[ Upstream commit 1e0ce03bf142454f38a5fc050bf4fd698d2d36d8 ]
 
-Fanotify queues of unlimited length do not expect events can be lost.
-Since these queues are used for system auditing and other security
-related tasks, loosing events can even have security implications.
-Currently, since the allocation is small (32-bytes), it cannot fail
-however when we start accounting events in memcgs, allocation can start
-failing. So avoid loosing events due to failure to allocate memory by
-making event allocation use __GFP_NOFAIL.
+The "mdr" command should repeat (continue) when only Enter/Return
+is pressed, so make it do so.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: kgdb-bugreport@lists.sourceforge.net
+Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/notify/fanotify/fanotify.c      |   19 ++++++++++++++-----
- fs/notify/fanotify/fanotify.h      |    3 ++-
- fs/notify/fanotify/fanotify_user.c |    2 +-
- 3 files changed, 17 insertions(+), 7 deletions(-)
+ kernel/debug/kdb/kdb_main.c |   27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -135,23 +135,32 @@ static bool fanotify_should_send_event(s
- 	return false;
- }
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1566,6 +1566,7 @@ static int kdb_md(int argc, const char *
+ 	int symbolic = 0;
+ 	int valid = 0;
+ 	int phys = 0;
++	int raw = 0;
  
--struct fanotify_event_info *fanotify_alloc_event(struct inode *inode, u32 mask,
-+struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
-+						 struct inode *inode, u32 mask,
- 						 const struct path *path)
- {
- 	struct fanotify_event_info *event;
-+	gfp_t gfp = GFP_KERNEL;
-+
-+	/*
-+	 * For queues with unlimited length lost events are not expected and
-+	 * can possibly have security implications. Avoid losing events when
-+	 * memory is short.
-+	 */
-+	if (group->max_events == UINT_MAX)
-+		gfp |= __GFP_NOFAIL;
+ 	kdbgetintenv("MDCOUNT", &mdcount);
+ 	kdbgetintenv("RADIX", &radix);
+@@ -1575,9 +1576,10 @@ static int kdb_md(int argc, const char *
+ 	repeat = mdcount * 16 / bytesperword;
  
- 	if (fanotify_is_perm_event(mask)) {
- 		struct fanotify_perm_event_info *pevent;
- 
--		pevent = kmem_cache_alloc(fanotify_perm_event_cachep,
--					  GFP_KERNEL);
-+		pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
- 		if (!pevent)
- 			return NULL;
- 		event = &pevent->fae;
- 		pevent->response = 0;
- 		goto init;
- 	}
--	event = kmem_cache_alloc(fanotify_event_cachep, GFP_KERNEL);
-+	event = kmem_cache_alloc(fanotify_event_cachep, gfp);
- 	if (!event)
- 		return NULL;
- init: __maybe_unused
-@@ -206,7 +215,7 @@ static int fanotify_handle_event(struct
- 			return 0;
+ 	if (strcmp(argv[0], "mdr") == 0) {
+-		if (argc != 2)
++		if (argc == 2 || (argc == 0 && last_addr != 0))
++			valid = raw = 1;
++		else
+ 			return KDB_ARGCOUNT;
+-		valid = 1;
+ 	} else if (isdigit(argv[0][2])) {
+ 		bytesperword = (int)(argv[0][2] - '0');
+ 		if (bytesperword == 0) {
+@@ -1613,7 +1615,10 @@ static int kdb_md(int argc, const char *
+ 		radix = last_radix;
+ 		bytesperword = last_bytesperword;
+ 		repeat = last_repeat;
+-		mdcount = ((repeat * bytesperword) + 15) / 16;
++		if (raw)
++			mdcount = repeat;
++		else
++			mdcount = ((repeat * bytesperword) + 15) / 16;
  	}
  
--	event = fanotify_alloc_event(inode, mask, data);
-+	event = fanotify_alloc_event(group, inode, mask, data);
- 	ret = -ENOMEM;
- 	if (unlikely(!event))
- 		goto finish;
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -52,5 +52,6 @@ static inline struct fanotify_event_info
- 	return container_of(fse, struct fanotify_event_info, fse);
- }
+ 	if (argc) {
+@@ -1630,7 +1635,10 @@ static int kdb_md(int argc, const char *
+ 			diag = kdbgetularg(argv[nextarg], &val);
+ 			if (!diag) {
+ 				mdcount = (int) val;
+-				repeat = mdcount * 16 / bytesperword;
++				if (raw)
++					repeat = mdcount;
++				else
++					repeat = mdcount * 16 / bytesperword;
+ 			}
+ 		}
+ 		if (argc >= nextarg+1) {
+@@ -1640,8 +1648,15 @@ static int kdb_md(int argc, const char *
+ 		}
+ 	}
  
--struct fanotify_event_info *fanotify_alloc_event(struct inode *inode, u32 mask,
-+struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
-+						 struct inode *inode, u32 mask,
- 						 const struct path *path);
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -757,7 +757,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned
- 	group->fanotify_data.user = user;
- 	atomic_inc(&user->fanotify_listeners);
+-	if (strcmp(argv[0], "mdr") == 0)
+-		return kdb_mdr(addr, mdcount);
++	if (strcmp(argv[0], "mdr") == 0) {
++		int ret;
++		last_addr = addr;
++		ret = kdb_mdr(addr, mdcount);
++		last_addr += mdcount;
++		last_repeat = mdcount;
++		last_bytesperword = bytesperword; // to make REPEAT happy
++		return ret;
++	}
  
--	oevent = fanotify_alloc_event(NULL, FS_Q_OVERFLOW, NULL);
-+	oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL);
- 	if (unlikely(!oevent)) {
- 		fd = -ENOMEM;
- 		goto out_destroy_group;
+ 	switch (radix) {
+ 	case 10:
