@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034631AbeE1PhC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:37:02 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35914 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968825AbeE1PgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:36:20 -0400
-X-Google-Smtp-Source: AB8JxZrWwhATwQct+t2cdadFyfYGYkJACxpX8pf3mxLC3MozD77AHob7QTMTHzxY18sGeGabwkO4vw==
-From: Yafang Shao <laoar.shao@gmail.com>
-To: songliubraving@fb.com, edumazet@google.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v3 net-next 2/2] tcp: minor optimization around tcp_hdr() usage in tcp receive path
-Date: Mon, 28 May 2018 23:35:53 +0800
-Message-Id: <1527521753-17963-2-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527521753-17963-1-git-send-email-laoar.shao@gmail.com>
-References: <1527521753-17963-1-git-send-email-laoar.shao@gmail.com>
+        id S1034641AbeE1Ph0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:37:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968616AbeE1KS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:29 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Keerthy <j-keerthy@ti.com>, Ladislav Michl <ladis@linux-mips.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 100/268] ARM: OMAP: Fix dmtimer init for omap1
+Date: Mon, 28 May 2018 12:01:14 +0200
+Message-Id: <20180528100213.540721928@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is additional to the commit ea1627c20c34 ("tcp: minor optimizations around tcp_hdr() usage").
-At this point, skb->data is same with tcp_hdr() as tcp header has not
-been pulled yet.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+------------------
+
+From: Tony Lindgren <tony@atomide.com>
+
+[ Upstream commit ba6887836178d43b3665b9da075c2c5dfe1d207c ]
+
+We need to enable PM runtime on omap1 also as otherwise we
+will get errors:
+
+omap_timer omap_timer.1: omap_dm_timer_probe: pm_runtime_get_sync failed!
+omap_timer: probe of omap_timer.1 failed with error -13
+...
+
+We are checking for OMAP_TIMER_NEEDS_RESET flag elsewhere so this is
+safe to do.
+
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_ipv4.c | 2 +-
- net/ipv6/tcp_ipv6.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/plat-omap/dmtimer.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index adbdb50..d179386 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1486,7 +1486,7 @@ int tcp_v4_do_rcv(struct sock *sk, struct sk_buff *skb)
- 				sk->sk_rx_dst = NULL;
- 			}
- 		}
--		tcp_rcv_established(sk, skb, tcp_hdr(skb));
-+		tcp_rcv_established(sk, skb, (const struct tcphdr *)skb->data);
- 		return 0;
- 	}
+--- a/arch/arm/plat-omap/dmtimer.c
++++ b/arch/arm/plat-omap/dmtimer.c
+@@ -854,11 +854,8 @@ static int omap_dm_timer_probe(struct pl
+ 	timer->irq = irq->start;
+ 	timer->pdev = pdev;
  
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 7d47c2b..1c633ff 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1322,7 +1322,7 @@ static int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *skb)
- 			}
- 		}
+-	/* Skip pm_runtime_enable for OMAP1 */
+-	if (!(timer->capability & OMAP_TIMER_NEEDS_RESET)) {
+-		pm_runtime_enable(dev);
+-		pm_runtime_irq_safe(dev);
+-	}
++	pm_runtime_enable(dev);
++	pm_runtime_irq_safe(dev);
  
--		tcp_rcv_established(sk, skb, tcp_hdr(skb));
-+		tcp_rcv_established(sk, skb, (const struct tcphdr *)skb->data);
- 		if (opt_skb)
- 			goto ipv6_pktoptions;
- 		return 0;
--- 
-1.8.3.1
+ 	if (!timer->reserved) {
+ 		ret = pm_runtime_get_sync(dev);
