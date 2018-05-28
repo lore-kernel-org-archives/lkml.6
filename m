@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165227AbeE1NPv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39716 "EHLO mail.kernel.org"
+        id S1165242AbeE1NQL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:16:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163270AbeE1KuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:15 -0400
+        id S1163635AbeE1KuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 202/496] iwlwifi: mvm: Fix channel switch for count 0 and 1
-Date: Mon, 28 May 2018 11:59:47 +0200
-Message-Id: <20180528100328.442738092@linuxfoundation.org>
+Subject: [PATCH 4.14 201/496] iwlwifi: mvm: fix TX of CCMP 256
+Date: Mon, 28 May 2018 11:59:46 +0200
+Message-Id: <20180528100328.404461495@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,73 +30,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 40d53f4a60c9eb10d4fa58066c23ba1af8a59e39 ]
+[ Upstream commit de04d4fbf87b769ab18c480e4f020c53e74bbdd2 ]
 
-It was assumed that apply_time==0 implies immediate scheduling, which is
-wrong. Instead, the fw expects the START_IMMEDIATELY flag to be set.
-Otherwise, this resulted in 0x3063 assert.
-Fix that.
-While at it rename the T2_V2_START_IMMEDIATELY to
-TE_V2_START_IMMEDIATELY.
+We don't have enough room in the TX command for a CCMP 256
+key, and need to use key from table.
 
-Fixes: f5d8f50f271d ("iwlwifi: mvm: Fix channel switch in case of count <= 1")
-Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Fixes: 3264bf032bd9 ("[BUGFIX] iwlwifi: mvm: Fix CCMP IV setting")
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/api/time-event.h |    4 ++--
- drivers/net/wireless/intel/iwlwifi/mvm/time-event.c    |    6 ++++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/fw/api/time-event.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/api/time-event.h
-@@ -211,7 +211,7 @@ enum {
-  * @TE_V2_NOTIF_HOST_FRAG_END:request/receive notification on frag end
-  * @TE_V2_NOTIF_INTERNAL_FRAG_START: internal FW use.
-  * @TE_V2_NOTIF_INTERNAL_FRAG_END: internal FW use.
-- * @T2_V2_START_IMMEDIATELY: start time event immediately
-+ * @TE_V2_START_IMMEDIATELY: start time event immediately
-  * @TE_V2_DEP_OTHER: depends on another time event
-  * @TE_V2_DEP_TSF: depends on a specific time
-  * @TE_V2_EVENT_SOCIOPATHIC: can't co-exist with other events of tha same MAC
-@@ -230,7 +230,7 @@ enum iwl_time_event_policy {
- 	TE_V2_NOTIF_HOST_FRAG_END = BIT(5),
- 	TE_V2_NOTIF_INTERNAL_FRAG_START = BIT(6),
- 	TE_V2_NOTIF_INTERNAL_FRAG_END = BIT(7),
--	T2_V2_START_IMMEDIATELY = BIT(11),
-+	TE_V2_START_IMMEDIATELY = BIT(11),
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+@@ -419,11 +419,11 @@ static void iwl_mvm_set_tx_cmd_crypto(st
+ {
+ 	struct ieee80211_key_conf *keyconf = info->control.hw_key;
+ 	u8 *crypto_hdr = skb_frag->data + hdrlen;
++	enum iwl_tx_cmd_sec_ctrl type = TX_CMD_SEC_CCM;
+ 	u64 pn;
  
- 	/* placement characteristics */
- 	TE_V2_DEP_OTHER = BIT(TE_V2_PLACEMENT_POS),
---- a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-@@ -621,7 +621,7 @@ void iwl_mvm_protect_session(struct iwl_
- 	time_cmd.repeat = 1;
- 	time_cmd.policy = cpu_to_le16(TE_V2_NOTIF_HOST_EVENT_START |
- 				      TE_V2_NOTIF_HOST_EVENT_END |
--				      T2_V2_START_IMMEDIATELY);
-+				      TE_V2_START_IMMEDIATELY);
- 
- 	if (!wait_for_notif) {
- 		iwl_mvm_time_event_send_add(mvm, vif, te_data, &time_cmd);
-@@ -814,7 +814,7 @@ int iwl_mvm_start_p2p_roc(struct iwl_mvm
- 	time_cmd.repeat = 1;
- 	time_cmd.policy = cpu_to_le16(TE_V2_NOTIF_HOST_EVENT_START |
- 				      TE_V2_NOTIF_HOST_EVENT_END |
--				      T2_V2_START_IMMEDIATELY);
-+				      TE_V2_START_IMMEDIATELY);
- 
- 	return iwl_mvm_time_event_send_add(mvm, vif, te_data, &time_cmd);
- }
-@@ -924,6 +924,8 @@ int iwl_mvm_schedule_csa_period(struct i
- 	time_cmd.interval = cpu_to_le32(1);
- 	time_cmd.policy = cpu_to_le16(TE_V2_NOTIF_HOST_EVENT_START |
- 				      TE_V2_ABSENCE);
-+	if (!apply_time)
-+		time_cmd.policy |= cpu_to_le16(TE_V2_START_IMMEDIATELY);
- 
- 	return iwl_mvm_time_event_send_add(mvm, vif, te_data, &time_cmd);
- }
+ 	switch (keyconf->cipher) {
+ 	case WLAN_CIPHER_SUITE_CCMP:
+-	case WLAN_CIPHER_SUITE_CCMP_256:
+ 		iwl_mvm_set_tx_cmd_ccmp(info, tx_cmd);
+ 		iwl_mvm_set_tx_cmd_pn(info, crypto_hdr);
+ 		break;
+@@ -447,13 +447,16 @@ static void iwl_mvm_set_tx_cmd_crypto(st
+ 		break;
+ 	case WLAN_CIPHER_SUITE_GCMP:
+ 	case WLAN_CIPHER_SUITE_GCMP_256:
++		type = TX_CMD_SEC_GCMP;
++		/* Fall through */
++	case WLAN_CIPHER_SUITE_CCMP_256:
+ 		/* TODO: Taking the key from the table might introduce a race
+ 		 * when PTK rekeying is done, having an old packets with a PN
+ 		 * based on the old key but the message encrypted with a new
+ 		 * one.
+ 		 * Need to handle this.
+ 		 */
+-		tx_cmd->sec_ctl |= TX_CMD_SEC_GCMP | TX_CMD_SEC_KEY_FROM_TABLE;
++		tx_cmd->sec_ctl |= type | TX_CMD_SEC_KEY_FROM_TABLE;
+ 		tx_cmd->key[0] = keyconf->hw_key_idx;
+ 		iwl_mvm_set_tx_cmd_pn(info, crypto_hdr);
+ 		break;
