@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938104AbeE1LZZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:25:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41002 "EHLO mail.kernel.org"
+        id S938165AbeE1LZk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:25:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932569AbeE1LZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:25:19 -0400
+        id S938143AbeE1LZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:25:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
         Yufen Yu <yuyufen@huawei.com>, Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 120/329] md raid10: fix NULL deference in handle_write_completed()
-Date: Mon, 28 May 2018 12:00:49 +0200
-Message-Id: <20180528100252.691476190@linuxfoundation.org>
+Subject: [PATCH 4.14 099/496] md raid10: fix NULL deference in handle_write_completed()
+Date: Mon, 28 May 2018 11:58:04 +0200
+Message-Id: <20180528100324.030465170@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -26,7 +26,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -67,7 +67,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/md/raid10.c
 +++ b/drivers/md/raid10.c
-@@ -2636,7 +2636,8 @@ static void handle_write_completed(struc
+@@ -2625,7 +2625,8 @@ static void handle_write_completed(struc
  		for (m = 0; m < conf->copies; m++) {
  			int dev = r10_bio->devs[m].devnum;
  			rdev = conf->mirrors[dev].rdev;
@@ -75,9 +75,9 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +			if (r10_bio->devs[m].bio == NULL ||
 +				r10_bio->devs[m].bio->bi_end_io == NULL)
  				continue;
- 			if (!r10_bio->devs[m].bio->bi_error) {
+ 			if (!r10_bio->devs[m].bio->bi_status) {
  				rdev_clear_badblocks(
-@@ -2651,7 +2652,8 @@ static void handle_write_completed(struc
+@@ -2640,7 +2641,8 @@ static void handle_write_completed(struc
  					md_error(conf->mddev, rdev);
  			}
  			rdev = conf->mirrors[dev].replacement;
@@ -86,4 +86,4 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +				r10_bio->devs[m].repl_bio->bi_end_io == NULL)
  				continue;
  
- 			if (!r10_bio->devs[m].repl_bio->bi_error) {
+ 			if (!r10_bio->devs[m].repl_bio->bi_status) {
