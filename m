@@ -1,20 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162950AbeE1Knd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:43:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
+        id S1165500AbeE1Nnn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161950AbeE1KnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:43:25 -0400
+        id S1162962AbeE1Knd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:43:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, greg@kroah.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 052/496] powerpc/pseries: Fix clearing of security feature flags
-Date: Mon, 28 May 2018 11:57:17 +0200
-Message-Id: <20180528100321.967583953@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 055/496] powerpc/64s: Fix section mismatch warnings from setup_rfi_flush()
+Date: Mon, 28 May 2018 11:57:20 +0200
+Message-Id: <20180528100322.103711113@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,76 +28,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 0f9bdfe3c77091e8704d2e510eb7c2c2c6cde524 upstream.
+commit 501a78cbc17c329fabf8e9750a1e9ab810c88a0e upstream.
 
-The H_CPU_BEHAV_* flags should be checked for in the 'behaviour' field
-of 'struct h_cpu_char_result' -- 'character' is for H_CPU_CHAR_*
-flags.
+The recent LPM changes to setup_rfi_flush() are causing some section
+mismatch warnings because we removed the __init annotation on
+setup_rfi_flush():
 
-Found by playing around with QEMU's implementation of the hypercall:
+  The function setup_rfi_flush() references
+  the function __init ppc64_bolted_size().
+  the function __init memblock_alloc_base().
 
-  H_CPU_CHAR=0xf000000000000000
-  H_CPU_BEHAV=0x0000000000000000
+The references are actually in init_fallback_flush(), but that is
+inlined into setup_rfi_flush().
 
-  This clears H_CPU_BEHAV_FAVOUR_SECURITY and H_CPU_BEHAV_L1D_FLUSH_PR
-  so pseries_setup_rfi_flush() disables 'rfi_flush'; and it also
-  clears H_CPU_CHAR_L1D_THREAD_PRIV flag. So there is no RFI flush
-  mitigation at all for cpu_show_meltdown() to report; but currently
-  it does:
+These references are safe because:
+ - only pseries calls setup_rfi_flush() at runtime
+ - pseries always passes L1D_FLUSH_FALLBACK at boot
+ - so the fallback flush area will always be allocated
+ - so the check in init_fallback_flush() will always return early:
+   /* Only allocate the fallback flush area once (at boot time). */
+   if (l1d_flush_fallback_area)
+   	return;
 
-  Original kernel:
+ - and therefore we won't actually call the freed init routines.
 
-    # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-    Mitigation: RFI Flush
+We should rework the code to make it safer by default rather than
+relying on the above, but for now as a quick-fix just add a __ref
+annotation to squash the warning.
 
-  Patched kernel:
-
-    # cat /sys/devices/system/cpu/vulnerabilities/meltdown
-    Not affected
-
-  H_CPU_CHAR=0x0000000000000000
-  H_CPU_BEHAV=0xf000000000000000
-
-  This sets H_CPU_BEHAV_BNDS_CHK_SPEC_BAR so cpu_show_spectre_v1() should
-  report vulnerable; but currently it doesn't:
-
-  Original kernel:
-
-    # cat /sys/devices/system/cpu/vulnerabilities/spectre_v1
-    Not affected
-
-  Patched kernel:
-
-    # cat /sys/devices/system/cpu/vulnerabilities/spectre_v1
-    Vulnerable
-
-Brown-paper-bag-by: Michael Ellerman <mpe@ellerman.id.au>
-Fixes: f636c14790ea ("powerpc/pseries: Set or clear security feature flags")
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Fixes: abf110f3e1ce ("powerpc/rfi-flush: Make it possible to call setup_rfi_flush() again")
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/setup.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/setup_64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -484,13 +484,13 @@ static void init_cpu_char_feature_flags(
- 	 * The features below are enabled by default, so we instead look to see
- 	 * if firmware has *disabled* them, and clear them if so.
- 	 */
--	if (!(result->character & H_CPU_BEHAV_FAVOUR_SECURITY))
-+	if (!(result->behaviour & H_CPU_BEHAV_FAVOUR_SECURITY))
- 		security_ftr_clear(SEC_FTR_FAVOUR_SECURITY);
- 
--	if (!(result->character & H_CPU_BEHAV_L1D_FLUSH_PR))
-+	if (!(result->behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
- 		security_ftr_clear(SEC_FTR_L1D_FLUSH_PR);
- 
--	if (!(result->character & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
-+	if (!(result->behaviour & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
- 		security_ftr_clear(SEC_FTR_BNDS_CHK_SPEC_BAR);
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -831,7 +831,7 @@ void rfi_flush_enable(bool enable)
+ 	rfi_flush = enable;
  }
  
+-static void init_fallback_flush(void)
++static void __ref init_fallback_flush(void)
+ {
+ 	u64 l1d_size, limit;
+ 	int cpu;
