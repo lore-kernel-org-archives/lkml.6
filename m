@@ -1,279 +1,608 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423316AbeE1MKZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:10:25 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:50585 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164990AbeE1MKM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 08:10:12 -0400
-From: Prabu Thangamuthu <Prabu.T@synopsys.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        id S1165050AbeE1MKs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:10:48 -0400
+Received: from mga07.intel.com ([134.134.136.100]:31689 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1165004AbeE1LEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:04:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,452,1520924400";
+   d="scan'208";a="42762035"
+From: "Wang, Kemi" <kemi.wang@intel.com>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        "Song, HaiyanX" <haiyanx.song@intel.com>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "kirill@shutemov.name" <kirill@shutemov.name>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "dave@stgolabs.net" <dave@stgolabs.net>, "jack@suse.cz" <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        "khandual@linux.vnet.ibm.com" <khandual@linux.vnet.ibm.com>,
+        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "paulus@samba.org" <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "sergey.senozhatsky.work@gmail.com"
+        <sergey.senozhatsky.work@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Punit Agrawal <punitagrawal@gmail.com>,
+        vinayak menon <vinayakm.list@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
-Subject: Re: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-Thread-Topic: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-Thread-Index: AdPxmBIFOmCk2CVqRi+baz/mIdVd7Q==
-Date: Mon, 28 May 2018 12:10:05 +0000
-Message-ID: <705D14B1C7978B40A723277C067CEDE2010A9B658F@IN01WEMBXB.internal.synopsys.com>
-References: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
- <abe62da4-3ef9-5660-94e1-a3f919df06cd@intel.com>
- <705D14B1C7978B40A723277C067CEDE2010A9B5491@IN01WEMBXB.internal.synopsys.com>
- <1f766ad9-481e-89cc-c0be-d9aea05e890b@intel.com>
-Accept-Language: en-US, en-IN
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "haren@linux.vnet.ibm.com" <haren@linux.vnet.ibm.com>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "bsingharora@gmail.com" <bsingharora@gmail.com>,
+        "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH v11 00/26] Speculative page faults
+Thread-Topic: [PATCH v11 00/26] Speculative page faults
+Thread-Index: AQHT7c81YDLQ4A7f1EGHmQWP/pOb4KREdfjK///ZsgCAAAisAIAACQkAgACo+KA=
+Date: Mon, 28 May 2018 11:04:05 +0000
+Message-ID: <25017BF213203E48912DB000DE5F5E1E6B80D51D@SHSMSX101.ccr.corp.intel.com>
+References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <9FE19350E8A7EE45B64D8D63D368C8966B834B67@SHSMSX101.ccr.corp.intel.com>
+ <1327633f-8bb9-99f7-fab4-4cfcbf997200@linux.vnet.ibm.com>
+ <20180528082235.e5x4oiaaf7cjoddr@haiyan.lkp.sh.intel.com>
+ <316c6936-203d-67e9-c18c-6cf10d0d4bee@linux.vnet.ibm.com>
+In-Reply-To: <316c6936-203d-67e9-c18c-6cf10d0d4bee@linux.vnet.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.239.235]
-Content-Type: text/plain; charset="us-ascii"
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODRjOTFhZTItMTc1MC00ZjViLTgwMzQtNjczNzE3YzYzZjMyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibGxjSkxic29ENlFLMm4raGtVenUrSWpoRHd3SkpRTDloTERma2tlZXl4OFVWcVd4MHgzYXZDK3I0ak1qbERqbiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4SCAW9Q022856
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4SCAskk022871
 
-Hi Adrian,
+Full run would take one or two weeks depended on our resource available. Could you pick some ones up, e.g. those have performance regression?
 
-On 5/24/2018 5:43 PM, Adrian Hunter wrote:
-> On 24/05/18 14:28, Prabu Thangamuthu wrote:
->> Hi Adrian,
+-----Original Message-----
+From: owner-linux-mm@kvack.org [mailto:owner-linux-mm@kvack.org] On Behalf Of Laurent Dufour
+Sent: Monday, May 28, 2018 4:55 PM
+To: Song, HaiyanX <haiyanx.song@intel.com>
+Cc: akpm@linux-foundation.org; mhocko@kernel.org; peterz@infradead.org; kirill@shutemov.name; ak@linux.intel.com; dave@stgolabs.net; jack@suse.cz; Matthew Wilcox <willy@infradead.org>; khandual@linux.vnet.ibm.com; aneesh.kumar@linux.vnet.ibm.com; benh@kernel.crashing.org; mpe@ellerman.id.au; paulus@samba.org; Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar <mingo@redhat.com>; hpa@zytor.com; Will Deacon <will.deacon@arm.com>; Sergey Senozhatsky <sergey.senozhatsky@gmail.com>; sergey.senozhatsky.work@gmail.com; Andrea Arcangeli <aarcange@redhat.com>; Alexei Starovoitov <alexei.starovoitov@gmail.com>; Wang, Kemi <kemi.wang@intel.com>; Daniel Jordan <daniel.m.jordan@oracle.com>; David Rientjes <rientjes@google.com>; Jerome Glisse <jglisse@redhat.com>; Ganesh Mahendran <opensource.ganesh@gmail.com>; Minchan Kim <minchan@kernel.org>; Punit Agrawal <punitagrawal@gmail.com>; vinayak menon <vinayakm.list@gmail.com>; Yang Shi <yang.shi@linux.alibaba.com>; linux-kernel@vger.kernel.org; linux-mm@kvack.org; haren@linux.vnet.ibm.com; npiggin@gmail.com; bsingharora@gmail.com; paulmck@linux.vnet.ibm.com; Tim Chen <tim.c.chen@linux.intel.com>; linuxppc-dev@lists.ozlabs.org; x86@kernel.org
+Subject: Re: [PATCH v11 00/26] Speculative page faults
+
+On 28/05/2018 10:22, Haiyan Song wrote:
+> Hi Laurent,
+> 
+> Yes, these tests are done on V9 patch.
+
+Do you plan to give this V11 a run ?
+
+> 
+> 
+> Best regards,
+> Haiyan Song
+> 
+> On Mon, May 28, 2018 at 09:51:34AM +0200, Laurent Dufour wrote:
+>> On 28/05/2018 07:23, Song, HaiyanX wrote:
+>>>
+>>> Some regression and improvements is found by LKP-tools(linux kernel 
+>>> performance) on V9 patch series tested on Intel 4s Skylake platform.
 >>
->> On 5/24/2018 2:06 PM, Adrian Hunter wrote:
->>> Hi
+>> Hi,
+>>
+>> Thanks for reporting this benchmark results, but you mentioned the 
+>> "V9 patch series" while responding to the v11 header series...
+>> Were these tests done on v9 or v11 ?
+>>
+>> Cheers,
+>> Laurent.
+>>
 >>>
->>> This patch is mangled.
->> We will check it.
->>> On 22/05/18 09:42, Prabu Thangamuthu wrote:
->>>> To enable Synopsys DWC MSHC controller on HPAS-DX platform connected using
->>>> PCIe interface. As Clock generation logic is implemented in MMCM module of
->>>> HAPS-DX platform, we have separate functions to control the MMCM to
->>>> generate required clocks with respect to speed mode. Also we have platform
->>>> specific set_power function to support different VDD of eMMC devices.
->>>>
->>>> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
->>>> ---
->>>>  MAINTAINERS                           |   7 ++
->>>>  drivers/mmc/host/Makefile             |   3 +-
->>>>  drivers/mmc/host/sdhci-pci-core.c     |   1 +
->>>>  drivers/mmc/host/sdhci-pci-dwc-mshc.c | 146
->>>> ++++++++++++++++++++++++++++++++++
->>>>  drivers/mmc/host/sdhci-pci-dwc-mshc.h |  37 +++++++++
->>>>  drivers/mmc/host/sdhci-pci.h          |   3 +
->>>>  6 files changed, 196 insertions(+), 1 deletion(-)
->>>>  create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>>>  create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.h
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 9051a9c..f1749c4 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -12643,6 +12643,13 @@ S:    Maintained
->>>>  F:    drivers/mmc/host/sdhci*
->>>>  F:    include/linux/mmc/sdhci*
->>>>  
->>>> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
->>>> +M:    Prabu Thangamuthu <prabu.t@synopsys.com>
->>>> +M:    Manjunath M B <manjumb@synopsys.com>
->>>> +L:    linux-mmc@vger.kernel.org
->>>> +S:    Maintained
->>>> +F:    drivers/mmc/host/sdhci-pci-dwc-mshc*
->>>> +
->>>>  SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
->>>>  M:    Ben Dooks <ben-linux@fluff.org>
->>>>  M:    Jaehoon Chung <jh80.chung@samsung.com>
->>>> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
->>>> index 6aead24..6c0d3fb 100644
->>>> --- a/drivers/mmc/host/Makefile
->>>> +++ b/drivers/mmc/host/Makefile
->>>> @@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC)        += mxcmmc.o
->>>>  obj-$(CONFIG_MMC_MXS)        += mxs-mmc.o
->>>>  obj-$(CONFIG_MMC_SDHCI)        += sdhci.o
->>>>  obj-$(CONFIG_MMC_SDHCI_PCI)    += sdhci-pci.o
->>>> -sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
->>>> sdhci-pci-arasan.o
->>>> +sdhci-pci-y            += sdhci-pci-core.o sdhci-pci-o2micro.o
->>>> sdhci-pci-arasan.o \
->>>> +                   sdhci-pci-dwc-mshc.o
->>>>  obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))    += sdhci-pci-data.o
->>>>  obj-$(CONFIG_MMC_SDHCI_ACPI)    += sdhci-acpi.o
->>>>  obj-$(CONFIG_MMC_SDHCI_PXAV3)    += sdhci-pxav3.o
->>>> diff --git a/drivers/mmc/host/sdhci-pci-core.c
->>>> b/drivers/mmc/host/sdhci-pci-core.c
->>>> index 77dd352..96b6963 100644
->>>> --- a/drivers/mmc/host/sdhci-pci-core.c
->>>> +++ b/drivers/mmc/host/sdhci-pci-core.c
->>>> @@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
->>>>      SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
->>>>      SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
->>>>      SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
->>>> +    SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC,  snps),
->>>>      SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
->>>>      /* Generic SD host controller */
->>>>      {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
->>>> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>>> b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>>> new file mode 100644
->>>> index 0000000..bca3db4
->>>> --- /dev/null
->>>> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>>> @@ -0,0 +1,146 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * SDHCI driver for Synopsys DWC_MSHC controller
->>>> + *
->>>> + * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
->>>> + *
->>>> + * Authors:
->>>> + *    Prabu Thangamuthu <prabu.t@synopsys.com>
->>>> + *    Manjunath M B <manjumb@synopsys.com>
->>>> + *
->>>> + */
->>>> +
->>>> +#include <linux/pci.h>
->>>> +#include <linux/delay.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/moduleparam.h>
->>>> +
->>>> +#include "sdhci.h"
->>>> +#include "sdhci-pci.h"
->>>> +#include "sdhci-pci-dwc-mshc.h"
->>>> +
->>>> +/* Default emmc vdd is set to 3.3V */
->>>> +static unsigned int emmc_vdd = SDHC_EMMC_VDD_330V;
->>>> +module_param(emmc_vdd, int, 0444);
->>> Why a module parameter?
->> Our platform has slots for eMMC devices which can supports both 1.8 V
->> and 3.3 V
->> operating modes. We want this module parameter to control the operating
->> voltage
->> of eMMC devices.
-> So why not use firmware device properties?
-We are assuming as you are referring  EXT_CSD register of eMMC device to
-understand 1.8V/3.3V support. But we need to fix the voltage before
-enumeration of the eMMC device.
-Please help us to understand more if you are not referring EXT_CSD register.
->
->>>> +
->>>> +static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int
->>>> clock)
->>>> +{
->>>> +    u16 clk = 0;
->>>> +    u32 reg = 0;
->>>> +    u32 vendor_ptr = 0;
->>>> +
->>>> +    vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
->>>> +
->>>> +    /* Disable Software managed rx tuning */
->>>> +    reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
->>>> +    reg &= ~SDHC_SW_TUNE_EN;
->>>> +    sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
->>>> +
->>>> +    if (clock <= 52000000) {
->>>> +        sdhci_set_clock(host, clock);
->>>> +    } else {
->>>> +        /* Assert reset to MMCM */
->>>> +        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
->>>> +        reg |= SDHC_CCLK_MMCM_RST;
->>>> +        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
->>>> +
->>>> +        /* Configure MMCM*/
->>> Space between MMCM and *
->> Okay.
->>>> +        sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
->>>> +        sdhci_writel(host, CLKFBOUT_100_MHZ,
->>>> +                SDHC_MMCM_CLKFBOUT);
->>>> +
->>>> +        /* De-assert reset to MMCM*/
->>> Space between MMCM and *
->> Okay.
+>>> The regression result is sorted by the metric will-it-scale.per_thread_ops.
+>>> Branch: Laurent-Dufour/Speculative-page-faults/20180316-151833 (V9 
+>>> patch series) Commit id:
+>>>     base commit: d55f34411b1b126429a823d06c3124c16283231f
+>>>     head commit: 0355322b3577eeab7669066df42c550a56801110
+>>> Benchmark suite: will-it-scale
+>>> Download link:
+>>> https://github.com/antonblanchard/will-it-scale/tree/master/tests
+>>> Metrics:
+>>>     will-it-scale.per_process_ops=processes/nr_cpu
+>>>     will-it-scale.per_thread_ops=threads/nr_cpu
+>>> test box: lkp-skl-4sp1(nr_cpu=192,memory=768G)
+>>> THP: enable / disable
+>>> nr_task: 100%
 >>>
->>>> +        reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
->>>> +        reg &= ~SDHC_CCLK_MMCM_RST;
->>>> +        sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
->>>> +
->>>> +        /* Enable clock */
->>>> +        clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
->>>> +            SDHCI_CLOCK_CARD_EN;
->>>> +        sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->>>> +    }
->>>> +}
->>>> +
->>>> +static void sdhci_snps_set_power(struct sdhci_host *host, unsigned char
->>>> mode,
->>>> +             unsigned short vdd)
->>>> +{
->>>> +    u8 pwr = 0;
->>>> +    u16 ctrl;
->>>> +
->>>> +    if (mode != MMC_POWER_OFF) {
->>>> +        switch (1 << vdd) {
->>>> +        case MMC_VDD_165_195:
->>>> +            pwr = SDHCI_POWER_180;
->>>> +            break;
->>>> +        case MMC_VDD_29_30:
->>>> +        case MMC_VDD_30_31:
->>>> +            pwr = SDHCI_POWER_300;
->>>> +            break;
->>>> +        case MMC_VDD_32_33:
->>>> +        case MMC_VDD_33_34:
->>>> +            pwr = SDHCI_POWER_330;
->>>> +            break;
->>>> +        default:
->>>> +            WARN(1, "%s: Invalid vdd %#x\n",
->>>> +                 mmc_hostname(host->mmc), vdd);
->>>> +            break;
->>>> +        }
->>>> +    }
->>>> +
->>>> +    if (host->pwr == pwr)
->>>> +        return;
->>>> +
->>>> +    host->pwr = pwr;
->>>> +
->>>> +    if (pwr == 0) {
->>>> +        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
->>>> +    } else {
->>>> +        sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
->>>> +
->>>> +        /*
->>>> +         * Enable it for eMMC phy cfg1 test with 1.8V mode
->>>> +         */
->>>> +        if (emmc_vdd == SDHC_EMMC_VDD_180V) {
->>>> +            pwr = SDHCI_POWER_180;
->>>> +            sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
->>>> +
->>>> +            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>>> +            /*
->>>> +             * Enable 1.8V Signal Enable in the Host Control2
->>>> +             * register
->>>> +             */
->>>> +            ctrl |= SDHCI_CTRL_VDD_180;
->>>> +            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>> +        }
->>>> +        pwr |= SDHCI_POWER_ON;
->>>> +
->>>> +        sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
->>>> +    }
->>>> +}
->>>> +
->>>> +static int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
->>>> +{
->>>> +    struct sdhci_host *host = slot->host;
->>>> +
->>>> +    host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
->>>> +    host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
->>> Why read caps here?
->> We had it for logging purpose. we will remove it.
-> To prevent 3.0V or 3.3V clear the corresponding capabilities bits.  There
-> are DT bindings for overriding the capabilities.
->
-> To use only 1.8V signaling clear SDHCI_SIGNALING_330 from host->flags.
->
-> Then you shouldn't need sdhci_snps_set_power().
-Agree your point. we will test with this approach and share the patches.
-
-Thanks,
-Prabu
+>>> 1. Regressions:
+>>> a) THP enabled:
+>>> testcase                        base            change          head       metric
+>>> page_fault3/ enable THP         10092           -17.5%          8323       will-it-scale.per_thread_ops
+>>> page_fault2/ enable THP          8300           -17.2%          6869       will-it-scale.per_thread_ops
+>>> brk1/ enable THP                  957.67         -7.6%           885       will-it-scale.per_thread_ops
+>>> page_fault3/ enable THP        172821            -5.3%        163692       will-it-scale.per_process_ops
+>>> signal1/ enable THP              9125            -3.2%          8834       will-it-scale.per_process_ops
+>>>
+>>> b) THP disabled:
+>>> testcase                        base            change          head       metric
+>>> page_fault3/ disable THP        10107           -19.1%          8180       will-it-scale.per_thread_ops
+>>> page_fault2/ disable THP         8432           -17.8%          6931       will-it-scale.per_thread_ops
+>>> context_switch1/ disable THP   215389            -6.8%        200776       will-it-scale.per_thread_ops
+>>> brk1/ disable THP                 939.67         -6.6%           877.33    will-it-scale.per_thread_ops
+>>> page_fault3/ disable THP       173145            -4.7%        165064       will-it-scale.per_process_ops
+>>> signal1/ disable THP             9162            -3.9%          8802       will-it-scale.per_process_ops
+>>>
+>>> 2. Improvements:
+>>> a) THP enabled:
+>>> testcase                        base            change          head       metric
+>>> malloc1/ enable THP               66.33        +469.8%           383.67    will-it-scale.per_thread_ops
+>>> writeseek3/ enable THP          2531             +4.5%          2646       will-it-scale.per_thread_ops
+>>> signal1/ enable THP              989.33          +2.8%          1016       will-it-scale.per_thread_ops
+>>>
+>>> b) THP disabled:
+>>> testcase                        base            change          head       metric
+>>> malloc1/ disable THP              90.33        +417.3%           467.33    will-it-scale.per_thread_ops
+>>> read2/ disable THP             58934            +39.2%         82060       will-it-scale.per_thread_ops
+>>> page_fault1/ disable THP        8607            +36.4%         11736       will-it-scale.per_thread_ops
+>>> read1/ disable THP            314063            +12.7%        353934       will-it-scale.per_thread_ops
+>>> writeseek3/ disable THP         2452            +12.5%          2759       will-it-scale.per_thread_ops
+>>> signal1/ disable THP             971.33          +5.5%          1024       will-it-scale.per_thread_ops
+>>>
+>>> Notes: for above values in column "change", the higher value means 
+>>> that the related testcase result on head commit is better than that on base commit for this benchmark.
+>>>
+>>>
+>>> Best regards
+>>> Haiyan Song
+>>>
+>>> ________________________________________
+>>> From: owner-linux-mm@kvack.org [owner-linux-mm@kvack.org] on behalf 
+>>> of Laurent Dufour [ldufour@linux.vnet.ibm.com]
+>>> Sent: Thursday, May 17, 2018 7:06 PM
+>>> To: akpm@linux-foundation.org; mhocko@kernel.org; 
+>>> peterz@infradead.org; kirill@shutemov.name; ak@linux.intel.com; 
+>>> dave@stgolabs.net; jack@suse.cz; Matthew Wilcox; 
+>>> khandual@linux.vnet.ibm.com; aneesh.kumar@linux.vnet.ibm.com; 
+>>> benh@kernel.crashing.org; mpe@ellerman.id.au; paulus@samba.org; 
+>>> Thomas Gleixner; Ingo Molnar; hpa@zytor.com; Will Deacon; Sergey 
+>>> Senozhatsky; sergey.senozhatsky.work@gmail.com; Andrea Arcangeli; 
+>>> Alexei Starovoitov; Wang, Kemi; Daniel Jordan; David Rientjes; 
+>>> Jerome Glisse; Ganesh Mahendran; Minchan Kim; Punit Agrawal; vinayak 
+>>> menon; Yang Shi
+>>> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org; 
+>>> haren@linux.vnet.ibm.com; npiggin@gmail.com; bsingharora@gmail.com; 
+>>> paulmck@linux.vnet.ibm.com; Tim Chen; linuxppc-dev@lists.ozlabs.org; 
+>>> x86@kernel.org
+>>> Subject: [PATCH v11 00/26] Speculative page faults
+>>>
+>>> This is a port on kernel 4.17 of the work done by Peter Zijlstra to 
+>>> handle page fault without holding the mm semaphore [1].
+>>>
+>>> The idea is to try to handle user space page faults without holding 
+>>> the mmap_sem. This should allow better concurrency for massively 
+>>> threaded process since the page fault handler will not wait for 
+>>> other threads memory layout change to be done, assuming that this 
+>>> change is done in another part of the process's memory space. This 
+>>> type page fault is named speculative page fault. If the speculative 
+>>> page fault fails because of a concurrency is detected or because 
+>>> underlying PMD or PTE tables are not yet allocating, it is failing its processing and a classic page fault is then tried.
+>>>
+>>> The speculative page fault (SPF) has to look for the VMA matching 
+>>> the fault address without holding the mmap_sem, this is done by 
+>>> introducing a rwlock which protects the access to the mm_rb tree. 
+>>> Previously this was done using SRCU but it was introducing a lot of 
+>>> scheduling to process the VMA's freeing operation which was hitting 
+>>> the performance by 20% as reported by Kemi Wang [2]. Using a rwlock 
+>>> to protect access to the mm_rb tree is limiting the locking 
+>>> contention to these operations which are expected to be in a O(log 
+>>> n) order. In addition to ensure that the VMA is not freed in our 
+>>> back a reference count is added and 2 services (get_vma() and
+>>> put_vma()) are introduced to handle the reference count. Once a VMA 
+>>> is fetched from the RB tree using get_vma(), it must be later freed 
+>>> using put_vma(). I can't see anymore the overhead I got while 
+>>> will-it-scale benchmark anymore.
+>>>
+>>> The VMA's attributes checked during the speculative page fault 
+>>> processing have to be protected against parallel changes. This is 
+>>> done by using a per VMA sequence lock. This sequence lock allows the 
+>>> speculative page fault handler to fast check for parallel changes in 
+>>> progress and to abort the speculative page fault in that case.
+>>>
+>>> Once the VMA has been found, the speculative page fault handler 
+>>> would check for the VMA's attributes to verify that the page fault 
+>>> has to be handled correctly or not. Thus, the VMA is protected 
+>>> through a sequence lock which allows fast detection of concurrent 
+>>> VMA changes. If such a change is detected, the speculative page 
+>>> fault is aborted and a *classic* page fault is tried.  VMA sequence 
+>>> lockings are added when VMA attributes which are checked during the page fault are modified.
+>>>
+>>> When the PTE is fetched, the VMA is checked to see if it has been 
+>>> changed, so once the page table is locked, the VMA is valid, so any 
+>>> other changes leading to touching this PTE will need to lock the 
+>>> page table, so no parallel change is possible at this time.
+>>>
+>>> The locking of the PTE is done with interrupts disabled, this allows 
+>>> checking for the PMD to ensure that there is not an ongoing 
+>>> collapsing operation. Since khugepaged is firstly set the PMD to 
+>>> pmd_none and then is waiting for the other CPU to have caught the 
+>>> IPI interrupt, if the pmd is valid at the time the PTE is locked, we 
+>>> have the guarantee that the collapsing operation will have to wait on the PTE lock to move forward.
+>>> This allows the SPF handler to map the PTE safely. If the PMD value 
+>>> is different from the one recorded at the beginning of the SPF 
+>>> operation, the classic page fault handler will be called to handle 
+>>> the operation while holding the mmap_sem. As the PTE lock is done 
+>>> with the interrupts disabled, the lock is done using spin_trylock() 
+>>> to avoid dead lock when handling a page fault while a TLB invalidate 
+>>> is requested by another CPU holding the PTE.
+>>>
+>>> In pseudo code, this could be seen as:
+>>>     speculative_page_fault()
+>>>     {
+>>>             vma = get_vma()
+>>>             check vma sequence count
+>>>             check vma's support
+>>>             disable interrupt
+>>>                   check pgd,p4d,...,pte
+>>>                   save pmd and pte in vmf
+>>>                   save vma sequence counter in vmf
+>>>             enable interrupt
+>>>             check vma sequence count
+>>>             handle_pte_fault(vma)
+>>>                     ..
+>>>                     page = alloc_page()
+>>>                     pte_map_lock()
+>>>                             disable interrupt
+>>>                                     abort if sequence counter has changed
+>>>                                     abort if pmd or pte has changed
+>>>                                     pte map and lock
+>>>                             enable interrupt
+>>>                     if abort
+>>>                        free page
+>>>                        abort
+>>>                     ...
+>>>     }
+>>>
+>>>     arch_fault_handler()
+>>>     {
+>>>             if (speculative_page_fault(&vma))
+>>>                goto done
+>>>     again:
+>>>             lock(mmap_sem)
+>>>             vma = find_vma();
+>>>             handle_pte_fault(vma);
+>>>             if retry
+>>>                unlock(mmap_sem)
+>>>                goto again;
+>>>     done:
+>>>             handle fault error
+>>>     }
+>>>
+>>> Support for THP is not done because when checking for the PMD, we 
+>>> can be confused by an in progress collapsing operation done by 
+>>> khugepaged. The issue is that pmd_none() could be true either if the 
+>>> PMD is not already populated or if the underlying PTE are in the way 
+>>> to be collapsed. So we cannot safely allocate a PMD if pmd_none() is true.
+>>>
+>>> This series add a new software performance event named 'speculative-faults'
+>>> or 'spf'. It counts the number of successful page fault event 
+>>> handled speculatively. When recording 'faults,spf' events, the 
+>>> faults one is counting the total number of page fault events while 
+>>> 'spf' is only counting the part of the faults processed speculatively.
+>>>
+>>> There are some trace events introduced by this series. They allow 
+>>> identifying why the page faults were not processed speculatively. 
+>>> This doesn't take in account the faults generated by a monothreaded 
+>>> process which directly processed while holding the mmap_sem. This 
+>>> trace events are grouped in a system named 'pagefault', they are:
+>>>  - pagefault:spf_vma_changed : if the VMA has been changed in our 
+>>> back
+>>>  - pagefault:spf_vma_noanon : the vma->anon_vma field was not yet set.
+>>>  - pagefault:spf_vma_notsup : the VMA's type is not supported
+>>>  - pagefault:spf_vma_access : the VMA's access right are not 
+>>> respected
+>>>  - pagefault:spf_pmd_changed : the upper PMD pointer has changed in our
+>>>    back.
+>>>
+>>> To record all the related events, the easier is to run perf with the 
+>>> following arguments :
+>>> $ perf stat -e 'faults,spf,pagefault:*' <command>
+>>>
+>>> There is also a dedicated vmstat counter showing the number of 
+>>> successful page fault handled speculatively. I can be seen this way:
+>>> $ grep speculative_pgfault /proc/vmstat
+>>>
+>>> This series builds on top of v4.16-mmotm-2018-04-13-17-28 and is 
+>>> functional on x86, PowerPC and arm64.
+>>>
+>>> ---------------------
+>>> Real Workload results
+>>>
+>>> As mentioned in previous email, we did non official runs using a 
+>>> "popular in memory multithreaded database product" on 176 cores SMT8 
+>>> Power system which showed a 30% improvements in the number of 
+>>> transaction processed per second. This run has been done on the v6 
+>>> series, but changes introduced in this new version should not impact the performance boost seen.
+>>>
+>>> Here are the perf data captured during 2 of these runs on top of the 
+>>> v8
+>>> series:
+>>>                 vanilla         spf
+>>> faults          89.418          101.364         +13%
+>>> spf                n/a           97.989
+>>>
+>>> With the SPF kernel, most of the page fault were processed in a 
+>>> speculative way.
+>>>
+>>> Ganesh Mahendran had backported the series on top of a 4.9 kernel 
+>>> and gave it a try on an android device. He reported that the 
+>>> application launch time was improved in average by 6%, and for large 
+>>> applications (~100 threads) by 20%.
+>>>
+>>> Here are the launch time Ganesh mesured on Android 8.0 on top of a 
+>>> Qcom
+>>> MSM845 (8 cores) with 6GB (the less is better):
+>>>
+>>> Application                             4.9     4.9+spf delta
+>>> com.tencent.mm                          416     389     -7%
+>>> com.eg.android.AlipayGphone             1135    986     -13%
+>>> com.tencent.mtt                         455     454     0%
+>>> com.qqgame.hlddz                        1497    1409    -6%
+>>> com.autonavi.minimap                    711     701     -1%
+>>> com.tencent.tmgp.sgame                  788     748     -5%
+>>> com.immomo.momo                         501     487     -3%
+>>> com.tencent.peng                        2145    2112    -2%
+>>> com.smile.gifmaker                      491     461     -6%
+>>> com.baidu.BaiduMap                      479     366     -23%
+>>> com.taobao.taobao                       1341    1198    -11%
+>>> com.baidu.searchbox                     333     314     -6%
+>>> com.tencent.mobileqq                    394     384     -3%
+>>> com.sina.weibo                          907     906     0%
+>>> com.youku.phone                         816     731     -11%
+>>> com.happyelements.AndroidAnimal.qq      763     717     -6%
+>>> com.UCMobile                            415     411     -1%
+>>> com.tencent.tmgp.ak                     1464    1431    -2%
+>>> com.tencent.qqmusic                     336     329     -2%
+>>> com.sankuai.meituan                     1661    1302    -22%
+>>> com.netease.cloudmusic                  1193    1200    1%
+>>> air.tv.douyu.android                    4257    4152    -2%
+>>>
+>>> ------------------
+>>> Benchmarks results
+>>>
+>>> Base kernel is v4.17.0-rc4-mm1
+>>> SPF is BASE + this series
+>>>
+>>> Kernbench:
+>>> ----------
+>>> Here are the results on a 16 CPUs X86 guest using kernbench on a 
+>>> 4.15 kernel (kernel is build 5 times):
+>>>
+>>> Average Half load -j 8
+>>>                  Run    (std deviation)
+>>>                  BASE                   SPF
+>>> Elapsed Time     1448.65 (5.72312)      1455.84 (4.84951)       0.50%
+>>> User    Time     10135.4 (30.3699)      10148.8 (31.1252)       0.13%
+>>> System  Time     900.47  (2.81131)      923.28  (7.52779)       2.53%
+>>> Percent CPU      761.4   (1.14018)      760.2   (0.447214)      -0.16%
+>>> Context Switches 85380   (3419.52)      84748   (1904.44)       -0.74%
+>>> Sleeps           105064  (1240.96)      105074  (337.612)       0.01%
+>>>
+>>> Average Optimal load -j 16
+>>>                  Run    (std deviation)
+>>>                  BASE                   SPF
+>>> Elapsed Time     920.528 (10.1212)      927.404 (8.91789)       0.75%
+>>> User    Time     11064.8 (981.142)      11085   (990.897)       0.18%
+>>> System  Time     979.904 (84.0615)      1001.14 (82.5523)       2.17%
+>>> Percent CPU      1089.5  (345.894)      1086.1  (343.545)       -0.31%
+>>> Context Switches 159488  (78156.4)      158223  (77472.1)       -0.79%
+>>> Sleeps           110566  (5877.49)      110388  (5617.75)       -0.16%
+>>>
+>>>
+>>> During a run on the SPF, perf events were captured:
+>>>  Performance counter stats for '../kernbench -M':
+>>>          526743764      faults
+>>>                210      spf
+>>>                  3      pagefault:spf_vma_changed
+>>>                  0      pagefault:spf_vma_noanon
+>>>               2278      pagefault:spf_vma_notsup
+>>>                  0      pagefault:spf_vma_access
+>>>                  0      pagefault:spf_pmd_changed
+>>>
+>>> Very few speculative page faults were recorded as most of the 
+>>> processes involved are monothreaded (sounds that on this 
+>>> architecture some threads were created during the kernel build processing).
+>>>
+>>> Here are the kerbench results on a 80 CPUs Power8 system:
+>>>
+>>> Average Half load -j 40
+>>>                  Run    (std deviation)
+>>>                  BASE                   SPF
+>>> Elapsed Time     117.152 (0.774642)     117.166 (0.476057)      0.01%
+>>> User    Time     4478.52 (24.7688)      4479.76 (9.08555)       0.03%
+>>> System  Time     131.104 (0.720056)     134.04  (0.708414)      2.24%
+>>> Percent CPU      3934    (19.7104)      3937.2  (19.0184)       0.08%
+>>> Context Switches 92125.4 (576.787)      92581.6 (198.622)       0.50%
+>>> Sleeps           317923  (652.499)      318469  (1255.59)       0.17%
+>>>
+>>> Average Optimal load -j 80
+>>>                  Run    (std deviation)
+>>>                  BASE                   SPF
+>>> Elapsed Time     107.73  (0.632416)     107.31  (0.584936)      -0.39%
+>>> User    Time     5869.86 (1466.72)      5871.71 (1467.27)       0.03%
+>>> System  Time     153.728 (23.8573)      157.153 (24.3704)       2.23%
+>>> Percent CPU      5418.6  (1565.17)      5436.7  (1580.91)       0.33%
+>>> Context Switches 223861  (138865)       225032  (139632)        0.52%
+>>> Sleeps           330529  (13495.1)      332001  (14746.2)       0.45%
+>>>
+>>> During a run on the SPF, perf events were captured:
+>>>  Performance counter stats for '../kernbench -M':
+>>>          116730856      faults
+>>>                  0      spf
+>>>                  3      pagefault:spf_vma_changed
+>>>                  0      pagefault:spf_vma_noanon
+>>>                476      pagefault:spf_vma_notsup
+>>>                  0      pagefault:spf_vma_access
+>>>                  0      pagefault:spf_pmd_changed
+>>>
+>>> Most of the processes involved are monothreaded so SPF is not 
+>>> activated but there is no impact on the performance.
+>>>
+>>> Ebizzy:
+>>> -------
+>>> The test is counting the number of records per second it can manage, 
+>>> the higher is the best. I run it like this 'ebizzy -mTt <nrcpus>'. 
+>>> To get consistent result I repeated the test 100 times and measure 
+>>> the average result. The number is the record processes per second, 
+>>> the higher is the best.
+>>>
+>>>                 BASE            SPF             delta
+>>> 16 CPUs x86 VM  742.57          1490.24         100.69%
+>>> 80 CPUs P8 node 13105.4         24174.23        84.46%
+>>>
+>>> Here are the performance counter read during a run on a 16 CPUs x86 VM:
+>>>  Performance counter stats for './ebizzy -mTt 16':
+>>>            1706379      faults
+>>>            1674599      spf
+>>>              30588      pagefault:spf_vma_changed
+>>>                  0      pagefault:spf_vma_noanon
+>>>                363      pagefault:spf_vma_notsup
+>>>                  0      pagefault:spf_vma_access
+>>>                  0      pagefault:spf_pmd_changed
+>>>
+>>> And the ones captured during a run on a 80 CPUs Power node:
+>>>  Performance counter stats for './ebizzy -mTt 80':
+>>>            1874773      faults
+>>>            1461153      spf
+>>>             413293      pagefault:spf_vma_changed
+>>>                  0      pagefault:spf_vma_noanon
+>>>                200      pagefault:spf_vma_notsup
+>>>                  0      pagefault:spf_vma_access
+>>>                  0      pagefault:spf_pmd_changed
+>>>
+>>> In ebizzy's case most of the page fault were handled in a 
+>>> speculative way, leading the ebizzy performance boost.
+>>>
+>>> ------------------
+>>> Changes since v10 (https://lkml.org/lkml/2018/4/17/572):
+>>>  - Accounted for all review feedbacks from Punit Agrawal, Ganesh Mahendran
+>>>    and Minchan Kim, hopefully.
+>>>  - Remove unneeded check on CONFIG_SPECULATIVE_PAGE_FAULT in
+>>>    __do_page_fault().
+>>>  - Loop in pte_spinlock() and pte_map_lock() when pte try lock fails
+>>>    instead
+>>>    of aborting the speculative page fault handling. Dropping the now 
+>>> useless
+>>>    trace event pagefault:spf_pte_lock.
+>>>  - No more try to reuse the fetched VMA during the speculative page fault
+>>>    handling when retrying is needed. This adds a lot of complexity and
+>>>    additional tests done didn't show a significant performance improvement.
+>>>  - Convert IS_ENABLED(CONFIG_NUMA) back to #ifdef due to build error.
+>>>
+>>> [1] 
+>>> http://linux-kernel.2935.n7.nabble.com/RFC-PATCH-0-6-Another-go-at-s
+>>> peculative-page-faults-tt965642.html#none
+>>> [2] https://patchwork.kernel.org/patch/9999687/
+>>>
+>>>
+>>> Laurent Dufour (20):
+>>>   mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
+>>>   x86/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+>>>   powerpc/mm: set ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+>>>   mm: introduce pte_spinlock for FAULT_FLAG_SPECULATIVE
+>>>   mm: make pte_unmap_same compatible with SPF
+>>>   mm: introduce INIT_VMA()
+>>>   mm: protect VMA modifications using VMA sequence count
+>>>   mm: protect mremap() against SPF hanlder
+>>>   mm: protect SPF handler against anon_vma changes
+>>>   mm: cache some VMA fields in the vm_fault structure
+>>>   mm/migrate: Pass vm_fault pointer to migrate_misplaced_page()
+>>>   mm: introduce __lru_cache_add_active_or_unevictable
+>>>   mm: introduce __vm_normal_page()
+>>>   mm: introduce __page_add_new_anon_rmap()
+>>>   mm: protect mm_rb tree with a rwlock
+>>>   mm: adding speculative page fault failure trace events
+>>>   perf: add a speculative page fault sw event
+>>>   perf tools: add support for the SPF perf event
+>>>   mm: add speculative page fault vmstats
+>>>   powerpc/mm: add speculative page fault
+>>>
+>>> Mahendran Ganesh (2):
+>>>   arm64/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+>>>   arm64/mm: add speculative page fault
+>>>
+>>> Peter Zijlstra (4):
+>>>   mm: prepare for FAULT_FLAG_SPECULATIVE
+>>>   mm: VMA sequence count
+>>>   mm: provide speculative fault infrastructure
+>>>   x86/mm: add speculative pagefault handling
+>>>
+>>>  arch/arm64/Kconfig                    |   1 +
+>>>  arch/arm64/mm/fault.c                 |  12 +
+>>>  arch/powerpc/Kconfig                  |   1 +
+>>>  arch/powerpc/mm/fault.c               |  16 +
+>>>  arch/x86/Kconfig                      |   1 +
+>>>  arch/x86/mm/fault.c                   |  27 +-
+>>>  fs/exec.c                             |   2 +-
+>>>  fs/proc/task_mmu.c                    |   5 +-
+>>>  fs/userfaultfd.c                      |  17 +-
+>>>  include/linux/hugetlb_inline.h        |   2 +-
+>>>  include/linux/migrate.h               |   4 +-
+>>>  include/linux/mm.h                    | 136 +++++++-
+>>>  include/linux/mm_types.h              |   7 +
+>>>  include/linux/pagemap.h               |   4 +-
+>>>  include/linux/rmap.h                  |  12 +-
+>>>  include/linux/swap.h                  |  10 +-
+>>>  include/linux/vm_event_item.h         |   3 +
+>>>  include/trace/events/pagefault.h      |  80 +++++
+>>>  include/uapi/linux/perf_event.h       |   1 +
+>>>  kernel/fork.c                         |   5 +-
+>>>  mm/Kconfig                            |  22 ++
+>>>  mm/huge_memory.c                      |   6 +-
+>>>  mm/hugetlb.c                          |   2 +
+>>>  mm/init-mm.c                          |   3 +
+>>>  mm/internal.h                         |  20 ++
+>>>  mm/khugepaged.c                       |   5 +
+>>>  mm/madvise.c                          |   6 +-
+>>>  mm/memory.c                           | 612 +++++++++++++++++++++++++++++-----
+>>>  mm/mempolicy.c                        |  51 ++-
+>>>  mm/migrate.c                          |   6 +-
+>>>  mm/mlock.c                            |  13 +-
+>>>  mm/mmap.c                             | 229 ++++++++++---
+>>>  mm/mprotect.c                         |   4 +-
+>>>  mm/mremap.c                           |  13 +
+>>>  mm/nommu.c                            |   2 +-
+>>>  mm/rmap.c                             |   5 +-
+>>>  mm/swap.c                             |   6 +-
+>>>  mm/swap_state.c                       |   8 +-
+>>>  mm/vmstat.c                           |   5 +-
+>>>  tools/include/uapi/linux/perf_event.h |   1 +
+>>>  tools/perf/util/evsel.c               |   1 +
+>>>  tools/perf/util/parse-events.c        |   4 +
+>>>  tools/perf/util/parse-events.l        |   1 +
+>>>  tools/perf/util/python.c              |   1 +
+>>>  44 files changed, 1161 insertions(+), 211 deletions(-)  create mode 
+>>> 100644 include/trace/events/pagefault.h
+>>>
+>>> --
+>>> 2.7.4
+>>>
+>>>
+>>
+> 
