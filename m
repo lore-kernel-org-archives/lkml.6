@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940064AbeE1Q1i (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:27:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58428 "EHLO mail.kernel.org"
+        id S940073AbeE1Q1w (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:27:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936428AbeE1KKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:15 -0400
+        id S936455AbeE1KKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -14,9 +14,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 075/185] batman-adv: invalidate checksum on fragment reassembly
-Date: Mon, 28 May 2018 12:01:56 +0200
-Message-Id: <20180528100057.135006401@linuxfoundation.org>
+Subject: [PATCH 3.18 074/185] batman-adv: fix packet checksum in receive path
+Date: Mon, 28 May 2018 12:01:55 +0200
+Message-Id: <20180528100057.092526706@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,13 +34,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-[ Upstream commit 3bf2a09da956b43ecfaa630a2ef9a477f991a46a ]
+[ Upstream commit abd6360591d3f8259f41c34e31ac4826dfe621b8 ]
 
-A more sophisticated implementation could try to combine fragment checksums
-when all fragments have CHECKSUM_COMPLETE and are split at even offsets.
-For now, we just set ip_summed to CHECKSUM_NONE to avoid "hw csum failure"
-warnings in the kernel log when fragmented frames are received. In
-consequence, skb_pull_rcsum() can be replaced with skb_pull().
+eth_type_trans() internally calls skb_pull(), which does not adjust the
+skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
+form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
+received.
 
 Note that in usual setups, packets don't reach batman-adv with
 CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
@@ -48,7 +47,7 @@ batadv's ethtype?), which is why the log messages do not occur on every
 system using batman-adv. I could reproduce this issue by stacking
 batman-adv on top of a VXLAN interface.
 
-Fixes: 610bfc6bc99b ("batman-adv: Receive fragmented packets and merge")
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
 Tested-by: Maximilian Wilhelm <max@sdn.clinic>
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
@@ -56,18 +55,23 @@ Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/fragmentation.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/batman-adv/soft-interface.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/net/batman-adv/fragmentation.c
-+++ b/net/batman-adv/fragmentation.c
-@@ -260,7 +260,8 @@ batadv_frag_merge_packets(struct hlist_h
- 	/* Move the existing MAC header to just before the payload. (Override
- 	 * the fragment header.)
- 	 */
--	skb_pull_rcsum(skb_out, hdr_size);
-+	skb_pull(skb_out, hdr_size);
-+	skb_out->ip_summed = CHECKSUM_NONE;
- 	memmove(skb_out->data - ETH_HLEN, skb_mac_header(skb_out), ETH_HLEN);
- 	skb_set_mac_header(skb_out, -ETH_HLEN);
- 	skb_reset_network_header(skb_out);
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@ -401,13 +401,7 @@ void batadv_interface_rx(struct net_devi
+ 
+ 	/* skb->dev & skb->pkt_type are set here */
+ 	skb->protocol = eth_type_trans(skb, soft_iface);
+-
+-	/* should not be necessary anymore as we use skb_pull_rcsum()
+-	 * TODO: please verify this and remove this TODO
+-	 * -- Dec 21st 2009, Simon Wunderlich
+-	 */
+-
+-	/* skb->ip_summed = CHECKSUM_UNNECESSARY; */
++	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
+ 
+ 	batadv_inc_counter(bat_priv, BATADV_CNT_RX);
+ 	batadv_add_counter(bat_priv, BATADV_CNT_RX_BYTES,
