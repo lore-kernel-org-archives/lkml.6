@@ -1,108 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753987AbeE1IGh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:06:37 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54978 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753718AbeE1IGc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:06:32 -0400
-X-Google-Smtp-Source: ADUXVKIPsA6HV9BL++1qaPatNojOtnrG5lljXdVyaD9bc63j8Z3DmssnMmmnHC6TFfL+gTRggUDxvzTjb2ISIWARbQo=
+        id S1754003AbeE1IIt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:08:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753718AbeE1IIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:08:47 -0400
+Date: Mon, 28 May 2018 10:08:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 09/11] misc: throttler: Add core support for non-thermal
+ throttling
+Message-ID: <20180528080826.GA17162@kroah.com>
+References: <20180525203043.249193-1-mka@chromium.org>
+ <20180525203043.249193-10-mka@chromium.org>
 MIME-Version: 1.0
-X-Originating-IP: [2a02:168:5628:0:d0c7:bcda:eea:9e5d]
-In-Reply-To: <2050411.pJQe2GrhOB@avalon>
-References: <20180525155030.3667352-1-arnd@arndb.de> <20180525155030.3667352-7-arnd@arndb.de>
- <2050411.pJQe2GrhOB@avalon>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Mon, 28 May 2018 10:06:31 +0200
-X-Google-Sender-Auth: ku4aV4bmYXFPbLTfFn_ekxZH7o4
-Message-ID: <CAKMK7uHi6Pi3oX2hfoWFzh-LUC9QqFS5AY6b=BojvE9Yqc5Oug@mail.gmail.com>
-Subject: Re: [PATCH 7/8] drm/bridge: fix dependency for lvds-encoder
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maciej Purski <m.purski@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525203043.249193-10-mka@chromium.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 10:02 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Arnd,
->
-> Thank you for the patch.
->
-> On Friday, 25 May 2018 18:50:14 EEST Arnd Bergmann wrote:
->> The DRM panel bridge code is built into the kms helpers module, so we
->> get a link error when trying to use it from a built-in driver while the
->> kms helper is a loadable module:
->>
->> drivers/gpu/drm/bridge/lvds-encoder.o: In function `lvds_encoder_probe':
->> lvds-encoder.c:(.text+0x124): undefined reference to
->> `devm_drm_panel_bridge_add'
->>
->> This adds a the same dependency in the lvds-encoder that we use for all
->> the other users of the panel bridge. I did not bisect the problem, but
->> from inspection it seems to date back to the patch that separated out
->> the panel bridge from lvds encoder.
->>
->> Fixes: 13dfc0540a57 ("drm/bridge: Refactor out the panel wrapper from the
->> lvds-encoder bridge.") Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  drivers/gpu/drm/bridge/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
->> index 6caa47834194..cf47bfa7a050 100644
->> --- a/drivers/gpu/drm/bridge/Kconfig
->> +++ b/drivers/gpu/drm/bridge/Kconfig
->> @@ -46,6 +46,7 @@ config DRM_DUMB_VGA_DAC
->>  config DRM_LVDS_ENCODER
->>       tristate "Transparent parallel to LVDS encoder support"
->>       depends on OF
->> +     select DRM_KMS_HELPER
->>       select DRM_PANEL_BRIDGE
->>       help
->>         Support for transparent parallel to LVDS encoders that don't require
->
-> Wouldn't it be better to apply the following ?
->
-> config DRM_PANEL_BRIDGE
->         def_bool y
->         depends on DRM_BRIDGE
-> -       depends on DRM_KMS_HELPER
-> +       select DRM_KMS_HELPER
->         select DRM_PANEL
->         help
->            DRM bridge wrapper of DRM panels
->
-> Otherwise you'll potentially have to patch every user of DRM_PANEL_BRIDGE as
-> done in this patch.
+On Fri, May 25, 2018 at 01:30:41PM -0700, Matthias Kaehlcke wrote:
+> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> index 20be70c3f118..01a1714dd2ad 100644
+> --- a/drivers/misc/Makefile
+> +++ b/drivers/misc/Makefile
+> @@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+>  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+>  obj-$(CONFIG_OCXL)		+= ocxl/
+>  obj-$(CONFIG_MISC_RTSX)		+= cardreader/
+> +obj-y				+= throttler/
 
-Select isn't recursive, so this won't work unfortunately :-/
--Daniel
+Shouldn't you depend on a Kconfig option to traverse into this
+directory?
 
+> diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
+> new file mode 100644
+> index 000000000000..ef8388f6bc0a
+> --- /dev/null
+> +++ b/drivers/misc/throttler/Kconfig
+> @@ -0,0 +1,13 @@
+> +menuconfig THROTTLER
+> +	bool "Throttler support"
+> +	default n
 
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+the default is always 'n' no need to say it again here :)
 
+> +	depends on OF
+> +	select CPU_FREQ
+> +	select PM_DEVFREQ
+> +	help
+> +	  This option enables core support for non-thermal throttling of CPUs
+> +	  and devfreq devices.
+> +
+> +	  Note that you also need a event monitor module usually called
+> +	  *_throttler.
+> +
+> diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
+> new file mode 100644
+> index 000000000000..c8d920cee315
+> --- /dev/null
+> +++ b/drivers/misc/throttler/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_THROTTLER)		+= core.o
+> diff --git a/drivers/misc/throttler/core.c b/drivers/misc/throttler/core.c
+> new file mode 100644
+> index 000000000000..c058d03212b8
+> --- /dev/null
+> +++ b/drivers/misc/throttler/core.c
+> @@ -0,0 +1,373 @@
+> +/*
+> + * Core code for non-thermal throttling
+> + *
+> + * Copyright (C) 2018 Google, Inc.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
 
+Please just use a single SPDX line, like checkpatch.pl would have warned
+you about.  No need for the full verbous license boiler-plate text here
+at all.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+thanks,
+
+greg k-h
