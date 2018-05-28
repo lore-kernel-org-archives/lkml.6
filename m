@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937088AbeE1K14 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:27:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47270 "EHLO mail.kernel.org"
+        id S937173AbeE1K2X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:28:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937024AbeE1K1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:50 -0400
+        id S937098AbeE1K2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gopanapalli Pradeep <prap_hai@yahoo.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Manfred Spraul <manfred@colorfullife.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 037/329] tools lib traceevent: Fix get_field_str() for dynamic strings
-Date: Mon, 28 May 2018 11:59:26 +0200
-Message-Id: <20180528100245.544494287@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 016/329] Revert "ipc/shm: Fix shmat mmap nil-page protection"
+Date: Mon, 28 May 2018 11:59:05 +0200
+Message-Id: <20180528100243.667989069@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,53 +33,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit d777f8de99b05d399c0e4e51cdce016f26bd971b ]
+commit a73ab244f0dad8fffb3291b905f73e2d3eaa7c00 upstream.
 
-If a field is a dynamic string, get_field_str() returned just the
-offset/size value and not the string. Have it parse the offset/size
-correctly to return the actual string. Otherwise filtering fails when
-trying to filter fields that are dynamic strings.
+Patch series "ipc/shm: shmat() fixes around nil-page".
 
-Reported-by: Gopanapalli Pradeep <prap_hai@yahoo.com>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: http://lkml.kernel.org/r/20180112004823.146333275@goodmis.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+These patches fix two issues reported[1] a while back by Joe and Andrea
+around how shmat(2) behaves with nil-page.
+
+The first reverts a commit that it was incorrectly thought that mapping
+nil-page (address=0) was a no no with MAP_FIXED.  This is not the case,
+with the exception of SHM_REMAP; which is address in the second patch.
+
+I chose two patches because it is easier to backport and it explicitly
+reverts bogus behaviour.  Both patches ought to be in -stable and ltp
+testcases need updated (the added testcase around the cve can be
+modified to just test for SHM_RND|SHM_REMAP).
+
+[1] lkml.kernel.org/r/20180430172152.nfa564pvgpk3ut7p@linux-n805
+
+This patch (of 2):
+
+Commit 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
+worked on the idea that we should not be mapping as root addr=0 and
+MAP_FIXED.  However, it was reported that this scenario is in fact
+valid, thus making the patch both bogus and breaks userspace as well.
+
+For example X11's libint10.so relies on shmat(1, SHM_RND) for lowmem
+initialization[1].
+
+[1] https://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/os-support/linux/int10/linux.c#n347
+Link: http://lkml.kernel.org/r/20180503203243.15045-2-dave@stgolabs.net
+Fixes: 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+Reported-by: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/lib/traceevent/parse-filter.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1879,17 +1879,25 @@ static const char *get_field_str(struct
- 	struct pevent *pevent;
- 	unsigned long long addr;
- 	const char *val = NULL;
-+	unsigned int size;
- 	char hex[64];
- 
- 	/* If the field is not a string convert it */
- 	if (arg->str.field->flags & FIELD_IS_STRING) {
- 		val = record->data + arg->str.field->offset;
-+		size = arg->str.field->size;
-+
-+		if (arg->str.field->flags & FIELD_IS_DYNAMIC) {
-+			addr = *(unsigned int *)val;
-+			val = record->data + (addr & 0xffff);
-+			size = addr >> 16;
-+		}
- 
- 		/*
- 		 * We need to copy the data since we can't be sure the field
- 		 * is null terminated.
- 		 */
--		if (*(val + arg->str.field->size - 1)) {
-+		if (*(val + size - 1)) {
- 			/* copy it */
- 			memcpy(arg->str.buffer, val, arg->str.field->size);
- 			/* the buffer is already NULL terminated */
+---
+ ipc/shm.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -1127,13 +1127,8 @@ long do_shmat(int shmid, char __user *sh
+ 		goto out;
+ 	else if ((addr = (ulong)shmaddr)) {
+ 		if (addr & (shmlba - 1)) {
+-			/*
+-			 * Round down to the nearest multiple of shmlba.
+-			 * For sane do_mmap_pgoff() parameters, avoid
+-			 * round downs that trigger nil-page and MAP_FIXED.
+-			 */
+-			if ((shmflg & SHM_RND) && addr >= shmlba)
+-				addr &= ~(shmlba - 1);
++			if (shmflg & SHM_RND)
++				addr &= ~(shmlba - 1);  /* round down */
+ 			else
+ #ifndef __ARCH_FORCE_SHMLBA
+ 				if (addr & ~PAGE_MASK)
