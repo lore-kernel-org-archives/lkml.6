@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968204AbeE1KQQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36268 "EHLO mail.kernel.org"
+        id S968429AbeE1KQ2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:16:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968024AbeE1KQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:07 -0400
+        id S968024AbeE1KQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 006/268] ALSA: timer: Fix pause event notification
-Date: Mon, 28 May 2018 11:59:40 +0200
-Message-Id: <20180528100202.834705157@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Alex Estrin <alex.estrin@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 053/268] IB/ipoib: Fix for potential no-carrier state
+Date: Mon, 28 May 2018 12:00:27 +0200
+Message-Id: <20180528100207.975418534@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -29,42 +32,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Alex Estrin <alex.estrin@intel.com>
 
-commit 3ae180972564846e6d794e3615e1ab0a1e6c4ef9 upstream.
+[ Upstream commit 1029361084d18cc270f64dfd39529fafa10cfe01 ]
 
-Commit f65e0d299807 ("ALSA: timer: Call notifier in the same spinlock")
-combined the start/continue and stop/pause functions, and in doing so
-changed the event code for the pause case to SNDRV_TIMER_EVENT_CONTINUE.
-Change it back to SNDRV_TIMER_EVENT_PAUSE.
+On reboot SM can program port pkey table before ipoib registered its
+event handler, which could result in missing pkey event and leave root
+interface with initial pkey value from index 0.
 
-Fixes: f65e0d299807 ("ALSA: timer: Call notifier in the same spinlock")
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Since OPA port starts with invalid pkey in index 0, root interface will
+fail to initialize and stay down with no-carrier flag.
+
+For IB ipoib interface may end up with pkey different from value
+opensm put in pkey table idx 0, resulting in connectivity issues
+(different mcast groups, for example).
+
+Close the window by calling event handler after registration
+to make sure ipoib pkey is in sync with port pkey table.
+
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/core/timer.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -548,7 +548,7 @@ static int snd_timer_stop1(struct snd_ti
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -1953,6 +1953,9 @@ static struct net_device *ipoib_add_port
+ 		goto event_failed;
  	}
- 	timeri->flags &= ~(SNDRV_TIMER_IFLG_RUNNING | SNDRV_TIMER_IFLG_START);
- 	snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
--			  SNDRV_TIMER_EVENT_CONTINUE);
-+			  SNDRV_TIMER_EVENT_PAUSE);
-  unlock:
- 	spin_unlock_irqrestore(&timer->lock, flags);
- 	return result;
-@@ -570,7 +570,7 @@ static int snd_timer_stop_slave(struct s
- 		list_del_init(&timeri->ack_list);
- 		list_del_init(&timeri->active_list);
- 		snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
--				  SNDRV_TIMER_EVENT_CONTINUE);
-+				  SNDRV_TIMER_EVENT_PAUSE);
- 		spin_unlock(&timeri->timer->lock);
- 	}
- 	spin_unlock_irqrestore(&slave_active_lock, flags);
+ 
++	/* call event handler to ensure pkey in sync */
++	queue_work(ipoib_workqueue, &priv->flush_heavy);
++
+ 	result = register_netdev(priv->dev);
+ 	if (result) {
+ 		printk(KERN_WARNING "%s: couldn't register ipoib port %d; error %d\n",
