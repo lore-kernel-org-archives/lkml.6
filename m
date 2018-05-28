@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165620AbeE1OZ3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:25:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54304 "EHLO mail.kernel.org"
+        id S1161850AbeE1KeF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:34:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161843AbeE1KeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:07 -0400
+        id S1161293AbeE1Kdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jayachandran C <jnair@caviumnetworks.com>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 176/329] watchdog: sbsa: use 32-bit read for WCV
-Date: Mon, 28 May 2018 12:01:45 +0200
-Message-Id: <20180528100257.039408089@linuxfoundation.org>
+Subject: [PATCH 4.9 171/329] Btrfs: send, fix issuing write op when processing hole in no data mode
+Date: Mon, 28 May 2018 12:01:40 +0200
+Message-Id: <20180528100256.644380006@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,49 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jayachandran C <jnair@caviumnetworks.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 93ac3deb7c220cbcec032a967220a1f109d58431 ]
+[ Upstream commit d4dfc0f4d39475ccbbac947880b5464a74c30b99 ]
 
-According to SBSA spec v3.1 section 5.3:
-  All registers are 32 bits in size and should be accessed using
-  32-bit reads and writes. If an access size other than 32 bits
-  is used then the results are IMPLEMENTATION DEFINED.
-  [...]
-  The Generic Watchdog is little-endian
+When doing an incremental send of a filesystem with the no-holes feature
+enabled, we end up issuing a write operation when using the no data mode
+send flag, instead of issuing an update extent operation. Fix this by
+issuing the update extent operation instead.
 
-The current code uses readq to read the watchdog compare register
-which does a 64-bit access. This fails on ThunderX2 which does not
-implement 64-bit access to this register.
+Trivial reproducer:
 
-Fix this by using lo_hi_readq() that does two 32-bit reads.
+  $ mkfs.btrfs -f -O no-holes /dev/sdc
+  $ mkfs.btrfs -f /dev/sdd
+  $ mount /dev/sdc /mnt/sdc
+  $ mount /dev/sdd /mnt/sdd
 
-Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+  $ xfs_io -f -c "pwrite -S 0xab 0 32K" /mnt/sdc/foobar
+  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap1
+
+  $ xfs_io -c "fpunch 8K 8K" /mnt/sdc/foobar
+  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap2
+
+  $ btrfs send /mnt/sdc/snap1 | btrfs receive /mnt/sdd
+  $ btrfs send --no-data -p /mnt/sdc/snap1 /mnt/sdc/snap2 \
+       | btrfs receive -vv /mnt/sdd
+
+Before this change the output of the second receive command is:
+
+  receiving snapshot snap2 uuid=f6922049-8c22-e544-9ff9-fc6755918447...
+  utimes
+  write foobar, offset 8192, len 8192
+  utimes foobar
+  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=f6922049-8c22-e544-9ff9-...
+
+After this change it is:
+
+  receiving snapshot snap2 uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+  utimes
+  update_extent foobar: offset=8192, len=8192
+  utimes foobar
+  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/sbsa_gwdt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/send.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/watchdog/sbsa_gwdt.c
-+++ b/drivers/watchdog/sbsa_gwdt.c
-@@ -50,6 +50,7 @@
-  */
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -4822,6 +4822,9 @@ static int send_hole(struct send_ctx *sc
+ 	u64 len;
+ 	int ret = 0;
  
- #include <linux/io.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-@@ -159,7 +160,7 @@ static unsigned int sbsa_gwdt_get_timele
- 	    !(readl(gwdt->control_base + SBSA_GWDT_WCS) & SBSA_GWDT_WCS_WS0))
- 		timeleft += readl(gwdt->control_base + SBSA_GWDT_WOR);
- 
--	timeleft += readq(gwdt->control_base + SBSA_GWDT_WCV) -
-+	timeleft += lo_hi_readq(gwdt->control_base + SBSA_GWDT_WCV) -
- 		    arch_counter_get_cntvct();
- 
- 	do_div(timeleft, gwdt->clk);
++	if (sctx->flags & BTRFS_SEND_FLAG_NO_FILE_DATA)
++		return send_update_extent(sctx, offset, end - offset);
++
+ 	p = fs_path_alloc();
+ 	if (!p)
+ 		return -ENOMEM;
