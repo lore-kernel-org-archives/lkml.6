@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163057AbeE1OIq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:08:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
+        id S1165483AbeE1OJH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:09:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162199AbeE1Kh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:58 -0400
+        id S1162099AbeE1Khx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 262/329] powerpc/perf: Fix kernel address leak via sampling registers
-Date: Mon, 28 May 2018 12:03:11 +0200
-Message-Id: <20180528100303.725807416@linuxfoundation.org>
+Subject: [PATCH 4.9 252/329] rxrpc: Fix Tx ring annotation after initial Tx failure
+Date: Mon, 28 May 2018 12:03:01 +0200
+Message-Id: <20180528100302.915683705@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,70 +29,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit e1ebd0e5b9d0a10ba65e63a3514b6da8c6a5a819 ]
+[ Upstream commit 03877bf6a30cca7d4bc3ffabd3c3e9464a7a1a19 ]
 
-Current code in power_pmu_disable() does not clear the sampling
-registers like Sampling Instruction Address Register (SIAR) and
-Sampling Data Address Register (SDAR) after disabling the PMU. Since
-these are userspace readable and could contain kernel addresses, add
-code to explicitly clear the content of these registers.
+rxrpc calls have a ring of packets that are awaiting ACK or retransmission
+and a parallel ring of annotations that tracks the state of those packets.
+If the initial transmission of a packet on the underlying UDP socket fails
+then the packet annotation is marked for resend - but the setting of this
+mark accidentally erases the last-packet mark also stored in the same
+annotation slot.  If this happens, a call won't switch out of the Tx phase
+when all the packets have been transmitted.
 
-Also add a "context synchronizing instruction" to enforce no further
-updates to these registers as suggested by Power ISA v3.0B. From
-section 9.4, on page 1108:
+Fix this by retaining the last-packet mark and only altering the packet
+state.
 
-  "If an mtspr instruction is executed that changes the value of a
-  Performance Monitor register other than SIAR, SDAR, and SIER, the
-  change is not guaranteed to have taken effect until after a
-  subsequent context synchronizing instruction has been executed (see
-  Chapter 11. "Synchronization Requirements for Context Alterations"
-  on page 1133)."
-
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-[mpe: Massage change log and add ISA reference]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/perf/core-book3s.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/rxrpc/sendmsg.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -1198,6 +1198,7 @@ static void power_pmu_disable(struct pmu
- 		 */
- 		write_mmcr0(cpuhw, val);
- 		mb();
-+		isync();
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -78,7 +78,9 @@ static inline void rxrpc_instant_resend(
+ 	spin_lock_bh(&call->lock);
  
- 		/*
- 		 * Disable instruction sampling if it was enabled
-@@ -1206,12 +1207,26 @@ static void power_pmu_disable(struct pmu
- 			mtspr(SPRN_MMCRA,
- 			      cpuhw->mmcr[2] & ~MMCRA_SAMPLE_ENABLE);
- 			mb();
-+			isync();
- 		}
- 
- 		cpuhw->disabled = 1;
- 		cpuhw->n_added = 0;
- 
- 		ebb_switch_out(mmcr0);
-+
-+#ifdef CONFIG_PPC64
-+		/*
-+		 * These are readable by userspace, may contain kernel
-+		 * addresses and are not switched by context switch, so clear
-+		 * them now to avoid leaking anything to userspace in general
-+		 * including to another process.
-+		 */
-+		if (ppmu->flags & PPMU_ARCH_207S) {
-+			mtspr(SPRN_SDAR, 0);
-+			mtspr(SPRN_SIAR, 0);
-+		}
-+#endif
+ 	if (call->state < RXRPC_CALL_COMPLETE) {
+-		call->rxtx_annotations[ix] = RXRPC_TX_ANNO_RETRANS;
++		call->rxtx_annotations[ix] =
++			(call->rxtx_annotations[ix] & RXRPC_TX_ANNO_LAST) |
++			RXRPC_TX_ANNO_RETRANS;
+ 		if (!test_and_set_bit(RXRPC_CALL_EV_RESEND, &call->events))
+ 			rxrpc_queue_call(call);
  	}
- 
- 	local_irq_restore(flags);
