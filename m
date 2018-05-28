@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423523AbeE1MZb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:25:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
+        id S1423546AbeE1MZw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:25:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164835AbeE1LBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:11 -0400
+        id S1422720AbeE1LBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Gorinov <ivan.gorinov@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        stable@vger.kernel.org, Will Newton <will.newton@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 437/496] x86/devicetree: Initialize device tree before using it
-Date: Mon, 28 May 2018 12:03:42 +0200
-Message-Id: <20180528100338.242904608@linuxfoundation.org>
+Subject: [PATCH 4.14 435/496] soc: qcom: wcnss_ctrl: Fix increment in NV upload
+Date: Mon, 28 May 2018 12:03:40 +0200
+Message-Id: <20180528100338.057023280@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,56 +31,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Gorinov <ivan.gorinov@intel.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 628df9dc5ad886b0a9b33c75a7b09710eb859ca1 ]
+[ Upstream commit 90c29ed7627b6b4aeb603ee197650173c8434512 ]
 
-Commit 08d53aa58cb1 added CRC32 calculation in early_init_dt_verify() and
-checking in late initcall of_fdt_raw_init(), making early_init_dt_verify()
-mandatory.
+hdr.len includes both the size of the header and the fragment, so using
+this when stepping through the firmware causes us to skip 16 bytes every
+chunk of 3072 bytes; causing only the first fragment to actually be
+valid data.
 
-The required call to early_init_dt_verify() was not added to the
-x86-specific implementation, causing failure to create the sysfs entry in
-of_fdt_raw_init().
+Instead use fragment size steps through the firmware blob.
 
-Fixes: 08d53aa58cb1 ("of/fdt: export fdt blob as /sys/firmware/fdt")
-Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Link: https://lkml.kernel.org/r/c8c7e941efc63b5d25ebf9b6350b0f3df38f6098.1520450752.git.ivan.gorinov@intel.com
+Fixes: ea7a1f275cf0 ("soc: qcom: Introduce WCNSS_CTRL SMD client")
+Reported-by: Will Newton <will.newton@gmail.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/devicetree.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/soc/qcom/wcnss_ctrl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/devicetree.c
-+++ b/arch/x86/kernel/devicetree.c
-@@ -12,6 +12,7 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/of_irq.h>
-+#include <linux/libfdt.h>
- #include <linux/slab.h>
- #include <linux/pci.h>
- #include <linux/of_pci.h>
-@@ -276,14 +277,15 @@ static void __init x86_flattree_get_conf
+--- a/drivers/soc/qcom/wcnss_ctrl.c
++++ b/drivers/soc/qcom/wcnss_ctrl.c
+@@ -249,7 +249,7 @@ static int wcnss_download_nv(struct wcns
+ 		/* Increment for next fragment */
+ 		req->seq++;
  
- 	map_len = max(PAGE_SIZE - (initial_dtb & ~PAGE_MASK), (u64)128);
+-		data += req->hdr.len;
++		data += NV_FRAGMENT_SIZE;
+ 		left -= NV_FRAGMENT_SIZE;
+ 	} while (left > 0);
  
--	initial_boot_params = dt = early_memremap(initial_dtb, map_len);
--	size = of_get_flat_dt_size();
-+	dt = early_memremap(initial_dtb, map_len);
-+	size = fdt_totalsize(dt);
- 	if (map_len < size) {
- 		early_memunmap(dt, map_len);
--		initial_boot_params = dt = early_memremap(initial_dtb, size);
-+		dt = early_memremap(initial_dtb, size);
- 		map_len = size;
- 	}
- 
-+	early_init_dt_verify(dt);
- 	unflatten_and_copy_device_tree();
- 	early_memunmap(dt, map_len);
- }
