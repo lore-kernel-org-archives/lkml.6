@@ -1,82 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755624AbeE1Rx2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 13:53:28 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54374 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754449AbeE1RxZ (ORCPT
+        id S1755664AbeE1Rzy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:55:54 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:35115 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755643AbeE1Rzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 13:53:25 -0400
-X-Google-Smtp-Source: ADUXVKKv3+FmLsjJGhKCxIYy9B/vqYZqHOJnRYgRas9B0fzUp6wbgnjiZnl+0BqDyGVKmrxJlEIdq8RQDRTuiG60mMg=
+        Mon, 28 May 2018 13:55:51 -0400
+X-Google-Smtp-Source: ADUXVKJvQZk7dbB6n8Kh2gWig7xK/rfmnKNIdM9xX0axYxvbJom2nZpq+t8li4YH6PL9dt57rEBxtQ==
+Date: Mon, 28 May 2018 14:55:46 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Xin Long <lucien.xin@gmail.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3dcd59a1f907245f891f@syzkaller.appspotmail.com>,
+        ast@kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: INFO: rcu detected stall in is_bpf_text_address
+Message-ID: <20180528175546.GD3787@localhost.localdomain>
+References: <0000000000006d7517056c911740@google.com>
+ <4b65142a-cf3b-05d7-d66b-018ff8da7ccc@gmail.com>
+ <CADvbK_e7LXc7minSmaPw6iZvjWo215wG-pPAS0gr58+-VxUO7Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180528154806.2621106-1-arnd@arndb.de>
-References: <20180528154806.2621106-1-arnd@arndb.de>
-From: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Date: Mon, 28 May 2018 19:53:03 +0200
-Message-ID: <CAAUqJDtAopg0aTy3ea3xqXEqnzQD5C4mHs7YVMMKC5_z-HjO2A@mail.gmail.com>
-Subject: Re: [PATCH] crypto: morus - Hide Kconfig option for glue code
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_e7LXc7minSmaPw6iZvjWo215wG-pPAS0gr58+-VxUO7Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Resending in plaintext because Gmail for Android sucks...)
+On Sun, May 20, 2018 at 04:26:03PM +0800, Xin Long wrote:
+> On Sat, May 19, 2018 at 11:57 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> > SCTP experts, please take a look.
+> >
+> > On 05/19/2018 08:55 AM, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    73fcb1a370c7 Merge branch 'akpm' (patches from Andrew)
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1462ec0f800000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3b4e30da84ec1ed
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3dcd59a1f907245f891f
+> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1079cf8f800000
+> Thank you.
+> The Reproducer is more than helpful.
+> 
+> setsockopt$inet_sctp6_SCTP_RTOINFO(r0, 0x84, 0x0,
+> &(0x7f0000000140)={0x0, 0x6, 0x7, 0x4}, 0x10)
+> 
+> It set rto_min=6 and rto_max=7, these are too small values.
 
-Hi Arnd,
+Considering
+struct sctp_rtoinfo {
+        sctp_assoc_t    srto_assoc_id;
+        __u32           srto_initial;
+        __u32           srto_max;
+        __u32           srto_min;
+};
 
-I have already addressed that in a follow-up patch here:
+Isn't this actually equivalent to:
+struct sctp_rtoinfo foo = {
+	.srto_assoc_id = 0,
+	.srto_initial = 6,
+	.srto_max = 7,
+	.srto_min = 4     /* instead of 6 */
+};
 
-https://patchwork.kernel.org/patch/10416245/
+?
 
-Regards,
-Ondrej
-
-2018-05-28 17:47 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
-> Enabling the glue drivers for morus640 and/or morus1280 leads to a build failure
-> on all non-x86 architectures:
->
-> crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
-> scripts/Makefile.build:311: recipe for target 'crypto/morus1280_glue.o' failed
-> crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
-> scripts/Makefile.build:311: recipe for target 'crypto/morus640_glue.o' failed
->
-> There really is no reason to enable these unless we also have a real
-> driver using the glue, so the Kconfig option can be hidden and remain
-> selected by the x86 specific SIMD drivers or any others getting added
-> in the future.
->
-> Fixes: 56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  crypto/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/crypto/Kconfig b/crypto/Kconfig
-> index 75f5efde9aa3..e11c59d26ac5 100644
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -341,7 +341,7 @@ config CRYPTO_MORUS640
->           Support for the MORUS-640 dedicated AEAD algorithm.
->
->  config CRYPTO_MORUS640_GLUE
-> -       tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
-> +       tristate
->         select CRYPTO_AEAD
->         select CRYPTO_CRYPTD
->         help
-> @@ -363,7 +363,7 @@ config CRYPTO_MORUS1280
->           Support for the MORUS-1280 dedicated AEAD algorithm.
->
->  config CRYPTO_MORUS1280_GLUE
-> -       tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
-> +       tristate
->         select CRYPTO_AEAD
->         select CRYPTO_CRYPTD
->         help
-> --
-> 2.9.0
->
+This doesn't change a thing in the analysis, it's just to be sure
+which one is right.
