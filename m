@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934696AbeE1KI0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:08:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56372 "EHLO mail.kernel.org"
+        id S934566AbeE1KIS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:08:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934203AbeE1KIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:20 -0400
+        id S934203AbeE1KIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 061/185] drm/exynos: fix comparison to bitshift when dealing with a mask
-Date: Mon, 28 May 2018 12:01:42 +0200
-Message-Id: <20180528100056.104079170@linuxfoundation.org>
+Subject: [PATCH 3.18 058/185] NFC: llcp: Limit size of SDP URI
+Date: Mon, 28 May 2018 12:01:39 +0200
+Message-Id: <20180528100055.789665989@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,29 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit 1293b6191010672c0c9dacae8f71c6f3e4d70cbe ]
+[ Upstream commit fe9c842695e26d8116b61b80bfb905356f07834b ]
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+The tlv_len is u8, so we need to limit the size of the SDP URI. Enforce
+this both in the NLA policy and in the code that performs the allocation
+and copy, to avoid writing past the end of the allocated buffer.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Fixes: d9b8d8e19b073 ("NFC: llcp: Service Name Lookup netlink interface")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/regs-fimc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/nfc/llcp_commands.c |    4 ++++
+ net/nfc/netlink.c       |    3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/exynos/regs-fimc.h
-+++ b/drivers/gpu/drm/exynos/regs-fimc.h
-@@ -569,7 +569,7 @@
- #define EXYNOS_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
- #define EXYNOS_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
- #define EXYNOS_CIIMGEFF_FIN_MASK			(7 << 26)
--#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff < 0))
-+#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff << 13) | (0xff << 0))
+--- a/net/nfc/llcp_commands.c
++++ b/net/nfc/llcp_commands.c
+@@ -149,6 +149,10 @@ struct nfc_llcp_sdp_tlv *nfc_llcp_build_
  
- /* Real input DMA size register */
- #define EXYNOS_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
+ 	pr_debug("uri: %s, len: %zu\n", uri, uri_len);
+ 
++	/* sdreq->tlv_len is u8, takes uri_len, + 3 for header, + 1 for NULL */
++	if (WARN_ON_ONCE(uri_len > U8_MAX - 4))
++		return NULL;
++
+ 	sdreq = kzalloc(sizeof(struct nfc_llcp_sdp_tlv), GFP_KERNEL);
+ 	if (sdreq == NULL)
+ 		return NULL;
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -60,7 +60,8 @@ static const struct nla_policy nfc_genl_
+ };
+ 
+ static const struct nla_policy nfc_sdp_genl_policy[NFC_SDP_ATTR_MAX + 1] = {
+-	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING },
++	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING,
++			       .len = U8_MAX - 4 },
+ 	[NFC_SDP_ATTR_SAP] = { .type = NLA_U8 },
+ };
+ 
