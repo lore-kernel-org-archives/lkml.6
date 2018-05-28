@@ -1,105 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753152AbeE1FTk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 01:19:40 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33208 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750765AbeE1FTh (ORCPT
+        id S1753207AbeE1FUH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 01:20:07 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:35994 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753170AbeE1FUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 01:19:37 -0400
-X-Google-Smtp-Source: ADUXVKIGyH75RqJaczrFjC6yqok6W71OsP9yyTlYel+peb47lJQYPm+Z0slZ4dE8vg1FZWEDU0B4kQ==
-Date: Sun, 27 May 2018 22:19:36 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>, Davidlohr Bueso <dave@stgolabs.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 28 May 2018 01:20:03 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180528052001epoutp027a2f88c23cae98a407d9ceec7f28c801~yt1WSVnDS1835518355epoutp024
+X-AuditID: b6c32a39-235ff7000000106b-7a-5b0b9175af7e
+To: undisclosed-recipients:;
+Mime-Version: 1.0
+Subject: RE: [PATCH 07/11] PM / devfreg: Add support policy notifiers
+Reply-To: myungjoo.ham@samsung.com
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+CC: Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-i2c@vger.kernel.org, Peter Chang <dpf@google.com>,
-        Deepa Dinamani <deepadinamani@google.com>,
-        John Sperbeck <jsperbeck@google.com>
-Subject: Re: [PATCH v3 1/2] rtmutex: allow specifying a subclass for nested
- locking
-Message-ID: <20180528051936.GA205298@joelaf.mtv.corp.google.com>
-References: <CAFNjLiXZk3Zigfpy9Hj2uY92sPGB7msUxoZHf6pFDOWSuBwkBA@mail.gmail.com>
- <20180524135240.10881-1-peda@axentia.se>
- <20180524135240.10881-2-peda@axentia.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524135240.10881-2-peda@axentia.se>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180525203043.249193-8-mka@chromium.org>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180528051949epcms1p3bedd6ac3e2f20d0bcd8cb082349d97fa@epcms1p3>
+Date: Mon, 28 May 2018 14:19:49 +0900
+X-CMS-MailID: 20180528051949epcms1p3bedd6ac3e2f20d0bcd8cb082349d97fa
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmvm7pRO5og0lrNCz+TjrGbrHp43tW
+        i5eHNC2uf3nOajH/yDlWi7PLDrJZNC9ez2ZxtukNu8XlXXPYLD73HmG0WHr9IpPF5w2PGS1a
+        9x5hd+D1WDNvDaPH71+TGD1mN1xk8di0qpPNY//cNewefVtWMXp83iQXwB6VapORmpiSWqSQ
+        mpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdK2SQlliTilQKCCxuFhJ
+        386mKL+0JFUhI7+4xFYp2tDQSM/QwFzPyAhIG8daGZkClSSkZny/2cFasICjou18E2sD4wO2
+        LkZODgkBE4mWhr+sXYxcHEICOxglznYvZQdJiAjISMyd/RgowcHBKyAo8XeHMEhYWMBV4uCZ
+        vcwgtpCAkkTDzX3MEHF9iY4H2xhBbDYBXYmtG+6ygMxkFljCIrFk439GiGW8EjPan7JA2NIS
+        25dvZQSZzylgLrHhTCZEWFTi5uq37DD2+2PzoVpFJFrvnWWGsAUlHvzcDRWXknjydiFUfb3E
+        9c+LmED2SghMYJT4feM/VEJf4tGV2WAP8wr4Sux7vpwVxGYRUJVYN6cBqsZF4tzbBrA4s4C8
+        xPa3c5hBbmMW0JRYv0sf5vyGjb/Z0dnMAnwS7772sMLEd8x7wgRhq0kc2r0Eql5G4vT0hVD3
+        e0jM23CFdQKj4ixE6M5CsngWwuIFjMyrGMVSC4pz01OLDQtM9YoTc4tL89L1kvNzNzGCk6yW
+        5Q7GY+d8DjEKcDAq8fA2/OaKFmJNLCuuzD3EKMHBrCTCy6ULFOJNSaysSi3Kjy8qzUktPsRo
+        CvT/RGYp0eR8YAbIK4k3NDUyNja2MDE0MzU0VBLnbTP/FyUkkJ5YkpqdmlqQWgTTx8TBKdXA
+        WClzYob2koj4F/N3Lt/7RuV8Rvn54sXVDEk3UrNt5G6w1S3axb/OYYnXr/V2Sk4N1wVTZi/d
+        dcjT/UZA4frJrlp+H7o0pL39li5ce7idZ59t+ydlsysCj7+43pG1mzx/Z+qP6in9Uv7fpS9M
+        Y+k4vz2daXpT+Pm8QLuQbd+e7mVP+qvz1LDigRJLcUaioRZzUXEiALeEl/7IAwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180525203128epcas5p138dbf89498c03bc2a9221aa662001fd4
+References: <20180525203043.249193-8-mka@chromium.org>
+        <20180525203043.249193-1-mka@chromium.org>
+        <CGME20180525203128epcas5p138dbf89498c03bc2a9221aa662001fd4@epcms1p3>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 03:52:39PM +0200, Peter Rosin wrote:
-> Needed for annotating rt_mutex locks.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  include/linux/rtmutex.h  |  7 +++++++
->  kernel/locking/rtmutex.c | 29 +++++++++++++++++++++++++----
->  2 files changed, 32 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
-> index 1b92a28dd672..6fd615a0eea9 100644
-> --- a/include/linux/rtmutex.h
-> +++ b/include/linux/rtmutex.h
-> @@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(struct rt_mutex *lock)
->  extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
->  extern void rt_mutex_destroy(struct rt_mutex *lock);
->  
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
-> +#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
-> +#else
->  extern void rt_mutex_lock(struct rt_mutex *lock);
-> +#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
-> +#endif
-> +
->  extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
->  extern int rt_mutex_timed_lock(struct rt_mutex *lock,
->  			       struct hrtimer_sleeper *timeout);
-> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-:
->  }
->  
-> +static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
-> +{
-> +	might_sleep();
-> +
-> +	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
-> +	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
-> +}
-> +
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +/**
-> + * rt_mutex_lock_nested - lock a rt_mutex
+>Policy notifiers are called before a frequency change and may narrow
+>the min/max frequency range in devfreq_policy, which is used to adjust
+>the target frequency if it is beyond this range.
+>
+>Also add a few helpers:
+> - devfreq_verify_within_[dev_]limits()
+>    - should be used by the notifiers for policy adjustments.
+> - dev_to_devfreq()
+>    - lookup a devfreq strict from a device pointer
+>
+>Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>---
+> drivers/devfreq/devfreq.c | 47 +++++++++++++++++++++-------
+> include/linux/devfreq.h   | 66 +++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 102 insertions(+), 11 deletions(-)
 
-This ifdef seems consistent with other nested locking primitives, but its
-kind of confusing.
+Hello Matthias,
 
-The Kconfig.debug for DEBUG_LOCK_ALLOC says:
 
-config DEBUG_LOCK_ALLOC
-	bool "Lock debugging: detect incorrect freeing of live locks"
-	[...]
-	help
-	 This feature will check whether any held lock (spinlock, rwlock,
-	 mutex or rwsem) is incorrectly freed by the kernel, via any of the
-	 memory-freeing routines (kfree(), kmem_cache_free(), free_pages(),
-	 vfree(), etc.), whether a live lock is incorrectly reinitialized via
-	 spin_lock_init()/mutex_init()/etc., or whether there is any lock
-	 held during task exit.
+Why should we have yet another notifier from an instance of devfreq?
+Wouldn't it better to let the current notifier (transition notifier)
+handle new events as well by adding possible event states to it?
 
-Shouldn't this ideally be ifdef'd under PROVE_LOCKING for this and other
-locking primitives? Any idea what's the reason? I know PROVE_LOCKING selects
-DEBUG_LOCK_ALLOC but still..
+Anyway, is this the reason why you've separated some data of devfreq
+into "policy" struct? (I was wondering why while reading commit 6/11).
 
-thanks!
 
-- Joel
- 
+Cheers
+MyungJoo
