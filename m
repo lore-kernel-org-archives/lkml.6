@@ -1,26 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424822AbeE1LXH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:23:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34790 "EHLO mail.kernel.org"
+        id S1424907AbeE1LXU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:23:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423696AbeE1LPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:15:41 -0400
+        id S1423696AbeE1LXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:23:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 254/272] perf tests: Fix dwarf unwind for stripped binaries
-Date: Mon, 28 May 2018 12:04:47 +0200
-Message-Id: <20180528100301.581676753@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>,
+        Andreas Dilger <adilger@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 017/268] do d_instantiate/unlock_new_inode combinations safely
+Date: Mon, 28 May 2018 11:59:51 +0200
+Message-Id: <20180528100203.994843437@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -29,211 +25,428 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit fdf7c49c200d1b9909e2204cec5bd68b48605c71 ]
+commit 1e2e547a93a00ebc21582c06ca3c6cfea2a309ee upstream.
 
-When we strip the perf binary, dwarf unwind test stop
-to work. The reason is that strip will remove static
-function symbols, which we need to check for unwind.
+For anything NFS-exported we do _not_ want to unlock new inode
+before it has grown an alias; original set of fixes got the
+ordering right, but missed the nasty complication in case of
+lockdep being enabled - unlock_new_inode() does
+	lockdep_annotate_inode_mutex_key(inode)
+which can only be done before anyone gets a chance to touch
+->i_mutex.  Unfortunately, flipping the order and doing
+unlock_new_inode() before d_instantiate() opens a window when
+mkdir can race with open-by-fhandle on a guessed fhandle, leading
+to multiple aliases for a directory inode and all the breakage
+that follows from that.
 
-This change will keep this test working in cases where
-the global symbols are put into dynamic symbol table,
-which is the case on x86. It still won't work on powerpc.
+	Correct solution: a new primitive (d_instantiate_new())
+combining these two in the right order - lockdep annotate, then
+d_instantiate(), then the rest of unlock_new_inode().  All
+combinations of d_instantiate() with unlock_new_inode() should
+be converted to that.
 
-Making those 5 local functions global, and adding
-'test_dwarf_unwind__' to their names.
-
-Committer testing:
-
-Before:
-
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  # strip ~/bin/perf
-  # perf test dwarf
-  58: DWARF unwind                               : FAILED!
-  # perf test -v dwarf
-  58: DWARF unwind                               :
-  --- start ---
-  test child forked, pid 6590
-  unwind: thread map already set, dso=/home/acme/bin/perf
-  <SNIP>
-  unwind: access_mem addr 0x7ffce6c48098 val 48563f, offset 1144
-  unwind: test__dwarf_unwind:ip = 0x4a54e5 (0xa54e5)
-  got: test__dwarf_unwind 0xa54e5, expecting test__dwarf_unwind
-  unwind: '':ip = 0x4a50bb (0xa50bb)
-  failed: got unresolved address 0xa50bb
-  unwind failed
-  test child finished with -1
-  ---- end ----
-  DWARF unwind: FAILED!
-  #
-
-After:
-
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  # strip ~/bin/perf
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  #
-  # perf test -v dwarf
-  58: DWARF unwind                               :
-  --- start ---
-  test child forked, pid 7219
-  unwind: thread map already set, dso=/home/acme/bin/perf
-  <SNIP>
-  unwind: access_mem addr 0x7fff007da2c8 val 48575f, offset 1144
-  unwind: test__arch_unwind_sample:ip = 0x589044 (0x189044)
-  got: test__arch_unwind_sample 0x189044, expecting test__arch_unwind_sample
-  unwind: test_dwarf_unwind__thread:ip = 0x4a52f7 (0xa52f7)
-  got: test_dwarf_unwind__thread 0xa52f7, expecting test_dwarf_unwind__thread
-  unwind: test_dwarf_unwind__compare:ip = 0x4a5468 (0xa5468)
-  got: test_dwarf_unwind__compare 0xa5468, expecting test_dwarf_unwind__compare
-  unwind: bsearch:ip = 0x7f6608ae94d8 (0x394d8)
-  got: bsearch 0x394d8, expecting bsearch
-  unwind: test_dwarf_unwind__krava_3:ip = 0x4a54d1 (0xa54d1)
-  got: test_dwarf_unwind__krava_3 0xa54d1, expecting test_dwarf_unwind__krava_3
-  unwind: test_dwarf_unwind__krava_2:ip = 0x4a550b (0xa550b)
-  got: test_dwarf_unwind__krava_2 0xa550b, expecting test_dwarf_unwind__krava_2
-  unwind: test_dwarf_unwind__krava_1:ip = 0x4a554b (0xa554b)
-  got: test_dwarf_unwind__krava_1 0xa554b, expecting test_dwarf_unwind__krava_1
-  unwind: test__dwarf_unwind:ip = 0x4a5605 (0xa5605)
-  got: test__dwarf_unwind 0xa5605, expecting test__dwarf_unwind
-  test child finished with 0
-  ---- end ----
-  DWARF unwind: Ok
-  #
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180206181813.10943-17-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@kernel.org	# 2.6.29 and later
+Tested-by: Mike Marshall <hubcap@omnibond.com>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/tests/dwarf-unwind.c |   46 ++++++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
 
---- a/tools/perf/tests/dwarf-unwind.c
-+++ b/tools/perf/tests/dwarf-unwind.c
-@@ -37,6 +37,19 @@ static int init_live_machine(struct mach
- 						  mmap_handler, machine, true, 500);
- }
+---
+ fs/btrfs/inode.c       |   16 ++++------------
+ fs/dcache.c            |   22 ++++++++++++++++++++++
+ fs/ecryptfs/inode.c    |    3 +--
+ fs/ext2/namei.c        |    6 ++----
+ fs/ext4/namei.c        |    6 ++----
+ fs/f2fs/namei.c        |   12 ++++--------
+ fs/jffs2/dir.c         |   12 ++++--------
+ fs/jfs/namei.c         |   12 ++++--------
+ fs/nilfs2/namei.c      |    6 ++----
+ fs/reiserfs/namei.c    |   12 ++++--------
+ fs/udf/namei.c         |    6 ++----
+ fs/ufs/namei.c         |    6 ++----
+ include/linux/dcache.h |    1 +
+ 13 files changed, 54 insertions(+), 66 deletions(-)
+
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6413,8 +6413,7 @@ static int btrfs_mknod(struct inode *dir
+ 		goto out_unlock_inode;
+ 	} else {
+ 		btrfs_update_inode(trans, root, inode);
+-		unlock_new_inode(inode);
+-		d_instantiate(dentry, inode);
++		d_instantiate_new(dentry, inode);
+ 	}
+ 
+ out_unlock:
+@@ -6489,8 +6488,7 @@ static int btrfs_create(struct inode *di
+ 		goto out_unlock_inode;
+ 
+ 	BTRFS_I(inode)->io_tree.ops = &btrfs_extent_io_ops;
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 
+ out_unlock:
+ 	btrfs_end_transaction(trans, root);
+@@ -6633,12 +6631,7 @@ static int btrfs_mkdir(struct inode *dir
+ 	if (err)
+ 		goto out_fail_inode;
+ 
+-	d_instantiate(dentry, inode);
+-	/*
+-	 * mkdir is special.  We're unlocking after we call d_instantiate
+-	 * to avoid a race with nfsd calling d_instantiate.
+-	 */
+-	unlock_new_inode(inode);
++	d_instantiate_new(dentry, inode);
+ 	drop_on_err = 0;
+ 
+ out_fail:
+@@ -9789,8 +9782,7 @@ static int btrfs_symlink(struct inode *d
+ 		goto out_unlock_inode;
+ 	}
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 
+ out_unlock:
+ 	btrfs_end_transaction(trans, root);
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1897,6 +1897,28 @@ struct dentry *d_instantiate_unique(stru
+ 
+ EXPORT_SYMBOL(d_instantiate_unique);
  
 +/*
-+ * We need to keep these functions global, despite the
-+ * fact that they are used only locally in this object,
-+ * in order to keep them around even if the binary is
-+ * stripped. If they are gone, the unwind check for
-+ * symbol fails.
++ * This should be equivalent to d_instantiate() + unlock_new_inode(),
++ * with lockdep-related part of unlock_new_inode() done before
++ * anything else.  Use that instead of open-coding d_instantiate()/
++ * unlock_new_inode() combinations.
 + */
-+int test_dwarf_unwind__thread(struct thread *thread);
-+int test_dwarf_unwind__compare(void *p1, void *p2);
-+int test_dwarf_unwind__krava_3(struct thread *thread);
-+int test_dwarf_unwind__krava_2(struct thread *thread);
-+int test_dwarf_unwind__krava_1(struct thread *thread);
++void d_instantiate_new(struct dentry *entry, struct inode *inode)
++{
++	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
++	BUG_ON(!inode);
++	lockdep_annotate_inode_mutex_key(inode);
++	security_d_instantiate(entry, inode);
++	spin_lock(&inode->i_lock);
++	__d_instantiate(entry, inode);
++	WARN_ON(!(inode->i_state & I_NEW));
++	inode->i_state &= ~I_NEW;
++	smp_mb();
++	wake_up_bit(&inode->i_state, __I_NEW);
++	spin_unlock(&inode->i_lock);
++}
++EXPORT_SYMBOL(d_instantiate_new);
 +
- #define MAX_STACK 8
- 
- static int unwind_entry(struct unwind_entry *entry, void *arg)
-@@ -45,12 +58,12 @@ static int unwind_entry(struct unwind_en
- 	char *symbol = entry->sym ? entry->sym->name : NULL;
- 	static const char *funcs[MAX_STACK] = {
- 		"test__arch_unwind_sample",
--		"unwind_thread",
--		"compare",
-+		"test_dwarf_unwind__thread",
-+		"test_dwarf_unwind__compare",
- 		"bsearch",
--		"krava_3",
--		"krava_2",
--		"krava_1",
-+		"test_dwarf_unwind__krava_3",
-+		"test_dwarf_unwind__krava_2",
-+		"test_dwarf_unwind__krava_1",
- 		"test__dwarf_unwind"
- 	};
- 	/*
-@@ -77,7 +90,7 @@ static int unwind_entry(struct unwind_en
- 	return strcmp((const char *) symbol, funcs[idx]);
- }
- 
--static noinline int unwind_thread(struct thread *thread)
-+noinline int test_dwarf_unwind__thread(struct thread *thread)
- {
- 	struct perf_sample sample;
- 	unsigned long cnt = 0;
-@@ -108,7 +121,7 @@ static noinline int unwind_thread(struct
- 
- static int global_unwind_retval = -INT_MAX;
- 
--static noinline int compare(void *p1, void *p2)
-+noinline int test_dwarf_unwind__compare(void *p1, void *p2)
- {
- 	/* Any possible value should be 'thread' */
- 	struct thread *thread = *(struct thread **)p1;
-@@ -117,17 +130,17 @@ static noinline int compare(void *p1, vo
- 		/* Call unwinder twice for both callchain orders. */
- 		callchain_param.order = ORDER_CALLER;
- 
--		global_unwind_retval = unwind_thread(thread);
-+		global_unwind_retval = test_dwarf_unwind__thread(thread);
- 		if (!global_unwind_retval) {
- 			callchain_param.order = ORDER_CALLEE;
--			global_unwind_retval = unwind_thread(thread);
-+			global_unwind_retval = test_dwarf_unwind__thread(thread);
- 		}
- 	}
- 
- 	return p1 - p2;
- }
- 
--static noinline int krava_3(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_3(struct thread *thread)
- {
- 	struct thread *array[2] = {thread, thread};
- 	void *fp = &bsearch;
-@@ -141,18 +154,19 @@ static noinline int krava_3(struct threa
- 			size_t, int (*)(void *, void *));
- 
- 	_bsearch = fp;
--	_bsearch(array, &thread, 2, sizeof(struct thread **), compare);
-+	_bsearch(array, &thread, 2, sizeof(struct thread **),
-+		 test_dwarf_unwind__compare);
- 	return global_unwind_retval;
- }
- 
--static noinline int krava_2(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_2(struct thread *thread)
- {
--	return krava_3(thread);
-+	return test_dwarf_unwind__krava_3(thread);
- }
- 
--static noinline int krava_1(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_1(struct thread *thread)
- {
--	return krava_2(thread);
-+	return test_dwarf_unwind__krava_2(thread);
- }
- 
- int test__dwarf_unwind(struct test *test __maybe_unused, int subtest __maybe_unused)
-@@ -189,7 +203,7 @@ int test__dwarf_unwind(struct test *test
+ /**
+  * d_instantiate_no_diralias - instantiate a non-aliased dentry
+  * @entry: dentry to complete
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -287,8 +287,7 @@ ecryptfs_create(struct inode *directory_
+ 		iput(ecryptfs_inode);
  		goto out;
  	}
+-	unlock_new_inode(ecryptfs_inode);
+-	d_instantiate(ecryptfs_dentry, ecryptfs_inode);
++	d_instantiate_new(ecryptfs_dentry, ecryptfs_inode);
+ out:
+ 	return rc;
+ }
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -40,8 +40,7 @@ static inline int ext2_add_nondir(struct
+ {
+ 	int err = ext2_add_link(dentry, inode);
+ 	if (!err) {
+-		unlock_new_inode(inode);
+-		d_instantiate(dentry, inode);
++		d_instantiate_new(dentry, inode);
+ 		return 0;
+ 	}
+ 	inode_dec_link_count(inode);
+@@ -267,8 +266,7 @@ static int ext2_mkdir(struct inode * dir
+ 	if (err)
+ 		goto out_fail;
  
--	err = krava_1(thread);
-+	err = test_dwarf_unwind__krava_1(thread);
- 	thread__put(thread);
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ out:
+ 	return err;
  
-  out:
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2429,8 +2429,7 @@ static int ext4_add_nondir(handle_t *han
+ 	int err = ext4_add_entry(handle, dentry, inode);
+ 	if (!err) {
+ 		ext4_mark_inode_dirty(handle, inode);
+-		unlock_new_inode(inode);
+-		d_instantiate(dentry, inode);
++		d_instantiate_new(dentry, inode);
+ 		return 0;
+ 	}
+ 	drop_nlink(inode);
+@@ -2669,8 +2668,7 @@ out_clear_inode:
+ 	err = ext4_mark_inode_dirty(handle, dir);
+ 	if (err)
+ 		goto out_clear_inode;
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	if (IS_DIRSYNC(dir))
+ 		ext4_handle_sync(handle);
+ 
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -150,8 +150,7 @@ static int f2fs_create(struct inode *dir
+ 
+ 	alloc_nid_done(sbi, ino);
+ 
+-	d_instantiate(dentry, inode);
+-	unlock_new_inode(inode);
++	d_instantiate_new(dentry, inode);
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+@@ -399,8 +398,7 @@ static int f2fs_symlink(struct inode *di
+ 	err = page_symlink(inode, p_str, p_len);
+ 
+ err_out:
+-	d_instantiate(dentry, inode);
+-	unlock_new_inode(inode);
++	d_instantiate_new(dentry, inode);
+ 
+ 	/*
+ 	 * Let's flush symlink data in order to avoid broken symlink as much as
+@@ -454,8 +452,7 @@ static int f2fs_mkdir(struct inode *dir,
+ 
+ 	alloc_nid_done(sbi, inode->i_ino);
+ 
+-	d_instantiate(dentry, inode);
+-	unlock_new_inode(inode);
++	d_instantiate_new(dentry, inode);
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+@@ -499,8 +496,7 @@ static int f2fs_mknod(struct inode *dir,
+ 
+ 	alloc_nid_done(sbi, inode->i_ino);
+ 
+-	d_instantiate(dentry, inode);
+-	unlock_new_inode(inode);
++	d_instantiate_new(dentry, inode);
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+--- a/fs/jffs2/dir.c
++++ b/fs/jffs2/dir.c
+@@ -207,8 +207,7 @@ static int jffs2_create(struct inode *di
+ 		  __func__, inode->i_ino, inode->i_mode, inode->i_nlink,
+ 		  f->inocache->pino_nlink, inode->i_mapping->nrpages);
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	return 0;
+ 
+  fail:
+@@ -428,8 +427,7 @@ static int jffs2_symlink (struct inode *
+ 	mutex_unlock(&dir_f->sem);
+ 	jffs2_complete_reservation(c);
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	return 0;
+ 
+  fail:
+@@ -573,8 +571,7 @@ static int jffs2_mkdir (struct inode *di
+ 	mutex_unlock(&dir_f->sem);
+ 	jffs2_complete_reservation(c);
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	return 0;
+ 
+  fail:
+@@ -745,8 +742,7 @@ static int jffs2_mknod (struct inode *di
+ 	mutex_unlock(&dir_f->sem);
+ 	jffs2_complete_reservation(c);
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	return 0;
+ 
+  fail:
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -178,8 +178,7 @@ static int jfs_create(struct inode *dip,
+ 		unlock_new_inode(ip);
+ 		iput(ip);
+ 	} else {
+-		unlock_new_inode(ip);
+-		d_instantiate(dentry, ip);
++		d_instantiate_new(dentry, ip);
+ 	}
+ 
+       out2:
+@@ -313,8 +312,7 @@ static int jfs_mkdir(struct inode *dip,
+ 		unlock_new_inode(ip);
+ 		iput(ip);
+ 	} else {
+-		unlock_new_inode(ip);
+-		d_instantiate(dentry, ip);
++		d_instantiate_new(dentry, ip);
+ 	}
+ 
+       out2:
+@@ -1058,8 +1056,7 @@ static int jfs_symlink(struct inode *dip
+ 		unlock_new_inode(ip);
+ 		iput(ip);
+ 	} else {
+-		unlock_new_inode(ip);
+-		d_instantiate(dentry, ip);
++		d_instantiate_new(dentry, ip);
+ 	}
+ 
+       out2:
+@@ -1443,8 +1440,7 @@ static int jfs_mknod(struct inode *dir,
+ 		unlock_new_inode(ip);
+ 		iput(ip);
+ 	} else {
+-		unlock_new_inode(ip);
+-		d_instantiate(dentry, ip);
++		d_instantiate_new(dentry, ip);
+ 	}
+ 
+       out1:
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -50,8 +50,7 @@ static inline int nilfs_add_nondir(struc
+ {
+ 	int err = nilfs_add_link(dentry, inode);
+ 	if (!err) {
+-		d_instantiate(dentry, inode);
+-		unlock_new_inode(inode);
++		d_instantiate_new(dentry, inode);
+ 		return 0;
+ 	}
+ 	inode_dec_link_count(inode);
+@@ -246,8 +245,7 @@ static int nilfs_mkdir(struct inode *dir
+ 		goto out_fail;
+ 
+ 	nilfs_mark_inode_dirty(inode);
+-	d_instantiate(dentry, inode);
+-	unlock_new_inode(inode);
++	d_instantiate_new(dentry, inode);
+ out:
+ 	if (!err)
+ 		err = nilfs_transaction_commit(dir->i_sb);
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -687,8 +687,7 @@ static int reiserfs_create(struct inode
+ 	reiserfs_update_inode_transaction(inode);
+ 	reiserfs_update_inode_transaction(dir);
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	retval = journal_end(&th);
+ 
+ out_failed:
+@@ -771,8 +770,7 @@ static int reiserfs_mknod(struct inode *
+ 		goto out_failed;
+ 	}
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	retval = journal_end(&th);
+ 
+ out_failed:
+@@ -871,8 +869,7 @@ static int reiserfs_mkdir(struct inode *
+ 	/* the above add_entry did not update dir's stat data */
+ 	reiserfs_update_sd(&th, dir);
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	retval = journal_end(&th);
+ out_failed:
+ 	reiserfs_write_unlock(dir->i_sb);
+@@ -1186,8 +1183,7 @@ static int reiserfs_symlink(struct inode
+ 		goto out_failed;
+ 	}
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	retval = journal_end(&th);
+ out_failed:
+ 	reiserfs_write_unlock(parent_dir->i_sb);
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -611,8 +611,7 @@ static int udf_add_nondir(struct dentry
+ 	if (fibh.sbh != fibh.ebh)
+ 		brelse(fibh.ebh);
+ 	brelse(fibh.sbh);
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 
+ 	return 0;
+ }
+@@ -722,8 +721,7 @@ static int udf_mkdir(struct inode *dir,
+ 	inc_nlink(dir);
+ 	dir->i_ctime = dir->i_mtime = current_fs_time(dir->i_sb);
+ 	mark_inode_dirty(dir);
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	if (fibh.sbh != fibh.ebh)
+ 		brelse(fibh.ebh);
+ 	brelse(fibh.sbh);
+--- a/fs/ufs/namei.c
++++ b/fs/ufs/namei.c
+@@ -38,8 +38,7 @@ static inline int ufs_add_nondir(struct
+ {
+ 	int err = ufs_add_link(dentry, inode);
+ 	if (!err) {
+-		unlock_new_inode(inode);
+-		d_instantiate(dentry, inode);
++		d_instantiate_new(dentry, inode);
+ 		return 0;
+ 	}
+ 	inode_dec_link_count(inode);
+@@ -191,8 +190,7 @@ static int ufs_mkdir(struct inode * dir,
+ 	if (err)
+ 		goto out_fail;
+ 
+-	unlock_new_inode(inode);
+-	d_instantiate(dentry, inode);
++	d_instantiate_new(dentry, inode);
+ 	return 0;
+ 
+ out_fail:
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -236,6 +236,7 @@ extern seqlock_t rename_lock;
+  * These are the low-level FS interfaces to the dcache..
+  */
+ extern void d_instantiate(struct dentry *, struct inode *);
++extern void d_instantiate_new(struct dentry *, struct inode *);
+ extern struct dentry * d_instantiate_unique(struct dentry *, struct inode *);
+ extern int d_instantiate_no_diralias(struct dentry *, struct inode *);
+ extern void __d_drop(struct dentry *dentry);
