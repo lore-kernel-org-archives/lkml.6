@@ -1,87 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933345AbeE1JFj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:05:39 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53087 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754173AbeE1I66 (ORCPT
+        id S933388AbeE1JGK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:06:10 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43965 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754101AbeE1JGF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:58:58 -0400
-X-Google-Smtp-Source: ADUXVKIf4azHoQMC48wKH6XjZK9JAdgFhRmCDSFNqxX552jbV5JJZ3i1tUVQWeyYoNgrnMnPfQuh9w==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: axboe@fb.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 06/20] lightnvm: pblk: return NVM_ error on failed submission
-Date: Mon, 28 May 2018 10:58:27 +0200
-Message-Id: <20180528085841.26684-7-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
-References: <20180528085841.26684-1-mb@lightnvm.io>
+        Mon, 28 May 2018 05:06:05 -0400
+X-UUID: cbed03bcc298499dbb757b49e6048650-20180528
+Message-ID: <1527498359.14913.2.camel@mtksdaap41>
+Subject: Re: [PATCH v1 5/7] drm/mediatek: implement connection from BLS to
+ DPI0
+From: CK Hu <ck.hu@mediatek.com>
+To: Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC: David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>
+Date: Mon, 28 May 2018 17:05:59 +0800
+In-Reply-To: <20180514075243.5442-6-bibby.hsieh@mediatek.com>
+References: <20180514075243.5442-1-bibby.hsieh@mediatek.com>
+         <20180514075243.5442-6-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+Hi, Bibby:
 
-Return a meaningful error when the sanity vector I/O check fails.
+On Mon, 2018-05-14 at 15:52 +0800, Bibby Hsieh wrote:
+> Modify display driver to support connection from BLS to DPI.
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 8130f3dab661..289a68c6731f 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -35,6 +35,7 @@
+>  #define DISP_REG_CONFIG_DISP_OVL_MOUT_EN	0x030
+>  #define DISP_REG_CONFIG_OUT_SEL			0x04c
+>  #define DISP_REG_CONFIG_DSI_SEL			0x050
+> +#define DISP_REG_CONFIG_DPI_SEL			0x064
+>  
+>  #define DISP_REG_MUTEX_EN(n)	(0x20 + 0x20 * (n))
+>  #define DISP_REG_MUTEX(n)	(0x24 + 0x20 * (n))
+> @@ -84,7 +85,10 @@
+>  
+>  #define OVL_MOUT_EN_RDMA		0x1
+>  #define BLS_TO_DSI_RDMA1_TO_DPI1	0x8
+> +#define BLS_TO_DPI_RDMA1_TO_DSI		0x2
+>  #define DSI_SEL_IN_BLS			0x0
+> +#define DPI_SEL_IN_BLS			0x0
+> +#define DSI_SEL_IN_RDMA			0x1
+>  
+>  struct mtk_disp_mutex {
+>  	int id;
+> @@ -189,9 +193,17 @@ static void mtk_ddp_sout_sel(void __iomem *config_regs,
+>  			     enum mtk_ddp_comp_id cur,
+>  			     enum mtk_ddp_comp_id next)
+>  {
+> -	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
+> +	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0) {
+>  		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+>  			       config_regs + DISP_REG_CONFIG_OUT_SEL);
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-core.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+When BLS->DIP0, DISP_REG_CONFIG_DSI_SEL and DISP_REG_CONFIG_DPI_SEL are
+configured. I think these two register should be configured when
+BLS->DSI0.
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 2cad918434a7..0d4078805ecc 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -467,16 +467,13 @@ int pblk_submit_io(struct pblk *pblk, struct nvm_rq *rqd)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 
-+	atomic_inc(&pblk->inflight_io);
-+
- #ifdef CONFIG_NVM_DEBUG
--	int ret;
--
--	ret = pblk_check_io(pblk, rqd);
--	if (ret)
--		return ret;
-+	if (pblk_check_io(pblk, rqd))
-+		return NVM_IO_ERR;
- #endif
- 
--	atomic_inc(&pblk->inflight_io);
--
- 	return nvm_submit_io(dev, rqd);
- }
- 
-@@ -484,16 +481,13 @@ int pblk_submit_io_sync(struct pblk *pblk, struct nvm_rq *rqd)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 
-+	atomic_inc(&pblk->inflight_io);
-+
- #ifdef CONFIG_NVM_DEBUG
--	int ret;
--
--	ret = pblk_check_io(pblk, rqd);
--	if (ret)
--		return ret;
-+	if (pblk_check_io(pblk, rqd))
-+		return NVM_IO_ERR;
- #endif
- 
--	atomic_inc(&pblk->inflight_io);
--
- 	return nvm_submit_io_sync(dev, rqd);
- }
- 
--- 
-2.11.0
+Regards,
+CK
+
+> +	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
+> +		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
+> +			       config_regs + DISP_REG_CONFIG_OUT_SEL);
+> +		writel_relaxed(DSI_SEL_IN_RDMA,
+> +			       config_regs + DISP_REG_CONFIG_DSI_SEL);
+> +		writel_relaxed(DPI_SEL_IN_BLS,
+> +			       config_regs + DISP_REG_CONFIG_DPI_SEL);
+> +	}
+>  }
+>  
+>  void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
