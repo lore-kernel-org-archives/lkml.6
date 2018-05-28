@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-99051-1527491215-2-2482606704528494861
+X-Cyrus-Session-Id: sloti22d1t05-133372-1527491184-2-5487661791243275780
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,26 +7,26 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527491215; b=S/l3TWaH/c0WYTcBrYuDd7nfic+S8FXTP6l4xbk6/VqXUD6k9f
-    riawuwoG6ugxqwIKM7CeaZNZ6g/hBoiU6ImEuGBBQ3yzwFd41+C+lvabO/AW8h7U
-    cv/S7/BDIrYNCSnHqM/UnHaTOLzk611xLHoYNGQcLZ8+N8g8dsokWebQ/L4sv06G
-    AYAZ8HgJmB4F6ppAU/SMNG3AxQs2IPo2aOULzeAt0PqjONH/rot8eVHIX0Kz7dXR
-    Y0b7THjUbLN41A6FH12kCizh4fvBMRvnBW0K7M8a+y8Kn6eja1pu6/461H3zEfzh
-    TCRD64rpvMosSw4pxZdMkH9kiMkLyy7GNyXQ==
+    1527491184; b=O245QYnasaCjI/cv7ObgK9ynMB2A92TNuBl96+N33dOeUAFBU9
+    iN73J/XG6718guM5Zb/S+KoyXzVXyr7gGq0eHr2v8qYWDvrrAoUcF2xuo7puTTx7
+    Iwqvx5/GyUUQfGZNwxelc8UP2lvx4J7I1LU+Hx93Bf5/DCziObTLNRN5a3tbK/jn
+    veEIsFG9S1hSz6TyakpXNxpFlRYF35aFX1Sf1atXQv/OMZW8endXCsT5p7kZsbHp
+    W1pg0Zk+anG0xRulebbBGf6Bs55YYYmZ2nMv30QBChRcpoJT6v5SqJowO0do2HDb
+    MhAThXLowAO+JrI1m4m4QT51EdlhNbtjcX+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491215;
-    bh=740rPhq/KV1LVzpppY17+e9pgUK6C+fSzj5vFBVBG10=; b=Hg4O0bb4KQ5j
-    OgBY5PTPt2hX0K8HOZPMAbr4dHFdK6cn9oBO7FMzoHjUeioQewtnEGsLNgMuv73j
-    NTaPuh8A1Ci71N4PAuEOr65sjqJCduv5cQm5Oa0pia6EWYiu1bvNRrsF3ud+wei9
-    89pmhlILkZpvIFCcGd3mLlqomBtJ18SboHqXuZ0Nt28o5g/I9MWVo5n2gFE6XYDR
-    mhof6+p8CcGW+kqlhiHyE0M0BwPLY8DvRIRpU5BK1vnIuWahZPr3MjwnMG0vshpf
-    Y9eUZPJP21wcZw6Wc8UNBsjG9IZeoN67ZuPw9oFv7Y62388iVuilvQoqbrARRKnc
-    oJMbc+TpoA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491184;
+    bh=uWThnsWZ4lybIR1rg0AA6bO9rMCcf+ABqrweQavHuQU=; b=Q1r9oET/xlMQ
+    Qmx8t/6j8bnJbCbS1kea8FbuOz4TxlEimoJsvT0RkTWfhULrJkQZYsy2K+HuBvPc
+    2LLBRXo1AwkwfMS5tYoi3g0KUSVSQtc9pnYKc3lOdyOLrUKru2x2hNgnDIHe8JmP
+    ncDW9neI+30xDgbTXC64gv7o0i2JnV4awUsh5WyMFKuyrZLIa1lQ0uPdEouJs8/W
+    9qhoRzimszaSaUazi04bi1nYZqtWnDPQn/jszN6h31aFEqQOoHTH424Hyb5JZ1y7
+    ApiNlw/yB3Kh/KvP+1zx/ZhCoe1cj4wjIDbax22PaL/B/+lG5u7zHS5IHRnD+HkE
+    YWDleMnF5w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=p50329I2 header.a=rsa-sha256
+    header.i=@kernel.org header.b=SAOCK2Om header.a=rsa-sha256
     header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=p50329I2 header.a=rsa-sha256
+      header.i=@kernel.org header.b=SAOCK2Om header.a=rsa-sha256
       header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -56,21 +56,21 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIAIAf8kJqXzqq03/GwHFvKcR6S9VMfeZ6pz4PY4NslbkqwPhPxjZdvi1VpdRKC3jA85heH+6LN8EZd5qxhMwiM/svQTbXT625eFHyiAjrRim8VgUiYG
-    V7I0ukBNnyitANkAFyy3Pd53+BnUNQE3TqJF6fqrfJsR9OCghyBioWVsYWOX6uqcb75DDl9tzXCl7udCM5AJ7XbBE+EQGNQ5qVwt5Y3bBlRP83nYOvhMQ7Fi
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLsOtVf6QHJWb/T80VnChvCbBcxwcJR//3EBkOxE7E2rvDqgItz7s5SGTqzVNbdDFM5JtV7a3+LeGlC27cxN9xf1InMlk/rbdGGshPPnPMG8PkKsCyC6
+    uooxE8bwoeJGQYTre0jLALznU+XO3SYs+yXokiJJiGbMkTcauy4Woc1iMq89UvGTdkOEkiyqzW3LwTt9/UruMKpq2GFILUvQBPx6/b3Msni7HHw+WzBao+tn
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=7tsTmkapxaCtXbMtdzkA:9 a=QEXdDO2ut3YA:10
+    a=VwQbUJbxAAAA:8 a=Yu1cahSTSsYnR66kQmkA:9 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753540AbeE1HGy (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 03:06:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39828 "EHLO mail.kernel.org"
+        id S1753618AbeE1HGX (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 03:06:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753484AbeE1HGx (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 28 May 2018 03:06:53 -0400
+        id S1753599AbeE1HGW (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 28 May 2018 03:06:22 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
@@ -98,9 +98,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Rich Felker <dalias@libc.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 14/27] kprobes/x86: Don't call ->break_handler() in x86 kprobes
-Date: Mon, 28 May 2018 16:06:27 +0900
-Message-Id: <152749118700.15132.7596723824971269356.stgit@devbox>
+Subject: [PATCH -tip v4 13/27] kprobes: Don't check the ->break_handler() in generic kprobes code
+Date: Mon, 28 May 2018 16:05:56 +0900
+Message-Id: <152749115603.15132.13295364754611981707.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
 References: <152749074878.15132.16693721906742461289.stgit@devbox>
@@ -114,106 +114,126 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Don't call ->break_handler() and remove break_handler
-related code since that was only used by jprobe which
-got removed.
+Don't check the ->break_handler() from the core kprobes code,
+because it was only used by jprobes which got removed.
+
+( In followup patches we'll remove the remaining calls in low level
+  arch handlers as well and remove the callback altogether. )
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/x86/include/asm/kprobes.h   |    2 +-
- arch/x86/kernel/kprobes/common.h |   10 ----------
- arch/x86/kernel/kprobes/core.c   |    7 -------
- arch/x86/kernel/kprobes/ftrace.c |   16 ++--------------
- 4 files changed, 3 insertions(+), 32 deletions(-)
+ Documentation/kprobes.txt |    2 +-
+ kernel/kprobes.c          |   39 +++++----------------------------------
+ 2 files changed, 6 insertions(+), 35 deletions(-)
 
-diff --git a/arch/x86/include/asm/kprobes.h b/arch/x86/include/asm/kprobes.h
-index 06782c2efa04..c8cec1b39b88 100644
---- a/arch/x86/include/asm/kprobes.h
-+++ b/arch/x86/include/asm/kprobes.h
-@@ -78,7 +78,7 @@ struct arch_specific_insn {
- 	 * boostable = true: This instruction has been boosted: we have
- 	 * added a relative jump after the instruction copy in insn,
- 	 * so no single-step and fixup are needed (unless there's
--	 * a post_handler or break_handler).
-+	 * a post_handler).
- 	 */
- 	bool boostable;
- 	bool if_modifier;
-diff --git a/arch/x86/kernel/kprobes/common.h b/arch/x86/kernel/kprobes/common.h
-index ae38dccf0c8f..2b949f4fd4d8 100644
---- a/arch/x86/kernel/kprobes/common.h
-+++ b/arch/x86/kernel/kprobes/common.h
-@@ -105,14 +105,4 @@ static inline unsigned long __recover_optprobed_insn(kprobe_opcode_t *buf, unsig
+diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
+index 5ae80baf3921..907a3017c0f2 100644
+--- a/Documentation/kprobes.txt
++++ b/Documentation/kprobes.txt
+@@ -262,7 +262,7 @@ is optimized, that modification is ignored.  Thus, if you want to
+ tweak the kernel's execution path, you need to suppress optimization,
+ using one of the following techniques:
+ 
+-- Specify an empty function for the kprobe's post_handler or break_handler.
++- Specify an empty function for the kprobe's post_handler.
+ 
+ or
+ 
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 69de130595f7..536ab451e96d 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -627,8 +627,8 @@ static void optimize_kprobe(struct kprobe *p)
+ 	    (kprobe_disabled(p) || kprobes_all_disarmed))
+ 		return;
+ 
+-	/* Both of break_handler and post_handler are not supported. */
+-	if (p->break_handler || p->post_handler)
++	/* kprobes with post_handler can not be optimized */
++	if (p->post_handler)
+ 		return;
+ 
+ 	op = container_of(p, struct optimized_kprobe, kp);
+@@ -1116,20 +1116,6 @@ static int aggr_fault_handler(struct kprobe *p, struct pt_regs *regs,
  }
- #endif
+ NOKPROBE_SYMBOL(aggr_fault_handler);
  
--#ifdef CONFIG_KPROBES_ON_FTRACE
--extern int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--			   struct kprobe_ctlblk *kcb);
--#else
--static inline int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--				  struct kprobe_ctlblk *kcb)
+-static int aggr_break_handler(struct kprobe *p, struct pt_regs *regs)
 -{
--	return 0;
--}
--#endif
- #endif
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 1b2d1acba810..0ac16a0d93e5 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -709,13 +709,6 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 		regs->ip = (unsigned long)addr;
- 		preempt_enable_no_resched();
- 		return 1;
--	} else if (kprobe_running()) {
--		p = __this_cpu_read(current_kprobe);
--		if (p->break_handler && p->break_handler(p, regs)) {
--			if (!skip_singlestep(p, regs, kcb))
--				setup_singlestep(p, regs, kcb, 0);
--			return 1;
--		}
- 	} /* else: not a kprobe fault; let the kernel handle it */
- 
- 	preempt_enable_no_resched();
-diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
-index 8dc0161cec8f..c8696f2a583f 100644
---- a/arch/x86/kernel/kprobes/ftrace.c
-+++ b/arch/x86/kernel/kprobes/ftrace.c
-@@ -26,7 +26,7 @@
- #include "common.h"
- 
- static nokprobe_inline
--void __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
-+void skip_singlestep(struct kprobe *p, struct pt_regs *regs,
- 		      struct kprobe_ctlblk *kcb, unsigned long orig_ip)
- {
- 	/*
-@@ -43,18 +43,6 @@ void __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
- 		regs->ip = orig_ip;
- }
- 
--int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--		    struct kprobe_ctlblk *kcb)
--{
--	if (kprobe_ftrace(p)) {
--		__skip_singlestep(p, regs, kcb, 0);
--		preempt_enable_no_resched();
--		return 1;
--	}
--	return 0;
--}
--NOKPROBE_SYMBOL(skip_singlestep);
+-	struct kprobe *cur = __this_cpu_read(kprobe_instance);
+-	int ret = 0;
 -
- /* Ftrace callback handler for kprobes -- called under preepmt disabed */
- void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
- 			   struct ftrace_ops *ops, struct pt_regs *regs)
-@@ -80,7 +68,7 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
- 		__this_cpu_write(current_kprobe, p);
- 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
--			__skip_singlestep(p, regs, kcb, orig_ip);
-+			skip_singlestep(p, regs, kcb, orig_ip);
- 			preempt_enable_no_resched();
- 		}
- 		/*
+-	if (cur && cur->break_handler) {
+-		if (cur->break_handler(cur, regs))
+-			ret = 1;
+-	}
+-	reset_kprobe_instance();
+-	return ret;
+-}
+-NOKPROBE_SYMBOL(aggr_break_handler);
+-
+ /* Walks the list and increments nmissed count for multiprobe case */
+ void kprobes_inc_nmissed_count(struct kprobe *p)
+ {
+@@ -1270,24 +1256,15 @@ static void cleanup_rp_inst(struct kretprobe *rp)
+ }
+ NOKPROBE_SYMBOL(cleanup_rp_inst);
+ 
+-/*
+-* Add the new probe to ap->list. Fail if this is the
+-* second break_handler at the address
+-*/
++/* Add the new probe to ap->list */
+ static int add_new_kprobe(struct kprobe *ap, struct kprobe *p)
+ {
+ 	BUG_ON(kprobe_gone(ap) || kprobe_gone(p));
+ 
+-	if (p->break_handler || p->post_handler)
++	if (p->post_handler)
+ 		unoptimize_kprobe(ap, true);	/* Fall back to normal kprobe */
+ 
+-	if (p->break_handler) {
+-		if (ap->break_handler)
+-			return -EEXIST;
+-		list_add_tail_rcu(&p->list, &ap->list);
+-		ap->break_handler = aggr_break_handler;
+-	} else
+-		list_add_rcu(&p->list, &ap->list);
++	list_add_rcu(&p->list, &ap->list);
+ 	if (p->post_handler && !ap->post_handler)
+ 		ap->post_handler = aggr_post_handler;
+ 
+@@ -1310,8 +1287,6 @@ static void init_aggr_kprobe(struct kprobe *ap, struct kprobe *p)
+ 	/* We don't care the kprobe which has gone. */
+ 	if (p->post_handler && !kprobe_gone(p))
+ 		ap->post_handler = aggr_post_handler;
+-	if (p->break_handler && !kprobe_gone(p))
+-		ap->break_handler = aggr_break_handler;
+ 
+ 	INIT_LIST_HEAD(&ap->list);
+ 	INIT_HLIST_NODE(&ap->hlist);
+@@ -1706,8 +1681,6 @@ static int __unregister_kprobe_top(struct kprobe *p)
+ 		goto disarmed;
+ 	else {
+ 		/* If disabling probe has special handlers, update aggrprobe */
+-		if (p->break_handler && !kprobe_gone(p))
+-			ap->break_handler = NULL;
+ 		if (p->post_handler && !kprobe_gone(p)) {
+ 			list_for_each_entry_rcu(list_p, &ap->list, list) {
+ 				if ((list_p != p) && (list_p->post_handler))
+@@ -1911,7 +1884,6 @@ int register_kretprobe(struct kretprobe *rp)
+ 	rp->kp.pre_handler = pre_handler_kretprobe;
+ 	rp->kp.post_handler = NULL;
+ 	rp->kp.fault_handler = NULL;
+-	rp->kp.break_handler = NULL;
+ 
+ 	/* Pre-allocate memory for max kretprobe instances */
+ 	if (rp->maxactive <= 0) {
+@@ -2034,7 +2006,6 @@ static void kill_kprobe(struct kprobe *p)
+ 		list_for_each_entry_rcu(kp, &p->list, list)
+ 			kp->flags |= KPROBE_FLAG_GONE;
+ 		p->post_handler = NULL;
+-		p->break_handler = NULL;
+ 		kill_optimized_kprobe(p);
+ 	}
+ 	/*
