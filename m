@@ -1,72 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162386AbeE1OMt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:12:49 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50162 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162423AbeE1OMU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 10:12:20 -0400
-Date: Mon, 28 May 2018 15:12:19 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Christian Brauner <christian@brauner.io>
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, mingo@kernel.org,
-        james.morris@microsoft.com, keescook@chromium.org,
-        peterz@infradead.org, sds@tycho.nsa.gov, akpm@linux-foundation.org,
-        oleg@redhat.com
-Subject: Re: [PATCH 3/8] signal: make may_ptrace_stop() return bool
-Message-ID: <20180528141219.GZ30522@ZenIV.linux.org.uk>
-References: <20180528134916.7568-1-christian@brauner.io>
- <20180528134916.7568-4-christian@brauner.io>
+        id S1162416AbeE1ONC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:13:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162297AbeE1KhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:03 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 241/329] Btrfs: fix NULL pointer dereference in log_dir_items
+Date: Mon, 28 May 2018 12:02:50 +0200
+Message-Id: <20180528100302.075696689@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528134916.7568-4-christian@brauner.io>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 03:49:11PM +0200, Christian Brauner wrote:
-> may_ptrace_stop() already behaves like a boolean function. Let's actually
-> declare it as such too.
-> 
-> Signed-off-by: Christian Brauner <christian@brauner.io>
-> ---
->  kernel/signal.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 81be01d193f4..6c2e7b45cba1 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1889,10 +1889,10 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
->  	spin_unlock_irqrestore(&sighand->siglock, flags);
->  }
->  
-> -static inline int may_ptrace_stop(void)
-> +static inline bool may_ptrace_stop(void)
->  {
->  	if (!likely(current->ptrace))
-> -		return 0;
-> +		return false;
->  	/*
->  	 * Are we in the middle of do_coredump?
->  	 * If so and our tracer is also part of the coredump stopping
-> @@ -1908,9 +1908,9 @@ static inline int may_ptrace_stop(void)
->  	 */
->  	if (unlikely(current->mm->core_state) &&
->  	    unlikely(current->mm == current->parent->mm))
-> -		return 0;
-> +		return false;
->  
-> -	return 1;
-> +	return true;
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-	return !current->mm->core_state || current->mm != current->parent->mm;
+------------------
 
-or, if it gives any measurably better code generation,
+From: Liu Bo <bo.liu@linux.alibaba.com>
 
-	return likely(!current->mm->core_state ||
-			current->mm != current->parent->mm);
+[ Upstream commit 80c0b4210a963e31529e15bf90519708ec947596 ]
+
+0, 1 and <0 can be returned by btrfs_next_leaf(), and when <0 is
+returned, path->nodes[0] could be NULL, log_dir_items lacks such a
+check for <0 and we may run into a null pointer dereference panic.
+
+Fixes: e02119d5a7b4 ("Btrfs: Add a write ahead tree log to optimize synchronous operations")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/btrfs/tree-log.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3399,8 +3399,11 @@ static noinline int log_dir_items(struct
+ 		 * from this directory and from this transaction
+ 		 */
+ 		ret = btrfs_next_leaf(root, path);
+-		if (ret == 1) {
+-			last_offset = (u64)-1;
++		if (ret) {
++			if (ret == 1)
++				last_offset = (u64)-1;
++			else
++				err = ret;
+ 			goto done;
+ 		}
+ 		btrfs_item_key_to_cpu(path->nodes[0], &tmp, path->slots[0]);
