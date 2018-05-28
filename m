@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423076AbeE1MOc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:14:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50986 "EHLO mail.kernel.org"
+        id S1423273AbeE1MOq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:14:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422952AbeE1LDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:49 -0400
+        id S1422949AbeE1LDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Deepak Rawat <drawat@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-Subject: [PATCH 4.14 496/496] drm/vmwgfx: Set dmabuf_size when vmw_dmabuf_init is successful
-Date: Mon, 28 May 2018 12:04:41 +0200
-Message-Id: <20180528100340.780737750@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 487/496] ARM: dts: at91: tse850: use the correct compatible for the eeprom
+Date: Mon, 28 May 2018 12:04:32 +0200
+Message-Id: <20180528100340.400015445@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,35 +30,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Deepak Rawat <drawat@vmware.com>
+From: Peter Rosin <peda@axentia.se>
 
-commit 91ba9f28a3de97761c2b5fd5df5d88421268e507 upstream.
+[ Upstream commit 7981190fb5dd710dea08c2613cee3d05e795ca5e ]
 
-SOU primary plane prepare_fb hook depends upon dmabuf_size to pin up BO
-(and not call a new vmw_dmabuf_init) when a new fb size is same as
-current fb. This was changed in a recent commit which is causing
-page_flip to fail on VM with low display memory and multi-mon failure
-when cycle monitors from secondary display.
+The used part does contain an eeprom compatible with an Atmel 24c02
+chip and it is from NXP, but it is not called 24c02. It's actually a
+se97b chip. Adjust the compatible accordingly.
 
-Cc: <stable@vger.kernel.org> # 4.14, 4.16
-Fixes: 20fb5a635a0c ("drm/vmwgfx: Unpin the screen object backup buffer when not used")
-Signed-off-by: Deepak Rawat <drawat@vmware.com>
-Reviewed-by: Sinclair Yeh <syeh@vmware.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Fixes: 21dd0ece34c2 ("ARM: dts: at91: add devicetree for the Axentia TSE-850")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/at91-tse850-3.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-@@ -530,6 +530,8 @@ vmw_sou_primary_plane_prepare_fb(struct
- 		return ret;
- 	}
+--- a/arch/arm/boot/dts/at91-tse850-3.dts
++++ b/arch/arm/boot/dts/at91-tse850-3.dts
+@@ -245,7 +245,7 @@
+ 	};
  
-+	vps->dmabuf_size = size;
-+
- 	/*
- 	 * TTM already thinks the buffer is pinned, but make sure the
- 	 * pin_count is upped.
+ 	eeprom@50 {
+-		compatible = "nxp,24c02", "atmel,24c02";
++		compatible = "nxp,se97b", "atmel,24c02";
+ 		reg = <0x50>;
+ 		pagesize = <16>;
+ 	};
