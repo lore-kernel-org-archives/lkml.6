@@ -1,28 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424869AbeE1LZE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:25:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
+        id S938146AbeE1LZc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:25:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424426AbeE1LPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:15:24 -0400
+        id S932603AbeE1LZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:25:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, douly.fnst@cn.fujitsu.com,
-        joro@8bytes.org, prarit@redhat.com, uobergfe@redhat.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 249/272] x86/apic: Set up through-local-APIC mode on the boot CPU if noapic specified
-Date: Mon, 28 May 2018 12:04:42 +0200
-Message-Id: <20180528100301.194366723@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 007/496] aio: fix io_destroy(2) vs. lookup_ioctx() race
+Date: Mon, 28 May 2018 11:56:32 +0200
+Message-Id: <20180528100319.857219183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -31,60 +24,70 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Baoquan He <bhe@redhat.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit bee3204ec3c49f6f53add9c3962c9012a5c036fa ]
+commit baf10564fbb66ea222cae66fbff11c444590ffd9 upstream.
 
-Currently the kdump kernel becomes very slow if 'noapic' is specified.
-Normal kernel doesn't have this bug.
+kill_ioctx() used to have an explicit RCU delay between removing the
+reference from ->ioctx_table and percpu_ref_kill() dropping the refcount.
+At some point that delay had been removed, on the theory that
+percpu_ref_kill() itself contained an RCU delay.  Unfortunately, that was
+the wrong kind of RCU delay and it didn't care about rcu_read_lock() used
+by lookup_ioctx().  As the result, we could get ctx freed right under
+lookup_ioctx().  Tejun has fixed that in a6d7cff472e ("fs/aio: Add explicit
+RCU grace period when freeing kioctx"); however, that fix is not enough.
 
-Kernel parameter 'noapic' is used to disable IO-APIC in system for
-testing or special purpose. Here the root cause is that in kdump
-kernel LAPIC is disabled since commit:
+Suppose io_destroy() from one thread races with e.g. io_setup() from another;
+CPU1 removes the reference from current->mm->ioctx_table[...] just as CPU2
+has picked it (under rcu_read_lock()).  Then CPU1 proceeds to drop the
+refcount, getting it to 0 and triggering a call of free_ioctx_users(),
+which proceeds to drop the secondary refcount and once that reaches zero
+calls free_ioctx_reqs().  That does
+        INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
+        queue_rcu_work(system_wq, &ctx->free_rwork);
+and schedules freeing the whole thing after RCU delay.
 
-  522e664644 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+In the meanwhile CPU2 has gotten around to percpu_ref_get(), bumping the
+refcount from 0 to 1 and returned the reference to io_setup().
 
-In this case we need set up through-local-APIC on boot CPU in
-setup_local_APIC().
+Tejun's fix (that queue_rcu_work() in there) guarantees that ctx won't get
+freed until after percpu_ref_get().  Sure, we'd increment the counter before
+ctx can be freed.  Now we are out of rcu_read_lock() and there's nothing to
+stop freeing of the whole thing.  Unfortunately, CPU2 assumes that since it
+has grabbed the reference, ctx is *NOT* going away until it gets around to
+dropping that reference.
 
-In normal kernel the legacy irq mode is enabled by the BIOS. If
-it is virtual wire mode, the local-APIC has been enabled and set as
-through-local-APIC.
+The fix is obvious - use percpu_ref_tryget_live() and treat failure as miss.
+It's not costlier than what we currently do in normal case, it's safe to
+call since freeing *is* delayed and it closes the race window - either
+lookup_ioctx() comes before percpu_ref_kill() (in which case ctx->users
+won't reach 0 until the caller of lookup_ioctx() drops it) or lookup_ioctx()
+fails, ctx->users is unaffected and caller of lookup_ioctx() doesn't see
+the object in question at all.
 
-Though we fixed the regression introduced by commit 522e664644,
-to further improve robustness set up the through-local-APIC mode
-explicitly, do not rely on the default boot IRQ mode.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: douly.fnst@cn.fujitsu.com
-Cc: joro@8bytes.org
-Cc: prarit@redhat.com
-Cc: uobergfe@redhat.com
-Link: http://lkml.kernel.org/r/20180214054656.3780-7-bhe@redhat.com
-[ Rewrote the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@kernel.org
+Fixes: a6d7cff472e "fs/aio: Add explicit RCU grace period when freeing kioctx"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/apic/apic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1570,7 +1570,7 @@ void setup_local_APIC(void)
- 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
- 	 */
- 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
--	if (!cpu && (pic_mode || !value)) {
-+	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
- 		value = APIC_DM_EXTINT;
- 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
- 	} else {
+---
+ fs/aio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1087,8 +1087,8 @@ static struct kioctx *lookup_ioctx(unsig
+ 
+ 	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+-		percpu_ref_get(&ctx->users);
+-		ret = ctx;
++		if (percpu_ref_tryget_live(&ctx->users))
++			ret = ctx;
+ 	}
+ out:
+ 	rcu_read_unlock();
