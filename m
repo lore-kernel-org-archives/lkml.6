@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969238AbeE1PqK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:46:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
+        id S1034757AbeE1Pqa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:46:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968571AbeE1KQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:50 -0400
+        id S968554AbeE1KQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-        Pavel Emelyanov <xemul@openvz.org>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Guanglei Li <guanglei.li@oracle.com>,
+        Honglei Wang <honglei.wang@oracle.com>,
+        Junxiao Bi <junxiao.bi@oracle.com>, Yanjun Zhu <yanjun.zhu@oracle.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 063/268] proc: fix /proc/*/map_files lookup
-Date: Mon, 28 May 2018 12:00:37 +0200
-Message-Id: <20180528100209.066625799@linuxfoundation.org>
+Subject: [PATCH 4.4 061/268] RDS: IB: Fix null pointer issue
+Date: Mon, 28 May 2018 12:00:35 +0200
+Message-Id: <20180528100208.843364181@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -33,103 +35,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: Guanglei Li <guanglei.li@oracle.com>
 
-[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
+[ Upstream commit 2c0aa08631b86a4678dbc93b9caa5248014b4458 ]
 
-Current code does:
+Scenario:
+1. Port down and do fail over
+2. Ap do rds_bind syscall
 
-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
+PID: 47039  TASK: ffff89887e2fe640  CPU: 47  COMMAND: "kworker/u:6"
+ #0 [ffff898e35f159f0] machine_kexec at ffffffff8103abf9
+ #1 [ffff898e35f15a60] crash_kexec at ffffffff810b96e3
+ #2 [ffff898e35f15b30] oops_end at ffffffff8150f518
+ #3 [ffff898e35f15b60] no_context at ffffffff8104854c
+ #4 [ffff898e35f15ba0] __bad_area_nosemaphore at ffffffff81048675
+ #5 [ffff898e35f15bf0] bad_area_nosemaphore at ffffffff810487d3
+ #6 [ffff898e35f15c00] do_page_fault at ffffffff815120b8
+ #7 [ffff898e35f15d10] page_fault at ffffffff8150ea95
+    [exception RIP: unknown or invalid address]
+    RIP: 0000000000000000  RSP: ffff898e35f15dc8  RFLAGS: 00010282
+    RAX: 00000000fffffffe  RBX: ffff889b77f6fc00  RCX:ffffffff81c99d88
+    RDX: 0000000000000000  RSI: ffff896019ee08e8  RDI:ffff889b77f6fc00
+    RBP: ffff898e35f15df0   R8: ffff896019ee08c8  R9:0000000000000000
+    R10: 0000000000000400  R11: 0000000000000000  R12:ffff896019ee08c0
+    R13: ffff889b77f6fe68  R14: ffffffff81c99d80  R15: ffffffffa022a1e0
+    ORIG_RAX: ffffffffffffffff  CS: 0010 SS: 0018
+ #8 [ffff898e35f15dc8] cma_ndev_work_handler at ffffffffa022a228 [rdma_cm]
+ #9 [ffff898e35f15df8] process_one_work at ffffffff8108a7c6
+ #10 [ffff898e35f15e58] worker_thread at ffffffff8108bda0
+ #11 [ffff898e35f15ee8] kthread at ffffffff81090fe6
 
-However sscanf() is broken garbage.
+PID: 45659  TASK: ffff880d313d2500  CPU: 31  COMMAND: "oracle_45659_ap"
+ #0 [ffff881024ccfc98] __schedule at ffffffff8150bac4
+ #1 [ffff881024ccfd40] schedule at ffffffff8150c2cf
+ #2 [ffff881024ccfd50] __mutex_lock_slowpath at ffffffff8150cee7
+ #3 [ffff881024ccfdc0] mutex_lock at ffffffff8150cdeb
+ #4 [ffff881024ccfde0] rdma_destroy_id at ffffffffa022a027 [rdma_cm]
+ #5 [ffff881024ccfe10] rds_ib_laddr_check at ffffffffa0357857 [rds_rdma]
+ #6 [ffff881024ccfe50] rds_trans_get_preferred at ffffffffa0324c2a [rds]
+ #7 [ffff881024ccfe80] rds_bind at ffffffffa031d690 [rds]
+ #8 [ffff881024ccfeb0] sys_bind at ffffffff8142a670
 
-It silently accepts whitespace between format specifiers
-(did you know that?).
+PID: 45659                          PID: 47039
+rds_ib_laddr_check
+  /* create id_priv with a null event_handler */
+  rdma_create_id
+  rdma_bind_addr
+    cma_acquire_dev
+      /* add id_priv to cma_dev->id_list */
+      cma_attach_to_dev
+                                    cma_ndev_work_handler
+                                      /* event_hanlder is null */
+                                      id_priv->id.event_handler
 
-It silently accepts valid strings which result in integer overflow.
-
-Do not use sscanf() for any even remotely reliable parsing code.
-
-	OK
-	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-	broken
-	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-	broken
-	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
-	/lib/systemd/systemd
-
-	very broken
-	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-Andrei said:
-
-: This patch breaks criu.  It was a bug in criu.  And this bug is on a minor
-: path, which works when memfd_create() isn't available.  It is a reason why
-: I ask to not backport this patch to stable kernels.
-:
-: In CRIU this bug can be triggered, only if this patch will be backported
-: to a kernel which version is lower than v3.16.
-
-Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Pavel Emelyanov <xemul@openvz.org>
-Cc: Andrei Vagin <avagin@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Guanglei Li <guanglei.li@oracle.com>
+Signed-off-by: Honglei Wang <honglei.wang@oracle.com>
+Reviewed-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Yanjun Zhu <yanjun.zhu@oracle.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Acked-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/base.c |   29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ net/rds/ib.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -94,6 +94,8 @@
- #include "internal.h"
- #include "fd.h"
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -336,7 +336,8 @@ static int rds_ib_laddr_check(struct net
+ 	/* Create a CMA ID and try to bind it. This catches both
+ 	 * IB and iWARP capable NICs.
+ 	 */
+-	cm_id = rdma_create_id(&init_net, NULL, NULL, RDMA_PS_TCP, IB_QPT_RC);
++	cm_id = rdma_create_id(&init_net, rds_rdma_cm_event_handler,
++			       NULL, RDMA_PS_TCP, IB_QPT_RC);
+ 	if (IS_ERR(cm_id))
+ 		return PTR_ERR(cm_id);
  
-+#include "../../lib/kstrtox.h"
-+
- /* NOTE:
-  *	Implementing inode permission operations in /proc is almost
-  *	certainly an error.  Permission checks need to happen during
-@@ -1836,8 +1838,33 @@ end_instantiate:
- static int dname_to_vma_addr(struct dentry *dentry,
- 			     unsigned long *start, unsigned long *end)
- {
--	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
-+	const char *str = dentry->d_name.name;
-+	unsigned long long sval, eval;
-+	unsigned int len;
-+
-+	len = _parse_integer(str, 16, &sval);
-+	if (len & KSTRTOX_OVERFLOW)
-+		return -EINVAL;
-+	if (sval != (unsigned long)sval)
- 		return -EINVAL;
-+	str += len;
-+
-+	if (*str != '-')
-+		return -EINVAL;
-+	str++;
-+
-+	len = _parse_integer(str, 16, &eval);
-+	if (len & KSTRTOX_OVERFLOW)
-+		return -EINVAL;
-+	if (eval != (unsigned long)eval)
-+		return -EINVAL;
-+	str += len;
-+
-+	if (*str != '\0')
-+		return -EINVAL;
-+
-+	*start = sval;
-+	*end = eval;
- 
- 	return 0;
- }
