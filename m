@@ -1,134 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937151AbeE1OzI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:55:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47222 "EHLO mail.kernel.org"
+        id S939480AbeE1OzW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:55:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55276 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937056AbeE1K1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:47 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hendrick Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 036/329] perf callchain: Fix attr.sample_max_stack setting
-Date: Mon, 28 May 2018 11:59:25 +0200
-Message-Id: <20180528100245.447439072@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S937213AbeE1OxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:53:15 -0400
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: arm@kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/15] arm: dts: armada: Fix "#cooling-cells" property's name
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+        <cover.1527244200.git.viresh.kumar@linaro.org>
+        <26a0666368694db610414a85a08843435ea070a7.1527244201.git.viresh.kumar@linaro.org>
+Date: Mon, 28 May 2018 16:53:04 +0200
+In-Reply-To: <26a0666368694db610414a85a08843435ea070a7.1527244201.git.viresh.kumar@linaro.org>
+        (Viresh Kumar's message of "Fri, 25 May 2018 16:01:47 +0530")
+Message-ID: <8736ybygq7.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-[ Upstream commit 249d98e567e25dd03e015e2d31e1b7b9648f34df ]
-
-When setting the "dwarf" unwinder for a specific event and not
-specifying the max-stack, the attr.sample_max_stack ended up using an
-uninitialized callchain_param.max_stack, fix it by using designated
-initializers for that callchain_param variable, zeroing all non
-explicitely initialized struct members.
-
-Here is what happened:
-
-  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  callchain: type DWARF
-  callchain: stack dump size 8192
-  perf_event_attr:
-    type                             2
-    size                             112
-    config                           0x730
-    { sample_period, sample_freq }   1
-    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
-    exclude_callchain_user           1
-    { wakeup_events, wakeup_watermark } 1
-    sample_regs_user                 0xff0fff
-    sample_stack_user                8192
-    sample_max_stack                 50656
-  sys_perf_event_open failed, error -75
-  Value too large for defined data type
-  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  callchain: type DWARF
-  callchain: stack dump size 8192
-  perf_event_attr:
-    type                             2
-    size                             112
-    config                           0x730
-    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
-    exclude_callchain_user           1
-    sample_regs_user                 0xff0fff
-    sample_stack_user                8192
-    sample_max_stack                 30448
-  sys_perf_event_open failed, error -75
-  Value too large for defined data type
-  #
-
-Now the attr.sample_max_stack is set to zero and the above works as
-expected:
-
-  # perf trace --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.072 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.072/0.072/0.072/0.000 ms
-       0.000 probe_libc:inet_pton:(7feb7a998350))
-                                         __inet_pton (inlined)
-                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-                                         __GI_getaddrinfo (inlined)
-                                         [0xffffaa39b6108f3f] (/usr/bin/ping)
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrick Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-is9tramondqa9jlxxsgcm9iz@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/util/evsel.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -681,14 +681,14 @@ static void apply_config_terms(struct pe
- 	struct perf_evsel_config_term *term;
- 	struct list_head *config_terms = &evsel->config_terms;
- 	struct perf_event_attr *attr = &evsel->attr;
--	struct callchain_param param;
-+	/* callgraph default */
-+	struct callchain_param param = {
-+		.record_mode = callchain_param.record_mode,
-+	};
- 	u32 dump_size = 0;
- 	int max_stack = 0;
- 	const char *callgraph_buf = NULL;
+Hi Viresh,
  
--	/* callgraph default */
--	param.record_mode = callchain_param.record_mode;
--
- 	list_for_each_entry(term, config_terms, list) {
- 		switch (term->type) {
- 		case PERF_EVSEL__CONFIG_TERM_PERIOD:
+ On ven., mai 25 2018, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+
+> It should be "#cooling-cells" instead of "cooling-cells". Fix it.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+
+Applied on mvebu/fixes
+
+Thanks,
+
+Gregory
+
+> ---
+>  arch/arm/boot/dts/armada-385-synology-ds116.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/armada-385-synology-ds116.dts b/arch/arm/boot/dts/armada-385-synology-ds116.dts
+> index 6782ce481ac9..d8769956cbfc 100644
+> --- a/arch/arm/boot/dts/armada-385-synology-ds116.dts
+> +++ b/arch/arm/boot/dts/armada-385-synology-ds116.dts
+> @@ -139,7 +139,7 @@
+>  					      3700 5
+>  					      3900 6
+>  					      4000 7>;
+> -			cooling-cells = <2>;
+> +			#cooling-cells = <2>;
+>  		};
+>  
+>  		gpio-leds {
+> -- 
+> 2.15.0.194.g9af6a3dea062
+>
+
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
