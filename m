@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163690AbeE1Kub (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39680 "EHLO mail.kernel.org"
+        id S1163717AbeE1Kul (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:50:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163660AbeE1KuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:20 -0400
+        id S1163660AbeE1Kue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Tal Bar <talb@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 203/496] iwlwifi: mvm: fix assert 0x2B00 on older FWs
-Date: Mon, 28 May 2018 11:59:48 +0200
-Message-Id: <20180528100328.490239029@linuxfoundation.org>
+Subject: [PATCH 4.14 177/496] spectrum: Reference count VLAN entries
+Date: Mon, 28 May 2018 11:59:22 +0200
+Message-Id: <20180528100327.328191207@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,95 +31,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 63dd5d022f4766e6b05ee611124afcc7cbfbb953 ]
+[ Upstream commit b3529af6bb0d4fe72defdd539712ceffaa054fb3 ]
 
-We should add the multicast station before adding the
-broadcast station.
+One of the basic construct in the device is a port-VLAN pair, which can
+be bound to a FID or a RIF in order to direct packets to the bridge or
+the router, respectively.
 
-However, in older FW, the firmware will start beaconing
-when we add the multicast station, and since the broadcast
-station is not added at this point so the transmission
-of the beacon will fail on assert 0x2b00.
+Since not all the netdevs are configured with a VLAN (e.g., sw1p1 vs.
+sw1p1.10), VID 1 is used to represent these and thus this VID can be
+used by both upper devices of mlxsw ports and by the driver itself.
 
-This is fixed in later firmware, so make the order
-of addition depend on the TLV.
+However, this VID is not reference counted and therefore might be freed
+prematurely, which can result in various WARNINGs. For example:
 
-Fixes: 26d6c16bed53 ("iwlwifi: mvm: add multicast station")
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+$ ip link add name br0 type bridge vlan_filtering 1
+$ teamd -t team0 -d -c '{"runner": {"name": "lacp"}}'
+$ ip link set dev team0 master br0
+$ ip link set dev enp1s0np1 master team0
+$ ip address add 192.0.2.1/24 dev enp1s0np1
+
+The enslavement to team0 will fail because team0 already has an upper
+and thus vlan_vids_del_by_dev() will be executed as part of team's error
+path which will delete VID 1 from enp1s0np1 (added by br0 as PVID). The
+WARNING will be generated when the driver will realize it can't find VID
+1 on the port and bind it to a RIF.
+
+Fix this by adding a reference count to the VLAN entries on the port, in
+a similar fashion to the reference counting used by the corresponding
+'vlan_vid_info' structure in the 8021q driver.
+
+Fixes: c57529e1d5d8 ("mlxsw: spectrum: Replace vPorts with Port-VLAN")
+Reported-by: Tal Bar <talb@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Tested-by: Tal Bar <talb@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |   45 +++++++++++++++++-----
- 1 file changed, 35 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    8 +++++++-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.h |    1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -8,6 +8,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of version 2 of the GNU General Public License as
-@@ -2127,15 +2128,40 @@ static int iwl_mvm_start_ap_ibss(struct
- 	if (ret)
- 		goto out_remove;
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -1417,6 +1417,7 @@ mlxsw_sp_port_vlan_create(struct mlxsw_s
+ 	}
  
--	ret = iwl_mvm_add_mcast_sta(mvm, vif);
--	if (ret)
--		goto out_unbind;
--
--	/* Send the bcast station. At this stage the TBTT and DTIM time events
--	 * are added and applied to the scheduler */
--	ret = iwl_mvm_send_add_bcast_sta(mvm, vif);
--	if (ret)
--		goto out_rm_mcast;
-+	/*
-+	 * This is not very nice, but the simplest:
-+	 * For older FWs adding the mcast sta before the bcast station may
-+	 * cause assert 0x2b00.
-+	 * This is fixed in later FW so make the order of removal depend on
-+	 * the TLV
-+	 */
-+	if (fw_has_api(&mvm->fw->ucode_capa, IWL_UCODE_TLV_API_STA_TYPE)) {
-+		ret = iwl_mvm_add_mcast_sta(mvm, vif);
-+		if (ret)
-+			goto out_unbind;
-+		/*
-+		 * Send the bcast station. At this stage the TBTT and DTIM time
-+		 * events are added and applied to the scheduler
-+		 */
-+		ret = iwl_mvm_send_add_bcast_sta(mvm, vif);
-+		if (ret) {
-+			iwl_mvm_rm_mcast_sta(mvm, vif);
-+			goto out_unbind;
-+		}
-+	} else {
-+		/*
-+		 * Send the bcast station. At this stage the TBTT and DTIM time
-+		 * events are added and applied to the scheduler
-+		 */
-+		iwl_mvm_send_add_bcast_sta(mvm, vif);
-+		if (ret)
-+			goto out_unbind;
-+		iwl_mvm_add_mcast_sta(mvm, vif);
-+		if (ret) {
-+			iwl_mvm_send_rm_bcast_sta(mvm, vif);
-+			goto out_unbind;
-+		}
+ 	mlxsw_sp_port_vlan->mlxsw_sp_port = mlxsw_sp_port;
++	mlxsw_sp_port_vlan->ref_count = 1;
+ 	mlxsw_sp_port_vlan->vid = vid;
+ 	list_add(&mlxsw_sp_port_vlan->list, &mlxsw_sp_port->vlans_list);
+ 
+@@ -1444,8 +1445,10 @@ mlxsw_sp_port_vlan_get(struct mlxsw_sp_p
+ 	struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan;
+ 
+ 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
+-	if (mlxsw_sp_port_vlan)
++	if (mlxsw_sp_port_vlan) {
++		mlxsw_sp_port_vlan->ref_count++;
+ 		return mlxsw_sp_port_vlan;
 +	}
  
- 	/* must be set before quota calculations */
- 	mvmvif->ap_ibss_active = true;
-@@ -2165,7 +2191,6 @@ out_quota_failed:
- 	iwl_mvm_power_update_mac(mvm);
- 	mvmvif->ap_ibss_active = false;
- 	iwl_mvm_send_rm_bcast_sta(mvm, vif);
--out_rm_mcast:
- 	iwl_mvm_rm_mcast_sta(mvm, vif);
- out_unbind:
- 	iwl_mvm_binding_remove_vif(mvm, vif);
+ 	return mlxsw_sp_port_vlan_create(mlxsw_sp_port, vid);
+ }
+@@ -1454,6 +1457,9 @@ void mlxsw_sp_port_vlan_put(struct mlxsw
+ {
+ 	struct mlxsw_sp_fid *fid = mlxsw_sp_port_vlan->fid;
+ 
++	if (--mlxsw_sp_port_vlan->ref_count != 0)
++		return;
++
+ 	if (mlxsw_sp_port_vlan->bridge_port)
+ 		mlxsw_sp_port_vlan_bridge_leave(mlxsw_sp_port_vlan);
+ 	else if (fid)
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
+@@ -194,6 +194,7 @@ struct mlxsw_sp_port_vlan {
+ 	struct list_head list;
+ 	struct mlxsw_sp_port *mlxsw_sp_port;
+ 	struct mlxsw_sp_fid *fid;
++	unsigned int ref_count;
+ 	u16 vid;
+ 	struct mlxsw_sp_bridge_port *bridge_port;
+ 	struct list_head bridge_vlan_node;
