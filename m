@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424725AbeE1LQr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35548 "EHLO mail.kernel.org"
+        id S1424750AbeE1LST (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:18:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424271AbeE1LQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:37 -0400
+        id S1424718AbeE1LQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 240/272] net: stmmac: call correct function in stmmac_mac_config_rx_queues_routing()
-Date: Mon, 28 May 2018 12:04:33 +0200
-Message-Id: <20180528100300.481032328@linuxfoundation.org>
+Subject: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
+Date: Mon, 28 May 2018 12:05:02 +0200
+Message-Id: <20180528100302.722883806@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,35 +31,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 13138de01400762f706c5e956e70660770d61962 ]
+[ Upstream commit a7aa75a2a7dba32594291a71c3704000a2fd7089 ]
 
-stmmac_mac_config_rx_queues_routing() incorrectly calls rx_queue_prio()
-instead of rx_queue_routing().
+The base of the TLMM gpiochip should not be statically defined as 0, fix
+this to not artificially restrict the existence of multiple pinctrl-msm
+devices.
 
-This looks like a copy paste issue, since
-stmmac_mac_config_rx_queues_prio() already calls rx_queue_prio(),
-and both stmmac_mac_config_rx_queues_routing() and
-stmmac_mac_config_rx_queues_prio() are very similar in structure.
-
-Fixes: abe80fdc6ee6 ("net: stmmac: RX queue routing configuration")
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+Reported-by: Timur Tabi <timur@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2435,7 +2435,7 @@ static void stmmac_mac_config_rx_queues_
- 			continue;
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
+ 		return -EINVAL;
  
- 		packet = priv->plat->rx_queues_cfg[queue].pkt_route;
--		priv->hw->mac->rx_queue_prio(priv->hw, packet, queue);
-+		priv->hw->mac->rx_queue_routing(priv->hw, packet, queue);
- 	}
- }
- 
+ 	chip = &pctrl->chip;
+-	chip->base = 0;
++	chip->base = -1;
+ 	chip->ngpio = ngpio;
+ 	chip->label = dev_name(pctrl->dev);
+ 	chip->parent = pctrl->dev;
