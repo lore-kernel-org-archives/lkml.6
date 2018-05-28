@@ -1,85 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933670AbeE1QH7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:07:59 -0400
-Received: from ns.lynxeye.de ([87.118.118.114]:54858 "EHLO lynxeye.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932476AbeE1QHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:07:54 -0400
-Message-ID: <040f1774efe7430a3802ac48f1980122ba5b1128.camel@lynxeye.de>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-From: Lucas Stach <dev@lynxeye.de>
-To: Stefan Agner <stefan@agner.ch>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, miquel.raynal@bootlin.com,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Date: Mon, 28 May 2018 17:58:11 +0200
-In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
-References: <20180527215442.14760-5-stefan@agner.ch>
-         <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
-         <5665b799f763daa82dced238fb494863@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S936817AbeE1QIJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:08:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48419 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933203AbeE1QIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:08:02 -0400
+Date: Mon, 28 May 2018 08:51:12 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        tgraf@suug.ch, manfred@colorfullife.com,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/6] lib/rhashtable: convert param sanitations to WARN_ON
+Message-ID: <20180528155112.iqsw6x3cdy5piaro@linux-n805>
+References: <20180524211135.27760-1-dave@stgolabs.net>
+ <20180524211135.27760-2-dave@stgolabs.net>
+ <20180528094048.etqeu2ubc227qrxf@gondor.apana.org.au>
+ <20180528131209.mt4ythkapvfvykc7@linux-n805>
+ <20180528155414.mbwyldat7mn6ro2j@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180528155414.mbwyldat7mn6ro2j@gondor.apana.org.au>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, den 28.05.2018, 17:53 +0200 schrieb Stefan Agner:
-> On 28.05.2018 09:55, Peter De Schrijver wrote:
-> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
-> > > From: Lucas Stach <dev@lynxeye.de>
-> > > 
-> > > Set up the NAND Flash controller clock to run at 150MHz
-> > > instead of the rate set by the bootloader. This is a
-> > > conservative rate which also yields good performance.
-> > > 
-> > > Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > ---
-> > >  drivers/clk/tegra/clk-tegra20.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> > > index 0ee56dd04cec..dff8c425cd28 100644
-> > > --- a/drivers/clk/tegra/clk-tegra20.c
-> > > +++ b/drivers/clk/tegra/clk-tegra20.c
-> > > @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
-> > >  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > >  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > >  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-> > > +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
-> > >  	/* must be the last entry */
-> > >  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> > >  };
-> > > --
-> > > 2.17.0
-> > > 
-> > 
-> > Maybe better to specify this in the Tegra20 dtsi? See 
-> > "Assigned clock parents and rates" in
-> > Documentation/devicetree/bindings/clock/clock-bindings.txt
-> 
-> assigned-clocks indeed works just fine for this case. Thanks for
-> bringing this up, will drop this patch and add the device tree
-> properties in v3.
-> 
-> Hm, interesting that none of the Tegra device tree make use of the
-> feature so far. I guess there would be other cases where this would be
-> useful as well (the one just above, VDE?).
+On Mon, 28 May 2018, Herbert Xu wrote:
 
-Most of the Tegra clock init stuff (including this patch) was written
-before we had assigned-clocks as some common DT facility. But fully
-agree on dropping this patch.
+>On Mon, May 28, 2018 at 06:12:09AM -0700, Davidlohr Bueso wrote:
+>>
+>> Well, I don't really _want_ them; nor does the ipc code which already
+>> does a WARN_ON() (but that goes away in future patches). What I want
+>> is to get rid of the return path. So I don't really care if we convert
+>> them to WARN or remove them altogether. Would you be happy with the
+>> later?
+>
+>It has nothing to do with the error return path.  Assuming you
+>remove the allocation failure path, then this error path can never
+>trigger for *your* use-case. 
 
-Regards,
-Lucas
+Why would this be triggered by any use case if the developer setup the
+params correctly...? I don't see the point of not getting rid of the
+EINVAL or wrapping around warning around it. Ultimately it would be
+good to just have rhashtable_init() return void.
