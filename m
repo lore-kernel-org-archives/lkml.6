@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423273AbeE1MOq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:14:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
+        id S1422934AbeE1LDm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:03:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422949AbeE1LDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:47 -0400
+        id S1164883AbeE1LDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 487/496] ARM: dts: at91: tse850: use the correct compatible for the eeprom
-Date: Mon, 28 May 2018 12:04:32 +0200
-Message-Id: <20180528100340.400015445@linuxfoundation.org>
+Subject: [PATCH 4.14 458/496] net: stmmac: ensure that the device has released ownership before reading data
+Date: Mon, 28 May 2018 12:04:03 +0200
+Message-Id: <20180528100339.215354471@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,31 +30,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-[ Upstream commit 7981190fb5dd710dea08c2613cee3d05e795ca5e ]
+[ Upstream commit a6b25da5e7ba212af5826a662e6a035a79bffabd ]
 
-The used part does contain an eeprom compatible with an Atmel 24c02
-chip and it is from NXP, but it is not called 24c02. It's actually a
-se97b chip. Adjust the compatible accordingly.
+According to Documentation/memory-barriers.txt, we need to use a
+dma_rmb() after reading the status/own bit, to ensure that all
+descriptor fields are read after reading the own bit.
 
-Fixes: 21dd0ece34c2 ("ARM: dts: at91: add devicetree for the Axentia TSE-850")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This way, we ensure that the DMA engine is done with the DMA
+descriptor before we read the other descriptor fields, e.g. reading
+the tx hardware timestamp (if PTP is enabled).
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/at91-tse850-3.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/arm/boot/dts/at91-tse850-3.dts
-+++ b/arch/arm/boot/dts/at91-tse850-3.dts
-@@ -245,7 +245,7 @@
- 	};
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1829,6 +1829,11 @@ static void stmmac_tx_clean(struct stmma
+ 		if (unlikely(status & tx_dma_own))
+ 			break;
  
- 	eeprom@50 {
--		compatible = "nxp,24c02", "atmel,24c02";
-+		compatible = "nxp,se97b", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
++		/* Make sure descriptor fields are read after reading
++		 * the own bit.
++		 */
++		dma_rmb();
++
+ 		/* Just consider the last segment and ...*/
+ 		if (likely(!(status & tx_not_ls))) {
+ 			/* ... verify the status error condition */
