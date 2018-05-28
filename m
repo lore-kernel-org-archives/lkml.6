@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933432AbeE1JDQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:03:16 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43808 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754090AbeE1I7E (ORCPT
+        id S1754087AbeE1JC7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:02:59 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:50298 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754160AbeE1I7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:59:04 -0400
-X-Google-Smtp-Source: ADUXVKINwZuGjx4PqNgwaz4blmlt1xPTk7Y16paUwMwLRnKnNx/i8hr049Zt8eOZOISuAVoAu85JKg==
+        Mon, 28 May 2018 04:59:13 -0400
+X-Google-Smtp-Source: ADUXVKLyFlCu7yUUKdkUaUF+oD8cP149XFVwj/aPN3R98TcwKGeE0XYUmspedl2RtE6EosCHK/GvKw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        Igor Konopko <igor.j.konopko@intel.com>,
+        Marcin Dziegielewski <marcin.dziegielewski@intel.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 11/20] lightnvm: pblk: remove dead function
-Date: Mon, 28 May 2018 10:58:32 +0200
-Message-Id: <20180528085841.26684-12-mb@lightnvm.io>
+Subject: [GIT PULL 17/20] lightnvm: fix partial read error path
+Date: Mon, 28 May 2018 10:58:38 +0200
+Message-Id: <20180528085841.26684-18-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
 References: <20180528085841.26684-1-mb@lightnvm.io>
@@ -27,46 +27,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+From: Igor Konopko <igor.j.konopko@intel.com>
 
-Remove dead function for manual sync. I/O
+When error occurs during bio_add_page on partial read path, pblk
+tries to free pages twice.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
+Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-core.c | 7 -------
- drivers/lightnvm/pblk.h      | 1 -
- 2 files changed, 8 deletions(-)
+ drivers/lightnvm/pblk-read.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 5f1e5b1b3094..5dae72e8b46b 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -342,13 +342,6 @@ void pblk_write_should_kick(struct pblk *pblk)
- 		pblk_write_kick(pblk);
- }
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index a2e678de428f..fa7b60f852d9 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -256,7 +256,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 	new_bio = bio_alloc(GFP_KERNEL, nr_holes);
  
--void pblk_end_io_sync(struct nvm_rq *rqd)
--{
--	struct completion *waiting = rqd->private;
+ 	if (pblk_bio_add_pages(pblk, new_bio, GFP_KERNEL, nr_holes))
+-		goto err;
++		goto err_add_pages;
+ 
+ 	if (nr_holes != new_bio->bi_vcnt) {
+ 		pr_err("pblk: malformed bio\n");
+@@ -347,10 +347,10 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 	return NVM_IO_OK;
+ 
+ err:
+-	pr_err("pblk: failed to perform partial read\n");
 -
--	complete(waiting);
--}
--
- static void pblk_wait_for_meta(struct pblk *pblk)
- {
- 	do {
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 0c69eb880f56..5a4daf0b949d 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -796,7 +796,6 @@ void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
- void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas);
- void pblk_up_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
- 		unsigned long *lun_bitmap);
--void pblk_end_io_sync(struct nvm_rq *rqd);
- int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t flags,
- 		       int nr_pages);
- void pblk_bio_free_pages(struct pblk *pblk, struct bio *bio, int off,
+ 	/* Free allocated pages in new bio */
+-	pblk_bio_free_pages(pblk, bio, 0, new_bio->bi_vcnt);
++	pblk_bio_free_pages(pblk, new_bio, 0, new_bio->bi_vcnt);
++err_add_pages:
++	pr_err("pblk: failed to perform partial read\n");
+ 	__pblk_end_io_read(pblk, rqd, false);
+ 	return NVM_IO_ERR;
+ }
 -- 
 2.11.0
