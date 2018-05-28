@@ -1,149 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753650AbeE1HAZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:00:25 -0400
-Received: from mail.efficios.com ([167.114.142.138]:36206 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753621AbeE1HAV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:00:21 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B25A91B93CC
-Date: Mon, 28 May 2018 03:00:19 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Boqun Feng <boqun.feng@gmail.com>
-Cc: Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Message-ID: <284936908.600.1527490819532.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87o9h5sw4e.fsf@concordia.ellerman.id.au>
-References: <20180430224433.17407-1-mathieu.desnoyers@efficios.com> <277374719.2144.1526570889798.JavaMail.zimbra@efficios.com> <1526601043.1338308.1376191416.0444B8C5@webmail.messagingengine.com> <418003803.516.1526667437396.JavaMail.zimbra@efficios.com> <20180520140811.GB1121@tardis> <1928158599.1541.1527106479862.JavaMail.zimbra@efficios.com> <37442352.1577.1527110985175.JavaMail.zimbra@efficios.com> <87o9h5sw4e.fsf@concordia.ellerman.id.au>
-Subject: Re: [PATCH 07/14] powerpc: Add support for restartable sequences
+        id S1753813AbeE1HEB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:04:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34743 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753779AbeE1HDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 03:03:55 -0400
+Date: Mon, 28 May 2018 09:03:52 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
+ for bad block check
+Message-ID: <20180528090352.254022ed@xps13>
+In-Reply-To: <90ae248edf8a06a1d35e2da458f75af5@codeaurora.org>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+        <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
+        <20180526104629.74315561@xps13>
+        <90ae248edf8a06a1d35e2da458f75af5@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: powerpc: Add support for restartable sequences
-Thread-Index: sN5gCvwrhK5fBvL+6QpV0cuqJC72SQ==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On May 24, 2018, at 3:03 AM, Michael Ellerman mpe@ellerman.id.au wrote:
+Hi Abhishek,
 
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> writes:
->> ----- On May 23, 2018, at 4:14 PM, Mathieu Desnoyers
->> mathieu.desnoyers@efficios.com wrote:
-> ...
->>> 
->>> Hi Boqun,
->>> 
->>> I tried your patch in a ppc64 le environment, and it does not survive boot
->>> with CONFIG_DEBUG_RSEQ=y. init gets killed right away.
+> >>  /* implements ecc->read_page() */
+> >>  static int qcom_nandc_read_page(struct mtd_info *mtd, struct >> nand_chip *chip,
+> >>  				uint8_t *buf, int oob_required, int page)
+> >> @@ -2118,6 +2083,7 @@ static int qcom_nandc_block_bad(struct mtd_info >> *mtd, loff_t ofs)
+> >>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> >>  	int page, ret, bbpos, bad = 0;
+> >>  	u32 flash_status;
+> >> +	u8 *bbm_bytes_buf = chip->data_buf;  
+> >> >>  	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+> >> >> @@ -2128,11 +2094,31 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)  
+> >>  	 * that contains the BBM
+> >>  	 */
+> >>  	host->use_ecc = false;
+> >> +	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
+> > > Are we sure there is no layout with only 1 step?  
 > 
+>   All the layouts are such that, the BBM will come in
+>   first byte of spare area.
 > 
-> Sorry this code is super gross and hard to deal with.
+>   For 4 bit ECC, the cw_size is 528 so for 2K page
 > 
->> The following fixup gets ppc64 to work:
->>
->> --- a/arch/powerpc/kernel/entry_64.S
->> +++ b/arch/powerpc/kernel/entry_64.S
->> @@ -208,6 +208,7 @@ system_call_exit:
->>         /* Check whether the syscall is issued inside a restartable sequence */
->>         addi    r3,r1,STACK_FRAME_OVERHEAD
->>         bl      rseq_syscall
->> +       ld      r3,RESULT(r1)
->>  #endif
->>         /*
->>          * Disable interrupts so current_thread_info()->flags can't change,
-> 
-> I don't think that's safe.
-> 
-> If you look above that, we have r3, r8 and r12 all live:
-> 
-> .Lsyscall_exit:
->	std	r3,RESULT(r1)
->	CURRENT_THREAD_INFO(r12, r1)
-> 
->	ld	r8,_MSR(r1)
-> #ifdef CONFIG_PPC_BOOK3S
->	/* No MSR:RI on BookE */
->	andi.	r10,r8,MSR_RI
->	beq-	.Lunrecov_restore
-> #endif
-> 
-> 
-> They're all volatile across function calls:
-> 
->  http://openpowerfoundation.org/wp-content/uploads/resources/leabi/content/dbdoclet.50655240_68174.html
-> 
-> 
-> The system_call_exit symbol is actually there for kprobes and cosmetic
-> purposes. The actual syscall return flow starts at .Lsyscall_exit.
-> 
-> So I think this would work:
-> 
-> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-> index db4df061c33a..e19f377a25e0 100644
-> --- a/arch/powerpc/kernel/entry_64.S
-> +++ b/arch/powerpc/kernel/entry_64.S
-> @@ -184,6 +184,14 @@ system_call:			/* label this so stack traces look sane */
-> 
-> .Lsyscall_exit:
-> 	std	r3,RESULT(r1)
-> +
-> +#ifdef CONFIG_DEBUG_RSEQ
-> +	/* Check whether the syscall is issued inside a restartable sequence */
-> +	addi    r3,r1,STACK_FRAME_OVERHEAD
-> +	bl      rseq_syscall
-> +	ld	r3,RESULT(r1)
-> +#endif
-> +
-> 	CURRENT_THREAD_INFO(r12, r1)
-> 
-> 	ld	r8,_MSR(r1)
-> 
-> 
-> I'll try and get this series into my test setup at some point, been a
-> bit busy lately :)
+>    2048 - 528 * 3 = 464
 
-Yes, this was needed. I had this in my tree already, but there is still
-a kernel OOPS when running the rseq selftests on ppc64 with CONFIG_DEBUG_RSEQ=y.
-
-My current dev tree is at: https://github.com/compudj/linux-percpu-dev/tree/rseq/dev-local
-
-So considering we are at rc7 now, should I plan to removing the powerpc bits
-for merge window submission, or is there someone planning to spend time on
-fixing and testing ppc integration before the merge window opens ?
-
-Thanks,
-
-Mathieu
-
+My question was more about small page NANDs. But I suppose it works
+too if ecc->steps == 1.
 
 > 
-> cheers
+>   So for last CW, the 464 is BBM (i.e 2048th byte) in
+>   full page.
+> 
+> > >> >>  	clear_bam_transaction(nandc);  
+> >> -	ret = copy_last_cw(host, page);
+> >> -	if (ret)
+> >> +	clear_read_regs(nandc);
+> >> +
+> >> +	set_address(host, host->cw_size * (ecc->steps - 1), page);
+> >> +	update_rw_regs(host, 1, true);
+> >> +
+> >> +	/*
+> >> +	 * The last codeword data will be copied from NAND device to NAND
+> >> +	 * controller internal HW buffer. Copy only required BBM size bytes
+> >> +	 * from this HW buffer to bbm_bytes_buf which is present at
+> >> +	 * bbpos offset.
+> >> +	 */
+> >> +	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
+> >> +	config_nand_single_cw_page_read(nandc);
+> >> +	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
+> >> +		      host->bbm_size, 0);
+> >> +
+> >> +	ret = submit_descs(nandc);
+> >> +	free_descs(nandc);
+> >> +	if (ret) {
+> >> +		dev_err(nandc->dev, "failed to copy bad block bytes\n");
+> >>  		goto err;
+> >> +	}  
+> >> >>  	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
+> >> >> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)  
+> >>  		goto err;
+> >>  	}  
+> >> >> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);  
+> >> -
+> >> -	bad = nandc->data_buffer[bbpos] != 0xff;
+> >> +	bad = bbm_bytes_buf[0] != 0xff;
+> > > This is suspect as it still points to the beginning of the data buffer.  
+> > Can you please check you did not meant bbm_bytes_buf[bbpos]?
+> >   
+>   The main thing here is
+>   nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
+> 
+>   After reading one complete CW from NAND, the data will be still
+>   in NAND HW buffer.
+> 
+>   The above register tells that we need to read data from
+>   bbpos of size host->bbm_size (which is 1 byte for 8 bus witdh
+>   and 2 byte for 16 bus width) in bbm_bytes_buf.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+I see: idx 0 in bbm_bytes_buf is the data at offset bbpos. Then
+it's ok.
+
+> 
+>   So bbm_bytes_buf[0] will contain the BBM first byte.
+>   and bbm_bytes_buf[1] will contain the BBM second byte.
+> 
+>   Regards,
+>   Abhishek
+> 
+> >> >>  	if (chip->options & NAND_BUSWIDTH_16)  
+> >> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
+> >> +		bad = bad || (bbm_bytes_buf[1] != 0xff);
+
+Sorry, my mistake, I did not see the above line.
+
+However, technically, the BBM could be located in the first, second or
+last page of the block. You should check the three of them are 0xFF
+before declaring the block is not bad.
+
+The more I look at the function, the more I wonder if you actually need
+it. Why does the generic nand_block_bad() implementation in the core
+do not fit?
+
+> >>  err:
+> >>  	return bad;
+> >>  }  
+> > > > Thanks,  
+> > Miquèl  
