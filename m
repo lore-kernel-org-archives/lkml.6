@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161331AbeE1Kbj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:31:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51268 "EHLO mail.kernel.org"
+        id S1165817AbeE1Oir (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:38:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161304AbeE1Kbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:31 -0400
+        id S1161314AbeE1Kbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org,
+        Naftali Goldstein <naftali.goldstein@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 087/329] xen/grant-table: Use put_page instead of free_page
-Date: Mon, 28 May 2018 12:00:16 +0200
-Message-Id: <20180528100250.037552549@linuxfoundation.org>
+Subject: [PATCH 4.9 113/329] iwlwifi: mvm: always init rs with 20mhz bandwidth rates
+Date: Mon, 28 May 2018 12:00:42 +0200
+Message-Id: <20180528100252.130901995@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,48 +31,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Naftali Goldstein <naftali.goldstein@intel.com>
 
-[ Upstream commit 3ac7292a25db1c607a50752055a18aba32ac2176 ]
+[ Upstream commit 6b7a5aea71b342ec0593d23b08383e1f33da4c9a ]
 
-The page given to gnttab_end_foreign_access() to free could be a
-compound page so use put_page() instead of free_page() since it can
-handle both compound and single pages correctly.
+In AP mode, when a new station associates, rs is initialized immediately
+upon association completion, before the phy context is updated with the
+association parameters, so the sta bandwidth might be wider than the phy
+context allows.
+To avoid this issue, always initialize rs with 20mhz bandwidth rate, and
+after authorization, when the phy context is already up-to-date, re-init
+rs with the correct bw.
 
-This bug was discovered when migrating a Xen VM with several VIFs and
-CONFIG_DEBUG_VM enabled. It hits a BUG usually after fewer than 10
-iterations. All netfront devices disconnect from the backend during a
-suspend/resume and this will call gnttab_end_foreign_access() if a
-netfront queue has an outstanding skb. The mismatch between calling
-get_page() and free_page() on a compound page causes a reference
-counting error which is detected when DEBUG_VM is enabled.
-
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Naftali Goldstein <naftali.goldstein@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/grant-table.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    4 +++
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.c       |   28 +++++++++++++++-------
+ 2 files changed, 24 insertions(+), 8 deletions(-)
 
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -327,7 +327,7 @@ static void gnttab_handle_deferred(unsig
- 			if (entry->page) {
- 				pr_debug("freeing g.e. %#x (pfn %#lx)\n",
- 					 entry->ref, page_to_pfn(entry->page));
--				__free_page(entry->page);
-+				put_page(entry->page);
- 			} else
- 				pr_info("freeing g.e. %#x\n", entry->ref);
- 			kfree(entry);
-@@ -383,7 +383,7 @@ void gnttab_end_foreign_access(grant_ref
- 	if (gnttab_end_foreign_access_ref(ref, readonly)) {
- 		put_free_entry(ref);
- 		if (page != 0)
--			free_page(page);
-+			put_page(virt_to_page(page));
- 	} else
- 		gnttab_add_deferred(ref, readonly,
- 				    page ? virt_to_page(page) : NULL);
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -2585,6 +2585,10 @@ static int iwl_mvm_mac_sta_state(struct
+ 
+ 		/* enable beacon filtering */
+ 		WARN_ON(iwl_mvm_enable_beacon_filter(mvm, vif, 0));
++
++		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band,
++				     false);
++
+ 		ret = 0;
+ 	} else if (old_state == IEEE80211_STA_AUTHORIZED &&
+ 		   new_state == IEEE80211_STA_ASSOC) {
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+@@ -2709,7 +2709,8 @@ static void rs_get_initial_rate(struct i
+ 				struct ieee80211_sta *sta,
+ 				struct iwl_lq_sta *lq_sta,
+ 				enum nl80211_band band,
+-				struct rs_rate *rate)
++				struct rs_rate *rate,
++				bool init)
+ {
+ 	int i, nentries;
+ 	unsigned long active_rate;
+@@ -2763,14 +2764,25 @@ static void rs_get_initial_rate(struct i
+ 	 */
+ 	if (sta->vht_cap.vht_supported &&
+ 	    best_rssi > IWL_RS_LOW_RSSI_THRESHOLD) {
+-		switch (sta->bandwidth) {
+-		case IEEE80211_STA_RX_BW_160:
+-		case IEEE80211_STA_RX_BW_80:
+-		case IEEE80211_STA_RX_BW_40:
++		/*
++		 * In AP mode, when a new station associates, rs is initialized
++		 * immediately upon association completion, before the phy
++		 * context is updated with the association parameters, so the
++		 * sta bandwidth might be wider than the phy context allows.
++		 * To avoid this issue, always initialize rs with 20mhz
++		 * bandwidth rate, and after authorization, when the phy context
++		 * is already up-to-date, re-init rs with the correct bw.
++		 */
++		u32 bw = init ? RATE_MCS_CHAN_WIDTH_20 : rs_bw_from_sta_bw(sta);
++
++		switch (bw) {
++		case RATE_MCS_CHAN_WIDTH_40:
++		case RATE_MCS_CHAN_WIDTH_80:
++		case RATE_MCS_CHAN_WIDTH_160:
+ 			initial_rates = rs_optimal_rates_vht;
+ 			nentries = ARRAY_SIZE(rs_optimal_rates_vht);
+ 			break;
+-		case IEEE80211_STA_RX_BW_20:
++		case RATE_MCS_CHAN_WIDTH_20:
+ 			initial_rates = rs_optimal_rates_vht_20mhz;
+ 			nentries = ARRAY_SIZE(rs_optimal_rates_vht_20mhz);
+ 			break;
+@@ -2781,7 +2793,7 @@ static void rs_get_initial_rate(struct i
+ 
+ 		active_rate = lq_sta->active_siso_rate;
+ 		rate->type = LQ_VHT_SISO;
+-		rate->bw = rs_bw_from_sta_bw(sta);
++		rate->bw = bw;
+ 	} else if (sta->ht_cap.ht_supported &&
+ 		   best_rssi > IWL_RS_LOW_RSSI_THRESHOLD) {
+ 		initial_rates = rs_optimal_rates_ht;
+@@ -2863,7 +2875,7 @@ static void rs_initialize_lq(struct iwl_
+ 	tbl = &(lq_sta->lq_info[active_tbl]);
+ 	rate = &tbl->rate;
+ 
+-	rs_get_initial_rate(mvm, sta, lq_sta, band, rate);
++	rs_get_initial_rate(mvm, sta, lq_sta, band, rate, init);
+ 	rs_init_optimal_rate(mvm, sta, lq_sta);
+ 
+ 	WARN_ON_ONCE(rate->ant != ANT_A && rate->ant != ANT_B);
