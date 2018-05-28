@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937298AbeE1KgH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:36:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56460 "EHLO mail.kernel.org"
+        id S1162215AbeE1Kg3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:36:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162161AbeE1KgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:02 -0400
+        id S1161538AbeE1Kg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Malone <peter.malone@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Rich Felker <dalias@libc.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 186/329] fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
-Date: Mon, 28 May 2018 12:01:55 +0200
-Message-Id: <20180528100257.798552206@linuxfoundation.org>
+Subject: [PATCH 4.9 228/329] sh: fix debug trap failure to process signals before return to user
+Date: Mon, 28 May 2018 12:02:37 +0200
+Message-Id: <20180528100301.105874585@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,61 +29,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Malone <peter.malone@gmail.com>
+From: Rich Felker <dalias@libc.org>
 
-[ Upstream commit 250c6c49e3b68756b14983c076183568636e2bde ]
+[ Upstream commit 96a598996f6ac518ac79839ecbb17c91af91f4f7 ]
 
-Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
-sbusfb_ioctl_helper().
+When responding to a debug trap (breakpoint) in userspace, the
+kernel's trap handler raised SIGTRAP but returned from the trap via a
+code path that ignored pending signals, resulting in an infinite loop
+re-executing the trapping instruction.
 
-'index' is defined as an int in sbusfb_ioctl_helper().
-We retrieve this from the user:
-if (get_user(index, &c->index) ||
-    __get_user(count, &c->count) ||
-    __get_user(ured, &c->red) ||
-    __get_user(ugreen, &c->green) ||
-    __get_user(ublue, &c->blue))
-       return -EFAULT;
-
-and then we use 'index' in the following way:
-red = cmap->red[index + i] >> 8;
-green = cmap->green[index + i] >> 8;
-blue = cmap->blue[index + i] >> 8;
-
-This is a classic information leak vulnerability. 'index' should be
-an unsigned int, given its usage above.
-
-This patch is straight-forward; it changes 'index' to unsigned int
-in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
-
-This patch fixes CVE-2018-6412.
-
-Signed-off-by: Peter Malone <peter.malone@gmail.com>
-Acked-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Rich Felker <dalias@libc.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/sbuslib.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/sh/kernel/entry-common.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/sbuslib.c
-+++ b/drivers/video/fbdev/sbuslib.c
-@@ -121,7 +121,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ured;
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
--		int index, count, i;
-+		unsigned int index, count, i;
+--- a/arch/sh/kernel/entry-common.S
++++ b/arch/sh/kernel/entry-common.S
+@@ -255,7 +255,7 @@ debug_trap:
+ 	mov.l	@r8, r8
+ 	jsr	@r8
+ 	 nop
+-	bra	__restore_all
++	bra	ret_from_exception
+ 	 nop
+ 	CFI_ENDPROC
  
- 		if (get_user(index, &c->index) ||
- 		    __get_user(count, &c->count) ||
-@@ -160,7 +160,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
- 		struct fb_cmap *cmap = &info->cmap;
--		int index, count, i;
-+		unsigned int index, count, i;
- 		u8 red, green, blue;
- 
- 		if (get_user(index, &c->index) ||
