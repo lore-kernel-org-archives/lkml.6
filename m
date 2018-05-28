@@ -1,72 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeE1HK2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:10:28 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39350 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753638AbeE1HJ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:09:56 -0400
-X-UUID: b801605c4e4f4300aa84634261675565-20180528
-Message-ID: <1527491391.24367.5.camel@mtksdaap41>
-Subject: Re: [PATCH v4 6/9] drm/mediatek: add ddp component PWM2
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 28 May 2018 15:09:51 +0800
-In-Reply-To: <1527489507-24453-7-git-send-email-stu.hsieh@mediatek.com>
-References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527489507-24453-7-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1753953AbeE1HKg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:10:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753621AbeE1HKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 03:10:31 -0400
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>, linux-arch@vger.kernel.org
+Subject: [PATCH -tip v4 21/27] s390/kprobes: Don't call the ->break_handler() in s390 kprobes code
+Date: Mon, 28 May 2018 16:10:04 +0900
+Message-Id: <152749140479.15132.14122696148962136409.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
+References: <152749074878.15132.16693721906742461289.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Don't call the ->break_handler() from the s390 kprobes code,
+because it was only used by jprobes which got removed.
 
-On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
-> This patch add component PWM2
-> 
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ arch/s390/kernel/kprobes.c |   20 --------------------
+ 1 file changed, 20 deletions(-)
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 1 +
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> index a5c7ac2d162d..86e8c9e5df41 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> @@ -233,6 +233,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
->  	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
->  	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
->  	[DDP_COMPONENT_PWM1]	= { MTK_DISP_PWM,	1, NULL },
-> +	[DDP_COMPONENT_PWM2]	= { MTK_DISP_PWM,	2, NULL },
->  	[DDP_COMPONENT_RDMA0]	= { MTK_DISP_RDMA,	0, NULL },
->  	[DDP_COMPONENT_RDMA1]	= { MTK_DISP_RDMA,	1, NULL },
->  	[DDP_COMPONENT_RDMA2]	= { MTK_DISP_RDMA,	2, NULL },
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> index 9b19fc4423f1..e00c2e798abd 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> @@ -56,6 +56,7 @@ enum mtk_ddp_comp_id {
->  	DDP_COMPONENT_OVL1,
->  	DDP_COMPONENT_PWM0,
->  	DDP_COMPONENT_PWM1,
-> +	DDP_COMPONENT_PWM2,
->  	DDP_COMPONENT_RDMA0,
->  	DDP_COMPONENT_RDMA1,
->  	DDP_COMPONENT_RDMA2,
+diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
+index 0967de19f53d..3e34018960b5 100644
+--- a/arch/s390/kernel/kprobes.c
++++ b/arch/s390/kernel/kprobes.c
+@@ -332,26 +332,6 @@ static int kprobe_handler(struct pt_regs *regs)
+ 		}
+ 		enable_singlestep(kcb, regs, (unsigned long) p->ainsn.insn);
+ 		return 1;
+-	} else if (kprobe_running()) {
+-		p = __this_cpu_read(current_kprobe);
+-		if (p->break_handler && p->break_handler(p, regs)) {
+-			/*
+-			 * Continuation after the jprobe completed and
+-			 * caused the jprobe_return trap. The jprobe
+-			 * break_handler "returns" to the original
+-			 * function that still has the kprobe breakpoint
+-			 * installed. We continue with single stepping.
+-			 */
+-			kcb->kprobe_status = KPROBE_HIT_SS;
+-			enable_singlestep(kcb, regs,
+-					  (unsigned long) p->ainsn.insn);
+-			return 1;
+-		} /* else:
+-		   * No kprobe at this address and the current kprobe
+-		   * has no break handler (no jprobe!). The kernel just
+-		   * exploded, let the standard trap handler pick up the
+-		   * pieces.
+-		   */
+ 	} /* else:
+ 	   * No kprobe at this address and no active kprobe. The trap has
+ 	   * not been caused by a kprobe breakpoint. The race of breakpoint
