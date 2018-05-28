@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163320AbeE1Ktj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:49:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39198 "EHLO mail.kernel.org"
+        id S1163568AbeE1Kto (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:49:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163537AbeE1Ktb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:31 -0400
+        id S1163537AbeE1Ktk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom St Denis <tom.stdenis@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 187/496] drm/amd/amdgpu: Correct VRAM width for APUs with GMC9
-Date: Mon, 28 May 2018 11:59:32 +0200
-Message-Id: <20180528100327.840413630@linuxfoundation.org>
+Subject: [PATCH 4.14 190/496] drm/sun4i: Fix dclk_set_phase
+Date: Mon, 28 May 2018 11:59:35 +0200
+Message-Id: <20180528100327.952943958@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,33 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tom St Denis <tom.stdenis@amd.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
-[ Upstream commit 585b7f161c85bd5ca675b97580faf21c506541e3 ]
+[ Upstream commit e64b6afa98f3629d0c0c46233bbdbe8acdb56f06 ]
 
-DDR4 has a 64-bit width not 128-bits.  It was reporting
-twice the width.  Tested with my Ryzen 2400G.
+Phase value is not shifted before writing.
 
-Signed-off-by: Tom St Denis <tom.stdenis@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Shift left of 28 bits to fit right bits
+
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1519836413-35023-1-git-send-email-giulio.benetti@micronovasrl.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c |    5 ++++-
+ drivers/gpu/drm/sun4i/sun4i_dotclock.c |    5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-@@ -456,7 +456,10 @@ static int gmc_v9_0_mc_init(struct amdgp
- 	adev->mc.vram_width = amdgpu_atomfirmware_get_vram_width(adev);
- 	if (!adev->mc.vram_width) {
- 		/* hbm memory channel size */
--		chansize = 128;
-+		if (adev->flags & AMD_IS_APU)
-+			chansize = 64;
-+		else
-+			chansize = 128;
+--- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
++++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+@@ -129,10 +129,13 @@ static int sun4i_dclk_get_phase(struct c
+ static int sun4i_dclk_set_phase(struct clk_hw *hw, int degrees)
+ {
+ 	struct sun4i_dclk *dclk = hw_to_dclk(hw);
++	u32 val = degrees / 120;
++
++	val <<= 28;
  
- 		tmp = RREG32_SOC15(DF, 0, mmDF_CS_AON0_DramBaseAddress0);
- 		tmp &= DF_CS_AON0_DramBaseAddress0__IntLvNumChan_MASK;
+ 	regmap_update_bits(dclk->regmap, SUN4I_TCON0_IO_POL_REG,
+ 			   GENMASK(29, 28),
+-			   degrees / 120);
++			   val);
+ 
+ 	return 0;
+ }
