@@ -1,21 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033324AbeE1KVO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:21:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40618 "EHLO mail.kernel.org"
+        id S1031667AbeE1KVY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:21:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033296AbeE1KVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:05 -0400
+        id S1033294AbeE1KVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Danilo Krummrich <danilokrummrich@dk-develop.de>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 157/268] net: mvneta: fix enable of all initialized RXQs
-Date: Mon, 28 May 2018 12:02:11 +0200
-Message-Id: <20180528100220.241775910@linuxfoundation.org>
+Subject: [PATCH 4.4 160/268] fs/proc/proc_sysctl.c: fix potential page fault while unregistering sysctl table
+Date: Mon, 28 May 2018 12:02:14 +0200
+Message-Id: <20180528100220.598044371@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,31 +36,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Danilo Krummrich <danilokrummrich@dk-develop.de>
 
-[ Upstream commit e81b5e01c14add8395dfba7130f8829206bb507d ]
+[ Upstream commit a0b0d1c345d0317efe594df268feb5ccc99f651e ]
 
-In mvneta_port_up() we enable relevant RX and TX port queues by write
-queues bit map to an appropriate register.
+proc_sys_link_fill_cache() does not take currently unregistering sysctl
+tables into account, which might result into a page fault in
+sysctl_follow_link() - add a check to fix it.
 
-q_map must be ZERO in the beginning of this process.
+This bug has been present since v3.4.
 
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20180228013506.4915-1-danilokrummrich@dk-develop.de
+Fixes: 0e47c99d7fe25 ("sysctl: Replace root_list with links between sysctl_table_sets")
+Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/proc/proc_sysctl.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -818,6 +818,7 @@ static void mvneta_port_up(struct mvneta
- 	}
- 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -654,7 +654,10 @@ static bool proc_sys_link_fill_cache(str
+ 				    struct ctl_table *table)
+ {
+ 	bool ret = true;
++
+ 	head = sysctl_head_grab(head);
++	if (IS_ERR(head))
++		return false;
  
-+	q_map = 0;
- 	/* Enable all initialized RXQs. */
- 	mvreg_write(pp, MVNETA_RXQ_CMD, BIT(rxq_def));
- }
+ 	if (S_ISLNK(table->mode)) {
+ 		/* It is not an error if we can not follow the link ignore it */
