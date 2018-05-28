@@ -1,71 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165764AbeE1OiJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:38:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51446 "EHLO mail.kernel.org"
+        id S1165830AbeE1OiT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:38:19 -0400
+Received: from gate.crashing.org ([63.228.1.57]:46790 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161336AbeE1Kbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:42 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 123/329] drm/exynos: g2d: Delete an error message for a failed memory allocation in two functions
-Date: Mon, 28 May 2018 12:00:52 +0200
-Message-Id: <20180528100252.931862396@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1161336AbeE1OiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:38:15 -0400
+Date: Mon, 28 May 2018 09:37:19 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/Makefile: fix build failure by disabling attribute-alias warning
+Message-ID: <20180528143719.GB17342@gate.crashing.org>
+References: <0adce33cf1c70ac7203f8ebd987a912451aabd45.1527517001.git.christophe.leroy@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0adce33cf1c70ac7203f8ebd987a912451aabd45.1527517001.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 02:17:49PM +0000, Christophe Leroy wrote:
+> Latest GCC version emit many warnings similar to the following one.
 
-------------------
+You didn't actually show an example?
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+This warning should detect serious problems, so don't disable it without
+first investigating please.
 
-[ Upstream commit 6f0a60298bbbea43ab5e3955913ab19c153076f3 ]
+What do you call "latest version", btw?  Trunk, aka 9.0?  Or the most
+advanced release, 8.1?  Or the latest release (which also is 8.1 :-) )
 
-Omit an extra message for a memory allocation failure in these functions.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -286,7 +286,6 @@ static int g2d_init_cmdlist(struct g2d_d
- 
- 	node = kcalloc(G2D_CMDLIST_NUM, sizeof(*node), GFP_KERNEL);
- 	if (!node) {
--		dev_err(dev, "failed to allocate memory\n");
- 		ret = -ENOMEM;
- 		goto err;
- 	}
-@@ -1358,10 +1357,9 @@ int exynos_g2d_exec_ioctl(struct drm_dev
- 		return -EFAULT;
- 
- 	runqueue_node = kmem_cache_alloc(g2d->runqueue_slab, GFP_KERNEL);
--	if (!runqueue_node) {
--		dev_err(dev, "failed to allocate memory\n");
-+	if (!runqueue_node)
- 		return -ENOMEM;
--	}
-+
- 	run_cmdlist = &runqueue_node->run_cmdlist;
- 	event_list = &runqueue_node->event_list;
- 	INIT_LIST_HEAD(run_cmdlist);
+Segher
