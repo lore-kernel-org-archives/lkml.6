@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422894AbeE1LDF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50172 "EHLO mail.kernel.org"
+        id S1423340AbeE1MRt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:17:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422864AbeE1LCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:54 -0400
+        id S1422872AbeE1LDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jake Moroni <mail@jakemoroni.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 474/496] dpaa_eth: fix pause capability advertisement logic
-Date: Mon, 28 May 2018 12:04:19 +0200
-Message-Id: <20180528100339.880463103@linuxfoundation.org>
+Subject: [PATCH 4.14 478/496] perf test: Fix test case inet_pton to accept inlines.
+Date: Mon, 28 May 2018 12:04:23 +0200
+Message-Id: <20180528100340.040438373@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,31 +33,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jake Moroni <mail@jakemoroni.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-[ Upstream commit 3021efb440d02bf5b952b6d151c7ffee9bdd49fe ]
+[ Upstream commit 0f19a038afdc592176c9a302f0d08be6a68ad74a ]
 
-The ADVERTISED_Asym_Pause bit was being improperly set when both
-rx and tx pause were enabled. When rx and tx are both enabled, only
-the ADVERTISED_Pause bit is supposed to be set.
+Using Fedora 27 and latest Linux kernel the test case
+trace+probe_libc_inet_pton.sh fails again on s390.  This time is the
+inlining of functions which does not match.  After an update of the
+glibc (from 2.26-16 to 2.26-24) the output is different
 
-Signed-off-by: Jake Moroni <mail@jakemoroni.com>
-Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The expected output is:
+
+             __inet_pton (/usr/lib64/libc-2.26.so)
+             gaih_inet (inlined)
+             ....
+
+The actual output is:
+
+  1 packets transmitted, 1 received, 0% packet loss, time 0ms
+  rtt min/avg/max/mdev = 0.061/0.061/0.061/0.000 ms
+       0.000 probe_libc:inet_pton:(3ffb2140448))
+             __inet_pton (inlined)
+             gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+             ...
+
+Fix this by being less strict on 'inlined' verses library name and
+accept both
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180214070303.55757-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/shell/trace+probe_libc_inet_pton.sh |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-@@ -211,7 +211,7 @@ static int dpaa_set_pauseparam(struct ne
- 	if (epause->rx_pause)
- 		newadv = ADVERTISED_Pause | ADVERTISED_Asym_Pause;
- 	if (epause->tx_pause)
--		newadv |= ADVERTISED_Asym_Pause;
-+		newadv ^= ADVERTISED_Asym_Pause;
- 
- 	oldadv = phydev->advertising &
- 			(ADVERTISED_Pause | ADVERTISED_Asym_Pause);
+--- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+@@ -21,12 +21,12 @@ trace_libc_inet_pton_backtrace() {
+ 	expected[3]=".*packets transmitted.*"
+ 	expected[4]="rtt min.*"
+ 	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
+-	expected[6]=".*inet_pton[[:space:]]\($libc\)$"
++	expected[6]=".*inet_pton[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf'
+-		expected[7]="gaih_inet[[:space:]]\(inlined\)$"
+-		expected[8]="__GI_getaddrinfo[[:space:]]\(inlined\)$"
++		expected[7]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
++		expected[8]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
+ 		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
+ 		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
+ 		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
