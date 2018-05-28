@@ -1,74 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165691AbeE1O1G (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:27:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161787AbeE1Kdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:42 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joey Pabalinas <joeypabalinas@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 167/329] net/tcp/illinois: replace broken algorithm reference link
-Date: Mon, 28 May 2018 12:01:36 +0200
-Message-Id: <20180528100256.319620583@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1165698AbeE1O1Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:27:16 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38218 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161787AbeE1O1J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:27:09 -0400
+Date: Mon, 28 May 2018 16:27:00 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Tariq Toukan <tariqt@mellanox.com>
+cc: Song Liu <liu.song.a23@gmail.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>, kernel-team@fb.com
+Subject: Re: WARNING and PANIC in irq_matrix_free
+In-Reply-To: <1b4ded38-f217-fafa-d920-cddf980a685c@mellanox.com>
+Message-ID: <alpine.DEB.2.21.1805281625260.1584@nanos.tec.linutronix.de>
+References: <e2ec1a14-326a-57c2-56a6-7c2235e5b8b3@mellanox.com> <alpine.DEB.2.21.1802201829180.24268@nanos.tec.linutronix.de> <CAJwJo6aeb2q-C1R2MBnQQ8yR+7Xy4FWqSmBCE=7CkK_OHNCqSQ@mail.gmail.com> <alpine.DEB.2.21.1805191319190.1599@nanos.tec.linutronix.de>
+ <16f47fa4-1555-cddb-3dfb-7d56fb992ea1@mellanox.com> <alpine.DEB.2.21.1805231049021.1598@nanos.tec.linutronix.de> <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com> <alpine.DEB.2.21.1805281251140.1578@nanos.tec.linutronix.de>
+ <1b4ded38-f217-fafa-d920-cddf980a685c@mellanox.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 28 May 2018, Tariq Toukan wrote:
+> On 28/05/2018 1:53 PM, Thomas Gleixner wrote:
+> > On Fri, 25 May 2018, Song Liu wrote:
+> > > On Wed, May 23, 2018 at 1:49 AM, Thomas Gleixner <tglx@linutronix.de>
+> > > wrote:
+> > > > On Wed, 23 May 2018, Tariq Toukan wrote:
+> > > > > I have your patch merged into my internal branch, it prints the
+> > > > > following:
+> > > > > 
+> > > > > [ 4898.226258] Trying to clear prev_vector: 0
+> > > > > [ 4898.226439] Trying to clear prev_vector: 0
+> > > > > 
+> > > > > i.e. vector(0) is lower than FIRST_EXTERNAL_VECTOR.
+> > > > 
+> > > > Could you please enable the vector and irq matrix trace points and
+> > > > capture
+> > > > the trace when this happens?
+> > 
+> > Does the patch below fix it?
+> > 
+> > Thanks,
+> > 
+> > 	tglx
+> > 
+> > 8<-------------------
+> > diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+> > index bb6f7a2148d7..54af3d4884b1 100644
+> > --- a/arch/x86/kernel/apic/vector.c
+> > +++ b/arch/x86/kernel/apic/vector.c
+> > @@ -148,6 +148,7 @@ static void apic_update_vector(struct irq_data *irqd,
+> > unsigned int newvec,
+> >   	 * prev_vector for this and the offlined target case.
+> >   	 */
+> >   	apicd->prev_vector = 0;
+> > +	apicd->move_in_progress = false;
+> >   	if (!apicd->vector || apicd->vector == MANAGED_IRQ_SHUTDOWN_VECTOR)
+> >   		goto setnew;
+> >   	/*
+> > 
+> 
+> I took it into my internal branch. Will let you know.
 
-------------------
+Note, I'd still like to see a trace w/o the patch which shows which order
+of events leads to this. Even if the patch cures it, it might just paper
+over it and not fixing the root cause.
 
-From: Joey Pabalinas <joeypabalinas@gmail.com>
+Thanks,
 
-[ Upstream commit ecc832758a654e375924ebf06a4ac971acb5ce60 ]
-
-The link to the pdf containing the algorithm description is now a
-dead link; it seems http://www.ifp.illinois.edu/~srikant/ has been
-moved to https://sites.google.com/a/illinois.edu/srikant/ and none of
-the original papers can be found there...
-
-I have replaced it with the only working copy I was able to find.
-
-n.b. there is also a copy available at:
-
-http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.296.6350&rep=rep1&type=pdf
-
-However, this seems to only be a *cached* version, so I am unsure
-exactly how reliable that link can be expected to remain over time
-and have decided against using that one.
-
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-
- net/ipv4/tcp_illinois.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_illinois.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/ipv4/tcp_illinois.c
-+++ b/net/ipv4/tcp_illinois.c
-@@ -6,7 +6,7 @@
-  * The algorithm is described in:
-  * "TCP-Illinois: A Loss and Delay-Based Congestion Control Algorithm
-  *  for High-Speed Networks"
-- * http://www.ifp.illinois.edu/~srikant/Papers/liubassri06perf.pdf
-+ * http://tamerbasar.csl.illinois.edu/LiuBasarSrikantPerfEvalArtJun2008.pdf
-  *
-  * Implemented from description in paper and ns-2 simulation.
-  * Copyright (C) 2007 Stephen Hemminger <shemminger@linux-foundation.org>
+	tglx
