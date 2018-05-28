@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034095AbeE1PSL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:18:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41778 "EHLO mail.kernel.org"
+        id S1034206AbeE1PSk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:18:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033156AbeE1KWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:22 -0400
+        id S1033474AbeE1KWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 152/268] net/usb/qmi_wwan.c: Add USB id for lt4120 modem
-Date: Mon, 28 May 2018 12:02:06 +0200
-Message-Id: <20180528100219.640999454@linuxfoundation.org>
+Subject: [PATCH 4.4 180/268] btrfs: tests/qgroup: Fix wrong tree backref level
+Date: Mon, 28 May 2018 12:02:34 +0200
+Message-Id: <20180528100222.775137840@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,27 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit f3d801baf118c9d452ee7c278df16880c892e669 ]
+[ Upstream commit 3c0efdf03b2d127f0e40e30db4e7aa0429b1b79a ]
 
-This is needed to support the modem found in HP EliteBook 820 G3.
+The extent tree of the test fs is like the following:
 
-Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ BTRFS info (device (null)): leaf 16327509003777336587 total ptrs 1 free space 3919
+  item 0 key (4096 168 4096) itemoff 3944 itemsize 51
+          extent refs 1 gen 1 flags 2
+          tree block key (68719476736 0 0) level 1
+                                           ^^^^^^^
+          ref#0: tree block backref root 5
+
+And it's using an empty tree for fs tree, so there is no way that its
+level can be 1.
+
+For REAL (created by mkfs) fs tree backref with no skinny metadata, the
+result should look like:
+
+ item 3 key (30408704 EXTENT_ITEM 4096) itemoff 3845 itemsize 51
+         refs 1 gen 4 flags TREE_BLOCK
+         tree block key (256 INODE_ITEM 0) level 0
+                                           ^^^^^^^
+         tree block backref root 5
+
+Fix the level to 0, so it won't break later tree level checker.
+
+Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/tests/qgroup-tests.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -763,6 +763,7 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x413c, 0x81a9, 8)},	/* Dell Wireless 5808e Gobi(TM) 4G LTE Mobile Broadband Card */
- 	{QMI_FIXED_INTF(0x413c, 0x81b1, 8)},	/* Dell Wireless 5809e Gobi(TM) 4G LTE Mobile Broadband Card */
- 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
-+	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
- 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
- 	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
- 
+--- a/fs/btrfs/tests/qgroup-tests.c
++++ b/fs/btrfs/tests/qgroup-tests.c
+@@ -70,7 +70,7 @@ static int insert_normal_tree_ref(struct
+ 	btrfs_set_extent_generation(leaf, item, 1);
+ 	btrfs_set_extent_flags(leaf, item, BTRFS_EXTENT_FLAG_TREE_BLOCK);
+ 	block_info = (struct btrfs_tree_block_info *)(item + 1);
+-	btrfs_set_tree_block_level(leaf, block_info, 1);
++	btrfs_set_tree_block_level(leaf, block_info, 0);
+ 	iref = (struct btrfs_extent_inline_ref *)(block_info + 1);
+ 	if (parent > 0) {
+ 		btrfs_set_extent_inline_ref_type(leaf, iref,
