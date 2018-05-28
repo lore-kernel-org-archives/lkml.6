@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940467AbeE1Qsr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:48:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54470 "EHLO mail.kernel.org"
+        id S932185AbeE1KGW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:06:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754552AbeE1KGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:30 -0400
+        id S1754440AbeE1KGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
-Subject: [PATCH 3.18 003/185] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Date: Mon, 28 May 2018 12:00:44 +0200
-Message-Id: <20180528100050.899972001@linuxfoundation.org>
+        stable@vger.kernel.org, Binarus <lists@binarus.de>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 014/185] PCI: Add function 1 DMA alias quirk for Marvell 9128
+Date: Mon, 28 May 2018 12:00:55 +0200
+Message-Id: <20180528100051.487810366@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,33 +31,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
+[ Upstream commit aa008206634363ef800fbd5f0262016c9ff81dea ]
 
-Trivial fix to spelling mistake in debugfs_entries text.
+The Marvell 9128 is the original device generating bug 42679, from which
+many other Marvell DMA alias quirks have been sourced, but we didn't have
+positive confirmation of the fix on 9128 until now.
 
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
+Link: https://www.spinics.net/lists/kvm/msg161459.html
+Reported-by: Binarus <lists@binarus.de>
+Tested-by: Binarus <lists@binarus.de>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/kvm/mips.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/quirks.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -39,7 +39,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
- 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
- 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
- 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3559,6 +3559,8 @@ static void quirk_dma_func1_alias(struct
+  */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9123,
+ 			 quirk_dma_func1_alias);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9128,
++			 quirk_dma_func1_alias);
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c14 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9130,
+ 			 quirk_dma_func1_alias);
