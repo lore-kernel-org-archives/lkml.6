@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423179AbeE1LFv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:05:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52738 "EHLO mail.kernel.org"
+        id S1423191AbeE1LF7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:05:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423152AbeE1LFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:05:44 -0400
+        id S1423036AbeE1LFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH 4.16 040/272] KVM: s390: vsie: fix < 8k check for the itdba
-Date: Mon, 28 May 2018 12:01:13 +0200
-Message-Id: <20180528100244.138433291@linuxfoundation.org>
+        stable@vger.kernel.org, Pascal Roeleven <dev@pascalroeleven.nl>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 4.16 044/272] ARM: dts: sun4i: Fix incorrect clocks for displays
+Date: Mon, 28 May 2018 12:01:17 +0200
+Message-Id: <20180528100244.546738296@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,42 +29,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Pascal Roeleven <dev@pascalroeleven.nl>
 
-commit f4a551b72358facbbe5714248dff78404272feee upstream.
+commit 590b0c0cfc6162aeebbf43eaafb9753b56df1532 upstream.
 
-By missing an "L", we might detect some addresses to be <8k,
-although they are not.
+Some displays on sun4i devices wouldn't properly stay on unless
+'clk_ignore_unused' is used.
 
-e.g. for itdba = 100001fff
-!(gpa & ~0x1fffU) -> 1
-!(gpa & ~0x1fffUL) -> 0
+Change the duplicate clocks to the probably intended ones.
 
-So we would report a SIE validity intercept although everything is fine.
-
-Fixes: 166ecb3 ("KVM: s390: vsie: support transactional execution")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kvm/vsie.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sun4i-a10.dtsi |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -578,7 +578,7 @@ static int pin_blocks(struct kvm_vcpu *v
- 
- 	gpa = READ_ONCE(scb_o->itdba) & ~0xffUL;
- 	if (gpa && (scb_s->ecb & ECB_TE)) {
--		if (!(gpa & ~0x1fffU)) {
-+		if (!(gpa & ~0x1fffUL)) {
- 			rc = set_validity_icpt(scb_s, 0x0080U);
- 			goto unpin;
- 		}
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -76,7 +76,7 @@
+ 			allwinner,pipeline = "de_fe0-de_be0-lcd0-hdmi";
+ 			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_HDMI0>,
+ 				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
+-				 <&ccu CLK_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
++				 <&ccu CLK_DE_BE0>, <&ccu CLK_DE_FE0>,
+ 				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_HDMI>,
+ 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
+ 			status = "disabled";
+@@ -88,7 +88,7 @@
+ 			allwinner,pipeline = "de_fe0-de_be0-lcd0";
+ 			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_DE_BE0>,
+ 				 <&ccu CLK_AHB_DE_FE0>, <&ccu CLK_DE_BE0>,
+-				 <&ccu CLK_AHB_DE_FE0>, <&ccu CLK_TCON0_CH0>,
++				 <&ccu CLK_DE_FE0>, <&ccu CLK_TCON0_CH0>,
+ 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
+ 			status = "disabled";
+ 		};
+@@ -99,7 +99,7 @@
+ 			allwinner,pipeline = "de_fe0-de_be0-lcd0-tve0";
+ 			clocks = <&ccu CLK_AHB_TVE0>, <&ccu CLK_AHB_LCD0>,
+ 				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
+-				 <&ccu CLK_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
++				 <&ccu CLK_DE_BE0>, <&ccu CLK_DE_FE0>,
+ 				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_DRAM_TVE0>,
+ 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
+ 			status = "disabled";
