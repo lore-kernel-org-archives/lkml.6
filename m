@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164448AbeE1M7X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:59:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43020 "EHLO mail.kernel.org"
+        id S933058AbeE1M7T (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:59:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164226AbeE1Kx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:57 -0400
+        id S1164211AbeE1KyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cathy Zhou <Cathy.Zhou@Oracle.COM>,
-        Shannon Nelson <shannon.nelson@Oracle.COM>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 248/496] sunvnet: does not support GSO for sctp
-Date: Mon, 28 May 2018 12:00:33 +0200
-Message-Id: <20180528100330.340701745@linuxfoundation.org>
+Subject: [PATCH 4.14 249/496] KVM: arm/arm64: vgic: Add missing irq_lock to vgic_mmio_read_pending
+Date: Mon, 28 May 2018 12:00:34 +0200
+Message-Id: <20180528100330.382811591@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +30,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cathy Zhou <Cathy.Zhou@Oracle.COM>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit cf55612a945039476abfd73e39064b2e721c3272 ]
+[ Upstream commit 62b06f8f429cd233e4e2e7bbd21081ad60c9018f ]
 
-The NETIF_F_GSO_SOFTWARE implies support for GSO on SCTP, but the
-sunvnet driver does not support GSO for sctp.  Here we remove the
-NETIF_F_GSO_SOFTWARE feature flag and only report NETIF_F_ALL_TSO
-instead.
+Our irq_is_pending() helper function accesses multiple members of the
+vgic_irq struct, so we need to hold the lock when calling it.
+Add that requirement as a comment to the definition and take the lock
+around the call in vgic_mmio_read_pending(), where we were missing it
+before.
 
-Signed-off-by: Cathy Zhou <Cathy.Zhou@Oracle.COM>
-Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 96b298000db4 ("KVM: arm/arm64: vgic-new: Add PENDING registers handlers")
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/sun/sunvnet.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/vgic/vgic-mmio.c |    3 +++
+ virt/kvm/arm/vgic/vgic.h      |    1 +
+ 2 files changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/sun/sunvnet.c
-+++ b/drivers/net/ethernet/sun/sunvnet.c
-@@ -311,7 +311,7 @@ static struct vnet *vnet_new(const u64 *
- 	dev->ethtool_ops = &vnet_ethtool_ops;
- 	dev->watchdog_timeo = VNET_TX_TIMEOUT;
+--- a/virt/kvm/arm/vgic/vgic-mmio.c
++++ b/virt/kvm/arm/vgic/vgic-mmio.c
+@@ -110,9 +110,12 @@ unsigned long vgic_mmio_read_pending(str
+ 	/* Loop over all IRQs affected by this read */
+ 	for (i = 0; i < len * 8; i++) {
+ 		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
++		unsigned long flags;
  
--	dev->hw_features = NETIF_F_TSO | NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
-+	dev->hw_features = NETIF_F_TSO | NETIF_F_GSO | NETIF_F_ALL_TSO |
- 			   NETIF_F_HW_CSUM | NETIF_F_SG;
- 	dev->features = dev->hw_features;
++		spin_lock_irqsave(&irq->irq_lock, flags);
+ 		if (irq_is_pending(irq))
+ 			value |= (1U << i);
++		spin_unlock_irqrestore(&irq->irq_lock, flags);
  
+ 		vgic_put_irq(vcpu->kvm, irq);
+ 	}
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -96,6 +96,7 @@
+ /* we only support 64 kB translation table page size */
+ #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
+ 
++/* Requires the irq_lock to be held by the caller. */
+ static inline bool irq_is_pending(struct vgic_irq *irq)
+ {
+ 	if (irq->config == VGIC_CONFIG_EDGE)
