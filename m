@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937675AbeE1Koi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:44:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35272 "EHLO mail.kernel.org"
+        id S937690AbeE1Kom (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:44:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937511AbeE1Koc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:32 -0400
+        id S937393AbeE1Koi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:44:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matan Barak <matanb@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 078/496] IB/uverbs: Fix possible oops with duplicate ioctl attributes
-Date: Mon, 28 May 2018 11:57:43 +0200
-Message-Id: <20180528100323.063680185@linuxfoundation.org>
+Subject: [PATCH 4.14 080/496] arm64: dts: rockchip: Fix DWMMC clocks
+Date: Mon, 28 May 2018 11:57:45 +0200
+Message-Id: <20180528100323.146750058@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,40 +30,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matan Barak <matanb@mellanox.com>
+From: Robin Murphy <robin.murphy@arm.com>
 
-[ Upstream commit 4d39a959bc1f3d164b5a54147fdeb19f84b1ed58 ]
+[ Upstream commit ca9eee95a2decc6f60bed65b5b836a26bff825c1 ]
 
-If the same attribute is listed twice by the user in the ioctl attribute
-list then error unwind can cause the kernel to deref garbage.
+Trying to boot an RK3328 box with an HS200-capable eMMC, I see said eMMC
+fail to initialise as it can't run its tuning procedure, because the
+sample clock is missing. Upon closer inspection, whilst the clock is
+present in the DT, its name is subtly incorrect per the binding, so
+__of_clk_get_by_name() never finds it. By inspection, the drive clock
+suffers from a similar problem, so has never worked properly either.
 
-This happens when an object with WRITE access is sent twice. The second
-parse properly fails but corrupts the state required for the error unwind
-it triggers.
+Fix up all instances of the incorrect clock names across the 64-bit DTs.
 
-Fixing this by making duplicates in the attribute list invalid. This is
-not something we need to support.
-
-The ioctl interface is currently recommended to be disabled in kConfig.
-
-Signed-off-by: Matan Barak <matanb@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: d717f7352ec6 ("arm64: dts: rockchip: add sdmmc/sdio/emmc nodes for RK3328 SoCs")
+Fixes: b790c2cab5ca ("arm64: dts: add Rockchip rk3368 core dtsi and board dts for the r88 board")
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_ioctl.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi |    6 +++---
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/infiniband/core/uverbs_ioctl.c
-+++ b/drivers/infiniband/core/uverbs_ioctl.c
-@@ -59,6 +59,9 @@ static int uverbs_process_attr(struct ib
- 			return 0;
- 	}
- 
-+	if (test_bit(attr_id, attr_bundle_h->valid_bitmap))
-+		return -EINVAL;
-+
- 	spec = &attr_spec_bucket->attrs[attr_id];
- 	e = &elements[attr_id];
- 	e->uattr = uattr_ptr;
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -683,7 +683,7 @@
+ 		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
+ 			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
+-		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
++		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		status = "disabled";
+ 	};
+@@ -694,7 +694,7 @@
+ 		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
+ 			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
+-		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
++		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		status = "disabled";
+ 	};
+@@ -705,7 +705,7 @@
+ 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
+ 			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
+-		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
++		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		status = "disabled";
+ 	};
+--- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+@@ -257,7 +257,7 @@
+ 		max-frequency = <150000000>;
+ 		clocks = <&cru HCLK_SDIO0>, <&cru SCLK_SDIO0>,
+ 			 <&cru SCLK_SDIO0_DRV>, <&cru SCLK_SDIO0_SAMPLE>;
+-		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
++		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+ 		resets = <&cru SRST_SDIO0>;
