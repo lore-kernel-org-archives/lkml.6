@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161409AbeE1Kbz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:31:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51596 "EHLO mail.kernel.org"
+        id S1165809AbeE1Oh0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:37:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161109AbeE1Kbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:31:47 -0400
+        id S1161398AbeE1Kbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 125/329] md: raid5: avoid string overflow warning
-Date: Mon, 28 May 2018 12:00:54 +0200
-Message-Id: <20180528100253.091308779@linuxfoundation.org>
+Subject: [PATCH 4.9 128/329] s390/cio: fix ccw_device_start_timeout API
+Date: Mon, 28 May 2018 12:00:57 +0200
+Message-Id: <20180528100253.340933511@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,63 +30,196 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-[ Upstream commit 53b8d89ddbdbb0e4625a46d2cdbb6f106c52f801 ]
+[ Upstream commit f97a6b6c47d2f329a24f92cc0ca3c6df5727ba73 ]
 
-gcc warns about a possible overflow of the kmem_cache string, when adding
-four characters to a string of the same length:
+There are cases a device driver can't start IO because the device is
+currently in use by cio. In this case the device driver is notified
+when the device is usable again.
 
-drivers/md/raid5.c: In function 'setup_conf':
-drivers/md/raid5.c:2207:34: error: '-alt' directive writing 4 bytes into a region of size between 1 and 32 [-Werror=format-overflow=]
-  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-                                  ^~~~
-drivers/md/raid5.c:2207:2: note: 'sprintf' output between 5 and 36 bytes into a destination of size 32
-  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using ccw_device_start_timeout we would set the timeout (and change
+an existing timeout) before we test for internal usage. Worst case
+this could lead to an unexpected timer deletion.
 
-If I'm counting correctly, we need 11 characters for the fixed part
-of the string and 18 characters for a 64-bit pointer (when no gendisk
-is used), so that leaves three characters for conf->level, which should
-always be sufficient.
+Fix this by setting the timeout after we test for internal usage.
 
-This makes the code use snprintf() with the correct length, to
-make the code more robust against changes, and to get the compiler
-to shut up.
-
-In commit f4be6b43f1ac ("md/raid5: ensure we create a unique name for
-kmem_cache when mddev has no gendisk") from 2010, Neil said that
-the pointer could be removed "shortly" once devices without gendisk
-are disallowed. I have no idea if that happened, but if it did, that
-should probably be changed as well.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid5.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/s390/cio/device_ops.c |   72 ++++++++++++++++++------------------------
+ 1 file changed, 32 insertions(+), 40 deletions(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2049,15 +2049,16 @@ static int grow_one_stripe(struct r5conf
- static int grow_stripes(struct r5conf *conf, int num)
+--- a/drivers/s390/cio/device_ops.c
++++ b/drivers/s390/cio/device_ops.c
+@@ -158,7 +158,7 @@ int ccw_device_clear(struct ccw_device *
+ }
+ 
+ /**
+- * ccw_device_start_key() - start a s390 channel program with key
++ * ccw_device_start_timeout_key() - start a s390 channel program with timeout and key
+  * @cdev: target ccw device
+  * @cpa: logical start address of channel program
+  * @intparm: user specific interruption parameter; will be presented back to
+@@ -169,10 +169,15 @@ int ccw_device_clear(struct ccw_device *
+  * @key: storage key to be used for the I/O
+  * @flags: additional flags; defines the action to be performed for I/O
+  *	   processing.
++ * @expires: timeout value in jiffies
+  *
+  * Start a S/390 channel program. When the interrupt arrives, the
+  * IRQ handler is called, either immediately, delayed (dev-end missing,
+  * or sense required) or never (no IRQ handler registered).
++ * This function notifies the device driver if the channel program has not
++ * completed during the time specified by @expires. If a timeout occurs, the
++ * channel program is terminated via xsch, hsch or csch, and the device's
++ * interrupt handler will be called with an irb containing ERR_PTR(-%ETIMEDOUT).
+  * Returns:
+  *  %0, if the operation was successful;
+  *  -%EBUSY, if the device is busy, or status pending;
+@@ -181,9 +186,9 @@ int ccw_device_clear(struct ccw_device *
+  * Context:
+  *  Interrupts disabled, ccw device lock held
+  */
+-int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
+-			 unsigned long intparm, __u8 lpm, __u8 key,
+-			 unsigned long flags)
++int ccw_device_start_timeout_key(struct ccw_device *cdev, struct ccw1 *cpa,
++				 unsigned long intparm, __u8 lpm, __u8 key,
++				 unsigned long flags, int expires)
  {
- 	struct kmem_cache *sc;
-+	size_t namelen = sizeof(conf->cache_name[0]);
- 	int devs = max(conf->raid_disks, conf->previous_raid_disks);
+ 	struct subchannel *sch;
+ 	int ret;
+@@ -223,6 +228,8 @@ int ccw_device_start_key(struct ccw_devi
+ 	switch (ret) {
+ 	case 0:
+ 		cdev->private->intparm = intparm;
++		if (expires)
++			ccw_device_set_timeout(cdev, expires);
+ 		break;
+ 	case -EACCES:
+ 	case -ENODEV:
+@@ -233,7 +240,7 @@ int ccw_device_start_key(struct ccw_devi
+ }
  
- 	if (conf->mddev->gendisk)
--		sprintf(conf->cache_name[0],
-+		snprintf(conf->cache_name[0], namelen,
- 			"raid%d-%s", conf->level, mdname(conf->mddev));
- 	else
--		sprintf(conf->cache_name[0],
-+		snprintf(conf->cache_name[0], namelen,
- 			"raid%d-%p", conf->level, conf->mddev);
--	sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
-+	snprintf(conf->cache_name[1], namelen, "%.27s-alt", conf->cache_name[0]);
+ /**
+- * ccw_device_start_timeout_key() - start a s390 channel program with timeout and key
++ * ccw_device_start_key() - start a s390 channel program with key
+  * @cdev: target ccw device
+  * @cpa: logical start address of channel program
+  * @intparm: user specific interruption parameter; will be presented back to
+@@ -244,15 +251,10 @@ int ccw_device_start_key(struct ccw_devi
+  * @key: storage key to be used for the I/O
+  * @flags: additional flags; defines the action to be performed for I/O
+  *	   processing.
+- * @expires: timeout value in jiffies
+  *
+  * Start a S/390 channel program. When the interrupt arrives, the
+  * IRQ handler is called, either immediately, delayed (dev-end missing,
+  * or sense required) or never (no IRQ handler registered).
+- * This function notifies the device driver if the channel program has not
+- * completed during the time specified by @expires. If a timeout occurs, the
+- * channel program is terminated via xsch, hsch or csch, and the device's
+- * interrupt handler will be called with an irb containing ERR_PTR(-%ETIMEDOUT).
+  * Returns:
+  *  %0, if the operation was successful;
+  *  -%EBUSY, if the device is busy, or status pending;
+@@ -261,19 +263,12 @@ int ccw_device_start_key(struct ccw_devi
+  * Context:
+  *  Interrupts disabled, ccw device lock held
+  */
+-int ccw_device_start_timeout_key(struct ccw_device *cdev, struct ccw1 *cpa,
+-				 unsigned long intparm, __u8 lpm, __u8 key,
+-				 unsigned long flags, int expires)
++int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
++			 unsigned long intparm, __u8 lpm, __u8 key,
++			 unsigned long flags)
+ {
+-	int ret;
+-
+-	if (!cdev)
+-		return -ENODEV;
+-	ccw_device_set_timeout(cdev, expires);
+-	ret = ccw_device_start_key(cdev, cpa, intparm, lpm, key, flags);
+-	if (ret != 0)
+-		ccw_device_set_timeout(cdev, 0);
+-	return ret;
++	return ccw_device_start_timeout_key(cdev, cpa, intparm, lpm, key,
++					    flags, 0);
+ }
  
- 	conf->active_name = 0;
- 	sc = kmem_cache_create(conf->cache_name[conf->active_name],
+ /**
+@@ -488,18 +483,20 @@ void ccw_device_get_id(struct ccw_device
+ EXPORT_SYMBOL(ccw_device_get_id);
+ 
+ /**
+- * ccw_device_tm_start_key() - perform start function
++ * ccw_device_tm_start_timeout_key() - perform start function
+  * @cdev: ccw device on which to perform the start function
+  * @tcw: transport-command word to be started
+  * @intparm: user defined parameter to be passed to the interrupt handler
+  * @lpm: mask of paths to use
+  * @key: storage key to use for storage access
++ * @expires: time span in jiffies after which to abort request
+  *
+  * Start the tcw on the given ccw device. Return zero on success, non-zero
+  * otherwise.
+  */
+-int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
+-			    unsigned long intparm, u8 lpm, u8 key)
++int ccw_device_tm_start_timeout_key(struct ccw_device *cdev, struct tcw *tcw,
++				    unsigned long intparm, u8 lpm, u8 key,
++				    int expires)
+ {
+ 	struct subchannel *sch;
+ 	int rc;
+@@ -526,37 +523,32 @@ int ccw_device_tm_start_key(struct ccw_d
+ 			return -EACCES;
+ 	}
+ 	rc = cio_tm_start_key(sch, tcw, lpm, key);
+-	if (rc == 0)
++	if (rc == 0) {
+ 		cdev->private->intparm = intparm;
++		if (expires)
++			ccw_device_set_timeout(cdev, expires);
++	}
+ 	return rc;
+ }
+-EXPORT_SYMBOL(ccw_device_tm_start_key);
++EXPORT_SYMBOL(ccw_device_tm_start_timeout_key);
+ 
+ /**
+- * ccw_device_tm_start_timeout_key() - perform start function
++ * ccw_device_tm_start_key() - perform start function
+  * @cdev: ccw device on which to perform the start function
+  * @tcw: transport-command word to be started
+  * @intparm: user defined parameter to be passed to the interrupt handler
+  * @lpm: mask of paths to use
+  * @key: storage key to use for storage access
+- * @expires: time span in jiffies after which to abort request
+  *
+  * Start the tcw on the given ccw device. Return zero on success, non-zero
+  * otherwise.
+  */
+-int ccw_device_tm_start_timeout_key(struct ccw_device *cdev, struct tcw *tcw,
+-				    unsigned long intparm, u8 lpm, u8 key,
+-				    int expires)
++int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
++			    unsigned long intparm, u8 lpm, u8 key)
+ {
+-	int ret;
+-
+-	ccw_device_set_timeout(cdev, expires);
+-	ret = ccw_device_tm_start_key(cdev, tcw, intparm, lpm, key);
+-	if (ret != 0)
+-		ccw_device_set_timeout(cdev, 0);
+-	return ret;
++	return ccw_device_tm_start_timeout_key(cdev, tcw, intparm, lpm, key, 0);
+ }
+-EXPORT_SYMBOL(ccw_device_tm_start_timeout_key);
++EXPORT_SYMBOL(ccw_device_tm_start_key);
+ 
+ /**
+  * ccw_device_tm_start() - perform start function
