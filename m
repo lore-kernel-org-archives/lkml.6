@@ -1,129 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425481AbeE1QqY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:46:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932198AbeE1KHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:02 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Daney <david.daney@cavium.com>,
-        David Miller <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Nitin Gupta <nitin.m.gupta@oracle.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 031/185] asm-generic: provide generic_pmdp_establish()
-Date: Mon, 28 May 2018 12:01:12 +0200
-Message-Id: <20180528100052.466166017@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S940465AbeE1Qqh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:46:37 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34617 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940428AbeE1Qq1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:46:27 -0400
+X-Google-Smtp-Source: AB8JxZqML3aAQebWoMwKuiYoajBDchpPnOEw7eGSIYk/TskbiNzAKPd/nw/quv8KXI6bsZjIRXnhjQ==
+Date: Mon, 28 May 2018 10:46:22 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 rdma-next 3/4] RDMA/hns: Add reset process for RoCE in
+ hip08
+Message-ID: <20180528164622.GB17505@ziepe.ca>
+References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
+ <1527070590-94399-4-git-send-email-xavier.huwei@huawei.com>
+ <20180524213143.GE3948@ziepe.ca>
+ <5B07A517.7030507@huawei.com>
+ <20180525145553.GA27342@ziepe.ca>
+ <5B08BCBF.9040001@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B08BCBF.9040001@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Sat, May 26, 2018 at 09:47:43AM +0800, Wei Hu (Xavier) wrote:
+> 
+> 
+> On 2018/5/25 22:55, Jason Gunthorpe wrote:
+> > On Fri, May 25, 2018 at 01:54:31PM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2018/5/25 5:31, Jason Gunthorpe wrote:
+> >>>>  static const struct hnae3_client_ops hns_roce_hw_v2_ops = {
+> >>>>  	.init_instance = hns_roce_hw_v2_init_instance,
+> >>>>  	.uninit_instance = hns_roce_hw_v2_uninit_instance,
+> >>>> +	.reset_notify = hns_roce_hw_v2_reset_notify,
+> >>>>  };
+> >>>>  
+> >>>>  static struct hnae3_client hns_roce_hw_v2_client = {
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+> >>>> index 1b79a38..ac51372 100644
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+> >>>> @@ -332,6 +332,9 @@ static struct ib_ucontext *hns_roce_alloc_ucontext(struct ib_device *ib_dev,
+> >>>>  	struct hns_roce_ib_alloc_ucontext_resp resp = {};
+> >>>>  	struct hns_roce_dev *hr_dev = to_hr_dev(ib_dev);
+> >>>>  
+> >>>> +	if (!hr_dev->active)
+> >>>> +		return ERR_PTR(-EAGAIN);
+> >>> This still doesn't make sense, ib_unregister_device already makes sure
+> >>> that hns_roce_alloc_ucontext isn't running and won't be called before
+> >>> returning, don't need another flag to do that.
+> >>>
+> >>> Since this is the only place the active flag is tested it can just be deleted
+> >>> entirely.
+> >> Hi, Jason
+> >>    
+> >>     roce reset process:
+> >>     1. hr_dev->active = false;  //make sure no any process call
+> >> ibv_open_device.   
+> >>     2. call ib_dispatch_event() function to report IB_EVENT_DEVICE_FATAL
+> >> event.
+> >>     3. msleep(100);   // for some app to free resources
+> >>     4. call ib_unregister_device().   
+> >>     5. ...
+> >>     6. ...
+> >>
+> >>     There are 2 steps as above before calling ib_unregister_device(), we
+> >> evaluate
+> >> hr_dev->active with false to avoid no any process call
+> >> ibv_open_device.
+> > If you think this is the right flow then it is core issue to block new
+> > opens, not an individual driver issue, send a core patch - eg add a
+> > 'ib_driver_fatal_error()' call that does the dispatch and call it from
+> > all the drivers using this IB_EVENT_DEVICE_FATAL
+> Hi, Jason
+> 
+> It seem to be no difference between calling ib_driver_fatal_error and
+> calling ib_dispatch_event  directly in manufacturer driver.
+> 
+> void ib_driver_fatal_error(struct ib_device *ib_dev, u8 port_num)
+>  {
+>        struct ib_event event;
+>                 
+>   event.event = IB_EVENT_DEVICE_FATAL;
+>     event.device = ib_dev;
+>     event.element.port_num = port_num;
+>     ib_dispatch_event(&event);
+> }
 
-------------------
+My point was the core code should block calling
+hns_roce_alloc_ucontext after DEVICE_FATAL if we agree that is
+correct, the driver shouldn't be doing it.
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-
-[ Upstream commit c58f0bb77ed8bf93dfdde762b01cb67eebbdfc29 ]
-
-Patch series "Do not lose dirty bit on THP pages", v4.
-
-Vlastimil noted that pmdp_invalidate() is not atomic and we can lose
-dirty and access bits if CPU sets them after pmdp dereference, but
-before set_pmd_at().
-
-The bug can lead to data loss, but the race window is tiny and I haven't
-seen any reports that suggested that it happens in reality.  So I don't
-think it worth sending it to stable.
-
-Unfortunately, there's no way to address the issue in a generic way.  We
-need to fix all architectures that support THP one-by-one.
-
-All architectures that have THP supported have to provide atomic
-pmdp_invalidate() that returns previous value.
-
-If generic implementation of pmdp_invalidate() is used, architecture
-needs to provide atomic pmdp_estabish().
-
-pmdp_estabish() is not used out-side generic implementation of
-pmdp_invalidate() so far, but I think this can change in the future.
-
-This patch (of 12):
-
-This is an implementation of pmdp_establish() that is only suitable for
-an architecture that doesn't have hardware dirty/accessed bits.  In this
-case we can't race with CPU which sets these bits and non-atomic
-approach is fine.
-
-Link: http://lkml.kernel.org/r/20171213105756.69879-2-kirill.shutemov@linux.intel.com
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: David Daney <david.daney@cavium.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Nitin Gupta <nitin.m.gupta@oracle.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/asm-generic/pgtable.h |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -181,6 +181,21 @@ extern void pgtable_trans_huge_deposit(s
- extern pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm, pmd_t *pmdp);
- #endif
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+/*
-+ * This is an implementation of pmdp_establish() that is only suitable for an
-+ * architecture that doesn't have hardware dirty/accessed bits. In this case we
-+ * can't race with CPU which sets these bits and non-atomic aproach is fine.
-+ */
-+static inline pmd_t generic_pmdp_establish(struct vm_area_struct *vma,
-+		unsigned long address, pmd_t *pmdp, pmd_t pmd)
-+{
-+	pmd_t old_pmd = *pmdp;
-+	set_pmd_at(vma->vm_mm, address, pmdp, pmd);
-+	return old_pmd;
-+}
-+#endif
-+
- #ifndef __HAVE_ARCH_PMDP_INVALIDATE
- extern void pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 			    pmd_t *pmdp);
+Jason
