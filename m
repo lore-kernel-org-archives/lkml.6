@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422934AbeE1LDm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:03:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
+        id S1423330AbeE1MPH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:15:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164883AbeE1LDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:03:36 -0400
+        id S1422928AbeE1LDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:03:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 458/496] net: stmmac: ensure that the device has released ownership before reading data
-Date: Mon, 28 May 2018 12:04:03 +0200
-Message-Id: <20180528100339.215354471@linuxfoundation.org>
+Subject: [PATCH 4.14 460/496] cpufreq: Reorder cpufreq_online() error code path
+Date: Mon, 28 May 2018 12:04:05 +0200
+Message-Id: <20180528100339.300856151@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,37 +30,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit a6b25da5e7ba212af5826a662e6a035a79bffabd ]
+[ Upstream commit b24b6478e65f140610ab1ffaadc7bc6bf0be8aad ]
 
-According to Documentation/memory-barriers.txt, we need to use a
-dma_rmb() after reading the status/own bit, to ensure that all
-descriptor fields are read after reading the own bit.
+Ideally the de-allocation of resources should happen in the exact
+opposite order in which they were allocated. It helps maintain the code
+in long term, even if nothing really breaks with incorrect ordering.
 
-This way, we ensure that the DMA engine is done with the DMA
-descriptor before we read the other descriptor fields, e.g. reading
-the tx hardware timestamp (if PTP is enabled).
+That wasn't followed in cpufreq_online() and it has some
+inconsistencies.  For example, the symlinks were created from within
+the locked region while they are removed only after putting the locks.
+Also ->exit() should have been called only after the symlinks are
+removed and the lock is dropped, as that was the case when ->init()
+was first called.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Subject ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/cpufreq/cpufreq.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1829,6 +1829,11 @@ static void stmmac_tx_clean(struct stmma
- 		if (unlikely(status & tx_dma_own))
- 			break;
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1315,14 +1315,14 @@ static int cpufreq_online(unsigned int c
+ 	return 0;
  
-+		/* Make sure descriptor fields are read after reading
-+		 * the own bit.
-+		 */
-+		dma_rmb();
+ out_exit_policy:
++	for_each_cpu(j, policy->real_cpus)
++		remove_cpu_dev_symlink(policy, get_cpu_device(j));
 +
- 		/* Just consider the last segment and ...*/
- 		if (likely(!(status & tx_not_ls))) {
- 			/* ... verify the status error condition */
+ 	up_write(&policy->rwsem);
+ 
+ 	if (cpufreq_driver->exit)
+ 		cpufreq_driver->exit(policy);
+ 
+-	for_each_cpu(j, policy->real_cpus)
+-		remove_cpu_dev_symlink(policy, get_cpu_device(j));
+-
+ out_free_policy:
+ 	cpufreq_policy_free(policy);
+ 	return ret;
