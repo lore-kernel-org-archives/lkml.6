@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034353AbeE1PZC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40188 "EHLO mail.kernel.org"
+        id S1034336AbeE1PY5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:24:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033204AbeE1KUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:20:33 -0400
+        id S1033219AbeE1KUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 143/268] RDMA/ucma: Correct option size check using optlen
-Date: Mon, 28 May 2018 12:01:57 +0200
-Message-Id: <20180528100218.534049011@linuxfoundation.org>
+Subject: [PATCH 4.4 114/268] dmaengine: rcar-dmac: fix max_chunk_size for R-Car Gen3
+Date: Mon, 28 May 2018 12:01:28 +0200
+Message-Id: <20180528100215.032778754@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,33 +32,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chien Tin Tung <chien.tin.tung@intel.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit 5f3e3b85cc0a5eae1c46d72e47d3de7bf208d9e2 ]
+[ Upstream commit d716d9b702bb759dd6fb50804f10a174bd156d71 ]
 
-The option size check is using optval instead of optlen
-causing the set option call to fail. Use the correct
-field, optlen, for size check.
+According to R-Car Gen3 Rev.0.80 manual, the DMATCR can be set to
+16,777,215 as maximum. So, this patch fixes the max_chunk_size for
+safety on all of SoCs. Otherwise, a system may hang if the DMATCR
+is set to 0 on R-Car Gen3.
 
-Fixes: 6a21dfc0d0db ("RDMA/ucma: Limit possible option size")
-Signed-off-by: Chien Tin Tung <chien.tin.tung@intel.com>
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/ucma.c |    2 +-
+ drivers/dma/sh/rcar-dmac.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1295,7 +1295,7 @@ static ssize_t ucma_set_option(struct uc
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -851,7 +851,7 @@ rcar_dmac_chan_prep_sg(struct rcar_dmac_
  
--	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
-+	if (unlikely(cmd.optlen > KMALLOC_MAX_SIZE))
- 		return -EINVAL;
+ 	rcar_dmac_chan_configure_desc(chan, desc);
  
- 	optval = memdup_user((void __user *) (unsigned long) cmd.optval,
+-	max_chunk_size = (RCAR_DMATCR_MASK + 1) << desc->xfer_shift;
++	max_chunk_size = RCAR_DMATCR_MASK << desc->xfer_shift;
+ 
+ 	/*
+ 	 * Allocate and fill the transfer chunk descriptors. We own the only
