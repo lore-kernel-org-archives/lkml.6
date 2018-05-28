@@ -1,153 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754975AbeE1RfN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 13:35:13 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:41767 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754772AbeE1RfD (ORCPT
+        id S1755552AbeE1Rfq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:35:46 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38259 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754646AbeE1ReW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 13:35:03 -0400
-X-Google-Smtp-Source: ADUXVKI038hIDaGsIaHREbVZI/8WlanpvcC6uSUuFc2LKeA0Bpt1nHg6fWQ43VMpJS3kPxOwZSFqKEeMFeqCTBLmoeLzLGMZtZxa
+        Mon, 28 May 2018 13:34:22 -0400
+X-Google-Smtp-Source: AB8JxZqaSZrbD5oA+QBrl+r1c9XFGmWQ43a2z6JUVwMffQJZ7xy5IvYmpKfYU4bJEEGS7+udBnDY1g==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.dider@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Colin Didier <colin.didier@devialet.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH 2/5] ARM: clk-imx6q: add EPIT clock support
+Date: Mon, 28 May 2018 19:34:09 +0200
+Message-Id: <20180528173412.10000-3-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
+References: <20180528173412.10000-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Date: Mon, 28 May 2018 10:35:02 -0700
-In-Reply-To: <000000000000ca8a42056d4530a5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f3a1b056d478948@google.com>
-Subject: Re: possible deadlock in bpf_tcp_close
-From: syzbot <syzbot+47ed903f50684f046b15@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+From: Colin Didier <colin.didier@devialet.com>
 
-HEAD commit:    7a1a98c171ea Merge branch 'bpf-sendmsg-hook'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=149ae2b7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
-dashboard link: https://syzkaller.appspot.com/bug?extid=47ed903f50684f046b15
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1553b17b800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1460be2f800000
+Add EPIT clock support to the i.MX6Q clocking infrastructure.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+47ed903f50684f046b15@syzkaller.appspotmail.com
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ drivers/clk/imx/clk-imx6q.c               | 2 ++
+ include/dt-bindings/clock/imx6qdl-clock.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.17.0-rc6+ #25 Not tainted
-------------------------------------------------------
-syz-executor800/4527 is trying to acquire lock:
-         (ptrval) (&htab->buckets[i].lock){+...}, at:  
-bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
-
-but task is already holding lock:
-         (ptrval) (clock-AF_INET6){++..}, at: bpf_tcp_close+0x241/0x10b0  
-kernel/bpf/sockmap.c:260
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (clock-AF_INET6){++..}:
-        __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
-        _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
-        sock_hash_delete_elem+0x7c6/0xaf0 kernel/bpf/sockmap.c:2338
-        map_delete_elem+0x32e/0x4e0 kernel/bpf/syscall.c:815
-        __do_sys_bpf kernel/bpf/syscall.c:2349 [inline]
-        __se_sys_bpf kernel/bpf/syscall.c:2317 [inline]
-        __x64_sys_bpf+0x342/0x510 kernel/bpf/syscall.c:2317
-        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&htab->buckets[i].lock){+...}:
-        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-        __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-        _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
-        bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
-        inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-        inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-        sock_release+0x96/0x1b0 net/socket.c:594
-        sock_close+0x16/0x20 net/socket.c:1149
-        __fput+0x34d/0x890 fs/file_table.c:209
-        ____fput+0x15/0x20 fs/file_table.c:243
-        task_work_run+0x1e4/0x290 kernel/task_work.c:113
-        exit_task_work include/linux/task_work.h:22 [inline]
-        do_exit+0x1aee/0x2730 kernel/exit.c:865
-        do_group_exit+0x16f/0x430 kernel/exit.c:968
-        get_signal+0x886/0x1960 kernel/signal.c:2482
-        do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
-        exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-        prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-        syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-        do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(clock-AF_INET6);
-                                lock(&htab->buckets[i].lock);
-                                lock(clock-AF_INET6);
-   lock(&htab->buckets[i].lock);
-
-  *** DEADLOCK ***
-
-2 locks held by syz-executor800/4527:
-  #0:         (ptrval) (rcu_read_lock){....}, at: bpf_tcp_close+0x0/0x10b0  
-kernel/bpf/sockmap.c:2106
-  #1:         (ptrval) (clock-AF_INET6){++..}, at:  
-bpf_tcp_close+0x241/0x10b0 kernel/bpf/sockmap.c:260
-
-stack backtrace:
-CPU: 0 PID: 4527 Comm: syz-executor800 Not tainted 4.17.0-rc6+ #25
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_circular_bug.isra.36.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-  _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
-  bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2482
-  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
-  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445709
-RSP: 002b:00007f36c605ddb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dac3c RCX: 0000000000445709
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000006dac3c
-RBP: 00000000006dac38 R08: 0000000000000000 R09: 000
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8d518ad5dc13..b9ea7037e193 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -753,6 +753,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	else
+ 		clk[IMX6Q_CLK_ECSPI5] = imx_clk_gate2("ecspi5",        "ecspi_root",        base + 0x6c, 8);
+ 	clk[IMX6QDL_CLK_ENET]         = imx_clk_gate2("enet",          "ipg",               base + 0x6c, 10);
++	clk[IMX6QDL_CLK_EPIT1]        = imx_clk_gate2("epit1",         "ipg",               base + 0x6c, 12);
++	clk[IMX6QDL_CLK_EPIT2]        = imx_clk_gate2("epit2",         "ipg",               base + 0x6c, 14);
+ 	clk[IMX6QDL_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal",   "esai_podf",   base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem", "ahb",             base + 0x6c, 16, &share_count_esai);
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index da59fd9cdb5e..7ad171b8f3bf 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -271,6 +271,8 @@
+ #define IMX6QDL_CLK_PRE_AXI			258
+ #define IMX6QDL_CLK_MLB_SEL			259
+ #define IMX6QDL_CLK_MLB_PODF			260
+-#define IMX6QDL_CLK_END				261
++#define IMX6QDL_CLK_EPIT1			261
++#define IMX6QDL_CLK_EPIT2			262
++#define IMX6QDL_CLK_END				263
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+-- 
+2.17.0
