@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163260AbeE1Kre (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:47:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37524 "EHLO mail.kernel.org"
+        id S1163275AbeE1Krj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:47:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163243AbeE1KrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:25 -0400
+        id S1163256AbeE1Krd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:47:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 108/496] net/mlx5e: Return error if prio is specified when offloading eswitch vlan push
-Date: Mon, 28 May 2018 11:58:13 +0200
-Message-Id: <20180528100324.459968455@linuxfoundation.org>
+Subject: [PATCH 4.14 111/496] virtio_net: fix XDP code path in receive_small()
+Date: Mon, 28 May 2018 11:58:16 +0200
+Message-Id: <20180528100324.578570962@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,32 +31,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Or Gerlitz <ogerlitz@mellanox.com>
+From: Jesper Dangaard Brouer <brouer@redhat.com>
 
-[ Upstream commit 001a2fc0c8cc29241305e44ffbce52d1daf8782b ]
+[ Upstream commit 95dbe9e7b3720efa5cf83d21f44f6d953f7cf4a2 ]
 
-This isn't supported when we emulate eswitch vlan push action which
-is the current state of things.
+When configuring virtio_net to use the code path 'receive_small()',
+in-order to get correct XDP_REDIRECT support, I discovered TCP packets
+would get silently dropped when loading an XDP program action XDP_PASS.
 
-Fixes: 8b32580df1cb ('net/mlx5e: Add TC vlan action for SRIOV offloads')
-Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+The bug seems to be that receive_small() when XDP is loaded check that
+hdr->hdr.flags is zero, which seems wrong as hdr.flags contains the
+flags VIRTIO_NET_HDR_F_* :
+ #define VIRTIO_NET_HDR_F_NEEDS_CSUM 1 /* Use csum_start, csum_offset */
+ #define VIRTIO_NET_HDR_F_DATA_VALID 2 /* Csum is valid */
+
+TCP got dropped as it had the VIRTIO_NET_HDR_F_DATA_VALID flag set.
+
+The flags that are relevant here are the VIRTIO_NET_HDR_GSO_* flags
+stored in hdr->hdr.gso_type. Thus, the fix is just check that none of
+the gso_type flags have been set.
+
+Fixes: bb91accf2733 ("virtio-net: XDP support for small buffers")
+Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-@@ -2018,7 +2018,8 @@ static int parse_tc_fdb_actions(struct m
- 			if (tcf_vlan_action(a) == TCA_VLAN_ACT_POP) {
- 				attr->action |= MLX5_FLOW_CONTEXT_ACTION_VLAN_POP;
- 			} else if (tcf_vlan_action(a) == TCA_VLAN_ACT_PUSH) {
--				if (tcf_vlan_push_proto(a) != htons(ETH_P_8021Q))
-+				if (tcf_vlan_push_proto(a) != htons(ETH_P_8021Q) ||
-+				    tcf_vlan_push_prio(a))
- 					return -EOPNOTSUPP;
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -513,7 +513,7 @@ static struct sk_buff *receive_small(str
+ 		void *orig_data;
+ 		u32 act;
  
- 				attr->action |= MLX5_FLOW_CONTEXT_ACTION_VLAN_PUSH;
+-		if (unlikely(hdr->hdr.gso_type || hdr->hdr.flags))
++		if (unlikely(hdr->hdr.gso_type))
+ 			goto err_xdp;
+ 
+ 		if (unlikely(xdp_headroom < virtnet_get_headroom(vi))) {
