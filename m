@@ -1,99 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933894AbeE1UK2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 16:10:28 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36483 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932362AbeE1UK0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 16:10:26 -0400
-X-Google-Smtp-Source: AB8JxZrTisVCGeHKRvCKbSkFlAs+eGqAxtUH9ls1YRqSmO3ZQ9wPA5k06TQ0BKmBiqvxHTmAKd0tAmglGLN8OjGnAqk=
+        id S933985AbeE1U1q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 16:27:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932451AbeE1U1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 16:27:44 -0400
+Subject: Re: [PATCH v3] vfio: platform: Fix using devices in PM Domains
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1527521165-29345-1-git-send-email-geert+renesas@glider.be>
+Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <ff3992c7-1d59-1fec-1393-47e2d278d8c9@redhat.com>
+Date: Mon, 28 May 2018 22:27:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 29 May 2018 01:40:23 +0530
-Message-ID: <CA+G9fYsS50-auAAe79hSGAQ8b1jzkfdcUvuHq0WpAJk17JQkEA@mail.gmail.com>
-Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, dave@stgolabs.net
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1527521165-29345-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 May 2018 at 15:30, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.16.13 release.
-> There are 272 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed May 30 10:01:02 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.13-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
-> Davidlohr Bueso <dave@stgolabs.net>
->     ipc/shm: fix shmat() nil address after round-down when remapping
->
-> Davidlohr Bueso <dave@stgolabs.net>
->     Revert "ipc/shm: Fix shmat mmap nil-page protection"
+Hi Geert,
 
-Regression on 4.16, 4,14, 4.9 and 4.4 and all devices.
+On 05/28/2018 05:26 PM, Geert Uytterhoeven wrote:
+> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+> power state is managed using Runtime PM.  Without Runtime PM, the device
+> may not be powered up or clocked, causing subtle failures, crashes, or
+> system lock-ups when the device is accessed by the guest.
+> 
+> Fix this by adding Runtime PM support, powering the device when the VFIO
+> device is opened by the guest.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> v3:
+>   - Drop controversial note about unsafeness of exporting fine-grained
+>     power management from host to guest,
+thanks ;-)
 
-Regressions (compared to build v4.16.12)
-------------------------------------------------------------------------
+> 
+> v2:
+>   - Improve wording,
+>   - Add Reviewed-by.
+> ---
+>  drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+> index b60bb5326668498c..41f862f055054543 100644
+> --- a/drivers/vfio/platform/vfio_platform_common.c
+> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+> @@ -233,6 +234,8 @@ static void vfio_platform_release(void *device_data)
+>  		const char *extra_dbg = NULL;
+>  		int ret;
+>  
+> +		pm_runtime_put(vdev->device);
 
-On all devices,
-  ltp-syscalls-tests:
-    * cve-2017-5669
+> +
+>  		ret = vfio_platform_call_reset(vdev, &extra_dbg);
+While reading the code again, the reset is using the HW. Don't you want
+to call the get() before.
 
-  ltp-cve-tests:
-    * cve-2017-5669
+Thanks
 
-Test log:
-------------
-cve-2017-5669.c:62: INFO: Attempting to attach shared memory to null page
-cve-2017-5669.c:74: INFO: Mapped shared memory to (nil)
-cve-2017-5669.c:78: FAIL: We have mapped a VM address within the first 64Kb
-cve-2017-5669.c:84: INFO: Touching shared memory to see if anything
-strange happens
-Summary:
-passed   0
-failed   1
-skipped  0
-warnings 0
-
-
-The root cause is,
-"Revert "ipc/shm: Fix shmat mmap nil-page protection"",
-which explicitly rolls back the original change and mentions that
-the LTP test case needs to be updated accordingly.
-
-This regression initially detected on 4.17.0-rc5-next-20180516
-Need more investigation on this issue.
-
-Ref:
-LKFT: next: LTS-4.16,4.14 and 4.9: LTP test case cve-2017-5669 failed on
-all devices
-https://bugs.linaro.org/show_bug.cgi?id=3835
-https://bugzilla.kernel.org/show_bug.cgi?id=192931
-https://patchwork.kernel.org/patch/9552307/
-
-Best regards
-Naresh Kamboju
+Eric
+>  		if (ret && vdev->reset_required) {
+>  			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
+> @@ -275,6 +278,10 @@ static int vfio_platform_open(void *device_data)
+>  				 ret, extra_dbg ? extra_dbg : "");
+>  			goto err_rst;
+>  		}
+> +
+> +		ret = pm_runtime_get_sync(vdev->device);
+> +		if (ret < 0)
+> +			goto err_rst;
+>  	}
+>  
+>  	vdev->refcnt++;
+> @@ -690,6 +697,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+>  
+>  	mutex_init(&vdev->igate);
+>  
+> +	pm_runtime_enable(vdev->device);
+>  	return 0;
+>  
+>  put_iommu:
+> @@ -707,6 +715,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
+>  	vdev = vfio_del_group_dev(dev);
+>  
+>  	if (vdev) {
+> +		pm_runtime_disable(vdev->device);
+>  		vfio_platform_put_reset(vdev);
+>  		vfio_iommu_group_put(dev->iommu_group, dev);
+>  	}
+> 
