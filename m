@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165498AbeE1OUo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55482 "EHLO mail.kernel.org"
+        id S1165609AbeE1OVA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:21:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161766AbeE1KfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:09 -0400
+        id S1162007AbeE1KfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 199/329] drm/imx: move arming of the vblank event to atomic_flush
-Date: Mon, 28 May 2018 12:02:08 +0200
-Message-Id: <20180528100258.799786553@linuxfoundation.org>
+Subject: [PATCH 4.9 197/329] ipv4: lock mtu in fnhe when received PMTU < net.ipv4.route.min_pmtu
+Date: Mon, 28 May 2018 12:02:06 +0200
+Message-Id: <20180528100258.668090154@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,46 +31,219 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 6a055b92de15af987b4027826d43aa103c65a3c4 ]
+[ Upstream commit d52e5a7e7ca49457dd31fc8b42fb7c0d58a31221 ]
 
-Right now the vblank event completion is racing with the atomic update,
-which is especially bad when the PRE is in use, as one of the hardware
-issue workaround might extend the atomic commit for quite some time.
+Prior to the rework of PMTU information storage in commit
+2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer."),
+when a PMTU event advertising a PMTU smaller than
+net.ipv4.route.min_pmtu was received, we would disable setting the DF
+flag on packets by locking the MTU metric, and set the PMTU to
+net.ipv4.route.min_pmtu.
 
-If the vblank IRQ happens to trigger during that time, we will prematurely
-signal the atomic commit completion to userspace, which causes tearing
-when userspace re-uses a framebuffer we haven't managed to flip away from
-yet.
+Since then, we don't disable DF, and set PMTU to
+net.ipv4.route.min_pmtu, so the intermediate router that has this link
+with a small MTU will have to drop the packets.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+This patch reestablishes pre-2.6.39 behavior by splitting
+rtable->rt_pmtu into a bitfield with rt_mtu_locked and rt_pmtu.
+rt_mtu_locked indicates that we shouldn't set the DF bit on that path,
+and is checked in ip_dont_fragment().
+
+One possible workaround is to set net.ipv4.route.min_pmtu to a value low
+enough to accommodate the lowest MTU encountered.
+
+Fixes: 2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer.")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/imx/ipuv3-crtc.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ include/net/ip.h        |   11 +++++++++--
+ include/net/ip_fib.h    |    1 +
+ include/net/route.h     |    3 ++-
+ net/ipv4/route.c        |   26 +++++++++++++++++++-------
+ net/ipv4/xfrm4_policy.c |    1 +
+ 5 files changed, 32 insertions(+), 10 deletions(-)
 
---- a/drivers/gpu/drm/imx/ipuv3-crtc.c
-+++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
-@@ -189,7 +189,11 @@ static void ipu_crtc_atomic_begin(struct
- 				  struct drm_crtc_state *old_crtc_state)
- {
- 	drm_crtc_vblank_on(crtc);
-+}
+--- a/include/net/ip.h
++++ b/include/net/ip.h
+@@ -304,6 +304,13 @@ int ip_decrease_ttl(struct iphdr *iph)
+ 	return --iph->ttl;
+ }
  
-+static void ipu_crtc_atomic_flush(struct drm_crtc *crtc,
-+				  struct drm_crtc_state *old_crtc_state)
++static inline int ip_mtu_locked(const struct dst_entry *dst)
 +{
- 	spin_lock_irq(&crtc->dev->event_lock);
- 	if (crtc->state->event) {
- 		WARN_ON(drm_crtc_vblank_get(crtc));
-@@ -257,6 +261,7 @@ static const struct drm_crtc_helper_func
- 	.mode_set_nofb = ipu_crtc_mode_set_nofb,
- 	.atomic_check = ipu_crtc_atomic_check,
- 	.atomic_begin = ipu_crtc_atomic_begin,
-+	.atomic_flush = ipu_crtc_atomic_flush,
- 	.atomic_disable = ipu_crtc_atomic_disable,
- 	.enable = ipu_crtc_enable,
- };
++	const struct rtable *rt = (const struct rtable *)dst;
++
++	return rt->rt_mtu_locked || dst_metric_locked(dst, RTAX_MTU);
++}
++
+ static inline
+ int ip_dont_fragment(const struct sock *sk, const struct dst_entry *dst)
+ {
+@@ -311,7 +318,7 @@ int ip_dont_fragment(const struct sock *
+ 
+ 	return  pmtudisc == IP_PMTUDISC_DO ||
+ 		(pmtudisc == IP_PMTUDISC_WANT &&
+-		 !(dst_metric_locked(dst, RTAX_MTU)));
++		 !ip_mtu_locked(dst));
+ }
+ 
+ static inline bool ip_sk_accept_pmtu(const struct sock *sk)
+@@ -337,7 +344,7 @@ static inline unsigned int ip_dst_mtu_ma
+ 	struct net *net = dev_net(dst->dev);
+ 
+ 	if (net->ipv4.sysctl_ip_fwd_use_pmtu ||
+-	    dst_metric_locked(dst, RTAX_MTU) ||
++	    ip_mtu_locked(dst) ||
+ 	    !forwarding)
+ 		return dst_mtu(dst);
+ 
+--- a/include/net/ip_fib.h
++++ b/include/net/ip_fib.h
+@@ -57,6 +57,7 @@ struct fib_nh_exception {
+ 	int				fnhe_genid;
+ 	__be32				fnhe_daddr;
+ 	u32				fnhe_pmtu;
++	bool				fnhe_mtu_locked;
+ 	__be32				fnhe_gw;
+ 	unsigned long			fnhe_expires;
+ 	struct rtable __rcu		*fnhe_rth_input;
+--- a/include/net/route.h
++++ b/include/net/route.h
+@@ -63,7 +63,8 @@ struct rtable {
+ 	__be32			rt_gateway;
+ 
+ 	/* Miscellaneous cached information */
+-	u32			rt_pmtu;
++	u32			rt_mtu_locked:1,
++				rt_pmtu:31;
+ 
+ 	u32			rt_table_id;
+ 
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -618,6 +618,7 @@ static inline u32 fnhe_hashfun(__be32 da
+ static void fill_route_from_fnhe(struct rtable *rt, struct fib_nh_exception *fnhe)
+ {
+ 	rt->rt_pmtu = fnhe->fnhe_pmtu;
++	rt->rt_mtu_locked = fnhe->fnhe_mtu_locked;
+ 	rt->dst.expires = fnhe->fnhe_expires;
+ 
+ 	if (fnhe->fnhe_gw) {
+@@ -628,7 +629,7 @@ static void fill_route_from_fnhe(struct
+ }
+ 
+ static void update_or_create_fnhe(struct fib_nh *nh, __be32 daddr, __be32 gw,
+-				  u32 pmtu, unsigned long expires)
++				  u32 pmtu, bool lock, unsigned long expires)
+ {
+ 	struct fnhe_hash_bucket *hash;
+ 	struct fib_nh_exception *fnhe;
+@@ -665,8 +666,10 @@ static void update_or_create_fnhe(struct
+ 			fnhe->fnhe_genid = genid;
+ 		if (gw)
+ 			fnhe->fnhe_gw = gw;
+-		if (pmtu)
++		if (pmtu) {
+ 			fnhe->fnhe_pmtu = pmtu;
++			fnhe->fnhe_mtu_locked = lock;
++		}
+ 		fnhe->fnhe_expires = max(1UL, expires);
+ 		/* Update all cached dsts too */
+ 		rt = rcu_dereference(fnhe->fnhe_rth_input);
+@@ -690,6 +693,7 @@ static void update_or_create_fnhe(struct
+ 		fnhe->fnhe_daddr = daddr;
+ 		fnhe->fnhe_gw = gw;
+ 		fnhe->fnhe_pmtu = pmtu;
++		fnhe->fnhe_mtu_locked = lock;
+ 		fnhe->fnhe_expires = expires;
+ 
+ 		/* Exception created; mark the cached routes for the nexthop
+@@ -771,7 +775,8 @@ static void __ip_do_redirect(struct rtab
+ 				struct fib_nh *nh = &FIB_RES_NH(res);
+ 
+ 				update_or_create_fnhe(nh, fl4->daddr, new_gw,
+-						0, jiffies + ip_rt_gc_timeout);
++						0, false,
++						jiffies + ip_rt_gc_timeout);
+ 			}
+ 			if (kill_route)
+ 				rt->dst.obsolete = DST_OBSOLETE_KILL;
+@@ -983,15 +988,18 @@ static void __ip_rt_update_pmtu(struct r
+ {
+ 	struct dst_entry *dst = &rt->dst;
+ 	struct fib_result res;
++	bool lock = false;
+ 
+-	if (dst_metric_locked(dst, RTAX_MTU))
++	if (ip_mtu_locked(dst))
+ 		return;
+ 
+ 	if (ipv4_mtu(dst) < mtu)
+ 		return;
+ 
+-	if (mtu < ip_rt_min_pmtu)
++	if (mtu < ip_rt_min_pmtu) {
++		lock = true;
+ 		mtu = ip_rt_min_pmtu;
++	}
+ 
+ 	if (rt->rt_pmtu == mtu &&
+ 	    time_before(jiffies, dst->expires - ip_rt_mtu_expires / 2))
+@@ -1001,7 +1009,7 @@ static void __ip_rt_update_pmtu(struct r
+ 	if (fib_lookup(dev_net(dst->dev), fl4, &res, 0) == 0) {
+ 		struct fib_nh *nh = &FIB_RES_NH(res);
+ 
+-		update_or_create_fnhe(nh, fl4->daddr, 0, mtu,
++		update_or_create_fnhe(nh, fl4->daddr, 0, mtu, lock,
+ 				      jiffies + ip_rt_mtu_expires);
+ 	}
+ 	rcu_read_unlock();
+@@ -1256,7 +1264,7 @@ static unsigned int ipv4_mtu(const struc
+ 
+ 	mtu = READ_ONCE(dst->dev->mtu);
+ 
+-	if (unlikely(dst_metric_locked(dst, RTAX_MTU))) {
++	if (unlikely(ip_mtu_locked(dst))) {
+ 		if (rt->rt_uses_gateway && mtu > 576)
+ 			mtu = 576;
+ 	}
+@@ -1481,6 +1489,7 @@ struct rtable *rt_dst_alloc(struct net_d
+ 		rt->rt_is_input = 0;
+ 		rt->rt_iif = 0;
+ 		rt->rt_pmtu = 0;
++		rt->rt_mtu_locked = 0;
+ 		rt->rt_gateway = 0;
+ 		rt->rt_uses_gateway = 0;
+ 		rt->rt_table_id = 0;
+@@ -2403,6 +2412,7 @@ struct dst_entry *ipv4_blackhole_route(s
+ 		rt->rt_is_input = ort->rt_is_input;
+ 		rt->rt_iif = ort->rt_iif;
+ 		rt->rt_pmtu = ort->rt_pmtu;
++		rt->rt_mtu_locked = ort->rt_mtu_locked;
+ 
+ 		rt->rt_genid = rt_genid_ipv4(net);
+ 		rt->rt_flags = ort->rt_flags;
+@@ -2505,6 +2515,8 @@ static int rt_fill_info(struct net *net,
+ 	memcpy(metrics, dst_metrics_ptr(&rt->dst), sizeof(metrics));
+ 	if (rt->rt_pmtu && expires)
+ 		metrics[RTAX_MTU - 1] = rt->rt_pmtu;
++	if (rt->rt_mtu_locked && expires)
++		metrics[RTAX_LOCK - 1] |= BIT(RTAX_MTU);
+ 	if (rtnetlink_put_metrics(skb, metrics) < 0)
+ 		goto nla_put_failure;
+ 
+--- a/net/ipv4/xfrm4_policy.c
++++ b/net/ipv4/xfrm4_policy.c
+@@ -97,6 +97,7 @@ static int xfrm4_fill_dst(struct xfrm_ds
+ 	xdst->u.rt.rt_gateway = rt->rt_gateway;
+ 	xdst->u.rt.rt_uses_gateway = rt->rt_uses_gateway;
+ 	xdst->u.rt.rt_pmtu = rt->rt_pmtu;
++	xdst->u.rt.rt_mtu_locked = rt->rt_mtu_locked;
+ 	xdst->u.rt.rt_table_id = rt->rt_table_id;
+ 	INIT_LIST_HEAD(&xdst->u.rt.rt_uncached);
+ 
