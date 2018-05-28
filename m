@@ -1,70 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968817AbeE1PgS (ORCPT <rfc822;w@1wt.eu>);
+        id S969055AbeE1PgY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:36:24 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:43057 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968791AbeE1PgS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 11:36:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968791AbeE1KSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:31 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 101/268] smsc75xx: fix smsc75xx_set_features()
-Date: Mon, 28 May 2018 12:01:15 +0200
-Message-Id: <20180528100213.642391347@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Google-Smtp-Source: AB8JxZqEaBKQNug7dkm/cLBPvX+s9heDHVMvc68JjKBtNiF3z+lhqOEQdHI6JlvBZ+g4d6bJDaGBlA==
+From: Yafang Shao <laoar.shao@gmail.com>
+To: songliubraving@fb.com, edumazet@google.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v3 net-next 1/2] tcp: use data length instead of skb->len in tcp_probe
+Date: Mon, 28 May 2018 23:35:52 +0800
+Message-Id: <1527521753-17963-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+At this point skb->len is including tcp header length, so it is meaningless
+to user. data length could be more helpful, with which we can easily filter
+out the packet without payload.
 
-------------------
+Cc: Eric Dumazet <edumazet@google.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-From: Eric Dumazet <edumazet@google.com>
-
-[ Upstream commit 88e80c62671ceecdbb77c902731ec95a4bfa62f9 ]
-
-If an attempt is made to disable RX checksums, USB adapter is changed
-but netdev->features is not, because smsc75xx_set_features() returns a
-non zero value.
-
-This throws errors from netdev_rx_csum_fault() :
-<devname>: hw csum failure
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Steve Glendinning <steve.glendinning@shawell.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/smsc75xx.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+v3: tcp_hdr() is a little expensive than skb->data, so replace it with
+    skb->data.
 
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -945,10 +945,11 @@ static int smsc75xx_set_features(struct
- 	/* it's racing here! */
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ include/trace/events/tcp.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index c1a5284..7ff0446 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -236,7 +236,7 @@
+ 		__field(__u16, sport)
+ 		__field(__u16, dport)
+ 		__field(__u32, mark)
+-		__field(__u16, length)
++		__field(__u16, data_len)
+ 		__field(__u32, snd_nxt)
+ 		__field(__u32, snd_una)
+ 		__field(__u32, snd_cwnd)
+@@ -250,6 +250,7 @@
+ 	TP_fast_assign(
+ 		const struct tcp_sock *tp = tcp_sk(sk);
+ 		const struct inet_sock *inet = inet_sk(sk);
++		const struct tcphdr *th = (const struct tcphdr *)skb->data;
  
- 	ret = smsc75xx_write_reg(dev, RFE_CTL, pdata->rfe_ctl);
--	if (ret < 0)
-+	if (ret < 0) {
- 		netdev_warn(dev->net, "Error writing RFE_CTL\n");
--
--	return ret;
-+		return ret;
-+	}
-+	return 0;
- }
+ 		memset(__entry->saddr, 0, sizeof(struct sockaddr_in6));
+ 		memset(__entry->daddr, 0, sizeof(struct sockaddr_in6));
+@@ -261,7 +262,7 @@
+ 		__entry->dport = ntohs(inet->inet_dport);
+ 		__entry->mark = skb->mark;
  
- static int smsc75xx_wait_ready(struct usbnet *dev, int in_pm)
+-		__entry->length = skb->len;
++		__entry->data_len = skb->len - __tcp_hdrlen(th);
+ 		__entry->snd_nxt = tp->snd_nxt;
+ 		__entry->snd_una = tp->snd_una;
+ 		__entry->snd_cwnd = tp->snd_cwnd;
+@@ -272,9 +273,9 @@
+ 		__entry->sock_cookie = sock_gen_cookie(sk);
+ 	),
+ 
+-	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
++	TP_printk("src=%pISpc dest=%pISpc mark=%#x data_len=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
+ 		  __entry->saddr, __entry->daddr, __entry->mark,
+-		  __entry->length, __entry->snd_nxt, __entry->snd_una,
++		  __entry->data_len, __entry->snd_nxt, __entry->snd_una,
+ 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
+ 		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
+ );
+-- 
+1.8.3.1
