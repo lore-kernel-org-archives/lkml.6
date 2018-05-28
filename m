@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165618AbeE1OVU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:21:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55306 "EHLO mail.kernel.org"
+        id S1165625AbeE1OVo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:21:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161997AbeE1KfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:00 -0400
+        id S1161985AbeE1Ke6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 196/329] workqueue: use put_device() instead of kfree()
-Date: Mon, 28 May 2018 12:02:05 +0200
-Message-Id: <20180528100258.586488678@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 195/329] bnxt_en: Check valid VNIC ID in bnxt_hwrm_vnic_set_tpa().
+Date: Mon, 28 May 2018 12:02:04 +0200
+Message-Id: <20180528100258.525464570@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -29,30 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 537f4146c53c95aac977852b371bafb9c6755ee1 ]
+[ Upstream commit 3c4fe80b32c685bdc02b280814d0cfe80d441c72 ]
 
-Never directly free @dev after calling device_register(), even
-if it returned an error! Always use put_device() to give up the
-reference initialized in this function instead.
+During initialization, if we encounter errors, there is a code path that
+calls bnxt_hwrm_vnic_set_tpa() with invalid VNIC ID.  This may cause a
+warning in firmware logs.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/workqueue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5272,7 +5272,7 @@ int workqueue_sysfs_register(struct work
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -3401,6 +3401,9 @@ static int bnxt_hwrm_vnic_set_tpa(struct
+ 	struct bnxt_vnic_info *vnic = &bp->vnic_info[vnic_id];
+ 	struct hwrm_vnic_tpa_cfg_input req = {0};
  
- 	ret = device_register(&wq_dev->dev);
- 	if (ret) {
--		kfree(wq_dev);
-+		put_device(&wq_dev->dev);
- 		wq->wq_dev = NULL;
- 		return ret;
- 	}
++	if (vnic->fw_vnic_id == INVALID_HW_RING_ID)
++		return 0;
++
+ 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_VNIC_TPA_CFG, -1, -1);
+ 
+ 	if (tpa_flags) {
