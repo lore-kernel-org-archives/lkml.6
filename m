@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964930AbeE1KKx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:10:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59008 "EHLO mail.kernel.org"
+        id S936546AbeE1KLA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935436AbeE1KKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:49 -0400
+        id S964948AbeE1KKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 117/185] mm: fix races between address_space dereference and free in page_evicatable
-Date: Mon, 28 May 2018 12:02:38 +0200
-Message-Id: <20180528100102.034355627@linuxfoundation.org>
+Subject: [PATCH 3.18 119/185] Btrfs: fix NULL pointer dereference in log_dir_items
+Date: Mon, 28 May 2018 12:02:40 +0200
+Message-Id: <20180528100102.341672187@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,76 +30,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huang Ying <ying.huang@intel.com>
+From: Liu Bo <bo.liu@linux.alibaba.com>
 
-[ Upstream commit e92bb4dd9673945179b1fc738c9817dd91bfb629 ]
+[ Upstream commit 80c0b4210a963e31529e15bf90519708ec947596 ]
 
-When page_mapping() is called and the mapping is dereferenced in
-page_evicatable() through shrink_active_list(), it is possible for the
-inode to be truncated and the embedded address space to be freed at the
-same time.  This may lead to the following race.
+0, 1 and <0 can be returned by btrfs_next_leaf(), and when <0 is
+returned, path->nodes[0] could be NULL, log_dir_items lacks such a
+check for <0 and we may run into a null pointer dereference panic.
 
-CPU1                                                CPU2
-
-truncate(inode)                                     shrink_active_list()
-  ...                                                 page_evictable(page)
-  truncate_inode_page(mapping, page);
-    delete_from_page_cache(page)
-      spin_lock_irqsave(&mapping->tree_lock, flags);
-        __delete_from_page_cache(page, NULL)
-          page_cache_tree_delete(..)
-            ...                                         mapping = page_mapping(page);
-            page->mapping = NULL;
-            ...
-      spin_unlock_irqrestore(&mapping->tree_lock, flags);
-      page_cache_free_page(mapping, page)
-        put_page(page)
-          if (put_page_testzero(page)) -> false
-- inode now has no pages and can be freed including embedded address_space
-
-                                                        mapping_unevictable(mapping)
-							  test_bit(AS_UNEVICTABLE, &mapping->flags);
-- we've dereferenced mapping which is potentially already free.
-
-Similar race exists between swap cache freeing and page_evicatable()
-too.
-
-The address_space in inode and swap cache will be freed after a RCU
-grace period.  So the races are fixed via enclosing the page_mapping()
-and address_space usage in rcu_read_lock/unlock().  Some comments are
-added in code to make it clear what is protected by the RCU read lock.
-
-Link: http://lkml.kernel.org/r/20180212081227.1940-1-ying.huang@intel.com
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: e02119d5a7b4 ("Btrfs: Add a write ahead tree log to optimize synchronous operations")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmscan.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3753,7 +3753,13 @@ int zone_reclaim(struct zone *zone, gfp_
-  */
- int page_evictable(struct page *page)
- {
--	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	int ret;
-+
-+	/* Prevent address_space of inode and swap cache from being freed */
-+	rcu_read_lock();
-+	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- #ifdef CONFIG_SHMEM
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3085,8 +3085,11 @@ static noinline int log_dir_items(struct
+ 		 * from this directory and from this transaction
+ 		 */
+ 		ret = btrfs_next_leaf(root, path);
+-		if (ret == 1) {
+-			last_offset = (u64)-1;
++		if (ret) {
++			if (ret == 1)
++				last_offset = (u64)-1;
++			else
++				err = ret;
+ 			goto done;
+ 		}
+ 		btrfs_item_key_to_cpu(path->nodes[0], &tmp, path->slots[0]);
