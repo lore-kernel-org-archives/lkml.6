@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422903AbeE1LEl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:04:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51556 "EHLO mail.kernel.org"
+        id S1423055AbeE1LEq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:04:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164993AbeE1LE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:04:27 -0400
+        id S1165005AbeE1LEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:04:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.16 005/272] MIPS: ptrace: Expose FIR register through FP regset
-Date: Mon, 28 May 2018 12:00:38 +0200
-Message-Id: <20180528100240.636170749@linuxfoundation.org>
+        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.16 008/272] affs_lookup(): close a race with affs_remove_link()
+Date: Mon, 28 May 2018 12:00:41 +0200
+Message-Id: <20180528100240.887700939@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,94 +29,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 71e909c0cdad28a1df1fa14442929e68615dee45 upstream.
+commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
 
-Correct commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-and expose the FIR register using the unused 4 bytes at the end of the
-NT_PRFPREG regset.  Without that register included clients cannot use
-the PTRACE_GETREGSET request to retrieve the complete FPU register set
-and have to resort to one of the older interfaces, either PTRACE_PEEKUSR
-or PTRACE_GETFPREGS, to retrieve the missing piece of data.  Also the
-register is irreversibly missing from core dumps.
+we unlock the directory hash too early - if we are looking at secondary
+link and primary (in another directory) gets removed just as we unlock,
+we could have the old primary moved in place of the secondary, leaving
+us to look into freed entry (and leaving our dentry with ->d_fsdata
+pointing to a freed entry).
 
-This register is architecturally hardwired and read-only so the write
-path does not matter.  Ignore data supplied on writes then.
-
-Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.13+
-Patchwork: https://patchwork.linux-mips.org/patch/19273/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: stable@vger.kernel.org # 2.4.4+
+Acked-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/ptrace.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ fs/affs/namei.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -463,7 +463,7 @@ static int fpr_get_msa(struct task_struc
- /*
-  * Copy the floating-point context to the supplied NT_PRFPREG buffer.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR and FIR registers separately.
-  */
- static int fpr_get(struct task_struct *target,
- 		   const struct user_regset *regset,
-@@ -471,6 +471,7 @@ static int fpr_get(struct task_struct *t
- 		   void *kbuf, void __user *ubuf)
- {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	int err;
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -206,9 +206,10 @@ affs_lookup(struct inode *dir, struct de
  
- 	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
-@@ -483,6 +484,12 @@ static int fpr_get(struct task_struct *t
- 	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
- 				  &target->thread.fpu.fcr31,
- 				  fcr31_pos, fcr31_pos + sizeof(u32));
-+	if (err)
-+		return err;
-+
-+	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+				  &boot_cpu_data.fpu_id,
-+				  fir_pos, fir_pos + sizeof(u32));
+ 	affs_lock_dir(dir);
+ 	bh = affs_find_entry(dir, dentry);
+-	affs_unlock_dir(dir);
+-	if (IS_ERR(bh))
++	if (IS_ERR(bh)) {
++		affs_unlock_dir(dir);
+ 		return ERR_CAST(bh);
++	}
+ 	if (bh) {
+ 		u32 ino = bh->b_blocknr;
  
- 	return err;
- }
-@@ -531,7 +538,8 @@ static int fpr_set_msa(struct task_struc
- /*
-  * Copy the supplied NT_PRFPREG buffer to the floating-point context.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR register separately.  Ignore the incoming FIR register
-+ * contents though, as the register is read-only.
-  *
-  * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
-  * which is supposed to have been guaranteed by the kernel before
-@@ -545,6 +553,7 @@ static int fpr_set(struct task_struct *t
- 		   const void *kbuf, const void __user *ubuf)
- {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	u32 fcr31;
- 	int err;
- 
-@@ -572,6 +581,11 @@ static int fpr_set(struct task_struct *t
- 		ptrace_setfcr31(target, fcr31);
+@@ -222,10 +223,13 @@ affs_lookup(struct inode *dir, struct de
+ 		}
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+-		if (IS_ERR(inode))
++		if (IS_ERR(inode)) {
++			affs_unlock_dir(dir);
+ 			return ERR_CAST(inode);
++		}
  	}
- 
-+	if (count > 0)
-+		err = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
-+						fir_pos,
-+						fir_pos + sizeof(u32));
-+
- 	return err;
+ 	d_add(dentry, inode);
++	affs_unlock_dir(dir);
+ 	return NULL;
  }
  
