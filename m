@@ -1,89 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeE1BE2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 21:04:28 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33807 "EHLO
+        id S1752776AbeE1BY5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 21:24:57 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42990 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeE1BE0 (ORCPT
+        with ESMTP id S1751760AbeE1BY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 21:04:26 -0400
-X-Google-Smtp-Source: ADUXVKKwyuYV2/fb+PuTXAb9zWwDCqAzh0jqoji9S4ZS199nPrKA/td+sNm6FiiMuFjDsPpsvqD5Aw==
-Date: Sun, 27 May 2018 18:04:25 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: peterz@infradead.org, mingo@redhat.com,
+        Sun, 27 May 2018 21:24:56 -0400
+X-Google-Smtp-Source: AB8JxZqTtxXihfoTD/hd74JLua3JCBggsoCEUjcv6piU9Bq4RPojDnp87xIConfrlTjK874w2RY8RQ==
+From: "Joel Fernandes (Google)" <joelaf@google.com>
+X-Google-Original-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Ramussen <morten.rasmussen@arm.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
         Patrick Bellasi <patrick.bellasi@arm.com>,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH] kernel/sched/topology: Clarify root domain(s) debug
- string
-Message-ID: <20180528010425.GA64067@joelaf.mtv.corp.google.com>
-References: <20180524152936.17611-1-juri.lelli@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524152936.17611-1-juri.lelli@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Rohit Jain <rohit.k.jain@oracle.com>, kernel-team@android.com
+Subject: [PATCH v2] sched: Remove obscure comment from select_task_rq_fair
+Date: Sun, 27 May 2018 18:24:47 -0700
+Message-Id: <20180528012447.115411-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 05:29:36PM +0200, Juri Lelli wrote:
-> When scheduler debug is enabled, building scheduling domains outputs
-> information about how the domains are laid out and to which root domain
-> each CPU (or sets of CPUs) belongs, e.g.:
-> 
->  CPU0 attaching sched-domain(s):
->   domain-0: span=0-5 level=MC
->    groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
->  CPU1 attaching sched-domain(s):
->   domain-0: span=0-5 level=MC
->    groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
-> 
->  [...]
-> 
->  span: 0-5 (max cpu_capacity = 1024)
-> 
-> The fact that latest line refers to CPUs 0-5 root domain doesn't however look
+I was playing with cpusets and sched_load_balance flag and notice that
+the fast-path (select_idle_sibling) can also be attempted for
+exec-balance, not just wake-balance if the waker cpu's cpuset has
+sched_load_balance = 0. This patch removes the obscure comment which was
+saying this path can be entered only for wake-balance.
 
-                last line?
+To trigger this, I just do:
+mkdir /cpuset
+mount -t cpuset none /cpuset
+echo 0 > sched_load_balance
 
-> immediately obvious to me: one might wonder why span 0-5 is reported "again".
-> 
-> Make it more clear by adding "root domain" to it, as to end with the
-> following.
-> 
->  CPU0 attaching sched-domain(s):
->   domain-0: span=0-5 level=MC
->    groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }
->  CPU1 attaching sched-domain(s):
->   domain-0: span=0-5 level=MC
->    groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 0:{ span=0 }
-> 
->  [...]
-> 
->  root domain span: 0-5 (max cpu_capacity = 1024)
-> 
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Then did some random activity and dumped the stack from 'if (!sd)' for
+the non wake-balance cases.
 
-I played the sched_load_balance flag to trigger this and it makes sense to
-improve the print with 'root domain'.
+Following is one of the stacks:
+dump_stack+0x46/0x5b
+select_task_rq_fair+0x101d/0x1030
+sched_exec+0x4f/0xc0
+do_execveat_common.isra.41+0x1e3/0x7c0
+__x64_sys_execve+0x2d/0x40
+do_syscall_64+0x43/0xf0
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Turns out the same case occurs also during boot up when kthreadd tries
+to create threads before domains are attached so lets fix the comment.
 
-One thing I believe is a bit weird is sched_load_balance also can affect the
-wake-up path, because a NULL sd is attached to the rq if sched_load_balance
-is set to 0.
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Morten Ramussen <morten.rasmussen@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Rohit Jain <rohit.k.jain@oracle.com>
+Cc: kernel-team@android.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+v1->v2: Resending without "XXX" in subject since otherwise LKML thinks
+its junk.
 
-This could turn off the "for_each_domain(cpu, tmp)" loop in
-select_task_rq_fair and hence we would always end up in the
-select_idle_sibling path for those CPUs.
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It also means that "XXX always" can/should be removed because sd can very
-well be NULL for other sd_flag types as well, not just sd_flag ==
-SD_BALANCE_WAKE. I'll send a patch to remove that comment as I just tested
-this is true.
-
-thanks,
-
- - Joel
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 54dc31e7ab9b..dd07794141d0 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6665,7 +6665,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 
+ 	if (!sd) {
+ pick_cpu:
+-		if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
++		if (sd_flag & SD_BALANCE_WAKE) {
+ 			new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
+ 
+ 			if (want_affine)
+-- 
+2.17.0.921.gf22659ad46-goog
