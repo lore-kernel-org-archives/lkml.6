@@ -1,102 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940465AbeE1Qqh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:46:37 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34617 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940428AbeE1Qq1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:46:27 -0400
-X-Google-Smtp-Source: AB8JxZqML3aAQebWoMwKuiYoajBDchpPnOEw7eGSIYk/TskbiNzAKPd/nw/quv8KXI6bsZjIRXnhjQ==
-Date: Mon, 28 May 2018 10:46:22 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc: dledford@redhat.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 rdma-next 3/4] RDMA/hns: Add reset process for RoCE in
- hip08
-Message-ID: <20180528164622.GB17505@ziepe.ca>
-References: <1527070590-94399-1-git-send-email-xavier.huwei@huawei.com>
- <1527070590-94399-4-git-send-email-xavier.huwei@huawei.com>
- <20180524213143.GE3948@ziepe.ca>
- <5B07A517.7030507@huawei.com>
- <20180525145553.GA27342@ziepe.ca>
- <5B08BCBF.9040001@huawei.com>
+        id S932189AbeE1KG7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:06:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754767AbeE1KGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:51 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Alex Chen <alex.chen@huawei.com>, Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>, Changwei Ge <ge.changwei@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 028/185] ocfs2/acl: use ip_xattr_sem to protect getting extended attribute
+Date: Mon, 28 May 2018 12:01:09 +0200
+Message-Id: <20180528100052.273625112@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B08BCBF.9040001@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 09:47:43AM +0800, Wei Hu (Xavier) wrote:
-> 
-> 
-> On 2018/5/25 22:55, Jason Gunthorpe wrote:
-> > On Fri, May 25, 2018 at 01:54:31PM +0800, Wei Hu (Xavier) wrote:
-> >>
-> >> On 2018/5/25 5:31, Jason Gunthorpe wrote:
-> >>>>  static const struct hnae3_client_ops hns_roce_hw_v2_ops = {
-> >>>>  	.init_instance = hns_roce_hw_v2_init_instance,
-> >>>>  	.uninit_instance = hns_roce_hw_v2_uninit_instance,
-> >>>> +	.reset_notify = hns_roce_hw_v2_reset_notify,
-> >>>>  };
-> >>>>  
-> >>>>  static struct hnae3_client hns_roce_hw_v2_client = {
-> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-> >>>> index 1b79a38..ac51372 100644
-> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-> >>>> @@ -332,6 +332,9 @@ static struct ib_ucontext *hns_roce_alloc_ucontext(struct ib_device *ib_dev,
-> >>>>  	struct hns_roce_ib_alloc_ucontext_resp resp = {};
-> >>>>  	struct hns_roce_dev *hr_dev = to_hr_dev(ib_dev);
-> >>>>  
-> >>>> +	if (!hr_dev->active)
-> >>>> +		return ERR_PTR(-EAGAIN);
-> >>> This still doesn't make sense, ib_unregister_device already makes sure
-> >>> that hns_roce_alloc_ucontext isn't running and won't be called before
-> >>> returning, don't need another flag to do that.
-> >>>
-> >>> Since this is the only place the active flag is tested it can just be deleted
-> >>> entirely.
-> >> Hi, Jason
-> >>    
-> >>     roce reset process:
-> >>     1. hr_dev->active = false;  //make sure no any process call
-> >> ibv_open_device.   
-> >>     2. call ib_dispatch_event() function to report IB_EVENT_DEVICE_FATAL
-> >> event.
-> >>     3. msleep(100);   // for some app to free resources
-> >>     4. call ib_unregister_device().   
-> >>     5. ...
-> >>     6. ...
-> >>
-> >>     There are 2 steps as above before calling ib_unregister_device(), we
-> >> evaluate
-> >> hr_dev->active with false to avoid no any process call
-> >> ibv_open_device.
-> > If you think this is the right flow then it is core issue to block new
-> > opens, not an individual driver issue, send a core patch - eg add a
-> > 'ib_driver_fatal_error()' call that does the dispatch and call it from
-> > all the drivers using this IB_EVENT_DEVICE_FATAL
-> Hi, Jason
-> 
-> It seem to be no difference between calling ib_driver_fatal_error and
-> calling ib_dispatch_event  directly in manufacturer driver.
-> 
-> void ib_driver_fatal_error(struct ib_device *ib_dev, u8 port_num)
->  {
->        struct ib_event event;
->                 
->   event.event = IB_EVENT_DEVICE_FATAL;
->     event.device = ib_dev;
->     event.element.port_num = port_num;
->     ib_dispatch_event(&event);
-> }
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-My point was the core code should block calling
-hns_roce_alloc_ucontext after DEVICE_FATAL if we agree that is
-correct, the driver shouldn't be doing it.
+------------------
 
-Jason
+From: piaojun <piaojun@huawei.com>
+
+[ Upstream commit 16c8d569f5704a84164f30ff01b29879f3438065 ]
+
+The race between *set_acl and *get_acl will cause getting incomplete
+xattr data as below:
+
+  processA                                    processB
+
+  ocfs2_set_acl
+    ocfs2_xattr_set
+      __ocfs2_xattr_set_handle
+
+                                              ocfs2_get_acl_nolock
+                                                ocfs2_xattr_get_nolock:
+
+processB may get incomplete xattr data if processA hasn't set_acl done.
+
+So we should use 'ip_xattr_sem' to protect getting extended attribute in
+ocfs2_get_acl_nolock(), as other processes could be changing it
+concurrently.
+
+Link: http://lkml.kernel.org/r/5A5DDCFF.7030001@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Alex Chen <alex.chen@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/ocfs2/acl.c   |    6 ++++++
+ fs/ocfs2/xattr.c |    2 ++
+ 2 files changed, 8 insertions(+)
+
+--- a/fs/ocfs2/acl.c
++++ b/fs/ocfs2/acl.c
+@@ -300,7 +300,9 @@ struct posix_acl *ocfs2_iop_get_acl(stru
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
+ 
++	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	acl = ocfs2_get_acl_nolock(inode, type, di_bh);
++	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 
+ 	brelse(di_bh);
+ 
+@@ -319,7 +321,9 @@ int ocfs2_acl_chmod(struct inode *inode,
+ 	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
+ 		return 0;
+ 
++	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	acl = ocfs2_get_acl_nolock(inode, ACL_TYPE_ACCESS, bh);
++	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	if (IS_ERR(acl) || !acl)
+ 		return PTR_ERR(acl);
+ 	ret = __posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
+@@ -350,8 +354,10 @@ int ocfs2_init_acl(handle_t *handle,
+ 
+ 	if (!S_ISLNK(inode->i_mode)) {
+ 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
++			down_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
+ 						   dir_bh);
++			up_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 			if (IS_ERR(acl))
+ 				return PTR_ERR(acl);
+ 		}
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -645,9 +645,11 @@ int ocfs2_calc_xattr_init(struct inode *
+ 						     si->value_len);
+ 
+ 	if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
++		down_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 		acl_len = ocfs2_xattr_get_nolock(dir, dir_bh,
+ 					OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT,
+ 					"", NULL, 0);
++		up_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 		if (acl_len > 0) {
+ 			a_size = ocfs2_xattr_entry_real_size(0, acl_len);
+ 			if (S_ISDIR(mode))
