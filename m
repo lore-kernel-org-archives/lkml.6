@@ -1,135 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754052AbeE1IaW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:30:22 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13575 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753849AbeE1IaV (ORCPT
+        id S1754057AbeE1IcW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:32:22 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41963 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753986AbeE1IcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:30:21 -0400
-X-UUID: b2fb65dc70194e7aa017d1a174b83b2e-20180528
-Message-ID: <1527496214.396.6.camel@mtksdaap41>
-Subject: Re: [PATCH v1 2/7] drm/mediatek: fix to get right bridge for dpi
- encoder
-From: CK Hu <ck.hu@mediatek.com>
-To: Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC: David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date: Mon, 28 May 2018 16:30:14 +0800
-In-Reply-To: <20180514075243.5442-3-bibby.hsieh@mediatek.com>
-References: <20180514075243.5442-1-bibby.hsieh@mediatek.com>
-         <20180514075243.5442-3-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 28 May 2018 04:32:21 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [RFC] platform: detach from PM domains on shutdown
+Date: Mon, 28 May 2018 10:31:34 +0200
+Message-ID: <3452357.3GIrXi3WAv@aspire.rjw.lan>
+In-Reply-To: <HE1PR04MB300481B481F96F875DCBFB2B886E0@HE1PR04MB3004.eurprd04.prod.outlook.com>
+References: <20180515090110.26820-1-peng.fan@nxp.com> <HE1PR04MB30041C742230314926032D4D88900@HE1PR04MB3004.eurprd04.prod.outlook.com> <HE1PR04MB300481B481F96F875DCBFB2B886E0@HE1PR04MB3004.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
-
-Some inline comment.
-
-On Mon, 2018-05-14 at 15:52 +0800, Bibby Hsieh wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
+On Monday, May 28, 2018 10:01:09 AM CEST Peng Fan wrote:
+> Hi, Rafael & Uffe
 > 
-> 1, dpi is an encoder, there is an bridge in the struct
-> of decoder, we could use it.
-
-The encoder.bridge is assigned in drm_bridge_attach(), so I think the
-design is to assign this member in drm_bridge_attach().
-Any assignment outside this function may conflict with this design.
-
-> 2, using of_graph_get_remote_port_parent to get right
-> bridge in device tree.
+> > -----Original Message-----
+> > From: Peng Fan
+> > Sent: 2018年5月18日 16:53
+> > To: Rafael J. Wysocki <rjw@rjwysocki.net>
+> > Cc: Rafael J. Wysocki <rafael@kernel.org>; Ulf Hansson
+> > <ulf.hansson@linaro.org>; Rafael J. Wysocki <rafael.j.wysocki@intel.com>;
+> > Fabio Estevam <fabio.estevam@nxp.com>; Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org>; Linux Kernel Mailing List
+> > <linux-kernel@vger.kernel.org>; Linux PM <linux-pm@vger.kernel.org>;
+> > dl-linux-imx <linux-imx@nxp.com>
+> > Subject: RE: [RFC] platform: detach from PM domains on shutdown
+> > 
+> > 
+> > 
+> > > -----Original Message-----
+> > > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > > Sent: 2018年5月18日 15:55
+> > > To: Peng Fan <peng.fan@nxp.com>
+> > > Cc: Rafael J. Wysocki <rafael@kernel.org>; Ulf Hansson
+> > > <ulf.hansson@linaro.org>; Rafael J. Wysocki
+> > > <rafael.j.wysocki@intel.com>; Fabio Estevam <fabio.estevam@nxp.com>;
+> > > Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Linux Kernel Mailing
+> > > List <linux-kernel@vger.kernel.org>; Linux PM
+> > > <linux-pm@vger.kernel.org>; dl-linux-imx <linux-imx@nxp.com>
+> > > Subject: Re: [RFC] platform: detach from PM domains on shutdown
+> > >
+> > > On Thursday, May 17, 2018 2:37:31 PM CEST Peng Fan wrote:
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf
+> > > > > Of Rafael J. Wysocki
+> > > > > Sent: 2018年5月17日 16:01
+> > > > > To: Peng Fan <peng.fan@nxp.com>
+> > > > > Cc: Rafael J. Wysocki <rafael@kernel.org>; Ulf Hansson
+> > > > > <ulf.hansson@linaro.org>; Rafael J. Wysocki
+> > > > > <rafael.j.wysocki@intel.com>; Fabio Estevam
+> > > > > <fabio.estevam@nxp.com>; Greg Kroah-Hartman
+> > > > > <gregkh@linuxfoundation.org>; Linux Kernel Mailing List
+> > > > > <linux-kernel@vger.kernel.org>; Linux PM
+> > > > > <linux-pm@vger.kernel.org>; dl-linux-imx <linux-imx@nxp.com>
+> > > > > Subject: Re: [RFC] platform: detach from PM domains on shutdown
+> > > > >
+> > > > > On Thu, May 17, 2018 at 4:33 AM, Peng Fan <peng.fan@nxp.com> wrote:
+> > > > > >
+> > > > > >
+> > > > > >> -----Original Message-----
+> > > > > >> From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On
+> > > > > >> Behalf Of Rafael J. Wysocki
+> > > > > >> Sent: 2018年5月17日 5:35
+> > > > > >> To: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > > >> Cc: Peng Fan <peng.fan@nxp.com>; Rafael J. Wysocki
+> > > > > >> <rafael.j.wysocki@intel.com>; Fabio Estevam
+> > > > > >> <fabio.estevam@nxp.com>; Greg Kroah-Hartman
+> > > > > >> <gregkh@linuxfoundation.org>; Linux Kernel Mailing List
+> > > > > >> <linux-kernel@vger.kernel.org>; Linux PM
+> > > > > >> <linux-pm@vger.kernel.org>; dl-linux-imx <linux-imx@nxp.com>
+> > > > > >> Subject: Re: [RFC] platform: detach from PM domains on shutdown
+> > > > > >>
+> > > > > >> On Wed, May 16, 2018 at 11:52 AM, Ulf Hansson
+> > > > > >> <ulf.hansson@linaro.org>
+> > > > > >> wrote:
+> > > > > >> > On 15 May 2018 at 11:01, Peng Fan <peng.fan@nxp.com> wrote:
+> > > > > >> >> When reboot Linux, the PM domains attached to a device are
+> > > > > >> >> not shutdown. To SoCs which relys on reset the whole SoC,
+> > > > > >> >> there is no need to shutdown PM domains, but to Linux
+> > > > > >> >> running in a virtual machine with devices pass-through, we
+> > > > > >> >> could not reset the
+> > > whole SoC.
+> > > > > >> >> Currently we need Linux to shutdown its PM domains when reboot.
+> > > > > >> >
+> > > > > >> > I am not sure I understand exactly why the PM domain needs to
+> > > > > >> > be shutdown for these cases, could you please elaborate a bit on that.
+> > > > > >> >
+> > > > > >> > BTW, what platform are you running on and also what PM
+> > > > > >> > domains are being
+> > > > > >> used?
+> > > > > >> >
+> > > > > >> > Anyway, it seems like there may be need for certain cases,
+> > > > > >> > but certainly not all - especially since it may slow down the
+> > > > > >> > shutdown process, when not needed.
+> > > > > >> >
+> > > > > >> > Can we make this runtime configurable, via sysfs or whatever
+> > > > > >> > that makes
+> > > > > >> sense!?
+> > > > > >> >
+> > > > > >> >>
+> > > > > >> >> commit 2d30bb0b3889 ("platform: Do not detach from PM
+> > > > > >> >> domains on shutdown"), removes what this patch tries to add,
+> > > > > >> >> because of a
+> > > warning.
+> > > > > >> >> commit e79aee49bcf9 ("PM: Avoid false-positive warnings in
+> > > > > >> >> dev_pm_domain_set()") already fixes the false alarm warning.
+> > > > > >> >> So let's detach the power domain to shutdown PM domains
+> > > > > >> >> after driver
+> > > > > shutdown.
+> > > > > >> >>
+> > > > > >> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > >> >> ---
+> > > > > >> >>
+> > > > > >> >> I do not find a better place to shutdown power domain when
+> > > > > >> >> reboot Linux, so add back the line that commit 2d30bb0b3889
+> > > > > >> >> removes, because it is a false alarm warning as commit
+> > > > > >> >> e79aee49bcf9
+> > > describes.
+> > > > > >> >>
+> > > > > >> >>  drivers/base/platform.c | 1 +
+> > > > > >> >>  1 file changed, 1 insertion(+)
+> > > > > >> >>
+> > > > > >> >> diff --git a/drivers/base/platform.c
+> > > > > >> >> b/drivers/base/platform.c index 8075ddc70a17..a5929f24dc3c
+> > > > > >> >> 100644
+> > > > > >> >> --- a/drivers/base/platform.c
+> > > > > >> >> +++ b/drivers/base/platform.c
+> > > > > >> >> @@ -616,6 +616,7 @@ static void platform_drv_shutdown(struct
+> > > > > >> >> device
+> > > > > >> >> *_dev)
+> > > > > >> >>
+> > > > > >> >>         if (drv->shutdown)
+> > > > > >> >>                 drv->shutdown(dev);
+> > > > > >> >> +       dev_pm_domain_detach(_dev, true);
+> > > > > >> >
+> > > > > >> > This would somewhat work, but only for platform devices. To
+> > > > > >> > make this fully work, we need to call dev_pm_domain_detach()
+> > > > > >> > from amba, spi, etc as well.
+> > > > > >> >
+> > > > > >> > Perhaps another option to manage this more generally, an
+> > > > > >> > without having detach devices, could be to extend the struct
+> > > > > >> > dev_pm_domain with a new callback, "->shutdown()" and then
+> > > > > >> > make the driver core call it from device_shutdown().
+> > > > > >>
+> > > > > >> I'm sensing a possible ordering slippery slope with this (it
+> > > > > >> will only work if all of the drivers/bus types etc do the right
+> > > > > >> thing in their
+> > > > > >> ->shutdown callbacks so nothing depends on the domain going
+> > forward).
+> > > > > >>
+> > > > > >> > Typically, for genpd, I would probably count the number of
+> > > > > >> > calls being made to ->shutdown() per PM domain, then when it
+> > > > > >> > reaches the number of attached devices to it, allow to power off it.
+> > > > > >> >
+> > > > > >> > Let's see what Rafael thinks about it.
+> > > > > >>
+> > > > > >> I'm not sure about the use case.  The hypervisor should be able
+> > > > > >> to take care of turning power domains off on the client OS
+> > > > > >> reboot in theory.  If the client OS leaving the hypervisor
+> > > > > >> needs to worry about what state it leaves behind, the design of
+> > > > > >> the hypervisor is sort of
+> > > > > questionable IMO.
+> > > > > >
+> > > > > > This is valid concern. But moving the power domain logic into
+> > > > > > hypervisor mostly micro-kernel design will introduce more
+> > > > > > complexity and
+> > > > > make certification harder.
+> > > > > > Currently, Let Linux shutdown it's power domain is the easiest
+> > > > > > way to me and make things work well after reboot.
+> > > > >
+> > > > > Well, to put it bluntly, if your hypervisor depends on the guest
+> > > > > to do the right thing on exit, it doesn't do its job.  I wouldn't
+> > > > > have certified it for you if that was my decision.
+> > > >
+> > > > It is guest os not work well after guest os reboot. The hypervisor
+> > > > is not
+> > > affected.
+> > > >
+> > > > Thinking another case without hypervisor, M4 core run RTOS, A35 Core
+> > > > run Linux, when Linux rebooting, RTOS should not be affected. After
+> > > > Linux reboot itself, because its power domain is not paired with
+> > > open/shutdown, some devices not function well.
+> > >
+> > > The question boils down to whether or not devices should be detached
+> > > from PM domains on shutdown IMO.
+> > >
+> > > They are detached from PM domains on driver removal, so I guess one
+> > > answer is "yes, in analogy with that".  However, the point about
+> > > performace brought up by Ulf seems to be valid too.
+> > >
+> > > In any case, the change should be made for all of the bus types using
+> > > PM domains, not just one.
+> > 
+> > Understand, it will increase shutdown time. How about shutdown the power
+> > domain in platform_driver->shutdown, let the driver handle it's power domain
+> > sthudown by itself?
+> > Then no need common framework change.
 > 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> index 0a44ab175422..2b8b34c72697 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -63,7 +63,6 @@ enum mtk_dpi_out_color_format {
->  struct mtk_dpi {
->  	struct mtk_ddp_comp ddp_comp;
->  	struct drm_encoder encoder;
-> -	struct drm_bridge *bridge;
->  	void __iomem *regs;
->  	struct device *dev;
->  	struct clk *engine_clk;
-> @@ -643,8 +642,8 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
->  
->  	/* Currently DPI0 is fixed to be driven by OVL1 */
->  	dpi->encoder.possible_crtcs = BIT(1);
-> -
-> -	ret = drm_bridge_attach(&dpi->encoder, dpi->bridge, NULL);
-> +	dpi->encoder.bridge->encoder = &dpi->encoder;
+> Do you have more suggestions on how to handle this the power domain shutdown?
 
-This is done inside drm_bridge_attach().
-
-> +	ret = drm_bridge_attach(&dpi->encoder, dpi->encoder.bridge, NULL);
->  	if (ret) {
->  		dev_err(dev, "Failed to attach bridge: %d\n", ret);
->  		goto err_cleanup;
-> @@ -709,7 +708,7 @@ static int mtk_dpi_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct mtk_dpi *dpi;
->  	struct resource *mem;
-> -	struct device_node *bridge_node;
-> +	struct device_node *ep, *bridge_node;
->  	int comp_id;
->  	const struct of_device_id *match;
->  	int ret;
-> @@ -759,15 +758,21 @@ static int mtk_dpi_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	bridge_node = of_graph_get_remote_node(dev->of_node, 0, 0);
-> -	if (!bridge_node)
-> +	ep = of_graph_get_next_endpoint(dev->of_node, NULL);
-> +	if (ep) {
-> +		bridge_node = of_graph_get_remote_port_parent(ep);
-> +		of_node_put(ep);
-> +	}
-> +	if (!bridge_node) {
-> +		dev_err(dev, "Failed to find bridge node\n");
->  		return -ENODEV;
-> +	}
-
-This looks like mt8173 has the same bug, so send this patch
-independently and it would be more quick to merge.
-For mtk_dsi, it use drm_of_find_panel_or_bridge(), so I think you could
-use the same function to get bridge.
-
-Regards,
-CK
-
->  
->  	dev_info(dev, "Found bridge node: %pOF\n", bridge_node);
->  
-> -	dpi->bridge = of_drm_find_bridge(bridge_node);
-> +	dpi->encoder.bridge = of_drm_find_bridge(bridge_node);
->  	of_node_put(bridge_node);
-> -	if (!dpi->bridge)
-> +	if (!dpi->encoder.bridge)
->  		return -EPROBE_DEFER;
->  
->  	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DPI);
+I think you could add a platform syscore_shutdown hook to turn all power
+domains off.
