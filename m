@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422752AbeE1LBn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:01:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49112 "EHLO mail.kernel.org"
+        id S1422746AbeE1LBg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:01:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164854AbeE1LBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:38 -0400
+        id S938029AbeE1LB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 446/496] dmaengine: rcar-dmac: Check the done lists in rcar_dmac_chan_get_residue()
-Date: Mon, 28 May 2018 12:03:51 +0200
-Message-Id: <20180528100338.673676940@linuxfoundation.org>
+Subject: [PATCH 4.14 443/496] tools: hv: fix compiler warnings about major/target_fname
+Date: Mon, 28 May 2018 12:03:48 +0200
+Message-Id: <20180528100338.528303118@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,52 +31,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 3e081628d510b2ddbe493371d9c574d9275da17e ]
+[ Upstream commit 1330fc35327f3ecdfa1aa645e7321ced7349b2cd ]
 
-This patch fixes an issue that a race condition happens between a client
-driver and the rcar-dmac driver:
+This patch fixes the below warnings with new glibc and gcc:
 
-- The rcar_dmac_isr_transfer_end() is called.
- - The done list appears, and desc.running is the next active list.
-- rcar_dmac_chan_get_residue() is called by a client driver before
-  rcar_dmac_isr_channel_thread() is called.
- - The rcar_dmac_chan_get_residue() will not find any descriptors.
- - And, the following WARNING happens:
-	WARN(1, "No descriptor for cookie!");
+hv_vss_daemon.c:100:13: warning: In the GNU C Library, "major" is defined
+ by <sys/sysmacros.h>. For historical compatibility, it is currently
+defined by <sys/types.h> as well, but we plan to  remove this soon.
+To use "major", include <sys/sysmacros.h>  directly.
 
-The sh-sci driver with HSCIF (921,600bps) on R-Car H3 can cause this
-situation.
-So, this patch checks the done lists in rcar_dmac_chan_get_residue()
-and returns zero if the done lists has the argument cookie.
+hv_fcopy_daemon.c:42:2: note: 'snprintf' output between 2 and 1040
+bytes into a destination of size 260
 
-Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/sh/rcar-dmac.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ tools/hv/hv_fcopy_daemon.c |    3 ++-
+ tools/hv/hv_vss_daemon.c   |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1264,8 +1264,17 @@ static unsigned int rcar_dmac_chan_get_r
- 	 * If the cookie doesn't correspond to the currently running transfer
- 	 * then the descriptor hasn't been processed yet, and the residue is
- 	 * equal to the full descriptor size.
-+	 * Also, a client driver is possible to call this function before
-+	 * rcar_dmac_isr_channel_thread() runs. In this case, the "desc.running"
-+	 * will be the next descriptor, and the done list will appear. So, if
-+	 * the argument cookie matches the done list's cookie, we can assume
-+	 * the residue is zero.
- 	 */
- 	if (cookie != desc->async_tx.cookie) {
-+		list_for_each_entry(desc, &chan->desc.done, node) {
-+			if (cookie == desc->async_tx.cookie)
-+				return 0;
-+		}
- 		list_for_each_entry(desc, &chan->desc.pending, node) {
- 			if (cookie == desc->async_tx.cookie)
- 				return desc->size;
+--- a/tools/hv/hv_fcopy_daemon.c
++++ b/tools/hv/hv_fcopy_daemon.c
+@@ -23,13 +23,14 @@
+ #include <unistd.h>
+ #include <errno.h>
+ #include <linux/hyperv.h>
++#include <linux/limits.h>
+ #include <syslog.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <getopt.h>
+ 
+ static int target_fd;
+-static char target_fname[W_MAX_PATH];
++static char target_fname[PATH_MAX];
+ static unsigned long long filesize;
+ 
+ static int hv_start_fcopy(struct hv_start_fcopy *smsg)
+--- a/tools/hv/hv_vss_daemon.c
++++ b/tools/hv/hv_vss_daemon.c
+@@ -22,6 +22,7 @@
+ #include <sys/poll.h>
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+ #include <mntent.h>
