@@ -1,74 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939883AbeE1QOW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:14:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49814 "EHLO mx2.suse.de"
+        id S939853AbeE1QPN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:15:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49769 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935137AbeE1QNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:13:50 -0400
-Date: Mon, 28 May 2018 15:35:03 +0200
+        id S933488AbeE1QNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:13:49 -0400
+Date: Mon, 28 May 2018 14:52:57 +0200
 From: Jan Kara <jack@suse.cz>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, tj@kernel.org,
-        david@fromorbit.com, linux-block@vger.kernel.org
-Subject: Re: general protection fault in wb_workfn (2)
-Message-ID: <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
-References: <000000000000cbd959056d1851ca@google.com>
- <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.16 231/272] fanotify: Avoid lost events due to ENOMEM
+ for unlimited queues
+Message-ID: <20180528125257.bppijdymfnsr3yqz@quack2.suse.cz>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <20180528100259.797799079@linuxfoundation.org>
+ <CAOQ4uxi9emdAqr1JPYgC_T52SjCtpAbac4pSzfZ7vqtmg6nFMg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAOQ4uxi9emdAqr1JPYgC_T52SjCtpAbac4pSzfZ7vqtmg6nFMg@mail.gmail.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 27-05-18 09:47:54, Tetsuo Handa wrote:
-> Forwarding http://lkml.kernel.org/r/201805251915.FGH64517.HVFJOOLFFMQStO@I-love.SAKURA.ne.jp .
+On Mon 28-05-18 15:39:04, Amir Goldstein wrote:
+> On Mon, May 28, 2018 at 1:04 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > 4.16-stable review patch.  If anyone has any objections, please let me know.
+> >
 > 
-> Jan Kara wrote:
-> > > void delayed_work_timer_fn(struct timer_list *t)
-> > > {
-> > > 	struct delayed_work *dwork = from_timer(dwork, t, timer);
-> > > 
-> > > 	/* should have been called from irqsafe timer with irq already off */
-> > > 	__queue_work(dwork->cpu, dwork->wq, &dwork->work);
-> > > }
-> > > 
-> > > Then, wb_workfn() is after all scheduled even if we check for
-> > > WB_registered bit, isn't it?
-> > 
-> > It can be queued after WB_registered bit is cleared but it cannot be queued
-> > after mod_delayed_work(bdi_wq, &wb->dwork, 0) has finished. That function
-> > deletes the pending timer (the timer cannot be armed again because
-> > WB_registered is cleared) and queues what should be the last round of
-> > wb_workfn().
+> I do not have objections for applying this patch to stable, but AFAIK
+> it is a correctness patch that doesn't fix any bug and it was mainly added
+> as a prerequisite to memcg accounting of event allocations, which is not
+> yet merged and not destined for stable.
 > 
-> mod_delayed_work() deletes the pending timer but does not wait for already
-> invoked timer handler to complete because it is using del_timer() rather than
-> del_timer_sync(). Then, what happens if __queue_work() is almost concurrently
-> executed from two CPUs, one from mod_delayed_work(bdi_wq, &wb->dwork, 0) from
-> wb_shutdown() path (which is called without spin_lock_bh(&wb->work_lock)) and
-> the other from delayed_work_timer_fn() path (which is called without checking
-> WB_registered bit under spin_lock_bh(&wb->work_lock)) ?
+> Jan? do you agree with my statements above?
 
-In this case, work should still be queued only once. The synchronization in
-this case should be provided by the WORK_STRUCT_PENDING_BIT. When a delayed
-work is queued by mod_delayed_work(), this bit is set, and gets cleared
-only once the work is started on some CPU. But admittedly this code is
-rather convoluted so I may be missing something.
-
-Also you should note that flush_delayed_work() which follows
-mod_delayed_work() in wb_shutdown() does del_timer_sync() so I don't see
-how anything could get past that. In fact mod_delayed_work() is in
-wb_shutdown() path to make sure wb_workfn() gets executed at least once
-before the bdi_writeback structure gets cleaned up so that all queued items
-are finished. We do not rely on it to remove pending timers or queued
-wb_workfn() executions.
+Yes, you are correct. The problem this patch tries to fix is theoretical in
+nature at this point. However my feeling is stable tree has got rather
+benevolent in accepting patches in last months and Greg wishes it stays that
+way so I'm objecting only to patches I know introduce regressions at this
+point.
 
 								Honza
 -- 
