@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425155AbeE1PRj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:17:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41860 "EHLO mail.kernel.org"
+        id S1034095AbeE1PSL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:18:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030868AbeE1KW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:28 -0400
+        id S1033156AbeE1KWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org,
+        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 154/268] llc: properly handle dev_queue_xmit() return value
-Date: Mon, 28 May 2018 12:02:08 +0200
-Message-Id: <20180528100219.863350551@linuxfoundation.org>
+Subject: [PATCH 4.4 152/268] net/usb/qmi_wwan.c: Add USB id for lt4120 modem
+Date: Mon, 28 May 2018 12:02:06 +0200
+Message-Id: <20180528100219.640999454@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,169 +31,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 
-[ Upstream commit b85ab56c3f81c5a24b5a5213374f549df06430da ]
+[ Upstream commit f3d801baf118c9d452ee7c278df16880c892e669 ]
 
-llc_conn_send_pdu() pushes the skb into write queue and
-calls llc_conn_send_pdus() to flush them out. However, the
-status of dev_queue_xmit() is not returned to caller,
-in this case, llc_conn_state_process().
+This is needed to support the modem found in HP EliteBook 820 G3.
 
-llc_conn_state_process() needs hold the skb no matter
-success or failure, because it still uses it after that,
-therefore we should hold skb before dev_queue_xmit() when
-that skb is the one being processed by llc_conn_state_process().
-
-For other callers, they can just pass NULL and ignore
-the return value as they are.
-
-Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/llc_conn.h |    2 +-
- net/llc/llc_c_ac.c     |   15 +++++++++------
- net/llc/llc_conn.c     |   32 +++++++++++++++++++++++---------
- 3 files changed, 33 insertions(+), 16 deletions(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/net/llc_conn.h
-+++ b/include/net/llc_conn.h
-@@ -104,7 +104,7 @@ void llc_sk_reset(struct sock *sk);
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -763,6 +763,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x413c, 0x81a9, 8)},	/* Dell Wireless 5808e Gobi(TM) 4G LTE Mobile Broadband Card */
+ 	{QMI_FIXED_INTF(0x413c, 0x81b1, 8)},	/* Dell Wireless 5809e Gobi(TM) 4G LTE Mobile Broadband Card */
+ 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
++	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
+ 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
+ 	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
  
- /* Access to a connection */
- int llc_conn_state_process(struct sock *sk, struct sk_buff *skb);
--void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
-+int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
- void llc_conn_rtn_pdu(struct sock *sk, struct sk_buff *skb);
- void llc_conn_resend_i_pdu_as_cmd(struct sock *sk, u8 nr, u8 first_p_bit);
- void llc_conn_resend_i_pdu_as_rsp(struct sock *sk, u8 nr, u8 first_f_bit);
---- a/net/llc/llc_c_ac.c
-+++ b/net/llc/llc_c_ac.c
-@@ -389,7 +389,7 @@ static int llc_conn_ac_send_i_cmd_p_set_
- 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
--		llc_conn_send_pdu(sk, skb);
-+		rc = llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
- 	return rc;
-@@ -916,7 +916,7 @@ static int llc_conn_ac_send_i_rsp_f_set_
- 	llc_pdu_init_as_i_cmd(skb, llc->ack_pf, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
--		llc_conn_send_pdu(sk, skb);
-+		rc = llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
- 	return rc;
-@@ -935,14 +935,17 @@ static int llc_conn_ac_send_i_rsp_f_set_
- int llc_conn_ac_send_i_as_ack(struct sock *sk, struct sk_buff *skb)
- {
- 	struct llc_sock *llc = llc_sk(sk);
-+	int ret;
- 
- 	if (llc->ack_must_be_send) {
--		llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
-+		ret = llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
- 		llc->ack_must_be_send = 0 ;
- 		llc->ack_pf = 0;
--	} else
--		llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
--	return 0;
-+	} else {
-+		ret = llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
-+	}
-+
-+	return ret;
- }
- 
- /**
---- a/net/llc/llc_conn.c
-+++ b/net/llc/llc_conn.c
-@@ -30,7 +30,7 @@
- #endif
- 
- static int llc_find_offset(int state, int ev_type);
--static void llc_conn_send_pdus(struct sock *sk);
-+static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *skb);
- static int llc_conn_service(struct sock *sk, struct sk_buff *skb);
- static int llc_exec_conn_trans_actions(struct sock *sk,
- 				       struct llc_conn_state_trans *trans,
-@@ -193,11 +193,11 @@ out_skb_put:
- 	return rc;
- }
- 
--void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
-+int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
- {
- 	/* queue PDU to send to MAC layer */
- 	skb_queue_tail(&sk->sk_write_queue, skb);
--	llc_conn_send_pdus(sk);
-+	return llc_conn_send_pdus(sk, skb);
- }
- 
- /**
-@@ -255,7 +255,7 @@ void llc_conn_resend_i_pdu_as_cmd(struct
- 	if (howmany_resend > 0)
- 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
- 	/* any PDUs to re-send are queued up; start sending to MAC */
--	llc_conn_send_pdus(sk);
-+	llc_conn_send_pdus(sk, NULL);
- out:;
- }
- 
-@@ -296,7 +296,7 @@ void llc_conn_resend_i_pdu_as_rsp(struct
- 	if (howmany_resend > 0)
- 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
- 	/* any PDUs to re-send are queued up; start sending to MAC */
--	llc_conn_send_pdus(sk);
-+	llc_conn_send_pdus(sk, NULL);
- out:;
- }
- 
-@@ -340,12 +340,16 @@ out:
- /**
-  *	llc_conn_send_pdus - Sends queued PDUs
-  *	@sk: active connection
-+ *	@hold_skb: the skb held by caller, or NULL if does not care
-  *
-- *	Sends queued pdus to MAC layer for transmission.
-+ *	Sends queued pdus to MAC layer for transmission. When @hold_skb is
-+ *	NULL, always return 0. Otherwise, return 0 if @hold_skb is sent
-+ *	successfully, or 1 for failure.
-  */
--static void llc_conn_send_pdus(struct sock *sk)
-+static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *hold_skb)
- {
- 	struct sk_buff *skb;
-+	int ret = 0;
- 
- 	while ((skb = skb_dequeue(&sk->sk_write_queue)) != NULL) {
- 		struct llc_pdu_sn *pdu = llc_pdu_sn_hdr(skb);
-@@ -357,10 +361,20 @@ static void llc_conn_send_pdus(struct so
- 			skb_queue_tail(&llc_sk(sk)->pdu_unack_q, skb);
- 			if (!skb2)
- 				break;
--			skb = skb2;
-+			dev_queue_xmit(skb2);
-+		} else {
-+			bool is_target = skb == hold_skb;
-+			int rc;
-+
-+			if (is_target)
-+				skb_get(skb);
-+			rc = dev_queue_xmit(skb);
-+			if (is_target)
-+				ret = rc;
- 		}
--		dev_queue_xmit(skb);
- 	}
-+
-+	return ret;
- }
- 
- /**
