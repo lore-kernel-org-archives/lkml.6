@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934566AbeE1KIS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:08:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56246 "EHLO mail.kernel.org"
+        id S934759AbeE1KId (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:08:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934203AbeE1KIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:12 -0400
+        id S934203AbeE1KI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Dave Jiang <dave.jiang@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 058/185] NFC: llcp: Limit size of SDP URI
-Date: Mon, 28 May 2018 12:01:39 +0200
-Message-Id: <20180528100055.789665989@linuxfoundation.org>
+Subject: [PATCH 3.18 064/185] kernel/relay.c: limit kmalloc size to KMALLOC_MAX_SIZE
+Date: Mon, 28 May 2018 12:01:45 +0200
+Message-Id: <20180528100056.340583664@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,46 +34,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit fe9c842695e26d8116b61b80bfb905356f07834b ]
+[ Upstream commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e ]
 
-The tlv_len is u8, so we need to limit the size of the SDP URI. Enforce
-this both in the NLA policy and in the code that performs the allocation
-and copy, to avoid writing past the end of the allocated buffer.
+chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
+of chan->n_subbufs * sizeof(size_t *).
 
-Fixes: d9b8d8e19b073 ("NFC: llcp: Service Name Lookup netlink interface")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+kmalloc_slab() will generate a warning when this fails if
+chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
+
+Limit chan->n_subbufs to the maximum allowed kmalloc() size.
+
+Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
+Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/nfc/llcp_commands.c |    4 ++++
- net/nfc/netlink.c       |    3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ kernel/relay.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/nfc/llcp_commands.c
-+++ b/net/nfc/llcp_commands.c
-@@ -149,6 +149,10 @@ struct nfc_llcp_sdp_tlv *nfc_llcp_build_
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -166,7 +166,7 @@ static struct rchan_buf *relay_create_bu
+ {
+ 	struct rchan_buf *buf;
  
- 	pr_debug("uri: %s, len: %zu\n", uri, uri_len);
- 
-+	/* sdreq->tlv_len is u8, takes uri_len, + 3 for header, + 1 for NULL */
-+	if (WARN_ON_ONCE(uri_len > U8_MAX - 4))
-+		return NULL;
-+
- 	sdreq = kzalloc(sizeof(struct nfc_llcp_sdp_tlv), GFP_KERNEL);
- 	if (sdreq == NULL)
+-	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
++	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
  		return NULL;
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -60,7 +60,8 @@ static const struct nla_policy nfc_genl_
- };
  
- static const struct nla_policy nfc_sdp_genl_policy[NFC_SDP_ATTR_MAX + 1] = {
--	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING },
-+	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING,
-+			       .len = U8_MAX - 4 },
- 	[NFC_SDP_ATTR_SAP] = { .type = NLA_U8 },
- };
- 
+ 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
