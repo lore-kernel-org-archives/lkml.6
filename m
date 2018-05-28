@@ -1,68 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939334AbeE1OKE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:10:04 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49968 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162253AbeE1OHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 10:07:54 -0400
-Date: Mon, 28 May 2018 15:07:49 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Christian Brauner <christian@brauner.io>
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, mingo@kernel.org,
-        james.morris@microsoft.com, keescook@chromium.org,
-        peterz@infradead.org, sds@tycho.nsa.gov, akpm@linux-foundation.org,
-        oleg@redhat.com
-Subject: Re: [PATCH 2/8] signal: make kill_as_cred_perm() return bool
-Message-ID: <20180528140749.GY30522@ZenIV.linux.org.uk>
-References: <20180528134916.7568-1-christian@brauner.io>
- <20180528134916.7568-3-christian@brauner.io>
+        id S939348AbeE1OKb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:10:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161328AbeE1Khj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:39 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 223/329] llc: properly handle dev_queue_xmit() return value
+Date: Mon, 28 May 2018 12:02:32 +0200
+Message-Id: <20180528100300.662585663@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528134916.7568-3-christian@brauner.io>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 03:49:10PM +0200, Christian Brauner wrote:
-> kill_as_cred_perm() already behaves like a boolean function. Let's actually
-> declare it as such too.
-> 
-> Signed-off-by: Christian Brauner <christian@brauner.io>
-> ---
->  kernel/signal.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index c756008d589e..81be01d193f4 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1349,14 +1349,15 @@ static int kill_proc_info(int sig, struct siginfo *info, pid_t pid)
->  	return error;
->  }
->  
-> -static int kill_as_cred_perm(const struct cred *cred,
-> +static bool kill_as_cred_perm(const struct cred *cred,
->  			     struct task_struct *target)
->  {
->  	const struct cred *pcred = __task_cred(target);
->  	if (!uid_eq(cred->euid, pcred->suid) && !uid_eq(cred->euid, pcred->uid) &&
->  	    !uid_eq(cred->uid,  pcred->suid) && !uid_eq(cred->uid,  pcred->uid))
-> -		return 0;
-> -	return 1;
-> +		return false;
-> +
-> +	return true;
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Ugh...
-	if (!foo && !bar && !baz && !quux)
-		return false;
-	return true;
+------------------
 
-is a bloody odd way to spell
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-	return foo || bar || baz || quux;
+[ Upstream commit b85ab56c3f81c5a24b5a5213374f549df06430da ]
+
+llc_conn_send_pdu() pushes the skb into write queue and
+calls llc_conn_send_pdus() to flush them out. However, the
+status of dev_queue_xmit() is not returned to caller,
+in this case, llc_conn_state_process().
+
+llc_conn_state_process() needs hold the skb no matter
+success or failure, because it still uses it after that,
+therefore we should hold skb before dev_queue_xmit() when
+that skb is the one being processed by llc_conn_state_process().
+
+For other callers, they can just pass NULL and ignore
+the return value as they are.
+
+Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/net/llc_conn.h |    2 +-
+ net/llc/llc_c_ac.c     |   15 +++++++++------
+ net/llc/llc_conn.c     |   32 +++++++++++++++++++++++---------
+ 3 files changed, 33 insertions(+), 16 deletions(-)
+
+--- a/include/net/llc_conn.h
++++ b/include/net/llc_conn.h
+@@ -104,7 +104,7 @@ void llc_sk_reset(struct sock *sk);
+ 
+ /* Access to a connection */
+ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb);
+-void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
++int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
+ void llc_conn_rtn_pdu(struct sock *sk, struct sk_buff *skb);
+ void llc_conn_resend_i_pdu_as_cmd(struct sock *sk, u8 nr, u8 first_p_bit);
+ void llc_conn_resend_i_pdu_as_rsp(struct sock *sk, u8 nr, u8 first_f_bit);
+--- a/net/llc/llc_c_ac.c
++++ b/net/llc/llc_c_ac.c
+@@ -389,7 +389,7 @@ static int llc_conn_ac_send_i_cmd_p_set_
+ 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
+ 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
+ 	if (likely(!rc)) {
+-		llc_conn_send_pdu(sk, skb);
++		rc = llc_conn_send_pdu(sk, skb);
+ 		llc_conn_ac_inc_vs_by_1(sk, skb);
+ 	}
+ 	return rc;
+@@ -916,7 +916,7 @@ static int llc_conn_ac_send_i_rsp_f_set_
+ 	llc_pdu_init_as_i_cmd(skb, llc->ack_pf, llc->vS, llc->vR);
+ 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
+ 	if (likely(!rc)) {
+-		llc_conn_send_pdu(sk, skb);
++		rc = llc_conn_send_pdu(sk, skb);
+ 		llc_conn_ac_inc_vs_by_1(sk, skb);
+ 	}
+ 	return rc;
+@@ -935,14 +935,17 @@ static int llc_conn_ac_send_i_rsp_f_set_
+ int llc_conn_ac_send_i_as_ack(struct sock *sk, struct sk_buff *skb)
+ {
+ 	struct llc_sock *llc = llc_sk(sk);
++	int ret;
+ 
+ 	if (llc->ack_must_be_send) {
+-		llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
++		ret = llc_conn_ac_send_i_rsp_f_set_ackpf(sk, skb);
+ 		llc->ack_must_be_send = 0 ;
+ 		llc->ack_pf = 0;
+-	} else
+-		llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
+-	return 0;
++	} else {
++		ret = llc_conn_ac_send_i_cmd_p_set_0(sk, skb);
++	}
++
++	return ret;
+ }
+ 
+ /**
+--- a/net/llc/llc_conn.c
++++ b/net/llc/llc_conn.c
+@@ -30,7 +30,7 @@
+ #endif
+ 
+ static int llc_find_offset(int state, int ev_type);
+-static void llc_conn_send_pdus(struct sock *sk);
++static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *skb);
+ static int llc_conn_service(struct sock *sk, struct sk_buff *skb);
+ static int llc_exec_conn_trans_actions(struct sock *sk,
+ 				       struct llc_conn_state_trans *trans,
+@@ -193,11 +193,11 @@ out_skb_put:
+ 	return rc;
+ }
+ 
+-void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
++int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
+ {
+ 	/* queue PDU to send to MAC layer */
+ 	skb_queue_tail(&sk->sk_write_queue, skb);
+-	llc_conn_send_pdus(sk);
++	return llc_conn_send_pdus(sk, skb);
+ }
+ 
+ /**
+@@ -255,7 +255,7 @@ void llc_conn_resend_i_pdu_as_cmd(struct
+ 	if (howmany_resend > 0)
+ 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
+ 	/* any PDUs to re-send are queued up; start sending to MAC */
+-	llc_conn_send_pdus(sk);
++	llc_conn_send_pdus(sk, NULL);
+ out:;
+ }
+ 
+@@ -296,7 +296,7 @@ void llc_conn_resend_i_pdu_as_rsp(struct
+ 	if (howmany_resend > 0)
+ 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
+ 	/* any PDUs to re-send are queued up; start sending to MAC */
+-	llc_conn_send_pdus(sk);
++	llc_conn_send_pdus(sk, NULL);
+ out:;
+ }
+ 
+@@ -340,12 +340,16 @@ out:
+ /**
+  *	llc_conn_send_pdus - Sends queued PDUs
+  *	@sk: active connection
++ *	@hold_skb: the skb held by caller, or NULL if does not care
+  *
+- *	Sends queued pdus to MAC layer for transmission.
++ *	Sends queued pdus to MAC layer for transmission. When @hold_skb is
++ *	NULL, always return 0. Otherwise, return 0 if @hold_skb is sent
++ *	successfully, or 1 for failure.
+  */
+-static void llc_conn_send_pdus(struct sock *sk)
++static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *hold_skb)
+ {
+ 	struct sk_buff *skb;
++	int ret = 0;
+ 
+ 	while ((skb = skb_dequeue(&sk->sk_write_queue)) != NULL) {
+ 		struct llc_pdu_sn *pdu = llc_pdu_sn_hdr(skb);
+@@ -357,10 +361,20 @@ static void llc_conn_send_pdus(struct so
+ 			skb_queue_tail(&llc_sk(sk)->pdu_unack_q, skb);
+ 			if (!skb2)
+ 				break;
+-			skb = skb2;
++			dev_queue_xmit(skb2);
++		} else {
++			bool is_target = skb == hold_skb;
++			int rc;
++
++			if (is_target)
++				skb_get(skb);
++			rc = dev_queue_xmit(skb);
++			if (is_target)
++				ret = rc;
+ 		}
+-		dev_queue_xmit(skb);
+ 	}
++
++	return ret;
+ }
+ 
+ /**
