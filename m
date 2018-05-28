@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424273AbeE1LNc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:13:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32824 "EHLO mail.kernel.org"
+        id S1424304AbeE1LNn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:13:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424260AbeE1LN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:13:28 -0400
+        id S1424048AbeE1LNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 207/272] ARM: dts: keystone-k2e-clocks: Fix missing unit address separator
-Date: Mon, 28 May 2018 12:04:00 +0200
-Message-Id: <20180528100257.903473469@linuxfoundation.org>
+Subject: [PATCH 4.16 188/272] hwmon: (pmbus/adm1275) Accept negative page register values
+Date: Mon, 28 May 2018 12:03:41 +0200
+Message-Id: <20180528100256.432742664@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,32 +29,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suman Anna <s-anna@ti.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 5a3a03905a433216f517babd0a343ae7265e9ca1 ]
+[ Upstream commit ecb29abd4cb0670c616fb563a078f25d777ce530 ]
 
-Commit 95d8b41c765b ("ARM: dts: keystone-k2e-clocks: Add missing unit
-name to clock nodes that have regs") fixed the unit names on various
-clock nodes but missed out adding the unit address separator on the
-clkhyperlink0 clock node. Fix the same.
+A negative page register value means that no page needs to be
+selected. This is used by status register read operations and needs
+to be accepted. The failure to do so so results in missed status
+and limit registers.
 
-Fixes: 95d8b41c765b ("ARM: dts: keystone-k2e-clocks: Add missing unit name to clock nodes that have regs")
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Fixes: da8e48ab483e1 ("hwmon: (pmbus) Always call _pmbus_read_byte in core driver")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/keystone-k2e-clocks.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/pmbus/adm1275.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/keystone-k2e-clocks.dtsi
-+++ b/arch/arm/boot/dts/keystone-k2e-clocks.dtsi
-@@ -42,7 +42,7 @@ clocks {
- 		domain-id = <0>;
- 	};
+--- a/drivers/hwmon/pmbus/adm1275.c
++++ b/drivers/hwmon/pmbus/adm1275.c
+@@ -154,7 +154,7 @@ static int adm1275_read_word_data(struct
+ 	const struct adm1275_data *data = to_adm1275_data(info);
+ 	int ret = 0;
  
--	clkhyperlink0: clkhyperlink02350030 {
-+	clkhyperlink0: clkhyperlink0@2350030 {
- 		#clock-cells = <0>;
- 		compatible = "ti,keystone,psc-clock";
- 		clocks = <&chipclk12>;
+-	if (page)
++	if (page > 0)
+ 		return -ENXIO;
+ 
+ 	switch (reg) {
+@@ -240,7 +240,7 @@ static int adm1275_write_word_data(struc
+ 	const struct adm1275_data *data = to_adm1275_data(info);
+ 	int ret;
+ 
+-	if (page)
++	if (page > 0)
+ 		return -ENXIO;
+ 
+ 	switch (reg) {
