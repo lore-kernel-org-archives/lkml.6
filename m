@@ -1,126 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162112AbeE1OYw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:24:52 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:51280 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1161893AbeE1KeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:16 -0400
-From: Oleksandr Shamray <oleksandrs@mellanox.com>
-To: gregkh@linuxfoundation.org, arnd@arndb.de
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
-        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
-        vadimp@mellanox.com, system-sw-low-level@mellanox.com,
-        robh+dt@kernel.org, openocd-devel-owner@lists.sourceforge.net,
-        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-        Oleksandr Shamray <oleksandrs@mellanox.com>
-Subject: [patch v22 3/4] Documentation: jtag: Add bindings for Aspeed SoC 24xx and 25xx families JTAG master driver
-Date: Mon, 28 May 2018 13:34:11 +0300
-Message-Id: <1527503652-21975-4-git-send-email-oleksandrs@mellanox.com>
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1527503652-21975-1-git-send-email-oleksandrs@mellanox.com>
-References: <1527503652-21975-1-git-send-email-oleksandrs@mellanox.com>
+        id S1165620AbeE1OZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:25:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161843AbeE1KeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:07 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jayachandran C <jnair@caviumnetworks.com>,
+        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 176/329] watchdog: sbsa: use 32-bit read for WCV
+Date: Mon, 28 May 2018 12:01:45 +0200
+Message-Id: <20180528100257.039408089@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It has been tested on Mellanox system with BMC equipped with
-Aspeed 2520 SoC for programming CPLD devices.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
-Acked-by: Rob Herring <robh@kernel.org>
+------------------
+
+From: Jayachandran C <jnair@caviumnetworks.com>
+
+[ Upstream commit 93ac3deb7c220cbcec032a967220a1f109d58431 ]
+
+According to SBSA spec v3.1 section 5.3:
+  All registers are 32 bits in size and should be accessed using
+  32-bit reads and writes. If an access size other than 32 bits
+  is used then the results are IMPLEMENTATION DEFINED.
+  [...]
+  The Generic Watchdog is little-endian
+
+The current code uses readq to read the watchdog compare register
+which does a 64-bit access. This fails on ThunderX2 which does not
+implement 64-bit access to this register.
+
+Fix this by using lo_hi_readq() that does two 32-bit reads.
+
+Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-v21->v22
-v20->v21
-v19->v20
-v18->v19
+ drivers/watchdog/sbsa_gwdt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v17->v18
-v16->v17
-v15->v16
-Comments pointed by Joel Stanley <joel.stan@gmail.com>
-- change clocks = <&clk_apb> to proper clocks = <&syscon ASPEED_CLK_APB>
-- add reset descriptions in bndings file
-
-v14->v15
-v13->v14
-v12->v13
-v11->v12
-v10->v11
-v9->v10
-v8->v9
-v7->v8
-Comments pointed by pointed by Joel Stanley <joel.stan@gmail.com>
-- Change compatible string to ast2400 and ast2000
-
-V6->v7
-Comments pointed by Tobias Klauser <tklauser@distanz.ch>
- - Fix spell "Doccumentation" -> "Documentation"
-
-v5->v6
-Comments pointed by Tobias Klauser <tklauser@distanz.ch>
-- Small nit: s/documentation/Documentation/
-
-v4->v5
-
-V3->v4
-Comments pointed by Rob Herring <robh@kernel.org>
-- delete unnecessary "status" and "reg-shift" descriptions in
-  bndings file
-
-v2->v3
-Comments pointed by Rob Herring <robh@kernel.org>
-- split Aspeed jtag driver and binding to sepatrate patches
-- delete unnecessary "status" and "reg-shift" descriptions in
-  bndings file
----
- .../devicetree/bindings/jtag/aspeed-jtag.txt       |   22 ++++++++++++++++++++
- MAINTAINERS                                        |    1 +
- 2 files changed, 23 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/jtag/aspeed-jtag.txt
-
-diff --git a/Documentation/devicetree/bindings/jtag/aspeed-jtag.txt b/Documentation/devicetree/bindings/jtag/aspeed-jtag.txt
-new file mode 100644
-index 0000000..7c36eb6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/jtag/aspeed-jtag.txt
-@@ -0,0 +1,22 @@
-+Aspeed JTAG driver for ast2400 and ast2500 SoC
-+
-+Required properties:
-+- compatible:		Should be one of
-+      - "aspeed,ast2400-jtag"
-+      - "aspeed,ast2500-jtag"
-+- reg			contains the offset and length of the JTAG memory
-+			region
-+- clocks		root clock of bus, should reference the APB
-+			clock in the second cell
-+- resets		phandle to reset controller with the reset number in
-+			the second cell
-+- interrupts		should contain JTAG controller interrupt
-+
-+Example:
-+jtag: jtag@1e6e4000 {
-+	compatible = "aspeed,ast2500-jtag";
-+	reg = <0x1e6e4000 0x1c>;
-+	clocks = <&syscon ASPEED_CLK_APB>;
-+	resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
-+	interrupts = <43>;
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7b8b2c..a5e5f75 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7617,6 +7617,7 @@ S:	Maintained
- F:	include/linux/jtag.h
- F:	include/uapi/linux/jtag.h
- F:	drivers/jtag/
-+F:	Documentation/devicetree/bindings/jtag/
+--- a/drivers/watchdog/sbsa_gwdt.c
++++ b/drivers/watchdog/sbsa_gwdt.c
+@@ -50,6 +50,7 @@
+  */
  
- K10TEMP HARDWARE MONITORING DRIVER
- M:	Clemens Ladisch <clemens@ladisch.de>
--- 
-1.7.1
+ #include <linux/io.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -159,7 +160,7 @@ static unsigned int sbsa_gwdt_get_timele
+ 	    !(readl(gwdt->control_base + SBSA_GWDT_WCS) & SBSA_GWDT_WCS_WS0))
+ 		timeleft += readl(gwdt->control_base + SBSA_GWDT_WOR);
+ 
+-	timeleft += readq(gwdt->control_base + SBSA_GWDT_WCV) -
++	timeleft += lo_hi_readq(gwdt->control_base + SBSA_GWDT_WCV) -
+ 		    arch_counter_get_cntvct();
+ 
+ 	do_div(timeleft, gwdt->clk);
