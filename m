@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937601AbeE1Nwx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:52:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33288 "EHLO mail.kernel.org"
+        id S937697AbeE1NxG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:53:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162985AbeE1Klt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:49 -0400
+        id S1163015AbeE1Kln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Martin <dave.martin@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>, Mark Salter <msalter@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 017/496] arm64: lse: Add early clobbers to some input/output asm operands
-Date: Mon, 28 May 2018 11:56:42 +0200
-Message-Id: <20180528100320.318837751@linuxfoundation.org>
+        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>,
+        Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: [PATCH 4.14 015/496] xen-swiotlb: fix the check condition for xen_swiotlb_free_coherent
+Date: Mon, 28 May 2018 11:56:40 +0200
+Message-Id: <20180528100320.211722874@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,146 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Joe Jin <joe.jin@oracle.com>
 
-commit 32c3fa7cdf0c4a3eb8405fc3e13398de019e828b upstream.
+commit 4855c92dbb7b3b85c23e88ab7ca04f99b9677b41 upstream.
 
-For LSE atomics that read and write a register operand, we need to
-ensure that these operands are annotated as "early clobber" if the
-register is written before all of the input operands have been consumed.
-Failure to do so can result in the compiler allocating the same register
-to both operands, leading to splats such as:
+When run raidconfig from Dom0 we found that the Xen DMA heap is reduced,
+but Dom Heap is increased by the same size. Tracing raidconfig we found
+that the related ioctl() in megaraid_sas will call dma_alloc_coherent()
+to apply memory. If the memory allocated by Dom0 is not in the DMA area,
+it will exchange memory with Xen to meet the requiment. Later drivers
+call dma_free_coherent() to free the memory, on xen_swiotlb_free_coherent()
+the check condition (dev_addr + size - 1 <= dma_mask) is always false,
+it prevents calling xen_destroy_contiguous_region() to return the memory
+to the Xen DMA heap.
 
- Unable to handle kernel paging request at virtual address 11111122222221
- [...]
- x1 : 1111111122222222 x0 : 1111111122222221
- Process swapper/0 (pid: 1, stack limit = 0x000000008209f908)
- Call trace:
-  test_atomic64+0x1360/0x155c
+This issue introduced by commit 6810df88dcfc2 "xen-swiotlb: When doing
+coherent alloc/dealloc check before swizzling the MFNs.".
 
-where x0 has been allocated as both the value to be stored and also the
-atomic_t pointer.
-
-This patch adds the missing clobbers.
-
-Cc: <stable@vger.kernel.org>
-Cc: Dave Martin <dave.martin@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Reported-by: Mark Salter <msalter@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Joe Jin <joe.jin@oracle.com>
+Tested-by: John Sobecki <john.sobecki@oracle.com>
+Reviewed-by: Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/atomic_lse.h |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/xen/swiotlb-xen.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/include/asm/atomic_lse.h
-+++ b/arch/arm64/include/asm/atomic_lse.h
-@@ -117,7 +117,7 @@ static inline void atomic_and(int i, ato
- 	/* LSE atomics */
- 	"	mvn	%w[i], %w[i]\n"
- 	"	stclr	%w[i], %[v]")
--	: [i] "+r" (w0), [v] "+Q" (v->counter)
-+	: [i] "+&r" (w0), [v] "+Q" (v->counter)
- 	: "r" (x1)
- 	: __LL_SC_CLOBBERS);
- }
-@@ -135,7 +135,7 @@ static inline int atomic_fetch_and##name
- 	/* LSE atomics */						\
- 	"	mvn	%w[i], %w[i]\n"					\
- 	"	ldclr" #mb "	%w[i], %w[i], %[v]")			\
--	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
-+	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
- 	: "r" (x1)							\
- 	: __LL_SC_CLOBBERS, ##cl);					\
- 									\
-@@ -161,7 +161,7 @@ static inline void atomic_sub(int i, ato
- 	/* LSE atomics */
- 	"	neg	%w[i], %w[i]\n"
- 	"	stadd	%w[i], %[v]")
--	: [i] "+r" (w0), [v] "+Q" (v->counter)
-+	: [i] "+&r" (w0), [v] "+Q" (v->counter)
- 	: "r" (x1)
- 	: __LL_SC_CLOBBERS);
- }
-@@ -180,7 +180,7 @@ static inline int atomic_sub_return##nam
- 	"	neg	%w[i], %w[i]\n"					\
- 	"	ldadd" #mb "	%w[i], w30, %[v]\n"			\
- 	"	add	%w[i], %w[i], w30")				\
--	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
-+	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
- 	: "r" (x1)							\
- 	: __LL_SC_CLOBBERS , ##cl);					\
- 									\
-@@ -207,7 +207,7 @@ static inline int atomic_fetch_sub##name
- 	/* LSE atomics */						\
- 	"	neg	%w[i], %w[i]\n"					\
- 	"	ldadd" #mb "	%w[i], %w[i], %[v]")			\
--	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
-+	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
- 	: "r" (x1)							\
- 	: __LL_SC_CLOBBERS, ##cl);					\
- 									\
-@@ -314,7 +314,7 @@ static inline void atomic64_and(long i,
- 	/* LSE atomics */
- 	"	mvn	%[i], %[i]\n"
- 	"	stclr	%[i], %[v]")
--	: [i] "+r" (x0), [v] "+Q" (v->counter)
-+	: [i] "+&r" (x0), [v] "+Q" (v->counter)
- 	: "r" (x1)
- 	: __LL_SC_CLOBBERS);
- }
-@@ -332,7 +332,7 @@ static inline long atomic64_fetch_and##n
- 	/* LSE atomics */						\
- 	"	mvn	%[i], %[i]\n"					\
- 	"	ldclr" #mb "	%[i], %[i], %[v]")			\
--	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
-+	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
- 	: "r" (x1)							\
- 	: __LL_SC_CLOBBERS, ##cl);					\
- 									\
-@@ -358,7 +358,7 @@ static inline void atomic64_sub(long i,
- 	/* LSE atomics */
- 	"	neg	%[i], %[i]\n"
- 	"	stadd	%[i], %[v]")
--	: [i] "+r" (x0), [v] "+Q" (v->counter)
-+	: [i] "+&r" (x0), [v] "+Q" (v->counter)
- 	: "r" (x1)
- 	: __LL_SC_CLOBBERS);
- }
-@@ -377,7 +377,7 @@ static inline long atomic64_sub_return##
- 	"	neg	%[i], %[i]\n"					\
- 	"	ldadd" #mb "	%[i], x30, %[v]\n"			\
- 	"	add	%[i], %[i], x30")				\
--	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
-+	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
- 	: "r" (x1)							\
- 	: __LL_SC_CLOBBERS, ##cl);					\
- 									\
-@@ -404,7 +404,7 @@ static inline long atomic64_fetch_sub##n
- 	/* LSE atomics */						\
- 	"	neg	%[i], %[i]\n"					\
- 	"	ldadd" #mb "	%[i], %[i], %[v]")			\
--	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
-+	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
- 	: "r" (x1)							\
- 	: __LL_SC_CLOBBERS, ##cl);					\
- 									\
-@@ -435,7 +435,7 @@ static inline long atomic64_dec_if_posit
- 	"	sub	x30, x30, %[ret]\n"
- 	"	cbnz	x30, 1b\n"
- 	"2:")
--	: [ret] "+r" (x0), [v] "+Q" (v->counter)
-+	: [ret] "+&r" (x0), [v] "+Q" (v->counter)
- 	:
- 	: __LL_SC_CLOBBERS, "cc", "memory");
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -365,7 +365,7 @@ xen_swiotlb_free_coherent(struct device
+ 	 * physical address */
+ 	phys = xen_bus_to_phys(dev_addr);
  
-@@ -516,7 +516,7 @@ static inline long __cmpxchg_double##nam
- 	"	eor	%[old1], %[old1], %[oldval1]\n"			\
- 	"	eor	%[old2], %[old2], %[oldval2]\n"			\
- 	"	orr	%[old1], %[old1], %[old2]")			\
--	: [old1] "+r" (x0), [old2] "+r" (x1),				\
-+	: [old1] "+&r" (x0), [old2] "+&r" (x1),				\
- 	  [v] "+Q" (*(unsigned long *)ptr)				\
- 	: [new1] "r" (x2), [new2] "r" (x3), [ptr] "r" (x4),		\
- 	  [oldval1] "r" (oldval1), [oldval2] "r" (oldval2)		\
+-	if (((dev_addr + size - 1 > dma_mask)) ||
++	if (((dev_addr + size - 1 <= dma_mask)) ||
+ 	    range_straddles_page_boundary(phys, size))
+ 		xen_destroy_contiguous_region(phys, order);
+ 
