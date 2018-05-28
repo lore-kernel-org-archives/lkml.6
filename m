@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163499AbeE1KtP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:49:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38956 "EHLO mail.kernel.org"
+        id S1165331AbeE1NVG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:21:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163433AbeE1KtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:11 -0400
+        id S1163486AbeE1KtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Naresh Madhusudana <naresh.madhusudana@arm.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 147/496] batman-adv: Ignore invalid batadv_iv_gw during netlink send
-Date: Mon, 28 May 2018 11:58:52 +0200
-Message-Id: <20180528100326.097539274@linuxfoundation.org>
+Subject: [PATCH 4.14 138/496] fs: dcache: Avoid livelock between d_alloc_parallel and __d_add
+Date: Mon, 28 May 2018 11:58:43 +0200
+Message-Id: <20180528100325.748441454@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,34 +33,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 10d570284258a30dc104c50787c5289ec49f3d23 ]
+[ Upstream commit 015555fd4d2930bc0c86952c46ad88b3392f66e4 ]
 
-The function batadv_iv_gw_dump stops the processing loop when
-batadv_iv_gw_dump_entry returns a non-0 return code. This should only
-happen when the buffer is full. Otherwise, an empty message may be
-returned by batadv_gw_dump. This empty message will then stop the netlink
-dumping of gateway entries. At worst, not a single entry is returned to
-userspace even when plenty of possible gateways exist.
+If d_alloc_parallel runs concurrently with __d_add, it is possible for
+d_alloc_parallel to continuously retry whilst i_dir_seq has been
+incremented to an odd value by __d_add:
 
-Fixes: efb766af06e3 ("batman-adv: add B.A.T.M.A.N. IV bat_gw_dump implementations")
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+CPU0:
+__d_add
+	n = start_dir_add(dir);
+		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
+
+CPU1:
+d_alloc_parallel
+retry:
+	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
+	hlist_bl_lock(b);
+		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
+
+CPU0:
+	__d_lookup_done(dentry)
+		hlist_bl_lock
+			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
+
+CPU1:
+	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+		hlist_bl_unlock(b);
+		goto retry;
+	}
+
+Since the simple bit_spin_lock used to implement hlist_bl_lock does not
+provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
+and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
+exit its retry loop because the sequence number always has the bottom
+bit set.
+
+This patch resolves the livelock by not taking hlist_bl_lock in
+d_alloc_parallel if the sequence counter is odd, since any subsequent
+masked comparison with i_dir_seq will fail anyway.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: Naresh Madhusudana <naresh.madhusudana@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/dcache.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -2719,7 +2719,7 @@ static int batadv_iv_gw_dump_entry(struc
- 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
- 	struct batadv_neigh_node *router;
- 	struct batadv_gw_node *curr_gw;
--	int ret = -EINVAL;
-+	int ret = 0;
- 	void *hdr;
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2482,7 +2482,7 @@ struct dentry *d_alloc_parallel(struct d
  
- 	router = batadv_orig_router_get(gw_node->orig_node, BATADV_IF_DEFAULT);
+ retry:
+ 	rcu_read_lock();
+-	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
++	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
+ 	r_seq = read_seqbegin(&rename_lock);
+ 	dentry = __d_lookup_rcu(parent, name, &d_seq);
+ 	if (unlikely(dentry)) {
+@@ -2503,6 +2503,12 @@ retry:
+ 		rcu_read_unlock();
+ 		goto retry;
+ 	}
++
++	if (unlikely(seq & 1)) {
++		rcu_read_unlock();
++		goto retry;
++	}
++
+ 	hlist_bl_lock(b);
+ 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+ 		hlist_bl_unlock(b);
