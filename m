@@ -1,303 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934121AbeE1WN4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 18:13:56 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38260 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932315AbeE1WNw (ORCPT
+        id S935046AbeE1Wdi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 18:33:38 -0400
+Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:45213 "EHLO
+        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934147AbeE1Wdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 18:13:52 -0400
-X-Google-Smtp-Source: AB8JxZqaifNKZm8kEapTRUV2FXhEVxUP/vZBs6zpF1egGO3Mc+H6lfJNeM/uQWX8Ba0KOv0dkCHGOA==
-Date: Mon, 28 May 2018 16:13:47 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Robert Walker <Robert.Walker@arm.com>, mike.leach@linaro.org,
-        kim.phillips@arm.co, Tor Jeremiassen <tor@ti.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, coresight@lists.linaro.org
-Subject: Re: [RFT v3 1/4] perf cs-etm: Generate branch sample for missed
- packets
-Message-ID: <20180528221347.GA4109@xps15>
-References: <1527497103-3593-1-git-send-email-leo.yan@linaro.org>
- <1527497103-3593-2-git-send-email-leo.yan@linaro.org>
+        Mon, 28 May 2018 18:33:35 -0400
+Date: Tue, 29 May 2018 08:32:05 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+Message-ID: <20180528223205.GG23861@dastard>
+References: <20180424183536.GF30619@thunk.org>
+ <20180524114341.1101-1-mhocko@kernel.org>
+ <20180524221715.GY10363@dastard>
+ <20180525081624.GH11881@dhcp22.suse.cz>
+ <20180527234854.GF23861@dastard>
+ <20180528091923.GH1517@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527497103-3593-2-git-send-email-leo.yan@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180528091923.GH1517@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Leo and/or Robert,
-
-On Mon, May 28, 2018 at 04:45:00PM +0800, Leo Yan wrote:
-> Commit e573e978fb12 ("perf cs-etm: Inject capabilitity for CoreSight
-> traces") reworks the samples generation flow from CoreSight trace to
-> match the correct format so Perf report tool can display the samples
-> properly.
+On Mon, May 28, 2018 at 11:19:23AM +0200, Michal Hocko wrote:
+> On Mon 28-05-18 09:48:54, Dave Chinner wrote:
+> > On Fri, May 25, 2018 at 10:16:24AM +0200, Michal Hocko wrote:
+> > > On Fri 25-05-18 08:17:15, Dave Chinner wrote:
+> > > > On Thu, May 24, 2018 at 01:43:41PM +0200, Michal Hocko wrote:
+> > > [...]
+> > > > > +FS/IO code then simply calls the appropriate save function right at the
+> > > > > +layer where a lock taken from the reclaim context (e.g. shrinker) and
+> > > > > +the corresponding restore function when the lock is released. All that
+> > > > > +ideally along with an explanation what is the reclaim context for easier
+> > > > > +maintenance.
+> > > > 
+> > > > This paragraph doesn't make much sense to me. I think you're trying
+> > > > to say that we should call the appropriate save function "before
+> > > > locks are taken that a reclaim context (e.g a shrinker) might
+> > > > require access to."
+> > > > 
+> > > > I think it's also worth making a note about recursive/nested
+> > > > save/restore stacking, because it's not clear from this description
+> > > > that this is allowed and will work as long as inner save/restore
+> > > > calls are fully nested inside outer save/restore contexts.
+> > > 
+> > > Any better?
+> > > 
+> > > -FS/IO code then simply calls the appropriate save function right at the
+> > > -layer where a lock taken from the reclaim context (e.g. shrinker) and
+> > > -the corresponding restore function when the lock is released. All that
+> > > -ideally along with an explanation what is the reclaim context for easier
+> > > -maintenance.
+> > > +FS/IO code then simply calls the appropriate save function before any
+> > > +lock shared with the reclaim context is taken.  The corresponding
+> > > +restore function when the lock is released. All that ideally along with
+> > > +an explanation what is the reclaim context for easier maintenance.
+> > > +
+> > > +Please note that the proper pairing of save/restore function allows nesting
+> > > +so memalloc_noio_save is safe to be called from an existing NOIO or NOFS scope.
+> > 
+> > It's better, but the talk of this being necessary for locking makes
+> > me cringe. XFS doesn't do it for locking reasons - it does it
+> > largely for preventing transaction context nesting, which has all
+> > sorts of problems that cause hangs (e.g. log space reservations
+> > can't be filled) that aren't directly locking related.
 > 
-> But the change has side effect for branch packet handling, it only
-> generate branch samples by checking previous packet flag
-> 'last_instr_taken_branch' is true, this results in below three kinds
-> packets are missed to generate branch samples:
-> 
-> - The start tracing packet at the beginning of tracing data;
-> - The exception handling packet;
-> - If one CS_ETM_TRACE_ON packet is inserted, we also miss to handle it
->   for branch samples.  CS_ETM_TRACE_ON packet itself can give the info
->   that there have a discontinuity in the trace, on the other hand we
->   also miss to generate proper branch sample for packets before and
->   after CS_ETM_TRACE_ON packet.
-> 
-> This patch is to add branch sample handling for up three kinds packets:
-> 
-> - In function cs_etm__sample(), check if 'prev_packet->sample_type' is
->   zero and in this case it generates branch sample for the start tracing
->   packet; furthermore, we also need to handle the condition for
->   prev_packet::end_addr is zero in the cs_etm__last_executed_instr();
-> 
-> - In function cs_etm__sample(), check if 'prev_packet->exc' is true and
->   generate branch sample for exception handling packet;
-> 
-> - If there has one CS_ETM_TRACE_ON packet is coming, we firstly generate
->   branch sample in the function cs_etm__flush(), this can save complete
->   info for the previous CS_ETM_RANGE packet just before CS_ETM_TRACE_ON
->   packet.  We also generate branch sample for the new CS_ETM_RANGE
->   packet after CS_ETM_TRACE_ON packet, this have two purposes, the
->   first one purpose is to save the info for the new CS_ETM_RANGE packet,
->   the second purpose is to save CS_ETM_TRACE_ON packet info so we can
->   have hint for a discontinuity in the trace.
-> 
->   For CS_ETM_TRACE_ON packet, its fields 'packet->start_addr' and
->   'packet->end_addr' equal to 0xdeadbeefdeadbeefUL which are emitted in
->   the decoder layer as dummy value.  This patch is to convert these
->   values to zeros for more readable; this is accomplished by functions
->   cs_etm__last_executed_instr() and cs_etm__first_executed_instr().  The
->   later one is a new function introduced by this patch.
-> 
-> Reviewed-by: Robert Walker <robert.walker@arm.com>
-> Fixes: e573e978fb12 ("perf cs-etm: Inject capabilitity for CoreSight traces")
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/util/cs-etm.c | 93 +++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 73 insertions(+), 20 deletions(-)
-> 
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 822ba91..8418173 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -495,6 +495,20 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
->  static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
->  {
->  	/*
-> +	 * The packet is the start tracing packet if the end_addr is zero,
-> +	 * returns 0 for this case.
-> +	 */
-> +	if (!packet->end_addr)
-> +		return 0;
-
-What is considered to be the "start tracing packet"?  Right now the only two
-kind of packets inserted in the decoder packet buffer queue are INST_RANGE and
-TRACE_ON.  How can we hit a condition where packet->end-addr == 0?
-
-
-> +
-> +	/*
-> +	 * The packet is the CS_ETM_TRACE_ON packet if the end_addr is
-> +	 * magic number 0xdeadbeefdeadbeefUL, returns 0 for this case.
-> +	 */
-> +	if (packet->end_addr == 0xdeadbeefdeadbeefUL)
-> +		return 0;
-
-As it is with the above, I find triggering on addresses to be brittle and hard
-to maintain on the long run.  Packets all have a sample_type field that should
-be used in cases like this one.  That way we know exactly the condition that is
-targeted.
-
-While working on this set, please spin-off another patch that defines
-CS_ETM_INVAL_ADDR 0xdeadbeefdeadbeefUL and replace all the cases where the
-numeral is used.  That way we stop using the hard coded value.
-
-> +
-> +	/*
->  	 * The packet records the execution range with an exclusive end address
->  	 *
->  	 * A64 instructions are constant size, so the last executed
-> @@ -505,6 +519,18 @@ static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
->  	return packet->end_addr - A64_INSTR_SIZE;
->  }
+> Yeah, I wanted to not mention locks as much as possible.
 >  
-> +static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
-> +{
-> +	/*
-> +	 * The packet is the CS_ETM_TRACE_ON packet if the start_addr is
-> +	 * magic number 0xdeadbeefdeadbeefUL, returns 0 for this case.
-> +	 */
-> +	if (packet->start_addr == 0xdeadbeefdeadbeefUL)
-> +		return 0;
-
-Same comment as above.
-
-> +
-> +	return packet->start_addr;
-> +}
-> +
->  static inline u64 cs_etm__instr_count(const struct cs_etm_packet *packet)
->  {
->  	/*
-> @@ -546,7 +572,7 @@ static void cs_etm__update_last_branch_rb(struct cs_etm_queue *etmq)
->  
->  	be       = &bs->entries[etmq->last_branch_pos];
->  	be->from = cs_etm__last_executed_instr(etmq->prev_packet);
-> -	be->to	 = etmq->packet->start_addr;
-> +	be->to	 = cs_etm__first_executed_instr(etmq->packet);
->  	/* No support for mispredict */
->  	be->flags.mispred = 0;
->  	be->flags.predicted = 1;
-> @@ -701,7 +727,7 @@ static int cs_etm__synth_branch_sample(struct cs_etm_queue *etmq)
->  	sample.ip = cs_etm__last_executed_instr(etmq->prev_packet);
->  	sample.pid = etmq->pid;
->  	sample.tid = etmq->tid;
-> -	sample.addr = etmq->packet->start_addr;
-> +	sample.addr = cs_etm__first_executed_instr(etmq->packet);
->  	sample.id = etmq->etm->branches_id;
->  	sample.stream_id = etmq->etm->branches_id;
->  	sample.period = 1;
-> @@ -897,13 +923,28 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
->  		etmq->period_instructions = instrs_over;
->  	}
->  
-> -	if (etm->sample_branches &&
-> -	    etmq->prev_packet &&
-> -	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
-> -	    etmq->prev_packet->last_instr_taken_branch) {
-> -		ret = cs_etm__synth_branch_sample(etmq);
-> -		if (ret)
-> -			return ret;
-> +	if (etm->sample_branches && etmq->prev_packet) {
-> +		bool generate_sample = false;
-> +
-> +		/* Generate sample for start tracing packet */
-> +		if (etmq->prev_packet->sample_type == 0 ||
-
-What kind of packet is sample_type == 0 ?
-
-> +		    etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
-> +			generate_sample = true;
-> +
-> +		/* Generate sample for exception packet */
-> +		if (etmq->prev_packet->exc == true)
-> +			generate_sample = true;
-
-Please don't do that.  Exception packets have a type of their own and can be
-added to the decoder packet queue the same way INST_RANGE and TRACE_ON packets
-are.  Moreover exception packet containt an address that, if I'm reading the
-documenation properly, can be used to keep track of instructions that were
-executed between the last address of the previous range packet and the address
-executed just before the exception occurred.  Mike and Rob will have to confirm
-this as the decoder may be doing all that hard work for us.
-
-> +
-> +		/* Generate sample for normal branch packet */
-> +		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
-> +		    etmq->prev_packet->last_instr_taken_branch)
-> +			generate_sample = true;
-> +
-> +		if (generate_sample) {
-> +			ret = cs_etm__synth_branch_sample(etmq);
-> +			if (ret)
-> +				return ret;
-> +		}
->  	}
->  
->  	if (etm->sample_branches || etm->synth_opts.last_branch) {
-> @@ -922,11 +963,16 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
->  static int cs_etm__flush(struct cs_etm_queue *etmq)
->  {
->  	int err = 0;
-> +	struct cs_etm_auxtrace *etm = etmq->etm;
->  	struct cs_etm_packet *tmp;
->  
-> -	if (etmq->etm->synth_opts.last_branch &&
-> -	    etmq->prev_packet &&
-> -	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-> +	if (!etmq->prev_packet)
-> +		return 0;
-> +
-> +	if (etmq->prev_packet->sample_type != CS_ETM_RANGE)
-> +		return 0;
-> +
-> +	if (etmq->etm->synth_opts.last_branch) {
-
-If you add:
-
-        if (!etmq->etm->synth_opts.last_branch)
-                return 0;
-
-You can avoid indenting the whole block.
-
->  		/*
->  		 * Generate a last branch event for the branches left in the
->  		 * circular buffer at the end of the trace.
-> @@ -939,18 +985,25 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
->  		err = cs_etm__synth_instruction_sample(
->  			etmq, addr,
->  			etmq->period_instructions);
-> +		if (err)
-> +			return err;
->  		etmq->period_instructions = 0;
-> +	}
->  
-> -		/*
-> -		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
-> -		 * the next incoming packet.
-> -		 */
-> -		tmp = etmq->packet;
-> -		etmq->packet = etmq->prev_packet;
-> -		etmq->prev_packet = tmp;
-> +	if (etm->sample_branches) {
-> +		err = cs_etm__synth_branch_sample(etmq);
-> +		if (err)
-> +			return err;
->  	}
->  
-> -	return err;
-> +	/*
-> +	 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
-> +	 * the next incoming packet.
-> +	 */
-> +	tmp = etmq->packet;
-> +	etmq->packet = etmq->prev_packet;
-> +	etmq->prev_packet = tmp;
-
-Robert, I remember noticing that when you first submitted the code but forgot to
-go back to it.  What is the point of swapping the packets?  I understand
-
-etmq->prev_packet = etmq->packet;
-
-But not 
-
-etmq->packet = tmp;
-
-After all etmq->packet will be clobbered as soon as cs_etm_decoder__get_packet()
-is called, which is alwasy right after either cs_etm__sample() or
-cs_etm__flush().
-
-Thanks,
-Mathieu
-
-
-
-> +	return 0;
->  }
->  
->  static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
-> -- 
-> 2.7.4
+> > i.e we should be talking about using these functions around contexts
+> > where recursion back into the filesystem through reclaim is
+> > problematic, not that "holding locks" is problematic. Locks can be
+> > used as an example of a problematic context, but locks are not the
+> > only recursion issue that require GFP_NOFS allocation contexts to
+> > avoid.
 > 
+> agreed. Do you have any suggestion how to add a more abstract wording
+> that would not make head spinning?
+> 
+> I've tried the following. Any better?
+> 
+> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> index c0ec212d6773..adac362b2875 100644
+> --- a/Documentation/core-api/gfp_mask-from-fs-io.rst
+> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+> @@ -34,9 +34,11 @@ scope will inherently drop __GFP_FS respectively __GFP_IO from the given
+>  mask so no memory allocation can recurse back in the FS/IO.
+>  
+>  FS/IO code then simply calls the appropriate save function before any
+> -lock shared with the reclaim context is taken.  The corresponding
+> -restore function when the lock is released. All that ideally along with
+> -an explanation what is the reclaim context for easier maintenance.
+> +critical section wrt. the reclaim is started - e.g. lock shared with the
+> +reclaim context or when a transaction context nesting would be possible
+> +via reclaim. The corresponding restore function when the critical
+
+.... restore function should be called when ...
+
+But otherwise I think this is much better.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
