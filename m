@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423597AbeE1Me1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:34:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47298 "EHLO mail.kernel.org"
+        id S1423693AbeE1Meo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:34:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164482AbeE1K7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:21 -0400
+        id S1164455AbeE1K7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
-        Casey Leedom <leedom@chelsio.com>,
-        Ganesh Goudhar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Seunghun Han <kkamagui@gmail.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 399/496] cxgb4: Fix queue free path of ULD drivers
-Date: Mon, 28 May 2018 12:03:04 +0200
-Message-Id: <20180528100336.573770441@linuxfoundation.org>
+Subject: [PATCH 4.14 398/496] ACPICA: acpi: acpica: fix acpi operand cache leak in nseval.c
+Date: Mon, 28 May 2018 12:03:03 +0200
+Message-Id: <20180528100336.537634096@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,34 +31,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Seunghun Han <kkamagui@gmail.com>
 
-[ Upstream commit d7cb44496a9bb458632cb3c18acb08949c210448 ]
+[ Upstream commit 97f3c0a4b0579b646b6b10ae5a3d59f0441cc12c ]
 
-Setting sge_uld_rxq_info to NULL in free_queues_uld().
-We are referencing sge_uld_rxq_info in cxgb_up(). This
-will fix a panic when interface is brought up after a
-ULDq creation failure.
+I found an ACPI cache leak in ACPI early termination and boot continuing case.
 
-Fixes: 94cdb8bb993a (cxgb4: Add support for dynamic allocation
-       of resources for ULD)
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Ganesh Goudhar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+When early termination occurs due to malicious ACPI table, Linux kernel
+terminates ACPI function and continues to boot process. While kernel terminates
+ACPI function, kmem_cache_destroy() reports Acpi-Operand cache leak.
+
+Boot log of ACPI operand cache leak is as follows:
+>[    0.464168] ACPI: Added _OSI(Module Device)
+>[    0.467022] ACPI: Added _OSI(Processor Device)
+>[    0.469376] ACPI: Added _OSI(3.0 _SCP Extensions)
+>[    0.471647] ACPI: Added _OSI(Processor Aggregator Device)
+>[    0.477997] ACPI Error: Null stack entry at ffff880215c0aad8 (20170303/exresop-174)
+>[    0.482706] ACPI Exception: AE_AML_INTERNAL, While resolving operands for [opcode_name unavailable] (20170303/dswexec-461)
+>[    0.487503] ACPI Error: Method parse/execution failed [\DBG] (Node ffff88021710ab40), AE_AML_INTERNAL (20170303/psparse-543)
+>[    0.492136] ACPI Error: Method parse/execution failed [\_SB._INI] (Node ffff88021710a618), AE_AML_INTERNAL (20170303/psparse-543)
+>[    0.497683] ACPI: Interpreter enabled
+>[    0.499385] ACPI: (supports S0)
+>[    0.501151] ACPI: Using IOAPIC for interrupt routing
+>[    0.503342] ACPI Error: Null stack entry at ffff880215c0aad8 (20170303/exresop-174)
+>[    0.506522] ACPI Exception: AE_AML_INTERNAL, While resolving operands for [opcode_name unavailable] (20170303/dswexec-461)
+>[    0.510463] ACPI Error: Method parse/execution failed [\DBG] (Node ffff88021710ab40), AE_AML_INTERNAL (20170303/psparse-543)
+>[    0.514477] ACPI Error: Method parse/execution failed [\_PIC] (Node ffff88021710ab18), AE_AML_INTERNAL (20170303/psparse-543)
+>[    0.518867] ACPI Exception: AE_AML_INTERNAL, Evaluating _PIC (20170303/bus-991)
+>[    0.522384] kmem_cache_destroy Acpi-Operand: Slab cache still has objects
+>[    0.524597] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.12.0-rc5 #26
+>[    0.526795] Hardware name: innotek gmb_h virtual_box/virtual_box, BIOS virtual_box 12/01/2006
+>[    0.529668] Call Trace:
+>[    0.530811]  ? dump_stack+0x5c/0x81
+>[    0.532240]  ? kmem_cache_destroy+0x1aa/0x1c0
+>[    0.533905]  ? acpi_os_delete_cache+0xa/0x10
+>[    0.535497]  ? acpi_ut_delete_caches+0x3f/0x7b
+>[    0.537237]  ? acpi_terminate+0xa/0x14
+>[    0.538701]  ? acpi_init+0x2af/0x34f
+>[    0.540008]  ? acpi_sleep_proc_init+0x27/0x27
+>[    0.541593]  ? do_one_initcall+0x4e/0x1a0
+>[    0.543008]  ? kernel_init_freeable+0x19e/0x21f
+>[    0.546202]  ? rest_init+0x80/0x80
+>[    0.547513]  ? kernel_init+0xa/0x100
+>[    0.548817]  ? ret_from_fork+0x25/0x30
+>[    0.550587] vgaarb: loaded
+>[    0.551716] EDAC MC: Ver: 3.0.0
+>[    0.553744] PCI: Probing PCI hardware
+>[    0.555038] PCI host bridge to bus 0000:00
+> ... Continue to boot and log is omitted ...
+
+I analyzed this memory leak in detail and found acpi_ns_evaluate() function
+only removes Info->return_object in AE_CTRL_RETURN_VALUE case. But, when errors
+occur, the status value is not AE_CTRL_RETURN_VALUE, and Info->return_object is
+also not null. Therefore, this causes acpi operand memory leak.
+
+This cache leak causes a security threat because an old kernel (<= 4.9) shows
+memory locations of kernel functions in stack dump. Some malicious users
+could use this information to neutralize kernel ASLR.
+
+I made a patch to fix ACPI operand cache leak.
+
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/acpi/acpica/nseval.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-@@ -342,6 +342,7 @@ static void free_queues_uld(struct adapt
- {
- 	struct sge_uld_rxq_info *rxq_info = adap->sge.uld_rxq_info[uld_type];
+--- a/drivers/acpi/acpica/nseval.c
++++ b/drivers/acpi/acpica/nseval.c
+@@ -308,6 +308,14 @@ acpi_status acpi_ns_evaluate(struct acpi
+ 		/* Map AE_CTRL_RETURN_VALUE to AE_OK, we are done with it */
  
-+	adap->sge.uld_rxq_info[uld_type] = NULL;
- 	kfree(rxq_info->rspq_id);
- 	kfree(rxq_info->uldrxq);
- 	kfree(rxq_info);
+ 		status = AE_OK;
++	} else if (ACPI_FAILURE(status)) {
++
++		/* If return_object exists, delete it */
++
++		if (info->return_object) {
++			acpi_ut_remove_reference(info->return_object);
++			info->return_object = NULL;
++		}
+ 	}
+ 
+ 	ACPI_DEBUG_PRINT((ACPI_DB_NAMES,
