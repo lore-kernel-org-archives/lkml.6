@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165123AbeE1NDa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:03:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42288 "EHLO mail.kernel.org"
+        id S1164074AbeE1ND4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:03:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164074AbeE1KxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:03 -0400
+        id S1163127AbeE1KxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 245/496] bnxt_en: Check valid VNIC ID in bnxt_hwrm_vnic_set_tpa().
-Date: Mon, 28 May 2018 12:00:30 +0200
-Message-Id: <20180528100330.224375339@linuxfoundation.org>
+Subject: [PATCH 4.14 262/496] batman-adv: Fix skbuff rcsum on packet reroute
+Date: Mon, 28 May 2018 12:00:47 +0200
+Message-Id: <20180528100330.906106023@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,32 +32,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 3c4fe80b32c685bdc02b280814d0cfe80d441c72 ]
+[ Upstream commit fc04fdb2c8a894283259f5621d31d75610701091 ]
 
-During initialization, if we encounter errors, there is a code path that
-calls bnxt_hwrm_vnic_set_tpa() with invalid VNIC ID.  This may cause a
-warning in firmware logs.
+batadv_check_unicast_ttvn may redirect a packet to itself or another
+originator. This involves rewriting the ttvn and the destination address in
+the batadv unicast header. These field were not yet pulled (with skb rcsum
+update) and thus any change to them also requires a change in the receive
+checksum.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Fixes: a73105b8d4c7 ("batman-adv: improved client announcement mechanism")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/batman-adv/routing.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -3808,6 +3808,9 @@ static int bnxt_hwrm_vnic_set_tpa(struct
- 	struct bnxt_vnic_info *vnic = &bp->vnic_info[vnic_id];
- 	struct hwrm_vnic_tpa_cfg_input req = {0};
+--- a/net/batman-adv/routing.c
++++ b/net/batman-adv/routing.c
+@@ -743,6 +743,7 @@ free_skb:
+ /**
+  * batadv_reroute_unicast_packet - update the unicast header for re-routing
+  * @bat_priv: the bat priv with all the soft interface information
++ * @skb: unicast packet to process
+  * @unicast_packet: the unicast header to be updated
+  * @dst_addr: the payload destination
+  * @vid: VLAN identifier
+@@ -754,7 +755,7 @@ free_skb:
+  * Return: true if the packet header has been updated, false otherwise
+  */
+ static bool
+-batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
++batadv_reroute_unicast_packet(struct batadv_priv *bat_priv, struct sk_buff *skb,
+ 			      struct batadv_unicast_packet *unicast_packet,
+ 			      u8 *dst_addr, unsigned short vid)
+ {
+@@ -783,8 +784,10 @@ batadv_reroute_unicast_packet(struct bat
+ 	}
  
-+	if (vnic->fw_vnic_id == INVALID_HW_RING_ID)
-+		return 0;
-+
- 	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_VNIC_TPA_CFG, -1, -1);
+ 	/* update the packet header */
++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 	ether_addr_copy(unicast_packet->dest, orig_addr);
+ 	unicast_packet->ttvn = orig_ttvn;
++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
  
- 	if (tpa_flags) {
+ 	ret = true;
+ out:
+@@ -825,7 +828,7 @@ static bool batadv_check_unicast_ttvn(st
+ 	 * the packet to
+ 	 */
+ 	if (batadv_tt_local_client_is_roaming(bat_priv, ethhdr->h_dest, vid)) {
+-		if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
++		if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
+ 						  ethhdr->h_dest, vid))
+ 			batadv_dbg_ratelimited(BATADV_DBG_TT,
+ 					       bat_priv,
+@@ -871,7 +874,7 @@ static bool batadv_check_unicast_ttvn(st
+ 	 * destination can possibly be updated and forwarded towards the new
+ 	 * target host
+ 	 */
+-	if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
++	if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
+ 					  ethhdr->h_dest, vid)) {
+ 		batadv_dbg_ratelimited(BATADV_DBG_TT, bat_priv,
+ 				       "Rerouting unicast packet to %pM (dst=%pM): TTVN mismatch old_ttvn=%u new_ttvn=%u\n",
+@@ -894,12 +897,14 @@ static bool batadv_check_unicast_ttvn(st
+ 	if (!primary_if)
+ 		return false;
+ 
++	/* update the packet header */
++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 	ether_addr_copy(unicast_packet->dest, primary_if->net_dev->dev_addr);
++	unicast_packet->ttvn = curr_ttvn;
++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 
+ 	batadv_hardif_put(primary_if);
+ 
+-	unicast_packet->ttvn = curr_ttvn;
+-
+ 	return true;
+ }
+ 
