@@ -1,105 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753736AbeE1HEK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:04:10 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50154 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753802AbeE1HEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:04:00 -0400
-X-UUID: 116464c45b4a4423a61da13b129c7c77-20180528
-Message-ID: <1527491035.24367.1.camel@mtksdaap41>
-Subject: Re: [PATCH v4 3/9] drm/mediatek: add ddp component AAL1
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 28 May 2018 15:03:55 +0800
-In-Reply-To: <1527489507-24453-4-git-send-email-stu.hsieh@mediatek.com>
-References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527489507-24453-4-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1753831AbeE1HEV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:04:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753779AbeE1HER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 03:04:17 -0400
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>, linux-arch@vger.kernel.org
+Subject: [PATCH -tip v4 09/27] MIPS: kprobes: Remove jprobe implementation
+Date: Mon, 28 May 2018 16:03:51 +0900
+Message-Id: <152749103140.15132.10001281852618363102.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
+References: <152749074878.15132.16693721906742461289.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Remove arch dependent setjump/longjump functions
+and unused fields in kprobe_ctlblk for jprobes
+from arch/mips.
 
-On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
-> This patch add component AAL1 and
-> rename AAL to AAL0
-> 
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ arch/mips/include/asm/kprobes.h |   13 -----------
+ arch/mips/kernel/kprobes.c      |   45 ---------------------------------------
+ 2 files changed, 58 deletions(-)
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 2 +-
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 3 ++-
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 3 ++-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 2 +-
->  4 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 47ffa240bd25..7217665f4b5d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -110,7 +110,7 @@ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
->  };
->  
->  static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
-> -	[DDP_COMPONENT_AAL] = MT8173_MUTEX_MOD_DISP_AAL,
-> +	[DDP_COMPONENT_AAL0] = MT8173_MUTEX_MOD_DISP_AAL,
->  	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
->  	[DDP_COMPONENT_COLOR1] = MT8173_MUTEX_MOD_DISP_COLOR1,
->  	[DDP_COMPONENT_GAMMA] = MT8173_MUTEX_MOD_DISP_GAMMA,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> index 4672317e3ad1..0919039805aa 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> @@ -218,7 +218,8 @@ struct mtk_ddp_comp_match {
->  };
->  
->  static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
-> -	[DDP_COMPONENT_AAL]	= { MTK_DISP_AAL,	0, &ddp_aal },
-> +	[DDP_COMPONENT_AAL0]	= { MTK_DISP_AAL,	0, &ddp_aal },
-> +	[DDP_COMPONENT_AAL1]	= { MTK_DISP_AAL,	1, &ddp_aal },
->  	[DDP_COMPONENT_BLS]	= { MTK_DISP_BLS,	0, NULL },
->  	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
->  	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> index 0828cf8bf85c..eee3c0cc2632 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> @@ -41,7 +41,8 @@ enum mtk_ddp_comp_type {
->  };
->  
->  enum mtk_ddp_comp_id {
-> -	DDP_COMPONENT_AAL,
-> +	DDP_COMPONENT_AAL0,
-> +	DDP_COMPONENT_AAL1,
->  	DDP_COMPONENT_BLS,
->  	DDP_COMPONENT_COLOR0,
->  	DDP_COMPONENT_COLOR1,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index a2ca90fc403c..a415260f3d5f 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -149,7 +149,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
->  static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
->  	DDP_COMPONENT_OVL0,
->  	DDP_COMPONENT_COLOR0,
-> -	DDP_COMPONENT_AAL,
-> +	DDP_COMPONENT_AAL0,
->  	DDP_COMPONENT_OD,
->  	DDP_COMPONENT_RDMA0,
->  	DDP_COMPONENT_UFOE,
+diff --git a/arch/mips/include/asm/kprobes.h b/arch/mips/include/asm/kprobes.h
+index ad1a99948f27..a72dfbf1babb 100644
+--- a/arch/mips/include/asm/kprobes.h
++++ b/arch/mips/include/asm/kprobes.h
+@@ -68,16 +68,6 @@ struct prev_kprobe {
+ 	unsigned long saved_epc;
+ };
+ 
+-#define MAX_JPROBES_STACK_SIZE 128
+-#define MAX_JPROBES_STACK_ADDR \
+-	(((unsigned long)current_thread_info()) + THREAD_SIZE - 32 - sizeof(struct pt_regs))
+-
+-#define MIN_JPROBES_STACK_SIZE(ADDR)					\
+-	((((ADDR) + MAX_JPROBES_STACK_SIZE) > MAX_JPROBES_STACK_ADDR)	\
+-		? MAX_JPROBES_STACK_ADDR - (ADDR)			\
+-		: MAX_JPROBES_STACK_SIZE)
+-
+-
+ #define SKIP_DELAYSLOT 0x0001
+ 
+ /* per-cpu kprobe control block */
+@@ -86,12 +76,9 @@ struct kprobe_ctlblk {
+ 	unsigned long kprobe_old_SR;
+ 	unsigned long kprobe_saved_SR;
+ 	unsigned long kprobe_saved_epc;
+-	unsigned long jprobe_saved_sp;
+-	struct pt_regs jprobe_saved_regs;
+ 	/* Per-thread fields, used while emulating branches */
+ 	unsigned long flags;
+ 	unsigned long target_epc;
+-	u8 jprobes_stack[MAX_JPROBES_STACK_SIZE];
+ 	struct prev_kprobe prev_kprobe;
+ };
+ 
+diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
+index f5c8bce70db2..efdcd0b1ce12 100644
+--- a/arch/mips/kernel/kprobes.c
++++ b/arch/mips/kernel/kprobes.c
+@@ -468,51 +468,6 @@ int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
+ 	return ret;
+ }
+ 
+-int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
+-{
+-	struct jprobe *jp = container_of(p, struct jprobe, kp);
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-
+-	kcb->jprobe_saved_regs = *regs;
+-	kcb->jprobe_saved_sp = regs->regs[29];
+-
+-	memcpy(kcb->jprobes_stack, (void *)kcb->jprobe_saved_sp,
+-	       MIN_JPROBES_STACK_SIZE(kcb->jprobe_saved_sp));
+-
+-	regs->cp0_epc = (unsigned long)(jp->entry);
+-
+-	return 1;
+-}
+-
+-/* Defined in the inline asm below. */
+-void jprobe_return_end(void);
+-
+-void __kprobes jprobe_return(void)
+-{
+-	/* Assembler quirk necessitates this '0,code' business.	 */
+-	asm volatile(
+-		"break 0,%0\n\t"
+-		".globl jprobe_return_end\n"
+-		"jprobe_return_end:\n"
+-		: : "n" (BRK_KPROBE_BP) : "memory");
+-}
+-
+-int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
+-{
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-
+-	if (regs->cp0_epc >= (unsigned long)jprobe_return &&
+-	    regs->cp0_epc <= (unsigned long)jprobe_return_end) {
+-		*regs = kcb->jprobe_saved_regs;
+-		memcpy((void *)kcb->jprobe_saved_sp, kcb->jprobes_stack,
+-		       MIN_JPROBES_STACK_SIZE(kcb->jprobe_saved_sp));
+-		preempt_enable_no_resched();
+-
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+ /*
+  * Function return probe trampoline:
+  *	- init_kprobes() establishes a probepoint here
