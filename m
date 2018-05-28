@@ -1,286 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeE1GTC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 02:19:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54422 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753447AbeE1GSz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 02:18:55 -0400
-Date: Mon, 28 May 2018 09:18:46 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Shuah Khan <shuah@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] selftests: cgroup/memcontrol: add basic test for
- socket accounting
-References: <1527019565-20470-1-git-send-email-rppt@linux.vnet.ibm.com>
+        id S1753510AbeE1GUU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 02:20:20 -0400
+Received: from verein.lst.de ([213.95.11.211]:46996 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750725AbeE1GUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 02:20:17 -0400
+Date: Mon, 28 May 2018 08:26:18 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-ext4@vger.kernel.org,
+        tytso@mit.edu
+Subject: Re: mmc filesystem performance decreased on the first write after
+        filesystem creation
+Message-ID: <20180528062618.GA4196@lst.de>
+References: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527019565-20470-1-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18052806-0040-0000-0000-0000045E0F09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052806-0041-0000-0000-000021027925
-Message-Id: <20180528061845.GA4805@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805280077
+In-Reply-To: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Summary: mke2s uses the BLKDISCARD ioctl to wipe the device,
+and then uses BLKDISCARDZEROES to check if that zeroed the data.
 
-Are there any updates on this?
+A while ago I made BLKDISCARDZEROES always return 0 because it is
+basically impossible to have reliably zeroing using discard as the
+standards leave the devices way to many options to not actually
+zero data at their own choice when using the discard commands.
 
-On Tue, May 22, 2018 at 11:06:05PM +0300, Mike Rapoport wrote:
-> The test verifies that when there is active TCP connection, the
-> memory.stat.sock and memory.current values are close.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Acked-by: Roman Gushchin <guro@fb.com>
-> ---
-> v3 changes:
-> * added changelog
-> 
-> v2 changes:
-> * bumped error percentage for comparing memory.current with memory.stat.sock
-> * added checks that memory.stat.sock == 0 and memory.current >= 0 after TCP
-> server exits
-> * simplified error handling
-> 
->  tools/testing/selftests/cgroup/test_memcontrol.c | 193 +++++++++++++++++++++++
->  1 file changed, 193 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
-> index beae06c9c899..cf0bddc9d271 100644
-> --- a/tools/testing/selftests/cgroup/test_memcontrol.c
-> +++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-> @@ -9,6 +9,12 @@
->  #include <sys/stat.h>
->  #include <sys/types.h>
->  #include <unistd.h>
-> +#include <sys/socket.h>
-> +#include <sys/wait.h>
-> +#include <arpa/inet.h>
-> +#include <netinet/in.h>
-> +#include <netdb.h>
-> +#include <errno.h>
-> 
->  #include "../kselftest.h"
->  #include "cgroup_util.h"
-> @@ -772,6 +778,192 @@ static int test_memcg_oom_events(const char *root)
->  	return ret;
->  }
-> 
-> +struct tcp_server_args {
-> +	unsigned short port;
-> +	int ctl[2];
-> +};
-> +
-> +static int tcp_server(const char *cgroup, void *arg)
-> +{
-> +	struct tcp_server_args *srv_args = arg;
-> +	struct sockaddr_in6 saddr = { 0 };
-> +	socklen_t slen = sizeof(saddr);
-> +	int sk, client_sk, ctl_fd, yes = 1, ret = -1;
-> +
-> +	close(srv_args->ctl[0]);
-> +	ctl_fd = srv_args->ctl[1];
-> +
-> +	saddr.sin6_family = AF_INET6;
-> +	saddr.sin6_addr = in6addr_any;
-> +	saddr.sin6_port = htons(srv_args->port);
-> +
-> +	sk = socket(AF_INET6, SOCK_STREAM, 0);
-> +	if (sk < 0)
-> +		return ret;
-> +
-> +	if (setsockopt(sk, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0)
-> +		goto cleanup;
-> +
-> +	if (bind(sk, (struct sockaddr *)&saddr, slen)) {
-> +		write(ctl_fd, &errno, sizeof(errno));
-> +		goto cleanup;
-> +	}
-> +
-> +	if (listen(sk, 1))
-> +		goto cleanup;
-> +
-> +	ret = 0;
-> +	if (write(ctl_fd, &ret, sizeof(ret)) != sizeof(ret)) {
-> +		ret = -1;
-> +		goto cleanup;
-> +	}
-> +
-> +	client_sk = accept(sk, NULL, NULL);
-> +	if (client_sk < 0)
-> +		goto cleanup;
-> +
-> +	ret = -1;
-> +	for (;;) {
-> +		uint8_t buf[0x100000];
-> +
-> +		if (write(client_sk, buf, sizeof(buf)) <= 0) {
-> +			if (errno == ECONNRESET)
-> +				ret = 0;
-> +			break;
-> +		}
-> +	}
-> +
-> +	close(client_sk);
-> +
-> +cleanup:
-> +	close(sk);
-> +	return ret;
-> +}
-> +
-> +static int tcp_client(const char *cgroup, unsigned short port)
-> +{
-> +	const char server[] = "localhost";
-> +	struct addrinfo *ai;
-> +	char servport[6];
-> +	int retries = 0x10; /* nice round number */
-> +	int sk, ret;
-> +
-> +	snprintf(servport, sizeof(servport), "%hd", port);
-> +	ret = getaddrinfo(server, servport, NULL, &ai);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sk = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-> +	if (sk < 0)
-> +		goto free_ainfo;
-> +
-> +	ret = connect(sk, ai->ai_addr, ai->ai_addrlen);
-> +	if (ret < 0)
-> +		goto close_sk;
-> +
-> +	ret = KSFT_FAIL;
-> +	while (retries--) {
-> +		uint8_t buf[0x100000];
-> +		long current, sock;
-> +
-> +		if (read(sk, buf, sizeof(buf)) <= 0)
-> +			goto close_sk;
-> +
-> +		current = cg_read_long(cgroup, "memory.current");
-> +		sock = cg_read_key_long(cgroup, "memory.stat", "sock ");
-> +
-> +		if (current < 0 || sock < 0)
-> +			goto close_sk;
-> +
-> +		if (current < sock)
-> +			goto close_sk;
-> +
-> +		if (values_close(current, sock, 10)) {
-> +			ret = KSFT_PASS;
-> +			break;
-> +		}
-> +	}
-> +
-> +close_sk:
-> +	close(sk);
-> +free_ainfo:
-> +	freeaddrinfo(ai);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * This test checks socket memory accounting.
-> + * The test forks a TCP server listens on a random port between 1000
-> + * and 61000. Once it gets a client connection, it starts writing to
-> + * its socket.
-> + * The TCP client interleaves reads from the socket with check whether
-> + * memory.current and memory.stat.sock are similar.
-> + */
-> +static int test_memcg_sock(const char *root)
-> +{
-> +	int bind_retries = 5, ret = KSFT_FAIL, pid, err;
-> +	unsigned short port;
-> +	char *memcg;
-> +
-> +	memcg = cg_name(root, "memcg_test");
-> +	if (!memcg)
-> +		goto cleanup;
-> +
-> +	if (cg_create(memcg))
-> +		goto cleanup;
-> +
-> +	while (bind_retries--) {
-> +		struct tcp_server_args args;
-> +
-> +		if (pipe(args.ctl))
-> +			goto cleanup;
-> +
-> +		port = args.port = 1000 + rand() % 60000;
-> +
-> +		pid = cg_run_nowait(memcg, tcp_server, &args);
-> +		if (pid < 0)
-> +			goto cleanup;
-> +
-> +		close(args.ctl[1]);
-> +		if (read(args.ctl[0], &err, sizeof(err)) != sizeof(err))
-> +			goto cleanup;
-> +		close(args.ctl[0]);
-> +
-> +		if (!err)
-> +			break;
-> +		if (err != EADDRINUSE)
-> +			goto cleanup;
-> +
-> +		waitpid(pid, NULL, 0);
-> +	}
-> +
-> +	if (err == EADDRINUSE) {
-> +		ret = KSFT_SKIP;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (tcp_client(memcg, port) != KSFT_PASS)
-> +		goto cleanup;
-> +
-> +	waitpid(pid, &err, 0);
-> +	if (WEXITSTATUS(err))
-> +		goto cleanup;
-> +
-> +	if (cg_read_long(memcg, "memory.current") < 0)
-> +		goto cleanup;
-> +
-> +	if (cg_read_key_long(memcg, "memory.stat", "sock "))
-> +		goto cleanup;
-> +
-> +	ret = KSFT_PASS;
-> +
-> +cleanup:
-> +	cg_destroy(memcg);
-> +	free(memcg);
-> +
-> +	return ret;
-> +}
-> +
->  #define T(x) { x, #x }
->  struct memcg_test {
->  	int (*fn)(const char *root);
-> @@ -785,6 +977,7 @@ struct memcg_test {
->  	T(test_memcg_max),
->  	T(test_memcg_oom_events),
->  	T(test_memcg_swap_max),
-> +	T(test_memcg_sock),
->  };
->  #undef T
-> 
-> -- 
-> 2.7.4
-> 
+So IFF mke2fs want to actually free space and zero it it needs
+to use fallocate to punch a hole, and mmc needs to implement
+REQ_OP_WRITE_ZEROS IFF it actually has a reliable way to zero
+blocks.
 
--- 
-Sincerely yours,
-Mike.
+
+On Tue, May 22, 2018 at 08:48:31PM +0530, Faiz Abbas wrote:
+> Hi,
+> 
+> I am debugging a performance reduction in ext2 filesystems on an mmc
+> device in TI's am335x evm board.
+> 
+> I see that the performance is reduced on the first write after making a
+> new filesystem using mkfs.ext2 on one of the mmc partitions. The
+> performance comes back to normal after the first write.
+> 
+> commands used:
+> 
+> => umount /dev/mmcblk1p2
+> 
+> => mkfs.ext2 -F  /dev/mmcblk1p2
+> 
+> => mount -t ext2 -o async /dev/mmcblk1p2 /mnt/partition_mmc
+> 
+> => dd if=/dev/urandom of=/dev/shm/srctest_file_mmc_1184 bs=1M count=10
+> 
+> => ./filesystem_tests -write -src_file /dev/shm/srctest_file_mmc_1184
+> -srcfile_size 10 -file /mnt/partition_mmc/test_file_1184 -buffer_size
+> 102400 -file_size 100 -performance
+> 
+> The filesystem_tests write utility reads from the file generated at
+> /dev/shm/srctest_file_mmc_1184, memory maps the file to a buffer, and
+> then writes it into the newly created /mnt/partition_mmc in multiples of
+> buffer_size while measuring write performance.
+> 
+> See here for the implementation of filesystem_tests write utility:
+> http://arago-project.org/git/projects/?p=test-automation/ltp-ddt.git;a=blob;f=testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c;h=80e8e244d7eaa9f0dbd9b21ea705445156c36bef;hb=f7fc06c290333ce08a7d4fba104eee0f0f1d942b
+> 
+> Complete log with multiple calls to filesystem_tests:
+> https://pastebin.ubuntu.com/p/BckmTJpqPv/
+> 
+> Notice that the first run of filesystem_tests has a lower throughput
+> reported.
+> 
+> I was able to bisect the issue to this commit:
+> 5d1429fead5b (mmc: remove the discard_zeroes_data flag)
+> 
+> I would assume that after this flag is removed, the filesystem creation
+> command would explicitly write zeroes to the device which might explain
+> the performance fall. However, then the mkfs.ext2 command itself should
+> take more time rather than the first file write after that.
+> 
+> It would be nice if someone could help me understand why this is happening.
+> 
+> Thanks for your help.
+> 
+> Regards,
+> Faiz
+---end quoted text---
