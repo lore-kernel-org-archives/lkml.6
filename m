@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938884AbeE1MaJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:30:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48132 "EHLO mail.kernel.org"
+        id S1164749AbeE1LAW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164764AbeE1LA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:28 -0400
+        id S1164681AbeE1LAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>,
-        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 389/496] iommu/mediatek: Fix protect memory setting
-Date: Mon, 28 May 2018 12:02:54 +0200
-Message-Id: <20180528100336.164078422@linuxfoundation.org>
+Subject: [PATCH 4.14 415/496] drm/meson: Fix some error handling paths in meson_drv_bind_master()
+Date: Mon, 28 May 2018 12:03:20 +0200
+Message-Id: <20180528100337.232724500@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,86 +31,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yong Wu <yong.wu@mediatek.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 70ca608b2ec6dafa6bb1c2b0691852fc78f8f717 ]
+[ Upstream commit 2c18107b9d58972588cd45d89b8f58d0f033c110 ]
 
-In MediaTek's IOMMU design, When a iommu translation fault occurs
-(HW can NOT translate the destination address to a valid physical
-address), the IOMMU HW output the dirty data into a special memory
-to avoid corrupting the main memory, this is called "protect memory".
-the register(0x114) for protect memory is a little different between
-mt8173 and mt2712.
+If one of these functions fail, we whould free 'drm', as alreadry done in
+the other error handling paths, below and above.
 
-In the mt8173, bit[30:6] in the register represents [31:7] of the
-physical address. In the 4GB mode, the register bit[31] should be 1.
-While in the mt2712, the bits don't shift. bit[31:7] in the register
-represents [31:7] in the physical address, and bit[1:0] in the
-register represents bit[33:32] of the physical address if it has.
-
-Fixes: e6dec9230862 ("iommu/mediatek: Add mt2712 IOMMU support")
-Reported-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/df47e03d36c2cf7bc37ec3105fc47c16555bd946.1520885192.git.christophe.jaillet@wanadoo.fr
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/mtk_iommu.c |   15 ++++++++++-----
- drivers/iommu/mtk_iommu.h |    1 +
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/meson/meson_drv.c |   24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -60,7 +60,7 @@
- 	(((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -180,35 +180,43 @@ static int meson_drv_bind_master(struct
  
- #define REG_MMU_IVRP_PADDR			0x114
--#define F_MMU_IVRP_PA_SET(pa, ext)		(((pa) >> 1) | ((!!(ext)) << 31))
-+
- #define REG_MMU_VLD_PA_RNG			0x118
- #define F_MMU_VLD_PA_RNG(EA, SA)		(((EA) << 8) | (SA))
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vpu");
+ 	regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(regs))
+-		return PTR_ERR(regs);
++	if (IS_ERR(regs)) {
++		ret = PTR_ERR(regs);
++		goto free_drm;
++	}
  
-@@ -532,8 +532,13 @@ static int mtk_iommu_hw_init(const struc
- 		F_INT_PRETETCH_TRANSATION_FIFO_FAULT;
- 	writel_relaxed(regval, data->base + REG_MMU_INT_MAIN_CONTROL);
+ 	priv->io_base = regs;
  
--	writel_relaxed(F_MMU_IVRP_PA_SET(data->protect_base, data->enable_4GB),
--		       data->base + REG_MMU_IVRP_PADDR);
-+	if (data->m4u_plat == M4U_MT8173)
-+		regval = (data->protect_base >> 1) | (data->enable_4GB << 31);
-+	else
-+		regval = lower_32_bits(data->protect_base) |
-+			 upper_32_bits(data->protect_base);
-+	writel_relaxed(regval, data->base + REG_MMU_IVRP_PADDR);
-+
- 	if (data->enable_4GB && data->m4u_plat != M4U_MT8173) {
- 		/*
- 		 * If 4GB mode is enabled, the validate PA range is from
-@@ -688,6 +693,7 @@ static int __maybe_unused mtk_iommu_susp
- 	reg->ctrl_reg = readl_relaxed(base + REG_MMU_CTRL_REG);
- 	reg->int_control0 = readl_relaxed(base + REG_MMU_INT_CONTROL0);
- 	reg->int_main_control = readl_relaxed(base + REG_MMU_INT_MAIN_CONTROL);
-+	reg->ivrp_paddr = readl_relaxed(base + REG_MMU_IVRP_PADDR);
- 	clk_disable_unprepare(data->bclk);
- 	return 0;
- }
-@@ -710,8 +716,7 @@ static int __maybe_unused mtk_iommu_resu
- 	writel_relaxed(reg->ctrl_reg, base + REG_MMU_CTRL_REG);
- 	writel_relaxed(reg->int_control0, base + REG_MMU_INT_CONTROL0);
- 	writel_relaxed(reg->int_main_control, base + REG_MMU_INT_MAIN_CONTROL);
--	writel_relaxed(F_MMU_IVRP_PA_SET(data->protect_base, data->enable_4GB),
--		       base + REG_MMU_IVRP_PADDR);
-+	writel_relaxed(reg->ivrp_paddr, base + REG_MMU_IVRP_PADDR);
- 	if (data->m4u_dom)
- 		writel(data->m4u_dom->cfg.arm_v7s_cfg.ttbr[0],
- 		       base + REG_MMU_PT_BASE_ADDR);
---- a/drivers/iommu/mtk_iommu.h
-+++ b/drivers/iommu/mtk_iommu.h
-@@ -32,6 +32,7 @@ struct mtk_iommu_suspend_reg {
- 	u32				ctrl_reg;
- 	u32				int_control0;
- 	u32				int_main_control;
-+	u32				ivrp_paddr;
- };
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (!regs)
+-		return -EADDRNOTAVAIL;
++	if (!regs) {
++		ret = -EADDRNOTAVAIL;
++		goto free_drm;
++	}
  
- enum mtk_iommu_plat {
+ 	priv->hhi = devm_regmap_init_mmio(dev, regs,
+ 					  &meson_regmap_config);
+ 	if (IS_ERR(priv->hhi)) {
+ 		dev_err(&pdev->dev, "Couldn't create the HHI regmap\n");
+-		return PTR_ERR(priv->hhi);
++		ret = PTR_ERR(priv->hhi);
++		goto free_drm;
+ 	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
+ 	/* Simply ioremap since it may be a shared register zone */
+ 	regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (!regs)
+-		return -EADDRNOTAVAIL;
++	if (!regs) {
++		ret = -EADDRNOTAVAIL;
++		goto free_drm;
++	}
+ 
+ 	priv->dmc = devm_regmap_init_mmio(dev, regs,
+ 					  &meson_regmap_config);
+ 	if (IS_ERR(priv->dmc)) {
+ 		dev_err(&pdev->dev, "Couldn't create the DMC regmap\n");
+-		return PTR_ERR(priv->dmc);
++		ret = PTR_ERR(priv->dmc);
++		goto free_drm;
+ 	}
+ 
+ 	priv->vsync_irq = platform_get_irq(pdev, 0);
