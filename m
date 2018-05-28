@@ -1,88 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932163AbeE1Rkx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 13:40:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52036 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932072AbeE1Rkw (ORCPT
+        id S1755624AbeE1Rx2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:53:28 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54374 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754449AbeE1RxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 13:40:52 -0400
-Subject: Re: [PATCH v6 4/4] vsprintf: Add command line option
- debug_boot_weak_hash
-To: "Tobin C. Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-References: <1527472002-11571-1-git-send-email-me@tobin.cc>
- <1527472002-11571-5-git-send-email-me@tobin.cc>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fde2cc84-f1d8-b1ee-510b-b3659834874d@infradead.org>
-Date: Mon, 28 May 2018 10:40:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 28 May 2018 13:53:25 -0400
+X-Google-Smtp-Source: ADUXVKKv3+FmLsjJGhKCxIYy9B/vqYZqHOJnRYgRas9B0fzUp6wbgnjiZnl+0BqDyGVKmrxJlEIdq8RQDRTuiG60mMg=
 MIME-Version: 1.0
-In-Reply-To: <1527472002-11571-5-git-send-email-me@tobin.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180528154806.2621106-1-arnd@arndb.de>
+References: <20180528154806.2621106-1-arnd@arndb.de>
+From: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+Date: Mon, 28 May 2018 19:53:03 +0200
+Message-ID: <CAAUqJDtAopg0aTy3ea3xqXEqnzQD5C4mHs7YVMMKC5_z-HjO2A@mail.gmail.com>
+Subject: Re: [PATCH] crypto: morus - Hide Kconfig option for glue code
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/27/2018 06:46 PM, Tobin C. Harding wrote:
-> Currently printing [hashed] pointers requires enough entropy to be
-> available.  Early in the boot sequence this may not be the case
-> resulting in a dummy string '(____ptrval____)' being printed.  This
-> makes debugging the early boot sequence difficult.  We can relax the
-> requirement to use cryptographically secure hashing during debugging.
-> This enables debugging while keeping development/production kernel
-> behaviour the same.
-> 
-> If new command line option debug_boot_weak_hash is enabled use
-> cryptographically insecure hashing and hash pointer value immediately.
-> 
-> Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+(Resending in plaintext because Gmail for Android sucks...)
+
+Hi Arnd,
+
+I have already addressed that in a follow-up patch here:
+
+https://patchwork.kernel.org/patch/10416245/
+
+Regards,
+Ondrej
+
+2018-05-28 17:47 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
+> Enabling the glue drivers for morus640 and/or morus1280 leads to a build failure
+> on all non-x86 architectures:
+>
+> crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
+> scripts/Makefile.build:311: recipe for target 'crypto/morus1280_glue.o' failed
+> crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
+> scripts/Makefile.build:311: recipe for target 'crypto/morus640_glue.o' failed
+>
+> There really is no reason to enable these unless we also have a real
+> driver using the glue, so the Kconfig option can be hidden and remain
+> selected by the x86 specific SIMD drivers or any others getting added
+> in the future.
+>
+> Fixes: 56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
->  lib/vsprintf.c                                  | 20 ++++++++++++++++++++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index f2040d46f095..8a86d895343e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -753,6 +753,15 @@
->  
->  	debug		[KNL] Enable kernel debugging (events log level).
->  
-
-Hi,
-This is much more readable than the previous version.  Thanks.
-
-> +	debug_boot_weak_hash
-> +			[KNL] Enable printing pointers early in the boot
-> +			sequence.  If enabled, we use a weak hash instead of
-> +			siphash to hash pointers.  Use this option if you need
-> +			to see pointer values during early boot (i.e you are
-
-			                                         i.e.
-
-> +			seeing instances of '(___ptrval___)').
-> +			Cryptographically insecure, please do not use on
-> +			production kernels.
-> +
->  	debug_locks_verbose=
->  			[KNL] verbose self-tests
->  			Format=<0|1>
-
-
--- 
-~Randy
+>  crypto/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 75f5efde9aa3..e11c59d26ac5 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -341,7 +341,7 @@ config CRYPTO_MORUS640
+>           Support for the MORUS-640 dedicated AEAD algorithm.
+>
+>  config CRYPTO_MORUS640_GLUE
+> -       tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
+> +       tristate
+>         select CRYPTO_AEAD
+>         select CRYPTO_CRYPTD
+>         help
+> @@ -363,7 +363,7 @@ config CRYPTO_MORUS1280
+>           Support for the MORUS-1280 dedicated AEAD algorithm.
+>
+>  config CRYPTO_MORUS1280_GLUE
+> -       tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
+> +       tristate
+>         select CRYPTO_AEAD
+>         select CRYPTO_CRYPTD
+>         help
+> --
+> 2.9.0
+>
