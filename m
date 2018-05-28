@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938068AbeE1LMS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:12:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60034 "EHLO mail.kernel.org"
+        id S938336AbeE1LkG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:40:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932506AbeE1LMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:12:15 -0400
+        id S937621AbeE1LMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:12:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 180/272] f2fs: fix to set KEEP_SIZE bit in f2fs_zero_range
-Date: Mon, 28 May 2018 12:03:33 +0200
-Message-Id: <20180528100255.839918191@linuxfoundation.org>
+Subject: [PATCH 4.16 181/272] f2fs: fix to clear CP_TRIMMED_FLAG
+Date: Mon, 28 May 2018 12:03:34 +0200
+Message-Id: <20180528100255.903245056@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,51 +32,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 17cd07ae95073c298af92c1ba14ac58ce84de33b ]
+[ Upstream commit cd36d7a17f9da68be9aa67185ba3ad7969934a19 ]
 
-As Jayashree Mohan reported:
+Once CP_TRIMMED_FLAG is set, after a reboot, we will never issue discard
+before LBA becomes invalid again, fix it by clearing the flag in
+checkpoint without CP_TRIMMED reason.
 
-A simple workload to reproduce this would be :
-1. create foo
-2. Write (8K - 16K)  // foo size = 16K now
-3. fsync()
-4. falloc zero_range , keep_size (4202496 - 4210688) // foo size must be 16K
-5. fdatasync()
-Crash now
-
-On recovery, we see that the file size is 4210688 and not 16K, which
-violates the semantics of keep_size flag. We have a test case to
-reproduce this using CrashMonkey on 4.15 kernel. Try this out by
-simply running :
- ./c_harness -f /dev/sda -d /dev/cow_ram0 -t f2fs -e 102400  -P -v
- tests/generic_468_zero.so
-
-The root cause is that we miss to set KEEP_SIZE bit correctly in zero_range
-when zeroing block cross EOF with FALLOC_FL_KEEP_SIZE, let's fix this
-missing case.
-
+Fixes: 1f43e2ad7bff ("f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard")
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/file.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/f2fs/checkpoint.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1348,8 +1348,12 @@ static int f2fs_zero_range(struct inode
- 	}
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1136,6 +1136,8 @@ static void update_ckpt_flags(struct f2f
  
- out:
--	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size)
--		f2fs_i_size_write(inode, new_size);
-+	if (new_size > i_size_read(inode)) {
-+		if (mode & FALLOC_FL_KEEP_SIZE)
-+			file_set_keep_isize(inode);
-+		else
-+			f2fs_i_size_write(inode, new_size);
-+	}
- out_sem:
- 	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	if (cpc->reason & CP_TRIMMED)
+ 		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
++	else
++		__clear_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
  
+ 	if (cpc->reason & CP_UMOUNT)
+ 		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
