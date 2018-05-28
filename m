@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937345AbeE1K3d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:29:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48870 "EHLO mail.kernel.org"
+        id S937312AbeE1K32 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:29:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937302AbeE1K3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:23 -0400
+        id S936976AbeE1K3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nitin Gupta <nitin.m.gupta@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>, Changwei Ge <ge.changwei@h3c.com>,
+        Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>, Joseph Qi <jiangqi903@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 071/329] sparc64: update pmdp_invalidate() to return old pmd value
-Date: Mon, 28 May 2018 12:00:00 +0200
-Message-Id: <20180528100248.751889596@linuxfoundation.org>
+Subject: [PATCH 4.9 067/329] ocfs2: return error when we attempt to access a dirty bh in jbd2
+Date: Mon, 28 May 2018 11:59:56 +0200
+Message-Id: <20180528100248.391810660@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -35,82 +34,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nitin Gupta <nitin.m.gupta@oracle.com>
+From: piaojun <piaojun@huawei.com>
 
-[ Upstream commit a8e654f01cb725d0bfd741ebca1bf4c9337969cc ]
+[ Upstream commit d984187e3a1ad7d12447a7ab2c43ce3717a2b5b3 ]
 
-It's required to avoid losing dirty and accessed bits.
+We should not reuse the dirty bh in jbd2 directly due to the following
+situation:
 
-[akpm@linux-foundation.org: add a `do' to the do-while loop]
-Link: http://lkml.kernel.org/r/20171213105756.69879-9-kirill.shutemov@linux.intel.com
-Signed-off-by: Nitin Gupta <nitin.m.gupta@oracle.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
+1. When removing extent rec, we will dirty the bhs of extent rec and
+   truncate log at the same time, and hand them over to jbd2.
+
+2. The bhs are submitted to jbd2 area successfully.
+
+3. The write-back thread of device help flush the bhs to disk but
+   encounter write error due to abnormal storage link.
+
+4. After a while the storage link become normal. Truncate log flush
+   worker triggered by the next space reclaiming found the dirty bh of
+   truncate log and clear its 'BH_Write_EIO' and then set it uptodate in
+   __ocfs2_journal_access():
+
+   ocfs2_truncate_log_worker
+     ocfs2_flush_truncate_log
+       __ocfs2_flush_truncate_log
+         ocfs2_replay_truncate_records
+           ocfs2_journal_access_di
+             __ocfs2_journal_access // here we clear io_error and set 'tl_bh' uptodata.
+
+5. Then jbd2 will flush the bh of truncate log to disk, but the bh of
+   extent rec is still in error state, and unfortunately nobody will
+   take care of it.
+
+6. At last the space of extent rec was not reduced, but truncate log
+   flush worker have given it back to globalalloc. That will cause
+   duplicate cluster problem which could be identified by fsck.ocfs2.
+
+Sadly we can hardly revert this but set fs read-only in case of ruining
+atomicity and consistency of space reclaim.
+
+Link: http://lkml.kernel.org/r/5A6E8092.8090701@huawei.com
+Fixes: acf8fdbe6afb ("ocfs2: do not BUG if buffer not uptodate in __ocfs2_journal_access")
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/include/asm/pgtable_64.h |    2 +-
- arch/sparc/mm/tlb.c                 |   23 ++++++++++++++++++-----
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ fs/ocfs2/journal.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/arch/sparc/include/asm/pgtable_64.h
-+++ b/arch/sparc/include/asm/pgtable_64.h
-@@ -952,7 +952,7 @@ void update_mmu_cache_pmd(struct vm_area
- 			  pmd_t *pmd);
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -666,23 +666,24 @@ static int __ocfs2_journal_access(handle
+ 	/* we can safely remove this assertion after testing. */
+ 	if (!buffer_uptodate(bh)) {
+ 		mlog(ML_ERROR, "giving me a buffer that's not uptodate!\n");
+-		mlog(ML_ERROR, "b_blocknr=%llu\n",
+-		     (unsigned long long)bh->b_blocknr);
++		mlog(ML_ERROR, "b_blocknr=%llu, b_state=0x%lx\n",
++		     (unsigned long long)bh->b_blocknr, bh->b_state);
  
- #define __HAVE_ARCH_PMDP_INVALIDATE
--extern void pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
-+extern pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 			    pmd_t *pmdp);
- 
- #define __HAVE_ARCH_PGTABLE_DEPOSIT
---- a/arch/sparc/mm/tlb.c
-+++ b/arch/sparc/mm/tlb.c
-@@ -219,17 +219,28 @@ void set_pmd_at(struct mm_struct *mm, un
- 	}
- }
- 
-+static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
-+		unsigned long address, pmd_t *pmdp, pmd_t pmd)
-+{
-+	pmd_t old;
-+
-+	do {
-+		old = *pmdp;
-+	} while (cmpxchg64(&pmdp->pmd, old.pmd, pmd.pmd) != old.pmd);
-+
-+	return old;
-+}
-+
- /*
-  * This routine is only called when splitting a THP
-  */
--void pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
-+pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 		     pmd_t *pmdp)
- {
--	pmd_t entry = *pmdp;
+ 		lock_buffer(bh);
+ 		/*
+-		 * A previous attempt to write this buffer head failed.
+-		 * Nothing we can do but to retry the write and hope for
+-		 * the best.
++		 * A previous transaction with a couple of buffer heads fail
++		 * to checkpoint, so all the bhs are marked as BH_Write_EIO.
++		 * For current transaction, the bh is just among those error
++		 * bhs which previous transaction handle. We can't just clear
++		 * its BH_Write_EIO and reuse directly, since other bhs are
++		 * not written to disk yet and that will cause metadata
++		 * inconsistency. So we should set fs read-only to avoid
++		 * further damage.
+ 		 */
+ 		if (buffer_write_io_error(bh) && !buffer_uptodate(bh)) {
+-			clear_buffer_write_io_error(bh);
+-			set_buffer_uptodate(bh);
+-		}
 -
--	pmd_val(entry) &= ~_PAGE_VALID;
-+	pmd_t old, entry;
- 
--	set_pmd_at(vma->vm_mm, address, pmdp, entry);
-+	entry = __pmd(pmd_val(*pmdp) & ~_PAGE_VALID);
-+	old = pmdp_establish(vma, address, pmdp, entry);
- 	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
- 
- 	/*
-@@ -240,6 +251,8 @@ void pmdp_invalidate(struct vm_area_stru
- 	if ((pmd_val(entry) & _PAGE_PMD_HUGE) &&
- 	    !is_huge_zero_page(pmd_page(entry)))
- 		(vma->vm_mm)->context.thp_pte_count--;
-+
-+	return old;
- }
- 
- void pgtable_trans_huge_deposit(struct mm_struct *mm, pmd_t *pmdp,
+-		if (!buffer_uptodate(bh)) {
+ 			unlock_buffer(bh);
+-			return -EIO;
++			return ocfs2_error(osb->sb, "A previous attempt to "
++					"write this buffer head failed\n");
+ 		}
+ 		unlock_buffer(bh);
+ 	}
