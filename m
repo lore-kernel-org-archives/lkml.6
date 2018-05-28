@@ -1,100 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753096AbeE1D1G (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 23:27:06 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38501 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752981AbeE1D1D (ORCPT
+        id S1753113AbeE1DcO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 23:32:14 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:56404 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752981AbeE1DcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 23:27:03 -0400
-X-Google-Smtp-Source: AB8JxZqcQcAx5rFDoHI6WOLn0MP5CrRKCoXeTrIS1bvefCyN5ZuraHuJ9sCSUZRfX1Ird1sR61+kTA==
-From: Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To: greentime@andestech.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        torvalds@linux-foundation.org
-Cc: green.hu@gmail.com
-Subject: [GIT PULL] nds32 fixes for 4.17
-Date: Mon, 28 May 2018 11:26:39 +0800
-Message-Id: <cover.1527477138.git.greentime@andestech.com>
-X-Mailer: git-send-email 2.16.2
+        Sun, 27 May 2018 23:32:13 -0400
+Date: Sun, 27 May 2018 20:32:12 -0700
+From: Vito Caputo <vcaputo@pengaru.com>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+        Tim Murray <timmurray@google.com>, tj@kernel.org
+Subject: Re: [REGRESSION] (>= v4.12) IO w/dmcrypt causing audio underruns
+Message-ID: <20180528033212.bmtxq3zyujsf7x4a@shells.gnugeneration.com>
+References: <20171129183919.GQ692@shells.gnugeneration.com>
+ <20171201213322.GW692@shells.gnugeneration.com>
+ <CAFqH_51LwG=txh_wDHvztWBN1fU_8zgXzdBJDxmzemcnpohKyg@mail.gmail.com>
+ <20180117224852.3cr33lhot3rpahg7@shells.gnugeneration.com>
+ <CAFqH_52Bpy8O6-F5XZm6G8emRY1dtufp8jNJTgjMtfvaOZ3okw@mail.gmail.com>
+ <20180125083321.jmrsqpfszj6ugsay@shells.gnugeneration.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180125083321.jmrsqpfszj6ugsay@shells.gnugeneration.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
+On Thu, Jan 25, 2018 at 12:33:21AM -0800, vcaputo@pengaru.com wrote:
+> On Fri, Jan 19, 2018 at 11:57:32AM +0100, Enric Balletbo Serra wrote:
+> > Hi Vito,
+> > 
+> > 2018-01-17 23:48 GMT+01:00  <vcaputo@pengaru.com>:
+> > > On Mon, Dec 18, 2017 at 10:25:33AM +0100, Enric Balletbo Serra wrote:
+> > >> Hi Vito,
+> > >>
+> > >> 2017-12-01 22:33 GMT+01:00  <vcaputo@pengaru.com>:
+> > >> > On Wed, Nov 29, 2017 at 10:39:19AM -0800, vcaputo@pengaru.com wrote:
+> > >> >> Hello,
+> > >> >>
+> > >> >> Recently I noticed substantial audio dropouts when listening to MP3s in
+> > >> >> `cmus` while doing big and churny `git checkout` commands in my linux git
+> > >> >> tree.
+> > >> >>
+> > >> >> It's not something I've done much of over the last couple months so I
+> > >> >> hadn't noticed until yesterday, but didn't remember this being a problem in
+> > >> >> recent history.
+> > >> >>
+> > >> >> As there's quite an accumulation of similarly configured and built kernels
+> > >> >> in my grub menu, it was trivial to determine approximately when this began:
+> > >> >>
+> > >> >> 4.11.0: no dropouts
+> > >> >> 4.12.0-rc7: dropouts
+> > >> >> 4.14.0-rc6: dropouts (seem more substantial as well, didn't investigate)
+> > >> >>
+> > >> >> Watching top while this is going on in the various kernel versions, it's
+> > >> >> apparent that the kworker behavior changed.  Both the priority and quantity
+> > >> >> of running kworker threads is elevated in kernels experiencing dropouts.
+> > >> >>
+> > >> >> Searching through the commit history for v4.11..v4.12 uncovered:
+> > >> >>
+> > >> >> commit a1b89132dc4f61071bdeaab92ea958e0953380a1
+> > >> >> Author: Tim Murray <timmurray@google.com>
+> > >> >> Date:   Fri Apr 21 11:11:36 2017 +0200
+> > >> >>
+> > >> >>     dm crypt: use WQ_HIGHPRI for the IO and crypt workqueues
+> > >> >>
+> > >> >>     Running dm-crypt with workqueues at the standard priority results in IO
+> > >> >>     competing for CPU time with standard user apps, which can lead to
+> > >> >>     pipeline bubbles and seriously degraded performance.  Move to using
+> > >> >>     WQ_HIGHPRI workqueues to protect against that.
+> > >> >>
+> > >> >>     Signed-off-by: Tim Murray <timmurray@google.com>
+> > >> >>     Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > >> >>     Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+> > >> >>
+> > >> >> ---
+> > >> >>
+> > >> >> Reverting a1b8913 from 4.14.0-rc6, my current kernel, eliminates the
+> > >> >> problem completely.
+> > >> >>
+> > >> >> Looking at the diff in that commit, it looks like the commit message isn't
+> > >> >> even accurate; not only is the priority of the dmcrypt workqueues being
+> > >> >> changed - they're also being made "CPU intensive" workqueues as well.
+> > >> >>
+> > >> >> This combination appears to result in both elevated scheduling priority and
+> > >> >> greater quantity of participant worker threads effectively starving any
+> > >> >> normal priority user task under periods of heavy IO on dmcrypt volumes.
+> > >> >>
+> > >> >> I don't know what the right solution is here.  It seems to me we're lacking
+> > >> >> the appropriate mechanism for charging CPU resources consumed on behalf of
+> > >> >> user processes in kworker threads to the work-causing process.
+> > >> >>
+> > >> >> What effectively happens is my normal `git` user process is able to
+> > >> >> greatly amplify what share of CPU it takes from the system by generating IO
+> > >> >> on what happens to be a high-priority CPU-intensive storage volume.
+> > >> >>
+> > >> >> It looks potentially complicated to fix properly, but I suspect at its core
+> > >> >> this may be a fairly longstanding shortcoming of the page cache and its
+> > >> >> asynchronous design.  Something that has been exacerbated substantially by
+> > >> >> the introduction of CPU-intensive storage subsystems like dmcrypt.
+> > >> >>
+> > >> >> If we imagine the whole stack simplified, where all the IO was being done
+> > >> >> synchronously in-band, and the dmcrypt kernel code simply ran in the
+> > >> >> IO-causing process context, it would be getting charged to the calling
+> > >> >> process and scheduled accordingly.  The resource accounting and scheduling
+> > >> >> problems all emerge with the page cache, buffered IO, and async background
+> > >> >> writeback in a pool of unrelated worker threads, etc.  That's how it
+> > >> >> appears to me anyways...
+> > >> >>
+> > >> >> The system used is a X61s Thinkpad 1.8Ghz with 840 EVO SSD, lvm on dmcrypt.
+> > >> >> The kernel .config is attached in case it's of interest.
+> > >> >>
+> > >> >> Thanks,
+> > >> >> Vito Caputo
+> > >> >
+> > >> >
+> > >> >
+> > >> > Ping...
+> > >> >
+> > >> > Could somebody please at least ACK receiving this so I'm not left wondering
+> > >> > if my mails to lkml are somehow winding up flagged as spam, thanks!
+> > >>
+> > >> Sorry I did not notice your email before you ping me directly. It's
+> > >> interesting that issue, though we didn't notice this problem. It's a
+> > >> bit far since I tested this patch but I'll setup the environment again
+> > >> and do more tests to understand better what is happening.
+> > >>
+> > >
+> > > Any update on this?
+> > >
+> > 
+> > I did not reproduce the issue for now. Can you try what happens if you
+> > remove the WQ_CPU_INTENSIVE in the kcryptd_io workqueue?
+> > 
+> > - cc->io_queue = alloc_workqueue("kcryptd_io", WQ_HIGHPRI |
+> > WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM, 1);
+> > cc->io_queue = alloc_workqueue("kcryptd_io", WQ_HIGHPRI | WQ_MEM_RECLAIM, 1);
+> > 
+> 
+> FWIW if I change both "kcryptd" and "kcryptd_io" workqueues to just
+> WQ_CPU_INTENSIVE, removing WQ_HIGHPRIO, the problem goes away.
+> 
+> Doing this to "kcryptd_io" alone, as mentioned in my previous email, was
+> ineffective.
+> 
+> Perhaps revert just the WQ_HIGHPRIO bit from the dmcrypt workqueues?
+> 
 
-are available in the Git repository at:
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git tags/nds32-for-linus-4.17-fixes
+Guys... this is still a problem in 4.17-rc6.
 
-for you to fetch changes up to a30e7d1e37e8acc37c25420d93af218166cca3ae:
+I don't understand why this is being ignored.  It's pathetic, my laptop
+can't even do a git checkout of the linux tree while playing mp3s
+without the music skipping.
 
-  nds32: Fix compiler warning, Wstringop-overflow, in vdso.c (2018-05-23 13:26:22 +0800)
+Reverting a1b8913 completely eliminates the problem.  What gives?
 
-----------------------------------------------------------------
-nds32 patches for 4.17
-
-Here is the nds32 patch set based on 4.17-rc6.
-Contained in here are the bug fixes and building error fixes for nds32.
-
-These are the LTP20170427 testing results. hackbench01 may fail sometimes.
-We are still investigating this issue.
-
-Total Tests: 1902
-Total Skipped Tests: 593
-Total Failures: 420
-Kernel Version: 4.17.0-rc6-00018-ga30e7d1e37e8
-Machine Architecture: nds32
-
-Total Tests: 1902
-Total Skipped Tests: 593
-Total Failures: 419
-Kernel Version: 4.17.0-rc5-00018-g27288975a735
-Machine Architecture: nds32
-
-Signed-off-by: Greentime Hu <greentime@andestech.com>
-
-----------------------------------------------------------------
-Greentime Hu (12):
-      nds32: lib: To use generic lib instead of libgcc to prevent the symbol undefined issue.
-      nds32: Fix building error when CONFIG_FREEZE is enabled.
-      nds32: Fix building error of crypto/xor.c by adding xor.h
-      nds32: Fix drivers/gpu/drm/udl/udl_fb.c building error by defining PAGE_SHARED
-      nds32: Fix xfs_buf built failed by export invalidate_kernel_vmap_range and flush_kernel_vmap_range
-      nds32: Fix the symbols undefined issue by exporting them.
-      nds32: Fix the unknown type u8 issue.
-      nds32: Fix build failed because arch_trace_hardirqs_off is changed to trace_hardirqs_off.
-      nds32: Fix the allmodconfig build. To make sure CONFIG_CPU_LITTLE_ENDIAN is default y
-      nds32: Fix the virtual address may map too much range by tlbop issue.
-      nds32: To refine readability of INT_MASK_INITAIAL_VAL
-      nds32: To fix a cache inconsistency issue by setting correct cacheability of NTC
-
-Nickhu (2):
-      nds32: Renaming the file for unaligned access
-      nds32: Fix the unaligned access handler
-
-Vincent Chen (4):
-      nds32: Correct flush_dcache_page function
-      nds32: Flush the cache of the page at vmaddr instead of kaddr in flush_anon_page
-      nds32: Disable local irq before calling cpu_dcache_wb_page in copy_user_highpage
-      nds32: Fix compiler warning, Wstringop-overflow, in vdso.c
-
- arch/nds32/Kconfig                  |  7 +++++++
- arch/nds32/Kconfig.cpu              |  5 +++--
- arch/nds32/Makefile                 |  7 ++++---
- arch/nds32/include/asm/Kbuild       |  2 ++
- arch/nds32/include/asm/bitfield.h   |  3 ++-
- arch/nds32/include/asm/cacheflush.h |  2 ++
- arch/nds32/include/asm/io.h         |  2 ++
- arch/nds32/include/asm/page.h       |  3 +++
- arch/nds32/include/asm/pgtable.h    |  1 +
- arch/nds32/kernel/ex-entry.S        |  2 +-
- arch/nds32/kernel/head.S            | 28 +++++++++++++++++++++++-----
- arch/nds32/kernel/setup.c           |  3 +++
- arch/nds32/kernel/stacktrace.c      |  2 ++
- arch/nds32/kernel/vdso.c            | 10 +++++-----
- arch/nds32/lib/copy_page.S          |  3 +++
- arch/nds32/mm/alignment.c           |  9 ++++++---
- arch/nds32/mm/cacheflush.c          | 74 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------
- arch/nds32/mm/init.c                |  1 +
- 18 files changed, 130 insertions(+), 34 deletions(-)
+Regards,
+Vito Caputo
