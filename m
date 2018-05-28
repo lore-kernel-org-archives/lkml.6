@@ -1,24 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032986AbeE1KTr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:19:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39552 "EHLO mail.kernel.org"
+        id S1033024AbeE1KTv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:19:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032809AbeE1KTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:42 -0400
+        id S1032988AbeE1KTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Peter Malone <peter.malone@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 127/268] scsi: mpt3sas: Do not mark fw_event workqueue as WQ_MEM_RECLAIM
-Date: Mon, 28 May 2018 12:01:41 +0200
-Message-Id: <20180528100216.500487004@linuxfoundation.org>
+Subject: [PATCH 4.4 129/268] fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
+Date: Mon, 28 May 2018 12:01:43 +0200
+Message-Id: <20180528100216.702176008@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,34 +31,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hannes Reinecke <hare@suse.de>
+From: Peter Malone <peter.malone@gmail.com>
 
-[ Upstream commit 864449eea7c600596e305ffdc4a6a846414b222c ]
+[ Upstream commit 250c6c49e3b68756b14983c076183568636e2bde ]
 
-The firmware event workqueue should not be marked as WQ_MEM_RECLAIM
-as it's doesn't need to make forward progress under memory pressure.
-In the current state it will result in a deadlock if the device had been
-forcefully removed.
+Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
+sbusfb_ioctl_helper().
 
-Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+'index' is defined as an int in sbusfb_ioctl_helper().
+We retrieve this from the user:
+if (get_user(index, &c->index) ||
+    __get_user(count, &c->count) ||
+    __get_user(ured, &c->red) ||
+    __get_user(ugreen, &c->green) ||
+    __get_user(ublue, &c->blue))
+       return -EFAULT;
+
+and then we use 'index' in the following way:
+red = cmap->red[index + i] >> 8;
+green = cmap->green[index + i] >> 8;
+blue = cmap->blue[index + i] >> 8;
+
+This is a classic information leak vulnerability. 'index' should be
+an unsigned int, given its usage above.
+
+This patch is straight-forward; it changes 'index' to unsigned int
+in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
+
+This patch fixes CVE-2018-6412.
+
+Signed-off-by: Peter Malone <peter.malone@gmail.com>
+Acked-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/sbuslib.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -8637,7 +8637,7 @@ _scsih_probe(struct pci_dev *pdev, const
- 	snprintf(ioc->firmware_event_name, sizeof(ioc->firmware_event_name),
- 	    "fw_event_%s%d", ioc->driver_name, ioc->id);
- 	ioc->firmware_event_thread = alloc_ordered_workqueue(
--	    ioc->firmware_event_name, WQ_MEM_RECLAIM);
-+	    ioc->firmware_event_name, 0);
- 	if (!ioc->firmware_event_thread) {
- 		pr_err(MPT3SAS_FMT "failure at %s:%d/%s()!\n",
- 		    ioc->name, __FILE__, __LINE__, __func__);
+--- a/drivers/video/fbdev/sbuslib.c
++++ b/drivers/video/fbdev/sbuslib.c
+@@ -121,7 +121,7 @@ int sbusfb_ioctl_helper(unsigned long cm
+ 		unsigned char __user *ured;
+ 		unsigned char __user *ugreen;
+ 		unsigned char __user *ublue;
+-		int index, count, i;
++		unsigned int index, count, i;
+ 
+ 		if (get_user(index, &c->index) ||
+ 		    __get_user(count, &c->count) ||
+@@ -160,7 +160,7 @@ int sbusfb_ioctl_helper(unsigned long cm
+ 		unsigned char __user *ugreen;
+ 		unsigned char __user *ublue;
+ 		struct fb_cmap *cmap = &info->cmap;
+-		int index, count, i;
++		unsigned int index, count, i;
+ 		u8 red, green, blue;
+ 
+ 		if (get_user(index, &c->index) ||
