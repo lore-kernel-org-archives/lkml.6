@@ -1,108 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938002AbeE1K6W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:58:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937983AbeE1K6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:17 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Asseg <frank.asseg@objecthunter.net>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 374/496] tools/thermal: tmon: fix for segfault
-Date: Mon, 28 May 2018 12:02:39 +0200
-Message-Id: <20180528100335.572184987@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S938053AbeE1K6m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:58:42 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41694 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938038AbeE1K6e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:34 -0400
+X-Google-Smtp-Source: AB8JxZpdBTk5bw0E3plFo8LVXaJQxDQkZyb/2/JaCHK5qsYUibPNy6Sbn45epTKZcJGUyC0JoChzIA==
+Date: Mon, 28 May 2018 16:28:31 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: arm@kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 13/15] arm: dts: r8a7743: Add missing OPP properties for
+ CPUs
+Message-ID: <20180528105831.vesrswazlagynemq@vireshk-i7>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
+ <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 28-05-18, 11:23, Simon Horman wrote:
+> [Cc Biju Das]
+> 
+> On Fri, May 25, 2018 at 04:01:59PM +0530, Viresh Kumar wrote:
+> > The OPP properties, like "operating-points", should either be present
+> > for all the CPUs of a cluster or none. If these are present only for a
+> > subset of CPUs of a cluster then things will start falling apart as soon
+> > as the CPUs are brought online in a different order. For example, this
+> > will happen because the operating system looks for such properties in
+> > the CPU node it is trying to bring up, so that it can create an OPP
+> > table.
+> > 
+> > Add such missing properties.
+> > 
+> > Fix other missing property (clock latency) as well to make it all
+> > work.
+> > 
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> Thanks, this looks good to me and it looks like it should have:
+> 
+> Fixes: 0417814ea140 ("ARM: dts: r8a7743: Add OPP table for frequency scaling")
 
-------------------
+Sure.
 
-From: Frank Asseg <frank.asseg@objecthunter.net>
+Will you be picking this patch directly and send it part of your pull
+request ? Maybe add Fixes tag then only ?
 
-[ Upstream commit 6c59f64b7ecf2bccbe73931d7d573d66ed13b537 ]
-
-Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in the
-ncurses tmon application. The segfault is caused by incrementing
-cur_thermal_record in the main function without checking if it's value reached
-NR_THERMAL_RECORD immediately. Since the boundary check only occurred in
-update_thermal_data a race condition existed, which lead to an attempted read
-beyond the last element of the trec array.
-
-The fix was implemented by moving the cur_thermal_record incrementation to the
-update_thermal_data function using a temporary variable on which the boundary
-condition is checked before updating cur_thread_record, so that the variable is
-never incremented beyond the trec array's boundary.
-
-It seems the segfault does not occur on every machine: On a HP EliteBook G4 the
-segfault happens, while it does not happen on a Thinkpad T540p.
-
-Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/thermal/tmon/sysfs.c |   12 +++++++-----
- tools/thermal/tmon/tmon.c  |    1 -
- 2 files changed, 7 insertions(+), 6 deletions(-)
-
---- a/tools/thermal/tmon/sysfs.c
-+++ b/tools/thermal/tmon/sysfs.c
-@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst
- int update_thermal_data()
- {
- 	int i;
-+	int next_thermal_record = cur_thermal_record + 1;
- 	char tz_name[256];
- 	static unsigned long samples;
- 
-@@ -495,9 +496,9 @@ int update_thermal_data()
- 	}
- 
- 	/* circular buffer for keeping historic data */
--	if (cur_thermal_record >= NR_THERMAL_RECORDS)
--		cur_thermal_record = 0;
--	gettimeofday(&trec[cur_thermal_record].tv, NULL);
-+	if (next_thermal_record >= NR_THERMAL_RECORDS)
-+		next_thermal_record = 0;
-+	gettimeofday(&trec[next_thermal_record].tv, NULL);
- 	if (tmon_log) {
- 		fprintf(tmon_log, "%lu ", ++samples);
- 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
-@@ -507,11 +508,12 @@ int update_thermal_data()
- 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
- 			ptdata.tzi[i].instance);
- 		sysfs_get_ulong(tz_name, "temp",
--				&trec[cur_thermal_record].temp[i]);
-+				&trec[next_thermal_record].temp[i]);
- 		if (tmon_log)
- 			fprintf(tmon_log, "%lu ",
--				trec[cur_thermal_record].temp[i]/1000);
-+				trec[next_thermal_record].temp[i] / 1000);
- 	}
-+	cur_thermal_record = next_thermal_record;
- 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
- 		char cdev_name[256];
- 		unsigned long val;
---- a/tools/thermal/tmon/tmon.c
-+++ b/tools/thermal/tmon/tmon.c
-@@ -336,7 +336,6 @@ int main(int argc, char **argv)
- 			show_data_w();
- 			show_cooling_device();
- 		}
--		cur_thermal_record++;
- 		time_elapsed += ticktime;
- 		controller_handler(trec[0].temp[target_tz_index] / 1000,
- 				&yk);
+-- 
+viresh
