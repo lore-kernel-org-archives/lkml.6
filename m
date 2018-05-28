@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938626AbeE1MLh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:11:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51494 "EHLO mail.kernel.org"
+        id S1164992AbeE1LEV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:04:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423030AbeE1LEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:04:24 -0400
+        id S1164982AbeE1LEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:04:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.16 004/272] MIPS: Fix build with DEBUG_ZBOOT and MACH_JZ4770
-Date: Mon, 28 May 2018 12:00:37 +0200
-Message-Id: <20180528100240.574018305@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 486/496] drm: rcar-du: lvds: Fix LVDS startup on R-Car Gen2
+Date: Mon, 28 May 2018 12:04:31 +0200
+Message-Id: <20180528100340.357584122@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -26,51 +27,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit c60128ce97674fd05adb8b5ae79eb6745a03192e upstream.
+[ Upstream commit 8525d04ba8a6a9ecfa4bd619c988ca873a5fc2a4 ]
 
-The debug definitions were missing for MACH_JZ4770, resulting in a build
-failure when DEBUG_ZBOOT was set.
+According to the latest revision 2.00 of the R-Car Gen2 manual, the LVDS
+and the bias circuit must be enabled after the LVDS I/O pins are
+enabled, not before. Fix the Gen2 LVDS startup sequence accordingly.
 
-Since the UART addresses are the same across all Ingenic SoCs, we just
-use a #ifdef CONFIG_MACH_INGENIC instead of checking for individual
-Ingenic SoCs.
+While at it, also fix the comment preceding the first LVDCR0 write that
+still talks about hardcoding the LVDS mode 0.
 
-Additionally, I added a #define for the UART0 address in-code and
-dropped the <asm/mach-jz4740/base.h> include, for the reason that this
-include file is slowly being phased out as the whole platform is being
-moved to devicetree.
-
-Fixes: 9be5f3e92ed5 ("MIPS: ingenic: Initial JZ4770 support")
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.16
-Patchwork: https://patchwork.linux-mips.org/patch/18957/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: 90374b5c25c9 ("drm/rcar-du: Add internal LVDS encoder support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/boot/compressed/uart-16550.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/mips/boot/compressed/uart-16550.c
-+++ b/arch/mips/boot/compressed/uart-16550.c
-@@ -18,9 +18,9 @@
- #define PORT(offset) (CKSEG1ADDR(AR7_REGS_UART0) + (4 * offset))
- #endif
+--- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+@@ -59,11 +59,8 @@ static void rcar_du_lvdsenc_start_gen2(s
  
--#if defined(CONFIG_MACH_JZ4740) || defined(CONFIG_MACH_JZ4780)
--#include <asm/mach-jz4740/base.h>
--#define PORT(offset) (CKSEG1ADDR(JZ4740_UART0_BASE_ADDR) + (4 * offset))
-+#ifdef CONFIG_MACH_INGENIC
-+#define INGENIC_UART0_BASE_ADDR	0x10030000
-+#define PORT(offset) (CKSEG1ADDR(INGENIC_UART0_BASE_ADDR) + (4 * offset))
- #endif
+ 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
  
- #ifdef CONFIG_CPU_XLR
+-	/*
+-	 * Select the input, hardcode mode 0, enable LVDS operation and turn
+-	 * bias circuitry on.
+-	 */
+-	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_BEN | LVDCR0_LVEN;
++	/* Select the input and set the LVDS mode. */
++	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
+ 	if (rcrtc->index == 2)
+ 		lvdcr0 |= LVDCR0_DUSEL;
+ 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+@@ -74,6 +71,10 @@ static void rcar_du_lvdsenc_start_gen2(s
+ 			LVDCR1_CHSTBY_GEN2(1) | LVDCR1_CHSTBY_GEN2(0) |
+ 			LVDCR1_CLKSTBY_GEN2);
+ 
++	/* Enable LVDS operation and turn bias circuitry on. */
++	lvdcr0 |= LVDCR0_BEN | LVDCR0_LVEN;
++	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
++
+ 	/*
+ 	 * Turn the PLL on, wait for the startup delay, and turn the output
+ 	 * on.
