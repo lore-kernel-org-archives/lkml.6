@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932443AbeE1K1V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:27:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46538 "EHLO mail.kernel.org"
+        id S936910AbeE1K1Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:27:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936983AbeE1K1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:08 -0400
+        id S932315AbeE1K1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH 4.9 022/329] KVM: s390: vsie: fix < 8k check for the itdba
-Date: Mon, 28 May 2018 11:59:11 +0200
-Message-Id: <20180528100244.177397494@linuxfoundation.org>
+        stable@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 025/329] firewire-ohci: work around oversized DMA reads on JMicron controllers
+Date: Mon, 28 May 2018 11:59:14 +0200
+Message-Id: <20180528100244.473735367@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,42 +31,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Hector Martin <marcan@marcan.st>
 
-commit f4a551b72358facbbe5714248dff78404272feee upstream.
+[ Upstream commit 188775181bc05f29372b305ef96485840e351fde ]
 
-By missing an "L", we might detect some addresses to be <8k,
-although they are not.
+At least some JMicron controllers issue buggy oversized DMA reads when
+fetching context descriptors, always fetching 0x20 bytes at once for
+descriptors which are only 0x10 bytes long. This is often harmless, but
+can cause page faults on modern systems with IOMMUs:
 
-e.g. for itdba = 100001fff
-!(gpa & ~0x1fffU) -> 1
-!(gpa & ~0x1fffUL) -> 0
+DMAR: [DMA Read] Request device [05:00.0] fault addr fff56000 [fault reason 06] PTE Read access is not set
+firewire_ohci 0000:05:00.0: DMA context IT0 has stopped, error code: evt_descriptor_read
 
-So we would report a SIE validity intercept although everything is fine.
+This works around the problem by always leaving 0x10 padding bytes at
+the end of descriptor buffer pages, which should be harmless to do
+unconditionally for controllers in case others have the same behavior.
 
-Fixes: 166ecb3 ("KVM: s390: vsie: support transactional execution")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Hector Martin <marcan@marcan.st>
+Reviewed-by: Clemens Ladisch <clemens@ladisch.de>
+Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/s390/kvm/vsie.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firewire/ohci.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -549,7 +549,7 @@ static int pin_blocks(struct kvm_vcpu *v
+--- a/drivers/firewire/ohci.c
++++ b/drivers/firewire/ohci.c
+@@ -1130,7 +1130,13 @@ static int context_add_buffer(struct con
+ 		return -ENOMEM;
  
- 	gpa = scb_o->itdba & ~0xffUL;
- 	if (gpa && (scb_s->ecb & 0x10U)) {
--		if (!(gpa & ~0x1fffU)) {
-+		if (!(gpa & ~0x1fffUL)) {
- 			rc = set_validity_icpt(scb_s, 0x0080U);
- 			goto unpin;
- 		}
+ 	offset = (void *)&desc->buffer - (void *)desc;
+-	desc->buffer_size = PAGE_SIZE - offset;
++	/*
++	 * Some controllers, like JMicron ones, always issue 0x20-byte DMA reads
++	 * for descriptors, even 0x10-byte ones. This can cause page faults when
++	 * an IOMMU is in use and the oversized read crosses a page boundary.
++	 * Work around this by always leaving at least 0x10 bytes of padding.
++	 */
++	desc->buffer_size = PAGE_SIZE - offset - 0x10;
+ 	desc->buffer_bus = bus_addr + offset;
+ 	desc->used = 0;
+ 
