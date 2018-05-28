@@ -1,57 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165791AbeE1Ogr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:36:47 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:56455 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968913AbeE1Og0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 10:36:26 -0400
-From: Roger Quadros <rogerq@ti.com>
-To: <balbi@kernel.org>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 1/2] usb: dwc3: of-simple: Don't fail if no clock entries
-Date: Mon, 28 May 2018 17:36:13 +0300
-Message-ID: <1527518174-27860-1-git-send-email-rogerq@ti.com>
-X-Mailer: git-send-email 2.7.4
+        id S1165802AbeE1OhM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:37:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161386AbeE1Kb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:31:57 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 129/329] s390/cio: fix return code after missing interrupt
+Date: Mon, 28 May 2018 12:00:58 +0200
+Message-Id: <20180528100253.415931454@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_count_phandle_with_args() returns -ENOENT (-2) if
-there are no clock entries. Don't fail in such a case.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+------------------
+
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+
+[ Upstream commit 770b55c995d171f026a9efb85e71e3b1ea47b93d ]
+
+When a timeout occurs for users of ccw_device_start_timeout
+we will stop the IO and call the drivers int handler with
+the irb pointer set to ERR_PTR(-ETIMEDOUT). Sometimes
+however we'd set the irb pointer to ERR_PTR(-EIO) which is
+not intended. Just set the correct value in all codepaths.
+
+Reported-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/dwc3-of-simple.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/s390/cio/device_fsm.c |    6 ++++--
+ drivers/s390/cio/io_sch.h     |    1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index cb2ee96..e98d221 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -36,11 +36,11 @@ static int dwc3_of_simple_clk_init(struct dwc3_of_simple *simple, int count)
- 	struct device_node	*np = dev->of_node;
- 	int			i;
+--- a/drivers/s390/cio/device_fsm.c
++++ b/drivers/s390/cio/device_fsm.c
+@@ -822,6 +822,7 @@ ccw_device_online_timeout(struct ccw_dev
  
--	simple->num_clocks = count;
--
--	if (!count)
-+	if (count <= 0)
- 		return 0;
+ 	ccw_device_set_timeout(cdev, 0);
+ 	cdev->private->iretry = 255;
++	cdev->private->async_kill_io_rc = -ETIMEDOUT;
+ 	ret = ccw_device_cancel_halt_clear(cdev);
+ 	if (ret == -EBUSY) {
+ 		ccw_device_set_timeout(cdev, 3*HZ);
+@@ -898,7 +899,7 @@ ccw_device_killing_irq(struct ccw_device
+ 	/* OK, i/o is dead now. Call interrupt handler. */
+ 	if (cdev->handler)
+ 		cdev->handler(cdev, cdev->private->intparm,
+-			      ERR_PTR(-EIO));
++			      ERR_PTR(cdev->private->async_kill_io_rc));
+ }
  
-+	simple->num_clocks = count;
-+
- 	simple->clks = devm_kcalloc(dev, simple->num_clocks,
- 			sizeof(struct clk *), GFP_KERNEL);
- 	if (!simple->clks)
--- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+ static void
+@@ -915,7 +916,7 @@ ccw_device_killing_timeout(struct ccw_de
+ 	ccw_device_online_verify(cdev, 0);
+ 	if (cdev->handler)
+ 		cdev->handler(cdev, cdev->private->intparm,
+-			      ERR_PTR(-EIO));
++			      ERR_PTR(cdev->private->async_kill_io_rc));
+ }
+ 
+ void ccw_device_kill_io(struct ccw_device *cdev)
+@@ -923,6 +924,7 @@ void ccw_device_kill_io(struct ccw_devic
+ 	int ret;
+ 
+ 	cdev->private->iretry = 255;
++	cdev->private->async_kill_io_rc = -EIO;
+ 	ret = ccw_device_cancel_halt_clear(cdev);
+ 	if (ret == -EBUSY) {
+ 		ccw_device_set_timeout(cdev, 3*HZ);
+--- a/drivers/s390/cio/io_sch.h
++++ b/drivers/s390/cio/io_sch.h
+@@ -154,6 +154,7 @@ struct ccw_device_private {
+ 	unsigned long intparm;	/* user interruption parameter */
+ 	struct qdio_irq *qdio_data;
+ 	struct irb irb;		/* device status */
++	int async_kill_io_rc;
+ 	struct senseid senseid;	/* SenseID info */
+ 	struct pgid pgid[8];	/* path group IDs per chpid*/
+ 	struct ccw1 iccws[2];	/* ccws for SNID/SID/SPGID commands */
