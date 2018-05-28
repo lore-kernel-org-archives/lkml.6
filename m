@@ -1,92 +1,549 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753905AbeE1HaE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:30:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34824 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753812AbeE1H37 (ORCPT
+        id S1753769AbeE1Hcs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:32:48 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:25502 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753612AbeE1Hcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:29:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C06B7600E2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
- bindings
-To: Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, devicetree@vger.kernel.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-References: <1526751291-17873-1-git-send-email-tdas@codeaurora.org>
- <1526751291-17873-2-git-send-email-tdas@codeaurora.org>
- <20180522193139.GA21623@rob-hp-laptop>
- <20180523054846.zn7gftt6aqyibd26@vireshk-i7>
- <CAL_JsqL7VdSjerOioc5cSOyKAAXJuVnPJqp_WbTtwr11UUxq=A@mail.gmail.com>
- <cba1616d-ad12-599b-4351-3c7240de852a@codeaurora.org>
- <20180524054333.56vga66xrkfuqtkr@vireshk-i7>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <ba22b1f2-3a9a-0e23-04ee-74e173c531c1@codeaurora.org>
-Date: Mon, 28 May 2018 12:59:51 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180524054333.56vga66xrkfuqtkr@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 28 May 2018 03:32:45 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180528073242epoutp038d35063105743a4d44c5ba3961b32abc~yvpMZIPk83043730437epoutp03M
+X-AuditID: b6c32a36-be9ff70000000fe4-2a-5b0bb0969523
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5B0BB095.4040106@samsung.com>
+Date: Mon, 28 May 2018 16:32:37 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 09/11] misc: throttler: Add core support for non-thermal
+ throttling
+In-reply-to: <20180525203043.249193-10-mka@chromium.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUgTcRjud7fdndby18z8ZVh2EaHk8ramV7jIPkcJSdKnlB3uckN3s92U
+        7A9Z2eew8KsE06aJYiIYVmaJibqsIK0sP0ASKpI+tAixsg/rtsvqr/d5H5736+GlcHUREUJZ
+        BAdvF7h0mvBXNHWGayIvXJ2ZFFU8SbE/C7tItvHTRyXr9vQo2e6adoLNrWog2O5joyT79HYZ
+        wY6f9QC2euAJxo5ffQXYoaO1BHui1UOunWWsv1QPjN+/FQLjRecThbGx7gxhbCuvJ43nrtcB
+        43jjwgRyLx9r5jkTbw/jhRSbySKkGuiticnrk/XRUUwks4qNocMEzsob6A3xCZGbLOnSpnRY
+        FpeeKVEJnCjSK9bE2m2ZDj7MbBMdBjqJYbQaJipGo9VKUbdvtVYvSQ7w5uYvNXhG6aHDzuJy
+        3Aku7HEBPwrBlcjlOq90AX9KDZuBlPwi5OQLQEPtw2Ba5e7qIrxYDVsAepx/0ItVcA76WjSs
+        cAGKwuEi5OlN89I4DEc3WhpIuc9zgEabrmCyPgLdH5nw9VHApejBwwIfT0h825tBHx8AF6O+
+        r698c4PgbnTL/Zn04rkwEVVMPlJ4m+JwAkO3P7h9okC4Bw22jim92A+yqODXa99kBE+RqLIy
+        D5Mv2IA6B2pIGQeid/euk96tEVyAeu8a/ugBOtV6CZeTYoB6Bob/FOvQSKULk2+bjT5M5Cnl
+        YhU6fVItS4yo/3UN9tfHhpIqRT4ILf3PpdJ/LpX+51IFwOvAPD5DtKbyIpOh1YicVcwUUjUp
+        Nmsj8D1kRHQzuNwT3wEgBehZKud3/yS1kssSs60dAFE4PVflHylRKhOXfYS325Ltmem82AH0
+        kskFeEhQik16b8GRzOi1Op2OXclE6xmGDladjJnaq4apnINP4/kM3j5dh1F+IU5Q9uy9qtAk
+        TA4FtyzfP3Joi8JzJAd7fEed234zwI1bxkzMsRcfl6KscrpEyE3YNrj5ZZJhvDJ7hvPHxmvH
+        La1OUcx/vzAYliEYu4xcZxJCR9P6t+cuGBwLiNuBFT0NrO4/YzHPmazQhM4/Xvd2iTWupBc7
+        O5XTtzNxate+2rYQWiGaOSYCt4vcb2ht+memAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42I5/e+xgO7UDdzRBqtXmVr8nXSM3WLTx/es
+        FvOPnGO1OLvsIJtF8+L1bBZnm96wW1zeNYfN4nPvEUaLpdcvMll83vCY0eJ24wo2i9a9R9gd
+        eDzWzFvD6PH71yRGj9kNF1k8Nq3qZPPYP3cNu0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBl
+        7Pi+jLlgVmFFw5S5zA2M0yK7GDk5JARMJOYfO8bWxcjFISSwk1FifttWRpAEr4CgxI/J91i6
+        GDk4mAXkJY5cygYJMwuoS0yat4gZov4+o8S5E/9ZIOq1JE48+8oGYrMIqEqcPDORCcRmA4rv
+        f3EDLM4voChx9cdjRpCZogIREt0nKkHCIgLBEh+ae8BuYBb4yiTx7G87M0hCWCBS4sbet6wQ
+        y3YwSvx8/AZsEKeAhcTE/0/ZJzAKzEJy6yyEW2chuXUBI/MqRsnUguLc9NxiowLDvNRyveLE
+        3OLSvHS95PzcTYzAmNl2WKtvB+P9JfGHGAU4GJV4eBt+c0ULsSaWFVfmHmKU4GBWEuHl0gUK
+        8aYkVlalFuXHF5XmpBYfYpTmYFES572ddyxSSCA9sSQ1OzW1ILUIJsvEwSnVwFh3j/HUDu6f
+        937NuTvl+fzKFSurjU7O7F34p+XmVQnO6LVPyx+UGGz8feLJnAVKb1ZanTHfcUplz182vwes
+        gpPlJjR+2SMw8fE1/iPBcxWZb0kfza67tTtpJ99k50srHxc82e/969DdKLtYzTd1dlPfMXRI
+        VrmXTy/5XqAY/XK3zgbRVqZXby46K7EUZyQaajEXFScCAPPkwm6VAgAA
+X-CMS-MailID: 20180528073237epcas1p13a15496dacfd4afe8b7036973a4e12ce
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180525203233epcas1p2f6bd8aa08aa6f259428bf53784b656a9
+References: <20180525203043.249193-1-mka@chromium.org>
+        <CGME20180525203233epcas1p2f6bd8aa08aa6f259428bf53784b656a9@epcas1p2.samsung.com>
+        <20180525203043.249193-10-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
+Hi Matthias,
 
-Could you please suggest if the below looks okay to be implemented?
+IMHO, you better to split out the devfreq patches from
+'throttler' patch set. Because I'm not sure throttler is either
+necessary or not.
 
-On 5/24/2018 11:13 AM, Viresh Kumar wrote:
-> On 24-05-18, 10:48, Taniya Das wrote:
->> Hello Rob, Viresh,
->>
->> Thank you for the comments. If I understand correctly, the device tree nodes
->> should look something like the below.
->>
->> Though I am not sure if any vendor name could be associated in the cpu
->> nodes.
-> 
-> Well Rob said Yes to that I think.
-> 
->> Please suggest if my understanding is wrong.
->>
->> cpu@0 {
->> 	qcom,freq-domain = <&freq_domain_table0>;
->> 	…
->> };
->>
->> same follows for cpu 1/2/3
->>
->> cpu@400 {
->> 	qcom,freq-domain = <&freq_domain_table1>;
->> 	…
->> };
->> same follows for cpu 5/6/7
->>
->> freq_domain_table0 : freq_table {
->> 	reg = < >, < >, < > ;
->> 	reg-names = "perf_base", "lut_base", "en_base";
->> };
->>
->> freq_domain_table1 : freq_table {
->> 	reg = < >, < >, < > ;
->> 	reg-names = "perf_base", "lut_base", "en_base";
->> };
-> 
-> Mostly yes.
-> 
+After finishing the review of 'throttler' patches without devfreq handling,
+it would be better for you to send devfreq patches separately.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+Regards,
+Chanwoo Choi
 
---
+
+On 2018년 05월 26일 05:30, Matthias Kaehlcke wrote:
+> The purpose of the throttler is to provide support for non-thermal
+> throttling. Throttling is triggered by external event, e.g. the
+> detection of a high battery discharge current, close to the OCP limit
+> of the battery. The throttler is only in charge of the throttling, not
+> the monitoring, which is done by another (possibly platform specific)
+> driver.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/misc/Kconfig            |   1 +
+>  drivers/misc/Makefile           |   1 +
+>  drivers/misc/throttler/Kconfig  |  13 ++
+>  drivers/misc/throttler/Makefile |   1 +
+>  drivers/misc/throttler/core.c   | 373 ++++++++++++++++++++++++++++++++
+>  include/linux/throttler.h       |  10 +
+>  6 files changed, 399 insertions(+)
+>  create mode 100644 drivers/misc/throttler/Kconfig
+>  create mode 100644 drivers/misc/throttler/Makefile
+>  create mode 100644 drivers/misc/throttler/core.c
+>  create mode 100644 include/linux/throttler.h
+> 
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 5d713008749b..691d9625d83c 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -513,4 +513,5 @@ source "drivers/misc/echo/Kconfig"
+>  source "drivers/misc/cxl/Kconfig"
+>  source "drivers/misc/ocxl/Kconfig"
+>  source "drivers/misc/cardreader/Kconfig"
+> +source "drivers/misc/throttler/Kconfig"
+>  endmenu
+> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> index 20be70c3f118..01a1714dd2ad 100644
+> --- a/drivers/misc/Makefile
+> +++ b/drivers/misc/Makefile
+> @@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+>  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+>  obj-$(CONFIG_OCXL)		+= ocxl/
+>  obj-$(CONFIG_MISC_RTSX)		+= cardreader/
+> +obj-y				+= throttler/
+> diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
+> new file mode 100644
+> index 000000000000..ef8388f6bc0a
+> --- /dev/null
+> +++ b/drivers/misc/throttler/Kconfig
+> @@ -0,0 +1,13 @@
+> +menuconfig THROTTLER
+> +	bool "Throttler support"
+> +	default n
+> +	depends on OF
+> +	select CPU_FREQ
+> +	select PM_DEVFREQ
+> +	help
+> +	  This option enables core support for non-thermal throttling of CPUs
+> +	  and devfreq devices.
+> +
+> +	  Note that you also need a event monitor module usually called
+> +	  *_throttler.
+> +
+> diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
+> new file mode 100644
+> index 000000000000..c8d920cee315
+> --- /dev/null
+> +++ b/drivers/misc/throttler/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_THROTTLER)		+= core.o
+> diff --git a/drivers/misc/throttler/core.c b/drivers/misc/throttler/core.c
+> new file mode 100644
+> index 000000000000..c058d03212b8
+> --- /dev/null
+> +++ b/drivers/misc/throttler/core.c
+> @@ -0,0 +1,373 @@
+> +/*
+> + * Core code for non-thermal throttling
+> + *
+> + * Copyright (C) 2018 Google, Inc.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/cpufreq.h>
+> +#include <linux/devfreq.h>
+> +#include <linux/kernel.h>
+> +#include <linux/notifier.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +/*
+> + * Non-thermal throttling: throttling of system components in response to
+> + * external events (e.g. high battery discharge current).
+> + *
+> + * The throttler supports throttling through cpufreq and devfreq. Multiple
+> + * levels of throttling can be configured. At level 0 no throttling is
+> + * active on behalf of the throttler, for values > 0 throttling is typically
+> + * configured to be increasingly aggressive with each level.
+> + * The number of throttling levels is not limited by the throttler (though
+> + * it is likely limited by the throttling devices). It is not necessary to
+> + * configure the same number of levels for all throttling devices. If the
+> + * requested throttling level for a device is higher than the maximum level
+> + * of the device the throttler will sleect the maximum throttling level of
+> + * the device.
+> + *
+> + * Non-thermal throttling is split in two parts:
+> + *
+> + * - throttler core
+> + *   - parses the thermal policy
+> + *   - applies throttling settings for a requested level of throttling
+> + *
+> + * - event monitor driver
+> + *   - monitors the events that trigger throttling
+> + *   - determines the throttling level (often limited to on/off)
+> + *   - requests throttler core to apply throttling settings
+> + *
+> + * It is possible for a system to have more than one throttler and the
+> + * throttlers may make use of the same throttling devices, in case of
+> + * conflicting settings for a device the more aggressive values will be
+> + * applied.
+> + *
+> + */
+> +
+> +struct thrcfg {
+> +	uint32_t *freqs;
+> +	int num_levels;
+> +};
+> +
+> +struct cpufreq_thrdev {
+> +	uint32_t cpu;
+> +	struct thrcfg cfg;
+> +};
+> +
+> +struct devfreq_thrdev {
+> +	struct devfreq *devfreq;
+> +	struct thrcfg cfg;
+> +	struct throttler *thr;
+> +	struct notifier_block nb;
+> +};
+> +
+> +struct __thr_cpufreq {
+> +	struct cpufreq_thrdev *devs;
+> +	int ndevs;
+> +	struct notifier_block nb;
+> +};
+> +
+> +struct __thr_devfreq {
+> +	struct devfreq_thrdev *devs;
+> +	int ndevs;
+> +};
+> +
+> +struct throttler {
+> +	struct device *dev;
+> +	int level;
+> +	struct __thr_cpufreq cpufreq;
+> +	struct __thr_devfreq devfreq;
+> +};
+> +
+> +static unsigned long thr_get_throttling_freq(struct thrcfg *cfg, int level)
+> +{
+> +	if (level == 0 ) {
+> +		WARN(true, "level == 0");
+> +		return 0;
+> +	}
+> +
+> +	if (level <= cfg->num_levels)
+> +		return cfg->freqs[level - 1];
+> +	else
+> +		return cfg->freqs[cfg->num_levels - 1];
+> +}
+> +
+> +static int thr_cpufreq_event(struct notifier_block *nb,
+> +				    unsigned long event, void *data)
+> +{
+> +	struct throttler *thr =
+> +                container_of(nb, struct throttler, cpufreq.nb);
+> +        struct cpufreq_policy *policy = data;
+> +	struct cpufreq_thrdev *ctd;
+> +	int i;
+> +
+> +	if ((event != CPUFREQ_ADJUST) || (thr->level == 0))
+> +                return NOTIFY_DONE;
+> +
+> +	for (i = 0; i < thr->cpufreq.ndevs; i++) {
+> +		ctd = &thr->cpufreq.devs[i];
+> +
+> +		if (ctd->cpu == policy->cpu) {
+> +			unsigned long clamp_freq =
+> +				thr_get_throttling_freq(&ctd->cfg, thr->level);
+> +			if (clamp_freq < policy->max) {
+> +				cpufreq_verify_within_limits(policy, 0, clamp_freq);
+> +			}
+> +		}
+> +	}
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int thr_devfreq_event(struct notifier_block *nb,
+> +				    unsigned long event, void *data)
+> +{
+> +	struct devfreq_thrdev *dtd =
+> +		container_of(nb, struct devfreq_thrdev, nb);
+> +	struct throttler *thr = dtd->thr;
+> +	struct devfreq_policy *policy = data;
+> +	unsigned long clamp_freq;
+> +
+> +	if ((event != DEVFREQ_ADJUST) || (thr->level == 0))
+> +                return NOTIFY_DONE;
+> +
+> +	clamp_freq = thr_get_throttling_freq(&dtd->cfg, thr->level);
+> +	if (clamp_freq < policy->max)
+> +		devfreq_verify_within_limits(policy, 0, clamp_freq);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static void thr_cpufreq_update_policy(struct throttler *thr)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < thr->cpufreq.ndevs; i++) {
+> +		struct cpufreq_thrdev *ctd = &thr->cpufreq.devs[i];
+> +		struct cpufreq_policy *policy = cpufreq_cpu_get(ctd->cpu);
+> +
+> +		if (!policy) {
+> +			dev_warn(thr->dev, "CPU%d does have no cpufreq policy!\n", ctd->cpu);
+> +			continue;
+> +		}
+> +
+> +		cpufreq_update_policy(ctd->cpu);
+> +		cpufreq_cpu_put(policy);
+> +	}
+> +}
+> +
+> +static int thr_parse_thrcfg(struct throttler *thr,
+> +		struct device_node *np, struct thrcfg *cfg) {
+> +	int err;
+> +
+> +	cfg->num_levels =
+> +		of_property_count_u32_elems(np, "throttling-frequencies");
+> +	if (cfg->num_levels < 0) {
+> +		pr_err("%s: failed to determine number of throttling frequencies\n",
+> +		       np->full_name);
+> +		return cfg->num_levels;
+> +	}
+> +
+> +	cfg->freqs = devm_kzalloc(thr->dev,
+> +		cfg->num_levels * sizeof(u32), GFP_KERNEL);
+> +	if (!cfg->freqs)
+> +		return -ENOMEM;
+> +
+> +	err = of_property_read_u32_array(np, "throttling-frequencies",
+> +		 cfg->freqs, cfg->num_levels);
+> +	if (err) {
+> +		pr_err("%s: failed to read throttling frequencies\n", np->full_name);
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct devfreq *thr_find_devfreq_dev(struct throttler *thr,
+> +		struct device_node *np_df) {
+> +	struct device_node *node;
+> +	struct platform_device *pdev;
+> +
+> +	node = of_parse_phandle(np_df, "device", 0);
+> +	if (!node) {
+> +		pr_err("%s: failed to get devfreq parent device\n",
+> +		       np_df->full_name);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	pdev = of_find_device_by_node(node);
+> +	if (!pdev) {
+> +		pr_err("%s: could not find devfreq parent device\n",
+> +		       node->full_name);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return dev_to_devfreq(&pdev->dev);
+> +}
+> +
+> +static int thr_parse_dt(struct throttler *thr, struct device_node *np)
+> +{
+> +	struct device_node *node, *child;
+> +	int err, i;
+> +
+> +	node = of_get_child_by_name(np, "cpufreq");
+> +	if (node) {
+> +		thr->cpufreq.ndevs = of_get_child_count(node);
+> +		thr->cpufreq.devs = devm_kzalloc(thr->dev,
+> +			sizeof(*thr->cpufreq.devs) * thr->cpufreq.ndevs,
+> +			GFP_KERNEL);
+> +
+> +		i = 0;
+> +		for_each_child_of_node(node, child) {
+> +			struct cpufreq_thrdev *ctd = &thr->cpufreq.devs[i];
+> +
+> +			err = of_property_read_u32(child, "cpu", &ctd->cpu);
+> +			if (err) {
+> +				pr_err("%s: failed to read CPU id\n", child->full_name);
+> +				return err;
+> +			}
+> +
+> +			err = thr_parse_thrcfg(thr, child, &ctd->cfg);
+> +			if (err)
+> +				return err;
+> +
+> +			i++;
+> +		}
+> +	}
+> +
+> +	node = of_get_child_by_name(np, "devfreq");
+> +	if (node) {
+> +		thr->devfreq.ndevs = of_get_child_count(node);
+> +		thr->devfreq.devs = devm_kzalloc(thr->dev,
+> +			sizeof(*thr->devfreq.devs) * thr->devfreq.ndevs,
+> +			GFP_KERNEL);
+> +
+> +		i = 0;
+> +		for_each_child_of_node(node, child) {
+> +			struct devfreq_thrdev *dtd = &thr->devfreq.devs[i];
+> +
+> +			dtd->thr = thr;
+> +
+> +			dtd->devfreq = thr_find_devfreq_dev(thr, child);
+> +			if (IS_ERR(dtd->devfreq))
+> +				return PTR_ERR(dtd->devfreq);
+> +
+> +			err = thr_parse_thrcfg(thr, child, &dtd->cfg);
+> +			if (err)
+> +				return err;
+> +
+> +			i++;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void thr_update_devfreq(struct devfreq *devfreq)
+> +{
+> +	mutex_lock(&devfreq->lock);
+> +	update_devfreq(devfreq);
+> +	mutex_unlock(&devfreq->lock);
+> +}
+> +
+> +void throttler_set_level(struct throttler *thr, int level)
+> +{
+> +	int i;
+> +
+> +	if (level == thr->level)
+> +		return;
+> +
+> +	dev_dbg(thr->dev, "throttling level: %d\n", level);
+> +	thr->level = level;
+> +
+> +	if (thr->cpufreq.ndevs > 0)
+> +		thr_cpufreq_update_policy(thr);
+> +
+> +	if (thr->devfreq.ndevs > 0)
+> +		for (i = 0; i < thr->devfreq.ndevs; i++)
+> +			thr_update_devfreq(thr->devfreq.devs[i].devfreq);
+> +}
+> +EXPORT_SYMBOL_GPL(throttler_set_level);
+> +
+> +struct throttler *throttler_setup(struct device *dev)
+> +{
+> +	struct throttler *thr;
+> +	struct device_node *np = dev->of_node;
+> +	int err, i;
+> +
+> +	if (!np)
+> +		/* should never happen */
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	thr = devm_kzalloc(dev, sizeof(*thr), GFP_KERNEL);
+> +	if (!thr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	thr->dev = dev;
+> +
+> +	err = thr_parse_dt(thr, np);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	if (thr->cpufreq.ndevs > 0) {
+> +		thr->cpufreq.nb.notifier_call = thr_cpufreq_event;
+> +		err = cpufreq_register_notifier(&thr->cpufreq.nb,
+> +						CPUFREQ_POLICY_NOTIFIER);
+> +		if (err < 0) {
+> +			dev_err(dev, "failed to register cpufreq notifier\n");
+> +			return ERR_PTR(err);
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < thr->devfreq.ndevs; i++) {
+> +		struct devfreq_thrdev *dtd = &thr->devfreq.devs[i];
+> +
+> +		dtd->nb.notifier_call = thr_devfreq_event;
+> +		err = devm_devfreq_register_notifier(dev, dtd->devfreq,
+> +						     &dtd->nb, DEVFREQ_POLICY_NOTIFIER);
+> +		if (err < 0) {
+> +			dev_err(dev, "failed to register devfreq notifier\n");
+> +			goto err_cpufreq_unregister;
+> +		}
+> +	}
+> +
+> +	return thr;
+> +
+> +err_cpufreq_unregister:
+> +	if (thr->cpufreq.ndevs > 0)
+> +		cpufreq_unregister_notifier(&thr->cpufreq.nb,
+> +					    CPUFREQ_POLICY_NOTIFIER);
+> +
+> +	return ERR_PTR(err);
+> +}
+> +EXPORT_SYMBOL_GPL(throttler_setup);
+> +
+> +void throttler_teardown(struct throttler *thr)
+> +{
+> +	int i;
+> +
+> +	thr->level = 0;
+> +
+> +	if (thr->cpufreq.ndevs > 0) {
+> +		thr_cpufreq_update_policy(thr);
+> +
+> +		cpufreq_unregister_notifier(&thr->cpufreq.nb,
+> +					    CPUFREQ_POLICY_NOTIFIER);
+> +	}
+> +
+> +	if (thr->devfreq.ndevs > 0)
+> +		for (i = 0; i < thr->devfreq.ndevs; i++)
+> +			thr_update_devfreq(thr->devfreq.devs[i].devfreq);
+> +}
+> +EXPORT_SYMBOL_GPL(throttler_teardown);
+> diff --git a/include/linux/throttler.h b/include/linux/throttler.h
+> new file mode 100644
+> index 000000000000..cab8c466da4b
+> --- /dev/null
+> +++ b/include/linux/throttler.h
+> @@ -0,0 +1,10 @@
+> +#ifndef __LINUX_THROTTLER_H__
+> +#define __LINUX_THROTTLER_H__
+> +
+> +struct throttler;
+> +
+> +extern struct throttler *throttler_setup(struct device *dev);
+> +extern void throttler_teardown(struct throttler *thr);
+> +extern void throttler_set_level(struct throttler *thr, int level);
+> +
+> +#endif /* __LINUX_THROTTLER_H__ */
+> 
