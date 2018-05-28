@@ -1,89 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425152AbeE1PYL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:24:11 -0400
-Received: from smtprelay0216.hostedemail.com ([216.40.44.216]:35321 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1033256AbeE1PYH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:24:07 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:69:355:379:541:599:800:960:973:988:989:1042:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2691:2828:2899:2911:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:4321:4425:5007:6119:7576:7688:7903:10004:10400:10450:10455:10471:10848:11026:11232:11473:11657:11658:11914:12043:12296:12438:12555:12740:12760:12895:13069:13095:13161:13229:13255:13311:13357:13439:14181:14659:14721:19904:19999:21080:21212:21433:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: fan42_687801c45a46
-X-Filterd-Recvd-Size: 2808
-Message-ID: <41d4c55b6e9ad7f68bdcbae6c3f8064938d58e68.camel@perches.com>
-Subject: Re: [PATCH 4.14 102/496] drm/exynos: g2d: Delete an error message
- for a failed memory allocation in two functions
-From: Joe Perches <joe@perches.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>,
-        Inki Dae <inki.dae@samsung.com>,
+        id S968867AbeE1KUw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:20:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033226AbeE1KUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:41 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Matthias Ferdinand <bcache@mfedv.net>,
+        Tang Junhui <tang.junhui@zte.com.cn>, Michael Lyle <mlyle@lyle.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Date: Mon, 28 May 2018 08:24:03 -0700
-In-Reply-To: <20180528100324.148603249@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-         <20180528100324.148603249@linuxfoundation.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 4.4 115/268] bcache: fix kcrashes with fio in RAID5 backend dev
+Date: Mon, 28 May 2018 12:01:29 +0200
+Message-Id: <20180528100215.163277620@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-28 at 11:58 +0200, Greg Kroah-Hartman wrote:
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I still wonder why any Markus Elfring patch should
-be applied to a stable branch.
+------------------
 
-The only reason I could believe is it would make
-forward porting of an actually useful fix easier.
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-Does this?
+[ Upstream commit 60eb34ec5526e264c2bbaea4f7512d714d791caf ]
 
+Kernel crashed when run fio in a RAID5 backend bcache device, the call
+trace is bellow:
+[  440.012034] kernel BUG at block/blk-ioc.c:146!
+[  440.012696] invalid opcode: 0000 [#1] SMP NOPTI
+[  440.026537] CPU: 2 PID: 2205 Comm: md127_raid5 Not tainted 4.15.0 #8
+[  440.027441] Hardware name: HP ProLiant MicroServer Gen8, BIOS J06 07/16
+/2015
+[  440.028615] RIP: 0010:put_io_context+0x8b/0x90
+[  440.029246] RSP: 0018:ffffa8c882b43af8 EFLAGS: 00010246
+[  440.029990] RAX: 0000000000000000 RBX: ffffa8c88294fca0 RCX: 0000000000
+0f4240
+[  440.031006] RDX: 0000000000000004 RSI: 0000000000000286 RDI: ffffa8c882
+94fca0
+[  440.032030] RBP: ffffa8c882b43b10 R08: 0000000000000003 R09: ffff949cb8
+0c1700
+[  440.033206] R10: 0000000000000104 R11: 000000000000b71c R12: 00000000000
+01000
+[  440.034222] R13: 0000000000000000 R14: ffff949cad84db70 R15: ffff949cb11
+bd1e0
+[  440.035239] FS:  0000000000000000(0000) GS:ffff949cba280000(0000) knlGS:
+0000000000000000
+[  440.060190] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  440.084967] CR2: 00007ff0493ef000 CR3: 00000002f1e0a002 CR4: 00000000001
+606e0
+[  440.110498] Call Trace:
+[  440.135443]  bio_disassociate_task+0x1b/0x60
+[  440.160355]  bio_free+0x1b/0x60
+[  440.184666]  bio_put+0x23/0x30
+[  440.208272]  search_free+0x23/0x40 [bcache]
+[  440.231448]  cached_dev_write_complete+0x31/0x70 [bcache]
+[  440.254468]  closure_put+0xb6/0xd0 [bcache]
+[  440.277087]  request_endio+0x30/0x40 [bcache]
+[  440.298703]  bio_endio+0xa1/0x120
+[  440.319644]  handle_stripe+0x418/0x2270 [raid456]
+[  440.340614]  ? load_balance+0x17b/0x9c0
+[  440.360506]  handle_active_stripes.isra.58+0x387/0x5a0 [raid456]
+[  440.380675]  ? __release_stripe+0x15/0x20 [raid456]
+[  440.400132]  raid5d+0x3ed/0x5d0 [raid456]
+[  440.419193]  ? schedule+0x36/0x80
+[  440.437932]  ? schedule_timeout+0x1d2/0x2f0
+[  440.456136]  md_thread+0x122/0x150
+[  440.473687]  ? wait_woken+0x80/0x80
+[  440.491411]  kthread+0x102/0x140
+[  440.508636]  ? find_pers+0x70/0x70
+[  440.524927]  ? kthread_associate_blkcg+0xa0/0xa0
+[  440.541791]  ret_from_fork+0x35/0x40
+[  440.558020] Code: c2 48 00 5b 41 5c 41 5d 5d c3 48 89 c6 4c 89 e7 e8 bb c2
+48 00 48 8b 3d bc 36 4b 01 48 89 de e8 7c f7 e0 ff 5b 41 5c 41 5d 5d c3 <0f> 0b
+0f 1f 00 0f 1f 44 00 00 55 48 8d 47 b8 48 89 e5 41 57 41
+[  440.610020] RIP: put_io_context+0x8b/0x90 RSP: ffffa8c882b43af8
+[  440.628575] ---[ end trace a1fd79d85643a73e ]--
 
-> [ Upstream commit 6f0a60298bbbea43ab5e3955913ab19c153076f3 ]
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -286,7 +286,6 @@ static int g2d_init_cmdlist(struct g2d_d
->  
->  	node = kcalloc(G2D_CMDLIST_NUM, sizeof(*node), GFP_KERNEL);
->  	if (!node) {
-> -		dev_err(dev, "failed to allocate memory\n");
->  		ret = -ENOMEM;
->  		goto err;
->  	}
-> @@ -1358,10 +1357,9 @@ int exynos_g2d_exec_ioctl(struct drm_dev
->  		return -EFAULT;
->  
->  	runqueue_node = kmem_cache_alloc(g2d->runqueue_slab, GFP_KERNEL);
-> -	if (!runqueue_node) {
-> -		dev_err(dev, "failed to allocate memory\n");
-> +	if (!runqueue_node)
->  		return -ENOMEM;
-> -	}
-> +
->  	run_cmdlist = &runqueue_node->run_cmdlist;
->  	event_list = &runqueue_node->event_list;
->  	INIT_LIST_HEAD(run_cmdlist);
-> 
-> 
+All the crash issue happened when a bypass IO coming, in such scenario
+s->iop.bio is pointed to the s->orig_bio. In search_free(), it finishes the
+s->orig_bio by calling bio_complete(), and after that, s->iop.bio became
+invalid, then kernel would crash when calling bio_put(). Maybe its upper
+layer's faulty, since bio should not be freed before we calling bio_put(),
+but we'd better calling bio_put() first before calling bio_complete() to
+notify upper layer ending this bio.
+
+This patch moves bio_complete() under bio_put() to avoid kernel crash.
+
+[mlyle: fixed commit subject for character limits]
+
+Reported-by: Matthias Ferdinand <bcache@mfedv.net>
+Tested-by: Matthias Ferdinand <bcache@mfedv.net>
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/md/bcache/request.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -633,11 +633,11 @@ static void do_bio_hook(struct search *s
+ static void search_free(struct closure *cl)
+ {
+ 	struct search *s = container_of(cl, struct search, cl);
+-	bio_complete(s);
+ 
+ 	if (s->iop.bio)
+ 		bio_put(s->iop.bio);
+ 
++	bio_complete(s);
+ 	closure_debug_destroy(cl);
+ 	mempool_free(s, s->d->c->search);
+ }
