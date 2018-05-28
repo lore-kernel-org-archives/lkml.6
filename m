@@ -1,25 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030313AbeE1KRf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37628 "EHLO mail.kernel.org"
+        id S1030950AbeE1KRu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968655AbeE1KRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:30 -0400
+        id S1030444AbeE1KRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Alex Chen <alex.chen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>, Gang He <ghe@suse.com>,
-        Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
+        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Andi Kleen <ak@linux.intel.com>,
+        Chris Salls <salls@cs.ucsb.edu>, Christopher Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 046/268] ocfs2: return -EROFS to mount.ocfs2 if inode block is invalid
-Date: Mon, 28 May 2018 12:00:20 +0200
-Message-Id: <20180528100207.280931981@linuxfoundation.org>
+Subject: [PATCH 4.4 050/268] mm/mempolicy: add nodes_empty check in SYSC_migrate_pages
+Date: Mon, 28 May 2018 12:00:24 +0200
+Message-Id: <20180528100207.654271725@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -35,64 +36,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: piaojun <piaojun@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
-[ Upstream commit 025bcbde3634b2c9b316f227fed13ad6ad6817fb ]
+[ Upstream commit 0486a38bcc4749808edbc848f1bcf232042770fc ]
 
-If metadata is corrupted such as 'invalid inode block', we will get
-failed by calling 'mount()' and then set filesystem readonly as below:
+As in manpage of migrate_pages, the errno should be set to EINVAL when
+none of the node IDs specified by new_nodes are on-line and allowed by
+the process's current cpuset context, or none of the specified nodes
+contain memory.  However, when test by following case:
 
-  ocfs2_mount
-    ocfs2_initialize_super
-      ocfs2_init_global_system_inodes
-        ocfs2_iget
-          ocfs2_read_locked_inode
-            ocfs2_validate_inode_block
-	      ocfs2_error
-	        ocfs2_handle_error
-	          ocfs2_set_ro_flag(osb, 0);  // set readonly
+	new_nodes = 0;
+	old_nodes = 0xf;
+	ret = migrate_pages(pid, old_nodes, new_nodes, MAX);
 
-In this situation we need return -EROFS to 'mount.ocfs2', so that user
-can fix it by fsck.  And then mount again.  In addition, 'mount.ocfs2'
-should be updated correspondingly as it only return 1 for all errno.
-And I will post a patch for 'mount.ocfs2' too.
+The ret will be 0 and no errno is set.  As the new_nodes is empty, we
+should expect EINVAL as documented.
 
-Link: http://lkml.kernel.org/r/5A4302FA.2010606@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Alex Chen <alex.chen@huawei.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Gang He <ghe@suse.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
+To fix the case like above, this patch check whether target nodes AND
+current task_nodes is empty, and then check whether AND
+node_states[N_MEMORY] is empty.
+
+Link: http://lkml.kernel.org/r/1510882624-44342-4-git-send-email-xieyisheng1@huawei.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Chris Salls <salls@cs.ucsb.edu>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/super.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ mm/mempolicy.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -477,9 +477,8 @@ static int ocfs2_init_global_system_inod
- 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
- 		if (!new) {
- 			ocfs2_release_system_inodes(osb);
--			status = -EINVAL;
-+			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
- 			mlog_errno(status);
--			/* FIXME: Should ERROR_RO_FS */
- 			mlog(ML_ERROR, "Unable to load system inode %d, "
- 			     "possibly corrupt fs?", i);
- 			goto bail;
-@@ -508,7 +507,7 @@ static int ocfs2_init_local_system_inode
- 		new = ocfs2_get_system_file_inode(osb, i, osb->slot_num);
- 		if (!new) {
- 			ocfs2_release_system_inodes(osb);
--			status = -EINVAL;
-+			status = ocfs2_is_soft_readonly(osb) ? -EROFS : -EINVAL;
- 			mlog(ML_ERROR, "status=%d, sysfile=%d, slot=%d\n",
- 			     status, i, osb->slot_num);
- 			goto bail;
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1410,10 +1410,14 @@ SYSCALL_DEFINE4(migrate_pages, pid_t, pi
+ 		goto out_put;
+ 	}
+ 
+-	if (!nodes_subset(*new, node_states[N_MEMORY])) {
+-		err = -EINVAL;
++	task_nodes = cpuset_mems_allowed(current);
++	nodes_and(*new, *new, task_nodes);
++	if (nodes_empty(*new))
++		goto out_put;
++
++	nodes_and(*new, *new, node_states[N_MEMORY]);
++	if (nodes_empty(*new))
+ 		goto out_put;
+-	}
+ 
+ 	err = security_task_movememory(task);
+ 	if (err)
