@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754478AbeE1J3s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:29:48 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:21615 "EHLO
+        id S1754495AbeE1J3x (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:29:53 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:21616 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754319AbeE1JYQ (ORCPT
+        with ESMTP id S1754321AbeE1JYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 05:24:16 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4S9MInY027506
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4S9MInR027506
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,9 +18,9 @@ Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v5 17/31] kconfig: add 'filename' and 'lineno' built-in variables
-Date: Mon, 28 May 2018 18:21:54 +0900
-Message-Id: <1527499328-13213-18-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v5 10/31] kconfig: replace $(UNAME_RELEASE) with function call
+Date: Mon, 28 May 2018 18:21:47 +0900
+Message-Id: <1527499328-13213-11-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
@@ -28,65 +28,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The special variables, $(filename) and $(lineno), are expanded to a
-file name and its line number being parsed, respectively.
+Now that 'shell' function is supported, this can be self-contained in
+Kconfig.
 
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
 
 Changes in v5: None
-Changes in v4:
- - Newly added
-
+Changes in v4: None
 Changes in v3: None
 Changes in v2: None
 
- scripts/kconfig/preprocess.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Makefile     | 3 +--
+ init/Kconfig | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
-index 5ee58ee..0574039 100644
---- a/scripts/kconfig/preprocess.c
-+++ b/scripts/kconfig/preprocess.c
-@@ -114,6 +114,11 @@ static char *do_error_if(int argc, char *argv[])
- 	return NULL;
- }
+diff --git a/Makefile b/Makefile
+index 59b8654..58afa07 100644
+--- a/Makefile
++++ b/Makefile
+@@ -284,8 +284,7 @@ include scripts/Kbuild.include
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+-UNAME_RELEASE := $(shell uname --release)
+-export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION UNAME_RELEASE
++export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
  
-+static char *do_filename(int argc, char *argv[])
-+{
-+	return xstrdup(current_file->name);
-+}
-+
- static char *do_info(int argc, char *argv[])
- {
- 	printf("%s\n", argv[0]);
-@@ -121,6 +126,15 @@ static char *do_info(int argc, char *argv[])
- 	return xstrdup("");
- }
+ # SUBARCH tells the usermode build what the underlying arch is.  That is set
+ # first, and if a usermode build is happening, the "ARCH=um" on the command
+diff --git a/init/Kconfig b/init/Kconfig
+index 1217fc6..f1b0cfb 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2,9 +2,9 @@ config DEFCONFIG_LIST
+ 	string
+ 	depends on !UML
+ 	option defconfig_list
+-	default "/lib/modules/$(UNAME_RELEASE)/.config"
++	default "/lib/modules/$(shell,uname --release)/.config"
+ 	default "/etc/kernel-config"
+-	default "/boot/config-$(UNAME_RELEASE)"
++	default "/boot/config-$(shell,uname --release)"
+ 	default ARCH_DEFCONFIG
+ 	default "arch/$(ARCH)/defconfig"
  
-+static char *do_lineno(int argc, char *argv[])
-+{
-+	char buf[16];
-+
-+	sprintf(buf, "%d", yylineno);
-+
-+	return xstrdup(buf);
-+}
-+
- static char *do_shell(int argc, char *argv[])
- {
- 	FILE *p;
-@@ -173,7 +187,9 @@ static char *do_warning_if(int argc, char *argv[])
- static const struct function function_table[] = {
- 	/* Name		MIN	MAX	Function */
- 	{ "error-if",	2,	2,	do_error_if },
-+	{ "filename",	0,	0,	do_filename },
- 	{ "info",	1,	1,	do_info },
-+	{ "lineno",	0,	0,	do_lineno },
- 	{ "shell",	1,	1,	do_shell },
- 	{ "warning-if",	2,	2,	do_warning_if },
- };
 -- 
 2.7.4
