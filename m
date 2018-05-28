@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033345AbeE1KVf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:21:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40962 "EHLO mail.kernel.org"
+        id S1033356AbeE1KVi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031868AbeE1KV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:26 -0400
+        id S1033296AbeE1KVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 147/268] selftests: ftrace: Add a testcase for probepoint
-Date: Mon, 28 May 2018 12:02:01 +0200
-Message-Id: <20180528100219.047073276@linuxfoundation.org>
+Subject: [PATCH 4.4 164/268] cpufreq: CPPC: Initialize shared perf capabilities of CPUs
+Date: Mon, 28 May 2018 12:02:18 +0200
+Message-Id: <20180528100220.964360811@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,68 +31,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
 
-[ Upstream commit dfa453bc90eca0febff33c8d292a656e53702158 ]
+[ Upstream commit 8913315e9459b146e5888ab5138e10daa061b885 ]
 
-Add a testcase for probe point definition. This tests
-symbol, address and symbol+offset syntax. The offset
-must be positive and smaller than UINT_MAX.
+When multiple CPUs are related in one cpufreq policy, the first online
+CPU will be chosen by default to handle cpufreq operations. Let's take
+cpu0 and cpu1 as an example.
 
-Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
+When cpu0 is offline, policy->cpu will be shifted to cpu1. cpu1's perf
+capabilities should be initialized. Otherwise, perf capabilities are 0s
+and speed change can not take effect.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+This patch copies perf capabilities of the first online CPU to other
+shared CPUs when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc |   43 +++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+ drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-@@ -0,0 +1,43 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe events - probe points
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -100,9 +100,19 @@ static int cppc_cpufreq_cpu_init(struct
+ 	policy->cpuinfo.max_freq = policy->max;
+ 	policy->shared_type = cpu->shared_type;
+ 
+-	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
++	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
++		int i;
 +
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
+ 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
+-	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
 +
-+TARGET_FUNC=create_trace_kprobe
++		for_each_cpu(i, policy->cpus) {
++			if (unlikely(i == policy->cpu))
++				continue;
 +
-+dec_addr() { # hexaddr
-+  printf "%d" "0x"`echo $1 | tail -c 8`
-+}
-+
-+set_offs() { # prev target next
-+  A1=`dec_addr $1`
-+  A2=`dec_addr $2`
-+  A3=`dec_addr $3`
-+  TARGET="0x$2" # an address
-+  PREV=`expr $A1 - $A2` # offset to previous symbol
-+  NEXT=+`expr $A3 - $A2` # offset to next symbol
-+  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
-+}
-+
-+# We have to decode symbol addresses to get correct offsets.
-+# If the offset is not an instruction boundary, it cause -EILSEQ.
-+set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
-+
-+UINT_TEST=no
-+# printf "%x" -1 returns (unsigned long)-1.
-+if [ `printf "%x" -1 | wc -c` != 9 ]; then
-+  UINT_TEST=yes
-+fi
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
-+echo "p:testprobe ${TARGET}" > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
-+! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
-+if [ "${UINT_TEST}" = yes ]; then
-+! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
-+fi
-+echo > kprobe_events
-+clear_trace
++			memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
++			       sizeof(cpu->perf_caps));
++		}
++	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
+ 		/* Support only SW_ANY for now. */
+ 		pr_debug("Unsupported CPU co-ord type\n");
+ 		return -EFAULT;
