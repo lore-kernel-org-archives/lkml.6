@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166107AbeE1PQm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:16:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42082 "EHLO mail.kernel.org"
+        id S1425143AbeE1PRB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:17:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033069AbeE1KWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:42 -0400
+        id S1033537AbeE1KWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
+        stable@vger.kernel.org, Frank Asseg <frank.asseg@objecthunter.net>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 193/268] selftests: Print the test were running to /dev/kmsg
-Date: Mon, 28 May 2018 12:02:47 +0200
-Message-Id: <20180528100224.179583791@linuxfoundation.org>
+Subject: [PATCH 4.4 192/268] tools/thermal: tmon: fix for segfault
+Date: Mon, 28 May 2018 12:02:46 +0200
+Message-Id: <20180528100224.066119451@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,40 +30,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Frank Asseg <frank.asseg@objecthunter.net>
 
-[ Upstream commit 88893cf787d3062c631cc20b875068eb11756e03 ]
+[ Upstream commit 6c59f64b7ecf2bccbe73931d7d573d66ed13b537 ]
 
-Some tests cause the kernel to print things to the kernel log
-buffer (ie. printk), in particular oops and warnings etc. However when
-running all the tests in succession it's not always obvious which
-test(s) caused the kernel to print something.
+Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in the
+ncurses tmon application. The segfault is caused by incrementing
+cur_thermal_record in the main function without checking if it's value reached
+NR_THERMAL_RECORD immediately. Since the boundary check only occurred in
+update_thermal_data a race condition existed, which lead to an attempted read
+beyond the last element of the trec array.
 
-We can narrow it down by printing which test directory we're running
-in to /dev/kmsg, if it's writable.
+The fix was implemented by moving the cur_thermal_record incrementation to the
+update_thermal_data function using a temporary variable on which the boundary
+condition is checked before updating cur_thread_record, so that the variable is
+never incremented beyond the trec array's boundary.
 
-Example output:
+It seems the segfault does not occur on every machine: On a HP EliteBook G4 the
+segfault happens, while it does not happen on a Thinkpad T540p.
 
-  [  170.149149] kselftest: Running tests in powerpc
-  [  305.300132] kworker/dying (71) used greatest stack depth: 7776 bytes
-                 left
-  [  808.915456] kselftest: Running tests in pstore
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ tools/thermal/tmon/sysfs.c |   12 +++++++-----
+ tools/thermal/tmon/tmon.c  |    1 -
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -90,6 +90,7 @@ ifdef INSTALL_PATH
- 	for TARGET in $(TARGETS); do \
- 		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
- 		echo "echo ========================================" >> $(ALL_SCRIPT); \
-+		echo "[ -w /dev/kmsg ] && echo \"kselftest: Running tests in $$TARGET\" >> /dev/kmsg" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
- 		make -s --no-print-directory -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
+--- a/tools/thermal/tmon/sysfs.c
++++ b/tools/thermal/tmon/sysfs.c
+@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst
+ int update_thermal_data()
+ {
+ 	int i;
++	int next_thermal_record = cur_thermal_record + 1;
+ 	char tz_name[256];
+ 	static unsigned long samples;
+ 
+@@ -495,9 +496,9 @@ int update_thermal_data()
+ 	}
+ 
+ 	/* circular buffer for keeping historic data */
+-	if (cur_thermal_record >= NR_THERMAL_RECORDS)
+-		cur_thermal_record = 0;
+-	gettimeofday(&trec[cur_thermal_record].tv, NULL);
++	if (next_thermal_record >= NR_THERMAL_RECORDS)
++		next_thermal_record = 0;
++	gettimeofday(&trec[next_thermal_record].tv, NULL);
+ 	if (tmon_log) {
+ 		fprintf(tmon_log, "%lu ", ++samples);
+ 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
+@@ -507,11 +508,12 @@ int update_thermal_data()
+ 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
+ 			ptdata.tzi[i].instance);
+ 		sysfs_get_ulong(tz_name, "temp",
+-				&trec[cur_thermal_record].temp[i]);
++				&trec[next_thermal_record].temp[i]);
+ 		if (tmon_log)
+ 			fprintf(tmon_log, "%lu ",
+-				trec[cur_thermal_record].temp[i]/1000);
++				trec[next_thermal_record].temp[i] / 1000);
+ 	}
++	cur_thermal_record = next_thermal_record;
+ 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
+ 		char cdev_name[256];
+ 		unsigned long val;
+--- a/tools/thermal/tmon/tmon.c
++++ b/tools/thermal/tmon/tmon.c
+@@ -336,7 +336,6 @@ int main(int argc, char **argv)
+ 			show_data_w();
+ 			show_cooling_device();
+ 		}
+-		cur_thermal_record++;
+ 		time_elapsed += ticktime;
+ 		controller_handler(trec[0].temp[target_tz_index] / 1000,
+ 				&yk);
