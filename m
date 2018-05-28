@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033997AbeE1KZY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:25:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44602 "EHLO mail.kernel.org"
+        id S937801AbeE1PFD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:05:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033541AbeE1KZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:16 -0400
+        id S1033982AbeE1KZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -14,9 +14,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 247/268] clk: samsung: s3c2410: Fix PLL rates
-Date: Mon, 28 May 2018 12:03:41 +0200
-Message-Id: <20180528100231.298593577@linuxfoundation.org>
+Subject: [PATCH 4.4 249/268] clk: samsung: exynos5433: Fix PLL rates
+Date: Mon, 28 May 2018 12:03:43 +0200
+Message-Id: <20180528100231.487812491@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,7 +34,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit 179db533c08431f509a3823077549773d519358b ]
+[ Upstream commit ab0447845cffc0fd752df2ccd6b4e34006000ce4 ]
 
 Rates declared in PLL rate tables should match exactly rates calculated from
 the PLL coefficients. If that is not the case, rate of the PLL's child clock
@@ -56,43 +56,35 @@ Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-s3c2410.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/clk/samsung/clk-s3c2410.c
-+++ b/drivers/clk/samsung/clk-s3c2410.c
-@@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll
- 	PLL_35XX_RATE(226000000, 105, 1, 1),
- 	PLL_35XX_RATE(210000000, 132, 2, 1),
- 	/* 2410 common */
--	PLL_35XX_RATE(203000000, 161, 3, 1),
-+	PLL_35XX_RATE(202800000, 161, 3, 1),
- 	PLL_35XX_RATE(192000000, 88, 1, 1),
- 	PLL_35XX_RATE(186000000, 85, 1, 1),
- 	PLL_35XX_RATE(180000000, 82, 1, 1),
-@@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll
- 	PLL_35XX_RATE(147000000, 90, 2, 1),
- 	PLL_35XX_RATE(135000000, 82, 2, 1),
- 	PLL_35XX_RATE(124000000, 116, 1, 2),
--	PLL_35XX_RATE(118000000, 150, 2, 2),
-+	PLL_35XX_RATE(118500000, 150, 2, 2),
- 	PLL_35XX_RATE(113000000, 105, 1, 2),
--	PLL_35XX_RATE(101000000, 127, 2, 2),
-+	PLL_35XX_RATE(101250000, 127, 2, 2),
- 	PLL_35XX_RATE(90000000, 112, 2, 2),
--	PLL_35XX_RATE(85000000, 105, 2, 2),
-+	PLL_35XX_RATE(84750000, 105, 2, 2),
- 	PLL_35XX_RATE(79000000, 71, 1, 2),
--	PLL_35XX_RATE(68000000, 82, 2, 2),
--	PLL_35XX_RATE(56000000, 142, 2, 3),
-+	PLL_35XX_RATE(67500000, 82, 2, 2),
-+	PLL_35XX_RATE(56250000, 142, 2, 3),
- 	PLL_35XX_RATE(48000000, 120, 2, 3),
--	PLL_35XX_RATE(51000000, 161, 3, 3),
-+	PLL_35XX_RATE(50700000, 161, 3, 3),
- 	PLL_35XX_RATE(45000000, 82, 1, 3),
--	PLL_35XX_RATE(34000000, 82, 2, 3),
-+	PLL_35XX_RATE(33750000, 82, 2, 3),
- 	{ /* sentinel */ },
- };
- 
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -747,7 +747,7 @@ static struct samsung_pll_rate_table exy
+ 	PLL_35XX_RATE(800000000U,  400, 6,  1),
+ 	PLL_35XX_RATE(733000000U,  733, 12, 1),
+ 	PLL_35XX_RATE(700000000U,  175, 3,  1),
+-	PLL_35XX_RATE(667000000U,  222, 4,  1),
++	PLL_35XX_RATE(666000000U,  222, 4,  1),
+ 	PLL_35XX_RATE(633000000U,  211, 4,  1),
+ 	PLL_35XX_RATE(600000000U,  500, 5,  2),
+ 	PLL_35XX_RATE(552000000U,  460, 5,  2),
+@@ -773,12 +773,12 @@ static struct samsung_pll_rate_table exy
+ /* AUD_PLL */
+ static struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
+ 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+ 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
+-	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
+-	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
+-	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
+-	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
++	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
++	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
++	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
++	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
+ 	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+ 	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+ 	{ /* sentinel */ }
