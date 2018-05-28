@@ -1,18 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937574AbeE1KnL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:43:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34102 "EHLO mail.kernel.org"
+        id S937576AbeE1KnQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:43:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937546AbeE1Kmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:54 -0400
+        id S932350AbeE1KmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, greg@kroah.com
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 042/496] powerpc/pseries: Add new H_GET_CPU_CHARACTERISTICS flags
-Date: Mon, 28 May 2018 11:57:07 +0200
-Message-Id: <20180528100321.457869034@linuxfoundation.org>
+        stable@vger.kernel.org, Piotr Gabriel Kosinski <pg.kosinski@gmail.com>,
+        Daniel Shapira <daniel@twistlock.com>,
+        Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 021/496] sr: pass down correctly sized SCSI sense buffer
+Date: Mon, 28 May 2018 11:56:46 +0200
+Message-Id: <20180528100320.483371030@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -28,28 +30,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit c4bc36628d7f8b664657d8bd6ad1c44c177880b7 upstream.
+commit f7068114d45ec55996b9040e98111afa56e010fe upstream.
 
-Add some additional values which have been defined for the
-H_GET_CPU_CHARACTERISTICS hypercall.
+We're casting the CDROM layer request_sense to the SCSI sense
+buffer, but the former is 64 bytes and the latter is 96 bytes.
+As we generally allocate these on the stack, we end up blowing
+up the stack.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fix this by wrapping the scsi_execute() call with a properly
+sized sense buffer, and copying back the bits for the CDROM
+layer.
+
+Cc: stable@vger.kernel.org
+Reported-by: Piotr Gabriel Kosinski <pg.kosinski@gmail.com>
+Reported-by: Daniel Shapira <daniel@twistlock.com>
+Tested-by: Kees Cook <keescook@chromium.org>
+Fixes: 82ed4db499b8 ("block: split scsi_request out of struct request")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/include/asm/hvcall.h |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/include/asm/hvcall.h
-+++ b/arch/powerpc/include/asm/hvcall.h
-@@ -337,6 +337,9 @@
- #define H_CPU_CHAR_L1D_FLUSH_ORI30	(1ull << 61) // IBM bit 2
- #define H_CPU_CHAR_L1D_FLUSH_TRIG2	(1ull << 60) // IBM bit 3
- #define H_CPU_CHAR_L1D_THREAD_PRIV	(1ull << 59) // IBM bit 4
-+#define H_CPU_CHAR_BRANCH_HINTS_HONORED	(1ull << 58) // IBM bit 5
-+#define H_CPU_CHAR_THREAD_RECONFIG_CTRL	(1ull << 57) // IBM bit 6
-+#define H_CPU_CHAR_COUNT_CACHE_DISABLED	(1ull << 56) // IBM bit 7
+---
+ drivers/scsi/sr_ioctl.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/sr_ioctl.c
++++ b/drivers/scsi/sr_ioctl.c
+@@ -188,9 +188,13 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
+ 	struct scsi_device *SDev;
+ 	struct scsi_sense_hdr sshdr;
+ 	int result, err = 0, retries = 0;
++	unsigned char sense_buffer[SCSI_SENSE_BUFFERSIZE], *senseptr = NULL;
  
- #define H_CPU_BEHAV_FAVOUR_SECURITY	(1ull << 63) // IBM bit 0
- #define H_CPU_BEHAV_L1D_FLUSH_PR	(1ull << 62) // IBM bit 1
+ 	SDev = cd->device;
+ 
++	if (cgc->sense)
++		senseptr = sense_buffer;
++
+       retry:
+ 	if (!scsi_block_when_processing_errors(SDev)) {
+ 		err = -ENODEV;
+@@ -198,10 +202,12 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
+ 	}
+ 
+ 	result = scsi_execute(SDev, cgc->cmd, cgc->data_direction,
+-			      cgc->buffer, cgc->buflen,
+-			      (unsigned char *)cgc->sense, &sshdr,
++			      cgc->buffer, cgc->buflen, senseptr, &sshdr,
+ 			      cgc->timeout, IOCTL_RETRIES, 0, 0, NULL);
+ 
++	if (cgc->sense)
++		memcpy(cgc->sense, sense_buffer, sizeof(*cgc->sense));
++
+ 	/* Minimal error checking.  Ignore cases we know about, and report the rest. */
+ 	if (driver_byte(result) != 0) {
+ 		switch (sshdr.sense_key) {
