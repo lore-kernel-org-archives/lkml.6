@@ -1,25 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933204AbeE1QDi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:03:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35282 "EHLO mail.kernel.org"
+        id S933277AbeE1QD7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:03:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966073AbeE1KPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:08 -0400
+        id S965967AbeE1KPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hendrick Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 026/268] perf callchain: Fix attr.sample_max_stack setting
-Date: Mon, 28 May 2018 12:00:00 +0200
-Message-Id: <20180528100205.048023171@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dave Jones <davej@codemonkey.org.uk>
+Subject: [PATCH 4.4 008/268] libata: Blacklist some Sandisk SSDs for NCQ
+Date: Mon, 28 May 2018 11:59:42 +0200
+Message-Id: <20180528100203.075107115@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -35,99 +29,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 249d98e567e25dd03e015e2d31e1b7b9648f34df ]
+commit 322579dcc865b94b47345ad1b6002ad167f85405 upstream.
 
-When setting the "dwarf" unwinder for a specific event and not
-specifying the max-stack, the attr.sample_max_stack ended up using an
-uninitialized callchain_param.max_stack, fix it by using designated
-initializers for that callchain_param variable, zeroing all non
-explicitely initialized struct members.
+Sandisk SSDs SD7SN6S256G and SD8SN8U256G are regularly locking up
+regularly under sustained moderate load with NCQ enabled.  Blacklist
+for now.
 
-Here is what happened:
-
-  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  callchain: type DWARF
-  callchain: stack dump size 8192
-  perf_event_attr:
-    type                             2
-    size                             112
-    config                           0x730
-    { sample_period, sample_freq }   1
-    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
-    exclude_callchain_user           1
-    { wakeup_events, wakeup_watermark } 1
-    sample_regs_user                 0xff0fff
-    sample_stack_user                8192
-    sample_max_stack                 50656
-  sys_perf_event_open failed, error -75
-  Value too large for defined data type
-  # perf trace -vv --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  callchain: type DWARF
-  callchain: stack dump size 8192
-  perf_event_attr:
-    type                             2
-    size                             112
-    config                           0x730
-    sample_type                      IP|TID|TIME|ADDR|CALLCHAIN|CPU|PERIOD|RAW|REGS_USER|STACK_USER|DATA_SRC
-    exclude_callchain_user           1
-    sample_regs_user                 0xff0fff
-    sample_stack_user                8192
-    sample_max_stack                 30448
-  sys_perf_event_open failed, error -75
-  Value too large for defined data type
-  #
-
-Now the attr.sample_max_stack is set to zero and the above works as
-expected:
-
-  # perf trace --no-syscalls --max-stack 4 -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.072 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.072/0.072/0.072/0.000 ms
-       0.000 probe_libc:inet_pton:(7feb7a998350))
-                                         __inet_pton (inlined)
-                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-                                         __GI_getaddrinfo (inlined)
-                                         [0xffffaa39b6108f3f] (/usr/bin/ping)
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrick Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-is9tramondqa9jlxxsgcm9iz@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Dave Jones <davej@codemonkey.org.uk>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/util/evsel.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -624,13 +624,13 @@ static void apply_config_terms(struct pe
- 	struct perf_evsel_config_term *term;
- 	struct list_head *config_terms = &evsel->config_terms;
- 	struct perf_event_attr *attr = &evsel->attr;
--	struct callchain_param param;
-+	/* callgraph default */
-+	struct callchain_param param = {
-+		.record_mode = callchain_param.record_mode,
-+	};
- 	u32 dump_size = 0;
- 	char *callgraph_buf = NULL;
+---
+ drivers/ata/libata-core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4187,6 +4187,10 @@ static const struct ata_blacklist_entry
+ 	/* https://bugzilla.kernel.org/show_bug.cgi?id=15573 */
+ 	{ "C300-CTFDDAC128MAG",	"0001",		ATA_HORKAGE_NONCQ, },
  
--	/* callgraph default */
--	param.record_mode = callchain_param.record_mode;
--
- 	list_for_each_entry(term, config_terms, list) {
- 		switch (term->type) {
- 		case PERF_EVSEL__CONFIG_TERM_PERIOD:
++	/* Some Sandisk SSDs lock up hard with NCQ enabled.  Reported on
++	   SD7SN6S256G and SD8SN8U256G */
++	{ "SanDisk SD[78]SN*G",	NULL,		ATA_HORKAGE_NONCQ, },
++
+ 	/* devices which puke on READ_NATIVE_MAX */
+ 	{ "HDS724040KLSA80",	"KFAOA20N",	ATA_HORKAGE_BROKEN_HPA, },
+ 	{ "WDC WD3200JD-00KLB0", "WD-WCAMR1130137", ATA_HORKAGE_BROKEN_HPA },
