@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932189AbeE1KG7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:06:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54802 "EHLO mail.kernel.org"
+        id S1754893AbeE1QrG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754767AbeE1KGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:51 -0400
+        id S1754882AbeE1KG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Alex Chen <alex.chen@huawei.com>, Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>, Changwei Ge <ge.changwei@h3c.com>,
+        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Andi Kleen <ak@linux.intel.com>,
+        Chris Salls <salls@cs.ucsb.edu>, Christopher Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 028/185] ocfs2/acl: use ip_xattr_sem to protect getting extended attribute
-Date: Mon, 28 May 2018 12:01:09 +0200
-Message-Id: <20180528100052.273625112@linuxfoundation.org>
+Subject: [PATCH 3.18 030/185] mm/mempolicy: add nodes_empty check in SYSC_migrate_pages
+Date: Mon, 28 May 2018 12:01:11 +0200
+Message-Id: <20180528100052.390601977@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -34,89 +36,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: piaojun <piaojun@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
-[ Upstream commit 16c8d569f5704a84164f30ff01b29879f3438065 ]
+[ Upstream commit 0486a38bcc4749808edbc848f1bcf232042770fc ]
 
-The race between *set_acl and *get_acl will cause getting incomplete
-xattr data as below:
+As in manpage of migrate_pages, the errno should be set to EINVAL when
+none of the node IDs specified by new_nodes are on-line and allowed by
+the process's current cpuset context, or none of the specified nodes
+contain memory.  However, when test by following case:
 
-  processA                                    processB
+	new_nodes = 0;
+	old_nodes = 0xf;
+	ret = migrate_pages(pid, old_nodes, new_nodes, MAX);
 
-  ocfs2_set_acl
-    ocfs2_xattr_set
-      __ocfs2_xattr_set_handle
+The ret will be 0 and no errno is set.  As the new_nodes is empty, we
+should expect EINVAL as documented.
 
-                                              ocfs2_get_acl_nolock
-                                                ocfs2_xattr_get_nolock:
+To fix the case like above, this patch check whether target nodes AND
+current task_nodes is empty, and then check whether AND
+node_states[N_MEMORY] is empty.
 
-processB may get incomplete xattr data if processA hasn't set_acl done.
-
-So we should use 'ip_xattr_sem' to protect getting extended attribute in
-ocfs2_get_acl_nolock(), as other processes could be changing it
-concurrently.
-
-Link: http://lkml.kernel.org/r/5A5DDCFF.7030001@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Alex Chen <alex.chen@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
+Link: http://lkml.kernel.org/r/1510882624-44342-4-git-send-email-xieyisheng1@huawei.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Chris Salls <salls@cs.ucsb.edu>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/acl.c   |    6 ++++++
- fs/ocfs2/xattr.c |    2 ++
- 2 files changed, 8 insertions(+)
+ mm/mempolicy.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/acl.c
-+++ b/fs/ocfs2/acl.c
-@@ -300,7 +300,9 @@ struct posix_acl *ocfs2_iop_get_acl(stru
- 	if (ret < 0)
- 		return ERR_PTR(ret);
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1464,10 +1464,14 @@ SYSCALL_DEFINE4(migrate_pages, pid_t, pi
+ 		goto out_put;
+ 	}
  
-+	down_read(&OCFS2_I(inode)->ip_xattr_sem);
- 	acl = ocfs2_get_acl_nolock(inode, type, di_bh);
-+	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+-	if (!nodes_subset(*new, node_states[N_MEMORY])) {
+-		err = -EINVAL;
++	task_nodes = cpuset_mems_allowed(current);
++	nodes_and(*new, *new, task_nodes);
++	if (nodes_empty(*new))
++		goto out_put;
++
++	nodes_and(*new, *new, node_states[N_MEMORY]);
++	if (nodes_empty(*new))
+ 		goto out_put;
+-	}
  
- 	brelse(di_bh);
- 
-@@ -319,7 +321,9 @@ int ocfs2_acl_chmod(struct inode *inode,
- 	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
- 		return 0;
- 
-+	down_read(&OCFS2_I(inode)->ip_xattr_sem);
- 	acl = ocfs2_get_acl_nolock(inode, ACL_TYPE_ACCESS, bh);
-+	up_read(&OCFS2_I(inode)->ip_xattr_sem);
- 	if (IS_ERR(acl) || !acl)
- 		return PTR_ERR(acl);
- 	ret = __posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
-@@ -350,8 +354,10 @@ int ocfs2_init_acl(handle_t *handle,
- 
- 	if (!S_ISLNK(inode->i_mode)) {
- 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
-+			down_read(&OCFS2_I(dir)->ip_xattr_sem);
- 			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
- 						   dir_bh);
-+			up_read(&OCFS2_I(dir)->ip_xattr_sem);
- 			if (IS_ERR(acl))
- 				return PTR_ERR(acl);
- 		}
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -645,9 +645,11 @@ int ocfs2_calc_xattr_init(struct inode *
- 						     si->value_len);
- 
- 	if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
-+		down_read(&OCFS2_I(dir)->ip_xattr_sem);
- 		acl_len = ocfs2_xattr_get_nolock(dir, dir_bh,
- 					OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT,
- 					"", NULL, 0);
-+		up_read(&OCFS2_I(dir)->ip_xattr_sem);
- 		if (acl_len > 0) {
- 			a_size = ocfs2_xattr_entry_real_size(0, acl_len);
- 			if (S_ISDIR(mode))
+ 	err = security_task_movememory(task);
+ 	if (err)
