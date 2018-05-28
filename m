@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968726AbeE1KTW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:19:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39218 "EHLO mail.kernel.org"
+        id S1034290AbeE1Pbf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:31:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936919AbeE1KTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:14 -0400
+        id S936859AbeE1KTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Qi Hou <qi.hou@windriver.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 076/268] scsi: qla2xxx: Avoid triggering undefined behavior in qla2x00_mbx_completion()
-Date: Mon, 28 May 2018 12:00:50 +0200
-Message-Id: <20180528100210.454472271@linuxfoundation.org>
+Subject: [PATCH 4.4 085/268] ARM: OMAP2+: timer: fix a kmemleak caused in omap_get_timer_dt
+Date: Mon, 28 May 2018 12:00:59 +0200
+Message-Id: <20180528100211.769763873@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -33,76 +30,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Qi Hou <qi.hou@windriver.com>
 
-[ Upstream commit c02189e12ce3bf3808cb880569d3b10249f50bd9 ]
+[ Upstream commit db35340c536f1af0108ec9a0b2126a05d358d14a ]
 
-A left shift must shift less than the bit width of the left argument.
-Avoid triggering undefined behavior if ha->mbx_count == 32.
+When more than one GP timers are used as kernel system timers and the
+corresponding nodes in device-tree are marked with the same "disabled"
+property, then the "attr" field of the property will be initialized
+more than once as the property being added to sys file system via
+__of_add_property_sysfs().
 
-This patch avoids that UBSAN reports the following complaint:
+In __of_add_property_sysfs(), the "name" field of pp->attr.attr is set
+directly to the return value of safe_name(), without taking care of
+whether it's already a valid pointer to a memory block. If it is, its
+old value will always be overwritten by the new one and the memory block
+allocated before will a "ghost", then a kmemleak happened.
 
-UBSAN: Undefined behaviour in drivers/scsi/qla2xxx/qla_isr.c:275:14
-shift exponent 32 is too large for 32-bit type 'int'
-Call Trace:
- dump_stack+0x4e/0x6c
- ubsan_epilogue+0xd/0x3b
- __ubsan_handle_shift_out_of_bounds+0x112/0x14c
- qla2x00_mbx_completion+0x1c5/0x25d [qla2xxx]
- qla2300_intr_handler+0x1ea/0x3bb [qla2xxx]
- qla2x00_mailbox_command+0x77b/0x139a [qla2xxx]
- qla2x00_mbx_reg_test+0x83/0x114 [qla2xxx]
- qla2x00_chip_diag+0x354/0x45f [qla2xxx]
- qla2x00_initialize_adapter+0x2c2/0xa4e [qla2xxx]
- qla2x00_probe_one+0x1681/0x392e [qla2xxx]
- pci_device_probe+0x10b/0x1f1
- driver_probe_device+0x21f/0x3a4
- __driver_attach+0xa9/0xe1
- bus_for_each_dev+0x6e/0xb5
- driver_attach+0x22/0x3c
- bus_add_driver+0x1d1/0x2ae
- driver_register+0x78/0x130
- __pci_register_driver+0x75/0xa8
- qla2x00_module_init+0x21b/0x267 [qla2xxx]
- do_one_initcall+0x5a/0x1e2
- do_init_module+0x9d/0x285
- load_module+0x20db/0x38e3
- SYSC_finit_module+0xa8/0xbc
- SyS_finit_module+0x9/0xb
- do_syscall_64+0x77/0x271
- entry_SYSCALL64_slow_path+0x25/0x25
+That the same "disabled" property being added to different nodes of device
+tree would cause that kind of kmemleak overhead, at least once.
 
-Reported-by: Meelis Roos <mroos@linux.ee>
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+To fix it, allocate the property dynamically, and delete static one.
+
+Signed-off-by: Qi Hou <qi.hou@windriver.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/qla2xxx/qla_isr.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap2/timer.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -268,7 +268,8 @@ qla2x00_mbx_completion(scsi_qla_host_t *
- 	struct device_reg_2xxx __iomem *reg = &ha->iobase->isp;
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -136,12 +136,6 @@ static struct clock_event_device clockev
+ 	.tick_resume		= omap2_gp_timer_shutdown,
+ };
  
- 	/* Read all mbox registers? */
--	mboxes = (1 << ha->mbx_count) - 1;
-+	WARN_ON_ONCE(ha->mbx_count > 32);
-+	mboxes = (1ULL << ha->mbx_count) - 1;
- 	if (!ha->mcp)
- 		ql_dbg(ql_dbg_async, vha, 0x5001, "MBX pointer ERROR.\n");
- 	else
-@@ -2495,7 +2496,8 @@ qla24xx_mbx_completion(scsi_qla_host_t *
- 	struct device_reg_24xx __iomem *reg = &ha->iobase->isp24;
+-static struct property device_disabled = {
+-	.name = "status",
+-	.length = sizeof("disabled"),
+-	.value = "disabled",
+-};
+-
+ static const struct of_device_id omap_timer_match[] __initconst = {
+ 	{ .compatible = "ti,omap2420-timer", },
+ 	{ .compatible = "ti,omap3430-timer", },
+@@ -183,8 +177,17 @@ static struct device_node * __init omap_
+ 				  of_get_property(np, "ti,timer-secure", NULL)))
+ 			continue;
  
- 	/* Read all mbox registers? */
--	mboxes = (1 << ha->mbx_count) - 1;
-+	WARN_ON_ONCE(ha->mbx_count > 32);
-+	mboxes = (1ULL << ha->mbx_count) - 1;
- 	if (!ha->mcp)
- 		ql_dbg(ql_dbg_async, vha, 0x504e, "MBX pointer ERROR.\n");
- 	else
+-		if (!of_device_is_compatible(np, "ti,omap-counter32k"))
+-			of_add_property(np, &device_disabled);
++		if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
++			struct property *prop;
++
++			prop = kzalloc(sizeof(*prop), GFP_KERNEL);
++			if (!prop)
++				return NULL;
++			prop->name = "status";
++			prop->value = "disabled";
++			prop->length = strlen(prop->value);
++			of_add_property(np, prop);
++		}
+ 		return np;
+ 	}
+ 
