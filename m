@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424599AbeE1LPo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:15:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34760 "EHLO mail.kernel.org"
+        id S1424822AbeE1LXH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:23:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424566AbeE1LPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:15:39 -0400
+        id S1423696AbeE1LPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:15:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 253/272] perf report: Fix memory corruption in --branch-history mode --branch-history
-Date: Mon, 28 May 2018 12:04:46 +0200
-Message-Id: <20180528100301.507658259@linuxfoundation.org>
+Subject: [PATCH 4.16 254/272] perf tests: Fix dwarf unwind for stripped binaries
+Date: Mon, 28 May 2018 12:04:47 +0200
+Message-Id: <20180528100301.581676753@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -34,99 +33,207 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit e3ebaa465136ecfedf9c6f4671df02bf625f8125 ]
+[ Upstream commit fdf7c49c200d1b9909e2204cec5bd68b48605c71 ]
 
-Jin Yao reported memory corrupton in perf report with
-branch info used for stack trace:
+When we strip the perf binary, dwarf unwind test stop
+to work. The reason is that strip will remove static
+function symbols, which we need to check for unwind.
 
-  > Following command lines will cause perf crash.
+This change will keep this test working in cases where
+the global symbols are put into dynamic symbol table,
+which is the case on x86. It still won't work on powerpc.
 
-  > perf record -j call -g -a <application>
-  > perf report --branch-history
-  >
-  > *** Error in `perf': double free or corruption (!prev): 0x00000000104aa040 ***
-  > ======= Backtrace: =========
-  > /lib/x86_64-linux-gnu/libc.so.6(+0x77725)[0x7f6b37254725]
-  > /lib/x86_64-linux-gnu/libc.so.6(+0x7ff4a)[0x7f6b3725cf4a]
-  > /lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f6b37260abc]
-  > perf[0x51b914]
-  > perf(hist_entry_iter__add+0x1e5)[0x51f305]
-  > perf[0x43cf01]
-  > perf[0x4fa3bf]
-  > perf[0x4fa923]
-  > perf[0x4fd396]
-  > perf[0x4f9614]
-  > perf(perf_session__process_events+0x89e)[0x4fc38e]
-  > perf(cmd_report+0x15d2)[0x43f202]
-  > perf[0x4a059f]
-  > perf(main+0x631)[0x427b71]
-  > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f6b371fd830]
-  > perf(_start+0x29)[0x427d89]
+Making those 5 local functions global, and adding
+'test_dwarf_unwind__' to their names.
 
-For the cumulative output, we allocate the he_cache array based on the
---max-stack option value and populate it with data from 'callchain_cursor'.
+Committer testing:
 
-The --max-stack option value does not ensure now the limit for number of
-callchain_cursor nodes, so the cumulative iter code will allocate smaller array
-than it's actually needed and cause above corruption.
+Before:
 
-I think the --max-stack limit does not apply here anyway, because we add
-callchain data as normal hist entries, while the --max-stack control the limit
-of single entry callchain depth.
+  # perf test dwarf
+  58: DWARF unwind                               : Ok
+  # strip ~/bin/perf
+  # perf test dwarf
+  58: DWARF unwind                               : FAILED!
+  # perf test -v dwarf
+  58: DWARF unwind                               :
+  --- start ---
+  test child forked, pid 6590
+  unwind: thread map already set, dso=/home/acme/bin/perf
+  <SNIP>
+  unwind: access_mem addr 0x7ffce6c48098 val 48563f, offset 1144
+  unwind: test__dwarf_unwind:ip = 0x4a54e5 (0xa54e5)
+  got: test__dwarf_unwind 0xa54e5, expecting test__dwarf_unwind
+  unwind: '':ip = 0x4a50bb (0xa50bb)
+  failed: got unresolved address 0xa50bb
+  unwind failed
+  test child finished with -1
+  ---- end ----
+  DWARF unwind: FAILED!
+  #
 
-Using the callchain_cursor.nr as he_cache array count to fix this. Also
-removing struct hist_entry_iter::max_stack, because there's no longer any use
-for it.
+After:
 
-We need more fixes to ensure that the branch stack code follows properly the
-logic of --max-stack, which is not the case at the moment.
+  # perf test dwarf
+  58: DWARF unwind                               : Ok
+  # strip ~/bin/perf
+  # perf test dwarf
+  58: DWARF unwind                               : Ok
+  #
+  # perf test -v dwarf
+  58: DWARF unwind                               :
+  --- start ---
+  test child forked, pid 7219
+  unwind: thread map already set, dso=/home/acme/bin/perf
+  <SNIP>
+  unwind: access_mem addr 0x7fff007da2c8 val 48575f, offset 1144
+  unwind: test__arch_unwind_sample:ip = 0x589044 (0x189044)
+  got: test__arch_unwind_sample 0x189044, expecting test__arch_unwind_sample
+  unwind: test_dwarf_unwind__thread:ip = 0x4a52f7 (0xa52f7)
+  got: test_dwarf_unwind__thread 0xa52f7, expecting test_dwarf_unwind__thread
+  unwind: test_dwarf_unwind__compare:ip = 0x4a5468 (0xa5468)
+  got: test_dwarf_unwind__compare 0xa5468, expecting test_dwarf_unwind__compare
+  unwind: bsearch:ip = 0x7f6608ae94d8 (0x394d8)
+  got: bsearch 0x394d8, expecting bsearch
+  unwind: test_dwarf_unwind__krava_3:ip = 0x4a54d1 (0xa54d1)
+  got: test_dwarf_unwind__krava_3 0xa54d1, expecting test_dwarf_unwind__krava_3
+  unwind: test_dwarf_unwind__krava_2:ip = 0x4a550b (0xa550b)
+  got: test_dwarf_unwind__krava_2 0xa550b, expecting test_dwarf_unwind__krava_2
+  unwind: test_dwarf_unwind__krava_1:ip = 0x4a554b (0xa554b)
+  got: test_dwarf_unwind__krava_1 0xa554b, expecting test_dwarf_unwind__krava_1
+  unwind: test__dwarf_unwind:ip = 0x4a5605 (0xa5605)
+  got: test__dwarf_unwind 0xa5605, expecting test__dwarf_unwind
+  test child finished with 0
+  ---- end ----
+  DWARF unwind: Ok
+  #
 
-Original-patch-by: Jin Yao <yao.jin@linux.intel.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180216123619.GA9945@krava
+Link: http://lkml.kernel.org/r/20180206181813.10943-17-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/hist.c |    4 +---
- tools/perf/util/hist.h |    1 -
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ tools/perf/tests/dwarf-unwind.c |   46 ++++++++++++++++++++++++++--------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -879,7 +879,7 @@ iter_prepare_cumulative_entry(struct his
- 	 * cumulated only one time to prevent entries more than 100%
- 	 * overhead.
- 	 */
--	he_cache = malloc(sizeof(*he_cache) * (iter->max_stack + 1));
-+	he_cache = malloc(sizeof(*he_cache) * (callchain_cursor.nr + 1));
- 	if (he_cache == NULL)
- 		return -ENOMEM;
+--- a/tools/perf/tests/dwarf-unwind.c
++++ b/tools/perf/tests/dwarf-unwind.c
+@@ -37,6 +37,19 @@ static int init_live_machine(struct mach
+ 						  mmap_handler, machine, true, 500);
+ }
  
-@@ -1045,8 +1045,6 @@ int hist_entry_iter__add(struct hist_ent
- 	if (err)
- 		return err;
++/*
++ * We need to keep these functions global, despite the
++ * fact that they are used only locally in this object,
++ * in order to keep them around even if the binary is
++ * stripped. If they are gone, the unwind check for
++ * symbol fails.
++ */
++int test_dwarf_unwind__thread(struct thread *thread);
++int test_dwarf_unwind__compare(void *p1, void *p2);
++int test_dwarf_unwind__krava_3(struct thread *thread);
++int test_dwarf_unwind__krava_2(struct thread *thread);
++int test_dwarf_unwind__krava_1(struct thread *thread);
++
+ #define MAX_STACK 8
  
--	iter->max_stack = max_stack_depth;
--
- 	err = iter->ops->prepare_entry(iter, al);
- 	if (err)
+ static int unwind_entry(struct unwind_entry *entry, void *arg)
+@@ -45,12 +58,12 @@ static int unwind_entry(struct unwind_en
+ 	char *symbol = entry->sym ? entry->sym->name : NULL;
+ 	static const char *funcs[MAX_STACK] = {
+ 		"test__arch_unwind_sample",
+-		"unwind_thread",
+-		"compare",
++		"test_dwarf_unwind__thread",
++		"test_dwarf_unwind__compare",
+ 		"bsearch",
+-		"krava_3",
+-		"krava_2",
+-		"krava_1",
++		"test_dwarf_unwind__krava_3",
++		"test_dwarf_unwind__krava_2",
++		"test_dwarf_unwind__krava_1",
+ 		"test__dwarf_unwind"
+ 	};
+ 	/*
+@@ -77,7 +90,7 @@ static int unwind_entry(struct unwind_en
+ 	return strcmp((const char *) symbol, funcs[idx]);
+ }
+ 
+-static noinline int unwind_thread(struct thread *thread)
++noinline int test_dwarf_unwind__thread(struct thread *thread)
+ {
+ 	struct perf_sample sample;
+ 	unsigned long cnt = 0;
+@@ -108,7 +121,7 @@ static noinline int unwind_thread(struct
+ 
+ static int global_unwind_retval = -INT_MAX;
+ 
+-static noinline int compare(void *p1, void *p2)
++noinline int test_dwarf_unwind__compare(void *p1, void *p2)
+ {
+ 	/* Any possible value should be 'thread' */
+ 	struct thread *thread = *(struct thread **)p1;
+@@ -117,17 +130,17 @@ static noinline int compare(void *p1, vo
+ 		/* Call unwinder twice for both callchain orders. */
+ 		callchain_param.order = ORDER_CALLER;
+ 
+-		global_unwind_retval = unwind_thread(thread);
++		global_unwind_retval = test_dwarf_unwind__thread(thread);
+ 		if (!global_unwind_retval) {
+ 			callchain_param.order = ORDER_CALLEE;
+-			global_unwind_retval = unwind_thread(thread);
++			global_unwind_retval = test_dwarf_unwind__thread(thread);
+ 		}
+ 	}
+ 
+ 	return p1 - p2;
+ }
+ 
+-static noinline int krava_3(struct thread *thread)
++noinline int test_dwarf_unwind__krava_3(struct thread *thread)
+ {
+ 	struct thread *array[2] = {thread, thread};
+ 	void *fp = &bsearch;
+@@ -141,18 +154,19 @@ static noinline int krava_3(struct threa
+ 			size_t, int (*)(void *, void *));
+ 
+ 	_bsearch = fp;
+-	_bsearch(array, &thread, 2, sizeof(struct thread **), compare);
++	_bsearch(array, &thread, 2, sizeof(struct thread **),
++		 test_dwarf_unwind__compare);
+ 	return global_unwind_retval;
+ }
+ 
+-static noinline int krava_2(struct thread *thread)
++noinline int test_dwarf_unwind__krava_2(struct thread *thread)
+ {
+-	return krava_3(thread);
++	return test_dwarf_unwind__krava_3(thread);
+ }
+ 
+-static noinline int krava_1(struct thread *thread)
++noinline int test_dwarf_unwind__krava_1(struct thread *thread)
+ {
+-	return krava_2(thread);
++	return test_dwarf_unwind__krava_2(thread);
+ }
+ 
+ int test__dwarf_unwind(struct test *test __maybe_unused, int subtest __maybe_unused)
+@@ -189,7 +203,7 @@ int test__dwarf_unwind(struct test *test
  		goto out;
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -107,7 +107,6 @@ struct hist_entry_iter {
- 	int curr;
+ 	}
  
- 	bool hide_unresolved;
--	int max_stack;
+-	err = krava_1(thread);
++	err = test_dwarf_unwind__krava_1(thread);
+ 	thread__put(thread);
  
- 	struct perf_evsel *evsel;
- 	struct perf_sample *sample;
+  out:
