@@ -1,96 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938716AbeE1MTa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:19:30 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41907 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938658AbeE1MT0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 08:19:26 -0400
-X-Google-Smtp-Source: ADUXVKJOTJuYiPR5zPhg69nb6ZFdjERQoWerym6YW36ujpcBh+E5IEHjxFeGP6HdlRZoRX6ff+P5dZP2Pt5G4HMus3o=
+        id S938731AbeE1MTv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:19:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1164907AbeE1LCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:37 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 469/496] PCMCIA / PM: Avoid noirq suspend aborts during suspend-to-idle
+Date: Mon, 28 May 2018 12:04:14 +0200
+Message-Id: <20180528100339.669296768@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
-References: <705D14B1C7978B40A723277C067CEDE2010A9B43CC@IN01WEMBXB.internal.synopsys.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 28 May 2018 15:19:24 +0300
-Message-ID: <CAHp75VcT+HEb67q0XbMvi9xQ4s0nyVKnoYRm5KN42z8h2FSu1g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-To: Prabu Thangamuthu <Prabu.T@synopsys.com>
-Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 9:42 AM, Prabu Thangamuthu <Prabu.T@synopsys.com> wrote:
-> To enable Synopsys DWC MSHC controller on HPAS-DX platform connected using
-> PCIe interface. As Clock generation logic is implemented in MMCM module of
-> HAPS-DX platform, we have separate functions to control the MMCM to
-> generate required clocks with respect to speed mode. Also we have platform
-> specific set_power function to support different VDD of eMMC devices.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> + * Authors:
-> + *    Prabu Thangamuthu <prabu.t@synopsys.com>
-> + *    Manjunath M B <manjumb@synopsys.com>
-> + *
+------------------
 
-Redundant last line in above excerpt.
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-> +#include <linux/pci.h>
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
+[ Upstream commit dbdd0f58fd2cdde5cf945c9da67a2d52d32ba550 ]
 
-> +#include <linux/moduleparam.h>
+There is a problem with PCMCIA system resume callbacks with respect
+to suspend-to-idle in which the ->suspend_noirq() callback may be
+invoked after the ->resume_noirq() one without resuming the system
+entirely in some cases.  This doesn't work for PCMCIA because of
+the lack of symmetry between its system suspend and system resume
+"noirq" callbacks.
 
-This one is effectively included by module.h.
+The system resume handling in PCMCIA is split between
+socket_early_resume() and socket_late_resume() which are called in
+different phases of system resume and both need to run for
+socket_suspend() (invoked by the system suspend "noirq" callback)
+to work.  Specifically, socket_suspend() returns an error when
+called after socket_early_resume() without socket_late_resume(),
+so if the suspend-to-idle core detects a spurious wakeup event and
+attempts to put the system back to sleep, that is aborted by the
+error coming from socket_suspend().
 
-> +/* Default emmc vdd is set to 3.3V */
-> +static unsigned int emmc_vdd = SDHC_EMMC_VDD_330V;
-> +module_param(emmc_vdd, int, 0444);
+Avoid that by using a new socket state flag, SOCKET_IN_RESUME,
+to indicate that socket_early_resume() has already run for the
+socket in which case socket_suspend() will do minimum handling
+and return 0.
 
-This looks weird. Why do you need a module parameter?
+This change has been tested on my venerable Toshiba Portege R500
+(which is where the problem has been discovered in the first place),
+but admittedly I have no PCMCIA cards to test along with the socket
+itself.
 
-> +    u16 clk = 0;
-> +    u32 reg = 0;
-> +    u32 vendor_ptr = 0;
+Fixes: 33e4f80ee69b (ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[linux@dominikbrodowski.net: follow same codepaths for both suspend variants; call ->suspend()]
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/pcmcia/cs.c          |   10 +++++++---
+ drivers/pcmcia/cs_internal.h |    1 +
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-Why do above have assignments?
-
-> +MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
-This better to be near to the parameter declaration. Though, as I said
-above, it feels wrong to have it in the first place.
-
-
-> +/* Synopsys Vendor Specific Registers */
-> +#define SDHC_GPIO_OUT                          0x34
-> +#define SDHC_AT_CTRL_R                   0x40
-> +
-> +#define SDHC_SW_TUNE_EN                   0x00000010
-> +
-> +/* MMCM DRP */
-> +#define SDHC_MMCM_DIV_REG               0x1020
-> +#define DIV_REG_100_MHZ                   0x1145
-> +
-> +#define SDHC_MMCM_CLKFBOUT               0x1024
-> +#define CLKFBOUT_100_MHZ               0x0000
-> +
-> +#define SDHC_CCLK_MMCM_RST               0x00000001
-
-Do you need these all in the header file? Why?
-
-
-> +#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xC202
-
-Absent blank line.
-Broken style of the value.
-
-Who knows what else wrong with this patch? Please, pay attention to
-the details and check twice before submit.
-
--- 
-With Best Regards,
-Andy Shevchenko
+--- a/drivers/pcmcia/cs.c
++++ b/drivers/pcmcia/cs.c
+@@ -452,17 +452,20 @@ static int socket_insert(struct pcmcia_s
+ 
+ static int socket_suspend(struct pcmcia_socket *skt)
+ {
+-	if (skt->state & SOCKET_SUSPEND)
++	if ((skt->state & SOCKET_SUSPEND) && !(skt->state & SOCKET_IN_RESUME))
+ 		return -EBUSY;
+ 
+ 	mutex_lock(&skt->ops_mutex);
+-	skt->suspended_state = skt->state;
++	/* store state on first suspend, but not after spurious wakeups */
++	if (!(skt->state & SOCKET_IN_RESUME))
++		skt->suspended_state = skt->state;
+ 
+ 	skt->socket = dead_socket;
+ 	skt->ops->set_socket(skt, &skt->socket);
+ 	if (skt->ops->suspend)
+ 		skt->ops->suspend(skt);
+ 	skt->state |= SOCKET_SUSPEND;
++	skt->state &= ~SOCKET_IN_RESUME;
+ 	mutex_unlock(&skt->ops_mutex);
+ 	return 0;
+ }
+@@ -475,6 +478,7 @@ static int socket_early_resume(struct pc
+ 	skt->ops->set_socket(skt, &skt->socket);
+ 	if (skt->state & SOCKET_PRESENT)
+ 		skt->resume_status = socket_setup(skt, resume_delay);
++	skt->state |= SOCKET_IN_RESUME;
+ 	mutex_unlock(&skt->ops_mutex);
+ 	return 0;
+ }
+@@ -484,7 +488,7 @@ static int socket_late_resume(struct pcm
+ 	int ret = 0;
+ 
+ 	mutex_lock(&skt->ops_mutex);
+-	skt->state &= ~SOCKET_SUSPEND;
++	skt->state &= ~(SOCKET_SUSPEND | SOCKET_IN_RESUME);
+ 	mutex_unlock(&skt->ops_mutex);
+ 
+ 	if (!(skt->state & SOCKET_PRESENT)) {
+--- a/drivers/pcmcia/cs_internal.h
++++ b/drivers/pcmcia/cs_internal.h
+@@ -70,6 +70,7 @@ struct pccard_resource_ops {
+ /* Flags in socket state */
+ #define SOCKET_PRESENT		0x0008
+ #define SOCKET_INUSE		0x0010
++#define SOCKET_IN_RESUME	0x0040
+ #define SOCKET_SUSPEND		0x0080
+ #define SOCKET_WIN_REQ(i)	(0x0100<<(i))
+ #define SOCKET_CARDBUS		0x8000
