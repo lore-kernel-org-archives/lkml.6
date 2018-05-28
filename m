@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938570AbeE1MFu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:05:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52602 "EHLO mail.kernel.org"
+        id S938613AbeE1MGJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:06:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423133AbeE1LFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:05:36 -0400
+        id S1423129AbeE1LFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Martitz <kugel@rockbox.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.16 038/272] PM / core: Fix direct_complete handling for devices with no callbacks
-Date: Mon, 28 May 2018 12:01:11 +0200
-Message-Id: <20180528100243.952620533@linuxfoundation.org>
+        stable@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 037/272] kernel/sys.c: fix potential Spectre v1 issue
+Date: Mon, 28 May 2018 12:01:10 +0200
+Message-Id: <20180528100243.876338234@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,56 +34,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit c62ec4610c40bcc44f2d3d5ed1c312737279e2f3 upstream.
+commit 23d6aef74da86a33fa6bb75f79565e0a16ee97c2 upstream.
 
-Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
-driver flags) inadvertently prevented the power.direct_complete flag
-from being set for devices without PM callbacks and with disabled
-runtime PM which also prevents power.direct_complete from being set
-for their parents.  That led to problems including a resume crash on
-HP ZBook 14u.
+`resource' can be controlled by user-space, hence leading to a potential
+exploitation of the Spectre variant 1 vulnerability.
 
-Restore the previous behavior by causing power.direct_complete to be
-set for those devices again, but do that in a more direct way to
-avoid overlooking that case in the future.
+This issue was detected with the help of Smatch:
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
-Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
-Reported-by: Thomas Martitz <kugel@rockbox.org>
-Tested-by: Thomas Martitz <kugel@rockbox.org>
-Cc: 4.15+ <stable@vger.kernel.org> # 4.15+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Johan Hovold <johan@kernel.org>
+  kernel/sys.c:1474 __do_compat_sys_old_getrlimit() warn: potential spectre issue 'get_current()->signal->rlim' (local cap)
+  kernel/sys.c:1455 __do_sys_old_getrlimit() warn: potential spectre issue 'get_current()->signal->rlim' (local cap)
+
+Fix this by sanitizing *resource* before using it to index
+current->signal->rlim
+
+Notice that given that speculation windows are large, the policy is to
+kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Link: http://lkml.kernel.org/r/20180515030038.GA11822@embeddedor.com
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/main.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/sys.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1923,10 +1923,8 @@ static int device_prepare(struct device
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1401,6 +1401,7 @@ SYSCALL_DEFINE2(old_getrlimit, unsigned
+ 	if (resource >= RLIM_NLIMITS)
+ 		return -EINVAL;
  
- 	dev->power.wakeup_path = false;
++	resource = array_index_nospec(resource, RLIM_NLIMITS);
+ 	task_lock(current->group_leader);
+ 	x = current->signal->rlim[resource];
+ 	task_unlock(current->group_leader);
+@@ -1420,6 +1421,7 @@ COMPAT_SYSCALL_DEFINE2(old_getrlimit, un
+ 	if (resource >= RLIM_NLIMITS)
+ 		return -EINVAL;
  
--	if (dev->power.no_pm_callbacks) {
--		ret = 1;	/* Let device go direct_complete */
-+	if (dev->power.no_pm_callbacks)
- 		goto unlock;
--	}
- 
- 	if (dev->pm_domain)
- 		callback = dev->pm_domain->ops.prepare;
-@@ -1960,7 +1958,8 @@ unlock:
- 	 */
- 	spin_lock_irq(&dev->power.lock);
- 	dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
--		pm_runtime_suspended(dev) && ret > 0 &&
-+		((pm_runtime_suspended(dev) && ret > 0) ||
-+		 dev->power.no_pm_callbacks) &&
- 		!dev_pm_test_driver_flags(dev, DPM_FLAG_NEVER_SKIP);
- 	spin_unlock_irq(&dev->power.lock);
- 	return 0;
++	resource = array_index_nospec(resource, RLIM_NLIMITS);
+ 	task_lock(current->group_leader);
+ 	r = current->signal->rlim[resource];
+ 	task_unlock(current->group_leader);
