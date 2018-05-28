@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938869AbeE1M3g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:29:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48186 "EHLO mail.kernel.org"
+        id S1164778AbeE1LAa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164783AbeE1LAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:33 -0400
+        id S1164726AbeE1LAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Honggang Li <honli@redhat.com>,
-        Hal Rosenstock <hal@mellanox.com>, Noa Osherovich <noaos@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
+        Brian Paul <brianp@vmware.com>, Sinclair Yeh <syeh@vmware.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 391/496] IB/mlx5: Set the default active rate and width to QDR and 4X
-Date: Mon, 28 May 2018 12:02:56 +0200
-Message-Id: <20180528100336.248482133@linuxfoundation.org>
+Subject: [PATCH 4.14 388/496] drm/vmwgfx: Unpin the screen object backup buffer when not used
+Date: Mon, 28 May 2018 12:02:53 +0200
+Message-Id: <20180528100336.126225716@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,41 +30,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Honggang Li <honli@redhat.com>
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-[ Upstream commit 7672ed33c4c15dbe9d56880683baaba4227cf940 ]
+[ Upstream commit 20fb5a635a0c8478ac98f15cfafc2ea83df29565 ]
 
-Before commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
-active_speed in RoCE"), the mlx5_ib driver set the default active_width
-and active_speed to IB_WIDTH_4X and IB_SPEED_QDR.
+We were relying on the pinned screen object backup buffer to be destroyed
+when not used. But if we hold a copy of the atomic state, like when
+hibernating, the backup buffer might not be destroyed since it's
+refcounted by the atomic state. This causes us to hibernate with a
+buffer pinned in VRAM.
 
-When the RoCE port is down, the RoCE port does not negotiate the active
-width with the remote side, causing the active width to be zero. When
-running userspace ibstat to view the port status, ibstat will panic as it
-reads an invalid width from sys file.
+Fix this by only having the buffer pinned when it is actually used by a
+screen object.
 
-This patch restores the original behavior.
-
-Fixes: f1b65df5a232 ("IB/mlx5: Add support for active_width and active_speed in RoCE").
-Signed-off-by: Honggang Li <honli@redhat.com>
-Reviewed-by: Hal Rosenstock <hal@mellanox.com>
-Reviewed-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Brian Paul <brianp@vmware.com>
+Reviewed-by: Sinclair Yeh <syeh@vmware.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/main.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c |   29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -270,6 +270,9 @@ static int mlx5_query_port_roce(struct i
- 	if (err)
- 		return err;
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
+@@ -453,7 +453,11 @@ vmw_sou_primary_plane_cleanup_fb(struct
+ 				 struct drm_plane_state *old_state)
+ {
+ 	struct vmw_plane_state *vps = vmw_plane_state_to_vps(old_state);
++	struct drm_crtc *crtc = plane->state->crtc ?
++		plane->state->crtc : old_state->crtc;
  
-+	props->active_width     = IB_WIDTH_4X;
-+	props->active_speed     = IB_SPEED_QDR;
-+
- 	translate_eth_proto_oper(eth_prot_oper, &props->active_speed,
- 				 &props->active_width);
++	if (vps->dmabuf)
++		vmw_dmabuf_unpin(vmw_priv(crtc->dev), vps->dmabuf, false);
+ 	vmw_dmabuf_unreference(&vps->dmabuf);
+ 	vps->dmabuf_size = 0;
+ 
+@@ -491,10 +495,17 @@ vmw_sou_primary_plane_prepare_fb(struct
+ 	}
+ 
+ 	size = new_state->crtc_w * new_state->crtc_h * 4;
++	dev_priv = vmw_priv(crtc->dev);
+ 
+ 	if (vps->dmabuf) {
+-		if (vps->dmabuf_size == size)
+-			return 0;
++		if (vps->dmabuf_size == size) {
++			/*
++			 * Note that this might temporarily up the pin-count
++			 * to 2, until cleanup_fb() is called.
++			 */
++			return vmw_dmabuf_pin_in_vram(dev_priv, vps->dmabuf,
++						      true);
++		}
+ 
+ 		vmw_dmabuf_unreference(&vps->dmabuf);
+ 		vps->dmabuf_size = 0;
+@@ -504,7 +515,6 @@ vmw_sou_primary_plane_prepare_fb(struct
+ 	if (!vps->dmabuf)
+ 		return -ENOMEM;
+ 
+-	dev_priv = vmw_priv(crtc->dev);
+ 	vmw_svga_enable(dev_priv);
+ 
+ 	/* After we have alloced the backing store might not be able to
+@@ -515,13 +525,16 @@ vmw_sou_primary_plane_prepare_fb(struct
+ 			      &vmw_vram_ne_placement,
+ 			      false, &vmw_dmabuf_bo_free);
+ 	vmw_overlay_resume_all(dev_priv);
+-
+-	if (ret != 0)
++	if (ret) {
+ 		vps->dmabuf = NULL; /* vmw_dmabuf_init frees on error */
+-	else
+-		vps->dmabuf_size = size;
++		return ret;
++	}
+ 
+-	return ret;
++	/*
++	 * TTM already thinks the buffer is pinned, but make sure the
++	 * pin_count is upped.
++	 */
++	return vmw_dmabuf_pin_in_vram(dev_priv, vps->dmabuf, true);
+ }
+ 
  
