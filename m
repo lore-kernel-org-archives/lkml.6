@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162951AbeE1KlR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:41:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32786 "EHLO mail.kernel.org"
+        id S1162966AbeE1KlW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:41:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161795AbeE1KlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:11 -0400
+        id S1162936AbeE1KlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aapo Vienamo <aapo@tuxera.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 325/329] ARM: dts: imx7d: cl-som-imx7: fix pinctrl_enet
-Date: Mon, 28 May 2018 12:04:14 +0200
-Message-Id: <20180528100308.101832895@linuxfoundation.org>
+Subject: [PATCH 4.9 326/329] ARM: dts: porter: Fix HDMI output routing
+Date: Mon, 28 May 2018 12:04:15 +0200
+Message-Id: <20180528100308.177954556@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,85 +31,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aapo Vienamo <aapo@tuxera.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 2bada7ac1fdcbf79a9689bd2ff65fa515ca7a31f ]
+[ Upstream commit d4b78db6ac3e084e2bdc57d5518bd247c727f396 ]
 
-The missing last digit of the CONFIG values is added. Looks like a typo
-of some sort when comparing to the downstream dt. This fixes
-intermittent behavior behaviour of the ethernet controllers.
+The HDMI encoder is connected to the RGB output of the DU, which is
+port@0, not port@1. Fix the incorrect DT description.
 
-Signed-off-by: Aapo Vienamo <aapo@tuxera.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: c5af8a4248d3 ("ARM: dts: porter: add DU DT support")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts |   52 ++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ arch/arm/boot/dts/r8a7791-porter.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-+++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -213,37 +213,37 @@
- &iomuxc {
- 	pinctrl_enet1: enet1grp {
- 		fsl,pins = <
--			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x3
--			MX7D_PAD_SD2_WP__ENET1_MDC			0x3
--			MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x1
--			MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x1
--			MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x1
--			MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x1
--			MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x1
--			MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x1
--			MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x1
--			MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x1
--			MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x1
--			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x1
--			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x1
--			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x1
-+			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x30
-+			MX7D_PAD_SD2_WP__ENET1_MDC			0x30
-+			MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x11
-+			MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x11
-+			MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x11
-+			MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x11
-+			MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x11
-+			MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x11
-+			MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x11
-+			MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x11
-+			MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x11
-+			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x11
-+			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x11
-+			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x11
- 		>;
- 	};
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -428,7 +428,7 @@
+ 		      "dclkin.0", "dclkin.1";
  
- 	pinctrl_enet2: enet2grp {
- 		fsl,pins = <
--			MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x1
--			MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x1
--			MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x1
--			MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x1
--			MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x1
--			MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x1
--			MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x1
--			MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x1
--			MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x1
--			MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x1
--			MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x1
--			MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x1
-+			MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x11
-+			MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x11
-+			MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x11
-+			MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x11
-+			MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x11
-+			MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x11
-+			MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x11
-+			MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x11
-+			MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x11
-+			MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x11
-+			MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x11
-+			MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x11
- 		>;
- 	};
- 
+ 	ports {
+-		port@1 {
++		port@0 {
+ 			endpoint {
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
