@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936860AbeE1KO1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:14:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34308 "EHLO mail.kernel.org"
+        id S936890AbeE1KOf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:14:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936516AbeE1KOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:19 -0400
+        id S936516AbeE1KOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 170/185] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-Date: Mon, 28 May 2018 12:03:31 +0200
-Message-Id: <20180528100113.621918832@linuxfoundation.org>
+        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 004/268] affs_lookup(): close a race with affs_remove_link()
+Date: Mon, 28 May 2018 11:59:38 +0200
+Message-Id: <20180528100202.593711854@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -25,37 +25,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit ffab87fdecc655cc676f8be8dd1a2c5e22bd6d47 ]
+commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
 
-The lpuart_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+we unlock the directory hash too early - if we are looking at secondary
+link and primary (in another directory) gets removed just as we unlock,
+we could have the old primary moved in place of the secondary, leaving
+us to look into freed entry (and leaving our dentry with ->d_fsdata
+pointing to a freed entry).
 
-Fix this by adding a range check.
-
-Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org # 2.4.4+
+Acked-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/tty/serial/fsl_lpuart.c |    4 ++++
- 1 file changed, 4 insertions(+)
 
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1791,6 +1791,10 @@ static int lpuart_probe(struct platform_
- 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
- 		return ret;
- 	}
-+	if (ret >= ARRAY_SIZE(lpuart_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", ret);
-+		return -EINVAL;
+---
+ fs/affs/namei.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -224,9 +224,10 @@ affs_lookup(struct inode *dir, struct de
+ 
+ 	affs_lock_dir(dir);
+ 	bh = affs_find_entry(dir, dentry);
+-	affs_unlock_dir(dir);
+-	if (IS_ERR(bh))
++	if (IS_ERR(bh)) {
++		affs_unlock_dir(dir);
+ 		return ERR_CAST(bh);
 +	}
- 	sport->port.line = ret;
- 	sport->lpuart32 = of_device_is_compatible(np, "fsl,ls1021a-lpuart");
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (bh) {
+ 		u32 ino = bh->b_blocknr;
+ 
+@@ -240,10 +241,13 @@ affs_lookup(struct inode *dir, struct de
+ 		}
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+-		if (IS_ERR(inode))
++		if (IS_ERR(inode)) {
++			affs_unlock_dir(dir);
+ 			return ERR_CAST(inode);
++		}
+ 	}
+ 	d_add(dentry, inode);
++	affs_unlock_dir(dir);
+ 	return NULL;
+ }
+ 
