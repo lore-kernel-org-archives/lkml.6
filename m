@@ -1,90 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933940AbeE1UaI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 16:30:08 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:32788 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932451AbeE1UaH (ORCPT
+        id S933992AbeE1UcY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 16:32:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53434 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932451AbeE1UcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 16:30:07 -0400
-Date: Mon, 28 May 2018 21:30:03 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][RFC] [powerpc] arch_ptrace() uses of access_ok() are
- pointless
-Message-ID: <20180528203002.GD30522@ZenIV.linux.org.uk>
-References: <20180527223403.GT30522@ZenIV.linux.org.uk>
- <CA+7wUswhpVRQ4yECc-Zh9djHxiT=9-ALuP7_=mfLMtU-NXDnfg@mail.gmail.com>
+        Mon, 28 May 2018 16:32:22 -0400
+Subject: Re: [patch v22 4/4] Documentation: jtag: Add ABI documentation
+To: Oleksandr Shamray <oleksandrs@mellanox.com>,
+        gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
+        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
+        system-sw-low-level@mellanox.com, robh+dt@kernel.org,
+        openocd-devel-owner@lists.sourceforge.net, linux-api@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org
+References: <1527508827-30724-1-git-send-email-oleksandrs@mellanox.com>
+ <1527508827-30724-5-git-send-email-oleksandrs@mellanox.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a2645e23-d50a-02c6-02a9-4570f0c5ba65@infradead.org>
+Date: Mon, 28 May 2018 13:32:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <1527508827-30724-5-git-send-email-oleksandrs@mellanox.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+7wUswhpVRQ4yECc-Zh9djHxiT=9-ALuP7_=mfLMtU-NXDnfg@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> Maybe this is just an RFC, but:
+On 05/28/2018 05:00 AM, Oleksandr Shamray wrote:
+> Added document that describe the ABI for JTAG class drivrer
 > 
->   CALL    ../arch/powerpc/kernel/systbl_chk.sh
-> ../arch/powerpc/kernel/ptrace.c: In function ‘arch_ptrace’:
-> ../arch/powerpc/kernel/ptrace.c:3086:4: error: expected ‘)’ before ‘return’
->     return -EFAULT;
->     ^~~~~~
+> Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-and the same a few lines later.  What's more, those 'unlikely' are pointless
-there.  Fixed variant follows; only build-tested, though.
+> ---
+>  Documentation/ABI/testing/jtag-dev |   27 +++++++++
+>  Documentation/jtag/overview        |   28 +++++++++
+>  Documentation/jtag/transactions    |  109 ++++++++++++++++++++++++++++++++++++
+>  MAINTAINERS                        |    1 +
+>  4 files changed, 165 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/jtag-dev
+>  create mode 100644 Documentation/jtag/overview
+>  create mode 100644 Documentation/jtag/transactions
+> 
 
-make it use copy_{from,to}_user(), rather than access_ok() +
-__copy_...
+> diff --git a/Documentation/jtag/overview b/Documentation/jtag/overview
+> new file mode 100644
+> index 0000000..42b487a
+> --- /dev/null
+> +++ b/Documentation/jtag/overview
+> @@ -0,0 +1,28 @@
+> +Linux kernel JTAG support
+> +=========================
+> +
+> +The JTAG is an industry standard for verifying hardware.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- arch/powerpc/kernel/ptrace.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+JTAG is an
 
-diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
-index d23cf632edf0..f557322621e0 100644
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -3081,27 +3081,19 @@ long arch_ptrace(struct task_struct *child, long request,
- #endif /* CONFIG_HAVE_HW_BREAKPOINT */
- #endif /* CONFIG_PPC_ADV_DEBUG_REGS */
- 
--		if (!access_ok(VERIFY_WRITE, datavp,
--			       sizeof(struct ppc_debug_info)))
-+		if (copy_to_user(datavp, &dbginfo,
-+				     sizeof(struct ppc_debug_info)))
- 			return -EFAULT;
--		ret = __copy_to_user(datavp, &dbginfo,
--				     sizeof(struct ppc_debug_info)) ?
--		      -EFAULT : 0;
--		break;
-+		return 0;
- 	}
- 
- 	case PPC_PTRACE_SETHWDEBUG: {
- 		struct ppc_hw_breakpoint bp_info;
- 
--		if (!access_ok(VERIFY_READ, datavp,
--			       sizeof(struct ppc_hw_breakpoint)))
--			return -EFAULT;
--		ret = __copy_from_user(&bp_info, datavp,
--				       sizeof(struct ppc_hw_breakpoint)) ?
--		      -EFAULT : 0;
--		if (!ret)
--			ret = ppc_set_hwdebug(child, &bp_info);
--		break;
-+		if (copy_from_user(&bp_info, datavp,
-+				       sizeof(struct ppc_hw_breakpoint)))
-+		      return -EFAULT;
-+		return ppc_set_hwdebug(child, &bp_info);
- 	}
- 
- 	case PPC_PTRACE_DELHWDEBUG: {
+> +JTAG provides access to many logic signals of a complex integrated circuit,
+> +including the device pins.
+> +
+> +A JTAG interface is a special interface added to a chip.
+> +Depending on the version of JTAG, two, four, or five pins are added.
+> +
+> +The connector pins are:
+> +	TDI (Test Data In)
+> +	TDO (Test Data Out)
+> +	TCK (Test Clock)
+> +	TMS (Test Mode Select)
+> +	TRST (Test Reset) optional
+> +
+> +JTAG interface is designed to have two parts - basic core driver and
+> +hardware specific driver. The basic driver introduces a general interface
+> +which is not dependent of specific hardware. It provides communication
+> +between user space and hardware specific driver.
+> +Each JTAG device is represented as a char device from (jtag0, jtag1, ...).
+> +Access to a JTAG device is performed through IOCTL calls.
+> +
+> +Call flow example:
+> +User: open  -> /dev/jatgX
+> +User: ioctl -> /dev/jtagX -> JTAG core driver -> JTAG hardware specific driver
+> +User: close -> /dev/jatgX
+> diff --git a/Documentation/jtag/transactions b/Documentation/jtag/transactions
+> new file mode 100644
+> index 0000000..2abf833
+> --- /dev/null
+> +++ b/Documentation/jtag/transactions
+> @@ -0,0 +1,109 @@
+> +The JTAG API
+> +=============
+> +
+> +JTAG master devices can be accessed through a character misc-device.
+> +Each JTAG master interface can be accessed by using /dev/jtagN.
+> +
+> +JTAG system calls set:
+> +- SIR (Scan Instruction Register, IEEE 1149.1 Instruction Register scan);
+> +- SDR (Scan Data Register, IEEE 1149.1 Data Register scan);
+> +- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
+> +number of clocks.
+> +
+> +open(), close()
+> +-------
+> +open() opens JTAG device. Only one open operation per JTAG device
+> +can be performed. Two or more open for one device will return error.
+> +
+> +Open/Close  device:
+> +- jtag_fd = open("/dev/jtag0", O_RDWR);
+> +- close(jtag_fd);
+> +
+> +ioctl()
+> +-------
+> +All access operations to JTAG devices performed through ioctl interface.
+
+                         to JTAG devices are performed through
+
+> +The IOCTL interface supports these requests:
+> +	JTAG_IOCRUNTEST - Force JTAG state machine to RUN_TEST/IDLE state
+> +	JTAG_SIOCFREQ - Set JTAG TCK frequency
+> +	JTAG_GIOCFREQ - Get JTAG TCK frequency
+> +	JTAG_IOCXFER - send JTAG data Xfer
+> +	JTAG_GIOCSTATUS - get current JTAG TAP status
+> +	JTAG_SIOCMODE - set JTAG mode flags.
+> +
+> +JTAG_SIOCFREQ, JTAG_GIOCFREQ
+> +------
+> +Set/Get JTAG clock speed:
+> +
+> +	unsigned int jtag_fd;
+> +	ioctl(jtag_fd, JTAG_SIOCFREQ, &frq);
+> +	ioctl(jtag_fd, JTAG_GIOCFREQ, &frq);
+> +
+> +JTAG_IOCRUNTEST
+> +------
+> +Force JTAG state machine to RUN_TEST/IDLE state
+> +
+> +struct jtag_run_test_idle {
+> +	__u8	reset;
+> +	__u8	endstate;
+> +	__u8	tck;
+> +};
+> +
+> +reset: 0 - run IDLE/PAUSE from current state
+> +	   1 - go through TEST_LOGIC/RESET state before  IDLE/PAUSE
+
+	                                         before IDLE/PAUSE
+
+
+> +endstate: completion flag
+> +tck: clock counter
+> +
+> +Example:
+> +	struct jtag_run_test_idle runtest;
+> +
+> +	runtest.endstate = JTAG_STATE_IDLE;
+> +	runtest.reset = 0;
+> +	runtest.tck = data_p->tck;
+> +	usleep(25 * 1000);
+> +	ioctl(jtag_fd, JTAG_IOCRUNTEST, &runtest);
+> +
+> +JTAG_IOCXFER
+> +------
+> +Send SDR/SIR transaction
+> +
+> +struct jtag_xfer {
+> +	__u8	type;
+> +	__u8	direction;
+> +	__u8	endstate;
+> +	__u8	padding;
+> +	__u32	length;
+> +	__u64	tdio;
+> +};
+> +
+> +type: transfer type - JTAG_SIR_XFER/JTAG_SDR_XFER
+> +direction: xfer direction - JTAG_SIR_XFER/JTAG_SDR_XFER,
+
+              drop ending comma                           ^
+
+> +length: xfer data len in bits
+
+s/len/length/
+
+> +tdio : xfer data array
+> +endstate: xfer end state after transaction finish
+> +	   can be: JTAG_STATE_IDLE/JTAG_STATE_PAUSEIR/JTAG_STATE_PAUSEDR
+> +
+> +Example:
+> +	struct jtag_xfer xfer;
+> +	static char buf[64];
+> +	static unsigned int buf_len = 0;
+> +	[...]
+> +	xfer.type = JTAG_SDR_XFER;
+> +	xfer.tdio = (__u64)buf;
+> +	xfer.length = buf_len;
+> +	xfer.endstate = JTAG_STATE_IDLE;
+> +
+> +	if (is_read)
+> +		xfer.direction = JTAG_READ_XFER;
+> +	else
+> +		xfer.direction = JTAG_WRITE_XFER;
+> +
+> +	ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
+> +
+> +JTAG_SIOCMODE
+> +------
+> +If hardware driver can support different running modes you can change it.
+> +
+> +Example:
+> +	unsigned int mode;
+> +	mode = JTAG_XFER_HW_MODE;
+> +	ioctl(jtag_fd, JTAG_SIOCMODE, &mode);
+
+
 -- 
-2.11.0
+~Randy
