@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164633AbeE1K7n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:59:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47442 "EHLO mail.kernel.org"
+        id S1422756AbeE1MdU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:33:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164612AbeE1K7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:32 -0400
+        id S1164612AbeE1K7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Wang Nan <wangnan0@huawei.com>,
+        stable@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 402/496] perf top: Fix top.call-graph config option reading
-Date: Mon, 28 May 2018 12:03:07 +0200
-Message-Id: <20180528100336.700724994@linuxfoundation.org>
+Subject: [PATCH 4.14 406/496] coresight: Use %px to print pcsr instead of %p
+Date: Mon, 28 May 2018 12:03:11 +0200
+Message-Id: <20180528100336.871242813@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -33,49 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yisheng Xie <xieyisheng1@huawei.com>
+From: Leo Yan <leo.yan@linaro.org>
 
-[ Upstream commit a3a4a3b37c9b911af4c375b2475cea0fd2b84d38 ]
+[ Upstream commit 831c326fcd0e8e2a6ece952f898a1ec9b1dc1004 ]
 
-When trying to add the "call-graph" variable for top into the
-.perfconfig file, like:
+Commit ad67b74d2469 ("printk: hash addresses printed with %p") lets
+printk specifier %p to hash all addresses before printing, this was
+resulting in the high 32 bits of pcsr can only output zeros.  So
+module cannot completely print pc value and it's pointless for debugging
+purpose.
 
-      [top]
-            call-graph = fp
+This patch fixes this by using %px to print pcsr instead.
 
-I that perf_top_config() do not parse this variable.
-
-Fix it by calling perf_default_config() when the top.call-graph variable
-is set.
-
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: b8cbb349061e ("perf config: Bring perf_default_config to the very beginning at main()")
-Link: http://lkml.kernel.org/r/1520853957-36106-1-git-send-email-xieyisheng1@huawei.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-top.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/hwtracing/coresight/coresight-cpu-debug.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1080,8 +1080,10 @@ parse_callchain_opt(const struct option
+--- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
++++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+@@ -315,7 +315,7 @@ static void debug_dump_regs(struct debug
+ 	}
  
- static int perf_top_config(const char *var, const char *value, void *cb __maybe_unused)
- {
--	if (!strcmp(var, "top.call-graph"))
--		var = "call-graph.record-mode"; /* fall-through */
-+	if (!strcmp(var, "top.call-graph")) {
-+		var = "call-graph.record-mode";
-+		return perf_default_config(var, value, cb);
-+	}
- 	if (!strcmp(var, "top.children")) {
- 		symbol_conf.cumulate_callchain = perf_config_bool(var, value);
- 		return 0;
+ 	pc = debug_adjust_pc(drvdata);
+-	dev_emerg(dev, " EDPCSR:  [<%p>] %pS\n", (void *)pc, (void *)pc);
++	dev_emerg(dev, " EDPCSR:  [<%px>] %pS\n", (void *)pc, (void *)pc);
+ 
+ 	if (drvdata->edcidsr_present)
+ 		dev_emerg(dev, " EDCIDSR: %08x\n", drvdata->edcidsr);
