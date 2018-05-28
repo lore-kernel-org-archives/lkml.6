@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755308AbeE1Ntk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:49:40 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46157 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755248AbeE1Nte (ORCPT
+        id S1755372AbeE1Nuj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:50:39 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39750 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755313AbeE1Ntl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:49:34 -0400
-X-Google-Smtp-Source: AB8JxZperSjron3088xVM49QiTro9yVdSfW5/nheC9qvEcIJ9xuTbJjELNeMEqusioS+fiH9H3s+Rg==
+        Mon, 28 May 2018 09:49:41 -0400
+X-Google-Smtp-Source: ADUXVKIRIlmPJOurrGFYLYHL703neuaLwkzMkoSzFyQHJk0WfPlPENBvbe3KgB5umBwNQe8Wkck8Yg==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH 1/8] signal: make force_sigsegv() void
-Date: Mon, 28 May 2018 15:49:09 +0200
-Message-Id: <20180528134916.7568-2-christian@brauner.io>
+Subject: [PATCH 8/8] signal: simplify rt_sigaction()
+Date: Mon, 28 May 2018 15:49:16 +0200
+Message-Id: <20180528134916.7568-9-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528134916.7568-1-christian@brauner.io>
 References: <20180528134916.7568-1-christian@brauner.io>
@@ -25,60 +25,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-force_sigsegv() returned 0 unconditionally so it doesn't make sense to have
-it return at all. In addition, there are no callers that check
-force_sigsegv()'s return value.
+The goto is not needed and does not add any clarity. Simply return -EINVAL
+on unexpected sigset_t struct size directly.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
- include/linux/sched/signal.h | 2 +-
- kernel/signal.c              | 7 ++-----
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ kernel/signal.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 113d1ad1ced7..e138ac16c650 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -314,7 +314,7 @@ int force_sig_pkuerr(void __user *addr, u32 pkey);
- int force_sig_ptrace_errno_trap(int errno, void __user *addr);
- 
- extern int send_sig_info(int, struct siginfo *, struct task_struct *);
--extern int force_sigsegv(int, struct task_struct *);
-+extern void force_sigsegv(int sig, struct task_struct *p);
- extern int force_sig_info(int, struct siginfo *, struct task_struct *);
- extern int __kill_pgrp_info(int sig, struct siginfo *info, struct pid *pgrp);
- extern int kill_pid_info(int sig, struct siginfo *info, struct pid *pid);
 diff --git a/kernel/signal.c b/kernel/signal.c
-index 9c33163a6165..c756008d589e 100644
+index 42a7b067a49c..96c58de43ddf 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -1468,8 +1468,7 @@ send_sig(int sig, struct task_struct *p, int priv)
- 	return send_sig_info(sig, __si_special(priv), p);
- }
- 
--void
--force_sig(int sig, struct task_struct *p)
-+void force_sig(int sig, struct task_struct *p)
+@@ -3741,24 +3741,21 @@ SYSCALL_DEFINE4(rt_sigaction, int, sig,
+ 		size_t, sigsetsize)
  {
- 	force_sig_info(sig, SEND_SIG_PRIV, p);
- }
-@@ -1480,8 +1479,7 @@ force_sig(int sig, struct task_struct *p)
-  * the problem was already a SIGSEGV, we'll want to
-  * make sure we don't even try to deliver the signal..
-  */
--int
--force_sigsegv(int sig, struct task_struct *p)
-+void force_sigsegv(int sig, struct task_struct *p)
- {
- 	if (sig == SIGSEGV) {
- 		unsigned long flags;
-@@ -1490,7 +1488,6 @@ force_sigsegv(int sig, struct task_struct *p)
- 		spin_unlock_irqrestore(&p->sighand->siglock, flags);
- 	}
- 	force_sig(SIGSEGV, p);
--	return 0;
- }
+ 	struct k_sigaction new_sa, old_sa;
+-	int ret = -EINVAL;
++	int ret;
  
- int force_sig_fault(int sig, int code, void __user *addr
+ 	/* XXX: Don't preclude handling different sized sigset_t's.  */
+ 	if (sigsetsize != sizeof(sigset_t))
+-		goto out;
++		return -EINVAL;
+ 
+-	if (act) {
++	if (act)
+ 		if (copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)))
+ 			return -EFAULT;
+-	}
+ 
+ 	ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
+-
+-	if (!ret && oact) {
++	if (!ret && oact)
+ 		if (copy_to_user(oact, &old_sa.sa, sizeof(old_sa.sa)))
+ 			return -EFAULT;
+-	}
+-out:
++
+ 	return ret;
+ }
+ #ifdef CONFIG_COMPAT
 -- 
 2.17.0
