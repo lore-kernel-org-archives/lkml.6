@@ -1,21 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162172AbeE1KgN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:36:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56546 "EHLO mail.kernel.org"
+        id S1162258AbeE1Kgv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:36:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937308AbeE1KgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:07 -0400
+        id S1161538AbeE1Kgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hemanth Puranik <hpuranik@codeaurora.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Danilo Krummrich <danilokrummrich@dk-develop.de>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 188/329] net: qcom/emac: Use proper free methods during TX
-Date: Mon, 28 May 2018 12:01:57 +0200
-Message-Id: <20180528100257.958569320@linuxfoundation.org>
+Subject: [PATCH 4.9 232/329] fs/proc/proc_sysctl.c: fix potential page fault while unregistering sysctl table
+Date: Mon, 28 May 2018 12:02:41 +0200
+Message-Id: <20180528100301.401236771@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,68 +36,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hemanth Puranik <hpuranik@codeaurora.org>
+From: Danilo Krummrich <danilokrummrich@dk-develop.de>
 
-[ Upstream commit cc5db3150e87fe7f7e947bf333b6c1c97f848ecb ]
+[ Upstream commit a0b0d1c345d0317efe594df268feb5ccc99f651e ]
 
-This patch fixes the warning messages/call traces seen if DMA debug is
-enabled, In case of fragmented skb's memory was allocated using
-dma_map_page but freed using dma_unmap_single. This patch modifies buffer
-allocations in TX path to use dma_map_page in all the places and
-dma_unmap_page while freeing the buffers.
+proc_sys_link_fill_cache() does not take currently unregistering sysctl
+tables into account, which might result into a page fault in
+sysctl_follow_link() - add a check to fix it.
 
-Signed-off-by: Hemanth Puranik <hpuranik@codeaurora.org>
-Acked-by: Timur Tabi <timur@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This bug has been present since v3.4.
+
+Link: http://lkml.kernel.org/r/20180228013506.4915-1-danilokrummrich@dk-develop.de
+Fixes: 0e47c99d7fe25 ("sysctl: Replace root_list with links between sysctl_table_sets")
+Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qualcomm/emac/emac-mac.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ fs/proc/proc_sysctl.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-mac.c
-@@ -1250,9 +1250,9 @@ void emac_mac_tx_process(struct emac_ada
- 	while (tx_q->tpd.consume_idx != hw_consume_idx) {
- 		tpbuf = GET_TPD_BUFFER(tx_q, tx_q->tpd.consume_idx);
- 		if (tpbuf->dma_addr) {
--			dma_unmap_single(adpt->netdev->dev.parent,
--					 tpbuf->dma_addr, tpbuf->length,
--					 DMA_TO_DEVICE);
-+			dma_unmap_page(adpt->netdev->dev.parent,
-+				       tpbuf->dma_addr, tpbuf->length,
-+				       DMA_TO_DEVICE);
- 			tpbuf->dma_addr = 0;
- 		}
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -660,7 +660,10 @@ static bool proc_sys_link_fill_cache(str
+ 				    struct ctl_table *table)
+ {
+ 	bool ret = true;
++
+ 	head = sysctl_head_grab(head);
++	if (IS_ERR(head))
++		return false;
  
-@@ -1409,9 +1409,11 @@ static void emac_tx_fill_tpd(struct emac
- 
- 		tpbuf = GET_TPD_BUFFER(tx_q, tx_q->tpd.produce_idx);
- 		tpbuf->length = mapped_len;
--		tpbuf->dma_addr = dma_map_single(adpt->netdev->dev.parent,
--						 skb->data, tpbuf->length,
--						 DMA_TO_DEVICE);
-+		tpbuf->dma_addr = dma_map_page(adpt->netdev->dev.parent,
-+					       virt_to_page(skb->data),
-+					       offset_in_page(skb->data),
-+					       tpbuf->length,
-+					       DMA_TO_DEVICE);
- 		ret = dma_mapping_error(adpt->netdev->dev.parent,
- 					tpbuf->dma_addr);
- 		if (ret)
-@@ -1427,9 +1429,12 @@ static void emac_tx_fill_tpd(struct emac
- 	if (mapped_len < len) {
- 		tpbuf = GET_TPD_BUFFER(tx_q, tx_q->tpd.produce_idx);
- 		tpbuf->length = len - mapped_len;
--		tpbuf->dma_addr = dma_map_single(adpt->netdev->dev.parent,
--						 skb->data + mapped_len,
--						 tpbuf->length, DMA_TO_DEVICE);
-+		tpbuf->dma_addr = dma_map_page(adpt->netdev->dev.parent,
-+					       virt_to_page(skb->data +
-+							    mapped_len),
-+					       offset_in_page(skb->data +
-+							      mapped_len),
-+					       tpbuf->length, DMA_TO_DEVICE);
- 		ret = dma_mapping_error(adpt->netdev->dev.parent,
- 					tpbuf->dma_addr);
- 		if (ret)
+ 	if (S_ISLNK(table->mode)) {
+ 		/* It is not an error if we can not follow the link ignore it */
