@@ -1,54 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940181AbeE1QhZ (ORCPT <rfc822;w@1wt.eu>);
+        id S940360AbeE1QjY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:39:24 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48089 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940289AbeE1QhZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 12:37:25 -0400
-Received: from mout01.posteo.de ([185.67.36.141]:38575 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934400AbeE1KIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:15 -0400
-Subject: Re: [PATCH v4 6/6] tty/serial: atmel: changed the driver to work
- under at91-usart mfd
-To: Radu Pirea <radu.pirea@microchip.com>, broonie@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org
-References: <20180525171941.26766-1-radu.pirea@microchip.com>
- <20180525171941.26766-7-radu.pirea@microchip.com>
-From: Richard Genoud <richard.genoud@gmail.com>
-Message-ID: <e1445467-2df0-4593-852d-939e6795f318@sorico.fr>
-Date: Mon, 28 May 2018 12:08:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180525171941.26766-7-radu.pirea@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
+        sakari.ailus@iki.fi, mchehab@kernel.org, ysato@users.sourceforge.jp,
+        dalias@libc.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
+Date: Mon, 28 May 2018 18:37:06 +0200
+Message-Id: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/2018 19:19, Radu Pirea wrote:
-> This patch modifies the place where resources and device tree properties
-> are searched.
-> 
-> Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-> ---
->  drivers/tty/serial/Kconfig        |  1 +
->  drivers/tty/serial/atmel_serial.c | 40 +++++++++++++++++--------------
->  2 files changed, 23 insertions(+), 18 deletions(-)
-the stdout-path property of the chosen node is still broken in this verion.
-if :
-stdout-path = "serial0:115200n8";
-is set in the DTS, the console output should go on serial0 (aka dbgu)
-cf Documentation/devicetree/bindings/chosen.txt
+Hello,
+    this series removes dependencies on the soc_camera based
+sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
+sensor driver used by one of those boards.
 
-With this patch applied, this is not the case anymore.
-Adding console=ttyS0,115200 in the chosen node is not the solution here.
+Hans, this means there are no more user of the soc_camera framework that I know
+of in Linux, and I guess we can now plan of to remove that framework.
 
+A note on the sensor driver: I haven't been able to find any documentation
+for the SHARP RJ54N1CB0C sensor and so I inferred as much as possible from the
+existing code. It seems to me that the sensor needs to power-up/enable gpios
+(both active high) and I have registered them from the kfr2r09 board file,
+assuming this was not a platform-specific design, but something the sensor
+requires. As per the previous drivers ported away from soc_camera, I'm in
+favour of moving them to staging if they do not match the quality expected
+from a modern V4L2 sensor driver. Ie. framerate control is missing, and I
+know this has been a blocker for other drivers in the past.
 
-regards,
-Richard.
+What I've done to three board files closely resembles what I done already for
+Migo-R and Ecovec, and it listed in the single commit messages.
+
+The only tough one is probably ap325rxa, which had an additional sensor
+registered but controlled from i2c transaction of magic blobs from the board
+file. I dare to remove that sensor registration completely as it seems to me
+there is no diver for that at all in mainline.
+
+Last, this patch is based on the media tree master branch, with Akinobu Mita's
+patches on ov772x driver on top, which I strangely see only partially applied
+to the media master tree [1]
+
+Hans, as this is mostly media-related work, but mostly on SH architecture, I
+would like to ask if these should go through you or SH tree.
+
+All of that has only been compile tested. It's pretty hard to find this
+platforms around and testing would be awesome if somebody happens to have
+one of these.
+
+Thanks
+   j
+
+[1] https://patchwork.linuxtv.org/patch/49318/
+    https://patchwork.linuxtv.org/patch/49317/
+    https://patchwork.linuxtv.org/patch/49312/
+
+Jacopo Mondi (5):
+  media: i2c: Copy rj54n1cb0c soc_camera sensor driver
+  media: i2c: rj54n1: Remove soc_camera dependencies
+  arch: sh: kfr2r09: Use new renesas-ceu camera driver
+  arch: sh: ms7724se: Use new renesas-ceu camera driver
+  arch: sh: ap325rxa: Use new renesas-ceu camera driver
+
+ arch/sh/boards/mach-ap325rxa/setup.c   |  282 ++-----
+ arch/sh/boards/mach-kfr2r09/setup.c    |  216 +++--
+ arch/sh/boards/mach-se/7724/setup.c    |  120 ++-
+ arch/sh/kernel/cpu/sh4a/clock-sh7723.c |    2 +-
+ drivers/media/i2c/Kconfig              |   11 +
+ drivers/media/i2c/Makefile             |    1 +
+ drivers/media/i2c/rj54n1cb0c.c         | 1437 ++++++++++++++++++++++++++++++++
+ 7 files changed, 1710 insertions(+), 359 deletions(-)
+ create mode 100644 drivers/media/i2c/rj54n1cb0c.c
+
+--
+2.7.4
