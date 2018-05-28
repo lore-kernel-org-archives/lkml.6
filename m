@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164003AbeE1Kyv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:54:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43518 "EHLO mail.kernel.org"
+        id S1164324AbeE1Ky5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:54:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163955AbeE1Kyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:43 -0400
+        id S1163941AbeE1Kyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Raghuram Chary J <raghuramchary.jallipalli@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 298/496] lan78xx: Set ASD in MAC_CR when EEE is enabled.
-Date: Mon, 28 May 2018 12:01:23 +0200
-Message-Id: <20180528100332.381146713@linuxfoundation.org>
+Subject: [PATCH 4.14 297/496] ARM: 8748/1: mm: Define vdso_start, vdso_end as array
+Date: Mon, 28 May 2018 12:01:22 +0200
+Message-Id: <20180528100332.342431607@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,53 +31,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
+From: Jinbum Park <jinb.park7@gmail.com>
 
-[ Upstream commit e69647a19c870c2f919e4d5023af8a515e8ef25f ]
+[ Upstream commit 73b9160d0dfe44dfdaffd6465dc1224c38a4a73c ]
 
-Description:
-EEE does not work with lan7800 when AutoSpeed is not set.
-(This can happen when EEPROM is not populated or configured incorrectly)
+Define vdso_start, vdso_end as array to avoid compile-time analysis error
+for the case of built with CONFIG_FORTIFY_SOURCE.
 
-Root-Cause:
-When EEE is enabled, the mac config register ASD is not set
-i.e. in default state, causing EEE fail.
+and, since vdso_start, vdso_end are used in vdso.c only,
+move extern-declaration from vdso.h to vdso.c.
 
-Fix:
-Set the register when eeprom is not present.
+If kernel is built with CONFIG_FORTIFY_SOURCE,
+compile-time error happens at this code.
+- if (memcmp(&vdso_start, "177ELF", 4))
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Signed-off-by: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The size of "&vdso_start" is recognized as 1 byte, but n is 4,
+So that compile-time error is reported.
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/include/asm/vdso.h |    2 --
+ arch/arm/kernel/vdso.c      |   12 +++++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2352,6 +2352,7 @@ static int lan78xx_reset(struct lan78xx_
- 	u32 buf;
- 	int ret = 0;
- 	unsigned long timeout;
-+	u8 sig;
+--- a/arch/arm/include/asm/vdso.h
++++ b/arch/arm/include/asm/vdso.h
+@@ -12,8 +12,6 @@ struct mm_struct;
  
- 	ret = lan78xx_read_reg(dev, HW_CFG, &buf);
- 	buf |= HW_CFG_LRST_;
-@@ -2451,6 +2452,15 @@ static int lan78xx_reset(struct lan78xx_
- 	/* LAN7801 only has RGMII mode */
- 	if (dev->chipid == ID_REV_CHIP_ID_7801_)
- 		buf &= ~MAC_CR_GMII_EN_;
+ void arm_install_vdso(struct mm_struct *mm, unsigned long addr);
+ 
+-extern char vdso_start, vdso_end;
+-
+ extern unsigned int vdso_total_pages;
+ 
+ #else /* CONFIG_VDSO */
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -39,6 +39,8 @@
+ 
+ static struct page **vdso_text_pagelist;
+ 
++extern char vdso_start[], vdso_end[];
 +
-+	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
-+		ret = lan78xx_read_raw_eeprom(dev, 0, 1, &sig);
-+		if (!ret && sig != EEPROM_INDICATOR) {
-+			/* Implies there is no external eeprom. Set mac speed */
-+			netdev_info(dev->net, "No External EEPROM. Setting MAC Speed\n");
-+			buf |= MAC_CR_AUTO_DUPLEX_ | MAC_CR_AUTO_SPEED_;
-+		}
-+	}
- 	ret = lan78xx_write_reg(dev, MAC_CR, buf);
+ /* Total number of pages needed for the data and text portions of the VDSO. */
+ unsigned int vdso_total_pages __ro_after_init;
  
- 	ret = lan78xx_read_reg(dev, MAC_TX, &buf);
+@@ -197,13 +199,13 @@ static int __init vdso_init(void)
+ 	unsigned int text_pages;
+ 	int i;
+ 
+-	if (memcmp(&vdso_start, "\177ELF", 4)) {
++	if (memcmp(vdso_start, "\177ELF", 4)) {
+ 		pr_err("VDSO is not a valid ELF object!\n");
+ 		return -ENOEXEC;
+ 	}
+ 
+-	text_pages = (&vdso_end - &vdso_start) >> PAGE_SHIFT;
+-	pr_debug("vdso: %i text pages at base %p\n", text_pages, &vdso_start);
++	text_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
++	pr_debug("vdso: %i text pages at base %p\n", text_pages, vdso_start);
+ 
+ 	/* Allocate the VDSO text pagelist */
+ 	vdso_text_pagelist = kcalloc(text_pages, sizeof(struct page *),
+@@ -218,7 +220,7 @@ static int __init vdso_init(void)
+ 	for (i = 0; i < text_pages; i++) {
+ 		struct page *page;
+ 
+-		page = virt_to_page(&vdso_start + i * PAGE_SIZE);
++		page = virt_to_page(vdso_start + i * PAGE_SIZE);
+ 		vdso_text_pagelist[i] = page;
+ 	}
+ 
+@@ -229,7 +231,7 @@ static int __init vdso_init(void)
+ 
+ 	cntvct_ok = cntvct_functional();
+ 
+-	patch_vdso(&vdso_start);
++	patch_vdso(vdso_start);
+ 
+ 	return 0;
+ }
