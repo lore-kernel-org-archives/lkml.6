@@ -1,87 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938899AbeE1Mab (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:30:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164103AbeE1LAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:22 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Eric Sandeen <sandeen@redhat.com>, Theodore Tso <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 387/496] ext4: dont complain about incorrect features when probing
-Date: Mon, 28 May 2018 12:02:52 +0200
-Message-Id: <20180528100336.081448905@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S938916AbeE1Man (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:30:43 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:50676 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938903AbeE1Maf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 08:30:35 -0400
+To: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.com>,
+        "Omar Sandoval" <osandov@fb.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Sagi Grimberg" <sagi@grimberg.me>, Shaohua Li <shli@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 1/7] block: Add block level changes for inline encryption
+From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Manjunath M Bettegowda <manjumb@synopsys.com>; Prabu Thangamuthu
+        <prabut@synopsys.com>; Tejas Joglekar" <Tejas.Joglekar@synopsys.com>
+Message-ID: <8cd6a622-693a-f130-708d-eae517f26c78@synopsys.com>
+Date: Mon, 28 May 2018 13:30:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.144.133.104]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+This patch introduces new variable under bio structure to
+facilitate inline encryption. This variable is used to
+associate I/O requests to crypto information.
 
-From: Eric Sandeen <sandeen@redhat.com>
-
-[ Upstream commit 0d9366d67bcf066b028e57d09c9a86ce879bcc28 ]
-
-If mount is auto-probing for filesystem type, it will try various
-filesystems in order, with the MS_SILENT flag set.  We get
-that flag as the silent arg to ext4_fill_super.
-
-If we're probing (silent==1) then don't complain about feature
-incompatibilities that are found if it looks like it's actually
-a different valid extN type - failed probes should be silent
-in this case.
-
-If the on-disk features are unknown even to ext4, then complain.
-
-Reported-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Tested-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
 ---
- fs/ext4/super.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ block/Kconfig             | 13 +++++++++++++
+ block/bio.c               |  6 ++++++
+ include/linux/blk_types.h |  3 +++
+ 3 files changed, 22 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3663,6 +3663,12 @@ static int ext4_fill_super(struct super_
- 			ext4_msg(sb, KERN_INFO, "mounting ext2 file system "
- 				 "using the ext4 subsystem");
- 		else {
-+			/*
-+			 * If we're probing be silent, if this looks like
-+			 * it's actually an ext[34] filesystem.
-+			 */
-+			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
-+				goto failed_mount;
- 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext2 due "
- 				 "to feature incompatibilities");
- 			goto failed_mount;
-@@ -3674,6 +3680,12 @@ static int ext4_fill_super(struct super_
- 			ext4_msg(sb, KERN_INFO, "mounting ext3 file system "
- 				 "using the ext4 subsystem");
- 		else {
-+			/*
-+			 * If we're probing be silent, if this looks like
-+			 * it's actually an ext4 filesystem.
-+			 */
-+			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
-+				goto failed_mount;
- 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext3 due "
- 				 "to feature incompatibilities");
- 			goto failed_mount;
+diff --git a/block/Kconfig b/block/Kconfig
+index 28ec557..a48ecec 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -128,6 +128,19 @@ config BLK_DEV_THROTTLING_LOW
+ 
+ 	Note, this is an experimental interface and could be changed someday.
+ 
++config BLK_DEV_INLINE_ENCRYPTION
++	bool "Enable support for block device inline encryption"
++	default n
++	help
++	Enable block devices for Inline Encryption support.
++
++	This option is required to support the inline encryption capability
++	of the block device driver, including UFS Host Controller driver.
++	When the Inline Encryption feature is enabled in the block device
++	drivers, this option will be automatically enabled.
++
++	If unsure, say N.
++
+ config BLK_CMDLINE_PARSER
+ 	bool "Block device command line partition parser"
+ 	default n
+diff --git a/block/bio.c b/block/bio.c
+index 0a4df92..91aecf5 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -606,6 +606,9 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
+ 	bio->bi_write_hint = bio_src->bi_write_hint;
+ 	bio->bi_iter = bio_src->bi_iter;
+ 	bio->bi_io_vec = bio_src->bi_io_vec;
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++	bio->bi_ie_private = bio_src->bi_ie_private;
++#endif
+ 
+ 	bio_clone_blkcg_association(bio, bio_src);
+ }
+@@ -690,6 +693,9 @@ struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
+ 	bio->bi_write_hint	= bio_src->bi_write_hint;
+ 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
+ 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++	bio->bi_ie_private      = bio_src->bi_ie_private;
++#endif
+ 
+ 	switch (bio_op(bio)) {
+ 	case REQ_OP_DISCARD:
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 4cb970c..11df096 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -183,6 +183,9 @@ struct bio {
+ 	void			*bi_cg_private;
+ 	struct bio_issue	bi_issue;
+ #endif
++#ifdef CONFIG_BLK_DEV_INLINE_ENCRYPTION
++	void                    *bi_ie_private;
++#endif
+ #endif
+ 	union {
+ #if defined(CONFIG_BLK_DEV_INTEGRITY)
+-- 
+2.7.4
