@@ -1,79 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937046AbeE1O7Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:59:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034062AbeE1KZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:51 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 262/268] scsi: lpfc: Fix soft lockup in lpfc worker thread during LIP testing
-Date: Mon, 28 May 2018 12:03:56 +0200
-Message-Id: <20180528100232.539006557@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S939486AbeE1PCr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:02:47 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:36746 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932387AbeE1PCk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:02:40 -0400
+X-Google-Smtp-Source: ADUXVKILNsWREkc2GSPt6zCvol2vebbCpOuRONvr5edQgzqVmLVg+CkVP4UlZ6tSuXTz7vzPOcm7lEEKsjsswjW8+Co=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <10a503da-d431-f2c9-3ddc-91b065563a0d@redhat.com>
+References: <1526640912-894-1-git-send-email-geert+renesas@glider.be> <10a503da-d431-f2c9-3ddc-91b065563a0d@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 May 2018 17:02:38 +0200
+X-Google-Sender-Auth: bVWRoh66-w49Jqe1xkkYwDTyKaI
+Message-ID: <CAMuHMdXfEj9Z8b3csyM_5rbS5-ki99bWJqnWZcL2chK9P39vTg@mail.gmail.com>
+Subject: Re: [PATCH v2] vfio: platform: Fix using devices in PM Domains
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hi Eric,
 
-------------------
+On Mon, May 28, 2018 at 4:54 PM, Auger Eric <eric.auger@redhat.com> wrote:
+> On 05/18/2018 12:55 PM, Geert Uytterhoeven wrote:
+>> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+>> power state is managed using Runtime PM.  Without Runtime PM, the device
+>> may not be powered up or clocked, causing subtle failures, crashes, or
+>> system lock-ups when the device is accessed by the guest.
+>>
+>> Fix this by adding Runtime PM support, powering the device when the VFIO
+>> device is opened by the guest.
+>
+> I fail to apply this on master branch?
 
-From: James Smart <jsmart2021@gmail.com>
+It's against git://github.com/awilliam/linux-vfio.git#next.
 
-[ Upstream commit 161df4f09987ae2e9f0f97f0b38eee298b4a39ff ]
+>> Note that while more fine-grained power management could be implemented
+>> on the guest side, if exported by the host, this would be inherently
+>> unsafe, as abusing it may take down the whole system.
+> I think I would prefer we get rid of the above paragraph.
 
-During link bounce testing in a point-to-point topology, the host may
-enter a soft lockup on the lpfc_worker thread:
+OK, I will drop it. But you've been warned ;-)
 
-    Call Trace:
-     lpfc_work_done+0x1f3/0x1390 [lpfc]
-     lpfc_do_work+0x16f/0x180 [lpfc]
-     kthread+0xc7/0xe0
-     ret_from_fork+0x3f/0x70
+Gr{oetje,eeting}s,
 
-The driver was simultaneously setting a combination of flags that caused
-lpfc_do_work()to effectively spin between slow path work and new event
-data, causing the lockup.
+                        Geert
 
-Ensure in the typical wq completions, that new event data flags are set
-if the slow path flag is running. The slow path will eventually
-reschedule the wq handling.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/lpfc/lpfc_hbadisc.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -691,8 +691,9 @@ lpfc_work_done(struct lpfc_hba *phba)
- 	    (phba->hba_flag & HBA_SP_QUEUE_EVT)) {
- 		if (pring->flag & LPFC_STOP_IOCB_EVENT) {
- 			pring->flag |= LPFC_DEFERRED_RING_EVENT;
--			/* Set the lpfc data pending flag */
--			set_bit(LPFC_DATA_READY, &phba->data_flags);
-+			/* Preserve legacy behavior. */
-+			if (!(phba->hba_flag & HBA_SP_QUEUE_EVT))
-+				set_bit(LPFC_DATA_READY, &phba->data_flags);
- 		} else {
- 			if (phba->link_state >= LPFC_LINK_UP) {
- 				pring->flag &= ~LPFC_DEFERRED_RING_EVENT;
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
