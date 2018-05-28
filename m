@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937820AbeE1K5Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:57:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
+        id S937836AbeE1K5a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:57:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937520AbeE1K5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:06 -0400
+        id S1164582AbeE1K4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Graf <agraf@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 347/496] lan78xx: Connect phy early
-Date: Mon, 28 May 2018 12:02:12 +0200
-Message-Id: <20180528100334.426485423@linuxfoundation.org>
+Subject: [PATCH 4.14 342/496] ocfs2/dlm: dont handle migrate lockres if already in shutdown
+Date: Mon, 28 May 2018 12:02:07 +0200
+Message-Id: <20180528100334.229104524@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,172 +34,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Graf <agraf@suse.de>
+From: Jun Piao <piaojun@huawei.com>
 
-[ Upstream commit 92571a1aae40d291158d16e7142637908220f470 ]
+[ Upstream commit bb34f24c7d2c98d0c81838a7700e6068325b17a0 ]
 
-When using wicked with a lan78xx device attached to the system, we
-end up with ethtool commands issued on the device before an ifup
-got issued. That lead to the following crash:
+We should not handle migrate lockres if we are already in
+'DLM_CTXT_IN_SHUTDOWN', as that will cause lockres remains after leaving
+dlm domain.  At last other nodes will get stuck into infinite loop when
+requsting lock from us.
 
-    Unable to handle kernel NULL pointer dereference at virtual address 0000039c
-    pgd = ffff800035b30000
-    [0000039c] *pgd=0000000000000000
-    Internal error: Oops: 96000004 [#1] SMP
-    Modules linked in: [...]
-    Supported: Yes
-    CPU: 3 PID: 638 Comm: wickedd Tainted: G            E      4.12.14-0-default #1
-    Hardware name: raspberrypi rpi/rpi, BIOS 2018.03-rc2 02/21/2018
-    task: ffff800035e74180 task.stack: ffff800036718000
-    PC is at phy_ethtool_ksettings_get+0x20/0x98
-    LR is at lan78xx_get_link_ksettings+0x44/0x60 [lan78xx]
-    pc : [<ffff0000086f7f30>] lr : [<ffff000000dcca84>] pstate: 20000005
-    sp : ffff80003671bb20
-    x29: ffff80003671bb20 x28: ffff800035e74180
-    x27: ffff000008912000 x26: 000000000000001d
-    x25: 0000000000000124 x24: ffff000008f74d00
-    x23: 0000004000114809 x22: 0000000000000000
-    x21: ffff80003671bbd0 x20: 0000000000000000
-    x19: ffff80003671bbd0 x18: 000000000000040d
-    x17: 0000000000000001 x16: 0000000000000000
-    x15: 0000000000000000 x14: ffffffffffffffff
-    x13: 0000000000000000 x12: 0000000000000020
-    x11: 0101010101010101 x10: fefefefefefefeff
-    x9 : 7f7f7f7f7f7f7f7f x8 : fefefeff31677364
-    x7 : 0000000080808080 x6 : ffff80003671bc9c
-    x5 : ffff80003671b9f8 x4 : ffff80002c296190
-    x3 : 0000000000000000 x2 : 0000000000000000
-    x1 : ffff80003671bbd0 x0 : ffff80003671bc00
-    Process wickedd (pid: 638, stack limit = 0xffff800036718000)
-    Call trace:
-    Exception stack(0xffff80003671b9e0 to 0xffff80003671bb20)
-    b9e0: ffff80003671bc00 ffff80003671bbd0 0000000000000000 0000000000000000
-    ba00: ffff80002c296190 ffff80003671b9f8 ffff80003671bc9c 0000000080808080
-    ba20: fefefeff31677364 7f7f7f7f7f7f7f7f fefefefefefefeff 0101010101010101
-    ba40: 0000000000000020 0000000000000000 ffffffffffffffff 0000000000000000
-    ba60: 0000000000000000 0000000000000001 000000000000040d ffff80003671bbd0
-    ba80: 0000000000000000 ffff80003671bbd0 0000000000000000 0000004000114809
-    baa0: ffff000008f74d00 0000000000000124 000000000000001d ffff000008912000
-    bac0: ffff800035e74180 ffff80003671bb20 ffff000000dcca84 ffff80003671bb20
-    bae0: ffff0000086f7f30 0000000020000005 ffff80002c296000 ffff800035223900
-    bb00: 0000ffffffffffff 0000000000000000 ffff80003671bb20 ffff0000086f7f30
-    [<ffff0000086f7f30>] phy_ethtool_ksettings_get+0x20/0x98
-    [<ffff000000dcca84>] lan78xx_get_link_ksettings+0x44/0x60 [lan78xx]
-    [<ffff0000087cbc40>] ethtool_get_settings+0x68/0x210
-    [<ffff0000087cc0d4>] dev_ethtool+0x214/0x2180
-    [<ffff0000087e5008>] dev_ioctl+0x400/0x630
-    [<ffff00000879dd00>] sock_do_ioctl+0x70/0x88
-    [<ffff00000879f5f8>] sock_ioctl+0x208/0x368
-    [<ffff0000082cde10>] do_vfs_ioctl+0xb0/0x848
-    [<ffff0000082ce634>] SyS_ioctl+0x8c/0xa8
-    Exception stack(0xffff80003671bec0 to 0xffff80003671c000)
-    bec0: 0000000000000009 0000000000008946 0000fffff4e841d0 0000aa0032687465
-    bee0: 0000aaaafa2319d4 0000fffff4e841d4 0000000032687465 0000000032687465
-    bf00: 000000000000001d 7f7fff7f7f7f7f7f 72606b622e71ff4c 7f7f7f7f7f7f7f7f
-    bf20: 0101010101010101 0000000000000020 ffffffffffffffff 0000ffff7f510c68
-    bf40: 0000ffff7f6a9d18 0000ffff7f44ce30 000000000000040d 0000ffff7f6f98f0
-    bf60: 0000fffff4e842c0 0000000000000001 0000aaaafa2c2e00 0000ffff7f6ab000
-    bf80: 0000fffff4e842c0 0000ffff7f62a000 0000aaaafa2b9f20 0000aaaafa2c2e00
-    bfa0: 0000fffff4e84818 0000fffff4e841a0 0000ffff7f5ad0cc 0000fffff4e841a0
-    bfc0: 0000ffff7f44ce3c 0000000080000000 0000000000000009 000000000000001d
-    bfe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+The problem is caused by concurrency umount between nodes.  Before
+receiveing N1's DLM_BEGIN_EXIT_DOMAIN_MSG, N2 has picked up N1 as the
+migrate target.  So N2 will continue sending lockres to N1 even though
+N1 has left domain.
 
-The culprit is quite simple: The driver tries to access the phy left and right,
-but only actually has a working reference to it when the device is up.
+        N1                             N2 (owner)
+                                       touch file
 
-The fix thus is quite simple too: Get a reference to the phy on probe already
-and keep it even when the device is going down.
+    access the file,
+    and get pr lock
 
-With this patch applied, I can successfully run wicked on my system and bring
-the interface up and down as many times as I want, without getting NULL pointer
-dereferences in between.
+                                       begin leave domain and
+                                       pick up N1 as new owner
 
-Signed-off-by: Alexander Graf <agraf@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+    begin leave domain and
+    migrate all lockres done
+
+                                       begin migrate lockres to N1
+
+    end leave domain, but
+    the lockres left
+    unexpectedly, because
+    migrate task has passed
+
+[piaojun@huawei.com: v3]
+  Link: http://lkml.kernel.org/r/5A9CBD19.5020107@huawei.com
+Link: http://lkml.kernel.org/r/5A99F028.2090902@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |   34 ++++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
+ fs/ocfs2/dlm/dlmdomain.c   |   14 --------------
+ fs/ocfs2/dlm/dlmdomain.h   |   25 ++++++++++++++++++++++++-
+ fs/ocfs2/dlm/dlmrecovery.c |    9 +++++++++
+ 3 files changed, 33 insertions(+), 15 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2083,10 +2083,6 @@ static int lan78xx_phy_init(struct lan78
- 
- 	dev->fc_autoneg = phydev->autoneg;
- 
--	phy_start(phydev);
--
--	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
--
- 	return 0;
- 
- error:
-@@ -2523,9 +2519,9 @@ static int lan78xx_open(struct net_devic
- 	if (ret < 0)
- 		goto done;
- 
--	ret = lan78xx_phy_init(dev);
--	if (ret < 0)
--		goto done;
-+	phy_start(net->phydev);
-+
-+	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
- 
- 	/* for Link Check */
- 	if (dev->urb_intr) {
-@@ -2586,13 +2582,8 @@ static int lan78xx_stop(struct net_devic
- 	if (timer_pending(&dev->stat_monitor))
- 		del_timer_sync(&dev->stat_monitor);
- 
--	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
--	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
--
--	phy_stop(net->phydev);
--	phy_disconnect(net->phydev);
--
--	net->phydev = NULL;
-+	if (net->phydev)
-+		phy_stop(net->phydev);
- 
- 	clear_bit(EVENT_DEV_OPEN, &dev->flags);
- 	netif_stop_queue(net);
-@@ -3507,8 +3498,13 @@ static void lan78xx_disconnect(struct us
- 		return;
- 
- 	udev = interface_to_usbdev(intf);
--
- 	net = dev->net;
-+
-+	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
-+	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
-+
-+	phy_disconnect(net->phydev);
-+
- 	unregister_netdev(net);
- 
- 	cancel_delayed_work_sync(&dev->wq);
-@@ -3668,8 +3664,14 @@ static int lan78xx_probe(struct usb_inte
- 	pm_runtime_set_autosuspend_delay(&udev->dev,
- 					 DEFAULT_AUTOSUSPEND_DELAY);
- 
-+	ret = lan78xx_phy_init(dev);
-+	if (ret < 0)
-+		goto out4;
-+
- 	return 0;
- 
-+out4:
-+	unregister_netdev(netdev);
- out3:
- 	lan78xx_unbind(dev, intf);
- out2:
-@@ -4017,7 +4019,7 @@ static int lan78xx_reset_resume(struct u
- 
- 	lan78xx_reset(dev);
- 
--	lan78xx_phy_init(dev);
-+	phy_start(dev->net->phydev);
- 
- 	return lan78xx_resume(intf);
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -676,20 +676,6 @@ static void dlm_leave_domain(struct dlm_
+ 	spin_unlock(&dlm->spinlock);
  }
+ 
+-int dlm_shutting_down(struct dlm_ctxt *dlm)
+-{
+-	int ret = 0;
+-
+-	spin_lock(&dlm_domain_lock);
+-
+-	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
+-		ret = 1;
+-
+-	spin_unlock(&dlm_domain_lock);
+-
+-	return ret;
+-}
+-
+ void dlm_unregister_domain(struct dlm_ctxt *dlm)
+ {
+ 	int leave = 0;
+--- a/fs/ocfs2/dlm/dlmdomain.h
++++ b/fs/ocfs2/dlm/dlmdomain.h
+@@ -28,7 +28,30 @@
+ extern spinlock_t dlm_domain_lock;
+ extern struct list_head dlm_domains;
+ 
+-int dlm_shutting_down(struct dlm_ctxt *dlm);
++static inline int dlm_joined(struct dlm_ctxt *dlm)
++{
++	int ret = 0;
++
++	spin_lock(&dlm_domain_lock);
++	if (dlm->dlm_state == DLM_CTXT_JOINED)
++		ret = 1;
++	spin_unlock(&dlm_domain_lock);
++
++	return ret;
++}
++
++static inline int dlm_shutting_down(struct dlm_ctxt *dlm)
++{
++	int ret = 0;
++
++	spin_lock(&dlm_domain_lock);
++	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
++		ret = 1;
++	spin_unlock(&dlm_domain_lock);
++
++	return ret;
++}
++
+ void dlm_fire_domain_eviction_callbacks(struct dlm_ctxt *dlm,
+ 					int node_num);
+ 
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -1378,6 +1378,15 @@ int dlm_mig_lockres_handler(struct o2net
+ 	if (!dlm_grab(dlm))
+ 		return -EINVAL;
+ 
++	if (!dlm_joined(dlm)) {
++		mlog(ML_ERROR, "Domain %s not joined! "
++			  "lockres %.*s, master %u\n",
++			  dlm->name, mres->lockname_len,
++			  mres->lockname, mres->master);
++		dlm_put(dlm);
++		return -EINVAL;
++	}
++
+ 	BUG_ON(!(mres->flags & (DLM_MRES_RECOVERY|DLM_MRES_MIGRATION)));
+ 
+ 	real_master = mres->master;
