@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161448AbeE1KcE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:32:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51864 "EHLO mail.kernel.org"
+        id S1161507AbeE1KcU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:32:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161359AbeE1KcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:00 -0400
+        id S1161359AbeE1KcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 130/329] s390/cio: clear timer when terminating driver I/O
-Date: Mon, 28 May 2018 12:00:59 +0200
-Message-Id: <20180528100253.514344215@linuxfoundation.org>
+Subject: [PATCH 4.9 133/329] smsc75xx: fix smsc75xx_set_features()
+Date: Mon, 28 May 2018 12:01:02 +0200
+Message-Id: <20180528100253.742943168@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,29 +31,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 410d5e13e7638bc146321671e223d56495fbf3c7 ]
+[ Upstream commit 88e80c62671ceecdbb77c902731ec95a4bfa62f9 ]
 
-When we terminate driver I/O (because we need to stop using a certain
-channel path) we also need to ensure that a timer (which may have been
-set up using ccw_device_start_timeout) is cleared.
+If an attempt is made to disable RX checksums, USB adapter is changed
+but netdev->features is not, because smsc75xx_set_features() returns a
+non zero value.
 
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+This throws errors from netdev_rx_csum_fault() :
+<devname>: hw csum failure
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Steve Glendinning <steve.glendinning@shawell.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/device_fsm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/usb/smsc75xx.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/s390/cio/device_fsm.c
-+++ b/drivers/s390/cio/device_fsm.c
-@@ -923,6 +923,7 @@ void ccw_device_kill_io(struct ccw_devic
- {
- 	int ret;
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -957,10 +957,11 @@ static int smsc75xx_set_features(struct
+ 	/* it's racing here! */
  
-+	ccw_device_set_timeout(cdev, 0);
- 	cdev->private->iretry = 255;
- 	cdev->private->async_kill_io_rc = -EIO;
- 	ret = ccw_device_cancel_halt_clear(cdev);
+ 	ret = smsc75xx_write_reg(dev, RFE_CTL, pdata->rfe_ctl);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		netdev_warn(dev->net, "Error writing RFE_CTL\n");
+-
+-	return ret;
++		return ret;
++	}
++	return 0;
+ }
+ 
+ static int smsc75xx_wait_ready(struct usbnet *dev, int in_pm)
