@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-99051-1527491153-2-5195222408796514654
+X-Cyrus-Session-Id: sloti22d1t05-99051-1527491092-5-12482626706601685907
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,26 +7,26 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527491153; b=YQVRC4+JCoMJOlrWpIxsAYtS8bgH0cgljf7xNZWVwLj5mAjjx1
-    MgF1/3ibjoTiRlk4hf502ouGAh+q3IMIkdhswKmvaQSp/XIEOXCszf4iN9v09fCJ
-    bo1v5u2u4lSP4jJ4N0fjNQ5cKogzyD+7Sa2fELPj700qsY1vxPRjaNz5N0eOsowT
-    HExH+e30nraYjUSxbjE0wnSHpRvJ6YANRYef3URjhetngnXfDOQIMFLG9/VkjAda
-    CEIXBoaZEOmvHNi9/Vf7tyQuJ11Xc7jBH+PmLGvqeGoqsh9cb9zGYztcRDHHtwby
-    H6qipM/1GvE+dAPK+QNK717XOjEXNDTe14sw==
+    1527491092; b=KmLO+bR5fomcoNiWIE1MM26jxwbXLSK4oFjlil3fnusKWkrZ8m
+    5wEqGKgQeshssBAwh5JtqlkPzOR7hA6LZa2nDI4nLSu13crhel7dvB4Ml+oBM5JB
+    TDd/p7H5JnGfVUFlkFHSUQrdJ05ShyhnFD+YonUv+svlk1qRYGKcZqOiQ/cup65M
+    hbXuB+wb0kQeguv+RSft8G4ufrCn2VhbwEtOqSc27cPoQ/dlKtrNYYQQzq92++U6
+    vq4aBpDnHXRAzudw/MS1yRw9hoNAE1IdJdePnFKxdbhExdjcxeNGeUewstULdwRO
+    of1pnvG45BDkk0UI4TeTuoxiDW6tKpz+i4mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491153;
-    bh=81KD4uRbm7kEYN5Gm2gXnUDPa3rnSfVq/fYCxxU33JE=; b=JlgyV3PsKLkH
-    tQQL1944jLzadwFpp9kIjjXNSBsX5XV8eghrAtqa/QTsM1Y9246m+0WsA9LQrYKM
-    sSs8q2PIpbOQanNtM19L5MJp5w/6nt0p4wKm6dWYb9xVp0fptW7PB5O97mMGuPm7
-    m4ZjgyBuVE4ytg/6pgo0Mw4tjOrA/WifN/MF8bcgQo30XlC1MDs8S9Y25Hv7Mr/S
-    vhn2oWFWNfVkEEv3tMF+qxBz3OtP8N2J+yLedruFaYW207rrwzp9F9GdLT5pTMGJ
-    vGyvBLVdwzgVsJjhakuLA4U8vOARKDmBCzFuU0cPJnml28Xk32cd3GOVdI50zFHt
-    lnN5Yj1Phw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491092;
+    bh=88F6bC8yxno6Q/IUIwdWCfX/9G3O5g/TtlXYibUjLGs=; b=Rv5/nVtuEPaV
+    SCb1G1VGSmEm6Y1gpEKbEddYgszSrrJR3hmwiW5UkpOJc7wPAf4ouycvBV3/bBT/
+    eINKIC/L6/dZE64p7ec5gU+8lCeD5VMC+SDvDSg3QeTaAf4O51nwatQb19PzR9oU
+    JxZZxsgvhRwreTkqkdj2jOSW3XFGJ/ok9xMKScEziMabhWvLQBhL/QCOvtwNPu0A
+    cmN6tvBzGWstwABKye0aDPRyCFkGzcxGUkfIPION7S75R7YW89Gst3KvJafHCDH5
+    INYXXuoQoX4F0o5mLxzkDNYyrZO3fFtziUwTqyUJtKsrsFDLeRJ+yQGwkdNvWMJH
+    VwMmSey/hA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=LxxML6cC header.a=rsa-sha256
+    header.i=@kernel.org header.b=YRhUI4mQ header.a=rsa-sha256
     header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=LxxML6cC header.a=rsa-sha256
+      header.i=@kernel.org header.b=YRhUI4mQ header.a=rsa-sha256
       header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -56,21 +56,21 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHOLIJDz0j36OoKO9LWn+EKpCf6nufk0S2pG7O7/n0rRlecHGPZWBZ5gBWi0h0TmCID5G6u/LXY2UzrI6YrBI0a2kBM/f1/7xL/B2KaXEbw/GGYI5QmC
-    gkXZR/DGvuAun/0KJYj8K37AciIu9bnS5ntLp5Zz4TEvLyKMf2L6AVPENCeGhO6B3tCCg4en3Ad57feetaxc0TCFbXaw3s5R11+odHXCneCFAZwExI0FsAcd
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEp3aU7kE/k1kNNKEuh9tCzcnTFvt9GX59zBOsX2sf82LboT+potxzEhefm9dYfrLXkZCC5J0vqSLbQdpJaHr4h5DwBmbxNBj2vGdyDpvTN64eg4FpCQ
+    sOFDWtg58g21F0wVU4z3xxzEvvT16mkfocLHhSLRf1DaY+1K5ec5hGf1eOWwkTkhVsFURtJ0tjVwdkPrc/rdgIL3YGqBGUWxcILLHvuGUT8v7rZDN+w/oSt+
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=xovFcui46dSD-l7nkwAA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=EMZZQjxb8AIeVhpNRCEA:9 a=Kty-GkjW1yLAjTgr:21
+    a=EufYG1L75R47ABg4:21 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753806AbeE1HFw (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 03:05:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
+        id S1753735AbeE1HEt (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 28 May 2018 03:04:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753645AbeE1HFv (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 28 May 2018 03:05:51 -0400
+        id S1753657AbeE1HEt (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 28 May 2018 03:04:49 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
@@ -98,9 +98,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Rich Felker <dalias@libc.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 12/27] sparc64: kprobes: Remove jprobe implementation
-Date: Mon, 28 May 2018 16:05:25 +0900
-Message-Id: <152749112496.15132.2606036082593246054.stgit@devbox>
+Subject: [PATCH -tip v4 10/27] s390/kprobes: Remove jprobe implementation
+Date: Mon, 28 May 2018 16:04:22 +0900
+Message-Id: <152749106264.15132.4817637767737065092.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
 References: <152749074878.15132.16693721906742461289.stgit@devbox>
@@ -116,81 +116,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Remove arch dependent setjump/longjump functions
 and unused fields in kprobe_ctlblk for jprobes
-from arch/sparc.
+from arch/s390.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/sparc/include/asm/kprobes.h |    1 -
- arch/sparc/kernel/kprobes.c      |   47 --------------------------------------
- 2 files changed, 48 deletions(-)
+ arch/s390/include/asm/kprobes.h |    2 -
+ arch/s390/kernel/kprobes.c      |   59 +--------------------------------------
+ 2 files changed, 2 insertions(+), 59 deletions(-)
 
-diff --git a/arch/sparc/include/asm/kprobes.h b/arch/sparc/include/asm/kprobes.h
-index 3704490b4488..bfcaa6326c20 100644
---- a/arch/sparc/include/asm/kprobes.h
-+++ b/arch/sparc/include/asm/kprobes.h
-@@ -44,7 +44,6 @@ struct kprobe_ctlblk {
- 	unsigned long kprobe_status;
- 	unsigned long kprobe_orig_tnpc;
- 	unsigned long kprobe_orig_tstate_pil;
--	struct pt_regs jprobe_saved_regs;
+diff --git a/arch/s390/include/asm/kprobes.h b/arch/s390/include/asm/kprobes.h
+index 13de80cf741c..b106aa29bf55 100644
+--- a/arch/s390/include/asm/kprobes.h
++++ b/arch/s390/include/asm/kprobes.h
+@@ -68,8 +68,6 @@ struct kprobe_ctlblk {
+ 	unsigned long kprobe_saved_imask;
+ 	unsigned long kprobe_saved_ctl[3];
  	struct prev_kprobe prev_kprobe;
+-	struct pt_regs jprobe_saved_regs;
+-	kprobe_opcode_t jprobes_stack[MAX_STACK_SIZE];
  };
  
-diff --git a/arch/sparc/kernel/kprobes.c b/arch/sparc/kernel/kprobes.c
-index ab4ba4347941..f555711da8f1 100644
---- a/arch/sparc/kernel/kprobes.c
-+++ b/arch/sparc/kernel/kprobes.c
-@@ -441,53 +441,6 @@ asmlinkage void __kprobes kprobe_trap(unsigned long trap_level,
- 	exception_exit(prev_state);
+ void arch_remove_kprobe(struct kprobe *p);
+diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
+index 60f60afa645c..0967de19f53d 100644
+--- a/arch/s390/kernel/kprobes.c
++++ b/arch/s390/kernel/kprobes.c
+@@ -321,9 +321,8 @@ static int kprobe_handler(struct pt_regs *regs)
+ 			 * If we have no pre-handler or it returned 0, we
+ 			 * continue with single stepping. If we have a
+ 			 * pre-handler and it returned non-zero, it prepped
+-			 * for calling the break_handler below on re-entry
+-			 * for jprobe processing, so get out doing nothing
+-			 * more here.
++			 * for changing execution path, so get out doing
++			 * nothing more here.
+ 			 */
+ 			push_kprobe(kcb, p);
+ 			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
+@@ -661,60 +660,6 @@ int kprobe_exceptions_notify(struct notifier_block *self,
  }
+ NOKPROBE_SYMBOL(kprobe_exceptions_notify);
  
--/* Jprobes support.  */
--int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
+-int setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
 -{
 -	struct jprobe *jp = container_of(p, struct jprobe, kp);
 -	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-	unsigned long stack;
 -
--	memcpy(&(kcb->jprobe_saved_regs), regs, sizeof(*regs));
+-	memcpy(&kcb->jprobe_saved_regs, regs, sizeof(struct pt_regs));
 -
--	regs->tpc  = (unsigned long) jp->entry;
--	regs->tnpc = ((unsigned long) jp->entry) + 0x4UL;
--	regs->tstate |= TSTATE_PIL;
+-	/* setup return addr to the jprobe handler routine */
+-	regs->psw.addr = (unsigned long) jp->entry;
+-	regs->psw.mask &= ~(PSW_MASK_IO | PSW_MASK_EXT);
 -
+-	/* r15 is the stack pointer */
+-	stack = (unsigned long) regs->gprs[15];
+-
+-	memcpy(kcb->jprobes_stack, (void *) stack, MIN_STACK_SIZE(stack));
+-
+-	/*
+-	 * jprobes use jprobe_return() which skips the normal return
+-	 * path of the function, and this messes up the accounting of the
+-	 * function graph tracer to get messed up.
+-	 *
+-	 * Pause function graph tracing while performing the jprobe function.
+-	 */
+-	pause_graph_tracing();
 -	return 1;
 -}
+-NOKPROBE_SYMBOL(setjmp_pre_handler);
 -
--void __kprobes jprobe_return(void)
+-void jprobe_return(void)
+-{
+-	asm volatile(".word 0x0002");
+-}
+-NOKPROBE_SYMBOL(jprobe_return);
+-
+-int longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
 -{
 -	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--	register unsigned long orig_fp asm("g1");
+-	unsigned long stack;
 -
--	orig_fp = kcb->jprobe_saved_regs.u_regs[UREG_FP];
--	__asm__ __volatile__("\n"
--"1:	cmp		%%sp, %0\n\t"
--	"blu,a,pt	%%xcc, 1b\n\t"
--	" restore\n\t"
--	".globl		jprobe_return_trap_instruction\n"
--"jprobe_return_trap_instruction:\n\t"
--	"ta		0x70"
--	: /* no outputs */
--	: "r" (orig_fp));
+-	/* It's OK to start function graph tracing again */
+-	unpause_graph_tracing();
+-
+-	stack = (unsigned long) kcb->jprobe_saved_regs.gprs[15];
+-
+-	/* Put the regs back */
+-	memcpy(regs, &kcb->jprobe_saved_regs, sizeof(struct pt_regs));
+-	/* put the stack back */
+-	memcpy((void *) stack, kcb->jprobes_stack, MIN_STACK_SIZE(stack));
+-	preempt_enable_no_resched();
+-	return 1;
 -}
+-NOKPROBE_SYMBOL(longjmp_break_handler);
 -
--extern void jprobe_return_trap_instruction(void);
--
--int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
--{
--	u32 *addr = (u32 *) regs->tpc;
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--
--	if (addr == (u32 *) jprobe_return_trap_instruction) {
--		memcpy(regs, &(kcb->jprobe_saved_regs), sizeof(*regs));
--		preempt_enable_no_resched();
--		return 1;
--	}
--	return 0;
--}
--
- /* The value stored in the return address register is actually 2
-  * instructions before where the callee will return to.
-  * Sequences usually look something like this
+ static struct kprobe trampoline = {
+ 	.addr = (kprobe_opcode_t *) &kretprobe_trampoline,
+ 	.pre_handler = trampoline_probe_handler
