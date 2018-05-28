@@ -1,144 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754107AbeE1IpU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:45:20 -0400
-Received: from anor.bigon.be ([91.121.173.99]:45705 "EHLO anor.bigon.be"
+        id S933292AbeE1IqK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:46:10 -0400
+Received: from canardo.mork.no ([148.122.252.1]:52627 "EHLO canardo.mork.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754029AbeE1IpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:45:18 -0400
-Subject: Re: [PATCH] tpm_tis: verify locality released before returning from
- release_locality
-From: Laurent Bigonville <bigon@debian.org>
-To: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-References: <20180505195453.10431-1-jsnitsel@redhat.com>
- <20180505200315.x7jt33j7psizmfyi@cantor>
- <bcac4481-108a-4598-6524-041879be7c06@debian.org>
-Message-ID: <06d7794e-125b-85da-72af-c386d999341c@debian.org>
-Date: Mon, 28 May 2018 10:44:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932106AbeE1IqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:46:05 -0400
+From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To: Josh Hill <josh@joshuajhill.com>
+Cc: joshuajhill@gmail.com, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: qmi_wwan: Add Netgear Aircard 779S
+Organization: m
+References: <1527466241-28446-1-git-send-email-josh@joshuajhill.com>
+Date: Mon, 28 May 2018 10:45:47 +0200
+In-Reply-To: <1527466241-28446-1-git-send-email-josh@joshuajhill.com> (Josh
+        Hill's message of "Sun, 27 May 2018 20:10:41 -0400")
+Message-ID: <87r2lwmamc.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <bcac4481-108a-4598-6524-041879be7c06@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4S8kt6S003502
 
-Hello,
+Josh Hill <josh@joshuajhill.com> writes:
 
-Top posting, sorry.
-
-I don't know if I did it well to include the "Tested-by" tag because I 
-don't see that the patch has landed in linus branch already.
-
-And as far as I understand, this will not be in the upcoming 4.17 
-release as we are already late in the cycle?
-
-Kind regards,
-
-Laurent Bigonville
-
-
-Le 11/05/18 à 21:02, Laurent Bigonville a écrit :
-> Le 05/05/18 à 22:03, Jerry Snitselaar a écrit :
->> On Sat May 05 18, Jerry Snitselaar wrote:
->>> For certain tpm chips releasing locality can take long enough that a
->>> subsequent call to request_locality will see the locality as being
->>> active when the access register is read in check_locality. So check
->>> that the locality has been released before returning from
->>> release_locality.
->>>
->>> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>> Cc: Peter Huewe <peterhuewe@gmx.de>
->>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
->>> Reported-by: Laurent Bigonville <bigon@debian.org>
->>> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Tested-by: Laurent Bigonville <bigon@debian.org>
->>> ---
->>> drivers/char/tpm/tpm_tis_core.c | 47 
->>> ++++++++++++++++++++++++++++++++++++++++-
->>> 1 file changed, 46 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/char/tpm/tpm_tis_core.c 
->>> b/drivers/char/tpm/tpm_tis_core.c
->>> index 5a1f47b43947..d547cd309dbd 100644
->>> --- a/drivers/char/tpm/tpm_tis_core.c
->>> +++ b/drivers/char/tpm/tpm_tis_core.c
->>> @@ -143,13 +143,58 @@ static bool check_locality(struct tpm_chip 
->>> *chip, int l)
->>>     return false;
->>> }
->>>
->>> +static bool locality_inactive(struct tpm_chip *chip, int l)
->>> +{
->>> +    struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->>> +    int rc;
->>> +    u8 access;
->>> +
->>> +    rc = tpm_tis_read8(priv, TPM_ACCESS(l), &access);
->>> +    if (rc < 0)
->>> +        return false;
->>> +
->>> +    if ((access & (TPM_ACCESS_VALID | TPM_ACCESS_ACTIVE_LOCALITY))
->>> +        == TPM_ACCESS_VALID)
->>> +        return true;
->>> +
->>> +    return false;
->>> +}
->>> +
->>> static int release_locality(struct tpm_chip *chip, int l)
->>> {
->>>     struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
->>> +    unsigned long stop, timeout;
->>> +    long rc;
->>>
->>>     tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
->>>
->>> -    return 0;
->>> +    stop = jiffies + chip->timeout_a;
->>> +
->>> +    if (chip->flags & TPM_CHIP_FLAG_IRQ) {
->>> +again:
->>> +        timeout = stop - jiffies;
->>> +        if ((long)timeout <= 0)
->>> +            return -1;
->>> +
->>> +        rc = wait_event_interruptible_timeout(priv->int_queue,
->>> +                              (locality_inactive(chip, l)),
->>> +                              timeout);
->>> +
->>> +        if (rc > 0)
->>> +            return 0;
->>> +
->>> +        if (rc == -ERESTARTSYS && freezing(current)) {
->>> +            clear_thread_flag(TIF_SIGPENDING);
->>> +            goto again;
->>> +        }
->>> +    } else {
->>> +        do {
->>> +            if (locality_inactive(chip, l))
->>> +                return 0;
->>> +            tpm_msleep(TPM_TIMEOUT);
->>> +        } while (time_before(jiffies, stop));
->>> +    }
->>> +    return -1;
->>> }
->>>
->>> static int request_locality(struct tpm_chip *chip, int l)
->>> -- 
->>> 2.15.0
->>>
->>
->> Laurent,
->>
->> Can you try this patch with your system since it is the one
->> that has exhibited the problem so far. I've tested on a
->> tpm2.0 and tpm1.2 system here.
->>
->> Regards,
->> Jerry
+> Add support for Netgear Aircard 779S
 >
+> Signed-off-by: Josh Hill <josh@joshuajhill.com>
+
+Acked-by: Bjørn Mork <bjorn@mork.no>
+
+Please queue this for stable too.  Thanks.
+
+
+Bjørn
