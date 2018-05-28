@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425016AbeE1M6c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:58:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43020 "EHLO mail.kernel.org"
+        id S1164314AbeE1M61 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:58:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164248AbeE1KyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:06 -0400
+        id S1164019AbeE1KyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Ben Skeggs <skeggsb@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 251/496] drm/imx: move arming of the vblank event to atomic_flush
-Date: Mon, 28 May 2018 12:00:36 +0200
-Message-Id: <20180528100330.459553191@linuxfoundation.org>
+Subject: [PATCH 4.14 252/496] drm/nouveau/bl: fix backlight regression
+Date: Mon, 28 May 2018 12:00:37 +0200
+Message-Id: <20180528100330.510973807@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,46 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Karol Herbst <kherbst@redhat.com>
 
-[ Upstream commit 6a055b92de15af987b4027826d43aa103c65a3c4 ]
+[ Upstream commit 9e75dc61eaa9acd1bff83c3b814ac2af6dc1f64c ]
 
-Right now the vblank event completion is racing with the atomic update,
-which is especially bad when the PRE is in use, as one of the hardware
-issue workaround might extend the atomic commit for quite some time.
-
-If the vblank IRQ happens to trigger during that time, we will prematurely
-signal the atomic commit completion to userspace, which causes tearing
-when userspace re-uses a framebuffer we haven't managed to flip away from
-yet.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Fixes: 3c66c87dc9 ("drm/nouveau/disp: remove hw-specific customisation
+of output paths")
+Suggested-by: Ben Skeggs <skeggsb@redhat.com>
+Signed-off-by: Karol Herbst <kherbst@redhat.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/imx/ipuv3-crtc.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/nouveau/nouveau_backlight.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/imx/ipuv3-crtc.c
-+++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
-@@ -225,7 +225,11 @@ static void ipu_crtc_atomic_begin(struct
- 				  struct drm_crtc_state *old_crtc_state)
- {
- 	drm_crtc_vblank_on(crtc);
-+}
+--- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
++++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+@@ -134,7 +134,7 @@ nv50_get_intensity(struct backlight_devi
+ 	struct nouveau_encoder *nv_encoder = bl_get_data(bd);
+ 	struct nouveau_drm *drm = nouveau_drm(nv_encoder->base.base.dev);
+ 	struct nvif_object *device = &drm->client.device.object;
+-	int or = nv_encoder->or;
++	int or = ffs(nv_encoder->dcb->or) - 1;
+ 	u32 div = 1025;
+ 	u32 val;
  
-+static void ipu_crtc_atomic_flush(struct drm_crtc *crtc,
-+				  struct drm_crtc_state *old_crtc_state)
-+{
- 	spin_lock_irq(&crtc->dev->event_lock);
- 	if (crtc->state->event) {
- 		WARN_ON(drm_crtc_vblank_get(crtc));
-@@ -293,6 +297,7 @@ static const struct drm_crtc_helper_func
- 	.mode_set_nofb = ipu_crtc_mode_set_nofb,
- 	.atomic_check = ipu_crtc_atomic_check,
- 	.atomic_begin = ipu_crtc_atomic_begin,
-+	.atomic_flush = ipu_crtc_atomic_flush,
- 	.atomic_disable = ipu_crtc_atomic_disable,
- 	.atomic_enable = ipu_crtc_atomic_enable,
- };
+@@ -149,7 +149,7 @@ nv50_set_intensity(struct backlight_devi
+ 	struct nouveau_encoder *nv_encoder = bl_get_data(bd);
+ 	struct nouveau_drm *drm = nouveau_drm(nv_encoder->base.base.dev);
+ 	struct nvif_object *device = &drm->client.device.object;
+-	int or = nv_encoder->or;
++	int or = ffs(nv_encoder->dcb->or) - 1;
+ 	u32 div = 1025;
+ 	u32 val = (bd->props.brightness * div) / 100;
+ 
+@@ -170,7 +170,7 @@ nva3_get_intensity(struct backlight_devi
+ 	struct nouveau_encoder *nv_encoder = bl_get_data(bd);
+ 	struct nouveau_drm *drm = nouveau_drm(nv_encoder->base.base.dev);
+ 	struct nvif_object *device = &drm->client.device.object;
+-	int or = nv_encoder->or;
++	int or = ffs(nv_encoder->dcb->or) - 1;
+ 	u32 div, val;
+ 
+ 	div  = nvif_rd32(device, NV50_PDISP_SOR_PWM_DIV(or));
+@@ -188,7 +188,7 @@ nva3_set_intensity(struct backlight_devi
+ 	struct nouveau_encoder *nv_encoder = bl_get_data(bd);
+ 	struct nouveau_drm *drm = nouveau_drm(nv_encoder->base.base.dev);
+ 	struct nvif_object *device = &drm->client.device.object;
+-	int or = nv_encoder->or;
++	int or = ffs(nv_encoder->dcb->or) - 1;
+ 	u32 div, val;
+ 
+ 	div = nvif_rd32(device, NV50_PDISP_SOR_PWM_DIV(or));
+@@ -228,7 +228,7 @@ nv50_backlight_init(struct drm_connector
+ 			return -ENODEV;
+ 	}
+ 
+-	if (!nvif_rd32(device, NV50_PDISP_SOR_PWM_CTL(nv_encoder->or)))
++	if (!nvif_rd32(device, NV50_PDISP_SOR_PWM_CTL(ffs(nv_encoder->dcb->or) - 1)))
+ 		return 0;
+ 
+ 	if (drm->client.device.info.chipset <= 0xa0 ||
