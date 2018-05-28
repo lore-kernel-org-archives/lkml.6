@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937844AbeE1M5E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:57:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43370 "EHLO mail.kernel.org"
+        id S939013AbeE1M5Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:57:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164287AbeE1Kyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:31 -0400
+        id S1163964AbeE1Ky0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:54:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 294/496] drm/amdkfd: Fix scratch memory with HWS enabled
-Date: Mon, 28 May 2018 12:01:19 +0200
-Message-Id: <20180528100332.207929301@linuxfoundation.org>
+Subject: [PATCH 4.14 292/496] selftests: ftrace: Add a testcase for string type with kprobe_event
+Date: Mon, 28 May 2018 12:01:17 +0200
+Message-Id: <20180528100332.130348779@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,31 +30,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit c70a36268799cf2f902b5a31e452571fcb96bfe9 ]
+[ Upstream commit 5fbdbed797b6d12d043a5121fdbc8d8b49d10e80 ]
 
-Program sh_hidden_private_base_vmid correctly in the map-process
-PM4 packet.
+Add a testcase for string type with kprobe event.
+This tests good/bad syntax combinations and also
+the traced data is correct in several way.
 
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Link: http://lkml.kernel.org/r/152129038381.31874.9201387794548737554.stgit@devbox
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_packet_manager.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc |   46 ++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_packet_manager.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_packet_manager.c
-@@ -166,8 +166,7 @@ static int pm_create_map_process(struct
- 	packet->sh_mem_ape1_base = qpd->sh_mem_ape1_base;
- 	packet->sh_mem_ape1_limit = qpd->sh_mem_ape1_limit;
- 
--	/* TODO: scratch support */
--	packet->sh_hidden_private_base_vmid = 0;
-+	packet->sh_hidden_private_base_vmid = qpd->sh_hidden_private_base;
- 
- 	packet->gds_addr_lo = lower_32_bits(qpd->gds_context_area);
- 	packet->gds_addr_hi = upper_32_bits(qpd->gds_context_area);
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -0,0 +1,46 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe event string type argument
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++echo 0 > events/enable
++echo > kprobe_events
++
++case `uname -m` in
++x86_64)
++  ARG2=%si
++  OFFS=8
++;;
++i[3456]86)
++  ARG2=%cx
++  OFFS=4
++;;
++aarch64)
++  ARG2=%x1
++  OFFS=8
++;;
++arm*)
++  ARG2=%r1
++  OFFS=4
++;;
++*)
++  echo "Please implement other architecture here"
++  exit_untested
++esac
++
++: "Test get argument (1)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
++
++echo 0 > events/kprobes/testprobe/enable
++: "Test get argument (2)"
++echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test1 test2 >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
++
++echo 0 > events/enable
++echo > kprobe_events
