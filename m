@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938922AbeE1MbO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48014 "EHLO mail.kernel.org"
+        id S1164716AbeE1LAL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164715AbeE1LAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:19 -0400
+        id S1164681AbeE1LAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Puschmann <pp@emlix.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 386/496] arm: dts: socfpga: fix GIC PPI warning
-Date: Mon, 28 May 2018 12:02:51 +0200
-Message-Id: <20180528100336.037368708@linuxfoundation.org>
+Subject: [PATCH 4.14 385/496] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
+Date: Mon, 28 May 2018 12:02:50 +0200
+Message-Id: <20180528100335.999945711@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,29 +32,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Philipp Puschmann <pp@emlix.com>
+From: Jay Vosburgh <jay.vosburgh@canonical.com>
 
-[ Upstream commit 6d97d5aba08b26108f95dc9fb7bbe4d9436c769c ]
+[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
 
-Fixes the warning "GIC: PPI13 is secure or misconfigured" by
-changing the interrupt type from level_low to edge_raising
+The operstate update logic will leave an interface in the
+default UNKNOWN operstate if the interface carrier state never changes
+from the default carrier up state set at creation.  This includes the
+case of an explicit call to netif_carrier_on, as the carrier on to on
+transition has no effect on operstate.
 
-Signed-off-by: Philipp Puschmann <pp@emlix.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+	This affects virtio-net for the case that the virtio peer does
+not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
+updates).  Without this feature, the virtio specification states that
+"the link should be assumed active," so, logically, the operstate should
+be UP instead of UNKNOWN.  This has impact on user space applications
+that use the operstate to make availability decisions for the interface.
+
+	Resolve this by changing the virtio probe logic slightly to call
+netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
+cases, and then the existing call to netif_carrier_on for the "without"
+case will cause an operstate transition.
+
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/socfpga.dtsi |    2 +-
+ drivers/net/virtio_net.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -827,7 +827,7 @@
- 		timer@fffec600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0xfffec600 0x100>;
--			interrupts = <1 13 0xf04>;
-+			interrupts = <1 13 0xf01>;
- 			clocks = <&mpu_periph_clk>;
- 		};
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2655,8 +2655,8 @@ static int virtnet_probe(struct virtio_d
  
+ 	/* Assume link up if device can't report link status,
+ 	   otherwise get link status from config. */
++	netif_carrier_off(dev);
+ 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+-		netif_carrier_off(dev);
+ 		schedule_work(&vi->config_work);
+ 	} else {
+ 		vi->status = VIRTIO_NET_S_LINK_UP;
