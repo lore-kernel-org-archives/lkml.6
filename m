@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938956AbeE1Mmr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:42:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46252 "EHLO mail.kernel.org"
+        id S938845AbeE1MnM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:43:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937939AbeE1K6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:03 -0400
+        id S937899AbeE1K56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:57:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlo Pisani <carlojpisani@gmail.com>,
-        Kyle McMartin <kyle@mcmartin.ca>,
-        Grant Grundler <grantgrundler@gmail.com>, Helge Deller <deller@gmx.de>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 369/496] parisc/pci: Switch LBA PCI bus from Hard Fail to Soft Fail mode
-Date: Mon, 28 May 2018 12:02:34 +0200
-Message-Id: <20180528100335.363936816@linuxfoundation.org>
+Subject: [PATCH 4.14 350/496] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
+Date: Mon, 28 May 2018 12:02:15 +0200
+Message-Id: <20180528100334.559261349@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,60 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit b845f66f78bf42a4ce98e5cfe0e94fab41dd0742 ]
+[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
 
-Carlo Pisani noticed that his C3600 workstation behaved unstable during heavy
-I/O on the PCI bus with a VIA VT6421 IDE/SATA PCI card.
+bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
+32-bit word without using proper accessors, fix this, and because a
+length cannot be negative, use unsigned int while at it.
 
-To avoid such instability, this patch switches the LBA PCI bus from Hard Fail
-mode into Soft Fail mode. In this mode the bus will return -1UL for timed out
-MMIO transactions, which is exactly how the x86 (and most other architectures)
-PCI busses behave.
-
-This patch is based on a proposal by Grant Grundler and Kyle McMartin 10
-years ago:
-https://www.spinics.net/lists/linux-parisc/msg01027.html
-
-Cc: Carlo Pisani <carlojpisani@gmail.com>
-Cc: Kyle McMartin <kyle@mcmartin.ca>
-Reviewed-by: Grant Grundler <grantgrundler@gmail.com>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/parisc/lba_pci.c |   20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/parisc/lba_pci.c
-+++ b/drivers/parisc/lba_pci.c
-@@ -1403,9 +1403,27 @@ lba_hw_init(struct lba_device *d)
- 		WRITE_REG32(stat, d->hba.base_addr + LBA_ERROR_CONFIG);
- 	}
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -532,7 +532,8 @@ static void bgmac_dma_tx_ring_free(struc
+ 	int i;
  
--	/* Set HF mode as the default (vs. -1 mode). */
-+
-+	/*
-+	 * Hard Fail vs. Soft Fail on PCI "Master Abort".
-+	 *
-+	 * "Master Abort" means the MMIO transaction timed out - usually due to
-+	 * the device not responding to an MMIO read. We would like HF to be
-+	 * enabled to find driver problems, though it means the system will
-+	 * crash with a HPMC.
-+	 *
-+	 * In SoftFail mode "~0L" is returned as a result of a timeout on the
-+	 * pci bus. This is like how PCI busses on x86 and most other
-+	 * architectures behave.  In order to increase compatibility with
-+	 * existing (x86) PCI hardware and existing Linux drivers we enable
-+	 * Soft Faul mode on PA-RISC now too.
-+	 */
-         stat = READ_REG32(d->hba.base_addr + LBA_STAT_CTL);
-+#if defined(ENABLE_HARDFAIL)
- 	WRITE_REG32(stat | HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
-+#else
-+	WRITE_REG32(stat & ~HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
-+#endif
+ 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
+-		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
++		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
++		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
  
- 	/*
- 	** Writing a zero to STAT_CTL.rf (bit 0) will clear reset signal
+ 		slot = &ring->slots[i];
+ 		dev_kfree_skb(slot->skb);
