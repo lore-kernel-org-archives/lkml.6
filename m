@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423762AbeE1LJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:09:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
+        id S1424984AbeE1LwQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:52:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423305AbeE1LJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:09:18 -0400
+        id S1423765AbeE1LJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:09:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 089/272] powerpc/64s: sreset panic if there is no debugger or crash dump handlers
-Date: Mon, 28 May 2018 12:02:02 +0200
-Message-Id: <20180528100248.625273444@linuxfoundation.org>
+Subject: [PATCH 4.16 122/272] net: hns3: fix for the wrong shift problem in hns3_set_txbd_baseinfo
+Date: Mon, 28 May 2018 12:02:35 +0200
+Message-Id: <20180528100251.395397582@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,65 +31,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
-[ Upstream commit d40b6768e45bd9213139b2d91d30c7692b6007b1 ]
+[ Upstream commit 3c8f5c0339515202e8662b6e3ae36a7b16610caf ]
 
-system_reset_exception does most of its own crash handling now,
-invoking the debugger or crash dumps if they are registered. If not,
-then it goes through to die() to print stack traces, and then is
-supposed to panic (according to comments).
+Third parameter of hnae_set_field is shift, But a mask is given. This
+patch fixes it by replacing HNS3_TXD_BDTYPE_M with HNS3_TXD_BDTYPE_S.
 
-However after die() prints oopses, it does its own handling which
-doesn't allow system_reset_exception to panic (e.g., it may just
-kill the current process). This patch causes sreset exceptions to
-return from die after it prints messages but before acting.
-
-This also stops die from invoking the debugger on 0x100 crashes.
-system_reset_exception similarly calls the debugger. It had been
-thought this was harmless (because if the debugger was disabled,
-neither call would fire, and if it was enabled the first call
-would return). However in some cases like xmon 'X' command, the
-debugger returns 0, which currently causes it to be entered
-again (first in system_reset_exception, then in die), which is
-confusing.
-
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/traps.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -208,6 +208,12 @@ static void oops_end(unsigned long flags
- 	}
- 	raw_local_irq_restore(flags);
- 
-+	/*
-+	 * system_reset_excption handles debugger, crash dump, panic, for 0x100
-+	 */
-+	if (TRAP(regs) == 0x100)
-+		return;
-+
- 	crash_fadump(regs, "die oops");
- 
- 	if (kexec_should_crash(current))
-@@ -272,8 +278,13 @@ void die(const char *str, struct pt_regs
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -747,7 +747,7 @@ static void hns3_set_txbd_baseinfo(u16 *
  {
- 	unsigned long flags;
- 
--	if (debugger(regs))
--		return;
-+	/*
-+	 * system_reset_excption handles debugger, crash dump, panic, for 0x100
-+	 */
-+	if (TRAP(regs) != 0x100) {
-+		if (debugger(regs))
-+			return;
-+	}
- 
- 	flags = oops_begin(regs);
- 	if (__die(str, regs, err))
+ 	/* Config bd buffer end */
+ 	hnae_set_field(*bdtp_fe_sc_vld_ra_ri, HNS3_TXD_BDTYPE_M,
+-		       HNS3_TXD_BDTYPE_M, 0);
++		       HNS3_TXD_BDTYPE_S, 0);
+ 	hnae_set_bit(*bdtp_fe_sc_vld_ra_ri, HNS3_TXD_FE_B, !!frag_end);
+ 	hnae_set_bit(*bdtp_fe_sc_vld_ra_ri, HNS3_TXD_VLD_B, 1);
+ 	hnae_set_field(*bdtp_fe_sc_vld_ra_ri, HNS3_TXD_SC_M, HNS3_TXD_SC_S, 0);
