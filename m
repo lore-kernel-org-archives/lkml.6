@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423457AbeE1LHg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54176 "EHLO mail.kernel.org"
+        id S938495AbeE1L75 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:59:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423414AbeE1LHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:23 -0400
+        id S1423414AbeE1LHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>, Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 075/272] ocfs2/dlm: dont handle migrate lockres if already in shutdown
-Date: Mon, 28 May 2018 12:01:48 +0200
-Message-Id: <20180528100247.277820281@linuxfoundation.org>
+Subject: [PATCH 4.16 049/272] Btrfs: fix loss of prealloc extents past i_size after fsync log replay
+Date: Mon, 28 May 2018 12:01:22 +0200
+Message-Id: <20180528100244.974562540@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -34,131 +30,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jun Piao <piaojun@huawei.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit bb34f24c7d2c98d0c81838a7700e6068325b17a0 ]
+[ Upstream commit 471d557afed155b85da237ec46c549f443eeb5de ]
 
-We should not handle migrate lockres if we are already in
-'DLM_CTXT_IN_SHUTDOWN', as that will cause lockres remains after leaving
-dlm domain.  At last other nodes will get stuck into infinite loop when
-requsting lock from us.
+Currently if we allocate extents beyond an inode's i_size (through the
+fallocate system call) and then fsync the file, we log the extents but
+after a power failure we replay them and then immediately drop them.
+This behaviour happens since about 2009, commit c71bf099abdd ("Btrfs:
+Avoid orphan inodes cleanup while replaying log"), because it marks
+the inode as an orphan instead of dropping any extents beyond i_size
+before replaying logged extents, so after the log replay, and while
+the mount operation is still ongoing, we find the inode marked as an
+orphan and then perform a truncation (drop extents beyond the inode's
+i_size). Because the processing of orphan inodes is still done
+right after replaying the log and before the mount operation finishes,
+the intention of that commit does not make any sense (at least as
+of today). However reverting that behaviour is not enough, because
+we can not simply discard all extents beyond i_size and then replay
+logged extents, because we risk dropping extents beyond i_size created
+in past transactions, for example:
 
-The problem is caused by concurrency umount between nodes.  Before
-receiveing N1's DLM_BEGIN_EXIT_DOMAIN_MSG, N2 has picked up N1 as the
-migrate target.  So N2 will continue sending lockres to N1 even though
-N1 has left domain.
+  add prealloc extent beyond i_size
+  fsync - clears the flag BTRFS_INODE_NEEDS_FULL_SYNC from the inode
+  transaction commit
+  add another prealloc extent beyond i_size
+  fsync - triggers the fast fsync path
+  power failure
 
-        N1                             N2 (owner)
-                                       touch file
+In that scenario, we would drop the first extent and then replay the
+second one. To fix this just make sure that all prealloc extents
+beyond i_size are logged, and if we find too many (which is far from
+a common case), fallback to a full transaction commit (like we do when
+logging regular extents in the fast fsync path).
 
-    access the file,
-    and get pr lock
+Trivial reproducer:
 
-                                       begin leave domain and
-                                       pick up N1 as new owner
+ $ mkfs.btrfs -f /dev/sdb
+ $ mount /dev/sdb /mnt
+ $ xfs_io -f -c "pwrite -S 0xab 0 256K" /mnt/foo
+ $ sync
+ $ xfs_io -c "falloc -k 256K 1M" /mnt/foo
+ $ xfs_io -c "fsync" /mnt/foo
+ <power failure>
 
-    begin leave domain and
-    migrate all lockres done
+ # mount to replay log
+ $ mount /dev/sdb /mnt
+ # at this point the file only has one extent, at offset 0, size 256K
 
-                                       begin migrate lockres to N1
+A test case for fstests follows soon, covering multiple scenarios that
+involve adding prealloc extents with previous shrinking truncates and
+without such truncates.
 
-    end leave domain, but
-    the lockres left
-    unexpectedly, because
-    migrate task has passed
-
-[piaojun@huawei.com: v3]
-  Link: http://lkml.kernel.org/r/5A9CBD19.5020107@huawei.com
-Link: http://lkml.kernel.org/r/5A99F028.2090902@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: c71bf099abdd ("Btrfs: Avoid orphan inodes cleanup while replaying log")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/dlm/dlmdomain.c   |   14 --------------
- fs/ocfs2/dlm/dlmdomain.h   |   25 ++++++++++++++++++++++++-
- fs/ocfs2/dlm/dlmrecovery.c |    9 +++++++++
- 3 files changed, 33 insertions(+), 15 deletions(-)
+ fs/btrfs/tree-log.c |   63 +++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 58 insertions(+), 5 deletions(-)
 
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -675,20 +675,6 @@ static void dlm_leave_domain(struct dlm_
- 	spin_unlock(&dlm->spinlock);
- }
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2461,13 +2461,41 @@ static int replay_one_buffer(struct btrf
+ 			if (ret)
+ 				break;
  
--int dlm_shutting_down(struct dlm_ctxt *dlm)
--{
--	int ret = 0;
--
--	spin_lock(&dlm_domain_lock);
--
--	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
--		ret = 1;
--
--	spin_unlock(&dlm_domain_lock);
--
--	return ret;
--}
--
- void dlm_unregister_domain(struct dlm_ctxt *dlm)
- {
- 	int leave = 0;
---- a/fs/ocfs2/dlm/dlmdomain.h
-+++ b/fs/ocfs2/dlm/dlmdomain.h
-@@ -28,7 +28,30 @@
- extern spinlock_t dlm_domain_lock;
- extern struct list_head dlm_domains;
+-			/* for regular files, make sure corresponding
+-			 * orphan item exist. extents past the new EOF
+-			 * will be truncated later by orphan cleanup.
++			/*
++			 * Before replaying extents, truncate the inode to its
++			 * size. We need to do it now and not after log replay
++			 * because before an fsync we can have prealloc extents
++			 * added beyond the inode's i_size. If we did it after,
++			 * through orphan cleanup for example, we would drop
++			 * those prealloc extents just after replaying them.
+ 			 */
+ 			if (S_ISREG(mode)) {
+-				ret = insert_orphan_item(wc->trans, root,
+-							 key.objectid);
++				struct inode *inode;
++				u64 from;
++
++				inode = read_one_inode(root, key.objectid);
++				if (!inode) {
++					ret = -EIO;
++					break;
++				}
++				from = ALIGN(i_size_read(inode),
++					     root->fs_info->sectorsize);
++				ret = btrfs_drop_extents(wc->trans, root, inode,
++							 from, (u64)-1, 1);
++				/*
++				 * If the nlink count is zero here, the iput
++				 * will free the inode.  We bump it to make
++				 * sure it doesn't get freed until the link
++				 * count fixup is done.
++				 */
++				if (!ret) {
++					if (inode->i_nlink == 0)
++						inc_nlink(inode);
++					/* Update link count and nbytes. */
++					ret = btrfs_update_inode(wc->trans,
++								 root, inode);
++				}
++				iput(inode);
+ 				if (ret)
+ 					break;
+ 			}
+@@ -4321,6 +4349,31 @@ static int btrfs_log_changed_extents(str
+ 		num++;
+ 	}
  
--int dlm_shutting_down(struct dlm_ctxt *dlm);
-+static inline int dlm_joined(struct dlm_ctxt *dlm)
-+{
-+	int ret = 0;
++	/*
++	 * Add all prealloc extents beyond the inode's i_size to make sure we
++	 * don't lose them after doing a fast fsync and replaying the log.
++	 */
++	if (inode->flags & BTRFS_INODE_PREALLOC) {
++		struct rb_node *node;
 +
-+	spin_lock(&dlm_domain_lock);
-+	if (dlm->dlm_state == DLM_CTXT_JOINED)
-+		ret = 1;
-+	spin_unlock(&dlm_domain_lock);
-+
-+	return ret;
-+}
-+
-+static inline int dlm_shutting_down(struct dlm_ctxt *dlm)
-+{
-+	int ret = 0;
-+
-+	spin_lock(&dlm_domain_lock);
-+	if (dlm->dlm_state == DLM_CTXT_IN_SHUTDOWN)
-+		ret = 1;
-+	spin_unlock(&dlm_domain_lock);
-+
-+	return ret;
-+}
-+
- void dlm_fire_domain_eviction_callbacks(struct dlm_ctxt *dlm,
- 					int node_num);
- 
---- a/fs/ocfs2/dlm/dlmrecovery.c
-+++ b/fs/ocfs2/dlm/dlmrecovery.c
-@@ -1378,6 +1378,15 @@ int dlm_mig_lockres_handler(struct o2net
- 	if (!dlm_grab(dlm))
- 		return -EINVAL;
- 
-+	if (!dlm_joined(dlm)) {
-+		mlog(ML_ERROR, "Domain %s not joined! "
-+			  "lockres %.*s, master %u\n",
-+			  dlm->name, mres->lockname_len,
-+			  mres->lockname, mres->master);
-+		dlm_put(dlm);
-+		return -EINVAL;
++		for (node = rb_last(&tree->map); node; node = rb_prev(node)) {
++			em = rb_entry(node, struct extent_map, rb_node);
++			if (em->start < i_size_read(&inode->vfs_inode))
++				break;
++			if (!list_empty(&em->list))
++				continue;
++			/* Same as above loop. */
++			if (++num > 32768) {
++				list_del_init(&tree->modified_extents);
++				ret = -EFBIG;
++				goto process;
++			}
++			refcount_inc(&em->refs);
++			set_bit(EXTENT_FLAG_LOGGING, &em->flags);
++			list_add_tail(&em->list, &extents);
++		}
 +	}
 +
- 	BUG_ON(!(mres->flags & (DLM_MRES_RECOVERY|DLM_MRES_MIGRATION)));
- 
- 	real_master = mres->master;
+ 	list_sort(NULL, &extents, extent_cmp);
+ 	btrfs_get_logged_extents(inode, logged_list, logged_start, logged_end);
+ 	/*
