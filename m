@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939723AbeE1QLv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:11:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33518 "EHLO mail.kernel.org"
+        id S939753AbeE1QMW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:12:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936495AbeE1KNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:41 -0400
+        id S936557AbeE1KNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 180/185] netlabel: If PF_INET6, check sk_buff ip header version
-Date: Mon, 28 May 2018 12:03:41 +0200
-Message-Id: <20180528100116.144929819@linuxfoundation.org>
+Subject: [PATCH 3.18 144/185] ACPICA: Events: add a return on failure from acpi_hw_register_read
+Date: Mon, 28 May 2018 12:03:05 +0200
+Message-Id: <20180528100108.141099825@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,39 +30,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Haines <richard_c_haines@btinternet.com>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-[ Upstream commit 213d7f94775322ba44e0bbb55ec6946e9de88cea ]
+[ Upstream commit b4c0de312613ca676db5bd7e696a44b56795612a ]
 
-When resolving a fallback label, check the sk_buff version as it
-is possible (e.g. SCTP) to have family = PF_INET6 while
-receiving ip_hdr(skb)->version = 4.
+This ensures that acpi_ev_fixed_event_detect() does not use fixed_status
+and and fixed_enable as uninitialized variables.
 
-Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlabel/netlabel_unlabeled.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/acpi/acpica/evevent.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -1472,6 +1472,16 @@ int netlbl_unlabel_getattr(const struct
- 		iface = rcu_dereference(netlbl_unlhsh_def);
- 	if (iface == NULL || !iface->valid)
- 		goto unlabel_getattr_nolabel;
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+	/* When resolving a fallback label, check the sk_buff version as
-+	 * it is possible (e.g. SCTP) to have family = PF_INET6 while
-+	 * receiving ip_hdr(skb)->version = 4.
-+	 */
-+	if (family == PF_INET6 && ip_hdr(skb)->version == 4)
-+		family = PF_INET;
-+#endif /* IPv6 */
-+
- 	switch (family) {
- 	case PF_INET: {
- 		struct iphdr *hdr4;
+--- a/drivers/acpi/acpica/evevent.c
++++ b/drivers/acpi/acpica/evevent.c
+@@ -204,6 +204,7 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	u32 fixed_status;
+ 	u32 fixed_enable;
+ 	u32 i;
++	acpi_status status;
+ 
+ 	ACPI_FUNCTION_NAME(ev_fixed_event_detect);
+ 
+@@ -211,8 +212,12 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	 * Read the fixed feature status and enable registers, as all the cases
+ 	 * depend on their values. Ignore errors here.
+ 	 */
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
++	status |=
++	    acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	if (ACPI_FAILURE(status)) {
++		return (int_status);
++	}
+ 
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INTERRUPTS,
+ 			  "Fixed Event Block: Enable %08X Status %08X\n",
