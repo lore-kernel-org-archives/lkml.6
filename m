@@ -1,122 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933607AbeE1QHm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965697AbeE1KOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:21 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.4 001/268] MIPS: ptrace: Expose FIR register through FP regset
-Date: Mon, 28 May 2018 11:59:35 +0200
-Message-Id: <20180528100202.174811317@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S933670AbeE1QH7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:07:59 -0400
+Received: from ns.lynxeye.de ([87.118.118.114]:54858 "EHLO lynxeye.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932476AbeE1QHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:07:54 -0400
+Message-ID: <040f1774efe7430a3802ac48f1980122ba5b1128.camel@lynxeye.de>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+From: Lucas Stach <dev@lynxeye.de>
+To: Stefan Agner <stefan@agner.ch>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, miquel.raynal@bootlin.com,
+        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Date: Mon, 28 May 2018 17:58:11 +0200
+In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
+References: <20180527215442.14760-5-stefan@agner.ch>
+         <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+         <5665b799f763daa82dced238fb494863@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Am Montag, den 28.05.2018, 17:53 +0200 schrieb Stefan Agner:
+> On 28.05.2018 09:55, Peter De Schrijver wrote:
+> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+> > > From: Lucas Stach <dev@lynxeye.de>
+> > > 
+> > > Set up the NAND Flash controller clock to run at 150MHz
+> > > instead of the rate set by the bootloader. This is a
+> > > conservative rate which also yields good performance.
+> > > 
+> > > Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > > ---
+> > >  drivers/clk/tegra/clk-tegra20.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> > > index 0ee56dd04cec..dff8c425cd28 100644
+> > > --- a/drivers/clk/tegra/clk-tegra20.c
+> > > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > > @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+> > >  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > >  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > >  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+> > > +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+> > >  	/* must be the last entry */
+> > >  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> > >  };
+> > > --
+> > > 2.17.0
+> > > 
+> > 
+> > Maybe better to specify this in the Tegra20 dtsi? See 
+> > "Assigned clock parents and rates" in
+> > Documentation/devicetree/bindings/clock/clock-bindings.txt
+> 
+> assigned-clocks indeed works just fine for this case. Thanks for
+> bringing this up, will drop this patch and add the device tree
+> properties in v3.
+> 
+> Hm, interesting that none of the Tegra device tree make use of the
+> feature so far. I guess there would be other cases where this would be
+> useful as well (the one just above, VDE?).
 
-------------------
+Most of the Tegra clock init stuff (including this patch) was written
+before we had assigned-clocks as some common DT facility. But fully
+agree on dropping this patch.
 
-From: Maciej W. Rozycki <macro@mips.com>
-
-commit 71e909c0cdad28a1df1fa14442929e68615dee45 upstream.
-
-Correct commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-and expose the FIR register using the unused 4 bytes at the end of the
-NT_PRFPREG regset.  Without that register included clients cannot use
-the PTRACE_GETREGSET request to retrieve the complete FPU register set
-and have to resort to one of the older interfaces, either PTRACE_PEEKUSR
-or PTRACE_GETFPREGS, to retrieve the missing piece of data.  Also the
-register is irreversibly missing from core dumps.
-
-This register is architecturally hardwired and read-only so the write
-path does not matter.  Ignore data supplied on writes then.
-
-Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.13+
-Patchwork: https://patchwork.linux-mips.org/patch/19273/
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kernel/ptrace.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -483,7 +483,7 @@ static int fpr_get_msa(struct task_struc
- /*
-  * Copy the floating-point context to the supplied NT_PRFPREG buffer.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR and FIR registers separately.
-  */
- static int fpr_get(struct task_struct *target,
- 		   const struct user_regset *regset,
-@@ -491,6 +491,7 @@ static int fpr_get(struct task_struct *t
- 		   void *kbuf, void __user *ubuf)
- {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	int err;
- 
- 	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
-@@ -503,6 +504,12 @@ static int fpr_get(struct task_struct *t
- 	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
- 				  &target->thread.fpu.fcr31,
- 				  fcr31_pos, fcr31_pos + sizeof(u32));
-+	if (err)
-+		return err;
-+
-+	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+				  &boot_cpu_data.fpu_id,
-+				  fir_pos, fir_pos + sizeof(u32));
- 
- 	return err;
- }
-@@ -551,7 +558,8 @@ static int fpr_set_msa(struct task_struc
- /*
-  * Copy the supplied NT_PRFPREG buffer to the floating-point context.
-  * Choose the appropriate helper for general registers, and then copy
-- * the FCSR register separately.
-+ * the FCSR register separately.  Ignore the incoming FIR register
-+ * contents though, as the register is read-only.
-  *
-  * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
-  * which is supposed to have been guaranteed by the kernel before
-@@ -565,6 +573,7 @@ static int fpr_set(struct task_struct *t
- 		   const void *kbuf, const void __user *ubuf)
- {
- 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
-+	const int fir_pos = fcr31_pos + sizeof(u32);
- 	u32 fcr31;
- 	int err;
- 
-@@ -592,6 +601,11 @@ static int fpr_set(struct task_struct *t
- 		ptrace_setfcr31(target, fcr31);
- 	}
- 
-+	if (count > 0)
-+		err = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
-+						fir_pos,
-+						fir_pos + sizeof(u32));
-+
- 	return err;
- }
- 
+Regards,
+Lucas
