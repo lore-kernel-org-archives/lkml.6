@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940036AbeE1Q0c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:26:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58734 "EHLO mail.kernel.org"
+        id S1425355AbeE1Q0x (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:26:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935073AbeE1KKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:33 -0400
+        id S936487AbeE1KK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Abraham <tabraham@suse.com>,
-        Mark.Landis@Teradata.com, Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 111/185] swap: divide-by-zero when zero length swap file on ssd
-Date: Mon, 28 May 2018 12:02:32 +0200
-Message-Id: <20180528100101.226333546@linuxfoundation.org>
+Subject: [PATCH 3.18 101/185] selftests: ftrace: Add a testcase for probepoint
+Date: Mon, 28 May 2018 12:02:22 +0200
+Message-Id: <20180528100059.743407127@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,52 +30,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tom Abraham <tabraham@suse.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit a06ad633a37c64a0cd4c229fc605cee8725d376e ]
+[ Upstream commit dfa453bc90eca0febff33c8d292a656e53702158 ]
 
-Calling swapon() on a zero length swap file on SSD can lead to a
-divide-by-zero.
+Add a testcase for probe point definition. This tests
+symbol, address and symbol+offset syntax. The offset
+must be positive and smaller than UINT_MAX.
 
-Although creating such files isn't possible with mkswap and they woud be
-considered invalid, it would be better for the swapon code to be more
-robust and handle this condition gracefully (return -EINVAL).
-Especially since the fix is small and straightforward.
+Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
 
-To help with wear leveling on SSD, the swapon syscall calculates a
-random position in the swap file using modulo p->highest_bit, which is
-set to maxpages - 1 in read_swap_header.
-
-If the swap file is zero length, read_swap_header sets maxpages=1 and
-last_page=0, resulting in p->highest_bit=0 and we divide-by-zero when we
-modulo p->highest_bit in swapon syscall.
-
-This can be prevented by having read_swap_header return zero if
-last_page is zero.
-
-Link: http://lkml.kernel.org/r/5AC747C1020000A7001FA82C@prv-mh.provo.novell.com
-Signed-off-by: Thomas Abraham <tabraham@suse.com>
-Reported-by: <Mark.Landis@Teradata.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/swapfile.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc |   43 +++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
 
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2217,6 +2217,10 @@ static unsigned long read_swap_header(st
- 	maxpages = swp_offset(pte_to_swp_entry(
- 			swp_entry_to_pte(swp_entry(0, ~0UL)))) + 1;
- 	last_page = swap_header->info.last_page;
-+	if (!last_page) {
-+		pr_warn("Empty swap-file\n");
-+		return 0;
-+	}
- 	if (last_page > maxpages) {
- 		pr_warn("Truncating oversized swap area, only using %luk out of %luk\n",
- 			maxpages << (PAGE_SHIFT - 10),
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+@@ -0,0 +1,43 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe events - probe points
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++TARGET_FUNC=create_trace_kprobe
++
++dec_addr() { # hexaddr
++  printf "%d" "0x"`echo $1 | tail -c 8`
++}
++
++set_offs() { # prev target next
++  A1=`dec_addr $1`
++  A2=`dec_addr $2`
++  A3=`dec_addr $3`
++  TARGET="0x$2" # an address
++  PREV=`expr $A1 - $A2` # offset to previous symbol
++  NEXT=+`expr $A3 - $A2` # offset to next symbol
++  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
++}
++
++# We have to decode symbol addresses to get correct offsets.
++# If the offset is not an instruction boundary, it cause -EILSEQ.
++set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
++
++UINT_TEST=no
++# printf "%x" -1 returns (unsigned long)-1.
++if [ `printf "%x" -1 | wc -c` != 9 ]; then
++  UINT_TEST=yes
++fi
++
++echo 0 > events/enable
++echo > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
++echo "p:testprobe ${TARGET}" > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
++! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
++if [ "${UINT_TEST}" = yes ]; then
++! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
++fi
++echo > kprobe_events
++clear_trace
