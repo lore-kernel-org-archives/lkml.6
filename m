@@ -1,66 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753920AbeE1Hok (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:44:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56674 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753884AbeE1Hoj (ORCPT
+        id S1753946AbeE1HqK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:46:10 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38333 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753826AbeE1HqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:44:39 -0400
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf docu: Update section on cpu topology
-Date: Mon, 28 May 2018 09:44:33 +0200
-X-Mailer: git-send-email 2.16.3
-X-TM-AS-GCONF: 00
-x-cbid: 18052807-0040-0000-0000-0000045E15CA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052807-0041-0000-0000-00002102803B
-Message-Id: <20180528074433.16652-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805280095
+        Mon, 28 May 2018 03:46:06 -0400
+X-Google-Smtp-Source: ADUXVKIzNUQsHArqgFAO/q/jm7H935NRMw3sg2C9HHzzQEyv57gh14qr04E6uFImqIteFZSzj23LWFbESv33wDt5Ylo=
+MIME-Version: 1.0
+In-Reply-To: <1527261094-10412-1-git-send-email-phil.edworthy@renesas.com>
+References: <1527261094-10412-1-git-send-email-phil.edworthy@renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 May 2018 09:46:04 +0200
+Message-ID: <CACRpkdb4A=oFh6iirtWLVqqf5F2JpZ3Q-Gc7i+tT9EP7Phb+Dg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: dwapb: Fix rework support for 1 interrupt per port
+ A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hoan Tran <hotran@apm.com>, Lee Jones <lee.jones@linaro.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an explanation of each cpu's core and socket
-identifier to the documentation.
+On Fri, May 25, 2018 at 5:11 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- tools/perf/Documentation/perf.data-file-format.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> Commit da069d5d2b814d9887989dcdb29fb0202eac8b38 ("gpio: dwapb: Rework
+> support for 1 interrupt per port A GPIO"), was an incremental patch that
+> was supposed to provide the delta between v5 and v6 patch set for
+> adding support for 1 interupt per port A GPIO. v5 was applied, then some
+> other feedback came afterwards.
+>
+> However, in my haste I managed to drop the changes made to dwapb_port_property
+> struct. This patch includes those missing changes.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index d00f0d51cab8..c57904a526ce 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -153,10 +153,18 @@ struct {
- 	HEADER_CPU_TOPOLOGY = 13,
- 
- String lists defining the core and CPU threads topology.
-+The string lists are followed by a variable length array
-+which contains core_id and socket_id of each cpu.
-+The number of entries can be determined by the size of the
-+section minus the sizes of both string lists.
- 
- struct {
-        struct perf_header_string_list cores; /* Variable length */
-        struct perf_header_string_list threads; /* Variable length */
-+       struct {
-+	      uint32_t core_id;
-+	      uint32_t socket_id;
-+       } cpus[nr]; /* Variable length records */
- };
- 
- Example:
--- 
-2.14.3
+Patch applied!
+
+Yours,
+Linus Walleij
