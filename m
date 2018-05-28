@@ -1,21 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034162AbeE1K0U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:26:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45584 "EHLO mail.kernel.org"
+        id S1034182AbeE1K00 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:26:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034143AbeE1K0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:26:15 -0400
+        id S1034164AbeE1K0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, douly.fnst@cn.fujitsu.com,
+        joro@8bytes.org, prarit@redhat.com, uobergfe@redhat.com,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 254/268] MIPS: Octeon: Fix logging messages with spurious periods after newlines
-Date: Mon, 28 May 2018 12:03:48 +0200
-Message-Id: <20180528100231.896236451@linuxfoundation.org>
+Subject: [PATCH 4.4 256/268] x86/apic: Set up through-local-APIC mode on the boot CPU if noapic specified
+Date: Mon, 28 May 2018 12:03:50 +0200
+Message-Id: <20180528100232.051254717@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,68 +35,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Perches <joe@perches.com>
+From: Baoquan He <bhe@redhat.com>
 
-[ Upstream commit db6775ca6e0353d2618ca7d5e210fc36ad43bbd4 ]
+[ Upstream commit bee3204ec3c49f6f53add9c3962c9012a5c036fa ]
 
-Using a period after a newline causes bad output.
+Currently the kdump kernel becomes very slow if 'noapic' is specified.
+Normal kernel doesn't have this bug.
 
-Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
-Signed-off-by: Joe Perches <joe@perches.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/17886/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Kernel parameter 'noapic' is used to disable IO-APIC in system for
+testing or special purpose. Here the root cause is that in kdump
+kernel LAPIC is disabled since commit:
+
+  522e664644 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+
+In this case we need set up through-local-APIC on boot CPU in
+setup_local_APIC().
+
+In normal kernel the legacy irq mode is enabled by the BIOS. If
+it is virtual wire mode, the local-APIC has been enabled and set as
+through-local-APIC.
+
+Though we fixed the regression introduced by commit 522e664644,
+to further improve robustness set up the through-local-APIC mode
+explicitly, do not rely on the default boot IRQ mode.
+
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: douly.fnst@cn.fujitsu.com
+Cc: joro@8bytes.org
+Cc: prarit@redhat.com
+Cc: uobergfe@redhat.com
+Link: http://lkml.kernel.org/r/20180214054656.3780-7-bhe@redhat.com
+[ Rewrote the changelog. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/cavium-octeon/octeon-irq.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/apic/apic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/cavium-octeon/octeon-irq.c
-+++ b/arch/mips/cavium-octeon/octeon-irq.c
-@@ -2240,7 +2240,7 @@ static int __init octeon_irq_init_cib(st
- 
- 	parent_irq = irq_of_parse_and_map(ciu_node, 0);
- 	if (!parent_irq) {
--		pr_err("ERROR: Couldn't acquire parent_irq for %s\n.",
-+		pr_err("ERROR: Couldn't acquire parent_irq for %s\n",
- 			ciu_node->name);
- 		return -EINVAL;
- 	}
-@@ -2252,7 +2252,7 @@ static int __init octeon_irq_init_cib(st
- 
- 	addr = of_get_address(ciu_node, 0, NULL, NULL);
- 	if (!addr) {
--		pr_err("ERROR: Couldn't acquire reg(0) %s\n.", ciu_node->name);
-+		pr_err("ERROR: Couldn't acquire reg(0) %s\n", ciu_node->name);
- 		return -EINVAL;
- 	}
- 	host_data->raw_reg = (u64)phys_to_virt(
-@@ -2260,7 +2260,7 @@ static int __init octeon_irq_init_cib(st
- 
- 	addr = of_get_address(ciu_node, 1, NULL, NULL);
- 	if (!addr) {
--		pr_err("ERROR: Couldn't acquire reg(1) %s\n.", ciu_node->name);
-+		pr_err("ERROR: Couldn't acquire reg(1) %s\n", ciu_node->name);
- 		return -EINVAL;
- 	}
- 	host_data->en_reg = (u64)phys_to_virt(
-@@ -2268,7 +2268,7 @@ static int __init octeon_irq_init_cib(st
- 
- 	r = of_property_read_u32(ciu_node, "cavium,max-bits", &val);
- 	if (r) {
--		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n.",
-+		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n",
- 			ciu_node->name);
- 		return r;
- 	}
-@@ -2278,7 +2278,7 @@ static int __init octeon_irq_init_cib(st
- 					   &octeon_irq_domain_cib_ops,
- 					   host_data);
- 	if (!cib_domain) {
--		pr_err("ERROR: Couldn't irq_domain_add_linear()\n.");
-+		pr_err("ERROR: Couldn't irq_domain_add_linear()\n");
- 		return -ENOMEM;
- 	}
- 
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1368,7 +1368,7 @@ void setup_local_APIC(void)
+ 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
+ 	 */
+ 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
+-	if (!cpu && (pic_mode || !value)) {
++	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
+ 		value = APIC_DM_EXTINT;
+ 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
+ 	} else {
