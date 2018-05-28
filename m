@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938602AbeE1MFM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:05:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
+        id S938570AbeE1MFu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:05:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423195AbeE1LGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:06 -0400
+        id S1423133AbeE1LFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:05:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corneliu Doban <corneliu.doban@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.16 017/272] mmc: sdhci-iproc: fix 32bit writes for TRANSFER_MODE register
-Date: Mon, 28 May 2018 12:00:50 +0200
-Message-Id: <20180528100241.835633675@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Martitz <kugel@rockbox.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.16 038/272] PM / core: Fix direct_complete handling for devices with no callbacks
+Date: Mon, 28 May 2018 12:01:11 +0200
+Message-Id: <20180528100243.952620533@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,101 +30,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corneliu Doban <corneliu.doban@broadcom.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 5f651b870485ee60f5abbbd85195a6852978894a upstream.
+commit c62ec4610c40bcc44f2d3d5ed1c312737279e2f3 upstream.
 
-When the host controller accepts only 32bit writes, the value of the
-16bit TRANSFER_MODE register, that has the same 32bit address as the
-16bit COMMAND register, needs to be saved and it will be written
-in a 32bit write together with the command as this will trigger the
-host to send the command on the SD interface.
-When sending the tuning command, TRANSFER_MODE is written and then
-sdhci_set_transfer_mode reads it back to clear AUTO_CMD12 bit and
-write it again resulting in wrong value to be written because the
-initial write value was saved in a shadow and the read-back returned
-a wrong value, from the register.
-Fix sdhci_iproc_readw to return the saved value of TRANSFER_MODE
-when a saved value exist.
-Same fix for read of BLOCK_SIZE and BLOCK_COUNT registers, that are
-saved for a different reason, although a scenario that will cause the
-mentioned problem on this registers is not probable.
+Commit 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE
+driver flags) inadvertently prevented the power.direct_complete flag
+from being set for devices without PM callbacks and with disabled
+runtime PM which also prevents power.direct_complete from being set
+for their parents.  That led to problems including a resume crash on
+HP ZBook 14u.
 
-Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
-Signed-off-by: Corneliu Doban <corneliu.doban@broadcom.com>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Cc: stable@vger.kernel.org # v4.1+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Restore the previous behavior by causing power.direct_complete to be
+set for those devices again, but do that in a more direct way to
+avoid overlooking that case in the future.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199693
+Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and SMART_PREPARE driver flags)
+Reported-by: Thomas Martitz <kugel@rockbox.org>
+Tested-by: Thomas Martitz <kugel@rockbox.org>
+Cc: 4.15+ <stable@vger.kernel.org> # 4.15+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-iproc.c |   30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+ drivers/base/power/main.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -33,6 +33,8 @@ struct sdhci_iproc_host {
- 	const struct sdhci_iproc_data *data;
- 	u32 shadow_cmd;
- 	u32 shadow_blk;
-+	bool is_cmd_shadowed;
-+	bool is_blk_shadowed;
- };
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1923,10 +1923,8 @@ static int device_prepare(struct device
  
- #define REG_OFFSET_IN_BITS(reg) ((reg) << 3 & 0x18)
-@@ -48,8 +50,22 @@ static inline u32 sdhci_iproc_readl(stru
+ 	dev->power.wakeup_path = false;
  
- static u16 sdhci_iproc_readw(struct sdhci_host *host, int reg)
- {
--	u32 val = sdhci_iproc_readl(host, (reg & ~3));
--	u16 word = val >> REG_OFFSET_IN_BITS(reg) & 0xffff;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_iproc_host *iproc_host = sdhci_pltfm_priv(pltfm_host);
-+	u32 val;
-+	u16 word;
-+
-+	if ((reg == SDHCI_TRANSFER_MODE) && iproc_host->is_cmd_shadowed) {
-+		/* Get the saved transfer mode */
-+		val = iproc_host->shadow_cmd;
-+	} else if ((reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) &&
-+		   iproc_host->is_blk_shadowed) {
-+		/* Get the saved block info */
-+		val = iproc_host->shadow_blk;
-+	} else {
-+		val = sdhci_iproc_readl(host, (reg & ~3));
-+	}
-+	word = val >> REG_OFFSET_IN_BITS(reg) & 0xffff;
- 	return word;
- }
+-	if (dev->power.no_pm_callbacks) {
+-		ret = 1;	/* Let device go direct_complete */
++	if (dev->power.no_pm_callbacks)
+ 		goto unlock;
+-	}
  
-@@ -105,13 +121,15 @@ static void sdhci_iproc_writew(struct sd
- 
- 	if (reg == SDHCI_COMMAND) {
- 		/* Write the block now as we are issuing a command */
--		if (iproc_host->shadow_blk != 0) {
-+		if (iproc_host->is_blk_shadowed) {
- 			sdhci_iproc_writel(host, iproc_host->shadow_blk,
- 				SDHCI_BLOCK_SIZE);
--			iproc_host->shadow_blk = 0;
-+			iproc_host->is_blk_shadowed = false;
- 		}
- 		oldval = iproc_host->shadow_cmd;
--	} else if (reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) {
-+		iproc_host->is_cmd_shadowed = false;
-+	} else if ((reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) &&
-+		   iproc_host->is_blk_shadowed) {
- 		/* Block size and count are stored in shadow reg */
- 		oldval = iproc_host->shadow_blk;
- 	} else {
-@@ -123,9 +141,11 @@ static void sdhci_iproc_writew(struct sd
- 	if (reg == SDHCI_TRANSFER_MODE) {
- 		/* Save the transfer mode until the command is issued */
- 		iproc_host->shadow_cmd = newval;
-+		iproc_host->is_cmd_shadowed = true;
- 	} else if (reg == SDHCI_BLOCK_SIZE || reg == SDHCI_BLOCK_COUNT) {
- 		/* Save the block info until the command is issued */
- 		iproc_host->shadow_blk = newval;
-+		iproc_host->is_blk_shadowed = true;
- 	} else {
- 		/* Command or other regular 32-bit write */
- 		sdhci_iproc_writel(host, newval, reg & ~3);
+ 	if (dev->pm_domain)
+ 		callback = dev->pm_domain->ops.prepare;
+@@ -1960,7 +1958,8 @@ unlock:
+ 	 */
+ 	spin_lock_irq(&dev->power.lock);
+ 	dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
+-		pm_runtime_suspended(dev) && ret > 0 &&
++		((pm_runtime_suspended(dev) && ret > 0) ||
++		 dev->power.no_pm_callbacks) &&
+ 		!dev_pm_test_driver_flags(dev, DPM_FLAG_NEVER_SKIP);
+ 	spin_unlock_irq(&dev->power.lock);
+ 	return 0;
