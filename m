@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938987AbeE1Muh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:50:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44666 "EHLO mail.kernel.org"
+        id S939016AbeE1MvD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:51:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164480AbeE1K4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:13 -0400
+        id S1164486AbeE1K4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 330/496] powerpc/fscr: Enable interrupts earlier before calling get_user()
-Date: Mon, 28 May 2018 12:01:55 +0200
-Message-Id: <20180528100333.722729839@linuxfoundation.org>
+Subject: [PATCH 4.14 328/496] Force log to disk before reading the AGF during a fstrim
+Date: Mon, 28 May 2018 12:01:53 +0200
+Message-Id: <20180528100333.648031625@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,79 +30,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+From: Carlos Maiolino <cmaiolino@redhat.com>
 
-[ Upstream commit 709b973c844c0b4d115ac3a227a2e5a68722c912 ]
+[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
 
-The function get_user() can sleep while trying to fetch instruction
-from user address space and causes the following warning from the
-scheduler.
+Forcing the log to disk after reading the agf is wrong, we might be
+calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
 
-BUG: sleeping function called from invalid context
+This can cause a deadlock when racing a fstrim with a filesystem
+shutdown.
 
-Though interrupts get enabled back but it happens bit later after
-get_user() is called. This change moves enabling these interrupts
-earlier covering the function get_user(). While at this, lets check
-for kernel mode and crash as this interrupt should not have been
-triggered from the kernel context.
+The deadlock has been identified due a miscalculation bug in device-mapper
+dm-thin, which returns lack of space to its users earlier than the device itself
+really runs out of space, changing the device-mapper volume into an error state.
 
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+The problem happened while filling the filesystem with a single file,
+triggering the bug in device-mapper, consequently causing an IO error
+and shutting down the filesystem.
+
+If such file is removed, and fstrim executed before the XFS finishes the
+shut down process, the fstrim process will end up holding the buffer
+lock, and going to sleep on the cil wait queue.
+
+At this point, the shut down process will try to wake up all the threads
+waiting on the cil wait queue, but for this, it will try to hold the
+same buffer log already held my the fstrim, locking up the filesystem.
+
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/traps.c |   32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ fs/xfs/xfs_discard.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -1379,6 +1379,22 @@ void facility_unavailable_exception(stru
- 		value = mfspr(SPRN_FSCR);
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -50,19 +50,19 @@ xfs_trim_extents(
  
- 	status = value >> 56;
-+	if ((hv || status >= 2) &&
-+	    (status < ARRAY_SIZE(facility_strings)) &&
-+	    facility_strings[status])
-+		facility = facility_strings[status];
-+
-+	/* We should not have taken this interrupt in kernel */
-+	if (!user_mode(regs)) {
-+		pr_emerg("Facility '%s' unavailable (%d) exception in kernel mode at %lx\n",
-+			 facility, status, regs->nip);
-+		die("Unexpected facility unavailable exception", regs, SIGABRT);
-+	}
-+
-+	/* We restore the interrupt state now */
-+	if (!arch_irq_disabled_regs(regs))
-+		local_irq_enable();
-+
- 	if (status == FSCR_DSCR_LG) {
- 		/*
- 		 * User is accessing the DSCR register using the problem
-@@ -1445,25 +1461,11 @@ void facility_unavailable_exception(stru
- 		return;
- 	}
+ 	pag = xfs_perag_get(mp, agno);
  
--	if ((hv || status >= 2) &&
--	    (status < ARRAY_SIZE(facility_strings)) &&
--	    facility_strings[status])
--		facility = facility_strings[status];
+-	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
+-	if (error || !agbp)
+-		goto out_put_perag;
 -
--	/* We restore the interrupt state now */
--	if (!arch_irq_disabled_regs(regs))
--		local_irq_enable();
+-	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
 -
- 	pr_err_ratelimited("%sFacility '%s' unavailable (%d), exception at 0x%lx, MSR=%lx\n",
- 		hv ? "Hypervisor " : "", facility, status, regs->nip, regs->msr);
+ 	/*
+ 	 * Force out the log.  This means any transactions that might have freed
+-	 * space before we took the AGF buffer lock are now on disk, and the
++	 * space before we take the AGF buffer lock are now on disk, and the
+ 	 * volatile disk cache is flushed.
+ 	 */
+ 	xfs_log_force(mp, XFS_LOG_SYNC);
  
- out:
--	if (user_mode(regs)) {
--		_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
--		return;
--	}
--
--	die("Unexpected facility unavailable exception", regs, SIGABRT);
-+	_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
- }
- #endif
- 
++	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
++	if (error || !agbp)
++		goto out_put_perag;
++
++	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
++
+ 	/*
+ 	 * Look up the longest btree in the AGF and start with it.
+ 	 */
