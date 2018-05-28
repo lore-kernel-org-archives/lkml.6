@@ -1,22 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939559AbeE1PFV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:05:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
+        id S939572AbeE1PFw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:05:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033970AbeE1KZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:19 -0400
+        id S1033929AbeE1KZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 248/268] clk: samsung: exynos5260: Fix PLL rates
-Date: Mon, 28 May 2018 12:03:42 +0200
-Message-Id: <20180528100231.390764788@linuxfoundation.org>
+Subject: [PATCH 4.4 218/268] perf/core: Fix perf_output_read_group()
+Date: Mon, 28 May 2018 12:03:12 +0200
+Message-Id: <20180528100226.962117774@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,41 +38,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit cdb68fbd4e7962be742c4f29475220c5bf28d8a5 ]
+[ Upstream commit 9e5b127d6f33468143d90c8a45ca12410e4c3fa7 ]
 
-Rates declared in PLL rate tables should match exactly rates calculated from
-the PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+Mark reported his arm64 perf fuzzer runs sometimes splat like:
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
+  armv8pmu_read_counter+0x1e8/0x2d8
+  armpmu_event_update+0x8c/0x188
+  armpmu_read+0xc/0x18
+  perf_output_read+0x550/0x11e8
+  perf_event_read_event+0x1d0/0x248
+  perf_event_exit_task+0x468/0xbb8
+  do_exit+0x690/0x1310
+  do_group_exit+0xd0/0x2b0
+  get_signal+0x2e8/0x17a8
+  do_signal+0x144/0x4f8
+  do_notify_resume+0x148/0x1e8
+  work_pending+0x8/0x14
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+which asserts that we only call pmu::read() on ACTIVE events.
+
+The above callchain does:
+
+  perf_event_exit_task()
+    perf_event_exit_task_context()
+      task_ctx_sched_out() // INACTIVE
+      perf_event_exit_event()
+        perf_event_set_state(EXIT) // EXIT
+        sync_child_event()
+          perf_event_read_event()
+            perf_output_read()
+              perf_output_read_group()
+                leader->pmu->read()
+
+Which results in doing a pmu::read() on an !ACTIVE event.
+
+I _think_ this is 'new' since we added attr.inherit_stat, which added
+the perf_event_read_event() to the exit path, without that
+perf_event_read_output() would only trigger from samples and for
+@event to trigger a sample, it's leader _must_ be ACTIVE too.
+
+Still, adding this check makes it consistent with the @sub case for
+the siblings.
+
+Reported-and-Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos5260.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/samsung/clk-exynos5260.c
-+++ b/drivers/clk/samsung/clk-exynos5260.c
-@@ -65,7 +65,7 @@ static struct samsung_pll_rate_table pll
- 	PLL_36XX_RATE(480000000, 160, 2, 2, 0),
- 	PLL_36XX_RATE(432000000, 144, 2, 2, 0),
- 	PLL_36XX_RATE(400000000, 200, 3, 2, 0),
--	PLL_36XX_RATE(394073130, 459, 7, 2, 49282),
-+	PLL_36XX_RATE(394073128, 459, 7, 2, 49282),
- 	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
- 	PLL_36XX_RATE(300000000, 100, 2, 2, 0),
- 	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5299,7 +5299,8 @@ static void perf_output_read_group(struc
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
+ 		values[n++] = running;
+ 
+-	if (leader != event)
++	if ((leader != event) &&
++	    (leader->state == PERF_EVENT_STATE_ACTIVE))
+ 		leader->pmu->read(leader);
+ 
+ 	values[n++] = perf_event_count(leader);
