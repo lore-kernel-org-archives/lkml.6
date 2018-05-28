@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425435AbeE1QaK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57936 "EHLO mail.kernel.org"
+        id S940107AbeE1Qaf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:30:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935748AbeE1KJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:09:48 -0400
+        id S935562AbeE1KJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Brandon Carpenter <brandon.carpenter@cypherpath.com>,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Fredrik Noring <noring@nocrew.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 094/185] net: Fix vlan untag for bridge and vlan_dev with reorder_hdr off
-Date: Mon, 28 May 2018 12:02:15 +0200
-Message-Id: <20180528100058.908715810@linuxfoundation.org>
+Subject: [PATCH 3.18 091/185] USB: OHCI: Fix NULL dereference in HCDs using HCD_LOCAL_MEM
+Date: Mon, 28 May 2018 12:02:12 +0200
+Message-Id: <20180528100058.476985278@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,118 +30,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Fredrik Noring <noring@nocrew.org>
 
-[ Upstream commit 4bbb3e0e8239f9079bf1fe20b3c0cb598714ae61 ]
+[ Upstream commit d6c931ea32dc08ac2665bb5f009f9c40ad1bbdb3 ]
 
-When we have a bridge with vlan_filtering on and a vlan device on top of
-it, packets would be corrupted in skb_vlan_untag() called from
-br_dev_xmit().
+Scatter-gather needs to be disabled when using dma_declare_coherent_memory
+and HCD_LOCAL_MEM. Andrea Righi made the equivalent fix for EHCI drivers
+in commit 4307a28eb01284 "USB: EHCI: fix NULL pointer dererence in HCDs
+that use HCD_LOCAL_MEM".
 
-The problem sits in skb_reorder_vlan_header() used in skb_vlan_untag(),
-which makes use of skb->mac_len. In this function mac_len is meant for
-handling rx path with vlan devices with reorder_header disabled, but in
-tx path mac_len is typically 0 and cannot be used, which is the problem
-in this case.
+The following NULL pointer WARN_ON_ONCE triggered with OHCI drivers:
 
-The current code even does not properly handle rx path (skb_vlan_untag()
-called from __netif_receive_skb_core()) with reorder_header off actually.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 49 at drivers/usb/core/hcd.c:1379 hcd_alloc_coherent+0x4c/0xc8
+Modules linked in:
+CPU: 0 PID: 49 Comm: usb-storage Not tainted 4.15.0+ #1014
+Stack : 00000000 00000000 805a78d2 0000003a 81f5c2cc 8053d367 804d77fc 00000031
+        805a3a08 00000563 81ee9400 805a0000 00000000 10058c00 81f61b10 805c0000
+        00000000 00000000 805a0000 00d9038e 00000004 803ee818 00000006 312e3420
+        805c0000 00000000 00000073 81f61958 00000000 00000000 802eb380 804fd538
+        00000009 00000563 81ee9400 805a0000 00000002 80056148 00000000 805a0000
+        ...
+Call Trace:
+[<578af360>] show_stack+0x74/0x104
+[<2f3702c6>] __warn+0x118/0x120
+[<ae93fc9e>] warn_slowpath_null+0x44/0x58
+[<a891a517>] hcd_alloc_coherent+0x4c/0xc8
+[<3578fa36>] usb_hcd_map_urb_for_dma+0x4d8/0x534
+[<110bc94c>] usb_hcd_submit_urb+0x82c/0x834
+[<02eb5baf>] usb_sg_wait+0x14c/0x1a0
+[<ccd09e85>] usb_stor_bulk_transfer_sglist.part.1+0xac/0x124
+[<87a5c34c>] usb_stor_bulk_srb+0x40/0x60
+[<ff1792ac>] usb_stor_Bulk_transport+0x160/0x37c
+[<b9e2709c>] usb_stor_invoke_transport+0x3c/0x500
+[<004754f4>] usb_stor_control_thread+0x258/0x28c
+[<22edf42e>] kthread+0x134/0x13c
+[<a419ffd0>] ret_from_kernel_thread+0x14/0x1c
+---[ end trace bcdb825805eefdcc ]---
 
-In rx path single tag case, it works as follows:
+Signed-off-by: Fredrik Noring <noring@nocrew.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-- Before skb_reorder_vlan_header()
 
- mac_header                                data
-   v                                        v
-   +-------------------+-------------+------+----
-   |        ETH        |    VLAN     | ETH  |
-   |       ADDRS       | TPID | TCI  | TYPE |
-   +-------------------+-------------+------+----
-   <-------- mac_len --------->
-                       <------------->
-                        to be removed
-
-- After skb_reorder_vlan_header()
-
-            mac_header                     data
-                 v                          v
-                 +-------------------+------+----
-                 |        ETH        | ETH  |
-                 |       ADDRS       | TYPE |
-                 +-------------------+------+----
-                 <-------- mac_len --------->
-
-This is ok, but in rx double tag case, it corrupts packets:
-
-- Before skb_reorder_vlan_header()
-
- mac_header                                              data
-   v                                                      v
-   +-------------------+-------------+-------------+------+----
-   |        ETH        |    VLAN     |    VLAN     | ETH  |
-   |       ADDRS       | TPID | TCI  | TPID | TCI  | TYPE |
-   +-------------------+-------------+-------------+------+----
-   <--------------- mac_len ---------------->
-                                     <------------->
-                                    should be removed
-                       <--------------------------->
-                         actually will be removed
-
-- After skb_reorder_vlan_header()
-
-            mac_header                                   data
-                 v                                        v
-                               +-------------------+------+----
-                               |        ETH        | ETH  |
-                               |       ADDRS       | TYPE |
-                               +-------------------+------+----
-                 <--------------- mac_len ---------------->
-
-So, two of vlan tags are both removed while only inner one should be
-removed and mac_header (and mac_len) is broken.
-
-skb_vlan_untag() is meant for removing the vlan header at (skb->data - 2),
-so use skb->data and skb->mac_header to calculate the right offset.
-
-Reported-by: Brandon Carpenter <brandon.carpenter@cypherpath.com>
-Fixes: a6e18ff11170 ("vlan: Fix untag operations of stacked vlans with REORDER_HEADER off")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/if_ether.h |    1 +
- net/core/skbuff.c             |    7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/host/ohci-hcd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/uapi/linux/if_ether.h
-+++ b/include/uapi/linux/if_ether.h
-@@ -29,6 +29,7 @@
-  */
+--- a/drivers/usb/host/ohci-hcd.c
++++ b/drivers/usb/host/ohci-hcd.c
+@@ -443,7 +443,8 @@ static int ohci_init (struct ohci_hcd *o
+ 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
  
- #define ETH_ALEN	6		/* Octets in one ethernet addr	 */
-+#define ETH_TLEN	2		/* Octets in ethernet type field */
- #define ETH_HLEN	14		/* Total octets in header.	 */
- #define ETH_ZLEN	60		/* Min. octets in frame sans FCS */
- #define ETH_DATA_LEN	1500		/* Max. octets in payload	 */
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4129,13 +4129,16 @@ EXPORT_SYMBOL_GPL(skb_gso_transport_segl
+ 	/* Accept arbitrarily long scatter-gather lists */
+-	hcd->self.sg_tablesize = ~0;
++	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
++		hcd->self.sg_tablesize = ~0;
  
- static struct sk_buff *skb_reorder_vlan_header(struct sk_buff *skb)
- {
-+	int mac_len;
-+
- 	if (skb_cow(skb, skb_headroom(skb)) < 0) {
- 		kfree_skb(skb);
- 		return NULL;
- 	}
- 
--	memmove(skb->data - ETH_HLEN, skb->data - skb->mac_len - VLAN_HLEN,
--		2 * ETH_ALEN);
-+	mac_len = skb->data - skb_mac_header(skb);
-+	memmove(skb_mac_header(skb) + VLAN_HLEN, skb_mac_header(skb),
-+		mac_len - VLAN_HLEN - ETH_TLEN);
- 	skb->mac_header += VLAN_HLEN;
- 	return skb;
- }
+ 	if (distrust_firmware)
+ 		ohci->flags |= OHCI_QUIRK_HUB_POWER;
