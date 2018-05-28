@@ -1,70 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940368AbeE1Qjb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:39:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40083 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S940291AbeE1QhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:37:25 -0400
-Message-Id: <1d3fd6a6c35e41d3e25ebe5256adf021369ada7c.1527525305.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/64: Fix build failure with GCC 8.1
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Mon, 28 May 2018 16:37:22 +0000 (UTC)
+        id S940378AbeE1QkG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:40:06 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38954 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934563AbeE1QkB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:40:01 -0400
+X-Google-Smtp-Source: AB8JxZqMNYqkaQLhJ67s9MHnx3kMg2OLjRgBlYpHZZkJPv73ym7UFdBJX98ZuRJKh0NFQWiV7YffnA==
+Date: Mon, 28 May 2018 10:39:49 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Greg Thelen <gthelen@google.com>
+Cc: arnd@arndb.de, Doug Ledford <dledford@redhat.com>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        oleg.drokin@intel.com, andreas.dilger@intel.com,
+        jsimmons@infradead.org, gregkh@linuxfoundation.org,
+        Steve French <sfrench@samba.org>, ericvh@gmail.com,
+        rminnich@sandia.gov, lucho@ionkov.net,
+        "David S. Miller" <davem@davemloft.net>, santosh.shilimkar@oracle.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        bfields@fieldses.org, jlayton@kernel.org,
+        Bart Van Assche <bart.vanassche@wdc.com>, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] IB: Revert "remove redundant INFINIBAND kconfig
+ dependencies"
+Message-ID: <20180528163949.GA17505@ziepe.ca>
+References: <20180525213123.2113748-1-arnd@arndb.de>
+ <CAHH2K0Ysgi30gHPN8EEdDa+PfSFJLo8=6j-aq=SYy=_h6K0kPg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHH2K0Ysgi30gHPN8EEdDa+PfSFJLo8=6j-aq=SYy=_h6K0kPg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  CC      arch/powerpc/kernel/nvram_64.o
-arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
-arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound 12 equals destination size [-Werror=stringop-truncation]
-  strncpy(new_part->header.name, name, 12);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Fri, May 25, 2018 at 05:32:52PM -0700, Greg Thelen wrote:
+> On Fri, May 25, 2018 at 2:32 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> 
+> > Several subsystems depend on INFINIBAND_ADDR_TRANS, which in turn depends
+> > on INFINIBAND. However, when with CONFIG_INIFIBAND=m, this leads to a
+> > link error when another driver using it is built-in. The
+> > INFINIBAND_ADDR_TRANS dependency is insufficient here as this is
+> > a 'bool' symbol that does not force anything to be a module in turn.
+> 
+> > fs/cifs/smbdirect.o: In function `smbd_disconnect_rdma_work':
+> > smbdirect.c:(.text+0x1e4): undefined reference to `rdma_disconnect'
+> > net/9p/trans_rdma.o: In function `rdma_request':
+> > trans_rdma.c:(.text+0x7bc): undefined reference to `rdma_disconnect'
+> > net/9p/trans_rdma.o: In function `rdma_destroy_trans':
+> > trans_rdma.c:(.text+0x830): undefined reference to `ib_destroy_qp'
+> > trans_rdma.c:(.text+0x858): undefined reference to `ib_dealloc_pd'
+> 
+> > Fixes: 9533b292a7ac ("IB: remove redundant INFINIBAND kconfig
+> dependencies")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Acked-by: Greg Thelen <gthelen@google.com>
+> 
+> Sorry for the 9533b292a7ac problem.
+> At this point the in release cycle, I think Arnd's revert is best.
+> 
+> If there is interest, I've put a little thought into an alternative fix:
+> making INFINIBAND_ADDR_TRANS tristate.  But it's nontrivial.
+> So I prefer this simple revert for now.
 
-  CC      arch/powerpc/kernel/trace/ftrace.o
-In function 'make_field',
-    inlined from 'ps3_repository_read_boot_dat_address' at arch/powerpc/platforms/ps3/repository.c:900:9:
-arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output truncated before terminating nul copying 8 bytes from a string of the same length [-Werror=stringop-truncation]
-  strncpy((char *)&n, text, 8);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Is that a normal thing to do?
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/nvram_64.c          | 2 +-
- arch/powerpc/platforms/ps3/repository.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> Doug: do you need anything from me on this?
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index ba681dac7b46..7507448cd904 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 	new_part->index = free_part->index;
- 	new_part->header.signature = sig;
- 	new_part->header.length = size;
--	strncpy(new_part->header.name, name, 12);
-+	strncpy(new_part->header.name, name, sizeof(new_part->header.name) - 1);
- 	new_part->header.checksum = nvram_checksum(&new_part->header);
- 
- 	rc = nvram_write_header(new_part);
-diff --git a/arch/powerpc/platforms/ps3/repository.c b/arch/powerpc/platforms/ps3/repository.c
-index 50dbaf24b1ee..b4d6628eec5e 100644
---- a/arch/powerpc/platforms/ps3/repository.c
-+++ b/arch/powerpc/platforms/ps3/repository.c
-@@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64 index)
- 
- static u64 make_field(const char *text, u64 index)
- {
--	u64 n;
-+	u64 n = 0;
- 
--	strncpy((char *)&n, text, 8);
-+	memcpy((char *)&n, text, min(sizeof(n), strlen(text)));
- 	return n + index;
- }
- 
--- 
-2.13.3
+I can take the revert..
+
+Jason
