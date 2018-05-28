@@ -1,63 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163383AbeE1NeD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:34:03 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:50932 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162641AbeE1NeA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:34:00 -0400
-To: "Vinayak Holikatti <vinholikatti@gmail.com>; \"James E.J. Bottomley\"
-        <jejb@linux.vnet.ibm.com>; \"Martin K. Petersen\""
-        <martin.petersen@oracle.com>
-Subject: [PATCH 4/5] scsi: ufs: Add crypto masks for UFS HC driver
-CC: <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org;Manjunath M Bettegowda
-        <manjumb@synopsys.com>; Prabu Thangamuthu <prabut@synopsys.com>; Tejas
-        Joglekar <joglekar@synopsys.com>; Joao Pinto"
-        <Joao.Pinto@synopsys.com>
-From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
-Message-ID: <ff79e81f-2250-35e8-9c10-ae4e0b2e08ba@synopsys.com>
-Date: Mon, 28 May 2018 14:32:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1163508AbeE1NeV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:34:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937784AbeE1KqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:01 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Qi Hou <qi.hou@windriver.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 068/496] ARM: OMAP2+: timer: fix a kmemleak caused in omap_get_timer_dt
+Date: Mon, 28 May 2018 11:57:33 +0200
+Message-Id: <20180528100322.653465979@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.144.133.104]
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-This patch add necessary crypto mask and command for
-inline encryption support in the UFS Host Controller driver.
+------------------
 
-Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
+From: Qi Hou <qi.hou@windriver.com>
+
+[ Upstream commit db35340c536f1af0108ec9a0b2126a05d358d14a ]
+
+When more than one GP timers are used as kernel system timers and the
+corresponding nodes in device-tree are marked with the same "disabled"
+property, then the "attr" field of the property will be initialized
+more than once as the property being added to sys file system via
+__of_add_property_sysfs().
+
+In __of_add_property_sysfs(), the "name" field of pp->attr.attr is set
+directly to the return value of safe_name(), without taking care of
+whether it's already a valid pointer to a memory block. If it is, its
+old value will always be overwritten by the new one and the memory block
+allocated before will a "ghost", then a kmemleak happened.
+
+That the same "disabled" property being added to different nodes of device
+tree would cause that kind of kmemleak overhead, at least once.
+
+To fix it, allocate the property dynamically, and delete static one.
+
+Signed-off-by: Qi Hou <qi.hou@windriver.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ufs/ufshci.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-omap2/timer.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h
-index bb5d9c7..c003924 100644
---- a/drivers/scsi/ufs/ufshci.h
-+++ b/drivers/scsi/ufs/ufshci.h
-@@ -90,6 +90,7 @@ enum {
- 	MASK_64_ADDRESSING_SUPPORT		= 0x01000000,
- 	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
- 	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
-+	MASK_CRYPTO_SUPPORT                     = 0x10000000,
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -156,12 +156,6 @@ static struct clock_event_device clockev
+ 	.tick_resume		= omap2_gp_timer_shutdown,
  };
  
- #define UFS_MASK(mask, offset)		((mask) << (offset))
-@@ -337,6 +338,7 @@ enum {
- 	UTP_NATIVE_UFS_COMMAND		= 0x10000000,
- 	UTP_DEVICE_MANAGEMENT_FUNCTION	= 0x20000000,
- 	UTP_REQ_DESC_INT_CMD		= 0x01000000,
-+	UTP_REQ_CRYPT_EN_CMD            = 0x00800000, /* Inline Encryption */
- };
+-static struct property device_disabled = {
+-	.name = "status",
+-	.length = sizeof("disabled"),
+-	.value = "disabled",
+-};
+-
+ static const struct of_device_id omap_timer_match[] __initconst = {
+ 	{ .compatible = "ti,omap2420-timer", },
+ 	{ .compatible = "ti,omap3430-timer", },
+@@ -203,8 +197,17 @@ static struct device_node * __init omap_
+ 				  of_get_property(np, "ti,timer-secure", NULL)))
+ 			continue;
  
- /* UTP Transfer Request Data Direction (DD) */
--- 
-2.7.4
+-		if (!of_device_is_compatible(np, "ti,omap-counter32k"))
+-			of_add_property(np, &device_disabled);
++		if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
++			struct property *prop;
++
++			prop = kzalloc(sizeof(*prop), GFP_KERNEL);
++			if (!prop)
++				return NULL;
++			prop->name = "status";
++			prop->value = "disabled";
++			prop->length = strlen(prop->value);
++			of_add_property(np, prop);
++		}
+ 		return np;
+ 	}
+ 
