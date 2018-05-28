@@ -1,76 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162429AbeE1OPa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:15:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162177AbeE1KgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:18 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 182/329] RDMA/qedr: Fix iWARP write and send with immediate
-Date: Mon, 28 May 2018 12:01:51 +0200
-Message-Id: <20180528100257.466939430@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1162476AbeE1OPn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:15:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50314 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162177AbeE1OPk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:15:40 -0400
+Date: Mon, 28 May 2018 15:15:37 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, akpm@linux-foundation.org,
+        oleg@redhat.com
+Subject: Re: [PATCH 5/8] signal: flatten do_send_sig_info()
+Message-ID: <20180528141537.GA30522@ZenIV.linux.org.uk>
+References: <20180528134916.7568-1-christian@brauner.io>
+ <20180528134916.7568-6-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528134916.7568-6-christian@brauner.io>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 03:49:13PM +0200, Christian Brauner wrote:
+> Let's return early when lock_task_sighand() fails and move send_signal()
+> and unlock_task_sighand() out of the if block.
 
-------------------
-
-From: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
-
-[ Upstream commit 551e1c67b4207455375a2e7a285dea1c7e8fc361 ]
-
-iWARP does not support RDMA WRITE or SEND with immediate data.
-Driver should check this before submitting to FW and return an
-immediate error
-
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/hw/qedr/verbs.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -2807,6 +2807,11 @@ int __qedr_post_send(struct ib_qp *ibqp,
- 
- 	switch (wr->opcode) {
- 	case IB_WR_SEND_WITH_IMM:
-+		if (unlikely(rdma_protocol_iwarp(&dev->ibdev, 1))) {
-+			rc = -EINVAL;
-+			*bad_wr = wr;
-+			break;
-+		}
- 		wqe->req_type = RDMA_SQ_REQ_TYPE_SEND_WITH_IMM;
- 		swqe = (struct rdma_sq_send_wqe_1st *)wqe;
- 		swqe->wqe_size = 2;
-@@ -2848,6 +2853,11 @@ int __qedr_post_send(struct ib_qp *ibqp,
- 		break;
- 
- 	case IB_WR_RDMA_WRITE_WITH_IMM:
-+		if (unlikely(rdma_protocol_iwarp(&dev->ibdev, 1))) {
-+			rc = -EINVAL;
-+			*bad_wr = wr;
-+			break;
-+		}
- 		wqe->req_type = RDMA_SQ_REQ_TYPE_RDMA_WR_WITH_IMM;
- 		rwqe = (struct rdma_sq_rdma_wqe_1st *)wqe;
- 
+Why is it an improvement?
