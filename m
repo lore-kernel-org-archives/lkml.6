@@ -1,18 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165469AbeE1Nmq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:42:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
+        id S937606AbeE1Knn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964769AbeE1Knw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:43:52 -0400
+        id S937413AbeE1Kni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:43:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, greg@kroah.com
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 035/496] powerpc/pseries: Support firmware disable of RFI flush
-Date: Mon, 28 May 2018 11:57:00 +0200
-Message-Id: <20180528100321.087770636@linuxfoundation.org>
+        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 057/496] MIPS: generic: Fix machine compatible matching
+Date: Mon, 28 May 2018 11:57:22 +0200
+Message-Id: <20180528100322.195730290@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -28,29 +32,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: James Hogan <jhogan@kernel.org>
 
-commit 582605a429e20ae68fd0b041b2e840af296edd08 upstream.
+[ Upstream commit 9a9ab3078e2744a1a55163cfaec73a5798aae33e ]
 
-Some versions of firmware will have a setting that can be configured
-to disable the RFI flush, add support for it.
+We now have a platform (Ranchu) in the "generic" platform which matches
+based on the FDT compatible string using mips_machine_is_compatible(),
+however that function doesn't stop at a blank struct
+of_device_id::compatible as that is an array in the struct, not a
+pointer to a string.
 
-Fixes: 8989d56878a7 ("powerpc/pseries: Query hypervisor for RFI flush settings")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fix the loop completion to check the first byte of the compatible array
+rather than the address of the compatible array in the struct.
+
+Fixes: eed0eabd12ef ("MIPS: generic: Introduce generic DT-based board support")
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Reviewed-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/18580/
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/setup.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/include/asm/machine.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -482,7 +482,8 @@ static void pseries_setup_rfi_flush(void
- 		if (types == L1D_FLUSH_NONE)
- 			types = L1D_FLUSH_FALLBACK;
+--- a/arch/mips/include/asm/machine.h
++++ b/arch/mips/include/asm/machine.h
+@@ -52,7 +52,7 @@ mips_machine_is_compatible(const struct
+ 	if (!mach->matches)
+ 		return NULL;
  
--		if (!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
-+		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
-+		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
- 			enable = false;
- 	} else {
- 		/* Default to fallback if case hcall is not available */
+-	for (match = mach->matches; match->compatible; match++) {
++	for (match = mach->matches; match->compatible[0]; match++) {
+ 		if (fdt_node_check_compatible(fdt, 0, match->compatible) == 0)
+ 			return match;
+ 	}
