@@ -1,73 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425168AbeE1Pls (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:41:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37570 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968704AbeE1KR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:27 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        Allen Hubbe <Allen.Hubbe@dell.com>, Dave Jiang <dave.jiang@intel.com>,
-        Jon Mason <jdmason@kudzu.us>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 045/268] ntb_transport: Fix bug with max_mw_size parameter
-Date: Mon, 28 May 2018 12:00:19 +0200
-Message-Id: <20180528100207.129185851@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1034695AbeE1PmB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:42:01 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44592 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965409AbeE1Plv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:41:51 -0400
+X-Google-Smtp-Source: ADUXVKIRrqsITqC+Ba6c5djv7RRoOaCaH+DqUYNpElz1xgJLt5thwTo9UatL9fDJXqem4yXVCGqj1g==
+Date: Mon, 28 May 2018 17:41:48 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Roger Quadros <rogerq@ti.com>
+Cc: balbi@kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: dwc3: of_simple: don't call
+ pm_runtime_set_active()
+Message-ID: <20180528152030.GA3261@localhost>
+References: <1527518174-27860-1-git-send-email-rogerq@ti.com>
+ <1527518174-27860-2-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527518174-27860-2-git-send-email-rogerq@ti.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 05:36:14PM +0300, Roger Quadros wrote:
+> Don't call pm_runtime_set_active() as it will prevent the device
+> from being activated in the next pm_runtime_get_sync() call.
+> 
+> Also call pm_runtime_get_sync() before of_platform_populate().
 
-------------------
+This paragraph describes what you do, but not why do it.
 
-From: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>  drivers/usb/dwc3/dwc3-of-simple.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+> index e98d221..2cbb5c0 100644
+> --- a/drivers/usb/dwc3/dwc3-of-simple.c
+> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
+> @@ -121,6 +121,9 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_resetc_assert;
+>  
+> +	pm_runtime_enable(dev);
+> +	pm_runtime_get_sync(dev);
 
-[ Upstream commit cbd27448faff4843ac4b66cc71445a10623ff48d ]
+This breaks runtime pm as you now get a second round of clock enables
+which are never balanced on runtime suspend (the clocks are first
+enabled in dwc3_of_simple_clk_init() above and with your change again in
+dwc3_of_simple_runtime_resume()).
 
-When using the max_mw_size parameter of ntb_transport to limit the size of
-the Memory windows, communication cannot be established and the queues
-freeze.
+On the other hand, we currently return from probe() with a positive RPM
+count so perhaps the RPM callbacks can just be removed altogether (i.e.
+unless some other entity drops that count at some point before
+remove()).
 
-This is because the mw_size that's reported to the peer is correctly
-limited but the size used locally is not. So the MW is initialized
-with a buffer smaller than the window but the TX side is using the
-full window. This means the TX side will be writing to a region of the
-window that points nowhere.
+>  	ret = of_platform_populate(np, NULL, NULL, dev);
+>  	if (ret) {
+>  		for (i = 0; i < simple->num_clocks; i++) {
+> @@ -131,10 +134,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  		goto err_resetc_assert;
+>  	}
+>  
+> -	pm_runtime_set_active(dev);
+> -	pm_runtime_enable(dev);
+> -	pm_runtime_get_sync(dev);
+> -
+>  	return 0;
+>  
+>  err_resetc_assert:
 
-This is easily fixed by applying the same limit to tx_size in
-ntb_transport_init_queue().
+Also note that there's currently a use-after-free in remove(), where
+pm_runtime_put_sync() is called after the clocks have been put.
+Something like the below (untested) patch should fix it.
 
-Fixes: e26a5843f7f5 ("NTB: Split ntb_hw_intel and ntb_transport drivers")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Allen Hubbe <Allen.Hubbe@dell.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Johan
+
+
+>From 35c384c31010c344d403c26fc0a1dde0fd68ef4a Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan@kernel.org>
+Date: Mon, 28 May 2018 17:31:45 +0200
+Subject: [PATCH] usb: dwc3: of-simple: fix use-after-free on remove
+
+The clocks have already been explicitly disabled and put as part of
+remove() so the runtime suspend callback must not be run when balancing
+the runtime PM usage count before returning.
+
+Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/ntb/ntb_transport.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/dwc3/dwc3-of-simple.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/ntb/ntb_transport.c
-+++ b/drivers/ntb/ntb_transport.c
-@@ -955,6 +955,9 @@ static int ntb_transport_init_queue(stru
- 	mw_base = nt->mw_vec[mw_num].phys_addr;
- 	mw_size = nt->mw_vec[mw_num].phys_size;
+diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+index cb2ee96fd3e8..b9c869cd6585 100644
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
  
-+	if (max_mw_size && mw_size > max_mw_size)
-+		mw_size = max_mw_size;
-+
- 	tx_size = (unsigned int)mw_size / num_qps_mw;
- 	qp_offset = tx_size * (qp_num / mw_count);
+ 	reset_control_put(simple->resets);
  
+-	pm_runtime_put_sync(dev);
++	pm_runtime_put_noidle(dev);
+ 	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
+ 
+ 	return 0;
+ }
+-- 
+2.17.0
