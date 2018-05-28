@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940107AbeE1Qaf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:30:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57800 "EHLO mail.kernel.org"
+        id S940113AbeE1Qa7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:30:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935562AbeE1KJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:09:40 -0400
+        id S935487AbeE1KJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:09:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fredrik Noring <noring@nocrew.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
+        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 091/185] USB: OHCI: Fix NULL dereference in HCDs using HCD_LOCAL_MEM
-Date: Mon, 28 May 2018 12:02:12 +0200
-Message-Id: <20180528100058.476985278@linuxfoundation.org>
+Subject: [PATCH 3.18 090/185] xen: xenbus: use put_device() instead of kfree()
+Date: Mon, 28 May 2018 12:02:11 +0200
+Message-Id: <20180528100058.402001135@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,63 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fredrik Noring <noring@nocrew.org>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-[ Upstream commit d6c931ea32dc08ac2665bb5f009f9c40ad1bbdb3 ]
+[ Upstream commit 351b2bccede1cb673ec7957b35ea997ea24c8884 ]
 
-Scatter-gather needs to be disabled when using dma_declare_coherent_memory
-and HCD_LOCAL_MEM. Andrea Righi made the equivalent fix for EHCI drivers
-in commit 4307a28eb01284 "USB: EHCI: fix NULL pointer dererence in HCDs
-that use HCD_LOCAL_MEM".
+Never directly free @dev after calling device_register(), even
+if it returned an error! Always use put_device() to give up the
+reference initialized.
 
-The following NULL pointer WARN_ON_ONCE triggered with OHCI drivers:
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 49 at drivers/usb/core/hcd.c:1379 hcd_alloc_coherent+0x4c/0xc8
-Modules linked in:
-CPU: 0 PID: 49 Comm: usb-storage Not tainted 4.15.0+ #1014
-Stack : 00000000 00000000 805a78d2 0000003a 81f5c2cc 8053d367 804d77fc 00000031
-        805a3a08 00000563 81ee9400 805a0000 00000000 10058c00 81f61b10 805c0000
-        00000000 00000000 805a0000 00d9038e 00000004 803ee818 00000006 312e3420
-        805c0000 00000000 00000073 81f61958 00000000 00000000 802eb380 804fd538
-        00000009 00000563 81ee9400 805a0000 00000002 80056148 00000000 805a0000
-        ...
-Call Trace:
-[<578af360>] show_stack+0x74/0x104
-[<2f3702c6>] __warn+0x118/0x120
-[<ae93fc9e>] warn_slowpath_null+0x44/0x58
-[<a891a517>] hcd_alloc_coherent+0x4c/0xc8
-[<3578fa36>] usb_hcd_map_urb_for_dma+0x4d8/0x534
-[<110bc94c>] usb_hcd_submit_urb+0x82c/0x834
-[<02eb5baf>] usb_sg_wait+0x14c/0x1a0
-[<ccd09e85>] usb_stor_bulk_transfer_sglist.part.1+0xac/0x124
-[<87a5c34c>] usb_stor_bulk_srb+0x40/0x60
-[<ff1792ac>] usb_stor_Bulk_transport+0x160/0x37c
-[<b9e2709c>] usb_stor_invoke_transport+0x3c/0x500
-[<004754f4>] usb_stor_control_thread+0x258/0x28c
-[<22edf42e>] kthread+0x134/0x13c
-[<a419ffd0>] ret_from_kernel_thread+0x14/0x1c
----[ end trace bcdb825805eefdcc ]---
-
-Signed-off-by: Fredrik Noring <noring@nocrew.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
-
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/ohci-hcd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/xen/xenbus/xenbus_probe.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -443,7 +443,8 @@ static int ohci_init (struct ohci_hcd *o
- 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -470,8 +470,11 @@ int xenbus_probe_node(struct xen_bus_typ
  
- 	/* Accept arbitrarily long scatter-gather lists */
--	hcd->self.sg_tablesize = ~0;
-+	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+		hcd->self.sg_tablesize = ~0;
+ 	/* Register with generic device framework. */
+ 	err = device_register(&xendev->dev);
+-	if (err)
++	if (err) {
++		put_device(&xendev->dev);
++		xendev = NULL;
+ 		goto fail;
++	}
  
- 	if (distrust_firmware)
- 		ohci->flags |= OHCI_QUIRK_HUB_POWER;
+ 	return 0;
+ fail:
