@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932991AbeE1M6y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:58:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43540 "EHLO mail.kernel.org"
+        id S1164448AbeE1M7X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:59:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164121AbeE1Kyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:54:46 -0400
+        id S1164226AbeE1Kx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Davide Caratti <dcaratti@redhat.com>,
+        stable@vger.kernel.org, Cathy Zhou <Cathy.Zhou@Oracle.COM>,
+        Shannon Nelson <shannon.nelson@Oracle.COM>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 281/496] net/sched: fix idr leak in the error path of tcf_act_police_init()
-Date: Mon, 28 May 2018 12:01:06 +0200
-Message-Id: <20180528100331.689710709@linuxfoundation.org>
+Subject: [PATCH 4.14 248/496] sunvnet: does not support GSO for sctp
+Date: Mon, 28 May 2018 12:00:33 +0200
+Message-Id: <20180528100330.340701745@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,46 +31,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Cathy Zhou <Cathy.Zhou@Oracle.COM>
 
-[ Upstream commit 5bf7f8185f7c7112decdfe3d3e5c5d5e67f099a1 ]
+[ Upstream commit cf55612a945039476abfd73e39064b2e721c3272 ]
 
-tcf_act_police_init() can fail after the idr has been successfully
-reserved (e.g., qdisc_get_rtab() may return NULL). When this happens,
-subsequent attempts to configure a police rule using the same idr value
-systematiclly fail with -ENOSPC:
+The NETIF_F_GSO_SOFTWARE implies support for GSO on SCTP, but the
+sunvnet driver does not support GSO for sctp.  Here we remove the
+NETIF_F_GSO_SOFTWARE feature flag and only report NETIF_F_ALL_TSO
+instead.
 
- # tc action add action police rate 1000 burst 1000 drop index 100
- RTNETLINK answers: Cannot allocate memory
- We have an error talking to the kernel
- # tc action add action police rate 1000 burst 1000 drop index 100
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
- # tc action add action police rate 1000 burst 1000 drop index 100
- RTNETLINK answers: No space left on device
- ...
-
-Fix this in the error path of tcf_act_police_init(), calling
-tcf_idr_release() in place of tcf_idr_cleanup().
-
-Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Cathy Zhou <Cathy.Zhou@Oracle.COM>
+Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_police.c |    2 +-
+ drivers/net/ethernet/sun/sunvnet.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/act_police.c
-+++ b/net/sched/act_police.c
-@@ -194,7 +194,7 @@ failure:
- 	qdisc_put_rtab(P_tab);
- 	qdisc_put_rtab(R_tab);
- 	if (ret == ACT_P_CREATED)
--		tcf_idr_cleanup(*a, est);
-+		tcf_idr_release(*a, bind);
- 	return err;
- }
+--- a/drivers/net/ethernet/sun/sunvnet.c
++++ b/drivers/net/ethernet/sun/sunvnet.c
+@@ -311,7 +311,7 @@ static struct vnet *vnet_new(const u64 *
+ 	dev->ethtool_ops = &vnet_ethtool_ops;
+ 	dev->watchdog_timeo = VNET_TX_TIMEOUT;
+ 
+-	dev->hw_features = NETIF_F_TSO | NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
++	dev->hw_features = NETIF_F_TSO | NETIF_F_GSO | NETIF_F_ALL_TSO |
+ 			   NETIF_F_HW_CSUM | NETIF_F_SG;
+ 	dev->features = dev->hw_features;
  
