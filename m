@@ -1,32 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938506AbeE1MAS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54408 "EHLO mail.kernel.org"
+        id S938515AbeE1MAe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:00:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423441AbeE1LHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:07:32 -0400
+        id S1423432AbeE1LH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Matt Fleming <matt@codeblueprint.co.uk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>,
+        dave@stgolabs.net, rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 078/272] x86/mm: Fix bogus warning during EFI bootup, use boot_cpu_has() instead of this_cpu_has() in build_cr3_noflush()
-Date: Mon, 28 May 2018 12:01:51 +0200
-Message-Id: <20180528100247.645864018@linuxfoundation.org>
+Subject: [PATCH 4.16 077/272] sched/rt: Fix rq->clock_update_flags < RQCF_ACT_SKIP warning
+Date: Mon, 28 May 2018 12:01:50 +0200
+Message-Id: <20180528100247.467844356@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -42,84 +34,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit 162ee5a8ab49be40d253f90e94aef712470a3a24 ]
+[ Upstream commit d29a20645d5e929aa7e8616f28e5d8e1c49263ec ]
 
-Linus reported the following boot warning:
+While running rt-tests' pi_stress program I got the following splat:
 
-  WARNING: CPU: 0 PID: 0 at arch/x86/include/asm/tlbflush.h:134 load_new_mm_cr3+0x114/0x170
+  rq->clock_update_flags < RQCF_ACT_SKIP
+  WARNING: CPU: 27 PID: 0 at kernel/sched/sched.h:960 assert_clock_updated.isra.38.part.39+0x13/0x20
+
   [...]
-  Call Trace:
-  switch_mm_irqs_off+0x267/0x590
-  switch_mm+0xe/0x20
-  efi_switch_mm+0x3e/0x50
-  efi_enter_virtual_mode+0x43f/0x4da
-  start_kernel+0x3bf/0x458
+
+  <IRQ>
+  enqueue_top_rt_rq+0xf4/0x150
+  ? cpufreq_dbs_governor_start+0x170/0x170
+  sched_rt_rq_enqueue+0x65/0x80
+  sched_rt_period_timer+0x156/0x360
+  ? sched_rt_rq_enqueue+0x80/0x80
+  __hrtimer_run_queues+0xfa/0x260
+  hrtimer_interrupt+0xcb/0x220
+  smp_apic_timer_interrupt+0x62/0x120
+  apic_timer_interrupt+0xf/0x20
+  </IRQ>
+
+  [...]
+
+  do_idle+0x183/0x1e0
+  cpu_startup_entry+0x5f/0x70
+  start_secondary+0x192/0x1d0
   secondary_startup_64+0xa5/0xb0
 
-... after merging:
+We can get rid of it be the "traditional" means of adding an
+update_rq_clock() call after acquiring the rq->lock in
+do_sched_rt_period_timer().
 
-  03781e40890c: x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
+The case for the RT task throttling (which this workload also hits)
+can be ignored in that the skip_update call is actually bogus and
+quite the contrary (the request bits are removed/reverted).
 
-When the platform supports PCID and if CONFIG_DEBUG_VM=y is enabled,
-build_cr3_noflush() (called via switch_mm()) does a sanity check to see
-if X86_FEATURE_PCID is set.
+By setting RQCF_UPDATED we really don't care if the skip is happening
+or not and will therefore make the assert_clock_updated() check happy.
 
-Presently, build_cr3_noflush() uses "this_cpu_has(X86_FEATURE_PCID)" to
-perform the check but this_cpu_has() works only after SMP is initialized
-(i.e. per cpu cpu_info's should be populated) and this happens to be very
-late in the boot process (during rest_init()).
-
-As efi_runtime_services() are called during (early) kernel boot time
-and run time, modify build_cr3_noflush() to use boot_cpu_has() all the
-time. As suggested by Dave Hansen, this should be OK because all CPU's have
-same capabilities on x86.
-
-With this change the warning is fixed.
-
-( Dave also suggested that we put a warning in this_cpu_has() if it's used
-  early in the boot process. This is still work in progress as it affects
-  MCE. )
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/1522870459-7432-1-git-send-email-sai.praneeth.prakhya@intel.com
+Cc: dave@stgolabs.net
+Cc: linux-kernel@vger.kernel.org
+Cc: rostedt@goodmis.org
+Link: http://lkml.kernel.org/r/20180402164954.16255-1-dave@stgolabs.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/tlbflush.h |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ kernel/sched/rt.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -131,7 +131,12 @@ static inline unsigned long build_cr3(pg
- static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- {
- 	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
--	VM_WARN_ON_ONCE(!this_cpu_has(X86_FEATURE_PCID));
-+	/*
-+	 * Use boot_cpu_has() instead of this_cpu_has() as this function
-+	 * might be called during early boot. This should work even after
-+	 * boot because all CPU's the have same capabilities:
-+	 */
-+	VM_WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_PCID));
- 	return __sme_pa(pgd) | kern_pcid(asid) | CR3_NOFLUSH;
- }
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -843,6 +843,8 @@ static int do_sched_rt_period_timer(stru
+ 			continue;
+ 
+ 		raw_spin_lock(&rq->lock);
++		update_rq_clock(rq);
++
+ 		if (rt_rq->rt_time) {
+ 			u64 runtime;
  
