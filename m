@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936766AbeE1QWq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:22:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59586 "EHLO mail.kernel.org"
+        id S939926AbeE1QXL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:23:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936579AbeE1KLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:23 -0400
+        id S935336AbeE1KLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 129/185] powerpc/mpic: Check if cpu_possible() in mpic_physmask()
-Date: Mon, 28 May 2018 12:02:50 +0200
-Message-Id: <20180528100104.198883804@linuxfoundation.org>
+Subject: [PATCH 3.18 128/185] ACPI: acpi_pad: Fix memory leak in power saving threads
+Date: Mon, 28 May 2018 12:02:49 +0200
+Message-Id: <20180528100103.927685910@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -29,45 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
-[ Upstream commit 0834d627fbea00c1444075eb3e448e1974da452d ]
+[ Upstream commit 8b29d29abc484d638213dd79a18a95ae7e5bb402 ]
 
-In mpic_physmask() we loop over all CPUs up to 32, then get the hard
-SMP processor id of that CPU.
+Fix once per second (round_robin_time) memory leak of about 1 KB in
+each acpi_pad kernel idling thread that is activated.
 
-Currently that's possibly walking off the end of the paca array, but
-in a future patch we will change the paca array to be an array of
-pointers, and in that case we will get a NULL for missing CPUs and
-oops. eg:
+Found by testing with kmemleak.
 
-  Unable to handle kernel paging request for data at address 0x88888888888888b8
-  Faulting instruction address: 0xc00000000004e380
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  ...
-  NIP .mpic_set_affinity+0x60/0x1a0
-  LR  .irq_do_set_affinity+0x48/0x100
-
-Fix it by checking the CPU is possible, this also fixes the code if
-there are gaps in the CPU numbering which probably never happens on
-mpic systems but who knows.
-
-Debugged-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/sysdev/mpic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_pad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/sysdev/mpic.c
-+++ b/arch/powerpc/sysdev/mpic.c
-@@ -627,7 +627,7 @@ static inline u32 mpic_physmask(u32 cpum
- 	int i;
- 	u32 mask = 0;
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -117,6 +117,7 @@ static void round_robin_cpu(unsigned int
+ 		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
+ 	if (cpumask_empty(tmp)) {
+ 		mutex_unlock(&round_robin_lock);
++		free_cpumask_var(tmp);
+ 		return;
+ 	}
+ 	for_each_cpu(cpu, tmp) {
+@@ -134,6 +135,8 @@ static void round_robin_cpu(unsigned int
+ 	mutex_unlock(&round_robin_lock);
  
--	for (i = 0; i < min(32, NR_CPUS); ++i, cpumask >>= 1)
-+	for (i = 0; i < min(32, NR_CPUS) && cpu_possible(i); ++i, cpumask >>= 1)
- 		mask |= (cpumask & 1) << get_hard_smp_processor_id(i);
- 	return mask;
+ 	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
++
++	free_cpumask_var(tmp);
  }
+ 
+ static void exit_round_robin(unsigned int tsk_index)
