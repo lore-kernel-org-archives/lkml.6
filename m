@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162374AbeE1Kha (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:37:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58034 "EHLO mail.kernel.org"
+        id S1161582AbeE1Khm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:37:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162020AbeE1Kh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:26 -0400
+        id S1162020AbeE1Khb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 248/329] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
-Date: Mon, 28 May 2018 12:02:57 +0200
-Message-Id: <20180528100302.638012195@linuxfoundation.org>
+Subject: [PATCH 4.9 250/329] Btrfs: fix copy_items() return value when logging an inode
+Date: Mon, 28 May 2018 12:02:59 +0200
+Message-Id: <20180528100302.783922654@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,32 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
+[ Upstream commit 8434ec46c6e3232cebc25a910363b29f5c617820 ]
 
-bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
-32-bit word without using proper accessors, fix this, and because a
-length cannot be negative, use unsigned int while at it.
+When logging an inode, at tree-log.c:copy_items(), if we call
+btrfs_next_leaf() at the loop which checks for the need to log holes, we
+need to make sure copy_items() returns the value 1 to its caller and
+not 0 (on success). This is because the path the caller passed was
+released and is now different from what is was before, and the caller
+expects a return value of 0 to mean both success and that the path
+has not changed, while a return value of 1 means both success and
+signals the caller that it can not reuse the path, it has to perform
+another tree search.
 
-Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Even though this is a case that should not be triggered on normal
+circumstances or very rare at least, its consequences can be very
+unpredictable (especially when replaying a log tree).
+
+Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/broadcom/bgmac.c
-+++ b/drivers/net/ethernet/broadcom/bgmac.c
-@@ -529,7 +529,8 @@ static void bgmac_dma_tx_ring_free(struc
- 	int i;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3854,6 +3854,7 @@ fill_holes:
+ 			ASSERT(ret == 0);
+ 			src = src_path->nodes[0];
+ 			i = 0;
++			need_find_last_extent = true;
+ 		}
  
- 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
--		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
-+		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
-+		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
- 
- 		slot = &ring->slots[i];
- 		dev_kfree_skb(slot->skb);
+ 		btrfs_item_key_to_cpu(src, &key, i);
