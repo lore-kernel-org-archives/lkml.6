@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933604AbeE1KHp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:07:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
+        id S940436AbeE1Qmx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:42:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933084AbeE1KHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:37 -0400
+        id S933542AbeE1KHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:07:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sujit Reddy Thumma <sthumma@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 046/185] scsi: ufs: Enable quirk to ignore sending WRITE_SAME command
-Date: Mon, 28 May 2018 12:01:27 +0200
-Message-Id: <20180528100054.844517219@linuxfoundation.org>
+Subject: [PATCH 3.18 049/185] scsi: mptfusion: Add bounds check in mptctl_hp_targetinfo()
+Date: Mon, 28 May 2018 12:01:30 +0200
+Message-Id: <20180528100055.087697854@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,33 +31,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sujit Reddy Thumma <sthumma@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 84af7e8b895088d89f246d6b0f82717fafdebf61 ]
+[ Upstream commit a7043e9529f3c367cc4d82997e00be034cbe57ca ]
 
-WRITE_SAME command is not supported by UFS. Enable a quirk for the upper
-level drivers to not send WRITE SAME command.
+My static checker complains about an out of bounds read:
 
-[mkp: botched patch, applied by hand]
+    drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
+    error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
 
-Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+It's true that we probably should have a bounds check here.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ufs/ufshcd.c |    2 ++
+ drivers/message/fusion/mptctl.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -2795,6 +2795,8 @@ static int ufshcd_slave_alloc(struct scs
- 	/* REPORT SUPPORTED OPERATION CODES is not supported */
- 	sdev->no_report_opcodes = 1;
- 
-+	/* WRITE_SAME command is not supported */
-+	sdev->no_write_same = 1;
- 
- 	ufshcd_set_queue_depth(sdev);
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -2694,6 +2694,8 @@ mptctl_hp_targetinfo(unsigned long arg)
+ 				__FILE__, __LINE__, iocnum);
+ 		return -ENODEV;
+ 	}
++	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
++		return -EINVAL;
+ 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
+ 	    ioc->name));
  
