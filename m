@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937715AbeE1KpJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:45:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35570 "EHLO mail.kernel.org"
+        id S1165467AbeE1NiR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163096AbeE1Ko5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:44:57 -0400
+        id S937708AbeE1KpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:45:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 087/496] MD: Free bioset when md_run fails
-Date: Mon, 28 May 2018 11:57:52 +0200
-Message-Id: <20180528100323.467858579@linuxfoundation.org>
+Subject: [PATCH 4.14 090/496] xfrm: do not call rcu_read_unlock when afinfo is NULL in xfrm_get_tos
+Date: Mon, 28 May 2018 11:57:55 +0200
+Message-Id: <20180528100323.596482294@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,79 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Ni <xni@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit b126194cbb799f9980b92a77e58db6ad794c8082 ]
+[ Upstream commit 143a4454daaf0e80a2b9f37159a0d6d2b61e64ed ]
 
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Acked-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+When xfrm_policy_get_afinfo returns NULL, it will not hold rcu
+read lock. In this case, rcu_read_unlock should not be called
+in xfrm_get_tos, just like other places where it's calling
+xfrm_policy_get_afinfo.
+
+Fixes: f5e2bb4f5b22 ("xfrm: policy: xfrm_get_tos cannot fail")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md.c |   26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ net/xfrm/xfrm_policy.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -5479,8 +5479,10 @@ int md_run(struct mddev *mddev)
- 	}
- 	if (mddev->sync_set == NULL) {
- 		mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
--		if (!mddev->sync_set)
--			return -ENOMEM;
-+		if (!mddev->sync_set) {
-+			err = -ENOMEM;
-+			goto abort;
-+		}
- 	}
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1459,10 +1459,13 @@ xfrm_tmpl_resolve(struct xfrm_policy **p
+ static int xfrm_get_tos(const struct flowi *fl, int family)
+ {
+ 	const struct xfrm_policy_afinfo *afinfo;
+-	int tos = 0;
++	int tos;
  
- 	spin_lock(&pers_lock);
-@@ -5493,7 +5495,8 @@ int md_run(struct mddev *mddev)
- 		else
- 			pr_warn("md: personality for level %s is not loaded!\n",
- 				mddev->clevel);
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto abort;
- 	}
- 	spin_unlock(&pers_lock);
- 	if (mddev->level != pers->level) {
-@@ -5506,7 +5509,8 @@ int md_run(struct mddev *mddev)
- 	    pers->start_reshape == NULL) {
- 		/* This personality cannot handle reshaping... */
- 		module_put(pers->owner);
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto abort;
- 	}
+ 	afinfo = xfrm_policy_get_afinfo(family);
+-	tos = afinfo ? afinfo->get_tos(fl) : 0;
++	if (!afinfo)
++		return 0;
++
++	tos = afinfo->get_tos(fl);
  
- 	if (pers->sync_request) {
-@@ -5580,7 +5584,7 @@ int md_run(struct mddev *mddev)
- 		mddev->private = NULL;
- 		module_put(pers->owner);
- 		bitmap_destroy(mddev);
--		return err;
-+		goto abort;
- 	}
- 	if (mddev->queue) {
- 		bool nonrot = true;
-@@ -5642,6 +5646,18 @@ int md_run(struct mddev *mddev)
- 	sysfs_notify_dirent_safe(mddev->sysfs_action);
- 	sysfs_notify(&mddev->kobj, NULL, "degraded");
- 	return 0;
-+
-+abort:
-+	if (mddev->bio_set) {
-+		bioset_free(mddev->bio_set);
-+		mddev->bio_set = NULL;
-+	}
-+	if (mddev->sync_set) {
-+		bioset_free(mddev->sync_set);
-+		mddev->sync_set = NULL;
-+	}
-+
-+	return err;
- }
- EXPORT_SYMBOL_GPL(md_run);
+ 	rcu_read_unlock();
  
