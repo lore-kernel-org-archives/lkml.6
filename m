@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422857AbeE1MUa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:20:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
+        id S1422888AbeE1MUx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:20:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422794AbeE1LCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:24 -0400
+        id S1164910AbeE1LCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Thomas Vincent-Cross <me@tvc.id.au>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 464/496] ixgbe: prevent ptp_rx_hang from running when in FILTER_ALL mode
-Date: Mon, 28 May 2018 12:04:09 +0200
-Message-Id: <20180528100339.463355716@linuxfoundation.org>
+Subject: [PATCH 4.14 462/496] PCI: Add function 1 DMA alias quirk for Marvell 88SE9220
+Date: Mon, 28 May 2018 12:04:07 +0200
+Message-Id: <20180528100339.382166430@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,46 +30,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Thomas Vincent-Cross <me@tvc.id.au>
 
-[ Upstream commit 6704a3abf4cf4181a1ee64f5db4969347b88ca1d ]
+[ Upstream commit 832e4e1f76b8a84991e9db56fdcef1ebce839b8b ]
 
-On hardware which supports timestamping all packets, the timestamps are
-recorded in the packet buffer, and the driver no longer uses or reads
-the registers. This makes the logic for checking and clearing Rx
-timestamp hangs meaningless.
+Add Marvell 88SE9220 DMA quirk as found and tested on bug 42679.
 
-If we run the ixgbe_ptp_rx_hang() function in this case, then the driver
-will continuously spam the log output with "Clearing Rx timestamp hang".
-These messages are spurious, and confusing to end users.
-
-The original code in commit a9763f3cb54c ("ixgbe: Update PTP to support
-X550EM_x devices", 2015-12-03) did have a flag PTP_RX_TIMESTAMP_IN_REGISTER
-which was intended to be used to avoid the Rx timestamp hang check,
-however it did not actually check the flag before calling the function.
-
-Do so now in order to stop the checks and prevent the spurious log
-messages.
-
-Fixes: a9763f3cb54c ("ixgbe: Update PTP to support X550EM_x devices", 2015-12-03)
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
+Signed-off-by: Thomas Vincent-Cross <me@tvc.id.au>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -7658,7 +7658,8 @@ static void ixgbe_service_task(struct wo
- 
- 	if (test_bit(__IXGBE_PTP_RUNNING, &adapter->state)) {
- 		ixgbe_ptp_overflow_check(adapter);
--		ixgbe_ptp_rx_hang(adapter);
-+		if (adapter->flags & IXGBE_FLAG_RX_HWTSTAMP_IN_REGISTER)
-+			ixgbe_ptp_rx_hang(adapter);
- 		ixgbe_ptp_tx_hang(adapter);
- 	}
- 
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3896,6 +3896,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c46 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x91a0,
+ 			 quirk_dma_func1_alias);
++/* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c127 */
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9220,
++			 quirk_dma_func1_alias);
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c49 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9230,
+ 			 quirk_dma_func1_alias);
