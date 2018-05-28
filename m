@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163213AbeE1Ncz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:32:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36690 "EHLO mail.kernel.org"
+        id S1163269AbeE1NdY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:33:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163049AbeE1KqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:24 -0400
+        id S1162824AbeE1KqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 119/496] s390/cio: fix return code after missing interrupt
-Date: Mon, 28 May 2018 11:58:24 +0200
-Message-Id: <20180528100324.942261024@linuxfoundation.org>
+Subject: [PATCH 4.14 116/496] soc: imx: gpc: de-register power domains only if initialized
+Date: Mon, 28 May 2018 11:58:21 +0200
+Message-Id: <20180528100324.818021501@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,69 +31,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 770b55c995d171f026a9efb85e71e3b1ea47b93d ]
+[ Upstream commit 7801c545e706674aeed40256eb806ad37b18ad71 ]
 
-When a timeout occurs for users of ccw_device_start_timeout
-we will stop the IO and call the drivers int handler with
-the irb pointer set to ERR_PTR(-ETIMEDOUT). Sometimes
-however we'd set the irb pointer to ERR_PTR(-EIO) which is
-not intended. Just set the correct value in all codepaths.
+If power domain information are missing in the device tree, no
+power domains get initialized. However, imx_gpc_remove tries to
+remove power domains always in the old DT binding case. Only
+remove power domains when imx_gpc_probe initialized them in
+first place.
 
-Reported-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 721cabf6c660 ("soc: imx: move PGC handling to a new GPC driver")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/device_fsm.c |    6 ++++--
- drivers/s390/cio/io_sch.h     |    1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/soc/imx/gpc.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/s390/cio/device_fsm.c
-+++ b/drivers/s390/cio/device_fsm.c
-@@ -796,6 +796,7 @@ ccw_device_online_timeout(struct ccw_dev
+--- a/drivers/soc/imx/gpc.c
++++ b/drivers/soc/imx/gpc.c
+@@ -456,13 +456,21 @@ static int imx_gpc_probe(struct platform
  
- 	ccw_device_set_timeout(cdev, 0);
- 	cdev->private->iretry = 255;
-+	cdev->private->async_kill_io_rc = -ETIMEDOUT;
- 	ret = ccw_device_cancel_halt_clear(cdev);
- 	if (ret == -EBUSY) {
- 		ccw_device_set_timeout(cdev, 3*HZ);
-@@ -872,7 +873,7 @@ ccw_device_killing_irq(struct ccw_device
- 	/* OK, i/o is dead now. Call interrupt handler. */
- 	if (cdev->handler)
- 		cdev->handler(cdev, cdev->private->intparm,
--			      ERR_PTR(-EIO));
-+			      ERR_PTR(cdev->private->async_kill_io_rc));
- }
- 
- static void
-@@ -889,7 +890,7 @@ ccw_device_killing_timeout(struct ccw_de
- 	ccw_device_online_verify(cdev, 0);
- 	if (cdev->handler)
- 		cdev->handler(cdev, cdev->private->intparm,
--			      ERR_PTR(-EIO));
-+			      ERR_PTR(cdev->private->async_kill_io_rc));
- }
- 
- void ccw_device_kill_io(struct ccw_device *cdev)
-@@ -897,6 +898,7 @@ void ccw_device_kill_io(struct ccw_devic
+ static int imx_gpc_remove(struct platform_device *pdev)
+ {
++	struct device_node *pgc_node;
  	int ret;
  
- 	cdev->private->iretry = 255;
-+	cdev->private->async_kill_io_rc = -EIO;
- 	ret = ccw_device_cancel_halt_clear(cdev);
- 	if (ret == -EBUSY) {
- 		ccw_device_set_timeout(cdev, 3*HZ);
---- a/drivers/s390/cio/io_sch.h
-+++ b/drivers/s390/cio/io_sch.h
-@@ -157,6 +157,7 @@ struct ccw_device_private {
- 	unsigned long intparm;	/* user interruption parameter */
- 	struct qdio_irq *qdio_data;
- 	struct irb irb;		/* device status */
-+	int async_kill_io_rc;
- 	struct senseid senseid;	/* SenseID info */
- 	struct pgid pgid[8];	/* path group IDs per chpid*/
- 	struct ccw1 iccws[2];	/* ccws for SNID/SID/SPGID commands */
++	pgc_node = of_get_child_by_name(pdev->dev.of_node, "pgc");
++
++	/* bail out if DT too old and doesn't provide the necessary info */
++	if (!of_property_read_bool(pdev->dev.of_node, "#power-domain-cells") &&
++	    !pgc_node)
++		return 0;
++
+ 	/*
+ 	 * If the old DT binding is used the toplevel driver needs to
+ 	 * de-register the power domains
+ 	 */
+-	if (!of_get_child_by_name(pdev->dev.of_node, "pgc")) {
++	if (!pgc_node) {
+ 		of_genpd_del_provider(pdev->dev.of_node);
+ 
+ 		ret = pm_genpd_remove(&imx_gpc_domains[GPC_PGC_DOMAIN_PU].base);
