@@ -1,25 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162769AbeE1N6I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:58:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60560 "EHLO mail.kernel.org"
+        id S1162906AbeE1N6f (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:58:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162846AbeE1Kki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:38 -0400
+        id S1162485AbeE1Kk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:40:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, douly.fnst@cn.fujitsu.com,
-        joro@8bytes.org, prarit@redhat.com, uobergfe@redhat.com,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 319/329] x86/apic: Set up through-local-APIC mode on the boot CPU if noapic specified
-Date: Mon, 28 May 2018 12:04:08 +0200
-Message-Id: <20180528100307.517818508@linuxfoundation.org>
+Subject: [PATCH 4.9 289/329] perf/core: Fix perf_output_read_group()
+Date: Mon, 28 May 2018 12:03:38 +0200
+Message-Id: <20180528100305.763006347@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -35,56 +38,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baoquan He <bhe@redhat.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit bee3204ec3c49f6f53add9c3962c9012a5c036fa ]
+[ Upstream commit 9e5b127d6f33468143d90c8a45ca12410e4c3fa7 ]
 
-Currently the kdump kernel becomes very slow if 'noapic' is specified.
-Normal kernel doesn't have this bug.
+Mark reported his arm64 perf fuzzer runs sometimes splat like:
 
-Kernel parameter 'noapic' is used to disable IO-APIC in system for
-testing or special purpose. Here the root cause is that in kdump
-kernel LAPIC is disabled since commit:
+  armv8pmu_read_counter+0x1e8/0x2d8
+  armpmu_event_update+0x8c/0x188
+  armpmu_read+0xc/0x18
+  perf_output_read+0x550/0x11e8
+  perf_event_read_event+0x1d0/0x248
+  perf_event_exit_task+0x468/0xbb8
+  do_exit+0x690/0x1310
+  do_group_exit+0xd0/0x2b0
+  get_signal+0x2e8/0x17a8
+  do_signal+0x144/0x4f8
+  do_notify_resume+0x148/0x1e8
+  work_pending+0x8/0x14
 
-  522e664644 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+which asserts that we only call pmu::read() on ACTIVE events.
 
-In this case we need set up through-local-APIC on boot CPU in
-setup_local_APIC().
+The above callchain does:
 
-In normal kernel the legacy irq mode is enabled by the BIOS. If
-it is virtual wire mode, the local-APIC has been enabled and set as
-through-local-APIC.
+  perf_event_exit_task()
+    perf_event_exit_task_context()
+      task_ctx_sched_out() // INACTIVE
+      perf_event_exit_event()
+        perf_event_set_state(EXIT) // EXIT
+        sync_child_event()
+          perf_event_read_event()
+            perf_output_read()
+              perf_output_read_group()
+                leader->pmu->read()
 
-Though we fixed the regression introduced by commit 522e664644,
-to further improve robustness set up the through-local-APIC mode
-explicitly, do not rely on the default boot IRQ mode.
+Which results in doing a pmu::read() on an !ACTIVE event.
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
+I _think_ this is 'new' since we added attr.inherit_stat, which added
+the perf_event_read_event() to the exit path, without that
+perf_event_read_output() would only trigger from samples and for
+@event to trigger a sample, it's leader _must_ be ACTIVE too.
+
+Still, adding this check makes it consistent with the @sub case for
+the siblings.
+
+Reported-and-Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: douly.fnst@cn.fujitsu.com
-Cc: joro@8bytes.org
-Cc: prarit@redhat.com
-Cc: uobergfe@redhat.com
-Link: http://lkml.kernel.org/r/20180214054656.3780-7-bhe@redhat.com
-[ Rewrote the changelog. ]
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/apic/apic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1403,7 +1403,7 @@ void setup_local_APIC(void)
- 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
- 	 */
- 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
--	if (!cpu && (pic_mode || !value)) {
-+	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
- 		value = APIC_DM_EXTINT;
- 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
- 	} else {
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5700,7 +5700,8 @@ static void perf_output_read_group(struc
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
+ 		values[n++] = running;
+ 
+-	if (leader != event)
++	if ((leader != event) &&
++	    (leader->state == PERF_EVENT_STATE_ACTIVE))
+ 		leader->pmu->read(leader);
+ 
+ 	values[n++] = perf_event_count(leader);
