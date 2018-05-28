@@ -1,23 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937188AbeE1K21 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47768 "EHLO mail.kernel.org"
+        id S937202AbeE1K2g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:28:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937166AbeE1K2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:22 -0400
+        id S936991AbeE1K2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 018/329] kasan: fix memory hotplug during boot
-Date: Mon, 28 May 2018 11:59:07 +0200
-Message-Id: <20180528100243.851065824@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 053/329] btrfs: fail mount when sb flag is not in BTRFS_SUPER_FLAG_SUPP
+Date: Mon, 28 May 2018 11:59:42 +0200
+Message-Id: <20180528100246.970100297@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,39 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Anand Jain <Anand.Jain@oracle.com>
 
-commit 3f1959721558a976aaf9c2024d5bc884e6411bf7 upstream.
+[ Upstream commit 6f794e3c5c8f8fdd3b5bb20d9ded894e685b5bbe ]
 
-Using module_init() is wrong.  E.g.  ACPI adds and onlines memory before
-our memory notifier gets registered.
+It appears from the original commit [1] that there isn't any design
+specific reason not to fail the mount instead of just warning. This
+patch will change it to fail.
 
-This makes sure that ACPI memory detected during boot up will not result
-in a kernel crash.
+[1]
+ commit 319e4d0661e5323c9f9945f0f8fb5905e5fe74c3
+    btrfs: Enhance super validation check
 
-Easily reproducible with QEMU, just specify a DIMM when starting up.
-
-Link: http://lkml.kernel.org/r/20180522100756.18478-3-david@redhat.com
-Fixes: 786a8959912e ("kasan: disable memory hotplug")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 319e4d0661e5323 ("btrfs: Enhance super validation check")
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/kasan/kasan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/disk-io.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/mm/kasan/kasan.c
-+++ b/mm/kasan/kasan.c
-@@ -800,5 +800,5 @@ static int __init kasan_memhotplug_init(
- 	return 0;
- }
- 
--module_init(kasan_memhotplug_init);
-+core_initcall(kasan_memhotplug_init);
- #endif
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -4142,9 +4142,11 @@ static int btrfs_check_super_valid(struc
+ 		btrfs_err(fs_info, "no valid FS found");
+ 		ret = -EINVAL;
+ 	}
+-	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)
+-		btrfs_warn(fs_info, "unrecognized super flag: %llu",
++	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP) {
++		btrfs_err(fs_info, "unrecognized or unsupported super flag: %llu",
+ 				btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP);
++		ret = -EINVAL;
++	}
+ 	if (btrfs_super_root_level(sb) >= BTRFS_MAX_LEVEL) {
+ 		btrfs_err(fs_info, "tree_root level too big: %d >= %d",
+ 				btrfs_super_root_level(sb), BTRFS_MAX_LEVEL);
