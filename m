@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164716AbeE1LAL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47788 "EHLO mail.kernel.org"
+        id S938930AbeE1Mbk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:31:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164681AbeE1LAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:02 -0400
+        id S1164702AbeE1LAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Milton Miller <miltonm@us.ibm.com>,
+        Eddie James <eajames@linux.vnet.ibm.com>,
+        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 385/496] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
-Date: Mon, 28 May 2018 12:02:50 +0200
-Message-Id: <20180528100335.999945711@linuxfoundation.org>
+Subject: [PATCH 4.14 413/496] watchdog: aspeed: Fix translation of reset mode to ctrl register
+Date: Mon, 28 May 2018 12:03:18 +0200
+Message-Id: <20180528100337.156184491@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,49 +31,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Vosburgh <jay.vosburgh@canonical.com>
+From: Milton Miller <miltonm@us.ibm.com>
 
-[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
+[ Upstream commit d2fc8db691bf3197d43b2afb553311a9bf257bff ]
 
-The operstate update logic will leave an interface in the
-default UNKNOWN operstate if the interface carrier state never changes
-from the default carrier up state set at creation.  This includes the
-case of an explicit call to netif_carrier_on, as the carrier on to on
-transition has no effect on operstate.
+Assert RESET_SYSTEM bit for any reset and set MODE field from reset
+type.
 
-	This affects virtio-net for the case that the virtio peer does
-not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
-updates).  Without this feature, the virtio specification states that
-"the link should be assumed active," so, logically, the operstate should
-be UP instead of UNKNOWN.  This has impact on user space applications
-that use the operstate to make availability decisions for the interface.
+The watchdog control register has a RESET_SYSTEM bit that is really
+closer to activate a reset, and RESET_SYSTEM_MODE field that chooses
+how much to reset.
 
-	Resolve this by changing the virtio probe logic slightly to call
-netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
-cases, and then the existing call to netif_carrier_on for the "without"
-case will cause an operstate transition.
+Before this patch, a node without these optional property would do a
+SOC reset, but a node with properties requesting a cpu or SOC reset
+would do nothing and a node requesting a system reset would do a
+SOC reset.
 
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b7f0b8ad25f3 ("drivers/watchdog: ASPEED reference dev tree properties for config")
+Signed-off-by: Milton Miller <miltonm@us.ibm.com>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/aspeed_wdt.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2655,8 +2655,8 @@ static int virtnet_probe(struct virtio_d
- 
- 	/* Assume link up if device can't report link status,
- 	   otherwise get link status from config. */
-+	netif_carrier_off(dev);
- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		netif_carrier_off(dev);
- 		schedule_work(&vi->config_work);
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -234,11 +234,14 @@ static int aspeed_wdt_probe(struct platf
+ 		wdt->ctrl |= WDT_CTRL_RESET_MODE_SOC | WDT_CTRL_RESET_SYSTEM;
  	} else {
- 		vi->status = VIRTIO_NET_S_LINK_UP;
+ 		if (!strcmp(reset_type, "cpu"))
+-			wdt->ctrl |= WDT_CTRL_RESET_MODE_ARM_CPU;
++			wdt->ctrl |= WDT_CTRL_RESET_MODE_ARM_CPU |
++				     WDT_CTRL_RESET_SYSTEM;
+ 		else if (!strcmp(reset_type, "soc"))
+-			wdt->ctrl |= WDT_CTRL_RESET_MODE_SOC;
++			wdt->ctrl |= WDT_CTRL_RESET_MODE_SOC |
++				     WDT_CTRL_RESET_SYSTEM;
+ 		else if (!strcmp(reset_type, "system"))
+-			wdt->ctrl |= WDT_CTRL_RESET_SYSTEM;
++			wdt->ctrl |= WDT_CTRL_RESET_MODE_FULL_CHIP |
++				     WDT_CTRL_RESET_SYSTEM;
+ 		else if (strcmp(reset_type, "none"))
+ 			return -EINVAL;
+ 	}
