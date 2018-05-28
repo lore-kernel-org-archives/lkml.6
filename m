@@ -1,73 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161490AbeE1KcO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:32:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161450AbeE1KcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:08 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Keerthy <j-keerthy@ti.com>, Ladislav Michl <ladis@linux-mips.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 132/329] ARM: OMAP: Fix dmtimer init for omap1
-Date: Mon, 28 May 2018 12:01:01 +0200
-Message-Id: <20180528100253.676405284@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
+        id S1161602AbeE1Ofi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:35:38 -0400
+Received: from a2-132.smtp-out.eu-west-1.amazonses.com ([54.240.2.132]:45426
+        "EHLO a2-132.smtp-out.eu-west-1.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S939380AbeE1Ofb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:35:31 -0400
+Subject: 
+From: =?UTF-8?Q?Julio_Guerra?= <julio@farjump.io>
+To: =?UTF-8?Q?linux-kernel=40vger=2Ekernel=2Eorg?=
+        <linux-kernel@vger.kernel.org>
+Date: Mon, 28 May 2018 14:35:29 +0000
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <d819f941-870e-9ee7-36c5-e9d53039e34c@farjump.io>
+X-Mailer: Amazon WorkMail
+Thread-Index: AQHT9pEfn5vZVoZjTjyxJlgjr/YASw==
+Message-ID: <01020163a72cedb5-ad87b915-62fa-4d06-9e6f-34eb0d7f3915-000000@eu-west-1.amazonses.com>
+X-SES-Outgoing: 2018.05.28-54.240.2.132
+Feedback-ID: 1.eu-west-1.b24dn6frgCi6dh20skzbuMRr7UL8M6Soir/3ogtEjHQ=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Tony Lindgren <tony@atomide.com>
-
-[ Upstream commit ba6887836178d43b3665b9da075c2c5dfe1d207c ]
-
-We need to enable PM runtime on omap1 also as otherwise we
-will get errors:
-
-omap_timer omap_timer.1: omap_dm_timer_probe: pm_runtime_get_sync failed!
-omap_timer: probe of omap_timer.1 failed with error -13
-...
-
-We are checking for OMAP_TIMER_NEEDS_RESET flag elsewhere so this is
-safe to do.
-
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/plat-omap/dmtimer.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
---- a/arch/arm/plat-omap/dmtimer.c
-+++ b/arch/arm/plat-omap/dmtimer.c
-@@ -890,11 +890,8 @@ static int omap_dm_timer_probe(struct pl
- 	timer->irq = irq->start;
- 	timer->pdev = pdev;
- 
--	/* Skip pm_runtime_enable for OMAP1 */
--	if (!(timer->capability & OMAP_TIMER_NEEDS_RESET)) {
--		pm_runtime_enable(dev);
--		pm_runtime_irq_safe(dev);
--	}
-+	pm_runtime_enable(dev);
-+	pm_runtime_irq_safe(dev);
- 
- 	if (!timer->reserved) {
- 		ret = pm_runtime_get_sync(dev);
+help
