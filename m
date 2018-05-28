@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422787AbeE1LKS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:10:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58298 "EHLO mail.kernel.org"
+        id S1423897AbeE1LKb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:10:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423851AbeE1LKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:10:12 -0400
+        id S1422749AbeE1LKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Ben Hutchings <ben@decadent.org.uk>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 137/272] virtio-net: Fix operstate for virtio when no VIRTIO_NET_F_STATUS
-Date: Mon, 28 May 2018 12:02:50 +0200
-Message-Id: <20180528100252.571928573@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Eric Sandeen <sandeen@redhat.com>, Theodore Tso <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 140/272] ext4: dont complain about incorrect features when probing
+Date: Mon, 28 May 2018 12:02:53 +0200
+Message-Id: <20180528100252.805459949@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,49 +31,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jay Vosburgh <jay.vosburgh@canonical.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-[ Upstream commit bda7fab54828bbef2164bb23c0f6b1a7d05cc718 ]
+[ Upstream commit 0d9366d67bcf066b028e57d09c9a86ce879bcc28 ]
 
-The operstate update logic will leave an interface in the
-default UNKNOWN operstate if the interface carrier state never changes
-from the default carrier up state set at creation.  This includes the
-case of an explicit call to netif_carrier_on, as the carrier on to on
-transition has no effect on operstate.
+If mount is auto-probing for filesystem type, it will try various
+filesystems in order, with the MS_SILENT flag set.  We get
+that flag as the silent arg to ext4_fill_super.
 
-	This affects virtio-net for the case that the virtio peer does
-not support VIRTIO_NET_F_STATUS (the feature that provides carrier state
-updates).  Without this feature, the virtio specification states that
-"the link should be assumed active," so, logically, the operstate should
-be UP instead of UNKNOWN.  This has impact on user space applications
-that use the operstate to make availability decisions for the interface.
+If we're probing (silent==1) then don't complain about feature
+incompatibilities that are found if it looks like it's actually
+a different valid extN type - failed probes should be silent
+in this case.
 
-	Resolve this by changing the virtio probe logic slightly to call
-netif_carrier_off for both the "with" and "without" VIRTIO_NET_F_STATUS
-cases, and then the existing call to netif_carrier_on for the "without"
-case will cause an operstate transition.
+If the on-disk features are unknown even to ext4, then complain.
 
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Tested-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2874,8 +2874,8 @@ static int virtnet_probe(struct virtio_d
- 
- 	/* Assume link up if device can't report link status,
- 	   otherwise get link status from config. */
-+	netif_carrier_off(dev);
- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		netif_carrier_off(dev);
- 		schedule_work(&vi->config_work);
- 	} else {
- 		vi->status = VIRTIO_NET_S_LINK_UP;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3663,6 +3663,12 @@ static int ext4_fill_super(struct super_
+ 			ext4_msg(sb, KERN_INFO, "mounting ext2 file system "
+ 				 "using the ext4 subsystem");
+ 		else {
++			/*
++			 * If we're probing be silent, if this looks like
++			 * it's actually an ext[34] filesystem.
++			 */
++			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
++				goto failed_mount;
+ 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext2 due "
+ 				 "to feature incompatibilities");
+ 			goto failed_mount;
+@@ -3674,6 +3680,12 @@ static int ext4_fill_super(struct super_
+ 			ext4_msg(sb, KERN_INFO, "mounting ext3 file system "
+ 				 "using the ext4 subsystem");
+ 		else {
++			/*
++			 * If we're probing be silent, if this looks like
++			 * it's actually an ext4 filesystem.
++			 */
++			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
++				goto failed_mount;
+ 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext3 due "
+ 				 "to feature incompatibilities");
+ 			goto failed_mount;
