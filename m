@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164404AbeE1Kzd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:55:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44038 "EHLO mail.kernel.org"
+        id S1164457AbeE1Kz4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164386AbeE1Kz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:27 -0400
+        id S1164433AbeE1Kzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vinayak Menon <vinmenon@codeaurora.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Dave Airlie <airlied@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 311/496] mm/kmemleak.c: wait for scan completion before disabling free
-Date: Mon, 28 May 2018 12:01:36 +0200
-Message-Id: <20180528100332.924396565@linuxfoundation.org>
+Subject: [PATCH 4.14 287/496] drm/ast: Fixed 1280x800 Display Issue
+Date: Mon, 28 May 2018 12:01:12 +0200
+Message-Id: <20180528100331.926346718@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,77 +30,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vinayak Menon <vinmenon@codeaurora.org>
+From: "Y.C. Chen" <yc_chen@aspeedtech.com>
 
-[ Upstream commit 914b6dfff790544d9b77dfd1723adb3745ec9700 ]
+[ Upstream commit 5a9f698feb11b198f17b2acebbfe0e2716a3beed ]
 
-A crash is observed when kmemleak_scan accesses the object->pointer,
-likely due to the following race.
+The original ast driver cannot display properly if the resolution is 1280x800 and the pixel clock is 83.5MHz.
+Here is the update to fix it.
 
-  TASK A             TASK B                     TASK C
-  kmemleak_write
-   (with "scan" and
-   NOT "scan=on")
-  kmemleak_scan()
-                     create_object
-                     kmem_cache_alloc fails
-                     kmemleak_disable
-                     kmemleak_do_cleanup
-                     kmemleak_free_enabled = 0
-                                                kfree
-                                                kmemleak_free bails out
-                                                 (kmemleak_free_enabled is 0)
-                                                slub frees object->pointer
-  update_checksum
-  crash - object->pointer
-   freed (DEBUG_PAGEALLOC)
-
-kmemleak_do_cleanup waits for the scan thread to complete, but not for
-direct call to kmemleak_scan via kmemleak_write.  So add a wait for
-kmemleak_scan completion before disabling kmemleak_free, and while at it
-fix the comment on stop_scan_thread.
-
-[vinmenon@codeaurora.org: fix stop_scan_thread comment]
-  Link: http://lkml.kernel.org/r/1522219972-22809-1-git-send-email-vinmenon@codeaurora.org
-Link: http://lkml.kernel.org/r/1522063429-18992-1-git-send-email-vinmenon@codeaurora.org
-Signed-off-by: Vinayak Menon <vinmenon@codeaurora.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/kmemleak.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/ast/ast_tables.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -1658,8 +1658,7 @@ static void start_scan_thread(void)
- }
- 
- /*
-- * Stop the automatic memory scanning thread. This function must be called
-- * with the scan_mutex held.
-+ * Stop the automatic memory scanning thread.
-  */
- static void stop_scan_thread(void)
- {
-@@ -1922,12 +1921,15 @@ static void kmemleak_do_cleanup(struct w
- {
- 	stop_scan_thread();
- 
-+	mutex_lock(&scan_mutex);
- 	/*
--	 * Once the scan thread has stopped, it is safe to no longer track
--	 * object freeing. Ordering of the scan thread stopping and the memory
--	 * accesses below is guaranteed by the kthread_stop() function.
-+	 * Once it is made sure that kmemleak_scan has stopped, it is safe to no
-+	 * longer track object freeing. Ordering of the scan thread stopping and
-+	 * the memory accesses below is guaranteed by the kthread_stop()
-+	 * function.
- 	 */
- 	kmemleak_free_enabled = 0;
-+	mutex_unlock(&scan_mutex);
- 
- 	if (!kmemleak_found_leaks)
- 		__kmemleak_do_cleanup();
+--- a/drivers/gpu/drm/ast/ast_tables.h
++++ b/drivers/gpu/drm/ast/ast_tables.h
+@@ -97,7 +97,7 @@ static const struct ast_vbios_dclk_info
+ 	{0x67, 0x22, 0x00},			/* 0E: VCLK157_5	*/
+ 	{0x6A, 0x22, 0x00},			/* 0F: VCLK162		*/
+ 	{0x4d, 0x4c, 0x80},			/* 10: VCLK154		*/
+-	{0xa7, 0x78, 0x80},			/* 11: VCLK83.5		*/
++	{0x68, 0x6f, 0x80},			/* 11: VCLK83.5		*/
+ 	{0x28, 0x49, 0x80},			/* 12: VCLK106.5	*/
+ 	{0x37, 0x49, 0x80},			/* 13: VCLK146.25	*/
+ 	{0x1f, 0x45, 0x80},			/* 14: VCLK148.5	*/
+@@ -127,7 +127,7 @@ static const struct ast_vbios_dclk_info
+ 	{0x67, 0x22, 0x00},			/* 0E: VCLK157_5	*/
+ 	{0x6A, 0x22, 0x00},			/* 0F: VCLK162		*/
+ 	{0x4d, 0x4c, 0x80},			/* 10: VCLK154		*/
+-	{0xa7, 0x78, 0x80},			/* 11: VCLK83.5		*/
++	{0x68, 0x6f, 0x80},			/* 11: VCLK83.5		*/
+ 	{0x28, 0x49, 0x80},			/* 12: VCLK106.5	*/
+ 	{0x37, 0x49, 0x80},			/* 13: VCLK146.25	*/
+ 	{0x1f, 0x45, 0x80},			/* 14: VCLK148.5	*/
