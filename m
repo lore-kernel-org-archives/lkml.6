@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164793AbeE1LAe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:00:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48156 "EHLO mail.kernel.org"
+        id S1422677AbeE1LAl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164726AbeE1LAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:30 -0400
+        id S1164726AbeE1LAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunyu Hu <chuhu@redhat.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Jiandi An <anjiandi@codeaurora.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 390/496] cpufreq: cppc_cpufreq: Fix cppc_cpufreq_init() failure path
-Date: Mon, 28 May 2018 12:02:55 +0200
-Message-Id: <20180528100336.214312632@linuxfoundation.org>
+Subject: [PATCH 4.14 382/496] ima: Fix Kconfig to select TPM 2.0 CRB interface
+Date: Mon, 28 May 2018 12:02:47 +0200
+Message-Id: <20180528100335.883857577@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,55 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chunyu Hu <chuhu@redhat.com>
+From: Jiandi An <anjiandi@codeaurora.org>
 
-[ Upstream commit 55b55abc17f238c61921360e61dde90dd9a326d1 ]
+[ Upstream commit fac37c628fd5d68fd7298d9b57ae8601ee1b4723 ]
 
-Kmemleak reported the below leak. When cppc_cpufreq_init went into
-failure path, the cpu mask is not freed. After fix, this report is
-gone. And to avaoid potential NULL pointer reference, check the cpu
-value first.
+TPM_CRB driver provides TPM CRB 2.0 support.  If it is built as a
+module, the TPM chip is registered after IMA init.  tpm_pcr_read() in
+IMA fails and displays the following message even though eventually
+there is a TPM chip on the system.
 
-unreferenced object 0xffff800fd5ea4880 (size 128):
-  comm "swapper/0", pid 1, jiffies 4294939510 (age 668.680s)
-  hex dump (first 32 bytes):
-    00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00  .... ...........
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffff0000082c4ae4>] __kmalloc_node+0x278/0x634
-    [<ffff0000088f4a74>] alloc_cpumask_var_node+0x28/0x60
-    [<ffff0000088f4af0>] zalloc_cpumask_var+0x14/0x1c
-    [<ffff000008d20254>] cppc_cpufreq_init+0xd0/0x19c
-    [<ffff000008083828>] do_one_initcall+0xec/0x15c
-    [<ffff000008cd1018>] kernel_init_freeable+0x1f4/0x2a4
-    [<ffff0000089099b0>] kernel_init+0x18/0x10c
-    [<ffff000008084d50>] ret_from_fork+0x10/0x18
-    [<ffffffffffffffff>] 0xffffffffffffffff
+ima: No TPM chip found, activating TPM-bypass! (rc=-19)
 
-Signed-off-by: Chunyu Hu <chuhu@redhat.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is built in the kernel
+and initializes before IMA.
+
+Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cppc_cpufreq.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ security/integrity/ima/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -243,8 +243,13 @@ static int __init cppc_cpufreq_init(void
- 	return ret;
- 
- out:
--	for_each_possible_cpu(i)
--		kfree(all_cpu_data[i]);
-+	for_each_possible_cpu(i) {
-+		cpu = all_cpu_data[i];
-+		if (!cpu)
-+			break;
-+		free_cpumask_var(cpu->shared_cpu_map);
-+		kfree(cpu);
-+	}
- 
- 	kfree(all_cpu_data);
- 	return -ENODEV;
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -10,6 +10,7 @@ config IMA
+ 	select CRYPTO_HASH_INFO
+ 	select TCG_TPM if HAS_IOMEM && !UML
+ 	select TCG_TIS if TCG_TPM && X86
++	select TCG_CRB if TCG_TPM && ACPI
+ 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+ 	help
+ 	  The Trusted Computing Group(TCG) runtime Integrity
