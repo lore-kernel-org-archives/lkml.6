@@ -1,27 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933212AbeE1KHh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:07:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
+        id S940439AbeE1Qnv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:43:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932358AbeE1KHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:32 -0400
+        id S1754200AbeE1KH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:07:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Yu Chen <yu.c.chen@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 036/185] ACPI: processor_perflib: Do not send _PPC change notification if not ready
-Date: Mon, 28 May 2018 12:01:17 +0200
-Message-Id: <20180528100053.120686016@linuxfoundation.org>
+        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 3.18 001/185] MIPS: ptrace: Expose FIR register through FP regset
+Date: Mon, 28 May 2018 12:00:42 +0200
+Message-Id: <20180528100050.786410467@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -32,97 +29,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: Maciej W. Rozycki <macro@mips.com>
 
-[ Upstream commit ba1edb9a5125a617d612f98eead14b9b84e75c3a ]
+commit 71e909c0cdad28a1df1fa14442929e68615dee45 upstream.
 
-The following warning was triggered after resumed from S3 -
-if all the nonboot CPUs were put offline before suspend:
+Correct commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
+and expose the FIR register using the unused 4 bytes at the end of the
+NT_PRFPREG regset.  Without that register included clients cannot use
+the PTRACE_GETREGSET request to retrieve the complete FPU register set
+and have to resort to one of the older interfaces, either PTRACE_PEEKUSR
+or PTRACE_GETFPREGS, to retrieve the missing piece of data.  Also the
+register is irreversibly missing from core dumps.
 
-[ 1840.329515] unchecked MSR access error: RDMSR from 0x771 at rIP: 0xffffffff86061e3a (native_read_msr+0xa/0x30)
-[ 1840.329516] Call Trace:
-[ 1840.329521]  __rdmsr_on_cpu+0x33/0x50
-[ 1840.329525]  generic_exec_single+0x81/0xb0
-[ 1840.329527]  smp_call_function_single+0xd2/0x100
-[ 1840.329530]  ? acpi_ds_result_pop+0xdd/0xf2
-[ 1840.329532]  ? acpi_ds_create_operand+0x215/0x23c
-[ 1840.329534]  rdmsrl_on_cpu+0x57/0x80
-[ 1840.329536]  ? cpumask_next+0x1b/0x20
-[ 1840.329538]  ? rdmsrl_on_cpu+0x57/0x80
-[ 1840.329541]  intel_pstate_update_perf_limits+0xf3/0x220
-[ 1840.329544]  ? notifier_call_chain+0x4a/0x70
-[ 1840.329546]  intel_pstate_set_policy+0x4e/0x150
-[ 1840.329548]  cpufreq_set_policy+0xcd/0x2f0
-[ 1840.329550]  cpufreq_update_policy+0xb2/0x130
-[ 1840.329552]  ? cpufreq_update_policy+0x130/0x130
-[ 1840.329556]  acpi_processor_ppc_has_changed+0x65/0x80
-[ 1840.329558]  acpi_processor_notify+0x80/0x100
-[ 1840.329561]  acpi_ev_notify_dispatch+0x44/0x5c
-[ 1840.329563]  acpi_os_execute_deferred+0x14/0x20
-[ 1840.329565]  process_one_work+0x193/0x3c0
-[ 1840.329567]  worker_thread+0x35/0x3b0
-[ 1840.329569]  kthread+0x125/0x140
-[ 1840.329571]  ? process_one_work+0x3c0/0x3c0
-[ 1840.329572]  ? kthread_park+0x60/0x60
-[ 1840.329575]  ? do_syscall_64+0x67/0x180
-[ 1840.329577]  ret_from_fork+0x25/0x30
-[ 1840.329585] unchecked MSR access error: WRMSR to 0x774 (tried to write 0x0000000000000000) at rIP: 0xffffffff86061f78 (native_write_msr+0x8/0x30)
-[ 1840.329586] Call Trace:
-[ 1840.329587]  __wrmsr_on_cpu+0x37/0x40
-[ 1840.329589]  generic_exec_single+0x81/0xb0
-[ 1840.329592]  smp_call_function_single+0xd2/0x100
-[ 1840.329594]  ? acpi_ds_create_operand+0x215/0x23c
-[ 1840.329595]  ? cpumask_next+0x1b/0x20
-[ 1840.329597]  wrmsrl_on_cpu+0x57/0x70
-[ 1840.329598]  ? rdmsrl_on_cpu+0x57/0x80
-[ 1840.329599]  ? wrmsrl_on_cpu+0x57/0x70
-[ 1840.329602]  intel_pstate_hwp_set+0xd3/0x150
-[ 1840.329604]  intel_pstate_set_policy+0x119/0x150
-[ 1840.329606]  cpufreq_set_policy+0xcd/0x2f0
-[ 1840.329607]  cpufreq_update_policy+0xb2/0x130
-[ 1840.329610]  ? cpufreq_update_policy+0x130/0x130
-[ 1840.329613]  acpi_processor_ppc_has_changed+0x65/0x80
-[ 1840.329615]  acpi_processor_notify+0x80/0x100
-[ 1840.329617]  acpi_ev_notify_dispatch+0x44/0x5c
-[ 1840.329619]  acpi_os_execute_deferred+0x14/0x20
-[ 1840.329620]  process_one_work+0x193/0x3c0
-[ 1840.329622]  worker_thread+0x35/0x3b0
-[ 1840.329624]  kthread+0x125/0x140
-[ 1840.329625]  ? process_one_work+0x3c0/0x3c0
-[ 1840.329626]  ? kthread_park+0x60/0x60
-[ 1840.329628]  ? do_syscall_64+0x67/0x180
-[ 1840.329631]  ret_from_fork+0x25/0x30
+This register is architecturally hardwired and read-only so the write
+path does not matter.  Ignore data supplied on writes then.
 
-This is because if there's only one online CPU, the MSR_PM_ENABLE
-(package wide)can not be enabled after resumed, due to
-intel_pstate_hwp_enable() will only be invoked on AP's online
-process after resumed - if there's no AP online, the HWP remains
-disabled after resumed (BIOS has disabled it in S3). Then if
-there comes a _PPC change notification which touches HWP register
-during this stage, the warning is triggered.
-
-Since we don't call acpi_processor_register_performance() when
-HWP is enabled, the pr->performance will be NULL. When this is
-NULL we don't need to do _PPC change notification.
-
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Yu Chen <yu.c.chen@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.13+
+Patchwork: https://patchwork.linux-mips.org/patch/19273/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/acpi/processor_perflib.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -165,7 +165,7 @@ int acpi_processor_ppc_has_changed(struc
+---
+ arch/mips/kernel/ptrace.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -444,7 +444,7 @@ static int fpr_get_msa(struct task_struc
+ /*
+  * Copy the floating-point context to the supplied NT_PRFPREG buffer.
+  * Choose the appropriate helper for general registers, and then copy
+- * the FCSR register separately.
++ * the FCSR and FIR registers separately.
+  */
+ static int fpr_get(struct task_struct *target,
+ 		   const struct user_regset *regset,
+@@ -452,6 +452,7 @@ static int fpr_get(struct task_struct *t
+ 		   void *kbuf, void __user *ubuf)
  {
- 	int ret;
+ 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
++	const int fir_pos = fcr31_pos + sizeof(u32);
+ 	int err;
  
--	if (ignore_ppc) {
-+	if (ignore_ppc || !pr->performance) {
- 		/*
- 		 * Only when it is notification event, the _OST object
- 		 * will be evaluated. Otherwise it is skipped.
+ 	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
+@@ -464,6 +465,12 @@ static int fpr_get(struct task_struct *t
+ 	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
+ 				  &target->thread.fpu.fcr31,
+ 				  fcr31_pos, fcr31_pos + sizeof(u32));
++	if (err)
++		return err;
++
++	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
++				  &boot_cpu_data.fpu_id,
++				  fir_pos, fir_pos + sizeof(u32));
+ 
+ 	return err;
+ }
+@@ -512,7 +519,8 @@ static int fpr_set_msa(struct task_struc
+ /*
+  * Copy the supplied NT_PRFPREG buffer to the floating-point context.
+  * Choose the appropriate helper for general registers, and then copy
+- * the FCSR register separately.
++ * the FCSR register separately.  Ignore the incoming FIR register
++ * contents though, as the register is read-only.
+  *
+  * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
+  * which is supposed to have been guaranteed by the kernel before
+@@ -526,6 +534,7 @@ static int fpr_set(struct task_struct *t
+ 		   const void *kbuf, const void __user *ubuf)
+ {
+ 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
++	const int fir_pos = fcr31_pos + sizeof(u32);
+ 	u32 fcr31;
+ 	int err;
+ 
+@@ -551,6 +560,11 @@ static int fpr_set(struct task_struct *t
+ 		target->thread.fpu.fcr31 = fcr31 & ~FPU_CSR_ALL_X;
+ 	}
+ 
++	if (count > 0)
++		err = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
++						fir_pos,
++						fir_pos + sizeof(u32));
++
+ 	return err;
+ }
+ 
