@@ -1,70 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425067AbeE1NRw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:17:52 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:51860 "EHLO pegase1.c-s.fr"
+        id S1165278AbeE1NRt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:17:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163251AbeE1KuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1163596AbeE1KuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 06:50:01 -0400
-Message-Id: <cover.1527503958.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 0/3] powerpc/lib: Optimisation of memcmp() and __clear_user() for PPC32 
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Mon, 28 May 2018 10:49:52 +0000 (UTC)
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 197/496] nvme: pci: pass max vectors as num_possible_cpus() to pci_alloc_irq_vectors
+Date: Mon, 28 May 2018 11:59:42 +0200
+Message-Id: <20180528100328.228187488@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This serie intends to optimise memcmp() and __clear_user() for PPC32
-in the same spirit as already done on PPC64.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-The first patch moves PPC32 specific functions from string.S into
-a dedicated file named string_32.S
-The second patch rewrites __clear_user() by using dcbz intruction
-The third patch rewrites memcmp() to compare 32 bits words instead
-of comparing byte per byte.
+------------------
 
-As shown in each individual commit log, second and third patches
-provide significant improvment.
+From: Ming Lei <ming.lei@redhat.com>
 
-Changes in v5:
-- Removed the handling of Little Endian, as PPC32 kernel only support Big Endian
-at the time being, and because unaligned accesses should be handled differently
-in LE.
+[ Upstream commit 16ccfff2897613007b5eda9e29d65303c6280026 ]
 
-Changes in v4:
-- In memcmp(), dropped the special handling for when length is 0. Handling it 
-through the small length path.
+84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
+has switched to do irq vectors spread among all possible CPUs, so
+pass num_possible_cpus() as max vecotrs to be assigned.
 
-Changes in v3:
-- Fixed the sign of the result returned by memcmp() by using a logical
-comparison of u32 words and returning -1, 0 or 1 instead of doing a substract.
-- In first patch, replaced PPC_LCMPI by cmpwi
-- Fixed licence in string_32.S
-- Removed the two last patches from the serie. They will be handled later as
-they require further tests and analysis to properly identify their real benefit
-in all possible cases.
+For example, in a 8 cores system, 0~3 online, 4~8 offline/not present,
+see 'lscpu':
 
-Changes in v2:
-- Moved out the patch removing the hot loop alignment on PPC32
-- Squashed the changes related to NUL size verification in a single patch
-- Reordered the patches in a more logical order
-- Modified the inlining patch to avoid warning about impossibility to version symbols.
+        [ming@box]$lscpu
+        Architecture:          x86_64
+        CPU op-mode(s):        32-bit, 64-bit
+        Byte Order:            Little Endian
+        CPU(s):                4
+        On-line CPU(s) list:   0-3
+        Thread(s) per core:    1
+        Core(s) per socket:    2
+        Socket(s):             2
+        NUMA node(s):          2
+        ...
+        NUMA node0 CPU(s):     0-3
+        NUMA node1 CPU(s):
+        ...
 
+1) before this patch, follows the allocated vectors and their affinity:
+	irq 47, cpu list 0,4
+	irq 48, cpu list 1,6
+	irq 49, cpu list 2,5
+	irq 50, cpu list 3,7
 
-Christophe Leroy (3):
-  powerpc/lib: move PPC32 specific functions out of string.S
-  powerpc/lib: optimise 32 bits __clear_user()
-  powerpc/lib: optimise PPC32 memcmp
+2) after this patch, follows the allocated vectors and their affinity:
+	irq 43, cpu list 0
+	irq 44, cpu list 1
+	irq 45, cpu list 2
+	irq 46, cpu list 3
+	irq 47, cpu list 4
+	irq 48, cpu list 6
+	irq 49, cpu list 5
+	irq 50, cpu list 7
 
- arch/powerpc/lib/Makefile    |   5 +-
- arch/powerpc/lib/string.S    |  61 ---------------------
- arch/powerpc/lib/string_32.S | 124 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 127 insertions(+), 63 deletions(-)
- create mode 100644 arch/powerpc/lib/string_32.S
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/nvme/host/pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-2.13.3
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1770,7 +1770,7 @@ static int nvme_setup_io_queues(struct n
+ 	int result, nr_io_queues;
+ 	unsigned long size;
+ 
+-	nr_io_queues = num_present_cpus();
++	nr_io_queues = num_possible_cpus();
+ 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
+ 	if (result < 0)
+ 		return result;
