@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162594AbeE1KjJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:39:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59304 "EHLO mail.kernel.org"
+        id S1162622AbeE1KjW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:39:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162574AbeE1KjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:03 -0400
+        id S1162596AbeE1KjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 284/329] MIPS: ath79: Fix AR724X_PLL_REG_PCIE_CONFIG offset
-Date: Mon, 28 May 2018 12:03:33 +0200
-Message-Id: <20180528100305.404513408@linuxfoundation.org>
+Subject: [PATCH 4.9 257/329] powerpc/mpic: Check if cpu_possible() in mpic_physmask()
+Date: Mon, 28 May 2018 12:03:06 +0200
+Message-Id: <20180528100303.336003707@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,37 +29,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Kresin <dev@kresin.me>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 05454c1bde91fb013c0431801001da82947e6b5a ]
+[ Upstream commit 0834d627fbea00c1444075eb3e448e1974da452d ]
 
-According to the QCA u-boot source the "PCIE Phase Lock Loop
-Configuration (PCIE_PLL_CONFIG)" register is for all SoCs except the
-QCA955X and QCA956X at offset 0x10.
+In mpic_physmask() we loop over all CPUs up to 32, then get the hard
+SMP processor id of that CPU.
 
-Since the PCIE PLL config register is only defined for the AR724x fix
-only this value. The value is wrong since the day it was added and isn't
-used by any driver yet.
+Currently that's possibly walking off the end of the paca array, but
+in a future patch we will change the paca array to be an array of
+pointers, and in that case we will get a NULL for missing CPUs and
+oops. eg:
 
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/16048/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+  Unable to handle kernel paging request for data at address 0x88888888888888b8
+  Faulting instruction address: 0xc00000000004e380
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  ...
+  NIP .mpic_set_affinity+0x60/0x1a0
+  LR  .irq_do_set_affinity+0x48/0x100
+
+Fix it by checking the CPU is possible, this also fixes the code if
+there are gaps in the CPU numbering which probably never happens on
+mpic systems but who knows.
+
+Debugged-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/mach-ath79/ar71xx_regs.h |    2 +-
+ arch/powerpc/sysdev/mpic.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
-+++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
-@@ -167,7 +167,7 @@
- #define AR71XX_AHB_DIV_MASK		0x7
+--- a/arch/powerpc/sysdev/mpic.c
++++ b/arch/powerpc/sysdev/mpic.c
+@@ -626,7 +626,7 @@ static inline u32 mpic_physmask(u32 cpum
+ 	int i;
+ 	u32 mask = 0;
  
- #define AR724X_PLL_REG_CPU_CONFIG	0x00
--#define AR724X_PLL_REG_PCIE_CONFIG	0x18
-+#define AR724X_PLL_REG_PCIE_CONFIG	0x10
- 
- #define AR724X_PLL_FB_SHIFT		0
- #define AR724X_PLL_FB_MASK		0x3ff
+-	for (i = 0; i < min(32, NR_CPUS); ++i, cpumask >>= 1)
++	for (i = 0; i < min(32, NR_CPUS) && cpu_possible(i); ++i, cpumask >>= 1)
+ 		mask |= (cpumask & 1) << get_hard_smp_processor_id(i);
+ 	return mask;
+ }
