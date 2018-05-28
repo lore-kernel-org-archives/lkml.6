@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424107AbeE1LLo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:11:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59570 "EHLO mail.kernel.org"
+        id S938120AbeE1Lm1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:42:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423797AbeE1LLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:11:37 -0400
+        id S1424098AbeE1LLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:11:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Lukas Wunner <lukas@wunner.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 168/272] powerpc/vas: Fix cleanup when VAS is not configured
-Date: Mon, 28 May 2018 12:03:21 +0200
-Message-Id: <20180528100254.901010371@linuxfoundation.org>
+Subject: [PATCH 4.16 169/272] PCI: Restore config space on runtime resume despite being unbound
+Date: Mon, 28 May 2018 12:03:22 +0200
+Message-Id: <20180528100254.968216313@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,71 +31,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-[ Upstream commit 45ddea8a73a25461387eb8e87f3e0ecca084799b ]
+[ Upstream commit 5775b843a619b3c93f946e2b55a208d9f0f48b59 ]
 
-When VAS is not configured, unregister the platform driver. Also simplify
-cleanup by delaying vas debugfs init until we know VAS is configured.
+We leave PCI devices not bound to a driver in D0 during runtime suspend.
+But they may have a parent which is bound and can be transitioned to
+D3cold at runtime.  Once the parent goes to D3cold, the unbound child
+may go to D3cold as well.  When the child goes to D3cold, its internal
+state, including configuration of BARs, MSI, ASPM, MPS, etc., is lost.
 
-Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+One example are recent hybrid graphics laptops which cut power to the
+discrete GPU when the root port above it goes to ACPI power state D3.
+Users may provoke this by unbinding the GPU driver and allowing runtime
+PM on the GPU via sysfs:  The PM core will then treat the GPU as
+"suspended", which in turn allows the root port to runtime suspend,
+causing the power resources listed in its _PR3 object to be powered off.
+The GPU's BARs will be uninitialized when a driver later probes it.
+
+Another example are hybrid graphics laptops where the GPU itself (rather
+than the root port) is capable of runtime suspending to D3cold.  If the
+GPU's integrated HDA controller is not bound and the GPU's driver
+decides to runtime suspend to D3cold, the HDA controller's BARs will be
+uninitialized when a driver later probes it.
+
+Fix by saving and restoring config space over a runtime suspend cycle
+even if the device is not bound.
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Peter Wu <peter@lekensteyn.nl>              # Nvidia Optimus
+Tested-by: Lukas Wunner <lukas@wunner.de>              # MacBook Pro
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[lukas: add commit message, bikeshed code comments for clarity]
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/92fb6e6ae2730915eb733c08e2f76c6a313e3860.1520068884.git.lukas@wunner.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/vas-debug.c |   11 +++++++++++
- arch/powerpc/platforms/powernv/vas.c       |    6 +++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/pci/pci-driver.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/vas-debug.c
-+++ b/arch/powerpc/platforms/powernv/vas-debug.c
-@@ -179,6 +179,7 @@ void vas_instance_init_dbgdir(struct vas
- {
- 	struct dentry *d;
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1225,11 +1225,14 @@ static int pci_pm_runtime_suspend(struct
+ 	int error;
  
-+	vas_init_dbgdir();
- 	if (!vas_debugfs)
- 		return;
- 
-@@ -201,8 +202,18 @@ free_name:
- 	vinst->dbgdir = NULL;
- }
- 
-+/*
-+ * Set up the "root" VAS debugfs dir. Return if we already set it up
-+ * (or failed to) in an earlier instance of VAS.
-+ */
- void vas_init_dbgdir(void)
- {
-+	static bool first_time = true;
-+
-+	if (!first_time)
-+		return;
-+
-+	first_time = false;
- 	vas_debugfs = debugfs_create_dir("vas", NULL);
- 	if (IS_ERR(vas_debugfs))
- 		vas_debugfs = NULL;
---- a/arch/powerpc/platforms/powernv/vas.c
-+++ b/arch/powerpc/platforms/powernv/vas.c
-@@ -160,8 +160,6 @@ static int __init vas_init(void)
- 	int found = 0;
- 	struct device_node *dn;
- 
--	vas_init_dbgdir();
--
- 	platform_driver_register(&vas_driver);
- 
- 	for_each_compatible_node(dn, NULL, "ibm,vas") {
-@@ -169,8 +167,10 @@ static int __init vas_init(void)
- 		found++;
- 	}
- 
--	if (!found)
-+	if (!found) {
-+		platform_driver_unregister(&vas_driver);
- 		return -ENODEV;
+ 	/*
+-	 * If pci_dev->driver is not set (unbound), the device should
+-	 * always remain in D0 regardless of the runtime PM status
++	 * If pci_dev->driver is not set (unbound), we leave the device in D0,
++	 * but it may go to D3cold when the bridge above it runtime suspends.
++	 * Save its config space in case that happens.
+ 	 */
+-	if (!pci_dev->driver)
++	if (!pci_dev->driver) {
++		pci_save_state(pci_dev);
+ 		return 0;
 +	}
  
- 	pr_devel("Found %d instances\n", found);
+ 	if (!pm || !pm->runtime_suspend)
+ 		return -ENOSYS;
+@@ -1277,16 +1280,18 @@ static int pci_pm_runtime_resume(struct
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
  
+ 	/*
+-	 * If pci_dev->driver is not set (unbound), the device should
+-	 * always remain in D0 regardless of the runtime PM status
++	 * Restoring config space is necessary even if the device is not bound
++	 * to a driver because although we left it in D0, it may have gone to
++	 * D3cold when the bridge above it runtime suspended.
+ 	 */
++	pci_restore_standard_config(pci_dev);
++
+ 	if (!pci_dev->driver)
+ 		return 0;
+ 
+ 	if (!pm || !pm->runtime_resume)
+ 		return -ENOSYS;
+ 
+-	pci_restore_standard_config(pci_dev);
+ 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+ 	pci_enable_wake(pci_dev, PCI_D0, false);
+ 	pci_fixup_device(pci_fixup_resume, pci_dev);
