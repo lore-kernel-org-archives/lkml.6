@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424583AbeE1LPf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:15:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
+        id S1424614AbeE1LPr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:15:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424566AbeE1LPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:15:30 -0400
+        id S1424585AbeE1LPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:15:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 233/272] sh_eth: fix TSU init on SH7734/R8A7740
-Date: Mon, 28 May 2018 12:04:26 +0200
-Message-Id: <20180528100259.961744303@linuxfoundation.org>
+Subject: [PATCH 4.16 252/272] perf tests: Use arch__compare_symbol_names to compare symbols
+Date: Mon, 28 May 2018 12:04:45 +0200
+Message-Id: <20180528100301.427666662@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,79 +34,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit a94cf2a614f8bc5b2b33c708626ce695bf71e424 ]
+[ Upstream commit ab6e9a99345131cd8e54268d1d0dc04a33f7ed11 ]
 
-It appears that the single port Ether controllers having TSU (like SH7734/
-R8A7740) need the same kind of treating in sh_eth_tsu_init() as R7S72100
-currently has -- they also don't have the TSU registers related e.g. to
-passing the frames between ports. Add the 'sh_eth_cpu_data::dual_port'
-flag and use it as a new criterion for taking a "short path" in the TSU
-init sequence in order to avoid writing to the non-existent registers...
+The symbol search called by machine__find_kernel_symbol_by_name is using
+internally arch__compare_symbol_names function to compare 2 symbol
+names, because different archs have different ways of comparing symbols.
+Mostly for skipping '.' prefixes and similar.
 
-Fixes: f0e81fecd4f8 ("net: sh_eth: Add support SH7734")
-Fixes: 73a0d907301e ("net: sh_eth: add support R8A7740")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In test 1 when we try to find matching symbols in kallsyms and vmlinux,
+by address and by symbol name. When either is found we compare the pair
+symbol names  by simple strcmp, which is not good enough for reasons
+explained in previous paragraph.
+
+On powerpc this can cause lockup, because even thought we found the
+pair, the compared names are different and don't match simple strcmp.
+Following code path is executed, that leads to lockup:
+
+   - we find the pair in kallsyms by sym->start
+next_pair:
+   - we compare the names and it fails
+   - we find the pair by sym->name
+   - the pair addresses match so we call goto next_pair
+     because we assume the names match in this case
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 031b84c407c3 ("perf probe ppc: Enable matching against dot symbols automatically")
+Link: http://lkml.kernel.org/r/20180215122635.24029-10-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |    6 +++++-
- drivers/net/ethernet/renesas/sh_eth.h |    1 +
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ tools/perf/tests/vmlinux-kallsyms.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -763,6 +763,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.rpadir		= 1,
- 	.rpadir_value   = 2 << 16,
- 	.rtrate		= 1,
-+	.dual_port	= 1,
- };
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -125,7 +125,7 @@ int test__vmlinux_matches_kallsyms(struc
  
- #define SH_GIGA_ETH_BASE	0xfee00000UL
-@@ -841,6 +842,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
- 	.tsu		= 1,
-+	.dual_port	= 1,
- };
- 
- /* SH7734 */
-@@ -911,6 +913,7 @@ static struct sh_eth_cpu_data sh7763_dat
- 	.tsu		= 1,
- 	.irq_flags	= IRQF_SHARED,
- 	.magic		= 1,
-+	.dual_port	= 1,
- };
- 
- static struct sh_eth_cpu_data sh7619_data = {
-@@ -943,6 +946,7 @@ static struct sh_eth_cpu_data sh771x_dat
- 			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
- 	.tsu		= 1,
-+	.dual_port	= 1,
- };
- 
- static void sh_eth_set_default_cpu_data(struct sh_eth_cpu_data *cd)
-@@ -2932,7 +2936,7 @@ static int sh_eth_vlan_rx_kill_vid(struc
- /* SuperH's TSU register init function */
- static void sh_eth_tsu_init(struct sh_eth_private *mdp)
- {
--	if (sh_eth_is_rz_fast_ether(mdp)) {
-+	if (!mdp->cd->dual_port) {
- 		sh_eth_tsu_write(mdp, 0, TSU_TEN); /* Disable all CAM entry */
- 		sh_eth_tsu_write(mdp, TSU_FWSLC_POSTENU | TSU_FWSLC_POSTENL,
- 				 TSU_FWSLC);	/* Enable POST registers */
---- a/drivers/net/ethernet/renesas/sh_eth.h
-+++ b/drivers/net/ethernet/renesas/sh_eth.h
-@@ -509,6 +509,7 @@ struct sh_eth_cpu_data {
- 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
- 	unsigned rtrate:1;	/* EtherC has RTRATE register */
- 	unsigned magic:1;	/* EtherC has ECMR.MPDE and ECSR.MPD */
-+	unsigned dual_port:1;	/* Dual EtherC/E-DMAC */
- };
- 
- struct sh_eth_private {
+ 		if (pair && UM(pair->start) == mem_start) {
+ next_pair:
+-			if (strcmp(sym->name, pair->name) == 0) {
++			if (arch__compare_symbol_names(sym->name, pair->name) == 0) {
+ 				/*
+ 				 * kallsyms don't have the symbol end, so we
+ 				 * set that by using the next symbol start - 1,
