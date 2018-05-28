@@ -1,99 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935473AbeE1X0G (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 19:26:06 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:34509 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935206AbeE1X0D (ORCPT
+        id S935097AbeE1XiP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 19:38:15 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:49571 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934854AbeE1XiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 19:26:03 -0400
-X-Google-Smtp-Source: ADUXVKLr+PfbykR3dq5R1UFdbVXoLwxKly7z6EcMM5kP3TnyaKICXyp8RTuHYOsSm0Og/AKgX3GXyBCEur1HfkWG+b4OAm24Qv9X
-MIME-Version: 1.0
-Date: Mon, 28 May 2018 16:26:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e46d0a056d4c70ce@google.com>
-Subject: BUG: unable to handle kernel (3)
-From: syzbot <syzbot+adfeaaee641dd4fdac43@syzkaller.appspotmail.com>
-To: bridge@lists.linux-foundation.org, coreteam@netfilter.org,
-        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Mon, 28 May 2018 19:38:12 -0400
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+X-Original-SENDERIP: 10.177.226.38
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+From: Hoeun Ryu <hoeun.ryu@lge.com.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Cyril Bur <cyrilbur@gmail.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Neuling <mikey@neuling.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Don Zickus <dzickus@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Liu, Changcheng" <changcheng.liu@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hoeun Ryu <hoeun.ryu@lge.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: [PATCH] printk: make printk_safe_flush safe in NMI context
+Date: Tue, 29 May 2018 08:34:14 +0900
+Message-Id: <1527550647-3953-1-git-send-email-hoeun.ryu@lge.com.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Hoeun Ryu <hoeun.ryu@lge.com>
 
-syzbot found the following crash on:
+ Make printk_safe_flush() safe in NMI context. And printk_safe_flush_on_panic() is
+folded into this function. The prototype of printk_safe_flush() is changed to
+"void printk_safe_flush(bool panic)".
 
-HEAD commit:    861d9dd37526 Merge tag 'kbuild-fixes-v4.17-2' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10bffd0f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
-dashboard link: https://syzkaller.appspot.com/bug?extid=adfeaaee641dd4fdac43
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1156a92f800000
+ nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
+function is called in watchdog_overflow_callback() if the flag of hardlockup
+backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
+watchdog_overflow_callback() function is called in NMI context on some
+architectures.
+ Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries to
+lock logbuf_lock in vprintk_emit() but the logbuf_lock can be already locked in
+preempted contexts (task or irq in this case) or by other CPUs and it may cause
+deadlocks.
+ By making printk_safe_flush() safe in NMI context, the backtrace triggering CPU
+just skips flushing if the lock is not avaiable in NMI context. The messages in
+per-cpu nmi buffer of the backtrace triggering CPU can be lost if the CPU is in
+hard lockup (because irq is disabled here) but if panic() is not called. The
+flushing can be delayed by the next irq work in normal cases.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+adfeaaee641dd4fdac43@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_CHANGE): bridge0: link becomes ready
-BUG: unable to handle kernel
-IPVS: ftp: loaded support on port[0] = 21
-paging request at ffffc90001f30003
-PGD 1da946067 P4D 1da946067 PUD 1da947067 PMD 1afa9e067 PTE 80000001b7d3e163
-Oops: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 8 Comm: ksoftirqd/0 Not tainted 4.17.0-rc6+ #95
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:ebt_do_table+0x1983/0x2140 net/bridge/netfilter/ebtables.c:283
-RSP: 0018:ffff8801d9aaeb68 EFLAGS: 00010246
-RAX: ffffc90001f30003 RBX: ffffc90001f30003 RCX: ffffc90001f24000
-RDX: 0000000000000000 RSI: ffffffff86a8513c RDI: 0000000000000000
-RBP: ffff8801d9aaed38 R08: ffff8801d9a9c200 R09: ffffed003b5c46d2
-R10: ffffed003b5c46d2 R11: ffff8801dae23693 R12: ffffc90001f24000
-R13: ffffc90001f201a0 R14: ffffc90001f200d0 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90001f30003 CR3: 00000001ad782000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ebt_broute+0x1f8/0x320 net/bridge/netfilter/ebtable_broute.c:60
-  br_handle_frame+0x6b6/0x19f0 net/bridge/br_input.c:291
-  __netif_receive_skb_core+0xc6e/0x3630 net/core/dev.c:4546
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
-  process_backlog+0x219/0x760 net/core/dev.c:5337
-  napi_poll net/core/dev.c:5735 [inline]
-  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-  run_ksoftirqd+0x86/0x100 kernel/softirq.c:646
-  smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Code: 6c 24 08 48 89 d8 48 89 9d d0 fe ff ff 48 c1 e8 03 42 0f b6 04 38 84  
-c0 74 08 3c 03 0f 8e 3b 06 00 00 48 8b 85 d0 fe ff ff 31 ff <8b> 18 89 de  
-e8 54 f1 d0 fa 85 db 0f 85 a0 02 00 00 e8 37 f0 d0
-RIP: ebt_do_table+0x1983/0x2140 net/bridge/netfilter/ebtables.c:283 RSP:  
-ffff8801d9aaeb68
-CR2: ffffc90001f30003
----[ end trace d121cd1897af50a4 ]---
-
-
+Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/powerpc/kernel/traps.c    |  2 +-
+ arch/powerpc/kernel/watchdog.c |  2 +-
+ include/linux/printk.h         |  9 ++----
+ kernel/kexec_core.c            |  2 +-
+ kernel/panic.c                 |  4 +--
+ kernel/printk/printk_safe.c    | 62 +++++++++++++++++++++---------------------
+ lib/nmi_backtrace.c            |  2 +-
+ 7 files changed, 39 insertions(+), 44 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 0904492..c50749c 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -160,7 +160,7 @@ extern void panic_flush_kmsg_start(void)
+ 
+ extern void panic_flush_kmsg_end(void)
+ {
+-	printk_safe_flush_on_panic();
++	printk_safe_flush(true);
+ 	kmsg_dump(KMSG_DUMP_PANIC);
+ 	bust_spinlocks(0);
+ 	debug_locks_off();
+diff --git a/arch/powerpc/kernel/watchdog.c b/arch/powerpc/kernel/watchdog.c
+index 6256dc3..3c9138b 100644
+--- a/arch/powerpc/kernel/watchdog.c
++++ b/arch/powerpc/kernel/watchdog.c
+@@ -173,7 +173,7 @@ static void watchdog_smp_panic(int cpu, u64 tb)
+ 
+ 	wd_smp_unlock(&flags);
+ 
+-	printk_safe_flush();
++	printk_safe_flush(false);
+ 	/*
+ 	 * printk_safe_flush() seems to require another print
+ 	 * before anything actually goes out to console.
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 6d7e800..495fe26 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -203,8 +203,7 @@ void dump_stack_print_info(const char *log_lvl);
+ void show_regs_print_info(const char *log_lvl);
+ extern asmlinkage void dump_stack(void) __cold;
+ extern void printk_safe_init(void);
+-extern void printk_safe_flush(void);
+-extern void printk_safe_flush_on_panic(void);
++extern void printk_safe_flush(bool panic);
+ #else
+ static inline __printf(1, 0)
+ int vprintk(const char *s, va_list args)
+@@ -273,11 +272,7 @@ static inline void printk_safe_init(void)
+ {
+ }
+ 
+-static inline void printk_safe_flush(void)
+-{
+-}
+-
+-static inline void printk_safe_flush_on_panic(void)
++static inline void printk_safe_flush(bool panic)
+ {
+ }
+ #endif
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 20fef1a..1b0876e 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -961,7 +961,7 @@ void crash_kexec(struct pt_regs *regs)
+ 	old_cpu = atomic_cmpxchg(&panic_cpu, PANIC_CPU_INVALID, this_cpu);
+ 	if (old_cpu == PANIC_CPU_INVALID) {
+ 		/* This is the 1st CPU which comes here, so go ahead. */
+-		printk_safe_flush_on_panic();
++		printk_safe_flush(true);
+ 		__crash_kexec(regs);
+ 
+ 		/*
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 42e4874..2f2c86c 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -193,7 +193,7 @@ void panic(const char *fmt, ...)
+ 	 * Bypass the panic_cpu check and call __crash_kexec directly.
+ 	 */
+ 	if (!_crash_kexec_post_notifiers) {
+-		printk_safe_flush_on_panic();
++		printk_safe_flush(true);
+ 		__crash_kexec(NULL);
+ 
+ 		/*
+@@ -218,7 +218,7 @@ void panic(const char *fmt, ...)
+ 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
+ 
+ 	/* Call flush even twice. It tries harder with a single online CPU */
+-	printk_safe_flush_on_panic();
++	printk_safe_flush(true);
+ 	kmsg_dump(KMSG_DUMP_PANIC);
+ 
+ 	/*
+diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+index 3e3c200..35ea941 100644
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -244,49 +244,49 @@ static void __printk_safe_flush(struct irq_work *work)
+ }
+ 
+ /**
+- * printk_safe_flush - flush all per-cpu nmi buffers.
++ * printk_safe_flush - flush all per-cpu nmi buffers. it can be called even in NMI
++ *                     context.
++ * @panic: true when the system goes down. It does the best effort to get NMI messages
++ *         into the main ring buffer. Note that it could try harder when there is only
++ *         one CPU online.
+  *
+- * The buffers are flushed automatically via IRQ work. This function
++ * The buffers are flushed automatically via IRQ work in normal cases. This function
+  * is useful only when someone wants to be sure that all buffers have
+  * been flushed at some point.
+  */
+-void printk_safe_flush(void)
++void printk_safe_flush(bool panic)
+ {
+ 	int cpu;
+ 
+-	for_each_possible_cpu(cpu) {
+-#ifdef CONFIG_PRINTK_NMI
+-		__printk_safe_flush(&per_cpu(nmi_print_seq, cpu).work);
+-#endif
+-		__printk_safe_flush(&per_cpu(safe_print_seq, cpu).work);
+-	}
+-}
+-
+-/**
+- * printk_safe_flush_on_panic - flush all per-cpu nmi buffers when the system
+- *	goes down.
+- *
+- * Similar to printk_safe_flush() but it can be called even in NMI context when
+- * the system goes down. It does the best effort to get NMI messages into
+- * the main ring buffer.
+- *
+- * Note that it could try harder when there is only one CPU online.
+- */
+-void printk_safe_flush_on_panic(void)
+-{
+ 	/*
+ 	 * Make sure that we could access the main ring buffer.
+-	 * Do not risk a double release when more CPUs are up.
++	 * Do not risk a double release when more CPUs are up on panic.
+ 	 */
+-	if (in_nmi() && raw_spin_is_locked(&logbuf_lock)) {
+-		if (num_online_cpus() > 1)
++	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK) {
++		if (panic) {
++			if (num_online_cpus() > 1)
++				return;
++
++			debug_locks_off();
++			raw_spin_lock_init(&logbuf_lock);
++		} else {
++			/*
++			 * Just avoid deadlocks here, we could loose the messages in
++			 * per-cpu nmi buffer in the case that hardlockup happens but
++			 * panic() is not called (irq_work won't work).
++			 * The flushing can be delayed by the next irq_work if flushing
++			 * is skiped here in normal cases.
++			 */
+ 			return;
+-
+-		debug_locks_off();
+-		raw_spin_lock_init(&logbuf_lock);
++		}
+ 	}
+ 
+-	printk_safe_flush();
++	for_each_possible_cpu(cpu) {
++#ifdef CONFIG_PRINTK_NMI
++		__printk_safe_flush(&per_cpu(nmi_print_seq, cpu).work);
++#endif
++		__printk_safe_flush(&per_cpu(safe_print_seq, cpu).work);
++	}
+ }
+ 
+ #ifdef CONFIG_PRINTK_NMI
+@@ -404,5 +404,5 @@ void __init printk_safe_init(void)
+ 	printk_safe_irq_ready = 1;
+ 
+ 	/* Flush pending messages that did not have scheduled IRQ works. */
+-	printk_safe_flush();
++	printk_safe_flush(false);
+ }
+diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
+index 61a6b5a..6781698 100644
+--- a/lib/nmi_backtrace.c
++++ b/lib/nmi_backtrace.c
+@@ -79,7 +79,7 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
+ 	 * Force flush any remote buffers that might be stuck in IRQ context
+ 	 * and therefore could not run their irq_work.
+ 	 */
+-	printk_safe_flush();
++	printk_safe_flush(false);
+ 
+ 	clear_bit_unlock(0, &backtrace_flag);
+ 	put_cpu();
+-- 
+2.1.4
