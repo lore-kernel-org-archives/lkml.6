@@ -1,71 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034947AbeE1PtU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:49:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:36335 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034934AbeE1PtP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:49:15 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jan Kiszka <jan.kiszka@siemens.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: versatile: include pci.h
-Date: Mon, 28 May 2018 17:48:39 +0200
-Message-Id: <20180528154850.2647019-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:2NFFx52rilNFoShuK3Xv7WX/vDmXoLi0tmd3BsUAQ9IfL8opXIo
- 87hlYGNCSQ8Mi/UyR7bIadfeInokg9p2YvWDcb1GpKQHsVApiq1kj6R/UJHNppckS7Jctqd
- a0Ae1f3aDQNTFTQeUdilxQbI9t/zZN/Y+tmx3KeOdL21Dj7Mh1vhs7LgIoZTcOrNoAJzIs7
- AnobjB9ncCx4rySPor5uw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ASY1+DLFZeY=:6vCDnhnHtKlqsiiHDwzcK8
- 3UUt341VUTnYi7z73x50JczsIdIE51lNxMkIVtWrGV9Ocd5uHlMPKlwtTcwaOpq1ShXyrdkgb
- mv14/wKANFOeBtULLYqg8l9LqsqM5Hs7UVKp8Ac4lHC5thlpPhXM3KX5DvS6icQctC1VRu7Yr
- gTFGju0BNLerLlwsZRCAipfZz8c/qXM6gw6/ErtVQdYWH6+D3aNzn9eGl/DhauHWrHX+9yehm
- +8uEnIfDRiEG9CA6KGNRczXDvhwY6kJMP1YbhjiwDru7IGLFlwvakKhi5HWfcqHLeGclO3n5a
- z+mMIXkFMR4EPPmvn7oE+ildgOu7ZYFU43GnpydQVxHKOKgFVGO4OKmE1LT9FrxJPN7sVCOF0
- SbiXKxIr4VtDAdo0R7MnuqoP6Qb7dXGSJIEO/lCHKDEzt7iAqAE+tMfDaJ99z96tBSKRMNvqo
- ZRuhPL+w4KJN2sAkkFPVfKxc9aVW3UC0UGRGY96T4hY0D7ahLyTV7AwexI1CYRpy9ZAq8KH1c
- tuDVvSDZL0Ifkeujvew8AhZ9vJ+d9AZiSf5Ej++1d0Kr184+37Z1Ogp4o3T+nssvMAVpdZByN
- oXpd5ydqzacJf1hYPZbZ71uAk1lAMNbx20OOk8/niJztwgwlv1NilmdOUpkgwhresr4vVURYh
- iIUXFo3is31hM+z5RiAGxfSobOx62QA6PugXGqXLVkEa0fiN0XtqLJRY+gUhM/T3omL0=
+        id S1034955AbeE1Ptw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:49:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936947AbeE1KQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:16:15 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>,
+        Minchan Kim <minchan@kernel.org>, "Huang, Ying" <ying.huang@intel.com>,
+        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 052/268] mm: pin address_space before dereferencing it while isolating an LRU page
+Date: Mon, 28 May 2018 12:00:26 +0200
+Message-Id: <20180528100207.850665533@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two patches for PCI host drivers clashed recently, leading to a broken
-build for versatile-pci:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-drivers/pci/host/pci-versatile.c: In function 'versatile_pci_parse_request_of_pci_ranges':
-drivers/pci/host/pci-versatile.c:70:8: error: implicit declaration of function 'devm_of_pci_get_host_bridge_resources'; did you mean 'pci_get_host_bridge_device'? [-Werror=implicit-function-declaration]
+------------------
 
-This adds the missing header inclusion that became necessary now.
+From: Mel Gorman <mgorman@techsingularity.net>
 
-Fixes: 9e2aee80c78d ("PCI: Move private DT related functions into private header")
-Fixes: 64720fd1f630 ("PCI: Rework of_pci_get_host_bridge_resources() to devm_of_pci_get_host_bridge_resources()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit 69d763fc6d3aee787a3e8c8c35092b4f4960fa5d ]
+
+Minchan Kim asked the following question -- what locks protects
+address_space destroying when race happens between inode trauncation and
+__isolate_lru_page? Jan Kara clarified by describing the race as follows
+
+CPU1                                            CPU2
+
+truncate(inode)                                 __isolate_lru_page()
+  ...
+  truncate_inode_page(mapping, page);
+    delete_from_page_cache(page)
+      spin_lock_irqsave(&mapping->tree_lock, flags);
+        __delete_from_page_cache(page, NULL)
+          page_cache_tree_delete(..)
+            ...                                   mapping = page_mapping(page);
+            page->mapping = NULL;
+            ...
+      spin_unlock_irqrestore(&mapping->tree_lock, flags);
+      page_cache_free_page(mapping, page)
+        put_page(page)
+          if (put_page_testzero(page)) -> false
+- inode now has no pages and can be freed including embedded address_space
+
+                                                  if (mapping && !mapping->a_ops->migratepage)
+- we've dereferenced mapping which is potentially already free.
+
+The race is theoretically possible but unlikely.  Before the
+delete_from_page_cache, truncate_cleanup_page is called so the page is
+likely to be !PageDirty or PageWriteback which gets skipped by the only
+caller that checks the mappping in __isolate_lru_page.  Even if the race
+occurs, a substantial amount of work has to happen during a tiny window
+with no preemption but it could potentially be done using a virtual
+machine to artifically slow one CPU or halt it during the critical
+window.
+
+This patch should eliminate the race with truncation by try-locking the
+page before derefencing mapping and aborting if the lock was not
+acquired.  There was a suggestion from Huang Ying to use RCU as a
+side-effect to prevent mapping being freed.  However, I do not like the
+solution as it's an unconventional means of preserving a mapping and
+it's not a context where rcu_read_lock is obviously protecting rcu data.
+
+Link: http://lkml.kernel.org/r/20180104102512.2qos3h5vqzeisrek@techsingularity.net
+Fixes: c82449352854 ("mm: compaction: make isolate_lru_page() filter-aware again")
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/host/pci-versatile.c | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/vmscan.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
-index ff2cd12b3978..994f32061b32 100644
---- a/drivers/pci/host/pci-versatile.c
-+++ b/drivers/pci/host/pci-versatile.c
-@@ -15,6 +15,8 @@
- #include <linux/pci.h>
- #include <linux/platform_device.h>
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1312,6 +1312,7 @@ int __isolate_lru_page(struct page *page
  
-+#include "../pci.h"
+ 		if (PageDirty(page)) {
+ 			struct address_space *mapping;
++			bool migrate_dirty;
+ 
+ 			/* ISOLATE_CLEAN means only clean pages */
+ 			if (mode & ISOLATE_CLEAN)
+@@ -1320,10 +1321,19 @@ int __isolate_lru_page(struct page *page
+ 			/*
+ 			 * Only pages without mappings or that have a
+ 			 * ->migratepage callback are possible to migrate
+-			 * without blocking
++			 * without blocking. However, we can be racing with
++			 * truncation so it's necessary to lock the page
++			 * to stabilise the mapping as truncation holds
++			 * the page lock until after the page is removed
++			 * from the page cache.
+ 			 */
++			if (!trylock_page(page))
++				return ret;
 +
- static void __iomem *versatile_pci_base;
- static void __iomem *versatile_cfg_base[2];
- 
--- 
-2.9.0
+ 			mapping = page_mapping(page);
+-			if (mapping && !mapping->a_ops->migratepage)
++			migrate_dirty = mapping && mapping->a_ops->migratepage;
++			unlock_page(page);
++			if (!migrate_dirty)
+ 				return ret;
+ 		}
+ 	}
