@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164240AbeE1K4Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:56:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44688 "EHLO mail.kernel.org"
+        id S1164513AbeE1K4R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:56:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164507AbeE1K4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:16 -0400
+        id S1164489AbeE1K4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 331/496] perf tools: Fix perf builds with clang support
-Date: Mon, 28 May 2018 12:01:56 +0200
-Message-Id: <20180528100333.765188073@linuxfoundation.org>
+Subject: [PATCH 4.14 329/496] cpufreq: CPPC: Initialize shared perf capabilities of CPUs
+Date: Mon, 28 May 2018 12:01:54 +0200
+Message-Id: <20180528100333.685407324@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,36 +31,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
 
-[ Upstream commit c2fb54a183cfe77c6fdc9d71e2d5299c1c302a6e ]
+[ Upstream commit 8913315e9459b146e5888ab5138e10daa061b885 ]
 
-For libclang, some distro packages provide static libraries (.a) while
-some provide shared libraries (.so). Currently, perf code can only be
-linked with static libraries. This makes perf build possible for both
-cases.
+When multiple CPUs are related in one cpufreq policy, the first online
+CPU will be chosen by default to handle cpufreq operations. Let's take
+cpu0 and cpu1 as an example.
 
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Fixes: d58ac0bf8d1e ("perf build: Add clang and llvm compile and linking support")
-Link: http://lkml.kernel.org/r/20180404180419.19056-1-sandipan@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+When cpu0 is offline, policy->cpu will be shifted to cpu1. cpu1's perf
+capabilities should be initialized. Otherwise, perf capabilities are 0s
+and speed change can not take effect.
+
+This patch copies perf capabilities of the first online CPU to other
+shared CPUs when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/Makefile.perf |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -368,7 +368,8 @@ LIBS = -Wl,--whole-archive $(PERFLIBS) $
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -167,9 +167,19 @@ static int cppc_cpufreq_cpu_init(struct
+ 		NSEC_PER_USEC;
+ 	policy->shared_type = cpu->shared_type;
  
- ifeq ($(USE_CLANG), 1)
-   CLANGLIBS_LIST = AST Basic CodeGen Driver Frontend Lex Tooling Edit Sema Analysis Parse Serialization
--  LIBCLANG = $(foreach l,$(CLANGLIBS_LIST),$(wildcard $(shell $(LLVM_CONFIG) --libdir)/libclang$(l).a))
-+  CLANGLIBS_NOEXT_LIST = $(foreach l,$(CLANGLIBS_LIST),$(shell $(LLVM_CONFIG) --libdir)/libclang$(l))
-+  LIBCLANG = $(foreach l,$(CLANGLIBS_NOEXT_LIST),$(wildcard $(l).a $(l).so))
-   LIBS += -Wl,--start-group $(LIBCLANG) -Wl,--end-group
- endif
- 
+-	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
++	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
++		int i;
++
+ 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
+-	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
++
++		for_each_cpu(i, policy->cpus) {
++			if (unlikely(i == policy->cpu))
++				continue;
++
++			memcpy(&all_cpu_data[i]->perf_caps, &cpu->perf_caps,
++			       sizeof(cpu->perf_caps));
++		}
++	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
+ 		/* Support only SW_ANY for now. */
+ 		pr_debug("Unsupported CPU co-ord type\n");
+ 		return -EFAULT;
