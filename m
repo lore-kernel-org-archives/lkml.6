@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965205AbeE1KMw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:12:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60772 "EHLO mail.kernel.org"
+        id S965382AbeE1KNN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:13:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936777AbeE1KMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:12:39 -0400
+        id S932478AbeE1KNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 157/185] usb: gadget: udc: change comparison to bitshift when dealing with a mask
-Date: Mon, 28 May 2018 12:03:18 +0200
-Message-Id: <20180528100110.905955098@linuxfoundation.org>
+Subject: [PATCH 3.18 138/185] ima: Fallback to the builtin hash algorithm
+Date: Mon, 28 May 2018 12:02:59 +0200
+Message-Id: <20180528100106.598206855@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,30 +30,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Petr Vorel <pvorel@suse.cz>
 
-[ Upstream commit ac87e560f7c0f91b62012e9a159c0681a373b922 ]
+[ Upstream commit ab60368ab6a452466885ef4edf0cefd089465132 ]
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+IMA requires having it's hash algorithm be compiled-in due to it's
+early use.  The default IMA algorithm is protected by Kconfig to be
+compiled-in.
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+The ima_hash kernel parameter allows to choose the hash algorithm. When
+the specified algorithm is not available or available as a module, IMA
+initialization fails, which leads to a kernel panic (mknodat syscall calls
+ima_post_path_mknod()).  Therefore as fallback we force IMA to use
+the default builtin Kconfig hash algorithm.
+
+Fixed crash:
+
+$ grep CONFIG_CRYPTO_MD4 .config
+CONFIG_CRYPTO_MD4=m
+
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
+...
+[    1.545190] ima: Can not allocate md4 (reason: -2)
+...
+[    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[    2.611903] IP: ima_match_policy+0x23/0x390
+[    2.612967] PGD 0 P4D 0
+[    2.613080] Oops: 0000 [#1] SMP
+[    2.613080] Modules linked in: autofs4
+[    2.613080] Supported: Yes
+[    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
+[    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+[    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
+[    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
+[    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
+[    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
+[    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
+[    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
+[    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
+[    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
+[    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
+[    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    2.613080] Call Trace:
+[    2.613080]  ? shmem_mknod+0xbf/0xd0
+[    2.613080]  ima_post_path_mknod+0x1c/0x40
+[    2.613080]  SyS_mknod+0x210/0x220
+[    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
+[    2.613080] RIP: 0033:0x7f5c1bfde570
+[    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+[    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
+[    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
+[    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
+[    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
+[    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
+[    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
+[    2.613080] CR2: 0000000000000000
+[    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
+[    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+[    2.673052]
+[    2.675337] Kernel Offset: disabled
+[    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/goku_udc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/integrity/ima/ima_crypto.c |    2 ++
+ security/integrity/ima/ima_main.c   |   13 +++++++++++++
+ 2 files changed, 15 insertions(+)
 
---- a/drivers/usb/gadget/udc/goku_udc.h
-+++ b/drivers/usb/gadget/udc/goku_udc.h
-@@ -28,7 +28,7 @@ struct goku_udc_regs {
- #	define INT_EP1DATASET		0x00040
- #	define INT_EP2DATASET		0x00080
- #	define INT_EP3DATASET		0x00100
--#define INT_EPnNAK(n)		(0x00100 < (n))		/* 0 < n < 4 */
-+#define INT_EPnNAK(n)		(0x00100 << (n))	/* 0 < n < 4 */
- #	define INT_EP1NAK		0x00200
- #	define INT_EP2NAK		0x00400
- #	define INT_EP3NAK		0x00800
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -108,6 +108,8 @@ int __init ima_init_crypto(void)
+ 		       hash_algo_name[ima_hash_algo], rc);
+ 		return rc;
+ 	}
++	pr_info("Allocated hash algorithm: %s\n",
++		hash_algo_name[ima_hash_algo]);
+ 	return 0;
+ }
+ 
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -16,6 +16,9 @@
+  *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
+  *	and ima_file_check.
+  */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
+ #include <linux/module.h>
+ #include <linux/file.h>
+ #include <linux/binfmts.h>
+@@ -351,6 +354,16 @@ static int __init init_ima(void)
+ 
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+ 	error = ima_init();
++
++	if (error && strcmp(hash_algo_name[ima_hash_algo],
++			    CONFIG_IMA_DEFAULT_HASH) != 0) {
++		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
++			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
++		hash_setup_done = 0;
++		hash_setup(CONFIG_IMA_DEFAULT_HASH);
++		error = ima_init();
++	}
++
+ 	if (!error) {
+ 		ima_initialized = 1;
+ 		ima_update_policy_flag();
