@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937997AbeE1MtT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:49:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44996 "EHLO mail.kernel.org"
+        id S938920AbeE1Mts (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:49:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164354AbeE1K4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:42 -0400
+        id S1164361AbeE1K41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 339/496] Btrfs: fix NULL pointer dereference in log_dir_items
-Date: Mon, 28 May 2018 12:02:04 +0200
-Message-Id: <20180528100334.107708868@linuxfoundation.org>
+Subject: [PATCH 4.14 334/496] ibmvnic: Zero used TX descriptor counter on reset
+Date: Mon, 28 May 2018 12:01:59 +0200
+Message-Id: <20180528100333.894041714@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,37 +30,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
 
-[ Upstream commit 80c0b4210a963e31529e15bf90519708ec947596 ]
+[ Upstream commit 41f714672f93608751dbd2fa2291d476a8ff0150 ]
 
-0, 1 and <0 can be returned by btrfs_next_leaf(), and when <0 is
-returned, path->nodes[0] could be NULL, log_dir_items lacks such a
-check for <0 and we may run into a null pointer dereference panic.
+The counter that tracks used TX descriptors pending completion
+needs to be zeroed as part of a device reset. This change fixes
+a bug causing transmit queues to be stopped unnecessarily and in
+some cases a transmit queue stall and timeout reset. If the counter
+is not reset, the remaining descriptors will not be "removed",
+effectively reducing queue capacity. If the queue is over half full,
+it will cause the queue to stall if stopped.
 
-Fixes: e02119d5a7b4 ("Btrfs: Add a write ahead tree log to optimize synchronous operations")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-log.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3462,8 +3462,11 @@ static noinline int log_dir_items(struct
- 		 * from this directory and from this transaction
- 		 */
- 		ret = btrfs_next_leaf(root, path);
--		if (ret == 1) {
--			last_offset = (u64)-1;
-+		if (ret) {
-+			if (ret == 1)
-+				last_offset = (u64)-1;
-+			else
-+				err = ret;
- 			goto done;
- 		}
- 		btrfs_item_key_to_cpu(path->nodes[0], &tmp, path->slots[0]);
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1962,6 +1962,7 @@ static int reset_one_sub_crq_queue(struc
+ 	}
+ 
+ 	memset(scrq->msgs, 0, 4 * PAGE_SIZE);
++	atomic_set(&scrq->used, 0);
+ 	scrq->cur = 0;
+ 
+ 	rc = h_reg_sub_crq(adapter->vdev->unit_address, scrq->msg_token,
