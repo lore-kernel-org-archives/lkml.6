@@ -1,187 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753839AbeE1Het (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:34:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36810 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753640AbeE1Her (ORCPT
+        id S1753859AbeE1HhK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:37:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753612AbeE1HhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:34:47 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 28 May 2018 13:04:45 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v3 15/16] mtd: rawnand: qcom: helper function for raw read
-In-Reply-To: <20180527155311.4c05d7ab@xps13>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
- <1527250904-21988-16-git-send-email-absahu@codeaurora.org>
- <20180527155311.4c05d7ab@xps13>
-Message-ID: <19569fdc057754978298a7e7afc9016a@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Mon, 28 May 2018 03:37:08 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH v2] perf test 39 (Session topology) dumps core on s390
+Date: Mon, 28 May 2018 09:36:57 +0200
+X-Mailer: git-send-email 2.16.3
+X-TM-AS-GCONF: 00
+x-cbid: 18052807-0040-0000-0000-0000043E773F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052807-0041-0000-0000-00002643C056
+Message-Id: <20180528073657.11743-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805280093
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-27 19:23, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> On Fri, 25 May 2018 17:51:43 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
->> This patch does minor code reorganization for raw reads.
->> Currently the raw read is required for complete page but for
->> subsequent patches related with erased codeword bit flips
->> detection, only few CW should be read. So, this patch adds
->> helper function and introduces the read CW bitmask which
->> specifies which CW reads are required in complete page.
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->> * Changes from v2:
->>   NONE
->> 
->> * Changes from v1:
->>  1. Included more detail in function comment
->> 
->>  drivers/mtd/nand/raw/qcom_nandc.c | 197 
->> ++++++++++++++++++++++++--------------
->>  1 file changed, 123 insertions(+), 74 deletions(-)
->> 
->> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c 
->> b/drivers/mtd/nand/raw/qcom_nandc.c
->> index 87f900e..34143a4 100644
->> --- a/drivers/mtd/nand/raw/qcom_nandc.c
->> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
->> @@ -1588,6 +1588,127 @@ static int check_flash_errors(struct 
->> qcom_nand_host *host, int cw_cnt)
->>  }
->> 
->>  /*
->> + * Helper to perform the page raw read operation. The read_cw_mask 
->> will be
->> + * used to specify the codewords (CW) for which the data should be 
->> read. The
->> + * single page contains multiple CW.
->> + *
->> + * Normally other NAND controllers store the data in main area and
->> + * ecc bytes in OOB area. So, if page size is 2048+64 then 2048
->> + * data bytes will go in main area followed by ECC bytes. The QCOM 
->> NAND
->> + * controller follows different layout in which the data+OOB is 
->> internally
->> + * divided in 528/532 bytes CW and each CW contains 516 bytes 
->> followed by
->> + * ECC parity bytes for that CW. By this, 4 available OOB bytes per 
->> CW
->> + * will also be protected with ECC.
->> + *
->> + * For each CW read, following are the 2 steps:
->> + * 1. Read the codeword bytes from NAND chip to NAND controller 
->> internal HW
->> + *    buffer.
->> + * 2. Copy all these bytes from this HW buffer to actual buffer.
->> + *
->> + * Sometime, only few CW data is required in complete page. The 
->> read_cw_mask
->> + * specifies which CW in a page needs to be read. Start address will 
->> be
->> + * determined with this CW mask to skip unnecessary data copy from 
->> NAND
->> + * flash device. Then, actual data copy from NAND controller HW 
->> internal buffer
->> + * to data buffer will be done only for the CWs, which have the mask 
->> set.
->> + */
->> +static int
->> +nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
->> +		    u8 *data_buf, u8 *oob_buf,
->> +		    int page, unsigned long read_cw_mask)
-> 
-> Please prefix the helper with "qcom_nandc"
-> 
+perf test 39 fails with core dump on s390. The root cause
+is a NULL pointer reference in function check_cpu_topology()
+line 76 (or line 82 without -v).
+The session->header.env.cpu variable is NULL because on s390
+function process_cpu_topology() returns with error:
+    socket_id number is too big.
+    You may need to upgrade the perf tool.
+and releases the env.cpu variable via zfree() and sets it to NULL.
 
-  Sure Miquel.
-  I will update that.
+Here is the gdb output:
+(gdb) n
+76                      pr_debug("CPU %d, core %d, socket %d\n", i,
+(gdb) n
 
->> +{
->> +	struct qcom_nand_host *host = to_qcom_nand_host(chip);
->> +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
->> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
->> +	int i, ret;
->> +	int read_loc, start_step, last_step;
->> +
->> +	nand_read_page_op(chip, page, 0, NULL, 0);
->> +
->> +	host->use_ecc = false;
->> +	start_step = ffs(read_cw_mask) - 1;
->> +	last_step = fls(read_cw_mask);
->> +
->> +	clear_bam_transaction(nandc);
->> +	set_address(host, host->cw_size * start_step, page);
->> +	update_rw_regs(host, last_step - start_step, true);
->> +	config_nand_page_read(nandc);
->> +
->> +	for (i = start_step; i < last_step; i++) {
-> 
-> This comment applies for both patches 15 and 16:
-> 
-> I would really prefer having a qcom_nandc_read_cw_raw() that reads only
-> one CW. From qcom_nandc_read_page_raw() you would loop over all the CW
-> calling qcom_nandc_read_cw_raw() helper (it's raw reads, we don't care
-> about performances)
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000010f4d9e in check_cpu_topology (path=0x3ffffffd6c8
+	"/tmp/perf-test-J6CHMa", map=0x14a1740) at tests/topology.c:76
+76  pr_debug("CPU %d, core %d, socket %d\n", i,
+(gdb)
 
-  Doing that way will degrade performances hugely.
+Make sure the env.cpu variable is not used when its NULL.
+Test for NULL pointer and return TEST_SKIP if so.
 
-  Currently once we formed the descriptor, the DMA will take care
-  of complete page data transfer from NAND device to buffer and will
-  generate single interrupt.
+Output before:
+[root@p23lp27 perf]# ./perf test -F 39
+39: Session topology  :Segmentation fault (core dumped)
+[root@p23lp27 perf]#
 
-  Now it will form one CW descriptor and wait for it to be finished.
-  In background, the data transfer from NAND device will be also
-  split and for every CW, it will give the PAGE_READ command again,
-  which is again time consuming.
+Output after:
+[root@p23lp27 perf]# ./perf test -vF 39
+39: Session topology                                      :
+--- start ---
+templ file: /tmp/perf-test-Ajx59D
+socket_id number is too big.You may need to upgrade the perf tool.
+---- end ----
+Session topology: Skip
+[root@p23lp27 perf]#
 
-  Data transfer degradation is ok but it will increase CPU time
-  and number of interrupts which will impact other peripherals
-  performance that time.
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 
-  Most of the NAND parts has 4K page size i.e 8 CWs.
+---
+---
+ tools/perf/tests/topology.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-> and from ->read_page_raw() you would check
-> CW with uncorrectable errors for being blank with that helper. You
-> would avoid the not-so-nice logic where you read all the CW between the
-> first bad one and the last bad one.
-> 
-
-  The reading b/w first CW and last CW is only from NAND device to NAND
-  HW buffers. The NAND controller has 2 HW buffers which is used to
-  optimize the traffic throughput between the NAND device and
-  system memory,in both directions. Each buffer is 544B in size: 512B
-  for data + 32B spare bytes. Throughput optimization is achieved by
-  executing internal data transfers (i.e. between NANDc buffers and
-  system memory) simultaneously with NAND device operations.
-
-  Making separate function won't help in improving performance for
-  this case either since once every thing is set for reading page
-  (descriptor formation, issue the PAGE_READ, Data transfer from
-  Flash array to data register in NAND device), the read time from
-  device to NAND HW buffer is very less. Again, we did optimization
-  in which the copying from NAND HW buffer to actual buffer is being
-  done only for those CW's only.
-
-  Again, in this case CPU time will be more.
-
-  Thanks,
-  Abhishek
+diff --git a/tools/perf/tests/topology.c b/tools/perf/tests/topology.c
+index 17cb1bb3448c..40e30a26b23c 100644
+--- a/tools/perf/tests/topology.c
++++ b/tools/perf/tests/topology.c
+@@ -70,6 +70,27 @@ static int check_cpu_topology(char *path, struct cpu_map *map)
+ 	session = perf_session__new(&data, false, NULL);
+ 	TEST_ASSERT_VAL("can't get session", session);
+ 
++	/* On platforms with large numbers of CPUs process_cpu_topology()
++	 * might issue an error while reading the perf.data file section
++	 * HEADER_CPU_TOPOLOGY and the cpu_topology_map pointed to by member
++	 * cpu is a NULL pointer.
++	 * Example: On s390
++	 *   CPU 0 is on core_id 0 and physical_package_id 6
++	 *   CPU 1 is on core_id 1 and physical_package_id 3
++	 *
++	 *   Core_id and physical_package_id are platform and architecture
++	 *   dependend and might have higher numbers than the CPU id.
++	 *   This actually depends on the configuration.
++	 *
++	 *  In this case process_cpu_topology() prints error message:
++	 *  "socket_id number is too big. You may need to upgrade the
++	 *  perf tool."
++	 *
++	 *  This is the reason why this test might be skipped.
++	 */
++	if (!session->header.env.cpu)
++		return TEST_SKIP;
++
+ 	for (i = 0; i < session->header.env.nr_cpus_avail; i++) {
+ 		if (!cpu_map__has(map, i))
+ 			continue;
+@@ -95,7 +116,7 @@ int test__session_topology(struct test *test __maybe_unused, int subtest __maybe
+ {
+ 	char path[PATH_MAX];
+ 	struct cpu_map *map;
+-	int ret = -1;
++	int ret = TEST_FAIL;
+ 
+ 	TEST_ASSERT_VAL("can't get templ file", !get_temp(path));
+ 
+@@ -110,12 +131,9 @@ int test__session_topology(struct test *test __maybe_unused, int subtest __maybe
+ 		goto free_path;
+ 	}
+ 
+-	if (check_cpu_topology(path, map))
+-		goto free_map;
+-	ret = 0;
+-
+-free_map:
++	ret = check_cpu_topology(path, map);
+ 	cpu_map__put(map);
++
+ free_path:
+ 	unlink(path);
+ 	return ret;
+-- 
+2.14.3
