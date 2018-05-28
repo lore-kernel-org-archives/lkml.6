@@ -1,63 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940474AbeE1Q5W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:57:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60602 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932116AbeE1Q5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:57:17 -0400
-Date: Mon, 28 May 2018 18:57:14 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
-Cc: Stefan Agner <stefan@agner.ch>, Dmitry Osipenko <digetx@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek =?UTF-8?B?VmHFoXV0?= <marek.vasut@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, Thierry Reding <thierry.reding@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Lucas Stach <dev@lynxeye.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>, richard@nod.at,
-        Marcel Ziswiler <marcel@ziswiler.com>, krzk@kernel.org,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180528185714.0a33bdc7@bbrezillon>
-In-Reply-To: <CAGefG56pyKd=rCjArVtvO1mnXzacrD+BW4_AkJSDRtw-2Gf3Nw@mail.gmail.com>
-References: <20180527215442.14760-4-stefan@agner.ch>
-        <b9cfc23e-2434-fd90-ae2d-e51f28b16038@gmail.com>
-        <c4df253d318e7c268e8999d5f3bfcd0f@agner.ch>
-        <CAGefG56pyKd=rCjArVtvO1mnXzacrD+BW4_AkJSDRtw-2Gf3Nw@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S940469AbeE1RA6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:00:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36129 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932116AbeE1RA4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 13:00:56 -0400
+X-Google-Smtp-Source: AB8JxZpLTPoKDoQ27OfKLQDaxw/hbPwtDmPh12xAQ1SohuMG3Fg6qOwRLul8PfTWAimbq8vEy8ZRxQ==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: [PATCH] kbuild: add endianness flag to CHEKCFLAGS
+Date: Mon, 28 May 2018 19:00:48 +0200
+Message-Id: <20180528170048.16595-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018 18:41:26 +0200
-Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
+The kernel depends on macros like __BYTE_ORDER__,
+__BIG_ENDIAN__ or __LITTLE_ENDIAN__.
 
-> Note that it's certainly possible to encode U-Boot and kernel with
-> RS[4] and still use RS[8] for the rootfs even if the boot rom doesn't
-> support it.
+OTOH, sparse doesn't know about the endianness of the kernel and
+by default uses the same as the machine on which sparse was built.
 
-Not if you want to read/write from/to the uboot partition from Linux.
+Ensure that sparse can predefine the macros corresponding to
+how the kernel was configured by adding -m{big,little}-endian
+to CHECKFLAGS in the main Makefile (and so for all archs).
+Also, remove the equivalent done in arch specific Makefiles.
 
-Per-partition ECC setup is not supported, so the only solutions we have
-right now are:
-1/ use the same ECC config as the one use by the bootrom
-2/ only access uboot partition in raw mode from Linux (that implies
-   generating images containing the ECC bytes so that they can be
-   flashed to the device in raw mode)
-3/ never access uboot partitions from Linux (not sure we want that)
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ Makefile               | 3 +++
+ arch/openrisc/Makefile | 1 -
+ arch/parisc/Makefile   | 2 +-
+ arch/s390/Makefile     | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
 
-> This whole 'use-bootable-ecc-only' business seems a bit
-> overengineered.
-> 
-
-Hm, I don't find it over-engineered.
+diff --git a/Makefile b/Makefile
+index 56ba070df..057a278d2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -878,6 +878,9 @@ ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
+ LDFLAGS_vmlinux	+= $(call ld-option, -X,)
+ endif
+ 
++# insure the checker run with the right endianness
++CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig,-mlittle)
++
+ # Default kernel image to build when no specific target is given.
+ # KBUILD_IMAGE may be overruled on the command line or
+ # set in the environment
+diff --git a/arch/openrisc/Makefile b/arch/openrisc/Makefile
+index cf8802962..89076a66e 100644
+--- a/arch/openrisc/Makefile
++++ b/arch/openrisc/Makefile
+@@ -25,7 +25,6 @@ LDFLAGS_vmlinux :=
+ LIBGCC 		:= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
+ 
+ KBUILD_CFLAGS	+= -pipe -ffixed-r10 -D__linux__
+-CHECKFLAGS	+= -mbig-endian
+ 
+ ifeq ($(CONFIG_OPENRISC_HAVE_INST_MUL),y)
+ 	KBUILD_CFLAGS += $(call cc-option,-mhard-mul)
+diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
+index 34ac503e2..348ae4779 100644
+--- a/arch/parisc/Makefile
++++ b/arch/parisc/Makefile
+@@ -22,7 +22,7 @@ KBUILD_IMAGE := vmlinuz
+ KBUILD_DEFCONFIG := default_defconfig
+ 
+ NM		= sh $(srctree)/arch/parisc/nm
+-CHECKFLAGS	+= -D__hppa__=1 -mbig-endian
++CHECKFLAGS	+= -D__hppa__=1
+ LIBGCC		= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
+ export LIBGCC
+ 
+diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+index c79936d02..68a690442 100644
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -18,7 +18,7 @@ KBUILD_CFLAGS	+= -m64
+ KBUILD_AFLAGS	+= -m64
+ UTS_MACHINE	:= s390x
+ STACK_SIZE	:= 16384
+-CHECKFLAGS	+= -D__s390__ -D__s390x__ -mbig-endian
++CHECKFLAGS	+= -D__s390__ -D__s390x__
+ 
+ export LD_BFD
+ 
+-- 
+2.17.0
