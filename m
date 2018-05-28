@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163702AbeE1Kuj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40020 "EHLO mail.kernel.org"
+        id S1163920AbeE1NOJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163689AbeE1Kub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:31 -0400
+        id S1163694AbeE1Kuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 207/496] iwlwifi: mvm: Correctly set the tid for mcast queue
-Date: Mon, 28 May 2018 11:59:52 +0200
-Message-Id: <20180528100328.662223226@linuxfoundation.org>
+Subject: [PATCH 4.14 178/496] ARC: mcip: halt GFRC counter when ARC cores halt
+Date: Mon, 28 May 2018 11:59:23 +0200
+Message-Id: <20180528100327.367664260@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,54 +31,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit 6508de0305d560235b366cc2cc98f7bcfb029e92 ]
+[ Upstream commit 07423d00a2b2a71a97e4287d9262cb83c4c4c89f ]
 
-In the scheduler config command, the meaning of tid == 0xf was intended
-to indicate the configuration is for management frames. However,
-tid == 0xf was also used for the multicast queue that was meant only
-for multicast data frames, which resulted with the FW not encrypting
-multicast data frames.
+In SMP systems, GFRC is used for clocksource. However by default the
+counter keeps running even when core is halted (say when debugging via a
+JTAG debugger). This confuses Linux timekeeping and triggers flase RCU stall
+splat such as below:
 
-As multicast frames do not have a QoS header, fix this by setting
-tid == 0, to indicate that this is a data queue and not management
-one.
+| [ARCLinux]# while true; do ./shm_open_23-1.run-test ; done
+| Running with 1000 processes for 1000 objects
+| hrtimer: interrupt took 485060 ns
+|
+| create_cnt: 1000
+| Running with 1000 processes for 1000 objects
+| [ARCLinux]# INFO: rcu_preempt self-detected stall on CPU
+|       2-...: (1 GPs behind) idle=a01/1/0 softirq=135770/135773 fqs=0
+| INFO: rcu_preempt detected stalls on CPUs/tasks:
+| 	0-...: (1 GPs behind) idle=71e/0/0 softirq=135264/135264 fqs=0
+|	2-...: (1 GPs behind) idle=a01/1/0 softirq=135770/135773 fqs=0
+|	3-...: (1 GPs behind) idle=4e0/0/0 softirq=134304/134304 fqs=0
+|	(detected by 1, t=13648 jiffies, g=31493, c=31492, q=1)
 
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Starting from ARC HS v3.0 it's possible to tie GFRC to state of up-to 4
+ARC cores with help of GFRC's CORE register where we set a mask for
+cores which state we need to rely on.
+
+We update cpu mask every time new cpu came online instead of using
+hardcoded one or using mask generated from "possible_cpus" as we
+want it set correctly even if we run kernel on HW which has fewer cores
+than expected (or we launch kernel via debugger and kick fever cores
+than HW has)
+
+Note that GFRC halts when all cores have halted and thus relies on
+programming of Inter-Core-dEbug register to halt all cores when one
+halts.
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: rewrote changelog]
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arc/kernel/mcip.c |   37 +++++++++++++++++++++++++++++++++++++
+ include/soc/arc/mcip.h |    3 +++
+ 2 files changed, 40 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -2023,7 +2023,7 @@ int iwl_mvm_add_mcast_sta(struct iwl_mvm
- 	struct iwl_trans_txq_scd_cfg cfg = {
- 		.fifo = IWL_MVM_TX_FIFO_MCAST,
- 		.sta_id = msta->sta_id,
--		.tid = IWL_MAX_TID_COUNT,
-+		.tid = 0,
- 		.aggregate = false,
- 		.frame_limit = IWL_FRAME_LIMIT,
- 	};
-@@ -2074,7 +2074,7 @@ int iwl_mvm_add_mcast_sta(struct iwl_mvm
- 	if (iwl_mvm_has_new_tx_api(mvm)) {
- 		int queue = iwl_mvm_tvqm_enable_txq(mvm, vif->cab_queue,
- 						    msta->sta_id,
--						    IWL_MAX_TID_COUNT,
-+						    0,
- 						    timeout);
- 		mvmvif->cab_queue = queue;
- 	} else if (!fw_has_api(&mvm->fw->ucode_capa,
-@@ -2099,7 +2099,7 @@ int iwl_mvm_rm_mcast_sta(struct iwl_mvm
- 	iwl_mvm_flush_sta(mvm, &mvmvif->mcast_sta, true, 0);
+--- a/arch/arc/kernel/mcip.c
++++ b/arch/arc/kernel/mcip.c
+@@ -22,10 +22,47 @@ static DEFINE_RAW_SPINLOCK(mcip_lock);
  
- 	iwl_mvm_disable_txq(mvm, mvmvif->cab_queue, vif->cab_queue,
--			    IWL_MAX_TID_COUNT, 0);
-+			    0, 0);
+ static char smp_cpuinfo_buf[128];
  
- 	ret = iwl_mvm_rm_sta_common(mvm, mvmvif->mcast_sta.sta_id);
- 	if (ret)
++/*
++ * Set mask to halt GFRC if any online core in SMP cluster is halted.
++ * Only works for ARC HS v3.0+, on earlier versions has no effect.
++ */
++static void mcip_update_gfrc_halt_mask(int cpu)
++{
++	struct bcr_generic gfrc;
++	unsigned long flags;
++	u32 gfrc_halt_mask;
++
++	READ_BCR(ARC_REG_GFRC_BUILD, gfrc);
++
++	/*
++	 * CMD_GFRC_SET_CORE and CMD_GFRC_READ_CORE commands were added in
++	 * GFRC 0x3 version.
++	 */
++	if (gfrc.ver < 0x3)
++		return;
++
++	raw_spin_lock_irqsave(&mcip_lock, flags);
++
++	__mcip_cmd(CMD_GFRC_READ_CORE, 0);
++	gfrc_halt_mask = read_aux_reg(ARC_REG_MCIP_READBACK);
++	gfrc_halt_mask |= BIT(cpu);
++	__mcip_cmd_data(CMD_GFRC_SET_CORE, 0, gfrc_halt_mask);
++
++	raw_spin_unlock_irqrestore(&mcip_lock, flags);
++}
++
+ static void mcip_setup_per_cpu(int cpu)
+ {
++	struct mcip_bcr mp;
++
++	READ_BCR(ARC_REG_MCIP_BCR, mp);
++
+ 	smp_ipi_irq_setup(cpu, IPI_IRQ);
+ 	smp_ipi_irq_setup(cpu, SOFTIRQ_IRQ);
++
++	/* Update GFRC halt mask as new CPU came online */
++	if (mp.gfrc)
++		mcip_update_gfrc_halt_mask(cpu);
+ }
+ 
+ static void mcip_ipi_send(int cpu)
+--- a/include/soc/arc/mcip.h
++++ b/include/soc/arc/mcip.h
+@@ -15,6 +15,7 @@
+ 
+ #define ARC_REG_MCIP_BCR	0x0d0
+ #define ARC_REG_MCIP_IDU_BCR	0x0D5
++#define ARC_REG_GFRC_BUILD	0x0D6
+ #define ARC_REG_MCIP_CMD	0x600
+ #define ARC_REG_MCIP_WDATA	0x601
+ #define ARC_REG_MCIP_READBACK	0x602
+@@ -40,6 +41,8 @@ struct mcip_cmd {
+ 
+ #define CMD_GFRC_READ_LO		0x42
+ #define CMD_GFRC_READ_HI		0x43
++#define CMD_GFRC_SET_CORE		0x47
++#define CMD_GFRC_READ_CORE		0x48
+ 
+ #define CMD_IDU_ENABLE			0x71
+ #define CMD_IDU_DISABLE			0x72
