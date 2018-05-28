@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164288AbeE1NAe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:00:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42850 "EHLO mail.kernel.org"
+        id S1165081AbeE1NAu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:00:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164178AbeE1Kxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:46 -0400
+        id S1164144AbeE1Kxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:53:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 276/496] RDMA/qedr: fix QPs ack timeout configuration
-Date: Mon, 28 May 2018 12:01:01 +0200
-Message-Id: <20180528100331.476294738@linuxfoundation.org>
+Subject: [PATCH 4.14 273/496] brcmfmac: Fix check for ISO3166 code
+Date: Mon, 28 May 2018 12:00:58 +0200
+Message-Id: <20180528100331.355200675@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,60 +31,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit c3594f22302cca5e924e47ec1cc8edd265708f41 ]
+[ Upstream commit 9b9322db5c5a1917a66c71fe47c3848a9a31227e ]
 
-QPs that were configured with ack timeout value lower than 1
-msec will not implement re-transmission timeout.
-This means that if a packet / ACK were dropped, the QP
-will not retransmit this packet.
+The commit "regulatory: add NUL to request alpha2" increases the length of
+alpha2 to 3. This causes a regression on brcmfmac, because
+brcmf_cfg80211_reg_notifier() expect valid ISO3166 codes in the complete
+array. So fix this accordingly.
 
-This can lead to an application hang.
-
-Fixes: cecbcddf6 ("qedr: Add support for QP verbs")
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 657308f73e67 ("regulatory: add NUL to request alpha2")
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/qedr/verbs.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -1903,18 +1903,23 @@ int qedr_modify_qp(struct ib_qp *ibqp, s
- 		SET_FIELD(qp_params.modify_flags,
- 			  QED_ROCE_MODIFY_QP_VALID_ACK_TIMEOUT, 1);
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -6916,7 +6916,7 @@ static void brcmf_cfg80211_reg_notifier(
+ 		return;
  
--		qp_params.ack_timeout = attr->timeout;
--		if (attr->timeout) {
--			u32 temp;
--
--			temp = 4096 * (1UL << attr->timeout) / 1000 / 1000;
--			/* FW requires [msec] */
--			qp_params.ack_timeout = temp;
--		} else {
--			/* Infinite */
-+		/* The received timeout value is an exponent used like this:
-+		 *    "12.7.34 LOCAL ACK TIMEOUT
-+		 *    Value representing the transport (ACK) timeout for use by
-+		 *    the remote, expressed as: 4.096 * 2^timeout [usec]"
-+		 * The FW expects timeout in msec so we need to divide the usec
-+		 * result by 1000. We'll approximate 1000~2^10, and 4.096 ~ 2^2,
-+		 * so we get: 2^2 * 2^timeout / 2^10 = 2^(timeout - 8).
-+		 * The value of zero means infinite so we use a 'max_t' to make
-+		 * sure that sub 1 msec values will be configured as 1 msec.
-+		 */
-+		if (attr->timeout)
-+			qp_params.ack_timeout =
-+					1 << max_t(int, attr->timeout - 8, 0);
-+		else
- 			qp_params.ack_timeout = 0;
--		}
- 	}
-+
- 	if (attr_mask & IB_QP_RETRY_CNT) {
- 		SET_FIELD(qp_params.modify_flags,
- 			  QED_ROCE_MODIFY_QP_VALID_RETRY_CNT, 1);
+ 	/* ignore non-ISO3166 country codes */
+-	for (i = 0; i < sizeof(req->alpha2); i++)
++	for (i = 0; i < 2; i++)
+ 		if (req->alpha2[i] < 'A' || req->alpha2[i] > 'Z') {
+ 			brcmf_err("not an ISO3166 code (0x%02x 0x%02x)\n",
+ 				  req->alpha2[0], req->alpha2[1]);
