@@ -1,80 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938309AbeE1LaM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:30:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:39185 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938062AbeE1LaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:30:08 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 01/12] perf/breakpoint: Split attribute parse and commit
-In-Reply-To: <20180525135846.GC22082@lerouge>
-References: <1526697950-7091-1-git-send-email-frederic@kernel.org> <1526697950-7091-2-git-send-email-frederic@kernel.org> <87h8mxstou.fsf@concordia.ellerman.id.au> <20180525135846.GC22082@lerouge>
-Date: Mon, 28 May 2018 21:29:59 +1000
-Message-ID: <87lgc43tmw.fsf@concordia.ellerman.id.au>
+        id S938321AbeE1La2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:30:28 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46366 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938062AbeE1LaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:30:22 -0400
+X-Google-Smtp-Source: ADUXVKLW3IXQn9UWonGq8R8g75iVzPQgNNr98VuTFkx6wRtkLH6lsstJ6qr59b01xn4mQ4Qn4fnVHBSuvbe4nZVyBpk=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAK8P3a2AGu4Lec1pwi87gb4QYn9QTy7mG2i9kWtfAR=An+k-7g@mail.gmail.com>
+References: <20180525210752.1794502-1-arnd@arndb.de> <CAPDyKFoyBZ=k5UQyTmgkPd+30Htymw99Xeh3C+bDPo+VGyjrNw@mail.gmail.com>
+ <CAK8P3a2AGu4Lec1pwi87gb4QYn9QTy7mG2i9kWtfAR=An+k-7g@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 28 May 2018 13:30:21 +0200
+Message-ID: <CAPDyKFqe4fPpJLh6d+timZ_w+J0BVZbO61PTacFM=X6BuUP-Yw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sunxi: mark PM functions as __maybe_unused
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frederic Weisbecker <frederic@kernel.org> writes:
-
-> On Thu, May 24, 2018 at 11:56:01AM +1000, Michael Ellerman wrote:
->> Frederic Weisbecker <frederic@kernel.org> writes:
->> 
->> > diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
->> > index 6e28d28..51320c2 100644
->> > --- a/kernel/events/hw_breakpoint.c
->> > +++ b/kernel/events/hw_breakpoint.c
->> > @@ -424,19 +443,22 @@ static int validate_hw_breakpoint(struct perf_event *bp)
->> >  
->> >  int register_perf_hw_breakpoint(struct perf_event *bp)
->> >  {
->> > -	int ret;
->> > +	struct arch_hw_breakpoint hw;
->> > +	int err;
->> >  
->> > -	ret = reserve_bp_slot(bp);
->> > -	if (ret)
->> > -		return ret;
->> > +	err = reserve_bp_slot(bp);
->> > +	if (err)
->> > +		return err;
->> >  
->> > -	ret = validate_hw_breakpoint(bp);
->> > -
->> > -	/* if arch_validate_hwbkpt_settings() fails then release bp slot */
->> > -	if (ret)
->> > +	err = hw_breakpoint_parse(bp, &bp->attr, &hw);
->> 
->> Is there a good reason we pass bp and bp->attr? (I assume so)
->> 
->> That added to the confusion in the existing code I think.
+On 28 May 2018 at 13:13, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, May 28, 2018 at 1:04 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 25 May 2018 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
+>>> The newly added runtime-pm functions cause a harmless warning
+>>> when CONFIG_PM is disabled:
+>>>
+>>> drivers/mmc/host/sunxi-mmc.c:1452:12: error: 'sunxi_mmc_runtime_suspend' defined but not used [-Werror=unused-function]
+>>>  static int sunxi_mmc_runtime_suspend(struct device *dev)
+>>>             ^~~~~~~~~~~~~~~~~~~~~~~~~
+>>> drivers/mmc/host/sunxi-mmc.c:1435:12: error: 'sunxi_mmc_runtime_resume' defined but not used [-Werror=unused-function]
+>>>  static int sunxi_mmc_runtime_resume(struct device *dev)
+>>>
+>>> This marks them as __maybe_unused to shut up the warning.
+>>
+>> Most mmc drivers uses #ifdef CONFIG_PM instead of the __maybe_unused() option.
+>>
+>> It's not a big deal, but consistency is always good. Would you mind changing?
 >
-> Yes, on breakpoint creation (which is the above function) it's not needed
-> but breakpoint modification wants it as we need to pass the attr that are
-> to be validated, and those are not yet copied to the breakpoint at this
-> stage. This happens in the end of the series.
+> I'd prefer not to. Most uses of #ifdef CONFIG_PM that get introduced are wrong,
+> and cause additional randconfig warnings that I end up having to fix,
+> so I always
+> do it with __maybe_unused.
 
-OK thanks.
+Right.
 
-cheers
+>
+> I don't mind if you treat my patch as a bug report and decide to fix
+> it differently
+> yourself, but you won't get that patch from me ;-)
+
+No, worries then. As stated, it's not a big deal.
+
+Applied for next!
+
+Kind regads
+Uffe
