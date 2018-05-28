@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939592AbeE1PGq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:06:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44154 "EHLO mail.kernel.org"
+        id S939611AbeE1PHJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:07:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033873AbeE1KYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:48 -0400
+        id S1033683AbeE1KYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:24:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michal Simek <michal.simek@xilinx.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 238/268] serial: xuartps: Fix out-of-bounds access through DT alias
-Date: Mon, 28 May 2018 12:03:32 +0200
-Message-Id: <20180528100230.265838678@linuxfoundation.org>
+Subject: [PATCH 4.4 237/268] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
+Date: Mon, 28 May 2018 12:03:31 +0200
+Message-Id: <20180528100230.192055472@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,32 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit e7d75e18d0fc3f7193b65282b651f980c778d935 ]
+[ Upstream commit 347876ad47b9923ce26e686173bbf46581802ffa ]
 
-The cdns_uart_port[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+The shifting of buf[5] by 24 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an unsigned long. If
+the top bit of buf[5] is set then all then all the upper bits sec
+end up as also being set because of the sign-extension. Fix this by
+casting buf[5] to an unsigned long before the shift.
 
-Fix this by adding a range check.
+Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
 
-Fixes: 928e9263492069ee ("tty: xuartps: Initialize ports according to aliases")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Michal Simek <michal.simek@xilinx.com>
+Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/xilinx_uartps.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-tx4939.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1026,7 +1026,7 @@ static struct uart_port *cdns_uart_get_p
- 	struct uart_port *port;
- 
- 	/* Try the given port id if failed use default method */
--	if (cdns_uart_port[id].mapbase != 0) {
-+	if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
- 		/* Find the next unused port */
- 		for (id = 0; id < CDNS_UART_NR_PORTS; id++)
- 			if (cdns_uart_port[id].mapbase == 0)
+--- a/drivers/rtc/rtc-tx4939.c
++++ b/drivers/rtc/rtc-tx4939.c
+@@ -86,7 +86,8 @@ static int tx4939_rtc_read_time(struct d
+ 	for (i = 2; i < 6; i++)
+ 		buf[i] = __raw_readl(&rtcreg->dat);
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, tm);
+ 	return rtc_valid_tm(tm);
+ }
+@@ -147,7 +148,8 @@ static int tx4939_rtc_read_alarm(struct
+ 	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
+ 	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, &alrm->time);
+ 	return rtc_valid_tm(&alrm->time);
+ }
