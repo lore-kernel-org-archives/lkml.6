@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034141AbeE1K0O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:26:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45408 "EHLO mail.kernel.org"
+        id S1034162AbeE1K0U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:26:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034116AbeE1K0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:26:05 -0400
+        id S1034143AbeE1K0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
+        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 267/268] kdb: make "mdr" command repeat
-Date: Mon, 28 May 2018 12:04:01 +0200
-Message-Id: <20180528100233.056722876@linuxfoundation.org>
+Subject: [PATCH 4.4 254/268] MIPS: Octeon: Fix logging messages with spurious periods after newlines
+Date: Mon, 28 May 2018 12:03:48 +0200
+Message-Id: <20180528100231.896236451@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,86 +31,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Joe Perches <joe@perches.com>
 
-[ Upstream commit 1e0ce03bf142454f38a5fc050bf4fd698d2d36d8 ]
+[ Upstream commit db6775ca6e0353d2618ca7d5e210fc36ad43bbd4 ]
 
-The "mdr" command should repeat (continue) when only Enter/Return
-is pressed, so make it do so.
+Using a period after a newline causes bad output.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: kgdb-bugreport@lists.sourceforge.net
-Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+Signed-off-by: Joe Perches <joe@perches.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/17886/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/debug/kdb/kdb_main.c |   27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ arch/mips/cavium-octeon/octeon-irq.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1564,6 +1564,7 @@ static int kdb_md(int argc, const char *
- 	int symbolic = 0;
- 	int valid = 0;
- 	int phys = 0;
-+	int raw = 0;
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2240,7 +2240,7 @@ static int __init octeon_irq_init_cib(st
  
- 	kdbgetintenv("MDCOUNT", &mdcount);
- 	kdbgetintenv("RADIX", &radix);
-@@ -1573,9 +1574,10 @@ static int kdb_md(int argc, const char *
- 	repeat = mdcount * 16 / bytesperword;
+ 	parent_irq = irq_of_parse_and_map(ciu_node, 0);
+ 	if (!parent_irq) {
+-		pr_err("ERROR: Couldn't acquire parent_irq for %s\n.",
++		pr_err("ERROR: Couldn't acquire parent_irq for %s\n",
+ 			ciu_node->name);
+ 		return -EINVAL;
+ 	}
+@@ -2252,7 +2252,7 @@ static int __init octeon_irq_init_cib(st
  
- 	if (strcmp(argv[0], "mdr") == 0) {
--		if (argc != 2)
-+		if (argc == 2 || (argc == 0 && last_addr != 0))
-+			valid = raw = 1;
-+		else
- 			return KDB_ARGCOUNT;
--		valid = 1;
- 	} else if (isdigit(argv[0][2])) {
- 		bytesperword = (int)(argv[0][2] - '0');
- 		if (bytesperword == 0) {
-@@ -1611,7 +1613,10 @@ static int kdb_md(int argc, const char *
- 		radix = last_radix;
- 		bytesperword = last_bytesperword;
- 		repeat = last_repeat;
--		mdcount = ((repeat * bytesperword) + 15) / 16;
-+		if (raw)
-+			mdcount = repeat;
-+		else
-+			mdcount = ((repeat * bytesperword) + 15) / 16;
+ 	addr = of_get_address(ciu_node, 0, NULL, NULL);
+ 	if (!addr) {
+-		pr_err("ERROR: Couldn't acquire reg(0) %s\n.", ciu_node->name);
++		pr_err("ERROR: Couldn't acquire reg(0) %s\n", ciu_node->name);
+ 		return -EINVAL;
+ 	}
+ 	host_data->raw_reg = (u64)phys_to_virt(
+@@ -2260,7 +2260,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	addr = of_get_address(ciu_node, 1, NULL, NULL);
+ 	if (!addr) {
+-		pr_err("ERROR: Couldn't acquire reg(1) %s\n.", ciu_node->name);
++		pr_err("ERROR: Couldn't acquire reg(1) %s\n", ciu_node->name);
+ 		return -EINVAL;
+ 	}
+ 	host_data->en_reg = (u64)phys_to_virt(
+@@ -2268,7 +2268,7 @@ static int __init octeon_irq_init_cib(st
+ 
+ 	r = of_property_read_u32(ciu_node, "cavium,max-bits", &val);
+ 	if (r) {
+-		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n.",
++		pr_err("ERROR: Couldn't read cavium,max-bits from %s\n",
+ 			ciu_node->name);
+ 		return r;
+ 	}
+@@ -2278,7 +2278,7 @@ static int __init octeon_irq_init_cib(st
+ 					   &octeon_irq_domain_cib_ops,
+ 					   host_data);
+ 	if (!cib_domain) {
+-		pr_err("ERROR: Couldn't irq_domain_add_linear()\n.");
++		pr_err("ERROR: Couldn't irq_domain_add_linear()\n");
+ 		return -ENOMEM;
  	}
  
- 	if (argc) {
-@@ -1628,7 +1633,10 @@ static int kdb_md(int argc, const char *
- 			diag = kdbgetularg(argv[nextarg], &val);
- 			if (!diag) {
- 				mdcount = (int) val;
--				repeat = mdcount * 16 / bytesperword;
-+				if (raw)
-+					repeat = mdcount;
-+				else
-+					repeat = mdcount * 16 / bytesperword;
- 			}
- 		}
- 		if (argc >= nextarg+1) {
-@@ -1638,8 +1646,15 @@ static int kdb_md(int argc, const char *
- 		}
- 	}
- 
--	if (strcmp(argv[0], "mdr") == 0)
--		return kdb_mdr(addr, mdcount);
-+	if (strcmp(argv[0], "mdr") == 0) {
-+		int ret;
-+		last_addr = addr;
-+		ret = kdb_mdr(addr, mdcount);
-+		last_addr += mdcount;
-+		last_repeat = mdcount;
-+		last_bytesperword = bytesperword; // to make REPEAT happy
-+		return ret;
-+	}
- 
- 	switch (radix) {
- 	case 10:
