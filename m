@@ -1,75 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1035049AbeE1PwT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:52:19 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:33148 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967041AbeE1KPy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:54 -0400
-X-Google-Smtp-Source: ADUXVKIMZHJWGjlUIp8H9QmyHLndAFghl88TjzHnQeb+mcYT96Ej2tpdwel3p25kIPXD7WFJdrjBb9oWAFZ7GlbJm9c=
+        id S936944AbeE1KPs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966670AbeE1KPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:35 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.4 009/268] libata: blacklist Micron 500IT SSD with MU01 firmware
+Date: Mon, 28 May 2018 11:59:43 +0200
+Message-Id: <20180528100203.185748186@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
- <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
- <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
- <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 28 May 2018 12:15:52 +0200
-X-Google-Sender-Auth: 94nZbkrxlzVD9lpDjsCuejQZV1g
-Message-ID: <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-To: Finn Thain <fthain@telegraphics.com.au>,
-        Christoph Hellwig <hch@lst.de>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Joshua Thompson <funaho@jurai.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> On Mon, 28 May 2018, Michael Schmitz wrote:
->> Am 27.05.2018 um 17:49 schrieb Finn Thain:
->> > On Sun, 27 May 2018, Michael Schmitz wrote:
->> >
->> >> That should have fixed the warning already ...
->> >
->> > It's still not fixed (hence my "acked-by" for Geunter's patch).
->> >
->>
->> Odd - does link order still matter even though the
->> arch_setup_dev_archdata() function from the core platform code is
->> declared as a weak symbol?
->>
->> I'll see what I can find out on elgar ...
->>
->
-> Any one of the numerous patches/rfcs/suggestions that I sent will avoid
-> the WARN splat.
->
-> When I said "it's still not fixed", what I meant to say was, "it's still
-> not fixed in mainline and no proposed fix was accepted to the best of my
-> knowledge".
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Indeed.
+------------------
 
-Do we have a consensus on the way forward? The merge window for
-v4.18 will open soon.
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-Thanks!
+commit 136d769e0b3475d71350aa3648a116a6ee7a8f6c upstream.
 
-Gr{oetje,eeting}s,
+While whitelisting Micron M500DC drives, the tweaked blacklist entry
+enabled queued TRIM from M500IT variants also. But these do not support
+queued TRIM. And while using those SSDs with the latest kernel we have
+seen errors and even the partition table getting corrupted.
 
-                        Geert
+Some part from the dmesg:
+[    6.727384] ata1.00: ATA-9: Micron_M500IT_MTFDDAK060MBD, MU01, max UDMA/133
+[    6.727390] ata1.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32), AA
+[    6.741026] ata1.00: supports DRM functions and may not be fully accessible
+[    6.759887] ata1.00: configured for UDMA/133
+[    6.762256] scsi 0:0:0:0: Direct-Access     ATA      Micron_M500IT_MT MU01 PQ: 0 ANSI: 5
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+and then for the error:
+[  120.860334] ata1.00: exception Emask 0x1 SAct 0x7ffc0007 SErr 0x0 action 0x6 frozen
+[  120.860338] ata1.00: irq_stat 0x40000008
+[  120.860342] ata1.00: failed command: SEND FPDMA QUEUED
+[  120.860351] ata1.00: cmd 64/01:00:00:00:00/00:00:00:00:00/a0 tag 0 ncq dma 512 out
+         res 40/00:00:00:00:00/00:00:00:00:00/00 Emask 0x5 (timeout)
+[  120.860353] ata1.00: status: { DRDY }
+[  120.860543] ata1: hard resetting link
+[  121.166128] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+[  121.166376] ata1.00: supports DRM functions and may not be fully accessible
+[  121.186238] ata1.00: supports DRM functions and may not be fully accessible
+[  121.204445] ata1.00: configured for UDMA/133
+[  121.204454] ata1.00: device reported invalid CHS sector 0
+[  121.204541] sd 0:0:0:0: [sda] tag#18 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+[  121.204546] sd 0:0:0:0: [sda] tag#18 Sense Key : 0x5 [current]
+[  121.204550] sd 0:0:0:0: [sda] tag#18 ASC=0x21 ASCQ=0x4
+[  121.204555] sd 0:0:0:0: [sda] tag#18 CDB: opcode=0x93 93 08 00 00 00 00 00 04 28 80 00 00 00 30 00 00
+[  121.204559] print_req_error: I/O error, dev sda, sector 272512
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+After few reboots with these errors, and the SSD is corrupted.
+After blacklisting it, the errors are not seen and the SSD does not get
+corrupted any more.
+
+Fixes: 243918be6393 ("libata: Do not blacklist Micron M500DC")
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/ata/libata-core.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4251,6 +4251,8 @@ static const struct ata_blacklist_entry
+ 	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
+ 
+ 	/* devices that don't properly handle queued TRIM commands */
++	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
++						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Crucial_CT*M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
