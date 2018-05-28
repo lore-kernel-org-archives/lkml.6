@@ -1,182 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932842AbeE1MmA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:42:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46382 "EHLO mail.kernel.org"
+        id S938084AbeE1MmO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:42:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937971AbeE1K6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:14 -0400
+        id S938911AbeE1Mly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 08:41:54 -0400
+Date: Mon, 28 May 2018 14:41:33 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 373/496] rsi: fix kernel panic observed on 64bit machine
-Date: Mon, 28 May 2018 12:02:38 +0200
-Message-Id: <20180528100335.530367082@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 286/496] macsec: missing dev_put() on error in
+ macsec_newlink()
+Message-ID: <20180528124133.GB19525@kroah.com>
 References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+ <20180528100331.887783491@linuxfoundation.org>
+ <20180528121644.4wftwxql43eoug5h@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528121644.4wftwxql43eoug5h@mwanda>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 03:16:45PM +0300, Dan Carpenter wrote:
+> Hi Greg,
+> 
+> I'm sorryt.  This one was buggy.  We did a revert of it in commit
+> bd28899dd34f ("Revert "macsec: missing dev_put() on error in
+> macsec_newlink()"").
+> 
+> You have queued for 4.8 as well.
 
-------------------
+Not a problem, thanks for letting me know, I've dropped it from both
+queues now.
 
-From: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-
-[ Upstream commit 864db4d5085349fcfa1f260b5bcd2adde3d7f2ed ]
-
-Following kernel panic is observed on 64bit machine while loading
-the driver. It is fixed if we pass dynamically allocated memory to
-SDIO for DMA.
-
-BUG: unable to handle kernel paging request at ffffeb04000172e0
-IP: sg_miter_stop+0x56/0x70
-PGD 0 P4D 0
-Oops: 0000 [#1] SMP PTI
-Modules linked in: rsi_sdio(OE+) rsi_91x(OE) btrsi(OE) rfcomm bluetooth
-ecdh_generic mac80211 mmc_block fuse xt_CHECKSUM iptable_mangle
-drm_kms_helper mmc_core serio_raw drm firewire_ohci tg3
-CPU: 0 PID: 4003 Comm: insmod Tainted: G           OE    4.16.0-rc1+ #27
-Hardware name: Dell Inc. Latitude E5500                  /0DW634, BIOS
-A19 06/13/2013
-RIP: 0010:sg_miter_stop+0x56/0x70
-RSP: 0018:ffff88007d003e78 EFLAGS: 00010002
-RAX: 0000000000000003 RBX: 0000000000000004 RCX: 0000000000000000
-RDX: ffffeb04000172c0 RSI: ffff88002f58002c RDI: ffff88007d003e80
-RBP: 0000000000000004 R08: ffff88007d003e80 R09: 0000000000000008
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000004
-R13: ffff88002f580028 R14: 0000000000000000 R15: 0000000000000004
-FS:  00007f35c29db700(0000) GS:ffff88007d000000(0000)
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffeb04000172e0 CR3: 000000007038e000 CR4: 00000000000406f0
-Call Trace:
-<IRQ>
-sg_copy_buffer+0xc6/0xf0
-sdhci_tasklet_finish+0x170/0x260 [sdhci]
-tasklet_action+0xf4/0x100
-__do_softirq+0xef/0x26e
-irq_exit+0xbe/0xd0
-do_IRQ+0x4a/0xc0
-common_interrupt+0xa2/0xa2
-</IRQ>
-
-Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/rsi/rsi_91x_sdio.c |   32 +++++++++++++++++++++-----------
- drivers/net/wireless/rsi/rsi_sdio.h     |    2 ++
- 2 files changed, 23 insertions(+), 11 deletions(-)
-
---- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-@@ -636,11 +636,14 @@ static int rsi_sdio_master_reg_read(stru
- 				    u32 *read_buf, u16 size)
- {
- 	u32 addr_on_bus, *data;
--	u32 align[2] = {};
- 	u16 ms_addr;
- 	int status;
- 
--	data = PTR_ALIGN(&align[0], 8);
-+	data = kzalloc(RSI_MASTER_REG_BUF_SIZE, GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data = PTR_ALIGN(data, 8);
- 
- 	ms_addr = (addr >> 16);
- 	status = rsi_sdio_master_access_msword(adapter, ms_addr);
-@@ -648,7 +651,7 @@ static int rsi_sdio_master_reg_read(stru
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to set ms word to common reg\n",
- 			__func__);
--		return status;
-+		goto err;
- 	}
- 	addr &= 0xFFFF;
- 
-@@ -666,7 +669,7 @@ static int rsi_sdio_master_reg_read(stru
- 					 (u8 *)data, 4);
- 	if (status < 0) {
- 		rsi_dbg(ERR_ZONE, "%s: AHB register read failed\n", __func__);
--		return status;
-+		goto err;
- 	}
- 	if (size == 2) {
- 		if ((addr & 0x3) == 0)
-@@ -688,17 +691,23 @@ static int rsi_sdio_master_reg_read(stru
- 		*read_buf = *data;
- 	}
- 
--	return 0;
-+err:
-+	kfree(data);
-+	return status;
- }
- 
- static int rsi_sdio_master_reg_write(struct rsi_hw *adapter,
- 				     unsigned long addr,
- 				     unsigned long data, u16 size)
- {
--	unsigned long data1[2], *data_aligned;
-+	unsigned long *data_aligned;
- 	int status;
- 
--	data_aligned = PTR_ALIGN(&data1[0], 8);
-+	data_aligned = kzalloc(RSI_MASTER_REG_BUF_SIZE, GFP_KERNEL);
-+	if (!data_aligned)
-+		return -ENOMEM;
-+
-+	data_aligned = PTR_ALIGN(data_aligned, 8);
- 
- 	if (size == 2) {
- 		*data_aligned = ((data << 16) | (data & 0xFFFF));
-@@ -717,6 +726,7 @@ static int rsi_sdio_master_reg_write(str
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to set ms word to common reg\n",
- 			__func__);
-+		kfree(data_aligned);
- 		return -EIO;
- 	}
- 	addr = addr & 0xFFFF;
-@@ -726,12 +736,12 @@ static int rsi_sdio_master_reg_write(str
- 					(adapter,
- 					 (addr | RSI_SD_REQUEST_MASTER),
- 					 (u8 *)data_aligned, size);
--	if (status < 0) {
-+	if (status < 0)
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to do AHB reg write\n", __func__);
--		return status;
--	}
--	return 0;
-+
-+	kfree(data_aligned);
-+	return status;
- }
- 
- /**
---- a/drivers/net/wireless/rsi/rsi_sdio.h
-+++ b/drivers/net/wireless/rsi/rsi_sdio.h
-@@ -46,6 +46,8 @@ enum sdio_interrupt_type {
- #define PKT_BUFF_AVAILABLE                      1
- #define FW_ASSERT_IND                           2
- 
-+#define RSI_MASTER_REG_BUF_SIZE			12
-+
- #define RSI_DEVICE_BUFFER_STATUS_REGISTER       0xf3
- #define RSI_FN1_INT_REGISTER                    0xf9
- #define RSI_SD_REQUEST_MASTER                   0x10000
+greg k-h
