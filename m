@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034180AbeE1PTA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:19:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41578 "EHLO mail.kernel.org"
+        id S1033438AbeE1KV6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:21:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033470AbeE1KWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:09 -0400
+        id S1033393AbeE1KVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vicente Bergas <vicencb@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>,
+        dave@stgolabs.net, rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 179/268] Bluetooth: btusb: Add USB ID 7392:a611 for Edimax EW-7611ULB
-Date: Mon, 28 May 2018 12:02:33 +0200
-Message-Id: <20180528100222.674755637@linuxfoundation.org>
+Subject: [PATCH 4.4 173/268] sched/rt: Fix rq->clock_update_flags < RQCF_ACT_SKIP warning
+Date: Mon, 28 May 2018 12:02:27 +0200
+Message-Id: <20180528100221.993481294@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,72 +34,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vicente Bergas <vicencb@gmail.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit a41e0796396eeceff673af4a38feaee149c6ff86 ]
+[ Upstream commit d29a20645d5e929aa7e8616f28e5d8e1c49263ec ]
 
-This WiFi/Bluetooth USB dongle uses a Realtek chipset, so, use btrtl for it.
+While running rt-tests' pi_stress program I got the following splat:
 
-Product information:
-https://wikidevi.com/wiki/Edimax_EW-7611ULB
+  rq->clock_update_flags < RQCF_ACT_SKIP
+  WARNING: CPU: 27 PID: 0 at kernel/sched/sched.h:960 assert_clock_updated.isra.38.part.39+0x13/0x20
 
->From /sys/kernel/debug/usb/devices
-T:  Bus=02 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  3 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=7392 ProdID=a611 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Edimax Wi-Fi N150 Bluetooth4.0 USB Adapter
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 6 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtl8723bu
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=03(Int.) MxPS=  64 Ivl=500us
-E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+  [...]
 
-Tested-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+  <IRQ>
+  enqueue_top_rt_rq+0xf4/0x150
+  ? cpufreq_dbs_governor_start+0x170/0x170
+  sched_rt_rq_enqueue+0x65/0x80
+  sched_rt_period_timer+0x156/0x360
+  ? sched_rt_rq_enqueue+0x80/0x80
+  __hrtimer_run_queues+0xfa/0x260
+  hrtimer_interrupt+0xcb/0x220
+  smp_apic_timer_interrupt+0x62/0x120
+  apic_timer_interrupt+0xf/0x20
+  </IRQ>
+
+  [...]
+
+  do_idle+0x183/0x1e0
+  cpu_startup_entry+0x5f/0x70
+  start_secondary+0x192/0x1d0
+  secondary_startup_64+0xa5/0xb0
+
+We can get rid of it be the "traditional" means of adding an
+update_rq_clock() call after acquiring the rq->lock in
+do_sched_rt_period_timer().
+
+The case for the RT task throttling (which this workload also hits)
+can be ignored in that the skip_update call is actually bogus and
+quite the contrary (the request bits are removed/reverted).
+
+By setting RQCF_UPDATED we really don't care if the skip is happening
+or not and will therefore make the assert_clock_updated() check happy.
+
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dave@stgolabs.net
+Cc: linux-kernel@vger.kernel.org
+Cc: rostedt@goodmis.org
+Link: http://lkml.kernel.org/r/20180402164954.16255-1-dave@stgolabs.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btusb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ kernel/sched/rt.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -336,6 +336,9 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x13d3, 0x3459), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3494), .driver_info = BTUSB_REALTEK },
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -822,6 +822,8 @@ static int do_sched_rt_period_timer(stru
+ 		struct rq *rq = rq_of_rt_rq(rt_rq);
  
-+	/* Additional Realtek 8723BU Bluetooth devices */
-+	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
+ 		raw_spin_lock(&rq->lock);
++		update_rq_clock(rq);
 +
- 	/* Additional Realtek 8821AE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
+ 		if (rt_rq->rt_time) {
+ 			u64 runtime;
+ 
