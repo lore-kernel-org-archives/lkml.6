@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162812AbeE1KqL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:46:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36402 "EHLO mail.kernel.org"
+        id S1163077AbeE1KqS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:46:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937798AbeE1KqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:04 -0400
+        id S1162857AbeE1KqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 104/496] arm64: perf: correct PMUVer probing
-Date: Mon, 28 May 2018 11:58:09 +0200
-Message-Id: <20180528100324.224472328@linuxfoundation.org>
+Subject: [PATCH 4.14 115/496] seccomp: add a selftest for get_metadata
+Date: Mon, 28 May 2018 11:58:20 +0200
+Message-Id: <20180528100324.761976897@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,42 +30,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Tycho Andersen <tycho@tycho.ws>
 
-[ Upstream commit 0331365edb1d6ccd6ae68b1038111da85d4c68d1 ]
+[ Upstream commit d057dc4e35e16050befa3dda943876dab39cbf80 ]
 
-The ID_AA64DFR0_EL1.PMUVer field doesn't follow the usual ID registers
-scheme. While value 0xf indicates a non-architected PMU is implemented,
-values 0x1 to 0xe indicate an increasingly featureful architected PMU,
-as if the field were unsigned.
+Let's test that we get the flags correctly, and that we preserve the filter
+index across the ptrace(PTRACE_SECCOMP_GET_METADATA) correctly.
 
-For more details, see ARM DDI 0487C.a, D10.1.4, "Alternative ID scheme
-used for the Performance Monitors Extension version".
-
-Currently, we treat the field as signed, and erroneously bail out for
-values 0x8 to 0xe. Let's correct that.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/perf_event.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/seccomp/seccomp_bpf.c |   61 ++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -914,9 +914,9 @@ static void __armv8pmu_probe_pmu(void *i
- 	int pmuver;
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -145,6 +145,15 @@ struct seccomp_data {
+ #define SECCOMP_FILTER_FLAG_SPEC_ALLOW (1UL << 2)
+ #endif
  
- 	dfr0 = read_sysreg(id_aa64dfr0_el1);
--	pmuver = cpuid_feature_extract_signed_field(dfr0,
-+	pmuver = cpuid_feature_extract_unsigned_field(dfr0,
- 			ID_AA64DFR0_PMUVER_SHIFT);
--	if (pmuver < 1)
-+	if (pmuver == 0xf || pmuver == 0)
- 		return;
++#ifndef PTRACE_SECCOMP_GET_METADATA
++#define PTRACE_SECCOMP_GET_METADATA	0x420d
++
++struct seccomp_metadata {
++	__u64 filter_off;       /* Input: which filter */
++	__u64 flags;             /* Output: filter's flags */
++};
++#endif
++
+ #ifndef seccomp
+ int seccomp(unsigned int op, unsigned int flags, void *args)
+ {
+@@ -2861,6 +2870,58 @@ TEST(get_action_avail)
+ 	EXPECT_EQ(errno, EOPNOTSUPP);
+ }
  
- 	probe->present = true;
++TEST(get_metadata)
++{
++	pid_t pid;
++	int pipefd[2];
++	char buf;
++	struct seccomp_metadata md;
++
++	ASSERT_EQ(0, pipe(pipefd));
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++	if (pid == 0) {
++		struct sock_filter filter[] = {
++			BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
++		};
++		struct sock_fprog prog = {
++			.len = (unsigned short)ARRAY_SIZE(filter),
++			.filter = filter,
++		};
++
++		/* one with log, one without */
++		ASSERT_EQ(0, seccomp(SECCOMP_SET_MODE_FILTER,
++				     SECCOMP_FILTER_FLAG_LOG, &prog));
++		ASSERT_EQ(0, seccomp(SECCOMP_SET_MODE_FILTER, 0, &prog));
++
++		ASSERT_EQ(0, close(pipefd[0]));
++		ASSERT_EQ(1, write(pipefd[1], "1", 1));
++		ASSERT_EQ(0, close(pipefd[1]));
++
++		while (1)
++			sleep(100);
++	}
++
++	ASSERT_EQ(0, close(pipefd[1]));
++	ASSERT_EQ(1, read(pipefd[0], &buf, 1));
++
++	ASSERT_EQ(0, ptrace(PTRACE_ATTACH, pid));
++	ASSERT_EQ(pid, waitpid(pid, NULL, 0));
++
++	md.filter_off = 0;
++	ASSERT_EQ(sizeof(md), ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(md), &md));
++	EXPECT_EQ(md.flags, SECCOMP_FILTER_FLAG_LOG);
++	EXPECT_EQ(md.filter_off, 0);
++
++	md.filter_off = 1;
++	ASSERT_EQ(sizeof(md), ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(md), &md));
++	EXPECT_EQ(md.flags, 0);
++	EXPECT_EQ(md.filter_off, 1);
++
++	ASSERT_EQ(0, kill(pid, SIGKILL));
++}
++
+ /*
+  * TODO:
+  * - add microbenchmarks
