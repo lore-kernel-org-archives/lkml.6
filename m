@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936623AbeE1KLj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:11:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59752 "EHLO mail.kernel.org"
+        id S1425269AbeE1QWZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:22:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936567AbeE1KLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:34 -0400
+        id S933961AbeE1KLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:11:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Carlo Pisani <carlojpisani@gmail.com>,
+        Kyle McMartin <kyle@mcmartin.ca>,
+        Grant Grundler <grantgrundler@gmail.com>, Helge Deller <deller@gmx.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 132/185] hwmon: (nct6775) Fix writing pwmX_mode
-Date: Mon, 28 May 2018 12:02:53 +0200
-Message-Id: <20180528100104.749785175@linuxfoundation.org>
+Subject: [PATCH 3.18 131/185] parisc/pci: Switch LBA PCI bus from Hard Fail to Soft Fail mode
+Date: Mon, 28 May 2018 12:02:52 +0200
+Message-Id: <20180528100104.528728026@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -29,61 +31,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit 415eb2a1aaa4881cf85bd86c683356fdd8094a23 ]
+[ Upstream commit b845f66f78bf42a4ce98e5cfe0e94fab41dd0742 ]
 
-pwmX_mode is defined in the ABI as 0=DC mode, 1=pwm mode. The chip
-register bit is set to 1 for DC mode. This got mixed up, and writing
-1 into pwmX_mode resulted in DC mode enabled. Fix it up by using
-the ABI definition throughout the driver for consistency.
+Carlo Pisani noticed that his C3600 workstation behaved unstable during heavy
+I/O on the PCI bus with a VIA VT6421 IDE/SATA PCI card.
 
-Fixes: 77eb5b3703d99 ("hwmon: (nct6775) Add support for pwm, pwm_mode, ... ")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+To avoid such instability, this patch switches the LBA PCI bus from Hard Fail
+mode into Soft Fail mode. In this mode the bus will return -1UL for timed out
+MMIO transactions, which is exactly how the x86 (and most other architectures)
+PCI busses behave.
+
+This patch is based on a proposal by Grant Grundler and Kyle McMartin 10
+years ago:
+https://www.spinics.net/lists/linux-parisc/msg01027.html
+
+Cc: Carlo Pisani <carlojpisani@gmail.com>
+Cc: Kyle McMartin <kyle@mcmartin.ca>
+Reviewed-by: Grant Grundler <grantgrundler@gmail.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/nct6775.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/parisc/lba_pci.c |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -1286,7 +1286,7 @@ static void nct6775_update_pwm(struct de
- 		duty_is_dc = data->REG_PWM_MODE[i] &&
- 		  (nct6775_read_value(data, data->REG_PWM_MODE[i])
- 		   & data->PWM_MODE_MASK[i]);
--		data->pwm_mode[i] = duty_is_dc;
-+		data->pwm_mode[i] = !duty_is_dc;
- 
- 		fanmodecfg = nct6775_read_value(data, data->REG_FAN_MODE[i]);
- 		for (j = 0; j < ARRAY_SIZE(data->REG_PWM); j++) {
-@@ -2145,7 +2145,7 @@ show_pwm_mode(struct device *dev, struct
- 	struct nct6775_data *data = nct6775_update_device(dev);
- 	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
- 
--	return sprintf(buf, "%d\n", !data->pwm_mode[sattr->index]);
-+	return sprintf(buf, "%d\n", data->pwm_mode[sattr->index]);
- }
- 
- static ssize_t
-@@ -2166,9 +2166,9 @@ store_pwm_mode(struct device *dev, struc
- 	if (val > 1)
- 		return -EINVAL;
- 
--	/* Setting DC mode is not supported for all chips/channels */
-+	/* Setting DC mode (0) is not supported for all chips/channels */
- 	if (data->REG_PWM_MODE[nr] == 0) {
--		if (val)
-+		if (!val)
- 			return -EINVAL;
- 		return count;
+--- a/drivers/parisc/lba_pci.c
++++ b/drivers/parisc/lba_pci.c
+@@ -1366,9 +1366,27 @@ lba_hw_init(struct lba_device *d)
+ 		WRITE_REG32(stat, d->hba.base_addr + LBA_ERROR_CONFIG);
  	}
-@@ -2177,7 +2177,7 @@ store_pwm_mode(struct device *dev, struc
- 	data->pwm_mode[nr] = val;
- 	reg = nct6775_read_value(data, data->REG_PWM_MODE[nr]);
- 	reg &= ~data->PWM_MODE_MASK[nr];
--	if (val)
-+	if (!val)
- 		reg |= data->PWM_MODE_MASK[nr];
- 	nct6775_write_value(data, data->REG_PWM_MODE[nr], reg);
- 	mutex_unlock(&data->update_lock);
+ 
+-	/* Set HF mode as the default (vs. -1 mode). */
++
++	/*
++	 * Hard Fail vs. Soft Fail on PCI "Master Abort".
++	 *
++	 * "Master Abort" means the MMIO transaction timed out - usually due to
++	 * the device not responding to an MMIO read. We would like HF to be
++	 * enabled to find driver problems, though it means the system will
++	 * crash with a HPMC.
++	 *
++	 * In SoftFail mode "~0L" is returned as a result of a timeout on the
++	 * pci bus. This is like how PCI busses on x86 and most other
++	 * architectures behave.  In order to increase compatibility with
++	 * existing (x86) PCI hardware and existing Linux drivers we enable
++	 * Soft Faul mode on PA-RISC now too.
++	 */
+         stat = READ_REG32(d->hba.base_addr + LBA_STAT_CTL);
++#if defined(ENABLE_HARDFAIL)
+ 	WRITE_REG32(stat | HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
++#else
++	WRITE_REG32(stat & ~HF_ENABLE, d->hba.base_addr + LBA_STAT_CTL);
++#endif
+ 
+ 	/*
+ 	** Writing a zero to STAT_CTL.rf (bit 0) will clear reset signal
