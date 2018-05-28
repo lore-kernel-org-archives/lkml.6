@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936846AbeE1KOO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:14:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34126 "EHLO mail.kernel.org"
+        id S936860AbeE1KO1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:14:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934993AbeE1KOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:14:11 -0400
+        id S936516AbeE1KOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:14:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 177/185] clk: samsung: exynos5250: Fix PLL rates
-Date: Mon, 28 May 2018 12:03:38 +0200
-Message-Id: <20180528100115.228489109@linuxfoundation.org>
+Subject: [PATCH 3.18 170/185] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
+Date: Mon, 28 May 2018 12:03:31 +0200
+Message-Id: <20180528100113.621918832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -32,50 +29,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 2ac051eeabaa411ef89ae7cd5bb8e60cb41ad780 ]
+[ Upstream commit ffab87fdecc655cc676f8be8dd1a2c5e22bd6d47 ]
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+The lpuart_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
+Fix this by adding a range check.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/samsung/clk-exynos5250.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tty/serial/fsl_lpuart.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -700,13 +700,13 @@ static struct samsung_pll_rate_table epl
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
- 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
--	PLL_36XX_RATE(180633600, 90, 3, 2, 20762),
-+	PLL_36XX_RATE(180633605, 90, 3, 2, 20762),
- 	PLL_36XX_RATE(180000000, 90, 3, 2, 0),
- 	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
--	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
-+	PLL_36XX_RATE(67737602, 90, 2, 4, 20762),
- 	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
--	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
--	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+	PLL_36XX_RATE(45158401, 90, 3, 4, 20762),
-+	PLL_36XX_RATE(32768001, 131, 3, 5, 4719),
- 	{ },
- };
- 
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1791,6 +1791,10 @@ static int lpuart_probe(struct platform_
+ 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+ 		return ret;
+ 	}
++	if (ret >= ARRAY_SIZE(lpuart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", ret);
++		return -EINVAL;
++	}
+ 	sport->port.line = ret;
+ 	sport->lpuart32 = of_device_is_compatible(np, "fsl,ls1021a-lpuart");
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
