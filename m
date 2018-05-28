@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032837AbeE1KTe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:19:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39328 "EHLO mail.kernel.org"
+        id S968755AbeE1KT2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936919AbeE1KTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:22 -0400
+        id S936960AbeE1KTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 121/268] selftests/powerpc: Skip the subpage_prot tests if the syscall is unavailable
-Date: Mon, 28 May 2018 12:01:35 +0200
-Message-Id: <20180528100215.810823852@linuxfoundation.org>
+Subject: [PATCH 4.4 120/268] Btrfs: send, fix issuing write op when processing hole in no data mode
+Date: Mon, 28 May 2018 12:01:34 +0200
+Message-Id: <20180528100215.737127476@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -29,63 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit cd4a6f3ab4d80cb919d15897eb3cbc85c2009d4b ]
+[ Upstream commit d4dfc0f4d39475ccbbac947880b5464a74c30b99 ]
 
-The subpage_prot syscall is only functional when the system is using
-the Hash MMU. Since commit 5b2b80714796 ("powerpc/mm: Invalidate
-subpage_prot() system call on radix platforms") it returns ENOENT when
-the Radix MMU is active. Currently this just makes the test fail.
+When doing an incremental send of a filesystem with the no-holes feature
+enabled, we end up issuing a write operation when using the no data mode
+send flag, instead of issuing an update extent operation. Fix this by
+issuing the update extent operation instead.
 
-Additionally the syscall is not available if the kernel is built with
-4K pages, or if CONFIG_PPC_SUBPAGE_PROT=n, in which case it returns
-ENOSYS because the syscall is missing entirely.
+Trivial reproducer:
 
-So check explicitly for ENOENT and ENOSYS and skip if we see either of
-those.
+  $ mkfs.btrfs -f -O no-holes /dev/sdc
+  $ mkfs.btrfs -f /dev/sdd
+  $ mount /dev/sdc /mnt/sdc
+  $ mount /dev/sdd /mnt/sdd
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+  $ xfs_io -f -c "pwrite -S 0xab 0 32K" /mnt/sdc/foobar
+  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap1
+
+  $ xfs_io -c "fpunch 8K 8K" /mnt/sdc/foobar
+  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap2
+
+  $ btrfs send /mnt/sdc/snap1 | btrfs receive /mnt/sdd
+  $ btrfs send --no-data -p /mnt/sdc/snap1 /mnt/sdc/snap2 \
+       | btrfs receive -vv /mnt/sdd
+
+Before this change the output of the second receive command is:
+
+  receiving snapshot snap2 uuid=f6922049-8c22-e544-9ff9-fc6755918447...
+  utimes
+  write foobar, offset 8192, len 8192
+  utimes foobar
+  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=f6922049-8c22-e544-9ff9-...
+
+After this change it is:
+
+  receiving snapshot snap2 uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+  utimes
+  update_extent foobar: offset=8192, len=8192
+  utimes foobar
+  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/powerpc/mm/subpage_prot.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/btrfs/send.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/tools/testing/selftests/powerpc/mm/subpage_prot.c
-+++ b/tools/testing/selftests/powerpc/mm/subpage_prot.c
-@@ -135,6 +135,16 @@ static int run_test(void *addr, unsigned
- 	return 0;
- }
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -4674,6 +4674,9 @@ static int send_hole(struct send_ctx *sc
+ 	u64 len;
+ 	int ret = 0;
  
-+static int syscall_available(void)
-+{
-+	int rc;
++	if (sctx->flags & BTRFS_SEND_FLAG_NO_FILE_DATA)
++		return send_update_extent(sctx, offset, end - offset);
 +
-+	errno = 0;
-+	rc = syscall(__NR_subpage_prot, 0, 0, 0);
-+
-+	return rc == 0 || (errno != ENOENT && errno != ENOSYS);
-+}
-+
- int test_anon(void)
- {
- 	unsigned long align;
-@@ -145,6 +155,8 @@ int test_anon(void)
- 	void *mallocblock;
- 	unsigned long mallocsize;
- 
-+	SKIP_IF(!syscall_available());
-+
- 	if (getpagesize() != 0x10000) {
- 		fprintf(stderr, "Kernel page size must be 64K!\n");
- 		return 1;
-@@ -180,6 +192,8 @@ int test_file(void)
- 	off_t filesize;
- 	int fd;
- 
-+	SKIP_IF(!syscall_available());
-+
- 	fd = open(file_name, O_RDWR);
- 	if (fd == -1) {
- 		perror("failed to open file");
+ 	p = fs_path_alloc();
+ 	if (!p)
+ 		return -ENOMEM;
