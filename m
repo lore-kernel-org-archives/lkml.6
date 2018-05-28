@@ -1,18 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938291AbeE1L2r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:28:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34160 "EHLO mail.kernel.org"
+        id S938229AbeE1L3I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:29:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424487AbeE1LPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:15:02 -0400
+        id S1424468AbeE1LOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.16 241/272] rcu: Call touch_nmi_watchdog() while printing stall warnings
-Date: Mon, 28 May 2018 12:04:34 +0200
-Message-Id: <20180528100300.561016308@linuxfoundation.org>
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
+        Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 217/272] pinctrl: artpec6: dt: add missing pin group uart5nocts
+Date: Mon, 28 May 2018 12:04:10 +0200
+Message-Id: <20180528100258.720976298@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -28,47 +31,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-[ Upstream commit 3caa973b7a260e7a2a69edc94c300ab9c65148c3 ]
+[ Upstream commit 7e065fb9ccce89fe667fdbd9a177eaec59a359fc ]
 
-When RCU stall warning triggers, it can print out a lot of messages
-while holding spinlocks.  If the console device is slow (e.g. an
-actual or IPMI serial console), it may end up triggering NMI hard
-lockup watchdog like the following.
+Add missing pin group uart5nocts (all pins except cts), which has been
+supported by the artpec6 pinctrl driver since its initial submission.
 
+Fixes: 00df0582eab1 ("pinctrl: Add pincontrol driver for ARTPEC-6 SoC")
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/rcu/tree_plugin.h |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -560,8 +560,14 @@ static void rcu_print_detail_task_stall_
- 	}
- 	t = list_entry(rnp->gp_tasks->prev,
- 		       struct task_struct, rcu_node_entry);
--	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry)
-+	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
-+		/*
-+		 * We could be printing a lot while holding a spinlock.
-+		 * Avoid triggering hard lockup.
-+		 */
-+		touch_nmi_watchdog();
- 		sched_show_task(t);
-+	}
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- }
- 
-@@ -1677,6 +1683,12 @@ static void print_cpu_stall_info(struct
- 	char *ticks_title;
- 	unsigned long ticks_value;
- 
-+	/*
-+	 * We could be printing a lot while holding a spinlock.  Avoid
-+	 * triggering hard lockup.
-+	 */
-+	touch_nmi_watchdog();
-+
- 	if (rsp->gpnum == rdp->gpnum) {
- 		ticks_title = "ticks this GP";
- 		ticks_value = rdp->ticks_this_gp;
+--- a/Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
+@@ -20,7 +20,8 @@ Required subnode-properties:
+ 		gpio: cpuclkoutgrp0, udlclkoutgrp0, i2c1grp0, i2c2grp0,
+ 		      i2c3grp0, i2s0grp0, i2s1grp0, i2srefclkgrp0, spi0grp0,
+ 		      spi1grp0, pciedebuggrp0, uart0grp0, uart0grp1, uart1grp0,
+-		      uart2grp0, uart2grp1, uart3grp0, uart4grp0, uart5grp0
++		      uart2grp0, uart2grp1, uart3grp0, uart4grp0, uart5grp0,
++		      uart5nocts
+ 		cpuclkout: cpuclkoutgrp0
+ 		udlclkout: udlclkoutgrp0
+ 		i2c1: i2c1grp0
+@@ -37,7 +38,7 @@ Required subnode-properties:
+ 		uart2: uart2grp0, uart2grp1
+ 		uart3: uart3grp0
+ 		uart4: uart4grp0
+-		uart5: uart5grp0
++		uart5: uart5grp0, uart5nocts
+ 		nand: nandgrp0
+ 		sdio0: sdio0grp0
+ 		sdio1: sdio1grp0
