@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165979AbeE1Oqt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:46:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49176 "EHLO mail.kernel.org"
+        id S937361AbeE1K3h (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:29:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936976AbeE1K3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:40 -0400
+        id S936976AbeE1K33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Alex Estrin <alex.estrin@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 076/329] IB/ipoib: Fix for potential no-carrier state
-Date: Mon, 28 May 2018 12:00:05 +0200
-Message-Id: <20180528100249.170986682@linuxfoundation.org>
+Subject: [PATCH 4.9 046/329] kconfig: Fix automatic menu creation mem leak
+Date: Mon, 28 May 2018 11:59:35 +0200
+Message-Id: <20180528100246.292640704@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,44 +30,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Estrin <alex.estrin@intel.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
 
-[ Upstream commit 1029361084d18cc270f64dfd39529fafa10cfe01 ]
+[ Upstream commit ae7440ef0c8013d68c00dad6900e7cce5311bb1c ]
 
-On reboot SM can program port pkey table before ipoib registered its
-event handler, which could result in missing pkey event and leave root
-interface with initial pkey value from index 0.
+expr_trans_compare() always allocates and returns a new expression,
+giving the following leak outline:
 
-Since OPA port starts with invalid pkey in index 0, root interface will
-fail to initialize and stay down with no-carrier flag.
+	...
+	*Allocate*
+	basedep = expr_trans_compare(basedep, E_UNEQUAL, &symbol_no);
+	...
+	for (menu = parent->next; menu; menu = menu->next) {
+		...
+		*Copy*
+		dep2 = expr_copy(basedep);
+		...
+		*Free copy*
+		expr_free(dep2);
+	}
+	*basedep lost!*
 
-For IB ipoib interface may end up with pkey different from value
-opensm put in pkey table idx 0, resulting in connectivity issues
-(different mcast groups, for example).
+Fix by freeing 'basedep' after the loop.
 
-Close the window by calling event handler after registration
-to make sure ipoib pkey is in sync with port pkey table.
+Summary from Valgrind on 'menuconfig' (ARCH=x86) before the fix:
 
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Alex Estrin <alex.estrin@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+	LEAK SUMMARY:
+	   definitely lost: 344,376 bytes in 14,349 blocks
+	   ...
+
+Summary after the fix:
+
+	LEAK SUMMARY:
+	   definitely lost: 44,448 bytes in 1,852 blocks
+	   ...
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c |    3 +++
- 1 file changed, 3 insertions(+)
+ scripts/kconfig/menu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -2119,6 +2119,9 @@ static struct net_device *ipoib_add_port
- 		goto event_failed;
- 	}
- 
-+	/* call event handler to ensure pkey in sync */
-+	queue_work(ipoib_workqueue, &priv->flush_heavy);
-+
- 	result = register_netdev(priv->dev);
- 	if (result) {
- 		printk(KERN_WARNING "%s: couldn't register ipoib port %d; error %d\n",
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -364,6 +364,7 @@ void menu_finalize(struct menu *parent)
+ 			menu->parent = parent;
+ 			last_menu = menu;
+ 		}
++		expr_free(basedep);
+ 		if (last_menu) {
+ 			parent->list = parent->next;
+ 			parent->next = last_menu->next;
