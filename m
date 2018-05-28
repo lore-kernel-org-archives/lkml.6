@@ -1,88 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754379AbeE1JyY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:54:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754173AbeE1JyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:54:23 -0400
-Date: Mon, 28 May 2018 17:54:18 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>,
-        Luiz Capitulino <lcapitulino@redhat.com>
-Cc: linux-kernel@vger.kernel.org, keescook@chromium.org,
-        tglx@linutronix.de, x86@kernel.org, hpa@zytor.com,
-        fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
-        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
- pages when do physical randomization
-Message-ID: <20180528095418.GD31261@MiWiFi-R3L-srv>
-References: <20180516100532.14083-1-bhe@redhat.com>
- <20180518070046.GA18660@gmail.com>
- <20180518074359.GR24627@MiWiFi-R3L-srv>
- <20180518081919.GB11379@gmail.com>
- <20180518112836.GS24627@MiWiFi-R3L-srv>
- <20180523151022.102e3565@doriath>
+        id S1754488AbeE1Jyg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:54:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55903 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754444AbeE1Jyd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 05:54:33 -0400
+X-Google-Smtp-Source: AB8JxZrRrXZHjl483z1bATvjaP8cCnFM+bLSgjy+bASQ/Sk1L4EwzYib+nGc9NJm3drFwXXkTODikS/x2RxCox5V2Bg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523151022.102e3565@doriath>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <5B0BD13D.8000809@broadcom.com>
+References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com> <5B0BD13D.8000809@broadcom.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Mon, 28 May 2018 11:54:31 +0200
+Message-ID: <CAOf5uw=mPOgngZW8UcPfvtxH+5nCR-36ovjYPH7AvO99y1M_xA@mail.gmail.com>
+Subject: Re: [PATCH] brcmfmac: stop watchdog before detach and free everything
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Ian Molton <ian@mnementh.co.uk>, linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/18 at 03:10pm, Luiz Capitulino wrote:
-> On Fri, 18 May 2018 19:28:36 +0800
-> Baoquan He <bhe@redhat.com> wrote:
-> 
-> > > Note that it's not KASLR specific: if we had some other kernel feature that tried 
-> > > to allocate a piece of memory from what appears to be perfectly usable generic RAM 
-> > > we'd have the same problems!  
-> > 
-> > Hmm, this may not be the situation for 1GB huge pages. For 1GB huge
-> > pages, the bug is that on KVM guest with 4GB ram, when user adds
-> > 'default_hugepagesz=1G hugepagesz=1G hugepages=1' to kernel
-> > command-line, if 'nokaslr' is specified, they can get 1GB huge page
-> > allocated successfully. If remove 'nokaslr', namely KASLR is enabled,
-> > the 1GB huge page allocation failed.
-> 
-> Let me clarify that this issue is not specific to KVM in any way. The same
-> issue happens on bare-metal, but if you have lots of memory you'll hardly
-> notice it. On the other hand, it's common to create KVM guests with a few
-> GBs of memory. In those guests, you may not be able to get a 1GB hugepage
-> at all if kaslr is enabled.
-> 
-> This series is a simple fix for this bug. It hooks up into already existing
-> KASLR code that scans memory regions to be avoided. The memory hotplug
-> issue is left for another day.
+Hi Arend
 
-Exactly. 
+On Mon, May 28, 2018 at 11:51 AM, Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
+> On 5/28/2018 9:50 AM, Michael Trimarchi wrote:
+>>
+>> Watchdog need to be stopped in brcmf_sdio_remove to avoid
+>> i
+>> The system is going down NOW!
+>> [ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual
+>> address 000002f8
+>> Sent SIGTERM to all processes
+>> [ 1348.121412] Mem abort info:
+>> [ 1348.126962]   ESR = 0x96000004
+>> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
+>> [ 1348.135948]   SET = 0, FnV = 0
+>> [ 1348.138997]   EA = 0, S1PTW = 0
+>> [ 1348.142154] Data abort info:
+>> [ 1348.145045]   ISV = 0, ISS = 0x00000004
+>> [ 1348.148884]   CM = 0, WnR = 0
+>> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+>> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
+>> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+>> [ 1348.168927] Modules linked in: ipv6
+>> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted
+>> 4.17.0-rc5-next-20180517 #18
+>> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
+>> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
+>> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
+>> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
+>
+>
+> Hi Michael,
+>
+> Thanks for the patch. In normal scenario the callstack looks like this:
+>
+> brcmf_sdio_remove()
+>         -> brcmf_detach()
+>                 -> brcmf_bus_stop()
+>                         -> brcmf_sdio_bus_stop()
+>
+> In brcmf_sdio_bus_stop() the watchdog is terminated. So in what scenario did
+> you encounter this null pointer deref?
 
-This issue is about kernel being randomized into good 1GB huge pages to
-break later huge page allocation, and we can only scan memory to know
-where 1GB huge page is located and avoid them.
+Is this happen even when there is not wifi firmware?
+boot without any firmware in the filesystem and then trigger a reboot
 
-The memory hotplug issue is about kernel being randomized into movable
-memory regions, and we need read ACPI SRAT table to retrieve the
-attribute of memory regions to know if it's movable, then avoid it if
-yes.
+Michael
 
-> 
-> Now, if I understand what Ingo is saying is that he wants to see all problems
-> solved with a generic solution vs. a specific solution for each problem.
+>
+> Regards,
+> Arend
 
-Hmm, if we understand Ingo's words correctly, for these two issues,
-seems there isn't a generic solution to solve both of them. We can only
-fix them separately.
 
-Hi Ingo,
 
-Ping!
-
-Not sure if my above understanding is correct. Could you confirm if I
-have understood your comments and if the solution of this patchset is
-right?
-
-Thanks
-Baoquan
+-- 
+| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
+| COO  -  Founder                                      Cruquiuskade 47 |
+| +31(0)851119172                                 Amsterdam 1018 AM NL |
+|                  [`as] http://www.amarulasolutions.com               |
