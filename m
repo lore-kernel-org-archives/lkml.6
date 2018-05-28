@@ -1,153 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939171AbeE1N3e (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:29:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37308 "EHLO mail.kernel.org"
+        id S939186AbeE1N3n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:29:43 -0400
+Received: from gate.crashing.org ([63.228.1.57]:51018 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163210AbeE1KrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:09 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pratyush Anand <panand@redhat.com>,
-        Jerome Marchand <jmarchan@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 133/496] arm64: fix unwind_frame() for filtered out fn for function graph tracing
-Date: Mon, 28 May 2018 11:58:38 +0200
-Message-Id: <20180528100325.548181202@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S939173AbeE1N3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:29:37 -0400
+Message-ID: <7e6878a1b6c16ea0e18ce0bd9cc7ae5d2de17359.camel@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc/64s: Clear PCR on boot
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Guenter Roeck <linux@roeck-us.net>,
+        Michael Ellerman <michael@ellerman.id.au>
+Cc: Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 28 May 2018 23:28:34 +1000
+In-Reply-To: <20180527034503.GA31985@roeck-us.net>
+References: <20180525133308.GA17443@roeck-us.net>
+         <31148B04-5AA9-4F4F-BD34-CD9665F7F6D6@ellerman.id.au>
+         <20180527034503.GA31985@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Sat, 2018-05-26 at 20:45 -0700, Guenter Roeck wrote:
+> 
+> I already have a patch, or at least one that does the trick for me.
+> Getting qemu patched was not the problem. I just want to be sure that
+> the problem is indeed a qemu problem.
 
-------------------
+Hey Guenter !
 
-From: Pratyush Anand <panand@redhat.com>
+It's not quite the right patch though. The PCR is a hypervisor
+priviledged register, your patch makes it supervisor accessible.
 
-[ Upstream commit 9f416319f40cd857d2bb517630e5855a905ef3fb ]
+I don't have all my stuff at hand to provide a "proper" or tested patch
+but it should look like
 
-do_task_stat() calls get_wchan(), which further does unwind_frame().
-unwind_frame() restores frame->pc to original value in case function
-graph tracer has modified a return address (LR) in a stack frame to hook
-a function return. However, if function graph tracer has hit a filtered
-function, then we can't unwind it as ftrace_push_return_trace() has
-biased the index(frame->graph) with a 'huge negative'
-offset(-FTRACE_NOTRACE_DEPTH).
+    spr_register_hv(env, SPR_PCR, "PCR",
+                    SPR_NOACCESS, SPR_NOACCESS,
+                    SPR_NOACCESS, SPR_NOACCESS,
+                    &spr_read_generic, &spr_write_generic, 0);
 
-Moreover, arm64 stack walker defines index(frame->graph) as unsigned
-int, which can not compare a -ve number.
+Additionally the TCG ppc instruction decoder should be made to check
+the PCR for varous instructions (that or use a specific write callback
+that affects the CPU flags) but that's less urgent.
 
-Similar problem we can have with calling of walk_stackframe() from
-save_stack_trace_tsk() or dump_backtrace().
+Cheers,
+Ben.
 
-This patch fixes unwind_frame() to test the index for -ve value and
-restore index accordingly before we can restore frame->pc.
-
-Reproducer:
-
-cd /sys/kernel/debug/tracing/
-echo schedule > set_graph_notrace
-echo 1 > options/display-graph
-echo wakeup > current_tracer
-ps -ef | grep -i agent
-
-Above commands result in:
-Unable to handle kernel paging request at virtual address ffff801bd3d1e000
-pgd = ffff8003cbe97c00
-[ffff801bd3d1e000] *pgd=0000000000000000, *pud=0000000000000000
-Internal error: Oops: 96000006 [#1] SMP
-[...]
-CPU: 5 PID: 11696 Comm: ps Not tainted 4.11.0+ #33
-[...]
-task: ffff8003c21ba000 task.stack: ffff8003cc6c0000
-PC is at unwind_frame+0x12c/0x180
-LR is at get_wchan+0xd4/0x134
-pc : [<ffff00000808892c>] lr : [<ffff0000080860b8>] pstate: 60000145
-sp : ffff8003cc6c3ab0
-x29: ffff8003cc6c3ab0 x28: 0000000000000001
-x27: 0000000000000026 x26: 0000000000000026
-x25: 00000000000012d8 x24: 0000000000000000
-x23: ffff8003c1c04000 x22: ffff000008c83000
-x21: ffff8003c1c00000 x20: 000000000000000f
-x19: ffff8003c1bc0000 x18: 0000fffffc593690
-x17: 0000000000000000 x16: 0000000000000001
-x15: 0000b855670e2b60 x14: 0003e97f22cf1d0f
-x13: 0000000000000001 x12: 0000000000000000
-x11: 00000000e8f4883e x10: 0000000154f47ec8
-x9 : 0000000070f367c0 x8 : 0000000000000000
-x7 : 00008003f7290000 x6 : 0000000000000018
-x5 : 0000000000000000 x4 : ffff8003c1c03cb0
-x3 : ffff8003c1c03ca0 x2 : 00000017ffe80000
-x1 : ffff8003cc6c3af8 x0 : ffff8003d3e9e000
-
-Process ps (pid: 11696, stack limit = 0xffff8003cc6c0000)
-Stack: (0xffff8003cc6c3ab0 to 0xffff8003cc6c4000)
-[...]
-[<ffff00000808892c>] unwind_frame+0x12c/0x180
-[<ffff000008305008>] do_task_stat+0x864/0x870
-[<ffff000008305c44>] proc_tgid_stat+0x3c/0x48
-[<ffff0000082fde0c>] proc_single_show+0x5c/0xb8
-[<ffff0000082b27e0>] seq_read+0x160/0x414
-[<ffff000008289e6c>] __vfs_read+0x58/0x164
-[<ffff00000828b164>] vfs_read+0x88/0x144
-[<ffff00000828c2e8>] SyS_read+0x60/0xc0
-[<ffff0000080834a0>] __sys_trace_return+0x0/0x4
-
-Fixes: 20380bb390a4 (arm64: ftrace: fix a stack tracer's output under function graph tracer)
-Signed-off-by: Pratyush Anand <panand@redhat.com>
-Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
-[catalin.marinas@arm.com: replace WARN_ON with WARN_ON_ONCE]
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/stacktrace.h |    2 +-
- arch/arm64/kernel/stacktrace.c      |    5 +++++
- arch/arm64/kernel/time.c            |    2 +-
- 3 files changed, 7 insertions(+), 2 deletions(-)
-
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -27,7 +27,7 @@ struct stackframe {
- 	unsigned long fp;
- 	unsigned long pc;
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	unsigned int graph;
-+	int graph;
- #endif
- };
- 
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -59,6 +59,11 @@ int notrace unwind_frame(struct task_str
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	if (tsk->ret_stack &&
- 			(frame->pc == (unsigned long)return_to_handler)) {
-+		if (WARN_ON_ONCE(frame->graph == -1))
-+			return -EINVAL;
-+		if (frame->graph < -1)
-+			frame->graph += FTRACE_NOTRACE_DEPTH;
-+
- 		/*
- 		 * This is a case where function graph tracer has
- 		 * modified a return address (LR) in a stack frame
---- a/arch/arm64/kernel/time.c
-+++ b/arch/arm64/kernel/time.c
-@@ -52,7 +52,7 @@ unsigned long profile_pc(struct pt_regs
- 	frame.fp = regs->regs[29];
- 	frame.pc = regs->pc;
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	frame.graph = -1; /* no task info */
-+	frame.graph = current->curr_ret_stack;
- #endif
- 	do {
- 		int ret = unwind_frame(NULL, &frame);
+> Thanks,
+> Guenter
+> 
+> ---
+> > From 1617bac264b4c49d817b6947611affa9b73318f6 Mon Sep 17 00:00:00 2001
+> 
+> From: Guenter Roeck <linux@roeck-us.net>
+> Date: Fri, 25 May 2018 06:38:40 -0700
+> Subject: [PATCH] PowerPC: Permit privileged access to SPR_PCR for POWER7+
+> 
+> Without this access, Linux mainline bails out.
+> 
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  target/ppc/translate_init.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/target/ppc/translate_init.c b/target/ppc/translate_init.c
+> index 391b94b..3b09c49 100644
+> --- a/target/ppc/translate_init.c
+> +++ b/target/ppc/translate_init.c
+> @@ -7953,11 +7953,12 @@ static void gen_spr_power6_common(CPUPPCState *env)
+>  #endif
+>      /*
+>       * Register PCR to report POWERPC_EXCP_PRIV_REG instead of
+> -     * POWERPC_EXCP_INVAL_SPR.
+> +     * POWERPC_EXCP_INVAL_SPR in userspace. Permit privileged
+> +     * access.
+>       */
+>      spr_register(env, SPR_PCR, "PCR",
+>                   SPR_NOACCESS, SPR_NOACCESS,
+> -                 SPR_NOACCESS, SPR_NOACCESS,
+> +                 &spr_read_generic, &spr_write_generic,
+>                   0x00000000);
+>  }
+>  
