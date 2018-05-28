@@ -1,74 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938350AbeE1LbP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:31:15 -0400
-Received: from ozlabs.org ([203.11.71.1]:36823 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937985AbeE1LbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:31:10 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 04/12] powerpc: Implement hw_breakpoint_arch_parse()
-In-Reply-To: <20180525140556.GD22082@lerouge>
-References: <1526697950-7091-1-git-send-email-frederic@kernel.org> <1526697950-7091-5-git-send-email-frederic@kernel.org> <87fu2hstf3.fsf@concordia.ellerman.id.au> <20180525140556.GD22082@lerouge>
-Date: Mon, 28 May 2018 21:31:07 +1000
-Message-ID: <87in783tl0.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S938362AbeE1LbX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:31:23 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33938 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937985AbeE1LbS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:31:18 -0400
+X-Google-Smtp-Source: AB8JxZrX4Hsq8kOIYmMVq5zxo+WVt13qsOanbGLA+Lb1nWXlsB15eNZ9g1wzGdUWsNj+7zfrCuYNSQ==
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: dvyukov@google.com, stable@vger.kernel.org
+Subject: [PATCH] KVM: irqfd: fix race between EPOLLHUP and irq_bypass_register_consumer
+Date: Mon, 28 May 2018 13:31:13 +0200
+Message-Id: <20180528113113.30941-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frederic Weisbecker <frederic@kernel.org> writes:
+A comment warning against this bug is there, but the code is not doing what
+the comment says.  Therefore it is possible that an EPOLLHUP races against
+irq_bypass_register_consumer.  The EPOLLHUP handler schedules irqfd_shutdown,
+and if that runs soon enough, you get a use-after-free.
 
-> On Thu, May 24, 2018 at 12:01:52PM +1000, Michael Ellerman wrote:
->> Frederic Weisbecker <frederic@kernel.org> writes:
->> 
->> > diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
->> > index 348cac9..fba6527 100644
->> > --- a/arch/powerpc/kernel/hw_breakpoint.c
->> > +++ b/arch/powerpc/kernel/hw_breakpoint.c
->> > @@ -139,30 +139,31 @@ int arch_bp_generic_fields(int type, int *gen_bp_type)
->> >  /*
->> >   * Validate the arch-specific HW Breakpoint register settings
->> >   */
->> > -int arch_validate_hwbkpt_settings(struct perf_event *bp)
->> > +int hw_breakpoint_arch_parse(struct perf_event *bp,
->> > +			     struct perf_event_attr *attr,
->> > +			     struct arch_hw_breakpoint *hw)
->> 
->> I think the semantics here are that we are reading from bp/attr and
->> writing to hw?
->> 
->> If so would some sprinkling of const on the first two parameters help
->> make that clearer?
->
-> I seem to remember there was an issue with that due to the various functions
-> we call that need to be converted to take const as well. I thought I would
-> do it in a seperate series but actually it should be no big deal to do it
-> on this one.
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ virt/kvm/eventfd.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Yeah, that does sometimes snowball out of control.
-
-> Let me try that and respin.
-
-Cool. It would be nice to have, but obviously not crucial.
-
-cheers
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index 6e865e8b5b10..44dda5dad0ee 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -402,11 +402,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	if (events & EPOLLIN)
+ 		schedule_work(&irqfd->inject);
+ 
+-	/*
+-	 * do not drop the file until the irqfd is fully initialized, otherwise
+-	 * we might race against the EPOLLHUP
+-	 */
+-	fdput(f);
+ #ifdef CONFIG_HAVE_KVM_IRQ_BYPASS
+ 	if (kvm_arch_has_irq_bypass()) {
+ 		irqfd->consumer.token = (void *)irqfd->eventfd;
+@@ -421,6 +416,11 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	}
+ #endif
+ 
++	/*
++	 * do not drop the file until the irqfd is fully initialized, otherwise
++	 * we might race against the EPOLLHUP
++	 */
++	fdput(f);
+ 	return 0;
+ 
+ fail:
+-- 
+2.17.0
