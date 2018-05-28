@@ -1,156 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753719AbeE1HI3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:08:29 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:35290 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753665AbeE1HIZ (ORCPT
+        id S1753901AbeE1HIr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:08:47 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45164 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753541AbeE1HIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:08:25 -0400
-X-Google-Smtp-Source: AB8JxZqvnpDgXZrRGT6b9to39YKaJQbRm8xS95LQrrhriOpZz2cKbOe9ljI88WGwcPQSBx5tGuHWbrAXmHiJ9ksj1Dk=
+        Mon, 28 May 2018 03:08:44 -0400
+X-Google-Smtp-Source: ADUXVKLS7hS3KyJU5ofw5qs60V4m6R8MtLMNVL0QgUBBTn38U1MyhSZxjK9HxoxVXfrqaJ4AAmFbXbDxcHvFqA/FNOY=
 MIME-Version: 1.0
-In-Reply-To: <20180514111726.lnxpegipqklyetmv@flea>
-References: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
- <20180514075727.uxggyhmbahvhestx@flea> <CAMty3ZDew=+zytKUx5+nX27CjCe0UfJpyYOy2s07NoJvbe57mQ@mail.gmail.com>
- <20180514082744.ydmfg5mzsbol5onu@flea> <CAMty3ZC3ggxkZwirpQ-aRP8Udg=aYypBArb0KcR0_Z0AG8wATA@mail.gmail.com>
- <20180514090618.r5xc3elzpvfp47f4@flea> <CAMty3ZCAWBHtemeeWcgLy5PoYLn10MwxpHdirqpsxFY3BA7=4g@mail.gmail.com>
- <20180514111726.lnxpegipqklyetmv@flea>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Mon, 28 May 2018 09:08:22 +0200
-Message-ID: <CAOf5uwkqBXjLZHq-ma3kF_Y2=daXLkSOZDUyJ7sM6o9abDT81Q@mail.gmail.com>
-Subject: Re: Allwinner A64: Issue on external rtc clock to wifi chip
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
+In-Reply-To: <20180521172948.GA18605@jordon-HP-15-Notebook-PC>
+References: <20180521172948.GA18605@jordon-HP-15-Notebook-PC>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Mon, 28 May 2018 12:38:41 +0530
+Message-ID: <CAFqt6zY8VJ791_6C_pqrGgjG91T1kirEmUyA3JC+3JsN8QjFAw@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: msm: Change return type to vm_fault_t
+To: Rob Clark <robdclark@gmail.com>, airlied@linux.ie,
+        Matthew Wilcox <willy@infradead.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        freedreno@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime
-
-On Mon, May 14, 2018 at 1:17 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Mon, May 14, 2018 at 03:12:49PM +0530, Jagan Teki wrote:
->> On Mon, May 14, 2018 at 2:36 PM, Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->> > On Mon, May 14, 2018 at 02:34:22PM +0530, Jagan Teki wrote:
->> >> On Mon, May 14, 2018 at 1:57 PM, Maxime Ripard
->> >> <maxime.ripard@bootlin.com> wrote:
->> >> > On Mon, May 14, 2018 at 01:34:56PM +0530, Jagan Teki wrote:
->> >> >> On Mon, May 14, 2018 at 1:27 PM, Maxime Ripard
->> >> >> <maxime.ripard@bootlin.com> wrote:
->> >> >> > Hi,
->> >> >> >
->> >> >> > On Mon, May 14, 2018 at 12:37:49PM +0530, Jagan Teki wrote:
->> >> >> >> Hi Maxime and All,
->> >> >> >>
->> >> >> >> We are trying to bring-up AP6330 Wifi chip for A64 board. We noticed
->> >> >> >> to have an external rtc clock has driven from wifi chip.
->> >> >> >>
->> >> >> >> So the devicetree is configured according to this as below.
->> >> >> >>
->> >> >> >> / {
->> >> >> >>         wifi_pwrseq: wifi-pwrseq {
->> >> >> >>                 compatible = "mmc-pwrseq-simple";
->> >> >> >>                 clocks = <&rtc 1>;
->> >> >> >>                 clock-names = "ext_clock";
->> >> >> >>                 reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
->> >> >> >>                 post-power-on-delay-ms = <400>;
->> >> >> >>         };
->> >> >> >> };
->> >> >> >>
->> >> >> >> &rtc {
->> >> >> >>         clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
->> >> >> >>         clocks = <&osc32k>;
->> >> >> >>         #clock-cells = <1>;
->> >> >> >> };
->> >> >> >>
->> >> >> >> &mmc1 {
->> >> >> >>         pinctrl-names = "default";
->> >> >> >>         pinctrl-0 = <&mmc1_pins>;
->> >> >> >>         vmmc-supply = <&reg_dcdc1>;
->> >> >> >>         vqmmc-supply = <&reg_eldo1>;
->> >> >> >>         mmc-pwrseq = <&wifi_pwrseq>;
->> >> >> >>         bus-width = <4>;
->> >> >> >>         non-removable;
->> >> >> >>         status = "okay";
->> >> >> >>
->> >> >> >>         brcmf: wifi@1 {
->> >> >> >>                 reg = <1>;
->> >> >> >>                 compatible = "brcm,bcm4329-fmac";
->> >> >> >>                 interrupt-parent = <&r_pio>;
->> >> >> >>                 interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-AP: PL3 */
->> >> >> >>                 interrupt-names = "host-wake";
->> >> >> >>         };
->> >> >> >> };
->> >> >> >>
->> >> >> >> And observed rtc-osc32k-out clock is never enabled[1] and the value of
->> >> >> >> LOSC_OUT_GATING is 0x0 which eventually not enabling
->> >> >> >> LOSC_OUT_GATING_EN
->> >> >> >>
->> >> >> >> Pls. let us know if we miss anything here?
->> >> >> >>
->> >> >> >> [1] https://paste.ubuntu.com/p/X2By4q8kD2/
->> >> >> >
->> >> >> > Could you paste your config and the logs from a boot to?
->> >> >>
->> >> >> .config
->> >> >> https://paste.ubuntu.com/p/w9w2KB7RFc/
->> >> >>
->> >> >> dmesg
->> >> >> https://paste.ubuntu.com/p/mrZGk5bWRR/
->> >> >
->> >> > This is kind of weird. Have you tested with a 4.17 kernel? We have
->> >> > runtime_pm changes lined up in next, so that might be a regression
->> >> > there, even though we tested it with Quentin at some point.
->> >>
->> >> This is 4.17-rc4 do you want to try it on 4.16 ?
->> >
->> > No, this is next-20180503. Please try with 4.17-rc4
->>
->> Couldn't find any different in behaviour [2]
->>
->> [2] https://paste.ubuntu.com/p/m3PGBwrv6W/
+On Mon, May 21, 2018 at 10:59 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
 >
-> It's hard to tell without the board, but have you looked at the return
-> value of devm_clk_get in the pwrseq code?
+> Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 >
-> Enabling the clk ftrace events would also help.
+> Previously vm_insert_mixed() returns err which driver
+> mapped into VM_FAULT_* type. The new function
+> vmf_insert_mixed() will replace this inefficiency by
+> returning VM_FAULT_* type.
 >
-
-The driver has one bug.
-
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 2e6fb27..a66f40c 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -74,7 +74,7 @@
- #define SUN6I_ALARM_CONFIG_WAKEUP              BIT(0)
-
- #define SUN6I_LOSC_OUT_GATING                  0x0060
--#define SUN6I_LOSC_OUT_GATING_EN               BIT(0)
-+#define SUN6I_LOSC_OUT_GATING_EN               0
-
-You need to pass bit_idx that is 0 and not BIT(0)
-
-Michael
-
-
-> Maxime
+> vmf_error() is the newly introduce inline function
+> in 4.17-rc6.
 >
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>  drivers/gpu/drm/msm/msm_drv.h |  3 ++-
+>  drivers/gpu/drm/msm/msm_gem.c | 33 ++++++++++-----------------------
+>  2 files changed, 12 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+> index 0a653dd..44b4ca7 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.h
+> +++ b/drivers/gpu/drm/msm/msm_drv.h
+> @@ -33,6 +33,7 @@
+>  #include <linux/of_graph.h>
+>  #include <linux/of_device.h>
+>  #include <asm/sizes.h>
+> +#include <linux/mm_types.h>
+>
+>  #include <drm/drmP.h>
+>  #include <drm/drm_atomic.h>
+> @@ -188,7 +189,7 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>  int msm_gem_mmap_obj(struct drm_gem_object *obj,
+>                         struct vm_area_struct *vma);
+>  int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> -int msm_gem_fault(struct vm_fault *vmf);
+> +vm_fault_t msm_gem_fault(struct vm_fault *vmf);
+>  uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
+>  int msm_gem_get_iova(struct drm_gem_object *obj,
+>                 struct msm_gem_address_space *aspace, uint64_t *iova);
+> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+> index 07376de..27a5ab5 100644
+> --- a/drivers/gpu/drm/msm/msm_gem.c
+> +++ b/drivers/gpu/drm/msm/msm_gem.c
+> @@ -217,7 +217,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>         return msm_gem_mmap_obj(vma->vm_private_data, vma);
+>  }
+>
+> -int msm_gem_fault(struct vm_fault *vmf)
+> +vm_fault_t msm_gem_fault(struct vm_fault *vmf)
+>  {
+>         struct vm_area_struct *vma = vmf->vma;
+>         struct drm_gem_object *obj = vma->vm_private_data;
+> @@ -225,15 +225,18 @@ int msm_gem_fault(struct vm_fault *vmf)
+>         struct page **pages;
+>         unsigned long pfn;
+>         pgoff_t pgoff;
+> -       int ret;
+> +       int err;
+> +       vm_fault_t ret;
+>
+>         /*
+>          * vm_ops.open/drm_gem_mmap_obj and close get and put
+>          * a reference on obj. So, we dont need to hold one here.
+>          */
+> -       ret = mutex_lock_interruptible(&msm_obj->lock);
+> -       if (ret)
+> +       err = mutex_lock_interruptible(&msm_obj->lock);
+> +       if (err) {
+> +               ret = VM_FAULT_NOPAGE;
+>                 goto out;
+> +       }
+>
+>         if (WARN_ON(msm_obj->madv != MSM_MADV_WILLNEED)) {
+>                 mutex_unlock(&msm_obj->lock);
+> @@ -243,7 +246,7 @@ int msm_gem_fault(struct vm_fault *vmf)
+>         /* make sure we have pages attached now */
+>         pages = get_pages(obj);
+>         if (IS_ERR(pages)) {
+> -               ret = PTR_ERR(pages);
+> +               ret = vmf_error(PTR_ERR(pages));
+>                 goto out_unlock;
+>         }
+>
+> @@ -255,27 +258,11 @@ int msm_gem_fault(struct vm_fault *vmf)
+>         VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
+>                         pfn, pfn << PAGE_SHIFT);
+>
+> -       ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+> -
+> +       ret = vmf_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+>  out_unlock:
+>         mutex_unlock(&msm_obj->lock);
+>  out:
+> -       switch (ret) {
+> -       case -EAGAIN:
+> -       case 0:
+> -       case -ERESTARTSYS:
+> -       case -EINTR:
+> -       case -EBUSY:
+> -               /*
+> -                * EBUSY is ok: this just means that another thread
+> -                * already did the job.
+> -                */
+> -               return VM_FAULT_NOPAGE;
+> -       case -ENOMEM:
+> -               return VM_FAULT_OOM;
+> -       default:
+> -               return VM_FAULT_SIGBUS;
+> -       }
+> +       return ret;
+>  }
+>
+>  /** get mmap offset */
 > --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> 1.9.1
+>
 
-
-
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+Any comment for this patch ?
