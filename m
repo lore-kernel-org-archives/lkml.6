@@ -1,20 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034566AbeE1Peo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:34:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38820 "EHLO mail.kernel.org"
+        id S1031830AbeE1KSq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:18:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031841AbeE1KSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:48 -0400
+        id S968814AbeE1KSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Yufen Yu <yuyufen@huawei.com>, Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-alpha@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 106/268] md/raid1: fix NULL pointer dereference
-Date: Mon, 28 May 2018 12:01:20 +0200
-Message-Id: <20180528100214.188956331@linuxfoundation.org>
+Subject: [PATCH 4.4 103/268] locking/xchg/alpha: Fix xchg() and cmpxchg() memory ordering bugs
+Date: Mon, 28 May 2018 12:01:17 +0200
+Message-Id: <20180528100213.899241917@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,88 +40,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Andrea Parri <parri.andrea@gmail.com>
 
-[ Upstream commit 3de59bb9d551428cbdc76a9ea57883f82e350b4d ]
+[ Upstream commit 472e8c55cf6622d1c112dc2bc777f68bbd4189db ]
 
-In handle_write_finished(), if r1_bio->bios[m] != NULL, it thinks
-the corresponding conf->mirrors[m].rdev is also not NULL. But, it
-is not always true.
+Successful RMW operations are supposed to be fully ordered, but
+Alpha's xchg() and cmpxchg() do not meet this requirement.
 
-Even if some io hold replacement rdev(i.e. rdev->nr_pending.count > 0),
-raid1_remove_disk() can also set the rdev as NULL. That means,
-bios[m] != NULL, but mirrors[m].rdev is NULL, resulting in NULL
-pointer dereference in handle_write_finished and sync_request_write.
+Will Deacon noticed the bug:
 
-This patch can fix BUGs as follows:
+  > So MP using xchg:
+  >
+  > WRITE_ONCE(x, 1)
+  > xchg(y, 1)
+  >
+  > smp_load_acquire(y) == 1
+  > READ_ONCE(x) == 0
+  >
+  > would be allowed.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000140
- IP: [<ffffffff815bbbbd>] raid1d+0x2bd/0xfc0
- PGD 12ab52067 PUD 12f587067 PMD 0
- Oops: 0000 [#1] SMP
- CPU: 1 PID: 2008 Comm: md3_raid1 Not tainted 4.1.44+ #130
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
- Call Trace:
-  ? schedule+0x37/0x90
-  ? prepare_to_wait_event+0x83/0xf0
-  md_thread+0x144/0x150
-  ? wake_atomic_t_function+0x70/0x70
-  ? md_start_sync+0xf0/0xf0
-  kthread+0xd8/0xf0
-  ? kthread_worker_fn+0x160/0x160
-  ret_from_fork+0x42/0x70
-  ? kthread_worker_fn+0x160/0x160
+... which thus violates the above requirement.
 
- BUG: unable to handle kernel NULL pointer dereference at 00000000000000b8
- IP: sync_request_write+0x9e/0x980
- PGD 800000007c518067 P4D 800000007c518067 PUD 8002b067 PMD 0
- Oops: 0000 [#1] SMP PTI
- CPU: 24 PID: 2549 Comm: md3_raid1 Not tainted 4.15.0+ #118
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
- Call Trace:
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0xc/0xb0
-  ? flush_pending_writes+0x3a/0xd0
-  ? pick_next_task_fair+0x4d5/0x5f0
-  ? __switch_to+0xa2/0x430
-  raid1d+0x65a/0x870
-  ? find_pers+0x70/0x70
-  ? find_pers+0x70/0x70
-  ? md_thread+0x11c/0x160
-  md_thread+0x11c/0x160
-  ? finish_wait+0x80/0x80
-  kthread+0x111/0x130
-  ? kthread_create_worker_on_cpu+0x70/0x70
-  ? do_syscall_64+0x6f/0x190
-  ? SyS_exit_group+0x10/0x10
-  ret_from_fork+0x35/0x40
+Fix it by adding a leading smp_mb() to the xchg() and cmpxchg() implementations.
 
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-alpha@vger.kernel.org
+Link: http://lkml.kernel.org/r/1519291488-5752-1-git-send-email-parri.andrea@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid1.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/alpha/include/asm/xchg.h |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1686,6 +1686,17 @@ static int raid1_remove_disk(struct mdde
- 			struct md_rdev *repl =
- 				conf->mirrors[conf->raid_disks + number].rdev;
- 			freeze_array(conf, 0);
-+			if (atomic_read(&repl->nr_pending)) {
-+				/* It means that some queued IO of retry_list
-+				 * hold repl. Thus, we cannot set replacement
-+				 * as NULL, avoiding rdev NULL pointer
-+				 * dereference in sync_request_write and
-+				 * handle_write_finished.
-+				 */
-+				err = -EBUSY;
-+				unfreeze_array(conf);
-+				goto abort;
-+			}
- 			clear_bit(Replacement, &repl->flags);
- 			p->rdev = repl;
- 			conf->mirrors[conf->raid_disks + number].rdev = NULL;
+--- a/arch/alpha/include/asm/xchg.h
++++ b/arch/alpha/include/asm/xchg.h
+@@ -11,6 +11,10 @@
+  * Atomic exchange.
+  * Since it can be used to implement critical sections
+  * it must clobber "memory" (also for interrupts in UP).
++ *
++ * The leading and the trailing memory barriers guarantee that these
++ * operations are fully ordered.
++ *
+  */
+ 
+ static inline unsigned long
+@@ -18,6 +22,7 @@ ____xchg(_u8, volatile char *m, unsigned
+ {
+ 	unsigned long ret, tmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%4,7,%3\n"
+ 	"	insbl	%1,%4,%1\n"
+@@ -42,6 +47,7 @@ ____xchg(_u16, volatile short *m, unsign
+ {
+ 	unsigned long ret, tmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%4,7,%3\n"
+ 	"	inswl	%1,%4,%1\n"
+@@ -66,6 +72,7 @@ ____xchg(_u32, volatile int *m, unsigned
+ {
+ 	unsigned long dummy;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldl_l %0,%4\n"
+ 	"	bis $31,%3,%1\n"
+@@ -86,6 +93,7 @@ ____xchg(_u64, volatile long *m, unsigne
+ {
+ 	unsigned long dummy;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldq_l %0,%4\n"
+ 	"	bis $31,%3,%1\n"
+@@ -127,9 +135,12 @@ ____xchg(, volatile void *ptr, unsigned
+  * store NEW in MEM.  Return the initial value in MEM.  Success is
+  * indicated by comparing RETURN with OLD.
+  *
+- * The memory barrier is placed in SMP unconditionally, in order to
+- * guarantee that dependency ordering is preserved when a dependency
+- * is headed by an unsuccessful operation.
++ * The leading and the trailing memory barriers guarantee that these
++ * operations are fully ordered.
++ *
++ * The trailing memory barrier is placed in SMP unconditionally, in
++ * order to guarantee that dependency ordering is preserved when a
++ * dependency is headed by an unsuccessful operation.
+  */
+ 
+ static inline unsigned long
+@@ -137,6 +148,7 @@ ____cmpxchg(_u8, volatile char *m, unsig
+ {
+ 	unsigned long prev, tmp, cmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%5,7,%4\n"
+ 	"	insbl	%1,%5,%1\n"
+@@ -164,6 +176,7 @@ ____cmpxchg(_u16, volatile short *m, uns
+ {
+ 	unsigned long prev, tmp, cmp, addr64;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"	andnot	%5,7,%4\n"
+ 	"	inswl	%1,%5,%1\n"
+@@ -191,6 +204,7 @@ ____cmpxchg(_u32, volatile int *m, int o
+ {
+ 	unsigned long prev, cmp;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldl_l %0,%5\n"
+ 	"	cmpeq %0,%3,%1\n"
+@@ -214,6 +228,7 @@ ____cmpxchg(_u64, volatile long *m, unsi
+ {
+ 	unsigned long prev, cmp;
+ 
++	smp_mb();
+ 	__asm__ __volatile__(
+ 	"1:	ldq_l %0,%5\n"
+ 	"	cmpeq %0,%3,%1\n"
