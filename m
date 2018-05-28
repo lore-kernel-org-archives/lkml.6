@@ -1,20 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938474AbeE1L6R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:58:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55212 "EHLO mail.kernel.org"
+        id S1423504AbeE1LH4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:07:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423513AbeE1LIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:08:00 -0400
+        id S1423470AbeE1LHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:07:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Hugh Dickins <hughd@google.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nadav Amit <namit@vmware.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 090/272] btrfs: tests/qgroup: Fix wrong tree backref level
-Date: Mon, 28 May 2018 12:02:03 +0200
-Message-Id: <20180528100248.710989626@linuxfoundation.org>
+Subject: [PATCH 4.16 051/272] x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
+Date: Mon, 28 May 2018 12:01:24 +0200
+Message-Id: <20180528100245.157344308@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,50 +41,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit 3c0efdf03b2d127f0e40e30db4e7aa0429b1b79a ]
+[ Upstream commit 639d6aafe437a7464399d2a77d006049053df06f ]
 
-The extent tree of the test fs is like the following:
+__ro_after_init data gets stuck in the .rodata section.  That's normally
+fine because the kernel itself manages the R/W properties.
 
- BTRFS info (device (null)): leaf 16327509003777336587 total ptrs 1 free space 3919
-  item 0 key (4096 168 4096) itemoff 3944 itemsize 51
-          extent refs 1 gen 1 flags 2
-          tree block key (68719476736 0 0) level 1
-                                           ^^^^^^^
-          ref#0: tree block backref root 5
+But, if we run __change_page_attr() on an area which is __ro_after_init,
+the .rodata checks will trigger and force the area to be immediately
+read-only, even if it is early-ish in boot.  This caused problems when
+trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
+it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
+to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
+a __ro_after_init data structure.
 
-And it's using an empty tree for fs tree, so there is no way that its
-level can be 1.
+To fix this, add the kernel_set_to_readonly check, just like we have
+for kernel text, just a few lines below in this function.
 
-For REAL (created by mkfs) fs tree backref with no skinny metadata, the
-result should look like:
-
- item 3 key (30408704 EXTENT_ITEM 4096) itemoff 3845 itemsize 51
-         refs 1 gen 4 flags TREE_BLOCK
-         tree block key (256 INODE_ITEM 0) level 0
-                                           ^^^^^^^
-         tree block backref root 5
-
-Fix the level to 0, so it won't break later tree level checker.
-
-Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180406205514.8D898241@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tests/qgroup-tests.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/pageattr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/tests/qgroup-tests.c
-+++ b/fs/btrfs/tests/qgroup-tests.c
-@@ -63,7 +63,7 @@ static int insert_normal_tree_ref(struct
- 	btrfs_set_extent_generation(leaf, item, 1);
- 	btrfs_set_extent_flags(leaf, item, BTRFS_EXTENT_FLAG_TREE_BLOCK);
- 	block_info = (struct btrfs_tree_block_info *)(item + 1);
--	btrfs_set_tree_block_level(leaf, block_info, 1);
-+	btrfs_set_tree_block_level(leaf, block_info, 0);
- 	iref = (struct btrfs_extent_inline_ref *)(block_info + 1);
- 	if (parent > 0) {
- 		btrfs_set_extent_inline_ref_type(leaf, iref,
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -298,9 +298,11 @@ static inline pgprot_t static_protection
+ 
+ 	/*
+ 	 * The .rodata section needs to be read-only. Using the pfn
+-	 * catches all aliases.
++	 * catches all aliases.  This also includes __ro_after_init,
++	 * so do not enforce until kernel_set_to_readonly is true.
+ 	 */
+-	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
++	if (kernel_set_to_readonly &&
++	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
+ 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
+ 		pgprot_val(forbidden) |= _PAGE_RW;
+ 
