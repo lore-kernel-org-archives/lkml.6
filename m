@@ -1,99 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1035062AbeE1PwX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:52:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966828AbeE1KPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1035049AbeE1PwT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:52:19 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33148 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967041AbeE1KPy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 06:15:54 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 011/268] Revert "ipc/shm: Fix shmat mmap nil-page protection"
-Date: Mon, 28 May 2018 11:59:45 +0200
-Message-Id: <20180528100203.357731085@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+X-Google-Smtp-Source: ADUXVKIMZHJWGjlUIp8H9QmyHLndAFghl88TjzHnQeb+mcYT96Ej2tpdwel3p25kIPXD7WFJdrjBb9oWAFZ7GlbJm9c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
+References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
+ <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
+ <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
+ <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 May 2018 12:15:52 +0200
+X-Google-Sender-Auth: 94nZbkrxlzVD9lpDjsCuejQZV1g
+Message-ID: <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
+ based ethernet
+To: Finn Thain <fthain@telegraphics.com.au>,
+        Christoph Hellwig <hch@lst.de>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Joshua Thompson <funaho@jurai.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> On Mon, 28 May 2018, Michael Schmitz wrote:
+>> Am 27.05.2018 um 17:49 schrieb Finn Thain:
+>> > On Sun, 27 May 2018, Michael Schmitz wrote:
+>> >
+>> >> That should have fixed the warning already ...
+>> >
+>> > It's still not fixed (hence my "acked-by" for Geunter's patch).
+>> >
+>>
+>> Odd - does link order still matter even though the
+>> arch_setup_dev_archdata() function from the core platform code is
+>> declared as a weak symbol?
+>>
+>> I'll see what I can find out on elgar ...
+>>
+>
+> Any one of the numerous patches/rfcs/suggestions that I sent will avoid
+> the WARN splat.
+>
+> When I said "it's still not fixed", what I meant to say was, "it's still
+> not fixed in mainline and no proposed fix was accepted to the best of my
+> knowledge".
 
-------------------
+Indeed.
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+Do we have a consensus on the way forward? The merge window for
+v4.18 will open soon.
 
-commit a73ab244f0dad8fffb3291b905f73e2d3eaa7c00 upstream.
+Thanks!
 
-Patch series "ipc/shm: shmat() fixes around nil-page".
+Gr{oetje,eeting}s,
 
-These patches fix two issues reported[1] a while back by Joe and Andrea
-around how shmat(2) behaves with nil-page.
+                        Geert
 
-The first reverts a commit that it was incorrectly thought that mapping
-nil-page (address=0) was a no no with MAP_FIXED.  This is not the case,
-with the exception of SHM_REMAP; which is address in the second patch.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I chose two patches because it is easier to backport and it explicitly
-reverts bogus behaviour.  Both patches ought to be in -stable and ltp
-testcases need updated (the added testcase around the cve can be
-modified to just test for SHM_RND|SHM_REMAP).
-
-[1] lkml.kernel.org/r/20180430172152.nfa564pvgpk3ut7p@linux-n805
-
-This patch (of 2):
-
-Commit 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
-worked on the idea that we should not be mapping as root addr=0 and
-MAP_FIXED.  However, it was reported that this scenario is in fact
-valid, thus making the patch both bogus and breaks userspace as well.
-
-For example X11's libint10.so relies on shmat(1, SHM_RND) for lowmem
-initialization[1].
-
-[1] https://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/os-support/linux/int10/linux.c#n347
-Link: http://lkml.kernel.org/r/20180503203243.15045-2-dave@stgolabs.net
-Fixes: 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reported-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- ipc/shm.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1113,13 +1113,8 @@ long do_shmat(int shmid, char __user *sh
- 		goto out;
- 	else if ((addr = (ulong)shmaddr)) {
- 		if (addr & (shmlba - 1)) {
--			/*
--			 * Round down to the nearest multiple of shmlba.
--			 * For sane do_mmap_pgoff() parameters, avoid
--			 * round downs that trigger nil-page and MAP_FIXED.
--			 */
--			if ((shmflg & SHM_RND) && addr >= shmlba)
--				addr &= ~(shmlba - 1);
-+			if (shmflg & SHM_RND)
-+				addr &= ~(shmlba - 1);  /* round down */
- 			else
- #ifndef __ARCH_FORCE_SHMLBA
- 				if (addr & ~PAGE_MASK)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
