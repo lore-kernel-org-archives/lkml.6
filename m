@@ -1,20 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422677AbeE1LAl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:00:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48238 "EHLO mail.kernel.org"
+        id S1164816AbeE1LAz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164726AbeE1LAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:36 -0400
+        id S1422680AbeE1LAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiandi An <anjiandi@codeaurora.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        kernel test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 382/496] ima: Fix Kconfig to select TPM 2.0 CRB interface
-Date: Mon, 28 May 2018 12:02:47 +0200
-Message-Id: <20180528100335.883857577@linuxfoundation.org>
+Subject: [PATCH 4.14 429/496] perf/x86/intel: Properly save/restore the PMU state in the NMI handler
+Date: Mon, 28 May 2018 12:03:34 +0200
+Message-Id: <20180528100337.822073982@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,35 +39,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiandi An <anjiandi@codeaurora.org>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit fac37c628fd5d68fd7298d9b57ae8601ee1b4723 ]
+[ Upstream commit 82d71ed0277efc45360828af8c4e4d40e1b45352 ]
 
-TPM_CRB driver provides TPM CRB 2.0 support.  If it is built as a
-module, the TPM chip is registered after IMA init.  tpm_pcr_read() in
-IMA fails and displays the following message even though eventually
-there is a TPM chip on the system.
+The PMU is disabled in intel_pmu_handle_irq(), but cpuc->enabled is not updated
+accordingly.
 
-ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+This is fine in current usage because no-one checks it - but fix it
+for future code: for example, the drain_pebs() will be modified to
+fix an auto-reload bug.
 
-Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is built in the kernel
-and initializes before IMA.
+Properly save/restore the old PMU state.
 
-Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: kernel test robot <fengguang.wu@intel.com>
+Link: http://lkml.kernel.org/r/6f44ee84-56f8-79f1-559b-08e371eaeb78@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/ima/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/events/intel/core.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -10,6 +10,7 @@ config IMA
- 	select CRYPTO_HASH_INFO
- 	select TCG_TPM if HAS_IOMEM && !UML
- 	select TCG_TIS if TCG_TPM && X86
-+	select TCG_CRB if TCG_TPM && ACPI
- 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
- 	help
- 	  The Trusted Computing Group(TCG) runtime Integrity
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2201,16 +2201,23 @@ static int intel_pmu_handle_irq(struct p
+ 	int bit, loops;
+ 	u64 status;
+ 	int handled;
++	int pmu_enabled;
+ 
+ 	cpuc = this_cpu_ptr(&cpu_hw_events);
+ 
+ 	/*
++	 * Save the PMU state.
++	 * It needs to be restored when leaving the handler.
++	 */
++	pmu_enabled = cpuc->enabled;
++	/*
+ 	 * No known reason to not always do late ACK,
+ 	 * but just in case do it opt-in.
+ 	 */
+ 	if (!x86_pmu.late_ack)
+ 		apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	intel_bts_disable_local();
++	cpuc->enabled = 0;
+ 	__intel_pmu_disable_all();
+ 	handled = intel_pmu_drain_bts_buffer();
+ 	handled += intel_bts_interrupt();
+@@ -2320,7 +2327,8 @@ again:
+ 
+ done:
+ 	/* Only restore PMU state when it's active. See x86_pmu_disable(). */
+-	if (cpuc->enabled)
++	cpuc->enabled = pmu_enabled;
++	if (pmu_enabled)
+ 		__intel_pmu_enable_all(0, true);
+ 	intel_bts_enable_local();
+ 
