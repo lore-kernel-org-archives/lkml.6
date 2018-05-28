@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161889AbeE1OeI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:34:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52490 "EHLO mail.kernel.org"
+        id S939336AbeE1Oe2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:34:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161559AbeE1Kca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:30 -0400
+        id S1161542AbeE1Kc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Pratyush Anand <panand@redhat.com>,
+        Jerome Marchand <jmarchan@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 140/329] macvlan: fix use-after-free in macvlan_common_newlink()
-Date: Mon, 28 May 2018 12:01:09 +0200
-Message-Id: <20180528100254.233251402@linuxfoundation.org>
+Subject: [PATCH 4.9 139/329] arm64: fix unwind_frame() for filtered out fn for function graph tracing
+Date: Mon, 28 May 2018 12:01:08 +0200
+Message-Id: <20180528100254.157564490@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,72 +31,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Pratyush Anand <panand@redhat.com>
 
-[ Upstream commit 4e14bf4236490306004782813b8b4494b18f5e60 ]
+[ Upstream commit 9f416319f40cd857d2bb517630e5855a905ef3fb ]
 
-The following use-after-free was reported by KASan when running
-LTP macvtap01 test on 4.16-rc2:
+do_task_stat() calls get_wchan(), which further does unwind_frame().
+unwind_frame() restores frame->pc to original value in case function
+graph tracer has modified a return address (LR) in a stack frame to hook
+a function return. However, if function graph tracer has hit a filtered
+function, then we can't unwind it as ftrace_push_return_trace() has
+biased the index(frame->graph) with a 'huge negative'
+offset(-FTRACE_NOTRACE_DEPTH).
 
-[10642.528443] BUG: KASAN: use-after-free in
-               macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
-[10642.626607] Read of size 8 at addr ffff880ba49f2100 by task ip/18450
-...
-[10642.963873] Call Trace:
-[10642.994352]  dump_stack+0x5c/0x7c
-[10643.035325]  print_address_description+0x75/0x290
-[10643.092938]  kasan_report+0x28d/0x390
-[10643.137971]  ? macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
-[10643.207963]  macvlan_common_newlink+0x12ef/0x14a0 [macvlan]
-[10643.275978]  macvtap_newlink+0x171/0x260 [macvtap]
-[10643.334532]  rtnl_newlink+0xd4f/0x1300
-...
-[10646.256176] Allocated by task 18450:
-[10646.299964]  kasan_kmalloc+0xa6/0xd0
-[10646.343746]  kmem_cache_alloc_trace+0xf1/0x210
-[10646.397826]  macvlan_common_newlink+0x6de/0x14a0 [macvlan]
-[10646.464386]  macvtap_newlink+0x171/0x260 [macvtap]
-[10646.522728]  rtnl_newlink+0xd4f/0x1300
-...
-[10647.022028] Freed by task 18450:
-[10647.061549]  __kasan_slab_free+0x138/0x180
-[10647.111468]  kfree+0x9e/0x1c0
-[10647.147869]  macvlan_port_destroy+0x3db/0x650 [macvlan]
-[10647.211411]  rollback_registered_many+0x5b9/0xb10
-[10647.268715]  rollback_registered+0xd9/0x190
-[10647.319675]  register_netdevice+0x8eb/0xc70
-[10647.370635]  macvlan_common_newlink+0xe58/0x14a0 [macvlan]
-[10647.437195]  macvtap_newlink+0x171/0x260 [macvtap]
+Moreover, arm64 stack walker defines index(frame->graph) as unsigned
+int, which can not compare a -ve number.
 
-Commit d02fd6e7d293 ("macvlan: Fix one possible double free") handles
-the case when register_netdevice() invokes ndo_uninit() on error and
-as a result free the port. But 'macvlan_port_get_rtnl(dev))' check
-(returns dev->rx_handler_data), which was added by this commit in order
-to prevent double free, is not quite correct:
+Similar problem we can have with calling of walk_stackframe() from
+save_stack_trace_tsk() or dump_backtrace().
 
-* for macvlan it always returns NULL because 'lowerdev' is the one that
-  was used to register rx handler (port) in macvlan_port_create() as
-  well as to unregister it in macvlan_port_destroy().
-* for macvtap it always returns a valid pointer because macvtap registers
-  its own rx handler before macvlan_common_newlink().
+This patch fixes unwind_frame() to test the index for -ve value and
+restore index accordingly before we can restore frame->pc.
 
-Fixes: d02fd6e7d293 ("macvlan: Fix one possible double free")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reproducer:
+
+cd /sys/kernel/debug/tracing/
+echo schedule > set_graph_notrace
+echo 1 > options/display-graph
+echo wakeup > current_tracer
+ps -ef | grep -i agent
+
+Above commands result in:
+Unable to handle kernel paging request at virtual address ffff801bd3d1e000
+pgd = ffff8003cbe97c00
+[ffff801bd3d1e000] *pgd=0000000000000000, *pud=0000000000000000
+Internal error: Oops: 96000006 [#1] SMP
+[...]
+CPU: 5 PID: 11696 Comm: ps Not tainted 4.11.0+ #33
+[...]
+task: ffff8003c21ba000 task.stack: ffff8003cc6c0000
+PC is at unwind_frame+0x12c/0x180
+LR is at get_wchan+0xd4/0x134
+pc : [<ffff00000808892c>] lr : [<ffff0000080860b8>] pstate: 60000145
+sp : ffff8003cc6c3ab0
+x29: ffff8003cc6c3ab0 x28: 0000000000000001
+x27: 0000000000000026 x26: 0000000000000026
+x25: 00000000000012d8 x24: 0000000000000000
+x23: ffff8003c1c04000 x22: ffff000008c83000
+x21: ffff8003c1c00000 x20: 000000000000000f
+x19: ffff8003c1bc0000 x18: 0000fffffc593690
+x17: 0000000000000000 x16: 0000000000000001
+x15: 0000b855670e2b60 x14: 0003e97f22cf1d0f
+x13: 0000000000000001 x12: 0000000000000000
+x11: 00000000e8f4883e x10: 0000000154f47ec8
+x9 : 0000000070f367c0 x8 : 0000000000000000
+x7 : 00008003f7290000 x6 : 0000000000000018
+x5 : 0000000000000000 x4 : ffff8003c1c03cb0
+x3 : ffff8003c1c03ca0 x2 : 00000017ffe80000
+x1 : ffff8003cc6c3af8 x0 : ffff8003d3e9e000
+
+Process ps (pid: 11696, stack limit = 0xffff8003cc6c0000)
+Stack: (0xffff8003cc6c3ab0 to 0xffff8003cc6c4000)
+[...]
+[<ffff00000808892c>] unwind_frame+0x12c/0x180
+[<ffff000008305008>] do_task_stat+0x864/0x870
+[<ffff000008305c44>] proc_tgid_stat+0x3c/0x48
+[<ffff0000082fde0c>] proc_single_show+0x5c/0xb8
+[<ffff0000082b27e0>] seq_read+0x160/0x414
+[<ffff000008289e6c>] __vfs_read+0x58/0x164
+[<ffff00000828b164>] vfs_read+0x88/0x144
+[<ffff00000828c2e8>] SyS_read+0x60/0xc0
+[<ffff0000080834a0>] __sys_trace_return+0x0/0x4
+
+Fixes: 20380bb390a4 (arm64: ftrace: fix a stack tracer's output under function graph tracer)
+Signed-off-by: Pratyush Anand <panand@redhat.com>
+Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
+[catalin.marinas@arm.com: replace WARN_ON with WARN_ON_ONCE]
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/macvlan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/stacktrace.h |    2 +-
+ arch/arm64/kernel/stacktrace.c      |    5 +++++
+ arch/arm64/kernel/time.c            |    2 +-
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -1384,7 +1384,7 @@ destroy_macvlan_port:
- 	/* the macvlan port may be freed by macvlan_uninit when fail to register.
- 	 * so we destroy the macvlan port only when it's valid.
- 	 */
--	if (create && macvlan_port_get_rtnl(dev))
-+	if (create && macvlan_port_get_rtnl(lowerdev))
- 		macvlan_port_destroy(port->dev);
- 	return err;
- }
+--- a/arch/arm64/include/asm/stacktrace.h
++++ b/arch/arm64/include/asm/stacktrace.h
+@@ -23,7 +23,7 @@ struct stackframe {
+ 	unsigned long sp;
+ 	unsigned long pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	unsigned int graph;
++	int graph;
+ #endif
+ };
+ 
+--- a/arch/arm64/kernel/stacktrace.c
++++ b/arch/arm64/kernel/stacktrace.c
+@@ -72,6 +72,11 @@ int notrace unwind_frame(struct task_str
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	if (tsk->ret_stack &&
+ 			(frame->pc == (unsigned long)return_to_handler)) {
++		if (WARN_ON_ONCE(frame->graph == -1))
++			return -EINVAL;
++		if (frame->graph < -1)
++			frame->graph += FTRACE_NOTRACE_DEPTH;
++
+ 		/*
+ 		 * This is a case where function graph tracer has
+ 		 * modified a return address (LR) in a stack frame
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -53,7 +53,7 @@ unsigned long profile_pc(struct pt_regs
+ 	frame.sp = regs->sp;
+ 	frame.pc = regs->pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = -1; /* no task info */
++	frame.graph = current->curr_ret_stack;
+ #endif
+ 	do {
+ 		int ret = unwind_frame(NULL, &frame);
