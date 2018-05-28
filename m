@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164429AbeE1K7R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:59:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47130 "EHLO mail.kernel.org"
+        id S1164605AbeE1K73 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:59:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164241AbeE1K7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:08 -0400
+        id S1164281AbeE1K7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 394/496] remoteproc: imx_rproc: Fix an error handling path in imx_rproc_probe()
-Date: Mon, 28 May 2018 12:02:59 +0200
-Message-Id: <20180528100336.368097073@linuxfoundation.org>
+Subject: [PATCH 4.14 395/496] dt-bindings: add device tree binding for Allwinner H6 main CCU
+Date: Mon, 28 May 2018 12:03:00 +0200
+Message-Id: <20180528100336.411823403@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,34 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit de6f83f85be94e0b7d0d324c29ccc9d78a6bb4e7 ]
+[ Upstream commit 2e08e4d2ff488424919d69dd211ac860a019ac1d ]
 
-If 'of_device_get_match_data()' fails, we must undo the previous
-'rproc_alloc()' call.
+The Allwinner H6 main CCU uses the internal oscillator of the SoC, which
+is different with old SoCs' main CCU.
 
-Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Add device tree binding for the Allwinner H6 main CCU.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/remoteproc/imx_rproc.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -339,8 +339,10 @@ static int imx_rproc_probe(struct platfo
- 	}
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -20,6 +20,7 @@ Required properties :
+ 		- "allwinner,sun50i-a64-ccu"
+ 		- "allwinner,sun50i-a64-r-ccu"
+ 		- "allwinner,sun50i-h5-ccu"
++		- "allwinner,sun50i-h6-ccu"
+ 		- "nextthing,gr8-ccu"
  
- 	dcfg = of_device_get_match_data(dev);
--	if (!dcfg)
--		return -EINVAL;
-+	if (!dcfg) {
-+		ret = -EINVAL;
-+		goto err_put_rproc;
-+	}
+ - reg: Must contain the registers base address and length
+@@ -31,6 +32,9 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
  
- 	priv = rproc->priv;
- 	priv->rproc = rproc;
++For the main CCU on H6, one more clock is needed:
++- "iosc": the SoC's internal frequency oscillator
++
+ For the PRCM CCUs on A83T/H3/A64, two more clocks are needed:
+ - "pll-periph": the SoC's peripheral PLL from the main CCU
+ - "iosc": the SoC's internal frequency oscillator
