@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936779AbeE1KNa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:13:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33202 "EHLO mail.kernel.org"
+        id S936794AbeE1KNf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:13:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932275AbeE1KNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:21 -0400
+        id S932275AbeE1KNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Puschmann <pp@emlix.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Michael Lyle <mlyle@lyle.org>, Hannes Reinecke <hare@suse.com>,
+        Huijun Tang <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 140/185] arm: dts: socfpga: fix GIC PPI warning
-Date: Mon, 28 May 2018 12:03:01 +0200
-Message-Id: <20180528100107.175120804@linuxfoundation.org>
+Subject: [PATCH 3.18 143/185] bcache: quit dc->writeback_thread when BCACHE_DEV_DETACHING is set
+Date: Mon, 28 May 2018 12:03:04 +0200
+Message-Id: <20180528100107.836692872@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,29 +31,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Philipp Puschmann <pp@emlix.com>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit 6d97d5aba08b26108f95dc9fb7bbe4d9436c769c ]
+[ Upstream commit fadd94e05c02afec7b70b0b14915624f1782f578 ]
 
-Fixes the warning "GIC: PPI13 is secure or misconfigured" by
-changing the interrupt type from level_low to edge_raising
+In patch "bcache: fix cached_dev->count usage for bch_cache_set_error()",
+cached_dev_get() is called when creating dc->writeback_thread, and
+cached_dev_put() is called when exiting dc->writeback_thread. This
+modification works well unless people detach the bcache device manually by
+    'echo 1 > /sys/block/bcache<N>/bcache/detach'
+Because this sysfs interface only calls bch_cached_dev_detach() which wakes
+up dc->writeback_thread but does not stop it. The reason is, before patch
+"bcache: fix cached_dev->count usage for bch_cache_set_error()", inside
+bch_writeback_thread(), if cache is not dirty after writeback,
+cached_dev_put() will be called here. And in cached_dev_make_request() when
+a new write request makes cache from clean to dirty, cached_dev_get() will
+be called there. Since we don't operate dc->count in these locations,
+refcount d->count cannot be dropped after cache becomes clean, and
+cached_dev_detach_finish() won't be called to detach bcache device.
 
-Signed-off-by: Philipp Puschmann <pp@emlix.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+This patch fixes the issue by checking whether BCACHE_DEV_DETACHING is
+set inside bch_writeback_thread(). If this bit is set and cache is clean
+(no existing writeback_keys), break the while-loop, call cached_dev_put()
+and quit the writeback thread.
+
+Please note if cache is still dirty, even BCACHE_DEV_DETACHING is set the
+writeback thread should continue to perform writeback, this is the original
+design of manually detach.
+
+It is safe to do the following check without locking, let me explain why,
++	if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
++	    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
+
+If the kenrel thread does not sleep and continue to run due to conditions
+are not updated in time on the running CPU core, it just consumes more CPU
+cycles and has no hurt. This should-sleep-but-run is safe here. We just
+focus on the should-run-but-sleep condition, which means the writeback
+thread goes to sleep in mistake while it should continue to run.
+1, First of all, no matter the writeback thread is hung or not,
+   kthread_stop() from cached_dev_detach_finish() will wake up it and
+   terminate by making kthread_should_stop() return true. And in normal
+   run time, bit on index BCACHE_DEV_DETACHING is always cleared, the
+   condition
+	!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)
+   is always true and can be ignored as constant value.
+2, If one of the following conditions is true, the writeback thread should
+   go to sleep,
+   "!atomic_read(&dc->has_dirty)" or "!dc->writeback_running)"
+   each of them independently controls the writeback thread should sleep or
+   not, let's analyse them one by one.
+2.1 condition "!atomic_read(&dc->has_dirty)"
+   If dc->has_dirty is set from 0 to 1 on another CPU core, bcache will
+   call bch_writeback_queue() immediately or call bch_writeback_add() which
+   indirectly calls bch_writeback_queue() too. In bch_writeback_queue(),
+   wake_up_process(dc->writeback_thread) is called. It sets writeback
+   thread's task state to TASK_RUNNING and following an implicit memory
+   barrier, then tries to wake up the writeback thread.
+   In writeback thread, its task state is set to TASK_INTERRUPTIBLE before
+   doing the condition check. If other CPU core sets the TASK_RUNNING state
+   after writeback thread setting TASK_INTERRUPTIBLE, the writeback thread
+   will be scheduled to run very soon because its state is not
+   TASK_INTERRUPTIBLE. If other CPU core sets the TASK_RUNNING state before
+   writeback thread setting TASK_INTERRUPTIBLE, the implict memory barrier
+   of wake_up_process() will make sure modification of dc->has_dirty on
+   other CPU core is updated and observed on the CPU core of writeback
+   thread. Therefore the condition check will correctly be false, and
+   continue writeback code without sleeping.
+2.2 condition "!dc->writeback_running)"
+   dc->writeback_running can be changed via sysfs file, every time it is
+   modified, a following bch_writeback_queue() is alwasy called. So the
+   change is always observed on the CPU core of writeback thread. If
+   dc->writeback_running is changed from 0 to 1 on other CPU core, this
+   condition check will observe the modification and allow writeback
+   thread to continue to run without sleeping.
+Now we can see, even without a locking protection, multiple conditions
+check is safe here, no deadlock or process hang up will happen.
+
+I compose a separte patch because that patch "bcache: fix cached_dev->count
+usage for bch_cache_set_error()" already gets a "Reviewed-by:" from Hannes
+Reinecke. Also this fix is not trivial and good for a separate patch.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Huijun Tang <tang.junhui@zte.com.cn>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/socfpga.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/writeback.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -643,7 +643,7 @@
- 		timer@fffec600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0xfffec600 0x100>;
--			interrupts = <1 13 0xf04>;
-+			interrupts = <1 13 0xf01>;
- 			clocks = <&mpu_periph_clk>;
- 		};
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -426,9 +426,15 @@ static int bch_writeback_thread(void *ar
+ 	while (!kthread_should_stop()) {
+ 		down_write(&dc->writeback_lock);
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		if (!atomic_read(&dc->has_dirty) ||
+-		    (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
+-		     !dc->writeback_running)) {
++		/*
++		 * If the bache device is detaching, skip here and continue
++		 * to perform writeback. Otherwise, if no dirty data on cache,
++		 * or there is dirty data on cache but writeback is disabled,
++		 * the writeback thread should sleep here and wait for others
++		 * to wake up it.
++		 */
++		if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
++		    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
+ 			up_write(&dc->writeback_lock);
  
+ 			if (kthread_should_stop()) {
+@@ -450,6 +456,14 @@ static int bch_writeback_thread(void *ar
+ 			cached_dev_put(dc);
+ 			SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
+ 			bch_write_bdev_super(dc, NULL);
++			/*
++			 * If bcache device is detaching via sysfs interface,
++			 * writeback thread should stop after there is no dirty
++			 * data on cache. BCACHE_DEV_DETACHING flag is set in
++			 * bch_cached_dev_detach().
++			 */
++			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags))
++				break;
+ 		}
+ 
+ 		up_write(&dc->writeback_lock);
