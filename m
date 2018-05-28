@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161598AbeE1Kcp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:32:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52678 "EHLO mail.kernel.org"
+        id S1161630AbeE1Kcy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:32:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161488AbeE1Kci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:32:38 -0400
+        id S1161593AbeE1Kco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:32:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Naresh Madhusudana <naresh.madhusudana@arm.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Alex Wu <alexwu@synology.com>,
+        Chung-Chiang Cheng <cccheng@synology.com>,
+        BingJing Chang <bingjingc@synology.com>,
+        Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 142/329] fs: dcache: Avoid livelock between d_alloc_parallel and __d_add
-Date: Mon, 28 May 2018 12:01:11 +0200
-Message-Id: <20180528100254.388311994@linuxfoundation.org>
+Subject: [PATCH 4.9 144/329] md: fix a potential deadlock of raid5/raid10 reshape
+Date: Mon, 28 May 2018 12:01:13 +0200
+Message-Id: <20180528100254.545094075@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,81 +32,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: BingJing Chang <bingjingc@synology.com>
 
-[ Upstream commit 015555fd4d2930bc0c86952c46ad88b3392f66e4 ]
+[ Upstream commit 8876391e440ba615b10eef729576e111f0315f87 ]
 
-If d_alloc_parallel runs concurrently with __d_add, it is possible for
-d_alloc_parallel to continuously retry whilst i_dir_seq has been
-incremented to an odd value by __d_add:
+There is a potential deadlock if mount/umount happens when
+raid5_finish_reshape() tries to grow the size of emulated disk.
 
-CPU0:
-__d_add
-	n = start_dir_add(dir);
-		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
+How the deadlock happens?
+1) The raid5 resync thread finished reshape (expanding array).
+2) The mount or umount thread holds VFS sb->s_umount lock and tries to
+   write through critical data into raid5 emulated block device. So it
+   waits for raid5 kernel thread handling stripes in order to finish it
+   I/Os.
+3) In the routine of raid5 kernel thread, md_check_recovery() will be
+   called first in order to reap the raid5 resync thread. That is,
+   raid5_finish_reshape() will be called. In this function, it will try
+   to update conf and call VFS revalidate_disk() to grow the raid5
+   emulated block device. It will try to acquire VFS sb->s_umount lock.
+The raid5 kernel thread cannot continue, so no one can handle mount/
+umount I/Os (stripes). Once the write-through I/Os cannot be finished,
+mount/umount will not release sb->s_umount lock. The deadlock happens.
 
-CPU1:
-d_alloc_parallel
-retry:
-	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-	hlist_bl_lock(b);
-		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
+The raid5 kernel thread is an emulated block device. It is responible to
+handle I/Os (stripes) from upper layers. The emulated block device
+should not request any I/Os on itself. That is, it should not call VFS
+layer functions. (If it did, it will try to acquire VFS locks to
+guarantee the I/Os sequence.) So we have the resync thread to send
+resync I/O requests and to wait for the results.
 
-CPU0:
-	__d_lookup_done(dentry)
-		hlist_bl_lock
-			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
+For solving this potential deadlock, we can put the size growth of the
+emulated block device as the final step of reshape thread.
 
-CPU1:
-	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
-		hlist_bl_unlock(b);
-		goto retry;
-	}
+2017/12/29:
+Thanks to Guoqing Jiang <gqjiang@suse.com>,
+we confirmed that there is the same deadlock issue in raid10. It's
+reproducible and can be fixed by this patch. For raid10.c, we can remove
+the similar code to prevent deadlock as well since they has been called
+before.
 
-Since the simple bit_spin_lock used to implement hlist_bl_lock does not
-provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
-and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
-exit its retry loop because the sequence number always has the bottom
-bit set.
-
-This patch resolves the livelock by not taking hlist_bl_lock in
-d_alloc_parallel if the sequence counter is odd, since any subsequent
-masked comparison with i_dir_seq will fail anyway.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Reported-by: Naresh Madhusudana <naresh.madhusudana@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: Alex Wu <alexwu@synology.com>
+Reviewed-by: Alex Wu <alexwu@synology.com>
+Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
+Signed-off-by: BingJing Chang <bingjingc@synology.com>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dcache.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/md/md.c     |   13 +++++++++++++
+ drivers/md/raid10.c |    8 +-------
+ drivers/md/raid5.c  |    8 +-------
+ 3 files changed, 15 insertions(+), 14 deletions(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2474,7 +2474,7 @@ struct dentry *d_alloc_parallel(struct d
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8200,6 +8200,19 @@ void md_do_sync(struct md_thread *thread
+ 	set_mask_bits(&mddev->flags, 0,
+ 		      BIT(MD_CHANGE_PENDING) | BIT(MD_CHANGE_DEVS));
  
- retry:
- 	rcu_read_lock();
--	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-+	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
- 	r_seq = read_seqbegin(&rename_lock);
- 	dentry = __d_lookup_rcu(parent, name, &d_seq);
- 	if (unlikely(dentry)) {
-@@ -2495,6 +2495,12 @@ retry:
- 		rcu_read_unlock();
- 		goto retry;
- 	}
-+
-+	if (unlikely(seq & 1)) {
-+		rcu_read_unlock();
-+		goto retry;
++	if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
++			!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
++			mddev->delta_disks > 0 &&
++			mddev->pers->finish_reshape &&
++			mddev->pers->size &&
++			mddev->queue) {
++		mddev_lock_nointr(mddev);
++		md_set_array_sectors(mddev, mddev->pers->size(mddev, 0, 0));
++		mddev_unlock(mddev);
++		set_capacity(mddev->gendisk, mddev->array_sectors);
++		revalidate_disk(mddev->gendisk);
 +	}
 +
- 	hlist_bl_lock(b);
- 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
- 		hlist_bl_unlock(b);
+ 	spin_lock(&mddev->lock);
+ 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+ 		/* We completed so min/max setting can be forgotten if used. */
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4684,17 +4684,11 @@ static void raid10_finish_reshape(struct
+ 		return;
+ 
+ 	if (mddev->delta_disks > 0) {
+-		sector_t size = raid10_size(mddev, 0, 0);
+-		md_set_array_sectors(mddev, size);
+ 		if (mddev->recovery_cp > mddev->resync_max_sectors) {
+ 			mddev->recovery_cp = mddev->resync_max_sectors;
+ 			set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+ 		}
+-		mddev->resync_max_sectors = size;
+-		if (mddev->queue) {
+-			set_capacity(mddev->gendisk, mddev->array_sectors);
+-			revalidate_disk(mddev->gendisk);
+-		}
++		mddev->resync_max_sectors = mddev->array_sectors;
+ 	} else {
+ 		int d;
+ 		rcu_read_lock();
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -7615,13 +7615,7 @@ static void raid5_finish_reshape(struct
+ 
+ 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+ 
+-		if (mddev->delta_disks > 0) {
+-			md_set_array_sectors(mddev, raid5_size(mddev, 0, 0));
+-			if (mddev->queue) {
+-				set_capacity(mddev->gendisk, mddev->array_sectors);
+-				revalidate_disk(mddev->gendisk);
+-			}
+-		} else {
++		if (mddev->delta_disks <= 0) {
+ 			int d;
+ 			spin_lock_irq(&conf->device_lock);
+ 			mddev->degraded = calc_degraded(conf);
