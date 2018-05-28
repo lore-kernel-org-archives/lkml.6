@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164778AbeE1LAa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:00:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48092 "EHLO mail.kernel.org"
+        id S938884AbeE1MaJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:30:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164726AbeE1LAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:25 -0400
+        id S1164764AbeE1LA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Brian Paul <brianp@vmware.com>, Sinclair Yeh <syeh@vmware.com>,
+        stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>,
+        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 388/496] drm/vmwgfx: Unpin the screen object backup buffer when not used
-Date: Mon, 28 May 2018 12:02:53 +0200
-Message-Id: <20180528100336.126225716@linuxfoundation.org>
+Subject: [PATCH 4.14 389/496] iommu/mediatek: Fix protect memory setting
+Date: Mon, 28 May 2018 12:02:54 +0200
+Message-Id: <20180528100336.164078422@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,89 +30,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Yong Wu <yong.wu@mediatek.com>
 
-[ Upstream commit 20fb5a635a0c8478ac98f15cfafc2ea83df29565 ]
+[ Upstream commit 70ca608b2ec6dafa6bb1c2b0691852fc78f8f717 ]
 
-We were relying on the pinned screen object backup buffer to be destroyed
-when not used. But if we hold a copy of the atomic state, like when
-hibernating, the backup buffer might not be destroyed since it's
-refcounted by the atomic state. This causes us to hibernate with a
-buffer pinned in VRAM.
+In MediaTek's IOMMU design, When a iommu translation fault occurs
+(HW can NOT translate the destination address to a valid physical
+address), the IOMMU HW output the dirty data into a special memory
+to avoid corrupting the main memory, this is called "protect memory".
+the register(0x114) for protect memory is a little different between
+mt8173 and mt2712.
 
-Fix this by only having the buffer pinned when it is actually used by a
-screen object.
+In the mt8173, bit[30:6] in the register represents [31:7] of the
+physical address. In the 4GB mode, the register bit[31] should be 1.
+While in the mt2712, the bits don't shift. bit[31:7] in the register
+represents [31:7] in the physical address, and bit[1:0] in the
+register represents bit[33:32] of the physical address if it has.
 
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Brian Paul <brianp@vmware.com>
-Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+Fixes: e6dec9230862 ("iommu/mediatek: Add mt2712 IOMMU support")
+Reported-by: Honghui Zhang <honghui.zhang@mediatek.com>
+Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c |   29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ drivers/iommu/mtk_iommu.c |   15 ++++++++++-----
+ drivers/iommu/mtk_iommu.h |    1 +
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-@@ -453,7 +453,11 @@ vmw_sou_primary_plane_cleanup_fb(struct
- 				 struct drm_plane_state *old_state)
- {
- 	struct vmw_plane_state *vps = vmw_plane_state_to_vps(old_state);
-+	struct drm_crtc *crtc = plane->state->crtc ?
-+		plane->state->crtc : old_state->crtc;
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -60,7 +60,7 @@
+ 	(((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
  
-+	if (vps->dmabuf)
-+		vmw_dmabuf_unpin(vmw_priv(crtc->dev), vps->dmabuf, false);
- 	vmw_dmabuf_unreference(&vps->dmabuf);
- 	vps->dmabuf_size = 0;
+ #define REG_MMU_IVRP_PADDR			0x114
+-#define F_MMU_IVRP_PA_SET(pa, ext)		(((pa) >> 1) | ((!!(ext)) << 31))
++
+ #define REG_MMU_VLD_PA_RNG			0x118
+ #define F_MMU_VLD_PA_RNG(EA, SA)		(((EA) << 8) | (SA))
  
-@@ -491,10 +495,17 @@ vmw_sou_primary_plane_prepare_fb(struct
- 	}
+@@ -532,8 +532,13 @@ static int mtk_iommu_hw_init(const struc
+ 		F_INT_PRETETCH_TRANSATION_FIFO_FAULT;
+ 	writel_relaxed(regval, data->base + REG_MMU_INT_MAIN_CONTROL);
  
- 	size = new_state->crtc_w * new_state->crtc_h * 4;
-+	dev_priv = vmw_priv(crtc->dev);
- 
- 	if (vps->dmabuf) {
--		if (vps->dmabuf_size == size)
--			return 0;
-+		if (vps->dmabuf_size == size) {
-+			/*
-+			 * Note that this might temporarily up the pin-count
-+			 * to 2, until cleanup_fb() is called.
-+			 */
-+			return vmw_dmabuf_pin_in_vram(dev_priv, vps->dmabuf,
-+						      true);
-+		}
- 
- 		vmw_dmabuf_unreference(&vps->dmabuf);
- 		vps->dmabuf_size = 0;
-@@ -504,7 +515,6 @@ vmw_sou_primary_plane_prepare_fb(struct
- 	if (!vps->dmabuf)
- 		return -ENOMEM;
- 
--	dev_priv = vmw_priv(crtc->dev);
- 	vmw_svga_enable(dev_priv);
- 
- 	/* After we have alloced the backing store might not be able to
-@@ -515,13 +525,16 @@ vmw_sou_primary_plane_prepare_fb(struct
- 			      &vmw_vram_ne_placement,
- 			      false, &vmw_dmabuf_bo_free);
- 	vmw_overlay_resume_all(dev_priv);
--
--	if (ret != 0)
-+	if (ret) {
- 		vps->dmabuf = NULL; /* vmw_dmabuf_init frees on error */
--	else
--		vps->dmabuf_size = size;
-+		return ret;
-+	}
- 
--	return ret;
-+	/*
-+	 * TTM already thinks the buffer is pinned, but make sure the
-+	 * pin_count is upped.
-+	 */
-+	return vmw_dmabuf_pin_in_vram(dev_priv, vps->dmabuf, true);
+-	writel_relaxed(F_MMU_IVRP_PA_SET(data->protect_base, data->enable_4GB),
+-		       data->base + REG_MMU_IVRP_PADDR);
++	if (data->m4u_plat == M4U_MT8173)
++		regval = (data->protect_base >> 1) | (data->enable_4GB << 31);
++	else
++		regval = lower_32_bits(data->protect_base) |
++			 upper_32_bits(data->protect_base);
++	writel_relaxed(regval, data->base + REG_MMU_IVRP_PADDR);
++
+ 	if (data->enable_4GB && data->m4u_plat != M4U_MT8173) {
+ 		/*
+ 		 * If 4GB mode is enabled, the validate PA range is from
+@@ -688,6 +693,7 @@ static int __maybe_unused mtk_iommu_susp
+ 	reg->ctrl_reg = readl_relaxed(base + REG_MMU_CTRL_REG);
+ 	reg->int_control0 = readl_relaxed(base + REG_MMU_INT_CONTROL0);
+ 	reg->int_main_control = readl_relaxed(base + REG_MMU_INT_MAIN_CONTROL);
++	reg->ivrp_paddr = readl_relaxed(base + REG_MMU_IVRP_PADDR);
+ 	clk_disable_unprepare(data->bclk);
+ 	return 0;
  }
+@@ -710,8 +716,7 @@ static int __maybe_unused mtk_iommu_resu
+ 	writel_relaxed(reg->ctrl_reg, base + REG_MMU_CTRL_REG);
+ 	writel_relaxed(reg->int_control0, base + REG_MMU_INT_CONTROL0);
+ 	writel_relaxed(reg->int_main_control, base + REG_MMU_INT_MAIN_CONTROL);
+-	writel_relaxed(F_MMU_IVRP_PA_SET(data->protect_base, data->enable_4GB),
+-		       base + REG_MMU_IVRP_PADDR);
++	writel_relaxed(reg->ivrp_paddr, base + REG_MMU_IVRP_PADDR);
+ 	if (data->m4u_dom)
+ 		writel(data->m4u_dom->cfg.arm_v7s_cfg.ttbr[0],
+ 		       base + REG_MMU_PT_BASE_ADDR);
+--- a/drivers/iommu/mtk_iommu.h
++++ b/drivers/iommu/mtk_iommu.h
+@@ -32,6 +32,7 @@ struct mtk_iommu_suspend_reg {
+ 	u32				ctrl_reg;
+ 	u32				int_control0;
+ 	u32				int_main_control;
++	u32				ivrp_paddr;
+ };
  
- 
+ enum mtk_iommu_plat {
