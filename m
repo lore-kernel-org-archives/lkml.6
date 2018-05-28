@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165963AbeE1OqE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:46:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49478 "EHLO mail.kernel.org"
+        id S1165972AbeE1Oq0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:46:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161046AbeE1K37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:59 -0400
+        id S937164AbeE1K3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:29:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 052/329] Btrfs: fix scrub to repair raid6 corruption
-Date: Mon, 28 May 2018 11:59:41 +0200
-Message-Id: <20180528100246.868916649@linuxfoundation.org>
+Subject: [PATCH 4.9 050/329] Btrfs: set plug for fsync
+Date: Mon, 28 May 2018 11:59:39 +0200
+Message-Id: <20180528100246.671024036@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,80 +32,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Liu Bo <bo.li.liu@oracle.com>
 
-[ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
+[ Upstream commit 343e4fc1c60971b0734de26dbbd475d433950982 ]
 
-The raid6 corruption is that,
-suppose that all disks can be read without problems and if the content
-that was read out doesn't match its checksum, currently for raid6
-btrfs at most retries twice,
+Setting plug can merge adjacent IOs before dispatching IOs to the disk
+driver.
 
-- the 1st retry is to rebuild with all other stripes, it'll eventually
-  be a raid5 xor rebuild,
-- if the 1st fails, the 2nd retry will deliberately fail parity p so
-  that it will do raid6 style rebuild,
+Without plug, it'd not be a problem for single disk usecases, but for
+multiple disks using raid profile, a large IO can be split to several
+IOs of stripe length, and plug can be helpful to bring them together
+for each disk so that we can save several disk access.
 
-however, the chances are that another non-parity stripe content also
-has something corrupted, so that the above retries are not able to
-return correct content.
-
-We've fixed normal reads to rebuild raid6 correctly with more retries
-in Patch "Btrfs: make raid6 rebuild retry more"[1], this is to fix
-scrub to do the exactly same rebuild process.
-
-[1]: https://patchwork.kernel.org/patch/10091755/
+Moreover, fsync issues synchronous writes, so plug can really take
+effect.
 
 Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/raid56.c  |   18 ++++++++++++++----
- fs/btrfs/volumes.c |    9 ++++++++-
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ fs/btrfs/file.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -2161,11 +2161,21 @@ int raid56_parity_recover(struct btrfs_r
- 	}
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1912,10 +1912,19 @@ int btrfs_release_file(struct inode *ino
+ static int start_ordered_ops(struct inode *inode, loff_t start, loff_t end)
+ {
+ 	int ret;
++	struct blk_plug plug;
  
- 	/*
--	 * reconstruct from the q stripe if they are
--	 * asking for mirror 3
-+	 * Loop retry:
-+	 * for 'mirror == 2', reconstruct from all other stripes.
-+	 * for 'mirror_num > 2', select a stripe to fail on every retry.
- 	 */
--	if (mirror_num == 3)
--		rbio->failb = rbio->real_stripes - 2;
-+	if (mirror_num > 2) {
-+		/*
-+		 * 'mirror == 3' is to fail the p stripe and
-+		 * reconstruct from the q stripe.  'mirror > 3' is to
-+		 * fail a data stripe and reconstruct from p+q stripe.
-+		 */
-+		rbio->failb = rbio->real_stripes - (mirror_num - 1);
-+		ASSERT(rbio->failb > 0);
-+		if (rbio->failb <= rbio->faila)
-+			rbio->failb--;
-+	}
++	/*
++	 * This is only called in fsync, which would do synchronous writes, so
++	 * a plug can merge adjacent IOs as much as possible.  Esp. in case of
++	 * multiple disks using raid profile, a large IO can be split to
++	 * several segments of stripe length (currently 64K).
++	 */
++	blk_start_plug(&plug);
+ 	atomic_inc(&BTRFS_I(inode)->sync_writers);
+ 	ret = btrfs_fdatawrite_range(inode, start, end);
+ 	atomic_dec(&BTRFS_I(inode)->sync_writers);
++	blk_finish_plug(&plug);
  
- 	ret = lock_stripe_add(rbio);
- 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5186,7 +5186,14 @@ int btrfs_num_copies(struct btrfs_fs_inf
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
- 		ret = 2;
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
--		ret = 3;
-+		/*
-+		 * There could be two corrupted data stripes, we need
-+		 * to loop retry in order to rebuild the correct data.
-+		 *
-+		 * Fail a stripe at a time on every retry except the
-+		 * stripe under reconstruction.
-+		 */
-+		ret = map->num_stripes;
- 	else
- 		ret = 1;
- 	free_extent_map(em);
+ 	return ret;
+ }
