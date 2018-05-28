@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936773AbeE1KMi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:12:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60690 "EHLO mail.kernel.org"
+        id S939965AbeE1QSF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:18:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936748AbeE1KMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:12:34 -0400
+        id S936470AbeE1KMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:12:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 155/185] hwmon: (pmbus/adm1275) Accept negative page register values
-Date: Mon, 28 May 2018 12:03:16 +0200
-Message-Id: <20180528100110.620532108@linuxfoundation.org>
+Subject: [PATCH 3.18 137/185] ath10k: Fix kernel panic while using worker (ath10k_sta_rc_update_wk)
+Date: Mon, 28 May 2018 12:02:58 +0200
+Message-Id: <20180528100106.279343920@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -29,40 +31,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
 
-[ Upstream commit ecb29abd4cb0670c616fb563a078f25d777ce530 ]
+[ Upstream commit 8b2d93dd22615cb7f3046a5a2083a6f8bb8052ed ]
 
-A negative page register value means that no page needs to be
-selected. This is used by status register read operations and needs
-to be accepted. The failure to do so so results in missed status
-and limit registers.
+When attempt to run worker (ath10k_sta_rc_update_wk) after the station object
+(ieee80211_sta) delete will trigger the kernel panic.
 
-Fixes: da8e48ab483e1 ("hwmon: (pmbus) Always call _pmbus_read_byte in core driver")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+This problem arise in AP + Mesh configuration, Where the current node AP VAP
+and neighbor node mesh VAP MAC address are same. When the current mesh node
+try to establish the mesh link with neighbor node, driver peer creation for
+the neighbor mesh node fails due to duplication MAC address. Already the AP
+VAP created with same MAC address.
+
+It is caused by the following scenario steps.
+
+Steps:
+1. In above condition, ath10k driver sta_state callback (ath10k_sta_state)
+   fails to do the state change for a station from IEEE80211_STA_NOTEXIST
+   to IEEE80211_STA_NONE due to peer creation fails. Sta_state callback is
+   called from ieee80211_add_station() to handle the new station
+   (neighbor mesh node) request from the wpa_supplicant.
+2. Concurrently ath10k receive the sta_rc_update callback notification from
+   the mesh_neighbour_update() to handle the beacon frames of the above
+   neighbor mesh node. since its atomic callback, ath10k driver queue the
+   work (ath10k_sta_rc_update_wk) to handle rc update.
+3. Due to driver sta_state callback fails (step 1), mac80211 free the station
+   object.
+4. When the worker (ath10k_sta_rc_update_wk) scheduled to run, it will access
+   the station object which is already deleted. so it will trigger kernel
+   panic.
+
+Added the peer exist check in sta_rc_update callback before queue the work.
+
+Kernel Panic log:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+pgd = c0204000
+[00000000] *pgd=00000000
+Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+CPU: 1 PID: 1833 Comm: kworker/u4:2 Not tainted 3.14.77 #1
+task: dcef0000 ti: d72b6000 task.ti: d72b6000
+PC is at pwq_activate_delayed_work+0x10/0x40
+LR is at pwq_activate_delayed_work+0xc/0x40
+pc : [<c023f988>]    lr : [<c023f984>]    psr: 40000193
+sp : d72b7f18  ip : 0000007a  fp : d72b6000
+r10: 00000000  r9 : dd404414  r8 : d8c31998
+r7 : d72b6038  r6 : 00000004  r5 : d4907ec8  r4 : dcee1300
+r3 : ffffffe0  r2 : 00000000  r1 : 00000001  r0 : 00000000
+Flags: nZcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+Control: 10c5787d  Table: 595bc06a  DAC: 00000015
+...
+Process kworker/u4:2 (pid: 1833, stack limit = 0xd72b6238)
+Stack: (0xd72b7f18 to 0xd72b8000)
+7f00:                                                       00000001 dcee1300
+7f20: 00000001 c02410dc d8c31980 dd404400 dd404400 c0242790 d8c31980 00000089
+7f40: 00000000 d93e1340 00000000 d8c31980 c0242568 00000000 00000000 00000000
+7f60: 00000000 c02474dc 00000000 00000000 000000f8 d8c31980 00000000 00000000
+7f80: d72b7f80 d72b7f80 00000000 00000000 d72b7f90 d72b7f90 d72b7fac d93e1340
+7fa0: c0247404 00000000 00000000 c0208d20 00000000 00000000 00000000 00000000
+7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[<c023f988>] (pwq_activate_delayed_work) from [<c02410dc>] (pwq_dec_nr_in_flight+0x58/0xc4)
+[<c02410dc>] (pwq_dec_nr_in_flight) from [<c0242790>] (worker_thread+0x228/0x360)
+[<c0242790>] (worker_thread) from [<c02474dc>] (kthread+0xd8/0xec)
+[<c02474dc>] (kthread) from [<c0208d20>] (ret_from_fork+0x14/0x34)
+Code: e92d4038 e1a05000 ebffffbc[69210.619376] SMP: failed to stop secondary CPUs
+Rebooting in 3 seconds..
+
+Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/pmbus/adm1275.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/ath/ath10k/mac.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/hwmon/pmbus/adm1275.c
-+++ b/drivers/hwmon/pmbus/adm1275.c
-@@ -67,7 +67,7 @@ static int adm1275_read_word_data(struct
- 	const struct adm1275_data *data = to_adm1275_data(info);
- 	int ret = 0;
- 
--	if (page)
-+	if (page > 0)
- 		return -ENXIO;
- 
- 	switch (reg) {
-@@ -144,7 +144,7 @@ static int adm1275_write_word_data(struc
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -4319,10 +4319,20 @@ static void ath10k_sta_rc_update(struct
  {
- 	int ret;
+ 	struct ath10k *ar = hw->priv;
+ 	struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
++	struct ath10k_vif *arvif = (void *)vif->drv_priv;
++	struct ath10k_peer *peer;
+ 	u32 bw, smps;
  
--	if (page)
-+	if (page > 0)
- 		return -ENXIO;
+ 	spin_lock_bh(&ar->data_lock);
  
- 	switch (reg) {
++	peer = ath10k_peer_find(ar, arvif->vdev_id, sta->addr);
++	if (!peer) {
++		spin_unlock_bh(&ar->data_lock);
++		ath10k_warn(ar, "mac sta rc update failed to find peer %pM on vdev %i\n",
++			    sta->addr, arvif->vdev_id);
++		return;
++	}
++
+ 	ath10k_dbg(ar, ATH10K_DBG_MAC,
+ 		   "mac sta rc update for %pM changed %08x bw %d nss %d smps %d\n",
+ 		   sta->addr, changed, sta->bandwidth, sta->rx_nss,
