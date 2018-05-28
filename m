@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754183AbeE1I66 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:58:58 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56315 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754120AbeE1I6v (ORCPT
+        id S1754141AbeE1I7J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:59:09 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55296 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754159AbeE1I6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:58:51 -0400
-X-Google-Smtp-Source: ADUXVKKhew4jovh4tSfZ5Y0gAbQwLFuQnWzdKXpj7d4cJ58aNb3nnWTeeZTyU8OXROwyqReAUtWdSw==
+        Mon, 28 May 2018 04:58:53 -0400
+X-Google-Smtp-Source: ADUXVKIJquyfOhnYDy0os2MA0OsqzLQ17Z5hnNhGeCt6itTYjDxFCkX9AcbzqmSZc8yLzXMaghuBpg==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 01/20] lightnvm: pblk: fail gracefully on line alloc. failure
-Date: Mon, 28 May 2018 10:58:22 +0200
-Message-Id: <20180528085841.26684-2-mb@lightnvm.io>
+Subject: [GIT PULL 02/20] lightnvm: pblk: recheck for bad lines at runtime
+Date: Mon, 28 May 2018 10:58:23 +0200
+Message-Id: <20180528085841.26684-3-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
 References: <20180528085841.26684-1-mb@lightnvm.io>
@@ -29,105 +29,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-In the event of a line failing to allocate, fail gracefully and stop the
-pipeline to avoid more write failing in the same place.
+Bad blocks can grow at runtime. Check that the number of valid blocks in
+a line are within the sanity threshold before allocating the line for
+new writes.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-init.c |  5 +++++
- drivers/lightnvm/pblk-map.c  | 33 ++++++++++++++++++++++++---------
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ drivers/lightnvm/pblk-core.c | 38 ++++++++++++++++++++++++++++----------
+ drivers/lightnvm/pblk-init.c | 11 +++++++----
+ 2 files changed, 35 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 91a5bc2556a3..dee64f91227d 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -1047,6 +1047,11 @@ static int pblk_lines_init(struct pblk *pblk)
- 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 94d5d97c9d8a..2cad918434a7 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1174,7 +1174,8 @@ static int pblk_prepare_new_line(struct pblk *pblk, struct pblk_line *line)
+ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ {
+ 	struct pblk_line_meta *lm = &pblk->lm;
+-	int blk_to_erase;
++	int blk_in_line = atomic_read(&line->blk_in_line);
++	int blk_to_erase, ret;
+ 
+ 	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
+ 	if (!line->map_bitmap)
+@@ -1183,8 +1184,8 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ 	/* will be initialized using bb info from map_bitmap */
+ 	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_ATOMIC);
+ 	if (!line->invalid_bitmap) {
+-		kfree(line->map_bitmap);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto fail_free_map_bitmap;
  	}
  
-+	if (!nr_free_chks) {
-+		pr_err("pblk: too many bad blocks prevent for sane instance\n");
-+		return -EINTR;
+ 	/* Bad blocks do not need to be erased */
+@@ -1199,16 +1200,19 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ 		blk_to_erase = pblk_prepare_new_line(pblk, line);
+ 		line->state = PBLK_LINESTATE_FREE;
+ 	} else {
+-		blk_to_erase = atomic_read(&line->blk_in_line);
++		blk_to_erase = blk_in_line;
 +	}
 +
- 	pblk_set_provision(pblk, nr_free_chks);
++	if (blk_in_line < lm->min_blk_line) {
++		ret = -EAGAIN;
++		goto fail_free_invalid_bitmap;
+ 	}
  
- 	kfree(chunk_meta);
-diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-index 20dbaa89c9df..953ca31dda68 100644
---- a/drivers/lightnvm/pblk-map.c
-+++ b/drivers/lightnvm/pblk-map.c
-@@ -18,11 +18,11 @@
+ 	if (line->state != PBLK_LINESTATE_FREE) {
+-		kfree(line->map_bitmap);
+-		kfree(line->invalid_bitmap);
+-		spin_unlock(&line->lock);
+ 		WARN(1, "pblk: corrupted line %d, state %d\n",
+ 							line->id, line->state);
+-		return -EAGAIN;
++		ret = -EINTR;
++		goto fail_free_invalid_bitmap;
+ 	}
  
- #include "pblk.h"
+ 	line->state = PBLK_LINESTATE_OPEN;
+@@ -1222,6 +1226,16 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ 	kref_init(&line->ref);
  
--static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
--			       struct ppa_addr *ppa_list,
--			       unsigned long *lun_bitmap,
--			       struct pblk_sec_meta *meta_list,
--			       unsigned int valid_secs)
-+static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
-+			      struct ppa_addr *ppa_list,
-+			      unsigned long *lun_bitmap,
-+			      struct pblk_sec_meta *meta_list,
-+			      unsigned int valid_secs)
- {
- 	struct pblk_line *line = pblk_line_get_data(pblk);
- 	struct pblk_emeta *emeta;
-@@ -35,8 +35,14 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
- 	if (pblk_line_is_full(line)) {
- 		struct pblk_line *prev_line = line;
- 
-+		/* If we cannot allocate a new line, make sure to store metadata
-+		 * on current line and then fail
-+		 */
- 		line = pblk_line_replace_data(pblk);
- 		pblk_line_close_meta(pblk, prev_line);
+ 	return 0;
 +
++fail_free_invalid_bitmap:
++	spin_unlock(&line->lock);
++	kfree(line->invalid_bitmap);
++	line->invalid_bitmap = NULL;
++fail_free_map_bitmap:
++	kfree(line->map_bitmap);
++	line->map_bitmap = NULL;
++
++	return ret;
+ }
+ 
+ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
+@@ -1292,10 +1306,14 @@ struct pblk_line *pblk_line_get(struct pblk *pblk)
+ 
+ 	ret = pblk_line_prepare(pblk, line);
+ 	if (ret) {
+-		if (ret == -EAGAIN) {
++		switch (ret) {
++		case -EAGAIN:
++			list_add(&line->list, &l_mg->bad_list);
++			goto retry;
++		case -EINTR:
+ 			list_add(&line->list, &l_mg->corrupt_list);
+ 			goto retry;
+-		} else {
++		default:
+ 			pr_err("pblk: failed to prepare line %d\n", line->id);
+ 			list_add(&line->list, &l_mg->free_list);
+ 			l_mg->nr_free_lines++;
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index dee64f91227d..8f8c9abd14fc 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -127,10 +127,8 @@ static int pblk_l2p_recover(struct pblk *pblk, bool factory_init)
+ 	if (!line) {
+ 		/* Configure next line for user data */
+ 		line = pblk_line_get_first_data(pblk);
+-		if (!line) {
+-			pr_err("pblk: line list corrupted\n");
 +		if (!line)
-+			return -EINTR;
+ 			return -EFAULT;
+-		}
  	}
  
- 	emeta = line->emeta;
-@@ -74,6 +80,7 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
- 	}
+ 	return 0;
+@@ -141,6 +139,7 @@ static int pblk_l2p_init(struct pblk *pblk, bool factory_init)
+ 	sector_t i;
+ 	struct ppa_addr ppa;
+ 	size_t map_size;
++	int ret = 0;
  
- 	pblk_down_rq(pblk, ppa_list, nr_secs, lun_bitmap);
-+	return 0;
+ 	map_size = pblk_trans_map_size(pblk);
+ 	pblk->trans_map = vmalloc(map_size);
+@@ -152,7 +151,11 @@ static int pblk_l2p_init(struct pblk *pblk, bool factory_init)
+ 	for (i = 0; i < pblk->rl.nr_secs; i++)
+ 		pblk_trans_map_set(pblk, i, ppa);
+ 
+-	return pblk_l2p_recover(pblk, factory_init);
++	ret = pblk_l2p_recover(pblk, factory_init);
++	if (ret)
++		vfree(pblk->trans_map);
++
++	return ret;
  }
  
- void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
-@@ -87,8 +94,12 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
- 
- 	for (i = off; i < rqd->nr_ppas; i += min) {
- 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
--		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
--					lun_bitmap, &meta_list[i], map_secs);
-+		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
-+					lun_bitmap, &meta_list[i], map_secs)) {
-+			bio_put(rqd->bio);
-+			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
-+			pblk_pipeline_stop(pblk);
-+		}
- 	}
- }
- 
-@@ -108,8 +119,12 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 
- 	for (i = 0; i < rqd->nr_ppas; i += min) {
- 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
--		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
--					lun_bitmap, &meta_list[i], map_secs);
-+		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
-+					lun_bitmap, &meta_list[i], map_secs)) {
-+			bio_put(rqd->bio);
-+			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
-+			pblk_pipeline_stop(pblk);
-+		}
- 
- 		erase_lun = pblk_ppa_to_pos(geo, rqd->ppa_list[i]);
- 
+ static void pblk_rwb_free(struct pblk *pblk)
 -- 
 2.11.0
