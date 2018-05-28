@@ -1,117 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968345AbeE1KQ0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:16:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936745AbeE1KQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:16:21 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>, Len Brown <len.brown@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Nicolas Pitre <nico@linaro.org>,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Bart Van Assche <bart.vanassche@wdc.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 054/268] x86/power: Fix swsusp_arch_resume prototype
-Date: Mon, 28 May 2018 12:00:28 +0200
-Message-Id: <20180528100208.059887729@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1034901AbeE1Psc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:48:32 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:50353 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030737AbeE1Ps1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 11:48:27 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ondrej Mosnacek <omosnacek@gmail.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: morus - Hide Kconfig option for glue code
+Date: Mon, 28 May 2018 17:47:45 +0200
+Message-Id: <20180528154806.2621106-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:TvFRafqsmQixTaQges1esfoXih1GkM4pgZ2SYKNuCewobS8UaXq
+ KiMHwAcWDyA6SjZlXfADEBsIv2/2TBomBn3AANiLZvBm72G+pgnavxkgI6R0J+of8sO8h4b
+ 70Y/MZUIPi73dwhZUvPXBDTOFvu8E7R7J6vMAfsaxx64/fLpAHhppO1rhovDOZOsF5sShnP
+ sHw4xA6rQK47xY0PyMndw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:UTbW7pFYclg=:EdTJmcBCmnoyqt959HxQaL
+ mPdwH2zuaqjeRtFf+tQwwlEw1ntIoFtBGO/eMUsMoxJEl2oIztMltwGq1SaVS+KbSplzYk4IU
+ OqBqPTUCq6758s+0124TjJo7EZfjItY/32ZnRzjs5YE9ZdRWzYIKd6WSojtNDpJC6LmJUJ6BF
+ lHXVsJ5Mi/ZTxZcuFtOdIMIzy4utBCio/+ibMD1ro/OnL+qni9E/mi8FVyaWW4VE44ybQCV1+
+ M4L/enP7zndZruNQW1eN4z73hO6oxFzYC4W+jnP7oi53Iv1gHSiOpj0q3LZh4YvQXHzURU3Bf
+ 9vw41CjQzdhGfpTKmtIjaKG7F/LuLzKXkTlAbMm2tK5qKxprLmsQNwEPIYw6/rrXx3OcF9CpG
+ aUDwCBGGRjautQDMb+5GO7sUpr3+izN6Odk6ipn7al1jwwlV/e07H46bAUFTrgOTJ4XN2GkUf
+ rRenboD7n+qrcAgPVKHOvki7QT1uwQyXDIebvbbEUwkEzp66xR6H+/qpE2bcH6MltjhPeHJPQ
+ Dq5oTosY9iFKiNS9A3aqXxL4wwvJa265hFdlTvLhn0KcOwuAZFiBC6H0Kd0hJqIUrGFVJ0QdH
+ uYdWzvZm6mU4DJu47vNAR/BLcdIuHnkBz4yT41Q3gCUQkIsCM0aM9C2BirhNuIpnjR3diCQ2b
+ 2Gf2iqMbPOdv209BXxQz7EEo2MLaw+fcQOo4VTrYEsKm5H4W2V2T0g9/Eg7eE1uLiOYY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Enabling the glue drivers for morus640 and/or morus1280 leads to a build failure
+on all non-x86 architectures:
 
-------------------
+crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
+scripts/Makefile.build:311: recipe for target 'crypto/morus1280_glue.o' failed
+crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
+scripts/Makefile.build:311: recipe for target 'crypto/morus640_glue.o' failed
 
-From: Arnd Bergmann <arnd@arndb.de>
+There really is no reason to enable these unless we also have a real
+driver using the glue, so the Kconfig option can be hidden and remain
+selected by the x86 specific SIMD drivers or any others getting added
+in the future.
 
-[ Upstream commit 328008a72d38b5bde6491e463405c34a81a65d3e ]
-
-The declaration for swsusp_arch_resume marks it as 'asmlinkage', but the
-definition in x86-32 does not, and it fails to include the header with the
-declaration. This leads to a warning when building with
-link-time-optimizations:
-
-kernel/power/power.h:108:23: error: type of 'swsusp_arch_resume' does not match original declaration [-Werror=lto-type-mismatch]
- extern asmlinkage int swsusp_arch_resume(void);
-                       ^
-arch/x86/power/hibernate_32.c:148:0: note: 'swsusp_arch_resume' was previously declared here
- int swsusp_arch_resume(void)
-
-This moves the declaration into a globally visible header file and fixes up
-both x86 definitions to match it.
-
+Fixes: 56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Nicolas Pitre <nico@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Link: https://lkml.kernel.org/r/20180202145634.200291-2-arnd@arndb.de
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/power/hibernate_32.c |    2 +-
- arch/x86/power/hibernate_64.c |    2 +-
- include/linux/suspend.h       |    2 ++
- kernel/power/power.h          |    3 ---
- 4 files changed, 4 insertions(+), 5 deletions(-)
+ crypto/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/power/hibernate_32.c
-+++ b/arch/x86/power/hibernate_32.c
-@@ -142,7 +142,7 @@ static inline void resume_init_first_lev
- #endif
- }
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 75f5efde9aa3..e11c59d26ac5 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -341,7 +341,7 @@ config CRYPTO_MORUS640
+ 	  Support for the MORUS-640 dedicated AEAD algorithm.
  
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
+ config CRYPTO_MORUS640_GLUE
+-	tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
++	tristate
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_CRYPTD
+ 	help
+@@ -363,7 +363,7 @@ config CRYPTO_MORUS1280
+ 	  Support for the MORUS-1280 dedicated AEAD algorithm.
  
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -78,7 +78,7 @@ static int set_up_temporary_mappings(voi
- 	return 0;
- }
- 
--int swsusp_arch_resume(void)
-+asmlinkage int swsusp_arch_resume(void)
- {
- 	int error;
- 
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -377,6 +377,8 @@ extern int swsusp_page_is_forbidden(stru
- extern void swsusp_set_page_free(struct page *);
- extern void swsusp_unset_page_free(struct page *);
- extern unsigned long get_safe_page(gfp_t gfp_mask);
-+extern asmlinkage int swsusp_arch_suspend(void);
-+extern asmlinkage int swsusp_arch_resume(void);
- 
- extern void hibernation_set_ops(const struct platform_hibernation_ops *ops);
- extern int hibernate(void);
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -85,9 +85,6 @@ extern int in_suspend;
- extern dev_t swsusp_resume_device;
- extern sector_t swsusp_resume_block;
- 
--extern asmlinkage int swsusp_arch_suspend(void);
--extern asmlinkage int swsusp_arch_resume(void);
--
- extern int create_basic_memory_bitmaps(void);
- extern void free_basic_memory_bitmaps(void);
- extern int hibernate_preallocate_memory(void);
+ config CRYPTO_MORUS1280_GLUE
+-	tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
++	tristate
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_CRYPTD
+ 	help
+-- 
+2.9.0
