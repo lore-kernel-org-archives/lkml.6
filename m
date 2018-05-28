@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966998AbeE1KPv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35866 "EHLO mail.kernel.org"
+        id S966774AbeE1KPh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:15:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966828AbeE1KPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:43 -0400
+        id S966501AbeE1KPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Corey Minyard <cminyard@mvista.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 038/268] Btrfs: fix scrub to repair raid6 corruption
-Date: Mon, 28 May 2018 12:00:12 +0200
-Message-Id: <20180528100206.374694208@linuxfoundation.org>
+Subject: [PATCH 4.4 035/268] ipmi/powernv: Fix error return code in ipmi_powernv_probe()
+Date: Mon, 28 May 2018 12:00:09 +0200
+Message-Id: <20180528100206.039394310@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,82 +31,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
+[ Upstream commit e749d328b0b450aa78d562fa26a0cd8872325dd9 ]
 
-The raid6 corruption is that,
-suppose that all disks can be read without problems and if the content
-that was read out doesn't match its checksum, currently for raid6
-btrfs at most retries twice,
+Fix to return a negative error code from the request_irq() error
+handling case instead of 0, as done elsewhere in this function.
 
-- the 1st retry is to rebuild with all other stripes, it'll eventually
-  be a raid5 xor rebuild,
-- if the 1st fails, the 2nd retry will deliberately fail parity p so
-  that it will do raid6 style rebuild,
-
-however, the chances are that another non-parity stripe content also
-has something corrupted, so that the above retries are not able to
-return correct content.
-
-We've fixed normal reads to rebuild raid6 correctly with more retries
-in Patch "Btrfs: make raid6 rebuild retry more"[1], this is to fix
-scrub to do the exactly same rebuild process.
-
-[1]: https://patchwork.kernel.org/patch/10091755/
-
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: dce143c3381c ("ipmi/powernv: Convert to irq event interface")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/raid56.c  |   18 ++++++++++++++----
- fs/btrfs/volumes.c |    9 ++++++++-
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ drivers/char/ipmi/ipmi_powernv.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -2160,11 +2160,21 @@ int raid56_parity_recover(struct btrfs_r
+--- a/drivers/char/ipmi/ipmi_powernv.c
++++ b/drivers/char/ipmi/ipmi_powernv.c
+@@ -251,8 +251,9 @@ static int ipmi_powernv_probe(struct pla
+ 		ipmi->irq = opal_event_request(prop);
  	}
  
- 	/*
--	 * reconstruct from the q stripe if they are
--	 * asking for mirror 3
-+	 * Loop retry:
-+	 * for 'mirror == 2', reconstruct from all other stripes.
-+	 * for 'mirror_num > 2', select a stripe to fail on every retry.
- 	 */
--	if (mirror_num == 3)
--		rbio->failb = rbio->real_stripes - 2;
-+	if (mirror_num > 2) {
-+		/*
-+		 * 'mirror == 3' is to fail the p stripe and
-+		 * reconstruct from the q stripe.  'mirror > 3' is to
-+		 * fail a data stripe and reconstruct from p+q stripe.
-+		 */
-+		rbio->failb = rbio->real_stripes - (mirror_num - 1);
-+		ASSERT(rbio->failb > 0);
-+		if (rbio->failb <= rbio->faila)
-+			rbio->failb--;
-+	}
- 
- 	ret = lock_stripe_add(rbio);
- 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5056,7 +5056,14 @@ int btrfs_num_copies(struct btrfs_fs_inf
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
- 		ret = 2;
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
--		ret = 3;
-+		/*
-+		 * There could be two corrupted data stripes, we need
-+		 * to loop retry in order to rebuild the correct data.
-+		 *
-+		 * Fail a stripe at a time on every retry except the
-+		 * stripe under reconstruction.
-+		 */
-+		ret = map->num_stripes;
- 	else
- 		ret = 1;
- 	free_extent_map(em);
+-	if (request_irq(ipmi->irq, ipmi_opal_event, IRQ_TYPE_LEVEL_HIGH,
+-				"opal-ipmi", ipmi)) {
++	rc = request_irq(ipmi->irq, ipmi_opal_event, IRQ_TYPE_LEVEL_HIGH,
++			 "opal-ipmi", ipmi);
++	if (rc) {
+ 		dev_warn(dev, "Unable to request irq\n");
+ 		goto err_dispose;
+ 	}
