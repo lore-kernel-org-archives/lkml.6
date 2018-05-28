@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034204AbeE1K0c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:26:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45806 "EHLO mail.kernel.org"
+        id S1034215AbeE1K0i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:26:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034181AbeE1K00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:26:26 -0400
+        id S1034191AbeE1K0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 258/268] perf report: Fix memory corruption in --branch-history mode --branch-history
-Date: Mon, 28 May 2018 12:03:52 +0200
-Message-Id: <20180528100232.201016882@linuxfoundation.org>
+Subject: [PATCH 4.4 250/268] clk: samsung: exynos5250: Fix PLL rates
+Date: Mon, 28 May 2018 12:03:44 +0200
+Message-Id: <20180528100231.579270171@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -34,99 +32,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit e3ebaa465136ecfedf9c6f4671df02bf625f8125 ]
+[ Upstream commit 2ac051eeabaa411ef89ae7cd5bb8e60cb41ad780 ]
 
-Jin Yao reported memory corrupton in perf report with
-branch info used for stack trace:
+Rates declared in PLL rate tables should match exactly rates calculated
+from PLL coefficients. If that is not the case, rate of the PLL's child clock
+might be set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is, the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
 
-  > Following command lines will cause perf crash.
+To fix this issue declared rates are changed to exactly match rates generated
+by the PLL, as calculated from the P, M, S, K coefficients.
 
-  > perf record -j call -g -a <application>
-  > perf report --branch-history
-  >
-  > *** Error in `perf': double free or corruption (!prev): 0x00000000104aa040 ***
-  > ======= Backtrace: =========
-  > /lib/x86_64-linux-gnu/libc.so.6(+0x77725)[0x7f6b37254725]
-  > /lib/x86_64-linux-gnu/libc.so.6(+0x7ff4a)[0x7f6b3725cf4a]
-  > /lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f6b37260abc]
-  > perf[0x51b914]
-  > perf(hist_entry_iter__add+0x1e5)[0x51f305]
-  > perf[0x43cf01]
-  > perf[0x4fa3bf]
-  > perf[0x4fa923]
-  > perf[0x4fd396]
-  > perf[0x4f9614]
-  > perf(perf_session__process_events+0x89e)[0x4fc38e]
-  > perf(cmd_report+0x15d2)[0x43f202]
-  > perf[0x4a059f]
-  > perf(main+0x631)[0x427b71]
-  > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f6b371fd830]
-  > perf(_start+0x29)[0x427d89]
-
-For the cumulative output, we allocate the he_cache array based on the
---max-stack option value and populate it with data from 'callchain_cursor'.
-
-The --max-stack option value does not ensure now the limit for number of
-callchain_cursor nodes, so the cumulative iter code will allocate smaller array
-than it's actually needed and cause above corruption.
-
-I think the --max-stack limit does not apply here anyway, because we add
-callchain data as normal hist entries, while the --max-stack control the limit
-of single entry callchain depth.
-
-Using the callchain_cursor.nr as he_cache array count to fix this. Also
-removing struct hist_entry_iter::max_stack, because there's no longer any use
-for it.
-
-We need more fixes to ensure that the branch stack code follows properly the
-logic of --max-stack, which is not the case at the moment.
-
-Original-patch-by: Jin Yao <yao.jin@linux.intel.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Reported-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180216123619.GA9945@krava
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/hist.c |    4 +---
- tools/perf/util/hist.h |    1 -
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos5250.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -720,7 +720,7 @@ iter_prepare_cumulative_entry(struct his
- 	 * cumulated only one time to prevent entries more than 100%
- 	 * overhead.
- 	 */
--	he_cache = malloc(sizeof(*he_cache) * (iter->max_stack + 1));
-+	he_cache = malloc(sizeof(*he_cache) * (callchain_cursor.nr + 1));
- 	if (he_cache == NULL)
- 		return -ENOMEM;
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -711,13 +711,13 @@ static struct samsung_pll_rate_table epl
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+ 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
+-	PLL_36XX_RATE(180633600, 90, 3, 2, 20762),
++	PLL_36XX_RATE(180633605, 90, 3, 2, 20762),
+ 	PLL_36XX_RATE(180000000, 90, 3, 2, 0),
+ 	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
+-	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
++	PLL_36XX_RATE(67737602, 90, 2, 4, 20762),
+ 	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
+-	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
+-	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
++	PLL_36XX_RATE(45158401, 90, 3, 4, 20762),
++	PLL_36XX_RATE(32768001, 131, 3, 5, 4719),
+ 	{ },
+ };
  
-@@ -881,8 +881,6 @@ int hist_entry_iter__add(struct hist_ent
- 	if (err)
- 		return err;
- 
--	iter->max_stack = max_stack_depth;
--
- 	err = iter->ops->prepare_entry(iter, al);
- 	if (err)
- 		goto out;
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -91,7 +91,6 @@ struct hist_entry_iter {
- 	int curr;
- 
- 	bool hide_unresolved;
--	int max_stack;
- 
- 	struct perf_evsel *evsel;
- 	struct perf_sample *sample;
