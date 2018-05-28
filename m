@@ -1,27 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939362AbeE1OK4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58146 "EHLO mail.kernel.org"
+        id S939384AbeE1OLW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:11:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161172AbeE1Khh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:37:37 -0400
+        id S1161689AbeE1KhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:37:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, kan.liang@intel.com,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 222/329] perf/x86/intel: Fix linear IP of PEBS real_ip on Haswell and later CPUs
-Date: Mon, 28 May 2018 12:02:31 +0200
-Message-Id: <20180528100300.608855202@linuxfoundation.org>
+Subject: [PATCH 4.9 220/329] ARM: 8748/1: mm: Define vdso_start, vdso_end as array
+Date: Mon, 28 May 2018 12:02:29 +0200
+Message-Id: <20180528100300.433498737@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -37,121 +31,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephane Eranian <eranian@google.com>
+From: Jinbum Park <jinb.park7@gmail.com>
 
-[ Upstream commit 71eb9ee9596d8df3d5723c3cfc18774c6235e8b1 ]
+[ Upstream commit 73b9160d0dfe44dfdaffd6465dc1224c38a4a73c ]
 
-this patch fix a bug in how the pebs->real_ip is handled in the PEBS
-handler. real_ip only exists in Haswell and later processor. It is
-actually the eventing IP, i.e., where the event occurred. As opposed
-to the pebs->ip which is the PEBS interrupt IP which is always off
-by one.
+Define vdso_start, vdso_end as array to avoid compile-time analysis error
+for the case of built with CONFIG_FORTIFY_SOURCE.
 
-The problem is that the real_ip just like the IP needs to be fixed up
-because PEBS does not record all the machine state registers, and
-in particular the code segement (cs). This is why we have the set_linear_ip()
-function. The problem was that set_linear_ip() was only used on the pebs->ip
-and not the pebs->real_ip.
+and, since vdso_start, vdso_end are used in vdso.c only,
+move extern-declaration from vdso.h to vdso.c.
 
-We have profiles which ran into invalid callstacks because of this.
-Here is an example:
+If kernel is built with CONFIG_FORTIFY_SOURCE,
+compile-time error happens at this code.
+- if (memcmp(&vdso_start, "177ELF", 4))
 
- .....  0: ffffffffffffff80 recent entry, marker kernel v
- .....  1: 000000000040044d <= user address in kernel space!
- .....  2: fffffffffffffe00 marker enter user v
- .....  3: 000000000040044d
- .....  4: 00000000004004b6 oldest entry
+The size of "&vdso_start" is recognized as 1 byte, but n is 4,
+So that compile-time error is reported.
 
-Debugging output in get_perf_callchain():
-
- [  857.769909] CALLCHAIN: CPU8 ip=40044d regs->cs=10 user_mode(regs)=0
-
-The problem is that the kernel entry in 1: points to a user level
-address. How can that be?
-
-The reason is that with PEBS sampling the instruction that caused the event
-to occur and the instruction where the CPU was when the interrupt was posted
-may be far apart. And sometime during that time window, the privilege level may
-change. This happens, for instance, when the PEBS sample is taken close to a
-kernel entry point. Here PEBS, eventing IP (real_ip) captured a user level
-instruction. But by the time the PMU interrupt fired, the processor had already
-entered kernel space. This is why the debug output shows a user address with
-user_mode() false.
-
-The problem comes from PEBS not recording the code segment (cs) register.
-The register is used in x86_64 to determine if executing in kernel vs user
-space. This is okay because the kernel has a software workaround called
-set_linear_ip(). But the issue in setup_pebs_sample_data() is that
-set_linear_ip() is never called on the real_ip value when it is available
-(Haswell and later) and precise_ip > 1.
-
-This patch fixes this problem and eliminates the callchain discrepancy.
-
-The patch restructures the code around set_linear_ip() to minimize the number
-of times the IP has to be set.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: kan.liang@intel.com
-Link: http://lkml.kernel.org/r/1521788507-10231-1-git-send-email-eranian@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/ds.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ arch/arm/include/asm/vdso.h |    2 --
+ arch/arm/kernel/vdso.c      |   12 +++++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1110,6 +1110,7 @@ static void setup_pebs_sample_data(struc
- 	if (pebs == NULL)
- 		return;
+--- a/arch/arm/include/asm/vdso.h
++++ b/arch/arm/include/asm/vdso.h
+@@ -11,8 +11,6 @@ struct mm_struct;
  
-+	regs->flags &= ~PERF_EFLAGS_EXACT;
- 	sample_type = event->attr.sample_type;
- 	dsrc = sample_type & PERF_SAMPLE_DATA_SRC;
+ void arm_install_vdso(struct mm_struct *mm, unsigned long addr);
  
-@@ -1154,7 +1155,6 @@ static void setup_pebs_sample_data(struc
- 	 */
- 	*regs = *iregs;
- 	regs->flags = pebs->flags;
--	set_linear_ip(regs, pebs->ip);
+-extern char vdso_start, vdso_end;
+-
+ extern unsigned int vdso_total_pages;
  
- 	if (sample_type & PERF_SAMPLE_REGS_INTR) {
- 		regs->ax = pebs->ax;
-@@ -1190,13 +1190,22 @@ static void setup_pebs_sample_data(struc
- #endif
+ #else /* CONFIG_VDSO */
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -39,6 +39,8 @@
+ 
+ static struct page **vdso_text_pagelist;
+ 
++extern char vdso_start[], vdso_end[];
++
+ /* Total number of pages needed for the data and text portions of the VDSO. */
+ unsigned int vdso_total_pages __ro_after_init;
+ 
+@@ -179,13 +181,13 @@ static int __init vdso_init(void)
+ 	unsigned int text_pages;
+ 	int i;
+ 
+-	if (memcmp(&vdso_start, "\177ELF", 4)) {
++	if (memcmp(vdso_start, "\177ELF", 4)) {
+ 		pr_err("VDSO is not a valid ELF object!\n");
+ 		return -ENOEXEC;
  	}
  
--	if (event->attr.precise_ip > 1 && x86_pmu.intel_cap.pebs_format >= 2) {
--		regs->ip = pebs->real_ip;
--		regs->flags |= PERF_EFLAGS_EXACT;
--	} else if (event->attr.precise_ip > 1 && intel_pmu_pebs_fixup_ip(regs))
--		regs->flags |= PERF_EFLAGS_EXACT;
--	else
--		regs->flags &= ~PERF_EFLAGS_EXACT;
-+	if (event->attr.precise_ip > 1) {
-+		/* Haswell and later have the eventing IP, so use it: */
-+		if (x86_pmu.intel_cap.pebs_format >= 2) {
-+			set_linear_ip(regs, pebs->real_ip);
-+			regs->flags |= PERF_EFLAGS_EXACT;
-+		} else {
-+			/* Otherwise use PEBS off-by-1 IP: */
-+			set_linear_ip(regs, pebs->ip);
-+
-+			/* ... and try to fix it up using the LBR entries: */
-+			if (intel_pmu_pebs_fixup_ip(regs))
-+				regs->flags |= PERF_EFLAGS_EXACT;
-+		}
-+	} else
-+		set_linear_ip(regs, pebs->ip);
-+
+-	text_pages = (&vdso_end - &vdso_start) >> PAGE_SHIFT;
+-	pr_debug("vdso: %i text pages at base %p\n", text_pages, &vdso_start);
++	text_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
++	pr_debug("vdso: %i text pages at base %p\n", text_pages, vdso_start);
  
- 	if ((sample_type & PERF_SAMPLE_ADDR) &&
- 	    x86_pmu.intel_cap.pebs_format >= 1)
+ 	/* Allocate the VDSO text pagelist */
+ 	vdso_text_pagelist = kcalloc(text_pages, sizeof(struct page *),
+@@ -200,7 +202,7 @@ static int __init vdso_init(void)
+ 	for (i = 0; i < text_pages; i++) {
+ 		struct page *page;
+ 
+-		page = virt_to_page(&vdso_start + i * PAGE_SIZE);
++		page = virt_to_page(vdso_start + i * PAGE_SIZE);
+ 		vdso_text_pagelist[i] = page;
+ 	}
+ 
+@@ -211,7 +213,7 @@ static int __init vdso_init(void)
+ 
+ 	cntvct_ok = cntvct_functional();
+ 
+-	patch_vdso(&vdso_start);
++	patch_vdso(vdso_start);
+ 
+ 	return 0;
+ }
