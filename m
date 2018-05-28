@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165327AbeE1Neo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:34:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36288 "EHLO mail.kernel.org"
+        id S1165346AbeE1NfM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:35:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937766AbeE1Kpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:45:55 -0400
+        id S1162385AbeE1Kpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:45:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Lee <asmt.swfae@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 076/496] xhci: workaround for AMD Promontory disabled ports wakeup
-Date: Mon, 28 May 2018 11:57:41 +0200
-Message-Id: <20180528100322.972272053@linuxfoundation.org>
+Subject: [PATCH 4.14 074/496] ibmvnic: Clean RX pool buffers during device close
+Date: Mon, 28 May 2018 11:57:39 +0200
+Message-Id: <20180528100322.895006759@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,225 +30,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Lee <asmt.swfae@gmail.com>
+From: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
 
-[ Upstream commit bde0716d1f076e4c913c7946bcc858f71243c7a0 ]
+[ Upstream commit d0869c0071e40c4407d1a4d7c9497653cf47253b ]
 
-For AMD Promontory xHCI host, although you can disable USB ports in
-BIOS settings, those ports will be enabled anyway after you remove a
-device on that port and re-plug it in again. It's a known limitation of
-the chip. As a workaround we can clear the PORT_WAKE_BITS.
+During device close or reset, there were some cases of outstanding
+RX socket buffers not being freed. Include a function similar to the
+one that already exists to clean TX socket buffers in this case.
 
-[commit and code comment rephrasing -Mathias]
-Signed-off-by: Joe Lee <asmt.swfae@gmail.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/pci-quirks.c |  109 ++++++++++++++++++++++++++++++++++++++++++
- drivers/usb/host/pci-quirks.h |    5 +
- drivers/usb/host/xhci-hub.c   |    7 ++
- drivers/usb/host/xhci-pci.c   |   11 ++++
- drivers/usb/host/xhci.h       |    2 
- 5 files changed, 133 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |   31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/pci-quirks.c
-+++ b/drivers/usb/host/pci-quirks.c
-@@ -65,6 +65,23 @@
- #define	AX_INDXC		0x30
- #define	AX_DATAC		0x34
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -933,6 +933,35 @@ static int ibmvnic_open(struct net_devic
+ 	return rc;
+ }
  
-+#define PT_ADDR_INDX		0xE8
-+#define PT_READ_INDX		0xE4
-+#define PT_SIG_1_ADDR		0xA520
-+#define PT_SIG_2_ADDR		0xA521
-+#define PT_SIG_3_ADDR		0xA522
-+#define PT_SIG_4_ADDR		0xA523
-+#define PT_SIG_1_DATA		0x78
-+#define PT_SIG_2_DATA		0x56
-+#define PT_SIG_3_DATA		0x34
-+#define PT_SIG_4_DATA		0x12
-+#define PT4_P1_REG		0xB521
-+#define PT4_P2_REG		0xB522
-+#define PT2_P1_REG		0xD520
-+#define PT2_P2_REG		0xD521
-+#define PT1_P1_REG		0xD522
-+#define PT1_P2_REG		0xD523
-+
- #define	NB_PCIE_INDX_ADDR	0xe0
- #define	NB_PCIE_INDX_DATA	0xe4
- #define	PCIE_P_CNTL		0x10040
-@@ -512,6 +529,98 @@ void usb_amd_dev_put(void)
- EXPORT_SYMBOL_GPL(usb_amd_dev_put);
- 
- /*
-+ * Check if port is disabled in BIOS on AMD Promontory host.
-+ * BIOS Disabled ports may wake on connect/disconnect and need
-+ * driver workaround to keep them disabled.
-+ * Returns true if port is marked disabled.
-+ */
-+bool usb_amd_pt_check_port(struct device *device, int port)
++static void clean_rx_pools(struct ibmvnic_adapter *adapter)
 +{
-+	unsigned char value, port_shift;
-+	struct pci_dev *pdev;
-+	u16 reg;
++	struct ibmvnic_rx_pool *rx_pool;
++	u64 rx_entries;
++	int rx_scrqs;
++	int i, j;
 +
-+	pdev = to_pci_dev(device);
-+	pci_write_config_word(pdev, PT_ADDR_INDX, PT_SIG_1_ADDR);
++	if (!adapter->rx_pool)
++		return;
 +
-+	pci_read_config_byte(pdev, PT_READ_INDX, &value);
-+	if (value != PT_SIG_1_DATA)
-+		return false;
++	rx_scrqs = be32_to_cpu(adapter->login_rsp_buf->num_rxadd_subcrqs);
++	rx_entries = adapter->req_rx_add_entries_per_subcrq;
 +
-+	pci_write_config_word(pdev, PT_ADDR_INDX, PT_SIG_2_ADDR);
++	/* Free any remaining skbs in the rx buffer pools */
++	for (i = 0; i < rx_scrqs; i++) {
++		rx_pool = &adapter->rx_pool[i];
++		if (!rx_pool)
++			continue;
 +
-+	pci_read_config_byte(pdev, PT_READ_INDX, &value);
-+	if (value != PT_SIG_2_DATA)
-+		return false;
-+
-+	pci_write_config_word(pdev, PT_ADDR_INDX, PT_SIG_3_ADDR);
-+
-+	pci_read_config_byte(pdev, PT_READ_INDX, &value);
-+	if (value != PT_SIG_3_DATA)
-+		return false;
-+
-+	pci_write_config_word(pdev, PT_ADDR_INDX, PT_SIG_4_ADDR);
-+
-+	pci_read_config_byte(pdev, PT_READ_INDX, &value);
-+	if (value != PT_SIG_4_DATA)
-+		return false;
-+
-+	/* Check disabled port setting, if bit is set port is enabled */
-+	switch (pdev->device) {
-+	case 0x43b9:
-+	case 0x43ba:
-+	/*
-+	 * device is AMD_PROMONTORYA_4(0x43b9) or PROMONTORYA_3(0x43ba)
-+	 * PT4_P1_REG bits[7..1] represents USB2.0 ports 6 to 0
-+	 * PT4_P2_REG bits[6..0] represents ports 13 to 7
-+	 */
-+		if (port > 6) {
-+			reg = PT4_P2_REG;
-+			port_shift = port - 7;
-+		} else {
-+			reg = PT4_P1_REG;
-+			port_shift = port + 1;
-+		}
-+		break;
-+	case 0x43bb:
-+	/*
-+	 * device is AMD_PROMONTORYA_2(0x43bb)
-+	 * PT2_P1_REG bits[7..5] represents USB2.0 ports 2 to 0
-+	 * PT2_P2_REG bits[5..0] represents ports 9 to 3
-+	 */
-+		if (port > 2) {
-+			reg = PT2_P2_REG;
-+			port_shift = port - 3;
-+		} else {
-+			reg = PT2_P1_REG;
-+			port_shift = port + 5;
-+		}
-+		break;
-+	case 0x43bc:
-+	/*
-+	 * device is AMD_PROMONTORYA_1(0x43bc)
-+	 * PT1_P1_REG[7..4] represents USB2.0 ports 3 to 0
-+	 * PT1_P2_REG[5..0] represents ports 9 to 4
-+	 */
-+		if (port > 3) {
-+			reg = PT1_P2_REG;
-+			port_shift = port - 4;
-+		} else {
-+			reg = PT1_P1_REG;
-+			port_shift = port + 4;
-+		}
-+		break;
-+	default:
-+		return false;
-+	}
-+	pci_write_config_word(pdev, PT_ADDR_INDX, reg);
-+	pci_read_config_byte(pdev, PT_READ_INDX, &value);
-+
-+	return !(value & BIT(port_shift));
-+}
-+EXPORT_SYMBOL_GPL(usb_amd_pt_check_port);
-+
-+/*
-  * Make sure the controller is completely inactive, unable to
-  * generate interrupts or do DMA.
-  */
---- a/drivers/usb/host/pci-quirks.h
-+++ b/drivers/usb/host/pci-quirks.h
-@@ -17,6 +17,7 @@ void usb_enable_intel_xhci_ports(struct
- void usb_disable_xhci_ports(struct pci_dev *xhci_pdev);
- void sb800_prefetch(struct device *dev, int on);
- bool usb_xhci_needs_pci_reset(struct pci_dev *pdev);
-+bool usb_amd_pt_check_port(struct device *device, int port);
- #else
- struct pci_dev;
- static inline void usb_amd_quirk_pll_disable(void) {}
-@@ -25,6 +26,10 @@ static inline void usb_asmedia_modifyflo
- static inline void usb_amd_dev_put(void) {}
- static inline void usb_disable_xhci_ports(struct pci_dev *xhci_pdev) {}
- static inline void sb800_prefetch(struct device *dev, int on) {}
-+static inline bool usb_amd_pt_check_port(struct device *device, int port)
-+{
-+	return false;
-+}
- #endif  /* CONFIG_USB_PCI */
- 
- #endif  /*  __LINUX_USB_PCI_QUIRKS_H  */
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1531,6 +1531,13 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 				t2 |= PORT_WKOC_E | PORT_WKCONN_E;
- 				t2 &= ~PORT_WKDISC_E;
- 			}
-+
-+			if ((xhci->quirks & XHCI_U2_DISABLE_WAKE) &&
-+			    (hcd->speed < HCD_USB3)) {
-+				if (usb_amd_pt_check_port(hcd->self.controller,
-+							  port_index))
-+					t2 &= ~PORT_WAKE_BITS;
++		netdev_dbg(adapter->netdev, "Cleaning rx_pool[%d]\n", i);
++		for (j = 0; j < rx_entries; j++) {
++			if (rx_pool->rx_buff[j].skb) {
++				dev_kfree_skb_any(rx_pool->rx_buff[j].skb);
++				rx_pool->rx_buff[j].skb = NULL;
 +			}
- 		} else
- 			t2 &= ~PORT_WAKE_BITS;
- 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -54,6 +54,10 @@
- #define PCI_DEVICE_ID_INTEL_APL_XHCI			0x5aa8
- #define PCI_DEVICE_ID_INTEL_DNV_XHCI			0x19d0
- 
-+#define PCI_DEVICE_ID_AMD_PROMONTORYA_4			0x43b9
-+#define PCI_DEVICE_ID_AMD_PROMONTORYA_3			0x43ba
-+#define PCI_DEVICE_ID_AMD_PROMONTORYA_2			0x43bb
-+#define PCI_DEVICE_ID_AMD_PROMONTORYA_1			0x43bc
- #define PCI_DEVICE_ID_ASMEDIA_1042A_XHCI		0x1142
- 
- static const char hcd_name[] = "xhci_hcd";
-@@ -143,6 +147,13 @@ static void xhci_pci_quirks(struct devic
- 	if (pdev->vendor == PCI_VENDOR_ID_AMD)
- 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
- 
-+	if ((pdev->vendor == PCI_VENDOR_ID_AMD) &&
-+		((pdev->device == PCI_DEVICE_ID_AMD_PROMONTORYA_4) ||
-+		(pdev->device == PCI_DEVICE_ID_AMD_PROMONTORYA_3) ||
-+		(pdev->device == PCI_DEVICE_ID_AMD_PROMONTORYA_2) ||
-+		(pdev->device == PCI_DEVICE_ID_AMD_PROMONTORYA_1)))
-+		xhci->quirks |= XHCI_U2_DISABLE_WAKE;
++		}
++	}
++}
 +
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
- 		xhci->quirks |= XHCI_LPM_SUPPORT;
- 		xhci->quirks |= XHCI_INTEL_HOST;
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1829,7 +1829,7 @@ struct xhci_hcd {
- /* For controller with a broken Port Disable implementation */
- #define XHCI_BROKEN_PORT_PED	(1 << 25)
- #define XHCI_LIMIT_ENDPOINT_INTERVAL_7	(1 << 26)
--/* Reserved. It was XHCI_U2_DISABLE_WAKE */
-+#define XHCI_U2_DISABLE_WAKE	(1 << 27)
- #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
- #define XHCI_SUSPEND_DELAY	(1 << 30)
- 
+ static void clean_tx_pools(struct ibmvnic_adapter *adapter)
+ {
+ 	struct ibmvnic_tx_pool *tx_pool;
+@@ -1010,7 +1039,7 @@ static int __ibmvnic_close(struct net_de
+ 			}
+ 		}
+ 	}
+-
++	clean_rx_pools(adapter);
+ 	clean_tx_pools(adapter);
+ 	adapter->state = VNIC_CLOSED;
+ 	return rc;
