@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937994AbeE1Msh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:48:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45026 "EHLO mail.kernel.org"
+        id S939000AbeE1Mse (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164569AbeE1K4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:45 -0400
+        id S1164574AbeE1K4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Mikhail Malygin <mikhail@malygin.me>,
+        Yonatan Cohen <yonatanc@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 340/496] btrfs: Fix possible softlock on single core machines
-Date: Mon, 28 May 2018 12:02:05 +0200
-Message-Id: <20180528100334.149393345@linuxfoundation.org>
+Subject: [PATCH 4.14 341/496] IB/rxe: Fix for oops in rxe_register_device on ppc64le arch
+Date: Mon, 28 May 2018 12:02:06 +0200
+Message-Id: <20180528100334.189586041@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,36 +31,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Mikhail Malygin <mikhail@malygin.me>
 
-[ Upstream commit 1e1c50a929bc9e49bc3f9935b92450d9e69f8158 ]
+[ Upstream commit efc365e7290d040fbd43f60b0e97653489a739d4 ]
 
-do_chunk_alloc implements a loop checking whether there is a pending
-chunk allocation and if so causes the caller do loop. Generally this
-loop is executed only once, however testing with btrfs/072 on a single
-core vm machines uncovered an extreme case where the system could loop
-indefinitely. This is due to a missing cond_resched when loop which
-doesn't give a chance to the previous chunk allocator finish its job.
+On ppc64le arch rxe_add command causes oops in kernel log:
 
-The fix is to simply add the missing cond_resched.
+[   92.495140] Oops: Kernel access of bad area, sig: 11 [#1]
+[   92.499710] SMP NR_CPUS=2048 NUMA pSeries
+[   92.499792] Modules linked in: ipt_MASQUERADE(E) nf_nat_masquerade_ipv4(E) nf_conntrack_netlink(E) nfnetlink(E) xfrm_user(E) iptable
+_nat(E) nf_conntrack_ipv4(E) nf_defrag_ipv4(E) nf_nat_ipv4(E) xt_addrtype(E) iptable_filter(E) ip_tables(E) xt_conntrack(E) x_tables(E)
+ nf_nat(E) nf_conntrack(E) br_netfilter(E) bridge(E) stp(E) llc(E) overlay(E) af_packet(E) rpcrdma(E) ib_isert(E) iscsi_target_mod(E) i
+b_iser(E) libiscsi(E) ib_srpt(E) target_core_mod(E) ib_srp(E) ib_ipoib(E) rdma_ucm(E) ib_ucm(E) ib_uverbs(E) ib_umad(E) bochs_drm(E) tt
+m(E) drm_kms_helper(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) fb_sys_fops(E) drm(E) agpgart(E) virtio_rng(E) virtio_console(E) rtc_
+generic(E) dm_ec(OEN) ttln_rdma(OEN) rdma_cm(E) configfs(E) iw_cm(E) ib_cm(E) rdma_rxe(E) ip6_udp_tunnel(E) udp_tunnel(E) ib_core(E) ql
+a2xxx(E)
+[   92.499832]  scsi_transport_fc(E) nvme_fc(E) nvme_fabrics(E) nvme_core(E) ipmi_watchdog(E) ipmi_ssif(E) ipmi_poweroff(E) ipmi_powernv(EX) ipmi_devintf(E) ipmi_msghandler(E) dummy(E) ext4(E) crc16(E) jbd2(E) mbcache(E) dm_service_time(E) scsi_transport_iscsi(E) sd_mod(E) sr_mod(E) cdrom(E) hid_generic(E) usbhid(E) virtio_blk(E) virtio_scsi(E) virtio_net(E) ibmvscsi(EX) scsi_transport_srp(E) xhci_pci(E) xhci_hcd(E) usbcore(E) usb_common(E) virtio_pci(E) virtio_ring(E) virtio(E) sunrpc(E) dm_mirror(E) dm_region_hash(E) dm_log(E) sg(E) dm_multipath(E) dm_mod(E) scsi_dh_rdac(E) scsi_dh_emc(E) scsi_dh_alua(E) scsi_mod(E) autofs4(E)
+[   92.499834] Supported: No, Unsupported modules are loaded
+[   92.499839] CPU: 3 PID: 5576 Comm: sh Tainted: G           OE   NX 4.4.120-ttln.17-default #1
+[   92.499841] task: c0000000afe8a490 ti: c0000000beba8000 task.ti: c0000000beba8000
+[   92.499842] NIP: c00000000008ba3c LR: c000000000027644 CTR: c00000000008ba10
+[   92.499844] REGS: c0000000bebab750 TRAP: 0300   Tainted: G           OE   NX  (4.4.120-ttln.17-default)
+[   92.499850] MSR: 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 28424428  XER: 20000000
+[   92.499871] CFAR: 0000000000002424 DAR: 0000000000000208 DSISR: 40000000 SOFTE: 1
+               GPR00: c000000000027644 c0000000bebab9d0 c000000000f09700 0000000000000000
+               GPR04: d0000000043d7192 0000000000000002 000000000000001a fffffffffffffffe
+               GPR08: 000000000000009c c00000000008ba10 d0000000043e5848 d0000000043d3828
+               GPR12: c00000000008ba10 c000000007a02400 0000000010062e38 0000010020388860
+               GPR16: 0000000000000000 0000000000000000 00000100203885f0 00000000100f6c98
+               GPR20: c0000000b3f1fcc0 c0000000b3f1fc48 c0000000b3f1fbd0 c0000000b3f1fb58
+               GPR24: c0000000b3f1fae0 c0000000b3f1fa68 00000000000005dc c0000000b3f1f9f0
+               GPR28: d0000000043e5848 c0000000b3f1f900 c0000000b3f1f320 c0000000b3f1f000
+[   92.499881] NIP [c00000000008ba3c] dma_get_required_mask_pSeriesLP+0x2c/0x1a0
+[   92.499885] LR [c000000000027644] dma_get_required_mask+0x44/0xac
+[   92.499886] Call Trace:
+[   92.499891] [c0000000bebab9d0] [c0000000bebaba30] 0xc0000000bebaba30 (unreliable)
+[   92.499894] [c0000000bebaba10] [c000000000027644] dma_get_required_mask+0x44/0xac
+[   92.499904] [c0000000bebaba30] [d0000000043cb4b4] rxe_register_device+0xc4/0x430 [rdma_rxe]
+[   92.499910] [c0000000bebabab0] [d0000000043c06c8] rxe_add+0x448/0x4e0 [rdma_rxe]
+[   92.499915] [c0000000bebabb30] [d0000000043d28dc] rxe_net_add+0x4c/0xf0 [rdma_rxe]
+[   92.499921] [c0000000bebabb60] [d0000000043d305c] rxe_param_set_add+0x6c/0x1ac [rdma_rxe]
+[   92.499924] [c0000000bebabbf0] [c0000000000e78c0] param_attr_store+0xa0/0x180
+[   92.499927] [c0000000bebabc70] [c0000000000e6448] module_attr_store+0x48/0x70
+[   92.499932] [c0000000bebabc90] [c000000000391f60] sysfs_kf_write+0x70/0xb0
+[   92.499935] [c0000000bebabcb0] [c000000000390f1c] kernfs_fop_write+0x18c/0x1e0
+[   92.499939] [c0000000bebabd00] [c0000000002e22ac] __vfs_write+0x4c/0x1d0
+[   92.499942] [c0000000bebabd90] [c0000000002e2f94] vfs_write+0xc4/0x200
+[   92.499945] [c0000000bebabde0] [c0000000002e488c] SyS_write+0x6c/0x110
+[   92.499948] [c0000000bebabe30] [c000000000009384] system_call+0x38/0xe4
+[   92.499949] Instruction dump:
+[   92.499954] 4e800020 3c4c00e8 3842dcf0 7c0802a6 f8010010 60000000 7c0802a6 fba1ffe8
+[   92.499958] fbc1fff0 fbe1fff8 f8010010 f821ffc1 <e9230208> 7c7e1b78 2fa90000 419e0078
+[   92.499962] ---[ end trace bed077e15eb420cf ]---
 
-Fixes: 6d74119f1a3e ("Btrfs: avoid taking the chunk_mutex in do_chunk_alloc")
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+It fails in dma_get_required_mask, that has ppc-specific implementation,
+and fail if provided device argument is NULL
+
+Signed-off-by: Mikhail Malygin <mikhail@malygin.me>
+Reviewed-by: Yonatan Cohen <yonatanc@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent-tree.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/sw/rxe/rxe_verbs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4675,6 +4675,7 @@ again:
- 	if (wait_for_alloc) {
- 		mutex_unlock(&fs_info->chunk_mutex);
- 		wait_for_alloc = 0;
-+		cond_resched();
- 		goto again;
- 	}
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.c
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
+@@ -1206,7 +1206,7 @@ int rxe_register_device(struct rxe_dev *
+ 			    rxe->ndev->dev_addr);
+ 	dev->dev.dma_ops = &dma_virt_ops;
+ 	dma_coerce_mask_and_coherent(&dev->dev,
+-				     dma_get_required_mask(dev->dev.parent));
++				     dma_get_required_mask(&dev->dev));
  
+ 	dev->uverbs_abi_ver = RXE_UVERBS_ABI_VERSION;
+ 	dev->uverbs_cmd_mask = BIT_ULL(IB_USER_VERBS_CMD_GET_CONTEXT)
