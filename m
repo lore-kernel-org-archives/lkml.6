@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932712AbeE1QB3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:01:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35826 "EHLO mail.kernel.org"
+        id S932988AbeE1QCE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:02:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936841AbeE1KPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:15:41 -0400
+        id S966327AbeE1KPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:15:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 037/268] btrfs: Fix out of bounds access in btrfs_search_slot
-Date: Mon, 28 May 2018 12:00:11 +0200
-Message-Id: <20180528100206.271368919@linuxfoundation.org>
+Subject: [PATCH 4.4 034/268] mac80211_hwsim: fix possible memory leak in hwsim_new_radio_nl()
+Date: Mon, 28 May 2018 12:00:08 +0200
+Message-Id: <20180528100205.943769387@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,62 +31,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
 
-[ Upstream commit 9ea2c7c9da13c9073e371c046cbbc45481ecb459 ]
+[ Upstream commit 0ddcff49b672239dda94d70d0fcf50317a9f4b51 ]
 
-When modifying a tree where the root is at BTRFS_MAX_LEVEL - 1 then
-the level variable is going to be 7 (this is the max height of the
-tree). On the other hand btrfs_cow_block is always called with
-"level + 1" as an index into the nodes and slots arrays. This leads to
-an out of bounds access. Admittdely this will be benign since an OOB
-access of the nodes array will likely read the 0th element from the
-slots array, which in this case is going to be 0 (since we start CoW at
-the top of the tree). The OOB access into the slots array in turn will
-read the 0th and 1st values of the locks array, which would both be 0
-at the time. However, this benign behavior relies on the fact that the
-path being passed hasn't been initialised, if it has already been used to
-query a btree then it could potentially have populated the nodes/slots arrays.
+'hwname' is malloced in hwsim_new_radio_nl() and should be freed
+before leaving from the error handling cases, otherwise it will cause
+memory leak.
 
-Fix it by explicitly checking if we are at level 7 (the maximum allowed
-index in nodes/slots arrays) and explicitly call the CoW routine with
-NULL for parent's node/slot.
-
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Fixes-coverity-id: 711515
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: ff4dd73dd2b4 ("mac80211_hwsim: check HWSIM_ATTR_RADIO_NAME length")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/ctree.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -2769,6 +2769,8 @@ again:
- 		 * contention with the cow code
- 		 */
- 		if (cow) {
-+			bool last_level = (level == (BTRFS_MAX_LEVEL - 1));
-+
- 			/*
- 			 * if we don't really need to cow this block
- 			 * then we don't want to set the path blocking,
-@@ -2793,9 +2795,13 @@ again:
- 			}
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2925,8 +2925,10 @@ static int hwsim_new_radio_nl(struct sk_
+ 	if (info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]) {
+ 		u32 idx = nla_get_u32(info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]);
  
- 			btrfs_set_path_blocking(p);
--			err = btrfs_cow_block(trans, root, b,
--					      p->nodes[level + 1],
--					      p->slots[level + 1], &b);
-+			if (last_level)
-+				err = btrfs_cow_block(trans, root, b, NULL, 0,
-+						      &b);
-+			else
-+				err = btrfs_cow_block(trans, root, b,
-+						      p->nodes[level + 1],
-+						      p->slots[level + 1], &b);
- 			if (err) {
- 				ret = err;
- 				goto done;
+-		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom))
++		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom)) {
++			kfree(hwname);
+ 			return -EINVAL;
++		}
+ 		param.regd = hwsim_world_regdom_custom[idx];
+ 	}
+ 
