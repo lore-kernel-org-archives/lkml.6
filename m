@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165866AbeE1OlE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:41:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50658 "EHLO mail.kernel.org"
+        id S1165879AbeE1Ola (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:41:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161215AbeE1Ka5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:57 -0400
+        id S1161204AbeE1Kay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 106/329] selftests: pstore: Adding config fragment CONFIG_PSTORE_RAM=m
-Date: Mon, 28 May 2018 12:00:35 +0200
-Message-Id: <20180528100251.605117722@linuxfoundation.org>
+        stable@vger.kernel.org, Dong Bo <dongbo4@huawei.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 105/329] libata: Fix compile warning with ATA_DEBUG enabled
+Date: Mon, 28 May 2018 12:00:34 +0200
+Message-Id: <20180528100251.524868358@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,25 +29,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
+From: Dong Bo <dongbo4@huawei.com>
 
-[ Upstream commit 9a379e77033f02c4a071891afdf0f0a01eff8ccb ]
+[ Upstream commit 0d3e45bc6507bd1f8728bf586ebd16c2d9e40613 ]
 
-pstore_tests and pstore_post_reboot_tests need CONFIG_PSTORE_RAM=m
+This fixs the following comile warnings with ATA_DEBUG enabled,
+which detected by Linaro GCC 5.2-2015.11:
 
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+  drivers/ata/libata-scsi.c: In function 'ata_scsi_dump_cdb':
+  ./include/linux/kern_levels.h:5:18: warning: format '%d' expects
+  argument of type 'int', but argument 6 has type 'u64 {aka long
+   long unsigned int}' [-Wformat=]
+
+tj: Patch hand-applied and description trimmed.
+
+Signed-off-by: Dong Bo <dongbo4@huawei.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/pstore/config |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/ata/libata-scsi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/pstore/config
-+++ b/tools/testing/selftests/pstore/config
-@@ -2,3 +2,4 @@ CONFIG_MISC_FILESYSTEMS=y
- CONFIG_PSTORE=y
- CONFIG_PSTORE_PMSG=y
- CONFIG_PSTORE_CONSOLE=y
-+CONFIG_PSTORE_RAM=m
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -4156,7 +4156,7 @@ static inline void ata_scsi_dump_cdb(str
+ #ifdef ATA_DEBUG
+ 	struct scsi_device *scsidev = cmd->device;
+ 
+-	DPRINTK("CDB (%u:%d,%d,%d) %9ph\n",
++	DPRINTK("CDB (%u:%d,%d,%lld) %9ph\n",
+ 		ap->print_id,
+ 		scsidev->channel, scsidev->id, scsidev->lun,
+ 		cmd->cmnd);
