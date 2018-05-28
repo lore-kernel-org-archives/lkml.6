@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423338AbeE1LGy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:06:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53646 "EHLO mail.kernel.org"
+        id S1423374AbeE1LHH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:07:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423308AbeE1LGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:51 -0400
+        id S1423342AbeE1LG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@infradead.org>, Ming Lei <ming.lei@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 065/272] dp83640: Ensure against premature access to PHY registers after reset
-Date: Mon, 28 May 2018 12:01:38 +0200
-Message-Id: <20180528100246.317190142@linuxfoundation.org>
+Subject: [PATCH 4.16 067/272] genirq/affinity: Dont return with empty affinity masks on error
+Date: Mon, 28 May 2018 12:01:40 +0200
+Message-Id: <20180528100246.534540714@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,54 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Esben Haabendal <eha@deif.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit 76327a35caabd1a932e83d6a42b967aa08584e5d ]
+[ Upstream commit 0211e12dd0a5385ecffd3557bc570dbad7fcf245 ]
 
-The datasheet specifies a 3uS pause after performing a software
-reset. The default implementation of genphy_soft_reset() does not
-provide this, so implement soft_reset with the needed pause.
+When the allocation of node_to_possible_cpumask fails, then
+irq_create_affinity_masks() returns with a pointer to the empty affinity
+masks array, which will cause malfunction.
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reorder the allocations so the masks array allocation comes last and every
+failure path returns NULL.
+
+Fixes: 9a0ef98e186d ("genirq/affinity: Assign vectors to all present CPUs")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83640.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ kernel/irq/affinity.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1207,6 +1207,23 @@ static void dp83640_remove(struct phy_de
- 	kfree(dp83640);
- }
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -108,7 +108,7 @@ irq_create_affinity_masks(int nvecs, con
+ 	int affv = nvecs - affd->pre_vectors - affd->post_vectors;
+ 	int last_affv = affv + affd->pre_vectors;
+ 	nodemask_t nodemsk = NODE_MASK_NONE;
+-	struct cpumask *masks;
++	struct cpumask *masks = NULL;
+ 	cpumask_var_t nmsk, *node_to_possible_cpumask;
  
-+static int dp83640_soft_reset(struct phy_device *phydev)
-+{
-+	int ret;
+ 	/*
+@@ -121,13 +121,13 @@ irq_create_affinity_masks(int nvecs, con
+ 	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
+ 		return NULL;
+ 
+-	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+-	if (!masks)
+-		goto out;
+-
+ 	node_to_possible_cpumask = alloc_node_to_possible_cpumask();
+ 	if (!node_to_possible_cpumask)
+-		goto out;
++		goto outcpumsk;
 +
-+	ret = genphy_soft_reset(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* From DP83640 datasheet: "Software driver code must wait 3 us
-+	 * following a software reset before allowing further serial MII
-+	 * operations with the DP83640."
-+	 */
-+	udelay(10);		/* Taking udelay inaccuracy into account */
-+
-+	return 0;
-+}
-+
- static int dp83640_config_init(struct phy_device *phydev)
- {
- 	struct dp83640_private *dp83640 = phydev->priv;
-@@ -1501,6 +1518,7 @@ static struct phy_driver dp83640_driver
- 	.flags		= PHY_HAS_INTERRUPT,
- 	.probe		= dp83640_probe,
- 	.remove		= dp83640_remove,
-+	.soft_reset	= dp83640_soft_reset,
- 	.config_init	= dp83640_config_init,
- 	.ack_interrupt  = dp83640_ack_interrupt,
- 	.config_intr    = dp83640_config_intr,
++	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
++	if (!masks)
++		goto outnodemsk;
+ 
+ 	/* Fill out vectors at the beginning that don't need affinity */
+ 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+@@ -192,8 +192,9 @@ done:
+ 	/* Fill out vectors at the end that don't need affinity */
+ 	for (; curvec < nvecs; curvec++)
+ 		cpumask_copy(masks + curvec, irq_default_affinity);
++outnodemsk:
+ 	free_node_to_possible_cpumask(node_to_possible_cpumask);
+-out:
++outcpumsk:
+ 	free_cpumask_var(nmsk);
+ 	return masks;
+ }
