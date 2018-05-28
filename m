@@ -1,74 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754459AbeE1JFJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:05:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38582 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754335AbeE1JFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:05:02 -0400
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, igall@marvell.com,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH] crypto: inside-secure - increase minimum transfer size
-Date: Mon, 28 May 2018 11:03:27 +0200
-Message-Id: <20180528090327.16844-1-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.17.0
+        id S1754472AbeE1JFZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:05:25 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54160 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754186AbeE1I67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:58:59 -0400
+X-Google-Smtp-Source: AB8JxZrgSJFVbG1rZpMvhNqUvT45C7NnVlo9xCdmfNxCAnOObuDPrGRGZW1hcDU2CpxXWetv2nhT4g==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 07/20] lightnvm: pblk: remove unnecessary indirection
+Date: Mon, 28 May 2018 10:58:28 +0200
+Message-Id: <20180528085841.26684-8-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
+References: <20180528085841.26684-1-mb@lightnvm.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ofer Heifetz <oferh@marvell.com>
+From: Javier González <javier@javigon.com>
 
-The token size was increased for AEAD support. Occasional authentication
-fails arise since the result descriptor overflows. This is because the
-token size and the engine minimal thresholds must be in sync.
+Call nvm_submit_io directly and remove an unnecessary indirection on the
+read path.
 
-Signed-off-by: Ofer Heifetz <oferh@marvell.com>
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
+ drivers/lightnvm/pblk-read.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-Hi Herbert,
-
-This patch fixes/improves the AEAD support in the SafeXcel driver. As
-the AEAD support (which introduces the issue) was only merge a few days
-ago, this patch is not flagged as being a fix.
-
-Thanks!
-Antoine
-
- drivers/crypto/inside-secure/safexcel.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 4e86f864a952..8691f6369a13 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -296,8 +296,8 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index b201fc486adb..a2e678de428f 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -102,16 +102,6 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ #endif
+ }
  
- 	/* DMA transfer size to use */
- 	val = EIP197_HIA_DFE_CFG_DIS_DEBUG;
--	val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(5) | EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(9);
--	val |= EIP197_HIA_DxE_CFG_MIN_CTRL_SIZE(5) | EIP197_HIA_DxE_CFG_MAX_CTRL_SIZE(7);
-+	val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(6) | EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(9);
-+	val |= EIP197_HIA_DxE_CFG_MIN_CTRL_SIZE(6) | EIP197_HIA_DxE_CFG_MAX_CTRL_SIZE(7);
- 	val |= EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(RD_CACHE_3BITS);
- 	val |= EIP197_HIA_DxE_CFG_CTRL_CACHE_CTRL(RD_CACHE_3BITS);
- 	writel(val, EIP197_HIA_DFE(priv) + EIP197_HIA_DFE_CFG);
-@@ -306,9 +306,9 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
- 	writel(0, EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL);
+-static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
+-{
+-	int err;
+-
+-	err = pblk_submit_io(pblk, rqd);
+-	if (err)
+-		return NVM_IO_ERR;
+-
+-	return NVM_IO_OK;
+-}
  
- 	/* Configure the procesing engine thresholds */
--	writel(EIP197_PE_IN_xBUF_THRES_MIN(5) | EIP197_PE_IN_xBUF_THRES_MAX(9),
-+	writel(EIP197_PE_IN_xBUF_THRES_MIN(6) | EIP197_PE_IN_xBUF_THRES_MAX(9),
- 	       EIP197_PE(priv) + EIP197_PE_IN_DBUF_THRES);
--	writel(EIP197_PE_IN_xBUF_THRES_MIN(5) | EIP197_PE_IN_xBUF_THRES_MAX(7),
-+	writel(EIP197_PE_IN_xBUF_THRES_MIN(6) | EIP197_PE_IN_xBUF_THRES_MAX(7),
- 	       EIP197_PE(priv) + EIP197_PE_IN_TBUF_THRES);
+ static void pblk_read_check_seq(struct pblk *pblk, struct nvm_rq *rqd,
+ 				sector_t blba)
+@@ -485,9 +475,9 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 		rqd->bio = int_bio;
+ 		r_ctx->private = bio;
  
- 	if (priv->version == EIP197) {
+-		ret = pblk_submit_read_io(pblk, rqd);
+-		if (ret) {
++		if (pblk_submit_io(pblk, rqd)) {
+ 			pr_err("pblk: read IO submission failed\n");
++			ret = NVM_IO_ERR;
+ 			if (int_bio)
+ 				bio_put(int_bio);
+ 			goto fail_end_io;
 -- 
-2.17.0
+2.11.0
