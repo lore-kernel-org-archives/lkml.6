@@ -1,20 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424198AbeE1LMp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:12:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60324 "EHLO mail.kernel.org"
+        id S1424217AbeE1LMy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:12:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423908AbeE1LMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:12:38 -0400
+        id S1423949AbeE1LMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:12:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, "leilei.lin" <leilei.lin@alibaba-inc.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, brendan.d.gregg@gmail.com,
+        eranian@gmail.com, yang_oliver@hotmail.com,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 149/272] dt-bindings: add device tree binding for Allwinner H6 main CCU
-Date: Mon, 28 May 2018 12:03:02 +0200
-Message-Id: <20180528100253.487681283@linuxfoundation.org>
+Subject: [PATCH 4.16 183/272] perf/core: Fix installing cgroup events on CPU
+Date: Mon, 28 May 2018 12:03:36 +0200
+Message-Id: <20180528100256.049554911@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,40 +39,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: "leilei.lin" <leilei.lin@alibaba-inc.com>
 
-[ Upstream commit 2e08e4d2ff488424919d69dd211ac860a019ac1d ]
+[ Upstream commit 33801b94741d6c3be9713c10aa627477216c21e2 ]
 
-The Allwinner H6 main CCU uses the internal oscillator of the SoC, which
-is different with old SoCs' main CCU.
+There's two problems when installing cgroup events on CPUs: firstly
+list_update_cgroup_event() only tries to set cpuctx->cgrp for the
+first event, if that mismatches on @cgrp we'll not try again for later
+additions.
 
-Add device tree binding for the Allwinner H6 main CCU.
+Secondly, when we install a cgroup event into an active context, only
+issue an event reprogram when the event matches the current cgroup
+context. This avoids a pointless event reprogramming.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
+[ Improved the changelog and comments. ]
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: brendan.d.gregg@gmail.com
+Cc: eranian@gmail.com
+Cc: linux-kernel@vger.kernel.org
+Cc: yang_oliver@hotmail.com
+Link: http://lkml.kernel.org/r/20180306093637.28247-1-linxiulei@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt |    4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/events/core.c |   46 +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 35 insertions(+), 11 deletions(-)
 
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -20,6 +20,7 @@ Required properties :
- 		- "allwinner,sun50i-a64-ccu"
- 		- "allwinner,sun50i-a64-r-ccu"
- 		- "allwinner,sun50i-h5-ccu"
-+		- "allwinner,sun50i-h6-ccu"
- 		- "nextthing,gr8-ccu"
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -948,27 +948,39 @@ list_update_cgroup_event(struct perf_eve
+ 	if (!is_cgroup_event(event))
+ 		return;
  
- - reg: Must contain the registers base address and length
-@@ -31,6 +32,9 @@ Required properties :
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
- 
-+For the main CCU on H6, one more clock is needed:
-+- "iosc": the SoC's internal frequency oscillator
+-	if (add && ctx->nr_cgroups++)
+-		return;
+-	else if (!add && --ctx->nr_cgroups)
+-		return;
+ 	/*
+ 	 * Because cgroup events are always per-cpu events,
+ 	 * this will always be called from the right CPU.
+ 	 */
+ 	cpuctx = __get_cpu_context(ctx);
+-	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+-	/* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
+-	if (add) {
 +
- For the PRCM CCUs on A83T/H3/A64, two more clocks are needed:
- - "pll-periph": the SoC's peripheral PLL from the main CCU
- - "iosc": the SoC's internal frequency oscillator
++	/*
++	 * Since setting cpuctx->cgrp is conditional on the current @cgrp
++	 * matching the event's cgroup, we must do this for every new event,
++	 * because if the first would mismatch, the second would not try again
++	 * and we would leave cpuctx->cgrp unset.
++	 */
++	if (add && !cpuctx->cgrp) {
+ 		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
+ 
+-		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+ 		if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
+ 			cpuctx->cgrp = cgrp;
+-	} else {
+-		list_del(cpuctx_entry);
+-		cpuctx->cgrp = NULL;
+ 	}
++
++	if (add && ctx->nr_cgroups++)
++		return;
++	else if (!add && --ctx->nr_cgroups)
++		return;
++
++	/* no cgroup running */
++	if (!add)
++		cpuctx->cgrp = NULL;
++
++	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
++	if (add)
++		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
++	else
++		list_del(cpuctx_entry);
+ }
+ 
+ #else /* !CONFIG_CGROUP_PERF */
+@@ -2328,6 +2340,18 @@ static int  __perf_install_in_context(vo
+ 		raw_spin_lock(&task_ctx->lock);
+ 	}
+ 
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		/*
++		 * If the current cgroup doesn't match the event's
++		 * cgroup, we should not try to schedule it.
++		 */
++		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
++					event->cgrp->css.cgroup);
++	}
++#endif
++
+ 	if (reprogram) {
+ 		ctx_sched_out(ctx, cpuctx, EVENT_TIME);
+ 		add_event_to_ctx(event, ctx);
