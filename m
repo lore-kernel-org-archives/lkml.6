@@ -1,118 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964840AbeE1KKs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:10:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936527AbeE1KKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:10:41 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Carroll <david.carroll@microsemi.com>,
-        Raghava Aditya Renukunta
-        <raghavaaditya.renukunta@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 114/185] scsi: aacraid: Insure command thread is not recursively stopped
-Date: Mon, 28 May 2018 12:02:35 +0200
-Message-Id: <20180528100101.588051221@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1425335AbeE1QZR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:25:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51294 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932473AbeE1QZL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:25:11 -0400
+Subject: Re: [PATCH 08/12] drm/bridge: tc358764: Add DSI to LVDS bridge driver
+To: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
+ <CGME20180528094728eucas1p128e8a44fa6c3bcb29d056a8191c039af@eucas1p1.samsung.com>
+ <1527500833-16005-9-git-send-email-m.purski@samsung.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <153d1f8c-a0b4-b189-34b5-42a81d15f66b@infradead.org>
+Date: Mon, 28 May 2018 09:24:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1527500833-16005-9-git-send-email-m.purski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On 05/28/2018 02:47 AM, Maciej Purski wrote:
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index fa2c799..58e19af 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -110,6 +110,13 @@ config DRM_THINE_THC63LVD1024
+>  	---help---
+>  	  Thine THC63LVD1024 LVDS/parallel converter driver.
+>  
+> +config DRM_TOSHIBA_TC358764
+> +	tristate "TC358764 DSI/LVDS bridge"
+> +	depends on DRM && DRM_PANEL
+> +	depends on OF
+> +	select DRM_MIPI_DSI
+> +	select VIDEOMODE_HELPERS
+> +
 
-------------------
+Kconfig symbols with "prompt strings" should also have help text.
 
-From: Dave Carroll <david.carroll@microsemi.com>
+I expected checkpatch to catch that, but I tested it and there was no warning
+from checkpatch about help text.  OTOH, there was a warning that there are
+2 lines in this patch that end with whitespace, so that should be fixed.
 
-[ Upstream commit 1c6b41fb92936fa5facea464d5d7cbf855966d04 ]
+Did you use checkpatch (scripts/checkpatch.pl)?
 
-If a recursive IOP_RESET is invoked, usually due to the eh_thread
-handling errors after the first reset, be sure we flag that the command
-thread has been stopped to avoid an Oops of the form;
+>  config DRM_TOSHIBA_TC358767
+>  	tristate "Toshiba TC358767 eDP bridge"
+>  	depends on OF
 
- [ 336.620256] CPU: 28 PID: 1193 Comm: scsi_eh_0 Kdump: loaded Not tainted 4.14.0-49.el7a.ppc64le #1
- [ 336.620297] task: c000003fd630b800 task.stack: c000003fd61a4000
- [ 336.620326] NIP: c000000000176794 LR: c00000000013038c CTR: c00000000024bc10
- [ 336.620361] REGS: c000003fd61a7720 TRAP: 0300 Not tainted (4.14.0-49.el7a.ppc64le)
- [ 336.620395] MSR: 9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE> CR: 22084022 XER: 20040000
- [ 336.620435] CFAR: c000000000130388 DAR: 0000000000000000 DSISR: 40000000 SOFTE: 1
- [ 336.620435] GPR00: c00000000013038c c000003fd61a79a0 c0000000014c7e00 0000000000000000
- [ 336.620435] GPR04: 000000000000000c 000000000000000c 9000000000009033 0000000000000477
- [ 336.620435] GPR08: 0000000000000477 0000000000000000 0000000000000000 c008000010f7d940
- [ 336.620435] GPR12: c00000000024bc10 c000000007a33400 c0000000001708a8 c000003fe3b881d8
- [ 336.620435] GPR16: c000003fe3b88060 c000003fd61a7d10 fffffffffffff000 000000000000001e
- [ 336.620435] GPR20: 0000000000000001 c000000000ebf1a0 0000000000000001 c000003fe3b88000
- [ 336.620435] GPR24: 0000000000000003 0000000000000002 c000003fe3b88840 c000003fe3b887e8
- [ 336.620435] GPR28: c000003fe3b88000 c000003fc8181788 0000000000000000 c000003fc8181700
- [ 336.620750] NIP [c000000000176794] exit_creds+0x34/0x160
- [ 336.620775] LR [c00000000013038c] __put_task_struct+0x8c/0x1f0
- [ 336.620804] Call Trace:
- [ 336.620817] [c000003fd61a79a0] [c000003fe3b88000] 0xc000003fe3b88000 (unreliable)
- [ 336.620853] [c000003fd61a79d0] [c00000000013038c] __put_task_struct+0x8c/0x1f0
- [ 336.620889] [c000003fd61a7a00] [c000000000171418] kthread_stop+0x1e8/0x1f0
- [ 336.620922] [c000003fd61a7a40] [c008000010f7448c] aac_reset_adapter+0x14c/0x8d0 [aacraid]
- [ 336.620959] [c000003fd61a7b00] [c008000010f60174] aac_eh_host_reset+0x84/0x100 [aacraid]
- [ 336.621010] [c000003fd61a7b30] [c000000000864f24] scsi_try_host_reset+0x74/0x180
- [ 336.621046] [c000003fd61a7bb0] [c000000000867ac0] scsi_eh_ready_devs+0xc00/0x14d0
- [ 336.625165] [c000003fd61a7ca0] [c0000000008699e0] scsi_error_handler+0x550/0x730
- [ 336.632101] [c000003fd61a7dc0] [c000000000170a08] kthread+0x168/0x1b0
- [ 336.639031] [c000003fd61a7e30] [c00000000000b528] ret_from_kernel_thread+0x5c/0xb4
- [ 336.645971] Instruction dump:
- [ 336.648743] 384216a0 7c0802a6 fbe1fff8 f8010010 f821ffd1 7c7f1b78 60000000 60000000
- [ 336.657056] 39400000 e87f0838 f95f0838 7c0004ac <7d401828> 314affff 7d40192d 40c2fff4
- [ 336.663997] -[ end trace 4640cf8d4945ad95 ]-
-
-So flag when the thread is stopped by setting the thread pointer to NULL.
-
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Raghava Aditya Renukunta <raghavaaditya.renukunta@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/aacraid/commsup.c |    4 +++-
- drivers/scsi/aacraid/linit.c   |    1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -1270,9 +1270,10 @@ static int _aac_reset_adapter(struct aac
- 	host = aac->scsi_host_ptr;
- 	scsi_block_requests(host);
- 	aac_adapter_disable_int(aac);
--	if (aac->thread->pid != current->pid) {
-+	if (aac->thread && aac->thread->pid != current->pid) {
- 		spin_unlock_irq(host->host_lock);
- 		kthread_stop(aac->thread);
-+		aac->thread = NULL;
- 		jafo = 1;
- 	}
- 
-@@ -1343,6 +1344,7 @@ static int _aac_reset_adapter(struct aac
- 					  aac->name);
- 		if (IS_ERR(aac->thread)) {
- 			retval = PTR_ERR(aac->thread);
-+			aac->thread = NULL;
- 			goto out;
- 		}
- 	}
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1096,6 +1096,7 @@ static void __aac_shutdown(struct aac_de
- 				up(&fib->event_wait);
- 		}
- 		kthread_stop(aac->thread);
-+		aac->thread = NULL;
- 	}
- 	aac_send_shutdown(aac);
- 	aac_adapter_disable_int(aac);
+thanks,
+-- 
+~Randy
