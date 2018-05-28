@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755567AbeE1Qrl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54626 "EHLO mail.kernel.org"
+        id S940198AbeE1Qr4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:47:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754664AbeE1KGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:41 -0400
+        id S1754650AbeE1KGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:06:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Silvan Jegen <s.jegen@gmail.com>, Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 024/185] HID: roccat: prevent an out of bounds read in kovaplus_profile_activated()
-Date: Mon, 28 May 2018 12:01:05 +0200
-Message-Id: <20180528100051.993092887@linuxfoundation.org>
+Subject: [PATCH 3.18 023/185] scsi: fas216: fix sense buffer initialization
+Date: Mon, 28 May 2018 12:01:04 +0200
+Message-Id: <20180528100051.924311426@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,33 +30,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 7ad81482cad67cbe1ec808490d1ddfc420c42008 ]
+[ Upstream commit 96d5eaa9bb74d299508d811d865c2c41b38b0301 ]
 
-We get the "new_profile_index" value from the mouse device when we're
-handling raw events.  Smatch taints it as untrusted data and complains
-that we need a bounds check.  This seems like a reasonable warning
-otherwise there is a small read beyond the end of the array.
+While testing with the ARM specific memset() macro removed, I ran into a
+compiler warning that shows an old bug:
 
-Fixes: 0e70f97f257e ("HID: roccat: Add support for Kova[+] mouse")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Silvan Jegen <s.jegen@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+drivers/scsi/arm/fas216.c: In function 'fas216_rq_sns_done':
+drivers/scsi/arm/fas216.c:2014:40: error: argument to 'sizeof' in 'memset' call is the same expression as the destination; did you mean to provide an explicit length? [-Werror=sizeof-pointer-memaccess]
+
+It turns out that the definition of the scsi_cmd structure changed back
+in linux-2.6.25, so now we clear only four bytes (sizeof(pointer))
+instead of 96 (SCSI_SENSE_BUFFERSIZE). I did not check whether we
+actually need to initialize the buffer here, but it's clear that if we
+do it, we should use the correct size.
+
+Fixes: de25deb18016 ("[SCSI] use dynamically allocated sense buffer")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-roccat-kovaplus.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/arm/fas216.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/hid-roccat-kovaplus.c
-+++ b/drivers/hid/hid-roccat-kovaplus.c
-@@ -37,6 +37,8 @@ static uint kovaplus_convert_event_cpi(u
- static void kovaplus_profile_activated(struct kovaplus_device *kovaplus,
- 		uint new_profile_index)
- {
-+	if (new_profile_index >= ARRAY_SIZE(kovaplus->profile_settings))
-+		return;
- 	kovaplus->actual_profile = new_profile_index;
- 	kovaplus->actual_cpi = kovaplus->profile_settings[new_profile_index].cpi_startup_level;
- 	kovaplus->actual_x_sensitivity = kovaplus->profile_settings[new_profile_index].sensitivity_x;
+--- a/drivers/scsi/arm/fas216.c
++++ b/drivers/scsi/arm/fas216.c
+@@ -2010,7 +2010,7 @@ static void fas216_rq_sns_done(FAS216_In
+ 		 * have valid data in the sense buffer that could
+ 		 * confuse the higher levels.
+ 		 */
+-		memset(SCpnt->sense_buffer, 0, sizeof(SCpnt->sense_buffer));
++		memset(SCpnt->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
+ //printk("scsi%d.%c: sense buffer: ", info->host->host_no, '0' + SCpnt->device->id);
+ //{ int i; for (i = 0; i < 32; i++) printk("%02x ", SCpnt->sense_buffer[i]); printk("\n"); }
+ 	/*
