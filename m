@@ -1,96 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753051AbeE1C1I (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 22:27:08 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51706 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752978AbeE1C1E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753014AbeE1C1E (ORCPT <rfc822;w@1wt.eu>);
         Sun, 27 May 2018 22:27:04 -0400
-X-UUID: 6332e2ab24854901a3649e5b8582a131-20180528
-Message-ID: <1527474417.11190.21.camel@mtksdccf07>
-Subject: Re: [PATCH v3 8/8] drm/mediatek: add third ddp path
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 28 May 2018 10:26:57 +0800
-In-Reply-To: <1527224425.27165.27.camel@mtksdaap41>
-References: <1527215665-11937-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527215665-11937-9-git-send-email-stu.hsieh@mediatek.com>
-         <1527224425.27165.27.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+Received: from mail.kernel.org ([198.145.29.99]:44586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752970AbeE1C1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 May 2018 22:27:02 -0400
+Date: Mon, 28 May 2018 10:26:54 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Ian Ray <ian.ray@ge.com>,
+        Nandor Han <nandor.han@ge.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv4 1/2] ARM: imx53: add secure-reg-access support for PMU
+Message-ID: <20180528022652.GA3143@dragon>
+References: <20180212123945.15732-1-sebastian.reichel@collabora.co.uk>
+ <20180212123945.15732-2-sebastian.reichel@collabora.co.uk>
+ <20180224074543.GF3217@dragon>
+ <20180226134741.neqkpge33zo3pfzt@earth.universe>
+ <20180227011033.GV3217@dragon>
+ <20180227101712.3zwobvs4ox4jchcj@earth.universe>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180227101712.3zwobvs4ox4jchcj@earth.universe>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, CK:
-I've some idea as below.
-
-On Fri, 2018-05-25 at 13:00 +0800, CK Hu wrote:
-> Hi, Stu:
+On Tue, Feb 27, 2018 at 11:17:12AM +0100, Sebastian Reichel wrote:
+> Hi,
 > 
-> On Fri, 2018-05-25 at 10:34 +0800, stu.hsieh@mediatek.com wrote:
-> > From: Stu Hsieh <stu.hsieh@mediatek.com>
+> On Tue, Feb 27, 2018 at 09:10:34AM +0800, Shawn Guo wrote:
+> > On Mon, Feb 26, 2018 at 02:47:41PM +0100, Sebastian Reichel wrote:
+> > > On Sat, Feb 24, 2018 at 03:45:44PM +0800, Shawn Guo wrote:
+> > > > On Mon, Feb 12, 2018 at 01:39:44PM +0100, Sebastian Reichel wrote:
+> > > > > On i.MX53 it is necessary to set the DBG_EN bit in the
+> > > > > platform GPC register to enable access to PMU counters
+> > > > > other than the cycle counter.
+> > > > > 
+> > > > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > > > > ---
+> > > > >  arch/arm/mach-imx/mach-imx53.c | 39 ++++++++++++++++++++++++++++++++++++++-
+> > > > >  1 file changed, 38 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/arch/arm/mach-imx/mach-imx53.c b/arch/arm/mach-imx/mach-imx53.c
+> > > > > index 07c2e8dca494..658e28604dca 100644
+> > > > > --- a/arch/arm/mach-imx/mach-imx53.c
+> > > > > +++ b/arch/arm/mach-imx/mach-imx53.c
+> > > > > @@ -28,10 +28,47 @@ static void __init imx53_init_early(void)
+> > > > >  	mxc_set_cpu_type(MXC_CPU_MX53);
+> > > > >  }
+> > > > >  
+> > > > > +#define MXC_CORTEXA8_PLAT_GPC 0x63fa0004
+> > > > 
+> > > > The base address should be retrieved from device tree.
+> > > 
+> > > DT has no entry for 0x63fa0000-0x63fa3fff. iMX53 TRM lists it as "ARM Platform"
+> > > with 8 platform specific 32 bit registers. Do you think it's worth the trouble
+> > > adding a new binding? Do you have a suggestion for a compatible value?
 > > 
-> > This patch create third crtc by third ddp path
-> > 
+> > Looking at it more closely, I feel that patching every single platform
+> > which needs to set up additional register for secure-reg-access support
+> > doesn't really scale.  Can we have pmu driver do it with a phandle in
+> > DT pointing to the register and bit that need to be configured?
 > 
-> Apply this patch before the patch 'Add support for mediatek SOC MT2712'
-> because this patch is necessary for mt2712.
-> 
-> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > index b32c4cc8d051..3a866e1d6af4 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > @@ -267,6 +267,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
-> >  	if (ret < 0)
-> >  		goto err_component_unbind;
-> >  
-> > +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
-> > +				  private->data->third_len);
-> 
-> I think you should prevent doing this for mt8173 and mt2701 because that
-> two SoC has only two ddp path.
+> The PMU driver used to have a feature for initialising platform
+> specific bits, but it is currently being removed to make the PMU
+> code more maintainable. My understanding is, that it's very uncommon
+> to require platform specific setup to get secure-reg-access working.
+> I.e. it is not needed for newer iMX platforms.
 
-Now, 8173 and 2701 have only two ddp path, there is a problem on run
-time. 
-There are three crtc for drm resource, and there is nothing in third
-crtc. 
-Because 8173 and 2701 have no third ddp, and the third ddp_len is zero.
-So, I want to add the condition like following in mtk_crtc_create()
-if (path_len == 0)
-	return 0;
+Are you saying this is a very specific setup required by i.MX53 only?
+In that case, I can live with it.
 
-Then, the valur ret is zero and it would not create the null third crtc.
-
-
-Regards,
-Stu
-
-> 
-> Regards,
-> CK
-> 
-> > +	if (ret < 0)
-> > +		goto err_component_unbind;
-> > +
-> >  	/* Use OVL device for all DMA memory allocations */
-> >  	np = private->comp_node[private->data->main_path[0]] ?:
-> >  	     private->comp_node[private->data->ext_path[0]];
-> 
-> 
+Shawn
