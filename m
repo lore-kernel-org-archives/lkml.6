@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423866AbeE1LKF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:10:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58042 "EHLO mail.kernel.org"
+        id S1424097AbeE1LuD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:50:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423497AbeE1LJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:09:56 -0400
+        id S1423855AbeE1LKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:10:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
-        Casey Leedom <leedom@chelsio.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 131/272] cxgb4: Setup FW queues before registering netdev
-Date: Mon, 28 May 2018 12:02:44 +0200
-Message-Id: <20180528100252.090878622@linuxfoundation.org>
+Subject: [PATCH 4.16 134/272] ima: Fallback to the builtin hash algorithm
+Date: Mon, 28 May 2018 12:02:47 +0200
+Message-Id: <20180528100252.345934123@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,61 +30,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Petr Vorel <pvorel@suse.cz>
 
-[ Upstream commit 843bd7db79c861b49e2912d723625f5fa8e94502 ]
+[ Upstream commit ab60368ab6a452466885ef4edf0cefd089465132 ]
 
-When NetworkManager is enabled, there are chances that interface up
-is called even before probe completes. This means we have not yet
-allocated the FW sge queues, hence rest of ingress queue allocation
-wont be proper. Fix this by calling setup_fw_sge_queues() before
-register_netdev().
+IMA requires having it's hash algorithm be compiled-in due to it's
+early use.  The default IMA algorithm is protected by Kconfig to be
+compiled-in.
 
-Fixes: 0fbc81b3ad51 ('chcr/cxgb4i/cxgbit/RDMA/cxgb4: Allocate resources dynamically for all cxgb4 ULD's')
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The ima_hash kernel parameter allows to choose the hash algorithm. When
+the specified algorithm is not available or available as a module, IMA
+initialization fails, which leads to a kernel panic (mknodat syscall calls
+ima_post_path_mknod()).  Therefore as fallback we force IMA to use
+the default builtin Kconfig hash algorithm.
+
+Fixed crash:
+
+$ grep CONFIG_CRYPTO_MD4 .config
+CONFIG_CRYPTO_MD4=m
+
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.12.14-2.3-default root=UUID=74ae8202-9ca7-4e39-813b-22287ec52f7a video=1024x768-16 plymouth.ignore-serial-consoles console=ttyS0 console=tty resume=/dev/disk/by-path/pci-0000:00:07.0-part3 splash=silent showopts ima_hash=md4
+...
+[    1.545190] ima: Can not allocate md4 (reason: -2)
+...
+[    2.610120] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[    2.611903] IP: ima_match_policy+0x23/0x390
+[    2.612967] PGD 0 P4D 0
+[    2.613080] Oops: 0000 [#1] SMP
+[    2.613080] Modules linked in: autofs4
+[    2.613080] Supported: Yes
+[    2.613080] CPU: 0 PID: 1 Comm: systemd Not tainted 4.12.14-2.3-default #1
+[    2.613080] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+[    2.613080] task: ffff88003e2d0040 task.stack: ffffc90000190000
+[    2.613080] RIP: 0010:ima_match_policy+0x23/0x390
+[    2.613080] RSP: 0018:ffffc90000193e88 EFLAGS: 00010296
+[    2.613080] RAX: 0000000000000000 RBX: 000000000000000c RCX: 0000000000000004
+[    2.613080] RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffff880037071728
+[    2.613080] RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
+[    2.613080] R10: 0000000000000008 R11: 61c8864680b583eb R12: 00005580ff10086f
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000008000
+[    2.613080] FS:  00007f5c1da08940(0000) GS:ffff88003fc00000(0000) knlGS:0000000000000000
+[    2.613080] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.613080] CR2: 0000000000000000 CR3: 0000000037002000 CR4: 00000000003406f0
+[    2.613080] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    2.613080] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    2.613080] Call Trace:
+[    2.613080]  ? shmem_mknod+0xbf/0xd0
+[    2.613080]  ima_post_path_mknod+0x1c/0x40
+[    2.613080]  SyS_mknod+0x210/0x220
+[    2.613080]  entry_SYSCALL_64_fastpath+0x1a/0xa5
+[    2.613080] RIP: 0033:0x7f5c1bfde570
+[    2.613080] RSP: 002b:00007ffde1c90dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+[    2.613080] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1bfde570
+[    2.613080] RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00005580ff10086f
+[    2.613080] RBP: 00007ffde1c91040 R08: 00005580ff10086f R09: 0000000000000000
+[    2.613080] R10: 0000000000104000 R11: 0000000000000246 R12: 00005580ffb99660
+[    2.613080] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000002
+[    2.613080] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 57 41 56 44 8d 14 09 41 55 41 54 55 53 44 89 d3 09 cb 48 83 ec 38 48 8b 05 c5 03 29 01 <4c> 8b 20 4c 39 e0 0f 84 d7 01 00 00 4c 89 44 24 08 89 54 24 20
+[    2.613080] RIP: ima_match_policy+0x23/0x390 RSP: ffffc90000193e88
+[    2.613080] CR2: 0000000000000000
+[    2.613080] ---[ end trace 9a9f0a8a73079f6a ]---
+[    2.673052] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+[    2.673052]
+[    2.675337] Kernel Offset: disabled
+[    2.676405] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ security/integrity/ima/ima_crypto.c |    2 ++
+ security/integrity/ima/ima_main.c   |   13 +++++++++++++
+ 2 files changed, 15 insertions(+)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -833,8 +833,6 @@ static int setup_fw_sge_queues(struct ad
- 
- 	err = t4_sge_alloc_rxq(adap, &s->fw_evtq, true, adap->port[0],
- 			       adap->msi_idx, NULL, fwevtq_handler, NULL, -1);
--	if (err)
--		t4_free_sge_resources(adap);
- 	return err;
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -73,6 +73,8 @@ int __init ima_init_crypto(void)
+ 		       hash_algo_name[ima_hash_algo], rc);
+ 		return rc;
+ 	}
++	pr_info("Allocated hash algorithm: %s\n",
++		hash_algo_name[ima_hash_algo]);
+ 	return 0;
  }
  
-@@ -5474,6 +5472,13 @@ static int init_one(struct pci_dev *pdev
- 	if (err)
- 		goto out_free_dev;
- 
-+	err = setup_fw_sge_queues(adapter);
-+	if (err) {
-+		dev_err(adapter->pdev_dev,
-+			"FW sge queue allocation failed, err %d", err);
-+		goto out_free_dev;
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -16,6 +16,9 @@
+  *	implements the IMA hooks: ima_bprm_check, ima_file_mmap,
+  *	and ima_file_check.
+  */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
+ #include <linux/module.h>
+ #include <linux/file.h>
+ #include <linux/binfmts.h>
+@@ -472,6 +475,16 @@ static int __init init_ima(void)
+ 	ima_init_template_list();
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+ 	error = ima_init();
++
++	if (error && strcmp(hash_algo_name[ima_hash_algo],
++			    CONFIG_IMA_DEFAULT_HASH) != 0) {
++		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
++			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
++		hash_setup_done = 0;
++		hash_setup(CONFIG_IMA_DEFAULT_HASH);
++		error = ima_init();
 +	}
 +
- 	/*
- 	 * The card is now ready to go.  If any errors occur during device
- 	 * registration we do not fail the whole card but rather proceed only
-@@ -5522,10 +5527,10 @@ static int init_one(struct pci_dev *pdev
- 		cxgb4_ptp_init(adapter);
- 
- 	print_adapter_info(adapter);
--	setup_fw_sge_queues(adapter);
- 	return 0;
- 
-  out_free_dev:
-+	t4_free_sge_resources(adapter);
- 	free_some_resources(adapter);
- 	if (adapter->flags & USING_MSIX)
- 		free_msix_info(adapter);
+ 	if (!error) {
+ 		ima_initialized = 1;
+ 		ima_update_policy_flag();
