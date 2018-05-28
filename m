@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034652AbeE1Ph7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:37:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38418 "EHLO mail.kernel.org"
+        id S969080AbeE1Pim (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:38:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968594AbeE1KSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:18:20 -0400
+        id S968528AbeE1KSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:18:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Lord <mlord@pobox.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Shaohua Li <sh.li@alibaba-inc.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 097/268] powerpc/bpf/jit: Fix 32-bit JIT for seccomp_data access
-Date: Mon, 28 May 2018 12:01:11 +0200
-Message-Id: <20180528100213.252430510@linuxfoundation.org>
+Subject: [PATCH 4.4 095/268] md: raid5: avoid string overflow warning
+Date: Mon, 28 May 2018 12:01:09 +0200
+Message-Id: <20180528100212.954282587@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,37 +30,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Lord <mlord@pobox.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 083b20907185b076f21c265b30fe5b5f24c03d8c ]
+[ Upstream commit 53b8d89ddbdbb0e4625a46d2cdbb6f106c52f801 ]
 
-I am using SECCOMP to filter syscalls on a ppc32 platform, and noticed
-that the JIT compiler was failing on the BPF even though the
-interpreter was working fine.
+gcc warns about a possible overflow of the kmem_cache string, when adding
+four characters to a string of the same length:
 
-The issue was that the compiler was missing one of the instructions
-used by SECCOMP, so here is a patch to enable JIT for that
-instruction.
+drivers/md/raid5.c: In function 'setup_conf':
+drivers/md/raid5.c:2207:34: error: '-alt' directive writing 4 bytes into a region of size between 1 and 32 [-Werror=format-overflow=]
+  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
+                                  ^~~~
+drivers/md/raid5.c:2207:2: note: 'sprintf' output between 5 and 36 bytes into a destination of size 32
+  sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: eb84bab0fb38 ("ppc: Kconfig: Enable BPF JIT on ppc32")
-Signed-off-by: Mark Lord <mlord@pobox.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+If I'm counting correctly, we need 11 characters for the fixed part
+of the string and 18 characters for a 64-bit pointer (when no gendisk
+is used), so that leaves three characters for conf->level, which should
+always be sufficient.
+
+This makes the code use snprintf() with the correct length, to
+make the code more robust against changes, and to get the compiler
+to shut up.
+
+In commit f4be6b43f1ac ("md/raid5: ensure we create a unique name for
+kmem_cache when mddev has no gendisk") from 2010, Neil said that
+the pointer could be removed "shortly" once devices without gendisk
+are disallowed. I have no idea if that happened, but if it did, that
+should probably be changed as well.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/net/bpf_jit_comp.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/md/raid5.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/net/bpf_jit_comp.c
-+++ b/arch/powerpc/net/bpf_jit_comp.c
-@@ -329,6 +329,9 @@ static int bpf_jit_build_body(struct bpf
- 			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, len) != 4);
- 			PPC_LWZ_OFFS(r_A, r_skb, offsetof(struct sk_buff, len));
- 			break;
-+		case BPF_LDX | BPF_W | BPF_ABS: /* A = *((u32 *)(seccomp_data + K)); */
-+			PPC_LWZ_OFFS(r_A, r_skb, K);
-+			break;
- 		case BPF_LDX | BPF_W | BPF_LEN: /* X = skb->len; */
- 			PPC_LWZ_OFFS(r_X, r_skb, offsetof(struct sk_buff, len));
- 			break;
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -2028,15 +2028,16 @@ static int grow_one_stripe(struct r5conf
+ static int grow_stripes(struct r5conf *conf, int num)
+ {
+ 	struct kmem_cache *sc;
++	size_t namelen = sizeof(conf->cache_name[0]);
+ 	int devs = max(conf->raid_disks, conf->previous_raid_disks);
+ 
+ 	if (conf->mddev->gendisk)
+-		sprintf(conf->cache_name[0],
++		snprintf(conf->cache_name[0], namelen,
+ 			"raid%d-%s", conf->level, mdname(conf->mddev));
+ 	else
+-		sprintf(conf->cache_name[0],
++		snprintf(conf->cache_name[0], namelen,
+ 			"raid%d-%p", conf->level, conf->mddev);
+-	sprintf(conf->cache_name[1], "%s-alt", conf->cache_name[0]);
++	snprintf(conf->cache_name[1], namelen, "%.27s-alt", conf->cache_name[0]);
+ 
+ 	conf->active_name = 0;
+ 	sc = kmem_cache_create(conf->cache_name[conf->active_name],
