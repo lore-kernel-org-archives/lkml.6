@@ -1,59 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753842AbeE1HJI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:09:08 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:9808 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753603AbeE1HI5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:08:57 -0400
-X-UUID: ae115b2f91d849049f6701558fd54df9-20180528
-Message-ID: <1527491332.24367.4.camel@mtksdaap41>
-Subject: Re: [PATCH v4 5/9] drm/mediatek: add ddp component PWM1
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 28 May 2018 15:08:52 +0800
-In-Reply-To: <1527489507-24453-6-git-send-email-stu.hsieh@mediatek.com>
-References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527489507-24453-6-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1753929AbeE1HJj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:09:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35075 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753658AbeE1HJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 03:09:34 -0400
+Date: Mon, 28 May 2018 09:09:31 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
+ for bad block check
+Message-ID: <20180528090931.4a208c62@xps13>
+In-Reply-To: <d48035002fc00f142edc8ed80309f8a7@codeaurora.org>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+        <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
+        <20180526104900.139dd19b@xps13>
+        <d48035002fc00f142edc8ed80309f8a7@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Hi Abhishek,
 
-On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
-> This patch add component PWM1 in mtk_ddp_matches
+On Mon, 28 May 2018 11:46:47 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
+
+> On 2018-05-26 14:28, Miquel Raynal wrote:
+> > Hi Abhishek,  
+> > > >> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)  
+> >>  		goto err;
+> >>  	}  
+> >> >> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);  
+> >> -
+> >> -	bad = nandc->data_buffer[bbpos] != 0xff;
+> >> +	bad = bbm_bytes_buf[0] != 0xff;
+> > > BTW, as there are host->bbm_size bytes that can inform on the block  
+> > state, don't we need to check all of them?
+> >   
+>   We are checking all of them.
+>   host->bbm_size will be either 1 (for NAND_BUSWIDTH_8) or
+>   2 (for NAND_BUSWIDTH_16).
 > 
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 1 +
->  1 file changed, 1 insertion(+)
+>   https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/mtd/nand/raw/qcom_nandc.c#L2347
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> index 87acf6be87f6..a5c7ac2d162d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> @@ -232,6 +232,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
->  	[DDP_COMPONENT_OVL0]	= { MTK_DISP_OVL,	0, NULL },
->  	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
->  	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
-> +	[DDP_COMPONENT_PWM1]	= { MTK_DISP_PWM,	1, NULL },
->  	[DDP_COMPONENT_RDMA0]	= { MTK_DISP_RDMA,	0, NULL },
->  	[DDP_COMPONENT_RDMA1]	= { MTK_DISP_RDMA,	1, NULL },
->  	[DDP_COMPONENT_RDMA2]	= { MTK_DISP_RDMA,	2, NULL },
+>   Thanks,
+>   Abhishek
+> 
+> >> >>  	if (chip->options & NAND_BUSWIDTH_16)  
+> >> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
+> >> +		bad = bad || (bbm_bytes_buf[1] != 0xff);
+
+As told in my previous reply, I missed the above line.
+
+However, after checking the code of the core (nand_base.c) I wonder if
+it is useful to check for the second byte.
+
+And if you look at the core's implementation you'll see that the offset
+is not always 0 in the OOB but maybe 5 for small page NAND chips.
+
+Please have a look to the generic implementation and tell me why this
+is really needed?
+
+Thanks,
+Miquèl
