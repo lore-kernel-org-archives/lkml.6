@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163291AbeE1Kr7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:47:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37888 "EHLO mail.kernel.org"
+        id S1165370AbeE1N0J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:26:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034302AbeE1Krw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:47:52 -0400
+        id S1163293AbeE1KsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Keith Busch <keith.busch@intel.com>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@icloud.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 151/496] nvme-pci: Fix nvme queue cleanup if IRQ setup fails
-Date: Mon, 28 May 2018 11:58:56 +0200
-Message-Id: <20180528100326.259438083@linuxfoundation.org>
+Subject: [PATCH 4.14 154/496] ceph: fix dentry leak when failing to init debugfs
+Date: Mon, 28 May 2018 11:58:59 +0200
+Message-Id: <20180528100326.384492344@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,44 +30,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
+From: Chengguang Xu <cgxu519@icloud.com>
 
-[ Upstream commit f25a2dfc20e3a3ed8fe6618c331799dd7bd01190 ]
+[ Upstream commit 18106734b512664a8541026519ce4b862498b6c3 ]
 
-This patch fixes nvme queue cleanup if requesting an IRQ handler for
-the queue's vector fails. It does this by resetting the cq_vector to
-the uninitialized value of -1 so it is ignored for a controller reset.
+When failing from ceph_fs_debugfs_init() in ceph_real_mount(),
+there is lack of dput of root_dentry and it causes slab errors,
+so change the calling order of ceph_fs_debugfs_init() and
+open_root_dentry() and do some cleanups to avoid this issue.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-[changelog updates, removed misc whitespace changes]
-Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/pci.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ceph/super.c |   16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1322,7 +1322,7 @@ static int nvme_create_queue(struct nvme
- 	nvmeq->cq_vector = qid - 1;
- 	result = adapter_alloc_cq(dev, qid, nvmeq);
- 	if (result < 0)
--		return result;
-+		goto release_vector;
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -837,7 +837,6 @@ static struct dentry *ceph_real_mount(st
+ 	int err;
+ 	unsigned long started = jiffies;  /* note the start time */
+ 	struct dentry *root;
+-	int first = 0;   /* first vfsmount for this super_block */
  
- 	result = adapter_alloc_sq(dev, qid, nvmeq);
- 	if (result < 0)
-@@ -1336,9 +1336,12 @@ static int nvme_create_queue(struct nvme
- 	return result;
+ 	dout("mount start %p\n", fsc);
+ 	mutex_lock(&fsc->client->mount_mutex);
+@@ -862,17 +861,17 @@ static struct dentry *ceph_real_mount(st
+ 			path = fsc->mount_options->server_path + 1;
+ 			dout("mount opening path %s\n", path);
+ 		}
++
++		err = ceph_fs_debugfs_init(fsc);
++		if (err < 0)
++			goto out;
++
+ 		root = open_root_dentry(fsc, path, started);
+ 		if (IS_ERR(root)) {
+ 			err = PTR_ERR(root);
+ 			goto out;
+ 		}
+ 		fsc->sb->s_root = dget(root);
+-		first = 1;
+-
+-		err = ceph_fs_debugfs_init(fsc);
+-		if (err < 0)
+-			goto fail;
+ 	} else {
+ 		root = dget(fsc->sb->s_root);
+ 	}
+@@ -882,11 +881,6 @@ static struct dentry *ceph_real_mount(st
+ 	mutex_unlock(&fsc->client->mount_mutex);
+ 	return root;
  
-  release_sq:
-+	dev->online_queues--;
- 	adapter_delete_sq(dev, qid);
-  release_cq:
- 	adapter_delete_cq(dev, qid);
-+ release_vector:
-+	nvmeq->cq_vector = -1;
- 	return result;
- }
- 
+-fail:
+-	if (first) {
+-		dput(fsc->sb->s_root);
+-		fsc->sb->s_root = NULL;
+-	}
+ out:
+ 	mutex_unlock(&fsc->client->mount_mutex);
+ 	return ERR_PTR(err);
