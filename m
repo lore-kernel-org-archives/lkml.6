@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936935AbeE1KTP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:19:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39146 "EHLO mail.kernel.org"
+        id S1032837AbeE1KTe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:19:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030676AbeE1KTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:09 -0400
+        id S936919AbeE1KTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manish Rangankar <manish.rangankar@cavium.com>,
-        "Ewan D. Milne" <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 084/268] scsi: qla4xxx: skip error recovery in case of register disconnect.
-Date: Mon, 28 May 2018 12:00:58 +0200
-Message-Id: <20180528100211.671317107@linuxfoundation.org>
+Subject: [PATCH 4.4 121/268] selftests/powerpc: Skip the subpage_prot tests if the syscall is unavailable
+Date: Mon, 28 May 2018 12:01:35 +0200
+Message-Id: <20180528100215.810823852@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,136 +29,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manish Rangankar <manish.rangankar@cavium.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 1bc5ad3a6acdcf56f83272f2de1cd2389ea9e9e2 ]
+[ Upstream commit cd4a6f3ab4d80cb919d15897eb3cbc85c2009d4b ]
 
-A system crashes when continuously removing/re-adding the storage
-controller.
+The subpage_prot syscall is only functional when the system is using
+the Hash MMU. Since commit 5b2b80714796 ("powerpc/mm: Invalidate
+subpage_prot() system call on radix platforms") it returns ENOENT when
+the Radix MMU is active. Currently this just makes the test fail.
 
-Signed-off-by: Manish Rangankar <manish.rangankar@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Tomas Henzl <thenzl@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Additionally the syscall is not available if the kernel is built with
+4K pages, or if CONFIG_PPC_SUBPAGE_PROT=n, in which case it returns
+ENOSYS because the syscall is missing entirely.
+
+So check explicitly for ENOENT and ENOSYS and skip if we see either of
+those.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/qla4xxx/ql4_def.h |    2 +
- drivers/scsi/qla4xxx/ql4_os.c  |   46 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+ tools/testing/selftests/powerpc/mm/subpage_prot.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/drivers/scsi/qla4xxx/ql4_def.h
-+++ b/drivers/scsi/qla4xxx/ql4_def.h
-@@ -168,6 +168,8 @@
- #define DEV_DB_NON_PERSISTENT	0
- #define DEV_DB_PERSISTENT	1
+--- a/tools/testing/selftests/powerpc/mm/subpage_prot.c
++++ b/tools/testing/selftests/powerpc/mm/subpage_prot.c
+@@ -135,6 +135,16 @@ static int run_test(void *addr, unsigned
+ 	return 0;
+ }
  
-+#define QL4_ISP_REG_DISCONNECT 0xffffffffU
-+
- #define COPY_ISID(dst_isid, src_isid) {			\
- 	int i, j;					\
- 	for (i = 0, j = ISID_SIZE - 1; i < ISID_SIZE;)	\
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -262,6 +262,24 @@ static struct iscsi_transport qla4xxx_is
- 
- static struct scsi_transport_template *qla4xxx_scsi_transport;
- 
-+static int qla4xxx_isp_check_reg(struct scsi_qla_host *ha)
++static int syscall_available(void)
 +{
-+	u32 reg_val = 0;
-+	int rval = QLA_SUCCESS;
++	int rc;
 +
-+	if (is_qla8022(ha))
-+		reg_val = readl(&ha->qla4_82xx_reg->host_status);
-+	else if (is_qla8032(ha) || is_qla8042(ha))
-+		reg_val = qla4_8xxx_rd_direct(ha, QLA8XXX_PEG_ALIVE_COUNTER);
-+	else
-+		reg_val = readw(&ha->reg->ctrl_status);
++	errno = 0;
++	rc = syscall(__NR_subpage_prot, 0, 0, 0);
 +
-+	if (reg_val == QL4_ISP_REG_DISCONNECT)
-+		rval = QLA_ERROR;
-+
-+	return rval;
++	return rc == 0 || (errno != ENOENT && errno != ENOSYS);
 +}
 +
- static int qla4xxx_send_ping(struct Scsi_Host *shost, uint32_t iface_num,
- 			     uint32_t iface_type, uint32_t payload_size,
- 			     uint32_t pid, struct sockaddr *dst_addr)
-@@ -9196,10 +9214,17 @@ static int qla4xxx_eh_abort(struct scsi_
- 	struct srb *srb = NULL;
- 	int ret = SUCCESS;
- 	int wait = 0;
-+	int rval;
- 
- 	ql4_printk(KERN_INFO, ha, "scsi%ld:%d:%llu: Abort command issued cmd=%p, cdb=0x%x\n",
- 		   ha->host_no, id, lun, cmd, cmd->cmnd[0]);
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	spin_lock_irqsave(&ha->hardware_lock, flags);
- 	srb = (struct srb *) CMD_SP(cmd);
- 	if (!srb) {
-@@ -9251,6 +9276,7 @@ static int qla4xxx_eh_device_reset(struc
- 	struct scsi_qla_host *ha = to_qla_host(cmd->device->host);
- 	struct ddb_entry *ddb_entry = cmd->device->hostdata;
- 	int ret = FAILED, stat;
-+	int rval;
- 
- 	if (!ddb_entry)
- 		return ret;
-@@ -9270,6 +9296,12 @@ static int qla4xxx_eh_device_reset(struc
- 		      cmd, jiffies, cmd->request->timeout / HZ,
- 		      ha->dpc_flags, cmd->result, cmd->allowed));
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	/* FIXME: wait for hba to go online */
- 	stat = qla4xxx_reset_lun(ha, ddb_entry, cmd->device->lun);
- 	if (stat != QLA_SUCCESS) {
-@@ -9313,6 +9345,7 @@ static int qla4xxx_eh_target_reset(struc
- 	struct scsi_qla_host *ha = to_qla_host(cmd->device->host);
- 	struct ddb_entry *ddb_entry = cmd->device->hostdata;
- 	int stat, ret;
-+	int rval;
- 
- 	if (!ddb_entry)
- 		return FAILED;
-@@ -9330,6 +9363,12 @@ static int qla4xxx_eh_target_reset(struc
- 		      ha->host_no, cmd, jiffies, cmd->request->timeout / HZ,
- 		      ha->dpc_flags, cmd->result, cmd->allowed));
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
-+
- 	stat = qla4xxx_reset_target(ha, ddb_entry);
- 	if (stat != QLA_SUCCESS) {
- 		starget_printk(KERN_INFO, scsi_target(cmd->device),
-@@ -9384,9 +9423,16 @@ static int qla4xxx_eh_host_reset(struct
+ int test_anon(void)
  {
- 	int return_status = FAILED;
- 	struct scsi_qla_host *ha;
-+	int rval;
+ 	unsigned long align;
+@@ -145,6 +155,8 @@ int test_anon(void)
+ 	void *mallocblock;
+ 	unsigned long mallocsize;
  
- 	ha = to_qla_host(cmd->device->host);
- 
-+	rval = qla4xxx_isp_check_reg(ha);
-+	if (rval != QLA_SUCCESS) {
-+		ql4_printk(KERN_INFO, ha, "PCI/Register disconnect, exiting.\n");
-+		return FAILED;
-+	}
++	SKIP_IF(!syscall_available());
 +
- 	if ((is_qla8032(ha) || is_qla8042(ha)) && ql4xdontresethba)
- 		qla4_83xx_set_idc_dontreset(ha);
+ 	if (getpagesize() != 0x10000) {
+ 		fprintf(stderr, "Kernel page size must be 64K!\n");
+ 		return 1;
+@@ -180,6 +192,8 @@ int test_file(void)
+ 	off_t filesize;
+ 	int fd;
  
++	SKIP_IF(!syscall_available());
++
+ 	fd = open(file_name, O_RDWR);
+ 	if (fd == -1) {
+ 		perror("failed to open file");
