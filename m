@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423948AbeE1Lvb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:51:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
+        id S1424973AbeE1Lvr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:51:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423466AbeE1LJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:09:37 -0400
+        id S1423777AbeE1LJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:09:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 125/272] net: qualcomm: rmnet: check for null ep to avoid null pointer dereference
-Date: Mon, 28 May 2018 12:02:38 +0200
-Message-Id: <20180528100251.639539158@linuxfoundation.org>
+Subject: [PATCH 4.16 123/272] net: hns3: fix for returning wrong value problem in hns3_get_rss_indir_size
+Date: Mon, 28 May 2018 12:02:36 +0200
+Message-Id: <20180528100251.484369475@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,33 +31,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
-[ Upstream commit 0c29ba1b43df1eb7d8beb03fc929d2dac4c15f7e ]
+[ Upstream commit da44a00f06df1f823ea449065e79581ee624de4b ]
 
-The call to rmnet_get_endpoint can potentially return NULL so check
-for this to avoid any subsequent null pointer dereferences on a NULL
-ep.
+The return type of hns3_get_rss_indir_size is u32. But a negative value is
+returned. This patch fixes it by replacing the negative value with zero.
 
-Detected by CoverityScan, CID#1465385 ("Dereference null return value")
-
-Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-@@ -307,6 +307,8 @@ static int rmnet_changelink(struct net_d
- 	if (data[IFLA_VLAN_ID]) {
- 		mux_id = nla_get_u16(data[IFLA_VLAN_ID]);
- 		ep = rmnet_get_endpoint(port, priv->mux_id);
-+		if (!ep)
-+			return -ENODEV;
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -709,7 +709,7 @@ static u32 hns3_get_rss_indir_size(struc
  
- 		hlist_del_init_rcu(&ep->hlnode);
- 		hlist_add_head_rcu(&ep->hlnode, &port->muxed_ep[mux_id]);
+ 	if (!h->ae_algo || !h->ae_algo->ops ||
+ 	    !h->ae_algo->ops->get_rss_indir_size)
+-		return -EOPNOTSUPP;
++		return 0;
+ 
+ 	return h->ae_algo->ops->get_rss_indir_size(h);
+ }
