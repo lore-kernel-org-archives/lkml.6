@@ -1,29 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162904AbeE1Kk7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:40:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60742 "EHLO mail.kernel.org"
+        id S1755451AbeE1N4g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162887AbeE1Kkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:40:52 -0400
+        id S1162906AbeE1KlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        kernel test robot <fengguang.wu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Kamlakant Patel <kamlakant.patel@cavium.com>,
+        Corey Minyard <cminyard@mvista.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 293/329] perf/x86/intel: Properly save/restore the PMU state in the NMI handler
-Date: Mon, 28 May 2018 12:03:42 +0200
-Message-Id: <20180528100305.963028203@linuxfoundation.org>
+Subject: [PATCH 4.9 286/329] ipmi_ssif: Fix kernel panic at msg_done_handler
+Date: Mon, 28 May 2018 12:03:35 +0200
+Message-Id: <20180528100305.535285740@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -39,72 +30,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Kamlakant Patel <kamlakant.patel@cavium.com>
 
-[ Upstream commit 82d71ed0277efc45360828af8c4e4d40e1b45352 ]
+[ Upstream commit f002612b9d86613bc6fde0a444e0095225f6053e ]
 
-The PMU is disabled in intel_pmu_handle_irq(), but cpuc->enabled is not updated
-accordingly.
+This happens when BMC doesn't return any data and the code is trying
+to print the value of data[2].
 
-This is fine in current usage because no-one checks it - but fix it
-for future code: for example, the drain_pebs() will be modified to
-fix an auto-reload bug.
+Getting following crash:
+[  484.728410] Unable to handle kernel NULL pointer dereference at virtual address 00000002
+[  484.736496] pgd = ffff0000094a2000
+[  484.739885] [00000002] *pgd=00000047fcffe003, *pud=00000047fcffd003, *pmd=0000000000000000
+[  484.748158] Internal error: Oops: 96000005 [#1] SMP
+[...]
+[  485.101451] Call trace:
+[...]
+[  485.188473] [<ffff000000a46e68>] msg_done_handler+0x668/0x700 [ipmi_ssif]
+[  485.195249] [<ffff000000a456b8>] ipmi_ssif_thread+0x110/0x128 [ipmi_ssif]
+[  485.202038] [<ffff0000080f1430>] kthread+0x108/0x138
+[  485.206994] [<ffff0000080838e0>] ret_from_fork+0x10/0x30
+[  485.212294] Code: aa1903e1 aa1803e0 b900227f 95fef6a5 (39400aa3)
 
-Properly save/restore the old PMU state.
+Adding a check to validate the data len before printing data[2] to fix this issue.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Cc: kernel test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/6f44ee84-56f8-79f1-559b-08e371eaeb78@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/core.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_ssif.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2066,16 +2066,23 @@ static int intel_pmu_handle_irq(struct p
- 	int bit, loops;
- 	u64 status;
- 	int handled;
-+	int pmu_enabled;
- 
- 	cpuc = this_cpu_ptr(&cpu_hw_events);
- 
- 	/*
-+	 * Save the PMU state.
-+	 * It needs to be restored when leaving the handler.
-+	 */
-+	pmu_enabled = cpuc->enabled;
-+	/*
- 	 * No known reason to not always do late ACK,
- 	 * but just in case do it opt-in.
- 	 */
- 	if (!x86_pmu.late_ack)
- 		apic_write(APIC_LVTPC, APIC_DM_NMI);
- 	intel_bts_disable_local();
-+	cpuc->enabled = 0;
- 	__intel_pmu_disable_all();
- 	handled = intel_pmu_drain_bts_buffer();
- 	handled += intel_bts_interrupt();
-@@ -2173,7 +2180,8 @@ again:
- 
- done:
- 	/* Only restore PMU state when it's active. See x86_pmu_disable(). */
--	if (cpuc->enabled)
-+	cpuc->enabled = pmu_enabled;
-+	if (pmu_enabled)
- 		__intel_pmu_enable_all(0, true);
- 	intel_bts_enable_local();
- 
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -761,7 +761,7 @@ static void msg_done_handler(struct ssif
+ 			ssif_info->ssif_state = SSIF_NORMAL;
+ 			ipmi_ssif_unlock_cond(ssif_info, flags);
+ 			pr_warn(PFX "Error getting flags: %d %d, %x\n",
+-			       result, len, data[2]);
++			       result, len, (len >= 3) ? data[2] : 0);
+ 		} else if (data[0] != (IPMI_NETFN_APP_REQUEST | 1) << 2
+ 			   || data[1] != IPMI_GET_MSG_FLAGS_CMD) {
+ 			/*
+@@ -783,7 +783,7 @@ static void msg_done_handler(struct ssif
+ 		if ((result < 0) || (len < 3) || (data[2] != 0)) {
+ 			/* Error clearing flags */
+ 			pr_warn(PFX "Error clearing flags: %d %d, %x\n",
+-			       result, len, data[2]);
++			       result, len, (len >= 3) ? data[2] : 0);
+ 		} else if (data[0] != (IPMI_NETFN_APP_REQUEST | 1) << 2
+ 			   || data[1] != IPMI_CLEAR_MSG_FLAGS_CMD) {
+ 			pr_warn(PFX "Invalid response clearing flags: %x %x\n",
