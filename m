@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164749AbeE1LAW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
+        id S938899AbeE1Mab (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:30:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164681AbeE1LAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:00:14 -0400
+        id S1164103AbeE1LAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:00:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 415/496] drm/meson: Fix some error handling paths in meson_drv_bind_master()
-Date: Mon, 28 May 2018 12:03:20 +0200
-Message-Id: <20180528100337.232724500@linuxfoundation.org>
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Eric Sandeen <sandeen@redhat.com>, Theodore Tso <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 387/496] ext4: dont complain about incorrect features when probing
+Date: Mon, 28 May 2018 12:02:52 +0200
+Message-Id: <20180528100336.081448905@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,75 +31,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Eric Sandeen <sandeen@redhat.com>
 
-[ Upstream commit 2c18107b9d58972588cd45d89b8f58d0f033c110 ]
+[ Upstream commit 0d9366d67bcf066b028e57d09c9a86ce879bcc28 ]
 
-If one of these functions fail, we whould free 'drm', as alreadry done in
-the other error handling paths, below and above.
+If mount is auto-probing for filesystem type, it will try various
+filesystems in order, with the MS_SILENT flag set.  We get
+that flag as the silent arg to ext4_fill_super.
 
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/df47e03d36c2cf7bc37ec3105fc47c16555bd946.1520885192.git.christophe.jaillet@wanadoo.fr
+If we're probing (silent==1) then don't complain about feature
+incompatibilities that are found if it looks like it's actually
+a different valid extN type - failed probes should be silent
+in this case.
+
+If the on-disk features are unknown even to ext4, then complain.
+
+Reported-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Tested-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/meson/meson_drv.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ fs/ext4/super.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -180,35 +180,43 @@ static int meson_drv_bind_master(struct
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vpu");
- 	regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(regs))
--		return PTR_ERR(regs);
-+	if (IS_ERR(regs)) {
-+		ret = PTR_ERR(regs);
-+		goto free_drm;
-+	}
- 
- 	priv->io_base = regs;
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
- 	/* Simply ioremap since it may be a shared register zone */
- 	regs = devm_ioremap(dev, res->start, resource_size(res));
--	if (!regs)
--		return -EADDRNOTAVAIL;
-+	if (!regs) {
-+		ret = -EADDRNOTAVAIL;
-+		goto free_drm;
-+	}
- 
- 	priv->hhi = devm_regmap_init_mmio(dev, regs,
- 					  &meson_regmap_config);
- 	if (IS_ERR(priv->hhi)) {
- 		dev_err(&pdev->dev, "Couldn't create the HHI regmap\n");
--		return PTR_ERR(priv->hhi);
-+		ret = PTR_ERR(priv->hhi);
-+		goto free_drm;
- 	}
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
- 	/* Simply ioremap since it may be a shared register zone */
- 	regs = devm_ioremap(dev, res->start, resource_size(res));
--	if (!regs)
--		return -EADDRNOTAVAIL;
-+	if (!regs) {
-+		ret = -EADDRNOTAVAIL;
-+		goto free_drm;
-+	}
- 
- 	priv->dmc = devm_regmap_init_mmio(dev, regs,
- 					  &meson_regmap_config);
- 	if (IS_ERR(priv->dmc)) {
- 		dev_err(&pdev->dev, "Couldn't create the DMC regmap\n");
--		return PTR_ERR(priv->dmc);
-+		ret = PTR_ERR(priv->dmc);
-+		goto free_drm;
- 	}
- 
- 	priv->vsync_irq = platform_get_irq(pdev, 0);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3663,6 +3663,12 @@ static int ext4_fill_super(struct super_
+ 			ext4_msg(sb, KERN_INFO, "mounting ext2 file system "
+ 				 "using the ext4 subsystem");
+ 		else {
++			/*
++			 * If we're probing be silent, if this looks like
++			 * it's actually an ext[34] filesystem.
++			 */
++			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
++				goto failed_mount;
+ 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext2 due "
+ 				 "to feature incompatibilities");
+ 			goto failed_mount;
+@@ -3674,6 +3680,12 @@ static int ext4_fill_super(struct super_
+ 			ext4_msg(sb, KERN_INFO, "mounting ext3 file system "
+ 				 "using the ext4 subsystem");
+ 		else {
++			/*
++			 * If we're probing be silent, if this looks like
++			 * it's actually an ext4 filesystem.
++			 */
++			if (silent && ext4_feature_set_ok(sb, sb_rdonly(sb)))
++				goto failed_mount;
+ 			ext4_msg(sb, KERN_ERR, "couldn't mount as ext3 due "
+ 				 "to feature incompatibilities");
+ 			goto failed_mount;
