@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424150AbeE1LLz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:11:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
+        id S938046AbeE1LML (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:12:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424132AbeE1LLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:11:50 -0400
+        id S938090AbeE1LME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:12:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milton Miller <miltonm@us.ibm.com>,
-        Eddie James <eajames@linux.vnet.ibm.com>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 172/272] watchdog: aspeed: Fix translation of reset mode to ctrl register
-Date: Mon, 28 May 2018 12:03:25 +0200
-Message-Id: <20180528100255.226306153@linuxfoundation.org>
+Subject: [PATCH 4.16 177/272] powerpc/powernv/npu: Fix deadlock in mmio_invalidate()
+Date: Mon, 28 May 2018 12:03:30 +0200
+Message-Id: <20180528100255.615047899@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,51 +30,368 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Milton Miller <miltonm@us.ibm.com>
+From: Alistair Popple <alistair@popple.id.au>
 
-[ Upstream commit d2fc8db691bf3197d43b2afb553311a9bf257bff ]
+[ Upstream commit 2b74e2a9b39df40a2b489af2d24079617c61ee0e ]
 
-Assert RESET_SYSTEM bit for any reset and set MODE field from reset
-type.
+When sending TLB invalidates to the NPU we need to send extra flushes due
+to a hardware issue. The original implementation would lock the all the
+ATSD MMIO registers sequentially before unlocking and relocking each of
+them sequentially to do the extra flush.
 
-The watchdog control register has a RESET_SYSTEM bit that is really
-closer to activate a reset, and RESET_SYSTEM_MODE field that chooses
-how much to reset.
+This introduced a deadlock as it is possible for one thread to hold one
+ATSD register whilst waiting for another register to be freed while the
+other thread is holding that register waiting for the one in the first
+thread to be freed.
 
-Before this patch, a node without these optional property would do a
-SOC reset, but a node with properties requesting a cpu or SOC reset
-would do nothing and a node requesting a system reset would do a
-SOC reset.
+For example if there are two threads and two ATSD registers:
 
-Fixes: b7f0b8ad25f3 ("drivers/watchdog: ASPEED reference dev tree properties for config")
-Signed-off-by: Milton Miller <miltonm@us.ibm.com>
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+  Thread A	Thread B
+  ----------------------
+  Acquire 1
+  Acquire 2
+  Release 1	Acquire 1
+  Wait 1	Wait 2
+
+Both threads will be stuck waiting to acquire a register resulting in an
+RCU stall warning or soft lockup.
+
+This patch solves the deadlock by refactoring the code to ensure registers
+are not released between flushes and to ensure all registers are either
+acquired or released together and in order.
+
+Fixes: bbd5ff50afff ("powerpc/powernv/npu-dma: Add explicit flush when sending an ATSD")
+Signed-off-by: Alistair Popple <alistair@popple.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/aspeed_wdt.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/powernv/npu-dma.c |  227 +++++++++++++++++++------------
+ 1 file changed, 140 insertions(+), 87 deletions(-)
 
---- a/drivers/watchdog/aspeed_wdt.c
-+++ b/drivers/watchdog/aspeed_wdt.c
-@@ -234,11 +234,14 @@ static int aspeed_wdt_probe(struct platf
- 		wdt->ctrl |= WDT_CTRL_RESET_MODE_SOC | WDT_CTRL_RESET_SYSTEM;
- 	} else {
- 		if (!strcmp(reset_type, "cpu"))
--			wdt->ctrl |= WDT_CTRL_RESET_MODE_ARM_CPU;
-+			wdt->ctrl |= WDT_CTRL_RESET_MODE_ARM_CPU |
-+				     WDT_CTRL_RESET_SYSTEM;
- 		else if (!strcmp(reset_type, "soc"))
--			wdt->ctrl |= WDT_CTRL_RESET_MODE_SOC;
-+			wdt->ctrl |= WDT_CTRL_RESET_MODE_SOC |
-+				     WDT_CTRL_RESET_SYSTEM;
- 		else if (!strcmp(reset_type, "system"))
--			wdt->ctrl |= WDT_CTRL_RESET_SYSTEM;
-+			wdt->ctrl |= WDT_CTRL_RESET_MODE_FULL_CHIP |
-+				     WDT_CTRL_RESET_SYSTEM;
- 		else if (strcmp(reset_type, "none"))
- 			return -EINVAL;
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -417,6 +417,11 @@ struct npu_context {
+ 	void *priv;
+ };
+ 
++struct mmio_atsd_reg {
++	struct npu *npu;
++	int reg;
++};
++
+ /*
+  * Find a free MMIO ATSD register and mark it in use. Return -ENOSPC
+  * if none are available.
+@@ -426,7 +431,7 @@ static int get_mmio_atsd_reg(struct npu
+ 	int i;
+ 
+ 	for (i = 0; i < npu->mmio_atsd_count; i++) {
+-		if (!test_and_set_bit(i, &npu->mmio_atsd_usage))
++		if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
+ 			return i;
  	}
+ 
+@@ -435,86 +440,90 @@ static int get_mmio_atsd_reg(struct npu
+ 
+ static void put_mmio_atsd_reg(struct npu *npu, int reg)
+ {
+-	clear_bit(reg, &npu->mmio_atsd_usage);
++	clear_bit_unlock(reg, &npu->mmio_atsd_usage);
+ }
+ 
+ /* MMIO ATSD register offsets */
+ #define XTS_ATSD_AVA  1
+ #define XTS_ATSD_STAT 2
+ 
+-static int mmio_launch_invalidate(struct npu *npu, unsigned long launch,
+-				unsigned long va)
++static void mmio_launch_invalidate(struct mmio_atsd_reg *mmio_atsd_reg,
++				unsigned long launch, unsigned long va)
+ {
+-	int mmio_atsd_reg;
+-
+-	do {
+-		mmio_atsd_reg = get_mmio_atsd_reg(npu);
+-		cpu_relax();
+-	} while (mmio_atsd_reg < 0);
++	struct npu *npu = mmio_atsd_reg->npu;
++	int reg = mmio_atsd_reg->reg;
+ 
+ 	__raw_writeq(cpu_to_be64(va),
+-		npu->mmio_atsd_regs[mmio_atsd_reg] + XTS_ATSD_AVA);
++		npu->mmio_atsd_regs[reg] + XTS_ATSD_AVA);
+ 	eieio();
+-	__raw_writeq(cpu_to_be64(launch), npu->mmio_atsd_regs[mmio_atsd_reg]);
+-
+-	return mmio_atsd_reg;
++	__raw_writeq(cpu_to_be64(launch), npu->mmio_atsd_regs[reg]);
+ }
+ 
+-static int mmio_invalidate_pid(struct npu *npu, unsigned long pid, bool flush)
++static void mmio_invalidate_pid(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
++				unsigned long pid, bool flush)
+ {
++	int i;
+ 	unsigned long launch;
+ 
+-	/* IS set to invalidate matching PID */
+-	launch = PPC_BIT(12);
++	for (i = 0; i <= max_npu2_index; i++) {
++		if (mmio_atsd_reg[i].reg < 0)
++			continue;
++
++		/* IS set to invalidate matching PID */
++		launch = PPC_BIT(12);
+ 
+-	/* PRS set to process-scoped */
+-	launch |= PPC_BIT(13);
++		/* PRS set to process-scoped */
++		launch |= PPC_BIT(13);
+ 
+-	/* AP */
+-	launch |= (u64) mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
++		/* AP */
++		launch |= (u64)
++			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
+ 
+-	/* PID */
+-	launch |= pid << PPC_BITLSHIFT(38);
++		/* PID */
++		launch |= pid << PPC_BITLSHIFT(38);
+ 
+-	/* No flush */
+-	launch |= !flush << PPC_BITLSHIFT(39);
++		/* No flush */
++		launch |= !flush << PPC_BITLSHIFT(39);
+ 
+-	/* Invalidating the entire process doesn't use a va */
+-	return mmio_launch_invalidate(npu, launch, 0);
++		/* Invalidating the entire process doesn't use a va */
++		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, 0);
++	}
+ }
+ 
+-static int mmio_invalidate_va(struct npu *npu, unsigned long va,
+-			unsigned long pid, bool flush)
++static void mmio_invalidate_va(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS],
++			unsigned long va, unsigned long pid, bool flush)
+ {
++	int i;
+ 	unsigned long launch;
+ 
+-	/* IS set to invalidate target VA */
+-	launch = 0;
++	for (i = 0; i <= max_npu2_index; i++) {
++		if (mmio_atsd_reg[i].reg < 0)
++			continue;
+ 
+-	/* PRS set to process scoped */
+-	launch |= PPC_BIT(13);
++		/* IS set to invalidate target VA */
++		launch = 0;
+ 
+-	/* AP */
+-	launch |= (u64) mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
++		/* PRS set to process scoped */
++		launch |= PPC_BIT(13);
+ 
+-	/* PID */
+-	launch |= pid << PPC_BITLSHIFT(38);
++		/* AP */
++		launch |= (u64)
++			mmu_get_ap(mmu_virtual_psize) << PPC_BITLSHIFT(17);
+ 
+-	/* No flush */
+-	launch |= !flush << PPC_BITLSHIFT(39);
++		/* PID */
++		launch |= pid << PPC_BITLSHIFT(38);
+ 
+-	return mmio_launch_invalidate(npu, launch, va);
++		/* No flush */
++		launch |= !flush << PPC_BITLSHIFT(39);
++
++		mmio_launch_invalidate(&mmio_atsd_reg[i], launch, va);
++	}
+ }
+ 
+ #define mn_to_npu_context(x) container_of(x, struct npu_context, mn)
+ 
+-struct mmio_atsd_reg {
+-	struct npu *npu;
+-	int reg;
+-};
+-
+ static void mmio_invalidate_wait(
+-	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS], bool flush)
++	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
+ {
+ 	struct npu *npu;
+ 	int i, reg;
+@@ -529,16 +538,67 @@ static void mmio_invalidate_wait(
+ 		reg = mmio_atsd_reg[i].reg;
+ 		while (__raw_readq(npu->mmio_atsd_regs[reg] + XTS_ATSD_STAT))
+ 			cpu_relax();
++	}
++}
++
++/*
++ * Acquires all the address translation shootdown (ATSD) registers required to
++ * launch an ATSD on all links this npu_context is active on.
++ */
++static void acquire_atsd_reg(struct npu_context *npu_context,
++			struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
++{
++	int i, j;
++	struct npu *npu;
++	struct pci_dev *npdev;
++	struct pnv_phb *nphb;
++
++	for (i = 0; i <= max_npu2_index; i++) {
++		mmio_atsd_reg[i].reg = -1;
++		for (j = 0; j < NV_MAX_LINKS; j++) {
++			/*
++			 * There are no ordering requirements with respect to
++			 * the setup of struct npu_context, but to ensure
++			 * consistent behaviour we need to ensure npdev[][] is
++			 * only read once.
++			 */
++			npdev = READ_ONCE(npu_context->npdev[i][j]);
++			if (!npdev)
++				continue;
++
++			nphb = pci_bus_to_host(npdev->bus)->private_data;
++			npu = &nphb->npu;
++			mmio_atsd_reg[i].npu = npu;
++			mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
++			while (mmio_atsd_reg[i].reg < 0) {
++				mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
++				cpu_relax();
++			}
++			break;
++		}
++	}
++}
+ 
+-		put_mmio_atsd_reg(npu, reg);
++/*
++ * Release previously acquired ATSD registers. To avoid deadlocks the registers
++ * must be released in the same order they were acquired above in
++ * acquire_atsd_reg.
++ */
++static void release_atsd_reg(struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS])
++{
++	int i;
+ 
++	for (i = 0; i <= max_npu2_index; i++) {
+ 		/*
+-		 * The GPU requires two flush ATSDs to ensure all entries have
+-		 * been flushed. We use PID 0 as it will never be used for a
+-		 * process on the GPU.
++		 * We can't rely on npu_context->npdev[][] being the same here
++		 * as when acquire_atsd_reg() was called, hence we use the
++		 * values stored in mmio_atsd_reg during the acquire phase
++		 * rather than re-reading npdev[][].
+ 		 */
+-		if (flush)
+-			mmio_invalidate_pid(npu, 0, true);
++		if (mmio_atsd_reg[i].reg < 0)
++			continue;
++
++		put_mmio_atsd_reg(mmio_atsd_reg[i].npu, mmio_atsd_reg[i].reg);
+ 	}
+ }
+ 
+@@ -549,10 +609,6 @@ static void mmio_invalidate_wait(
+ static void mmio_invalidate(struct npu_context *npu_context, int va,
+ 			unsigned long address, bool flush)
+ {
+-	int i, j;
+-	struct npu *npu;
+-	struct pnv_phb *nphb;
+-	struct pci_dev *npdev;
+ 	struct mmio_atsd_reg mmio_atsd_reg[NV_MAX_NPUS];
+ 	unsigned long pid = npu_context->mm->context.id;
+ 
+@@ -568,37 +624,25 @@ static void mmio_invalidate(struct npu_c
+ 	 * Loop over all the NPUs this process is active on and launch
+ 	 * an invalidate.
+ 	 */
+-	for (i = 0; i <= max_npu2_index; i++) {
+-		mmio_atsd_reg[i].reg = -1;
+-		for (j = 0; j < NV_MAX_LINKS; j++) {
+-			npdev = npu_context->npdev[i][j];
+-			if (!npdev)
+-				continue;
++	acquire_atsd_reg(npu_context, mmio_atsd_reg);
++	if (va)
++		mmio_invalidate_va(mmio_atsd_reg, address, pid, flush);
++	else
++		mmio_invalidate_pid(mmio_atsd_reg, pid, flush);
+ 
+-			nphb = pci_bus_to_host(npdev->bus)->private_data;
+-			npu = &nphb->npu;
+-			mmio_atsd_reg[i].npu = npu;
+-
+-			if (va)
+-				mmio_atsd_reg[i].reg =
+-					mmio_invalidate_va(npu, address, pid,
+-							flush);
+-			else
+-				mmio_atsd_reg[i].reg =
+-					mmio_invalidate_pid(npu, pid, flush);
+-
+-			/*
+-			 * The NPU hardware forwards the shootdown to all GPUs
+-			 * so we only have to launch one shootdown per NPU.
+-			 */
+-			break;
+-		}
++	mmio_invalidate_wait(mmio_atsd_reg);
++	if (flush) {
++		/*
++		 * The GPU requires two flush ATSDs to ensure all entries have
++		 * been flushed. We use PID 0 as it will never be used for a
++		 * process on the GPU.
++		 */
++		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
++		mmio_invalidate_wait(mmio_atsd_reg);
++		mmio_invalidate_pid(mmio_atsd_reg, 0, true);
++		mmio_invalidate_wait(mmio_atsd_reg);
+ 	}
+-
+-	mmio_invalidate_wait(mmio_atsd_reg, flush);
+-	if (flush)
+-		/* Wait for the flush to complete */
+-		mmio_invalidate_wait(mmio_atsd_reg, false);
++	release_atsd_reg(mmio_atsd_reg);
+ }
+ 
+ static void pnv_npu2_mn_release(struct mmu_notifier *mn,
+@@ -741,7 +785,16 @@ struct npu_context *pnv_npu2_init_contex
+ 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
+ 							&nvlink_index)))
+ 		return ERR_PTR(-ENODEV);
+-	npu_context->npdev[npu->index][nvlink_index] = npdev;
++
++	/*
++	 * npdev is a pci_dev pointer setup by the PCI code. We assign it to
++	 * npdev[][] to indicate to the mmu notifiers that an invalidation
++	 * should also be sent over this nvlink. The notifiers don't use any
++	 * other fields in npu_context, so we just need to ensure that when they
++	 * deference npu_context->npdev[][] it is either a valid pointer or
++	 * NULL.
++	 */
++	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], npdev);
+ 
+ 	if (!nphb->npu.nmmu_flush) {
+ 		/*
+@@ -793,7 +846,7 @@ void pnv_npu2_destroy_context(struct npu
+ 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
+ 							&nvlink_index)))
+ 		return;
+-	npu_context->npdev[npu->index][nvlink_index] = NULL;
++	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], NULL);
+ 	opal_npu_destroy_context(nphb->opal_id, npu_context->mm->context.id,
+ 				PCI_DEVID(gpdev->bus->number, gpdev->devfn));
+ 	kref_put(&npu_context->kref, pnv_npu2_release_context);
