@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423973AbeE1LKx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:10:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58732 "EHLO mail.kernel.org"
+        id S1424004AbeE1LLG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:11:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423945AbeE1LKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:10:44 -0400
+        id S1423968AbeE1LLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:11:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Michael Lyle <mlyle@lyle.org>, Hannes Reinecke <hare@suse.com>,
-        Huijun Tang <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 147/272] bcache: quit dc->writeback_thread when BCACHE_DEV_DETACHING is set
-Date: Mon, 28 May 2018 12:03:00 +0200
-Message-Id: <20180528100253.359068093@linuxfoundation.org>
+Subject: [PATCH 4.16 119/272] i40e: hold the RTNL lock while changing interrupt schemes
+Date: Mon, 28 May 2018 12:02:32 +0200
+Message-Id: <20180528100251.155863020@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,130 +31,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Coly Li <colyli@suse.de>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-[ Upstream commit fadd94e05c02afec7b70b0b14915624f1782f578 ]
+[ Upstream commit f0ee70a042e267a517e943220e18ae62d3c1995a ]
 
-In patch "bcache: fix cached_dev->count usage for bch_cache_set_error()",
-cached_dev_get() is called when creating dc->writeback_thread, and
-cached_dev_put() is called when exiting dc->writeback_thread. This
-modification works well unless people detach the bcache device manually by
-    'echo 1 > /sys/block/bcache<N>/bcache/detach'
-Because this sysfs interface only calls bch_cached_dev_detach() which wakes
-up dc->writeback_thread but does not stop it. The reason is, before patch
-"bcache: fix cached_dev->count usage for bch_cache_set_error()", inside
-bch_writeback_thread(), if cache is not dirty after writeback,
-cached_dev_put() will be called here. And in cached_dev_make_request() when
-a new write request makes cache from clean to dirty, cached_dev_get() will
-be called there. Since we don't operate dc->count in these locations,
-refcount d->count cannot be dropped after cache becomes clean, and
-cached_dev_detach_finish() won't be called to detach bcache device.
+When we suspend and resume, we need to clear and re-enable the interrupt
+scheme. This was previously not done while holding the RTNL lock, which
+could be problematic, because we are actually destroying and re-creating
+queues.
 
-This patch fixes the issue by checking whether BCACHE_DEV_DETACHING is
-set inside bch_writeback_thread(). If this bit is set and cache is clean
-(no existing writeback_keys), break the while-loop, call cached_dev_put()
-and quit the writeback thread.
+Hold the RTNL lock for the entire sequence of preparing for reset, and
+when resuming. This additionally protects the flags related to interrupt
+scheme under RTNL lock so that their modification is properly threaded.
 
-Please note if cache is still dirty, even BCACHE_DEV_DETACHING is set the
-writeback thread should continue to perform writeback, this is the original
-design of manually detach.
+This is part of a larger effort to remove the need for cmpxchg64 in
+i40e_set_priv_flags().
 
-It is safe to do the following check without locking, let me explain why,
-+	if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
-+	    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
-
-If the kenrel thread does not sleep and continue to run due to conditions
-are not updated in time on the running CPU core, it just consumes more CPU
-cycles and has no hurt. This should-sleep-but-run is safe here. We just
-focus on the should-run-but-sleep condition, which means the writeback
-thread goes to sleep in mistake while it should continue to run.
-1, First of all, no matter the writeback thread is hung or not,
-   kthread_stop() from cached_dev_detach_finish() will wake up it and
-   terminate by making kthread_should_stop() return true. And in normal
-   run time, bit on index BCACHE_DEV_DETACHING is always cleared, the
-   condition
-	!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)
-   is always true and can be ignored as constant value.
-2, If one of the following conditions is true, the writeback thread should
-   go to sleep,
-   "!atomic_read(&dc->has_dirty)" or "!dc->writeback_running)"
-   each of them independently controls the writeback thread should sleep or
-   not, let's analyse them one by one.
-2.1 condition "!atomic_read(&dc->has_dirty)"
-   If dc->has_dirty is set from 0 to 1 on another CPU core, bcache will
-   call bch_writeback_queue() immediately or call bch_writeback_add() which
-   indirectly calls bch_writeback_queue() too. In bch_writeback_queue(),
-   wake_up_process(dc->writeback_thread) is called. It sets writeback
-   thread's task state to TASK_RUNNING and following an implicit memory
-   barrier, then tries to wake up the writeback thread.
-   In writeback thread, its task state is set to TASK_INTERRUPTIBLE before
-   doing the condition check. If other CPU core sets the TASK_RUNNING state
-   after writeback thread setting TASK_INTERRUPTIBLE, the writeback thread
-   will be scheduled to run very soon because its state is not
-   TASK_INTERRUPTIBLE. If other CPU core sets the TASK_RUNNING state before
-   writeback thread setting TASK_INTERRUPTIBLE, the implict memory barrier
-   of wake_up_process() will make sure modification of dc->has_dirty on
-   other CPU core is updated and observed on the CPU core of writeback
-   thread. Therefore the condition check will correctly be false, and
-   continue writeback code without sleeping.
-2.2 condition "!dc->writeback_running)"
-   dc->writeback_running can be changed via sysfs file, every time it is
-   modified, a following bch_writeback_queue() is alwasy called. So the
-   change is always observed on the CPU core of writeback thread. If
-   dc->writeback_running is changed from 0 to 1 on other CPU core, this
-   condition check will observe the modification and allow writeback
-   thread to continue to run without sleeping.
-Now we can see, even without a locking protection, multiple conditions
-check is safe here, no deadlock or process hang up will happen.
-
-I compose a separte patch because that patch "bcache: fix cached_dev->count
-usage for bch_cache_set_error()" already gets a "Reviewed-by:" from Hannes
-Reinecke. Also this fix is not trivial and good for a separate patch.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Huijun Tang <tang.junhui@zte.com.cn>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/writeback.c |   20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c |   19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -565,9 +565,15 @@ static int bch_writeback_thread(void *ar
- 	while (!kthread_should_stop()) {
- 		down_write(&dc->writeback_lock);
- 		set_current_state(TASK_INTERRUPTIBLE);
--		if (!atomic_read(&dc->has_dirty) ||
--		    (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
--		     !dc->writeback_running)) {
-+		/*
-+		 * If the bache device is detaching, skip here and continue
-+		 * to perform writeback. Otherwise, if no dirty data on cache,
-+		 * or there is dirty data on cache but writeback is disabled,
-+		 * the writeback thread should sleep here and wait for others
-+		 * to wake up it.
-+		 */
-+		if (!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags) &&
-+		    (!atomic_read(&dc->has_dirty) || !dc->writeback_running)) {
- 			up_write(&dc->writeback_lock);
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -14216,7 +14216,13 @@ static int __maybe_unused i40e_suspend(s
+ 	if (pf->wol_en && (pf->hw_features & I40E_HW_WOL_MC_MAGIC_PKT_WAKE))
+ 		i40e_enable_mc_magic_wake(pf);
  
- 			if (kthread_should_stop()) {
-@@ -588,6 +594,14 @@ static int bch_writeback_thread(void *ar
- 			cached_dev_put(dc);
- 			SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
- 			bch_write_bdev_super(dc, NULL);
-+			/*
-+			 * If bcache device is detaching via sysfs interface,
-+			 * writeback thread should stop after there is no dirty
-+			 * data on cache. BCACHE_DEV_DETACHING flag is set in
-+			 * bch_cached_dev_detach().
-+			 */
-+			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags))
-+				break;
- 		}
+-	i40e_prep_for_reset(pf, false);
++	/* Since we're going to destroy queues during the
++	 * i40e_clear_interrupt_scheme() we should hold the RTNL lock for this
++	 * whole section
++	 */
++	rtnl_lock();
++
++	i40e_prep_for_reset(pf, true);
  
- 		up_write(&dc->writeback_lock);
+ 	wr32(hw, I40E_PFPM_APM, (pf->wol_en ? I40E_PFPM_APM_APME_MASK : 0));
+ 	wr32(hw, I40E_PFPM_WUFC, (pf->wol_en ? I40E_PFPM_WUFC_MAG_MASK : 0));
+@@ -14228,6 +14234,8 @@ static int __maybe_unused i40e_suspend(s
+ 	 */
+ 	i40e_clear_interrupt_scheme(pf);
+ 
++	rtnl_unlock();
++
+ 	return 0;
+ }
+ 
+@@ -14245,6 +14253,11 @@ static int __maybe_unused i40e_resume(st
+ 	if (!test_bit(__I40E_SUSPENDED, pf->state))
+ 		return 0;
+ 
++	/* We need to hold the RTNL lock prior to restoring interrupt schemes,
++	 * since we're going to be restoring queues
++	 */
++	rtnl_lock();
++
+ 	/* We cleared the interrupt scheme when we suspended, so we need to
+ 	 * restore it now to resume device functionality.
+ 	 */
+@@ -14255,7 +14268,9 @@ static int __maybe_unused i40e_resume(st
+ 	}
+ 
+ 	clear_bit(__I40E_DOWN, pf->state);
+-	i40e_reset_and_rebuild(pf, false, false);
++	i40e_reset_and_rebuild(pf, false, true);
++
++	rtnl_unlock();
+ 
+ 	/* Clear suspended state last after everything is recovered */
+ 	clear_bit(__I40E_SUSPENDED, pf->state);
