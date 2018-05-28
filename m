@@ -1,198 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968925AbeE1NoP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:44:15 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:41169 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968564AbeE1NoI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 09:44:08 -0400
-Subject: Re: [PATCH 9/9] clk: davinci: Fix link errors when not all SoCs are
- enabled
-To: David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Kevin Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-10-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a1b62396-534c-bc68-63a4-ac493690a3e7@ti.com>
-Date: Mon, 28 May 2018 19:13:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S968950AbeE1Noa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:44:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162682AbeE1Kn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:43:27 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, greg@kroah.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 053/496] powerpc: Move default security feature flags
+Date: Mon, 28 May 2018 11:57:18 +0200
+Message-Id: <20180528100322.013305140@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180525181150.17873-10-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 25 May 2018 11:41 PM, David Lechner wrote:
-> This fixes linker errors due to undefined symbols when one or more of
-> the TI DaVinci SoCs is not enabled in the kernel config.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  drivers/clk/davinci/pll.c   | 16 ++++++++++++++++
->  drivers/clk/davinci/pll.h   | 11 ++++++++---
->  drivers/clk/davinci/psc.c   | 14 ++++++++++++++
->  drivers/clk/davinci/psc.h   | 12 ++++++++++++
->  include/linux/clk/davinci.h | 19 +++++++++++++++----
->  5 files changed, 65 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-> index 84a343060bc8..65abd371692d 100644
-> --- a/drivers/clk/davinci/pll.c
-> +++ b/drivers/clk/davinci/pll.c
-> @@ -860,25 +860,41 @@ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *de
->  }
->  
->  /* needed in early boot for clocksource/clockevent */
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
-> +#endif
->  
->  static const struct of_device_id davinci_pll_of_match[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
-> +#endif
->  	{ }
->  };
->  
->  static const struct platform_device_id davinci_pll_id_table[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA830
->  	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
->  	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
->  	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM365
->  	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
->  	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
->  	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  	{ .name = "dm646x-pll1", .driver_data = (kernel_ulong_t)dm646x_pll1_init },
->  	{ .name = "dm646x-pll2", .driver_data = (kernel_ulong_t)dm646x_pll2_init },
-> +#endif
->  	{ }
->  };
->  
-> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-> index b2e5c4496645..7cc354dd29e2 100644
-> --- a/drivers/clk/davinci/pll.h
-> +++ b/drivers/clk/davinci/pll.h
-> @@ -122,14 +122,19 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
->  
->  /* Platform-specific callbacks */
->  
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
->  void of_da850_pll0_init(struct device_node *node);
->  int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> -
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> -
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> -
-> +#endif
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-The traditional way of dealing with this for functions is to provide a
-static inline stub when CONFIG_ARCH_DAVINCI_DM644x is not defined. Can
-we use that? That helps in avoiding ifdefs elsewhere.
+------------------
 
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> +#endif
->  
->  #endif /* __CLK_DAVINCI_PLL_H___ */
-> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-> index 6326ba1fe3cc..fffbed5e263b 100644
-> --- a/drivers/clk/davinci/psc.c
-> +++ b/drivers/clk/davinci/psc.c
-> @@ -513,20 +513,34 @@ int of_davinci_psc_clk_init(struct device *dev,
->  }
->  
->  static const struct of_device_id davinci_psc_of_match[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .compatible = "ti,da850-psc0", .data = &of_da850_psc0_init_data },
->  	{ .compatible = "ti,da850-psc1", .data = &of_da850_psc1_init_data },
-> +#endif
->  	{ }
->  };
->  
->  static const struct platform_device_id davinci_psc_id_table[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA830
->  	{ .name = "da830-psc0", .driver_data = (kernel_ulong_t)&da830_psc0_init_data },
->  	{ .name = "da830-psc1", .driver_data = (kernel_ulong_t)&da830_psc1_init_data },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
->  	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM365
->  	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  	{ .name = "dm644x-psc", .driver_data = (kernel_ulong_t)&dm644x_psc_init_data },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  	{ .name = "dm646x-psc", .driver_data = (kernel_ulong_t)&dm646x_psc_init_data },
-> +#endif
->  	{ }
->  };
->  
-> diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-> index c2a7df6413fe..6a42529d31a9 100644
-> --- a/drivers/clk/davinci/psc.h
-> +++ b/drivers/clk/davinci/psc.h
-> @@ -94,15 +94,27 @@ struct davinci_psc_init_data {
->  	int (*psc_init)(struct device *dev, void __iomem *base);
->  };
->  
-> +#ifdef CONFIG_ARCH_DAVINCI_DA830
->  extern const struct davinci_psc_init_data da830_psc0_init_data;
->  extern const struct davinci_psc_init_data da830_psc1_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  extern const struct davinci_psc_init_data da850_psc0_init_data;
->  extern const struct davinci_psc_init_data da850_psc1_init_data;
->  extern const struct davinci_psc_init_data of_da850_psc0_init_data;
->  extern const struct davinci_psc_init_data of_da850_psc1_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  extern const struct davinci_psc_init_data dm355_psc_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM356
->  extern const struct davinci_psc_init_data dm365_psc_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  extern const struct davinci_psc_init_data dm644x_psc_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  extern const struct davinci_psc_init_data dm646x_psc_init_data;
-> +#endif
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 
-ifdefs around these extern declarations are not needed.
+commit e7347a86830f38dc3e40c8f7e28c04412b12a2e7 upstream.
 
-Thanks,
-Sekhar
+This moves the definition of the default security feature flags
+(i.e., enabled by default) closer to the security feature flags.
+
+This can be used to restore current flags to the default flags.
+
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/include/asm/security_features.h |    8 ++++++++
+ arch/powerpc/kernel/security.c               |    7 +------
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+--- a/arch/powerpc/include/asm/security_features.h
++++ b/arch/powerpc/include/asm/security_features.h
+@@ -63,4 +63,12 @@ static inline bool security_ftr_enabled(
+ // Firmware configuration indicates user favours security over performance
+ #define SEC_FTR_FAVOUR_SECURITY		0x0000000000000200ull
+ 
++
++// Features enabled by default
++#define SEC_FTR_DEFAULT \
++	(SEC_FTR_L1D_FLUSH_HV | \
++	 SEC_FTR_L1D_FLUSH_PR | \
++	 SEC_FTR_BNDS_CHK_SPEC_BAR | \
++	 SEC_FTR_FAVOUR_SECURITY)
++
+ #endif /* _ASM_POWERPC_SECURITY_FEATURES_H */
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -11,12 +11,7 @@
+ #include <asm/security_features.h>
+ 
+ 
+-unsigned long powerpc_security_features __read_mostly = \
+-	SEC_FTR_L1D_FLUSH_HV | \
+-	SEC_FTR_L1D_FLUSH_PR | \
+-	SEC_FTR_BNDS_CHK_SPEC_BAR | \
+-	SEC_FTR_FAVOUR_SECURITY;
+-
++unsigned long powerpc_security_features __read_mostly = SEC_FTR_DEFAULT;
+ 
+ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ {
