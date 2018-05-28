@@ -1,64 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938053AbeE1K6m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:58:42 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41694 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938038AbeE1K6e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:58:34 -0400
-X-Google-Smtp-Source: AB8JxZpdBTk5bw0E3plFo8LVXaJQxDQkZyb/2/JaCHK5qsYUibPNy6Sbn45epTKZcJGUyC0JoChzIA==
-Date: Mon, 28 May 2018 16:28:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: arm@kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 13/15] arm: dts: r8a7743: Add missing OPP properties for
- CPUs
-Message-ID: <20180528105831.vesrswazlagynemq@vireshk-i7>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
- <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
+        id S938035AbeE1K6d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:58:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937983AbeE1K62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:58:28 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 351/496] net: bgmac: Correctly annotate register space
+Date: Mon, 28 May 2018 12:02:16 +0200
+Message-Id: <20180528100334.600880138@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
+References: <20180528100319.498712256@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-05-18, 11:23, Simon Horman wrote:
-> [Cc Biju Das]
-> 
-> On Fri, May 25, 2018 at 04:01:59PM +0530, Viresh Kumar wrote:
-> > The OPP properties, like "operating-points", should either be present
-> > for all the CPUs of a cluster or none. If these are present only for a
-> > subset of CPUs of a cluster then things will start falling apart as soon
-> > as the CPUs are brought online in a different order. For example, this
-> > will happen because the operating system looks for such properties in
-> > the CPU node it is trying to bring up, so that it can create an OPP
-> > table.
-> > 
-> > Add such missing properties.
-> > 
-> > Fix other missing property (clock latency) as well to make it all
-> > work.
-> > 
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Thanks, this looks good to me and it looks like it should have:
-> 
-> Fixes: 0417814ea140 ("ARM: dts: r8a7743: Add OPP table for frequency scaling")
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Sure.
+------------------
 
-Will you be picking this patch directly and send it part of your pull
-request ? Maybe add Fixes tag then only ?
+From: Florian Fainelli <f.fainelli@gmail.com>
 
--- 
-viresh
+[ Upstream commit 16a1c0646e55c3345bce8e4edfc06ad119d27c04 ]
+
+All the members: base, idm_base and nicpm_base should be annotated with
+__iomem since they are pointers to register space. This fixes a bunch of
+sparse reported warnings.
+
+Fixes: f6a95a24957a ("net: ethernet: bgmac: Add platform device support")
+Fixes: dd5c5d037f5e ("net: ethernet: bgmac: add NS2 support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/broadcom/bgmac.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/net/ethernet/broadcom/bgmac.h
++++ b/drivers/net/ethernet/broadcom/bgmac.h
+@@ -479,9 +479,9 @@ struct bgmac_rx_header {
+ struct bgmac {
+ 	union {
+ 		struct {
+-			void *base;
+-			void *idm_base;
+-			void *nicpm_base;
++			void __iomem *base;
++			void __iomem *idm_base;
++			void __iomem *nicpm_base;
+ 		} plat;
+ 		struct {
+ 			struct bcma_device *core;
