@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936970AbeE1K3J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:29:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48324 "EHLO mail.kernel.org"
+        id S937250AbeE1K2y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:28:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937229AbeE1K24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:56 -0400
+        id S937229AbeE1K2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Spencer <aspencer@spacex.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 062/329] gianfar: prevent integer wrapping in the rx handler
-Date: Mon, 28 May 2018 11:59:51 +0200
-Message-Id: <20180528100247.966660810@linuxfoundation.org>
+Subject: [PATCH 4.9 059/329] powerpc/numa: Ensure nodes initialized for hotplug
+Date: Mon, 28 May 2018 11:59:48 +0200
+Message-Id: <20180528100247.705009200@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,81 +31,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Spencer <aspencer@spacex.com>
+From: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-[ Upstream commit 202a0a70e445caee1d0ec7aae814e64b1189fa4d ]
+[ Upstream commit ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6 ]
 
-When the frame check sequence (FCS) is split across the last two frames
-of a fragmented packet, part of the FCS gets counted twice, once when
-subtracting the FCS, and again when subtracting the previously received
-data.
+This patch fixes some problems encountered at runtime with
+configurations that support memory-less nodes, or that hot-add CPUs
+into nodes that are memoryless during system execution after boot. The
+problems of interest include:
 
-For example, if 1602 bytes are received, and the first fragment contains
-the first 1600 bytes (including the first two bytes of the FCS), and the
-second fragment contains the last two bytes of the FCS:
+* Nodes known to powerpc to be memoryless at boot, but to have CPUs in
+  them are allowed to be 'possible' and 'online'. Memory allocations
+  for those nodes are taken from another node that does have memory
+  until and if memory is hot-added to the node.
 
-  'skb->len == 1600' from the first fragment
+* Nodes which have no resources assigned at boot, but which may still
+  be referenced subsequently by affinity or associativity attributes,
+  are kept in the list of 'possible' nodes for powerpc. Hot-add of
+  memory or CPUs to the system can reference these nodes and bring
+  them online instead of redirecting the references to one of the set
+  of nodes known to have memory at boot.
 
-  size  = lstatus & BD_LENGTH_MASK; # 1602
-  size -= ETH_FCS_LEN;              # 1598
-  size -= skb->len;                 # -2
+Note that this software operates under the context of CPU hotplug. We
+are not doing memory hotplug in this code, but rather updating the
+kernel's CPU topology (i.e. arch_update_cpu_topology /
+numa_update_cpu_topology). We are initializing a node that may be used
+by CPUs or memory before it can be referenced as invalid by a CPU
+hotplug operation. CPU hotplug operations are protected by a range of
+APIs including cpu_maps_update_begin/cpu_maps_update_done,
+cpus_read/write_lock / cpus_read/write_unlock, device locks, and more.
+Memory hotplug operations, including try_online_node, are protected by
+mem_hotplug_begin/mem_hotplug_done, device locks, and more. In the
+case of CPUs being hot-added to a previously memoryless node, the
+try_online_node operation occurs wholly within the CPU locks with no
+overlap. Using HMC hot-add/hot-remove operations, we have been able to
+add and remove CPUs to any possible node without failures. HMC
+operations involve a degree self-serialization, though.
 
-Since the size is unsigned, it wraps around and causes a BUG later in
-the packet handling, as shown below:
-
-  kernel BUG at ./include/linux/skbuff.h:2068!
-  Oops: Exception in kernel mode, sig: 5 [#1]
-  ...
-  NIP [c021ec60] skb_pull+0x24/0x44
-  LR [c01e2fbc] gfar_clean_rx_ring+0x498/0x690
-  Call Trace:
-  [df7edeb0] [c01e2c1c] gfar_clean_rx_ring+0xf8/0x690 (unreliable)
-  [df7edf20] [c01e33a8] gfar_poll_rx_sq+0x3c/0x9c
-  [df7edf40] [c023352c] net_rx_action+0x21c/0x274
-  [df7edf90] [c0329000] __do_softirq+0xd8/0x240
-  [df7edff0] [c000c108] call_do_irq+0x24/0x3c
-  [c0597e90] [c00041dc] do_IRQ+0x64/0xc4
-  [c0597eb0] [c000d920] ret_from_except+0x0/0x18
-  --- interrupt: 501 at arch_cpu_idle+0x24/0x5c
-
-Change the size to a signed integer and then trim off any part of the
-FCS that was received prior to the last fragment.
-
-Fixes: 6c389fc931bc ("gianfar: fix size of scatter-gathered frames")
-Signed-off-by: Andy Spencer <aspencer@spacex.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Reviewed-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/gianfar.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/numa.c |   47 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -2935,7 +2935,7 @@ static irqreturn_t gfar_transmit(int irq
- static bool gfar_add_rx_frag(struct gfar_rx_buff *rxb, u32 lstatus,
- 			     struct sk_buff *skb, bool first)
- {
--	unsigned int size = lstatus & BD_LENGTH_MASK;
-+	int size = lstatus & BD_LENGTH_MASK;
- 	struct page *page = rxb->page;
- 	bool last = !!(lstatus & BD_LFLAG(RXBD_LAST));
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -551,7 +551,7 @@ static int numa_setup_cpu(unsigned long
+ 	nid = of_node_to_nid_single(cpu);
  
-@@ -2950,11 +2950,16 @@ static bool gfar_add_rx_frag(struct gfar
- 		if (last)
- 			size -= skb->len;
+ out_present:
+-	if (nid < 0 || !node_online(nid))
++	if (nid < 0 || !node_possible(nid))
+ 		nid = first_online_node;
  
--		/* in case the last fragment consisted only of the FCS */
-+		/* Add the last fragment if it contains something other than
-+		 * the FCS, otherwise drop it and trim off any part of the FCS
-+		 * that was already received.
-+		 */
- 		if (size > 0)
- 			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page,
- 					rxb->page_offset + RXBUF_ALIGNMENT,
- 					size, GFAR_RXB_TRUESIZE);
-+		else if (size < 0)
-+			pskb_trim(skb, skb->len + size);
+ 	map_cpu_to_node(lcpu, nid);
+@@ -922,10 +922,8 @@ static void __init find_possible_nodes(v
+ 		goto out;
+ 
+ 	for (i = 0; i < numnodes; i++) {
+-		if (!node_possible(i)) {
+-			setup_node_data(i, 0, 0);
++		if (!node_possible(i))
+ 			node_set(i, node_possible_map);
+-		}
  	}
  
- 	/* try reuse page */
+ out:
+@@ -1305,6 +1303,40 @@ static long vphn_get_associativity(unsig
+ 	return rc;
+ }
+ 
++static inline int find_and_online_cpu_nid(int cpu)
++{
++	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
++	int new_nid;
++
++	/* Use associativity from first thread for all siblings */
++	vphn_get_associativity(cpu, associativity);
++	new_nid = associativity_to_nid(associativity);
++	if (new_nid < 0 || !node_possible(new_nid))
++		new_nid = first_online_node;
++
++	if (NODE_DATA(new_nid) == NULL) {
++#ifdef CONFIG_MEMORY_HOTPLUG
++		/*
++		 * Need to ensure that NODE_DATA is initialized for a node from
++		 * available memory (see memblock_alloc_try_nid). If unable to
++		 * init the node, then default to nearest node that has memory
++		 * installed.
++		 */
++		if (try_online_node(new_nid))
++			new_nid = first_online_node;
++#else
++		/*
++		 * Default to using the nearest node that has memory installed.
++		 * Otherwise, it would be necessary to patch the kernel MM code
++		 * to deal with more memoryless-node error conditions.
++		 */
++		new_nid = first_online_node;
++#endif
++	}
++
++	return new_nid;
++}
++
+ /*
+  * Update the CPU maps and sysfs entries for a single CPU when its NUMA
+  * characteristics change. This function doesn't perform any locking and is
+@@ -1370,7 +1402,6 @@ int arch_update_cpu_topology(void)
+ {
+ 	unsigned int cpu, sibling, changed = 0;
+ 	struct topology_update_data *updates, *ud;
+-	__be32 associativity[VPHN_ASSOC_BUFSIZE] = {0};
+ 	cpumask_t updated_cpus;
+ 	struct device *dev;
+ 	int weight, new_nid, i = 0;
+@@ -1405,11 +1436,7 @@ int arch_update_cpu_topology(void)
+ 			continue;
+ 		}
+ 
+-		/* Use associativity from first thread for all siblings */
+-		vphn_get_associativity(cpu, associativity);
+-		new_nid = associativity_to_nid(associativity);
+-		if (new_nid < 0 || !node_online(new_nid))
+-			new_nid = first_online_node;
++		new_nid = find_and_online_cpu_nid(cpu);
+ 
+ 		if (new_nid == numa_cpu_lookup_table[cpu]) {
+ 			cpumask_andnot(&cpu_associativity_changes_mask,
