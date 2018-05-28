@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033373AbeE1KVk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:21:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41006 "EHLO mail.kernel.org"
+        id S1033389AbeE1KVp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:21:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032240AbeE1KV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:21:29 -0400
+        id S1033328AbeE1KVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:21:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Carroll <david.carroll@microsemi.com>,
-        Raghava Aditya Renukunta
-        <raghavaaditya.renukunta@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Esben Haabendal <eha@deif.com>,
+        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 165/268] scsi: aacraid: Insure command thread is not recursively stopped
-Date: Mon, 28 May 2018 12:02:19 +0200
-Message-Id: <20180528100221.108624532@linuxfoundation.org>
+Subject: [PATCH 4.4 166/268] dp83640: Ensure against premature access to PHY registers after reset
+Date: Mon, 28 May 2018 12:02:20 +0200
+Message-Id: <20180528100221.183310565@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -32,87 +30,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Carroll <david.carroll@microsemi.com>
+From: Esben Haabendal <eha@deif.com>
 
-[ Upstream commit 1c6b41fb92936fa5facea464d5d7cbf855966d04 ]
+[ Upstream commit 76327a35caabd1a932e83d6a42b967aa08584e5d ]
 
-If a recursive IOP_RESET is invoked, usually due to the eh_thread
-handling errors after the first reset, be sure we flag that the command
-thread has been stopped to avoid an Oops of the form;
+The datasheet specifies a 3uS pause after performing a software
+reset. The default implementation of genphy_soft_reset() does not
+provide this, so implement soft_reset with the needed pause.
 
- [ 336.620256] CPU: 28 PID: 1193 Comm: scsi_eh_0 Kdump: loaded Not tainted 4.14.0-49.el7a.ppc64le #1
- [ 336.620297] task: c000003fd630b800 task.stack: c000003fd61a4000
- [ 336.620326] NIP: c000000000176794 LR: c00000000013038c CTR: c00000000024bc10
- [ 336.620361] REGS: c000003fd61a7720 TRAP: 0300 Not tainted (4.14.0-49.el7a.ppc64le)
- [ 336.620395] MSR: 9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE> CR: 22084022 XER: 20040000
- [ 336.620435] CFAR: c000000000130388 DAR: 0000000000000000 DSISR: 40000000 SOFTE: 1
- [ 336.620435] GPR00: c00000000013038c c000003fd61a79a0 c0000000014c7e00 0000000000000000
- [ 336.620435] GPR04: 000000000000000c 000000000000000c 9000000000009033 0000000000000477
- [ 336.620435] GPR08: 0000000000000477 0000000000000000 0000000000000000 c008000010f7d940
- [ 336.620435] GPR12: c00000000024bc10 c000000007a33400 c0000000001708a8 c000003fe3b881d8
- [ 336.620435] GPR16: c000003fe3b88060 c000003fd61a7d10 fffffffffffff000 000000000000001e
- [ 336.620435] GPR20: 0000000000000001 c000000000ebf1a0 0000000000000001 c000003fe3b88000
- [ 336.620435] GPR24: 0000000000000003 0000000000000002 c000003fe3b88840 c000003fe3b887e8
- [ 336.620435] GPR28: c000003fe3b88000 c000003fc8181788 0000000000000000 c000003fc8181700
- [ 336.620750] NIP [c000000000176794] exit_creds+0x34/0x160
- [ 336.620775] LR [c00000000013038c] __put_task_struct+0x8c/0x1f0
- [ 336.620804] Call Trace:
- [ 336.620817] [c000003fd61a79a0] [c000003fe3b88000] 0xc000003fe3b88000 (unreliable)
- [ 336.620853] [c000003fd61a79d0] [c00000000013038c] __put_task_struct+0x8c/0x1f0
- [ 336.620889] [c000003fd61a7a00] [c000000000171418] kthread_stop+0x1e8/0x1f0
- [ 336.620922] [c000003fd61a7a40] [c008000010f7448c] aac_reset_adapter+0x14c/0x8d0 [aacraid]
- [ 336.620959] [c000003fd61a7b00] [c008000010f60174] aac_eh_host_reset+0x84/0x100 [aacraid]
- [ 336.621010] [c000003fd61a7b30] [c000000000864f24] scsi_try_host_reset+0x74/0x180
- [ 336.621046] [c000003fd61a7bb0] [c000000000867ac0] scsi_eh_ready_devs+0xc00/0x14d0
- [ 336.625165] [c000003fd61a7ca0] [c0000000008699e0] scsi_error_handler+0x550/0x730
- [ 336.632101] [c000003fd61a7dc0] [c000000000170a08] kthread+0x168/0x1b0
- [ 336.639031] [c000003fd61a7e30] [c00000000000b528] ret_from_kernel_thread+0x5c/0xb4
- [ 336.645971] Instruction dump:
- [ 336.648743] 384216a0 7c0802a6 fbe1fff8 f8010010 f821ffd1 7c7f1b78 60000000 60000000
- [ 336.657056] 39400000 e87f0838 f95f0838 7c0004ac <7d401828> 314affff 7d40192d 40c2fff4
- [ 336.663997] -[ end trace 4640cf8d4945ad95 ]-
-
-So flag when the thread is stopped by setting the thread pointer to NULL.
-
-Signed-off-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Raghava Aditya Renukunta <raghavaaditya.renukunta@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Esben Haabendal <eha@deif.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/aacraid/commsup.c |    4 +++-
- drivers/scsi/aacraid/linit.c   |    1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/phy/dp83640.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -1321,9 +1321,10 @@ static int _aac_reset_adapter(struct aac
- 	host = aac->scsi_host_ptr;
- 	scsi_block_requests(host);
- 	aac_adapter_disable_int(aac);
--	if (aac->thread->pid != current->pid) {
-+	if (aac->thread && aac->thread->pid != current->pid) {
- 		spin_unlock_irq(host->host_lock);
- 		kthread_stop(aac->thread);
-+		aac->thread = NULL;
- 		jafo = 1;
- 	}
+--- a/drivers/net/phy/dp83640.c
++++ b/drivers/net/phy/dp83640.c
+@@ -1203,6 +1203,23 @@ static void dp83640_remove(struct phy_de
+ 	kfree(dp83640);
+ }
  
-@@ -1392,6 +1393,7 @@ static int _aac_reset_adapter(struct aac
- 					  aac->name);
- 		if (IS_ERR(aac->thread)) {
- 			retval = PTR_ERR(aac->thread);
-+			aac->thread = NULL;
- 			goto out;
- 		}
- 	}
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1085,6 +1085,7 @@ static void __aac_shutdown(struct aac_de
- 				up(&fib->event_wait);
- 		}
- 		kthread_stop(aac->thread);
-+		aac->thread = NULL;
- 	}
- 	aac_send_shutdown(aac);
- 	aac_adapter_disable_int(aac);
++static int dp83640_soft_reset(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = genphy_soft_reset(phydev);
++	if (ret < 0)
++		return ret;
++
++	/* From DP83640 datasheet: "Software driver code must wait 3 us
++	 * following a software reset before allowing further serial MII
++	 * operations with the DP83640."
++	 */
++	udelay(10);		/* Taking udelay inaccuracy into account */
++
++	return 0;
++}
++
+ static int dp83640_config_init(struct phy_device *phydev)
+ {
+ 	struct dp83640_private *dp83640 = phydev->priv;
+@@ -1496,6 +1513,7 @@ static struct phy_driver dp83640_driver
+ 	.flags		= PHY_HAS_INTERRUPT,
+ 	.probe		= dp83640_probe,
+ 	.remove		= dp83640_remove,
++	.soft_reset	= dp83640_soft_reset,
+ 	.config_init	= dp83640_config_init,
+ 	.config_aneg	= genphy_config_aneg,
+ 	.read_status	= genphy_read_status,
