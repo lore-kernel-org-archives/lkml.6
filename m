@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161114AbeE1Ka3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:30:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49910 "EHLO mail.kernel.org"
+        id S1161135AbeE1Kai (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:30:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937261AbeE1KaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:23 -0400
+        id S1161117AbeE1Kab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 094/329] bcache: fix for data collapse after re-attaching an attached device
-Date: Mon, 28 May 2018 12:00:23 +0200
-Message-Id: <20180528100250.644382160@linuxfoundation.org>
+Subject: [PATCH 4.9 097/329] bpf: fix rlimit in reuseport net selftest
+Date: Mon, 28 May 2018 12:00:26 +0200
+Message-Id: <20180528100250.891100222@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,119 +31,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
+[ Upstream commit 941ff6f11c020913f5cddf543a9ec63475d7c082 ]
 
-back-end device sdm has already attached a cache_set with ID
-f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
-another cache set, and it returns with an error:
-[root]# cd /sys/block/sdm/bcache
-[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
--bash: echo: write error: Invalid argument
+Fix two issues in the reuseport_bpf selftests that were
+reported by Linaro CI:
 
-After that, execute a command to modify the label of bcache
-device:
-[root]# echo data_disk1 > label
+  [...]
+  + ./reuseport_bpf
+  ---- IPv4 UDP ----
+  Testing EBPF mod 10...
+  Reprograming, testing mod 5...
+  ./reuseport_bpf: ebpf error. log:
+  0: (bf) r6 = r1
+  1: (20) r0 = *(u32 *)skb[0]
+  2: (97) r0 %= 10
+  3: (95) exit
+  processed 4 insns
+  : Operation not permitted
+  + echo FAIL
+  [...]
+  ---- IPv4 TCP ----
+  Testing EBPF mod 10...
+  ./reuseport_bpf: failed to bind send socket: Address already in use
+  + echo FAIL
+  [...]
 
-Then we reboot the system, when the system power on, the back-end
-device can not attach to cache_set, a messages show in the log:
-Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
-bch_cached_dev_attach() couldn't find uuid for sdm in set
+For the former adjust rlimit since this was the cause of
+failure for loading the BPF prog, and for the latter add
+SO_REUSEADDR.
 
-In sysfs_attach(), dc->sb.set_uuid was assigned to the value
-which input through sysfs, no matter whether it is success
-or not in bch_cached_dev_attach(). For example, If the back-end
-device has already attached to an cache set, bch_cached_dev_attach()
-would fail, but dc->sb.set_uuid was changed. Then modify the
-label of bcache device, it will call bch_write_bdev_super(),
-which would write the dc->sb.set_uuid to the super block, so we
-record a wrong cache set ID in the super block, after the system
-reboot, the cache set couldn't find the uuid of the back-end
-device, so the bcache device couldn't exist and use any more.
-
-In this patch, we don't assigned cache set ID to dc->sb.set_uuid
-in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
-and assigned dc->sb.set_uuid to the cache set ID after the back-end
-device attached to the cache set successful.
-
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Link: https://bugs.linaro.org/show_bug.cgi?id=3502
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/bcache.h |    2 +-
- drivers/md/bcache/super.c  |   10 ++++++----
- drivers/md/bcache/sysfs.c  |    6 ++++--
- 3 files changed, 11 insertions(+), 7 deletions(-)
+ tools/testing/selftests/net/reuseport_bpf.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -904,7 +904,7 @@ void bcache_write_super(struct cache_set
+--- a/tools/testing/selftests/net/reuseport_bpf.c
++++ b/tools/testing/selftests/net/reuseport_bpf.c
+@@ -21,6 +21,7 @@
+ #include <sys/epoll.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
++#include <sys/resource.h>
+ #include <unistd.h>
  
- int bch_flash_dev_create(struct cache_set *c, uint64_t size);
+ #ifndef ARRAY_SIZE
+@@ -190,11 +191,14 @@ static void send_from(struct test_params
+ 	struct sockaddr * const saddr = new_any_sockaddr(p.send_family, sport);
+ 	struct sockaddr * const daddr =
+ 		new_loopback_sockaddr(p.send_family, p.recv_port);
+-	const int fd = socket(p.send_family, p.protocol, 0);
++	const int fd = socket(p.send_family, p.protocol, 0), one = 1;
  
--int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
-+int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
- void bch_cached_dev_detach(struct cached_dev *);
- void bch_cached_dev_run(struct cached_dev *);
- void bcache_device_stop(struct bcache_device *);
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -938,7 +938,8 @@ void bch_cached_dev_detach(struct cached
- 	cached_dev_put(dc);
+ 	if (fd < 0)
+ 		error(1, errno, "failed to create send socket");
+ 
++	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)))
++		error(1, errno, "failed to set reuseaddr");
++
+ 	if (bind(fd, saddr, sockaddr_size()))
+ 		error(1, errno, "failed to bind send socket");
+ 
+@@ -433,6 +437,21 @@ void enable_fastopen(void)
+ 	}
  }
  
--int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
-+int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
-+			  uint8_t *set_uuid)
- {
- 	uint32_t rtime = cpu_to_le32(get_seconds());
- 	struct uuid_entry *u;
-@@ -947,7 +948,8 @@ int bch_cached_dev_attach(struct cached_
- 
- 	bdevname(dc->bdev, buf);
- 
--	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
-+	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
-+	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
- 		return -ENOENT;
- 
- 	if (dc->disk.c) {
-@@ -1191,7 +1193,7 @@ static void register_bdev(struct cache_s
- 
- 	list_add(&dc->list, &uncached_devices);
- 	list_for_each_entry(c, &bch_cache_sets, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
- 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
-@@ -1714,7 +1716,7 @@ static void run_cache_set(struct cache_s
- 	bcache_write_super(c);
- 
- 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	flash_devs_run(c);
- 
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -263,11 +263,13 @@ STORE(__cached_dev)
- 	}
- 
- 	if (attr == &sysfs_attach) {
--		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
-+		uint8_t		set_uuid[16];
++static struct rlimit rlim_old, rlim_new;
 +
-+		if (bch_parse_uuid(buf, set_uuid) < 16)
- 			return -EINVAL;
- 
- 		list_for_each_entry(c, &bch_cache_sets, list) {
--			v = bch_cached_dev_attach(dc, c);
-+			v = bch_cached_dev_attach(dc, c, set_uuid);
- 			if (!v)
- 				return size;
- 		}
++static  __attribute__((constructor)) void main_ctor(void)
++{
++	getrlimit(RLIMIT_MEMLOCK, &rlim_old);
++	rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
++	rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
++	setrlimit(RLIMIT_MEMLOCK, &rlim_new);
++}
++
++static __attribute__((destructor)) void main_dtor(void)
++{
++	setrlimit(RLIMIT_MEMLOCK, &rlim_old);
++}
++
+ int main(void)
+ {
+ 	fprintf(stderr, "---- IPv4 UDP ----\n");
