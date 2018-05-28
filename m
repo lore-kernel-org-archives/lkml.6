@@ -1,185 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753879AbeE1Hna (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:43:30 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38305 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753612AbeE1HnZ (ORCPT
+        id S1753920AbeE1Hok (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:44:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56674 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753884AbeE1Hoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:43:25 -0400
-X-Google-Smtp-Source: AB8JxZqiM1MKldCxZZg9jAYfxqK4qrDBayHr3HmpQCEDiZiuZOF4ACKRVcEYfix7FcNJa709WX6UNQ==
-Date: Mon, 28 May 2018 09:42:58 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        davem@davemloft.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>, linux-usb@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] Documentation: usb: add documentation for USB
- CCID Gadget Device
-Message-ID: <20180528074258.GA4651@gmail.com>
-References: <20180526211940.25474-1-marcus.folkesson@gmail.com>
- <20180526211940.25474-2-marcus.folkesson@gmail.com>
- <2225254e-a8f1-570e-8b1c-f68168376784@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2225254e-a8f1-570e-8b1c-f68168376784@infradead.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 28 May 2018 03:44:39 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf docu: Update section on cpu topology
+Date: Mon, 28 May 2018 09:44:33 +0200
+X-Mailer: git-send-email 2.16.3
+X-TM-AS-GCONF: 00
+x-cbid: 18052807-0040-0000-0000-0000045E15CA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052807-0041-0000-0000-00002102803B
+Message-Id: <20180528074433.16652-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805280095
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+Add an explanation of each cpu's core and socket
+identifier to the documentation.
 
-On Sun, May 27, 2018 at 04:36:24PM -0700, Randy Dunlap wrote:
-> Hi,
-> 
-> I have a few documentation comments below...
-> 
-> On 05/26/2018 02:19 PM, Marcus Folkesson wrote:
-> > Add documentation to give a brief description on how to use the
-> > CCID Gadget Device.
-> > This includes a description for all attributes followed by an example on
-> > how to setup the device with ConfigFS.
-> > 
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> >  Documentation/usb/gadget_ccid.rst | 267 ++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 267 insertions(+)
-> >  create mode 100644 Documentation/usb/gadget_ccid.rst
-> > 
-> > diff --git a/Documentation/usb/gadget_ccid.rst b/Documentation/usb/gadget_ccid.rst
-> > new file mode 100644
-> > index 000000000000..5ac806b14604
-> > --- /dev/null
-> > +++ b/Documentation/usb/gadget_ccid.rst
-> > @@ -0,0 +1,267 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +============
-> > +CCID Gadget
-> > +============
-> > +
-> > +:Author: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > +
-> > +Introduction
-> > +============
-> > +
-> > +The CCID Gadget will present itself as a CCID device to the host system.
-> > +The device supports two endpoints for now; BULK IN and BULK OUT.
-> > +These endpoints is exposed to userspace via /dev/ccidg*.
-> 
->                    are exposed
-> 
-> > +
-> > +All CCID commands are sent on the BULK-OUT endpoint. Each command sent to the CCID
-> > +has an associated ending response. Some commands can also have intermediate
-> > +responses. The response is sent on the BULK-IN endpoint.
-> > +See Figure 3-3 in the CCID Specification [1]_ for more details.
-> > +
-> > +The CCID commands must be handled in userspace since the driver is only working
-> > +as a transport layer for the TPDUs.
-> > +
-> > +
-> > +CCID Commands
-> > +--------------
-> > +
-> > +All CCID commands begins with a 10 bytes header followed by an optional
-> 
->                             with a 10-byte header
-> (or maybe that's a locale difference)
-> 
-> > +data field depending on message type.
-> > +
-> > ++--------+--------------+-------+----------------------------------+
-> > +| Offset | Field        | Size  | Description                      |
-> > ++========+==============+=======+==================================+
-> > +| 0      | bMessageType | 1     | Type of message                  |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 1      | dwLength     | 4     | Message specific data length     |
-> > +|        |              |       |                                  |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 5      | bSlot        | 1     | Identifies the slot number       |
-> > +|        |              |       | for this command                 |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 6      | bSeq         | 1     | Sequence number for command      |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 7      | ...          | 3     | Fields depends on message type   |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 10     | abData       | array | Message specific data (OPTIONAL) |
-> > ++--------+--------------+-------+----------------------------------+
-> > +
-> > +
-> > +Multiple CCID gadgets
-> > +----------------------
-> > +
-> > +It is possible to create multiple instances of the CCID gadget, however,
-> > +a much more flexible way is to create one gadget and set the `nslots` attribute
-> > +to the number of desired CCID devices.
-> > +
-> > +All CCID commands specifies which slot that is the receiver in the `bSlot` field
-> 
->                      specify which slot is the receiver
-> 
-> > +of the CCID header.
-> > +
-> > +Usage
-> > +=====
-> > +
-> > +Access from userspace
-> > +----------------------
-> > +All communication is by read(2) and write(2) to the corresponding /dev/ccidg* device.
-> > +Only one filedescriptor is allowed to be open to the device at a time.
-> 
->             file descriptor
-> 
-> > +
-> > +The buffer size provided to read(2) **must be at least** 522 (10 bytes header + 512 bytes payload)
-> > +bytes as we are working with whole commands.
-> > +
-> > +The buffer size provided to write(2) **may not exceed** 522 (10 bytes header + 512 bytes payload)
-> > +bytes as we are working with whole commands.
-> > +
-> > +
-> > +Configuration with configfs
-> > +----------------------------
-> > +
-> > +ConfigFS is used to create and configure the CCID gadget.
-> > +In order to get a device to work as intended, a few attributes must
-> > +be considered.
-> > +
-> > +The attributes is described below followed by an example.
-> 
->                   are
-> 
-> > +
-> > +features
-> > +~~~~~~~~~
-> > +
-> > +The `feature` attribute writes to the dwFeatures field in the class descriptor.
-> > +See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
-> > +
-> > +The value indicates what intelligent features the CCID has.
-> > +These values are available to user application as defines in ccid.h [2]_.
-> 
->                                                   as defined
-> 
-> > +The default value is 0x00000000.
-> 
-> 
-> [snip]
-> 
-> HTH.
-> -- 
-> ~Randy
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/Documentation/perf.data-file-format.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thank you for your comments, I will take it with me for v3.
-
-Best regards
-Marcus Folkesson
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index d00f0d51cab8..c57904a526ce 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -153,10 +153,18 @@ struct {
+ 	HEADER_CPU_TOPOLOGY = 13,
+ 
+ String lists defining the core and CPU threads topology.
++The string lists are followed by a variable length array
++which contains core_id and socket_id of each cpu.
++The number of entries can be determined by the size of the
++section minus the sizes of both string lists.
+ 
+ struct {
+        struct perf_header_string_list cores; /* Variable length */
+        struct perf_header_string_list threads; /* Variable length */
++       struct {
++	      uint32_t core_id;
++	      uint32_t socket_id;
++       } cpus[nr]; /* Variable length records */
+ };
+ 
+ Example:
+-- 
+2.14.3
