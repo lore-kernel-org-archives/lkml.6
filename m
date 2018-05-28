@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S969027AbeE1P0j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:26:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
+        id S1034329AbeE1P1A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:27:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033169AbeE1KU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:20:28 -0400
+        id S1033149AbeE1KUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:20:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 141/268] vti4: Dont override MTU passed on link creation via IFLA_MTU
-Date: Mon, 28 May 2018 12:01:55 +0200
-Message-Id: <20180528100218.291151489@linuxfoundation.org>
+Subject: [PATCH 4.4 113/268] virtio-gpu: fix ioctl and expose the fixed status to userspace.
+Date: Mon, 28 May 2018 12:01:27 +0200
+Message-Id: <20180528100214.961111711@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,31 +30,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Dave Airlie <airlied@redhat.com>
 
-[ Upstream commit 03080e5ec72740c1a62e6730f2a5f3f114f11b19 ]
+[ Upstream commit 9a191b114906457c4b2494c474f58ae4142d4e67 ]
 
-Don't hardcode a MTU value on vti tunnel initialization,
-ip_tunnel_newlink() is able to deal with this already. See also
-commit ffc2b6ee4174 ("ip_gre: fix IFLA_MTU ignored on NEWLINK").
+This exposes to mesa that it can use the fixed ioctl for querying
+later cap sets, cap set 1 is forever frozen in time.
 
-Fixes: 1181412c1a67 ("net/ipv4: VTI support new module for ip_vti.")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Acked-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180221015003.22884-1-airlied@gmail.com
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_vti.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |   17 +++++++++++------
+ include/uapi/drm/virtgpu_drm.h         |    1 +
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -366,7 +366,6 @@ static int vti_tunnel_init(struct net_de
- 	memcpy(dev->dev_addr, &iph->saddr, 4);
- 	memcpy(dev->broadcast, &iph->daddr, 4);
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -208,6 +208,9 @@ static int virtio_gpu_getparam_ioctl(str
+ 	case VIRTGPU_PARAM_3D_FEATURES:
+ 		value = vgdev->has_virgl_3d == true ? 1 : 0;
+ 		break;
++	case VIRTGPU_PARAM_CAPSET_QUERY_FIX:
++		value = 1;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -483,7 +486,7 @@ static int virtio_gpu_get_caps_ioctl(str
+ {
+ 	struct virtio_gpu_device *vgdev = dev->dev_private;
+ 	struct drm_virtgpu_get_caps *args = data;
+-	int size;
++	unsigned size, host_caps_size;
+ 	int i;
+ 	int found_valid = -1;
+ 	int ret;
+@@ -492,6 +495,10 @@ static int virtio_gpu_get_caps_ioctl(str
+ 	if (vgdev->num_capsets == 0)
+ 		return -ENOSYS;
  
--	dev->mtu		= ETH_DATA_LEN;
- 	dev->flags		= IFF_NOARP;
- 	dev->addr_len		= 4;
- 	dev->features		|= NETIF_F_LLTX;
++	/* don't allow userspace to pass 0 */
++	if (args->size == 0)
++		return -EINVAL;
++
+ 	spin_lock(&vgdev->display_info_lock);
+ 	for (i = 0; i < vgdev->num_capsets; i++) {
+ 		if (vgdev->capsets[i].id == args->cap_set_id) {
+@@ -507,11 +514,9 @@ static int virtio_gpu_get_caps_ioctl(str
+ 		return -EINVAL;
+ 	}
+ 
+-	size = vgdev->capsets[found_valid].max_size;
+-	if (args->size > size) {
+-		spin_unlock(&vgdev->display_info_lock);
+-		return -EINVAL;
+-	}
++	host_caps_size = vgdev->capsets[found_valid].max_size;
++	/* only copy to user the minimum of the host caps size or the guest caps size */
++	size = min(args->size, host_caps_size);
+ 
+ 	list_for_each_entry(cache_ent, &vgdev->cap_cache, head) {
+ 		if (cache_ent->id == args->cap_set_id &&
+--- a/include/uapi/drm/virtgpu_drm.h
++++ b/include/uapi/drm/virtgpu_drm.h
+@@ -60,6 +60,7 @@ struct drm_virtgpu_execbuffer {
+ };
+ 
+ #define VIRTGPU_PARAM_3D_FEATURES 1 /* do we have 3D features in the hw */
++#define VIRTGPU_PARAM_CAPSET_QUERY_FIX 2 /* do we have the capset fix */
+ 
+ struct drm_virtgpu_getparam {
+ 	uint64_t param;
