@@ -1,120 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934850AbeE1WBv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 18:01:51 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33069 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934444AbeE1V6H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 17:58:07 -0400
-X-Google-Smtp-Source: AB8JxZqVkOIqDu/Mi9/ek8K0ecfVE9QTRqn3GyCuk1cwcOhXjcoLbHgBI7YglXUTEyRdRQTCJZjGJQ==
-From: Christian Brauner <christian@brauner.io>
-To: linux-kernel@vger.kernel.org
-Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
-        james.morris@microsoft.com, keescook@chromium.org,
-        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, oleg@redhat.com,
-        Christian Brauner <christian@brauner.io>
-Subject: [PATCH v1 04/20] signal: add copy_pending() helper
-Date: Mon, 28 May 2018 23:53:39 +0200
-Message-Id: <20180528215355.16119-5-christian@brauner.io>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528215355.16119-1-christian@brauner.io>
-References: <20180528215355.16119-1-christian@brauner.io>
+        id S934910AbeE1WEm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 18:04:42 -0400
+Received: from mail.us.es ([193.147.175.20]:35850 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934805AbeE1WEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 18:04:39 -0400
+Date: Tue, 29 May 2018 00:04:35 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iptables-compat: homogenize error message
+Message-ID: <20180528220435.rzd4lahsa25h2xe7@salvia>
+References: <20180527130901.GA18320@seema-Inspiron-15-3567>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180527130901.GA18320@seema-Inspiron-15-3567>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using a goto for this let's add a simple helper copy_pending()
-which can be called in both places.
+On Sun, May 27, 2018 at 06:39:01PM +0530, Arushi Singhal wrote:
+> There is a difference between error messages in iptables and
+> iptables-compat:
+> 
+> #sudo iptables-compat -D INPUT 4
+> iptables: No chain/target/match by that name.
+> 
+> #sudo iptables -D INPUT 4
+> iptables: Index of deletion too big.
+> 
+> Now, will show same error message.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-v0->v1:
-* patch unchanged
----
- kernel/signal.c | 54 +++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
+Applied, thanks Arushi.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index bc750fb4ddcc..baae137455eb 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -515,6 +515,19 @@ int unhandled_signal(struct task_struct *tsk, int sig)
- 	return !tsk->ptrace;
- }
- 
-+static void copy_pending(siginfo_t *info, struct sigqueue *first,
-+			 bool *resched_timer)
-+{
-+	list_del_init(&first->list);
-+	copy_siginfo(info, &first->info);
-+
-+	*resched_timer = (first->flags & SIGQUEUE_PREALLOC) &&
-+			 (info->si_code == SI_TIMER) &&
-+			 (info->si_sys_private);
-+
-+	__sigqueue_free(first);
-+}
-+
- static void collect_signal(int sig, struct sigpending *list, siginfo_t *info,
- 			   bool *resched_timer)
- {
-@@ -526,8 +539,10 @@ static void collect_signal(int sig, struct sigpending *list, siginfo_t *info,
- 	*/
- 	list_for_each_entry(q, &list->list, list) {
- 		if (q->info.si_signo == sig) {
--			if (first)
--				goto still_pending;
-+			if (first) {
-+				copy_pending(info, first, resched_timer);
-+				return;
-+			}
- 			first = q;
- 		}
- 	}
-@@ -535,29 +550,20 @@ static void collect_signal(int sig, struct sigpending *list, siginfo_t *info,
- 	sigdelset(&list->signal, sig);
- 
- 	if (first) {
--still_pending:
--		list_del_init(&first->list);
--		copy_siginfo(info, &first->info);
--
--		*resched_timer =
--			(first->flags & SIGQUEUE_PREALLOC) &&
--			(info->si_code == SI_TIMER) &&
--			(info->si_sys_private);
--
--		__sigqueue_free(first);
--	} else {
--		/*
--		 * Ok, it wasn't in the queue.  This must be
--		 * a fast-pathed signal or we must have been
--		 * out of queue space.  So zero out the info.
--		 */
--		clear_siginfo(info);
--		info->si_signo = sig;
--		info->si_errno = 0;
--		info->si_code = SI_USER;
--		info->si_pid = 0;
--		info->si_uid = 0;
-+		copy_pending(info, first, resched_timer);
-+		return;
- 	}
-+
-+	/*
-+	 * Ok, it wasn't in the queue. This must be a fast-pathed signal or we
-+	 * must have been out of queue space. So zero out the info.
-+	 */
-+	clear_siginfo(info);
-+	info->si_signo = sig;
-+	info->si_errno = 0;
-+	info->si_code = SI_USER;
-+	info->si_pid = 0;
-+	info->si_uid = 0;
- }
- 
- static int __dequeue_signal(struct sigpending *pending, sigset_t *mask,
--- 
-2.17.0
+P.S: Just Cc: netfilter-devel@vger.kernel.org next time. Thanks.
