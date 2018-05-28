@@ -1,58 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935094AbeE1XNr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 19:13:47 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35730 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934579AbeE1XNn (ORCPT
+        id S935041AbeE1XQF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 19:16:05 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:56164 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934544AbeE1XQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 19:13:43 -0400
-X-Google-Smtp-Source: AB8JxZp1ZToAcGCgQdqZKoyxYWFY09DLfuiTNAZOtyiXfUwkt4F/IaT7onJ6JmD0l2JR7Nt1WSx6nYesAvWRTRKVJ8w=
+        Mon, 28 May 2018 19:16:03 -0400
+X-Google-Smtp-Source: ADUXVKIKFsObNjLZy4XtHhQ2hq/1ZhXk3L778SGhcfXJMmatszp3yCVB88mOuy99vXrZo9MbpBuVuk8oSRqvF8u6WzRI57cGE+78
 MIME-Version: 1.0
-In-Reply-To: <20180525.164337.1433478215018599363.davem@davemloft.net>
-References: <20180524213829.15208-1-jmaxwell37@gmail.com> <20180525.164337.1433478215018599363.davem@davemloft.net>
-From: Jonathan Maxwell <jmaxwell37@gmail.com>
-Date: Tue, 29 May 2018 09:13:02 +1000
-Message-ID: <CAGHK07AuYxdgXXd1sKZqB3OVeOGdUVP7hS+-PGqtUEtOVV6Jng@mail.gmail.com>
-Subject: Re: [PATCH net-next] ifb: fix packets checksum
-To: David Miller <davem@davemloft.net>
-Cc: David Ahern <dsahern@gmail.com>, mschiffer@universe-factory.net,
-        zhangshengju@cmss.chinamobile.com, ktkhai@virtuozzo.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jon Maxwell <jmaxwell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 28 May 2018 16:16:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000222dd6056d4c4dfc@google.com>
+Subject: possible deadlock in sock_hash_free
+From: syzbot <syzbot+83bdee62c80cc044cb1a@syzkaller.appspotmail.com>
+To: ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 6:43 AM, David Miller <davem@davemloft.net> wrote:
-> From: Jon Maxwell <jmaxwell37@gmail.com>
-> Date: Fri, 25 May 2018 07:38:29 +1000
->
->> Fixup the checksum for CHECKSUM_COMPLETE when pulling skbs on RX path.
->> Otherwise we get splats when tc mirred is used to redirect packets to ifb.
->>
->> Before fix:
->>
->> nic: hw csum failure
->>
->> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
->
-> This definitely seems correct, but I am really surprised a bug like this has
-> lasted as long as it has.
->
+Hello,
 
-Sorry for the late reply I have been away for a few days. The customer never
-saw this on bnx2x. Then they switched to the mlx5 driver and it started
-happening continuously when doing iperf3 tests and also for other TCP traffic.
+syzbot found the following crash on:
 
-mlx5 uses CHECKSUM_COMPLETE. I think that bnx2x uses CHECKSUM UNNECESSARY
-which avoided the code path that triggers the csum failure message in
-__skb_checksum_complete(). It only logs the message for CHECKSUM_COMPLETE
-skbs. Probably few Linux users are using a combination of NIC drivers that
-use CHECKSUM_COMPLETE, tc mirred and ifb, which is why this has never been
-reported before.
+HEAD commit:    7a1a98c171ea Merge branch 'bpf-sendmsg-hook'
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=131f4067800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
+dashboard link: https://syzkaller.appspot.com/bug?extid=83bdee62c80cc044cb1a
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17a0be2f800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164cf10f800000
 
-This is very similar to commit 7be709af2b65.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+83bdee62c80cc044cb1a@syzkaller.appspotmail.com
 
-> So I'll let this sit for another day or two for review.
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.17.0-rc6+ #25 Not tainted
+------------------------------------------------------
+kworker/1:0/18 is trying to acquire lock:
+00000000ef3a7ff3 (clock-AF_INET6){++..}, at: sock_hash_free+0x377/0x700  
+kernel/bpf/sockmap.c:2089
+
+but task is already holding lock:
+00000000989798b8 (&htab->buckets[i].lock){+...}, at:  
+sock_hash_free+0x1d4/0x700 kernel/bpf/sockmap.c:2083
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&htab->buckets[i].lock){+...}:
+        __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+        _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
+        bpf_tcp_close+0x822/0x10b0 kernel/bpf/sockmap.c:285
+        inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+        inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+        sock_release+0x96/0x1b0 net/socket.c:594
+        sock_close+0x16/0x20 net/socket.c:1149
+        __fput+0x34d/0x890 fs/file_table.c:209
+        ____fput+0x15/0x20 fs/file_table.c:243
+        task_work_run+0x1e4/0x290 kernel/task_work.c:113
+        exit_task_work include/linux/task_work.h:22 [inline]
+        do_exit+0x1aee/0x2730 kernel/exit.c:865
+        do_group_exit+0x16f/0x430 kernel/exit.c:968
+        __do_sys_exit_group kernel/exit.c:979 [inline]
+        __se_sys_exit_group kernel/exit.c:977 [inline]
+        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (clock-AF_INET6){++..}:
+        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
+        __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
+        _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
+        sock_hash_free+0x377/0x700 kernel/bpf/sockmap.c:2089
+        bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:261
+        process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+        worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+        kthread+0x345/0x410 kernel/kthread.c:240
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&htab->buckets[i].lock);
+                                lock(clock-AF_INET6);
+                                lock(&htab->buckets[i].lock);
+   lock(clock-AF_INET6);
+
+  *** DEADLOCK ***
+
+4 locks held by kworker/1:0/18:
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
+__write_once_size include/linux/compiler.h:215 [inline]
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
+arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at: atomic64_set  
+include/asm-generic/atomic-instrumented.h:40 [inline]
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at: atomic_long_set  
+include/asm-generic/atomic-long.h:57 [inline]
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at: set_work_data  
+kernel/workqueue.c:617 [inline]
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
+set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
+  #0: 00000000b569d373 ((wq_completion)"events"){+.+.}, at:  
+process_one_work+0xaef/0x1b50 kernel/workqueue.c:2116
+  #1: 0000000041d1b332 ((work_completion)(&map->work)){+.+.}, at:  
+process_one_work+0xb46/0x1b50 kernel/workqueue.c:2120
+  #2: 00000000da1a504c (rcu_read_lock){....}, at: sock_hash_free+0x0/0x700  
+include/net/sock.h:2178
+  #3: 00000000989798b8 (&htab->buckets[i].lock){+...}, at:  
+sock_hash_free+0x1d4/0x700 kernel/bpf/sockmap.c:2083
+
+stack backtrace:
+CPU: 1 PID: 18 Comm: kworker/1:0 Not tainted 4.17.0-rc6+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_map_free_deferred
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_circular_bug.isra.36.cold.54+0x1bd/0x27d  
+kernel/locking/lockdep.c:1223
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2417 [inline]
+  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
+  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
+  __raw_write_lock_bh include/linux/rwlock_api_smp.h:203 [inline]
+  _raw_write_lock_bh+0x31/0x40 kernel/locking/spinlock.c:312
+  sock_hash_free+0x377/0x700 kernel/bpf/sockmap.c:2089
+  bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:261
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
