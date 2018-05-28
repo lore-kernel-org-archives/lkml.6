@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754311AbeE1JDX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:03:23 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38830 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754084AbeE1I7D (ORCPT
+        id S1754044AbeE1I7C (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:59:02 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53069 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754084AbeE1I6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:59:03 -0400
-X-Google-Smtp-Source: AB8JxZrGiJQaEQVEivmNzJ26kEGEx8NPSpZUGYnDIBAjJQGV5LcvkBUM/DYb+e+SGv89Vk6Wm7lHeA==
+        Mon, 28 May 2018 04:58:54 -0400
+X-Google-Smtp-Source: ADUXVKImEOy7IQUewPAps6Dog3kyoQvwbq4OX2RXqDdvvsyJxuLcJlAMatTwHyntEFStZe20OiWsZw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 10/20] lightnvm: pass flag on graceful teardown to targets
-Date: Mon, 28 May 2018 10:58:31 +0200
-Message-Id: <20180528085841.26684-11-mb@lightnvm.io>
+Subject: [GIT PULL 03/20] lightnvm: pblk: check read lba on gc path
+Date: Mon, 28 May 2018 10:58:24 +0200
+Message-Id: <20180528085841.26684-4-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
 References: <20180528085841.26684-1-mb@lightnvm.io>
@@ -29,213 +29,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-If the namespace is unregistered before the LightNVM target is removed
-(e.g., on hot unplug) it is too late for the target to store any metadata
-on the device - any attempt to write to the device will fail. In this
-case, pass on a "gracefull teardown" flag to the target to let it know
-when this happens.
-
-In the case of pblk, we pad the open line (close all open chunks) to
-improve data retention. In the event of an ungraceful shutdown, avoid
-this part and just clean up.
+Check that the lba stored in the LBA metadata is correct in the GC path
+too. This requires a new helper function to check random reads in the
+vector read.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/core.c      | 10 +++++-----
- drivers/lightnvm/pblk-core.c | 13 ++++++++++++-
- drivers/lightnvm/pblk-gc.c   | 10 ++++++----
- drivers/lightnvm/pblk-init.c | 14 ++++++++------
- drivers/lightnvm/pblk.h      |  4 +++-
- include/linux/lightnvm.h     |  2 +-
- 6 files changed, 35 insertions(+), 18 deletions(-)
+ drivers/lightnvm/pblk-read.c | 39 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 63171cdce270..60aa7bc5a630 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -431,7 +431,7 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
- 	return 0;
- err_sysfs:
- 	if (tt->exit)
--		tt->exit(targetdata);
-+		tt->exit(targetdata, true);
- err_init:
- 	blk_cleanup_queue(tqueue);
- 	tdisk->queue = NULL;
-@@ -446,7 +446,7 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
- 	return ret;
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index 9eee10f69df0..1f699c09e0ea 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -113,15 +113,14 @@ static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
+ 	return NVM_IO_OK;
  }
  
--static void __nvm_remove_target(struct nvm_target *t)
-+static void __nvm_remove_target(struct nvm_target *t, bool graceful)
+-static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
+-			   sector_t blba)
++static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
++				sector_t blba, int nr_lbas)
  {
- 	struct nvm_tgt_type *tt = t->type;
- 	struct gendisk *tdisk = t->disk;
-@@ -459,7 +459,7 @@ static void __nvm_remove_target(struct nvm_target *t)
- 		tt->sysfs_exit(tdisk);
+-	struct pblk_sec_meta *meta_list = rqd->meta_list;
+-	int nr_lbas = rqd->nr_ppas;
++	struct pblk_sec_meta *meta_lba_list = meta_list;
+ 	int i;
  
- 	if (tt->exit)
--		tt->exit(tdisk->private_data);
-+		tt->exit(tdisk->private_data, graceful);
+ 	for (i = 0; i < nr_lbas; i++) {
+-		u64 lba = le64_to_cpu(meta_list[i].lba);
++		u64 lba = le64_to_cpu(meta_lba_list[i].lba);
  
- 	nvm_remove_tgt_dev(t->dev, 1);
- 	put_disk(tdisk);
-@@ -489,7 +489,7 @@ static int nvm_remove_tgt(struct nvm_dev *dev, struct nvm_ioctl_remove *remove)
- 		mutex_unlock(&dev->mlock);
- 		return 1;
- 	}
--	__nvm_remove_target(t);
-+	__nvm_remove_target(t, true);
- 	mutex_unlock(&dev->mlock);
- 
- 	return 0;
-@@ -963,7 +963,7 @@ void nvm_unregister(struct nvm_dev *dev)
- 	list_for_each_entry_safe(t, tmp, &dev->targets, list) {
- 		if (t->dev->parent != dev)
+ 		if (lba == ADDR_EMPTY)
  			continue;
--		__nvm_remove_target(t);
-+		__nvm_remove_target(t, false);
+@@ -130,6 +129,32 @@ static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
  	}
- 	mutex_unlock(&dev->mlock);
- 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 4b10122aec89..5f1e5b1b3094 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1461,7 +1461,7 @@ static void pblk_line_close_meta_sync(struct pblk *pblk)
- 	flush_workqueue(pblk->close_wq);
  }
  
--void pblk_pipeline_stop(struct pblk *pblk)
-+void __pblk_pipeline_flush(struct pblk *pblk)
- {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	int ret;
-@@ -1486,6 +1486,11 @@ void pblk_pipeline_stop(struct pblk *pblk)
- 
- 	flush_workqueue(pblk->bb_wq);
- 	pblk_line_close_meta_sync(pblk);
-+}
-+
-+void __pblk_pipeline_stop(struct pblk *pblk)
++/*
++ * There can be holes in the lba list.
++ */
++static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
++				u64 *lba_list, int nr_lbas)
 +{
-+	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 
- 	spin_lock(&l_mg->free_lock);
- 	pblk->state = PBLK_STATE_STOPPED;
-@@ -1494,6 +1499,12 @@ void pblk_pipeline_stop(struct pblk *pblk)
- 	spin_unlock(&l_mg->free_lock);
- }
- 
-+void pblk_pipeline_stop(struct pblk *pblk)
-+{
-+	__pblk_pipeline_flush(pblk);
-+	__pblk_pipeline_stop(pblk);
-+}
++	struct pblk_sec_meta *meta_lba_list = meta_list;
++	int i, j;
 +
- struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-index 6851a5c67189..b0cc277bf972 100644
---- a/drivers/lightnvm/pblk-gc.c
-+++ b/drivers/lightnvm/pblk-gc.c
-@@ -649,7 +649,7 @@ int pblk_gc_init(struct pblk *pblk)
- 	return ret;
- }
- 
--void pblk_gc_exit(struct pblk *pblk)
-+void pblk_gc_exit(struct pblk *pblk, bool graceful)
- {
- 	struct pblk_gc *gc = &pblk->gc;
- 
-@@ -663,10 +663,12 @@ void pblk_gc_exit(struct pblk *pblk)
- 	if (gc->gc_reader_ts)
- 		kthread_stop(gc->gc_reader_ts);
- 
--	flush_workqueue(gc->gc_reader_wq);
-+	if (graceful) {
-+		flush_workqueue(gc->gc_reader_wq);
-+		flush_workqueue(gc->gc_line_reader_wq);
++	for (i = 0, j = 0; i < nr_lbas; i++) {
++		u64 lba = lba_list[i];
++		u64 meta_lba;
++
++		if (lba == ADDR_EMPTY)
++			continue;
++
++		meta_lba = le64_to_cpu(meta_lba_list[j++].lba);
++
++		if (lba != meta_lba) {
++			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
++								lba, meta_lba);
++			WARN_ON(1);
++		}
 +	}
++}
 +
- 	destroy_workqueue(gc->gc_reader_wq);
--
--	flush_workqueue(gc->gc_line_reader_wq);
- 	destroy_workqueue(gc->gc_line_reader_wq);
- 
- 	if (gc->gc_writer_ts)
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 9e3a43346d4c..bfc488d0dda9 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -1118,23 +1118,25 @@ static void pblk_free(struct pblk *pblk)
- 	kfree(pblk);
- }
- 
--static void pblk_tear_down(struct pblk *pblk)
-+static void pblk_tear_down(struct pblk *pblk, bool graceful)
+ static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
  {
--	pblk_pipeline_stop(pblk);
-+	if (graceful)
-+		__pblk_pipeline_flush(pblk);
-+	__pblk_pipeline_stop(pblk);
- 	pblk_writer_stop(pblk);
- 	pblk_rb_sync_l2p(&pblk->rwb);
- 	pblk_rl_free(&pblk->rl);
+ 	struct ppa_addr *ppa_list;
+@@ -172,7 +197,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+ 		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
+ #endif
  
--	pr_debug("pblk: consistent tear down\n");
-+	pr_debug("pblk: consistent tear down (graceful:%d)\n", graceful);
- }
+-	pblk_read_check(pblk, rqd, r_ctx->lba);
++	pblk_read_check_seq(pblk, rqd->meta_list, r_ctx->lba, rqd->nr_ppas);
  
--static void pblk_exit(void *private)
-+static void pblk_exit(void *private, bool graceful)
- {
- 	struct pblk *pblk = private;
+ 	bio_put(bio);
+ 	if (r_ctx->private)
+@@ -585,6 +610,8 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
+ 		goto err_free_bio;
+ 	}
  
- 	down_write(&pblk_lock);
--	pblk_gc_exit(pblk);
--	pblk_tear_down(pblk);
-+	pblk_gc_exit(pblk, graceful);
-+	pblk_tear_down(pblk, graceful);
++	pblk_read_check_rand(pblk, rqd.meta_list, gc_rq->lba_list, rqd.nr_ppas);
++
+ 	atomic_dec(&pblk->inflight_io);
  
- #ifdef CONFIG_NVM_DEBUG
- 	pr_info("pblk exit: L2P CRC: %x\n", pblk_l2p_crc(pblk));
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index dfbfe9e9a385..0c69eb880f56 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -771,6 +771,8 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line);
- void pblk_line_close(struct pblk *pblk, struct pblk_line *line);
- void pblk_line_close_ws(struct work_struct *work);
- void pblk_pipeline_stop(struct pblk *pblk);
-+void __pblk_pipeline_stop(struct pblk *pblk);
-+void __pblk_pipeline_flush(struct pblk *pblk);
- void pblk_gen_run_ws(struct pblk *pblk, struct pblk_line *line, void *priv,
- 		     void (*work)(struct work_struct *), gfp_t gfp_mask,
- 		     struct workqueue_struct *wq);
-@@ -864,7 +866,7 @@ int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
- #define PBLK_GC_RSV_LINE 1	/* Reserved lines for GC */
- 
- int pblk_gc_init(struct pblk *pblk);
--void pblk_gc_exit(struct pblk *pblk);
-+void pblk_gc_exit(struct pblk *pblk, bool graceful);
- void pblk_gc_should_start(struct pblk *pblk);
- void pblk_gc_should_stop(struct pblk *pblk);
- void pblk_gc_should_kick(struct pblk *pblk);
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 6e0859b9d4d2..e9e0d1c7eaf5 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -489,7 +489,7 @@ typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bio *);
- typedef sector_t (nvm_tgt_capacity_fn)(void *);
- typedef void *(nvm_tgt_init_fn)(struct nvm_tgt_dev *, struct gendisk *,
- 				int flags);
--typedef void (nvm_tgt_exit_fn)(void *);
-+typedef void (nvm_tgt_exit_fn)(void *, bool);
- typedef int (nvm_tgt_sysfs_init_fn)(struct gendisk *);
- typedef void (nvm_tgt_sysfs_exit_fn)(struct gendisk *);
- 
+ 	if (rqd.error) {
 -- 
 2.11.0
