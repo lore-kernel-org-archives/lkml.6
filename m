@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937143AbeE1K2Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:28:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
+        id S939398AbeE1Ox0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:53:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937098AbeE1K2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:28:01 -0400
+        id S937135AbeE1K2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:28:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, mulhern <amulhern@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 040/329] dm thin: fix documentation relative to low water mark threshold
-Date: Mon, 28 May 2018 11:59:29 +0200
-Message-Id: <20180528100245.797727320@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.9 015/329] IB/hfi1: Use after free race condition in send context error path
+Date: Mon, 28 May 2018 11:59:04 +0200
+Message-Id: <20180528100243.554433378@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,42 +31,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: mulhern <amulhern@redhat.com>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-[ Upstream commit 9b28a1102efc75d81298198166ead87d643a29ce ]
+commit f9e76ca3771bf23d2142a81a88ddd8f31f5c4c03 upstream.
 
-Fixes:
-1. The use of "exceeds" when the opposite of exceeds, falls below,
-was meant.
-2. Properly speaking, a table can not exceed a threshold.
+A pio send egress error can occur when the PSM library attempts to
+to send a bad packet.  That issue is still being investigated.
 
-It emphasizes the important point, which is that it is the userspace
-daemon's responsibility to check for low free space when a device
-is resumed, since it won't get a special event indicating low free
-space in that situation.
+The pio error interrupt handler then attempts to progress the recovery
+of the errored pio send context.
 
-Signed-off-by: mulhern <amulhern@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Code inspection reveals that the handling lacks the necessary locking
+if that recovery interleaves with a PSM close of the "context" object
+contains the pio send context.
+
+The lack of the locking can cause the recovery to access the already
+freed pio send context object and incorrectly deduce that the pio
+send context is actually a kernel pio send context as shown by the
+NULL deref stack below:
+
+[<ffffffff8143d78c>] _dev_info+0x6c/0x90
+[<ffffffffc0613230>] sc_restart+0x70/0x1f0 [hfi1]
+[<ffffffff816ab124>] ? __schedule+0x424/0x9b0
+[<ffffffffc06133c5>] sc_halted+0x15/0x20 [hfi1]
+[<ffffffff810aa3ba>] process_one_work+0x17a/0x440
+[<ffffffff810ab086>] worker_thread+0x126/0x3c0
+[<ffffffff810aaf60>] ? manage_workers.isra.24+0x2a0/0x2a0
+[<ffffffff810b252f>] kthread+0xcf/0xe0
+[<ffffffff810b2460>] ? insert_kthread_work+0x40/0x40
+[<ffffffff816b8798>] ret_from_fork+0x58/0x90
+[<ffffffff810b2460>] ? insert_kthread_work+0x40/0x40
+
+This is the best case scenario and other scenarios can corrupt the
+already freed memory.
+
+Fix by adding the necessary locking in the pio send context error
+handler.
+
+Cc: <stable@vger.kernel.org> # 4.9.x
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/device-mapper/thin-provisioning.txt |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/Documentation/device-mapper/thin-provisioning.txt
-+++ b/Documentation/device-mapper/thin-provisioning.txt
-@@ -112,9 +112,11 @@ $low_water_mark is expressed in blocks o
- free space on the data device drops below this level then a dm event
- will be triggered which a userspace daemon should catch allowing it to
- extend the pool device.  Only one such event will be sent.
--Resuming a device with a new table itself triggers an event so the
--userspace daemon can use this to detect a situation where a new table
--already exceeds the threshold.
-+
-+No special event is triggered if a just resumed device's free space is below
-+the low water mark. However, resuming a device always triggers an
-+event; a userspace daemon should verify that free space exceeds the low
-+water mark when handling this event.
+---
+ drivers/infiniband/hw/hfi1/chip.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -5860,6 +5860,7 @@ static void is_sendctxt_err_int(struct h
+ 	u64 status;
+ 	u32 sw_index;
+ 	int i = 0;
++	unsigned long irq_flags;
  
- A low water mark for the metadata device is maintained in the kernel and
- will trigger a dm event if free space on the metadata device drops below
+ 	sw_index = dd->hw_to_sw[hw_context];
+ 	if (sw_index >= dd->num_send_contexts) {
+@@ -5869,10 +5870,12 @@ static void is_sendctxt_err_int(struct h
+ 		return;
+ 	}
+ 	sci = &dd->send_contexts[sw_index];
++	spin_lock_irqsave(&dd->sc_lock, irq_flags);
+ 	sc = sci->sc;
+ 	if (!sc) {
+ 		dd_dev_err(dd, "%s: context %u(%u): no sc?\n", __func__,
+ 			   sw_index, hw_context);
++		spin_unlock_irqrestore(&dd->sc_lock, irq_flags);
+ 		return;
+ 	}
+ 
+@@ -5894,6 +5897,7 @@ static void is_sendctxt_err_int(struct h
+ 	 */
+ 	if (sc->type != SC_USER)
+ 		queue_work(dd->pport->hfi1_wq, &sc->halt_work);
++	spin_unlock_irqrestore(&dd->sc_lock, irq_flags);
+ 
+ 	/*
+ 	 * Update the counters for the corresponding status bits.
