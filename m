@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164124AbeE1KxW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:53:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42472 "EHLO mail.kernel.org"
+        id S1164076AbeE1KxE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:53:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163629AbeE1KxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:53:15 -0400
+        id S1164027AbeE1Kw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:52:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 266/496] vti6: Fix dev->max_mtu setting
-Date: Mon, 28 May 2018 12:00:51 +0200
-Message-Id: <20180528100331.071260733@linuxfoundation.org>
+Subject: [PATCH 4.14 261/496] net/sched: fix NULL dereference in the error path of tcf_sample_init()
+Date: Mon, 28 May 2018 12:00:46 +0200
+Message-Id: <20180528100330.867126611@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +31,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit f8a554b4aa9686bb2c12f6bae516e58783289a03 ]
+[ Upstream commit 1f110e7cae09e6c6a144616480d1a9dd99c5208a ]
 
-We shouldn't allow a tunnel to have IP_MAX_MTU as MTU, because
-another IPv6 header is going on top of our packets. Without this
-patch, we might end up building packets bigger than IP_MAX_MTU.
+when the following command
 
-Fixes: b96f9afee4eb ("ipv4/6: use core net MTU range checking")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Acked-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+ # tc action add action sample rate 100 group 100 index 100
+
+is run for the first time, and psample_group_get(100) fails to create a
+new group, tcf_sample_cleanup() calls psample_group_put(NULL), thus
+causing the following error:
+
+ BUG: unable to handle kernel NULL pointer dereference at 000000000000001c
+ IP: psample_group_put+0x15/0x71 [psample]
+ PGD 8000000075775067 P4D 8000000075775067 PUD 7453c067 PMD 0
+ Oops: 0002 [#1] SMP PTI
+ Modules linked in: act_sample(E) psample ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hda_core mbcache jbd2 crct10dif_pclmul snd_hwdep crc32_pclmul snd_seq ghash_clmulni_intel pcbc snd_seq_device snd_pcm aesni_intel crypto_simd snd_timer glue_helper snd cryptd joydev pcspkr i2c_piix4 soundcore virtio_balloon nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm virtio_net ata_piix virtio_console virtio_blk libata serio_raw crc32c_intel virtio_pci i2c_core virtio_ring virtio floppy dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_tunnel_key]
+ CPU: 2 PID: 5740 Comm: tc Tainted: G            E    4.16.0-rc4.act_vlan.orig+ #403
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ RIP: 0010:psample_group_put+0x15/0x71 [psample]
+ RSP: 0018:ffffb8a80032f7d0 EFLAGS: 00010246
+ RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000024
+ RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffffffffc06d93c0
+ RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
+ R10: 00000000bd003000 R11: ffff979fba04aa59 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: ffff979fbba3f22c
+ FS:  00007f7638112740(0000) GS:ffff979fbfd00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000000000000001c CR3: 00000000734ea001 CR4: 00000000001606e0
+ Call Trace:
+  __tcf_idr_release+0x79/0xf0
+  tcf_sample_init+0x125/0x1d0 [act_sample]
+  tcf_action_init_1+0x2cc/0x430
+  tcf_action_init+0xd3/0x1b0
+  tc_ctl_action+0x18b/0x240
+  rtnetlink_rcv_msg+0x29c/0x310
+  ? _cond_resched+0x15/0x30
+  ? __kmalloc_node_track_caller+0x1b9/0x270
+  ? rtnl_calcit.isra.28+0x100/0x100
+  netlink_rcv_skb+0xd2/0x110
+  netlink_unicast+0x17c/0x230
+  netlink_sendmsg+0x2cd/0x3c0
+  sock_sendmsg+0x30/0x40
+  ___sys_sendmsg+0x27a/0x290
+  ? filemap_map_pages+0x34a/0x3a0
+  ? __handle_mm_fault+0xbfd/0xe20
+  __sys_sendmsg+0x51/0x90
+  do_syscall_64+0x6e/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ RIP: 0033:0x7f7637523ba0
+ RSP: 002b:00007fff0473ef58 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+ RAX: ffffffffffffffda RBX: 00007fff0473f080 RCX: 00007f7637523ba0
+ RDX: 0000000000000000 RSI: 00007fff0473efd0 RDI: 0000000000000003
+ RBP: 000000005aaaac80 R08: 0000000000000002 R09: 0000000000000000
+ R10: 00007fff0473e9e0 R11: 0000000000000246 R12: 0000000000000000
+ R13: 00007fff0473f094 R14: 0000000000000001 R15: 0000000000669f60
+ Code: be 02 00 00 00 48 89 df e8 a9 fe ff ff e9 7c ff ff ff 0f 1f 40 00 0f 1f 44 00 00 53 48 89 fb 48 c7 c7 c0 93 6d c0 e8 db 20 8c ef <83> 6b 1c 01 74 10 48 c7 c7 c0 93 6d c0 ff 14 25 e8 83 83 b0 5b
+ RIP: psample_group_put+0x15/0x71 [psample] RSP: ffffb8a80032f7d0
+ CR2: 000000000000001c
+
+Fix it in tcf_sample_cleanup(), ensuring that calls to psample_group_put(p)
+are done only when p is not NULL.
+
+Fixes: cadb9c9fdbc6 ("net/sched: act_sample: Fix error path in init")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_vti.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/act_sample.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -852,7 +852,7 @@ static void vti6_dev_setup(struct net_de
- 	dev->hard_header_len = LL_MAX_HEADER + sizeof(struct ipv6hdr);
- 	dev->mtu = ETH_DATA_LEN;
- 	dev->min_mtu = IPV6_MIN_MTU;
--	dev->max_mtu = IP_MAX_MTU;
-+	dev->max_mtu = IP_MAX_MTU - sizeof(struct ipv6hdr);
- 	dev->flags |= IFF_NOARP;
- 	dev->addr_len = sizeof(struct in6_addr);
- 	netif_keep_dst(dev);
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -103,7 +103,8 @@ static void tcf_sample_cleanup_rcu(struc
+ 
+ 	psample_group = rcu_dereference_protected(s->psample_group, 1);
+ 	RCU_INIT_POINTER(s->psample_group, NULL);
+-	psample_group_put(psample_group);
++	if (psample_group)
++		psample_group_put(psample_group);
+ }
+ 
+ static void tcf_sample_cleanup(struct tc_action *a, int bind)
