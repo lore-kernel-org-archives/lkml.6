@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161084AbeE1KaL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:30:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49328 "EHLO mail.kernel.org"
+        id S1165932AbeE1Oov (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:44:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937386AbeE1K3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:29:48 -0400
+        id S937003AbeE1KaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Pavel Emelyanov <xemul@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 048/329] mac80211_hwsim: fix possible memory leak in hwsim_new_radio_nl()
-Date: Mon, 28 May 2018 11:59:37 +0200
-Message-Id: <20180528100246.473211419@linuxfoundation.org>
+Subject: [PATCH 4.9 090/329] proc: fix /proc/*/map_files lookup
+Date: Mon, 28 May 2018 12:00:19 +0200
+Message-Id: <20180528100250.272516156@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,35 +33,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit 0ddcff49b672239dda94d70d0fcf50317a9f4b51 ]
+[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
 
-'hwname' is malloced in hwsim_new_radio_nl() and should be freed
-before leaving from the error handling cases, otherwise it will cause
-memory leak.
+Current code does:
 
-Fixes: ff4dd73dd2b4 ("mac80211_hwsim: check HWSIM_ATTR_RADIO_NAME length")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
+
+However sscanf() is broken garbage.
+
+It silently accepts whitespace between format specifiers
+(did you know that?).
+
+It silently accepts valid strings which result in integer overflow.
+
+Do not use sscanf() for any even remotely reliable parsing code.
+
+	OK
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+	broken
+	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+	broken
+	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
+	/lib/systemd/systemd
+
+	very broken
+	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
+	/lib/systemd/systemd
+
+Andrei said:
+
+: This patch breaks criu.  It was a bug in criu.  And this bug is on a minor
+: path, which works when memfd_create() isn't available.  It is a reason why
+: I ask to not backport this patch to stable kernels.
+:
+: In CRIU this bug can be triggered, only if this patch will be backported
+: to a kernel which version is lower than v3.16.
+
+Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Pavel Emelyanov <xemul@openvz.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/proc/base.c |   29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3084,8 +3084,10 @@ static int hwsim_new_radio_nl(struct sk_
- 	if (info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]) {
- 		u32 idx = nla_get_u32(info->attrs[HWSIM_ATTR_REG_CUSTOM_REG]);
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,8 @@
+ #include "internal.h"
+ #include "fd.h"
  
--		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom))
-+		if (idx >= ARRAY_SIZE(hwsim_world_regdom_custom)) {
-+			kfree(hwname);
- 			return -EINVAL;
-+		}
- 		param.regd = hwsim_world_regdom_custom[idx];
- 	}
++#include "../../lib/kstrtox.h"
++
+ /* NOTE:
+  *	Implementing inode permission operations in /proc is almost
+  *	certainly an error.  Permission checks need to happen during
+@@ -1864,8 +1866,33 @@ end_instantiate:
+ static int dname_to_vma_addr(struct dentry *dentry,
+ 			     unsigned long *start, unsigned long *end)
+ {
+-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
++	const char *str = dentry->d_name.name;
++	unsigned long long sval, eval;
++	unsigned int len;
++
++	len = _parse_integer(str, 16, &sval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (sval != (unsigned long)sval)
+ 		return -EINVAL;
++	str += len;
++
++	if (*str != '-')
++		return -EINVAL;
++	str++;
++
++	len = _parse_integer(str, 16, &eval);
++	if (len & KSTRTOX_OVERFLOW)
++		return -EINVAL;
++	if (eval != (unsigned long)eval)
++		return -EINVAL;
++	str += len;
++
++	if (*str != '\0')
++		return -EINVAL;
++
++	*start = sval;
++	*end = eval;
  
+ 	return 0;
+ }
