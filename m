@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163425AbeE1Kst (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38556 "EHLO mail.kernel.org"
+        id S1425083AbeE1NXU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:23:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163413AbeE1Ksm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:42 -0400
+        id S1163418AbeE1Ksr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Yufen Yu <yuyufen@huawei.com>, Shaohua Li <sh.li@alibaba-inc.com>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 141/496] md/raid1: fix NULL pointer dereference
-Date: Mon, 28 May 2018 11:58:46 +0200
-Message-Id: <20180528100325.863091160@linuxfoundation.org>
+Subject: [PATCH 4.14 169/496] powerpc/boot: Fix random libfdt related build errors
+Date: Mon, 28 May 2018 11:59:14 +0200
+Message-Id: <20180528100326.986614748@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,88 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 3de59bb9d551428cbdc76a9ea57883f82e350b4d ]
+[ Upstream commit 64c3f648c25d108f346fdc96c15180c6b7d250e9 ]
 
-In handle_write_finished(), if r1_bio->bios[m] != NULL, it thinks
-the corresponding conf->mirrors[m].rdev is also not NULL. But, it
-is not always true.
+Once in a while I see build errors similar to the following
+when building images from a clean tree.
 
-Even if some io hold replacement rdev(i.e. rdev->nr_pending.count > 0),
-raid1_remove_disk() can also set the rdev as NULL. That means,
-bios[m] != NULL, but mirrors[m].rdev is NULL, resulting in NULL
-pointer dereference in handle_write_finished and sync_request_write.
+  Building powerpc:virtex-ml507:44x/virtex5_defconfig ... failed
+  ------------
+  Error log:
+  arch/powerpc/boot/treeboot-akebono.c:37:20: fatal error:
+  	libfdt.h: No such file or directory
 
-This patch can fix BUGs as follows:
+  Building powerpc:bamboo:smpdev:44x/bamboo_defconfig ... failed
+  ------------
+  Error log:
+  arch/powerpc/boot/treeboot-akebono.c:37:20: fatal error:
+  	libfdt.h: No such file or directory
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000140
- IP: [<ffffffff815bbbbd>] raid1d+0x2bd/0xfc0
- PGD 12ab52067 PUD 12f587067 PMD 0
- Oops: 0000 [#1] SMP
- CPU: 1 PID: 2008 Comm: md3_raid1 Not tainted 4.1.44+ #130
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
- Call Trace:
-  ? schedule+0x37/0x90
-  ? prepare_to_wait_event+0x83/0xf0
-  md_thread+0x144/0x150
-  ? wake_atomic_t_function+0x70/0x70
-  ? md_start_sync+0xf0/0xf0
-  kthread+0xd8/0xf0
-  ? kthread_worker_fn+0x160/0x160
-  ret_from_fork+0x42/0x70
-  ? kthread_worker_fn+0x160/0x160
+  arch/powerpc/boot/treeboot-currituck.c:35:20: fatal error:
+       libfdt.h: No such file or directory
 
- BUG: unable to handle kernel NULL pointer dereference at 00000000000000b8
- IP: sync_request_write+0x9e/0x980
- PGD 800000007c518067 P4D 800000007c518067 PUD 8002b067 PMD 0
- Oops: 0000 [#1] SMP PTI
- CPU: 24 PID: 2549 Comm: md3_raid1 Not tainted 4.15.0+ #118
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
- Call Trace:
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0xc/0xb0
-  ? flush_pending_writes+0x3a/0xd0
-  ? pick_next_task_fair+0x4d5/0x5f0
-  ? __switch_to+0xa2/0x430
-  raid1d+0x65a/0x870
-  ? find_pers+0x70/0x70
-  ? find_pers+0x70/0x70
-  ? md_thread+0x11c/0x160
-  md_thread+0x11c/0x160
-  ? finish_wait+0x80/0x80
-  kthread+0x111/0x130
-  ? kthread_create_worker_on_cpu+0x70/0x70
-  ? do_syscall_64+0x6f/0x190
-  ? SyS_exit_group+0x10/0x10
-  ret_from_fork+0x35/0x40
+Rebuilds will succeed.
 
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Turns out that several source files in arch/powerpc/boot/ include
+libfdt.h, but Makefile dependencies are incomplete. Let's fix that.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid1.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/powerpc/boot/Makefile |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1813,6 +1813,17 @@ static int raid1_remove_disk(struct mdde
- 			struct md_rdev *repl =
- 				conf->mirrors[conf->raid_disks + number].rdev;
- 			freeze_array(conf, 0);
-+			if (atomic_read(&repl->nr_pending)) {
-+				/* It means that some queued IO of retry_list
-+				 * hold repl. Thus, we cannot set replacement
-+				 * as NULL, avoiding rdev NULL pointer
-+				 * dereference in sync_request_write and
-+				 * handle_write_finished.
-+				 */
-+				err = -EBUSY;
-+				unfreeze_array(conf);
-+				goto abort;
-+			}
- 			clear_bit(Replacement, &repl->flags);
- 			p->rdev = repl;
- 			conf->mirrors[conf->raid_disks + number].rdev = NULL;
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -101,7 +101,8 @@ $(addprefix $(obj)/,$(zlib-y)): \
+ libfdt       := fdt.c fdt_ro.c fdt_wip.c fdt_sw.c fdt_rw.c fdt_strerror.c
+ libfdtheader := fdt.h libfdt.h libfdt_internal.h
+ 
+-$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o opal.o): \
++$(addprefix $(obj)/,$(libfdt) libfdt-wrapper.o simpleboot.o epapr.o opal.o \
++	treeboot-akebono.o treeboot-currituck.o treeboot-iss4xx.o): \
+ 	$(addprefix $(obj)/,$(libfdtheader))
+ 
+ src-wlib-y := string.S crt0.S stdio.c decompress.c main.c \
