@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937466AbeE1Nwa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:52:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33354 "EHLO mail.kernel.org"
+        id S937601AbeE1Nwx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:52:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162657AbeE1Kly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:54 -0400
+        id S1162985AbeE1Klt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:41:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 019/496] IB/hfi1: Use after free race condition in send context error path
-Date: Mon, 28 May 2018 11:56:44 +0200
-Message-Id: <20180528100320.394362528@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Martin <dave.martin@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Salter <msalter@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 017/496] arm64: lse: Add early clobbers to some input/output asm operands
+Date: Mon, 28 May 2018 11:56:42 +0200
+Message-Id: <20180528100320.318837751@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,83 +30,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit f9e76ca3771bf23d2142a81a88ddd8f31f5c4c03 upstream.
+commit 32c3fa7cdf0c4a3eb8405fc3e13398de019e828b upstream.
 
-A pio send egress error can occur when the PSM library attempts to
-to send a bad packet.  That issue is still being investigated.
+For LSE atomics that read and write a register operand, we need to
+ensure that these operands are annotated as "early clobber" if the
+register is written before all of the input operands have been consumed.
+Failure to do so can result in the compiler allocating the same register
+to both operands, leading to splats such as:
 
-The pio error interrupt handler then attempts to progress the recovery
-of the errored pio send context.
+ Unable to handle kernel paging request at virtual address 11111122222221
+ [...]
+ x1 : 1111111122222222 x0 : 1111111122222221
+ Process swapper/0 (pid: 1, stack limit = 0x000000008209f908)
+ Call trace:
+  test_atomic64+0x1360/0x155c
 
-Code inspection reveals that the handling lacks the necessary locking
-if that recovery interleaves with a PSM close of the "context" object
-contains the pio send context.
+where x0 has been allocated as both the value to be stored and also the
+atomic_t pointer.
 
-The lack of the locking can cause the recovery to access the already
-freed pio send context object and incorrectly deduce that the pio
-send context is actually a kernel pio send context as shown by the
-NULL deref stack below:
+This patch adds the missing clobbers.
 
-[<ffffffff8143d78c>] _dev_info+0x6c/0x90
-[<ffffffffc0613230>] sc_restart+0x70/0x1f0 [hfi1]
-[<ffffffff816ab124>] ? __schedule+0x424/0x9b0
-[<ffffffffc06133c5>] sc_halted+0x15/0x20 [hfi1]
-[<ffffffff810aa3ba>] process_one_work+0x17a/0x440
-[<ffffffff810ab086>] worker_thread+0x126/0x3c0
-[<ffffffff810aaf60>] ? manage_workers.isra.24+0x2a0/0x2a0
-[<ffffffff810b252f>] kthread+0xcf/0xe0
-[<ffffffff810b2460>] ? insert_kthread_work+0x40/0x40
-[<ffffffff816b8798>] ret_from_fork+0x58/0x90
-[<ffffffff810b2460>] ? insert_kthread_work+0x40/0x40
-
-This is the best case scenario and other scenarios can corrupt the
-already freed memory.
-
-Fix by adding the necessary locking in the pio send context error
-handler.
-
-Cc: <stable@vger.kernel.org> # 4.9.x
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Cc: <stable@vger.kernel.org>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Reported-by: Mark Salter <msalter@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/chip.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/include/asm/atomic_lse.h |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -5945,6 +5945,7 @@ static void is_sendctxt_err_int(struct h
- 	u64 status;
- 	u32 sw_index;
- 	int i = 0;
-+	unsigned long irq_flags;
+--- a/arch/arm64/include/asm/atomic_lse.h
++++ b/arch/arm64/include/asm/atomic_lse.h
+@@ -117,7 +117,7 @@ static inline void atomic_and(int i, ato
+ 	/* LSE atomics */
+ 	"	mvn	%w[i], %w[i]\n"
+ 	"	stclr	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -135,7 +135,7 @@ static inline int atomic_fetch_and##name
+ 	/* LSE atomics */						\
+ 	"	mvn	%w[i], %w[i]\n"					\
+ 	"	ldclr" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -161,7 +161,7 @@ static inline void atomic_sub(int i, ato
+ 	/* LSE atomics */
+ 	"	neg	%w[i], %w[i]\n"
+ 	"	stadd	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -180,7 +180,7 @@ static inline int atomic_sub_return##nam
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], w30, %[v]\n"			\
+ 	"	add	%w[i], %w[i], w30")				\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS , ##cl);					\
+ 									\
+@@ -207,7 +207,7 @@ static inline int atomic_fetch_sub##name
+ 	/* LSE atomics */						\
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -314,7 +314,7 @@ static inline void atomic64_and(long i,
+ 	/* LSE atomics */
+ 	"	mvn	%[i], %[i]\n"
+ 	"	stclr	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -332,7 +332,7 @@ static inline long atomic64_fetch_and##n
+ 	/* LSE atomics */						\
+ 	"	mvn	%[i], %[i]\n"					\
+ 	"	ldclr" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -358,7 +358,7 @@ static inline void atomic64_sub(long i,
+ 	/* LSE atomics */
+ 	"	neg	%[i], %[i]\n"
+ 	"	stadd	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -377,7 +377,7 @@ static inline long atomic64_sub_return##
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], x30, %[v]\n"			\
+ 	"	add	%[i], %[i], x30")				\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -404,7 +404,7 @@ static inline long atomic64_fetch_sub##n
+ 	/* LSE atomics */						\
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -435,7 +435,7 @@ static inline long atomic64_dec_if_posit
+ 	"	sub	x30, x30, %[ret]\n"
+ 	"	cbnz	x30, 1b\n"
+ 	"2:")
+-	: [ret] "+r" (x0), [v] "+Q" (v->counter)
++	: [ret] "+&r" (x0), [v] "+Q" (v->counter)
+ 	:
+ 	: __LL_SC_CLOBBERS, "cc", "memory");
  
- 	sw_index = dd->hw_to_sw[hw_context];
- 	if (sw_index >= dd->num_send_contexts) {
-@@ -5954,10 +5955,12 @@ static void is_sendctxt_err_int(struct h
- 		return;
- 	}
- 	sci = &dd->send_contexts[sw_index];
-+	spin_lock_irqsave(&dd->sc_lock, irq_flags);
- 	sc = sci->sc;
- 	if (!sc) {
- 		dd_dev_err(dd, "%s: context %u(%u): no sc?\n", __func__,
- 			   sw_index, hw_context);
-+		spin_unlock_irqrestore(&dd->sc_lock, irq_flags);
- 		return;
- 	}
- 
-@@ -5979,6 +5982,7 @@ static void is_sendctxt_err_int(struct h
- 	 */
- 	if (sc->type != SC_USER)
- 		queue_work(dd->pport->hfi1_wq, &sc->halt_work);
-+	spin_unlock_irqrestore(&dd->sc_lock, irq_flags);
- 
- 	/*
- 	 * Update the counters for the corresponding status bits.
+@@ -516,7 +516,7 @@ static inline long __cmpxchg_double##nam
+ 	"	eor	%[old1], %[old1], %[oldval1]\n"			\
+ 	"	eor	%[old2], %[old2], %[oldval2]\n"			\
+ 	"	orr	%[old1], %[old1], %[old2]")			\
+-	: [old1] "+r" (x0), [old2] "+r" (x1),				\
++	: [old1] "+&r" (x0), [old2] "+&r" (x1),				\
+ 	  [v] "+Q" (*(unsigned long *)ptr)				\
+ 	: [new1] "r" (x2), [new2] "r" (x3), [ptr] "r" (x4),		\
+ 	  [oldval1] "r" (oldval1), [oldval2] "r" (oldval2)		\
