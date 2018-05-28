@@ -1,62 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753390AbeE1NyO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:54:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162769AbeE1Kla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:41:30 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+        id S1754993AbeE1Nyb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:54:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51822 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S939261AbeE1NyK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 09:54:10 -0400
+Date: Mon, 28 May 2018 16:53:51 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ivan Safonov <insafonov@gmail.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Srinath Mannam <srinath.mannam@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 010/496] mmc: sdhci-iproc: remove hard coded mmc cap 1.8v
-Date: Mon, 28 May 2018 11:56:35 +0200
-Message-Id: <20180528100319.977216553@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        devel@driverdev.osuosl.org,
+        Santha Meena Ramamoorthy <santhameena13@gmail.com>,
+        Janani Sankara Babu <jananis37@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging:r8188eu: Use lib80211 to encrypt (WEP) tx frames
+Message-ID: <20180528135351.5y66u4puldawfic5@mwanda>
+References: <20180528061821.26948-1-insafonov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528061821.26948-1-insafonov@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8906 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805280168
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 09:18:21AM +0300, Ivan Safonov wrote:
+> Put data to skb, decrypt with lib80211_crypt_wep, and place back to tx buffer.
+> 
+> Signed-off-by: Ivan Safonov <insafonov@gmail.com>
+> ---
+>  drivers/staging/rtl8188eu/core/rtw_security.c | 72 ++++++++++++++++-----------
+>  1 file changed, 43 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
+> index bfe0b217e679..80d7569a3108 100644
+> --- a/drivers/staging/rtl8188eu/core/rtw_security.c
+> +++ b/drivers/staging/rtl8188eu/core/rtw_security.c
+> @@ -139,17 +139,11 @@ static __le32 getcrc32(u8 *buf, int len)
+>  	Need to consider the fragment  situation
+>  */
+>  void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+> -{	/*  exclude ICV */
+> -
+> -	unsigned char	crc[4];
+> -	struct arc4context	 mycontext;
+> -
+> +{
+>  	int	curfragnum, length;
+> -	u32	keylength;
+>  
+> -	u8	*pframe, *payload, *iv;    /* wepkey */
+> -	u8	wepkey[16];
+> -	u8   hw_hdr_offset = 0;
+> +	u8 *pframe;
+> +	u8 hw_hdr_offset = 0;
+>  	struct	pkt_attrib	 *pattrib = &((struct xmit_frame *)pxmitframe)->attrib;
+>  	struct	security_priv	*psecuritypriv = &padapter->securitypriv;
+>  	struct	xmit_priv		*pxmitpriv = &padapter->xmitpriv;
+> @@ -165,33 +159,53 @@ void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+>  
+>  	/* start to encrypt each fragment */
+>  	if ((pattrib->encrypt == _WEP40_) || (pattrib->encrypt == _WEP104_)) {
+> -		keylength = psecuritypriv->dot11DefKeylen[psecuritypriv->dot11PrivacyKeyIndex];
+> +		const int keyindex = psecuritypriv->dot11PrivacyKeyIndex;
+> +		void *crypto_private;
+> +		struct sk_buff *skb;
+> +		struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
+> +
+> +		if (!crypto_ops)
+> +			goto exit;
+> +
+> +		crypto_private = crypto_ops->init(keyindex);
+> +		if (!crypto_private)
+> +			goto exit;
+> +
+> +		if (crypto_ops->set_key(psecuritypriv->dot11DefKey[keyindex].skey,
+> +					psecuritypriv->dot11DefKeylen[keyindex], NULL, crypto_private) < 0)
+> +			goto exit;
+>  
+>  		for (curfragnum = 0; curfragnum < pattrib->nr_frags; curfragnum++) {
+> -			iv = pframe+pattrib->hdrlen;
+> -			memcpy(&wepkey[0], iv, 3);
+> -			memcpy(&wepkey[3], &psecuritypriv->dot11DefKey[psecuritypriv->dot11PrivacyKeyIndex].skey[0], keylength);
+> -			payload = pframe+pattrib->iv_len+pattrib->hdrlen;
+> +			if (curfragnum + 1 == pattrib->nr_frags)
+> +				length = pattrib->last_txcmdsz;
+> +			else
+> +				length = pxmitpriv->frag_len;
+> +			skb = dev_alloc_skb(length);
+> +			if (!skb)
+> +				goto exit;
+>  
+> -			if ((curfragnum+1) == pattrib->nr_frags) {	/* the last fragment */
+> -				length = pattrib->last_txcmdsz-pattrib->hdrlen-pattrib->iv_len-pattrib->icv_len;
+> +			skb_put_data(skb, pframe, length);
+>  
+> -				*((__le32 *)crc) = getcrc32(payload, length);
+> +			memmove(skb->data + 4, skb->data, pattrib->hdrlen);
+> +			skb_pull(skb, 4);
+> +			skb_trim(skb, skb->len - 4);
+>  
+> -				arcfour_init(&mycontext, wepkey, 3+keylength);
+> -				arcfour_encrypt(&mycontext, payload, payload, length);
+> -				arcfour_encrypt(&mycontext, payload+length, crc, 4);
+> -			} else {
+> -				length = pxmitpriv->frag_len-pattrib->hdrlen-pattrib->iv_len-pattrib->icv_len;
+> -				*((__le32 *)crc) = getcrc32(payload, length);
+> -				arcfour_init(&mycontext, wepkey, 3+keylength);
+> -				arcfour_encrypt(&mycontext, payload, payload, length);
+> -				arcfour_encrypt(&mycontext, payload+length, crc, 4);
+> -
+> -				pframe += pxmitpriv->frag_len;
+> -				pframe = (u8 *)round_up((size_t)(pframe), 4);
+> +			if (crypto_ops->encrypt_mpdu(skb, pattrib->hdrlen, crypto_private)) {
+> +				kfree_skb(skb);
+> +				goto exit;
+>  			}
+> +
+> +			memcpy(pframe, skb->data, skb->len);
+> +
+> +			pframe += skb->len;
+> +			pframe = (u8 *)round_up((size_t)(pframe), 4);
+> +
+> +			kfree_skb(skb);
+>  		}
+> +
+> +exit:
+> +		if (crypto_ops && crypto_private)
+> +			crypto_ops->deinit(crypto_private);
 
-------------------
+One label style error handling is always bugggy.  I'm surprised GCC
+doesn't catch that crypto_private can be uninitialized...
 
-From: Srinath Mannam <srinath.mannam@broadcom.com>
+Flip the if ((pattrib->encrypt == _WEP40_) || (pattrib->encrypt == _WEP104_)) {
+tests so it's:
 
-commit 4c94238f37af87a2165c3fb491b4a8b50e90649c upstream.
+	if (pattrib->encrypt != _WEP40_ && pattrib->encrypt != _WEP104_)
+		return;
 
-Remove hard coded mmc cap 1.8v from platform data as it is board specific.
-The 1.8v DDR mmc caps can be enabled using DTS property for those
-boards that support it.
+The use normal error handling style:
 
-Fixes: b17b4ab8ce38 ("mmc: sdhci-iproc: define MMC caps in platform data")
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	kfree_skb(skb);
+	return;
 
----
- drivers/mmc/host/sdhci-iproc.c |    1 -
- 1 file changed, 1 deletion(-)
+err_free_skb:
+	kfree_skb(skb);
+err_deinit:
+	crypto_ops->deinit(crypto_private);
+}
 
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -206,7 +206,6 @@ static const struct sdhci_iproc_data ipr
- 	.caps1 = SDHCI_DRIVER_TYPE_C |
- 		 SDHCI_DRIVER_TYPE_D |
- 		 SDHCI_SUPPORT_DDR50,
--	.mmc_caps = MMC_CAP_1_8V_DDR,
- };
- 
- static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
+regards,
+dan carpenter
