@@ -1,79 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936903AbeE1QKs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:10:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936814AbeE1KNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:46 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 182/185] scsi: lpfc: Fix soft lockup in lpfc worker thread during LIP testing
-Date: Mon, 28 May 2018 12:03:43 +0200
-Message-Id: <20180528100116.679967759@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S933640AbeE1QLM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:11:12 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:59148 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933391AbeE1QLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:11:05 -0400
+Date: Mon, 28 May 2018 09:10:17 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/2] sched: Make select_task_rq() require cpu_active()
+ for user tasks
+Message-ID: <20180528161017.ttgdusrzypvkga5w@pburton-laptop>
+References: <20180526154648.11635-1-paul.burton@mips.com>
+ <20180526154648.11635-2-paul.burton@mips.com>
+ <20180528144924.GE12217@hirez.programming.kicks-ass.net>
+ <20180528154516.c54b37ygekcn3p4g@pburton-laptop>
+ <20180528155306.GU12180@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180528155306.GU12180@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1527523818-637137-26662-297717-1
+X-BESS-VER: 2018.6-r1805181819
+X-BESS-Apparent-Source-IP: 12.201.5.33
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193454
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+Hi Peter,
 
-------------------
+On Mon, May 28, 2018 at 05:53:06PM +0200, Peter Zijlstra wrote:
+> On Mon, May 28, 2018 at 08:45:16AM -0700, Paul Burton wrote:
+> > > --- a/kernel/sched/core.c
+> > > +++ b/kernel/sched/core.c
+> > > @@ -1562,7 +1562,7 @@ int select_task_rq(struct task_struct *p
+> > >  	 *   not worry about this generic constraint ]
+> > >  	 */
+> > >  	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
+> > > -		     !cpu_online(cpu)))
+> > > +		     (is_per_cpu_kthread(p) ? !cpu_online(cpu) : !cpu_active(cpu)))
+> > >  		cpu = select_fallback_rq(task_cpu(p), p);
+> > >  
+> > >  	return cpu;
+> > 
+> > Yes this looks good to me.
+> > 
+> > Are you planning to submit your change to introduce
+> > is_per_cpu_kthread(), or shall I?
+> 
+> I've got the lot; I just need to write a better changelog for my old
+> (now rebased) patch and make a small note in your patch, but will feed
+> them to Ingo when done.
 
-From: James Smart <jsmart2021@gmail.com>
+Thanks a bunch!
 
-[ Upstream commit 161df4f09987ae2e9f0f97f0b38eee298b4a39ff ]
-
-During link bounce testing in a point-to-point topology, the host may
-enter a soft lockup on the lpfc_worker thread:
-
-    Call Trace:
-     lpfc_work_done+0x1f3/0x1390 [lpfc]
-     lpfc_do_work+0x16f/0x180 [lpfc]
-     kthread+0xc7/0xe0
-     ret_from_fork+0x3f/0x70
-
-The driver was simultaneously setting a combination of flags that caused
-lpfc_do_work()to effectively spin between slow path work and new event
-data, causing the lockup.
-
-Ensure in the typical wq completions, that new event data flags are set
-if the slow path flag is running. The slow path will eventually
-reschedule the wq handling.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/lpfc/lpfc_hbadisc.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -716,8 +716,9 @@ lpfc_work_done(struct lpfc_hba *phba)
- 	    (phba->hba_flag & HBA_SP_QUEUE_EVT)) {
- 		if (pring->flag & LPFC_STOP_IOCB_EVENT) {
- 			pring->flag |= LPFC_DEFERRED_RING_EVENT;
--			/* Set the lpfc data pending flag */
--			set_bit(LPFC_DATA_READY, &phba->data_flags);
-+			/* Preserve legacy behavior. */
-+			if (!(phba->hba_flag & HBA_SP_QUEUE_EVT))
-+				set_bit(LPFC_DATA_READY, &phba->data_flags);
- 		} else {
- 			if (phba->link_state >= LPFC_LINK_UP) {
- 				pring->flag &= ~LPFC_DEFERRED_RING_EVENT;
+Paul
