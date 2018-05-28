@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424845AbeE1LU4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:20:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38076 "EHLO mail.kernel.org"
+        id S1424860AbeE1LVB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:21:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424375AbeE1LUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:20:47 -0400
+        id S1422828AbeE1LQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 3.18 005/185] aio: fix io_destroy(2) vs. lookup_ioctx() race
-Date: Mon, 28 May 2018 12:00:46 +0200
-Message-Id: <20180528100051.027218482@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 261/272] ARM: dts: at91: nattis: use the correct compatible for the eeprom
+Date: Mon, 28 May 2018 12:04:54 +0200
+Message-Id: <20180528100302.086132492@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -24,70 +26,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Peter Rosin <peda@axentia.se>
 
-commit baf10564fbb66ea222cae66fbff11c444590ffd9 upstream.
+[ Upstream commit 6b65933008a6bbe5ff79a344b41175826848682d ]
 
-kill_ioctx() used to have an explicit RCU delay between removing the
-reference from ->ioctx_table and percpu_ref_kill() dropping the refcount.
-At some point that delay had been removed, on the theory that
-percpu_ref_kill() itself contained an RCU delay.  Unfortunately, that was
-the wrong kind of RCU delay and it didn't care about rcu_read_lock() used
-by lookup_ioctx().  As the result, we could get ctx freed right under
-lookup_ioctx().  Tejun has fixed that in a6d7cff472e ("fs/aio: Add explicit
-RCU grace period when freeing kioctx"); however, that fix is not enough.
+The used part does contain an eeprom compatible with an Atmel 24c02
+chip and it is from NXP, but it is not called 24c02. It's actually a
+se97b chip. Adjust the compatible accordingly.
 
-Suppose io_destroy() from one thread races with e.g. io_setup() from another;
-CPU1 removes the reference from current->mm->ioctx_table[...] just as CPU2
-has picked it (under rcu_read_lock()).  Then CPU1 proceeds to drop the
-refcount, getting it to 0 and triggering a call of free_ioctx_users(),
-which proceeds to drop the secondary refcount and once that reaches zero
-calls free_ioctx_reqs().  That does
-        INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
-        queue_rcu_work(system_wq, &ctx->free_rwork);
-and schedules freeing the whole thing after RCU delay.
-
-In the meanwhile CPU2 has gotten around to percpu_ref_get(), bumping the
-refcount from 0 to 1 and returned the reference to io_setup().
-
-Tejun's fix (that queue_rcu_work() in there) guarantees that ctx won't get
-freed until after percpu_ref_get().  Sure, we'd increment the counter before
-ctx can be freed.  Now we are out of rcu_read_lock() and there's nothing to
-stop freeing of the whole thing.  Unfortunately, CPU2 assumes that since it
-has grabbed the reference, ctx is *NOT* going away until it gets around to
-dropping that reference.
-
-The fix is obvious - use percpu_ref_tryget_live() and treat failure as miss.
-It's not costlier than what we currently do in normal case, it's safe to
-call since freeing *is* delayed and it closes the race window - either
-lookup_ioctx() comes before percpu_ref_kill() (in which case ctx->users
-won't reach 0 until the caller of lookup_ioctx() drops it) or lookup_ioctx()
-fails, ctx->users is unaffected and caller of lookup_ioctx() doesn't see
-the object in question at all.
-
-Cc: stable@kernel.org
-Fixes: a6d7cff472e "fs/aio: Add explicit RCU grace period when freeing kioctx"
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 0e4323899973 ("ARM: dts: at91: add devicetree for the Axentia Nattis with Natte power")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/aio.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/at91-nattis-2-natte-2.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1006,8 +1006,8 @@ static struct kioctx *lookup_ioctx(unsig
+--- a/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
++++ b/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
+@@ -146,7 +146,7 @@
+ 	};
  
- 	ctx = rcu_dereference(table->table[id]);
- 	if (ctx && ctx->user_id == ctx_id) {
--		percpu_ref_get(&ctx->users);
--		ret = ctx;
-+		if (percpu_ref_tryget_live(&ctx->users))
-+			ret = ctx;
- 	}
- out:
- 	rcu_read_unlock();
+ 	eeprom@50 {
+-		compatible = "nxp,24c02";
++		compatible = "nxp,se97b", "atmel,24c02";
+ 		reg = <0x50>;
+ 		pagesize = <16>;
+ 	};
