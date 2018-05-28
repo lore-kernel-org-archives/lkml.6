@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939611AbeE1PHJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:07:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44108 "EHLO mail.kernel.org"
+        id S939651AbeE1PHZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:07:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033683AbeE1KYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:46 -0400
+        id S1033858AbeE1KYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:24:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Lionel Debieve <lionel.debieve@st.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 237/268] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
-Date: Mon, 28 May 2018 12:03:31 +0200
-Message-Id: <20180528100230.192055472@linuxfoundation.org>
+Subject: [PATCH 4.4 235/268] hwrng: stm32 - add reset during probe
+Date: Mon, 28 May 2018 12:03:29 +0200
+Message-Id: <20180528100229.973091934@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,46 +30,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: "lionel.debieve@st.com" <lionel.debieve@st.com>
 
-[ Upstream commit 347876ad47b9923ce26e686173bbf46581802ffa ]
+[ Upstream commit 326ed382256475aa4b8b7eae8a2f60689fd25e78 ]
 
-The shifting of buf[5] by 24 bits to the left will be promoted to
-a 32 bit signed int and then sign-extended to an unsigned long. If
-the top bit of buf[5] is set then all then all the upper bits sec
-end up as also being set because of the sign-extension. Fix this by
-casting buf[5] to an unsigned long before the shift.
+Avoid issue when probing the RNG without
+reset if bad status has been detected previously
 
-Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
-
-Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-tx4939.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/char/hw_random/stm32-rng.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/rtc/rtc-tx4939.c
-+++ b/drivers/rtc/rtc-tx4939.c
-@@ -86,7 +86,8 @@ static int tx4939_rtc_read_time(struct d
- 	for (i = 2; i < 6; i++)
- 		buf[i] = __raw_readl(&rtcreg->dat);
- 	spin_unlock_irq(&pdata->lock);
--	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-+	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-+		(buf[3] << 8) | buf[2];
- 	rtc_time_to_tm(sec, tm);
- 	return rtc_valid_tm(tm);
- }
-@@ -147,7 +148,8 @@ static int tx4939_rtc_read_alarm(struct
- 	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
- 	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
- 	spin_unlock_irq(&pdata->lock);
--	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-+	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-+		(buf[3] << 8) | buf[2];
- 	rtc_time_to_tm(sec, &alrm->time);
- 	return rtc_valid_tm(&alrm->time);
- }
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ 
+ #define RNG_CR 0x00
+@@ -46,6 +47,7 @@ struct stm32_rng_private {
+ 	struct hwrng rng;
+ 	void __iomem *base;
+ 	struct clk *clk;
++	struct reset_control *rst;
+ };
+ 
+ static int stm32_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
+@@ -140,6 +142,13 @@ static int stm32_rng_probe(struct platfo
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
+ 
++	priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
++	if (!IS_ERR(priv->rst)) {
++		reset_control_assert(priv->rst);
++		udelay(2);
++		reset_control_deassert(priv->rst);
++	}
++
+ 	dev_set_drvdata(dev, priv);
+ 
+ 	priv->rng.name = dev_driver_string(dev),
