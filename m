@@ -1,19 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932378AbeE1KHY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:07:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55342 "EHLO mail.kernel.org"
+        id S1755034AbeE1KHa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:07:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932192AbeE1KHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:07:17 -0400
+        id S932358AbeE1KHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:07:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dave Jones <davej@codemonkey.org.uk>
-Subject: [PATCH 3.18 007/185] libata: Blacklist some Sandisk SSDs for NCQ
-Date: Mon, 28 May 2018 12:00:48 +0200
-Message-Id: <20180528100051.137085008@linuxfoundation.org>
+        stable@vger.kernel.org, zhongjiang <zhongjiang@huawei.com>,
+        Oleg Nesterov <oleg@redhat.com>, Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Xishi Qiu <qiuxishi@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 3.18 009/185] kernel/signal.c: avoid undefined behaviour in kill_something_info
+Date: Mon, 28 May 2018 12:00:50 +0200
+Message-Id: <20180528100051.242209298@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -29,33 +33,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: zhongjiang <zhongjiang@huawei.com>
 
-commit 322579dcc865b94b47345ad1b6002ad167f85405 upstream.
+commit 4ea77014af0d6205b05503d1c7aac6eace11d473 upstream.
 
-Sandisk SSDs SD7SN6S256G and SD8SN8U256G are regularly locking up
-regularly under sustained moderate load with NCQ enabled.  Blacklist
-for now.
+When running kill(72057458746458112, 0) in userspace I hit the following
+issue.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Dave Jones <davej@codemonkey.org.uk>
-Cc: stable@vger.kernel.org
+  UBSAN: Undefined behaviour in kernel/signal.c:1462:11
+  negation of -2147483648 cannot be represented in type 'int':
+  CPU: 226 PID: 9849 Comm: test Tainted: G    B          ---- -------   3.10.0-327.53.58.70.x86_64_ubsan+ #116
+  Hardware name: Huawei Technologies Co., Ltd. RH8100 V3/BC61PBIA, BIOS BLHSV028 11/11/2014
+  Call Trace:
+    dump_stack+0x19/0x1b
+    ubsan_epilogue+0xd/0x50
+    __ubsan_handle_negate_overflow+0x109/0x14e
+    SYSC_kill+0x43e/0x4d0
+    SyS_kill+0xe/0x10
+    system_call_fastpath+0x16/0x1b
+
+Add code to avoid the UBSAN detection.
+
+[akpm@linux-foundation.org: tweak comment]
+Link: http://lkml.kernel.org/r/1496670008-59084-1-git-send-email-zhongjiang@huawei.com
+Signed-off-by: zhongjiang <zhongjiang@huawei.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Xishi Qiu <qiuxishi@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    4 ++++
+ kernel/signal.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4188,6 +4188,10 @@ static const struct ata_blacklist_entry
- 	/* https://bugzilla.kernel.org/show_bug.cgi?id=15573 */
- 	{ "C300-CTFDDAC128MAG",	"0001",		ATA_HORKAGE_NONCQ, },
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1435,6 +1435,10 @@ static int kill_something_info(int sig,
+ 		return ret;
+ 	}
  
-+	/* Some Sandisk SSDs lock up hard with NCQ enabled.  Reported on
-+	   SD7SN6S256G and SD8SN8U256G */
-+	{ "SanDisk SD[78]SN*G",	NULL,		ATA_HORKAGE_NONCQ, },
++	/* -INT_MIN is undefined.  Exclude this case to avoid a UBSAN warning */
++	if (pid == INT_MIN)
++		return -ESRCH;
 +
- 	/* devices which puke on READ_NATIVE_MAX */
- 	{ "HDS724040KLSA80",	"KFAOA20N",	ATA_HORKAGE_BROKEN_HPA, },
- 	{ "WDC WD3200JD-00KLB0", "WD-WCAMR1130137", ATA_HORKAGE_BROKEN_HPA },
+ 	read_lock(&tasklist_lock);
+ 	if (pid != -1) {
+ 		ret = __kill_pgrp_info(sig, info,
