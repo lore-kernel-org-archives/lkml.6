@@ -1,176 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753865AbeE1HJE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:09:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753619AbeE1HI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753842AbeE1HJI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:09:08 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:9808 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753603AbeE1HI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 03:08:57 -0400
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>, linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 18/27] powerpc/kprobes: Don't call the ->break_handler() in arm kprobes code
-Date: Mon, 28 May 2018 16:08:31 +0900
-Message-Id: <152749131162.15132.7120419627022685621.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
-References: <152749074878.15132.16693721906742461289.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+X-UUID: ae115b2f91d849049f6701558fd54df9-20180528
+Message-ID: <1527491332.24367.4.camel@mtksdaap41>
+Subject: Re: [PATCH v4 5/9] drm/mediatek: add ddp component PWM1
+From: CK Hu <ck.hu@mediatek.com>
+To: Stu Hsieh <stu.hsieh@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date: Mon, 28 May 2018 15:08:52 +0800
+In-Reply-To: <1527489507-24453-6-git-send-email-stu.hsieh@mediatek.com>
+References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
+         <1527489507-24453-6-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't call the ->break_handler() from the arm kprobes code,
-because it was only used by jprobes which got removed.
+Hi, Stu:
 
-This also makes skip_singlestep() a static function since
-only ftrace-kprobe.c is using this function.
+On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
+> This patch add component PWM1 in mtk_ddp_matches
+> 
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/powerpc/include/asm/kprobes.h   |   10 ----------
- arch/powerpc/kernel/kprobes-ftrace.c |   16 +++-------------
- arch/powerpc/kernel/kprobes.c        |   31 +++++++++++--------------------
- 3 files changed, 14 insertions(+), 43 deletions(-)
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-diff --git a/arch/powerpc/include/asm/kprobes.h b/arch/powerpc/include/asm/kprobes.h
-index 674036db558b..785c464b6588 100644
---- a/arch/powerpc/include/asm/kprobes.h
-+++ b/arch/powerpc/include/asm/kprobes.h
-@@ -102,16 +102,6 @@ extern int kprobe_exceptions_notify(struct notifier_block *self,
- extern int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
- extern int kprobe_handler(struct pt_regs *regs);
- extern int kprobe_post_handler(struct pt_regs *regs);
--#ifdef CONFIG_KPROBES_ON_FTRACE
--extern int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--			   struct kprobe_ctlblk *kcb);
--#else
--static inline int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--				  struct kprobe_ctlblk *kcb)
--{
--	return 0;
--}
--#endif
- #else
- static inline int kprobe_handler(struct pt_regs *regs) { return 0; }
- static inline int kprobe_post_handler(struct pt_regs *regs) { return 0; }
-diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
-index 1b316331c2d9..3869b0e5d5c7 100644
---- a/arch/powerpc/kernel/kprobes-ftrace.c
-+++ b/arch/powerpc/kernel/kprobes-ftrace.c
-@@ -26,8 +26,8 @@
- #include <linux/ftrace.h>
- 
- static nokprobe_inline
--int __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--		      struct kprobe_ctlblk *kcb, unsigned long orig_nip)
-+int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
-+		    struct kprobe_ctlblk *kcb, unsigned long orig_nip)
- {
- 	/*
- 	 * Emulate singlestep (and also recover regs->nip)
-@@ -44,16 +44,6 @@ int __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
- 	return 1;
- }
- 
--int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
--		    struct kprobe_ctlblk *kcb)
--{
--	if (kprobe_ftrace(p))
--		return __skip_singlestep(p, regs, kcb, 0);
--	else
--		return 0;
--}
--NOKPROBE_SYMBOL(skip_singlestep);
--
- /* Ftrace callback handler for kprobes */
- void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 			   struct ftrace_ops *ops, struct pt_regs *regs)
-@@ -82,7 +72,7 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 		__this_cpu_write(current_kprobe, p);
- 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 		if (!p->pre_handler || !p->pre_handler(p, regs))
--			__skip_singlestep(p, regs, kcb, orig_nip);
-+			skip_singlestep(p, regs, kcb, orig_nip);
- 		else {
- 			/*
- 			 * If pre_handler returns !0, it sets regs->nip and
-diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
-index 600678fce0a8..f06747e2e70d 100644
---- a/arch/powerpc/kernel/kprobes.c
-+++ b/arch/powerpc/kernel/kprobes.c
-@@ -317,25 +317,17 @@ int kprobe_handler(struct pt_regs *regs)
- 			}
- 			prepare_singlestep(p, regs);
- 			return 1;
--		} else {
--			if (*addr != BREAKPOINT_INSTRUCTION) {
--				/* If trap variant, then it belongs not to us */
--				kprobe_opcode_t cur_insn = *addr;
--				if (is_trap(cur_insn))
--		       			goto no_kprobe;
--				/* The breakpoint instruction was removed by
--				 * another cpu right after we hit, no further
--				 * handling of this interrupt is appropriate
--				 */
--				ret = 1;
-+		} else if (*addr != BREAKPOINT_INSTRUCTION) {
-+			/* If trap variant, then it belongs not to us */
-+			kprobe_opcode_t cur_insn = *addr;
-+
-+			if (is_trap(cur_insn))
- 				goto no_kprobe;
--			}
--			p = __this_cpu_read(current_kprobe);
--			if (p->break_handler && p->break_handler(p, regs)) {
--				if (!skip_singlestep(p, regs, kcb))
--					goto ss_probe;
--				ret = 1;
--			}
-+			/* The breakpoint instruction was removed by
-+			 * another cpu right after we hit, no further
-+			 * handling of this interrupt is appropriate
-+			 */
-+			ret = 1;
- 		}
- 		goto no_kprobe;
- 	}
-@@ -350,7 +342,7 @@ int kprobe_handler(struct pt_regs *regs)
- 			 */
- 			kprobe_opcode_t cur_insn = *addr;
- 			if (is_trap(cur_insn))
--		       		goto no_kprobe;
-+				goto no_kprobe;
- 			/*
- 			 * The breakpoint instruction was removed right
- 			 * after we hit it.  Another cpu has removed
-@@ -370,7 +362,6 @@ int kprobe_handler(struct pt_regs *regs)
- 		/* handler has already set things up, so skip ss setup */
- 		return 1;
- 
--ss_probe:
- 	if (p->ainsn.boostable >= 0) {
- 		ret = try_to_emulate(p, regs);
- 
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> index 87acf6be87f6..a5c7ac2d162d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> @@ -232,6 +232,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+>  	[DDP_COMPONENT_OVL0]	= { MTK_DISP_OVL,	0, NULL },
+>  	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
+>  	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
+> +	[DDP_COMPONENT_PWM1]	= { MTK_DISP_PWM,	1, NULL },
+>  	[DDP_COMPONENT_RDMA0]	= { MTK_DISP_RDMA,	0, NULL },
+>  	[DDP_COMPONENT_RDMA1]	= { MTK_DISP_RDMA,	1, NULL },
+>  	[DDP_COMPONENT_RDMA2]	= { MTK_DISP_RDMA,	2, NULL },
