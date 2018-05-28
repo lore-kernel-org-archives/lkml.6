@@ -1,20 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938575AbeE1MDf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:03:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
+        id S1423277AbeE1LGa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:06:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423280AbeE1LGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:06:33 -0400
+        id S1423237AbeE1LGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:06:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 060/272] Force log to disk before reading the AGF during a fstrim
-Date: Mon, 28 May 2018 12:01:33 +0200
-Message-Id: <20180528100245.937025017@linuxfoundation.org>
+Subject: [PATCH 4.16 055/272] kasan: fix invalid-free test crashing the kernel
+Date: Mon, 28 May 2018 12:01:28 +0200
+Message-Id: <20180528100245.516786022@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,67 +44,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Carlos Maiolino <cmaiolino@redhat.com>
+From: Andrey Konovalov <andreyknvl@google.com>
 
-[ Upstream commit 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b ]
+[ Upstream commit 91c93ed07f04f5b32a30321d522d8ca9504745bf ]
 
-Forcing the log to disk after reading the agf is wrong, we might be
-calling xfs_log_force with XFS_LOG_SYNC with a metadata lock held.
+When an invalid-free is triggered by one of the KASAN tests, the object
+doesn't actually get freed.  This later leads to a BUG failure in
+kmem_cache_destroy that checks that there are no allocated objects in
+the cache that is being destroyed.
 
-This can cause a deadlock when racing a fstrim with a filesystem
-shutdown.
+Fix this by calling kmem_cache_free with the proper object address after
+the call that triggers invalid-free.
 
-The deadlock has been identified due a miscalculation bug in device-mapper
-dm-thin, which returns lack of space to its users earlier than the device itself
-really runs out of space, changing the device-mapper volume into an error state.
-
-The problem happened while filling the filesystem with a single file,
-triggering the bug in device-mapper, consequently causing an IO error
-and shutting down the filesystem.
-
-If such file is removed, and fstrim executed before the XFS finishes the
-shut down process, the fstrim process will end up holding the buffer
-lock, and going to sleep on the cil wait queue.
-
-At this point, the shut down process will try to wake up all the threads
-waiting on the cil wait queue, but for this, it will try to hold the
-same buffer log already held my the fstrim, locking up the filesystem.
-
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Link: http://lkml.kernel.org/r/286eaefc0a6c3fa9b83b87e7d6dc0fbb5b5c9926.1519924383.git.andreyknvl@google.com
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nick Terrell <terrelln@fb.com>
+Cc: Chris Mason <clm@fb.com>
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Jeff Layton <jlayton@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_discard.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ lib/test_kasan.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/xfs/xfs_discard.c
-+++ b/fs/xfs/xfs_discard.c
-@@ -50,19 +50,19 @@ xfs_trim_extents(
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -567,7 +567,15 @@ static noinline void __init kmem_cache_i
+ 		return;
+ 	}
  
- 	pag = xfs_perag_get(mp, agno);
- 
--	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
--	if (error || !agbp)
--		goto out_put_perag;
--
--	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
--
- 	/*
- 	 * Force out the log.  This means any transactions that might have freed
--	 * space before we took the AGF buffer lock are now on disk, and the
-+	 * space before we take the AGF buffer lock are now on disk, and the
- 	 * volatile disk cache is flushed.
- 	 */
- 	xfs_log_force(mp, XFS_LOG_SYNC);
- 
-+	error = xfs_alloc_read_agf(mp, NULL, agno, 0, &agbp);
-+	if (error || !agbp)
-+		goto out_put_perag;
++	/* Trigger invalid free, the object doesn't get freed */
+ 	kmem_cache_free(cache, p + 1);
 +
-+	cur = xfs_allocbt_init_cursor(mp, NULL, agbp, agno, XFS_BTNUM_CNT);
++	/*
++	 * Properly free the object to prevent the "Objects remaining in
++	 * test_cache on __kmem_cache_shutdown" BUG failure.
++	 */
++	kmem_cache_free(cache, p);
 +
- 	/*
- 	 * Look up the longest btree in the AGF and start with it.
- 	 */
+ 	kmem_cache_destroy(cache);
+ }
+ 
