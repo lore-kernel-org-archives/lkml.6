@@ -1,119 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165580AbeE1OTk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:19:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162049AbeE1KfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:22 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 203/329] batman-adv: Fix skbuff rcsum on packet reroute
-Date: Mon, 28 May 2018 12:02:12 +0200
-Message-Id: <20180528100259.127247117@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
-References: <20180528100241.796630982@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1165593AbeE1OUK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:20:10 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50502 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162041AbeE1OUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 10:20:07 -0400
+Date: Mon, 28 May 2018 15:20:05 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, akpm@linux-foundation.org,
+        oleg@redhat.com
+Subject: Re: [PATCH 7/8] signal: make do_sigpending() void
+Message-ID: <20180528142005.GB30522@ZenIV.linux.org.uk>
+References: <20180528134916.7568-1-christian@brauner.io>
+ <20180528134916.7568-8-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528134916.7568-8-christian@brauner.io>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, May 28, 2018 at 03:49:15PM +0200, Christian Brauner wrote:
+> do_sigpending() returned 0 unconditionally so it doesn't make sense to have
+> it return at all. This allows us to simplify a bunch of syscall callers.
 
-------------------
-
-From: Sven Eckelmann <sven@narfation.org>
-
-[ Upstream commit fc04fdb2c8a894283259f5621d31d75610701091 ]
-
-batadv_check_unicast_ttvn may redirect a packet to itself or another
-originator. This involves rewriting the ttvn and the destination address in
-the batadv unicast header. These field were not yet pulled (with skb rcsum
-update) and thus any change to them also requires a change in the receive
-checksum.
-
-Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Fixes: a73105b8d4c7 ("batman-adv: improved client announcement mechanism")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/batman-adv/routing.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
---- a/net/batman-adv/routing.c
-+++ b/net/batman-adv/routing.c
-@@ -724,6 +724,7 @@ out:
- /**
-  * batadv_reroute_unicast_packet - update the unicast header for re-routing
-  * @bat_priv: the bat priv with all the soft interface information
-+ * @skb: unicast packet to process
-  * @unicast_packet: the unicast header to be updated
-  * @dst_addr: the payload destination
-  * @vid: VLAN identifier
-@@ -735,7 +736,7 @@ out:
-  * Return: true if the packet header has been updated, false otherwise
-  */
- static bool
--batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
-+batadv_reroute_unicast_packet(struct batadv_priv *bat_priv, struct sk_buff *skb,
- 			      struct batadv_unicast_packet *unicast_packet,
- 			      u8 *dst_addr, unsigned short vid)
- {
-@@ -764,8 +765,10 @@ batadv_reroute_unicast_packet(struct bat
- 	}
- 
- 	/* update the packet header */
-+	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 	ether_addr_copy(unicast_packet->dest, orig_addr);
- 	unicast_packet->ttvn = orig_ttvn;
-+	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 
- 	ret = true;
- out:
-@@ -806,7 +809,7 @@ static bool batadv_check_unicast_ttvn(st
- 	 * the packet to
- 	 */
- 	if (batadv_tt_local_client_is_roaming(bat_priv, ethhdr->h_dest, vid)) {
--		if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
-+		if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
- 						  ethhdr->h_dest, vid))
- 			batadv_dbg_ratelimited(BATADV_DBG_TT,
- 					       bat_priv,
-@@ -852,7 +855,7 @@ static bool batadv_check_unicast_ttvn(st
- 	 * destination can possibly be updated and forwarded towards the new
- 	 * target host
- 	 */
--	if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
-+	if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
- 					  ethhdr->h_dest, vid)) {
- 		batadv_dbg_ratelimited(BATADV_DBG_TT, bat_priv,
- 				       "Rerouting unicast packet to %pM (dst=%pM): TTVN mismatch old_ttvn=%u new_ttvn=%u\n",
-@@ -875,12 +878,14 @@ static bool batadv_check_unicast_ttvn(st
- 	if (!primary_if)
- 		return false;
- 
-+	/* update the packet header */
-+	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 	ether_addr_copy(unicast_packet->dest, primary_if->net_dev->dev_addr);
-+	unicast_packet->ttvn = curr_ttvn;
-+	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
- 
- 	batadv_hardif_put(primary_if);
- 
--	unicast_packet->ttvn = curr_ttvn;
--
- 	return true;
- }
- 
+Yeah, that should've been done in "signal: lift sigset size check out of
+do_sigpending()" last year; missed that on review back then.
+Acked-by: Al Viro <viro@zeniv.linux.org.uk>
