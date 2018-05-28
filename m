@@ -1,48 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754105AbeE1Iy2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 04:54:28 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:42760 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753994AbeE1IyX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 04:54:23 -0400
-Subject: Re: [PATCH 1/2] ASoC: omap: sdma-pcm: add module license
-To: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-CC: Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, <alsa-devel@alsa-project.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180525160248.4135506-1-arnd@arndb.de>
- <20180525173531.GP4828@sirena.org.uk>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <517750ec-5db4-fecb-3a26-271b2007b4aa@ti.com>
-Date: Mon, 28 May 2018 11:55:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754117AbeE1I5m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 04:57:42 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46089 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753493AbeE1I5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 04:57:41 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v3] f2fs: fix to avoid race during access gc_thread pointer
+Date: Mon, 28 May 2018 16:57:32 +0800
+Message-ID: <20180528085732.91308-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
 MIME-Version: 1.0
-In-Reply-To: <20180525173531.GP4828@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thread A			Thread B
+- f2fs_remount
+ - stop_gc_thread
+				- f2fs_sbi_store
+   sbi->gc_thread = NULL;
+				  access sbi->gc_thread->gc_*
 
+Previously, we allocate memory for sbi->gc_thread based on background
+gc thread mount option, the memory can be released if we turn off
+that mount option, but still there are several places access gc_thread
+pointer without considering race condition, result in NULL point
+dereference.
 
-On 2018-05-25 20:35, Mark Brown wrote:
-> On Fri, May 25, 2018 at 06:02:31PM +0200, Arnd Bergmann wrote:
->> Kbuild warns that we should have a MODULE_LICENSE() tag in the new module:
->>
->> WARNING: modpost: missing MODULE_LICENSE() in sound/soc/omap/snd-soc-sdma.o
-> 
-> This doesn't apply against current code, please check and resend.
+In order to fix this issue, use sb->s_umount to exclude those operations.
 
-'ASoC: omap: sdma-pcm: Fix modpost warning' is already applied which
-adds the missing MODULE_LICENSE()
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- fix missing 'gc_urgent' case
+ fs/f2fs/sysfs.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index dd940d156af6..ac3ea6044936 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -165,7 +165,7 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
+ }
+ 
+-static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
++static ssize_t __f2fs_sbi_store(struct f2fs_attr *a,
+ 			struct f2fs_sb_info *sbi,
+ 			const char *buf, size_t count)
+ {
+@@ -278,6 +278,23 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	return count;
+ }
+ 
++static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
++			struct f2fs_sb_info *sbi,
++			const char *buf, size_t count)
++{
++	ssize_t ret;
++	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
++					a->struct_type == GC_THREAD);
++
++	if (gc_entry)
++		down_read(&sbi->sb->s_umount);
++	ret = __f2fs_sbi_store(a, sbi, buf, count);
++	if (gc_entry)
++		up_read(&sbi->sb->s_umount);
++
++	return ret;
++}
++
+ static ssize_t f2fs_attr_show(struct kobject *kobj,
+ 				struct attribute *attr, char *buf)
+ {
+-- 
+2.17.0.391.g1f1cddd558b5
