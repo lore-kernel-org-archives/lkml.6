@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033986AbeE1PNO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:13:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42840 "EHLO mail.kernel.org"
+        id S1034043AbeE1PN4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:13:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033216AbeE1KXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:23:31 -0400
+        id S1033634AbeE1KXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:23:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 210/268] MIPS: ath79: Fix AR724X_PLL_REG_PCIE_CONFIG offset
-Date: Mon, 28 May 2018 12:03:04 +0200
-Message-Id: <20180528100226.000815861@linuxfoundation.org>
+Subject: [PATCH 4.4 205/268] ACPICA: Events: add a return on failure from acpi_hw_register_read
+Date: Mon, 28 May 2018 12:02:59 +0200
+Message-Id: <20180528100225.483459544@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,37 +30,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Kresin <dev@kresin.me>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-[ Upstream commit 05454c1bde91fb013c0431801001da82947e6b5a ]
+[ Upstream commit b4c0de312613ca676db5bd7e696a44b56795612a ]
 
-According to the QCA u-boot source the "PCIE Phase Lock Loop
-Configuration (PCIE_PLL_CONFIG)" register is for all SoCs except the
-QCA955X and QCA956X at offset 0x10.
+This ensures that acpi_ev_fixed_event_detect() does not use fixed_status
+and and fixed_enable as uninitialized variables.
 
-Since the PCIE PLL config register is only defined for the AR724x fix
-only this value. The value is wrong since the day it was added and isn't
-used by any driver yet.
-
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/16048/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/mach-ath79/ar71xx_regs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpica/evevent.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
-+++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
-@@ -167,7 +167,7 @@
- #define AR71XX_AHB_DIV_MASK		0x7
+--- a/drivers/acpi/acpica/evevent.c
++++ b/drivers/acpi/acpica/evevent.c
+@@ -204,6 +204,7 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	u32 fixed_status;
+ 	u32 fixed_enable;
+ 	u32 i;
++	acpi_status status;
  
- #define AR724X_PLL_REG_CPU_CONFIG	0x00
--#define AR724X_PLL_REG_PCIE_CONFIG	0x18
-+#define AR724X_PLL_REG_PCIE_CONFIG	0x10
+ 	ACPI_FUNCTION_NAME(ev_fixed_event_detect);
  
- #define AR724X_PLL_FB_SHIFT		0
- #define AR724X_PLL_FB_MASK		0x3ff
+@@ -211,8 +212,12 @@ u32 acpi_ev_fixed_event_detect(void)
+ 	 * Read the fixed feature status and enable registers, as all the cases
+ 	 * depend on their values. Ignore errors here.
+ 	 */
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
+-	(void)acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &fixed_status);
++	status |=
++	    acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &fixed_enable);
++	if (ACPI_FAILURE(status)) {
++		return (int_status);
++	}
+ 
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INTERRUPTS,
+ 			  "Fixed Event Block: Enable %08X Status %08X\n",
