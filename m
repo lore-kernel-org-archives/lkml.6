@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940168AbeE1Qdt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:33:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57086 "EHLO mail.kernel.org"
+        id S940178AbeE1QeH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:34:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934971AbeE1KI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:08:57 -0400
+        id S934959AbeE1KIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Parag Warudkar <parag.warudkar@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 035/185] firmware: dmi_scan: Fix handling of empty DMI strings
-Date: Mon, 28 May 2018 12:01:16 +0200
-Message-Id: <20180528100053.051336581@linuxfoundation.org>
+Subject: [PATCH 3.18 043/185] bcache: fix for data collapse after re-attaching an attached device
+Date: Mon, 28 May 2018 12:01:24 +0200
+Message-Id: <20180528100054.475546018@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -31,83 +30,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-[ Upstream commit a7770ae194569e96a93c48aceb304edded9cc648 ]
+[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
 
-The handling of empty DMI strings looks quite broken to me:
-* Strings from 1 to 7 spaces are not considered empty.
-* True empty DMI strings (string index set to 0) are not considered
-  empty, and result in allocating a 0-char string.
-* Strings with invalid index also result in allocating a 0-char
-  string.
-* Strings starting with 8 spaces are all considered empty, even if
-  non-space characters follow (sounds like a weird thing to do, but
-  I have actually seen occurrences of this in DMI tables before.)
-* Strings which are considered empty are reported as 8 spaces,
-  instead of being actually empty.
+back-end device sdm has already attached a cache_set with ID
+f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
+another cache set, and it returns with an error:
+[root]# cd /sys/block/sdm/bcache
+[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
+-bash: echo: write error: Invalid argument
 
-Some of these issues are the result of an off-by-one error in memcmp,
-the rest is incorrect by design.
+After that, execute a command to modify the label of bcache
+device:
+[root]# echo data_disk1 > label
 
-So let's get it square: missing strings and strings made of only
-spaces, regardless of their length, should be treated as empty and
-no memory should be allocated for them. All other strings are
-non-empty and should be allocated.
+Then we reboot the system, when the system power on, the back-end
+device can not attach to cache_set, a messages show in the log:
+Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
+bch_cached_dev_attach() couldn't find uuid for sdm in set
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
-Cc: Parag Warudkar <parag.warudkar@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+In sysfs_attach(), dc->sb.set_uuid was assigned to the value
+which input through sysfs, no matter whether it is success
+or not in bch_cached_dev_attach(). For example, If the back-end
+device has already attached to an cache set, bch_cached_dev_attach()
+would fail, but dc->sb.set_uuid was changed. Then modify the
+label of bcache device, it will call bch_write_bdev_super(),
+which would write the dc->sb.set_uuid to the super block, so we
+record a wrong cache set ID in the super block, after the system
+reboot, the cache set couldn't find the uuid of the back-end
+device, so the bcache device couldn't exist and use any more.
+
+In this patch, we don't assigned cache set ID to dc->sb.set_uuid
+in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
+and assigned dc->sb.set_uuid to the cache set ID after the back-end
+device attached to the cache set successful.
+
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/dmi_scan.c |   22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/md/bcache/bcache.h |    2 +-
+ drivers/md/bcache/super.c  |   10 ++++++----
+ drivers/md/bcache/sysfs.c  |    6 ++++--
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -15,7 +15,7 @@
-  * of and an antecedent to, SMBIOS, which stands for System
-  * Management BIOS.  See further: http://www.dmtf.org/standards
-  */
--static const char dmi_empty_string[] = "        ";
-+static const char dmi_empty_string[] = "";
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -922,7 +922,7 @@ void bcache_write_super(struct cache_set
  
- static u16 __initdata dmi_ver;
- /*
-@@ -36,25 +36,21 @@ static int dmi_memdev_nr;
- static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
- {
- 	const u8 *bp = ((u8 *) dm) + dm->length;
-+	const u8 *nsp;
+ int bch_flash_dev_create(struct cache_set *c, uint64_t size);
  
- 	if (s) {
--		s--;
--		while (s > 0 && *bp) {
-+		while (--s > 0 && *bp)
- 			bp += strlen(bp) + 1;
--			s--;
--		}
- 
--		if (*bp != 0) {
--			size_t len = strlen(bp)+1;
--			size_t cmp_len = len > 8 ? 8 : len;
--
--			if (!memcmp(bp, dmi_empty_string, cmp_len))
--				return dmi_empty_string;
-+		/* Strings containing only spaces are considered empty */
-+		nsp = bp;
-+		while (*nsp == ' ')
-+			nsp++;
-+		if (*nsp != '\0')
- 			return bp;
--		}
- 	}
- 
--	return "";
-+	return dmi_empty_string;
+-int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
++int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
+ void bch_cached_dev_detach(struct cached_dev *);
+ void bch_cached_dev_run(struct cached_dev *);
+ void bcache_device_stop(struct bcache_device *);
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -967,7 +967,8 @@ void bch_cached_dev_detach(struct cached
+ 	cached_dev_put(dc);
  }
  
- static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
+-int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
++int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
++			  uint8_t *set_uuid)
+ {
+ 	uint32_t rtime = cpu_to_le32(get_seconds());
+ 	struct uuid_entry *u;
+@@ -975,7 +976,8 @@ int bch_cached_dev_attach(struct cached_
+ 
+ 	bdevname(dc->bdev, buf);
+ 
+-	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
++	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
++	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
+ 		return -ENOENT;
+ 
+ 	if (dc->disk.c) {
+@@ -1209,7 +1211,7 @@ static void register_bdev(struct cache_s
+ 
+ 	list_add(&dc->list, &uncached_devices);
+ 	list_for_each_entry(c, &bch_cache_sets, list)
+-		bch_cached_dev_attach(dc, c);
++		bch_cached_dev_attach(dc, c, NULL);
+ 
+ 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
+ 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
+@@ -1729,7 +1731,7 @@ static void run_cache_set(struct cache_s
+ 	bcache_write_super(c);
+ 
+ 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
+-		bch_cached_dev_attach(dc, c);
++		bch_cached_dev_attach(dc, c, NULL);
+ 
+ 	flash_devs_run(c);
+ 
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -263,11 +263,13 @@ STORE(__cached_dev)
+ 	}
+ 
+ 	if (attr == &sysfs_attach) {
+-		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
++		uint8_t		set_uuid[16];
++
++		if (bch_parse_uuid(buf, set_uuid) < 16)
+ 			return -EINVAL;
+ 
+ 		list_for_each_entry(c, &bch_cache_sets, list) {
+-			v = bch_cached_dev_attach(dc, c);
++			v = bch_cached_dev_attach(dc, c, set_uuid);
+ 			if (!v)
+ 				return size;
+ 		}
