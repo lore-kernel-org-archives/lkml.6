@@ -1,94 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940482AbeE1QuB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:50:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754279AbeE1KGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:06:01 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 3.18 002/185] MIPS: Fix ptrace(2) PTRACE_PEEKUSR and PTRACE_POKEUSR accesses to o32 FGRs
-Date: Mon, 28 May 2018 12:00:43 +0200
-Message-Id: <20180528100050.833352031@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1425510AbeE1Qxd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:53:33 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44525 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932352AbeE1Qx2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 12:53:28 -0400
+X-Google-Smtp-Source: AB8JxZpKsDS3YVq9AsmZcPhh+o56rsjrccyVzwWrAEm0Iun95Jzz4rDBWKXv1lkBovclNiYw5nQ0kQ==
+Date: Mon, 28 May 2018 10:53:23 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc: dledford@redhat.com, linux-rdma@vger.kernel.org, lijun_nudt@163.com,
+        oulijun@huawei.com, charles.chenxin@huawei.com,
+        linux-kernel@vger.kernel.org, leonro@mellanox.com
+Subject: Re: [PATCH V3 rdma-next 4/4] RDMA/hns: Implement the
+ disassociate_ucontext API
+Message-ID: <20180528165323.GC17505@ziepe.ca>
+References: <1527324107-56593-1-git-send-email-xavier.huwei@huawei.com>
+ <1527324107-56593-5-git-send-email-xavier.huwei@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527324107-56593-5-git-send-email-xavier.huwei@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Sat, May 26, 2018 at 04:41:47PM +0800, Wei Hu (Xavier) wrote:
+> This patch implemented the IB core disassociate_ucontext API.
+> 
+> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+> 
+> v2->v3: Addressed the comments from Jason. The related link:
+> 	https://lkml.org/lkml/2018/5/22/967
+> v1->v2: no change.
+>  drivers/infiniband/hw/hns/hns_roce_device.h |  8 ++++
+>  drivers/infiniband/hw/hns/hns_roce_main.c   | 70 ++++++++++++++++++++++++++++-
+>  2 files changed, 77 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+> index da8512b..31221d5 100644
+> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+> @@ -217,11 +217,19 @@ struct hns_roce_uar {
+>  	unsigned long	logic_idx;
+>  };
+>  
+> +struct hns_roce_vma_data {
+> +	struct list_head list;
+> +	struct vm_area_struct *vma;
+> +	struct mutex *vma_list_mutex;
+> +};
 
-------------------
+This stuff is basically shared in all the drivers too - would it make
+sense to maintain this information and do the zap_pte in the core code
+as well?
 
-From: Maciej W. Rozycki <macro@mips.com>
+There is no way to implement dis-associate without also doing the
+zaps..
 
-commit 9a3a92ccfe3620743d4ae57c987dc8e9c5f88996 upstream.
-
-Check the TIF_32BIT_FPREGS task setting of the tracee rather than the
-tracer in determining the layout of floating-point general registers in
-the floating-point context, correcting access to odd-numbered registers
-for o32 tracees where the setting disagrees between the two processes.
-
-Fixes: 597ce1723e0f ("MIPS: Support for 64-bit FP with O32 binaries")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.14+
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kernel/ptrace.c   |    4 ++--
- arch/mips/kernel/ptrace32.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -702,7 +702,7 @@ long arch_ptrace(struct task_struct *chi
- 			fregs = get_fpu_regs(child);
- 
- #ifdef CONFIG_32BIT
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
-@@ -796,7 +796,7 @@ long arch_ptrace(struct task_struct *chi
- 				child->thread.fpu.fcr31 = 0;
- 			}
- #ifdef CONFIG_32BIT
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -97,7 +97,7 @@ long compat_arch_ptrace(struct task_stru
- 				break;
- 			}
- 			fregs = get_fpu_regs(child);
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
-@@ -203,7 +203,7 @@ long compat_arch_ptrace(struct task_stru
- 				       sizeof(child->thread.fpu));
- 				child->thread.fpu.fcr31 = 0;
- 			}
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
+Jason
