@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422766AbeE1LBw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:01:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
+        id S1422778AbeE1LCB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:02:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164238AbeE1LBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:46 -0400
+        id S1164868AbeE1LB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 448/496] watchdog: asm9260_wdt: fix error handling in asm9260_wdt_probe()
-Date: Mon, 28 May 2018 12:03:53 +0200
-Message-Id: <20180528100338.761233103@linuxfoundation.org>
+Subject: [PATCH 4.14 422/496] f2fs: fix to check extent cache in f2fs_drop_extent_tree
+Date: Mon, 28 May 2018 12:03:27 +0200
+Message-Id: <20180528100337.536676765@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,44 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 3c829f47e33eb0398a9a14e357a05199a7be0277 ]
+[ Upstream commit bf617f7a92edc6bb2909db2bfa4576f50b280ee5 ]
 
-If devm_reset_control_get_exclusive() fails, asm9260_wdt_probe()
-returns immediately. But clks has been already enabled at that point,
-so it is required to disable them or to move the code around.
+If noextent_cache mount option is on, we will never initialize extent tree
+in inode, but still we're going to access it in f2fs_drop_extent_tree,
+result in kernel panic as below:
 
-Found by Linux Driver Verification project (linuxtesting.org).
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+ IP: _raw_write_lock+0xc/0x30
+ Call Trace:
+  ? f2fs_drop_extent_tree+0x41/0x70 [f2fs]
+  f2fs_fallocate+0x5a0/0xdd0 [f2fs]
+  ? common_file_perm+0x47/0xc0
+  ? apparmor_file_permission+0x1a/0x20
+  vfs_fallocate+0x15b/0x290
+  SyS_fallocate+0x44/0x70
+  do_syscall_64+0x6e/0x160
+  entry_SYSCALL64_slow_path+0x25/0x25
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+This patch fixes to check extent cache status before using in
+f2fs_drop_extent_tree.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/asm9260_wdt.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/extent_cache.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/watchdog/asm9260_wdt.c
-+++ b/drivers/watchdog/asm9260_wdt.c
-@@ -292,14 +292,14 @@ static int asm9260_wdt_probe(struct plat
- 	if (IS_ERR(priv->iobase))
- 		return PTR_ERR(priv->iobase);
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -706,6 +706,9 @@ void f2fs_drop_extent_tree(struct inode
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
  
--	ret = asm9260_wdt_get_dt_clks(priv);
--	if (ret)
--		return ret;
--
- 	priv->rst = devm_reset_control_get_exclusive(&pdev->dev, "wdt_rst");
- 	if (IS_ERR(priv->rst))
- 		return PTR_ERR(priv->rst);
- 
-+	ret = asm9260_wdt_get_dt_clks(priv);
-+	if (ret)
-+		return ret;
++	if (!f2fs_may_extent_tree(inode))
++		return;
 +
- 	wdd = &priv->wdd;
- 	wdd->info = &asm9260_wdt_ident;
- 	wdd->ops = &asm9260_wdt_ops;
+ 	set_inode_flag(inode, FI_NO_EXTENT);
+ 
+ 	write_lock(&et->lock);
