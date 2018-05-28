@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939979AbeE1QXa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:23:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59436 "EHLO mail.kernel.org"
+        id S940008AbeE1QX7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:23:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936561AbeE1KLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:11:12 -0400
+        id S934591AbeE1KK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:10:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 125/185] Btrfs: fix copy_items() return value when logging an inode
-Date: Mon, 28 May 2018 12:02:46 +0200
-Message-Id: <20180528100103.386247677@linuxfoundation.org>
+Subject: [PATCH 3.18 120/185] btrfs: Fix possible softlock on single core machines
+Date: Mon, 28 May 2018 12:02:41 +0200
+Message-Id: <20180528100102.394767341@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -30,40 +30,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit 8434ec46c6e3232cebc25a910363b29f5c617820 ]
+[ Upstream commit 1e1c50a929bc9e49bc3f9935b92450d9e69f8158 ]
 
-When logging an inode, at tree-log.c:copy_items(), if we call
-btrfs_next_leaf() at the loop which checks for the need to log holes, we
-need to make sure copy_items() returns the value 1 to its caller and
-not 0 (on success). This is because the path the caller passed was
-released and is now different from what is was before, and the caller
-expects a return value of 0 to mean both success and that the path
-has not changed, while a return value of 1 means both success and
-signals the caller that it can not reuse the path, it has to perform
-another tree search.
+do_chunk_alloc implements a loop checking whether there is a pending
+chunk allocation and if so causes the caller do loop. Generally this
+loop is executed only once, however testing with btrfs/072 on a single
+core vm machines uncovered an extreme case where the system could loop
+indefinitely. This is due to a missing cond_resched when loop which
+doesn't give a chance to the previous chunk allocator finish its job.
 
-Even though this is a case that should not be triggered on normal
-circumstances or very rare at least, its consequences can be very
-unpredictable (especially when replaying a log tree).
+The fix is to simply add the missing cond_resched.
 
-Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Fixes: 6d74119f1a3e ("Btrfs: avoid taking the chunk_mutex in do_chunk_alloc")
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-log.c |    1 +
+ fs/btrfs/extent-tree.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3539,6 +3539,7 @@ fill_holes:
- 			ASSERT(ret == 0);
- 			src = src_path->nodes[0];
- 			i = 0;
-+			need_find_last_extent = true;
- 		}
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -3946,6 +3946,7 @@ again:
+ 	if (wait_for_alloc) {
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 		wait_for_alloc = 0;
++		cond_resched();
+ 		goto again;
+ 	}
  
- 		btrfs_item_key_to_cpu(src, &key, i);
