@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165011AbeE1LEi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:04:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51624 "EHLO mail.kernel.org"
+        id S1422903AbeE1LEl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:04:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164596AbeE1LEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:04:30 -0400
+        id S1164993AbeE1LE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:04:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.16 006/272] MIPS: Fix ptrace(2) PTRACE_PEEKUSR and PTRACE_POKEUSR accesses to o32 FGRs
-Date: Mon, 28 May 2018 12:00:39 +0200
-Message-Id: <20180528100240.720957781@linuxfoundation.org>
+        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.16 005/272] MIPS: ptrace: Expose FIR register through FP regset
+Date: Mon, 28 May 2018 12:00:38 +0200
+Message-Id: <20180528100240.636170749@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,63 +32,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Maciej W. Rozycki <macro@mips.com>
 
-commit 9a3a92ccfe3620743d4ae57c987dc8e9c5f88996 upstream.
+commit 71e909c0cdad28a1df1fa14442929e68615dee45 upstream.
 
-Check the TIF_32BIT_FPREGS task setting of the tracee rather than the
-tracer in determining the layout of floating-point general registers in
-the floating-point context, correcting access to odd-numbered registers
-for o32 tracees where the setting disagrees between the two processes.
+Correct commit 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
+and expose the FIR register using the unused 4 bytes at the end of the
+NT_PRFPREG regset.  Without that register included clients cannot use
+the PTRACE_GETREGSET request to retrieve the complete FPU register set
+and have to resort to one of the older interfaces, either PTRACE_PEEKUSR
+or PTRACE_GETFPREGS, to retrieve the missing piece of data.  Also the
+register is irreversibly missing from core dumps.
 
-Fixes: 597ce1723e0f ("MIPS: Support for 64-bit FP with O32 binaries")
+This register is architecturally hardwired and read-only so the write
+path does not matter.  Ignore data supplied on writes then.
+
+Fixes: 7aeb753b5353 ("MIPS: Implement task_user_regset_view.")
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Maciej W. Rozycki <macro@mips.com>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.14+
+Cc: <stable@vger.kernel.org> # 3.13+
+Patchwork: https://patchwork.linux-mips.org/patch/19273/
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/ptrace.c   |    4 ++--
- arch/mips/kernel/ptrace32.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/mips/kernel/ptrace.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
 --- a/arch/mips/kernel/ptrace.c
 +++ b/arch/mips/kernel/ptrace.c
-@@ -807,7 +807,7 @@ long arch_ptrace(struct task_struct *chi
- 			fregs = get_fpu_regs(child);
+@@ -463,7 +463,7 @@ static int fpr_get_msa(struct task_struc
+ /*
+  * Copy the floating-point context to the supplied NT_PRFPREG buffer.
+  * Choose the appropriate helper for general registers, and then copy
+- * the FCSR register separately.
++ * the FCSR and FIR registers separately.
+  */
+ static int fpr_get(struct task_struct *target,
+ 		   const struct user_regset *regset,
+@@ -471,6 +471,7 @@ static int fpr_get(struct task_struct *t
+ 		   void *kbuf, void __user *ubuf)
+ {
+ 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
++	const int fir_pos = fcr31_pos + sizeof(u32);
+ 	int err;
  
- #ifdef CONFIG_32BIT
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
-@@ -902,7 +902,7 @@ long arch_ptrace(struct task_struct *chi
+ 	if (sizeof(target->thread.fpu.fpr[0]) == sizeof(elf_fpreg_t))
+@@ -483,6 +484,12 @@ static int fpr_get(struct task_struct *t
+ 	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
+ 				  &target->thread.fpu.fcr31,
+ 				  fcr31_pos, fcr31_pos + sizeof(u32));
++	if (err)
++		return err;
++
++	err = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
++				  &boot_cpu_data.fpu_id,
++				  fir_pos, fir_pos + sizeof(u32));
  
- 			init_fp_ctx(child);
- #ifdef CONFIG_32BIT
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -99,7 +99,7 @@ long compat_arch_ptrace(struct task_stru
- 				break;
- 			}
- 			fregs = get_fpu_regs(child);
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
-@@ -212,7 +212,7 @@ long compat_arch_ptrace(struct task_stru
- 				       sizeof(child->thread.fpu));
- 				child->thread.fpu.fcr31 = 0;
- 			}
--			if (test_thread_flag(TIF_32BIT_FPREGS)) {
-+			if (test_tsk_thread_flag(child, TIF_32BIT_FPREGS)) {
- 				/*
- 				 * The odd registers are actually the high
- 				 * order bits of the values stored in the even
+ 	return err;
+ }
+@@ -531,7 +538,8 @@ static int fpr_set_msa(struct task_struc
+ /*
+  * Copy the supplied NT_PRFPREG buffer to the floating-point context.
+  * Choose the appropriate helper for general registers, and then copy
+- * the FCSR register separately.
++ * the FCSR register separately.  Ignore the incoming FIR register
++ * contents though, as the register is read-only.
+  *
+  * We optimize for the case where `count % sizeof(elf_fpreg_t) == 0',
+  * which is supposed to have been guaranteed by the kernel before
+@@ -545,6 +553,7 @@ static int fpr_set(struct task_struct *t
+ 		   const void *kbuf, const void __user *ubuf)
+ {
+ 	const int fcr31_pos = NUM_FPU_REGS * sizeof(elf_fpreg_t);
++	const int fir_pos = fcr31_pos + sizeof(u32);
+ 	u32 fcr31;
+ 	int err;
+ 
+@@ -572,6 +581,11 @@ static int fpr_set(struct task_struct *t
+ 		ptrace_setfcr31(target, fcr31);
+ 	}
+ 
++	if (count > 0)
++		err = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
++						fir_pos,
++						fir_pos + sizeof(u32));
++
+ 	return err;
+ }
+ 
