@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938321AbeE1La2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:30:28 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:46366 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938062AbeE1LaW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:30:22 -0400
-X-Google-Smtp-Source: ADUXVKLW3IXQn9UWonGq8R8g75iVzPQgNNr98VuTFkx6wRtkLH6lsstJ6qr59b01xn4mQ4Qn4fnVHBSuvbe4nZVyBpk=
+        id S938331AbeE1Lap (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:30:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424002AbeE1LOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:14:38 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 212/272] dmaengine: rcar-dmac: Check the done lists in rcar_dmac_chan_get_residue()
+Date: Mon, 28 May 2018 12:04:05 +0200
+Message-Id: <20180528100258.317133820@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2AGu4Lec1pwi87gb4QYn9QTy7mG2i9kWtfAR=An+k-7g@mail.gmail.com>
-References: <20180525210752.1794502-1-arnd@arndb.de> <CAPDyKFoyBZ=k5UQyTmgkPd+30Htymw99Xeh3C+bDPo+VGyjrNw@mail.gmail.com>
- <CAK8P3a2AGu4Lec1pwi87gb4QYn9QTy7mG2i9kWtfAR=An+k-7g@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 28 May 2018 13:30:21 +0200
-Message-ID: <CAPDyKFqe4fPpJLh6d+timZ_w+J0BVZbO61PTacFM=X6BuUP-Yw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sunxi: mark PM functions as __maybe_unused
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 May 2018 at 13:13, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, May 28, 2018 at 1:04 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 25 May 2018 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
->>> The newly added runtime-pm functions cause a harmless warning
->>> when CONFIG_PM is disabled:
->>>
->>> drivers/mmc/host/sunxi-mmc.c:1452:12: error: 'sunxi_mmc_runtime_suspend' defined but not used [-Werror=unused-function]
->>>  static int sunxi_mmc_runtime_suspend(struct device *dev)
->>>             ^~~~~~~~~~~~~~~~~~~~~~~~~
->>> drivers/mmc/host/sunxi-mmc.c:1435:12: error: 'sunxi_mmc_runtime_resume' defined but not used [-Werror=unused-function]
->>>  static int sunxi_mmc_runtime_resume(struct device *dev)
->>>
->>> This marks them as __maybe_unused to shut up the warning.
->>
->> Most mmc drivers uses #ifdef CONFIG_PM instead of the __maybe_unused() option.
->>
->> It's not a big deal, but consistency is always good. Would you mind changing?
->
-> I'd prefer not to. Most uses of #ifdef CONFIG_PM that get introduced are wrong,
-> and cause additional randconfig warnings that I end up having to fix,
-> so I always
-> do it with __maybe_unused.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Right.
+------------------
 
->
-> I don't mind if you treat my patch as a bug report and decide to fix
-> it differently
-> yourself, but you won't get that patch from me ;-)
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-No, worries then. As stated, it's not a big deal.
+[ Upstream commit 3e081628d510b2ddbe493371d9c574d9275da17e ]
 
-Applied for next!
+This patch fixes an issue that a race condition happens between a client
+driver and the rcar-dmac driver:
 
-Kind regads
-Uffe
+- The rcar_dmac_isr_transfer_end() is called.
+ - The done list appears, and desc.running is the next active list.
+- rcar_dmac_chan_get_residue() is called by a client driver before
+  rcar_dmac_isr_channel_thread() is called.
+ - The rcar_dmac_chan_get_residue() will not find any descriptors.
+ - And, the following WARNING happens:
+	WARN(1, "No descriptor for cookie!");
+
+The sh-sci driver with HSCIF (921,600bps) on R-Car H3 can cause this
+situation.
+So, this patch checks the done lists in rcar_dmac_chan_get_residue()
+and returns zero if the done lists has the argument cookie.
+
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/dma/sh/rcar-dmac.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1301,8 +1301,17 @@ static unsigned int rcar_dmac_chan_get_r
+ 	 * If the cookie doesn't correspond to the currently running transfer
+ 	 * then the descriptor hasn't been processed yet, and the residue is
+ 	 * equal to the full descriptor size.
++	 * Also, a client driver is possible to call this function before
++	 * rcar_dmac_isr_channel_thread() runs. In this case, the "desc.running"
++	 * will be the next descriptor, and the done list will appear. So, if
++	 * the argument cookie matches the done list's cookie, we can assume
++	 * the residue is zero.
+ 	 */
+ 	if (cookie != desc->async_tx.cookie) {
++		list_for_each_entry(desc, &chan->desc.done, node) {
++			if (cookie == desc->async_tx.cookie)
++				return 0;
++		}
+ 		list_for_each_entry(desc, &chan->desc.pending, node) {
+ 			if (cookie == desc->async_tx.cookie)
+ 				return desc->size;
