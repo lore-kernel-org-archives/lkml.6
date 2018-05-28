@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937524AbeE1Kml (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:42:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33878 "EHLO mail.kernel.org"
+        id S937543AbeE1Kmu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:42:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937431AbeE1Kme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:42:34 -0400
+        id S937431AbeE1Kmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:42:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        kernel-janitors@vger.kernel.org, James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 004/496] KVM: Fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Date: Mon, 28 May 2018 11:56:29 +0200
-Message-Id: <20180528100319.713702239@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 008/496] ALSA: timer: Fix pause event notification
+Date: Mon, 28 May 2018 11:56:33 +0200
+Message-Id: <20180528100319.899630061@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,33 +29,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit ba3696e94d9d590d9a7e55f68e81c25dba515191 upstream.
+commit 3ae180972564846e6d794e3615e1ab0a1e6c4ef9 upstream.
 
-Trivial fix to spelling mistake in debugfs_entries text.
+Commit f65e0d299807 ("ALSA: timer: Call notifier in the same spinlock")
+combined the start/continue and stop/pause functions, and in doing so
+changed the event code for the pause case to SNDRV_TIMER_EVENT_CONTINUE.
+Change it back to SNDRV_TIMER_EVENT_PAUSE.
 
-Fixes: 669e846e6c4e ("KVM/MIPS32: MIPS arch specific APIs for KVM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: f65e0d299807 ("ALSA: timer: Call notifier in the same spinlock")
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: stable@vger.kernel.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kvm/mips.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/timer.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -45,7 +45,7 @@ struct kvm_stats_debugfs_item debugfs_en
- 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
- 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
- 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
- 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -592,7 +592,7 @@ static int snd_timer_stop1(struct snd_ti
+ 	else
+ 		timeri->flags |= SNDRV_TIMER_IFLG_PAUSED;
+ 	snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
+-			  SNDRV_TIMER_EVENT_CONTINUE);
++			  SNDRV_TIMER_EVENT_PAUSE);
+  unlock:
+ 	spin_unlock_irqrestore(&timer->lock, flags);
+ 	return result;
+@@ -614,7 +614,7 @@ static int snd_timer_stop_slave(struct s
+ 		list_del_init(&timeri->ack_list);
+ 		list_del_init(&timeri->active_list);
+ 		snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
+-				  SNDRV_TIMER_EVENT_CONTINUE);
++				  SNDRV_TIMER_EVENT_PAUSE);
+ 		spin_unlock(&timeri->timer->lock);
+ 	}
+ 	spin_unlock_irqrestore(&slave_active_lock, flags);
