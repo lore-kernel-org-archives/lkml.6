@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936808AbeE1KNn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:13:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33488 "EHLO mail.kernel.org"
+        id S939723AbeE1QLv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:11:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936720AbeE1KNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:13:38 -0400
+        id S936495AbeE1KNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:13:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 171/185] serial: arc_uart: Fix out-of-bounds access through DT alias
-Date: Mon, 28 May 2018 12:03:32 +0200
-Message-Id: <20180528100113.787538386@linuxfoundation.org>
+Subject: [PATCH 3.18 180/185] netlabel: If PF_INET6, check sk_buff ip header version
+Date: Mon, 28 May 2018 12:03:41 +0200
+Message-Id: <20180528100116.144929819@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
 References: <20180528100050.700971285@linuxfoundation.org>
@@ -29,38 +31,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Richard Haines <richard_c_haines@btinternet.com>
 
-[ Upstream commit f9f5786987e81d166c60833edcb7d1836aa16944 ]
+[ Upstream commit 213d7f94775322ba44e0bbb55ec6946e9de88cea ]
 
-The arc_uart_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+When resolving a fallback label, check the sk_buff version as it
+is possible (e.g. SCTP) to have family = PF_INET6 while
+receiving ip_hdr(skb)->version = 4.
 
-Fix this by adding a range check.
-
-Note that the array size is defined by a Kconfig symbol
-(CONFIG_SERIAL_ARC_NR_PORTS), so this can even be triggered using a
-legitimate DTB.
-
-Fixes: ea28fd56fcde69af ("serial/arc-uart: switch to devicetree based probing")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/arc_uart.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/netlabel/netlabel_unlabeled.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/tty/serial/arc_uart.c
-+++ b/drivers/tty/serial/arc_uart.c
-@@ -597,6 +597,11 @@ static int arc_serial_probe(struct platf
- 	if (dev_id < 0)
- 		dev_id = 0;
- 
-+	if (dev_id >= ARRAY_SIZE(arc_uart_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", dev_id);
-+		return -EINVAL;
-+	}
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -1472,6 +1472,16 @@ int netlbl_unlabel_getattr(const struct
+ 		iface = rcu_dereference(netlbl_unlhsh_def);
+ 	if (iface == NULL || !iface->valid)
+ 		goto unlabel_getattr_nolabel;
 +
- 	uart = &arc_uart_ports[dev_id];
- 	port = &uart->port;
- 
++#if IS_ENABLED(CONFIG_IPV6)
++	/* When resolving a fallback label, check the sk_buff version as
++	 * it is possible (e.g. SCTP) to have family = PF_INET6 while
++	 * receiving ip_hdr(skb)->version = 4.
++	 */
++	if (family == PF_INET6 && ip_hdr(skb)->version == 4)
++		family = PF_INET;
++#endif /* IPv6 */
++
+ 	switch (family) {
+ 	case PF_INET: {
+ 		struct iphdr *hdr4;
