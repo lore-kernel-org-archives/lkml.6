@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163776AbeE1Kw1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:52:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41672 "EHLO mail.kernel.org"
+        id S1163970AbeE1KwP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:52:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163985AbeE1KwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:52:22 -0400
+        id S1163748AbeE1KwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:52:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 215/496] ARM: dts: rockchip: Add missing #sound-dai-cells on rk3288
-Date: Mon, 28 May 2018 12:00:00 +0200
-Message-Id: <20180528100328.976770006@linuxfoundation.org>
+Subject: [PATCH 4.14 242/496] netfilter: ebtables: fix erroneous reject of last rule
+Date: Mon, 28 May 2018 12:00:27 +0200
+Message-Id: <20180528100330.096732534@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,41 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rob Herring <robh@kernel.org>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 4e943a890cef42e90f43ce6be64728a290b97c55 ]
+[ Upstream commit 932909d9b28d27e807ff8eecb68c7748f6701628 ]
 
-dtc now gives the following warning:
+The last rule in the blob has next_entry offset that is same as total size.
+This made "ebtables32 -A OUTPUT -d de:ad:be:ef:01:02" fail on 64 bit kernel.
 
-arch/arm/boot/dts/rk3288-tinker.dtb: Warning (sound_dai_property): /sound/simple-audio-card,codec: Missing property '#sound-dai-cells' in node /hdmi@ff980000 or bad phandle (referred from sound-dai[0])
-
-Add the missing #sound-dai-cells property.
-
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: b71812168571fa ("netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/rk3288.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
+ net/bridge/netfilter/ebtables.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -927,6 +927,7 @@
- 	i2s: i2s@ff890000 {
- 		compatible = "rockchip,rk3288-i2s", "rockchip,rk3066-i2s";
- 		reg = <0x0 0xff890000 0x0 0x10000>;
-+		#sound-dai-cells = <0>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1122,6 +1123,7 @@
- 		compatible = "rockchip,rk3288-dw-hdmi";
- 		reg = <0x0 0xff980000 0x0 0x20000>;
- 		reg-io-width = <4>;
-+		#sound-dai-cells = <0>;
- 		rockchip,grf = <&grf>;
- 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru  PCLK_HDMI_CTRL>, <&cru SCLK_HDMI_HDCP>;
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2124,8 +2124,12 @@ static int size_entry_mwt(struct ebt_ent
+ 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
+ 	 */
+ 	for (i = 0; i < 4 ; ++i) {
+-		if (offsets[i] >= *total)
++		if (offsets[i] > *total)
+ 			return -EINVAL;
++
++		if (i < 3 && offsets[i] == *total)
++			return -EINVAL;
++
+ 		if (i == 0)
+ 			continue;
+ 		if (offsets[i-1] > offsets[i])
