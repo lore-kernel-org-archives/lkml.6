@@ -1,20 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424330AbeE1LNz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:13:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33084 "EHLO mail.kernel.org"
+        id S1424515AbeE1Le3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:34:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424019AbeE1LNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:13:45 -0400
+        id S1424293AbeE1LNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:13:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        kernel test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 190/272] cdrom: do not call check_disk_change() inside cdrom_open()
-Date: Mon, 28 May 2018 12:03:43 +0200
-Message-Id: <20180528100256.596683550@linuxfoundation.org>
+Subject: [PATCH 4.16 189/272] perf/x86/intel: Properly save/restore the PMU state in the NMI handler
+Date: Mon, 28 May 2018 12:03:42 +0200
+Message-Id: <20180528100256.516703715@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,153 +39,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit 2bbea6e117357d17842114c65e9a9cf2d13ae8a3 ]
+[ Upstream commit 82d71ed0277efc45360828af8c4e4d40e1b45352 ]
 
-when mounting an ISO filesystem sometimes (very rarely)
-the system hangs because of a race condition between two tasks.
+The PMU is disabled in intel_pmu_handle_irq(), but cpuc->enabled is not updated
+accordingly.
 
-PID: 6766   TASK: ffff88007b2a6dd0  CPU: 0   COMMAND: "mount"
- #0 [ffff880078447ae0] __schedule at ffffffff8168d605
- #1 [ffff880078447b48] schedule_preempt_disabled at ffffffff8168ed49
- #2 [ffff880078447b58] __mutex_lock_slowpath at ffffffff8168c995
- #3 [ffff880078447bb8] mutex_lock at ffffffff8168bdef
- #4 [ffff880078447bd0] sr_block_ioctl at ffffffffa00b6818 [sr_mod]
- #5 [ffff880078447c10] blkdev_ioctl at ffffffff812fea50
- #6 [ffff880078447c70] ioctl_by_bdev at ffffffff8123a8b3
- #7 [ffff880078447c90] isofs_fill_super at ffffffffa04fb1e1 [isofs]
- #8 [ffff880078447da8] mount_bdev at ffffffff81202570
- #9 [ffff880078447e18] isofs_mount at ffffffffa04f9828 [isofs]
-#10 [ffff880078447e28] mount_fs at ffffffff81202d09
-#11 [ffff880078447e70] vfs_kern_mount at ffffffff8121ea8f
-#12 [ffff880078447ea8] do_mount at ffffffff81220fee
-#13 [ffff880078447f28] sys_mount at ffffffff812218d6
-#14 [ffff880078447f80] system_call_fastpath at ffffffff81698c49
-    RIP: 00007fd9ea914e9a  RSP: 00007ffd5d9bf648  RFLAGS: 00010246
-    RAX: 00000000000000a5  RBX: ffffffff81698c49  RCX: 0000000000000010
-    RDX: 00007fd9ec2bc210  RSI: 00007fd9ec2bc290  RDI: 00007fd9ec2bcf30
-    RBP: 0000000000000000   R8: 0000000000000000   R9: 0000000000000010
-    R10: 00000000c0ed0001  R11: 0000000000000206  R12: 00007fd9ec2bc040
-    R13: 00007fd9eb6b2380  R14: 00007fd9ec2bc210  R15: 00007fd9ec2bcf30
-    ORIG_RAX: 00000000000000a5  CS: 0033  SS: 002b
+This is fine in current usage because no-one checks it - but fix it
+for future code: for example, the drain_pebs() will be modified to
+fix an auto-reload bug.
 
-This task was trying to mount the cdrom.  It allocated and configured a
-super_block struct and owned the write-lock for the super_block->s_umount
-rwsem. While exclusively owning the s_umount lock, it called
-sr_block_ioctl and waited to acquire the global sr_mutex lock.
+Properly save/restore the old PMU state.
 
-PID: 6785   TASK: ffff880078720fb0  CPU: 0   COMMAND: "systemd-udevd"
- #0 [ffff880078417898] __schedule at ffffffff8168d605
- #1 [ffff880078417900] schedule at ffffffff8168dc59
- #2 [ffff880078417910] rwsem_down_read_failed at ffffffff8168f605
- #3 [ffff880078417980] call_rwsem_down_read_failed at ffffffff81328838
- #4 [ffff8800784179d0] down_read at ffffffff8168cde0
- #5 [ffff8800784179e8] get_super at ffffffff81201cc7
- #6 [ffff880078417a10] __invalidate_device at ffffffff8123a8de
- #7 [ffff880078417a40] flush_disk at ffffffff8123a94b
- #8 [ffff880078417a88] check_disk_change at ffffffff8123ab50
- #9 [ffff880078417ab0] cdrom_open at ffffffffa00a29e1 [cdrom]
-#10 [ffff880078417b68] sr_block_open at ffffffffa00b6f9b [sr_mod]
-#11 [ffff880078417b98] __blkdev_get at ffffffff8123ba86
-#12 [ffff880078417bf0] blkdev_get at ffffffff8123bd65
-#13 [ffff880078417c78] blkdev_open at ffffffff8123bf9b
-#14 [ffff880078417c90] do_dentry_open at ffffffff811fc7f7
-#15 [ffff880078417cd8] vfs_open at ffffffff811fc9cf
-#16 [ffff880078417d00] do_last at ffffffff8120d53d
-#17 [ffff880078417db0] path_openat at ffffffff8120e6b2
-#18 [ffff880078417e48] do_filp_open at ffffffff8121082b
-#19 [ffff880078417f18] do_sys_open at ffffffff811fdd33
-#20 [ffff880078417f70] sys_open at ffffffff811fde4e
-#21 [ffff880078417f80] system_call_fastpath at ffffffff81698c49
-    RIP: 00007f29438b0c20  RSP: 00007ffc76624b78  RFLAGS: 00010246
-    RAX: 0000000000000002  RBX: ffffffff81698c49  RCX: 0000000000000000
-    RDX: 00007f2944a5fa70  RSI: 00000000000a0800  RDI: 00007f2944a5fa70
-    RBP: 00007f2944a5f540   R8: 0000000000000000   R9: 0000000000000020
-    R10: 00007f2943614c40  R11: 0000000000000246  R12: ffffffff811fde4e
-    R13: ffff880078417f78  R14: 000000000000000c  R15: 00007f2944a4b010
-    ORIG_RAX: 0000000000000002  CS: 0033  SS: 002b
-
-This task tried to open the cdrom device, the sr_block_open function
-acquired the global sr_mutex lock. The call to check_disk_change()
-then saw an event flag indicating a possible media change and tried
-to flush any cached data for the device.
-As part of the flush, it tried to acquire the super_block->s_umount
-lock associated with the cdrom device.
-This was the same super_block as created and locked by the previous task.
-
-The first task acquires the s_umount lock and then the sr_mutex_lock;
-the second task acquires the sr_mutex_lock and then the s_umount lock.
-
-This patch fixes the issue by moving check_disk_change() out of
-cdrom_open() and let the caller take care of it.
-
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: kernel test robot <fengguang.wu@intel.com>
+Link: http://lkml.kernel.org/r/6f44ee84-56f8-79f1-559b-08e371eaeb78@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/paride/pcd.c |    2 ++
- drivers/cdrom/cdrom.c      |    3 ---
- drivers/cdrom/gdrom.c      |    3 +++
- drivers/ide/ide-cd.c       |    2 ++
- drivers/scsi/sr.c          |    2 ++
- 5 files changed, 9 insertions(+), 3 deletions(-)
+ arch/x86/events/intel/core.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/block/paride/pcd.c
-+++ b/drivers/block/paride/pcd.c
-@@ -230,6 +230,8 @@ static int pcd_block_open(struct block_d
- 	struct pcd_unit *cd = bdev->bd_disk->private_data;
- 	int ret;
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2201,16 +2201,23 @@ static int intel_pmu_handle_irq(struct p
+ 	int bit, loops;
+ 	u64 status;
+ 	int handled;
++	int pmu_enabled;
  
-+	check_disk_change(bdev);
-+
- 	mutex_lock(&pcd_mutex);
- 	ret = cdrom_open(&cd->info, bdev, mode);
- 	mutex_unlock(&pcd_mutex);
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -1152,9 +1152,6 @@ int cdrom_open(struct cdrom_device_info
+ 	cpuc = this_cpu_ptr(&cpu_hw_events);
  
- 	cd_dbg(CD_OPEN, "entering cdrom_open\n");
+ 	/*
++	 * Save the PMU state.
++	 * It needs to be restored when leaving the handler.
++	 */
++	pmu_enabled = cpuc->enabled;
++	/*
+ 	 * No known reason to not always do late ACK,
+ 	 * but just in case do it opt-in.
+ 	 */
+ 	if (!x86_pmu.late_ack)
+ 		apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	intel_bts_disable_local();
++	cpuc->enabled = 0;
+ 	__intel_pmu_disable_all();
+ 	handled = intel_pmu_drain_bts_buffer();
+ 	handled += intel_bts_interrupt();
+@@ -2320,7 +2327,8 @@ again:
  
--	/* open is event synchronization point, check events first */
--	check_disk_change(bdev);
--
- 	/* if this was a O_NONBLOCK open and we should honor the flags,
- 	 * do a quick open without drive/disc integrity checks. */
- 	cdi->use_count++;
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -497,6 +497,9 @@ static const struct cdrom_device_ops gdr
- static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
- {
- 	int ret;
-+
-+	check_disk_change(bdev);
-+
- 	mutex_lock(&gdrom_mutex);
- 	ret = cdrom_open(gd.cd_info, bdev, mode);
- 	mutex_unlock(&gdrom_mutex);
---- a/drivers/ide/ide-cd.c
-+++ b/drivers/ide/ide-cd.c
-@@ -1613,6 +1613,8 @@ static int idecd_open(struct block_devic
- 	struct cdrom_info *info;
- 	int rc = -ENXIO;
+ done:
+ 	/* Only restore PMU state when it's active. See x86_pmu_disable(). */
+-	if (cpuc->enabled)
++	cpuc->enabled = pmu_enabled;
++	if (pmu_enabled)
+ 		__intel_pmu_enable_all(0, true);
+ 	intel_bts_enable_local();
  
-+	check_disk_change(bdev);
-+
- 	mutex_lock(&ide_cd_mutex);
- 	info = ide_cd_get(bdev->bd_disk);
- 	if (!info)
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -525,6 +525,8 @@ static int sr_block_open(struct block_de
- 	struct scsi_cd *cd;
- 	int ret = -ENXIO;
- 
-+	check_disk_change(bdev);
-+
- 	mutex_lock(&sr_mutex);
- 	cd = scsi_cd_get(bdev->bd_disk);
- 	if (cd) {
