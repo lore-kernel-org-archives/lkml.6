@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034075AbeE1KZw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:25:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45100 "EHLO mail.kernel.org"
+        id S1034091AbeE1KZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:25:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034053AbeE1KZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:46 -0400
+        id S1033864AbeE1KZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 260/268] netlabel: If PF_INET6, check sk_buff ip header version
-Date: Mon, 28 May 2018 12:03:54 +0200
-Message-Id: <20180528100232.378778919@linuxfoundation.org>
+Subject: [PATCH 4.4 261/268] scsi: lpfc: Fix issue_lip if link is disabled
+Date: Mon, 28 May 2018 12:03:55 +0200
+Message-Id: <20180528100232.454246433@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -31,39 +32,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Haines <richard_c_haines@btinternet.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 213d7f94775322ba44e0bbb55ec6946e9de88cea ]
+[ Upstream commit 2289e9598dde9705400559ca2606fb8c145c34f0 ]
 
-When resolving a fallback label, check the sk_buff version as it
-is possible (e.g. SCTP) to have family = PF_INET6 while
-receiving ip_hdr(skb)->version = 4.
+The driver ignored checks on whether the link should be kept
+administratively down after a link bounce. Correct the checks.
 
-Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlabel/netlabel_unlabeled.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/scsi/lpfc/lpfc_attr.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -1469,6 +1469,16 @@ int netlbl_unlabel_getattr(const struct
- 		iface = rcu_dereference(netlbl_unlhsh_def);
- 	if (iface == NULL || !iface->valid)
- 		goto unlabel_getattr_nolabel;
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+	/* When resolving a fallback label, check the sk_buff version as
-+	 * it is possible (e.g. SCTP) to have family = PF_INET6 while
-+	 * receiving ip_hdr(skb)->version = 4.
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -634,7 +634,12 @@ lpfc_issue_lip(struct Scsi_Host *shost)
+ 	LPFC_MBOXQ_t *pmboxq;
+ 	int mbxstatus = MBXERR_ERROR;
+ 
++	/*
++	 * If the link is offline, disabled or BLOCK_MGMT_IO
++	 * it doesn't make any sense to allow issue_lip
 +	 */
-+	if (family == PF_INET6 && ip_hdr(skb)->version == 4)
-+		family = PF_INET;
-+#endif /* IPv6 */
-+
- 	switch (family) {
- 	case PF_INET: {
- 		struct iphdr *hdr4;
+ 	if ((vport->fc_flag & FC_OFFLINE_MODE) ||
++	    (phba->hba_flag & LINK_DISABLED) ||
+ 	    (phba->sli.sli_flag & LPFC_BLOCK_MGMT_IO))
+ 		return -EPERM;
+ 
