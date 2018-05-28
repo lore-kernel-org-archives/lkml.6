@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162735AbeE1Kj7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:39:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60006 "EHLO mail.kernel.org"
+        id S1162752AbeE1KkC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:40:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162719AbeE1Kjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:39:55 -0400
+        id S1162689AbeE1Kj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:39:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Govindarajulu Varadarajan <gvaradar@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 305/329] enic: enable rq before updating rq descriptors
-Date: Mon, 28 May 2018 12:03:54 +0200
-Message-Id: <20180528100306.575853491@linuxfoundation.org>
+Subject: [PATCH 4.9 288/329] f2fs: fix to check extent cache in f2fs_drop_extent_tree
+Date: Mon, 28 May 2018 12:03:37 +0200
+Message-Id: <20180528100305.694320191@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,52 +30,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Govindarajulu Varadarajan <gvaradar@cisco.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit e8588e268509292550634d9a35f2723a207683b2 ]
+[ Upstream commit bf617f7a92edc6bb2909db2bfa4576f50b280ee5 ]
 
-rq should be enabled before posting the buffers to rq desc. If not hw sees
-stale value and casuses DMAR errors.
+If noextent_cache mount option is on, we will never initialize extent tree
+in inode, but still we're going to access it in f2fs_drop_extent_tree,
+result in kernel panic as below:
 
-Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+ IP: _raw_write_lock+0xc/0x30
+ Call Trace:
+  ? f2fs_drop_extent_tree+0x41/0x70 [f2fs]
+  f2fs_fallocate+0x5a0/0xdd0 [f2fs]
+  ? common_file_perm+0x47/0xc0
+  ? apparmor_file_permission+0x1a/0x20
+  vfs_fallocate+0x15b/0x290
+  SyS_fallocate+0x44/0x70
+  do_syscall_64+0x6e/0x160
+  entry_SYSCALL64_slow_path+0x25/0x25
+
+This patch fixes to check extent cache status before using in
+f2fs_drop_extent_tree.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cisco/enic/enic_main.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/f2fs/extent_cache.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -1726,6 +1726,8 @@ static int enic_open(struct net_device *
- 	}
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -647,6 +647,9 @@ void f2fs_drop_extent_tree(struct inode
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
  
- 	for (i = 0; i < enic->rq_count; i++) {
-+		/* enable rq before updating rq desc */
-+		vnic_rq_enable(&enic->rq[i]);
- 		vnic_rq_fill(&enic->rq[i], enic_rq_alloc_buf);
- 		/* Need at least one buffer on ring to get going */
- 		if (vnic_rq_desc_used(&enic->rq[i]) == 0) {
-@@ -1737,8 +1739,6 @@ static int enic_open(struct net_device *
++	if (!f2fs_may_extent_tree(inode))
++		return;
++
+ 	set_inode_flag(inode, FI_NO_EXTENT);
  
- 	for (i = 0; i < enic->wq_count; i++)
- 		vnic_wq_enable(&enic->wq[i]);
--	for (i = 0; i < enic->rq_count; i++)
--		vnic_rq_enable(&enic->rq[i]);
- 
- 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
- 		enic_dev_add_station_addr(enic);
-@@ -1765,8 +1765,12 @@ static int enic_open(struct net_device *
- 	return 0;
- 
- err_out_free_rq:
--	for (i = 0; i < enic->rq_count; i++)
-+	for (i = 0; i < enic->rq_count; i++) {
-+		err = vnic_rq_disable(&enic->rq[i]);
-+		if (err)
-+			return err;
- 		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
-+	}
- 	enic_dev_notify_unset(enic);
- err_out_free_intr:
- 	enic_unset_affinity_hint(enic);
+ 	write_lock(&et->lock);
