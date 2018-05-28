@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968656AbeE1KRL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:17:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37204 "EHLO mail.kernel.org"
+        id S968717AbeE1KR3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:17:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966943AbeE1KRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:17:03 -0400
+        id S968655AbeE1KRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:17:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 068/268] bcache: return attach error when no cache set exist
-Date: Mon, 28 May 2018 12:00:42 +0200
-Message-Id: <20180528100209.580998816@linuxfoundation.org>
+Subject: [PATCH 4.4 075/268] scsi: mptfusion: Add bounds check in mptctl_hp_targetinfo()
+Date: Mon, 28 May 2018 12:00:49 +0200
+Message-Id: <20180528100210.332285143@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,58 +31,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 7f4fc93d4713394ee8f1cd44c238e046e11b4f15 ]
+[ Upstream commit a7043e9529f3c367cc4d82997e00be034cbe57ca ]
 
-I attach a back-end device to a cache set, and the cache set is not
-registered yet, this back-end device did not attach successfully, and no
-error returned:
-[root]# echo 87859280-fec6-4bcc-20df7ca8f86b > /sys/block/sde/bcache/attach
-[root]#
+My static checker complains about an out of bounds read:
 
-In sysfs_attach(), the return value "v" is initialized to "size" in
-the beginning, and if no cache set exist in bch_cache_sets, the "v" value
-would not change any more, and return to sysfs, sysfs regard it as success
-since the "size" is a positive number.
+    drivers/message/fusion/mptctl.c:2786 mptctl_hp_targetinfo()
+    error: buffer overflow 'hd->sel_timeout' 255 <= u32max.
 
-This patch fixes this issue by assigning "v" with "-ENOENT" in the
-initialization.
+It's true that we probably should have a bounds check here.
 
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/sysfs.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/message/fusion/mptctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -191,7 +191,7 @@ STORE(__cached_dev)
- {
- 	struct cached_dev *dc = container_of(kobj, struct cached_dev,
- 					     disk.kobj);
--	ssize_t v = size;
-+	ssize_t v;
- 	struct cache_set *c;
- 	struct kobj_uevent_env *env;
- 
-@@ -268,6 +268,7 @@ STORE(__cached_dev)
- 		if (bch_parse_uuid(buf, set_uuid) < 16)
- 			return -EINVAL;
- 
-+		v = -ENOENT;
- 		list_for_each_entry(c, &bch_cache_sets, list) {
- 			v = bch_cached_dev_attach(dc, c, set_uuid);
- 			if (!v)
-@@ -275,7 +276,7 @@ STORE(__cached_dev)
- 		}
- 
- 		pr_err("Can't attach %s: cache set not found", buf);
--		size = v;
-+		return v;
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -2698,6 +2698,8 @@ mptctl_hp_targetinfo(unsigned long arg)
+ 				__FILE__, __LINE__, iocnum);
+ 		return -ENODEV;
  	}
++	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
++		return -EINVAL;
+ 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
+ 	    ioc->name));
  
- 	if (attr == &sysfs_detach && dc->disk.c)
