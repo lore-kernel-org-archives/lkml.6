@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164540AbeE1K4b (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:56:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
+        id S1164555AbeE1K4l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:56:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164524AbeE1K4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:56:25 -0400
+        id S1164354AbeE1K4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:56:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
+        Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 316/496] net: mvneta: fix enable of all initialized RXQs
-Date: Mon, 28 May 2018 12:01:41 +0200
-Message-Id: <20180528100333.141466909@linuxfoundation.org>
+Subject: [PATCH 4.14 336/496] mm: fix races between address_space dereference and free in page_evicatable
+Date: Mon, 28 May 2018 12:02:01 +0200
+Message-Id: <20180528100333.979508297@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,31 +34,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Huang Ying <ying.huang@intel.com>
 
-[ Upstream commit e81b5e01c14add8395dfba7130f8829206bb507d ]
+[ Upstream commit e92bb4dd9673945179b1fc738c9817dd91bfb629 ]
 
-In mvneta_port_up() we enable relevant RX and TX port queues by write
-queues bit map to an appropriate register.
+When page_mapping() is called and the mapping is dereferenced in
+page_evicatable() through shrink_active_list(), it is possible for the
+inode to be truncated and the embedded address space to be freed at the
+same time.  This may lead to the following race.
 
-q_map must be ZERO in the beginning of this process.
+CPU1                                                CPU2
 
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+truncate(inode)                                     shrink_active_list()
+  ...                                                 page_evictable(page)
+  truncate_inode_page(mapping, page);
+    delete_from_page_cache(page)
+      spin_lock_irqsave(&mapping->tree_lock, flags);
+        __delete_from_page_cache(page, NULL)
+          page_cache_tree_delete(..)
+            ...                                         mapping = page_mapping(page);
+            page->mapping = NULL;
+            ...
+      spin_unlock_irqrestore(&mapping->tree_lock, flags);
+      page_cache_free_page(mapping, page)
+        put_page(page)
+          if (put_page_testzero(page)) -> false
+- inode now has no pages and can be freed including embedded address_space
+
+                                                        mapping_unevictable(mapping)
+							  test_bit(AS_UNEVICTABLE, &mapping->flags);
+- we've dereferenced mapping which is potentially already free.
+
+Similar race exists between swap cache freeing and page_evicatable()
+too.
+
+The address_space in inode and swap cache will be freed after a RCU
+grace period.  So the races are fixed via enclosing the page_mapping()
+and address_space usage in rcu_read_lock/unlock().  Some comments are
+added in code to make it clear what is protected by the RCU read lock.
+
+Link: http://lkml.kernel.org/r/20180212081227.1940-1-ying.huang@intel.com
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/vmscan.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -1112,6 +1112,7 @@ static void mvneta_port_up(struct mvneta
- 	}
- 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3961,7 +3961,13 @@ int node_reclaim(struct pglist_data *pgd
+  */
+ int page_evictable(struct page *page)
+ {
+-	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
++	int ret;
++
++	/* Prevent address_space of inode and swap cache from being freed */
++	rcu_read_lock();
++	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
++	rcu_read_unlock();
++	return ret;
+ }
  
-+	q_map = 0;
- 	/* Enable all initialized RXQs. */
- 	for (queue = 0; queue < rxq_number; queue++) {
- 		struct mvneta_rx_queue *rxq = &pp->rxqs[queue];
+ #ifdef CONFIG_SHMEM
