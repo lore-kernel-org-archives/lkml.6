@@ -1,31 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162229AbeE1Kgl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:36:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57068 "EHLO mail.kernel.org"
+        id S1162382AbeE1OPD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:15:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161996AbeE1Kge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:36:34 -0400
+        id S1161994AbeE1KgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Hugh Dickins <hughd@google.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nadav Amit <namit@vmware.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 231/329] x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
-Date: Mon, 28 May 2018 12:02:40 +0200
-Message-Id: <20180528100301.329900202@linuxfoundation.org>
+Subject: [PATCH 4.9 227/329] net: mvneta: fix enable of all initialized RXQs
+Date: Mon, 28 May 2018 12:02:36 +0200
+Message-Id: <20180528100300.991051573@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -41,62 +31,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-[ Upstream commit 639d6aafe437a7464399d2a77d006049053df06f ]
+[ Upstream commit e81b5e01c14add8395dfba7130f8829206bb507d ]
 
-__ro_after_init data gets stuck in the .rodata section.  That's normally
-fine because the kernel itself manages the R/W properties.
+In mvneta_port_up() we enable relevant RX and TX port queues by write
+queues bit map to an appropriate register.
 
-But, if we run __change_page_attr() on an area which is __ro_after_init,
-the .rodata checks will trigger and force the area to be immediately
-read-only, even if it is early-ish in boot.  This caused problems when
-trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
-it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
-to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
-a __ro_after_init data structure.
+q_map must be ZERO in the beginning of this process.
 
-To fix this, add the kernel_set_to_readonly check, just like we have
-for kernel text, just a few lines below in this function.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nadav Amit <namit@vmware.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180406205514.8D898241@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pageattr.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -279,9 +279,11 @@ static inline pgprot_t static_protection
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -1080,6 +1080,7 @@ static void mvneta_port_up(struct mvneta
+ 	}
+ 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
  
- 	/*
- 	 * The .rodata section needs to be read-only. Using the pfn
--	 * catches all aliases.
-+	 * catches all aliases.  This also includes __ro_after_init,
-+	 * so do not enforce until kernel_set_to_readonly is true.
- 	 */
--	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
-+	if (kernel_set_to_readonly &&
-+	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
- 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
- 		pgprot_val(forbidden) |= _PAGE_RW;
- 
++	q_map = 0;
+ 	/* Enable all initialized RXQs. */
+ 	for (queue = 0; queue < rxq_number; queue++) {
+ 		struct mvneta_rx_queue *rxq = &pp->rxqs[queue];
